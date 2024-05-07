@@ -144,14 +144,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AnnotatedStruct)
     annotation_parameter = traits<MemberDescriptor>::make_shared();
     // There is no official support in the STL to convert from wstring to string.
     /*
-    annotation_parameter->name("var_wstring_alias");
-    alias_type_descriptor = traits<TypeDescriptor>::make_shared();
-    alias_type_descriptor->kind(TK_ALIAS);
-    alias_type_descriptor->name("Inner_alias_bounded_wstring_helper");
-    alias_type_descriptor->base_type(factory->create_wstring_type(10)->build());
-    annotation_parameter->type(factory->create_type(alias_type_descriptor)->build());
-    annotation_builder->add_member(annotation_parameter);
-    */
+       annotation_parameter->name("var_wstring_alias");
+       alias_type_descriptor = traits<TypeDescriptor>::make_shared();
+       alias_type_descriptor->kind(TK_ALIAS);
+       alias_type_descriptor->name("Inner_alias_bounded_wstring_helper");
+       alias_type_descriptor->base_type(factory->create_wstring_type(10)->build());
+       annotation_parameter->type(factory->create_type(alias_type_descriptor)->build());
+       annotation_builder->add_member(annotation_parameter);
+     */
 
     annotation_descriptor->type(annotation_builder->build());
     annotation_descriptor->set_value("var_short", std::to_string(1));
@@ -177,18 +177,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AnnotatedStruct)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         AnnotatedStruct struct_data;
         AnnotatedStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-    }
-
-    // XCDRv2
-    {
-        AnnotatedStruct struct_data;
-        AnnotatedStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
     }
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
@@ -217,18 +210,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_EmptyAnnotatedStruct)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         EmptyAnnotatedStruct struct_data;
         EmptyAnnotatedStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-    }
-
-    // XCDRv2
-    {
-        EmptyAnnotatedStruct struct_data;
-        EmptyAnnotatedStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
     }
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);

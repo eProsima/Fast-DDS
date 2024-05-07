@@ -99,21 +99,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_EnumStructure)
                 var_scoped_innerenumhelper)), RETCODE_OK);
     EXPECT_EQ(static_cast<uint32_t>(scoped_value), scoped_test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         EnumStructure struct_data;
         EnumStructurePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(static_cast<uint32_t>(struct_data.var_InnerEnumHelper()), test_value);
-        EXPECT_EQ(static_cast<uint32_t>(struct_data.var_scoped_InnerEnumHelper()), scoped_test_value);
-    }
-
-    // XCDRv2
-    {
-        EnumStructure struct_data;
-        EnumStructurePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(static_cast<uint32_t>(struct_data.var_InnerEnumHelper()), test_value);
         EXPECT_EQ(static_cast<uint32_t>(struct_data.var_scoped_InnerEnumHelper()), scoped_test_value);
@@ -146,20 +136,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BitMaskStructure)
     EXPECT_EQ(data->get_uint32_value(test_value, data->get_member_id_by_name(var_innerbitmaskhelper_name)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         BitMaskStructure struct_data;
         BitMaskStructurePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(struct_data.var_InnerBitMaskHelper(), test_value);
-    }
-
-    // XCDRv2
-    {
-        BitMaskStructure struct_data;
-        BitMaskStructurePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_InnerBitMaskHelper(), test_value);
     }
@@ -193,20 +174,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BoundedBitMaskStructure)
                 var_innerboundedbitmaskhelper_name)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         BoundedBitMaskStructure struct_data;
         BoundedBitMaskStructurePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(struct_data.var_InnerBoundedBitMaskHelper(), test_value);
-    }
-
-    // XCDRv2
-    {
-        BoundedBitMaskStructure struct_data;
-        BoundedBitMaskStructurePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_InnerBoundedBitMaskHelper(), test_value);
     }

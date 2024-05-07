@@ -66,19 +66,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StringStruct)
     EXPECT_EQ(data->get_string_value(test_value, data->get_member_id_by_name(var_string_name)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         StringStruct struct_data;
         StringStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_string8(), test_value);
-    }
-
-    // XCDRv2
-    {
-        StringStruct struct_data;
-        StringStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_string8(), test_value);
     }
 
@@ -107,19 +99,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_WStringStruct)
     EXPECT_EQ(data->get_wstring_value(test_value, data->get_member_id_by_name(var_wstring_name)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         WStringStruct struct_data;
         WStringStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_string16(), test_value);
-    }
-
-    // XCDRv2
-    {
-        WStringStruct struct_data;
-        WStringStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_string16(), test_value);
     }
 
@@ -148,19 +132,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SmallStringStruct)
     EXPECT_EQ(data->get_string_value(test_value, data->get_member_id_by_name(var_small_string_name)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         SmallStringStruct struct_data;
         SmallStringStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_small_string(), test_value);
-    }
-
-    // XCDRv2
-    {
-        SmallStringStruct struct_data;
-        SmallStringStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_small_string(), test_value);
     }
 
@@ -189,19 +165,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SmallWStringStruct)
     EXPECT_EQ(data->get_wstring_value(test_value, data->get_member_id_by_name(var_small_wstring_name)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         SmallWStringStruct struct_data;
         SmallWStringStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_small_wstring(), test_value);
-    }
-
-    // XCDRv2
-    {
-        SmallWStringStruct struct_data;
-        SmallWStringStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_small_wstring(), test_value);
     }
 
@@ -230,19 +198,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_LargeStringStruct)
     EXPECT_EQ(data->get_string_value(test_value, data->get_member_id_by_name(var_large_string_name)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         LargeStringStruct struct_data;
         LargeStringStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_large_string(), test_value);
-    }
-
-    // XCDRv2
-    {
-        LargeStringStruct struct_data;
-        LargeStringStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_large_string(), test_value);
     }
 
@@ -271,19 +231,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_LargeWStringStruct)
     EXPECT_EQ(data->get_wstring_value(test_value, data->get_member_id_by_name(var_large_wstring_name)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         LargeWStringStruct struct_data;
         LargeWStringStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_large_wstring(), test_value);
-    }
-
-    // XCDRv2
-    {
-        LargeWStringStruct struct_data;
-        LargeWStringStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_large_wstring(), test_value);
     }
 

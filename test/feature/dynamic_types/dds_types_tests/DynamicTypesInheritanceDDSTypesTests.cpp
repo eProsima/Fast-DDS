@@ -297,20 +297,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_InnerStructureHelperChild)
             data->get_uint64_value(test_value.var_child_ulonglong(), data->get_member_id_by_name(var_child_ulonglong)));
     EXPECT_EQ(value.var_child_ulonglong(), test_value.var_child_ulonglong());
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         InnerStructureHelperChild struct_data;
         InnerStructureHelperChildPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value, struct_data);
-    }
-
-    // XCDRv2
-    {
-        InnerStructureHelperChild struct_data;
-        InnerStructureHelperChildPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value, struct_data);
     }
@@ -377,20 +368,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_InnerStructureHelperChildChild)
             data->get_member_id_by_name(var_childchild_ulonglong2)));
     EXPECT_EQ(value.var_childchild_ulonglong2(), test_value.var_childchild_ulonglong2());
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         InnerStructureHelperChildChild struct_data;
         InnerStructureHelperChildChildPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value, struct_data);
-    }
-
-    // XCDRv2
-    {
-        InnerStructureHelperChildChild struct_data;
-        InnerStructureHelperChildChildPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value, struct_data);
     }
@@ -426,20 +408,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_InnerStructureHelperEmptyChild)
             data->get_member_id_by_name(struct_float_member_name)));
     EXPECT_EQ(value.field2(), test_value.field2());
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         InnerStructureHelperEmptyChild struct_data;
         InnerStructureHelperEmptyChildPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value, struct_data);
-    }
-
-    // XCDRv2
-    {
-        InnerStructureHelperEmptyChild struct_data;
-        InnerStructureHelperEmptyChildPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value, struct_data);
     }
@@ -479,20 +452,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_InnerStructureHelperEmptyChildChil
     EXPECT_EQ(RETCODE_OK, data->get_char8_value(test_value.var_char(), data->get_member_id_by_name(var_char)));
     EXPECT_EQ(value.var_char(), test_value.var_char());
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         InnerStructureHelperEmptyChildChild struct_data;
         InnerStructureHelperEmptyChildChildPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value, struct_data);
-    }
-
-    // XCDRv2
-    {
-        InnerStructureHelperEmptyChildChild struct_data;
-        InnerStructureHelperEmptyChildChildPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value, struct_data);
     }
@@ -529,20 +493,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_InnerEmptyStructureHelperChild)
             data->get_uint64_value(test_value.var_child_ulonglong(), data->get_member_id_by_name(var_child_ulonglong)));
     EXPECT_EQ(value.var_child_ulonglong(), test_value.var_child_ulonglong());
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         InnerEmptyStructureHelperChild struct_data;
         InnerEmptyStructureHelperChildPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value, struct_data);
-    }
-
-    // XCDRv2
-    {
-        InnerEmptyStructureHelperChild struct_data;
-        InnerEmptyStructureHelperChildPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value, struct_data);
     }
@@ -585,20 +540,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructAliasInheritanceStruct)
             data->get_int16_value(test_value.new_member(), data->get_member_id_by_name(new_member)));
     EXPECT_EQ(value.new_member(), test_value.new_member());
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         StructAliasInheritanceStruct struct_data;
         StructAliasInheritanceStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value, struct_data);
-    }
-
-    // XCDRv2
-    {
-        StructAliasInheritanceStruct struct_data;
-        StructAliasInheritanceStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value, struct_data);
     }
@@ -870,20 +816,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructInheritanceStruct)
             test_value.var_StructAliasInheritanceStruct().new_member());
     data->return_loaned_value(inner_data);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         StructuresInheritanceStruct struct_data;
         StructuresInheritanceStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value, struct_data);
-    }
-
-    // XCDRv2
-    {
-        StructuresInheritanceStruct struct_data;
-        StructuresInheritanceStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value, struct_data);
     }
@@ -1014,35 +951,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BitsetsChildInheritanceStruct)
     EXPECT_EQ(ushort_value, test_ushort_value);
     EXPECT_EQ(data->return_loaned_value(bitset_data), RETCODE_OK);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         BitsetsChildInheritanceStruct struct_data;
         BitsetsChildInheritanceStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(octet_value, struct_data.var_InnerBitsetHelperChild().a());
-        EXPECT_EQ(bool_value, struct_data.var_InnerBitsetHelperChild().b());
-        EXPECT_EQ(ushort_value, struct_data.var_InnerBitsetHelperChild().c());
-        EXPECT_EQ(short_value, struct_data.var_InnerBitsetHelperChild().d());
-        EXPECT_EQ(long_value, struct_data.var_InnerBitsetHelperChild().child_w());
-        EXPECT_EQ(octet_value, struct_data.var_InnerBitsetHelperChildChild().a());
-        EXPECT_EQ(bool_value, struct_data.var_InnerBitsetHelperChildChild().b());
-        EXPECT_EQ(ushort_value, struct_data.var_InnerBitsetHelperChildChild().c());
-        EXPECT_EQ(short_value, struct_data.var_InnerBitsetHelperChildChild().d());
-        EXPECT_EQ(long_value, struct_data.var_InnerBitsetHelperChildChild().child_w());
-        EXPECT_EQ(ushort_value, struct_data.var_InnerBitsetHelperChildChild().childchild_z());
-        EXPECT_EQ(octet_value, struct_data.var_BitsetAliasInheritanceBitset().a());
-        EXPECT_EQ(bool_value, struct_data.var_BitsetAliasInheritanceBitset().b());
-        EXPECT_EQ(ushort_value, struct_data.var_BitsetAliasInheritanceBitset().c());
-        EXPECT_EQ(short_value, struct_data.var_BitsetAliasInheritanceBitset().d());
-        EXPECT_EQ(ushort_value, struct_data.var_BitsetAliasInheritanceBitset().new_bitfield());
-    }
-
-    // XCDRv2
-    {
-        BitsetsChildInheritanceStruct struct_data;
-        BitsetsChildInheritanceStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(octet_value, struct_data.var_InnerBitsetHelperChild().a());
         EXPECT_EQ(bool_value, struct_data.var_InnerBitsetHelperChild().b());

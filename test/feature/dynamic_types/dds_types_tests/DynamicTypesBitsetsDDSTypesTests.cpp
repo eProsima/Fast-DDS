@@ -305,37 +305,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BitsetStruct)
     EXPECT_EQ(ulong_long_value, test_ulong_long_value);
     EXPECT_EQ(data->return_loaned_value(var_innertypedbitsethelper4_data), RETCODE_OK);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         BitsetStruct data_struct;
         BitsetStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, data_struct,
-                static_pubsubType);
-        EXPECT_EQ(data_struct.var_InnerBitsetHelper().a(), test_uint8_value);
-        EXPECT_EQ(data_struct.var_InnerBitsetHelper().b(), test_bool_value);
-        EXPECT_EQ(data_struct.var_InnerBitsetHelper().c(), test_ushort_value);
-        EXPECT_EQ(data_struct.var_InnerBitsetHelper().d(), test_short_value);
-
-        EXPECT_EQ(data_struct.var_InnerTypedBitsetHelper().boolean_bitfield(), test_bool_value);
-        EXPECT_EQ(data_struct.var_InnerTypedBitsetHelper().byte_bitfield(), test_octet_value);
-        EXPECT_EQ(data_struct.var_InnerTypedBitsetHelper().int8_bitfield(), test_int8_value);
-        EXPECT_EQ(data_struct.var_InnerTypedBitsetHelper().uint8_bitfield(), test_uint8_value);
-        EXPECT_EQ(data_struct.var_InnerTypedBitsetHelper().short_bitfield(), test_short_value);
-        EXPECT_EQ(data_struct.var_InnerTypedBitsetHelper().ushort_bitfield(), test_ushort_value);
-
-        EXPECT_EQ(data_struct.var_InnerTypedBitsetHelper2().long_bitfield(), test_long_value);
-        EXPECT_EQ(data_struct.var_InnerTypedBitsetHelper2().ulong_bitfield(), test_ulong_value);
-
-        EXPECT_EQ(data_struct.var_InnerTypedBitsetHelper3().long_long_bitfield(), test_long_long_value);
-
-        EXPECT_EQ(data_struct.var_InnerTypedBitsetHelper4().ulong_long_bitfield(), test_ulong_long_value);
-    }
-
-    // XCDRv2
-    {
-        BitsetStruct data_struct;
-        BitsetStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, data_struct,
+        check_serialization_deserialization(struct_type, data, encoding, data_struct,
                 static_pubsubType);
         EXPECT_EQ(data_struct.var_InnerBitsetHelper().a(), test_uint8_value);
         EXPECT_EQ(data_struct.var_InnerBitsetHelper().b(), test_bool_value);

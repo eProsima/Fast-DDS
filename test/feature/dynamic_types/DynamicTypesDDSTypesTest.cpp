@@ -29,6 +29,8 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
+std::array<DataRepresentationId_t, 2> encodings {{XCDR_DATA_REPRESENTATION, XCDR2_DATA_REPRESENTATION}};
+
 DynamicTypesDDSTypesTest::~DynamicTypesDDSTypesTest()
 {
     eprosima::fastdds::dds::Log::KillThread();

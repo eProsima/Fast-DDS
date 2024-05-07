@@ -585,26 +585,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortShort)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapShortShort struct_data;
         MapShortShortPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_short_short().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_short_short().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_short_short().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapShortShort struct_data;
-        MapShortShortPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_short_short().size());
         for (auto const& map_element : value)
@@ -665,26 +650,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortUShort)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapShortUShort struct_data;
         MapShortUShortPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_short_ushort().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_short_ushort().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_short_ushort().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapShortUShort struct_data;
-        MapShortUShortPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_short_ushort().size());
         for (auto const& map_element : value)
@@ -745,26 +715,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortLong)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapShortLong struct_data;
         MapShortLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_short_long().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_short_long().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_short_long().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapShortLong struct_data;
-        MapShortLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_short_long().size());
         for (auto const& map_element : value)
@@ -825,26 +780,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortULong)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapShortULong struct_data;
         MapShortULongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_short_ulong().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_short_ulong().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_short_ulong().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapShortULong struct_data;
-        MapShortULongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_short_ulong().size());
         for (auto const& map_element : value)
@@ -905,26 +845,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortLongLong)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapShortLongLong struct_data;
         MapShortLongLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_short_longlong().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_short_longlong().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_short_longlong().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapShortLongLong struct_data;
-        MapShortLongLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_short_longlong().size());
         for (auto const& map_element : value)
@@ -985,26 +910,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortULongLong)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapShortULongLong struct_data;
         MapShortULongLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_short_ulonglong().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_short_ulonglong().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_short_ulonglong().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapShortULongLong struct_data;
-        MapShortULongLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_short_ulonglong().size());
         for (auto const& map_element : value)
@@ -1065,26 +975,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortFloat)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapShortFloat struct_data;
         MapShortFloatPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_short_float().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_short_float().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_short_float().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapShortFloat struct_data;
-        MapShortFloatPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_short_float().size());
         for (auto const& map_element : value)
@@ -1145,26 +1040,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortDouble)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapShortDouble struct_data;
         MapShortDoublePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_short_double().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_short_double().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_short_double().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapShortDouble struct_data;
-        MapShortDoublePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_short_double().size());
         for (auto const& map_element : value)
@@ -1225,26 +1105,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortLongDouble)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapShortLongDouble struct_data;
         MapShortLongDoublePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_short_longdouble().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_short_longdouble().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_short_longdouble().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapShortLongDouble struct_data;
-        MapShortLongDoublePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_short_longdouble().size());
         for (auto const& map_element : value)
@@ -1305,26 +1170,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortBoolean)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapShortBoolean struct_data;
         MapShortBooleanPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_short_boolean().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_short_boolean().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_short_boolean().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapShortBoolean struct_data;
-        MapShortBooleanPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_short_boolean().size());
         for (auto const& map_element : value)
@@ -1385,26 +1235,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortOctet)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapShortOctet struct_data;
         MapShortOctetPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_short_octet().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_short_octet().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_short_octet().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapShortOctet struct_data;
-        MapShortOctetPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_short_octet().size());
         for (auto const& map_element : value)
@@ -1465,26 +1300,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortChar)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapShortChar struct_data;
         MapShortCharPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_short_char().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_short_char().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_short_char().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapShortChar struct_data;
-        MapShortCharPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_short_char().size());
         for (auto const& map_element : value)
@@ -1545,26 +1365,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortWChar)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapShortWChar struct_data;
         MapShortWCharPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_short_wchar().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_short_wchar().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_short_wchar().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapShortWChar struct_data;
-        MapShortWCharPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_short_wchar().size());
         for (auto const& map_element : value)
@@ -1626,26 +1431,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortString)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapShortString struct_data;
         MapShortStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_short_string().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_short_string().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_short_string().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapShortString struct_data;
-        MapShortStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_short_string().size());
         for (auto const& map_element : value)
@@ -1707,26 +1497,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortWString)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapShortWString struct_data;
         MapShortWStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_short_wstring().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_short_wstring().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_short_wstring().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapShortWString struct_data;
-        MapShortWStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_short_wstring().size());
         for (auto const& map_element : value)
@@ -1787,26 +1562,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerAliasBoundedStringHel
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapShortInnerAliasBoundedStringHelper struct_data;
         MapShortInnerAliasBoundedStringHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_short_inneraliasboundedstringhelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_short_inneraliasboundedstringhelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_short_inneraliasboundedstringhelper().end(), it);
-            EXPECT_EQ(map_element.second, it->second.to_string());
-        }
-    }
-
-    // XCDRv2
-    {
-        MapShortInnerAliasBoundedStringHelper struct_data;
-        MapShortInnerAliasBoundedStringHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_short_inneraliasboundedstringhelper().size());
         for (auto const& map_element : value)
@@ -1867,26 +1627,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerAliasBoundedWStringHe
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapShortInnerAliasBoundedWStringHelper struct_data;
         MapShortInnerAliasBoundedWStringHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_short_inneraliasboundedwstringhelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_short_inneraliasboundedwstringhelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_short_inneraliasboundedwstringhelper().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapShortInnerAliasBoundedWStringHelper struct_data;
-        MapShortInnerAliasBoundedWStringHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_short_inneraliasboundedwstringhelper().size());
         for (auto const& map_element : value)
@@ -1947,26 +1692,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerEnumHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapShortInnerEnumHelper struct_data;
         MapShortInnerEnumHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_short_innerenumhelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_short_innerenumhelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_short_innerenumhelper().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapShortInnerEnumHelper struct_data;
-        MapShortInnerEnumHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_short_innerenumhelper().size());
         for (auto const& map_element : value)
@@ -2027,26 +1757,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerBitMaskHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapShortInnerBitMaskHelper struct_data;
         MapShortInnerBitMaskHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_short_innerbitmaskhelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_short_innerbitmaskhelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_short_innerbitmaskhelper().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapShortInnerBitMaskHelper struct_data;
-        MapShortInnerBitMaskHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_short_innerbitmaskhelper().size());
         for (auto const& map_element : value)
@@ -2107,26 +1822,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerAliasHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapShortInnerAliasHelper struct_data;
         MapShortInnerAliasHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_short_inneraliashelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_short_inneraliashelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_short_inneraliashelper().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapShortInnerAliasHelper struct_data;
-        MapShortInnerAliasHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_short_inneraliashelper().size());
         for (auto const& map_element : value)
@@ -2187,26 +1887,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerAliasArrayHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapShortInnerAliasArrayHelper struct_data;
         MapShortInnerAliasArrayHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_short_inneraliasarrayhelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_short_inneraliasarrayhelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_short_inneraliasarrayhelper().end(), it);
-            EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
-        }
-    }
-
-    // XCDRv2
-    {
-        MapShortInnerAliasArrayHelper struct_data;
-        MapShortInnerAliasArrayHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_short_inneraliasarrayhelper().size());
         for (auto const& map_element : value)
@@ -2267,26 +1952,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerAliasSequenceHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapShortInnerAliasSequenceHelper struct_data;
         MapShortInnerAliasSequenceHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_short_inneraliassequencehelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_short_inneraliassequencehelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_short_inneraliassequencehelper().end(), it);
-            EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
-        }
-    }
-
-    // XCDRv2
-    {
-        MapShortInnerAliasSequenceHelper struct_data;
-        MapShortInnerAliasSequenceHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_short_inneraliassequencehelper().size());
         for (auto const& map_element : value)
@@ -2372,26 +2042,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerAliasMapHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapShortInnerAliasMapHelper struct_data;
         MapShortInnerAliasMapHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_short_inneraliasmaphelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_short_inneraliasmaphelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_short_inneraliasmaphelper().end(), it);
-            EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
-        }
-    }
-
-    // XCDRv2
-    {
-        MapShortInnerAliasMapHelper struct_data;
-        MapShortInnerAliasMapHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_short_inneraliasmaphelper().size());
         for (auto const& map_element : value)
@@ -2460,11 +2115,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerUnionHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapShortInnerUnionHelper struct_data;
         MapShortInnerUnionHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_short_innerunionhelper().size());
         for (auto const& map_element : value)
@@ -2484,32 +2139,6 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerUnionHelper)
                 EXPECT_EQ(map_element.second.second, static_cast<int16_t>(it->second.shortValue()));
             }
 
-        }
-    }
-
-    // XCDRv2
-    {
-        MapShortInnerUnionHelper struct_data;
-        MapShortInnerUnionHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_short_innerunionhelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_short_innerunionhelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_short_innerunionhelper().end(), it);
-            if (union_long_member_name == map_element.second.first)
-            {
-                EXPECT_EQ(map_element.second.second, static_cast<int16_t>(it->second.longValue()));
-            }
-            else if (union_float_member_name == map_element.second.first)
-            {
-                EXPECT_EQ(map_element.second.second, static_cast<int16_t>(it->second.floatValue()));
-            }
-            else
-            {
-                EXPECT_EQ(map_element.second.second, static_cast<int16_t>(it->second.shortValue()));
-            }
         }
     }
 
@@ -2579,27 +2208,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerStructureHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapShortInnerStructureHelper struct_data;
         MapShortInnerStructureHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_short_innerstructurehelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_short_innerstructurehelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_short_innerstructurehelper().end(), it);
-            EXPECT_EQ(map_element.second.first, it->second.field1());
-            EXPECT_EQ(map_element.second.second, it->second.field2());
-        }
-    }
-
-    // XCDRv2
-    {
-        MapShortInnerStructureHelper struct_data;
-        MapShortInnerStructureHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_short_innerstructurehelper().size());
         for (auto const& map_element : value)
@@ -2692,29 +2305,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerBitsetHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapShortInnerBitsetHelper struct_data;
         MapShortInnerBitsetHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_short_innerbitsethelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_short_innerbitsethelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_short_innerbitsethelper().end(), it);
-            EXPECT_EQ(std::get<0>(map_element.second), it->second.a());
-            EXPECT_EQ(std::get<1>(map_element.second), it->second.b());
-            EXPECT_EQ(std::get<2>(map_element.second), it->second.c());
-            EXPECT_EQ(std::get<3>(map_element.second), it->second.d());
-        }
-    }
-
-    // XCDRv2
-    {
-        MapShortInnerBitsetHelper struct_data;
-        MapShortInnerBitsetHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_short_innerbitsethelper().size());
         for (auto const& map_element : value)
@@ -2780,26 +2375,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortShort)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapUShortShort struct_data;
         MapUShortShortPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_ushort_short().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_ushort_short().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_ushort_short().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapUShortShort struct_data;
-        MapUShortShortPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ushort_short().size());
         for (auto const& map_element : value)
@@ -2860,26 +2440,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortUShort)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapUShortUShort struct_data;
         MapUShortUShortPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_ushort_ushort().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_ushort_ushort().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_ushort_ushort().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapUShortUShort struct_data;
-        MapUShortUShortPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ushort_ushort().size());
         for (auto const& map_element : value)
@@ -2940,26 +2505,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortLong)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapUShortLong struct_data;
         MapUShortLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_ushort_long().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_ushort_long().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_ushort_long().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapUShortLong struct_data;
-        MapUShortLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ushort_long().size());
         for (auto const& map_element : value)
@@ -3020,26 +2570,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortULong)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapUShortULong struct_data;
         MapUShortULongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_ushort_ulong().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_ushort_ulong().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_ushort_ulong().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapUShortULong struct_data;
-        MapUShortULongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ushort_ulong().size());
         for (auto const& map_element : value)
@@ -3100,26 +2635,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortLongLong)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapUShortLongLong struct_data;
         MapUShortLongLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_ushort_longlong().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_ushort_longlong().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_ushort_longlong().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapUShortLongLong struct_data;
-        MapUShortLongLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ushort_longlong().size());
         for (auto const& map_element : value)
@@ -3180,26 +2700,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortULongLong)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapUShortULongLong struct_data;
         MapUShortULongLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_ushort_ulonglong().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_ushort_ulonglong().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_ushort_ulonglong().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapUShortULongLong struct_data;
-        MapUShortULongLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ushort_ulonglong().size());
         for (auto const& map_element : value)
@@ -3260,26 +2765,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortFloat)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapUShortFloat struct_data;
         MapUShortFloatPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_ushort_float().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_ushort_float().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_ushort_float().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapUShortFloat struct_data;
-        MapUShortFloatPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ushort_float().size());
         for (auto const& map_element : value)
@@ -3340,26 +2830,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortDouble)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapUShortDouble struct_data;
         MapUShortDoublePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_ushort_double().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_ushort_double().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_ushort_double().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapUShortDouble struct_data;
-        MapUShortDoublePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ushort_double().size());
         for (auto const& map_element : value)
@@ -3420,26 +2895,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortLongDouble)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapUShortLongDouble struct_data;
         MapUShortLongDoublePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_ushort_longdouble().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_ushort_longdouble().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_ushort_longdouble().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapUShortLongDouble struct_data;
-        MapUShortLongDoublePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ushort_longdouble().size());
         for (auto const& map_element : value)
@@ -3500,26 +2960,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortBoolean)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapUShortBoolean struct_data;
         MapUShortBooleanPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_ushort_boolean().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_ushort_boolean().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_ushort_boolean().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapUShortBoolean struct_data;
-        MapUShortBooleanPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ushort_boolean().size());
         for (auto const& map_element : value)
@@ -3580,26 +3025,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortOctet)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapUShortOctet struct_data;
         MapUShortOctetPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_ushort_octet().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_ushort_octet().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_ushort_octet().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapUShortOctet struct_data;
-        MapUShortOctetPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ushort_octet().size());
         for (auto const& map_element : value)
@@ -3660,26 +3090,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortChar)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapUShortChar struct_data;
         MapUShortCharPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_ushort_char().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_ushort_char().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_ushort_char().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapUShortChar struct_data;
-        MapUShortCharPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ushort_char().size());
         for (auto const& map_element : value)
@@ -3740,26 +3155,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortWChar)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapUShortWChar struct_data;
         MapUShortWCharPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_ushort_wchar().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_ushort_wchar().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_ushort_wchar().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapUShortWChar struct_data;
-        MapUShortWCharPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ushort_wchar().size());
         for (auto const& map_element : value)
@@ -3821,26 +3221,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortString)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapUShortString struct_data;
         MapUShortStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_ushort_string().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_ushort_string().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_ushort_string().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapUShortString struct_data;
-        MapUShortStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ushort_string().size());
         for (auto const& map_element : value)
@@ -3902,26 +3287,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortWString)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapUShortWString struct_data;
         MapUShortWStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_ushort_wstring().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_ushort_wstring().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_ushort_wstring().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapUShortWString struct_data;
-        MapUShortWStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ushort_wstring().size());
         for (auto const& map_element : value)
@@ -3982,26 +3352,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerAliasBoundedStringHe
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapUShortInnerAliasBoundedStringHelper struct_data;
         MapUShortInnerAliasBoundedStringHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_ushort_inneraliasboundedstringhelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_ushort_inneraliasboundedstringhelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_ushort_inneraliasboundedstringhelper().end(), it);
-            EXPECT_EQ(map_element.second, it->second.to_string());
-        }
-    }
-
-    // XCDRv2
-    {
-        MapUShortInnerAliasBoundedStringHelper struct_data;
-        MapUShortInnerAliasBoundedStringHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ushort_inneraliasboundedstringhelper().size());
         for (auto const& map_element : value)
@@ -4062,26 +3417,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerAliasBoundedWStringH
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapUShortInnerAliasBoundedWStringHelper struct_data;
         MapUShortInnerAliasBoundedWStringHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_ushort_inneraliasboundedwstringhelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_ushort_inneraliasboundedwstringhelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_ushort_inneraliasboundedwstringhelper().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapUShortInnerAliasBoundedWStringHelper struct_data;
-        MapUShortInnerAliasBoundedWStringHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ushort_inneraliasboundedwstringhelper().size());
         for (auto const& map_element : value)
@@ -4142,11 +3482,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerEnumHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapUShortInnerEnumHelper struct_data;
         MapUShortInnerEnumHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ushort_innerenumhelper().size());
         for (auto const& map_element : value)
@@ -4157,20 +3497,6 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerEnumHelper)
         }
     }
 
-    // XCDRv2
-    {
-        MapUShortInnerEnumHelper struct_data;
-        MapUShortInnerEnumHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_ushort_innerenumhelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_ushort_innerenumhelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_ushort_innerenumhelper().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -4222,26 +3548,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerBitMaskHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapUShortInnerBitMaskHelper struct_data;
         MapUShortInnerBitMaskHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_ushort_innerbitmaskhelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_ushort_innerbitmaskhelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_ushort_innerbitmaskhelper().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapUShortInnerBitMaskHelper struct_data;
-        MapUShortInnerBitMaskHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ushort_innerbitmaskhelper().size());
         for (auto const& map_element : value)
@@ -4302,26 +3613,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerAliasHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapUShortInnerAliasHelper struct_data;
         MapUShortInnerAliasHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_ushort_inneraliashelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_ushort_inneraliashelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_ushort_inneraliashelper().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapUShortInnerAliasHelper struct_data;
-        MapUShortInnerAliasHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ushort_inneraliashelper().size());
         for (auto const& map_element : value)
@@ -4382,26 +3678,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerAliasArrayHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapUShortInnerAliasArrayHelper struct_data;
         MapUShortInnerAliasArrayHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_ushort_inneraliasarrayhelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_ushort_inneraliasarrayhelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_ushort_inneraliasarrayhelper().end(), it);
-            EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
-        }
-    }
-
-    // XCDRv2
-    {
-        MapUShortInnerAliasArrayHelper struct_data;
-        MapUShortInnerAliasArrayHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ushort_inneraliasarrayhelper().size());
         for (auto const& map_element : value)
@@ -4462,26 +3743,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerAliasSequenceHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapUShortInnerAliasSequenceHelper struct_data;
         MapUShortInnerAliasSequenceHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_ushort_inneraliassequencehelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_ushort_inneraliassequencehelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_ushort_inneraliassequencehelper().end(), it);
-            EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
-        }
-    }
-
-    // XCDRv2
-    {
-        MapUShortInnerAliasSequenceHelper struct_data;
-        MapUShortInnerAliasSequenceHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ushort_inneraliassequencehelper().size());
         for (auto const& map_element : value)
@@ -4567,26 +3833,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerAliasMapHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapUShortInnerAliasMapHelper struct_data;
         MapUShortInnerAliasMapHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_ushort_inneraliasmaphelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_ushort_inneraliasmaphelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_ushort_inneraliasmaphelper().end(), it);
-            EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
-        }
-    }
-
-    // XCDRv2
-    {
-        MapUShortInnerAliasMapHelper struct_data;
-        MapUShortInnerAliasMapHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ushort_inneraliasmaphelper().size());
         for (auto const& map_element : value)
@@ -4655,11 +3906,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerUnionHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapUShortInnerUnionHelper struct_data;
         MapUShortInnerUnionHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ushort_innerunionhelper().size());
         for (auto const& map_element : value)
@@ -4679,32 +3930,6 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerUnionHelper)
                 EXPECT_EQ(map_element.second.second, static_cast<int16_t>(it->second.shortValue()));
             }
 
-        }
-    }
-
-    // XCDRv2
-    {
-        MapUShortInnerUnionHelper struct_data;
-        MapUShortInnerUnionHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_ushort_innerunionhelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_ushort_innerunionhelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_ushort_innerunionhelper().end(), it);
-            if (union_long_member_name == map_element.second.first)
-            {
-                EXPECT_EQ(map_element.second.second, static_cast<int16_t>(it->second.longValue()));
-            }
-            else if (union_float_member_name == map_element.second.first)
-            {
-                EXPECT_EQ(map_element.second.second, static_cast<int16_t>(it->second.floatValue()));
-            }
-            else
-            {
-                EXPECT_EQ(map_element.second.second, static_cast<int16_t>(it->second.shortValue()));
-            }
         }
     }
 
@@ -4774,27 +3999,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerStructureHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapUShortInnerStructureHelper struct_data;
         MapUShortInnerStructureHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_ushort_innerstructurehelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_ushort_innerstructurehelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_ushort_innerstructurehelper().end(), it);
-            EXPECT_EQ(map_element.second.first, it->second.field1());
-            EXPECT_EQ(map_element.second.second, it->second.field2());
-        }
-    }
-
-    // XCDRv2
-    {
-        MapUShortInnerStructureHelper struct_data;
-        MapUShortInnerStructureHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ushort_innerstructurehelper().size());
         for (auto const& map_element : value)
@@ -4887,29 +4096,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerBitsetHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapUShortInnerBitsetHelper struct_data;
         MapUShortInnerBitsetHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_ushort_innerbitsethelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_ushort_innerbitsethelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_ushort_innerbitsethelper().end(), it);
-            EXPECT_EQ(std::get<0>(map_element.second), it->second.a());
-            EXPECT_EQ(std::get<1>(map_element.second), it->second.b());
-            EXPECT_EQ(std::get<2>(map_element.second), it->second.c());
-            EXPECT_EQ(std::get<3>(map_element.second), it->second.d());
-        }
-    }
-
-    // XCDRv2
-    {
-        MapUShortInnerBitsetHelper struct_data;
-        MapUShortInnerBitsetHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ushort_innerbitsethelper().size());
         for (auto const& map_element : value)
@@ -4975,26 +4166,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongShort)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapLongShort struct_data;
         MapLongShortPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_long_short().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_long_short().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_long_short().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapLongShort struct_data;
-        MapLongShortPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_long_short().size());
         for (auto const& map_element : value)
@@ -5055,26 +4231,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongUShort)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapLongUShort struct_data;
         MapLongUShortPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_long_ushort().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_long_ushort().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_long_ushort().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapLongUShort struct_data;
-        MapLongUShortPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_long_ushort().size());
         for (auto const& map_element : value)
@@ -5135,26 +4296,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLong)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapLongLong struct_data;
         MapLongLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_long_long().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_long_long().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_long_long().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapLongLong struct_data;
-        MapLongLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_long_long().size());
         for (auto const& map_element : value)
@@ -5215,26 +4361,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongULong)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapLongULong struct_data;
         MapLongULongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_long_ulong().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_long_ulong().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_long_ulong().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapLongULong struct_data;
-        MapLongULongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_long_ulong().size());
         for (auto const& map_element : value)
@@ -5295,26 +4426,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongKeyLongLongValue)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapLongKeyLongLongValue struct_data;
         MapLongKeyLongLongValuePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_long_longlong().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_long_longlong().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_long_longlong().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapLongKeyLongLongValue struct_data;
-        MapLongKeyLongLongValuePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_long_longlong().size());
         for (auto const& map_element : value)
@@ -5375,26 +4491,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongULongLong)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapLongULongLong struct_data;
         MapLongULongLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_long_ulonglong().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_long_ulonglong().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_long_ulonglong().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapLongULongLong struct_data;
-        MapLongULongLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_long_ulonglong().size());
         for (auto const& map_element : value)
@@ -5455,26 +4556,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongFloat)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapLongFloat struct_data;
         MapLongFloatPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_long_float().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_long_float().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_long_float().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapLongFloat struct_data;
-        MapLongFloatPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_long_float().size());
         for (auto const& map_element : value)
@@ -5535,26 +4621,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongDouble)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapLongDouble struct_data;
         MapLongDoublePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_long_double().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_long_double().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_long_double().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapLongDouble struct_data;
-        MapLongDoublePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_long_double().size());
         for (auto const& map_element : value)
@@ -5615,26 +4686,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongKeyLongDoubleValue)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapLongKeyLongDoubleValue struct_data;
         MapLongKeyLongDoubleValuePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_long_longdouble().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_long_longdouble().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_long_longdouble().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapLongKeyLongDoubleValue struct_data;
-        MapLongKeyLongDoubleValuePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_long_longdouble().size());
         for (auto const& map_element : value)
@@ -5695,26 +4751,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongBoolean)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapLongBoolean struct_data;
         MapLongBooleanPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_long_boolean().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_long_boolean().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_long_boolean().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapLongBoolean struct_data;
-        MapLongBooleanPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_long_boolean().size());
         for (auto const& map_element : value)
@@ -5775,26 +4816,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongOctet)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapLongOctet struct_data;
         MapLongOctetPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_long_octet().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_long_octet().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_long_octet().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapLongOctet struct_data;
-        MapLongOctetPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_long_octet().size());
         for (auto const& map_element : value)
@@ -5855,26 +4881,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongChar)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapLongChar struct_data;
         MapLongCharPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_long_char().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_long_char().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_long_char().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapLongChar struct_data;
-        MapLongCharPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_long_char().size());
         for (auto const& map_element : value)
@@ -5935,26 +4946,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongWChar)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapLongWChar struct_data;
         MapLongWCharPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_long_wchar().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_long_wchar().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_long_wchar().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapLongWChar struct_data;
-        MapLongWCharPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_long_wchar().size());
         for (auto const& map_element : value)
@@ -6016,26 +5012,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongString)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapLongString struct_data;
         MapLongStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_long_string().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_long_string().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_long_string().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapLongString struct_data;
-        MapLongStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_long_string().size());
         for (auto const& map_element : value)
@@ -6097,26 +5078,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongWString)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapLongWString struct_data;
         MapLongWStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_long_wstring().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_long_wstring().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_long_wstring().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapLongWString struct_data;
-        MapLongWStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_long_wstring().size());
         for (auto const& map_element : value)
@@ -6177,26 +5143,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerAliasBoundedStringHelp
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapLongInnerAliasBoundedStringHelper struct_data;
         MapLongInnerAliasBoundedStringHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_long_inneraliasboundedstringhelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_long_inneraliasboundedstringhelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_long_inneraliasboundedstringhelper().end(), it);
-            EXPECT_EQ(map_element.second, it->second.to_string());
-        }
-    }
-
-    // XCDRv2
-    {
-        MapLongInnerAliasBoundedStringHelper struct_data;
-        MapLongInnerAliasBoundedStringHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_long_inneraliasboundedstringhelper().size());
         for (auto const& map_element : value)
@@ -6257,26 +5208,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerAliasBoundedWStringHel
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapLongInnerAliasBoundedWStringHelper struct_data;
         MapLongInnerAliasBoundedWStringHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_long_inneraliasboundedwstringhelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_long_inneraliasboundedwstringhelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_long_inneraliasboundedwstringhelper().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapLongInnerAliasBoundedWStringHelper struct_data;
-        MapLongInnerAliasBoundedWStringHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_long_inneraliasboundedwstringhelper().size());
         for (auto const& map_element : value)
@@ -6337,26 +5273,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerEnumHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapLongInnerEnumHelper struct_data;
         MapLongInnerEnumHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_long_innerenumhelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_long_innerenumhelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_long_innerenumhelper().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapLongInnerEnumHelper struct_data;
-        MapLongInnerEnumHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_long_innerenumhelper().size());
         for (auto const& map_element : value)
@@ -6417,26 +5338,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerBitMaskHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapLongInnerBitMaskHelper struct_data;
         MapLongInnerBitMaskHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_long_innerbitmaskhelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_long_innerbitmaskhelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_long_innerbitmaskhelper().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapLongInnerBitMaskHelper struct_data;
-        MapLongInnerBitMaskHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_long_innerbitmaskhelper().size());
         for (auto const& map_element : value)
@@ -6497,26 +5403,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerAliasHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapLongInnerAliasHelper struct_data;
         MapLongInnerAliasHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_long_inneraliashelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_long_inneraliashelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_long_inneraliashelper().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapLongInnerAliasHelper struct_data;
-        MapLongInnerAliasHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_long_inneraliashelper().size());
         for (auto const& map_element : value)
@@ -6577,26 +5468,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerAliasArrayHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapLongInnerAliasArrayHelper struct_data;
         MapLongInnerAliasArrayHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_long_inneraliasarrayhelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_long_inneraliasarrayhelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_long_inneraliasarrayhelper().end(), it);
-            EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
-        }
-    }
-
-    // XCDRv2
-    {
-        MapLongInnerAliasArrayHelper struct_data;
-        MapLongInnerAliasArrayHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_long_inneraliasarrayhelper().size());
         for (auto const& map_element : value)
@@ -6657,26 +5533,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerAliasSequenceHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapLongInnerAliasSequenceHelper struct_data;
         MapLongInnerAliasSequenceHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_long_inneraliassequencehelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_long_inneraliassequencehelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_long_inneraliassequencehelper().end(), it);
-            EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
-        }
-    }
-
-    // XCDRv2
-    {
-        MapLongInnerAliasSequenceHelper struct_data;
-        MapLongInnerAliasSequenceHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_long_inneraliassequencehelper().size());
         for (auto const& map_element : value)
@@ -6762,11 +5623,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerAliasMapHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapLongInnerAliasMapHelper struct_data;
         MapLongInnerAliasMapHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_long_inneraliasmaphelper().size());
         for (auto const& map_element : value)
@@ -6774,21 +5635,6 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerAliasMapHelper)
             auto it = struct_data.var_map_long_inneraliasmaphelper().find(map_element.first);
             ASSERT_NE(struct_data.var_map_long_inneraliasmaphelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapLongInnerAliasMapHelper struct_data;
-        MapLongInnerAliasMapHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_long_inneraliasmaphelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_long_inneraliasmaphelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_long_inneraliasmaphelper().end(), it);
-            EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
 
@@ -6850,11 +5696,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerUnionHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapLongInnerUnionHelper struct_data;
         MapLongInnerUnionHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_long_innerunionhelper().size());
         for (auto const& map_element : value)
@@ -6874,32 +5720,6 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerUnionHelper)
                 EXPECT_EQ(map_element.second.second, static_cast<int16_t>(it->second.shortValue()));
             }
 
-        }
-    }
-
-    // XCDRv2
-    {
-        MapLongInnerUnionHelper struct_data;
-        MapLongInnerUnionHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_long_innerunionhelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_long_innerunionhelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_long_innerunionhelper().end(), it);
-            if (union_long_member_name == map_element.second.first)
-            {
-                EXPECT_EQ(map_element.second.second, static_cast<int16_t>(it->second.longValue()));
-            }
-            else if (union_float_member_name == map_element.second.first)
-            {
-                EXPECT_EQ(map_element.second.second, static_cast<int16_t>(it->second.floatValue()));
-            }
-            else
-            {
-                EXPECT_EQ(map_element.second.second, static_cast<int16_t>(it->second.shortValue()));
-            }
         }
     }
 
@@ -6969,27 +5789,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerStructureHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapLongInnerStructureHelper struct_data;
         MapLongInnerStructureHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_long_innerstructurehelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_long_innerstructurehelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_long_innerstructurehelper().end(), it);
-            EXPECT_EQ(map_element.second.first, it->second.field1());
-            EXPECT_EQ(map_element.second.second, it->second.field2());
-        }
-    }
-
-    // XCDRv2
-    {
-        MapLongInnerStructureHelper struct_data;
-        MapLongInnerStructureHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_long_innerstructurehelper().size());
         for (auto const& map_element : value)
@@ -7082,29 +5886,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerBitsetHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapLongInnerBitsetHelper struct_data;
         MapLongInnerBitsetHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_long_innerbitsethelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_long_innerbitsethelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_long_innerbitsethelper().end(), it);
-            EXPECT_EQ(std::get<0>(map_element.second), it->second.a());
-            EXPECT_EQ(std::get<1>(map_element.second), it->second.b());
-            EXPECT_EQ(std::get<2>(map_element.second), it->second.c());
-            EXPECT_EQ(std::get<3>(map_element.second), it->second.d());
-        }
-    }
-
-    // XCDRv2
-    {
-        MapLongInnerBitsetHelper struct_data;
-        MapLongInnerBitsetHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_long_innerbitsethelper().size());
         for (auto const& map_element : value)
@@ -7170,26 +5956,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongShort)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapULongShort struct_data;
         MapULongShortPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_ulong_short().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_ulong_short().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_ulong_short().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapULongShort struct_data;
-        MapULongShortPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ulong_short().size());
         for (auto const& map_element : value)
@@ -7250,26 +6021,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongUShort)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapULongUShort struct_data;
         MapULongUShortPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_ulong_ushort().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_ulong_ushort().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_ulong_ushort().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapULongUShort struct_data;
-        MapULongUShortPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ulong_ushort().size());
         for (auto const& map_element : value)
@@ -7330,26 +6086,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLong)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapULongLong struct_data;
         MapULongLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_ulong_long().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_ulong_long().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_ulong_long().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapULongLong struct_data;
-        MapULongLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ulong_long().size());
         for (auto const& map_element : value)
@@ -7410,26 +6151,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongULong)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapULongULong struct_data;
         MapULongULongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_ulong_ulong().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_ulong_ulong().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_ulong_ulong().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapULongULong struct_data;
-        MapULongULongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ulong_ulong().size());
         for (auto const& map_element : value)
@@ -7490,26 +6216,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapKeyULongValueLongLong)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapKeyULongValueLongLong struct_data;
         MapKeyULongValueLongLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_ulong_longlong().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_ulong_longlong().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_ulong_longlong().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapKeyULongValueLongLong struct_data;
-        MapKeyULongValueLongLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ulong_longlong().size());
         for (auto const& map_element : value)
@@ -7570,26 +6281,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongULongLong)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapULongULongLong struct_data;
         MapULongULongLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_ulong_ulonglong().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_ulong_ulonglong().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_ulong_ulonglong().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapULongULongLong struct_data;
-        MapULongULongLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ulong_ulonglong().size());
         for (auto const& map_element : value)
@@ -7650,26 +6346,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongFloat)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapULongFloat struct_data;
         MapULongFloatPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_ulong_float().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_ulong_float().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_ulong_float().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapULongFloat struct_data;
-        MapULongFloatPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ulong_float().size());
         for (auto const& map_element : value)
@@ -7730,26 +6411,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongDouble)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapULongDouble struct_data;
         MapULongDoublePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_ulong_double().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_ulong_double().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_ulong_double().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapULongDouble struct_data;
-        MapULongDoublePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ulong_double().size());
         for (auto const& map_element : value)
@@ -7810,26 +6476,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapKeyULongValueLongDouble)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapKeyULongValueLongDouble struct_data;
         MapKeyULongValueLongDoublePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_ulong_longdouble().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_ulong_longdouble().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_ulong_longdouble().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapKeyULongValueLongDouble struct_data;
-        MapKeyULongValueLongDoublePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ulong_longdouble().size());
         for (auto const& map_element : value)
@@ -7890,26 +6541,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongBoolean)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapULongBoolean struct_data;
         MapULongBooleanPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_ulong_boolean().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_ulong_boolean().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_ulong_boolean().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapULongBoolean struct_data;
-        MapULongBooleanPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ulong_boolean().size());
         for (auto const& map_element : value)
@@ -7970,26 +6606,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongOctet)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapULongOctet struct_data;
         MapULongOctetPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_ulong_octet().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_ulong_octet().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_ulong_octet().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapULongOctet struct_data;
-        MapULongOctetPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ulong_octet().size());
         for (auto const& map_element : value)
@@ -8050,26 +6671,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongChar)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapULongChar struct_data;
         MapULongCharPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_ulong_char().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_ulong_char().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_ulong_char().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapULongChar struct_data;
-        MapULongCharPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ulong_char().size());
         for (auto const& map_element : value)
@@ -8130,26 +6736,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongWChar)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapULongWChar struct_data;
         MapULongWCharPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_ulong_wchar().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_ulong_wchar().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_ulong_wchar().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapULongWChar struct_data;
-        MapULongWCharPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ulong_wchar().size());
         for (auto const& map_element : value)
@@ -8211,26 +6802,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongString)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapULongString struct_data;
         MapULongStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_ulong_string().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_ulong_string().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_ulong_string().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapULongString struct_data;
-        MapULongStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ulong_string().size());
         for (auto const& map_element : value)
@@ -8292,26 +6868,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongWString)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapULongWString struct_data;
         MapULongWStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_ulong_wstring().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_ulong_wstring().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_ulong_wstring().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapULongWString struct_data;
-        MapULongWStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ulong_wstring().size());
         for (auto const& map_element : value)
@@ -8372,26 +6933,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerAliasBoundedStringHel
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapULongInnerAliasBoundedStringHelper struct_data;
         MapULongInnerAliasBoundedStringHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_ulong_inneraliasboundedstringhelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_ulong_inneraliasboundedstringhelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_ulong_inneraliasboundedstringhelper().end(), it);
-            EXPECT_EQ(map_element.second, it->second.to_string());
-        }
-    }
-
-    // XCDRv2
-    {
-        MapULongInnerAliasBoundedStringHelper struct_data;
-        MapULongInnerAliasBoundedStringHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ulong_inneraliasboundedstringhelper().size());
         for (auto const& map_element : value)
@@ -8452,26 +6998,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerAliasBoundedWStringHe
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapULongInnerAliasBoundedWStringHelper struct_data;
         MapULongInnerAliasBoundedWStringHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_ulong_inneraliasboundedwstringhelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_ulong_inneraliasboundedwstringhelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_ulong_inneraliasboundedwstringhelper().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapULongInnerAliasBoundedWStringHelper struct_data;
-        MapULongInnerAliasBoundedWStringHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ulong_inneraliasboundedwstringhelper().size());
         for (auto const& map_element : value)
@@ -8532,26 +7063,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerEnumHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapULongInnerEnumHelper struct_data;
         MapULongInnerEnumHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_ulong_innerenumhelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_ulong_innerenumhelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_ulong_innerenumhelper().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapULongInnerEnumHelper struct_data;
-        MapULongInnerEnumHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ulong_innerenumhelper().size());
         for (auto const& map_element : value)
@@ -8612,26 +7128,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerBitMaskHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapULongInnerBitMaskHelper struct_data;
         MapULongInnerBitMaskHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_ulong_innerbitmaskhelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_ulong_innerbitmaskhelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_ulong_innerbitmaskhelper().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapULongInnerBitMaskHelper struct_data;
-        MapULongInnerBitMaskHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ulong_innerbitmaskhelper().size());
         for (auto const& map_element : value)
@@ -8692,26 +7193,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerAliasHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapULongInnerAliasHelper struct_data;
         MapULongInnerAliasHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_ulong_inneraliashelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_ulong_inneraliashelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_ulong_inneraliashelper().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapULongInnerAliasHelper struct_data;
-        MapULongInnerAliasHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ulong_inneraliashelper().size());
         for (auto const& map_element : value)
@@ -8772,26 +7258,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerAliasArrayHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapULongInnerAliasArrayHelper struct_data;
         MapULongInnerAliasArrayHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_ulong_inneraliasarrayhelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_ulong_inneraliasarrayhelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_ulong_inneraliasarrayhelper().end(), it);
-            EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
-        }
-    }
-
-    // XCDRv2
-    {
-        MapULongInnerAliasArrayHelper struct_data;
-        MapULongInnerAliasArrayHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ulong_inneraliasarrayhelper().size());
         for (auto const& map_element : value)
@@ -8852,26 +7323,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerAliasSequenceHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapULongInnerAliasSequenceHelper struct_data;
         MapULongInnerAliasSequenceHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_ulong_inneraliassequencehelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_ulong_inneraliassequencehelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_ulong_inneraliassequencehelper().end(), it);
-            EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
-        }
-    }
-
-    // XCDRv2
-    {
-        MapULongInnerAliasSequenceHelper struct_data;
-        MapULongInnerAliasSequenceHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ulong_inneraliassequencehelper().size());
         for (auto const& map_element : value)
@@ -8957,11 +7413,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerAliasMapHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapULongInnerAliasMapHelper struct_data;
         MapULongInnerAliasMapHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ulong_inneraliasmaphelper().size());
         for (auto const& map_element : value)
@@ -8969,21 +7425,6 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerAliasMapHelper)
             auto it = struct_data.var_map_ulong_inneraliasmaphelper().find(map_element.first);
             ASSERT_NE(struct_data.var_map_ulong_inneraliasmaphelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapULongInnerAliasMapHelper struct_data;
-        MapULongInnerAliasMapHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_ulong_inneraliasmaphelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_ulong_inneraliasmaphelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_ulong_inneraliasmaphelper().end(), it);
-            EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
 
@@ -9045,11 +7486,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerUnionHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapULongInnerUnionHelper struct_data;
         MapULongInnerUnionHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ulong_innerunionhelper().size());
         for (auto const& map_element : value)
@@ -9069,32 +7510,6 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerUnionHelper)
                 EXPECT_EQ(map_element.second.second, static_cast<int16_t>(it->second.shortValue()));
             }
 
-        }
-    }
-
-    // XCDRv2
-    {
-        MapULongInnerUnionHelper struct_data;
-        MapULongInnerUnionHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_ulong_innerunionhelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_ulong_innerunionhelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_ulong_innerunionhelper().end(), it);
-            if (union_long_member_name == map_element.second.first)
-            {
-                EXPECT_EQ(map_element.second.second, static_cast<int16_t>(it->second.longValue()));
-            }
-            else if (union_float_member_name == map_element.second.first)
-            {
-                EXPECT_EQ(map_element.second.second, static_cast<int16_t>(it->second.floatValue()));
-            }
-            else
-            {
-                EXPECT_EQ(map_element.second.second, static_cast<int16_t>(it->second.shortValue()));
-            }
         }
     }
 
@@ -9164,27 +7579,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerStructureHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapULongInnerStructureHelper struct_data;
         MapULongInnerStructureHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_ulong_innerstructurehelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_ulong_innerstructurehelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_ulong_innerstructurehelper().end(), it);
-            EXPECT_EQ(map_element.second.first, it->second.field1());
-            EXPECT_EQ(map_element.second.second, it->second.field2());
-        }
-    }
-
-    // XCDRv2
-    {
-        MapULongInnerStructureHelper struct_data;
-        MapULongInnerStructureHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ulong_innerstructurehelper().size());
         for (auto const& map_element : value)
@@ -9277,29 +7676,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerBitsetHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapULongInnerBitsetHelper struct_data;
         MapULongInnerBitsetHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_ulong_innerbitsethelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_ulong_innerbitsethelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_ulong_innerbitsethelper().end(), it);
-            EXPECT_EQ(std::get<0>(map_element.second), it->second.a());
-            EXPECT_EQ(std::get<1>(map_element.second), it->second.b());
-            EXPECT_EQ(std::get<2>(map_element.second), it->second.c());
-            EXPECT_EQ(std::get<3>(map_element.second), it->second.d());
-        }
-    }
-
-    // XCDRv2
-    {
-        MapULongInnerBitsetHelper struct_data;
-        MapULongInnerBitsetHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ulong_innerbitsethelper().size());
         for (auto const& map_element : value)
@@ -9365,26 +7746,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongShort)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapLongLongShort struct_data;
         MapLongLongShortPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_longlong_short().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_longlong_short().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_longlong_short().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapLongLongShort struct_data;
-        MapLongLongShortPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_longlong_short().size());
         for (auto const& map_element : value)
@@ -9445,26 +7811,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongUShort)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapLongLongUShort struct_data;
         MapLongLongUShortPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_longlong_ushort().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_longlong_ushort().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_longlong_ushort().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapLongLongUShort struct_data;
-        MapLongLongUShortPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_longlong_ushort().size());
         for (auto const& map_element : value)
@@ -9525,26 +7876,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongKeyLongValue)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapLongLongKeyLongValue struct_data;
         MapLongLongKeyLongValuePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_longlong_long().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_longlong_long().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_longlong_long().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapLongLongKeyLongValue struct_data;
-        MapLongLongKeyLongValuePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_longlong_long().size());
         for (auto const& map_element : value)
@@ -9605,26 +7941,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongULong)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapLongLongULong struct_data;
         MapLongLongULongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_longlong_ulong().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_longlong_ulong().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_longlong_ulong().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapLongLongULong struct_data;
-        MapLongLongULongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_longlong_ulong().size());
         for (auto const& map_element : value)
@@ -9685,26 +8006,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongLongLong)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapLongLongLongLong struct_data;
         MapLongLongLongLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_longlong_longlong().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_longlong_longlong().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_longlong_longlong().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapLongLongLongLong struct_data;
-        MapLongLongLongLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_longlong_longlong().size());
         for (auto const& map_element : value)
@@ -9765,26 +8071,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongULongLong)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapLongLongULongLong struct_data;
         MapLongLongULongLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_longlong_ulonglong().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_longlong_ulonglong().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_longlong_ulonglong().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapLongLongULongLong struct_data;
-        MapLongLongULongLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_longlong_ulonglong().size());
         for (auto const& map_element : value)
@@ -9845,26 +8136,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongFloat)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapLongLongFloat struct_data;
         MapLongLongFloatPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_longlong_float().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_longlong_float().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_longlong_float().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapLongLongFloat struct_data;
-        MapLongLongFloatPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_longlong_float().size());
         for (auto const& map_element : value)
@@ -9925,26 +8201,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongKeyDoubleValue)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapLongLongKeyDoubleValue struct_data;
         MapLongLongKeyDoubleValuePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_longlong_double().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_longlong_double().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_longlong_double().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapLongLongKeyDoubleValue struct_data;
-        MapLongLongKeyDoubleValuePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_longlong_double().size());
         for (auto const& map_element : value)
@@ -10005,26 +8266,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongLongDouble)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapLongLongLongDouble struct_data;
         MapLongLongLongDoublePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_longlong_longdouble().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_longlong_longdouble().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_longlong_longdouble().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapLongLongLongDouble struct_data;
-        MapLongLongLongDoublePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_longlong_longdouble().size());
         for (auto const& map_element : value)
@@ -10085,26 +8331,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongBoolean)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapLongLongBoolean struct_data;
         MapLongLongBooleanPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_longlong_boolean().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_longlong_boolean().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_longlong_boolean().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapLongLongBoolean struct_data;
-        MapLongLongBooleanPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_longlong_boolean().size());
         for (auto const& map_element : value)
@@ -10165,26 +8396,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongOctet)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapLongLongOctet struct_data;
         MapLongLongOctetPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_longlong_octet().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_longlong_octet().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_longlong_octet().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapLongLongOctet struct_data;
-        MapLongLongOctetPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_longlong_octet().size());
         for (auto const& map_element : value)
@@ -10245,26 +8461,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongChar)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapLongLongChar struct_data;
         MapLongLongCharPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_longlong_char().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_longlong_char().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_longlong_char().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapLongLongChar struct_data;
-        MapLongLongCharPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_longlong_char().size());
         for (auto const& map_element : value)
@@ -10325,26 +8526,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongWChar)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapLongLongWChar struct_data;
         MapLongLongWCharPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_longlong_wchar().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_longlong_wchar().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_longlong_wchar().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapLongLongWChar struct_data;
-        MapLongLongWCharPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_longlong_wchar().size());
         for (auto const& map_element : value)
@@ -10406,26 +8592,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongString)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapLongLongString struct_data;
         MapLongLongStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_longlong_string().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_longlong_string().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_longlong_string().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapLongLongString struct_data;
-        MapLongLongStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_longlong_string().size());
         for (auto const& map_element : value)
@@ -10487,26 +8658,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongWString)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapLongLongWString struct_data;
         MapLongLongWStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_longlong_wstring().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_longlong_wstring().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_longlong_wstring().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapLongLongWString struct_data;
-        MapLongLongWStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_longlong_wstring().size());
         for (auto const& map_element : value)
@@ -10567,26 +8723,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerAliasBoundedString
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapLongLongInnerAliasBoundedStringHelper struct_data;
         MapLongLongInnerAliasBoundedStringHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_longlong_inneraliasboundedstringhelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_longlong_inneraliasboundedstringhelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_longlong_inneraliasboundedstringhelper().end(), it);
-            EXPECT_EQ(map_element.second, it->second.to_string());
-        }
-    }
-
-    // XCDRv2
-    {
-        MapLongLongInnerAliasBoundedStringHelper struct_data;
-        MapLongLongInnerAliasBoundedStringHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_longlong_inneraliasboundedstringhelper().size());
         for (auto const& map_element : value)
@@ -10647,26 +8788,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerAliasBoundedWStrin
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapLongLongInnerAliasBoundedWStringHelper struct_data;
         MapLongLongInnerAliasBoundedWStringHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_longlong_inneraliasboundedwstringhelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_longlong_inneraliasboundedwstringhelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_longlong_inneraliasboundedwstringhelper().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapLongLongInnerAliasBoundedWStringHelper struct_data;
-        MapLongLongInnerAliasBoundedWStringHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_longlong_inneraliasboundedwstringhelper().size());
         for (auto const& map_element : value)
@@ -10727,26 +8853,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerEnumHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapLongLongInnerEnumHelper struct_data;
         MapLongLongInnerEnumHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_longlong_innerenumhelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_longlong_innerenumhelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_longlong_innerenumhelper().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapLongLongInnerEnumHelper struct_data;
-        MapLongLongInnerEnumHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_longlong_innerenumhelper().size());
         for (auto const& map_element : value)
@@ -10807,26 +8918,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerBitMaskHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapLongLongInnerBitMaskHelper struct_data;
         MapLongLongInnerBitMaskHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_longlong_innerbitmaskhelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_longlong_innerbitmaskhelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_longlong_innerbitmaskhelper().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapLongLongInnerBitMaskHelper struct_data;
-        MapLongLongInnerBitMaskHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_longlong_innerbitmaskhelper().size());
         for (auto const& map_element : value)
@@ -10887,26 +8983,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerAliasHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapLongLongInnerAliasHelper struct_data;
         MapLongLongInnerAliasHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_longlong_inneraliashelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_longlong_inneraliashelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_longlong_inneraliashelper().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapLongLongInnerAliasHelper struct_data;
-        MapLongLongInnerAliasHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_longlong_inneraliashelper().size());
         for (auto const& map_element : value)
@@ -10967,26 +9048,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerAliasArrayHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapLongLongInnerAliasArrayHelper struct_data;
         MapLongLongInnerAliasArrayHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_longlong_inneraliasarrayhelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_longlong_inneraliasarrayhelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_longlong_inneraliasarrayhelper().end(), it);
-            EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
-        }
-    }
-
-    // XCDRv2
-    {
-        MapLongLongInnerAliasArrayHelper struct_data;
-        MapLongLongInnerAliasArrayHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_longlong_inneraliasarrayhelper().size());
         for (auto const& map_element : value)
@@ -11047,26 +9113,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerAliasSequenceHelpe
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapLongLongInnerAliasSequenceHelper struct_data;
         MapLongLongInnerAliasSequenceHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_longlong_inneraliassequencehelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_longlong_inneraliassequencehelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_longlong_inneraliassequencehelper().end(), it);
-            EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
-        }
-    }
-
-    // XCDRv2
-    {
-        MapLongLongInnerAliasSequenceHelper struct_data;
-        MapLongLongInnerAliasSequenceHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_longlong_inneraliassequencehelper().size());
         for (auto const& map_element : value)
@@ -11152,11 +9203,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerAliasMapHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapLongLongInnerAliasMapHelper struct_data;
         MapLongLongInnerAliasMapHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_longlong_inneraliasmaphelper().size());
         for (auto const& map_element : value)
@@ -11164,21 +9215,6 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerAliasMapHelper)
             auto it = struct_data.var_map_longlong_inneraliasmaphelper().find(map_element.first);
             ASSERT_NE(struct_data.var_map_longlong_inneraliasmaphelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapLongLongInnerAliasMapHelper struct_data;
-        MapLongLongInnerAliasMapHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_longlong_inneraliasmaphelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_longlong_inneraliasmaphelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_longlong_inneraliasmaphelper().end(), it);
-            EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
 
@@ -11240,11 +9276,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerUnionHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapLongLongInnerUnionHelper struct_data;
         MapLongLongInnerUnionHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_longlong_innerunionhelper().size());
         for (auto const& map_element : value)
@@ -11264,32 +9300,6 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerUnionHelper)
                 EXPECT_EQ(map_element.second.second, static_cast<int16_t>(it->second.shortValue()));
             }
 
-        }
-    }
-
-    // XCDRv2
-    {
-        MapLongLongInnerUnionHelper struct_data;
-        MapLongLongInnerUnionHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_longlong_innerunionhelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_longlong_innerunionhelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_longlong_innerunionhelper().end(), it);
-            if (union_long_member_name == map_element.second.first)
-            {
-                EXPECT_EQ(map_element.second.second, static_cast<int16_t>(it->second.longValue()));
-            }
-            else if (union_float_member_name == map_element.second.first)
-            {
-                EXPECT_EQ(map_element.second.second, static_cast<int16_t>(it->second.floatValue()));
-            }
-            else
-            {
-                EXPECT_EQ(map_element.second.second, static_cast<int16_t>(it->second.shortValue()));
-            }
         }
     }
 
@@ -11359,27 +9369,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerStructureHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapLongLongInnerStructureHelper struct_data;
         MapLongLongInnerStructureHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_longlong_innerstructurehelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_longlong_innerstructurehelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_longlong_innerstructurehelper().end(), it);
-            EXPECT_EQ(map_element.second.first, it->second.field1());
-            EXPECT_EQ(map_element.second.second, it->second.field2());
-        }
-    }
-
-    // XCDRv2
-    {
-        MapLongLongInnerStructureHelper struct_data;
-        MapLongLongInnerStructureHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_longlong_innerstructurehelper().size());
         for (auto const& map_element : value)
@@ -11472,29 +9466,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerBitsetHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapLongLongInnerBitsetHelper struct_data;
         MapLongLongInnerBitsetHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_longlong_innerbitsethelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_longlong_innerbitsethelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_longlong_innerbitsethelper().end(), it);
-            EXPECT_EQ(std::get<0>(map_element.second), it->second.a());
-            EXPECT_EQ(std::get<1>(map_element.second), it->second.b());
-            EXPECT_EQ(std::get<2>(map_element.second), it->second.c());
-            EXPECT_EQ(std::get<3>(map_element.second), it->second.d());
-        }
-    }
-
-    // XCDRv2
-    {
-        MapLongLongInnerBitsetHelper struct_data;
-        MapLongLongInnerBitsetHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_longlong_innerbitsethelper().size());
         for (auto const& map_element : value)
@@ -11560,26 +9536,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongShort)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapULongLongShort struct_data;
         MapULongLongShortPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_short().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_u_long_long_short().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_u_long_long_short().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapULongLongShort struct_data;
-        MapULongLongShortPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_short().size());
         for (auto const& map_element : value)
@@ -11640,26 +9601,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongUShort)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapULongLongUShort struct_data;
         MapULongLongUShortPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_u_short().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_u_long_long_u_short().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_u_long_long_u_short().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapULongLongUShort struct_data;
-        MapULongLongUShortPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_u_short().size());
         for (auto const& map_element : value)
@@ -11720,26 +9666,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongLong)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapULongLongLong struct_data;
         MapULongLongLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_long().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_u_long_long_long().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_u_long_long_long().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapULongLongLong struct_data;
-        MapULongLongLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_long().size());
         for (auto const& map_element : value)
@@ -11800,26 +9731,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongULong)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapULongLongULong struct_data;
         MapULongLongULongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_u_long().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_u_long_long_u_long().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_u_long_long_u_long().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapULongLongULong struct_data;
-        MapULongLongULongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_u_long().size());
         for (auto const& map_element : value)
@@ -11880,26 +9796,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongLongLong)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapULongLongLongLong struct_data;
         MapULongLongLongLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_long_long().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_u_long_long_long_long().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_u_long_long_long_long().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapULongLongLongLong struct_data;
-        MapULongLongLongLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_long_long().size());
         for (auto const& map_element : value)
@@ -11960,26 +9861,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongULongLong)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapULongLongULongLong struct_data;
         MapULongLongULongLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_u_long_long().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_u_long_long_u_long_long().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_u_long_long_u_long_long().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapULongLongULongLong struct_data;
-        MapULongLongULongLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_u_long_long().size());
         for (auto const& map_element : value)
@@ -12040,26 +9926,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongFloat)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapULongLongFloat struct_data;
         MapULongLongFloatPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_float().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_u_long_long_float().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_u_long_long_float().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapULongLongFloat struct_data;
-        MapULongLongFloatPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_float().size());
         for (auto const& map_element : value)
@@ -12120,26 +9991,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapKeyULongLongValueDouble)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapKeyULongLongValueDouble struct_data;
         MapKeyULongLongValueDoublePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_double().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_u_long_long_double().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_u_long_long_double().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapKeyULongLongValueDouble struct_data;
-        MapKeyULongLongValueDoublePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_double().size());
         for (auto const& map_element : value)
@@ -12200,26 +10056,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongLongDouble)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapULongLongLongDouble struct_data;
         MapULongLongLongDoublePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_long_double().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_u_long_long_long_double().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_u_long_long_long_double().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapULongLongLongDouble struct_data;
-        MapULongLongLongDoublePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_long_double().size());
         for (auto const& map_element : value)
@@ -12280,26 +10121,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongBoolean)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapULongLongBoolean struct_data;
         MapULongLongBooleanPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_boolean().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_u_long_long_boolean().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_u_long_long_boolean().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapULongLongBoolean struct_data;
-        MapULongLongBooleanPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_boolean().size());
         for (auto const& map_element : value)
@@ -12360,26 +10186,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongOctet)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapULongLongOctet struct_data;
         MapULongLongOctetPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_octet().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_u_long_long_octet().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_u_long_long_octet().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapULongLongOctet struct_data;
-        MapULongLongOctetPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_octet().size());
         for (auto const& map_element : value)
@@ -12440,26 +10251,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongChar)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapULongLongChar struct_data;
         MapULongLongCharPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_char().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_u_long_long_char().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_u_long_long_char().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapULongLongChar struct_data;
-        MapULongLongCharPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_char().size());
         for (auto const& map_element : value)
@@ -12520,26 +10316,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongWChar)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapULongLongWChar struct_data;
         MapULongLongWCharPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_wchar().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_u_long_long_wchar().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_u_long_long_wchar().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapULongLongWChar struct_data;
-        MapULongLongWCharPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_wchar().size());
         for (auto const& map_element : value)
@@ -12601,26 +10382,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongString)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapULongLongString struct_data;
         MapULongLongStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_string().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_u_long_long_string().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_u_long_long_string().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapULongLongString struct_data;
-        MapULongLongStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_string().size());
         for (auto const& map_element : value)
@@ -12682,26 +10448,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongWString)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapULongLongWString struct_data;
         MapULongLongWStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_wstring().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_u_long_long_wstring().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_u_long_long_wstring().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapULongLongWString struct_data;
-        MapULongLongWStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_wstring().size());
         for (auto const& map_element : value)
@@ -12762,26 +10513,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerAliasBoundedStrin
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapULongLongInnerAliasBoundedStringHelper struct_data;
         MapULongLongInnerAliasBoundedStringHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_inner_alias_bounded_string_helper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_u_long_long_inner_alias_bounded_string_helper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_u_long_long_inner_alias_bounded_string_helper().end(), it);
-            EXPECT_EQ(map_element.second, it->second.to_string());
-        }
-    }
-
-    // XCDRv2
-    {
-        MapULongLongInnerAliasBoundedStringHelper struct_data;
-        MapULongLongInnerAliasBoundedStringHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_inner_alias_bounded_string_helper().size());
         for (auto const& map_element : value)
@@ -12842,26 +10578,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerAliasBoundedWStri
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapULongLongInnerAliasBoundedWStringHelper struct_data;
         MapULongLongInnerAliasBoundedWStringHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_inner_alias_bounded_wstring_helper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_u_long_long_inner_alias_bounded_wstring_helper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_u_long_long_inner_alias_bounded_wstring_helper().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapULongLongInnerAliasBoundedWStringHelper struct_data;
-        MapULongLongInnerAliasBoundedWStringHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_inner_alias_bounded_wstring_helper().size());
         for (auto const& map_element : value)
@@ -12922,26 +10643,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerEnumHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapULongLongInnerEnumHelper struct_data;
         MapULongLongInnerEnumHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_inner_enum_helper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_u_long_long_inner_enum_helper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_u_long_long_inner_enum_helper().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapULongLongInnerEnumHelper struct_data;
-        MapULongLongInnerEnumHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_inner_enum_helper().size());
         for (auto const& map_element : value)
@@ -13002,26 +10708,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerBitMaskHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapULongLongInnerBitMaskHelper struct_data;
         MapULongLongInnerBitMaskHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_inner_bit_mask_helper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_u_long_long_inner_bit_mask_helper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_u_long_long_inner_bit_mask_helper().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapULongLongInnerBitMaskHelper struct_data;
-        MapULongLongInnerBitMaskHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_inner_bit_mask_helper().size());
         for (auto const& map_element : value)
@@ -13082,26 +10773,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerAliasHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapULongLongInnerAliasHelper struct_data;
         MapULongLongInnerAliasHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_inner_alias_helper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_u_long_long_inner_alias_helper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_u_long_long_inner_alias_helper().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapULongLongInnerAliasHelper struct_data;
-        MapULongLongInnerAliasHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_inner_alias_helper().size());
         for (auto const& map_element : value)
@@ -13162,26 +10838,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerAliasArrayHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapULongLongInnerAliasArrayHelper struct_data;
         MapULongLongInnerAliasArrayHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_inner_alias_array_helper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_u_long_long_inner_alias_array_helper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_u_long_long_inner_alias_array_helper().end(), it);
-            EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
-        }
-    }
-
-    // XCDRv2
-    {
-        MapULongLongInnerAliasArrayHelper struct_data;
-        MapULongLongInnerAliasArrayHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_inner_alias_array_helper().size());
         for (auto const& map_element : value)
@@ -13242,26 +10903,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerAliasSequenceHelp
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapULongLongInnerAliasSequenceHelper struct_data;
         MapULongLongInnerAliasSequenceHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_inner_alias_sequence_helper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_u_long_long_inner_alias_sequence_helper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_u_long_long_inner_alias_sequence_helper().end(), it);
-            EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
-        }
-    }
-
-    // XCDRv2
-    {
-        MapULongLongInnerAliasSequenceHelper struct_data;
-        MapULongLongInnerAliasSequenceHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_inner_alias_sequence_helper().size());
         for (auto const& map_element : value)
@@ -13347,11 +10993,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerAliasMapHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapULongLongInnerAliasMapHelper struct_data;
         MapULongLongInnerAliasMapHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_inner_alias_map_helper().size());
         for (auto const& map_element : value)
@@ -13359,21 +11005,6 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerAliasMapHelper)
             auto it = struct_data.var_map_u_long_long_inner_alias_map_helper().find(map_element.first);
             ASSERT_NE(struct_data.var_map_u_long_long_inner_alias_map_helper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapULongLongInnerAliasMapHelper struct_data;
-        MapULongLongInnerAliasMapHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_inner_alias_map_helper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_u_long_long_inner_alias_map_helper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_u_long_long_inner_alias_map_helper().end(), it);
-            EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
 
@@ -13435,11 +11066,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerUnionHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapULongLongInnerUnionHelper struct_data;
         MapULongLongInnerUnionHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_inner_union_helper().size());
         for (auto const& map_element : value)
@@ -13459,32 +11090,6 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerUnionHelper)
                 EXPECT_EQ(map_element.second.second, static_cast<int16_t>(it->second.shortValue()));
             }
 
-        }
-    }
-
-    // XCDRv2
-    {
-        MapULongLongInnerUnionHelper struct_data;
-        MapULongLongInnerUnionHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_inner_union_helper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_u_long_long_inner_union_helper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_u_long_long_inner_union_helper().end(), it);
-            if (union_long_member_name == map_element.second.first)
-            {
-                EXPECT_EQ(map_element.second.second, static_cast<int16_t>(it->second.longValue()));
-            }
-            else if (union_float_member_name == map_element.second.first)
-            {
-                EXPECT_EQ(map_element.second.second, static_cast<int16_t>(it->second.floatValue()));
-            }
-            else
-            {
-                EXPECT_EQ(map_element.second.second, static_cast<int16_t>(it->second.shortValue()));
-            }
         }
     }
 
@@ -13554,27 +11159,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerStructureHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapULongLongInnerStructureHelper struct_data;
         MapULongLongInnerStructureHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_inner_structure_helper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_u_long_long_inner_structure_helper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_u_long_long_inner_structure_helper().end(), it);
-            EXPECT_EQ(map_element.second.first, it->second.field1());
-            EXPECT_EQ(map_element.second.second, it->second.field2());
-        }
-    }
-
-    // XCDRv2
-    {
-        MapULongLongInnerStructureHelper struct_data;
-        MapULongLongInnerStructureHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_inner_structure_helper().size());
         for (auto const& map_element : value)
@@ -13667,29 +11256,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerBitsetHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapULongLongInnerBitsetHelper struct_data;
         MapULongLongInnerBitsetHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_inner_bitset_helper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_u_long_long_inner_bitset_helper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_u_long_long_inner_bitset_helper().end(), it);
-            EXPECT_EQ(std::get<0>(map_element.second), it->second.a());
-            EXPECT_EQ(std::get<1>(map_element.second), it->second.b());
-            EXPECT_EQ(std::get<2>(map_element.second), it->second.c());
-            EXPECT_EQ(std::get<3>(map_element.second), it->second.d());
-        }
-    }
-
-    // XCDRv2
-    {
-        MapULongLongInnerBitsetHelper struct_data;
-        MapULongLongInnerBitsetHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_inner_bitset_helper().size());
         for (auto const& map_element : value)
@@ -13755,26 +11326,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringShort)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapStringShort struct_data;
         MapStringShortPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_string_short().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_string_short().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_string_short().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapStringShort struct_data;
-        MapStringShortPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_string_short().size());
         for (auto const& map_element : value)
@@ -13835,26 +11391,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringUShort)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapStringUShort struct_data;
         MapStringUShortPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_string_ushort().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_string_ushort().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_string_ushort().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapStringUShort struct_data;
-        MapStringUShortPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_string_ushort().size());
         for (auto const& map_element : value)
@@ -13915,26 +11456,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringLong)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapStringLong struct_data;
         MapStringLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_string_long().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_string_long().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_string_long().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapStringLong struct_data;
-        MapStringLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_string_long().size());
         for (auto const& map_element : value)
@@ -13995,26 +11521,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringULong)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapStringULong struct_data;
         MapStringULongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_string_ulong().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_string_ulong().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_string_ulong().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapStringULong struct_data;
-        MapStringULongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_string_ulong().size());
         for (auto const& map_element : value)
@@ -14075,26 +11586,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringLongLong)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapStringLongLong struct_data;
         MapStringLongLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_string_longlong().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_string_longlong().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_string_longlong().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapStringLongLong struct_data;
-        MapStringLongLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_string_longlong().size());
         for (auto const& map_element : value)
@@ -14155,26 +11651,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringULongLong)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapStringULongLong struct_data;
         MapStringULongLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_string_ulonglong().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_string_ulonglong().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_string_ulonglong().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapStringULongLong struct_data;
-        MapStringULongLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_string_ulonglong().size());
         for (auto const& map_element : value)
@@ -14235,26 +11716,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringFloat)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapStringFloat struct_data;
         MapStringFloatPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_string_float().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_string_float().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_string_float().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapStringFloat struct_data;
-        MapStringFloatPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_string_float().size());
         for (auto const& map_element : value)
@@ -14315,26 +11781,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringDouble)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapStringDouble struct_data;
         MapStringDoublePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_string_double().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_string_double().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_string_double().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapStringDouble struct_data;
-        MapStringDoublePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_string_double().size());
         for (auto const& map_element : value)
@@ -14395,26 +11846,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringLongDouble)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapStringLongDouble struct_data;
         MapStringLongDoublePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_string_longdouble().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_string_longdouble().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_string_longdouble().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapStringLongDouble struct_data;
-        MapStringLongDoublePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_string_longdouble().size());
         for (auto const& map_element : value)
@@ -14475,26 +11911,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringBoolean)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapStringBoolean struct_data;
         MapStringBooleanPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_string_boolean().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_string_boolean().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_string_boolean().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapStringBoolean struct_data;
-        MapStringBooleanPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_string_boolean().size());
         for (auto const& map_element : value)
@@ -14555,26 +11976,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringOctet)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapStringOctet struct_data;
         MapStringOctetPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_string_octet().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_string_octet().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_string_octet().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapStringOctet struct_data;
-        MapStringOctetPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_string_octet().size());
         for (auto const& map_element : value)
@@ -14635,26 +12041,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringChar)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapStringChar struct_data;
         MapStringCharPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_string_char().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_string_char().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_string_char().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapStringChar struct_data;
-        MapStringCharPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_string_char().size());
         for (auto const& map_element : value)
@@ -14715,26 +12106,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringWChar)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapStringWChar struct_data;
         MapStringWCharPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_string_wchar().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_string_wchar().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_string_wchar().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapStringWChar struct_data;
-        MapStringWCharPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_string_wchar().size());
         for (auto const& map_element : value)
@@ -14796,26 +12172,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringString)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapStringString struct_data;
         MapStringStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_string_string().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_string_string().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_string_string().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapStringString struct_data;
-        MapStringStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_string_string().size());
         for (auto const& map_element : value)
@@ -14877,26 +12238,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringWString)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapStringWString struct_data;
         MapStringWStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_string_wstring().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_string_wstring().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_string_wstring().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapStringWString struct_data;
-        MapStringWStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_string_wstring().size());
         for (auto const& map_element : value)
@@ -14957,26 +12303,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerAliasBoundedStringHe
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapStringInnerAliasBoundedStringHelper struct_data;
         MapStringInnerAliasBoundedStringHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_string_inneraliasboundedstringhelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_string_inneraliasboundedstringhelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_string_inneraliasboundedstringhelper().end(), it);
-            EXPECT_EQ(map_element.second, it->second.to_string());
-        }
-    }
-
-    // XCDRv2
-    {
-        MapStringInnerAliasBoundedStringHelper struct_data;
-        MapStringInnerAliasBoundedStringHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_string_inneraliasboundedstringhelper().size());
         for (auto const& map_element : value)
@@ -15037,26 +12368,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerAliasBoundedWStringH
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapStringInnerAliasBoundedWStringHelper struct_data;
         MapStringInnerAliasBoundedWStringHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_string_inneraliasboundedwstringhelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_string_inneraliasboundedwstringhelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_string_inneraliasboundedwstringhelper().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapStringInnerAliasBoundedWStringHelper struct_data;
-        MapStringInnerAliasBoundedWStringHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_string_inneraliasboundedwstringhelper().size());
         for (auto const& map_element : value)
@@ -15117,26 +12433,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerEnumHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapStringInnerEnumHelper struct_data;
         MapStringInnerEnumHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_string_innerenumhelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_string_innerenumhelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_string_innerenumhelper().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapStringInnerEnumHelper struct_data;
-        MapStringInnerEnumHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_string_innerenumhelper().size());
         for (auto const& map_element : value)
@@ -15197,26 +12498,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerBitMaskHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapStringInnerBitMaskHelper struct_data;
         MapStringInnerBitMaskHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_string_innerbitmaskhelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_string_innerbitmaskhelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_string_innerbitmaskhelper().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapStringInnerBitMaskHelper struct_data;
-        MapStringInnerBitMaskHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_string_innerbitmaskhelper().size());
         for (auto const& map_element : value)
@@ -15277,26 +12563,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerAliasHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapStringInnerAliasHelper struct_data;
         MapStringInnerAliasHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_string_inneraliashelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_string_inneraliashelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_string_inneraliashelper().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapStringInnerAliasHelper struct_data;
-        MapStringInnerAliasHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_string_inneraliashelper().size());
         for (auto const& map_element : value)
@@ -15357,26 +12628,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerAliasArrayHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapStringInnerAliasArrayHelper struct_data;
         MapStringInnerAliasArrayHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_string_inneraliasarrayhelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_string_inneraliasarrayhelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_string_inneraliasarrayhelper().end(), it);
-            EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
-        }
-    }
-
-    // XCDRv2
-    {
-        MapStringInnerAliasArrayHelper struct_data;
-        MapStringInnerAliasArrayHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_string_inneraliasarrayhelper().size());
         for (auto const& map_element : value)
@@ -15437,26 +12693,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerAliasSequenceHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapStringInnerAliasSequenceHelper struct_data;
         MapStringInnerAliasSequenceHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_string_inneraliassequencehelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_string_inneraliassequencehelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_string_inneraliassequencehelper().end(), it);
-            EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
-        }
-    }
-
-    // XCDRv2
-    {
-        MapStringInnerAliasSequenceHelper struct_data;
-        MapStringInnerAliasSequenceHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_string_inneraliassequencehelper().size());
         for (auto const& map_element : value)
@@ -15543,11 +12784,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerAliasMapHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapStringInnerAliasMapHelper struct_data;
         MapStringInnerAliasMapHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_string_inneraliasmaphelper().size());
         for (auto const& map_element : value)
@@ -15555,21 +12796,6 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerAliasMapHelper)
             auto it = struct_data.var_map_string_inneraliasmaphelper().find(map_element.first);
             ASSERT_NE(struct_data.var_map_string_inneraliasmaphelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapStringInnerAliasMapHelper struct_data;
-        MapStringInnerAliasMapHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_string_inneraliasmaphelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_string_inneraliasmaphelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_string_inneraliasmaphelper().end(), it);
-            EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
 
@@ -15632,11 +12858,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerUnionHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapStringInnerUnionHelper struct_data;
         MapStringInnerUnionHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_string_innerunionhelper().size());
         for (auto const& map_element : value)
@@ -15656,32 +12882,6 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerUnionHelper)
                 EXPECT_EQ(map_element.second.second, static_cast<int16_t>(it->second.shortValue()));
             }
 
-        }
-    }
-
-    // XCDRv2
-    {
-        MapStringInnerUnionHelper struct_data;
-        MapStringInnerUnionHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_string_innerunionhelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_string_innerunionhelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_string_innerunionhelper().end(), it);
-            if (union_long_member_name == map_element.second.first)
-            {
-                EXPECT_EQ(map_element.second.second, static_cast<int16_t>(it->second.longValue()));
-            }
-            else if (union_float_member_name == map_element.second.first)
-            {
-                EXPECT_EQ(map_element.second.second, static_cast<int16_t>(it->second.floatValue()));
-            }
-            else
-            {
-                EXPECT_EQ(map_element.second.second, static_cast<int16_t>(it->second.shortValue()));
-            }
         }
     }
 
@@ -15752,27 +12952,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerStructureHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapStringInnerStructureHelper struct_data;
         MapStringInnerStructureHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_string_innerstructurehelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_string_innerstructurehelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_string_innerstructurehelper().end(), it);
-            EXPECT_EQ(map_element.second.first, it->second.field1());
-            EXPECT_EQ(map_element.second.second, it->second.field2());
-        }
-    }
-
-    // XCDRv2
-    {
-        MapStringInnerStructureHelper struct_data;
-        MapStringInnerStructureHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_string_innerstructurehelper().size());
         for (auto const& map_element : value)
@@ -15866,29 +13050,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerBitsetHelper)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapStringInnerBitsetHelper struct_data;
         MapStringInnerBitsetHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_string_innerbitsethelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_string_innerbitsethelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_string_innerbitsethelper().end(), it);
-            EXPECT_EQ(std::get<0>(map_element.second), it->second.a());
-            EXPECT_EQ(std::get<1>(map_element.second), it->second.b());
-            EXPECT_EQ(std::get<2>(map_element.second), it->second.c());
-            EXPECT_EQ(std::get<3>(map_element.second), it->second.d());
-        }
-    }
-
-    // XCDRv2
-    {
-        MapStringInnerBitsetHelper struct_data;
-        MapStringInnerBitsetHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_string_innerbitsethelper().size());
         for (auto const& map_element : value)
@@ -15955,26 +13121,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperSh
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapInnerAliasBoundedStringHelperShort struct_data;
         MapInnerAliasBoundedStringHelperShortPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_short().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_inneraliasboundedstringhelper_short().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_short().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapInnerAliasBoundedStringHelperShort struct_data;
-        MapInnerAliasBoundedStringHelperShortPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_short().size());
         for (auto const& map_element : value)
@@ -16034,26 +13185,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperUS
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapInnerAliasBoundedStringHelperUShort struct_data;
         MapInnerAliasBoundedStringHelperUShortPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_ushort().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_inneraliasboundedstringhelper_ushort().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_ushort().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapInnerAliasBoundedStringHelperUShort struct_data;
-        MapInnerAliasBoundedStringHelperUShortPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_ushort().size());
         for (auto const& map_element : value)
@@ -16113,26 +13249,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperLo
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapInnerAliasBoundedStringHelperLong struct_data;
         MapInnerAliasBoundedStringHelperLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_long().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_inneraliasboundedstringhelper_long().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_long().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapInnerAliasBoundedStringHelperLong struct_data;
-        MapInnerAliasBoundedStringHelperLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_long().size());
         for (auto const& map_element : value)
@@ -16192,26 +13313,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperUL
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapInnerAliasBoundedStringHelperULong struct_data;
         MapInnerAliasBoundedStringHelperULongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_ulong().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_inneraliasboundedstringhelper_ulong().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_ulong().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapInnerAliasBoundedStringHelperULong struct_data;
-        MapInnerAliasBoundedStringHelperULongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_ulong().size());
         for (auto const& map_element : value)
@@ -16271,26 +13377,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperLo
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapInnerAliasBoundedStringHelperLongLong struct_data;
         MapInnerAliasBoundedStringHelperLongLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_longlong().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_inneraliasboundedstringhelper_longlong().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_longlong().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapInnerAliasBoundedStringHelperLongLong struct_data;
-        MapInnerAliasBoundedStringHelperLongLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_longlong().size());
         for (auto const& map_element : value)
@@ -16350,26 +13441,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperUL
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapInnerAliasBoundedStringHelperULongLong struct_data;
         MapInnerAliasBoundedStringHelperULongLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_ulonglong().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_inneraliasboundedstringhelper_ulonglong().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_ulonglong().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapInnerAliasBoundedStringHelperULongLong struct_data;
-        MapInnerAliasBoundedStringHelperULongLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_ulonglong().size());
         for (auto const& map_element : value)
@@ -16429,26 +13505,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperFl
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapInnerAliasBoundedStringHelperFloat struct_data;
         MapInnerAliasBoundedStringHelperFloatPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_float().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_inneraliasboundedstringhelper_float().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_float().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapInnerAliasBoundedStringHelperFloat struct_data;
-        MapInnerAliasBoundedStringHelperFloatPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_float().size());
         for (auto const& map_element : value)
@@ -16508,26 +13569,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperDo
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapInnerAliasBoundedStringHelperDouble struct_data;
         MapInnerAliasBoundedStringHelperDoublePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_double().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_inneraliasboundedstringhelper_double().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_double().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapInnerAliasBoundedStringHelperDouble struct_data;
-        MapInnerAliasBoundedStringHelperDoublePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_double().size());
         for (auto const& map_element : value)
@@ -16587,26 +13633,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperLo
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapInnerAliasBoundedStringHelperLongDouble struct_data;
         MapInnerAliasBoundedStringHelperLongDoublePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_longdouble().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_inneraliasboundedstringhelper_longdouble().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_longdouble().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapInnerAliasBoundedStringHelperLongDouble struct_data;
-        MapInnerAliasBoundedStringHelperLongDoublePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_longdouble().size());
         for (auto const& map_element : value)
@@ -16666,26 +13697,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperBo
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapInnerAliasBoundedStringHelperBoolean struct_data;
         MapInnerAliasBoundedStringHelperBooleanPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_boolean().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_inneraliasboundedstringhelper_boolean().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_boolean().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapInnerAliasBoundedStringHelperBoolean struct_data;
-        MapInnerAliasBoundedStringHelperBooleanPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_boolean().size());
         for (auto const& map_element : value)
@@ -16745,26 +13761,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperOc
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapInnerAliasBoundedStringHelperOctet struct_data;
         MapInnerAliasBoundedStringHelperOctetPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_octet().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_inneraliasboundedstringhelper_octet().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_octet().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapInnerAliasBoundedStringHelperOctet struct_data;
-        MapInnerAliasBoundedStringHelperOctetPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_octet().size());
         for (auto const& map_element : value)
@@ -16824,26 +13825,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperCh
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapInnerAliasBoundedStringHelperChar struct_data;
         MapInnerAliasBoundedStringHelperCharPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_char().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_inneraliasboundedstringhelper_char().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_char().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapInnerAliasBoundedStringHelperChar struct_data;
-        MapInnerAliasBoundedStringHelperCharPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_char().size());
         for (auto const& map_element : value)
@@ -16903,26 +13889,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperWC
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapInnerAliasBoundedStringHelperWChar struct_data;
         MapInnerAliasBoundedStringHelperWCharPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_wchar().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_inneraliasboundedstringhelper_wchar().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_wchar().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapInnerAliasBoundedStringHelperWChar struct_data;
-        MapInnerAliasBoundedStringHelperWCharPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_wchar().size());
         for (auto const& map_element : value)
@@ -16983,26 +13954,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperSt
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapInnerAliasBoundedStringHelperString struct_data;
         MapInnerAliasBoundedStringHelperStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_string().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_inneraliasboundedstringhelper_string().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_string().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapInnerAliasBoundedStringHelperString struct_data;
-        MapInnerAliasBoundedStringHelperStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_string().size());
         for (auto const& map_element : value)
@@ -17063,26 +14019,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperWS
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapInnerAliasBoundedStringHelperWString struct_data;
         MapInnerAliasBoundedStringHelperWStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_wstring().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_inneraliasboundedstringhelper_wstring().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_wstring().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapInnerAliasBoundedStringHelperWString struct_data;
-        MapInnerAliasBoundedStringHelperWStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_wstring().size());
         for (auto const& map_element : value)
@@ -17144,28 +14085,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapInnerAliasBoundedStringHelperInnerAliasBoundedStringHelper struct_data;
         MapInnerAliasBoundedStringHelperInnerAliasBoundedStringHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(),
-                struct_data.var_map_inneraliasboundedstringhelper_inneraliasboundedstringhelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_inneraliasboundedstringhelper_inneraliasboundedstringhelper().find(
-                map_element.first);
-            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_inneraliasboundedstringhelper().end(), it);
-            EXPECT_EQ(map_element.second, it->second.to_string());
-        }
-    }
-
-    // XCDRv2
-    {
-        MapInnerAliasBoundedStringHelperInnerAliasBoundedStringHelper struct_data;
-        MapInnerAliasBoundedStringHelperInnerAliasBoundedStringHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(),
                 struct_data.var_map_inneraliasboundedstringhelper_inneraliasboundedstringhelper().size());
@@ -17229,28 +14153,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapInnerAliasBoundedStringHelperInnerAliasBoundedWStringHelper struct_data;
         MapInnerAliasBoundedStringHelperInnerAliasBoundedWStringHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(),
-                struct_data.var_map_inneraliasboundedstringhelper_inneraliasboundedwstringhelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_inneraliasboundedstringhelper_inneraliasboundedwstringhelper().find(
-                map_element.first);
-            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_inneraliasboundedwstringhelper().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapInnerAliasBoundedStringHelperInnerAliasBoundedWStringHelper struct_data;
-        MapInnerAliasBoundedStringHelperInnerAliasBoundedWStringHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(),
                 struct_data.var_map_inneraliasboundedstringhelper_inneraliasboundedwstringhelper().size());
@@ -17313,26 +14220,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapInnerAliasBoundedStringHelperInnerEnumHelper struct_data;
         MapInnerAliasBoundedStringHelperInnerEnumHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_innerenumhelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_inneraliasboundedstringhelper_innerenumhelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_innerenumhelper().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapInnerAliasBoundedStringHelperInnerEnumHelper struct_data;
-        MapInnerAliasBoundedStringHelperInnerEnumHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_innerenumhelper().size());
         for (auto const& map_element : value)
@@ -17394,26 +14286,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapInnerAliasBoundedStringHelperInnerBitMaskHelper struct_data;
         MapInnerAliasBoundedStringHelperInnerBitMaskHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_innerbitmaskhelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_inneraliasboundedstringhelper_innerbitmaskhelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_innerbitmaskhelper().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapInnerAliasBoundedStringHelperInnerBitMaskHelper struct_data;
-        MapInnerAliasBoundedStringHelperInnerBitMaskHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_innerbitmaskhelper().size());
         for (auto const& map_element : value)
@@ -17474,26 +14351,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapInnerAliasBoundedStringHelperInnerAliasHelper struct_data;
         MapInnerAliasBoundedStringHelperInnerAliasHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_inneraliashelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_inneraliasboundedstringhelper_inneraliashelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_inneraliashelper().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapInnerAliasBoundedStringHelperInnerAliasHelper struct_data;
-        MapInnerAliasBoundedStringHelperInnerAliasHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_inneraliashelper().size());
         for (auto const& map_element : value)
@@ -17555,26 +14417,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapInnerAliasBoundedStringHelperInnerAliasArrayHelper struct_data;
         MapInnerAliasBoundedStringHelperInnerAliasArrayHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_inneraliasarrayhelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_inneraliasboundedstringhelper_inneraliasarrayhelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_inneraliasarrayhelper().end(), it);
-            EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
-        }
-    }
-
-    // XCDRv2
-    {
-        MapInnerAliasBoundedStringHelperInnerAliasArrayHelper struct_data;
-        MapInnerAliasBoundedStringHelperInnerAliasArrayHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_inneraliasarrayhelper().size());
         for (auto const& map_element : value)
@@ -17636,27 +14483,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapInnerAliasBoundedStringHelperInnerAliasSequenceHelper struct_data;
         MapInnerAliasBoundedStringHelperInnerAliasSequenceHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_inneraliassequencehelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it =
-                    struct_data.var_map_inneraliasboundedstringhelper_inneraliassequencehelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_inneraliassequencehelper().end(), it);
-            EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
-        }
-    }
-
-    // XCDRv2
-    {
-        MapInnerAliasBoundedStringHelperInnerAliasSequenceHelper struct_data;
-        MapInnerAliasBoundedStringHelperInnerAliasSequenceHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_inneraliassequencehelper().size());
         for (auto const& map_element : value)
@@ -17745,11 +14576,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapInnerAliasBoundedStringHelperInnerAliasMapHelper struct_data;
         MapInnerAliasBoundedStringHelperInnerAliasMapHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_inneraliasmaphelper().size());
         for (auto const& map_element : value)
@@ -17757,21 +14588,6 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
             auto it = struct_data.var_map_inneraliasboundedstringhelper_inneraliasmaphelper().find(map_element.first);
             ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_inneraliasmaphelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        MapInnerAliasBoundedStringHelperInnerAliasMapHelper struct_data;
-        MapInnerAliasBoundedStringHelperInnerAliasMapHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_inneraliasmaphelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_inneraliasboundedstringhelper_inneraliasmaphelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_inneraliasmaphelper().end(), it);
-            EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
 
@@ -17834,11 +14650,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapInnerAliasBoundedStringHelperInnerUnionHelper struct_data;
         MapInnerAliasBoundedStringHelperInnerUnionHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_innerunionhelper().size());
         for (auto const& map_element : value)
@@ -17858,32 +14674,6 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
                 EXPECT_EQ(map_element.second.second, static_cast<int16_t>(it->second.shortValue()));
             }
 
-        }
-    }
-
-    // XCDRv2
-    {
-        MapInnerAliasBoundedStringHelperInnerUnionHelper struct_data;
-        MapInnerAliasBoundedStringHelperInnerUnionHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_innerunionhelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_inneraliasboundedstringhelper_innerunionhelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_innerunionhelper().end(), it);
-            if (union_long_member_name == map_element.second.first)
-            {
-                EXPECT_EQ(map_element.second.second, static_cast<int16_t>(it->second.longValue()));
-            }
-            else if (union_float_member_name == map_element.second.first)
-            {
-                EXPECT_EQ(map_element.second.second, static_cast<int16_t>(it->second.floatValue()));
-            }
-            else
-            {
-                EXPECT_EQ(map_element.second.second, static_cast<int16_t>(it->second.shortValue()));
-            }
         }
     }
 
@@ -17955,27 +14745,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapInnerAliasBoundedStringHelperInnerStructureHelper struct_data;
         MapInnerAliasBoundedStringHelperInnerStructureHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_innerstructurehelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_inneraliasboundedstringhelper_innerstructurehelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_innerstructurehelper().end(), it);
-            EXPECT_EQ(map_element.second.first, it->second.field1());
-            EXPECT_EQ(map_element.second.second, it->second.field2());
-        }
-    }
-
-    // XCDRv2
-    {
-        MapInnerAliasBoundedStringHelperInnerStructureHelper struct_data;
-        MapInnerAliasBoundedStringHelperInnerStructureHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_innerstructurehelper().size());
         for (auto const& map_element : value)
@@ -18069,29 +14843,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         MapInnerAliasBoundedStringHelperInnerBitsetHelper struct_data;
         MapInnerAliasBoundedStringHelperInnerBitsetHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_innerbitsethelper().size());
-        for (auto const& map_element : value)
-        {
-            auto it = struct_data.var_map_inneraliasboundedstringhelper_innerbitsethelper().find(map_element.first);
-            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_innerbitsethelper().end(), it);
-            EXPECT_EQ(std::get<0>(map_element.second), it->second.a());
-            EXPECT_EQ(std::get<1>(map_element.second), it->second.b());
-            EXPECT_EQ(std::get<2>(map_element.second), it->second.c());
-            EXPECT_EQ(std::get<3>(map_element.second), it->second.d());
-        }
-    }
-
-    // XCDRv2
-    {
-        MapInnerAliasBoundedStringHelperInnerBitsetHelper struct_data;
-        MapInnerAliasBoundedStringHelperInnerBitsetHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_innerbitsethelper().size());
         for (auto const& map_element : value)
@@ -18227,42 +14983,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BoundedSmallMap)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         BoundedSmallMap struct_data;
         BoundedSmallMapPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value_small_map.size(), struct_data.var_small_map().size());
-        for (auto const& map_element : value_small_map)
-        {
-            auto it = struct_data.var_small_map().find(map_element.first);
-            ASSERT_NE(struct_data.var_small_map().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-        EXPECT_EQ(value_unbounded_string_long_bounded_small_map.size(),
-                struct_data.var_unbounded_string_long_bounded_small_map().size());
-        for (auto const& map_element : value_unbounded_string_long_bounded_small_map)
-        {
-            auto it = struct_data.var_unbounded_string_long_bounded_small_map().find(map_element.first);
-            ASSERT_NE(struct_data.var_unbounded_string_long_bounded_small_map().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-        EXPECT_EQ(value_long_unbounded_string_long_bounded_small_map.size(),
-                struct_data.var_long_unbounded_string_bounded_small_map().size());
-        for (auto const& map_element : value_long_unbounded_string_long_bounded_small_map)
-        {
-            auto it = struct_data.var_long_unbounded_string_bounded_small_map().find(map_element.first);
-            ASSERT_NE(struct_data.var_long_unbounded_string_bounded_small_map().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        BoundedSmallMap struct_data;
-        BoundedSmallMapPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value_small_map.size(), struct_data.var_small_map().size());
         for (auto const& map_element : value_small_map)
@@ -18410,42 +15135,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BoundedLargeMap)
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         BoundedLargeMap struct_data;
         BoundedLargeMapPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(value_large_map.size(), struct_data.var_large_map().size());
-        for (auto const& map_element : value_large_map)
-        {
-            auto it = struct_data.var_large_map().find(map_element.first);
-            ASSERT_NE(struct_data.var_large_map().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-        EXPECT_EQ(value_unbounded_string_long_bounded_large_map.size(),
-                struct_data.var_unbounded_string_long_bounded_large_map().size());
-        for (auto const& map_element : value_unbounded_string_long_bounded_large_map)
-        {
-            auto it = struct_data.var_unbounded_string_long_bounded_large_map().find(map_element.first);
-            ASSERT_NE(struct_data.var_unbounded_string_long_bounded_large_map().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-        EXPECT_EQ(value_long_unbounded_string_long_bounded_large_map.size(),
-                struct_data.var_long_unbounded_string_bounded_large_map().size());
-        for (auto const& map_element : value_long_unbounded_string_long_bounded_large_map)
-        {
-            auto it = struct_data.var_long_unbounded_string_bounded_large_map().find(map_element.first);
-            ASSERT_NE(struct_data.var_long_unbounded_string_bounded_large_map().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
-        }
-    }
-
-    // XCDRv2
-    {
-        BoundedLargeMap struct_data;
-        BoundedLargeMapPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value_large_map.size(), struct_data.var_large_map().size());
         for (auto const& map_element : value_large_map)

@@ -217,20 +217,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionShort)
     EXPECT_EQ(value, test_value);
     EXPECT_EQ(data->return_loaned_value(union_data), RETCODE_OK);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         UnionShort struct_data;
         UnionShortPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(struct_data.var_union_short().a(), test_value);
-    }
-
-    // XCDRv2
-    {
-        UnionShort struct_data;
-        UnionShortPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_short().a(), test_value);
     }
@@ -276,20 +267,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionUShort)
     EXPECT_EQ(value, test_value);
     EXPECT_EQ(data->return_loaned_value(union_data), RETCODE_OK);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         UnionUShort struct_data;
         UnionUShortPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(struct_data.var_union_ushort().b(), test_value);
-    }
-
-    // XCDRv2
-    {
-        UnionUShort struct_data;
-        UnionUShortPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_ushort().b(), test_value);
     }
@@ -335,20 +317,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionLong)
     EXPECT_EQ(value, test_value);
     EXPECT_EQ(data->return_loaned_value(union_data), RETCODE_OK);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         UnionLong struct_data;
         UnionLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(struct_data.var_union_long().c(), test_value);
-    }
-
-    // XCDRv2
-    {
-        UnionLong struct_data;
-        UnionLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_long().c(), test_value);
     }
@@ -394,20 +367,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionULong)
     EXPECT_EQ(value, test_value);
     EXPECT_EQ(data->return_loaned_value(union_data), RETCODE_OK);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         UnionULong struct_data;
         UnionULongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(struct_data.var_union_ulong().d(), test_value);
-    }
-
-    // XCDRv2
-    {
-        UnionULong struct_data;
-        UnionULongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_ulong().d(), test_value);
     }
@@ -453,20 +417,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionLongLong)
     EXPECT_EQ(value, test_value);
     EXPECT_EQ(data->return_loaned_value(union_data), RETCODE_OK);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         UnionLongLong struct_data;
         UnionLongLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(struct_data.var_union_long_long().e(), test_value);
-    }
-
-    // XCDRv2
-    {
-        UnionLongLong struct_data;
-        UnionLongLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_long_long().e(), test_value);
     }
@@ -512,20 +467,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionULongLong)
     EXPECT_EQ(value, test_value);
     EXPECT_EQ(data->return_loaned_value(union_data), RETCODE_OK);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         UnionULongLong struct_data;
         UnionULongLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(struct_data.var_union_ulong_long().f(), test_value);
-    }
-
-    // XCDRv2
-    {
-        UnionULongLong struct_data;
-        UnionULongLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_ulong_long().f(), test_value);
     }
@@ -571,20 +517,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionFloat)
     EXPECT_EQ(value, test_value);
     EXPECT_EQ(data->return_loaned_value(union_data), RETCODE_OK);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         UnionFloat struct_data;
         UnionFloatPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(struct_data.var_union_float().g(), test_value);
-    }
-
-    // XCDRv2
-    {
-        UnionFloat struct_data;
-        UnionFloatPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_float().g(), test_value);
     }
@@ -630,20 +567,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDouble)
     EXPECT_EQ(value, test_value);
     EXPECT_EQ(data->return_loaned_value(union_data), RETCODE_OK);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         UnionDouble struct_data;
         UnionDoublePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(struct_data.var_union_double().h(), test_value);
-    }
-
-    // XCDRv2
-    {
-        UnionDouble struct_data;
-        UnionDoublePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_double().h(), test_value);
     }
@@ -689,20 +617,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionLongDouble)
     EXPECT_EQ(value, test_value);
     EXPECT_EQ(data->return_loaned_value(union_data), RETCODE_OK);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         UnionLongDouble struct_data;
         UnionLongDoublePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(struct_data.var_union_long_double().i(), test_value);
-    }
-
-    // XCDRv2
-    {
-        UnionLongDouble struct_data;
-        UnionLongDoublePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_long_double().i(), test_value);
     }
@@ -748,20 +667,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionBoolean)
     EXPECT_EQ(value, test_value);
     EXPECT_EQ(data->return_loaned_value(union_data), RETCODE_OK);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         UnionBoolean struct_data;
         UnionBooleanPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(struct_data.var_union_boolean().j(), test_value);
-    }
-
-    // XCDRv2
-    {
-        UnionBoolean struct_data;
-        UnionBooleanPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_boolean().j(), test_value);
     }
@@ -807,20 +717,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionOctet)
     EXPECT_EQ(value, test_value);
     EXPECT_EQ(data->return_loaned_value(union_data), RETCODE_OK);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         UnionOctet struct_data;
         UnionOctetPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(struct_data.var_union_octet().k(), test_value);
-    }
-
-    // XCDRv2
-    {
-        UnionOctet struct_data;
-        UnionOctetPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_octet().k(), test_value);
     }
@@ -866,20 +767,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionChar)
     EXPECT_EQ(value, test_value);
     EXPECT_EQ(data->return_loaned_value(union_data), RETCODE_OK);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         UnionChar struct_data;
         UnionCharPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(struct_data.var_union_char().l(), test_value);
-    }
-
-    // XCDRv2
-    {
-        UnionChar struct_data;
-        UnionCharPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_char().l(), test_value);
     }
@@ -925,20 +817,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionWChar)
     EXPECT_EQ(value, test_value);
     EXPECT_EQ(data->return_loaned_value(union_data), RETCODE_OK);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         UnionWChar struct_data;
         UnionWCharPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(struct_data.var_union_wchar().m(), test_value);
-    }
-
-    // XCDRv2
-    {
-        UnionWChar struct_data;
-        UnionWCharPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_wchar().m(), test_value);
     }
@@ -984,20 +867,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionString)
     EXPECT_EQ(value, test_value);
     EXPECT_EQ(data->return_loaned_value(union_data), RETCODE_OK);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         UnionString struct_data;
         UnionStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(struct_data.var_union_string().n(), test_value);
-    }
-
-    // XCDRv2
-    {
-        UnionString struct_data;
-        UnionStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_string().n(), test_value);
     }
@@ -1043,20 +917,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionWString)
     EXPECT_EQ(value, test_value);
     EXPECT_EQ(data->return_loaned_value(union_data), RETCODE_OK);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         UnionWString struct_data;
         UnionWStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(struct_data.var_union_wstring().o(), test_value);
-    }
-
-    // XCDRv2
-    {
-        UnionWString struct_data;
-        UnionWStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_wstring().o(), test_value);
     }
@@ -1102,20 +967,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionBoundedString)
     EXPECT_EQ(value, test_value);
     EXPECT_EQ(data->return_loaned_value(union_data), RETCODE_OK);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         UnionBoundedString struct_data;
         UnionBoundedStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(struct_data.var_union_bounded_string().bn(), test_value);
-    }
-
-    // XCDRv2
-    {
-        UnionBoundedString struct_data;
-        UnionBoundedStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_bounded_string().bn(), test_value);
     }
@@ -1161,20 +1017,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionBoundedWString)
     EXPECT_EQ(value, test_value);
     EXPECT_EQ(data->return_loaned_value(union_data), RETCODE_OK);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         UnionBoundedWString struct_data;
         UnionBoundedWStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(struct_data.var_union_bounded_wstring().bo(), test_value);
-    }
-
-    // XCDRv2
-    {
-        UnionBoundedWString struct_data;
-        UnionBoundedWStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_bounded_wstring().bo(), test_value);
     }
@@ -1221,20 +1068,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionInnerEnumHelper)
     EXPECT_EQ(static_cast<uint32_t>(value), test_value);
     EXPECT_EQ(data->return_loaned_value(union_data), RETCODE_OK);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         UnionInnerEnumHelper struct_data;
         UnionInnerEnumHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(static_cast<uint32_t>(struct_data.var_union_my_enum().p()), test_value);
-    }
-
-    // XCDRv2
-    {
-        UnionInnerEnumHelper struct_data;
-        UnionInnerEnumHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(static_cast<uint32_t>(struct_data.var_union_my_enum().p()), test_value);
     }
@@ -1281,20 +1119,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionInnerBitMaskHelper)
     EXPECT_EQ(value, test_value);
     EXPECT_EQ(data->return_loaned_value(union_data), RETCODE_OK);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         UnionInnerBitMaskHelper struct_data;
         UnionInnerBitMaskHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(struct_data.var_union_my_bit_mask().q(), test_value);
-    }
-
-    // XCDRv2
-    {
-        UnionInnerBitMaskHelper struct_data;
-        UnionInnerBitMaskHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_my_bit_mask().q(), test_value);
     }
@@ -1340,20 +1169,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionInnerAliasHelper)
     EXPECT_EQ(value, test_value);
     EXPECT_EQ(data->return_loaned_value(union_data), RETCODE_OK);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         UnionInnerAliasHelper struct_data;
         UnionInnerAliasHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(struct_data.var_union_my_alias().r(), test_value);
-    }
-
-    // XCDRv2
-    {
-        UnionInnerAliasHelper struct_data;
-        UnionInnerAliasHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_my_alias().r(), test_value);
     }
@@ -1399,24 +1219,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionArray)
     EXPECT_EQ(value, test_value);
     EXPECT_EQ(data->return_loaned_value(union_data), RETCODE_OK);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         UnionArray struct_data;
         UnionArrayPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(struct_data.var_union_array().s().size(), test_value.size());
-        for (size_t i = 0; i < test_value.size(); ++i)
-        {
-            EXPECT_EQ(struct_data.var_union_array().s()[i], test_value[i]);
-        }
-    }
-
-    // XCDRv2
-    {
-        UnionArray struct_data;
-        UnionArrayPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_array().s().size(), test_value.size());
         for (size_t i = 0; i < test_value.size(); ++i)
@@ -1467,20 +1274,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionSequence)
     EXPECT_EQ(value, test_value);
     EXPECT_EQ(data->return_loaned_value(union_data), RETCODE_OK);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         UnionSequence struct_data;
         UnionSequencePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(struct_data.var_union_sequence().t(), test_value);
-    }
-
-    // XCDRv2
-    {
-        UnionSequence struct_data;
-        UnionSequencePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_sequence().t(), test_value);
     }
@@ -1541,28 +1339,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionMap)
     EXPECT_EQ(union_data->return_loaned_value(map_data), RETCODE_OK);
     EXPECT_EQ(data->return_loaned_value(union_data), RETCODE_OK);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         UnionMap struct_data;
         UnionMapPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        union_data = data->loan_value(data->get_member_id_by_name(var_union_map_name));
-        ASSERT_TRUE(union_data);
-        map_data = union_data->loan_value(union_data->get_member_id_by_name(var_union_member_u));
-        ASSERT_TRUE(map_data);
-        EXPECT_EQ(struct_data.var_union_map().u().size(), map_data->get_item_count());
-        EXPECT_EQ(struct_data.var_union_map().u()[first_key], first_value);
-        EXPECT_EQ(struct_data.var_union_map().u()[second_key], second_value);
-        EXPECT_EQ(union_data->return_loaned_value(map_data), RETCODE_OK);
-        EXPECT_EQ(data->return_loaned_value(union_data), RETCODE_OK);
-    }
-
-    // XCDRv2
-    {
-        UnionMap struct_data;
-        UnionMapPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         union_data = data->loan_value(data->get_member_id_by_name(var_union_map_name));
         ASSERT_TRUE(union_data);
@@ -1635,20 +1416,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionInnerUnionHelper)
     EXPECT_EQ(union_data->return_loaned_value(union_union_data), RETCODE_OK);
     EXPECT_EQ(data->return_loaned_value(union_data), RETCODE_OK);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         UnionInnerUnionHelper struct_data;
         UnionInnerUnionHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(struct_data.var_union_my_union().v().longValue(), test_long_value);
-    }
-
-    // XCDRv2
-    {
-        UnionInnerUnionHelper struct_data;
-        UnionInnerUnionHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_my_union().v().longValue(), test_long_value);
     }
@@ -1706,21 +1478,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionInnerStructureHelper)
     EXPECT_EQ(union_data->return_loaned_value(union_struct_data), RETCODE_OK);
     EXPECT_EQ(data->return_loaned_value(union_data), RETCODE_OK);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         UnionInnerStructureHelper struct_data;
         UnionInnerStructureHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(struct_data.var_union_my_structure().w().field1(), test_long_value);
-        EXPECT_EQ(struct_data.var_union_my_structure().w().field2(), test_float_value);
-    }
-
-    // XCDRv2
-    {
-        UnionInnerStructureHelper struct_data;
-        UnionInnerStructureHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_my_structure().w().field1(), test_long_value);
         EXPECT_EQ(struct_data.var_union_my_structure().w().field2(), test_float_value);
@@ -1788,23 +1550,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionInnerBitsetHelper)
     EXPECT_EQ(union_data->return_loaned_value(bitset_data), RETCODE_OK);
     EXPECT_EQ(data->return_loaned_value(union_data), RETCODE_OK);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         UnionInnerBitsetHelper struct_data;
         UnionInnerBitsetHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(struct_data.var_union_my_bitset().x().a(), test_octet_value);
-        EXPECT_EQ(struct_data.var_union_my_bitset().x().b(), test_bool_value);
-        EXPECT_EQ(struct_data.var_union_my_bitset().x().c(), test_ushort_value);
-        EXPECT_EQ(struct_data.var_union_my_bitset().x().d(), test_short_value);
-    }
-
-    // XCDRv2
-    {
-        UnionInnerBitsetHelper struct_data;
-        UnionInnerBitsetHelperPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_my_bitset().x().a(), test_octet_value);
         EXPECT_EQ(struct_data.var_union_my_bitset().x().b(), test_bool_value);
@@ -1867,20 +1617,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorShort)
     EXPECT_EQ(long_long_value, test_long_long_value);
     EXPECT_EQ(data->return_loaned_value(union_data), RETCODE_OK);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         UnionDiscriminatorShort struct_data;
         UnionDiscriminatorShortPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(struct_data.var_union_discriminator_short().second(), test_long_long_value);
-    }
-
-    // XCDRv2
-    {
-        UnionDiscriminatorShort struct_data;
-        UnionDiscriminatorShortPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_discriminator_short().second(), test_long_long_value);
     }
@@ -1940,20 +1681,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorUShort)
     EXPECT_EQ(long_long_value, test_long_long_value);
     EXPECT_EQ(data->return_loaned_value(union_data), RETCODE_OK);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         UnionDiscriminatorUShort struct_data;
         UnionDiscriminatorUShortPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(struct_data.var_union_discriminator_ushort().second(), test_long_long_value);
-    }
-
-    // XCDRv2
-    {
-        UnionDiscriminatorUShort struct_data;
-        UnionDiscriminatorUShortPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_discriminator_ushort().second(), test_long_long_value);
     }
@@ -2013,20 +1745,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorLong)
     EXPECT_EQ(long_long_value, test_long_long_value);
     EXPECT_EQ(data->return_loaned_value(union_data), RETCODE_OK);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         UnionDiscriminatorLong struct_data;
         UnionDiscriminatorLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(struct_data.var_union_discriminator_long().second(), test_long_long_value);
-    }
-
-    // XCDRv2
-    {
-        UnionDiscriminatorLong struct_data;
-        UnionDiscriminatorLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_discriminator_long().second(), test_long_long_value);
     }
@@ -2086,20 +1809,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorULong)
     EXPECT_EQ(long_long_value, test_long_long_value);
     EXPECT_EQ(data->return_loaned_value(union_data), RETCODE_OK);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         UnionDiscriminatorULong struct_data;
         UnionDiscriminatorULongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(struct_data.var_union_discriminator_ulong().second(), test_long_long_value);
-    }
-
-    // XCDRv2
-    {
-        UnionDiscriminatorULong struct_data;
-        UnionDiscriminatorULongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_discriminator_ulong().second(), test_long_long_value);
     }
@@ -2159,20 +1873,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorLongLong)
     EXPECT_EQ(long_long_value, test_long_long_value);
     EXPECT_EQ(data->return_loaned_value(union_data), RETCODE_OK);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         UnionDiscriminatorLongLong struct_data;
         UnionDiscriminatorLongLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(struct_data.var_union_discriminator_long_long().second(), test_long_long_value);
-    }
-
-    // XCDRv2
-    {
-        UnionDiscriminatorLongLong struct_data;
-        UnionDiscriminatorLongLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_discriminator_long_long().second(), test_long_long_value);
     }
@@ -2232,20 +1937,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorULongLong)
     EXPECT_EQ(long_long_value, test_long_long_value);
     EXPECT_EQ(data->return_loaned_value(union_data), RETCODE_OK);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         UnionDiscriminatorULongLong struct_data;
         UnionDiscriminatorULongLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(struct_data.var_union_discriminator_ulong_long().second(), test_long_long_value);
-    }
-
-    // XCDRv2
-    {
-        UnionDiscriminatorULongLong struct_data;
-        UnionDiscriminatorULongLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_discriminator_ulong_long().second(), test_long_long_value);
     }
@@ -2305,20 +2001,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorBoolean)
     EXPECT_EQ(long_long_value, test_long_long_value);
     EXPECT_EQ(data->return_loaned_value(union_data), RETCODE_OK);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         UnionDiscriminatorBoolean struct_data;
         UnionDiscriminatorBooleanPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(struct_data.var_union_discriminator_boolean().second(), test_long_long_value);
-    }
-
-    // XCDRv2
-    {
-        UnionDiscriminatorBoolean struct_data;
-        UnionDiscriminatorBooleanPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_discriminator_boolean().second(), test_long_long_value);
     }
@@ -2378,20 +2065,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorOctet)
     EXPECT_EQ(long_long_value, test_long_long_value);
     EXPECT_EQ(data->return_loaned_value(union_data), RETCODE_OK);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         UnionDiscriminatorOctet struct_data;
         UnionDiscriminatorOctetPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(struct_data.var_union_discriminator_octet().second(), test_long_long_value);
-    }
-
-    // XCDRv2
-    {
-        UnionDiscriminatorOctet struct_data;
-        UnionDiscriminatorOctetPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_discriminator_octet().second(), test_long_long_value);
     }
@@ -2451,20 +2129,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorChar)
     EXPECT_EQ(long_long_value, test_long_long_value);
     EXPECT_EQ(data->return_loaned_value(union_data), RETCODE_OK);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         UnionDiscriminatorChar struct_data;
         UnionDiscriminatorCharPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(struct_data.var_union_discriminator_char().second(), test_long_long_value);
-    }
-
-    // XCDRv2
-    {
-        UnionDiscriminatorChar struct_data;
-        UnionDiscriminatorCharPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_discriminator_char().second(), test_long_long_value);
     }
@@ -2524,20 +2193,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorWChar)
     EXPECT_EQ(long_long_value, test_long_long_value);
     EXPECT_EQ(data->return_loaned_value(union_data), RETCODE_OK);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         UnionDiscriminatorWChar struct_data;
         UnionDiscriminatorWCharPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(struct_data.var_union_discriminator_wchar().second(), test_long_long_value);
-    }
-
-    // XCDRv2
-    {
-        UnionDiscriminatorWChar struct_data;
-        UnionDiscriminatorWCharPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_discriminator_wchar().second(), test_long_long_value);
     }
@@ -2609,20 +2269,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorEnum)
     EXPECT_EQ(long_long_value, test_long_long_value);
     EXPECT_EQ(data->return_loaned_value(union_data), RETCODE_OK);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         UnionDiscriminatorEnum struct_data;
         UnionDiscriminatorEnumPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(struct_data.var_union_discriminator_enum().second(), test_long_long_value);
-    }
-
-    // XCDRv2
-    {
-        UnionDiscriminatorEnum struct_data;
-        UnionDiscriminatorEnumPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_discriminator_enum().second(), test_long_long_value);
     }
@@ -2682,20 +2333,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorEnumLabel)
     EXPECT_EQ(second_short_value, test_short_value);
     EXPECT_EQ(data->return_loaned_value(union_data), RETCODE_OK);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         UnionDiscriminatorEnumLabel struct_data;
         UnionDiscriminatorEnumLabelPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(struct_data.var_union_discriminator_enum().second(), test_short_value);
-    }
-
-    // XCDRv2
-    {
-        UnionDiscriminatorEnumLabel struct_data;
-        UnionDiscriminatorEnumLabelPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_discriminator_enum().second(), test_short_value);
     }
@@ -2757,20 +2399,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorAlias)
     EXPECT_EQ(long_long_value, test_long_long_value);
     EXPECT_EQ(data->return_loaned_value(union_data), RETCODE_OK);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         UnionDiscriminatorAlias struct_data;
         UnionDiscriminatorAliasPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(struct_data.var_union_discriminator_alias().second(), test_long_long_value);
-    }
-
-    // XCDRv2
-    {
-        UnionDiscriminatorAlias struct_data;
-        UnionDiscriminatorAliasPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_discriminator_alias().second(), test_long_long_value);
     }

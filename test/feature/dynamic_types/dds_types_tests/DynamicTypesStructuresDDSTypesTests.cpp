@@ -119,7 +119,7 @@ constexpr const char* var_d_name = "d";
 constexpr const char* var_e_name = "e";
 
 /**
- * Auxiliary functions to create structures 
+ * Auxiliary functions to create structures
  */
 DynamicType::_ref_type create_short_struct()
 {
@@ -430,7 +430,8 @@ DynamicType::_ref_type create_short_array_struct()
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_array_name);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT16), {10})->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::
+                    get_instance()->get_primitive_type(TK_INT16), {10})->build());
     type_builder->add_member(member_descriptor);
 
     return type_builder->build();
@@ -445,7 +446,8 @@ DynamicType::_ref_type create_sequence_struct()
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_seq_name);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_sequence_type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32), LENGTH_UNLIMITED)->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_sequence_type(DynamicTypeBuilderFactory::
+                    get_instance()->get_primitive_type(TK_INT32), LENGTH_UNLIMITED)->build());
     type_builder->add_member(member_descriptor);
 
     return type_builder->build();
@@ -460,8 +462,9 @@ DynamicType::_ref_type create_map_struct()
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_map_name);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32),
-        DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32), LENGTH_UNLIMITED)->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(DynamicTypeBuilderFactory::
+                    get_instance()->get_primitive_type(TK_INT32),
+            DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32), LENGTH_UNLIMITED)->build());
     type_builder->add_member(member_descriptor);
 
     return type_builder->build();
@@ -535,19 +538,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructShort)
     EXPECT_EQ(data->get_int16_value(test_value, data->get_member_id_by_name(var_short_name)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         StructShort struct_data;
         StructShortPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_short(), test_value);
-    }
-
-    // XCDRv2
-    {
-        StructShort struct_data;
-        StructShortPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_short(), test_value);
     }
 
@@ -567,19 +562,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructUnsignedShort)
     EXPECT_EQ(data->get_uint16_value(test_value, data->get_member_id_by_name(var_ushort_name)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         StructUnsignedShort struct_data;
         StructUnsignedShortPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_ushort(), test_value);
-    }
-
-    // XCDRv2
-    {
-        StructUnsignedShort struct_data;
-        StructUnsignedShortPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_ushort(), test_value);
     }
 
@@ -599,19 +586,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructLong)
     EXPECT_EQ(data->get_int32_value(test_value, data->get_member_id_by_name(var_long_name)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         StructLong struct_data;
         StructLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_long(), test_value);
-    }
-
-    // XCDRv2
-    {
-        StructLong struct_data;
-        StructLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_long(), test_value);
     }
 
@@ -631,19 +610,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructUnsignedLong)
     EXPECT_EQ(data->get_uint32_value(test_value, data->get_member_id_by_name(var_ulong_name)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         StructUnsignedLong struct_data;
         StructUnsignedLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_ulong(), test_value);
-    }
-
-    // XCDRv2
-    {
-        StructUnsignedLong struct_data;
-        StructUnsignedLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_ulong(), test_value);
     }
 
@@ -663,19 +634,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructLongLong)
     EXPECT_EQ(data->get_int64_value(test_value, data->get_member_id_by_name(var_long_long_name)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         StructLongLong struct_data;
         StructLongLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_longlong(), test_value);
-    }
-
-    // XCDRv2
-    {
-        StructLongLong struct_data;
-        StructLongLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_longlong(), test_value);
     }
 
@@ -695,19 +658,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructUnsignedLongLong)
     EXPECT_EQ(data->get_uint64_value(test_value, data->get_member_id_by_name(var_ulong_long_name)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         StructUnsignedLongLong struct_data;
         StructUnsignedLongLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_ulonglong(), test_value);
-    }
-
-    // XCDRv2
-    {
-        StructUnsignedLongLong struct_data;
-        StructUnsignedLongLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_ulonglong(), test_value);
     }
 
@@ -727,19 +682,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructFloat)
     EXPECT_EQ(data->get_float32_value(test_value, data->get_member_id_by_name(var_float_name)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         StructFloat struct_data;
         StructFloatPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_float(), test_value);
-    }
-
-    // XCDRv2
-    {
-        StructFloat struct_data;
-        StructFloatPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_float(), test_value);
     }
 
@@ -759,19 +706,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructDouble)
     EXPECT_EQ(data->get_float64_value(test_value, data->get_member_id_by_name(var_double_name)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         StructDouble struct_data;
         StructDoublePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_double(), test_value);
-    }
-
-    // XCDRv2
-    {
-        StructDouble struct_data;
-        StructDoublePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_double(), test_value);
     }
 
@@ -791,19 +730,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructLongDouble)
     EXPECT_EQ(data->get_float128_value(test_value, data->get_member_id_by_name(var_long_double_name)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         StructLongDouble struct_data;
         StructLongDoublePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_longdouble(), test_value);
-    }
-
-    // XCDRv2
-    {
-        StructLongDouble struct_data;
-        StructLongDoublePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_longdouble(), test_value);
     }
 
@@ -823,19 +754,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructBoolean)
     EXPECT_EQ(data->get_boolean_value(test_value, data->get_member_id_by_name(var_bool_name)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         StructBoolean struct_data;
         StructBooleanPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_boolean(), test_value);
-    }
-
-    // XCDRv2
-    {
-        StructBoolean struct_data;
-        StructBooleanPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_boolean(), test_value);
     }
 
@@ -855,19 +778,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructOctet)
     EXPECT_EQ(data->get_byte_value(test_value, data->get_member_id_by_name(var_byte_name)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         StructOctet struct_data;
         StructOctetPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_octet(), test_value);
-    }
-
-    // XCDRv2
-    {
-        StructOctet struct_data;
-        StructOctetPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_octet(), test_value);
     }
 
@@ -887,19 +802,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructChar8)
     EXPECT_EQ(data->get_char8_value(test_value, data->get_member_id_by_name(var_char_name)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         StructChar8 struct_data;
         StructChar8PubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_char8(), test_value);
-    }
-
-    // XCDRv2
-    {
-        StructChar8 struct_data;
-        StructChar8PubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_char8(), test_value);
     }
 
@@ -919,19 +826,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructChar16)
     EXPECT_EQ(data->get_char16_value(test_value, data->get_member_id_by_name(var_wchar_name)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         StructChar16 struct_data;
         StructChar16PubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_char16(), test_value);
-    }
-
-    // XCDRv2
-    {
-        StructChar16 struct_data;
-        StructChar16PubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_char16(), test_value);
     }
 
@@ -951,19 +850,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructString)
     EXPECT_EQ(data->get_string_value(test_value, data->get_member_id_by_name(var_string_name)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         StructString struct_data;
         StructStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_string(), test_value);
-    }
-
-    // XCDRv2
-    {
-        StructString struct_data;
-        StructStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_string(), test_value);
     }
 
@@ -983,19 +874,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructWString)
     EXPECT_EQ(data->get_wstring_value(test_value, data->get_member_id_by_name(var_wstring_name)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         StructWString struct_data;
         StructWStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_wstring(), test_value);
-    }
-
-    // XCDRv2
-    {
-        StructWString struct_data;
-        StructWStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_wstring(), test_value);
     }
 
@@ -1015,19 +898,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructBoundedString)
     EXPECT_EQ(data->get_string_value(test_value, data->get_member_id_by_name(var_bounded_string_name)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         StructBoundedString struct_data;
         StructBoundedStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_bounded_string(), test_value);
-    }
-
-    // XCDRv2
-    {
-        StructBoundedString struct_data;
-        StructBoundedStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_bounded_string(), test_value);
     }
 
@@ -1047,19 +922,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructBoundedWString)
     EXPECT_EQ(data->get_wstring_value(test_value, data->get_member_id_by_name(var_bounded_wstring_name)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         StructBoundedWString struct_data;
         StructBoundedWStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_bounded_wstring(), test_value);
-    }
-
-    // XCDRv2
-    {
-        StructBoundedWString struct_data;
-        StructBoundedWStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_bounded_wstring(), test_value);
     }
 
@@ -1075,23 +942,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructEnum)
 
     InnerEnumHelper value = InnerEnumHelper::ENUM_VALUE_2;
     uint32_t test_value = 0;
-    EXPECT_EQ(data->set_uint32_value(data->get_member_id_by_name(var_enum_name), static_cast<uint32_t>(value)), RETCODE_OK);
+    EXPECT_EQ(data->set_uint32_value(data->get_member_id_by_name(
+                var_enum_name), static_cast<uint32_t>(value)), RETCODE_OK);
     EXPECT_EQ(data->get_uint32_value(test_value, data->get_member_id_by_name(var_enum_name)), RETCODE_OK);
     EXPECT_EQ(static_cast<uint32_t>(value), test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         StructEnum struct_data;
         StructEnumPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(static_cast<uint32_t>(struct_data.var_enum()), test_value);
-    }
-
-    // XCDRv2
-    {
-        StructEnum struct_data;
-        StructEnumPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(static_cast<uint32_t>(struct_data.var_enum()), test_value);
     }
 
@@ -1112,19 +972,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructBitMask)
     EXPECT_EQ(data->get_uint32_value(test_value, data->get_member_id_by_name(var_bitmask_name)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         StructBitMask struct_data;
         StructBitMaskPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_bitmask(), test_value);
-    }
-
-    // XCDRv2
-    {
-        StructBitMask struct_data;
-        StructBitMaskPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_bitmask(), test_value);
     }
 
@@ -1144,19 +996,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructAlias)
     EXPECT_EQ(data->get_int32_value(test_value, data->get_member_id_by_name(var_alias_name)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         StructAlias struct_data;
         StructAliasPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_alias(), test_value);
-    }
-
-    // XCDRv2
-    {
-        StructAlias struct_data;
-        StructAliasPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_alias(), test_value);
     }
 
@@ -1176,23 +1020,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructShortArray)
     EXPECT_EQ(data->get_int16_values(test_value, data->get_member_id_by_name(var_array_name)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         StructShortArray struct_data;
         StructShortArrayPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(test_value.size(), struct_data.var_array_short().size());
-        for (size_t i = 0; i < test_value.size(); ++i)
-        {
-            EXPECT_EQ(struct_data.var_array_short()[i], test_value[i]);
-        }
-    }
-
-    // XCDRv2
-    {
-        StructShortArray struct_data;
-        StructShortArrayPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(test_value.size(), struct_data.var_array_short().size());
         for (size_t i = 0; i < test_value.size(); ++i)
         {
@@ -1216,19 +1048,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructSequence)
     EXPECT_EQ(data->get_int32_values(test_value, data->get_member_id_by_name(var_seq_name)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         StructSequence struct_data;
         StructSequencePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_sequence(), test_value);
-    }
-
-    // XCDRv2
-    {
-        StructSequence struct_data;
-        StructSequencePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_sequence(), test_value);
     }
 
@@ -1249,32 +1073,23 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructMap)
     int32_t test_value = 0;
     DynamicData::_ref_type map_data = data->loan_value(data->get_member_id_by_name(var_map_name));
     ASSERT_TRUE(map_data);
-    EXPECT_EQ(map_data->set_int32_value(map_data->get_member_id_by_name(std::to_string(first_key)), first_value), RETCODE_OK);
-    EXPECT_EQ(map_data->set_int32_value(map_data->get_member_id_by_name(std::to_string(second_key)), second_value), RETCODE_OK);
-    EXPECT_EQ(map_data->get_int32_value(test_value, map_data->get_member_id_by_name(std::to_string(first_key))), RETCODE_OK);
+    EXPECT_EQ(map_data->set_int32_value(map_data->get_member_id_by_name(std::to_string(
+                first_key)), first_value), RETCODE_OK);
+    EXPECT_EQ(map_data->set_int32_value(map_data->get_member_id_by_name(std::to_string(
+                second_key)), second_value), RETCODE_OK);
+    EXPECT_EQ(map_data->get_int32_value(test_value, map_data->get_member_id_by_name(std::to_string(
+                first_key))), RETCODE_OK);
     EXPECT_EQ(test_value, first_value);
-    EXPECT_EQ(map_data->get_int32_value(test_value, map_data->get_member_id_by_name(std::to_string(second_key))), RETCODE_OK);
+    EXPECT_EQ(map_data->get_int32_value(test_value, map_data->get_member_id_by_name(std::to_string(
+                second_key))), RETCODE_OK);
     EXPECT_EQ(test_value, second_value);
     EXPECT_EQ(data->return_loaned_value(map_data), RETCODE_OK);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         StructMap struct_data;
         StructMapPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        map_data = data->loan_value(data->get_member_id_by_name(var_map_name));
-        ASSERT_TRUE(map_data);
-        EXPECT_EQ(struct_data.var_map().size(), map_data->get_item_count());
-        EXPECT_EQ(struct_data.var_map()[first_key], first_value);
-        EXPECT_EQ(struct_data.var_map()[second_key], second_value);
-        EXPECT_EQ(data->return_loaned_value(map_data), RETCODE_OK);
-    }
-
-    // XCDRv2
-    {
-        StructMap struct_data;
-        StructMapPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         map_data = data->loan_value(data->get_member_id_by_name(var_map_name));
         ASSERT_TRUE(map_data);
         EXPECT_EQ(struct_data.var_map().size(), map_data->get_item_count());
@@ -1299,27 +1114,23 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructUnion)
     int16_t test_short_value = 0;
     DynamicData::_ref_type union_data = data->loan_value(data->get_member_id_by_name(var_union_name));
     ASSERT_TRUE(union_data);
-    EXPECT_EQ(union_data->set_float32_value(union_data->get_member_id_by_name(union_float_member_name), float_value), RETCODE_OK);
-    EXPECT_EQ(union_data->get_float32_value(test_float_value, union_data->get_member_id_by_name(union_float_member_name)), RETCODE_OK);
+    EXPECT_EQ(union_data->set_float32_value(union_data->get_member_id_by_name(
+                union_float_member_name), float_value), RETCODE_OK);
+    EXPECT_EQ(union_data->get_float32_value(test_float_value, union_data->get_member_id_by_name(
+                union_float_member_name)), RETCODE_OK);
     EXPECT_EQ(float_value, test_float_value);
-    EXPECT_EQ(union_data->set_int16_value(union_data->get_member_id_by_name(union_short_member_name), short_value), RETCODE_OK);
-    EXPECT_EQ(union_data->get_int16_value(test_short_value, union_data->get_member_id_by_name(union_short_member_name)), RETCODE_OK);
+    EXPECT_EQ(union_data->set_int16_value(union_data->get_member_id_by_name(
+                union_short_member_name), short_value), RETCODE_OK);
+    EXPECT_EQ(union_data->get_int16_value(test_short_value, union_data->get_member_id_by_name(
+                union_short_member_name)), RETCODE_OK);
     EXPECT_EQ(short_value, test_short_value);
     EXPECT_EQ(data->return_loaned_value(union_data), RETCODE_OK);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         StructUnion struct_data;
         StructUnionPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_union().shortValue(), test_short_value);
-    }
-
-    // XCDRv2
-    {
-        StructUnion struct_data;
-        StructUnionPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_union().shortValue(), test_short_value);
     }
 
@@ -1339,28 +1150,23 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructStructure)
     int32_t test_long_value = 0;
     DynamicData::_ref_type struct_data = data->loan_value(data->get_member_id_by_name(var_struct_name));
     ASSERT_TRUE(struct_data);
-    EXPECT_EQ(struct_data->set_float32_value(struct_data->get_member_id_by_name(struct_float_member_name), float_value), RETCODE_OK);
-    EXPECT_EQ(struct_data->get_float32_value(test_float_value, struct_data->get_member_id_by_name(struct_float_member_name)), RETCODE_OK);
+    EXPECT_EQ(struct_data->set_float32_value(struct_data->get_member_id_by_name(
+                struct_float_member_name), float_value), RETCODE_OK);
+    EXPECT_EQ(struct_data->get_float32_value(test_float_value,
+            struct_data->get_member_id_by_name(struct_float_member_name)), RETCODE_OK);
     EXPECT_EQ(float_value, test_float_value);
-    EXPECT_EQ(struct_data->set_int32_value(struct_data->get_member_id_by_name(struct_long_member_name), long_value), RETCODE_OK);
-    EXPECT_EQ(struct_data->get_int32_value(test_long_value, struct_data->get_member_id_by_name(struct_long_member_name)), RETCODE_OK);
+    EXPECT_EQ(struct_data->set_int32_value(struct_data->get_member_id_by_name(
+                struct_long_member_name), long_value), RETCODE_OK);
+    EXPECT_EQ(struct_data->get_int32_value(test_long_value, struct_data->get_member_id_by_name(
+                struct_long_member_name)), RETCODE_OK);
     EXPECT_EQ(long_value, test_long_value);
     EXPECT_EQ(data->return_loaned_value(struct_data), RETCODE_OK);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         StructStructure data_struct;
         StructStructurePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, data_struct, static_pubsubType);
-        EXPECT_EQ(data_struct.var_structure().field1(), test_long_value);
-        EXPECT_EQ(data_struct.var_structure().field2(), test_float_value);
-    }
-
-    // XCDRv2
-    {
-        StructStructure data_struct;
-        StructStructurePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, data_struct, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, data_struct, static_pubsubType);
         EXPECT_EQ(data_struct.var_structure().field1(), test_long_value);
         EXPECT_EQ(data_struct.var_structure().field2(), test_float_value);
     }
@@ -1386,35 +1192,28 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructBitset)
     DynamicData::_ref_type bitset_data = data->loan_value(data->get_member_id_by_name(var_bitset_name));
     ASSERT_TRUE(bitset_data);
     EXPECT_EQ(bitset_data->set_uint8_value(bitset_data->get_member_id_by_name(bitfield_a), octet_value), RETCODE_OK);
-    EXPECT_EQ(bitset_data->get_uint8_value(test_octet_value, bitset_data->get_member_id_by_name(bitfield_a)), RETCODE_OK);
+    EXPECT_EQ(bitset_data->get_uint8_value(test_octet_value, bitset_data->get_member_id_by_name(bitfield_a)),
+            RETCODE_OK);
     EXPECT_EQ(octet_value, test_octet_value);
     EXPECT_EQ(bitset_data->set_boolean_value(bitset_data->get_member_id_by_name(bitfield_b), bool_value), RETCODE_OK);
-    EXPECT_EQ(bitset_data->get_boolean_value(test_bool_value, bitset_data->get_member_id_by_name(bitfield_b)), RETCODE_OK);
+    EXPECT_EQ(bitset_data->get_boolean_value(test_bool_value, bitset_data->get_member_id_by_name(
+                bitfield_b)), RETCODE_OK);
     EXPECT_EQ(bool_value, test_bool_value);
     EXPECT_EQ(bitset_data->set_uint16_value(bitset_data->get_member_id_by_name(bitfield_c), ushort_value), RETCODE_OK);
-    EXPECT_EQ(bitset_data->get_uint16_value(test_ushort_value, bitset_data->get_member_id_by_name(bitfield_c)), RETCODE_OK);
+    EXPECT_EQ(bitset_data->get_uint16_value(test_ushort_value, bitset_data->get_member_id_by_name(
+                bitfield_c)), RETCODE_OK);
     EXPECT_EQ(ushort_value, test_ushort_value);
     EXPECT_EQ(bitset_data->set_int16_value(bitset_data->get_member_id_by_name(bitfield_d), short_value), RETCODE_OK);
-    EXPECT_EQ(bitset_data->get_int16_value(test_short_value, bitset_data->get_member_id_by_name(bitfield_d)), RETCODE_OK);
+    EXPECT_EQ(bitset_data->get_int16_value(test_short_value, bitset_data->get_member_id_by_name(bitfield_d)),
+            RETCODE_OK);
     EXPECT_EQ(short_value, test_short_value);
     EXPECT_EQ(data->return_loaned_value(bitset_data), RETCODE_OK);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         StructBitset data_struct;
         StructBitsetPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, data_struct, static_pubsubType);
-        EXPECT_EQ(data_struct.var_bitset().a(), test_octet_value);
-        EXPECT_EQ(data_struct.var_bitset().b(), test_bool_value);
-        EXPECT_EQ(data_struct.var_bitset().c(), test_ushort_value);
-        EXPECT_EQ(data_struct.var_bitset().d(), test_short_value);
-    }
-
-    // XCDRv2
-    {
-        StructBitset data_struct;
-        StructBitsetPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, data_struct, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, data_struct, static_pubsubType);
         EXPECT_EQ(data_struct.var_bitset().a(), test_octet_value);
         EXPECT_EQ(data_struct.var_bitset().b(), test_bool_value);
         EXPECT_EQ(data_struct.var_bitset().c(), test_ushort_value);
@@ -1666,15 +1465,18 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructStructures)
     ASSERT_TRUE(long_struct_data);
     DynamicData::_ref_type ulong_struct_data = data->loan_value(data->get_member_id_by_name(var_ulong_struct_name));
     ASSERT_TRUE(ulong_struct_data);
-    DynamicData::_ref_type long_long_struct_data = data->loan_value(data->get_member_id_by_name(var_long_long_struct_name));
+    DynamicData::_ref_type long_long_struct_data =
+            data->loan_value(data->get_member_id_by_name(var_long_long_struct_name));
     ASSERT_TRUE(long_long_struct_data);
-    DynamicData::_ref_type ulong_long_struct_data = data->loan_value(data->get_member_id_by_name(var_ulong_long_struct_name));
+    DynamicData::_ref_type ulong_long_struct_data =
+            data->loan_value(data->get_member_id_by_name(var_ulong_long_struct_name));
     ASSERT_TRUE(ulong_long_struct_data);
     DynamicData::_ref_type float_struct_data = data->loan_value(data->get_member_id_by_name(var_float_struct_name));
     ASSERT_TRUE(float_struct_data);
     DynamicData::_ref_type double_struct_data = data->loan_value(data->get_member_id_by_name(var_double_struct_name));
     ASSERT_TRUE(double_struct_data);
-    DynamicData::_ref_type long_double_struct_data = data->loan_value(data->get_member_id_by_name(var_long_double_struct_name));
+    DynamicData::_ref_type long_double_struct_data =
+            data->loan_value(data->get_member_id_by_name(var_long_double_struct_name));
     ASSERT_TRUE(long_double_struct_data);
     DynamicData::_ref_type bool_struct_data = data->loan_value(data->get_member_id_by_name(var_bool_struct_name));
     ASSERT_TRUE(bool_struct_data);
@@ -1688,9 +1490,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructStructures)
     ASSERT_TRUE(string_struct_data);
     DynamicData::_ref_type wstring_struct_data = data->loan_value(data->get_member_id_by_name(var_wstring_struct_name));
     ASSERT_TRUE(wstring_struct_data);
-    DynamicData::_ref_type bounded_string_struct_data = data->loan_value(data->get_member_id_by_name(var_bounded_string_struct_name));
+    DynamicData::_ref_type bounded_string_struct_data =
+            data->loan_value(data->get_member_id_by_name(var_bounded_string_struct_name));
     ASSERT_TRUE(bounded_string_struct_data);
-    DynamicData::_ref_type bounded_wstring_struct_data = data->loan_value(data->get_member_id_by_name(var_bounded_wstring_struct_name));
+    DynamicData::_ref_type bounded_wstring_struct_data =
+            data->loan_value(data->get_member_id_by_name(var_bounded_wstring_struct_name));
     ASSERT_TRUE(bounded_wstring_struct_data);
     DynamicData::_ref_type enum_struct_data = data->loan_value(data->get_member_id_by_name(var_enum_struct_name));
     ASSERT_TRUE(enum_struct_data);
@@ -1708,104 +1512,163 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructStructures)
     ASSERT_TRUE(map_data);
     DynamicData::_ref_type union_struct_data = data->loan_value(data->get_member_id_by_name(var_union_struct_name));
     ASSERT_TRUE(union_struct_data);
-    DynamicData::_ref_type union_data = union_struct_data->loan_value(union_struct_data->get_member_id_by_name(var_union_name));
+    DynamicData::_ref_type union_data =
+            union_struct_data->loan_value(union_struct_data->get_member_id_by_name(var_union_name));
     ASSERT_TRUE(union_data);
     DynamicData::_ref_type struct_struct_data = data->loan_value(data->get_member_id_by_name(var_struct_struct_name));
     ASSERT_TRUE(struct_struct_data);
-    DynamicData::_ref_type structure_data = struct_struct_data->loan_value(struct_struct_data->get_member_id_by_name(var_struct_name));
+    DynamicData::_ref_type structure_data =
+            struct_struct_data->loan_value(struct_struct_data->get_member_id_by_name(var_struct_name));
     ASSERT_TRUE(structure_data);
     DynamicData::_ref_type bitset_struct_data = data->loan_value(data->get_member_id_by_name(var_bitset_struct_name));
     ASSERT_TRUE(bitset_struct_data);
-    DynamicData::_ref_type bitset_data = bitset_struct_data->loan_value(bitset_struct_data->get_member_id_by_name(var_bitset_name));
+    DynamicData::_ref_type bitset_data =
+            bitset_struct_data->loan_value(bitset_struct_data->get_member_id_by_name(var_bitset_name));
     ASSERT_TRUE(bitset_data);
 
-    EXPECT_EQ(short_struct_data->set_int16_value(short_struct_data->get_member_id_by_name(var_short_name), short_value), RETCODE_OK);
-    EXPECT_EQ(short_struct_data->get_int16_value(testing_values.test_short_value, short_struct_data->get_member_id_by_name(var_short_name)), RETCODE_OK);
+    EXPECT_EQ(short_struct_data->set_int16_value(short_struct_data->get_member_id_by_name(
+                var_short_name), short_value), RETCODE_OK);
+    EXPECT_EQ(short_struct_data->get_int16_value(testing_values.test_short_value,
+            short_struct_data->get_member_id_by_name(var_short_name)), RETCODE_OK);
     EXPECT_EQ(short_value, testing_values.test_short_value);
-    EXPECT_EQ(ushort_struct_data->set_uint16_value(ushort_struct_data->get_member_id_by_name(var_ushort_name), ushort_value), RETCODE_OK);
-    EXPECT_EQ(ushort_struct_data->get_uint16_value(testing_values.test_ushort_value, ushort_struct_data->get_member_id_by_name(var_ushort_name)), RETCODE_OK);
+    EXPECT_EQ(ushort_struct_data->set_uint16_value(ushort_struct_data->get_member_id_by_name(var_ushort_name),
+            ushort_value), RETCODE_OK);
+    EXPECT_EQ(ushort_struct_data->get_uint16_value(testing_values.test_ushort_value,
+            ushort_struct_data->get_member_id_by_name(var_ushort_name)), RETCODE_OK);
     EXPECT_EQ(ushort_value, testing_values.test_ushort_value);
-    EXPECT_EQ(long_struct_data->set_int32_value(long_struct_data->get_member_id_by_name(var_long_name), long_value), RETCODE_OK);
-    EXPECT_EQ(long_struct_data->get_int32_value(testing_values.test_long_value, long_struct_data->get_member_id_by_name(var_long_name)), RETCODE_OK);
+    EXPECT_EQ(long_struct_data->set_int32_value(long_struct_data->get_member_id_by_name(
+                var_long_name), long_value), RETCODE_OK);
+    EXPECT_EQ(long_struct_data->get_int32_value(testing_values.test_long_value,
+            long_struct_data->get_member_id_by_name(var_long_name)), RETCODE_OK);
     EXPECT_EQ(long_value, testing_values.test_long_value);
-    EXPECT_EQ(ulong_struct_data->set_uint32_value(ulong_struct_data->get_member_id_by_name(var_ulong_name), ulong_value), RETCODE_OK);
-    EXPECT_EQ(ulong_struct_data->get_uint32_value(testing_values.test_ulong_value, ulong_struct_data->get_member_id_by_name(var_ulong_name)), RETCODE_OK);
+    EXPECT_EQ(ulong_struct_data->set_uint32_value(ulong_struct_data->get_member_id_by_name(
+                var_ulong_name), ulong_value), RETCODE_OK);
+    EXPECT_EQ(ulong_struct_data->get_uint32_value(testing_values.test_ulong_value,
+            ulong_struct_data->get_member_id_by_name(var_ulong_name)), RETCODE_OK);
     EXPECT_EQ(ulong_value, testing_values.test_ulong_value);
-    EXPECT_EQ(long_long_struct_data->set_int64_value(long_long_struct_data->get_member_id_by_name(var_long_long_name), long_long_value), RETCODE_OK);
-    EXPECT_EQ(long_long_struct_data->get_int64_value(testing_values.test_long_long_value, long_long_struct_data->get_member_id_by_name(var_long_long_name)), RETCODE_OK);
+    EXPECT_EQ(long_long_struct_data->set_int64_value(long_long_struct_data->get_member_id_by_name(var_long_long_name),
+            long_long_value), RETCODE_OK);
+    EXPECT_EQ(long_long_struct_data->get_int64_value(testing_values.test_long_long_value,
+            long_long_struct_data->get_member_id_by_name(var_long_long_name)), RETCODE_OK);
     EXPECT_EQ(long_long_value, testing_values.test_long_long_value);
-    EXPECT_EQ(ulong_long_struct_data->set_uint64_value(ulong_long_struct_data->get_member_id_by_name(var_ulong_long_name), ulong_long_value), RETCODE_OK);
-    EXPECT_EQ(ulong_long_struct_data->get_uint64_value(testing_values.test_ulong_long_value, ulong_long_struct_data->get_member_id_by_name(var_ulong_long_name)), RETCODE_OK);
+    EXPECT_EQ(ulong_long_struct_data->set_uint64_value(ulong_long_struct_data->get_member_id_by_name(var_ulong_long_name),
+            ulong_long_value), RETCODE_OK);
+    EXPECT_EQ(ulong_long_struct_data->get_uint64_value(testing_values.test_ulong_long_value,
+            ulong_long_struct_data->get_member_id_by_name(var_ulong_long_name)), RETCODE_OK);
     EXPECT_EQ(ulong_long_value, testing_values.test_ulong_long_value);
-    EXPECT_EQ(float_struct_data->set_float32_value(float_struct_data->get_member_id_by_name(var_float_name), float_value), RETCODE_OK);
-    EXPECT_EQ(float_struct_data->get_float32_value(testing_values.test_float_value, float_struct_data->get_member_id_by_name(var_float_name)), RETCODE_OK);
+    EXPECT_EQ(float_struct_data->set_float32_value(float_struct_data->get_member_id_by_name(
+                var_float_name), float_value), RETCODE_OK);
+    EXPECT_EQ(float_struct_data->get_float32_value(testing_values.test_float_value,
+            float_struct_data->get_member_id_by_name(var_float_name)), RETCODE_OK);
     EXPECT_EQ(float_value, testing_values.test_float_value);
-    EXPECT_EQ(double_struct_data->set_float64_value(double_struct_data->get_member_id_by_name(var_double_name), double_value), RETCODE_OK);
-    EXPECT_EQ(double_struct_data->get_float64_value(testing_values.test_double_value, double_struct_data->get_member_id_by_name(var_double_name)), RETCODE_OK);
+    EXPECT_EQ(double_struct_data->set_float64_value(double_struct_data->get_member_id_by_name(var_double_name),
+            double_value), RETCODE_OK);
+    EXPECT_EQ(double_struct_data->get_float64_value(testing_values.test_double_value,
+            double_struct_data->get_member_id_by_name(var_double_name)), RETCODE_OK);
     EXPECT_EQ(double_value, testing_values.test_double_value);
-    EXPECT_EQ(long_double_struct_data->set_float128_value(long_double_struct_data->get_member_id_by_name(var_long_double_name), long_double_value), RETCODE_OK);
-    EXPECT_EQ(long_double_struct_data->get_float128_value(testing_values.test_long_double_value, long_double_struct_data->get_member_id_by_name(var_long_double_name)), RETCODE_OK);
+    EXPECT_EQ(long_double_struct_data->set_float128_value(long_double_struct_data->get_member_id_by_name(
+                var_long_double_name), long_double_value), RETCODE_OK);
+    EXPECT_EQ(long_double_struct_data->get_float128_value(testing_values.test_long_double_value,
+            long_double_struct_data->get_member_id_by_name(var_long_double_name)), RETCODE_OK);
     EXPECT_EQ(long_double_value, testing_values.test_long_double_value);
-    EXPECT_EQ(bool_struct_data->set_boolean_value(bool_struct_data->get_member_id_by_name(var_bool_name), bool_value), RETCODE_OK);
-    EXPECT_EQ(bool_struct_data->get_boolean_value(testing_values.test_bool_value, bool_struct_data->get_member_id_by_name(var_bool_name)), RETCODE_OK);
+    EXPECT_EQ(bool_struct_data->set_boolean_value(bool_struct_data->get_member_id_by_name(
+                var_bool_name), bool_value), RETCODE_OK);
+    EXPECT_EQ(bool_struct_data->get_boolean_value(testing_values.test_bool_value,
+            bool_struct_data->get_member_id_by_name(var_bool_name)), RETCODE_OK);
     EXPECT_EQ(bool_value, testing_values.test_bool_value);
-    EXPECT_EQ(byte_struct_data->set_byte_value(byte_struct_data->get_member_id_by_name(var_byte_name), byte_value), RETCODE_OK);
-    EXPECT_EQ(byte_struct_data->get_byte_value(testing_values.test_byte_value, byte_struct_data->get_member_id_by_name(var_byte_name)), RETCODE_OK);
+    EXPECT_EQ(byte_struct_data->set_byte_value(byte_struct_data->get_member_id_by_name(
+                var_byte_name), byte_value), RETCODE_OK);
+    EXPECT_EQ(byte_struct_data->get_byte_value(testing_values.test_byte_value,
+            byte_struct_data->get_member_id_by_name(var_byte_name)), RETCODE_OK);
     EXPECT_EQ(byte_value, testing_values.test_byte_value);
-    EXPECT_EQ(char_struct_data->set_char8_value(char_struct_data->get_member_id_by_name(var_char_name), char_value), RETCODE_OK);
-    EXPECT_EQ(char_struct_data->get_char8_value(testing_values.test_char_value, char_struct_data->get_member_id_by_name(var_char_name)), RETCODE_OK);
+    EXPECT_EQ(char_struct_data->set_char8_value(char_struct_data->get_member_id_by_name(
+                var_char_name), char_value), RETCODE_OK);
+    EXPECT_EQ(char_struct_data->get_char8_value(testing_values.test_char_value,
+            char_struct_data->get_member_id_by_name(var_char_name)), RETCODE_OK);
     EXPECT_EQ(char_value, testing_values.test_char_value);
-    EXPECT_EQ(wchar_struct_data->set_char16_value(wchar_struct_data->get_member_id_by_name(var_wchar_name), wchar_value), RETCODE_OK);
-    EXPECT_EQ(wchar_struct_data->get_char16_value(testing_values.test_wchar_value, wchar_struct_data->get_member_id_by_name(var_wchar_name)), RETCODE_OK);
+    EXPECT_EQ(wchar_struct_data->set_char16_value(wchar_struct_data->get_member_id_by_name(
+                var_wchar_name), wchar_value), RETCODE_OK);
+    EXPECT_EQ(wchar_struct_data->get_char16_value(testing_values.test_wchar_value,
+            wchar_struct_data->get_member_id_by_name(var_wchar_name)), RETCODE_OK);
     EXPECT_EQ(wchar_value, testing_values.test_wchar_value);
-    EXPECT_EQ(string_struct_data->set_string_value(string_struct_data->get_member_id_by_name(var_string_name), string_value), RETCODE_OK);
-    EXPECT_EQ(string_struct_data->get_string_value(testing_values.test_string_value, string_struct_data->get_member_id_by_name(var_string_name)), RETCODE_OK);
+    EXPECT_EQ(string_struct_data->set_string_value(string_struct_data->get_member_id_by_name(var_string_name),
+            string_value), RETCODE_OK);
+    EXPECT_EQ(string_struct_data->get_string_value(testing_values.test_string_value,
+            string_struct_data->get_member_id_by_name(var_string_name)), RETCODE_OK);
     EXPECT_EQ(string_value, testing_values.test_string_value);
-    EXPECT_EQ(wstring_struct_data->set_wstring_value(wstring_struct_data->get_member_id_by_name(var_wstring_name), wstring_value), RETCODE_OK);
-    EXPECT_EQ(wstring_struct_data->get_wstring_value(testing_values.test_wstring_value, wstring_struct_data->get_member_id_by_name(var_wstring_name)), RETCODE_OK);
+    EXPECT_EQ(wstring_struct_data->set_wstring_value(wstring_struct_data->get_member_id_by_name(var_wstring_name),
+            wstring_value), RETCODE_OK);
+    EXPECT_EQ(wstring_struct_data->get_wstring_value(testing_values.test_wstring_value,
+            wstring_struct_data->get_member_id_by_name(var_wstring_name)), RETCODE_OK);
     EXPECT_EQ(wstring_value, testing_values.test_wstring_value);
-    EXPECT_EQ(bounded_string_struct_data->set_string_value(bounded_string_struct_data->get_member_id_by_name(var_bounded_string_name), bounded_string_value), RETCODE_OK);
-    EXPECT_EQ(bounded_string_struct_data->get_string_value(testing_values.test_bounded_string_value, bounded_string_struct_data->get_member_id_by_name(var_bounded_string_name)), RETCODE_OK);
+    EXPECT_EQ(bounded_string_struct_data->set_string_value(bounded_string_struct_data->get_member_id_by_name(
+                var_bounded_string_name), bounded_string_value), RETCODE_OK);
+    EXPECT_EQ(bounded_string_struct_data->get_string_value(testing_values.test_bounded_string_value,
+            bounded_string_struct_data->get_member_id_by_name(var_bounded_string_name)), RETCODE_OK);
     EXPECT_EQ(bounded_string_value, testing_values.test_bounded_string_value);
-    EXPECT_EQ(bounded_wstring_struct_data->set_wstring_value(bounded_wstring_struct_data->get_member_id_by_name(var_bounded_wstring_name), bounded_wstring_value), RETCODE_OK);
-    EXPECT_EQ(bounded_wstring_struct_data->get_wstring_value(testing_values.test_bounded_wstring_value, bounded_wstring_struct_data->get_member_id_by_name(var_bounded_wstring_name)), RETCODE_OK);
+    EXPECT_EQ(bounded_wstring_struct_data->set_wstring_value(bounded_wstring_struct_data->get_member_id_by_name(
+                var_bounded_wstring_name), bounded_wstring_value), RETCODE_OK);
+    EXPECT_EQ(bounded_wstring_struct_data->get_wstring_value(testing_values.test_bounded_wstring_value,
+            bounded_wstring_struct_data->get_member_id_by_name(var_bounded_wstring_name)), RETCODE_OK);
     EXPECT_EQ(bounded_wstring_value, testing_values.test_bounded_wstring_value);
-    EXPECT_EQ(enum_struct_data->set_uint32_value(enum_struct_data->get_member_id_by_name(var_enum_name), static_cast<uint32_t>(enum_value)), RETCODE_OK);
-    EXPECT_EQ(enum_struct_data->get_uint32_value(testing_values.test_enum_value, enum_struct_data->get_member_id_by_name(var_enum_name)), RETCODE_OK);
+    EXPECT_EQ(enum_struct_data->set_uint32_value(enum_struct_data->get_member_id_by_name(var_enum_name),
+            static_cast<uint32_t>(enum_value)), RETCODE_OK);
+    EXPECT_EQ(enum_struct_data->get_uint32_value(testing_values.test_enum_value,
+            enum_struct_data->get_member_id_by_name(var_enum_name)), RETCODE_OK);
     EXPECT_EQ(static_cast<uint32_t>(enum_value), testing_values.test_enum_value);
-    EXPECT_EQ(bitmask_struct_data->set_uint32_value(bitmask_struct_data->get_member_id_by_name(var_bitmask_name), bitmask_value), RETCODE_OK);
-    EXPECT_EQ(bitmask_struct_data->get_uint32_value(testing_values.test_bitmask_value, bitmask_struct_data->get_member_id_by_name(var_bitmask_name)), RETCODE_OK);
+    EXPECT_EQ(bitmask_struct_data->set_uint32_value(bitmask_struct_data->get_member_id_by_name(var_bitmask_name),
+            bitmask_value), RETCODE_OK);
+    EXPECT_EQ(bitmask_struct_data->get_uint32_value(testing_values.test_bitmask_value,
+            bitmask_struct_data->get_member_id_by_name(var_bitmask_name)), RETCODE_OK);
     EXPECT_EQ(bitmask_value, testing_values.test_bitmask_value);
-    EXPECT_EQ(alias_struct_data->set_int32_value(alias_struct_data->get_member_id_by_name(var_alias_name), long_value), RETCODE_OK);
+    EXPECT_EQ(alias_struct_data->set_int32_value(alias_struct_data->get_member_id_by_name(
+                var_alias_name), long_value), RETCODE_OK);
     testing_values.test_long_value = 0;
-    EXPECT_EQ(alias_struct_data->get_int32_value(testing_values.test_long_value, alias_struct_data->get_member_id_by_name(var_alias_name)), RETCODE_OK);
+    EXPECT_EQ(alias_struct_data->get_int32_value(testing_values.test_long_value,
+            alias_struct_data->get_member_id_by_name(var_alias_name)), RETCODE_OK);
     EXPECT_EQ(long_value, testing_values.test_long_value);
-    EXPECT_EQ(array_struct_data->set_int16_values(array_struct_data->get_member_id_by_name(var_array_name), array_value), RETCODE_OK);
-    EXPECT_EQ(array_struct_data->get_int16_values(testing_values.test_array_value, array_struct_data->get_member_id_by_name(var_array_name)), RETCODE_OK);
+    EXPECT_EQ(array_struct_data->set_int16_values(array_struct_data->get_member_id_by_name(
+                var_array_name), array_value), RETCODE_OK);
+    EXPECT_EQ(array_struct_data->get_int16_values(testing_values.test_array_value,
+            array_struct_data->get_member_id_by_name(var_array_name)), RETCODE_OK);
     EXPECT_EQ(array_value, testing_values.test_array_value);
-    EXPECT_EQ(seq_struct_data->set_int32_values(seq_struct_data->get_member_id_by_name(var_seq_name), seq_value), RETCODE_OK);
-    EXPECT_EQ(seq_struct_data->get_int32_values(testing_values.test_seq_value, seq_struct_data->get_member_id_by_name(var_seq_name)), RETCODE_OK);
+    EXPECT_EQ(seq_struct_data->set_int32_values(seq_struct_data->get_member_id_by_name(
+                var_seq_name), seq_value), RETCODE_OK);
+    EXPECT_EQ(seq_struct_data->get_int32_values(testing_values.test_seq_value,
+            seq_struct_data->get_member_id_by_name(var_seq_name)), RETCODE_OK);
     EXPECT_EQ(seq_value, testing_values.test_seq_value);
-    EXPECT_EQ(map_data->set_int32_value(map_data->get_member_id_by_name(std::to_string(first_map_key)), long_value), RETCODE_OK);
-    EXPECT_EQ(map_data->set_int32_value(map_data->get_member_id_by_name(std::to_string(second_map_key)), map_value), RETCODE_OK);
-    EXPECT_EQ(map_data->get_int32_value(testing_values.test_long_value, map_data->get_member_id_by_name(std::to_string(first_map_key))), RETCODE_OK);
+    EXPECT_EQ(map_data->set_int32_value(map_data->get_member_id_by_name(std::to_string(
+                first_map_key)), long_value), RETCODE_OK);
+    EXPECT_EQ(map_data->set_int32_value(map_data->get_member_id_by_name(std::to_string(
+                second_map_key)), map_value), RETCODE_OK);
+    EXPECT_EQ(map_data->get_int32_value(testing_values.test_long_value,
+            map_data->get_member_id_by_name(std::to_string(first_map_key))), RETCODE_OK);
     EXPECT_EQ(long_value, testing_values.test_long_value);
-    EXPECT_EQ(map_data->get_int32_value(testing_values.test_map_value, map_data->get_member_id_by_name(std::to_string(second_map_key))), RETCODE_OK);
+    EXPECT_EQ(map_data->get_int32_value(testing_values.test_map_value,
+            map_data->get_member_id_by_name(std::to_string(second_map_key))), RETCODE_OK);
     EXPECT_EQ(map_value, testing_values.test_map_value);
     testing_values.test_float_value = 0.0;
     testing_values.test_short_value = 0;
-    EXPECT_EQ(union_data->set_float32_value(union_data->get_member_id_by_name(union_float_member_name), float_value), RETCODE_OK);
-    EXPECT_EQ(union_data->get_float32_value(testing_values.test_float_value, union_data->get_member_id_by_name(union_float_member_name)), RETCODE_OK);
+    EXPECT_EQ(union_data->set_float32_value(union_data->get_member_id_by_name(
+                union_float_member_name), float_value), RETCODE_OK);
+    EXPECT_EQ(union_data->get_float32_value(testing_values.test_float_value,
+            union_data->get_member_id_by_name(union_float_member_name)), RETCODE_OK);
     EXPECT_EQ(float_value, testing_values.test_float_value);
-    EXPECT_EQ(union_data->set_int16_value(union_data->get_member_id_by_name(union_short_member_name), short_value), RETCODE_OK);
-    EXPECT_EQ(union_data->get_int16_value(testing_values.test_short_value, union_data->get_member_id_by_name(union_short_member_name)), RETCODE_OK);
+    EXPECT_EQ(union_data->set_int16_value(union_data->get_member_id_by_name(
+                union_short_member_name), short_value), RETCODE_OK);
+    EXPECT_EQ(union_data->get_int16_value(testing_values.test_short_value,
+            union_data->get_member_id_by_name(union_short_member_name)), RETCODE_OK);
     EXPECT_EQ(short_value, testing_values.test_short_value);
     testing_values.test_float_value = 0.0;
     testing_values.test_long_value = 0;
-    EXPECT_EQ(structure_data->set_float32_value(structure_data->get_member_id_by_name(struct_float_member_name), float_value), RETCODE_OK);
-    EXPECT_EQ(structure_data->set_int32_value(structure_data->get_member_id_by_name(struct_long_member_name), long_value), RETCODE_OK);
-    EXPECT_EQ(structure_data->get_float32_value(testing_values.test_float_value, structure_data->get_member_id_by_name(struct_float_member_name)), RETCODE_OK);
-    EXPECT_EQ(structure_data->get_int32_value(testing_values.test_long_value, structure_data->get_member_id_by_name(struct_long_member_name)), RETCODE_OK);
+    EXPECT_EQ(structure_data->set_float32_value(structure_data->get_member_id_by_name(struct_float_member_name),
+            float_value), RETCODE_OK);
+    EXPECT_EQ(structure_data->set_int32_value(structure_data->get_member_id_by_name(
+                struct_long_member_name), long_value), RETCODE_OK);
+    EXPECT_EQ(structure_data->get_float32_value(testing_values.test_float_value,
+            structure_data->get_member_id_by_name(struct_float_member_name)), RETCODE_OK);
+    EXPECT_EQ(structure_data->get_int32_value(testing_values.test_long_value,
+            structure_data->get_member_id_by_name(struct_long_member_name)), RETCODE_OK);
     EXPECT_EQ(testing_values.test_float_value, float_value);
     EXPECT_EQ(testing_values.test_long_value, long_value);
     testing_values.test_bool_value = false;
@@ -1815,10 +1678,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructStructures)
     EXPECT_EQ(bitset_data->set_boolean_value(bitset_data->get_member_id_by_name(bitfield_b), bool_value), RETCODE_OK);
     EXPECT_EQ(bitset_data->set_uint16_value(bitset_data->get_member_id_by_name(bitfield_c), ushort_value), RETCODE_OK);
     EXPECT_EQ(bitset_data->set_int16_value(bitset_data->get_member_id_by_name(bitfield_d), short_value), RETCODE_OK);
-    EXPECT_EQ(bitset_data->get_uint8_value(testing_values.test_octet_value, bitset_data->get_member_id_by_name(bitfield_a)), RETCODE_OK);
-    EXPECT_EQ(bitset_data->get_boolean_value(testing_values.test_bool_value, bitset_data->get_member_id_by_name(bitfield_b)), RETCODE_OK);
-    EXPECT_EQ(bitset_data->get_uint16_value(testing_values.test_ushort_value, bitset_data->get_member_id_by_name(bitfield_c)), RETCODE_OK);
-    EXPECT_EQ(bitset_data->get_int16_value(testing_values.test_short_value, bitset_data->get_member_id_by_name(bitfield_d)), RETCODE_OK);
+    EXPECT_EQ(bitset_data->get_uint8_value(testing_values.test_octet_value,
+            bitset_data->get_member_id_by_name(bitfield_a)), RETCODE_OK);
+    EXPECT_EQ(bitset_data->get_boolean_value(testing_values.test_bool_value,
+            bitset_data->get_member_id_by_name(bitfield_b)), RETCODE_OK);
+    EXPECT_EQ(bitset_data->get_uint16_value(testing_values.test_ushort_value,
+            bitset_data->get_member_id_by_name(bitfield_c)), RETCODE_OK);
+    EXPECT_EQ(bitset_data->get_int16_value(testing_values.test_short_value,
+            bitset_data->get_member_id_by_name(bitfield_d)), RETCODE_OK);
     EXPECT_EQ(octet_value, testing_values.test_octet_value);
     EXPECT_EQ(bool_value, testing_values.test_bool_value);
     EXPECT_EQ(ushort_value, testing_values.test_ushort_value);
@@ -1855,19 +1722,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructStructures)
     EXPECT_EQ(bitset_struct_data->return_loaned_value(bitset_data), RETCODE_OK);
     EXPECT_EQ(data->return_loaned_value(bitset_struct_data), RETCODE_OK);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         Structures struct_data;
         StructuresPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        check_structure_static_data(data, struct_data, testing_values);
-    }
-
-    // XCDRv2
-    {
-        Structures struct_data;
-        StructuresPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         check_structure_static_data(data, struct_data, testing_values);
     }
 
@@ -1886,7 +1745,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructStructures)
  *     } foo_struct;
  *     float c;
  * };
- * 
+ *
  * struct root2
  * {
  *     struct foo
@@ -1898,7 +1757,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructStructures)
  *         double e;
  *     } bar_struct;
  * };
- * 
+ *
  * struct root
  * {
  *     root1 var_root1;
@@ -1915,23 +1774,28 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_root)
     type_descriptor = traits<TypeDescriptor>::make_shared();
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(root1_struct_name);
-    DynamicTypeBuilder::_ref_type  root1_struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type root1_struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                            type_descriptor)};
 
     type_descriptor = traits<TypeDescriptor>::make_shared();
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(root2_struct_name);
-    DynamicTypeBuilder::_ref_type root2_struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type root2_struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                            type_descriptor)};
 
     type_descriptor = traits<TypeDescriptor>::make_shared();
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(foo_struct_name);
-    DynamicTypeBuilder::_ref_type foo1_struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
-    DynamicTypeBuilder::_ref_type foo2_struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type foo1_struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                           type_descriptor)};
+    DynamicTypeBuilder::_ref_type foo2_struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                           type_descriptor)};
 
     type_descriptor = traits<TypeDescriptor>::make_shared();
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(bar_struct_name);
-    DynamicTypeBuilder::_ref_type bar_struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type bar_struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                          type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_a_name);
@@ -2011,7 +1875,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_root)
     EXPECT_EQ(foo1_data->get_int32_value(test_long_value, foo1_data->get_member_id_by_name(var_b_name)), RETCODE_OK);
     EXPECT_EQ(b_value, test_long_value);
     EXPECT_EQ(root1_data->set_float32_value(root1_data->get_member_id_by_name(var_c_name), c_value), RETCODE_OK);
-    EXPECT_EQ(root1_data->get_float32_value(test_float_value, root1_data->get_member_id_by_name(var_c_name)), RETCODE_OK);
+    EXPECT_EQ(root1_data->get_float32_value(test_float_value, root1_data->get_member_id_by_name(var_c_name)),
+            RETCODE_OK);
     EXPECT_EQ(c_value, test_float_value);
     EXPECT_EQ(foo2_data->set_boolean_value(foo2_data->get_member_id_by_name(var_d_name), d_value), RETCODE_OK);
     EXPECT_EQ(foo2_data->get_boolean_value(test_bool_value, foo2_data->get_member_id_by_name(var_d_name)), RETCODE_OK);
@@ -2026,23 +1891,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_root)
     EXPECT_EQ(data->return_loaned_value(root1_data), RETCODE_OK);
     EXPECT_EQ(data->return_loaned_value(root2_data), RETCODE_OK);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         root struct_data;
         rootPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_root1().foo_struct().a(), a_value);
-        EXPECT_EQ(struct_data.var_root1().foo_struct().b(), b_value);
-        EXPECT_EQ(struct_data.var_root1().c(), c_value);
-        EXPECT_EQ(struct_data.var_root2().foo_struct().d(), d_value);
-        EXPECT_EQ(struct_data.var_root2().bar_struct().e(), e_value);
-    }
-
-    // XCDRv2
-    {
-        root struct_data;
-        rootPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_root1().foo_struct().a(), a_value);
         EXPECT_EQ(struct_data.var_root1().foo_struct().b(), b_value);
         EXPECT_EQ(struct_data.var_root1().c(), c_value);

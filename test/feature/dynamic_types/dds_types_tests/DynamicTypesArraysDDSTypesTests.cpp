@@ -125,7 +125,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayShort)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_short_array);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT16), {10})->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::
+                    get_instance()->get_primitive_type(TK_INT16), {10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -138,23 +139,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayShort)
     EXPECT_EQ(data->get_int16_values(test_value, data->get_member_id_by_name(var_short_array)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         ArrayShort struct_data;
         ArrayShortPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_short().size(), test_value.size());
-        for (size_t i = 0; i < test_value.size(); ++i)
-        {
-            EXPECT_EQ(struct_data.var_array_short()[i], test_value[i]);
-        }
-    }
-
-    // XCDRv2
-    {
-        ArrayShort struct_data;
-        ArrayShortPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_array_short().size(), test_value.size());
         for (size_t i = 0; i < test_value.size(); ++i)
         {
@@ -175,7 +164,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayUShort)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ushort_array);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT16), {10})->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::
+                    get_instance()->get_primitive_type(TK_UINT16), {10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -188,23 +178,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayUShort)
     EXPECT_EQ(data->get_uint16_values(test_value, data->get_member_id_by_name(var_ushort_array)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         ArrayUShort struct_data;
         ArrayUShortPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_ushort().size(), test_value.size());
-        for (size_t i = 0; i < test_value.size(); ++i)
-        {
-            EXPECT_EQ(struct_data.var_array_ushort()[i], test_value[i]);
-        }
-    }
-
-    // XCDRv2
-    {
-        ArrayUShort struct_data;
-        ArrayUShortPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_array_ushort().size(), test_value.size());
         for (size_t i = 0; i < test_value.size(); ++i)
         {
@@ -225,7 +203,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayLong)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_long_array);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32), {10})->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::
+                    get_instance()->get_primitive_type(TK_INT32), {10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -238,23 +217,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayLong)
     EXPECT_EQ(data->get_int32_values(test_value, data->get_member_id_by_name(var_long_array)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         ArrayLong struct_data;
         ArrayLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_long().size(), test_value.size());
-        for (size_t i = 0; i < test_value.size(); ++i)
-        {
-            EXPECT_EQ(struct_data.var_array_long()[i], test_value[i]);
-        }
-    }
-
-    // XCDRv2
-    {
-        ArrayLong struct_data;
-        ArrayLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_array_long().size(), test_value.size());
         for (size_t i = 0; i < test_value.size(); ++i)
         {
@@ -275,7 +242,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayULong)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulong_array);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32), {10})->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::
+                    get_instance()->get_primitive_type(TK_UINT32), {10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -288,23 +256,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayULong)
     EXPECT_EQ(data->get_uint32_values(test_value, data->get_member_id_by_name(var_ulong_array)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         ArrayULong struct_data;
         ArrayULongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_ulong().size(), test_value.size());
-        for (size_t i = 0; i < test_value.size(); ++i)
-        {
-            EXPECT_EQ(struct_data.var_array_ulong()[i], test_value[i]);
-        }
-    }
-
-    // XCDRv2
-    {
-        ArrayULong struct_data;
-        ArrayULongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_array_ulong().size(), test_value.size());
         for (size_t i = 0; i < test_value.size(); ++i)
         {
@@ -325,7 +281,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayLongLong)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_longlong_array);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT64), {10})->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::
+                    get_instance()->get_primitive_type(TK_INT64), {10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -338,23 +295,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayLongLong)
     EXPECT_EQ(data->get_int64_values(test_value, data->get_member_id_by_name(var_longlong_array)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         ArrayLongLong struct_data;
         ArrayLongLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_longlong().size(), test_value.size());
-        for (size_t i = 0; i < test_value.size(); ++i)
-        {
-            EXPECT_EQ(struct_data.var_array_longlong()[i], test_value[i]);
-        }
-    }
-
-    // XCDRv2
-    {
-        ArrayLongLong struct_data;
-        ArrayLongLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_array_longlong().size(), test_value.size());
         for (size_t i = 0; i < test_value.size(); ++i)
         {
@@ -375,7 +320,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayULongLong)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulonglong_array);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT64), {10})->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::
+                    get_instance()->get_primitive_type(TK_UINT64), {10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -388,23 +334,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayULongLong)
     EXPECT_EQ(data->get_uint64_values(test_value, data->get_member_id_by_name(var_ulonglong_array)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         ArrayULongLong struct_data;
         ArrayULongLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_ulonglong().size(), test_value.size());
-        for (size_t i = 0; i < test_value.size(); ++i)
-        {
-            EXPECT_EQ(struct_data.var_array_ulonglong()[i], test_value[i]);
-        }
-    }
-
-    // XCDRv2
-    {
-        ArrayULongLong struct_data;
-        ArrayULongLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_array_ulonglong().size(), test_value.size());
         for (size_t i = 0; i < test_value.size(); ++i)
         {
@@ -425,7 +359,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayFloat)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_float_array);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_FLOAT32), {10})->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::
+                    get_instance()->get_primitive_type(TK_FLOAT32), {10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -438,23 +373,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayFloat)
     EXPECT_EQ(data->get_float32_values(test_value, data->get_member_id_by_name(var_float_array)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         ArrayFloat struct_data;
         ArrayFloatPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_float().size(), test_value.size());
-        for (size_t i = 0; i < test_value.size(); ++i)
-        {
-            EXPECT_EQ(struct_data.var_array_float()[i], test_value[i]);
-        }
-    }
-
-    // XCDRv2
-    {
-        ArrayFloat struct_data;
-        ArrayFloatPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_array_float().size(), test_value.size());
         for (size_t i = 0; i < test_value.size(); ++i)
         {
@@ -475,7 +398,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayDouble)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_double_array);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_FLOAT64), {10})->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::
+                    get_instance()->get_primitive_type(TK_FLOAT64), {10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -488,23 +412,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayDouble)
     EXPECT_EQ(data->get_float64_values(test_value, data->get_member_id_by_name(var_double_array)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         ArrayDouble struct_data;
         ArrayDoublePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_double().size(), test_value.size());
-        for (size_t i = 0; i < test_value.size(); ++i)
-        {
-            EXPECT_EQ(struct_data.var_array_double()[i], test_value[i]);
-        }
-    }
-
-    // XCDRv2
-    {
-        ArrayDouble struct_data;
-        ArrayDoublePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_array_double().size(), test_value.size());
         for (size_t i = 0; i < test_value.size(); ++i)
         {
@@ -525,7 +437,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayLongDouble)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_longdouble_array);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_FLOAT128), {10})->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::
+                    get_instance()->get_primitive_type(TK_FLOAT128), {10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -538,23 +451,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayLongDouble)
     EXPECT_EQ(data->get_float128_values(test_value, data->get_member_id_by_name(var_longdouble_array)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         ArrayLongDouble struct_data;
         ArrayLongDoublePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_longdouble().size(), test_value.size());
-        for (size_t i = 0; i < test_value.size(); ++i)
-        {
-            EXPECT_EQ(struct_data.var_array_longdouble()[i], test_value[i]);
-        }
-    }
-
-    // XCDRv2
-    {
-        ArrayLongDouble struct_data;
-        ArrayLongDoublePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_array_longdouble().size(), test_value.size());
         for (size_t i = 0; i < test_value.size(); ++i)
         {
@@ -575,7 +476,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayBoolean)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_bool_array);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_BOOLEAN), {10})->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::
+                    get_instance()->get_primitive_type(TK_BOOLEAN), {10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -588,23 +490,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayBoolean)
     EXPECT_EQ(data->get_boolean_values(test_value, data->get_member_id_by_name(var_bool_array)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         ArrayBoolean struct_data;
         ArrayBooleanPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_boolean().size(), test_value.size());
-        for (size_t i = 0; i < test_value.size(); ++i)
-        {
-            EXPECT_EQ(struct_data.var_array_boolean()[i], test_value[i]);
-        }
-    }
-
-    // XCDRv2
-    {
-        ArrayBoolean struct_data;
-        ArrayBooleanPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_array_boolean().size(), test_value.size());
         for (size_t i = 0; i < test_value.size(); ++i)
         {
@@ -625,7 +515,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayOctet)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_byte_array);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_BYTE), {10})->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::
+                    get_instance()->get_primitive_type(TK_BYTE), {10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -638,23 +529,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayOctet)
     EXPECT_EQ(data->get_byte_values(test_value, data->get_member_id_by_name(var_byte_array)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         ArrayOctet struct_data;
         ArrayOctetPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_octet().size(), test_value.size());
-        for (size_t i = 0; i < test_value.size(); ++i)
-        {
-            EXPECT_EQ(struct_data.var_array_octet()[i], test_value[i]);
-        }
-    }
-
-    // XCDRv2
-    {
-        ArrayOctet struct_data;
-        ArrayOctetPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_array_octet().size(), test_value.size());
         for (size_t i = 0; i < test_value.size(); ++i)
         {
@@ -675,7 +554,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayChar)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_char_array);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_CHAR8), {10})->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::
+                    get_instance()->get_primitive_type(TK_CHAR8), {10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -688,23 +568,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayChar)
     EXPECT_EQ(data->get_char8_values(test_value, data->get_member_id_by_name(var_char_array)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         ArrayChar struct_data;
         ArrayCharPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_char().size(), test_value.size());
-        for (size_t i = 0; i < test_value.size(); ++i)
-        {
-            EXPECT_EQ(struct_data.var_array_char()[i], test_value[i]);
-        }
-    }
-
-    // XCDRv2
-    {
-        ArrayChar struct_data;
-        ArrayCharPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_array_char().size(), test_value.size());
         for (size_t i = 0; i < test_value.size(); ++i)
         {
@@ -725,7 +593,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayWChar)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_wchar_array);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_CHAR16), {10})->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::
+                    get_instance()->get_primitive_type(TK_CHAR16), {10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -738,23 +607,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayWChar)
     EXPECT_EQ(data->get_char16_values(test_value, data->get_member_id_by_name(var_wchar_array)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         ArrayWChar struct_data;
         ArrayWCharPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_wchar().size(), test_value.size());
-        for (size_t i = 0; i < test_value.size(); ++i)
-        {
-            EXPECT_EQ(struct_data.var_array_wchar()[i], test_value[i]);
-        }
-    }
-
-    // XCDRv2
-    {
-        ArrayWChar struct_data;
-        ArrayWCharPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_array_wchar().size(), test_value.size());
         for (size_t i = 0; i < test_value.size(); ++i)
         {
@@ -775,7 +632,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayString)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_string_array);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::get_instance()->create_string_type(LENGTH_UNLIMITED)->build(), {10})->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::
+                    get_instance()->create_string_type(LENGTH_UNLIMITED)->build(), {10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -788,23 +646,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayString)
     EXPECT_EQ(data->get_string_values(test_value, data->get_member_id_by_name(var_string_array)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         ArrayString struct_data;
         ArrayStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_string().size(), test_value.size());
-        for (size_t i = 0; i < test_value.size(); ++i)
-        {
-            EXPECT_EQ(struct_data.var_array_string()[i], test_value[i]);
-        }
-    }
-
-    // XCDRv2
-    {
-        ArrayString struct_data;
-        ArrayStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_array_string().size(), test_value.size());
         for (size_t i = 0; i < test_value.size(); ++i)
         {
@@ -825,36 +671,27 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayWString)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_wstring_array);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::get_instance()->create_wstring_type(LENGTH_UNLIMITED)->build(), {10})->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::
+                    get_instance()->create_wstring_type(LENGTH_UNLIMITED)->build(), {10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    WstringSeq value = {L"Lorem", L"ipsum", L"dolor", L"sit", L"amet", L"consectetur", L"adipiscing", L"elit", L"sed", L"do"};
+    WstringSeq value =
+    {L"Lorem", L"ipsum", L"dolor", L"sit", L"amet", L"consectetur", L"adipiscing", L"elit", L"sed",
+     L"do"};
     WstringSeq test_value;
     EXPECT_EQ(data->set_wstring_values(data->get_member_id_by_name(var_wstring_array), value), RETCODE_OK);
     EXPECT_EQ(data->get_wstring_values(test_value, data->get_member_id_by_name(var_wstring_array)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         ArrayWString struct_data;
         ArrayWStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_wstring().size(), test_value.size());
-        for (size_t i = 0; i < test_value.size(); ++i)
-        {
-            EXPECT_EQ(struct_data.var_array_wstring()[i], test_value[i]);
-        }
-    }
-
-    // XCDRv2
-    {
-        ArrayWString struct_data;
-        ArrayWStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_array_wstring().size(), test_value.size());
         for (size_t i = 0; i < test_value.size(); ++i)
         {
@@ -875,7 +712,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayBoundedString)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_bounded_string_array);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(create_inner_alias_bounded_string_helper(), {10})->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(
+                create_inner_alias_bounded_string_helper(), {10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -888,23 +726,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayBoundedString)
     EXPECT_EQ(data->get_string_values(test_value, data->get_member_id_by_name(var_bounded_string_array)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         ArrayBoundedString struct_data;
         ArrayBoundedStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_bounded_string().size(), test_value.size());
-        for (size_t i = 0; i < test_value.size(); ++i)
-        {
-            EXPECT_EQ(struct_data.var_array_bounded_string()[i], test_value[i]);
-        }
-    }
-
-    // XCDRv2
-    {
-        ArrayBoundedString struct_data;
-        ArrayBoundedStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_array_bounded_string().size(), test_value.size());
         for (size_t i = 0; i < test_value.size(); ++i)
         {
@@ -925,36 +751,27 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayBoundedWString)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_bounded_wstring_array);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(create_inner_alias_bounded_wstring_helper(), {10})->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(
+                create_inner_alias_bounded_wstring_helper(), {10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    WstringSeq value = {L"Lorem", L"ipsum", L"dolor", L"sit", L"amet", L"consectetu", L"adipiscing", L"elit", L"sed", L"do"};
+    WstringSeq value =
+    {L"Lorem", L"ipsum", L"dolor", L"sit", L"amet", L"consectetu", L"adipiscing", L"elit", L"sed",
+     L"do"};
     WstringSeq test_value;
     EXPECT_EQ(data->set_wstring_values(data->get_member_id_by_name(var_bounded_wstring_array), value), RETCODE_OK);
     EXPECT_EQ(data->get_wstring_values(test_value, data->get_member_id_by_name(var_bounded_wstring_array)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         ArrayBoundedWString struct_data;
         ArrayBoundedWStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_bounded_wstring().size(), test_value.size());
-        for (size_t i = 0; i < test_value.size(); ++i)
-        {
-            EXPECT_EQ(struct_data.var_array_bounded_wstring()[i], test_value[i]);
-        }
-    }
-
-    // XCDRv2
-    {
-        ArrayBoundedWString struct_data;
-        ArrayBoundedWStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_array_bounded_wstring().size(), test_value.size());
         for (size_t i = 0; i < test_value.size(); ++i)
         {
@@ -975,7 +792,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayEnum)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_enum_array);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(create_inner_enum_helper(), {10})->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(create_inner_enum_helper(),
+            {10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -999,23 +817,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayEnum)
     EXPECT_EQ(data->get_uint32_values(test_value, data->get_member_id_by_name(var_enum_array)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         ArrayEnum struct_data;
         ArrayEnumPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_enum().size(), test_value.size());
-        for (size_t i = 0; i < test_value.size(); ++i)
-        {
-            EXPECT_EQ(static_cast<uint32_t>(struct_data.var_array_enum()[i]), test_value[i]);
-        }
-    }
-
-    // XCDRv2
-    {
-        ArrayEnum struct_data;
-        ArrayEnumPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_array_enum().size(), test_value.size());
         for (size_t i = 0; i < test_value.size(); ++i)
         {
@@ -1036,7 +842,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayBitMask)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_bitmask_array);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(create_inner_bitmask_helper(), {10})->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(create_inner_bitmask_helper(),
+            {10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -1051,7 +858,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayBitMask)
         InnerBitMaskHelperBits::flag0 | InnerBitMaskHelperBits::flag4 | InnerBitMaskHelperBits::flag6,
         InnerBitMaskHelperBits::flag4 | InnerBitMaskHelperBits::flag6,
         InnerBitMaskHelperBits::flag1 | InnerBitMaskHelperBits::flag4,
-        InnerBitMaskHelperBits::flag0 | InnerBitMaskHelperBits::flag4 | InnerBitMaskHelperBits::flag1 | InnerBitMaskHelperBits::flag6,
+        InnerBitMaskHelperBits::flag0 | InnerBitMaskHelperBits::flag4 | InnerBitMaskHelperBits::flag1 |
+        InnerBitMaskHelperBits::flag6,
         InnerBitMaskHelperBits::flag1 | InnerBitMaskHelperBits::flag6,
         InnerBitMaskHelperBits::flag1 | InnerBitMaskHelperBits::flag4 | InnerBitMaskHelperBits::flag6
     };
@@ -1060,23 +868,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayBitMask)
     EXPECT_EQ(data->get_uint32_values(test_value, data->get_member_id_by_name(var_bitmask_array)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         ArrayBitMask struct_data;
         ArrayBitMaskPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_bitmask().size(), test_value.size());
-        for (size_t i = 0; i < test_value.size(); ++i)
-        {
-            EXPECT_EQ(struct_data.var_array_bitmask()[i], test_value[i]);
-        }
-    }
-
-    // XCDRv2
-    {
-        ArrayBitMask struct_data;
-        ArrayBitMaskPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_array_bitmask().size(), test_value.size());
         for (size_t i = 0; i < test_value.size(); ++i)
         {
@@ -1097,7 +893,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayAlias)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_alias_array);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(create_inner_alias_helper(), {10})->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(create_inner_alias_helper(),
+            {10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -1110,23 +907,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayAlias)
     EXPECT_EQ(data->get_int32_values(test_value, data->get_member_id_by_name(var_alias_array)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         ArrayAlias struct_data;
         ArrayAliasPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_alias().size(), test_value.size());
-        for (size_t i = 0; i < test_value.size(); ++i)
-        {
-            EXPECT_EQ(struct_data.var_array_alias()[i], test_value[i]);
-        }
-    }
-
-    // XCDRv2
-    {
-        ArrayAlias struct_data;
-        ArrayAliasPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_array_alias().size(), test_value.size());
         for (size_t i = 0; i < test_value.size(); ++i)
         {
@@ -1147,7 +932,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayShortArray)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_array_array);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT16), {10, 10})->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::
+                    get_instance()->get_primitive_type(TK_INT16), {10, 10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -1155,41 +941,29 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayShortArray)
     ASSERT_TRUE(data);
 
     Int16Seq value = {10, -100, 1000, -20, 200, -20000, 30, -300, 30000, 45,
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-            0, -1, -2, -3, -4, -5, -6, -7, -8, -9,
-            1000};
+                      0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+                      0, -1, -2, -3, -4, -5, -6, -7, -8, -9,
+                      1000};
     Int16Seq test_value;
     EXPECT_EQ(data->set_int16_values(data->get_member_id_by_name(var_array_array), value), RETCODE_OK);
     EXPECT_EQ(data->get_int16_values(test_value, data->get_member_id_by_name(var_array_array)), RETCODE_OK);
     value.insert(value.end(), 69, 0);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         ArrayShortArray struct_data;
         ArrayShortArrayPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_short_array().size() * struct_data.var_array_short_array()[0].size(), test_value.size());
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
+        EXPECT_EQ(
+            struct_data.var_array_short_array().size() * struct_data.var_array_short_array()[0].size(),
+            test_value.size());
         for (size_t i = 0; i < struct_data.var_array_short_array().size(); ++i)
         {
             for (size_t j = 0; j < struct_data.var_array_short_array()[i].size(); ++j)
             {
-                EXPECT_EQ(struct_data.var_array_short_array()[i][j], test_value[i * struct_data.var_array_short_array().size() + j]);
-            }
-        }
-    }
-
-    // XCDRv2
-    {
-        ArrayShortArray struct_data;
-        ArrayShortArrayPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_short_array().size() * struct_data.var_array_short_array()[0].size(), test_value.size());
-        for (size_t i = 0; i < struct_data.var_array_short_array().size(); ++i)
-        {
-            for (size_t j = 0; j < struct_data.var_array_short_array()[i].size(); ++j)
-            {
-                EXPECT_EQ(struct_data.var_array_short_array()[i][j], test_value[i * struct_data.var_array_short_array().size() + j]);
+                EXPECT_EQ(struct_data.var_array_short_array()[i][j],
+                        test_value[i * struct_data.var_array_short_array().size() + j]);
             }
         }
     }
@@ -1207,7 +981,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArraySequence)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_seq_array);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::get_instance()->create_sequence_type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32), LENGTH_UNLIMITED)->build(), {10})->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::
+                    get_instance()->create_sequence_type(DynamicTypeBuilderFactory::get_instance()->
+                    get_primitive_type(TK_INT32), LENGTH_UNLIMITED)->build(), {10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -1236,28 +1012,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArraySequence)
     }
     EXPECT_EQ(data->return_loaned_value(array_data), RETCODE_OK);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         ArraySequence struct_data;
         ArraySequencePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        array_data = data->loan_value(data->get_member_id_by_name(var_seq_array));
-        EXPECT_EQ(struct_data.var_array_sequence().size(), array_data->get_item_count());
-        EXPECT_EQ(struct_data.var_array_sequence()[0], first_value);
-        EXPECT_EQ(struct_data.var_array_sequence()[1], second_value);
-        EXPECT_EQ(struct_data.var_array_sequence()[2], third_value);
-        for (size_t i = 3; i < array_data->get_item_count(); ++i)
-        {
-            EXPECT_TRUE(struct_data.var_array_sequence()[i].empty());
-        }
-        EXPECT_EQ(data->return_loaned_value(array_data), RETCODE_OK);
-    }
-
-    // XCDRv2
-    {
-        ArraySequence struct_data;
-        ArraySequencePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         array_data = data->loan_value(data->get_member_id_by_name(var_seq_array));
         EXPECT_EQ(struct_data.var_array_sequence().size(), array_data->get_item_count());
         EXPECT_EQ(struct_data.var_array_sequence()[0], first_value);
@@ -1283,7 +1042,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMap)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_map_array);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::get_instance()->create_map_type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32), DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32), LENGTH_UNLIMITED)->build(), {10})->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::
+                    get_instance()->create_map_type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(
+                TK_INT32), DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32),
+            LENGTH_UNLIMITED)->build(), {10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -1301,17 +1063,23 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMap)
     ASSERT_TRUE(array_data);
     DynamicData::_ref_type map_data = array_data->loan_value(0);
     ASSERT_TRUE(map_data);
-    EXPECT_EQ(map_data->set_int32_value(map_data->get_member_id_by_name(std::to_string(first_key)), first_value), RETCODE_OK);
-    EXPECT_EQ(map_data->set_int32_value(map_data->get_member_id_by_name(std::to_string(second_key)), second_value), RETCODE_OK);
-    EXPECT_EQ(map_data->get_int32_value(test_value, map_data->get_member_id_by_name(std::to_string(first_key))), RETCODE_OK);
+    EXPECT_EQ(map_data->set_int32_value(map_data->get_member_id_by_name(std::to_string(
+                first_key)), first_value), RETCODE_OK);
+    EXPECT_EQ(map_data->set_int32_value(map_data->get_member_id_by_name(std::to_string(
+                second_key)), second_value), RETCODE_OK);
+    EXPECT_EQ(map_data->get_int32_value(test_value, map_data->get_member_id_by_name(std::to_string(
+                first_key))), RETCODE_OK);
     EXPECT_EQ(test_value, first_value);
-    EXPECT_EQ(map_data->get_int32_value(test_value, map_data->get_member_id_by_name(std::to_string(second_key))), RETCODE_OK);
+    EXPECT_EQ(map_data->get_int32_value(test_value, map_data->get_member_id_by_name(std::to_string(
+                second_key))), RETCODE_OK);
     EXPECT_EQ(test_value, second_value);
     EXPECT_EQ(array_data->return_loaned_value(map_data), RETCODE_OK);
     map_data = array_data->loan_value(1);
     ASSERT_TRUE(map_data);
-    EXPECT_EQ(map_data->set_int32_value(map_data->get_member_id_by_name(std::to_string(third_key)), third_value), RETCODE_OK);
-    EXPECT_EQ(map_data->get_int32_value(test_value, map_data->get_member_id_by_name(std::to_string(third_key))), RETCODE_OK);
+    EXPECT_EQ(map_data->set_int32_value(map_data->get_member_id_by_name(std::to_string(
+                third_key)), third_value), RETCODE_OK);
+    EXPECT_EQ(map_data->get_int32_value(test_value, map_data->get_member_id_by_name(std::to_string(
+                third_key))), RETCODE_OK);
     EXPECT_EQ(test_value, third_value);
     EXPECT_EQ(array_data->return_loaned_value(map_data), RETCODE_OK);
     EXPECT_EQ(data->return_loaned_value(array_data), RETCODE_OK);
@@ -1323,37 +1091,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMap)
         EXPECT_EQ(array_data->return_loaned_value(map_data), RETCODE_OK);
     }
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         ArrayMap struct_data;
         ArrayMapPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        array_data = data->loan_value(data->get_member_id_by_name(var_map_array));
-        ASSERT_TRUE(array_data);
-        EXPECT_EQ(struct_data.var_array_map().size(), array_data->get_item_count());
-        map_data = array_data->loan_value(0);
-        ASSERT_TRUE(map_data);
-        EXPECT_EQ(struct_data.var_array_map()[0].size(), map_data->get_item_count());
-        EXPECT_EQ(struct_data.var_array_map()[0][first_key], first_value);
-        EXPECT_EQ(struct_data.var_array_map()[0][second_key], second_value);
-        EXPECT_EQ(array_data->return_loaned_value(map_data), RETCODE_OK);
-        map_data = array_data->loan_value(1);
-        ASSERT_TRUE(map_data);
-        EXPECT_EQ(struct_data.var_array_map()[1].size(), map_data->get_item_count());
-        EXPECT_EQ(struct_data.var_array_map()[1][third_key], third_value);
-        EXPECT_EQ(array_data->return_loaned_value(map_data), RETCODE_OK);
-        for (size_t i = 2; i < array_data->get_item_count(); ++i)
-        {
-            EXPECT_TRUE(struct_data.var_array_map()[i].empty());
-        }
-        EXPECT_EQ(data->return_loaned_value(array_data), RETCODE_OK);
-    }
-
-    // XCDRv2
-    {
-        ArrayMap struct_data;
-        ArrayMapPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         array_data = data->loan_value(data->get_member_id_by_name(var_map_array));
         ASSERT_TRUE(array_data);
         EXPECT_EQ(struct_data.var_array_map().size(), array_data->get_item_count());
@@ -1388,7 +1130,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayUnion)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_union_array);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(create_inner_union_helper(), {10})->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(create_inner_union_helper(),
+            {10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -1405,20 +1148,26 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayUnion)
     ASSERT_TRUE(array_data);
     DynamicData::_ref_type union_data = array_data->loan_value(0);
     ASSERT_TRUE(union_data);
-    EXPECT_EQ(union_data->set_int32_value(union_data->get_member_id_by_name(union_long_member_name), long_value), RETCODE_OK);
-    EXPECT_EQ(union_data->get_int32_value(test_long_value, union_data->get_member_id_by_name(union_long_member_name)), RETCODE_OK);
+    EXPECT_EQ(union_data->set_int32_value(union_data->get_member_id_by_name(
+                union_long_member_name), long_value), RETCODE_OK);
+    EXPECT_EQ(union_data->get_int32_value(test_long_value, union_data->get_member_id_by_name(
+                union_long_member_name)), RETCODE_OK);
     EXPECT_EQ(test_long_value, long_value);
     EXPECT_EQ(array_data->return_loaned_value(union_data), RETCODE_OK);
     union_data = array_data->loan_value(1);
     ASSERT_TRUE(union_data);
-    EXPECT_EQ(union_data->set_float32_value(union_data->get_member_id_by_name(union_float_member_name), float_value), RETCODE_OK);
-    EXPECT_EQ(union_data->get_float32_value(test_float_value, union_data->get_member_id_by_name(union_float_member_name)), RETCODE_OK);
+    EXPECT_EQ(union_data->set_float32_value(union_data->get_member_id_by_name(
+                union_float_member_name), float_value), RETCODE_OK);
+    EXPECT_EQ(union_data->get_float32_value(test_float_value, union_data->get_member_id_by_name(
+                union_float_member_name)), RETCODE_OK);
     EXPECT_EQ(test_float_value, float_value);
     EXPECT_EQ(array_data->return_loaned_value(union_data), RETCODE_OK);
     union_data = array_data->loan_value(2);
     ASSERT_TRUE(union_data);
-    EXPECT_EQ(union_data->set_int16_value(union_data->get_member_id_by_name(union_short_member_name), short_value), RETCODE_OK);
-    EXPECT_EQ(union_data->get_int16_value(test_short_value, union_data->get_member_id_by_name(union_short_member_name)), RETCODE_OK);
+    EXPECT_EQ(union_data->set_int16_value(union_data->get_member_id_by_name(
+                union_short_member_name), short_value), RETCODE_OK);
+    EXPECT_EQ(union_data->get_int16_value(test_short_value, union_data->get_member_id_by_name(
+                union_short_member_name)), RETCODE_OK);
     EXPECT_EQ(test_short_value, short_value);
     EXPECT_EQ(array_data->return_loaned_value(union_data), RETCODE_OK);
     EXPECT_EQ(data->return_loaned_value(array_data), RETCODE_OK);
@@ -1426,30 +1175,17 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayUnion)
     {
         union_data = array_data->loan_value(i);
         ASSERT_TRUE(union_data);
-        EXPECT_EQ(union_data->get_int16_value(test_short_value, union_data->get_member_id_by_name(union_short_member_name)), RETCODE_OK);
+        EXPECT_EQ(union_data->get_int16_value(test_short_value,
+                union_data->get_member_id_by_name(union_short_member_name)), RETCODE_OK);
         EXPECT_EQ(test_short_value, 0u);
         EXPECT_EQ(array_data->return_loaned_value(union_data), RETCODE_OK);
     }
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         ArrayUnion struct_data;
         ArrayUnionPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_union()[0].longValue(), long_value);
-        EXPECT_EQ(struct_data.var_array_union()[1].floatValue(), float_value);
-        EXPECT_EQ(struct_data.var_array_union()[2].shortValue(), short_value);
-        for (size_t i = 3; i < struct_data.var_array_union().size(); ++i)
-        {
-            EXPECT_EQ(struct_data.var_array_union()[i].shortValue(), 0u);
-        }
-    }
-
-    // XCDRv2
-    {
-        ArrayUnion struct_data;
-        ArrayUnionPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_array_union()[0].longValue(), long_value);
         EXPECT_EQ(struct_data.var_array_union()[1].floatValue(), float_value);
         EXPECT_EQ(struct_data.var_array_union()[2].shortValue(), short_value);
@@ -1472,7 +1208,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayStructure)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_struct_array);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(create_inner_struct_helper(), {10})->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(create_inner_struct_helper(),
+            {10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -1489,20 +1226,28 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayStructure)
     ASSERT_TRUE(array_data);
     DynamicData::_ref_type data_struct = array_data->loan_value(0);
     ASSERT_TRUE(data_struct);
-    EXPECT_EQ(data_struct->set_int32_value(data_struct->get_member_id_by_name(struct_long_member_name), first_long_value), RETCODE_OK);
-    EXPECT_EQ(data_struct->get_int32_value(test_long_value, data_struct->get_member_id_by_name(struct_long_member_name)), RETCODE_OK);
+    EXPECT_EQ(data_struct->set_int32_value(data_struct->get_member_id_by_name(
+                struct_long_member_name), first_long_value), RETCODE_OK);
+    EXPECT_EQ(data_struct->get_int32_value(test_long_value, data_struct->get_member_id_by_name(
+                struct_long_member_name)), RETCODE_OK);
     EXPECT_EQ(test_long_value, first_long_value);
-    EXPECT_EQ(data_struct->set_float32_value(data_struct->get_member_id_by_name(struct_float_member_name), first_float_value), RETCODE_OK);
-    EXPECT_EQ(data_struct->get_float32_value(test_float_value, data_struct->get_member_id_by_name(struct_float_member_name)), RETCODE_OK);
+    EXPECT_EQ(data_struct->set_float32_value(data_struct->get_member_id_by_name(struct_float_member_name),
+            first_float_value), RETCODE_OK);
+    EXPECT_EQ(data_struct->get_float32_value(test_float_value,
+            data_struct->get_member_id_by_name(struct_float_member_name)), RETCODE_OK);
     EXPECT_EQ(test_float_value, first_float_value);
     EXPECT_EQ(array_data->return_loaned_value(data_struct), RETCODE_OK);
     data_struct = array_data->loan_value(1);
     ASSERT_TRUE(data_struct);
-    EXPECT_EQ(data_struct->set_int32_value(data_struct->get_member_id_by_name(struct_long_member_name), second_long_value), RETCODE_OK);
-    EXPECT_EQ(data_struct->get_int32_value(test_long_value, data_struct->get_member_id_by_name(struct_long_member_name)), RETCODE_OK);
+    EXPECT_EQ(data_struct->set_int32_value(data_struct->get_member_id_by_name(struct_long_member_name),
+            second_long_value), RETCODE_OK);
+    EXPECT_EQ(data_struct->get_int32_value(test_long_value, data_struct->get_member_id_by_name(
+                struct_long_member_name)), RETCODE_OK);
     EXPECT_EQ(test_long_value, second_long_value);
-    EXPECT_EQ(data_struct->set_float32_value(data_struct->get_member_id_by_name(struct_float_member_name), second_float_value), RETCODE_OK);
-    EXPECT_EQ(data_struct->get_float32_value(test_float_value, data_struct->get_member_id_by_name(struct_float_member_name)), RETCODE_OK);
+    EXPECT_EQ(data_struct->set_float32_value(data_struct->get_member_id_by_name(struct_float_member_name),
+            second_float_value), RETCODE_OK);
+    EXPECT_EQ(data_struct->get_float32_value(test_float_value,
+            data_struct->get_member_id_by_name(struct_float_member_name)), RETCODE_OK);
     EXPECT_EQ(test_float_value, second_float_value);
     EXPECT_EQ(array_data->return_loaned_value(data_struct), RETCODE_OK);
     EXPECT_EQ(data->return_loaned_value(array_data), RETCODE_OK);
@@ -1510,34 +1255,20 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayStructure)
     {
         data_struct = array_data->loan_value(i);
         ASSERT_TRUE(data_struct);
-        EXPECT_EQ(data_struct->get_int32_value(test_long_value, data_struct->get_member_id_by_name(struct_long_member_name)), RETCODE_OK);
-        EXPECT_EQ(data_struct->get_float32_value(test_float_value, data_struct->get_member_id_by_name(struct_float_member_name)), RETCODE_OK);
+        EXPECT_EQ(data_struct->get_int32_value(test_long_value,
+                data_struct->get_member_id_by_name(struct_long_member_name)), RETCODE_OK);
+        EXPECT_EQ(data_struct->get_float32_value(test_float_value,
+                data_struct->get_member_id_by_name(struct_float_member_name)), RETCODE_OK);
         EXPECT_EQ(test_long_value, 0u);
         EXPECT_EQ(test_float_value, 0u);
         EXPECT_EQ(array_data->return_loaned_value(data_struct), RETCODE_OK);
     }
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         ArrayStructure struct_data;
         ArrayStructurePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_structure()[0].field1(), first_long_value);
-        EXPECT_EQ(struct_data.var_array_structure()[0].field2(), first_float_value);
-        EXPECT_EQ(struct_data.var_array_structure()[1].field1(), second_long_value);
-        EXPECT_EQ(struct_data.var_array_structure()[1].field2(), second_float_value);
-        for (size_t i = 2; i < struct_data.var_array_structure().size(); ++i)
-        {
-            EXPECT_EQ(struct_data.var_array_structure()[i].field1(), 0u);
-            EXPECT_EQ(struct_data.var_array_structure()[i].field2(), 0u);
-        }
-    }
-
-    // XCDRv2
-    {
-        ArrayStructure struct_data;
-        ArrayStructurePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_array_structure()[0].field1(), first_long_value);
         EXPECT_EQ(struct_data.var_array_structure()[0].field2(), first_float_value);
         EXPECT_EQ(struct_data.var_array_structure()[1].field1(), second_long_value);
@@ -1562,7 +1293,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayBitset)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_bitset_array);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(create_inner_bitset_helper(), {10})->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(create_inner_bitset_helper(),
+            {10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -1585,32 +1317,48 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayBitset)
     ASSERT_TRUE(array_data);
     DynamicData::_ref_type bitset_data = array_data->loan_value(0);
     ASSERT_TRUE(bitset_data);
-    EXPECT_EQ(bitset_data->set_uint8_value(bitset_data->get_member_id_by_name(bitfield_a), first_octet_value), RETCODE_OK);
-    EXPECT_EQ(bitset_data->get_uint8_value(test_octet_value, bitset_data->get_member_id_by_name(bitfield_a)), RETCODE_OK);
+    EXPECT_EQ(bitset_data->set_uint8_value(bitset_data->get_member_id_by_name(
+                bitfield_a), first_octet_value), RETCODE_OK);
+    EXPECT_EQ(bitset_data->get_uint8_value(test_octet_value, bitset_data->get_member_id_by_name(bitfield_a)),
+            RETCODE_OK);
     EXPECT_EQ(first_octet_value, test_octet_value);
-    EXPECT_EQ(bitset_data->set_boolean_value(bitset_data->get_member_id_by_name(bitfield_b), first_bool_value), RETCODE_OK);
-    EXPECT_EQ(bitset_data->get_boolean_value(test_bool_value, bitset_data->get_member_id_by_name(bitfield_b)), RETCODE_OK);
+    EXPECT_EQ(bitset_data->set_boolean_value(bitset_data->get_member_id_by_name(
+                bitfield_b), first_bool_value), RETCODE_OK);
+    EXPECT_EQ(bitset_data->get_boolean_value(test_bool_value, bitset_data->get_member_id_by_name(
+                bitfield_b)), RETCODE_OK);
     EXPECT_EQ(first_bool_value, test_bool_value);
-    EXPECT_EQ(bitset_data->set_uint16_value(bitset_data->get_member_id_by_name(bitfield_c), first_ushort_value), RETCODE_OK);
-    EXPECT_EQ(bitset_data->get_uint16_value(test_ushort_value, bitset_data->get_member_id_by_name(bitfield_c)), RETCODE_OK);
+    EXPECT_EQ(bitset_data->set_uint16_value(bitset_data->get_member_id_by_name(
+                bitfield_c), first_ushort_value), RETCODE_OK);
+    EXPECT_EQ(bitset_data->get_uint16_value(test_ushort_value, bitset_data->get_member_id_by_name(
+                bitfield_c)), RETCODE_OK);
     EXPECT_EQ(first_ushort_value, test_ushort_value);
-    EXPECT_EQ(bitset_data->set_int16_value(bitset_data->get_member_id_by_name(bitfield_d), first_short_value), RETCODE_OK);
-    EXPECT_EQ(bitset_data->get_int16_value(test_short_value, bitset_data->get_member_id_by_name(bitfield_d)), RETCODE_OK);
+    EXPECT_EQ(bitset_data->set_int16_value(bitset_data->get_member_id_by_name(
+                bitfield_d), first_short_value), RETCODE_OK);
+    EXPECT_EQ(bitset_data->get_int16_value(test_short_value, bitset_data->get_member_id_by_name(bitfield_d)),
+            RETCODE_OK);
     EXPECT_EQ(first_short_value, test_short_value);
     EXPECT_EQ(array_data->return_loaned_value(bitset_data), RETCODE_OK);
     bitset_data = array_data->loan_value(1);
     ASSERT_TRUE(bitset_data);
-    EXPECT_EQ(bitset_data->set_uint8_value(bitset_data->get_member_id_by_name(bitfield_a), second_octet_value), RETCODE_OK);
-    EXPECT_EQ(bitset_data->get_uint8_value(test_octet_value, bitset_data->get_member_id_by_name(bitfield_a)), RETCODE_OK);
+    EXPECT_EQ(bitset_data->set_uint8_value(bitset_data->get_member_id_by_name(
+                bitfield_a), second_octet_value), RETCODE_OK);
+    EXPECT_EQ(bitset_data->get_uint8_value(test_octet_value, bitset_data->get_member_id_by_name(bitfield_a)),
+            RETCODE_OK);
     EXPECT_EQ(second_octet_value, test_octet_value);
-    EXPECT_EQ(bitset_data->set_boolean_value(bitset_data->get_member_id_by_name(bitfield_b), second_bool_value), RETCODE_OK);
-    EXPECT_EQ(bitset_data->get_boolean_value(test_bool_value, bitset_data->get_member_id_by_name(bitfield_b)), RETCODE_OK);
+    EXPECT_EQ(bitset_data->set_boolean_value(bitset_data->get_member_id_by_name(
+                bitfield_b), second_bool_value), RETCODE_OK);
+    EXPECT_EQ(bitset_data->get_boolean_value(test_bool_value, bitset_data->get_member_id_by_name(
+                bitfield_b)), RETCODE_OK);
     EXPECT_EQ(second_bool_value, test_bool_value);
-    EXPECT_EQ(bitset_data->set_uint16_value(bitset_data->get_member_id_by_name(bitfield_c), second_ushort_value), RETCODE_OK);
-    EXPECT_EQ(bitset_data->get_uint16_value(test_ushort_value, bitset_data->get_member_id_by_name(bitfield_c)), RETCODE_OK);
+    EXPECT_EQ(bitset_data->set_uint16_value(bitset_data->get_member_id_by_name(
+                bitfield_c), second_ushort_value), RETCODE_OK);
+    EXPECT_EQ(bitset_data->get_uint16_value(test_ushort_value, bitset_data->get_member_id_by_name(
+                bitfield_c)), RETCODE_OK);
     EXPECT_EQ(second_ushort_value, test_ushort_value);
-    EXPECT_EQ(bitset_data->set_int16_value(bitset_data->get_member_id_by_name(bitfield_d), second_short_value), RETCODE_OK);
-    EXPECT_EQ(bitset_data->get_int16_value(test_short_value, bitset_data->get_member_id_by_name(bitfield_d)), RETCODE_OK);
+    EXPECT_EQ(bitset_data->set_int16_value(bitset_data->get_member_id_by_name(
+                bitfield_d), second_short_value), RETCODE_OK);
+    EXPECT_EQ(bitset_data->get_int16_value(test_short_value, bitset_data->get_member_id_by_name(bitfield_d)),
+            RETCODE_OK);
     EXPECT_EQ(second_short_value, test_short_value);
     EXPECT_EQ(array_data->return_loaned_value(bitset_data), RETCODE_OK);
     EXPECT_EQ(data->return_loaned_value(array_data), RETCODE_OK);
@@ -1618,10 +1366,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayBitset)
     {
         bitset_data = array_data->loan_value(i);
         ASSERT_TRUE(bitset_data);
-        EXPECT_EQ(bitset_data->get_uint8_value(test_octet_value, bitset_data->get_member_id_by_name(bitfield_a)), RETCODE_OK);
-        EXPECT_EQ(bitset_data->get_boolean_value(test_bool_value, bitset_data->get_member_id_by_name(bitfield_b)), RETCODE_OK);
-        EXPECT_EQ(bitset_data->get_uint16_value(test_ushort_value, bitset_data->get_member_id_by_name(bitfield_c)), RETCODE_OK);
-        EXPECT_EQ(bitset_data->get_int16_value(test_short_value, bitset_data->get_member_id_by_name(bitfield_d)), RETCODE_OK);
+        EXPECT_EQ(bitset_data->get_uint8_value(test_octet_value, bitset_data->get_member_id_by_name(
+                    bitfield_a)), RETCODE_OK);
+        EXPECT_EQ(bitset_data->get_boolean_value(test_bool_value, bitset_data->get_member_id_by_name(
+                    bitfield_b)), RETCODE_OK);
+        EXPECT_EQ(bitset_data->get_uint16_value(test_ushort_value, bitset_data->get_member_id_by_name(
+                    bitfield_c)), RETCODE_OK);
+        EXPECT_EQ(bitset_data->get_int16_value(test_short_value, bitset_data->get_member_id_by_name(
+                    bitfield_d)), RETCODE_OK);
         EXPECT_EQ(test_octet_value, 0u);
         EXPECT_EQ(test_bool_value, false);
         EXPECT_EQ(test_ushort_value, 0u);
@@ -1629,11 +1381,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayBitset)
         EXPECT_EQ(array_data->return_loaned_value(bitset_data), RETCODE_OK);
     }
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         ArrayBitset struct_data;
         ArrayBitsetPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_array_bitset()[0].a(), first_octet_value);
         EXPECT_EQ(struct_data.var_array_bitset()[0].b(), first_bool_value);
         EXPECT_EQ(struct_data.var_array_bitset()[0].c(), first_ushort_value);
@@ -1644,32 +1396,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayBitset)
         EXPECT_EQ(struct_data.var_array_bitset()[1].d(), second_short_value);
         for (size_t i = 2; i < struct_data.var_array_bitset().size(); ++i)
         {
-        EXPECT_EQ(struct_data.var_array_bitset()[i].a(), 0u);
-        EXPECT_EQ(struct_data.var_array_bitset()[i].b(), false);
-        EXPECT_EQ(struct_data.var_array_bitset()[i].c(), 0u);
-        EXPECT_EQ(struct_data.var_array_bitset()[i].d(), 0);
-        }
-    }
-
-    // XCDRv2
-    {
-        ArrayBitset struct_data;
-        ArrayBitsetPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_bitset()[0].a(), first_octet_value);
-        EXPECT_EQ(struct_data.var_array_bitset()[0].b(), first_bool_value);
-        EXPECT_EQ(struct_data.var_array_bitset()[0].c(), first_ushort_value);
-        EXPECT_EQ(struct_data.var_array_bitset()[0].d(), first_short_value);
-        EXPECT_EQ(struct_data.var_array_bitset()[1].a(), second_octet_value);
-        EXPECT_EQ(struct_data.var_array_bitset()[1].b(), second_bool_value);
-        EXPECT_EQ(struct_data.var_array_bitset()[1].c(), second_ushort_value);
-        EXPECT_EQ(struct_data.var_array_bitset()[1].d(), second_short_value);
-        for (size_t i = 2; i < struct_data.var_array_bitset().size(); ++i)
-        {
-        EXPECT_EQ(struct_data.var_array_bitset()[i].a(), 0u);
-        EXPECT_EQ(struct_data.var_array_bitset()[i].b(), false);
-        EXPECT_EQ(struct_data.var_array_bitset()[i].c(), 0u);
-        EXPECT_EQ(struct_data.var_array_bitset()[i].d(), 0);
+            EXPECT_EQ(struct_data.var_array_bitset()[i].a(), 0u);
+            EXPECT_EQ(struct_data.var_array_bitset()[i].b(), false);
+            EXPECT_EQ(struct_data.var_array_bitset()[i].c(), 0u);
+            EXPECT_EQ(struct_data.var_array_bitset()[i].d(), 0);
         }
     }
 
@@ -1686,7 +1416,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionShort)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_short_array);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT16), {10, 10, 10})->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::
+                    get_instance()->get_primitive_type(TK_INT16), {10, 10, 10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -1707,37 +1438,24 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionShort)
     EXPECT_EQ(value.size(), test_value.size());
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         ArrayMultiDimensionShort struct_data;
         ArrayMultiDimensionShortPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_short().size() * struct_data.var_array_short()[0].size() * struct_data.var_array_short()[0][0].size(), test_value.size());
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
+        EXPECT_EQ(
+            struct_data.var_array_short().size() * struct_data.var_array_short()[0].size() *
+            struct_data.var_array_short()[0][0].size(), test_value.size());
         for (size_t i = 0; i < struct_data.var_array_short().size(); ++i)
         {
             for (size_t j = 0; j < struct_data.var_array_short()[i].size(); ++j)
             {
                 for (size_t k = 0; k < struct_data.var_array_short()[i][j].size(); ++k)
                 {
-                    EXPECT_EQ(struct_data.var_array_short()[i][j][k], test_value[i * struct_data.var_array_short().size() * struct_data.var_array_short()[i].size() + j * struct_data.var_array_short()[i].size() + k]);
-                }
-            }
-        }
-    }
-
-    // XCDRv2
-    {
-        ArrayMultiDimensionShort struct_data;
-        ArrayMultiDimensionShortPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_short().size() * struct_data.var_array_short()[0].size() * struct_data.var_array_short()[0][0].size(), test_value.size());
-        for (size_t i = 0; i < struct_data.var_array_short().size(); ++i)
-        {
-            for (size_t j = 0; j < struct_data.var_array_short()[i].size(); ++j)
-            {
-                for (size_t k = 0; k < struct_data.var_array_short()[i][j].size(); ++k)
-                {
-                    EXPECT_EQ(struct_data.var_array_short()[i][j][k], test_value[i * struct_data.var_array_short().size() * struct_data.var_array_short()[i].size() + j * struct_data.var_array_short()[i].size() + k]);
+                    EXPECT_EQ(struct_data.var_array_short()[i][j][k],
+                            test_value[i * struct_data.var_array_short().size() *
+                            struct_data.var_array_short()[i].size() + j *
+                            struct_data.var_array_short()[i].size() + k]);
                 }
             }
         }
@@ -1756,7 +1474,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionUShort)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ushort_array);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT16), {10, 10, 10})->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::
+                    get_instance()->get_primitive_type(TK_UINT16), {10, 10, 10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -1777,37 +1496,24 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionUShort)
     EXPECT_EQ(value.size(), test_value.size());
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         ArrayMultiDimensionUShort struct_data;
         ArrayMultiDimensionUShortPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_ushort().size() * struct_data.var_array_ushort()[0].size() * struct_data.var_array_ushort()[0][0].size(), test_value.size());
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
+        EXPECT_EQ(
+            struct_data.var_array_ushort().size() * struct_data.var_array_ushort()[0].size() *
+            struct_data.var_array_ushort()[0][0].size(), test_value.size());
         for (size_t i = 0; i < struct_data.var_array_ushort().size(); ++i)
         {
             for (size_t j = 0; j < struct_data.var_array_ushort()[i].size(); ++j)
             {
                 for (size_t k = 0; k < struct_data.var_array_ushort()[i][j].size(); ++k)
                 {
-                    EXPECT_EQ(struct_data.var_array_ushort()[i][j][k], test_value[i * struct_data.var_array_ushort().size() * struct_data.var_array_ushort()[i].size() + j * struct_data.var_array_ushort()[i].size() + k]);
-                }
-            }
-        }
-    }
-
-    // XCDRv2
-    {
-        ArrayMultiDimensionUShort struct_data;
-        ArrayMultiDimensionUShortPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_ushort().size() * struct_data.var_array_ushort()[0].size() * struct_data.var_array_ushort()[0][0].size(), test_value.size());
-        for (size_t i = 0; i < struct_data.var_array_ushort().size(); ++i)
-        {
-            for (size_t j = 0; j < struct_data.var_array_ushort()[i].size(); ++j)
-            {
-                for (size_t k = 0; k < struct_data.var_array_ushort()[i][j].size(); ++k)
-                {
-                    EXPECT_EQ(struct_data.var_array_ushort()[i][j][k], test_value[i * struct_data.var_array_ushort().size() * struct_data.var_array_ushort()[i].size() + j * struct_data.var_array_ushort()[i].size() + k]);
+                    EXPECT_EQ(struct_data.var_array_ushort()[i][j][k],
+                            test_value[i * struct_data.var_array_ushort().size() *
+                            struct_data.var_array_ushort()[i].size() + j *
+                            struct_data.var_array_ushort()[i].size() + k]);
                 }
             }
         }
@@ -1826,14 +1532,17 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionLong)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_long_array);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32), {10, 10, 10})->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::
+                    get_instance()->get_primitive_type(TK_INT32), {10, 10, 10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    Int32Seq value = {1, 2, 3, 4, 5, -6, -7, -8, -9, -10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000};
+    Int32Seq value =
+    {1, 2, 3, 4, 5, -6, -7, -8, -9, -10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000,
+     1000000000};
     value.insert(value.end(), 82, 0);
     value.insert(value.end(), 10);
     value.insert(value.end(), 100, 0);
@@ -1847,37 +1556,24 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionLong)
     EXPECT_EQ(value.size(), test_value.size());
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         ArrayMultiDimensionLong struct_data;
         ArrayMultiDimensionLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_long().size() * struct_data.var_array_long()[0].size() * struct_data.var_array_long()[0][0].size(), test_value.size());
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
+        EXPECT_EQ(
+            struct_data.var_array_long().size() * struct_data.var_array_long()[0].size() *
+            struct_data.var_array_long()[0][0].size(), test_value.size());
         for (size_t i = 0; i < struct_data.var_array_long().size(); ++i)
         {
             for (size_t j = 0; j < struct_data.var_array_long()[i].size(); ++j)
             {
                 for (size_t k = 0; k < struct_data.var_array_long()[i][j].size(); ++k)
                 {
-                    EXPECT_EQ(struct_data.var_array_long()[i][j][k], test_value[i * struct_data.var_array_long().size() * struct_data.var_array_long()[i].size() + j * struct_data.var_array_long()[i].size() + k]);
-                }
-            }
-        }
-    }
-
-    // XCDRv2
-    {
-        ArrayMultiDimensionLong struct_data;
-        ArrayMultiDimensionLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_long().size() * struct_data.var_array_long()[0].size() * struct_data.var_array_long()[0][0].size(), test_value.size());
-        for (size_t i = 0; i < struct_data.var_array_long().size(); ++i)
-        {
-            for (size_t j = 0; j < struct_data.var_array_long()[i].size(); ++j)
-            {
-                for (size_t k = 0; k < struct_data.var_array_long()[i][j].size(); ++k)
-                {
-                    EXPECT_EQ(struct_data.var_array_long()[i][j][k], test_value[i * struct_data.var_array_long().size() * struct_data.var_array_long()[i].size() + j * struct_data.var_array_long()[i].size() + k]);
+                    EXPECT_EQ(struct_data.var_array_long()[i][j][k],
+                            test_value[i * struct_data.var_array_long().size() *
+                            struct_data.var_array_long()[i].size() + j *
+                            struct_data.var_array_long()[i].size() + k]);
                 }
             }
         }
@@ -1896,14 +1592,17 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionULong)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulong_array);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32), {10, 10, 10})->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::
+                    get_instance()->get_primitive_type(TK_UINT32), {10, 10, 10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    UInt32Seq value = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000};
+    UInt32Seq value =
+    {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000,
+     1000000000};
     value.insert(value.end(), 82, 0);
     value.insert(value.end(), 10);
     value.insert(value.end(), 100, 0);
@@ -1917,37 +1616,24 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionULong)
     EXPECT_EQ(value.size(), test_value.size());
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         ArrayMultiDimensionULong struct_data;
         ArrayMultiDimensionULongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_ulong().size() * struct_data.var_array_ulong()[0].size() * struct_data.var_array_ulong()[0][0].size(), test_value.size());
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
+        EXPECT_EQ(
+            struct_data.var_array_ulong().size() * struct_data.var_array_ulong()[0].size() *
+            struct_data.var_array_ulong()[0][0].size(), test_value.size());
         for (size_t i = 0; i < struct_data.var_array_ulong().size(); ++i)
         {
             for (size_t j = 0; j < struct_data.var_array_ulong()[i].size(); ++j)
             {
                 for (size_t k = 0; k < struct_data.var_array_ulong()[i][j].size(); ++k)
                 {
-                    EXPECT_EQ(struct_data.var_array_ulong()[i][j][k], test_value[i * struct_data.var_array_ulong().size() * struct_data.var_array_ulong()[i].size() + j * struct_data.var_array_ulong()[i].size() + k]);
-                }
-            }
-        }
-    }
-
-    // XCDRv2
-    {
-        ArrayMultiDimensionULong struct_data;
-        ArrayMultiDimensionULongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_ulong().size() * struct_data.var_array_ulong()[0].size() * struct_data.var_array_ulong()[0][0].size(), test_value.size());
-        for (size_t i = 0; i < struct_data.var_array_ulong().size(); ++i)
-        {
-            for (size_t j = 0; j < struct_data.var_array_ulong()[i].size(); ++j)
-            {
-                for (size_t k = 0; k < struct_data.var_array_ulong()[i][j].size(); ++k)
-                {
-                    EXPECT_EQ(struct_data.var_array_ulong()[i][j][k], test_value[i * struct_data.var_array_ulong().size() * struct_data.var_array_ulong()[i].size() + j * struct_data.var_array_ulong()[i].size() + k]);
+                    EXPECT_EQ(struct_data.var_array_ulong()[i][j][k],
+                            test_value[i * struct_data.var_array_ulong().size() *
+                            struct_data.var_array_ulong()[i].size() + j *
+                            struct_data.var_array_ulong()[i].size() + k]);
                 }
             }
         }
@@ -1966,14 +1652,17 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionLongLong)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_longlong_array);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT64), {10, 10, 10})->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::
+                    get_instance()->get_primitive_type(TK_INT64), {10, 10, 10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    Int64Seq value = {1, 2, 3, 4, 5, -6, -7, -8, -9, -10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000, 1000000000000000000};
+    Int64Seq value =
+    {1, 2, 3, 4, 5, -6, -7, -8, -9, -10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000,
+     1000000000, 1000000000000000000};
     value.insert(value.end(), 81, 0);
     value.insert(value.end(), 10);
     value.insert(value.end(), 100, 0);
@@ -1987,37 +1676,24 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionLongLong)
     EXPECT_EQ(value.size(), test_value.size());
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         ArrayMultiDimensionLongLong struct_data;
         ArrayMultiDimensionLongLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_longlong().size() * struct_data.var_array_longlong()[0].size() * struct_data.var_array_longlong()[0][0].size(), test_value.size());
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
+        EXPECT_EQ(
+            struct_data.var_array_longlong().size() * struct_data.var_array_longlong()[0].size() *
+            struct_data.var_array_longlong()[0][0].size(), test_value.size());
         for (size_t i = 0; i < struct_data.var_array_longlong().size(); ++i)
         {
             for (size_t j = 0; j < struct_data.var_array_longlong()[i].size(); ++j)
             {
                 for (size_t k = 0; k < struct_data.var_array_longlong()[i][j].size(); ++k)
                 {
-                    EXPECT_EQ(struct_data.var_array_longlong()[i][j][k], test_value[i * struct_data.var_array_longlong().size() * struct_data.var_array_longlong()[i].size() + j * struct_data.var_array_longlong()[i].size() + k]);
-                }
-            }
-        }
-    }
-
-    // XCDRv2
-    {
-        ArrayMultiDimensionLongLong struct_data;
-        ArrayMultiDimensionLongLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_longlong().size() * struct_data.var_array_longlong()[0].size() * struct_data.var_array_longlong()[0][0].size(), test_value.size());
-        for (size_t i = 0; i < struct_data.var_array_longlong().size(); ++i)
-        {
-            for (size_t j = 0; j < struct_data.var_array_longlong()[i].size(); ++j)
-            {
-                for (size_t k = 0; k < struct_data.var_array_longlong()[i][j].size(); ++k)
-                {
-                    EXPECT_EQ(struct_data.var_array_longlong()[i][j][k], test_value[i * struct_data.var_array_longlong().size() * struct_data.var_array_longlong()[i].size() + j * struct_data.var_array_longlong()[i].size() + k]);
+                    EXPECT_EQ(struct_data.var_array_longlong()[i][j][k],
+                            test_value[i * struct_data.var_array_longlong().size() *
+                            struct_data.var_array_longlong()[i].size() + j *
+                            struct_data.var_array_longlong()[i].size() + k]);
                 }
             }
         }
@@ -2036,14 +1712,17 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionULongLong)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulonglong_array);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT64), {10, 10, 10})->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::
+                    get_instance()->get_primitive_type(TK_UINT64), {10, 10, 10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    UInt64Seq value = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000, 1000000000000000000};
+    UInt64Seq value =
+    {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000,
+     1000000000000000000};
     value.insert(value.end(), 81, 0);
     value.insert(value.end(), 10);
     value.insert(value.end(), 100, 0);
@@ -2057,37 +1736,24 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionULongLong)
     EXPECT_EQ(value.size(), test_value.size());
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         ArrayMultiDimensionULongLong struct_data;
         ArrayMultiDimensionULongLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_ulonglong().size() * struct_data.var_array_ulonglong()[0].size() * struct_data.var_array_ulonglong()[0][0].size(), test_value.size());
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
+        EXPECT_EQ(
+            struct_data.var_array_ulonglong().size() * struct_data.var_array_ulonglong()[0].size() *
+            struct_data.var_array_ulonglong()[0][0].size(), test_value.size());
         for (size_t i = 0; i < struct_data.var_array_ulonglong().size(); ++i)
         {
             for (size_t j = 0; j < struct_data.var_array_ulonglong()[i].size(); ++j)
             {
                 for (size_t k = 0; k < struct_data.var_array_ulonglong()[i][j].size(); ++k)
                 {
-                    EXPECT_EQ(struct_data.var_array_ulonglong()[i][j][k], test_value[i * struct_data.var_array_ulonglong().size() * struct_data.var_array_ulonglong()[i].size() + j * struct_data.var_array_ulonglong()[i].size() + k]);
-                }
-            }
-        }
-    }
-
-    // XCDRv2
-    {
-        ArrayMultiDimensionULongLong struct_data;
-        ArrayMultiDimensionULongLongPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_ulonglong().size() * struct_data.var_array_ulonglong()[0].size() * struct_data.var_array_ulonglong()[0][0].size(), test_value.size());
-        for (size_t i = 0; i < struct_data.var_array_ulonglong().size(); ++i)
-        {
-            for (size_t j = 0; j < struct_data.var_array_ulonglong()[i].size(); ++j)
-            {
-                for (size_t k = 0; k < struct_data.var_array_ulonglong()[i][j].size(); ++k)
-                {
-                    EXPECT_EQ(struct_data.var_array_ulonglong()[i][j][k], test_value[i * struct_data.var_array_ulonglong().size() * struct_data.var_array_ulonglong()[i].size() + j * struct_data.var_array_ulonglong()[i].size() + k]);
+                    EXPECT_EQ(struct_data.var_array_ulonglong()[i][j][k],
+                            test_value[i * struct_data.var_array_ulonglong().size() *
+                            struct_data.var_array_ulonglong()[i].size() + j *
+                            struct_data.var_array_ulonglong()[i].size() + k]);
                 }
             }
         }
@@ -2106,14 +1772,17 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionFloat)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_float_array);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_FLOAT32), {10, 10, 10})->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::
+                    get_instance()->get_primitive_type(TK_FLOAT32), {10, 10, 10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    Float32Seq value = {-1.234, 2.000103, 3.14, -4.01, 5.00000001, 6, 7.5, 8.21, 9, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000};
+    Float32Seq value =
+    {-1.234, 2.000103, 3.14, -4.01, 5.00000001, 6, 7.5, 8.21, 9, 10, 100, 1000, 10000, 100000,
+     1000000, 10000000, 100000000, 1000000000};
     value.insert(value.end(), 82, 0);
     value.insert(value.end(), 10);
     value.insert(value.end(), 100, 0);
@@ -2127,37 +1796,24 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionFloat)
     EXPECT_EQ(value.size(), test_value.size());
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         ArrayMultiDimensionFloat struct_data;
         ArrayMultiDimensionFloatPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_float().size() * struct_data.var_array_float()[0].size() * struct_data.var_array_float()[0][0].size(), test_value.size());
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
+        EXPECT_EQ(
+            struct_data.var_array_float().size() * struct_data.var_array_float()[0].size() *
+            struct_data.var_array_float()[0][0].size(), test_value.size());
         for (size_t i = 0; i < struct_data.var_array_float().size(); ++i)
         {
             for (size_t j = 0; j < struct_data.var_array_float()[i].size(); ++j)
             {
                 for (size_t k = 0; k < struct_data.var_array_float()[i][j].size(); ++k)
                 {
-                    EXPECT_EQ(struct_data.var_array_float()[i][j][k], test_value[i * struct_data.var_array_float().size() * struct_data.var_array_float()[i].size() + j * struct_data.var_array_float()[i].size() + k]);
-                }
-            }
-        }
-    }
-
-    // XCDRv2
-    {
-        ArrayMultiDimensionFloat struct_data;
-        ArrayMultiDimensionFloatPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_float().size() * struct_data.var_array_float()[0].size() * struct_data.var_array_float()[0][0].size(), test_value.size());
-        for (size_t i = 0; i < struct_data.var_array_float().size(); ++i)
-        {
-            for (size_t j = 0; j < struct_data.var_array_float()[i].size(); ++j)
-            {
-                for (size_t k = 0; k < struct_data.var_array_float()[i][j].size(); ++k)
-                {
-                    EXPECT_EQ(struct_data.var_array_float()[i][j][k], test_value[i * struct_data.var_array_float().size() * struct_data.var_array_float()[i].size() + j * struct_data.var_array_float()[i].size() + k]);
+                    EXPECT_EQ(struct_data.var_array_float()[i][j][k],
+                            test_value[i * struct_data.var_array_float().size() *
+                            struct_data.var_array_float()[i].size() + j *
+                            struct_data.var_array_float()[i].size() + k]);
                 }
             }
         }
@@ -2176,14 +1832,17 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionDouble)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_double_array);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_FLOAT64), {10, 10, 10})->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::
+                    get_instance()->get_primitive_type(TK_FLOAT64), {10, 10, 10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    Float64Seq value = {-1.234, 2.000103, 3.14, -4.01, 5.00000001, 6, 7.5, 8.21, 9, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000.4622537257};
+    Float64Seq value =
+    {-1.234, 2.000103, 3.14, -4.01, 5.00000001, 6, 7.5, 8.21, 9, 10, 100, 1000, 10000, 100000,
+     1000000, 10000000, 100000000, 1000000000.4622537257};
     value.insert(value.end(), 82, 0);
     value.insert(value.end(), 10);
     value.insert(value.end(), 100, 0);
@@ -2197,37 +1856,24 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionDouble)
     EXPECT_EQ(value.size(), test_value.size());
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         ArrayMultiDimensionDouble struct_data;
         ArrayMultiDimensionDoublePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_double().size() * struct_data.var_array_double()[0].size() * struct_data.var_array_double()[0][0].size(), test_value.size());
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
+        EXPECT_EQ(
+            struct_data.var_array_double().size() * struct_data.var_array_double()[0].size() *
+            struct_data.var_array_double()[0][0].size(), test_value.size());
         for (size_t i = 0; i < struct_data.var_array_double().size(); ++i)
         {
             for (size_t j = 0; j < struct_data.var_array_double()[i].size(); ++j)
             {
                 for (size_t k = 0; k < struct_data.var_array_double()[i][j].size(); ++k)
                 {
-                    EXPECT_EQ(struct_data.var_array_double()[i][j][k], test_value[i * struct_data.var_array_double().size() * struct_data.var_array_double()[i].size() + j * struct_data.var_array_double()[i].size() + k]);
-                }
-            }
-        }
-    }
-
-    // XCDRv2
-    {
-        ArrayMultiDimensionDouble struct_data;
-        ArrayMultiDimensionDoublePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_double().size() * struct_data.var_array_double()[0].size() * struct_data.var_array_double()[0][0].size(), test_value.size());
-        for (size_t i = 0; i < struct_data.var_array_double().size(); ++i)
-        {
-            for (size_t j = 0; j < struct_data.var_array_double()[i].size(); ++j)
-            {
-                for (size_t k = 0; k < struct_data.var_array_double()[i][j].size(); ++k)
-                {
-                    EXPECT_EQ(struct_data.var_array_double()[i][j][k], test_value[i * struct_data.var_array_double().size() * struct_data.var_array_double()[i].size() + j * struct_data.var_array_double()[i].size() + k]);
+                    EXPECT_EQ(struct_data.var_array_double()[i][j][k],
+                            test_value[i * struct_data.var_array_double().size() *
+                            struct_data.var_array_double()[i].size() + j *
+                            struct_data.var_array_double()[i].size() + k]);
                 }
             }
         }
@@ -2246,14 +1892,17 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionLongDouble)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_longdouble_array);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_FLOAT128), {10, 10, 10})->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::
+                    get_instance()->get_primitive_type(TK_FLOAT128), {10, 10, 10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    Float128Seq value = {-1.234, 2.000103, 3.14, -4.01, 5.00000001, 6, 7.5, 8.21, 9, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000.4622537257};
+    Float128Seq value =
+    {-1.234, 2.000103, 3.14, -4.01, 5.00000001, 6, 7.5, 8.21, 9, 10, 100, 1000, 10000, 100000,
+     1000000, 10000000, 100000000, 1000000000.4622537257};
     value.insert(value.end(), 82, 0);
     value.insert(value.end(), 10);
     value.insert(value.end(), 100, 0);
@@ -2267,37 +1916,24 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionLongDouble)
     EXPECT_EQ(value.size(), test_value.size());
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         ArrayMultiDimensionLongDouble struct_data;
         ArrayMultiDimensionLongDoublePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_longdouble().size() * struct_data.var_array_longdouble()[0].size() * struct_data.var_array_longdouble()[0][0].size(), test_value.size());
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
+        EXPECT_EQ(
+            struct_data.var_array_longdouble().size() * struct_data.var_array_longdouble()[0].size() *
+            struct_data.var_array_longdouble()[0][0].size(), test_value.size());
         for (size_t i = 0; i < struct_data.var_array_longdouble().size(); ++i)
         {
             for (size_t j = 0; j < struct_data.var_array_longdouble()[i].size(); ++j)
             {
                 for (size_t k = 0; k < struct_data.var_array_longdouble()[i][j].size(); ++k)
                 {
-                    EXPECT_EQ(struct_data.var_array_longdouble()[i][j][k], test_value[i * struct_data.var_array_longdouble().size() * struct_data.var_array_longdouble()[i].size() + j * struct_data.var_array_longdouble()[i].size() + k]);
-                }
-            }
-        }
-    }
-
-    // XCDRv2
-    {
-        ArrayMultiDimensionLongDouble struct_data;
-        ArrayMultiDimensionLongDoublePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_longdouble().size() * struct_data.var_array_longdouble()[0].size() * struct_data.var_array_longdouble()[0][0].size(), test_value.size());
-        for (size_t i = 0; i < struct_data.var_array_longdouble().size(); ++i)
-        {
-            for (size_t j = 0; j < struct_data.var_array_longdouble()[i].size(); ++j)
-            {
-                for (size_t k = 0; k < struct_data.var_array_longdouble()[i][j].size(); ++k)
-                {
-                    EXPECT_EQ(struct_data.var_array_longdouble()[i][j][k], test_value[i * struct_data.var_array_longdouble().size() * struct_data.var_array_longdouble()[i].size() + j * struct_data.var_array_longdouble()[i].size() + k]);
+                    EXPECT_EQ(struct_data.var_array_longdouble()[i][j][k],
+                            test_value[i * struct_data.var_array_longdouble().size() *
+                            struct_data.var_array_longdouble()[i].size() + j *
+                            struct_data.var_array_longdouble()[i].size() + k]);
                 }
             }
         }
@@ -2316,7 +1952,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionBoolean)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_bool_array);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_BOOLEAN), {10, 10, 10})->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::
+                    get_instance()->get_primitive_type(TK_BOOLEAN), {10, 10, 10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -2337,37 +1974,24 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionBoolean)
     EXPECT_EQ(value.size(), test_value.size());
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         ArrayMultiDimensionBoolean struct_data;
         ArrayMultiDimensionBooleanPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_boolean().size() * struct_data.var_array_boolean()[0].size() * struct_data.var_array_boolean()[0][0].size(), test_value.size());
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
+        EXPECT_EQ(
+            struct_data.var_array_boolean().size() * struct_data.var_array_boolean()[0].size() *
+            struct_data.var_array_boolean()[0][0].size(), test_value.size());
         for (size_t i = 0; i < struct_data.var_array_boolean().size(); ++i)
         {
             for (size_t j = 0; j < struct_data.var_array_boolean()[i].size(); ++j)
             {
                 for (size_t k = 0; k < struct_data.var_array_boolean()[i][j].size(); ++k)
                 {
-                    EXPECT_EQ(struct_data.var_array_boolean()[i][j][k], test_value[i * struct_data.var_array_boolean().size() * struct_data.var_array_boolean()[i].size() + j * struct_data.var_array_boolean()[i].size() + k]);
-                }
-            }
-        }
-    }
-
-    // XCDRv2
-    {
-        ArrayMultiDimensionBoolean struct_data;
-        ArrayMultiDimensionBooleanPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_boolean().size() * struct_data.var_array_boolean()[0].size() * struct_data.var_array_boolean()[0][0].size(), test_value.size());
-        for (size_t i = 0; i < struct_data.var_array_boolean().size(); ++i)
-        {
-            for (size_t j = 0; j < struct_data.var_array_boolean()[i].size(); ++j)
-            {
-                for (size_t k = 0; k < struct_data.var_array_boolean()[i][j].size(); ++k)
-                {
-                    EXPECT_EQ(struct_data.var_array_boolean()[i][j][k], test_value[i * struct_data.var_array_boolean().size() * struct_data.var_array_boolean()[i].size() + j * struct_data.var_array_boolean()[i].size() + k]);
+                    EXPECT_EQ(struct_data.var_array_boolean()[i][j][k],
+                            test_value[i * struct_data.var_array_boolean().size() *
+                            struct_data.var_array_boolean()[i].size() + j *
+                            struct_data.var_array_boolean()[i].size() + k]);
                 }
             }
         }
@@ -2386,7 +2010,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionOctet)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_byte_array);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_BYTE), {10, 10, 10})->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::
+                    get_instance()->get_primitive_type(TK_BYTE), {10, 10, 10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -2407,37 +2032,24 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionOctet)
     EXPECT_EQ(value.size(), test_value.size());
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         ArrayMultiDimensionOctet struct_data;
         ArrayMultiDimensionOctetPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_octet().size() * struct_data.var_array_octet()[0].size() * struct_data.var_array_octet()[0][0].size(), test_value.size());
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
+        EXPECT_EQ(
+            struct_data.var_array_octet().size() * struct_data.var_array_octet()[0].size() *
+            struct_data.var_array_octet()[0][0].size(), test_value.size());
         for (size_t i = 0; i < struct_data.var_array_octet().size(); ++i)
         {
             for (size_t j = 0; j < struct_data.var_array_octet()[i].size(); ++j)
             {
                 for (size_t k = 0; k < struct_data.var_array_octet()[i][j].size(); ++k)
                 {
-                    EXPECT_EQ(struct_data.var_array_octet()[i][j][k], test_value[i * struct_data.var_array_octet().size() * struct_data.var_array_octet()[i].size() + j * struct_data.var_array_octet()[i].size() + k]);
-                }
-            }
-        }
-    }
-
-    // XCDRv2
-    {
-        ArrayMultiDimensionOctet struct_data;
-        ArrayMultiDimensionOctetPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_octet().size() * struct_data.var_array_octet()[0].size() * struct_data.var_array_octet()[0][0].size(), test_value.size());
-        for (size_t i = 0; i < struct_data.var_array_octet().size(); ++i)
-        {
-            for (size_t j = 0; j < struct_data.var_array_octet()[i].size(); ++j)
-            {
-                for (size_t k = 0; k < struct_data.var_array_octet()[i][j].size(); ++k)
-                {
-                    EXPECT_EQ(struct_data.var_array_octet()[i][j][k], test_value[i * struct_data.var_array_octet().size() * struct_data.var_array_octet()[i].size() + j * struct_data.var_array_octet()[i].size() + k]);
+                    EXPECT_EQ(struct_data.var_array_octet()[i][j][k],
+                            test_value[i * struct_data.var_array_octet().size() *
+                            struct_data.var_array_octet()[i].size() + j *
+                            struct_data.var_array_octet()[i].size() + k]);
                 }
             }
         }
@@ -2456,7 +2068,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionChar)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_char_array);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_CHAR8), {10, 10, 10})->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::
+                    get_instance()->get_primitive_type(TK_CHAR8), {10, 10, 10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -2477,37 +2090,24 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionChar)
     EXPECT_EQ(value.size(), test_value.size());
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         ArrayMultiDimensionChar struct_data;
         ArrayMultiDimensionCharPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_char().size() * struct_data.var_array_char()[0].size() * struct_data.var_array_char()[0][0].size(), test_value.size());
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
+        EXPECT_EQ(
+            struct_data.var_array_char().size() * struct_data.var_array_char()[0].size() *
+            struct_data.var_array_char()[0][0].size(), test_value.size());
         for (size_t i = 0; i < struct_data.var_array_char().size(); ++i)
         {
             for (size_t j = 0; j < struct_data.var_array_char()[i].size(); ++j)
             {
                 for (size_t k = 0; k < struct_data.var_array_char()[i][j].size(); ++k)
                 {
-                    EXPECT_EQ(struct_data.var_array_char()[i][j][k], test_value[i * struct_data.var_array_char().size() * struct_data.var_array_char()[i].size() + j * struct_data.var_array_char()[i].size() + k]);
-                }
-            }
-        }
-    }
-
-    // XCDRv2
-    {
-        ArrayMultiDimensionChar struct_data;
-        ArrayMultiDimensionCharPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_char().size() * struct_data.var_array_char()[0].size() * struct_data.var_array_char()[0][0].size(), test_value.size());
-        for (size_t i = 0; i < struct_data.var_array_char().size(); ++i)
-        {
-            for (size_t j = 0; j < struct_data.var_array_char()[i].size(); ++j)
-            {
-                for (size_t k = 0; k < struct_data.var_array_char()[i][j].size(); ++k)
-                {
-                    EXPECT_EQ(struct_data.var_array_char()[i][j][k], test_value[i * struct_data.var_array_char().size() * struct_data.var_array_char()[i].size() + j * struct_data.var_array_char()[i].size() + k]);
+                    EXPECT_EQ(struct_data.var_array_char()[i][j][k],
+                            test_value[i * struct_data.var_array_char().size() *
+                            struct_data.var_array_char()[i].size() + j *
+                            struct_data.var_array_char()[i].size() + k]);
                 }
             }
         }
@@ -2526,14 +2126,17 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionWChar)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_wchar_array);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_CHAR16), {10, 10, 10})->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::
+                    get_instance()->get_primitive_type(TK_CHAR16), {10, 10, 10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    WcharSeq value = {L'e', L'P', L'r', L'o', L's', L'i', L'm', L'a', L'.', L' ', L'a', L'm', L'i', L's', L'o', L'r', L'P', L'e'};
+    WcharSeq value =
+    {L'e', L'P', L'r', L'o', L's', L'i', L'm', L'a', L'.', L' ', L'a', L'm', L'i', L's', L'o', L'r',
+     L'P', L'e'};
     value.insert(value.end(), 82, 0);
     value.insert(value.end(), L'E');
     value.insert(value.end(), 100, 0);
@@ -2547,37 +2150,24 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionWChar)
     EXPECT_EQ(value.size(), test_value.size());
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         ArrayMultiDimensionWChar struct_data;
         ArrayMultiDimensionWCharPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_wchar().size() * struct_data.var_array_wchar()[0].size() * struct_data.var_array_wchar()[0][0].size(), test_value.size());
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
+        EXPECT_EQ(
+            struct_data.var_array_wchar().size() * struct_data.var_array_wchar()[0].size() *
+            struct_data.var_array_wchar()[0][0].size(), test_value.size());
         for (size_t i = 0; i < struct_data.var_array_wchar().size(); ++i)
         {
             for (size_t j = 0; j < struct_data.var_array_wchar()[i].size(); ++j)
             {
                 for (size_t k = 0; k < struct_data.var_array_wchar()[i][j].size(); ++k)
                 {
-                    EXPECT_EQ(struct_data.var_array_wchar()[i][j][k], test_value[i * struct_data.var_array_wchar().size() * struct_data.var_array_wchar()[i].size() + j * struct_data.var_array_wchar()[i].size() + k]);
-                }
-            }
-        }
-    }
-
-    // XCDRv2
-    {
-        ArrayMultiDimensionWChar struct_data;
-        ArrayMultiDimensionWCharPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_wchar().size() * struct_data.var_array_wchar()[0].size() * struct_data.var_array_wchar()[0][0].size(), test_value.size());
-        for (size_t i = 0; i < struct_data.var_array_wchar().size(); ++i)
-        {
-            for (size_t j = 0; j < struct_data.var_array_wchar()[i].size(); ++j)
-            {
-                for (size_t k = 0; k < struct_data.var_array_wchar()[i][j].size(); ++k)
-                {
-                    EXPECT_EQ(struct_data.var_array_wchar()[i][j][k], test_value[i * struct_data.var_array_wchar().size() * struct_data.var_array_wchar()[i].size() + j * struct_data.var_array_wchar()[i].size() + k]);
+                    EXPECT_EQ(struct_data.var_array_wchar()[i][j][k],
+                            test_value[i * struct_data.var_array_wchar().size() *
+                            struct_data.var_array_wchar()[i].size() + j *
+                            struct_data.var_array_wchar()[i].size() + k]);
                 }
             }
         }
@@ -2596,14 +2186,17 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionString)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_string_array);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::get_instance()->create_string_type(LENGTH_UNLIMITED)->build(), {10, 10, 10})->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::
+                    get_instance()->create_string_type(LENGTH_UNLIMITED)->build(), {10, 10, 10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    StringSeq value = {"Lorem", "ipsum", "dolor", "sit", "amet", "consectetur", "adipiscing", "elit", "sed", "do", "eiusmod", "tempor", "incididunt", "ut", "labore", "et", "dolore", "magna", "aliqua"};
+    StringSeq value =
+    {"Lorem", "ipsum", "dolor", "sit", "amet", "consectetur", "adipiscing", "elit", "sed", "do",
+     "eiusmod", "tempor", "incididunt", "ut", "labore", "et", "dolore", "magna", "aliqua"};
     value.insert(value.end(), 81, "");
     value.insert(value.end(), "Ut");
     value.insert(value.end(), 100, "");
@@ -2617,37 +2210,24 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionString)
     EXPECT_EQ(value.size(), test_value.size());
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         ArrayMultiDimensionString struct_data;
         ArrayMultiDimensionStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_string().size() * struct_data.var_array_string()[0].size() * struct_data.var_array_string()[0][0].size(), test_value.size());
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
+        EXPECT_EQ(
+            struct_data.var_array_string().size() * struct_data.var_array_string()[0].size() *
+            struct_data.var_array_string()[0][0].size(), test_value.size());
         for (size_t i = 0; i < struct_data.var_array_string().size(); ++i)
         {
             for (size_t j = 0; j < struct_data.var_array_string()[i].size(); ++j)
             {
                 for (size_t k = 0; k < struct_data.var_array_string()[i][j].size(); ++k)
                 {
-                    EXPECT_EQ(struct_data.var_array_string()[i][j][k], test_value[i * struct_data.var_array_string().size() * struct_data.var_array_string()[i].size() + j * struct_data.var_array_string()[i].size() + k]);
-                }
-            }
-        }
-    }
-
-    // XCDRv2
-    {
-        ArrayMultiDimensionString struct_data;
-        ArrayMultiDimensionStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_string().size() * struct_data.var_array_string()[0].size() * struct_data.var_array_string()[0][0].size(), test_value.size());
-        for (size_t i = 0; i < struct_data.var_array_string().size(); ++i)
-        {
-            for (size_t j = 0; j < struct_data.var_array_string()[i].size(); ++j)
-            {
-                for (size_t k = 0; k < struct_data.var_array_string()[i][j].size(); ++k)
-                {
-                    EXPECT_EQ(struct_data.var_array_string()[i][j][k], test_value[i * struct_data.var_array_string().size() * struct_data.var_array_string()[i].size() + j * struct_data.var_array_string()[i].size() + k]);
+                    EXPECT_EQ(struct_data.var_array_string()[i][j][k],
+                            test_value[i * struct_data.var_array_string().size() *
+                            struct_data.var_array_string()[i].size() + j *
+                            struct_data.var_array_string()[i].size() + k]);
                 }
             }
         }
@@ -2666,14 +2246,18 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionWString)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_wstring_array);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::get_instance()->create_wstring_type(LENGTH_UNLIMITED)->build(), {10, 10, 10})->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::
+                    get_instance()->create_wstring_type(LENGTH_UNLIMITED)->build(), {10, 10, 10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    WstringSeq value = {L"Lorem", L"ipsum", L"dolor", L"sit", L"amet", L"consectetur", L"adipiscing", L"elit", L"sed", L"do", L"eiusmod", L"tempor", L"incididunt", L"ut", L"labore", L"et", L"dolore", L"magna", L"aliqua"};
+    WstringSeq value =
+    {L"Lorem", L"ipsum", L"dolor", L"sit", L"amet", L"consectetur", L"adipiscing", L"elit", L"sed",
+     L"do", L"eiusmod", L"tempor", L"incididunt", L"ut", L"labore", L"et", L"dolore", L"magna",
+     L"aliqua"};
     value.insert(value.end(), 81, L"");
     value.insert(value.end(), L"Ut");
     value.insert(value.end(), 100, L"");
@@ -2687,37 +2271,24 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionWString)
     EXPECT_EQ(value.size(), test_value.size());
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         ArrayMultiDimensionWString struct_data;
         ArrayMultiDimensionWStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_wstring().size() * struct_data.var_array_wstring()[0].size() * struct_data.var_array_wstring()[0][0].size(), test_value.size());
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
+        EXPECT_EQ(
+            struct_data.var_array_wstring().size() * struct_data.var_array_wstring()[0].size() *
+            struct_data.var_array_wstring()[0][0].size(), test_value.size());
         for (size_t i = 0; i < struct_data.var_array_wstring().size(); ++i)
         {
             for (size_t j = 0; j < struct_data.var_array_wstring()[i].size(); ++j)
             {
                 for (size_t k = 0; k < struct_data.var_array_wstring()[i][j].size(); ++k)
                 {
-                    EXPECT_EQ(struct_data.var_array_wstring()[i][j][k], test_value[i * struct_data.var_array_wstring().size() * struct_data.var_array_wstring()[i].size() + j * struct_data.var_array_wstring()[i].size() + k]);
-                }
-            }
-        }
-    }
-
-    // XCDRv2
-    {
-        ArrayMultiDimensionWString struct_data;
-        ArrayMultiDimensionWStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_wstring().size() * struct_data.var_array_wstring()[0].size() * struct_data.var_array_wstring()[0][0].size(), test_value.size());
-        for (size_t i = 0; i < struct_data.var_array_wstring().size(); ++i)
-        {
-            for (size_t j = 0; j < struct_data.var_array_wstring()[i].size(); ++j)
-            {
-                for (size_t k = 0; k < struct_data.var_array_wstring()[i][j].size(); ++k)
-                {
-                    EXPECT_EQ(struct_data.var_array_wstring()[i][j][k], test_value[i * struct_data.var_array_wstring().size() * struct_data.var_array_wstring()[i].size() + j * struct_data.var_array_wstring()[i].size() + k]);
+                    EXPECT_EQ(struct_data.var_array_wstring()[i][j][k],
+                            test_value[i * struct_data.var_array_wstring().size() *
+                            struct_data.var_array_wstring()[i].size() + j *
+                            struct_data.var_array_wstring()[i].size() + k]);
                 }
             }
         }
@@ -2736,14 +2307,17 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionBoundedString)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_bounded_string_array);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(create_inner_alias_bounded_string_helper(), {10, 10, 10})->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(
+                create_inner_alias_bounded_string_helper(), {10, 10, 10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    StringSeq value = {"Lorem", "ipsum", "dolor", "sit", "amet", "consectetu", "adipiscing", "elit", "sed", "do", "eiusmod", "tempor", "incididunt", "ut", "labore", "et", "dolore", "magna", "aliqua"};
+    StringSeq value =
+    {"Lorem", "ipsum", "dolor", "sit", "amet", "consectetu", "adipiscing", "elit", "sed", "do",
+     "eiusmod", "tempor", "incididunt", "ut", "labore", "et", "dolore", "magna", "aliqua"};
     value.insert(value.end(), 81, "");
     value.insert(value.end(), "Ut");
     value.insert(value.end(), 100, "");
@@ -2757,37 +2331,24 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionBoundedString)
     EXPECT_EQ(value.size(), test_value.size());
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         ArrayMultiDimensionBoundedString struct_data;
         ArrayMultiDimensionBoundedStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_bounded_string().size() * struct_data.var_array_bounded_string()[0].size() * struct_data.var_array_bounded_string()[0][0].size(), test_value.size());
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
+        EXPECT_EQ(
+            struct_data.var_array_bounded_string().size() * struct_data.var_array_bounded_string()[0].size() *
+            struct_data.var_array_bounded_string()[0][0].size(), test_value.size());
         for (size_t i = 0; i < struct_data.var_array_bounded_string().size(); ++i)
         {
             for (size_t j = 0; j < struct_data.var_array_bounded_string()[i].size(); ++j)
             {
                 for (size_t k = 0; k < struct_data.var_array_bounded_string()[i][j].size(); ++k)
                 {
-                    EXPECT_EQ(struct_data.var_array_bounded_string()[i][j][k], test_value[i * struct_data.var_array_bounded_string().size() * struct_data.var_array_bounded_string()[i].size() + j * struct_data.var_array_bounded_string()[i].size() + k]);
-                }
-            }
-        }
-    }
-
-    // XCDRv2
-    {
-        ArrayMultiDimensionBoundedString struct_data;
-        ArrayMultiDimensionBoundedStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_bounded_string().size() * struct_data.var_array_bounded_string()[0].size() * struct_data.var_array_bounded_string()[0][0].size(), test_value.size());
-        for (size_t i = 0; i < struct_data.var_array_bounded_string().size(); ++i)
-        {
-            for (size_t j = 0; j < struct_data.var_array_bounded_string()[i].size(); ++j)
-            {
-                for (size_t k = 0; k < struct_data.var_array_bounded_string()[i][j].size(); ++k)
-                {
-                    EXPECT_EQ(struct_data.var_array_bounded_string()[i][j][k], test_value[i * struct_data.var_array_bounded_string().size() * struct_data.var_array_bounded_string()[i].size() + j * struct_data.var_array_bounded_string()[i].size() + k]);
+                    EXPECT_EQ(struct_data.var_array_bounded_string()[i][j][k],
+                            test_value[i * struct_data.var_array_bounded_string().size() *
+                            struct_data.var_array_bounded_string()[i].size() + j *
+                            struct_data.var_array_bounded_string()[i].size() + k]);
                 }
             }
         }
@@ -2806,14 +2367,18 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionBoundedWString)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_bounded_wstring_array);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(create_inner_alias_bounded_wstring_helper(), {10, 10, 10})->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(
+                create_inner_alias_bounded_wstring_helper(), {10, 10, 10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    WstringSeq value = {L"Lorem", L"ipsum", L"dolor", L"sit", L"amet", L"consectetu", L"adipiscing", L"elit", L"sed", L"do", L"eiusmod", L"tempor", L"incididunt", L"ut", L"labore", L"et", L"dolore", L"magna", L"aliqua"};
+    WstringSeq value =
+    {L"Lorem", L"ipsum", L"dolor", L"sit", L"amet", L"consectetu", L"adipiscing", L"elit", L"sed",
+     L"do", L"eiusmod", L"tempor", L"incididunt", L"ut", L"labore", L"et", L"dolore", L"magna",
+     L"aliqua"};
     value.insert(value.end(), 81, L"");
     value.insert(value.end(), L"Ut");
     value.insert(value.end(), 100, L"");
@@ -2827,37 +2392,24 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionBoundedWString)
     EXPECT_EQ(value.size(), test_value.size());
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         ArrayMultiDimensionBoundedWString struct_data;
         ArrayMultiDimensionBoundedWStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_bounded_wstring().size() * struct_data.var_array_bounded_wstring()[0].size() * struct_data.var_array_bounded_wstring()[0][0].size(), test_value.size());
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
+        EXPECT_EQ(
+            struct_data.var_array_bounded_wstring().size() * struct_data.var_array_bounded_wstring()[0].size() *
+            struct_data.var_array_bounded_wstring()[0][0].size(), test_value.size());
         for (size_t i = 0; i < struct_data.var_array_bounded_wstring().size(); ++i)
         {
             for (size_t j = 0; j < struct_data.var_array_bounded_wstring()[i].size(); ++j)
             {
                 for (size_t k = 0; k < struct_data.var_array_bounded_wstring()[i][j].size(); ++k)
                 {
-                    EXPECT_EQ(struct_data.var_array_bounded_wstring()[i][j][k], test_value[i * struct_data.var_array_bounded_wstring().size() * struct_data.var_array_bounded_wstring()[i].size() + j * struct_data.var_array_bounded_wstring()[i].size() + k]);
-                }
-            }
-        }
-    }
-
-    // XCDRv2
-    {
-        ArrayMultiDimensionBoundedWString struct_data;
-        ArrayMultiDimensionBoundedWStringPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_bounded_wstring().size() * struct_data.var_array_bounded_wstring()[0].size() * struct_data.var_array_bounded_wstring()[0][0].size(), test_value.size());
-        for (size_t i = 0; i < struct_data.var_array_bounded_wstring().size(); ++i)
-        {
-            for (size_t j = 0; j < struct_data.var_array_bounded_wstring()[i].size(); ++j)
-            {
-                for (size_t k = 0; k < struct_data.var_array_bounded_wstring()[i][j].size(); ++k)
-                {
-                    EXPECT_EQ(struct_data.var_array_bounded_wstring()[i][j][k], test_value[i * struct_data.var_array_bounded_wstring().size() * struct_data.var_array_bounded_wstring()[i].size() + j * struct_data.var_array_bounded_wstring()[i].size() + k]);
+                    EXPECT_EQ(struct_data.var_array_bounded_wstring()[i][j][k],
+                            test_value[i * struct_data.var_array_bounded_wstring().size() *
+                            struct_data.var_array_bounded_wstring()[i].size() + j *
+                            struct_data.var_array_bounded_wstring()[i].size() + k]);
                 }
             }
         }
@@ -2876,7 +2428,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionEnum)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_enum_array);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(create_inner_enum_helper(), {10, 10, 10})->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(create_inner_enum_helper(),
+            {10, 10, 10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -2910,37 +2463,24 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionEnum)
     EXPECT_EQ(value.size(), test_value.size());
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         ArrayMultiDimensionEnum struct_data;
         ArrayMultiDimensionEnumPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_enum().size() * struct_data.var_array_enum()[0].size() * struct_data.var_array_enum()[0][0].size(), test_value.size());
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
+        EXPECT_EQ(
+            struct_data.var_array_enum().size() * struct_data.var_array_enum()[0].size() *
+            struct_data.var_array_enum()[0][0].size(), test_value.size());
         for (size_t i = 0; i < struct_data.var_array_enum().size(); ++i)
         {
             for (size_t j = 0; j < struct_data.var_array_enum()[i].size(); ++j)
             {
                 for (size_t k = 0; k < struct_data.var_array_enum()[i][j].size(); ++k)
                 {
-                    EXPECT_EQ(static_cast<uint32_t>(struct_data.var_array_enum()[i][j][k]), test_value[i * struct_data.var_array_enum().size() * struct_data.var_array_enum()[i].size() + j * struct_data.var_array_enum()[i].size() + k]);
-                }
-            }
-        }
-    }
-
-    // XCDRv2
-    {
-        ArrayMultiDimensionEnum struct_data;
-        ArrayMultiDimensionEnumPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_enum().size() * struct_data.var_array_enum()[0].size() * struct_data.var_array_enum()[0][0].size(), test_value.size());
-        for (size_t i = 0; i < struct_data.var_array_enum().size(); ++i)
-        {
-            for (size_t j = 0; j < struct_data.var_array_enum()[i].size(); ++j)
-            {
-                for (size_t k = 0; k < struct_data.var_array_enum()[i][j].size(); ++k)
-                {
-                    EXPECT_EQ(static_cast<uint32_t>(struct_data.var_array_enum()[i][j][k]), test_value[i * struct_data.var_array_enum().size() * struct_data.var_array_enum()[i].size() + j * struct_data.var_array_enum()[i].size() + k]);
+                    EXPECT_EQ(static_cast<uint32_t>(struct_data.var_array_enum()[i][j][k]),
+                            test_value[i * struct_data.var_array_enum().size() *
+                            struct_data.var_array_enum()[i].size() + j *
+                            struct_data.var_array_enum()[i].size() + k]);
                 }
             }
         }
@@ -2959,7 +2499,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionBitMask)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_bitmask_array);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(create_inner_bitmask_helper(), {10, 10, 10})->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(create_inner_bitmask_helper(),
+            {10, 10, 10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -2974,7 +2515,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionBitMask)
         InnerBitMaskHelperBits::flag0 | InnerBitMaskHelperBits::flag4 | InnerBitMaskHelperBits::flag6,
         InnerBitMaskHelperBits::flag4 | InnerBitMaskHelperBits::flag6,
         InnerBitMaskHelperBits::flag1 | InnerBitMaskHelperBits::flag4,
-        InnerBitMaskHelperBits::flag0 | InnerBitMaskHelperBits::flag4 | InnerBitMaskHelperBits::flag1 | InnerBitMaskHelperBits::flag6,
+        InnerBitMaskHelperBits::flag0 | InnerBitMaskHelperBits::flag4 | InnerBitMaskHelperBits::flag1 |
+        InnerBitMaskHelperBits::flag6,
         InnerBitMaskHelperBits::flag1 | InnerBitMaskHelperBits::flag6,
         InnerBitMaskHelperBits::flag1 | InnerBitMaskHelperBits::flag4 | InnerBitMaskHelperBits::flag6,
         InnerBitMaskHelperBits::flag0,
@@ -2993,37 +2535,24 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionBitMask)
     EXPECT_EQ(value.size(), test_value.size());
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         ArrayMultiDimensionBitMask struct_data;
         ArrayMultiDimensionBitMaskPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_bitmask().size() * struct_data.var_array_bitmask()[0].size() * struct_data.var_array_bitmask()[0][0].size(), test_value.size());
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
+        EXPECT_EQ(
+            struct_data.var_array_bitmask().size() * struct_data.var_array_bitmask()[0].size() *
+            struct_data.var_array_bitmask()[0][0].size(), test_value.size());
         for (size_t i = 0; i < struct_data.var_array_bitmask().size(); ++i)
         {
             for (size_t j = 0; j < struct_data.var_array_bitmask()[i].size(); ++j)
             {
                 for (size_t k = 0; k < struct_data.var_array_bitmask()[i][j].size(); ++k)
                 {
-                    EXPECT_EQ(static_cast<uint32_t>(struct_data.var_array_bitmask()[i][j][k]), test_value[i * struct_data.var_array_bitmask().size() * struct_data.var_array_bitmask()[i].size() + j * struct_data.var_array_bitmask()[i].size() + k]);
-                }
-            }
-        }
-    }
-
-    // XCDRv2
-    {
-        ArrayMultiDimensionBitMask struct_data;
-        ArrayMultiDimensionBitMaskPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_bitmask().size() * struct_data.var_array_bitmask()[0].size() * struct_data.var_array_bitmask()[0][0].size(), test_value.size());
-        for (size_t i = 0; i < struct_data.var_array_bitmask().size(); ++i)
-        {
-            for (size_t j = 0; j < struct_data.var_array_bitmask()[i].size(); ++j)
-            {
-                for (size_t k = 0; k < struct_data.var_array_bitmask()[i][j].size(); ++k)
-                {
-                    EXPECT_EQ(static_cast<uint32_t>(struct_data.var_array_bitmask()[i][j][k]), test_value[i * struct_data.var_array_bitmask().size() * struct_data.var_array_bitmask()[i].size() + j * struct_data.var_array_bitmask()[i].size() + k]);
+                    EXPECT_EQ(static_cast<uint32_t>(struct_data.var_array_bitmask()[i][j][k]),
+                            test_value[i * struct_data.var_array_bitmask().size() *
+                            struct_data.var_array_bitmask()[i].size() + j *
+                            struct_data.var_array_bitmask()[i].size() + k]);
                 }
             }
         }
@@ -3042,14 +2571,17 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionAlias)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_alias_array);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(create_inner_alias_helper(), {10, 10, 10})->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(create_inner_alias_helper(),
+            {10, 10, 10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    Int32Seq value = {1, 2, 3, 4, 5, -6, -7, -8, -9, -10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000};
+    Int32Seq value =
+    {1, 2, 3, 4, 5, -6, -7, -8, -9, -10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000,
+     1000000000};
     value.insert(value.end(), 82, 0);
     value.insert(value.end(), 10);
     value.insert(value.end(), 100, 0);
@@ -3063,37 +2595,24 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionAlias)
     EXPECT_EQ(value.size(), test_value.size());
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         ArrayMultiDimensionAlias struct_data;
         ArrayMultiDimensionAliasPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_alias().size() * struct_data.var_array_alias()[0].size() * struct_data.var_array_alias()[0][0].size(), test_value.size());
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
+        EXPECT_EQ(
+            struct_data.var_array_alias().size() * struct_data.var_array_alias()[0].size() *
+            struct_data.var_array_alias()[0][0].size(), test_value.size());
         for (size_t i = 0; i < struct_data.var_array_alias().size(); ++i)
         {
             for (size_t j = 0; j < struct_data.var_array_alias()[i].size(); ++j)
             {
                 for (size_t k = 0; k < struct_data.var_array_alias()[i][j].size(); ++k)
                 {
-                    EXPECT_EQ(static_cast<uint32_t>(struct_data.var_array_alias()[i][j][k]), test_value[i * struct_data.var_array_alias().size() * struct_data.var_array_alias()[i].size() + j * struct_data.var_array_alias()[i].size() + k]);
-                }
-            }
-        }
-    }
-
-    // XCDRv2
-    {
-        ArrayMultiDimensionAlias struct_data;
-        ArrayMultiDimensionAliasPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_alias().size() * struct_data.var_array_alias()[0].size() * struct_data.var_array_alias()[0][0].size(), test_value.size());
-        for (size_t i = 0; i < struct_data.var_array_alias().size(); ++i)
-        {
-            for (size_t j = 0; j < struct_data.var_array_alias()[i].size(); ++j)
-            {
-                for (size_t k = 0; k < struct_data.var_array_alias()[i][j].size(); ++k)
-                {
-                    EXPECT_EQ(static_cast<uint32_t>(struct_data.var_array_alias()[i][j][k]), test_value[i * struct_data.var_array_alias().size() * struct_data.var_array_alias()[i].size() + j * struct_data.var_array_alias()[i].size() + k]);
+                    EXPECT_EQ(static_cast<uint32_t>(struct_data.var_array_alias()[i][j][k]),
+                            test_value[i * struct_data.var_array_alias().size() *
+                            struct_data.var_array_alias()[i].size() + j *
+                            struct_data.var_array_alias()[i].size() + k]);
                 }
             }
         }
@@ -3112,7 +2631,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionSequence)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_seq_array);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::get_instance()->create_sequence_type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32), LENGTH_UNLIMITED)->build(), {10, 10, 10})->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::
+                    get_instance()->create_sequence_type(DynamicTypeBuilderFactory::get_instance()->
+                    get_primitive_type(TK_INT32), LENGTH_UNLIMITED)->build(), {10, 10, 10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -3136,43 +2657,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionSequence)
     EXPECT_EQ(third_value, test_value);
     EXPECT_EQ(data->return_loaned_value(array_data), RETCODE_OK);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         ArrayMultiDimensionSequence struct_data;
         ArrayMultiDimensionSequencePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        for (size_t i = 0; i < struct_data.var_array_sequence().size(); ++i)
-        {
-            for (size_t j = 0; j < struct_data.var_array_sequence()[i].size(); ++j)
-            {
-                for (size_t k = 0; k < struct_data.var_array_sequence()[i][j].size(); ++k)
-                {
-                    if (i == 0 && j == 0 && k == 0)
-                    {
-                        EXPECT_EQ(struct_data.var_array_sequence()[i][j][k], first_value);
-                    }
-                    else if (i == 0 && j == 3 && k == 3)
-                    {
-                        EXPECT_EQ(struct_data.var_array_sequence()[i][j][k], second_value);
-                    }
-                    else if (i == 8 && j == 5 && k == 7)
-                    {
-                        EXPECT_EQ(struct_data.var_array_sequence()[i][j][k], third_value);
-                    }
-                    else
-                    {
-                        EXPECT_TRUE(struct_data.var_array_sequence()[i][j][k].empty());
-                    }
-                }
-            }
-        }
-    }
-
-    // XCDRv2
-    {
-        ArrayMultiDimensionSequence struct_data;
-        ArrayMultiDimensionSequencePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         for (size_t i = 0; i < struct_data.var_array_sequence().size(); ++i)
         {
             for (size_t j = 0; j < struct_data.var_array_sequence()[i].size(); ++j)
@@ -3213,7 +2702,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionMap)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_map_array);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::get_instance()->create_map_type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32), DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32), LENGTH_UNLIMITED)->build(), {10, 10, 10})->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::
+                    get_instance()->create_map_type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(
+                TK_INT32), DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32),
+            LENGTH_UNLIMITED)->build(), {10, 10, 10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -3231,61 +2723,35 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionMap)
     ASSERT_TRUE(array_data);
     DynamicData::_ref_type map_data = array_data->loan_value(0);
     ASSERT_TRUE(map_data);
-    EXPECT_EQ(map_data->set_int32_value(map_data->get_member_id_by_name(std::to_string(first_key)), first_value), RETCODE_OK);
-    EXPECT_EQ(map_data->get_int32_value(test_value, map_data->get_member_id_by_name(std::to_string(first_key))), RETCODE_OK);
+    EXPECT_EQ(map_data->set_int32_value(map_data->get_member_id_by_name(std::to_string(
+                first_key)), first_value), RETCODE_OK);
+    EXPECT_EQ(map_data->get_int32_value(test_value, map_data->get_member_id_by_name(std::to_string(
+                first_key))), RETCODE_OK);
     EXPECT_EQ(first_value, test_value);
     EXPECT_EQ(array_data->return_loaned_value(map_data), RETCODE_OK);
     map_data = array_data->loan_value(33);
     ASSERT_TRUE(map_data);
-    EXPECT_EQ(map_data->set_int32_value(map_data->get_member_id_by_name(std::to_string(second_key)), second_value), RETCODE_OK);
-    EXPECT_EQ(map_data->get_int32_value(test_value, map_data->get_member_id_by_name(std::to_string(second_key))), RETCODE_OK);
+    EXPECT_EQ(map_data->set_int32_value(map_data->get_member_id_by_name(std::to_string(
+                second_key)), second_value), RETCODE_OK);
+    EXPECT_EQ(map_data->get_int32_value(test_value, map_data->get_member_id_by_name(std::to_string(
+                second_key))), RETCODE_OK);
     EXPECT_EQ(second_value, test_value);
     EXPECT_EQ(array_data->return_loaned_value(map_data), RETCODE_OK);
     map_data = array_data->loan_value(857);
     ASSERT_TRUE(map_data);
-    EXPECT_EQ(map_data->set_int32_value(map_data->get_member_id_by_name(std::to_string(third_key)), third_value), RETCODE_OK);
-    EXPECT_EQ(map_data->get_int32_value(test_value, map_data->get_member_id_by_name(std::to_string(third_key))), RETCODE_OK);
+    EXPECT_EQ(map_data->set_int32_value(map_data->get_member_id_by_name(std::to_string(
+                third_key)), third_value), RETCODE_OK);
+    EXPECT_EQ(map_data->get_int32_value(test_value, map_data->get_member_id_by_name(std::to_string(
+                third_key))), RETCODE_OK);
     EXPECT_EQ(third_value, test_value);
     EXPECT_EQ(array_data->return_loaned_value(map_data), RETCODE_OK);
     EXPECT_EQ(data->return_loaned_value(array_data), RETCODE_OK);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         ArrayMultiDimensionMap struct_data;
         ArrayMultiDimensionMapPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        for (size_t i = 0; i < struct_data.var_array_map().size(); ++i)
-        {
-            for (size_t j = 0; j < struct_data.var_array_map()[i].size(); ++j)
-            {
-                for (size_t k = 0; k < struct_data.var_array_map()[i][j].size(); ++k)
-                {
-                    if (i == 0 && j == 0 && k == 0)
-                    {
-                        EXPECT_EQ(struct_data.var_array_map()[i][j][k][first_key], first_value);
-                    }
-                    else if (i == 0 && j == 3 && k == 3)
-                    {
-                        EXPECT_EQ(struct_data.var_array_map()[i][j][k][second_key], second_value);
-                    }
-                    else if (i == 8 && j == 5 && k == 7)
-                    {
-                        EXPECT_EQ(struct_data.var_array_map()[i][j][k][third_key], third_value);
-                    }
-                    else
-                    {
-                        EXPECT_TRUE(struct_data.var_array_map()[i][j][k].empty());
-                    }
-                }
-            }
-        }
-    }
-
-    // XCDRv2
-    {
-        ArrayMultiDimensionMap struct_data;
-        ArrayMultiDimensionMapPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         for (size_t i = 0; i < struct_data.var_array_map().size(); ++i)
         {
             for (size_t j = 0; j < struct_data.var_array_map()[i].size(); ++j)
@@ -3326,7 +2792,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionUnion)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_union_array);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(create_inner_union_helper(), {10, 10, 10})->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(create_inner_union_helper(),
+            {10, 10, 10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -3343,61 +2810,35 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionUnion)
     ASSERT_TRUE(array_data);
     DynamicData::_ref_type union_data = array_data->loan_value(0);
     ASSERT_TRUE(union_data);
-    EXPECT_EQ(union_data->set_int32_value(union_data->get_member_id_by_name(union_long_member_name), long_value), RETCODE_OK);
-    EXPECT_EQ(union_data->get_int32_value(test_long_value, union_data->get_member_id_by_name(union_long_member_name)), RETCODE_OK);
+    EXPECT_EQ(union_data->set_int32_value(union_data->get_member_id_by_name(
+                union_long_member_name), long_value), RETCODE_OK);
+    EXPECT_EQ(union_data->get_int32_value(test_long_value, union_data->get_member_id_by_name(
+                union_long_member_name)), RETCODE_OK);
     EXPECT_EQ(test_long_value, long_value);
     EXPECT_EQ(array_data->return_loaned_value(union_data), RETCODE_OK);
     union_data = array_data->loan_value(33);
     ASSERT_TRUE(union_data);
-    EXPECT_EQ(union_data->set_float32_value(union_data->get_member_id_by_name(union_float_member_name), float_value), RETCODE_OK);
-    EXPECT_EQ(union_data->get_float32_value(test_float_value, union_data->get_member_id_by_name(union_float_member_name)), RETCODE_OK);
+    EXPECT_EQ(union_data->set_float32_value(union_data->get_member_id_by_name(
+                union_float_member_name), float_value), RETCODE_OK);
+    EXPECT_EQ(union_data->get_float32_value(test_float_value, union_data->get_member_id_by_name(
+                union_float_member_name)), RETCODE_OK);
     EXPECT_EQ(test_float_value, float_value);
     EXPECT_EQ(array_data->return_loaned_value(union_data), RETCODE_OK);
     union_data = array_data->loan_value(857);
     ASSERT_TRUE(union_data);
-    EXPECT_EQ(union_data->set_int16_value(union_data->get_member_id_by_name(union_short_member_name), short_value), RETCODE_OK);
-    EXPECT_EQ(union_data->get_int16_value(test_short_value, union_data->get_member_id_by_name(union_short_member_name)), RETCODE_OK);
+    EXPECT_EQ(union_data->set_int16_value(union_data->get_member_id_by_name(
+                union_short_member_name), short_value), RETCODE_OK);
+    EXPECT_EQ(union_data->get_int16_value(test_short_value, union_data->get_member_id_by_name(
+                union_short_member_name)), RETCODE_OK);
     EXPECT_EQ(test_short_value, short_value);
     EXPECT_EQ(array_data->return_loaned_value(union_data), RETCODE_OK);
     EXPECT_EQ(data->return_loaned_value(array_data), RETCODE_OK);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         ArrayMultiDimensionUnion struct_data;
         ArrayMultiDimensionUnionPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        for (size_t i = 0; i < struct_data.var_array_union().size(); ++i)
-        {
-            for (size_t j = 0; j < struct_data.var_array_union()[i].size(); ++j)
-            {
-                for (size_t k = 0; k < struct_data.var_array_union()[i][j].size(); ++k)
-                {
-                    if (i == 0 && j == 0 && k == 0)
-                    {
-                        EXPECT_EQ(struct_data.var_array_union()[i][j][k].longValue(), long_value);
-                    }
-                    else if (i == 0 && j == 3 && k == 3)
-                    {
-                        EXPECT_EQ(struct_data.var_array_union()[i][j][k].floatValue(), float_value);
-                    }
-                    else if (i == 8 && j == 5 && k == 7)
-                    {
-                        EXPECT_EQ(struct_data.var_array_union()[i][j][k].shortValue(), short_value);
-                    }
-                    else
-                    {
-                        EXPECT_EQ(struct_data.var_array_union()[i][j][k].shortValue(), 0u);
-                    }
-                }
-            }
-        }
-    }
-
-    // XCDRv2
-    {
-        ArrayMultiDimensionUnion struct_data;
-        ArrayMultiDimensionUnionPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         for (size_t i = 0; i < struct_data.var_array_union().size(); ++i)
         {
             for (size_t j = 0; j < struct_data.var_array_union()[i].size(); ++j)
@@ -3438,7 +2879,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionStructure)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_struct_array);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(create_inner_struct_helper(), {10, 10, 10})->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(create_inner_struct_helper(),
+            {10, 10, 10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -3457,74 +2899,50 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionStructure)
     ASSERT_TRUE(array_data);
     DynamicData::_ref_type data_struct = array_data->loan_value(0);
     ASSERT_TRUE(data_struct);
-    EXPECT_EQ(data_struct->set_int32_value(data_struct->get_member_id_by_name(struct_long_member_name), first_long_value), RETCODE_OK);
-    EXPECT_EQ(data_struct->get_int32_value(test_long_value, data_struct->get_member_id_by_name(struct_long_member_name)), RETCODE_OK);
+    EXPECT_EQ(data_struct->set_int32_value(data_struct->get_member_id_by_name(
+                struct_long_member_name), first_long_value), RETCODE_OK);
+    EXPECT_EQ(data_struct->get_int32_value(test_long_value, data_struct->get_member_id_by_name(
+                struct_long_member_name)), RETCODE_OK);
     EXPECT_EQ(test_long_value, first_long_value);
-    EXPECT_EQ(data_struct->set_float32_value(data_struct->get_member_id_by_name(struct_float_member_name), first_float_value), RETCODE_OK);
-    EXPECT_EQ(data_struct->get_float32_value(test_float_value, data_struct->get_member_id_by_name(struct_float_member_name)), RETCODE_OK);
+    EXPECT_EQ(data_struct->set_float32_value(data_struct->get_member_id_by_name(struct_float_member_name),
+            first_float_value), RETCODE_OK);
+    EXPECT_EQ(data_struct->get_float32_value(test_float_value,
+            data_struct->get_member_id_by_name(struct_float_member_name)), RETCODE_OK);
     EXPECT_EQ(test_float_value, first_float_value);
     EXPECT_EQ(array_data->return_loaned_value(data_struct), RETCODE_OK);
     data_struct = array_data->loan_value(33);
     ASSERT_TRUE(data_struct);
-    EXPECT_EQ(data_struct->set_int32_value(data_struct->get_member_id_by_name(struct_long_member_name), second_long_value), RETCODE_OK);
-    EXPECT_EQ(data_struct->get_int32_value(test_long_value, data_struct->get_member_id_by_name(struct_long_member_name)), RETCODE_OK);
+    EXPECT_EQ(data_struct->set_int32_value(data_struct->get_member_id_by_name(struct_long_member_name),
+            second_long_value), RETCODE_OK);
+    EXPECT_EQ(data_struct->get_int32_value(test_long_value, data_struct->get_member_id_by_name(
+                struct_long_member_name)), RETCODE_OK);
     EXPECT_EQ(test_long_value, second_long_value);
-    EXPECT_EQ(data_struct->set_float32_value(data_struct->get_member_id_by_name(struct_float_member_name), second_float_value), RETCODE_OK);
-    EXPECT_EQ(data_struct->get_float32_value(test_float_value, data_struct->get_member_id_by_name(struct_float_member_name)), RETCODE_OK);
+    EXPECT_EQ(data_struct->set_float32_value(data_struct->get_member_id_by_name(struct_float_member_name),
+            second_float_value), RETCODE_OK);
+    EXPECT_EQ(data_struct->get_float32_value(test_float_value,
+            data_struct->get_member_id_by_name(struct_float_member_name)), RETCODE_OK);
     EXPECT_EQ(test_float_value, second_float_value);
     EXPECT_EQ(array_data->return_loaned_value(data_struct), RETCODE_OK);
     data_struct = array_data->loan_value(857);
     ASSERT_TRUE(data_struct);
-    EXPECT_EQ(data_struct->set_int32_value(data_struct->get_member_id_by_name(struct_long_member_name), third_long_value), RETCODE_OK);
-    EXPECT_EQ(data_struct->get_int32_value(test_long_value, data_struct->get_member_id_by_name(struct_long_member_name)), RETCODE_OK);
+    EXPECT_EQ(data_struct->set_int32_value(data_struct->get_member_id_by_name(
+                struct_long_member_name), third_long_value), RETCODE_OK);
+    EXPECT_EQ(data_struct->get_int32_value(test_long_value, data_struct->get_member_id_by_name(
+                struct_long_member_name)), RETCODE_OK);
     EXPECT_EQ(test_long_value, third_long_value);
-    EXPECT_EQ(data_struct->set_float32_value(data_struct->get_member_id_by_name(struct_float_member_name), third_float_value), RETCODE_OK);
-    EXPECT_EQ(data_struct->get_float32_value(test_float_value, data_struct->get_member_id_by_name(struct_float_member_name)), RETCODE_OK);
+    EXPECT_EQ(data_struct->set_float32_value(data_struct->get_member_id_by_name(struct_float_member_name),
+            third_float_value), RETCODE_OK);
+    EXPECT_EQ(data_struct->get_float32_value(test_float_value,
+            data_struct->get_member_id_by_name(struct_float_member_name)), RETCODE_OK);
     EXPECT_EQ(test_float_value, third_float_value);
     EXPECT_EQ(array_data->return_loaned_value(data_struct), RETCODE_OK);
     EXPECT_EQ(data->return_loaned_value(array_data), RETCODE_OK);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         ArrayMultiDimensionStructure struct_data;
         ArrayMultiDimensionStructurePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        for (size_t i = 0; i < struct_data.var_array_structure().size(); ++i)
-        {
-            for (size_t j = 0; j < struct_data.var_array_structure()[i].size(); ++j)
-            {
-                for (size_t k = 0; k < struct_data.var_array_structure()[i][j].size(); ++k)
-                {
-                    if (i == 0 && j == 0 && k == 0)
-                    {
-                        EXPECT_EQ(struct_data.var_array_structure()[i][j][k].field1(), first_long_value);
-                        EXPECT_EQ(struct_data.var_array_structure()[i][j][k].field2(), first_float_value);
-                    }
-                    else if (i == 0 && j == 3 && k == 3)
-                    {
-                        EXPECT_EQ(struct_data.var_array_structure()[i][j][k].field1(), second_long_value);
-                        EXPECT_EQ(struct_data.var_array_structure()[i][j][k].field2(), second_float_value);
-                    }
-                    else if (i == 8 && j == 5 && k == 7)
-                    {
-                        EXPECT_EQ(struct_data.var_array_structure()[i][j][k].field1(), third_long_value);
-                        EXPECT_EQ(struct_data.var_array_structure()[i][j][k].field2(), third_float_value);
-                    }
-                    else
-                    {
-                        EXPECT_EQ(struct_data.var_array_structure()[i][j][k].field1(), 0u);
-                        EXPECT_EQ(struct_data.var_array_structure()[i][j][k].field2(), 0u);
-                    }
-                }
-            }
-        }
-    }
-
-    // XCDRv2
-    {
-        ArrayMultiDimensionStructure struct_data;
-        ArrayMultiDimensionStructurePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         for (size_t i = 0; i < struct_data.var_array_structure().size(); ++i)
         {
             for (size_t j = 0; j < struct_data.var_array_structure()[i].size(); ++j)
@@ -3569,7 +2987,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionBitset)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_bitset_array);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(create_inner_bitset_helper(), {10, 10, 10})->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(create_inner_bitset_helper(),
+            {10, 10, 10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -3596,100 +3015,80 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionBitset)
     ASSERT_TRUE(array_data);
     DynamicData::_ref_type bitset_data = array_data->loan_value(0);
     ASSERT_TRUE(bitset_data);
-    EXPECT_EQ(bitset_data->set_uint8_value(bitset_data->get_member_id_by_name(bitfield_a), first_octet_value), RETCODE_OK);
-    EXPECT_EQ(bitset_data->get_uint8_value(test_octet_value, bitset_data->get_member_id_by_name(bitfield_a)), RETCODE_OK);
+    EXPECT_EQ(bitset_data->set_uint8_value(bitset_data->get_member_id_by_name(
+                bitfield_a), first_octet_value), RETCODE_OK);
+    EXPECT_EQ(bitset_data->get_uint8_value(test_octet_value, bitset_data->get_member_id_by_name(bitfield_a)),
+            RETCODE_OK);
     EXPECT_EQ(first_octet_value, test_octet_value);
-    EXPECT_EQ(bitset_data->set_boolean_value(bitset_data->get_member_id_by_name(bitfield_b), first_bool_value), RETCODE_OK);
-    EXPECT_EQ(bitset_data->get_boolean_value(test_bool_value, bitset_data->get_member_id_by_name(bitfield_b)), RETCODE_OK);
+    EXPECT_EQ(bitset_data->set_boolean_value(bitset_data->get_member_id_by_name(
+                bitfield_b), first_bool_value), RETCODE_OK);
+    EXPECT_EQ(bitset_data->get_boolean_value(test_bool_value, bitset_data->get_member_id_by_name(
+                bitfield_b)), RETCODE_OK);
     EXPECT_EQ(first_bool_value, test_bool_value);
-    EXPECT_EQ(bitset_data->set_uint16_value(bitset_data->get_member_id_by_name(bitfield_c), first_ushort_value), RETCODE_OK);
-    EXPECT_EQ(bitset_data->get_uint16_value(test_ushort_value, bitset_data->get_member_id_by_name(bitfield_c)), RETCODE_OK);
+    EXPECT_EQ(bitset_data->set_uint16_value(bitset_data->get_member_id_by_name(
+                bitfield_c), first_ushort_value), RETCODE_OK);
+    EXPECT_EQ(bitset_data->get_uint16_value(test_ushort_value, bitset_data->get_member_id_by_name(
+                bitfield_c)), RETCODE_OK);
     EXPECT_EQ(first_ushort_value, test_ushort_value);
-    EXPECT_EQ(bitset_data->set_int16_value(bitset_data->get_member_id_by_name(bitfield_d), first_short_value), RETCODE_OK);
-    EXPECT_EQ(bitset_data->get_int16_value(test_short_value, bitset_data->get_member_id_by_name(bitfield_d)), RETCODE_OK);
+    EXPECT_EQ(bitset_data->set_int16_value(bitset_data->get_member_id_by_name(
+                bitfield_d), first_short_value), RETCODE_OK);
+    EXPECT_EQ(bitset_data->get_int16_value(test_short_value, bitset_data->get_member_id_by_name(bitfield_d)),
+            RETCODE_OK);
     EXPECT_EQ(first_short_value, test_short_value);
     EXPECT_EQ(array_data->return_loaned_value(bitset_data), RETCODE_OK);
     bitset_data = array_data->loan_value(33);
     ASSERT_TRUE(bitset_data);
-    EXPECT_EQ(bitset_data->set_uint8_value(bitset_data->get_member_id_by_name(bitfield_a), second_octet_value), RETCODE_OK);
-    EXPECT_EQ(bitset_data->get_uint8_value(test_octet_value, bitset_data->get_member_id_by_name(bitfield_a)), RETCODE_OK);
+    EXPECT_EQ(bitset_data->set_uint8_value(bitset_data->get_member_id_by_name(
+                bitfield_a), second_octet_value), RETCODE_OK);
+    EXPECT_EQ(bitset_data->get_uint8_value(test_octet_value, bitset_data->get_member_id_by_name(bitfield_a)),
+            RETCODE_OK);
     EXPECT_EQ(second_octet_value, test_octet_value);
-    EXPECT_EQ(bitset_data->set_boolean_value(bitset_data->get_member_id_by_name(bitfield_b), second_bool_value), RETCODE_OK);
-    EXPECT_EQ(bitset_data->get_boolean_value(test_bool_value, bitset_data->get_member_id_by_name(bitfield_b)), RETCODE_OK);
+    EXPECT_EQ(bitset_data->set_boolean_value(bitset_data->get_member_id_by_name(
+                bitfield_b), second_bool_value), RETCODE_OK);
+    EXPECT_EQ(bitset_data->get_boolean_value(test_bool_value, bitset_data->get_member_id_by_name(
+                bitfield_b)), RETCODE_OK);
     EXPECT_EQ(second_bool_value, test_bool_value);
-    EXPECT_EQ(bitset_data->set_uint16_value(bitset_data->get_member_id_by_name(bitfield_c), second_ushort_value), RETCODE_OK);
-    EXPECT_EQ(bitset_data->get_uint16_value(test_ushort_value, bitset_data->get_member_id_by_name(bitfield_c)), RETCODE_OK);
+    EXPECT_EQ(bitset_data->set_uint16_value(bitset_data->get_member_id_by_name(
+                bitfield_c), second_ushort_value), RETCODE_OK);
+    EXPECT_EQ(bitset_data->get_uint16_value(test_ushort_value, bitset_data->get_member_id_by_name(
+                bitfield_c)), RETCODE_OK);
     EXPECT_EQ(second_ushort_value, test_ushort_value);
-    EXPECT_EQ(bitset_data->set_int16_value(bitset_data->get_member_id_by_name(bitfield_d), second_short_value), RETCODE_OK);
-    EXPECT_EQ(bitset_data->get_int16_value(test_short_value, bitset_data->get_member_id_by_name(bitfield_d)), RETCODE_OK);
+    EXPECT_EQ(bitset_data->set_int16_value(bitset_data->get_member_id_by_name(
+                bitfield_d), second_short_value), RETCODE_OK);
+    EXPECT_EQ(bitset_data->get_int16_value(test_short_value, bitset_data->get_member_id_by_name(bitfield_d)),
+            RETCODE_OK);
     EXPECT_EQ(second_short_value, test_short_value);
     EXPECT_EQ(array_data->return_loaned_value(bitset_data), RETCODE_OK);
     bitset_data = array_data->loan_value(857);
     ASSERT_TRUE(bitset_data);
-    EXPECT_EQ(bitset_data->set_uint8_value(bitset_data->get_member_id_by_name(bitfield_a), third_octet_value), RETCODE_OK);
-    EXPECT_EQ(bitset_data->get_uint8_value(test_octet_value, bitset_data->get_member_id_by_name(bitfield_a)), RETCODE_OK);
+    EXPECT_EQ(bitset_data->set_uint8_value(bitset_data->get_member_id_by_name(
+                bitfield_a), third_octet_value), RETCODE_OK);
+    EXPECT_EQ(bitset_data->get_uint8_value(test_octet_value, bitset_data->get_member_id_by_name(bitfield_a)),
+            RETCODE_OK);
     EXPECT_EQ(third_octet_value, test_octet_value);
-    EXPECT_EQ(bitset_data->set_boolean_value(bitset_data->get_member_id_by_name(bitfield_b), third_bool_value), RETCODE_OK);
-    EXPECT_EQ(bitset_data->get_boolean_value(test_bool_value, bitset_data->get_member_id_by_name(bitfield_b)), RETCODE_OK);
+    EXPECT_EQ(bitset_data->set_boolean_value(bitset_data->get_member_id_by_name(
+                bitfield_b), third_bool_value), RETCODE_OK);
+    EXPECT_EQ(bitset_data->get_boolean_value(test_bool_value, bitset_data->get_member_id_by_name(
+                bitfield_b)), RETCODE_OK);
     EXPECT_EQ(third_bool_value, test_bool_value);
-    EXPECT_EQ(bitset_data->set_uint16_value(bitset_data->get_member_id_by_name(bitfield_c), third_ushort_value), RETCODE_OK);
-    EXPECT_EQ(bitset_data->get_uint16_value(test_ushort_value, bitset_data->get_member_id_by_name(bitfield_c)), RETCODE_OK);
+    EXPECT_EQ(bitset_data->set_uint16_value(bitset_data->get_member_id_by_name(
+                bitfield_c), third_ushort_value), RETCODE_OK);
+    EXPECT_EQ(bitset_data->get_uint16_value(test_ushort_value, bitset_data->get_member_id_by_name(
+                bitfield_c)), RETCODE_OK);
     EXPECT_EQ(third_ushort_value, test_ushort_value);
-    EXPECT_EQ(bitset_data->set_int16_value(bitset_data->get_member_id_by_name(bitfield_d), third_short_value), RETCODE_OK);
-    EXPECT_EQ(bitset_data->get_int16_value(test_short_value, bitset_data->get_member_id_by_name(bitfield_d)), RETCODE_OK);
+    EXPECT_EQ(bitset_data->set_int16_value(bitset_data->get_member_id_by_name(
+                bitfield_d), third_short_value), RETCODE_OK);
+    EXPECT_EQ(bitset_data->get_int16_value(test_short_value, bitset_data->get_member_id_by_name(bitfield_d)),
+            RETCODE_OK);
     EXPECT_EQ(third_short_value, test_short_value);
     EXPECT_EQ(array_data->return_loaned_value(bitset_data), RETCODE_OK);
     EXPECT_EQ(data->return_loaned_value(array_data), RETCODE_OK);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         ArrayMultiDimensionBitset struct_data;
         ArrayMultiDimensionBitsetPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        for (size_t i = 0; i < struct_data.var_array_bitset().size(); ++i)
-        {
-            for (size_t j = 0; j < struct_data.var_array_bitset()[i].size(); ++j)
-            {
-                for (size_t k = 0; k < struct_data.var_array_bitset()[i][j].size(); ++k)
-                {
-                    if (i == 0 && j == 0 && k == 0)
-                    {
-                        EXPECT_EQ(struct_data.var_array_bitset()[i][j][k].a(), first_octet_value);
-                        EXPECT_EQ(struct_data.var_array_bitset()[i][j][k].b(), first_bool_value);
-                        EXPECT_EQ(struct_data.var_array_bitset()[i][j][k].c(), first_ushort_value);
-                        EXPECT_EQ(struct_data.var_array_bitset()[i][j][k].d(), first_short_value);
-                    }
-                    else if (i == 0 && j == 3 && k == 3)
-                    {
-                        EXPECT_EQ(struct_data.var_array_bitset()[i][j][k].a(), second_octet_value);
-                        EXPECT_EQ(struct_data.var_array_bitset()[i][j][k].b(), second_bool_value);
-                        EXPECT_EQ(struct_data.var_array_bitset()[i][j][k].c(), second_ushort_value);
-                        EXPECT_EQ(struct_data.var_array_bitset()[i][j][k].d(), second_short_value);
-                    }
-                    else if (i == 8 && j == 5 && k == 7)
-                    {
-                        EXPECT_EQ(struct_data.var_array_bitset()[i][j][k].a(), third_octet_value);
-                        EXPECT_EQ(struct_data.var_array_bitset()[i][j][k].b(), third_bool_value);
-                        EXPECT_EQ(struct_data.var_array_bitset()[i][j][k].c(), third_ushort_value);
-                        EXPECT_EQ(struct_data.var_array_bitset()[i][j][k].d(), third_short_value);
-                    }
-                    else
-                    {
-                        EXPECT_EQ(struct_data.var_array_bitset()[i][j][k].a(), 0u);
-                        EXPECT_EQ(struct_data.var_array_bitset()[i][j][k].b(), false);
-                        EXPECT_EQ(struct_data.var_array_bitset()[i][j][k].c(), 0u);
-                        EXPECT_EQ(struct_data.var_array_bitset()[i][j][k].d(), 0);
-                    }
-                }
-            }
-        }
-    }
-
-    // XCDRv2
-    {
-        ArrayMultiDimensionBitset struct_data;
-        ArrayMultiDimensionBitsetPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         for (size_t i = 0; i < struct_data.var_array_bitset().size(); ++i)
         {
             for (size_t j = 0; j < struct_data.var_array_bitset()[i].size(); ++j)
@@ -3745,7 +3144,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BoundedBigArrays)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_large_array);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT16), {41925})->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::
+                    get_instance()->get_primitive_type(TK_INT16), {41925})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -3763,23 +3163,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BoundedBigArrays)
     value.insert(value.end(), 923, 0);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         BoundedBigArrays struct_data;
         BoundedBigArraysPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_big().size(), test_value.size());
-        for (size_t i = 0; i < test_value.size(); ++i)
-        {
-            EXPECT_EQ(struct_data.var_array_big()[i], test_value[i]);
-        }
-    }
-
-    // XCDRv2
-    {
-        BoundedBigArrays struct_data;
-        BoundedBigArraysPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_array_big().size(), test_value.size());
         for (size_t i = 0; i < test_value.size(); ++i)
         {

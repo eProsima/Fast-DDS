@@ -88,6 +88,8 @@ constexpr const char* var_wchar_name = "var_char16";
 constexpr const char* var_union_name = "var_union";
 constexpr const char* var_str_name = "var_str";
 
+extern std::array<DataRepresentationId_t, 2> encodings;
+
 class DynamicTypesDDSTypesTest : public ::testing::Test
 {
 public:

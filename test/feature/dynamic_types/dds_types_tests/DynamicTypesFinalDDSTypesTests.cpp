@@ -90,20 +90,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_FinalShortStruct)
     EXPECT_EQ(data->get_int16_value(test_value, data->get_member_id_by_name(var_short_name)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         FinalShortStruct struct_data;
         FinalShortStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(struct_data.var_short(), test_value);
-    }
-
-    // XCDRv2
-    {
-        FinalShortStruct struct_data;
-        FinalShortStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_short(), test_value);
     }
@@ -134,20 +125,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_FinalUShortStruct)
     EXPECT_EQ(data->get_uint16_value(test_value, data->get_member_id_by_name(var_ushort_name)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         FinalUShortStruct struct_data;
         FinalUShortStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(struct_data.var_ushort(), test_value);
-    }
-
-    // XCDRv2
-    {
-        FinalUShortStruct struct_data;
-        FinalUShortStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_ushort(), test_value);
     }
@@ -178,20 +160,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_FinalLongStruct)
     EXPECT_EQ(data->get_int32_value(test_value, data->get_member_id_by_name(var_long_name)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         FinalLongStruct struct_data;
         FinalLongStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(struct_data.var_long(), test_value);
-    }
-
-    // XCDRv2
-    {
-        FinalLongStruct struct_data;
-        FinalLongStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_long(), test_value);
     }
@@ -222,20 +195,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_FinalULongStruct)
     EXPECT_EQ(data->get_uint32_value(test_value, data->get_member_id_by_name(var_ulong_name)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         FinalULongStruct struct_data;
         FinalULongStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(struct_data.var_ulong(), test_value);
-    }
-
-    // XCDRv2
-    {
-        FinalULongStruct struct_data;
-        FinalULongStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_ulong(), test_value);
     }
@@ -266,20 +230,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_FinalLongLongStruct)
     EXPECT_EQ(data->get_int64_value(test_value, data->get_member_id_by_name(var_long_long_name)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         FinalLongLongStruct struct_data;
         FinalLongLongStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(struct_data.var_longlong(), test_value);
-    }
-
-    // XCDRv2
-    {
-        FinalLongLongStruct struct_data;
-        FinalLongLongStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_longlong(), test_value);
     }
@@ -310,20 +265,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_FinalULongLongStruct)
     EXPECT_EQ(data->get_uint64_value(test_value, data->get_member_id_by_name(var_ulong_long_name)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         FinalULongLongStruct struct_data;
         FinalULongLongStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(struct_data.var_ulonglong(), test_value);
-    }
-
-    // XCDRv2
-    {
-        FinalULongLongStruct struct_data;
-        FinalULongLongStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_ulonglong(), test_value);
     }
@@ -354,20 +300,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_FinalFloatStruct)
     EXPECT_EQ(data->get_float32_value(test_value, data->get_member_id_by_name(var_float_name)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         FinalFloatStruct struct_data;
         FinalFloatStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(struct_data.var_float(), test_value);
-    }
-
-    // XCDRv2
-    {
-        FinalFloatStruct struct_data;
-        FinalFloatStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_float(), test_value);
     }
@@ -398,20 +335,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_FinalDoubleStruct)
     EXPECT_EQ(data->get_float64_value(test_value, data->get_member_id_by_name(var_double_name)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         FinalDoubleStruct struct_data;
         FinalDoubleStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(struct_data.var_double(), test_value);
-    }
-
-    // XCDRv2
-    {
-        FinalDoubleStruct struct_data;
-        FinalDoubleStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_double(), test_value);
     }
@@ -442,20 +370,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_FinalLongDoubleStruct)
     EXPECT_EQ(data->get_float128_value(test_value, data->get_member_id_by_name(var_long_double_name)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         FinalLongDoubleStruct struct_data;
         FinalLongDoubleStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(struct_data.var_longdouble(), test_value);
-    }
-
-    // XCDRv2
-    {
-        FinalLongDoubleStruct struct_data;
-        FinalLongDoubleStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_longdouble(), test_value);
     }
@@ -486,20 +405,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_FinalBooleanStruct)
     EXPECT_EQ(data->get_boolean_value(test_value, data->get_member_id_by_name(var_bool_name)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         FinalBooleanStruct struct_data;
         FinalBooleanStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(struct_data.var_boolean(), test_value);
-    }
-
-    // XCDRv2
-    {
-        FinalBooleanStruct struct_data;
-        FinalBooleanStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_boolean(), test_value);
     }
@@ -530,20 +440,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_FinalOctetStruct)
     EXPECT_EQ(data->get_byte_value(test_value, data->get_member_id_by_name(var_byte_name)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         FinalOctetStruct struct_data;
         FinalOctetStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(struct_data.var_octet(), test_value);
-    }
-
-    // XCDRv2
-    {
-        FinalOctetStruct struct_data;
-        FinalOctetStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_octet(), test_value);
     }
@@ -574,20 +475,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_FinalCharStruct)
     EXPECT_EQ(data->get_char8_value(test_value, data->get_member_id_by_name(var_char_name)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         FinalCharStruct struct_data;
         FinalCharStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(struct_data.var_char8(), test_value);
-    }
-
-    // XCDRv2
-    {
-        FinalCharStruct struct_data;
-        FinalCharStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_char8(), test_value);
     }
@@ -618,20 +510,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_FinalWCharStruct)
     EXPECT_EQ(data->get_char16_value(test_value, data->get_member_id_by_name(var_wchar_name)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         FinalWCharStruct struct_data;
         FinalWCharStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(struct_data.var_char16(), test_value);
-    }
-
-    // XCDRv2
-    {
-        FinalWCharStruct struct_data;
-        FinalWCharStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_char16(), test_value);
     }
@@ -675,20 +558,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_FinalUnionStruct)
     EXPECT_EQ(short_value, test_short_value);
     EXPECT_EQ(data->return_loaned_value(union_data), RETCODE_OK);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         FinalUnionStruct struct_data;
         FinalUnionStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(struct_data.var_union().shortValue(), test_short_value);
-    }
-
-    // XCDRv2
-    {
-        FinalUnionStruct struct_data;
-        FinalUnionStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union().shortValue(), test_short_value);
     }
@@ -702,19 +576,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_FinalEmptyStruct)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         FinalEmptyStruct struct_data;
         FinalEmptyStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-    }
-
-    // XCDRv2
-    {
-        FinalEmptyStruct struct_data;
-        FinalEmptyStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
     }
 
@@ -745,20 +611,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_FinalEmptyInheritanceStruct)
     EXPECT_EQ(data->get_string_value(str_test_value, data->get_member_id_by_name(var_str_name)), RETCODE_OK);
     EXPECT_EQ(str_value, str_test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         FinalEmptyInheritanceStruct struct_data;
         FinalEmptyInheritanceStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(struct_data.var_str(), str_test_value);
-    }
-
-    // XCDRv2
-    {
-        FinalEmptyInheritanceStruct struct_data;
-        FinalEmptyInheritanceStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_str(), str_test_value);
     }
@@ -796,21 +653,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_FinalInheritanceStruct)
     EXPECT_EQ(data->get_string_value(str_test_value, data->get_member_id_by_name(var_str_name)), RETCODE_OK);
     EXPECT_EQ(str_value, str_test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         FinalInheritanceStruct struct_data;
         FinalInheritanceStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(struct_data.var_short(), short_test_value);
-        EXPECT_EQ(struct_data.var_str(), str_test_value);
-    }
-
-    // XCDRv2
-    {
-        FinalInheritanceStruct struct_data;
-        FinalInheritanceStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_short(), short_test_value);
         EXPECT_EQ(struct_data.var_str(), str_test_value);
@@ -838,20 +685,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_InheritanceEmptyStruct)
     EXPECT_EQ(data->get_int16_value(short_test_value, data->get_member_id_by_name(var_short_name)), RETCODE_OK);
     EXPECT_EQ(short_value, short_test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         InheritanceEmptyStruct struct_data;
         InheritanceEmptyStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(struct_data.var_short(), short_test_value);
-    }
-
-    // XCDRv2
-    {
-        InheritanceEmptyStruct struct_data;
-        InheritanceEmptyStructPubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_short(), short_test_value);
     }
@@ -889,21 +727,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_FinalExtensibilityInheritance)
     EXPECT_EQ(data->get_int32_value(long_test_value, data->get_member_id_by_name(var_long_name)), RETCODE_OK);
     EXPECT_EQ(long_value, long_test_value);
 
-    // XCDRv1
+    for (auto encoding : encodings)
     {
         FinalExtensibilityInheritance struct_data;
         FinalExtensibilityInheritancePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
-                static_pubsubType);
-        EXPECT_EQ(struct_data.var_short(), short_test_value);
-        EXPECT_EQ(struct_data.var_long(), long_test_value);
-    }
-
-    // XCDRv2
-    {
-        FinalExtensibilityInheritance struct_data;
-        FinalExtensibilityInheritancePubSubType static_pubsubType;
-        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
+        check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_short(), short_test_value);
         EXPECT_EQ(struct_data.var_long(), long_test_value);
