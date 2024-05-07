@@ -4942,6 +4942,29 @@ TEST_F(DynamicTypesTests, DynamicType_XML_Bitmask_test)
     }
 }
 
+TEST_F(DynamicTypesTests, DynamicType_XML_key_annotation)
+{
+    using namespace xmlparser;
+    using namespace types;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+
+    {
+        DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("BoolStruct");
+        ASSERT_FALSE(pbType->m_isGetKeyDefined);
+        XMLProfileManager::DeleteDynamicPubSubType(pbType);
+    }
+
+    {
+        DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("my_keyed_struct");
+        ASSERT_TRUE(pbType->m_isGetKeyDefined);
+        XMLProfileManager::DeleteDynamicPubSubType(pbType);
+    }
+
+    XMLProfileManager::DeleteInstance();
+}
+
 TEST(TypeIdentifierTests, MinimalTypeIdentifierComparision)
 {
     TypeIdentifier enum1 = *GetMyEnumIdentifier(false);

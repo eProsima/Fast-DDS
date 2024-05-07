@@ -357,6 +357,22 @@ XMLP_ret XMLProfileManager::loadXMLString(
     return loaded_ret;
 }
 
+types::DynamicPubSubType* XMLProfileManager::CreateDynamicPubSubType(
+        const std::string& type_name)
+{
+    if (dynamic_types_.find(type_name) != dynamic_types_.end())
+    {
+        return new types::DynamicPubSubType(dynamic_types_[type_name]->build());
+    }
+    return nullptr;
+}
+
+void XMLProfileManager::DeleteDynamicPubSubType(
+        types::DynamicPubSubType* type)
+{
+    delete type;
+}
+
 XMLP_ret XMLProfileManager::extractProfiles(
         up_base_node_t profiles,
         const std::string& filename)
