@@ -322,11 +322,10 @@ public:
      * @param[out] writer_qos
      * @param[in] topic_qos
      * @return RETCODE_OK if successful, an error code otherwise
-     * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
-    RTPS_DllAPI ReturnCode_t copy_from_topic_qos(
+    RTPS_DllAPI static ReturnCode_t copy_from_topic_qos(
             fastdds::dds::DataWriterQos& writer_qos,
-            const fastdds::dds::TopicQos& topic_qos) const;
+            const fastdds::dds::TopicQos& topic_qos);
 
     /**
      * Fills the DataWriterQos with the values of the XML profile.

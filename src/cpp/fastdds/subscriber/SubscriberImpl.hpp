@@ -28,6 +28,7 @@
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
+#include <fastdds/dds/topic/qos/TopicQos.hpp>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/types/TypesBase.h>
 
@@ -152,11 +153,9 @@ public:
             const std::string& profile_name,
             DataReaderQos& qos) const;
 
-    /* TODO
-       bool copy_from_topic_qos(
-            ReaderQos& reader_qos,
-            const fastrtps::TopicAttributes& topic_qos) const;
-     */
+    ReturnCode_t static copy_from_topic_qos(
+            DataReaderQos& reader_qos,
+            const TopicQos& topic_qos);
 
     const DomainParticipant* get_participant() const;
 

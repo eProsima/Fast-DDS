@@ -14,16 +14,28 @@
 
 #include <chrono>
 
-#include "BlackboxTests.hpp"
-
-#include "PubSubReader.hpp"
-#include "PubSubWriter.hpp"
-
 #include <gtest/gtest.h>
 
+#include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
+#include <fastdds/dds/publisher/DataWriter.hpp>
+#include <fastdds/dds/publisher/Publisher.hpp>
+#include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
+#include <fastdds/dds/publisher/qos/PublisherQos.hpp>
+#include <fastdds/dds/subscriber/DataReader.hpp>
+#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
+#include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
+#include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastdds/dds/topic/qos/TopicQos.hpp>
+#include <fastdds/dds/topic/Topic.hpp>
 #include <fastrtps/attributes/LibrarySettingsAttributes.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <rtps/transport/test_UDPv4Transport.h>
+
+#include "BlackboxTests.hpp"
+#include "PubSubReader.hpp"
+#include "PubSubWriter.hpp"
 
 using namespace eprosima::fastrtps;
 using test_UDPv4Transport = eprosima::fastdds::rtps::test_UDPv4Transport;
@@ -430,6 +442,95 @@ TEST(DDSDataWriter, default_qos_large_history_depth)
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     writer.history_depth(1000).init();
     ASSERT_TRUE(writer.isInitialized());
+}
+
+/**
+ * Utility class to set some values other than default to those Qos common to Topic and DataWriter.
+ *
+ * This is a class instead of a free function to avoid linking with its TestsDataReader counterpart.
+ */
+class TestsDataWriterQosCommonUtils
+{
+public:
+
+    template<typename T>
+    static void set_common_qos(
+            T& qos)
+    {
+        qos.durability_service().history_kind = eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS;
+        qos.reliability().kind = eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS;
+        qos.durability().kind = eprosima::fastdds::dds::VOLATILE_DURABILITY_QOS;
+        qos.deadline().period = {0, 500000000};
+        qos.latency_budget().duration = 0;
+        qos.liveliness().kind = eprosima::fastdds::dds::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
+        qos.resource_limits().max_samples = 1000;
+        qos.transport_priority().value = 1;
+        qos.ownership().kind = eprosima::fastdds::dds::EXCLUSIVE_OWNERSHIP_QOS;
+        qos.representation().m_value.push_back(eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+        qos.history().kind = eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS;
+        qos.lifespan().duration = {5, 0};
+    }
+
+};
+
+/*
+ * This test:
+ *   1. Creates a Topic with custom Qos
+ *   2. Updates the default DataWriter Qos that are not in common with Topic Qos with non-default values
+ *   3. Creates a DataWriter with DATAWRITER_QOS_USE_TOPIC_QOS
+ *   4. Checks that the used Qos are the merge between the default ones and the Topic ones
+ */
+TEST(DDSDataWriter, datawriter_qos_use_topic_qos)
+{
+    using namespace eprosima::fastdds::dds;
+
+    /* Create a topic with custom Qos */
+    // Set Topic Qos different from default
+    TopicQos topic_qos;
+    TestsDataWriterQosCommonUtils::set_common_qos(topic_qos);
+
+    // Create DomainParticipant
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    /* Create a DataWriter with modified default Qos using the Topic Qos */
+    // Create Topic
+    TypeSupport type_support;
+    type_support.reset(new HelloWorldPubSubType());
+    type_support.register_type(participant, "HelloWorld");
+    Topic* topic = participant->create_topic("HelloWorldTopic", "HelloWorld", topic_qos);
+
+    // Create the Publisher
+    Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+    ASSERT_NE(publisher, nullptr);
+
+    // Change default DataWriter Qos (only those that are different from Topic Qos)
+    DataWriterQos control_qos;
+    control_qos.ownership_strength().value = 1;
+    control_qos.publish_mode().kind = eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE;
+    control_qos.writer_data_lifecycle().autodispose_unregistered_instances = false;
+    control_qos.user_data().push_back(0);
+    control_qos.endpoint().entity_id = 1;
+    control_qos.writer_resource_limits().matched_subscriber_allocation =
+            ResourceLimitedContainerConfig::fixed_size_configuration(1u);
+    control_qos.data_sharing().off();
+    publisher->set_default_datawriter_qos(control_qos);
+
+    // Create DataWriter with DATAREADER_QOS_USE_TOPIC_QOS
+    DataWriter* writer = publisher->create_datawriter(topic, DATAWRITER_QOS_USE_TOPIC_QOS);
+    ASSERT_NE(writer, nullptr);
+
+    /* Check that used Qos are the merge between the default ones and the Topic ones */
+    // Set the topic values on the control DataWriterQos
+    TestsDataWriterQosCommonUtils::set_common_qos(control_qos);
+
+    // Get used DataWriter Qos
+    DataWriterQos test_qos = writer->get_qos();
+
+    // Check that the Qos that are not in common with Topic Qos are correctly set as the default ones,
+    // and that the rest of the Qos are left unmodified
+    ASSERT_EQ(control_qos, test_qos);
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P

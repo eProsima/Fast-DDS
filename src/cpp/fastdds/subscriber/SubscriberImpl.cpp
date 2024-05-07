@@ -16,31 +16,24 @@
  * @file SubscriberImpl.cpp
  *
  */
-
-#include <fastdds/subscriber/SubscriberImpl.hpp>
-#include <fastdds/subscriber/DataReaderImpl.hpp>
-#include <fastdds/topic/TopicDescriptionImpl.hpp>
-#include <fastdds/domain/DomainParticipantImpl.hpp>
-
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
-
+#include <fastdds/dds/log/Log.hpp>
+#include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/SubscriberListener.hpp>
-#include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
-#include <fastdds/utils/QosConverters.hpp>
-
-#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/common/Property.h>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
-
-#include <rtps/network/utils/netmask_filter.hpp>
-
 #include <fastrtps/attributes/SubscriberAttributes.h>
-
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
+#include <fastdds/domain/DomainParticipantImpl.hpp>
+#include <fastdds/subscriber/DataReaderImpl.hpp>
+#include <fastdds/subscriber/SubscriberImpl.hpp>
+#include <fastdds/topic/TopicDescriptionImpl.hpp>
+#include <fastdds/utils/QosConverters.hpp>
+#include <rtps/network/utils/netmask_filter.hpp>
 #ifdef FASTDDS_STATISTICS
 #include <statistics/types/monitorservice_types.h>
 #endif //FASTDDS_STATISTICS
@@ -442,15 +435,24 @@ const ReturnCode_t SubscriberImpl::get_datareader_qos_from_profile(
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
 }
 
-/* TODO
-   bool SubscriberImpl::copy_from_topic_qos(
-        DataReaderQos&,
-        const fastrtps::TopicAttributes&) const
-   {
-    EPROSIMA_LOG_ERROR(PUBLISHER, "Operation not implemented");
-    return false;
-   }
- */
+ReturnCode_t SubscriberImpl::copy_from_topic_qos(
+        DataReaderQos& reader_qos,
+        const TopicQos& topic_qos)
+{
+    TypeConsistencyQos new_value;
+    reader_qos.durability(topic_qos.durability());
+    reader_qos.durability_service(topic_qos.durability_service());
+    reader_qos.deadline(topic_qos.deadline());
+    reader_qos.latency_budget(topic_qos.latency_budget());
+    reader_qos.liveliness(topic_qos.liveliness());
+    reader_qos.reliability(topic_qos.reliability());
+    reader_qos.destination_order(topic_qos.destination_order());
+    reader_qos.history(topic_qos.history());
+    reader_qos.resource_limits(topic_qos.resource_limits());
+    reader_qos.ownership(topic_qos.ownership());
+    reader_qos.type_consistency().representation = topic_qos.representation();
+    return ReturnCode_t::RETCODE_OK;
+}
 
 const DomainParticipant* SubscriberImpl::get_participant() const
 {

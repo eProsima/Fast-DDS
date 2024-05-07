@@ -481,15 +481,25 @@ const ReturnCode_t PublisherImpl::get_datawriter_qos_from_profile(
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
 }
 
-/* TODO
-   bool PublisherImpl::copy_from_topic_qos(
-        fastrtps::WriterQos&,
-        const fastrtps::TopicAttributes&) const
-   {
-    EPROSIMA_LOG_ERROR(PUBLISHER, "Operation not implemented");
-    return false;
-   }
- */
+ReturnCode_t PublisherImpl::copy_from_topic_qos(
+        DataWriterQos& writer_qos,
+        const TopicQos& topic_qos)
+{
+    writer_qos.durability(topic_qos.durability());
+    writer_qos.durability_service(topic_qos.durability_service());
+    writer_qos.deadline(topic_qos.deadline());
+    writer_qos.latency_budget(topic_qos.latency_budget());
+    writer_qos.liveliness(topic_qos.liveliness());
+    writer_qos.reliability(topic_qos.reliability());
+    writer_qos.destination_order(topic_qos.destination_order());
+    writer_qos.history(topic_qos.history());
+    writer_qos.resource_limits(topic_qos.resource_limits());
+    writer_qos.transport_priority(topic_qos.transport_priority());
+    writer_qos.lifespan(topic_qos.lifespan());
+    writer_qos.ownership(topic_qos.ownership());
+    writer_qos.representation(topic_qos.representation());
+    return ReturnCode_t::RETCODE_OK;
+}
 
 ReturnCode_t PublisherImpl::wait_for_acknowledgments(
         const Duration_t& max_wait)

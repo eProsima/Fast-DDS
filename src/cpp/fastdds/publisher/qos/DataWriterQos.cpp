@@ -23,6 +23,7 @@
 using namespace eprosima::fastdds::dds;
 
 const DataWriterQos eprosima::fastdds::dds::DATAWRITER_QOS_DEFAULT;
+const DataWriterQos eprosima::fastdds::dds::DATAWRITER_QOS_USE_TOPIC_QOS;
 
 DataWriterQos::DataWriterQos()
 {

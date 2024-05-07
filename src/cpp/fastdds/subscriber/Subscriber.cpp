@@ -221,12 +221,7 @@ ReturnCode_t Subscriber::copy_from_topic_qos(
         DataReaderQos& reader_qos,
         const TopicQos& topic_qos)
 {
-    static_cast<void> (reader_qos);
-    static_cast<void> (topic_qos);
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
-    /*
-       return impl_->copy_from_topic_qos(reader_qos, topic_qos);
-     */
+    return SubscriberImpl::copy_from_topic_qos(reader_qos, topic_qos);
 }
 
 const DomainParticipant* Subscriber::get_participant() const

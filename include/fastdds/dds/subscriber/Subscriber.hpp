@@ -360,7 +360,6 @@ public:
      * @param[in, out] reader_qos
      * @param[in] topic_qos
      * @return RETCODE_OK if successful, an error code otherwise
-     * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
     RTPS_DllAPI static ReturnCode_t copy_from_topic_qos(
             DataReaderQos& reader_qos,

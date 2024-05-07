@@ -12,32 +12,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <fstream>
+
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
 #include <dds/domain/DomainParticipant.hpp>
-#include <dds/domain/DomainParticipant.hpp>
 #include <dds/pub/DataWriter.hpp>
-#include <dds/pub/Publisher.hpp>
 #include <dds/pub/Publisher.hpp>
 #include <dds/pub/qos/DataWriterQos.hpp>
 #include <dds/pub/qos/PublisherQos.hpp>
 #include <dds/topic/Topic.hpp>
-
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/PublisherListener.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
-
+#include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
-
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
-#include <fstream>
-
 
 namespace eprosima {
 namespace fastdds {
@@ -809,11 +806,10 @@ TEST(Publisher, DeleteContainedEntities)
 /*
  * This test checks that the Publisher methods defined in the standard not yet implemented in FastDDS return
  * ReturnCode_t::RETCODE_UNSUPPORTED. The following methods are checked:
- * 1. copy_from_topic_qos
- * 2. suspend_publications
- * 3. resume_publications
- * 4. begin_coherent_changes
- * 5. end_coherent_changes
+ * 1. suspend_publications
+ * 2. resume_publications
+ * 3. begin_coherent_changes
+ * 4. end_coherent_changes
  */
 TEST(PublisherTests, UnsupportedPublisherMethods)
 {
@@ -825,7 +821,6 @@ TEST(PublisherTests, UnsupportedPublisherMethods)
 
     fastdds::dds::DataWriterQos writer_qos;
     fastdds::dds::TopicQos topic_qos;
-    EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, publisher->copy_from_topic_qos(writer_qos, topic_qos));
     EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, publisher->suspend_publications());
     EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, publisher->resume_publications());
     EXPECT_EQ(ReturnCode_t::RETCODE_UNSUPPORTED, publisher->begin_coherent_changes());
@@ -833,6 +828,86 @@ TEST(PublisherTests, UnsupportedPublisherMethods)
 
     ASSERT_EQ(participant->delete_publisher(publisher), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+/**
+ * Utility class to set some values other than default to those Qos common to Topic and DataWriter.
+ *
+ * This is a class instead of a free function to avoid linking with its TestsSubscriber counterpart.
+ */
+class TestsPublisherQosCommonUtils
+{
+public:
+
+    template<typename T>
+    static void set_common_qos(
+            T& qos)
+    {
+        qos.durability_service().history_kind = KEEP_ALL_HISTORY_QOS;
+        qos.reliability().kind = BEST_EFFORT_RELIABILITY_QOS;
+        qos.durability().kind = VOLATILE_DURABILITY_QOS;
+        qos.deadline().period = {0, 500000000};
+        qos.latency_budget().duration = 0;
+        qos.liveliness().kind = MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
+        qos.destination_order().kind = BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS;
+        qos.resource_limits().max_samples = 1000;
+        qos.transport_priority().value = 1;
+        qos.ownership().kind = EXCLUSIVE_OWNERSHIP_QOS;
+        qos.representation().m_value.push_back(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+        qos.destination_order().kind = eprosima::fastdds::dds::BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS;
+        qos.history().kind = KEEP_ALL_HISTORY_QOS;
+        qos.lifespan().duration = {5, 0};
+    }
+
+};
+
+/*
+ * This test:
+ *   1. Creates a Topic with custom Qos
+ *   2. Creates a control DataWriterQos in which the non-common Qos are set to a value different from the default
+ *   3. Creates a test DataWriterQos and assigns it the value of the control Qos
+ *   4. Updates the control Qos' common Qos with the same values used in the Topic Qos
+ *   5. Calls Publisher::copy_from_topic_qos() with the test Qos and the Topic Qos
+ *   6. Checks that the resulting test Qos has the same values as the control Qos
+ */
+TEST(PublisherTests, datawriter_copy_from_topic_qos)
+{
+    /* Set Topic Qos different from default */
+    TopicQos topic_qos;
+    TestsPublisherQosCommonUtils::set_common_qos(topic_qos);
+
+    /* Create the publisher under test */
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+    ASSERT_NE(publisher, nullptr);
+
+    /* Create control and test Qos instances */
+    // Override non-common Qos with values different from the default on the control Qos
+    DataWriterQos control_qos;
+    control_qos.ownership_strength().value = 1;
+    control_qos.publish_mode().kind = eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE;
+    control_qos.writer_data_lifecycle().autodispose_unregistered_instances = false;
+    control_qos.user_data().push_back(0);
+    control_qos.endpoint().entity_id = 1;
+    control_qos.writer_resource_limits().matched_subscriber_allocation =
+            eprosima::fastrtps::ResourceLimitedContainerConfig::fixed_size_configuration(1u);
+    control_qos.data_sharing().off();
+
+    // Copy control Qos to test Qos. At this point, test_qos has non-default values for the non-common Qos,
+    // and default values for the common Qos
+    DataWriterQos test_qos = control_qos;
+
+    // Set common Qos to the control Qos with the same values used in the Topic Qos
+    TestsPublisherQosCommonUtils::set_common_qos(control_qos);
+
+    /* Function under test call */
+    publisher->copy_from_topic_qos(test_qos, topic_qos);
+
+    /* Check that the test Qos has the same values as the control Qos */
+    ASSERT_EQ(control_qos, test_qos);
 }
 
 } // namespace dds

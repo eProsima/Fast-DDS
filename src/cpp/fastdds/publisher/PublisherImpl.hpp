@@ -28,6 +28,7 @@
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
+#include <fastdds/dds/topic/qos/TopicQos.hpp>
 #include <fastrtps/types/TypesBase.h>
 #include <fastrtps/qos/DeadlineMissedStatus.h>
 #include <fastrtps/qos/IncompatibleQosStatus.hpp>
@@ -173,11 +174,9 @@ public:
             const std::string& profile_name,
             DataWriterQos& qos) const;
 
-    /* TODO
-       bool copy_from_topic_qos(
-            WriterQos& writer_qos,
-            const fastrtps::TopicAttributes& topic_qos) const;
-     */
+    ReturnCode_t static copy_from_topic_qos(
+            DataWriterQos& writer_qos,
+            const TopicQos& topic_qos);
 
     fastrtps::rtps::RTPSParticipant* rtps_participant() const
     {

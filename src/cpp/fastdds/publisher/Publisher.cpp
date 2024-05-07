@@ -208,14 +208,9 @@ ReturnCode_t Publisher::get_default_datawriter_qos(
 
 ReturnCode_t Publisher::copy_from_topic_qos(
         fastdds::dds::DataWriterQos& writer_qos,
-        const fastdds::dds::TopicQos& topic_qos) const
+        const fastdds::dds::TopicQos& topic_qos)
 {
-    static_cast<void> (writer_qos);
-    static_cast<void> (topic_qos);
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
-    /*
-       return impl_->copy_from_topic_qos(writer_qos, topic_qos);
-     */
+    return PublisherImpl::copy_from_topic_qos(writer_qos, topic_qos);
 }
 
 const fastrtps::rtps::InstanceHandle_t& Publisher::get_instance_handle() const
