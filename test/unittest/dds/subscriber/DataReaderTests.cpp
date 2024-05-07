@@ -3818,26 +3818,20 @@ public:
         return true;
     }
 
-    MOCK_CONST_METHOD1(custom_is_plain, bool(DataRepresentationId_t data_representation_id));
+    MOCK_CONST_METHOD1(custom_is_plain_with_rep, bool(DataRepresentationId_t data_representation_id));
 
     bool is_plain(
             DataRepresentationId_t data_representation_id) const override
     {
-        return custom_is_plain(data_representation_id);
+        return custom_is_plain_with_rep(data_representation_id);
     }
+
+    MOCK_CONST_METHOD0(custom_is_plain, bool());
 
     bool is_plain() const override
     {
-        return is_plain(DataRepresentationId_t::XCDR_DATA_REPRESENTATION); // default XCDR1
+        return custom_is_plain();
     }
-
-    bool construct_sample(
-            void* sample) const override
-    {
-        new (sample) LoanableType();
-        return true;
-    }
-
 };
 
 TEST_F(DataReaderTests, data_type_is_plain_data_representation)
@@ -3864,9 +3858,10 @@ TEST_F(DataReaderTests, data_type_is_plain_data_representation)
     qos_xcdr.type_consistency().representation.m_value.push_back(DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
 
     /* Expect the "is_plain" method called with default data representation (XCDR1) */
-    EXPECT_CALL(*type, custom_is_plain(DataRepresentationId_t::XCDR_DATA_REPRESENTATION)).Times(
+    EXPECT_CALL(*type, custom_is_plain()).Times(0);
+    EXPECT_CALL(*type, custom_is_plain_with_rep(DataRepresentationId_t::XCDR_DATA_REPRESENTATION)).Times(
         testing::AtLeast(1)).WillRepeatedly(testing::Return(true));
-    EXPECT_CALL(*type, custom_is_plain(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)).Times(0);
+    EXPECT_CALL(*type, custom_is_plain_with_rep(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)).Times(0);
 
     /* Create a datareader will trigger the "is_plain" call */
     DataReader* datareader_xcdr = subscriber->create_datareader(topic, qos_xcdr);
@@ -3881,13 +3876,30 @@ TEST_F(DataReaderTests, data_type_is_plain_data_representation)
     qos_xcdr2.type_consistency().representation.m_value.push_back(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
 
     /* Expect the "is_plain" method called with XCDR2 data representation */
-    EXPECT_CALL(*type, custom_is_plain(DataRepresentationId_t::XCDR_DATA_REPRESENTATION)).Times(0);
-    EXPECT_CALL(*type, custom_is_plain(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)).Times(
+    EXPECT_CALL(*type, custom_is_plain()).Times(0);
+    EXPECT_CALL(*type, custom_is_plain_with_rep(DataRepresentationId_t::XCDR_DATA_REPRESENTATION)).Times(0);
+    EXPECT_CALL(*type, custom_is_plain_with_rep(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)).Times(
         testing::AtLeast(1)).WillRepeatedly(testing::Return(true));
 
     /* Create a datareader will trigger the "is_plain" call */
     DataReader* datareader_xcdr2 = subscriber->create_datareader(topic, qos_xcdr2);
     ASSERT_NE(datareader_xcdr2, nullptr);
+
+    /* NOT Define data representation QoS to force "is_plain" call */
+    DataReaderQos qos_no_xcdr = DATAREADER_QOS_DEFAULT;
+    qos_no_xcdr.endpoint().history_memory_policy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+    qos_no_xcdr.type_consistency().representation.m_value.clear();
+
+    /* Expect the "is_plain" method called with both data representation */
+    EXPECT_CALL(*type, custom_is_plain()).Times(0);
+    EXPECT_CALL(*type, custom_is_plain_with_rep(DataRepresentationId_t::XCDR_DATA_REPRESENTATION)).Times(
+        testing::AtLeast(1)).WillRepeatedly(testing::Return(true));
+    EXPECT_CALL(*type, custom_is_plain_with_rep(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)).Times(
+        testing::AtLeast(1)).WillRepeatedly(testing::Return(true));
+
+    /* Create a datareader will trigger the "is_plain" call */
+    DataReader* datareader_no_xcdr = subscriber->create_datareader(topic, qos_no_xcdr);
+    ASSERT_NE(datareader_no_xcdr, nullptr);
 
     /* Tear down */
     participant->delete_contained_entities();
