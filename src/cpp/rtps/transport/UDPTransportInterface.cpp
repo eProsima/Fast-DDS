@@ -142,14 +142,15 @@ void UDPTransportInterface::configure_send_buffer_size()
     }
 
     // Ensure the minimum value is used
-    if (send_buffer_size < s_minimumSocketBuffer)
+    uint32_t minimum_socket_buffer = configuration()->maxMessageSize;
+    if (send_buffer_size < minimum_socket_buffer)
     {
-        send_buffer_size = s_minimumSocketBuffer;
+        send_buffer_size = minimum_socket_buffer;
         set_send_buffer_size(send_buffer_size);
     }
 
     // Try to set the highest possible value the system allows
-    for (; send_buffer_size >= s_minimumSocketBuffer; send_buffer_size /= 2)
+    for (; send_buffer_size >= minimum_socket_buffer; send_buffer_size /= 2)
     {
         socket_base::send_buffer_size option(static_cast<int32_t>(send_buffer_size));
         socket.set_option(option, ec);
@@ -196,14 +197,15 @@ void UDPTransportInterface::configure_receive_buffer_size()
     }
 
     // Ensure the minimum value is used
-    if (receive_buffer_size < s_minimumSocketBuffer)
+    uint32_t minimum_socket_buffer = configuration()->maxMessageSize;
+    if (receive_buffer_size < minimum_socket_buffer)
     {
-        receive_buffer_size = s_minimumSocketBuffer;
+        receive_buffer_size = minimum_socket_buffer;
         set_receive_buffer_size(receive_buffer_size);
     }
 
     // Try to set the highest possible value the system allows
-    for (; receive_buffer_size >= s_minimumSocketBuffer; receive_buffer_size /= 2)
+    for (; receive_buffer_size >= minimum_socket_buffer; receive_buffer_size /= 2)
     {
         socket_base::receive_buffer_size option(static_cast<int32_t>(receive_buffer_size));
         socket.set_option(option, ec);
