@@ -674,11 +674,22 @@ TEST_P(DDSStatus, DataAvailableConditions)
     subscriber_reader.wait_waitset_timeout();
 }
 
+// We want to ensure that samples are only lost due to the custom filter we have set in sample_lost_test_dw_init.
+// Since we are going to send 300KB samples in the test for fragments, let's increase the buffer size to avoid any
+// other possible loss.
+static constexpr uint32_t SAMPLE_LOST_TEST_BUFFER_SIZE =
+        300ul * 1024ul // sample size
+        * 13ul         // number of samples
+        * 2ul;         // 2x to avoid any possible loss
+
 template<typename T>
 void sample_lost_test_dw_init(
         PubSubWriter<T>& writer)
 {
     auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
+    testTransport->sendBufferSize = SAMPLE_LOST_TEST_BUFFER_SIZE;
+    testTransport->receiveBufferSize = SAMPLE_LOST_TEST_BUFFER_SIZE;
+
     testTransport->drop_data_messages_filter_ = [](eprosima::fastrtps::rtps::CDRMessage_t& msg)-> bool
             {
                 uint32_t old_pos = msg.pos;
@@ -777,15 +788,8 @@ void sample_lost_test_init(
         PubSubWriter<T>& writer,
         std::function<void(const eprosima::fastdds::dds::SampleLostStatus& status)> functor)
 {
-    // We want to ensure that samples are only lost due to the custom filter we have set in sample_lost_test_dw_init.
-    // Since we are going to send 300KB samples in the test for fragments, let's increase the buffer size to avoid any
-    // other possible loss.
-    constexpr uint32_t BUFFER_SIZE =
-            300ul * 1024ul // sample size
-            * 13ul         // number of samples
-            * 2ul;         // 2x to avoid any possible loss
-    reader.socket_buffer_size(BUFFER_SIZE);
-    writer.socket_buffer_size(BUFFER_SIZE);
+    reader.socket_buffer_size(SAMPLE_LOST_TEST_BUFFER_SIZE);
+    writer.socket_buffer_size(SAMPLE_LOST_TEST_BUFFER_SIZE);
 
     sample_lost_test_dw_init(writer);
     sample_lost_test_dr_init(reader, functor);
