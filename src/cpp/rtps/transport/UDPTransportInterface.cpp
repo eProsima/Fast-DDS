@@ -117,6 +117,35 @@ bool UDPTransportInterface::DoInputLocatorsMatch(
     return IPLocator::getPhysicalPort(left) == IPLocator::getPhysicalPort(right);
 }
 
+/**
+ * @brief Set the send buffer size of the socket to the highest possible value the system allows.
+ *
+ * @param socket The socket on which to set the send buffer size.
+ * @param initial_buffer_value The initial value to try to set.
+ * @param minimum_buffer_value The minimum value to set.
+ *
+ * @return The final value set.
+ */
+static uint32_t try_setting_send_buffer_size(
+        asio::ip::udp::socket& socket,
+        uint32_t initial_buffer_value,
+        uint32_t minimum_buffer_value)
+{
+    // Try to set the highest possible value the system allows
+    for (auto send_size = initial_buffer_value; send_size >= minimum_buffer_value; send_size /= 2)
+    {
+        asio::error_code ec;
+        socket_base::send_buffer_size option(static_cast<int32_t>(send_size));
+        socket.set_option(option, ec);
+        if (!ec)
+        {
+            return send_size;
+        }
+    }
+
+    return minimum_buffer_value;
+}
+
 void UDPTransportInterface::configure_send_buffer_size()
 {
     asio::error_code ec;
@@ -146,23 +175,14 @@ void UDPTransportInterface::configure_send_buffer_size()
     if (send_buffer_size < minimum_socket_buffer)
     {
         send_buffer_size = minimum_socket_buffer;
-        set_send_buffer_size(send_buffer_size);
     }
 
     // Try to set the highest possible value the system allows
-    for (; send_buffer_size >= minimum_socket_buffer; send_buffer_size /= 2)
-    {
-        socket_base::send_buffer_size option(static_cast<int32_t>(send_buffer_size));
-        socket.set_option(option, ec);
-        if (!ec)
-        {
-            set_send_buffer_size(send_buffer_size);
-            break;
-        }
-    }
+    send_buffer_size = try_setting_send_buffer_size(socket, send_buffer_size, minimum_socket_buffer);
+    set_send_buffer_size(send_buffer_size);
 
     // Keep final configuration value
-    mSendBufferSize = configuration()->sendBufferSize;
+    mSendBufferSize = send_buffer_size;
 
     // Inform the user if the desired value could not be set
     if (initial_value != 0 && mSendBufferSize != initial_value)
@@ -327,7 +347,13 @@ eProsimaUDPSocket UDPTransportInterface::OpenAndBindUnicastOutputSocket(
     getSocketPtr(socket)->open(generate_protocol());
     if (mSendBufferSize != 0)
     {
-        getSocketPtr(socket)->set_option(socket_base::send_buffer_size(static_cast<int32_t>(mSendBufferSize)));
+        uint32_t configured_value;
+        configured_value = try_setting_send_buffer_size(socket, mSendBufferSize, configuration()->maxMessageSize);
+        if (configured_value != mSendBufferSize)
+        {
+            EPROSIMA_LOG_WARNING(RTPS_MSG_OUT, "UDPTransport sendBufferSize could not be set to the desired value. "
+                    << "Using " << configured_value << " instead of " << mSendBufferSize);
+        }
     }
     getSocketPtr(socket)->set_option(ip::multicast::hops(configuration()->TTL));
     getSocketPtr(socket)->bind(endpoint);
