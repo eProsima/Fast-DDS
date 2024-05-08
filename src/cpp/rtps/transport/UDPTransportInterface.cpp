@@ -229,29 +229,31 @@ bool UDPTransportInterface::init(
         const fastrtps::rtps::PropertyPolicy*,
         const uint32_t& max_msg_size_no_frag)
 {
-    configure_send_buffer_size();
-    configure_receive_buffer_size();
-
     uint32_t maximumMessageSize = max_msg_size_no_frag == 0 ? s_maximumMessageSize : max_msg_size_no_frag;
+    uint32_t cfg_max_msg_size = configuration()->maxMessageSize;
+    uint32_t cfg_send_size = configuration()->sendBufferSize;
+    uint32_t cfg_recv_size = configuration()->receiveBufferSize;
 
-    if (configuration()->maxMessageSize > maximumMessageSize)
+    if (cfg_max_msg_size > maximumMessageSize)
     {
         EPROSIMA_LOG_ERROR(RTPS_MSG_OUT,
                 "maxMessageSize cannot be greater than " << std::to_string(maximumMessageSize));
         return false;
     }
-
-    if (configuration()->maxMessageSize > configuration()->sendBufferSize)
+    if ((cfg_send_size > 0) && (cfg_max_msg_size > cfg_send_size))
     {
         EPROSIMA_LOG_ERROR(RTPS_MSG_OUT, "maxMessageSize cannot be greater than send_buffer_size");
         return false;
     }
 
-    if (configuration()->maxMessageSize > configuration()->receiveBufferSize)
+    if ((cfg_recv_size > 0) && (cfg_max_msg_size > cfg_recv_size))
     {
         EPROSIMA_LOG_ERROR(RTPS_MSG_OUT, "maxMessageSize cannot be greater than receive_buffer_size");
         return false;
     }
+
+    configure_send_buffer_size();
+    configure_receive_buffer_size();
 
     return true;
 }
