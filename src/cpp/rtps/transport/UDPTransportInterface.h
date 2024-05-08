@@ -285,6 +285,12 @@ protected:
             bool return_loopback = false);
 
     std::atomic_bool rescan_interfaces_ = {true};
+
+private:
+
+    void configure_send_buffer_size();
+    void configure_receive_buffer_size();
+
 };
 
 } // namespace rtps
