@@ -180,6 +180,12 @@ public:
         return true;
     }
 
+    inline bool is_plain(
+            DataRepresentationId_t) const override
+    {
+        return true;
+    }
+
     bool getKey(
             void* /*data*/,
             fastrtps::rtps::InstanceHandle_t* /*ihandle*/,
