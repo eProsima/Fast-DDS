@@ -1402,6 +1402,12 @@ public:
         return true;
     }
 
+    bool is_plain(
+            DataRepresentationId_t) const override
+    {
+        return true;
+    }
+
     bool construct_sample(
             void* sample) const override
     {
@@ -1505,6 +1511,12 @@ public:
     bool construct_sample_result = true;
 
     bool is_plain() const override
+    {
+        return is_plain_result;
+    }
+
+    bool is_plain(
+            DataRepresentationId_t) const override
     {
         return is_plain_result;
     }
@@ -2155,6 +2167,88 @@ TEST(DataWriterTests, history_depth_max_samples_per_instance_warning)
     participant->delete_contained_entities();
     DomainParticipantFactory::get_instance()->delete_participant(participant);
     Log::KillThread();
+}
+
+class DataRepresentationTestsTypeSupport : public LoanableTypeSupport
+{
+public:
+
+    bool is_bounded() const override
+    {
+        return true;
+    }
+
+    MOCK_CONST_METHOD1(custom_is_plain_with_rep, bool(DataRepresentationId_t data_representation_id));
+
+    bool is_plain(
+            DataRepresentationId_t data_representation_id) const override
+    {
+        return custom_is_plain_with_rep(data_representation_id);
+    }
+
+    MOCK_CONST_METHOD0(custom_is_plain, bool());
+
+    bool is_plain() const override
+    {
+        return custom_is_plain();
+    }
+
+};
+
+TEST(DataWriterTests, data_type_is_plain_data_representation)
+{
+    /* Create a participant, topic, and a publisher */
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0,
+                    PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    DataRepresentationTestsTypeSupport* type = new DataRepresentationTestsTypeSupport();
+    TypeSupport ts (type);
+    ts.register_type(participant);
+
+    Topic* topic = participant->create_topic("plain_topic", "LoanableType", TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+
+    Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+    ASSERT_NE(publisher, nullptr);
+
+    /* Define default data representation (XCDR1) QoS to force "is_plain" call */
+    DataWriterQos qos_xcdr = DATAWRITER_QOS_DEFAULT;
+    qos_xcdr.endpoint().history_memory_policy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+
+    /* Expect the "is_plain" method called with default data representation (XCDR1) */
+    EXPECT_CALL(*type, custom_is_plain()).Times(0);
+    EXPECT_CALL(*type, custom_is_plain_with_rep(DataRepresentationId_t::XCDR_DATA_REPRESENTATION)).Times(
+        testing::AtLeast(1)).WillRepeatedly(testing::Return(true));
+    EXPECT_CALL(*type, custom_is_plain_with_rep(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)).Times(0);
+
+    /* Create a datawriter will trigger the "is_plain" call */
+    DataWriter* datawriter_xcdr = publisher->create_datawriter(topic, qos_xcdr);
+    ASSERT_NE(datawriter_xcdr, nullptr);
+
+    testing::Mock::VerifyAndClearExpectations(&type);
+
+    /* Define XCDR2 data representation QoS to force "is_plain" call */
+    DataWriterQos qos_xcdr2 = DATAWRITER_QOS_DEFAULT;
+    qos_xcdr2.endpoint().history_memory_policy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+    qos_xcdr2.representation().m_value.clear();
+    qos_xcdr2.representation().m_value.push_back(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+    /* Expect the "is_plain" method called with XCDR2 data representation */
+    EXPECT_CALL(*type, custom_is_plain()).Times(0);
+    EXPECT_CALL(*type, custom_is_plain_with_rep(DataRepresentationId_t::XCDR_DATA_REPRESENTATION)).Times(0);
+    EXPECT_CALL(*type, custom_is_plain_with_rep(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)).Times(
+        testing::AtLeast(1)).WillRepeatedly(testing::Return(true));
+
+    /* Create a datawriter will trigger the "is_plain" call */
+    DataWriter* datawriter_xcdr2 = publisher->create_datawriter(topic, qos_xcdr2);
+    ASSERT_NE(datawriter_xcdr2, nullptr);
+
+    testing::Mock::VerifyAndClearExpectations(&type);
+
+    /* Tear down */
+    participant->delete_contained_entities();
+    DomainParticipantFactory::get_instance()->delete_participant(participant);
 }
 
 } // namespace dds

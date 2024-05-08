@@ -1786,10 +1786,26 @@ DataReaderListener* DataReaderImpl::get_listener_for(
 
 std::shared_ptr<IPayloadPool> DataReaderImpl::get_payload_pool()
 {
+    // Check whether DataReader's type is plain in all its data representations
+    bool is_plain = true;
+    if (qos_.type_consistency().representation.m_value.size() > 0)
+    {
+        for (auto data_representation : qos_.type_consistency().representation.m_value)
+        {
+            is_plain = is_plain && type_->is_plain(data_representation);
+        }
+    }
+    // If data representation is not defined, consider both XCDR representations
+    else
+    {
+        is_plain = type_->is_plain(DataRepresentationId_t::XCDR_DATA_REPRESENTATION)
+                && type_->is_plain(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+    }
+
     // When the user requested PREALLOCATED_WITH_REALLOC, but we know the type cannot
     // grow, we translate the policy into bare PREALLOCATED
     if (PREALLOCATED_WITH_REALLOC_MEMORY_MODE == history_.m_att.memoryPolicy &&
-            (type_->is_bounded() || type_->is_plain()))
+            (type_->is_bounded() || is_plain))
     {
         history_.m_att.memoryPolicy = PREALLOCATED_MEMORY_MODE;
     }
@@ -1798,7 +1814,7 @@ std::shared_ptr<IPayloadPool> DataReaderImpl::get_payload_pool()
 
     if (!sample_pool_)
     {
-        sample_pool_ = std::make_shared<detail::SampleLoanManager>(config, type_);
+        sample_pool_ = std::make_shared<detail::SampleLoanManager>(config, type_, is_plain);
     }
     if (!is_custom_payload_pool_)
     {

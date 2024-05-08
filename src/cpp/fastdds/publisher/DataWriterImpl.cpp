@@ -469,7 +469,7 @@ ReturnCode_t DataWriterImpl::loan_sample(
             microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability().max_blocking_time));
 
     // Type should be plain and have space for the representation header
-    if (!type_->is_plain() || SerializedPayload_t::representation_header_size > type_->m_typeSize)
+    if (!type_->is_plain(data_representation_) || SerializedPayload_t::representation_header_size > type_->m_typeSize)
     {
         return ReturnCode_t::RETCODE_ILLEGAL_OPERATION;
     }
@@ -555,7 +555,7 @@ ReturnCode_t DataWriterImpl::discard_loan(
         void*& sample)
 {
     // Type should be plain and have space for the representation header
-    if (!type_->is_plain() || SerializedPayload_t::representation_header_size > type_->m_typeSize)
+    if (!type_->is_plain(data_representation_) || SerializedPayload_t::representation_header_size > type_->m_typeSize)
     {
         return ReturnCode_t::RETCODE_ILLEGAL_OPERATION;
     }
@@ -2018,7 +2018,7 @@ std::shared_ptr<IPayloadPool> DataWriterImpl::get_payload_pool()
         // When the user requested PREALLOCATED_WITH_REALLOC, but we know the type cannot
         // grow, we translate the policy into bare PREALLOCATED
         if (PREALLOCATED_WITH_REALLOC_MEMORY_MODE == history_.m_att.memoryPolicy &&
-                (type_->is_bounded() || type_->is_plain()))
+                (type_->is_bounded() || type_->is_plain(data_representation_)))
         {
             history_.m_att.memoryPolicy = PREALLOCATED_MEMORY_MODE;
         }
@@ -2043,7 +2043,7 @@ std::shared_ptr<IPayloadPool> DataWriterImpl::get_payload_pool()
         }
 
         // Prepare loans collection for plain types only
-        if (type_->is_plain())
+        if (type_->is_plain(data_representation_))
         {
             loans_.reset(new LoanCollection(config));
         }

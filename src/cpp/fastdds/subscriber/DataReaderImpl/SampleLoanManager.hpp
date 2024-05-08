@@ -51,8 +51,10 @@ struct SampleLoanManager
 
     SampleLoanManager(
             const PoolConfig& pool_config,
-            const TypeSupport& type)
-        : limits_(pool_config.initial_size,
+            const TypeSupport& type,
+            const bool is_plain)
+        : is_plain_(is_plain)
+        , limits_(pool_config.initial_size,
                 pool_config.maximum_size ? pool_config.maximum_size : std::numeric_limits<size_t>::max(),
                 1)
         , free_loans_(limits_)
@@ -62,7 +64,7 @@ struct SampleLoanManager
         for (size_t n = 0; n < limits_.initial; ++n)
         {
             OutstandingLoanItem item;
-            if (!type_->is_plain())
+            if (!is_plain_)
             {
                 item.sample = type_->createData();
             }
@@ -72,7 +74,7 @@ struct SampleLoanManager
 
     ~SampleLoanManager()
     {
-        if (!type_->is_plain())
+        if (!is_plain_)
         {
             for (const OutstandingLoanItem& item : free_loans_)
             {
@@ -108,7 +110,7 @@ struct SampleLoanManager
             if (nullptr != item)
             {
                 // Create sample if necessary
-                if (!type_->is_plain())
+                if (!is_plain_)
                 {
                     item->sample = type_->createData();
                 }
@@ -139,7 +141,7 @@ struct SampleLoanManager
         tmp.serializedPayload.data = nullptr;
 
         // Perform deserialization
-        if (type_->is_plain())
+        if (is_plain_)
         {
             auto ptr = item->payload.data;
             ptr += item->payload.representation_header_size;
@@ -212,6 +214,7 @@ private:
 
     using collection_type = eprosima::fastrtps::ResourceLimitedVector<OutstandingLoanItem>;
 
+    bool is_plain_;
     eprosima::fastrtps::ResourceLimitedContainerConfig limits_;
     collection_type free_loans_;
     collection_type used_loans_;
