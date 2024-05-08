@@ -621,7 +621,6 @@ bool WriterProxyData::readFromCDRMessage(
         bool should_filter_locators,
         fastdds::rtps::VendorId_t source_vendor_id)
 {
-        m_qos.data_sharing.off();
     auto param_process = [this, &network, &is_shm_transport_available, &should_filter_locators, source_vendor_id](
         CDRMessage_t* msg, const ParameterId_t& pid, uint16_t plength)
             {
@@ -1077,6 +1076,7 @@ bool WriterProxyData::readFromCDRMessage(
 
     uint32_t qos_size;
     clear();
+    m_qos.data_sharing.off();
     try
     {
         if (ParameterList::readParameterListfromCDRMsg(*msg, param_process, true, qos_size))
