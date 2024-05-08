@@ -172,20 +172,55 @@ void UDPTransportInterface::configure_send_buffer_size()
 
 void UDPTransportInterface::configure_receive_buffer_size()
 {
+    asio::error_code ec;
     ip::udp::socket socket(io_service_);
-    socket.open(generate_protocol());
+    socket.open(generate_protocol(), ec);
+    if (!!ec)
+    {
+        EPROSIMA_LOG_ERROR(RTPS_MSG_OUT, "Error creating socket: " << ec.message());
+        return;
+    }
 
-    if (configuration()->receiveBufferSize == 0)
+    // If receiveBufferSize is 0, try using the system default value
+    uint32_t receive_buffer_size = configuration()->receiveBufferSize;
+    uint32_t initial_value = receive_buffer_size;
+    if (receive_buffer_size == 0)
     {
         socket_base::receive_buffer_size option;
-        socket.get_option(option);
-        set_receive_buffer_size(static_cast<uint32_t>(option.value()));
-
-        if (configuration()->receiveBufferSize < s_minimumSocketBuffer)
+        socket.get_option(option, ec);
+        if (!ec)
         {
-            set_receive_buffer_size(s_minimumSocketBuffer);
-            mReceiveBufferSize = s_minimumSocketBuffer;
+            receive_buffer_size = static_cast<uint32_t>(option.value());
         }
+    }
+
+    // Ensure the minimum value is used
+    if (receive_buffer_size < s_minimumSocketBuffer)
+    {
+        receive_buffer_size = s_minimumSocketBuffer;
+        set_receive_buffer_size(receive_buffer_size);
+    }
+
+    // Try to set the highest possible value the system allows
+    for (; receive_buffer_size >= s_minimumSocketBuffer; receive_buffer_size /= 2)
+    {
+        socket_base::receive_buffer_size option(static_cast<int32_t>(receive_buffer_size));
+        socket.set_option(option, ec);
+        if (!ec)
+        {
+            set_receive_buffer_size(receive_buffer_size);
+            break;
+        }
+    }
+
+    // Keep final configuration value
+    mReceiveBufferSize = configuration()->receiveBufferSize;
+
+    // Inform the user if the desired value could not be set
+    if (initial_value != 0 && mReceiveBufferSize != initial_value)
+    {
+        EPROSIMA_LOG_WARNING(RTPS_MSG_OUT, "UDPTransport receiveBufferSize could not be set to the desired value. "
+                << "Using " << mReceiveBufferSize << " instead of " << initial_value);
     }
 }
 
