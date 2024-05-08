@@ -82,6 +82,11 @@ set(DYNAMIC_TYPES_DDS_TYPES_TEST_SOURCE
     # ${PROJECT_SOURCE_DIR}/test/dds-types-test/relative_path_includeTypeObjectSupport.cxx
     )
 
+if(WIN32)
+    set_source_files_properties(dds_types_tests/DynamicTypesMapsDDSTypesTests.cpp PROPERTIES COMPILE_OPTIONS /bigobj)
+    set_source_files_properties(${PROJECT_SOURCE_DIR}/test/dds-types-test/mapsPubSubTypes.cxx PROPERTIES COMPILE_OPTIONS /bigobj)
+endif()
+
 add_executable(DynamicTypesTests DynamicTypesTests.cpp)
 target_compile_definitions(DynamicTypesTests PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
