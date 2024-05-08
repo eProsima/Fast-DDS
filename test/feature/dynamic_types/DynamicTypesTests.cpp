@@ -7629,9 +7629,7 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_int64)
         EXPECT_EQ(data->get_uint8_values(uTestSeq8, 0), RETCODE_BAD_PARAMETER);
         EXPECT_EQ(data->get_int16_values(iTestSeq16, 0), RETCODE_BAD_PARAMETER);
         EXPECT_EQ(data->get_uint16_values(uTestSeq16, 0), RETCODE_BAD_PARAMETER);
-        Int32Seq iTestSeq32;
         EXPECT_EQ(data->get_int32_values(iTestSeq32, 0), RETCODE_BAD_PARAMETER);
-        UInt32Seq uTestSeq32;
         EXPECT_EQ(data->get_uint32_values(uTestSeq32, 0), RETCODE_BAD_PARAMETER);
         UInt64Seq uTestSeq64;
         EXPECT_EQ(data->get_uint64_values(uTestSeq64, 0), RETCODE_BAD_PARAMETER);
@@ -7800,7 +7798,7 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_uint64)
     EXPECT_EQ(data->get_uint64_values(get_test_value, 0), RETCODE_OK);
     EXPECT_EQ(uTestSeq64, get_test_value);
 
-    const UInt32Seq uTestSeq32 {{1, 2, 3, 4}};
+    UInt32Seq uTestSeq32 {{1, 2, 3, 4}};
     EXPECT_EQ(data->set_uint32_values(0, uTestSeq32), RETCODE_OK);
     EXPECT_EQ(data->get_uint64_values(get_test_value, 0), RETCODE_OK);
     EXPECT_THAT(uTestSeq32, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
@@ -7924,7 +7922,6 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_uint64)
         EXPECT_EQ(data->get_uint16_values(uTestSeq16, 0), RETCODE_BAD_PARAMETER);
         Int32Seq iTestSeq32;
         EXPECT_EQ(data->get_int32_values(iTestSeq32, 0), RETCODE_BAD_PARAMETER);
-        UInt32Seq uTestSeq32;
         EXPECT_EQ(data->get_uint32_values(uTestSeq32, 0), RETCODE_BAD_PARAMETER);
         Int64Seq iTestSeq64;
         EXPECT_EQ(data->get_int64_values(iTestSeq64, 0), RETCODE_BAD_PARAMETER);
@@ -8540,9 +8537,7 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_float64)
         EXPECT_EQ(data->get_uint8_values(uTestSeq8, 0), RETCODE_BAD_PARAMETER);
         EXPECT_EQ(data->get_int16_values(iTestSeq16, 0), RETCODE_BAD_PARAMETER);
         EXPECT_EQ(data->get_uint16_values(uTestSeq16, 0), RETCODE_BAD_PARAMETER);
-        Int32Seq iTestSeq32;
         EXPECT_EQ(data->get_int32_values(iTestSeq32, 0), RETCODE_BAD_PARAMETER);
-        UInt32Seq uTestSeq32;
         EXPECT_EQ(data->get_uint32_values(uTestSeq32, 0), RETCODE_BAD_PARAMETER);
         Int64Seq iTestSeq64;
         EXPECT_EQ(data->get_int64_values(iTestSeq64, 0), RETCODE_BAD_PARAMETER);
@@ -8861,13 +8856,9 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_float128)
         EXPECT_EQ(data->get_uint8_values(uTestSeq8, 0), RETCODE_BAD_PARAMETER);
         EXPECT_EQ(data->get_int16_values(iTestSeq16, 0), RETCODE_BAD_PARAMETER);
         EXPECT_EQ(data->get_uint16_values(uTestSeq16, 0), RETCODE_BAD_PARAMETER);
-        Int32Seq iTestSeq32;
         EXPECT_EQ(data->get_int32_values(iTestSeq32, 0), RETCODE_BAD_PARAMETER);
-        UInt32Seq uTestSeq32;
         EXPECT_EQ(data->get_uint32_values(uTestSeq32, 0), RETCODE_BAD_PARAMETER);
-        Int64Seq iTestSeq64;
         EXPECT_EQ(data->get_int64_values(iTestSeq64, 0), RETCODE_BAD_PARAMETER);
-        UInt64Seq uTestSeq64;
         EXPECT_EQ(data->get_uint64_values(uTestSeq64, 0), RETCODE_BAD_PARAMETER);
         EXPECT_EQ(data->get_float32_values(fTestSeq32, 0), RETCODE_BAD_PARAMETER);
         EXPECT_EQ(data->get_float64_values(fTestSeq64, 0), RETCODE_BAD_PARAMETER);

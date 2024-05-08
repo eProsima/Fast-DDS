@@ -58,6 +58,10 @@ void register_annotations_type_objects()
 
                 register_EmptyAnnotatedStruct_type_identifier();
 
+                register_BasicAnnotationsTest_type_identifier();
+
+                register_BasicAnnotationsStruct_type_identifier();
+
             });
 }
 
@@ -1578,6 +1582,262 @@ void register_EmptyAnnotatedStruct_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "EmptyAnnotatedStruct: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            return;
+        }
+    }
+}
+void register_BasicAnnotationsTest_type_identifier()
+{
+    AnnotationTypeFlag annotation_flag_BasicAnnotationsTest = 0;
+    QualifiedTypeName annotation_name_BasicAnnotationsTest = "BasicAnnotationsTest";
+    CompleteAnnotationHeader header_BasicAnnotationsTest = TypeObjectUtils::build_complete_annotation_header(annotation_name_BasicAnnotationsTest);
+    CompleteAnnotationParameterSeq member_seq_BasicAnnotationsTest;
+    {
+        ReturnCode_t return_code_var_basic_short;
+        TypeIdentifierPair type_ids_var_basic_short;
+        AnnotationParameterFlag member_flags_var_basic_short = 0;
+        return_code_var_basic_short =
+            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+            "_int16_t", type_ids_var_basic_short);
+
+        if (return_code_var_basic_short != eprosima::fastdds::dds::RETCODE_OK)
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "var_basic_short annotation parameter TypeIdentifier unknown to TypeObjectRegistry.");
+            return;
+        }
+        CommonAnnotationParameter common_var_basic_short;
+        if (EK_COMPLETE == type_ids_var_basic_short.type_identifier1()._d() || TK_NONE == type_ids_var_basic_short.type_identifier2()._d())
+        {
+            common_var_basic_short = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_basic_short, type_ids_var_basic_short.type_identifier1());
+        }
+        else if (EK_COMPLETE == type_ids_var_basic_short.type_identifier2()._d())
+        {
+            common_var_basic_short = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_basic_short, type_ids_var_basic_short.type_identifier2());
+        }
+        else
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "var_basic_short annotation parameter TypeIdentifier inconsistent.");
+            return;
+        }
+        MemberName name_var_basic_short = "var_basic_short";
+        AnnotationParameterValue param_value_var_basic_short = TypeObjectUtils::build_annotation_parameter_value(static_cast<int16_t>(0));
+
+        CompleteAnnotationParameter param_var_basic_short = TypeObjectUtils::build_complete_annotation_parameter(common_var_basic_short, name_var_basic_short, param_value_var_basic_short);
+        TypeObjectUtils::add_complete_annotation_parameter(member_seq_BasicAnnotationsTest, param_var_basic_short);
+    }
+    CompleteAnnotationType annotation_type_BasicAnnotationsTest = TypeObjectUtils::build_complete_annotation_type(annotation_flag_BasicAnnotationsTest, header_BasicAnnotationsTest,
+            member_seq_BasicAnnotationsTest);
+    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+            TypeObjectUtils::build_and_register_annotation_type_object(annotation_type_BasicAnnotationsTest, annotation_name_BasicAnnotationsTest.to_string()))
+    {
+        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+            "BasicAnnotationsTest already registered in TypeObjectRegistry for a different type.");
+    }
+}
+void register_BasicAnnotationsStruct_type_identifier()
+{
+    {
+        StructTypeFlag struct_flags_BasicAnnotationsStruct = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+                false, false);
+        ReturnCode_t return_code_BasicAnnotationsStruct;
+        TypeIdentifierPair type_ids_BasicAnnotationsStruct;
+        QualifiedTypeName type_name_BasicAnnotationsStruct = "BasicAnnotationsStruct";
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_BasicAnnotationsStruct;
+        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_BasicAnnotationsStruct;
+        AppliedAnnotationSeq tmp_ann_custom_BasicAnnotationsStruct;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_BasicAnnotationsStruct;
+        {
+            eprosima::fastcdr::optional<AppliedAnnotationParameterSeq> applied_annotation_parameter_seq_BasicAnnotationsStruct;
+            AppliedAnnotationParameterSeq tmp_applied_annotation_parameter_seq_BasicAnnotationsStruct;
+        {
+            NameHash paramname_hash_var_basic_short = TypeObjectUtils::name_hash("var_basic_short");
+            AnnotationParameterValue param_value_var_basic_short = TypeObjectUtils::build_annotation_parameter_value(static_cast<int16_t>(1));
+
+            AppliedAnnotationParameter applied_param_var_basic_short = TypeObjectUtils::build_applied_annotation_parameter(paramname_hash_var_basic_short,
+                    param_value_var_basic_short);
+            TypeObjectUtils::add_applied_annotation_parameter(tmp_applied_annotation_parameter_seq_BasicAnnotationsStruct, applied_param_var_basic_short);
+        }
+
+            {
+                AppliedAnnotation applied_annotation_BasicAnnotationsStruct;
+                return_code_BasicAnnotationsStruct =
+                    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                    "BasicAnnotationsTest", type_ids_BasicAnnotationsStruct);
+                if (return_code_BasicAnnotationsStruct != eprosima::fastdds::dds::RETCODE_OK)
+                {
+                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                "BasicAnnotationsStruct Structure: Given Annotation TypeIdentifier unknown to TypeObjectRegistry.");
+                    return;
+                }
+                if (!tmp_applied_annotation_parameter_seq_BasicAnnotationsStruct.empty())
+                {
+                    applied_annotation_parameter_seq_BasicAnnotationsStruct = tmp_applied_annotation_parameter_seq_BasicAnnotationsStruct;
+                }
+                if (EK_COMPLETE == type_ids_BasicAnnotationsStruct.type_identifier1()._d())
+                {
+                    applied_annotation_BasicAnnotationsStruct = TypeObjectUtils::build_applied_annotation(type_ids_BasicAnnotationsStruct.type_identifier1(), applied_annotation_parameter_seq_BasicAnnotationsStruct);
+                }
+                else if (EK_COMPLETE == type_ids_BasicAnnotationsStruct.type_identifier2()._d())
+                {
+                    applied_annotation_BasicAnnotationsStruct = TypeObjectUtils::build_applied_annotation(type_ids_BasicAnnotationsStruct.type_identifier2(), applied_annotation_parameter_seq_BasicAnnotationsStruct);
+                }
+                else
+                {
+                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                            "BasicAnnotationsStruct Structure: Given Annotation TypeIdentifier is inconsistent.");
+                    return;
+                }
+                TypeObjectUtils::add_applied_annotation(tmp_ann_custom_BasicAnnotationsStruct, applied_annotation_BasicAnnotationsStruct);
+            }
+        }
+
+        if (!tmp_ann_custom_BasicAnnotationsStruct.empty())
+        {
+            ann_custom_BasicAnnotationsStruct = tmp_ann_custom_BasicAnnotationsStruct;
+        }
+
+        CompleteTypeDetail detail_BasicAnnotationsStruct = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_BasicAnnotationsStruct, ann_custom_BasicAnnotationsStruct, type_name_BasicAnnotationsStruct.to_string());
+        CompleteStructHeader header_BasicAnnotationsStruct;
+        header_BasicAnnotationsStruct = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_BasicAnnotationsStruct);
+        CompleteStructMemberSeq member_seq_BasicAnnotationsStruct;
+        {
+            return_code_BasicAnnotationsStruct =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_int16_t", type_ids_BasicAnnotationsStruct);
+
+            if (return_code_BasicAnnotationsStruct != eprosima::fastdds::dds::RETCODE_OK)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "basic_annotations_member Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            StructMemberFlag member_flags_basic_annotations_member = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                    false, false, false, false);
+            CommonStructMember common_basic_annotations_member;
+            MemberId member_id_basic_annotations_member = 0x00000000;
+            if (EK_COMPLETE == type_ids_BasicAnnotationsStruct.type_identifier1()._d() || TK_NONE == type_ids_BasicAnnotationsStruct.type_identifier2()._d() ||
+                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_BasicAnnotationsStruct.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_BasicAnnotationsStruct.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_BasicAnnotationsStruct.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_BasicAnnotationsStruct.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_SMALL == type_ids_BasicAnnotationsStruct.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_BasicAnnotationsStruct.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_LARGE == type_ids_BasicAnnotationsStruct.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_BasicAnnotationsStruct.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_MAP_SMALL == type_ids_BasicAnnotationsStruct.type_identifier1()._d() &&
+                    (EK_COMPLETE == type_ids_BasicAnnotationsStruct.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_BasicAnnotationsStruct.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                    (TI_PLAIN_MAP_LARGE == type_ids_BasicAnnotationsStruct.type_identifier1()._d() &&
+                    (EK_COMPLETE == type_ids_BasicAnnotationsStruct.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_BasicAnnotationsStruct.type_identifier1().map_ldefn().key_identifier()->_d())))
+            {
+                common_basic_annotations_member = TypeObjectUtils::build_common_struct_member(member_id_basic_annotations_member, member_flags_basic_annotations_member, type_ids_BasicAnnotationsStruct.type_identifier1());
+            }
+            else if (EK_COMPLETE == type_ids_BasicAnnotationsStruct.type_identifier2()._d() ||
+                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_BasicAnnotationsStruct.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_BasicAnnotationsStruct.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_BasicAnnotationsStruct.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_BasicAnnotationsStruct.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_SMALL == type_ids_BasicAnnotationsStruct.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_BasicAnnotationsStruct.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_LARGE == type_ids_BasicAnnotationsStruct.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_BasicAnnotationsStruct.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_MAP_SMALL == type_ids_BasicAnnotationsStruct.type_identifier2()._d() &&
+                    (EK_COMPLETE == type_ids_BasicAnnotationsStruct.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_BasicAnnotationsStruct.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                    (TI_PLAIN_MAP_LARGE == type_ids_BasicAnnotationsStruct.type_identifier2()._d() &&
+                    (EK_COMPLETE == type_ids_BasicAnnotationsStruct.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_BasicAnnotationsStruct.type_identifier2().map_ldefn().key_identifier()->_d())))
+            {
+                common_basic_annotations_member = TypeObjectUtils::build_common_struct_member(member_id_basic_annotations_member, member_flags_basic_annotations_member, type_ids_BasicAnnotationsStruct.type_identifier2());
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "Structure basic_annotations_member member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_basic_annotations_member = "basic_annotations_member";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_basic_annotations_member;
+            ann_custom_BasicAnnotationsStruct.reset();
+            AppliedAnnotationSeq tmp_ann_custom_basic_annotations_member;
+            eprosima::fastcdr::optional<std::string> unit_basic_annotations_member;
+            eprosima::fastcdr::optional<AnnotationParameterValue> min_basic_annotations_member;
+            eprosima::fastcdr::optional<AnnotationParameterValue> max_basic_annotations_member;
+            eprosima::fastcdr::optional<std::string> hash_id_basic_annotations_member;
+            {
+                eprosima::fastcdr::optional<AppliedAnnotationParameterSeq> applied_annotation_parameter_seq_basic_annotations_member;
+                AppliedAnnotationParameterSeq tmp_applied_annotation_parameter_seq_basic_annotations_member;
+            {
+                NameHash paramname_hash_var_basic_short = TypeObjectUtils::name_hash("var_basic_short");
+                AnnotationParameterValue param_value_var_basic_short = TypeObjectUtils::build_annotation_parameter_value(static_cast<int16_t>(1));
+
+                AppliedAnnotationParameter applied_param_var_basic_short = TypeObjectUtils::build_applied_annotation_parameter(paramname_hash_var_basic_short,
+                        param_value_var_basic_short);
+                TypeObjectUtils::add_applied_annotation_parameter(tmp_applied_annotation_parameter_seq_basic_annotations_member, applied_param_var_basic_short);
+            }
+
+                {
+                    AppliedAnnotation applied_annotation_basic_annotations_member;
+                    return_code_BasicAnnotationsStruct =
+                        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                        "BasicAnnotationsTest", type_ids_BasicAnnotationsStruct);
+                    if (return_code_BasicAnnotationsStruct != eprosima::fastdds::dds::RETCODE_OK)
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                    "BasicAnnotationsStruct basic_annotations_member member: Given Annotation TypeIdentifier unknown to TypeObjectRegistry.");
+                        return;
+                    }
+                    if (!tmp_applied_annotation_parameter_seq_basic_annotations_member.empty())
+                    {
+                        applied_annotation_parameter_seq_basic_annotations_member = tmp_applied_annotation_parameter_seq_basic_annotations_member;
+                    }
+                    if (EK_COMPLETE == type_ids_BasicAnnotationsStruct.type_identifier1()._d())
+                    {
+                        applied_annotation_basic_annotations_member = TypeObjectUtils::build_applied_annotation(type_ids_BasicAnnotationsStruct.type_identifier1(), applied_annotation_parameter_seq_basic_annotations_member);
+                    }
+                    else if (EK_COMPLETE == type_ids_BasicAnnotationsStruct.type_identifier2()._d())
+                    {
+                        applied_annotation_basic_annotations_member = TypeObjectUtils::build_applied_annotation(type_ids_BasicAnnotationsStruct.type_identifier2(), applied_annotation_parameter_seq_basic_annotations_member);
+                    }
+                    else
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                "BasicAnnotationsStruct basic_annotations_member member: Given Annotation TypeIdentifier is inconsistent.");
+                        return;
+                    }
+                    TypeObjectUtils::add_applied_annotation(tmp_ann_custom_basic_annotations_member, applied_annotation_basic_annotations_member);
+                }
+            }
+
+            if (unit_basic_annotations_member.has_value() || min_basic_annotations_member.has_value() || max_basic_annotations_member.has_value() || hash_id_basic_annotations_member.has_value())
+            {
+                member_ann_builtin_basic_annotations_member = TypeObjectUtils::build_applied_builtin_member_annotations(unit_basic_annotations_member, min_basic_annotations_member, max_basic_annotations_member, hash_id_basic_annotations_member);
+            }
+            if (!tmp_ann_custom_basic_annotations_member.empty())
+            {
+                ann_custom_BasicAnnotationsStruct = tmp_ann_custom_basic_annotations_member;
+            }
+            CompleteMemberDetail detail_basic_annotations_member = TypeObjectUtils::build_complete_member_detail(name_basic_annotations_member, member_ann_builtin_basic_annotations_member, ann_custom_BasicAnnotationsStruct);
+            CompleteStructMember member_basic_annotations_member = TypeObjectUtils::build_complete_struct_member(common_basic_annotations_member, detail_basic_annotations_member);
+            TypeObjectUtils::add_complete_struct_member(member_seq_BasicAnnotationsStruct, member_basic_annotations_member);
+        }
+        CompleteStructType struct_type_BasicAnnotationsStruct = TypeObjectUtils::build_complete_struct_type(struct_flags_BasicAnnotationsStruct, header_BasicAnnotationsStruct, member_seq_BasicAnnotationsStruct);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_BasicAnnotationsStruct, type_name_BasicAnnotationsStruct.to_string()))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "BasicAnnotationsStruct already registered in TypeObjectRegistry for a different type.");
+        }
+        return_code_BasicAnnotationsStruct =
+            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+            "BasicAnnotationsStruct", type_ids_BasicAnnotationsStruct);
+        if (return_code_BasicAnnotationsStruct != eprosima::fastdds::dds::RETCODE_OK)
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "BasicAnnotationsStruct: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
             return;
         }
     }

@@ -264,7 +264,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_InnerStructureHelperChild)
 
     InnerStructureHelperChild value;
     value.field1(-1000);
-    value.field2(3.34);
+    value.field2(3.34f);
     value.var_child_longlong(-3000003);
     value.var_child_ulonglong(3000003);
     InnerStructureHelperChild test_value;
@@ -319,7 +319,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_InnerStructureHelperChildChild)
 
     InnerStructureHelperChildChild value;
     value.field1(-1000);
-    value.field2(3.34);
+    value.field2(3.34f);
     value.var_child_longlong(-3000003);
     value.var_child_ulonglong(3000003);
     value.var_child_childlonglong2(-4005003);
@@ -390,7 +390,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_InnerStructureHelperEmptyChild)
 
     InnerStructureHelperEmptyChild value;
     value.field1(-1000);
-    value.field2(3.34);
+    value.field2(3.34f);
     InnerStructureHelperEmptyChild test_value;
 
     // Set values.
@@ -515,7 +515,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructAliasInheritanceStruct)
 
     StructAliasInheritanceStruct value;
     value.field1(-1000);
-    value.field2(3.34);
+    value.field2(3.34f);
     value.new_member(334);
     StructAliasInheritanceStruct test_value;
 
@@ -595,24 +595,24 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructInheritanceStruct)
 
     StructuresInheritanceStruct value;
     value.var_InnerStructureHelperChild().field1(-1000);
-    value.var_InnerStructureHelperChild().field2(3.34);
+    value.var_InnerStructureHelperChild().field2(3.34f);
     value.var_InnerStructureHelperChild().var_child_longlong(-3000003);
     value.var_InnerStructureHelperChild().var_child_ulonglong(3000003);
     value.var_InnerStructureHelperChildChild().field1(-1000);
-    value.var_InnerStructureHelperChildChild().field2(3.34);
+    value.var_InnerStructureHelperChildChild().field2(3.34f);
     value.var_InnerStructureHelperChildChild().var_child_longlong(-3000003);
     value.var_InnerStructureHelperChildChild().var_child_ulonglong(3000003);
     value.var_InnerStructureHelperChildChild().var_child_childlonglong2(-4005003);
     value.var_InnerStructureHelperChildChild().var_childchild_ulonglong2(3002003);
     value.var_InnerStructureHelperEmptyChild().field1(-1000);
-    value.var_InnerStructureHelperEmptyChild().field2(3.34);
+    value.var_InnerStructureHelperEmptyChild().field2(3.34f);
     value.var_InnerStructureHelperEmptyChildChild().field1(-1000);
-    value.var_InnerStructureHelperEmptyChildChild().field2(3.34);
+    value.var_InnerStructureHelperEmptyChildChild().field2(3.34f);
     value.var_InnerStructureHelperEmptyChildChild().var_char('X');
     value.var_InnerEmptyStructureHelperChild().var_child_longlong(-1000);
     value.var_InnerEmptyStructureHelperChild().var_child_ulonglong(334);
     value.var_StructAliasInheritanceStruct().field1(-1000);
-    value.var_StructAliasInheritanceStruct().field2(3.34);
+    value.var_StructAliasInheritanceStruct().field2(3.34f);
     value.var_StructAliasInheritanceStruct().new_member(243);
 
     StructuresInheritanceStruct test_value;

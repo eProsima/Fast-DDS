@@ -367,7 +367,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayFloat)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    Float32Seq value = {1.01, 2.002, 3.0003, 4.4, 5.4, 6.67, 7.4567, 8.122, 9.868, -10.52};
+    Float32Seq value {1.01f, 2.002f, 3.0003f, 4.4f, 5.4f, 6.67f, 7.4567f, 8.122f, 9.868f, -10.52f};
     Float32Seq test_value;
     EXPECT_EQ(data->set_float32_values(data->get_member_id_by_name(var_float_array), value), RETCODE_OK);
     EXPECT_EQ(data->get_float32_values(test_value, data->get_member_id_by_name(var_float_array)), RETCODE_OK);
@@ -633,7 +633,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayString)
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_string_array);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::
-                    get_instance()->create_string_type(LENGTH_UNLIMITED)->build(), {10})->build());
+                    get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))->build(),
+            {10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -672,7 +673,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayWString)
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_wstring_array);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::
-                    get_instance()->create_wstring_type(LENGTH_UNLIMITED)->build(), {10})->build());
+                    get_instance()->create_wstring_type(static_cast<uint32_t>(LENGTH_UNLIMITED))->build(),
+            {10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -983,7 +985,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArraySequence)
     member_descriptor->name(var_seq_array);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::
                     get_instance()->create_sequence_type(DynamicTypeBuilderFactory::get_instance()->
-                    get_primitive_type(TK_INT32), LENGTH_UNLIMITED)->build(), {10})->build());
+                    get_primitive_type(TK_INT32), static_cast<uint32_t>(LENGTH_UNLIMITED))->build(), {10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -1005,7 +1007,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArraySequence)
     EXPECT_EQ(array_data->set_int32_values(2, third_value), RETCODE_OK);
     EXPECT_EQ(array_data->get_int32_values(test_value, 2), RETCODE_OK);
     EXPECT_EQ(third_value, test_value);
-    for (size_t i = 3; i < array_data->get_item_count(); ++i)
+    for (uint32_t i = 3; i < array_data->get_item_count(); ++i)
     {
         EXPECT_EQ(array_data->get_int32_values(test_value, i), RETCODE_OK);
         EXPECT_TRUE(test_value.empty());
@@ -1045,7 +1047,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMap)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::
                     get_instance()->create_map_type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(
                 TK_INT32), DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32),
-            LENGTH_UNLIMITED)->build(), {10})->build());
+            static_cast<uint32_t>(LENGTH_UNLIMITED))->build(), {10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -1083,7 +1085,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMap)
     EXPECT_EQ(test_value, third_value);
     EXPECT_EQ(array_data->return_loaned_value(map_data), RETCODE_OK);
     EXPECT_EQ(data->return_loaned_value(array_data), RETCODE_OK);
-    for (size_t i = 2; i < array_data->get_item_count(); ++i)
+    for (uint32_t i = 2; i < array_data->get_item_count(); ++i)
     {
         map_data = array_data->loan_value(i);
         ASSERT_TRUE(map_data);
@@ -1140,7 +1142,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayUnion)
 
     int32_t long_value = 121;
     int32_t test_long_value = 0;
-    float float_value = 10.01;
+    float float_value = 10.01f;
     float test_float_value = 0;
     int16_t short_value = -2;
     int16_t test_short_value = 0;
@@ -1171,7 +1173,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayUnion)
     EXPECT_EQ(test_short_value, short_value);
     EXPECT_EQ(array_data->return_loaned_value(union_data), RETCODE_OK);
     EXPECT_EQ(data->return_loaned_value(array_data), RETCODE_OK);
-    for (size_t i = 3; i < array_data->get_item_count(); ++i)
+    for (uint32_t i = 3; i < array_data->get_item_count(); ++i)
     {
         union_data = array_data->loan_value(i);
         ASSERT_TRUE(union_data);
@@ -1219,8 +1221,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayStructure)
     int32_t first_long_value = 121;
     int32_t second_long_value = 10001;
     int32_t test_long_value = 10001;
-    float first_float_value = 10.01;
-    float second_float_value = 3.14;
+    float first_float_value = 10.01f;
+    float second_float_value = 3.14f;
     float test_float_value = 0;
     DynamicData::_ref_type array_data = data->loan_value(data->get_member_id_by_name(var_struct_array));
     ASSERT_TRUE(array_data);
@@ -1251,7 +1253,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayStructure)
     EXPECT_EQ(test_float_value, second_float_value);
     EXPECT_EQ(array_data->return_loaned_value(data_struct), RETCODE_OK);
     EXPECT_EQ(data->return_loaned_value(array_data), RETCODE_OK);
-    for (size_t i = 2; i < array_data->get_item_count(); ++i)
+    for (uint32_t i = 2; i < array_data->get_item_count(); ++i)
     {
         data_struct = array_data->loan_value(i);
         ASSERT_TRUE(data_struct);
@@ -1362,7 +1364,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayBitset)
     EXPECT_EQ(second_short_value, test_short_value);
     EXPECT_EQ(array_data->return_loaned_value(bitset_data), RETCODE_OK);
     EXPECT_EQ(data->return_loaned_value(array_data), RETCODE_OK);
-    for (size_t i = 2; i < array_data->get_item_count(); ++i)
+    for (uint32_t i = 2; i < array_data->get_item_count(); ++i)
     {
         bitset_data = array_data->loan_value(i);
         ASSERT_TRUE(bitset_data);
@@ -1781,8 +1783,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionFloat)
     ASSERT_TRUE(data);
 
     Float32Seq value =
-    {-1.234, 2.000103, 3.14, -4.01, 5.00000001, 6, 7.5, 8.21, 9, 10, 100, 1000, 10000, 100000,
-     1000000, 10000000, 100000000, 1000000000};
+    {-1.234f, 2.000103f, 3.14f, -4.01f, 5.00000001f, 6.0f, 7.5f, 8.21f, 9.0f, 10.0f, 100.0f, 1000.0f, 10000.0f,
+     100000.0f,
+     1000000.0f, 10000000.0f, 100000000.0f, 1000000000.0f};
     value.insert(value.end(), 82, 0);
     value.insert(value.end(), 10);
     value.insert(value.end(), 100, 0);
@@ -2187,7 +2190,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionString)
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_string_array);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::
-                    get_instance()->create_string_type(LENGTH_UNLIMITED)->build(), {10, 10, 10})->build());
+                    get_instance()->create_string_type(
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build(), {10, 10, 10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -2247,7 +2251,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionWString)
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_wstring_array);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::
-                    get_instance()->create_wstring_type(LENGTH_UNLIMITED)->build(), {10, 10, 10})->build());
+                    get_instance()->create_wstring_type(
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build(), {10, 10, 10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -2633,7 +2638,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionSequence)
     member_descriptor->name(var_seq_array);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::
                     get_instance()->create_sequence_type(DynamicTypeBuilderFactory::get_instance()->
-                    get_primitive_type(TK_INT32), LENGTH_UNLIMITED)->build(), {10, 10, 10})->build());
+                    get_primitive_type(TK_INT32),
+            static_cast<uint32_t>(LENGTH_UNLIMITED))->build(), {10, 10, 10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -2705,7 +2711,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionMap)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::
                     get_instance()->create_map_type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(
                 TK_INT32), DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32),
-            LENGTH_UNLIMITED)->build(), {10, 10, 10})->build());
+            static_cast<uint32_t>(LENGTH_UNLIMITED))->build(), {10, 10, 10})->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -2802,7 +2808,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionUnion)
 
     int32_t long_value = 121;
     int32_t test_long_value = 0;
-    float float_value = 10.01;
+    float float_value = 10.01f;
     float test_float_value = 0;
     int16_t short_value = -2;
     int16_t test_short_value = 0;
@@ -2891,9 +2897,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionStructure)
     int32_t second_long_value = 10001;
     int32_t third_long_value = -421523;
     int32_t test_long_value = 10001;
-    float first_float_value = 10.01;
-    float second_float_value = 3.14;
-    float third_float_value = 62346.757;
+    float first_float_value = 10.01f;
+    float second_float_value = 3.14f;
+    float third_float_value = 62346.757f;
     float test_float_value = 0;
     DynamicData::_ref_type array_data = data->loan_value(data->get_member_id_by_name(var_struct_array));
     ASSERT_TRUE(array_data);

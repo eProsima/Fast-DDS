@@ -275,7 +275,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_sequence_hel
     alias_descriptor->name(seq_alias);
     alias_descriptor->base_type(DynamicTypeBuilderFactory::get_instance()->create_sequence_type(
                 DynamicTypeBuilderFactory::get_instance()->get_primitive_type(
-                    TK_INT16), LENGTH_UNLIMITED)->build());
+                    TK_INT16), static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
 
     return DynamicTypeBuilderFactory::get_instance()->create_type(alias_descriptor)->build();
 }
@@ -288,7 +288,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
     alias_descriptor->base_type(DynamicTypeBuilderFactory::get_instance()->create_map_type(DynamicTypeBuilderFactory::
                     get_instance()->get_primitive_type(TK_INT32),
             DynamicTypeBuilderFactory::get_instance()->get_primitive_type(
-                TK_INT32), LENGTH_UNLIMITED)->build());
+                TK_INT32), static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
 
     return DynamicTypeBuilderFactory::get_instance()->create_type(alias_descriptor)->build();
 }

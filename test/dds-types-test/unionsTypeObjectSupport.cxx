@@ -128,6 +128,10 @@ void register_unions_type_objects()
 
                 register_Union_Discriminator_alias_type_identifier();
 
+                register_Union_Several_Fields_type_identifier();
+
+                register_Union_Several_Fields_With_Default_type_identifier();
+
                 register_UnionShort_type_identifier();
 
                 register_UnionUShort_type_identifier();
@@ -205,6 +209,10 @@ void register_unions_type_objects()
                 register_UnionDiscriminatorEnumLabel_type_identifier();
 
                 register_UnionDiscriminatorAlias_type_identifier();
+
+                register_UnionSeveralFields_type_identifier();
+
+                register_UnionSeveralFieldsWithDefault_type_identifier();
 
             });
 }
@@ -7878,6 +7886,2260 @@ void register_Union_Discriminator_alias_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Union_Discriminator_alias: Given Union TypeIdentifier unknown to TypeObjectRegistry.");
+            return;
+        }
+    }
+}
+void register_Union_Several_Fields_type_identifier()
+{
+    {
+        ReturnCode_t return_code_Union_Several_Fields;
+        TypeIdentifierPair type_ids_Union_Several_Fields;
+        UnionTypeFlag union_flags_Union_Several_Fields = TypeObjectUtils::build_union_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+                false, false);
+        QualifiedTypeName type_name_Union_Several_Fields = "Union_Several_Fields";
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_Union_Several_Fields;
+        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_Union_Several_Fields;
+        CompleteTypeDetail detail_Union_Several_Fields = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_Union_Several_Fields, ann_custom_Union_Several_Fields, type_name_Union_Several_Fields.to_string());
+        CompleteUnionHeader header_Union_Several_Fields = TypeObjectUtils::build_complete_union_header(detail_Union_Several_Fields);
+        UnionDiscriminatorFlag member_flags_Union_Several_Fields = TypeObjectUtils::build_union_discriminator_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                false);
+        return_code_Union_Several_Fields =
+            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+            "_int32_t", type_ids_Union_Several_Fields);
+
+        if (return_code_Union_Several_Fields != eprosima::fastdds::dds::RETCODE_OK)
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "Union discriminator TypeIdentifier unknown to TypeObjectRegistry.");
+            return;
+        }
+        CommonDiscriminatorMember common_Union_Several_Fields;
+        if (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1()._d() || TK_NONE == type_ids_Union_Several_Fields.type_identifier2()._d())
+        {
+            common_Union_Several_Fields = TypeObjectUtils::build_common_discriminator_member(member_flags_Union_Several_Fields, type_ids_Union_Several_Fields.type_identifier1());
+        }
+        else if (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2()._d())
+        {
+            common_Union_Several_Fields = TypeObjectUtils::build_common_discriminator_member(member_flags_Union_Several_Fields, type_ids_Union_Several_Fields.type_identifier2());
+        }
+        else
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "Union_Several_Fields discriminator TypeIdentifier inconsistent.");
+            return;
+        }
+        type_ann_builtin_Union_Several_Fields.reset();
+        ann_custom_Union_Several_Fields.reset();
+        CompleteDiscriminatorMember discriminator_Union_Several_Fields = TypeObjectUtils::build_complete_discriminator_member(common_Union_Several_Fields,
+                type_ann_builtin_Union_Several_Fields, ann_custom_Union_Several_Fields);
+        CompleteUnionMemberSeq member_seq_Union_Several_Fields;
+        {
+            return_code_Union_Several_Fields =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "InnerStructureHelper", type_ids_Union_Several_Fields);
+
+            if (return_code_Union_Several_Fields != eprosima::fastdds::dds::RETCODE_OK)
+            {
+                {
+                    StructTypeFlag struct_flags_InnerStructureHelper = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+                            true, false);
+                    ReturnCode_t return_code_InnerStructureHelper;
+                    TypeIdentifierPair type_ids_InnerStructureHelper;
+                    QualifiedTypeName type_name_InnerStructureHelper = "InnerStructureHelper";
+                    eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_InnerStructureHelper;
+                    eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_InnerStructureHelper;
+                    AppliedAnnotationSeq tmp_ann_custom_InnerStructureHelper;
+                    eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_InnerStructureHelper;
+                    if (!tmp_ann_custom_InnerStructureHelper.empty())
+                    {
+                        ann_custom_InnerStructureHelper = tmp_ann_custom_InnerStructureHelper;
+                    }
+
+                    CompleteTypeDetail detail_InnerStructureHelper = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_InnerStructureHelper, ann_custom_InnerStructureHelper, type_name_InnerStructureHelper.to_string());
+                    CompleteStructHeader header_InnerStructureHelper;
+                    header_InnerStructureHelper = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_InnerStructureHelper);
+                    CompleteStructMemberSeq member_seq_InnerStructureHelper;
+                    {
+                        return_code_InnerStructureHelper =
+                            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                            "_int32_t", type_ids_InnerStructureHelper);
+
+                        if (return_code_InnerStructureHelper != eprosima::fastdds::dds::RETCODE_OK)
+                        {
+                            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                    "field1 Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                            return;
+                        }
+                        StructMemberFlag member_flags_field1 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                                false, false, false, false);
+                        CommonStructMember common_field1;
+                        MemberId member_id_field1 = 0x00000000;
+                        if (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1()._d() || TK_NONE == type_ids_InnerStructureHelper.type_identifier2()._d() ||
+                                (TI_PLAIN_SEQUENCE_SMALL == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_SEQUENCE_LARGE == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_SMALL == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_LARGE == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_MAP_SMALL == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                                (TI_PLAIN_MAP_LARGE == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().map_ldefn().key_identifier()->_d())))
+                        {
+                            common_field1 = TypeObjectUtils::build_common_struct_member(member_id_field1, member_flags_field1, type_ids_InnerStructureHelper.type_identifier1());
+                        }
+                        else if (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2()._d() ||
+                                (TI_PLAIN_SEQUENCE_SMALL == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_SEQUENCE_LARGE == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_SMALL == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_LARGE == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_MAP_SMALL == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                                (TI_PLAIN_MAP_LARGE == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().map_ldefn().key_identifier()->_d())))
+                        {
+                            common_field1 = TypeObjectUtils::build_common_struct_member(member_id_field1, member_flags_field1, type_ids_InnerStructureHelper.type_identifier2());
+                        }
+                        else
+                        {
+                            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                    "Structure field1 member TypeIdentifier inconsistent.");
+                            return;
+                        }
+                        MemberName name_field1 = "field1";
+                        eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_field1;
+                        ann_custom_InnerStructureHelper.reset();
+                        CompleteMemberDetail detail_field1 = TypeObjectUtils::build_complete_member_detail(name_field1, member_ann_builtin_field1, ann_custom_InnerStructureHelper);
+                        CompleteStructMember member_field1 = TypeObjectUtils::build_complete_struct_member(common_field1, detail_field1);
+                        TypeObjectUtils::add_complete_struct_member(member_seq_InnerStructureHelper, member_field1);
+                    }
+                    {
+                        return_code_InnerStructureHelper =
+                            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                            "_float", type_ids_InnerStructureHelper);
+
+                        if (return_code_InnerStructureHelper != eprosima::fastdds::dds::RETCODE_OK)
+                        {
+                            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                    "field2 Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                            return;
+                        }
+                        StructMemberFlag member_flags_field2 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                                false, false, false, false);
+                        CommonStructMember common_field2;
+                        MemberId member_id_field2 = 0x00000001;
+                        if (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1()._d() || TK_NONE == type_ids_InnerStructureHelper.type_identifier2()._d() ||
+                                (TI_PLAIN_SEQUENCE_SMALL == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_SEQUENCE_LARGE == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_SMALL == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_LARGE == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_MAP_SMALL == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                                (TI_PLAIN_MAP_LARGE == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().map_ldefn().key_identifier()->_d())))
+                        {
+                            common_field2 = TypeObjectUtils::build_common_struct_member(member_id_field2, member_flags_field2, type_ids_InnerStructureHelper.type_identifier1());
+                        }
+                        else if (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2()._d() ||
+                                (TI_PLAIN_SEQUENCE_SMALL == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_SEQUENCE_LARGE == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_SMALL == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_LARGE == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_MAP_SMALL == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                                (TI_PLAIN_MAP_LARGE == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().map_ldefn().key_identifier()->_d())))
+                        {
+                            common_field2 = TypeObjectUtils::build_common_struct_member(member_id_field2, member_flags_field2, type_ids_InnerStructureHelper.type_identifier2());
+                        }
+                        else
+                        {
+                            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                    "Structure field2 member TypeIdentifier inconsistent.");
+                            return;
+                        }
+                        MemberName name_field2 = "field2";
+                        eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_field2;
+                        ann_custom_InnerStructureHelper.reset();
+                        CompleteMemberDetail detail_field2 = TypeObjectUtils::build_complete_member_detail(name_field2, member_ann_builtin_field2, ann_custom_InnerStructureHelper);
+                        CompleteStructMember member_field2 = TypeObjectUtils::build_complete_struct_member(common_field2, detail_field2);
+                        TypeObjectUtils::add_complete_struct_member(member_seq_InnerStructureHelper, member_field2);
+                    }
+                    CompleteStructType struct_type_InnerStructureHelper = TypeObjectUtils::build_complete_struct_type(struct_flags_InnerStructureHelper, header_InnerStructureHelper, member_seq_InnerStructureHelper);
+                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                            TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerStructureHelper, type_name_InnerStructureHelper.to_string()))
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                "InnerStructureHelper already registered in TypeObjectRegistry for a different type.");
+                    }
+                    return_code_InnerStructureHelper =
+                        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                        "InnerStructureHelper", type_ids_InnerStructureHelper);
+                    if (return_code_InnerStructureHelper != eprosima::fastdds::dds::RETCODE_OK)
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                    "InnerStructureHelper: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+                        return;
+                    }
+                }
+            }
+            UnionMemberFlag member_flags_a = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                    false, false);
+            UnionCaseLabelSeq label_seq_a;
+            TypeObjectUtils::add_union_case_label(label_seq_a, static_cast<int32_t>(0));
+            CommonUnionMember common_a;
+            MemberId member_id_a = 0x00000001;
+            if (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1()._d() || TK_NONE == type_ids_Union_Several_Fields.type_identifier2()._d() ||
+                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                    (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                    (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                    (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_ldefn().key_identifier()->_d())))
+            {
+                common_a = TypeObjectUtils::build_common_union_member(member_id_a, member_flags_a, type_ids_Union_Several_Fields.type_identifier1(),
+                        label_seq_a);
+            }
+            else if (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2()._d() ||
+                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                    (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                    (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                    (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_ldefn().key_identifier()->_d())))
+            {
+                common_a = TypeObjectUtils::build_common_union_member(member_id_a, member_flags_a, type_ids_Union_Several_Fields.type_identifier2(),
+                        label_seq_a);
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "Union a member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_a = "a";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_a;
+            ann_custom_Union_Several_Fields.reset();
+            CompleteMemberDetail detail_a = TypeObjectUtils::build_complete_member_detail(name_a, member_ann_builtin_a, ann_custom_Union_Several_Fields);
+            CompleteUnionMember member_a = TypeObjectUtils::build_complete_union_member(common_a, detail_a);
+            TypeObjectUtils::add_complete_union_member(member_seq_Union_Several_Fields, member_a);
+        }
+        {
+            return_code_Union_Several_Fields =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "InnerEmptyStructureHelper", type_ids_Union_Several_Fields);
+
+            if (return_code_Union_Several_Fields != eprosima::fastdds::dds::RETCODE_OK)
+            {
+                {
+                    StructTypeFlag struct_flags_InnerEmptyStructureHelper = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+                            true, false);
+                    ReturnCode_t return_code_InnerEmptyStructureHelper;
+                    TypeIdentifierPair type_ids_InnerEmptyStructureHelper;
+                    QualifiedTypeName type_name_InnerEmptyStructureHelper = "InnerEmptyStructureHelper";
+                    eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_InnerEmptyStructureHelper;
+                    eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_InnerEmptyStructureHelper;
+                    AppliedAnnotationSeq tmp_ann_custom_InnerEmptyStructureHelper;
+                    eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_InnerEmptyStructureHelper;
+                    if (!tmp_ann_custom_InnerEmptyStructureHelper.empty())
+                    {
+                        ann_custom_InnerEmptyStructureHelper = tmp_ann_custom_InnerEmptyStructureHelper;
+                    }
+
+                    CompleteTypeDetail detail_InnerEmptyStructureHelper = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_InnerEmptyStructureHelper, ann_custom_InnerEmptyStructureHelper, type_name_InnerEmptyStructureHelper.to_string());
+                    CompleteStructHeader header_InnerEmptyStructureHelper;
+                    header_InnerEmptyStructureHelper = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_InnerEmptyStructureHelper);
+                    CompleteStructMemberSeq member_seq_InnerEmptyStructureHelper;
+                    CompleteStructType struct_type_InnerEmptyStructureHelper = TypeObjectUtils::build_complete_struct_type(struct_flags_InnerEmptyStructureHelper, header_InnerEmptyStructureHelper, member_seq_InnerEmptyStructureHelper);
+                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                            TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerEmptyStructureHelper, type_name_InnerEmptyStructureHelper.to_string()))
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                "InnerEmptyStructureHelper already registered in TypeObjectRegistry for a different type.");
+                    }
+                    return_code_InnerEmptyStructureHelper =
+                        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                        "InnerEmptyStructureHelper", type_ids_InnerEmptyStructureHelper);
+                    if (return_code_InnerEmptyStructureHelper != eprosima::fastdds::dds::RETCODE_OK)
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                    "InnerEmptyStructureHelper: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+                        return;
+                    }
+                }
+            }
+            UnionMemberFlag member_flags_b = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                    false, false);
+            UnionCaseLabelSeq label_seq_b;
+            TypeObjectUtils::add_union_case_label(label_seq_b, static_cast<int32_t>(1));
+            CommonUnionMember common_b;
+            MemberId member_id_b = 0x00000002;
+            if (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1()._d() || TK_NONE == type_ids_Union_Several_Fields.type_identifier2()._d() ||
+                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                    (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                    (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                    (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_ldefn().key_identifier()->_d())))
+            {
+                common_b = TypeObjectUtils::build_common_union_member(member_id_b, member_flags_b, type_ids_Union_Several_Fields.type_identifier1(),
+                        label_seq_b);
+            }
+            else if (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2()._d() ||
+                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                    (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                    (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                    (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_ldefn().key_identifier()->_d())))
+            {
+                common_b = TypeObjectUtils::build_common_union_member(member_id_b, member_flags_b, type_ids_Union_Several_Fields.type_identifier2(),
+                        label_seq_b);
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "Union b member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_b = "b";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_b;
+            ann_custom_Union_Several_Fields.reset();
+            CompleteMemberDetail detail_b = TypeObjectUtils::build_complete_member_detail(name_b, member_ann_builtin_b, ann_custom_Union_Several_Fields);
+            CompleteUnionMember member_b = TypeObjectUtils::build_complete_union_member(common_b, detail_b);
+            TypeObjectUtils::add_complete_union_member(member_seq_Union_Several_Fields, member_b);
+        }
+        {
+            return_code_Union_Several_Fields =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "Inner_alias_bounded_string_helper", type_ids_Union_Several_Fields);
+
+            if (return_code_Union_Several_Fields != eprosima::fastdds::dds::RETCODE_OK)
+            {
+                AliasTypeFlag alias_flags_Inner_alias_bounded_string_helper = 0;
+                QualifiedTypeName type_name_Inner_alias_bounded_string_helper = "Inner_alias_bounded_string_helper";
+                eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_Inner_alias_bounded_string_helper;
+                eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_Inner_alias_bounded_string_helper;
+                CompleteTypeDetail detail_Inner_alias_bounded_string_helper = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_Inner_alias_bounded_string_helper, ann_custom_Inner_alias_bounded_string_helper, type_name_Inner_alias_bounded_string_helper.to_string());
+                CompleteAliasHeader header_Inner_alias_bounded_string_helper = TypeObjectUtils::build_complete_alias_header(detail_Inner_alias_bounded_string_helper);
+                AliasMemberFlag related_flags_Inner_alias_bounded_string_helper = 0;
+                return_code_Union_Several_Fields =
+                    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                    "anonymous_string_10", type_ids_Union_Several_Fields);
+
+                if (return_code_Union_Several_Fields != eprosima::fastdds::dds::RETCODE_OK)
+                {
+                    std::string type_id_kind_anonymous_string_10("TI_STRING8_SMALL");
+                    if (type_id_kind_anonymous_string_10 == "TI_STRING8_SMALL")
+                    {
+                        SBound bound = static_cast<SBound>(10);
+                        StringSTypeDefn string_sdefn = TypeObjectUtils::build_string_s_type_defn(bound);
+                        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                                TypeObjectUtils::build_and_register_s_string_type_identifier(string_sdefn,
+                                "anonymous_string_10"))
+                        {
+                            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                "anonymous_string_10 already registered in TypeObjectRegistry for a different type.");
+                        }
+                    }
+                    else if (type_id_kind_anonymous_string_10 == "TI_STRING8_LARGE")
+                    {
+                        LBound bound = 10;
+                        StringLTypeDefn string_ldefn = TypeObjectUtils::build_string_l_type_defn(bound);
+                        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                                TypeObjectUtils::build_and_register_l_string_type_identifier(string_ldefn,
+                                "anonymous_string_10"))
+                        {
+                            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                "anonymous_string_10 already registered in TypeObjectRegistry for a different type.");
+                        }
+                    }
+                    else
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                    "anonymous_string_10: Unknown String kind.");
+                        return;
+                    }
+                    return_code_Union_Several_Fields =
+                        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                        "anonymous_string_10", type_ids_Union_Several_Fields);
+                    if (return_code_Union_Several_Fields != eprosima::fastdds::dds::RETCODE_OK)
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                    "anonymous_string_10: Given String TypeIdentifier unknown to TypeObjectRegistry.");
+                        return;
+                    }
+                }
+                CommonAliasBody common_Inner_alias_bounded_string_helper;
+                if (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1()._d() || TK_NONE == type_ids_Union_Several_Fields.type_identifier2()._d() ||
+                        (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                        (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                        (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                        (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                        (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                        (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_sdefn().header().equiv_kind() ||
+                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                        (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                        (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_ldefn().header().equiv_kind() ||
+                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_ldefn().key_identifier()->_d())))
+                {
+                    common_Inner_alias_bounded_string_helper = TypeObjectUtils::build_common_alias_body(related_flags_Inner_alias_bounded_string_helper, type_ids_Union_Several_Fields.type_identifier1());
+                }
+                else if (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2()._d() ||
+                        (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                        (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                        (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                        (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                        (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                        (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_sdefn().header().equiv_kind() ||
+                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                        (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                        (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_ldefn().header().equiv_kind() ||
+                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_ldefn().key_identifier()->_d())))
+                {
+                    common_Inner_alias_bounded_string_helper = TypeObjectUtils::build_common_alias_body(related_flags_Inner_alias_bounded_string_helper, type_ids_Union_Several_Fields.type_identifier2());
+                }
+                else
+                {
+                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                            "Inner_alias_bounded_string_helper related TypeIdentifier inconsistent.");
+                    return;
+                }
+                eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_Inner_alias_bounded_string_helper;
+                ann_custom_Inner_alias_bounded_string_helper.reset();
+                CompleteAliasBody body_Inner_alias_bounded_string_helper = TypeObjectUtils::build_complete_alias_body(common_Inner_alias_bounded_string_helper, member_ann_builtin_Inner_alias_bounded_string_helper, ann_custom_Inner_alias_bounded_string_helper);
+                CompleteAliasType alias_type_Inner_alias_bounded_string_helper = TypeObjectUtils::build_complete_alias_type(alias_flags_Inner_alias_bounded_string_helper, header_Inner_alias_bounded_string_helper, body_Inner_alias_bounded_string_helper);
+                if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                        TypeObjectUtils::build_and_register_alias_type_object(alias_type_Inner_alias_bounded_string_helper, type_name_Inner_alias_bounded_string_helper.to_string()))
+                {
+                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "Inner_alias_bounded_string_helper already registered in TypeObjectRegistry for a different type.");
+                }
+                return_code_Union_Several_Fields =
+                    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                    "Inner_alias_bounded_string_helper", type_ids_Union_Several_Fields);
+                if (return_code_Union_Several_Fields != eprosima::fastdds::dds::RETCODE_OK)
+                {
+                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                "Inner_alias_bounded_string_helper: Given Alias TypeIdentifier unknown to TypeObjectRegistry.");
+                    return;
+                }
+            }
+            UnionMemberFlag member_flags_c = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                    false, false);
+            UnionCaseLabelSeq label_seq_c;
+            TypeObjectUtils::add_union_case_label(label_seq_c, static_cast<int32_t>(2));
+            CommonUnionMember common_c;
+            MemberId member_id_c = 0x00000003;
+            if (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1()._d() || TK_NONE == type_ids_Union_Several_Fields.type_identifier2()._d() ||
+                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                    (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                    (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                    (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_ldefn().key_identifier()->_d())))
+            {
+                common_c = TypeObjectUtils::build_common_union_member(member_id_c, member_flags_c, type_ids_Union_Several_Fields.type_identifier1(),
+                        label_seq_c);
+            }
+            else if (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2()._d() ||
+                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                    (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                    (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                    (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_ldefn().key_identifier()->_d())))
+            {
+                common_c = TypeObjectUtils::build_common_union_member(member_id_c, member_flags_c, type_ids_Union_Several_Fields.type_identifier2(),
+                        label_seq_c);
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "Union c member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_c = "c";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_c;
+            ann_custom_Union_Several_Fields.reset();
+            CompleteMemberDetail detail_c = TypeObjectUtils::build_complete_member_detail(name_c, member_ann_builtin_c, ann_custom_Union_Several_Fields);
+            CompleteUnionMember member_c = TypeObjectUtils::build_complete_union_member(common_c, detail_c);
+            TypeObjectUtils::add_complete_union_member(member_seq_Union_Several_Fields, member_c);
+        }
+        {
+            return_code_Union_Several_Fields =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "Inner_alias_array_helper", type_ids_Union_Several_Fields);
+
+            if (return_code_Union_Several_Fields != eprosima::fastdds::dds::RETCODE_OK)
+            {
+                AliasTypeFlag alias_flags_Inner_alias_array_helper = 0;
+                QualifiedTypeName type_name_Inner_alias_array_helper = "Inner_alias_array_helper";
+                eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_Inner_alias_array_helper;
+                eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_Inner_alias_array_helper;
+                CompleteTypeDetail detail_Inner_alias_array_helper = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_Inner_alias_array_helper, ann_custom_Inner_alias_array_helper, type_name_Inner_alias_array_helper.to_string());
+                CompleteAliasHeader header_Inner_alias_array_helper = TypeObjectUtils::build_complete_alias_header(detail_Inner_alias_array_helper);
+                AliasMemberFlag related_flags_Inner_alias_array_helper = 0;
+                return_code_Union_Several_Fields =
+                    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                    "anonymous_array_int16_t_2", type_ids_Union_Several_Fields);
+
+                if (return_code_Union_Several_Fields != eprosima::fastdds::dds::RETCODE_OK)
+                {
+                    return_code_Union_Several_Fields =
+                        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                        "_int16_t", type_ids_Union_Several_Fields);
+
+                    if (return_code_Union_Several_Fields != eprosima::fastdds::dds::RETCODE_OK)
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                "Array element TypeIdentifier unknown to TypeObjectRegistry.");
+                        return;
+                    }
+                    TypeIdentifier* element_identifier_anonymous_array_int16_t_2 {nullptr};
+                    if (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1()._d() || TK_NONE == type_ids_Union_Several_Fields.type_identifier2()._d() ||
+                            (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                            EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                            (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                            EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                            (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                            EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                            (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                            EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                            (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                            (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_sdefn().header().equiv_kind() ||
+                            EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                            (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                            (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_ldefn().header().equiv_kind() ||
+                            EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_ldefn().key_identifier()->_d())))
+                    {
+                        element_identifier_anonymous_array_int16_t_2 = new TypeIdentifier(type_ids_Union_Several_Fields.type_identifier1());
+                    }
+                    else if (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2()._d() ||
+                            (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                            EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                            (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                            EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                            (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                            EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                            (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                            EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                            (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                            (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_sdefn().header().equiv_kind() ||
+                            EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                            (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                            (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_ldefn().header().equiv_kind() ||
+                            EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_ldefn().key_identifier()->_d())))
+                    {
+                        element_identifier_anonymous_array_int16_t_2 = new TypeIdentifier(type_ids_Union_Several_Fields.type_identifier2());
+                    }
+                    else
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                            "Array element TypeIdentifier inconsistent.");
+                        return;
+                    }
+                    EquivalenceKind equiv_kind_anonymous_array_int16_t_2 = EK_COMPLETE;
+                    if (TK_NONE == type_ids_Union_Several_Fields.type_identifier2()._d())
+                    {
+                        equiv_kind_anonymous_array_int16_t_2 = EK_BOTH;
+                    }
+                    CollectionElementFlag element_flags_anonymous_array_int16_t_2 = 0;
+                    PlainCollectionHeader header_anonymous_array_int16_t_2 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_array_int16_t_2, element_flags_anonymous_array_int16_t_2);
+                    std::string type_id_kind_anonymous_array_int16_t_2("TI_PLAIN_ARRAY_SMALL");
+                    if (type_id_kind_anonymous_array_int16_t_2 == "TI_PLAIN_ARRAY_SMALL")
+                    {
+                        SBoundSeq array_bound_seq;
+                            TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<SBound>(2));
+
+                        PlainArraySElemDefn array_sdefn = TypeObjectUtils::build_plain_array_s_elem_defn(header_anonymous_array_int16_t_2, array_bound_seq,
+                                    eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int16_t_2));
+                        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                                TypeObjectUtils::build_and_register_s_array_type_identifier(array_sdefn, "anonymous_array_int16_t_2"))
+                        {
+                            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                "anonymous_array_int16_t_2 already registered in TypeObjectRegistry for a different type.");
+                        }
+                    }
+                    else
+                    {
+                        LBoundSeq array_bound_seq;
+                            TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<LBound>(2));
+
+                        PlainArrayLElemDefn array_ldefn = TypeObjectUtils::build_plain_array_l_elem_defn(header_anonymous_array_int16_t_2, array_bound_seq,
+                                    eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int16_t_2));
+                        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                                TypeObjectUtils::build_and_register_l_array_type_identifier(array_ldefn, "anonymous_array_int16_t_2"))
+                        {
+                            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                "anonymous_array_int16_t_2 already registered in TypeObjectRegistry for a different type.");
+                        }
+                    }
+                    return_code_Union_Several_Fields =
+                        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                        "anonymous_array_int16_t_2", type_ids_Union_Several_Fields);
+                    if (return_code_Union_Several_Fields != eprosima::fastdds::dds::RETCODE_OK)
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                    "anonymous_array_int16_t_2: Given Array TypeIdentifier unknown to TypeObjectRegistry.");
+                        return;
+                    }
+                }
+                CommonAliasBody common_Inner_alias_array_helper;
+                if (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1()._d() || TK_NONE == type_ids_Union_Several_Fields.type_identifier2()._d() ||
+                        (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                        (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                        (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                        (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                        (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                        (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_sdefn().header().equiv_kind() ||
+                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                        (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                        (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_ldefn().header().equiv_kind() ||
+                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_ldefn().key_identifier()->_d())))
+                {
+                    common_Inner_alias_array_helper = TypeObjectUtils::build_common_alias_body(related_flags_Inner_alias_array_helper, type_ids_Union_Several_Fields.type_identifier1());
+                }
+                else if (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2()._d() ||
+                        (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                        (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                        (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                        (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                        (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                        (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_sdefn().header().equiv_kind() ||
+                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                        (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                        (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_ldefn().header().equiv_kind() ||
+                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_ldefn().key_identifier()->_d())))
+                {
+                    common_Inner_alias_array_helper = TypeObjectUtils::build_common_alias_body(related_flags_Inner_alias_array_helper, type_ids_Union_Several_Fields.type_identifier2());
+                }
+                else
+                {
+                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                            "Inner_alias_array_helper related TypeIdentifier inconsistent.");
+                    return;
+                }
+                eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_Inner_alias_array_helper;
+                ann_custom_Inner_alias_array_helper.reset();
+                CompleteAliasBody body_Inner_alias_array_helper = TypeObjectUtils::build_complete_alias_body(common_Inner_alias_array_helper, member_ann_builtin_Inner_alias_array_helper, ann_custom_Inner_alias_array_helper);
+                CompleteAliasType alias_type_Inner_alias_array_helper = TypeObjectUtils::build_complete_alias_type(alias_flags_Inner_alias_array_helper, header_Inner_alias_array_helper, body_Inner_alias_array_helper);
+                if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                        TypeObjectUtils::build_and_register_alias_type_object(alias_type_Inner_alias_array_helper, type_name_Inner_alias_array_helper.to_string()))
+                {
+                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "Inner_alias_array_helper already registered in TypeObjectRegistry for a different type.");
+                }
+                return_code_Union_Several_Fields =
+                    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                    "Inner_alias_array_helper", type_ids_Union_Several_Fields);
+                if (return_code_Union_Several_Fields != eprosima::fastdds::dds::RETCODE_OK)
+                {
+                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                "Inner_alias_array_helper: Given Alias TypeIdentifier unknown to TypeObjectRegistry.");
+                    return;
+                }
+            }
+            UnionMemberFlag member_flags_d = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                    false, false);
+            UnionCaseLabelSeq label_seq_d;
+            TypeObjectUtils::add_union_case_label(label_seq_d, static_cast<int32_t>(3));
+            CommonUnionMember common_d;
+            MemberId member_id_d = 0x00000004;
+            if (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1()._d() || TK_NONE == type_ids_Union_Several_Fields.type_identifier2()._d() ||
+                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                    (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                    (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                    (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_ldefn().key_identifier()->_d())))
+            {
+                common_d = TypeObjectUtils::build_common_union_member(member_id_d, member_flags_d, type_ids_Union_Several_Fields.type_identifier1(),
+                        label_seq_d);
+            }
+            else if (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2()._d() ||
+                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                    (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                    (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                    (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_ldefn().key_identifier()->_d())))
+            {
+                common_d = TypeObjectUtils::build_common_union_member(member_id_d, member_flags_d, type_ids_Union_Several_Fields.type_identifier2(),
+                        label_seq_d);
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "Union d member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_d = "d";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_d;
+            ann_custom_Union_Several_Fields.reset();
+            CompleteMemberDetail detail_d = TypeObjectUtils::build_complete_member_detail(name_d, member_ann_builtin_d, ann_custom_Union_Several_Fields);
+            CompleteUnionMember member_d = TypeObjectUtils::build_complete_union_member(common_d, detail_d);
+            TypeObjectUtils::add_complete_union_member(member_seq_Union_Several_Fields, member_d);
+        }
+        {
+            return_code_Union_Several_Fields =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "Inner_alias_sequence_helper", type_ids_Union_Several_Fields);
+
+            if (return_code_Union_Several_Fields != eprosima::fastdds::dds::RETCODE_OK)
+            {
+                AliasTypeFlag alias_flags_Inner_alias_sequence_helper = 0;
+                QualifiedTypeName type_name_Inner_alias_sequence_helper = "Inner_alias_sequence_helper";
+                eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_Inner_alias_sequence_helper;
+                eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_Inner_alias_sequence_helper;
+                CompleteTypeDetail detail_Inner_alias_sequence_helper = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_Inner_alias_sequence_helper, ann_custom_Inner_alias_sequence_helper, type_name_Inner_alias_sequence_helper.to_string());
+                CompleteAliasHeader header_Inner_alias_sequence_helper = TypeObjectUtils::build_complete_alias_header(detail_Inner_alias_sequence_helper);
+                AliasMemberFlag related_flags_Inner_alias_sequence_helper = 0;
+                return_code_Union_Several_Fields =
+                    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                    "anonymous_sequence_int16_t_unbounded", type_ids_Union_Several_Fields);
+
+                if (return_code_Union_Several_Fields != eprosima::fastdds::dds::RETCODE_OK)
+                {
+                    return_code_Union_Several_Fields =
+                        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                        "_int16_t", type_ids_Union_Several_Fields);
+
+                    if (return_code_Union_Several_Fields != eprosima::fastdds::dds::RETCODE_OK)
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                "Sequence element TypeIdentifier unknown to TypeObjectRegistry.");
+                        return;
+                    }
+                    TypeIdentifier* element_identifier_anonymous_sequence_int16_t_unbounded {nullptr};
+                    if (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1()._d() || TK_NONE == type_ids_Union_Several_Fields.type_identifier2()._d() ||
+                            (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                            EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                            (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                            EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                            (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                            EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                            (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                            EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                            (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                            (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_sdefn().header().equiv_kind() ||
+                            EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                            (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                            (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_ldefn().header().equiv_kind() ||
+                            EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_ldefn().key_identifier()->_d())))
+                    {
+                        element_identifier_anonymous_sequence_int16_t_unbounded = new TypeIdentifier(type_ids_Union_Several_Fields.type_identifier1());
+                    }
+                    else if (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2()._d() ||
+                            (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                            EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                            (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                            EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                            (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                            EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                            (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                            EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                            (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                            (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_sdefn().header().equiv_kind() ||
+                            EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                            (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                            (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_ldefn().header().equiv_kind() ||
+                            EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_ldefn().key_identifier()->_d())))
+                    {
+                        element_identifier_anonymous_sequence_int16_t_unbounded = new TypeIdentifier(type_ids_Union_Several_Fields.type_identifier2());
+                    }
+                    else
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                            "Sequence element TypeIdentifier inconsistent.");
+                        return;
+                    }
+                    EquivalenceKind equiv_kind_anonymous_sequence_int16_t_unbounded = EK_COMPLETE;
+                    if (TK_NONE == type_ids_Union_Several_Fields.type_identifier2()._d())
+                    {
+                        equiv_kind_anonymous_sequence_int16_t_unbounded = EK_BOTH;
+                    }
+                    CollectionElementFlag element_flags_anonymous_sequence_int16_t_unbounded = 0;
+                    PlainCollectionHeader header_anonymous_sequence_int16_t_unbounded = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_sequence_int16_t_unbounded, element_flags_anonymous_sequence_int16_t_unbounded);
+                    std::string type_id_kind_anonymous_sequence_int16_t_unbounded("TI_PLAIN_SEQUENCE_SMALL");
+                    if (type_id_kind_anonymous_sequence_int16_t_unbounded == "TI_PLAIN_SEQUENCE_SMALL")
+                    {
+                        SBound bound = 0;
+                        PlainSequenceSElemDefn seq_sdefn = TypeObjectUtils::build_plain_sequence_s_elem_defn(header_anonymous_sequence_int16_t_unbounded, bound,
+                                    eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_sequence_int16_t_unbounded));
+                        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                                TypeObjectUtils::build_and_register_s_sequence_type_identifier(seq_sdefn, "anonymous_sequence_int16_t_unbounded"))
+                        {
+                            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                "anonymous_sequence_int16_t_unbounded already registered in TypeObjectRegistry for a different type.");
+                        }
+                    }
+                    else
+                    {
+                        LBound bound = 0;
+                        PlainSequenceLElemDefn seq_ldefn = TypeObjectUtils::build_plain_sequence_l_elem_defn(header_anonymous_sequence_int16_t_unbounded, bound,
+                                    eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_sequence_int16_t_unbounded));
+                        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                                TypeObjectUtils::build_and_register_l_sequence_type_identifier(seq_ldefn, "anonymous_sequence_int16_t_unbounded"))
+                        {
+                            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                "anonymous_sequence_int16_t_unbounded already registered in TypeObjectRegistry for a different type.");
+                        }
+                    }
+                    return_code_Union_Several_Fields =
+                        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                        "anonymous_sequence_int16_t_unbounded", type_ids_Union_Several_Fields);
+                    if (return_code_Union_Several_Fields != eprosima::fastdds::dds::RETCODE_OK)
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                    "anonymous_sequence_int16_t_unbounded: Given Sequence TypeIdentifier unknown to TypeObjectRegistry.");
+                        return;
+                    }
+                }
+                CommonAliasBody common_Inner_alias_sequence_helper;
+                if (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1()._d() || TK_NONE == type_ids_Union_Several_Fields.type_identifier2()._d() ||
+                        (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                        (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                        (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                        (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                        (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                        (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_sdefn().header().equiv_kind() ||
+                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                        (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                        (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_ldefn().header().equiv_kind() ||
+                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_ldefn().key_identifier()->_d())))
+                {
+                    common_Inner_alias_sequence_helper = TypeObjectUtils::build_common_alias_body(related_flags_Inner_alias_sequence_helper, type_ids_Union_Several_Fields.type_identifier1());
+                }
+                else if (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2()._d() ||
+                        (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                        (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                        (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                        (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                        (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                        (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_sdefn().header().equiv_kind() ||
+                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                        (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                        (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_ldefn().header().equiv_kind() ||
+                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_ldefn().key_identifier()->_d())))
+                {
+                    common_Inner_alias_sequence_helper = TypeObjectUtils::build_common_alias_body(related_flags_Inner_alias_sequence_helper, type_ids_Union_Several_Fields.type_identifier2());
+                }
+                else
+                {
+                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                            "Inner_alias_sequence_helper related TypeIdentifier inconsistent.");
+                    return;
+                }
+                eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_Inner_alias_sequence_helper;
+                ann_custom_Inner_alias_sequence_helper.reset();
+                CompleteAliasBody body_Inner_alias_sequence_helper = TypeObjectUtils::build_complete_alias_body(common_Inner_alias_sequence_helper, member_ann_builtin_Inner_alias_sequence_helper, ann_custom_Inner_alias_sequence_helper);
+                CompleteAliasType alias_type_Inner_alias_sequence_helper = TypeObjectUtils::build_complete_alias_type(alias_flags_Inner_alias_sequence_helper, header_Inner_alias_sequence_helper, body_Inner_alias_sequence_helper);
+                if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                        TypeObjectUtils::build_and_register_alias_type_object(alias_type_Inner_alias_sequence_helper, type_name_Inner_alias_sequence_helper.to_string()))
+                {
+                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "Inner_alias_sequence_helper already registered in TypeObjectRegistry for a different type.");
+                }
+                return_code_Union_Several_Fields =
+                    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                    "Inner_alias_sequence_helper", type_ids_Union_Several_Fields);
+                if (return_code_Union_Several_Fields != eprosima::fastdds::dds::RETCODE_OK)
+                {
+                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                "Inner_alias_sequence_helper: Given Alias TypeIdentifier unknown to TypeObjectRegistry.");
+                    return;
+                }
+            }
+            UnionMemberFlag member_flags_e = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                    false, false);
+            UnionCaseLabelSeq label_seq_e;
+            TypeObjectUtils::add_union_case_label(label_seq_e, static_cast<int32_t>(4));
+            CommonUnionMember common_e;
+            MemberId member_id_e = 0x00000005;
+            if (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1()._d() || TK_NONE == type_ids_Union_Several_Fields.type_identifier2()._d() ||
+                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                    (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                    (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                    (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_ldefn().key_identifier()->_d())))
+            {
+                common_e = TypeObjectUtils::build_common_union_member(member_id_e, member_flags_e, type_ids_Union_Several_Fields.type_identifier1(),
+                        label_seq_e);
+            }
+            else if (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2()._d() ||
+                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                    (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                    (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                    (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_ldefn().key_identifier()->_d())))
+            {
+                common_e = TypeObjectUtils::build_common_union_member(member_id_e, member_flags_e, type_ids_Union_Several_Fields.type_identifier2(),
+                        label_seq_e);
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "Union e member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_e = "e";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_e;
+            ann_custom_Union_Several_Fields.reset();
+            CompleteMemberDetail detail_e = TypeObjectUtils::build_complete_member_detail(name_e, member_ann_builtin_e, ann_custom_Union_Several_Fields);
+            CompleteUnionMember member_e = TypeObjectUtils::build_complete_union_member(common_e, detail_e);
+            TypeObjectUtils::add_complete_union_member(member_seq_Union_Several_Fields, member_e);
+        }
+        CompleteUnionType union_type_Union_Several_Fields = TypeObjectUtils::build_complete_union_type(union_flags_Union_Several_Fields, header_Union_Several_Fields, discriminator_Union_Several_Fields,
+                member_seq_Union_Several_Fields);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_union_type_object(union_type_Union_Several_Fields, type_name_Union_Several_Fields.to_string()))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "Union_Several_Fields already registered in TypeObjectRegistry for a different type.");
+        }
+        return_code_Union_Several_Fields =
+            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+            "Union_Several_Fields", type_ids_Union_Several_Fields);
+        if (return_code_Union_Several_Fields != eprosima::fastdds::dds::RETCODE_OK)
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "Union_Several_Fields: Given Union TypeIdentifier unknown to TypeObjectRegistry.");
+            return;
+        }
+    }
+}
+void register_Union_Several_Fields_With_Default_type_identifier()
+{
+    {
+        ReturnCode_t return_code_Union_Several_Fields_With_Default;
+        TypeIdentifierPair type_ids_Union_Several_Fields_With_Default;
+        UnionTypeFlag union_flags_Union_Several_Fields_With_Default = TypeObjectUtils::build_union_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+                false, false);
+        QualifiedTypeName type_name_Union_Several_Fields_With_Default = "Union_Several_Fields_With_Default";
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_Union_Several_Fields_With_Default;
+        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_Union_Several_Fields_With_Default;
+        CompleteTypeDetail detail_Union_Several_Fields_With_Default = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_Union_Several_Fields_With_Default, ann_custom_Union_Several_Fields_With_Default, type_name_Union_Several_Fields_With_Default.to_string());
+        CompleteUnionHeader header_Union_Several_Fields_With_Default = TypeObjectUtils::build_complete_union_header(detail_Union_Several_Fields_With_Default);
+        UnionDiscriminatorFlag member_flags_Union_Several_Fields_With_Default = TypeObjectUtils::build_union_discriminator_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                false);
+        return_code_Union_Several_Fields_With_Default =
+            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+            "_int32_t", type_ids_Union_Several_Fields_With_Default);
+
+        if (return_code_Union_Several_Fields_With_Default != eprosima::fastdds::dds::RETCODE_OK)
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "Union discriminator TypeIdentifier unknown to TypeObjectRegistry.");
+            return;
+        }
+        CommonDiscriminatorMember common_Union_Several_Fields_With_Default;
+        if (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() || TK_NONE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d())
+        {
+            common_Union_Several_Fields_With_Default = TypeObjectUtils::build_common_discriminator_member(member_flags_Union_Several_Fields_With_Default, type_ids_Union_Several_Fields_With_Default.type_identifier1());
+        }
+        else if (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d())
+        {
+            common_Union_Several_Fields_With_Default = TypeObjectUtils::build_common_discriminator_member(member_flags_Union_Several_Fields_With_Default, type_ids_Union_Several_Fields_With_Default.type_identifier2());
+        }
+        else
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "Union_Several_Fields_With_Default discriminator TypeIdentifier inconsistent.");
+            return;
+        }
+        type_ann_builtin_Union_Several_Fields_With_Default.reset();
+        ann_custom_Union_Several_Fields_With_Default.reset();
+        CompleteDiscriminatorMember discriminator_Union_Several_Fields_With_Default = TypeObjectUtils::build_complete_discriminator_member(common_Union_Several_Fields_With_Default,
+                type_ann_builtin_Union_Several_Fields_With_Default, ann_custom_Union_Several_Fields_With_Default);
+        CompleteUnionMemberSeq member_seq_Union_Several_Fields_With_Default;
+        {
+            return_code_Union_Several_Fields_With_Default =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "InnerStructureHelper", type_ids_Union_Several_Fields_With_Default);
+
+            if (return_code_Union_Several_Fields_With_Default != eprosima::fastdds::dds::RETCODE_OK)
+            {
+                {
+                    StructTypeFlag struct_flags_InnerStructureHelper = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+                            true, false);
+                    ReturnCode_t return_code_InnerStructureHelper;
+                    TypeIdentifierPair type_ids_InnerStructureHelper;
+                    QualifiedTypeName type_name_InnerStructureHelper = "InnerStructureHelper";
+                    eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_InnerStructureHelper;
+                    eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_InnerStructureHelper;
+                    AppliedAnnotationSeq tmp_ann_custom_InnerStructureHelper;
+                    eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_InnerStructureHelper;
+                    if (!tmp_ann_custom_InnerStructureHelper.empty())
+                    {
+                        ann_custom_InnerStructureHelper = tmp_ann_custom_InnerStructureHelper;
+                    }
+
+                    CompleteTypeDetail detail_InnerStructureHelper = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_InnerStructureHelper, ann_custom_InnerStructureHelper, type_name_InnerStructureHelper.to_string());
+                    CompleteStructHeader header_InnerStructureHelper;
+                    header_InnerStructureHelper = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_InnerStructureHelper);
+                    CompleteStructMemberSeq member_seq_InnerStructureHelper;
+                    {
+                        return_code_InnerStructureHelper =
+                            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                            "_int32_t", type_ids_InnerStructureHelper);
+
+                        if (return_code_InnerStructureHelper != eprosima::fastdds::dds::RETCODE_OK)
+                        {
+                            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                    "field1 Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                            return;
+                        }
+                        StructMemberFlag member_flags_field1 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                                false, false, false, false);
+                        CommonStructMember common_field1;
+                        MemberId member_id_field1 = 0x00000000;
+                        if (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1()._d() || TK_NONE == type_ids_InnerStructureHelper.type_identifier2()._d() ||
+                                (TI_PLAIN_SEQUENCE_SMALL == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_SEQUENCE_LARGE == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_SMALL == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_LARGE == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_MAP_SMALL == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                                (TI_PLAIN_MAP_LARGE == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().map_ldefn().key_identifier()->_d())))
+                        {
+                            common_field1 = TypeObjectUtils::build_common_struct_member(member_id_field1, member_flags_field1, type_ids_InnerStructureHelper.type_identifier1());
+                        }
+                        else if (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2()._d() ||
+                                (TI_PLAIN_SEQUENCE_SMALL == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_SEQUENCE_LARGE == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_SMALL == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_LARGE == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_MAP_SMALL == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                                (TI_PLAIN_MAP_LARGE == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().map_ldefn().key_identifier()->_d())))
+                        {
+                            common_field1 = TypeObjectUtils::build_common_struct_member(member_id_field1, member_flags_field1, type_ids_InnerStructureHelper.type_identifier2());
+                        }
+                        else
+                        {
+                            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                    "Structure field1 member TypeIdentifier inconsistent.");
+                            return;
+                        }
+                        MemberName name_field1 = "field1";
+                        eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_field1;
+                        ann_custom_InnerStructureHelper.reset();
+                        CompleteMemberDetail detail_field1 = TypeObjectUtils::build_complete_member_detail(name_field1, member_ann_builtin_field1, ann_custom_InnerStructureHelper);
+                        CompleteStructMember member_field1 = TypeObjectUtils::build_complete_struct_member(common_field1, detail_field1);
+                        TypeObjectUtils::add_complete_struct_member(member_seq_InnerStructureHelper, member_field1);
+                    }
+                    {
+                        return_code_InnerStructureHelper =
+                            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                            "_float", type_ids_InnerStructureHelper);
+
+                        if (return_code_InnerStructureHelper != eprosima::fastdds::dds::RETCODE_OK)
+                        {
+                            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                    "field2 Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                            return;
+                        }
+                        StructMemberFlag member_flags_field2 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                                false, false, false, false);
+                        CommonStructMember common_field2;
+                        MemberId member_id_field2 = 0x00000001;
+                        if (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1()._d() || TK_NONE == type_ids_InnerStructureHelper.type_identifier2()._d() ||
+                                (TI_PLAIN_SEQUENCE_SMALL == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_SEQUENCE_LARGE == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_SMALL == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_LARGE == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_MAP_SMALL == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                                (TI_PLAIN_MAP_LARGE == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().map_ldefn().key_identifier()->_d())))
+                        {
+                            common_field2 = TypeObjectUtils::build_common_struct_member(member_id_field2, member_flags_field2, type_ids_InnerStructureHelper.type_identifier1());
+                        }
+                        else if (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2()._d() ||
+                                (TI_PLAIN_SEQUENCE_SMALL == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_SEQUENCE_LARGE == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_SMALL == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_LARGE == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_MAP_SMALL == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                                (TI_PLAIN_MAP_LARGE == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().map_ldefn().key_identifier()->_d())))
+                        {
+                            common_field2 = TypeObjectUtils::build_common_struct_member(member_id_field2, member_flags_field2, type_ids_InnerStructureHelper.type_identifier2());
+                        }
+                        else
+                        {
+                            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                    "Structure field2 member TypeIdentifier inconsistent.");
+                            return;
+                        }
+                        MemberName name_field2 = "field2";
+                        eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_field2;
+                        ann_custom_InnerStructureHelper.reset();
+                        CompleteMemberDetail detail_field2 = TypeObjectUtils::build_complete_member_detail(name_field2, member_ann_builtin_field2, ann_custom_InnerStructureHelper);
+                        CompleteStructMember member_field2 = TypeObjectUtils::build_complete_struct_member(common_field2, detail_field2);
+                        TypeObjectUtils::add_complete_struct_member(member_seq_InnerStructureHelper, member_field2);
+                    }
+                    CompleteStructType struct_type_InnerStructureHelper = TypeObjectUtils::build_complete_struct_type(struct_flags_InnerStructureHelper, header_InnerStructureHelper, member_seq_InnerStructureHelper);
+                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                            TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerStructureHelper, type_name_InnerStructureHelper.to_string()))
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                "InnerStructureHelper already registered in TypeObjectRegistry for a different type.");
+                    }
+                    return_code_InnerStructureHelper =
+                        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                        "InnerStructureHelper", type_ids_InnerStructureHelper);
+                    if (return_code_InnerStructureHelper != eprosima::fastdds::dds::RETCODE_OK)
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                    "InnerStructureHelper: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+                        return;
+                    }
+                }
+            }
+            UnionMemberFlag member_flags_a = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                    false, false);
+            UnionCaseLabelSeq label_seq_a;
+            TypeObjectUtils::add_union_case_label(label_seq_a, static_cast<int32_t>(0));
+            CommonUnionMember common_a;
+            MemberId member_id_a = 0x00000001;
+            if (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() || TK_NONE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() ||
+                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                    (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                    (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                    (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_ldefn().key_identifier()->_d())))
+            {
+                common_a = TypeObjectUtils::build_common_union_member(member_id_a, member_flags_a, type_ids_Union_Several_Fields_With_Default.type_identifier1(),
+                        label_seq_a);
+            }
+            else if (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() ||
+                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                    (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                    (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                    (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_ldefn().key_identifier()->_d())))
+            {
+                common_a = TypeObjectUtils::build_common_union_member(member_id_a, member_flags_a, type_ids_Union_Several_Fields_With_Default.type_identifier2(),
+                        label_seq_a);
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "Union a member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_a = "a";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_a;
+            ann_custom_Union_Several_Fields_With_Default.reset();
+            CompleteMemberDetail detail_a = TypeObjectUtils::build_complete_member_detail(name_a, member_ann_builtin_a, ann_custom_Union_Several_Fields_With_Default);
+            CompleteUnionMember member_a = TypeObjectUtils::build_complete_union_member(common_a, detail_a);
+            TypeObjectUtils::add_complete_union_member(member_seq_Union_Several_Fields_With_Default, member_a);
+        }
+        {
+            return_code_Union_Several_Fields_With_Default =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "InnerEmptyStructureHelper", type_ids_Union_Several_Fields_With_Default);
+
+            if (return_code_Union_Several_Fields_With_Default != eprosima::fastdds::dds::RETCODE_OK)
+            {
+                {
+                    StructTypeFlag struct_flags_InnerEmptyStructureHelper = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+                            true, false);
+                    ReturnCode_t return_code_InnerEmptyStructureHelper;
+                    TypeIdentifierPair type_ids_InnerEmptyStructureHelper;
+                    QualifiedTypeName type_name_InnerEmptyStructureHelper = "InnerEmptyStructureHelper";
+                    eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_InnerEmptyStructureHelper;
+                    eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_InnerEmptyStructureHelper;
+                    AppliedAnnotationSeq tmp_ann_custom_InnerEmptyStructureHelper;
+                    eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_InnerEmptyStructureHelper;
+                    if (!tmp_ann_custom_InnerEmptyStructureHelper.empty())
+                    {
+                        ann_custom_InnerEmptyStructureHelper = tmp_ann_custom_InnerEmptyStructureHelper;
+                    }
+
+                    CompleteTypeDetail detail_InnerEmptyStructureHelper = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_InnerEmptyStructureHelper, ann_custom_InnerEmptyStructureHelper, type_name_InnerEmptyStructureHelper.to_string());
+                    CompleteStructHeader header_InnerEmptyStructureHelper;
+                    header_InnerEmptyStructureHelper = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_InnerEmptyStructureHelper);
+                    CompleteStructMemberSeq member_seq_InnerEmptyStructureHelper;
+                    CompleteStructType struct_type_InnerEmptyStructureHelper = TypeObjectUtils::build_complete_struct_type(struct_flags_InnerEmptyStructureHelper, header_InnerEmptyStructureHelper, member_seq_InnerEmptyStructureHelper);
+                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                            TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerEmptyStructureHelper, type_name_InnerEmptyStructureHelper.to_string()))
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                "InnerEmptyStructureHelper already registered in TypeObjectRegistry for a different type.");
+                    }
+                    return_code_InnerEmptyStructureHelper =
+                        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                        "InnerEmptyStructureHelper", type_ids_InnerEmptyStructureHelper);
+                    if (return_code_InnerEmptyStructureHelper != eprosima::fastdds::dds::RETCODE_OK)
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                    "InnerEmptyStructureHelper: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+                        return;
+                    }
+                }
+            }
+            UnionMemberFlag member_flags_b = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                    false, false);
+            UnionCaseLabelSeq label_seq_b;
+            TypeObjectUtils::add_union_case_label(label_seq_b, static_cast<int32_t>(1));
+            CommonUnionMember common_b;
+            MemberId member_id_b = 0x00000002;
+            if (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() || TK_NONE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() ||
+                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                    (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                    (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                    (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_ldefn().key_identifier()->_d())))
+            {
+                common_b = TypeObjectUtils::build_common_union_member(member_id_b, member_flags_b, type_ids_Union_Several_Fields_With_Default.type_identifier1(),
+                        label_seq_b);
+            }
+            else if (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() ||
+                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                    (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                    (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                    (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_ldefn().key_identifier()->_d())))
+            {
+                common_b = TypeObjectUtils::build_common_union_member(member_id_b, member_flags_b, type_ids_Union_Several_Fields_With_Default.type_identifier2(),
+                        label_seq_b);
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "Union b member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_b = "b";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_b;
+            ann_custom_Union_Several_Fields_With_Default.reset();
+            CompleteMemberDetail detail_b = TypeObjectUtils::build_complete_member_detail(name_b, member_ann_builtin_b, ann_custom_Union_Several_Fields_With_Default);
+            CompleteUnionMember member_b = TypeObjectUtils::build_complete_union_member(common_b, detail_b);
+            TypeObjectUtils::add_complete_union_member(member_seq_Union_Several_Fields_With_Default, member_b);
+        }
+        {
+            return_code_Union_Several_Fields_With_Default =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "Inner_alias_bounded_string_helper", type_ids_Union_Several_Fields_With_Default);
+
+            if (return_code_Union_Several_Fields_With_Default != eprosima::fastdds::dds::RETCODE_OK)
+            {
+                AliasTypeFlag alias_flags_Inner_alias_bounded_string_helper = 0;
+                QualifiedTypeName type_name_Inner_alias_bounded_string_helper = "Inner_alias_bounded_string_helper";
+                eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_Inner_alias_bounded_string_helper;
+                eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_Inner_alias_bounded_string_helper;
+                CompleteTypeDetail detail_Inner_alias_bounded_string_helper = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_Inner_alias_bounded_string_helper, ann_custom_Inner_alias_bounded_string_helper, type_name_Inner_alias_bounded_string_helper.to_string());
+                CompleteAliasHeader header_Inner_alias_bounded_string_helper = TypeObjectUtils::build_complete_alias_header(detail_Inner_alias_bounded_string_helper);
+                AliasMemberFlag related_flags_Inner_alias_bounded_string_helper = 0;
+                return_code_Union_Several_Fields_With_Default =
+                    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                    "anonymous_string_10", type_ids_Union_Several_Fields_With_Default);
+
+                if (return_code_Union_Several_Fields_With_Default != eprosima::fastdds::dds::RETCODE_OK)
+                {
+                    std::string type_id_kind_anonymous_string_10("TI_STRING8_SMALL");
+                    if (type_id_kind_anonymous_string_10 == "TI_STRING8_SMALL")
+                    {
+                        SBound bound = static_cast<SBound>(10);
+                        StringSTypeDefn string_sdefn = TypeObjectUtils::build_string_s_type_defn(bound);
+                        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                                TypeObjectUtils::build_and_register_s_string_type_identifier(string_sdefn,
+                                "anonymous_string_10"))
+                        {
+                            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                "anonymous_string_10 already registered in TypeObjectRegistry for a different type.");
+                        }
+                    }
+                    else if (type_id_kind_anonymous_string_10 == "TI_STRING8_LARGE")
+                    {
+                        LBound bound = 10;
+                        StringLTypeDefn string_ldefn = TypeObjectUtils::build_string_l_type_defn(bound);
+                        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                                TypeObjectUtils::build_and_register_l_string_type_identifier(string_ldefn,
+                                "anonymous_string_10"))
+                        {
+                            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                "anonymous_string_10 already registered in TypeObjectRegistry for a different type.");
+                        }
+                    }
+                    else
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                    "anonymous_string_10: Unknown String kind.");
+                        return;
+                    }
+                    return_code_Union_Several_Fields_With_Default =
+                        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                        "anonymous_string_10", type_ids_Union_Several_Fields_With_Default);
+                    if (return_code_Union_Several_Fields_With_Default != eprosima::fastdds::dds::RETCODE_OK)
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                    "anonymous_string_10: Given String TypeIdentifier unknown to TypeObjectRegistry.");
+                        return;
+                    }
+                }
+                CommonAliasBody common_Inner_alias_bounded_string_helper;
+                if (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() || TK_NONE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() ||
+                        (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                        (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                        (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                        (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                        (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                        (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_sdefn().header().equiv_kind() ||
+                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                        (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                        (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_ldefn().header().equiv_kind() ||
+                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_ldefn().key_identifier()->_d())))
+                {
+                    common_Inner_alias_bounded_string_helper = TypeObjectUtils::build_common_alias_body(related_flags_Inner_alias_bounded_string_helper, type_ids_Union_Several_Fields_With_Default.type_identifier1());
+                }
+                else if (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() ||
+                        (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                        (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                        (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                        (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                        (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                        (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_sdefn().header().equiv_kind() ||
+                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                        (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                        (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_ldefn().header().equiv_kind() ||
+                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_ldefn().key_identifier()->_d())))
+                {
+                    common_Inner_alias_bounded_string_helper = TypeObjectUtils::build_common_alias_body(related_flags_Inner_alias_bounded_string_helper, type_ids_Union_Several_Fields_With_Default.type_identifier2());
+                }
+                else
+                {
+                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                            "Inner_alias_bounded_string_helper related TypeIdentifier inconsistent.");
+                    return;
+                }
+                eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_Inner_alias_bounded_string_helper;
+                ann_custom_Inner_alias_bounded_string_helper.reset();
+                CompleteAliasBody body_Inner_alias_bounded_string_helper = TypeObjectUtils::build_complete_alias_body(common_Inner_alias_bounded_string_helper, member_ann_builtin_Inner_alias_bounded_string_helper, ann_custom_Inner_alias_bounded_string_helper);
+                CompleteAliasType alias_type_Inner_alias_bounded_string_helper = TypeObjectUtils::build_complete_alias_type(alias_flags_Inner_alias_bounded_string_helper, header_Inner_alias_bounded_string_helper, body_Inner_alias_bounded_string_helper);
+                if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                        TypeObjectUtils::build_and_register_alias_type_object(alias_type_Inner_alias_bounded_string_helper, type_name_Inner_alias_bounded_string_helper.to_string()))
+                {
+                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "Inner_alias_bounded_string_helper already registered in TypeObjectRegistry for a different type.");
+                }
+                return_code_Union_Several_Fields_With_Default =
+                    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                    "Inner_alias_bounded_string_helper", type_ids_Union_Several_Fields_With_Default);
+                if (return_code_Union_Several_Fields_With_Default != eprosima::fastdds::dds::RETCODE_OK)
+                {
+                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                "Inner_alias_bounded_string_helper: Given Alias TypeIdentifier unknown to TypeObjectRegistry.");
+                    return;
+                }
+            }
+            UnionMemberFlag member_flags_c = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                    false, false);
+            UnionCaseLabelSeq label_seq_c;
+            TypeObjectUtils::add_union_case_label(label_seq_c, static_cast<int32_t>(2));
+            CommonUnionMember common_c;
+            MemberId member_id_c = 0x00000003;
+            if (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() || TK_NONE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() ||
+                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                    (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                    (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                    (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_ldefn().key_identifier()->_d())))
+            {
+                common_c = TypeObjectUtils::build_common_union_member(member_id_c, member_flags_c, type_ids_Union_Several_Fields_With_Default.type_identifier1(),
+                        label_seq_c);
+            }
+            else if (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() ||
+                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                    (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                    (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                    (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_ldefn().key_identifier()->_d())))
+            {
+                common_c = TypeObjectUtils::build_common_union_member(member_id_c, member_flags_c, type_ids_Union_Several_Fields_With_Default.type_identifier2(),
+                        label_seq_c);
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "Union c member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_c = "c";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_c;
+            ann_custom_Union_Several_Fields_With_Default.reset();
+            CompleteMemberDetail detail_c = TypeObjectUtils::build_complete_member_detail(name_c, member_ann_builtin_c, ann_custom_Union_Several_Fields_With_Default);
+            CompleteUnionMember member_c = TypeObjectUtils::build_complete_union_member(common_c, detail_c);
+            TypeObjectUtils::add_complete_union_member(member_seq_Union_Several_Fields_With_Default, member_c);
+        }
+        {
+            return_code_Union_Several_Fields_With_Default =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "Inner_alias_array_helper", type_ids_Union_Several_Fields_With_Default);
+
+            if (return_code_Union_Several_Fields_With_Default != eprosima::fastdds::dds::RETCODE_OK)
+            {
+                AliasTypeFlag alias_flags_Inner_alias_array_helper = 0;
+                QualifiedTypeName type_name_Inner_alias_array_helper = "Inner_alias_array_helper";
+                eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_Inner_alias_array_helper;
+                eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_Inner_alias_array_helper;
+                CompleteTypeDetail detail_Inner_alias_array_helper = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_Inner_alias_array_helper, ann_custom_Inner_alias_array_helper, type_name_Inner_alias_array_helper.to_string());
+                CompleteAliasHeader header_Inner_alias_array_helper = TypeObjectUtils::build_complete_alias_header(detail_Inner_alias_array_helper);
+                AliasMemberFlag related_flags_Inner_alias_array_helper = 0;
+                return_code_Union_Several_Fields_With_Default =
+                    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                    "anonymous_array_int16_t_2", type_ids_Union_Several_Fields_With_Default);
+
+                if (return_code_Union_Several_Fields_With_Default != eprosima::fastdds::dds::RETCODE_OK)
+                {
+                    return_code_Union_Several_Fields_With_Default =
+                        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                        "_int16_t", type_ids_Union_Several_Fields_With_Default);
+
+                    if (return_code_Union_Several_Fields_With_Default != eprosima::fastdds::dds::RETCODE_OK)
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                "Array element TypeIdentifier unknown to TypeObjectRegistry.");
+                        return;
+                    }
+                    TypeIdentifier* element_identifier_anonymous_array_int16_t_2 {nullptr};
+                    if (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() || TK_NONE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() ||
+                            (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                            EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                            (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                            EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                            (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                            EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                            (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                            EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                            (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                            (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_sdefn().header().equiv_kind() ||
+                            EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                            (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                            (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_ldefn().header().equiv_kind() ||
+                            EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_ldefn().key_identifier()->_d())))
+                    {
+                        element_identifier_anonymous_array_int16_t_2 = new TypeIdentifier(type_ids_Union_Several_Fields_With_Default.type_identifier1());
+                    }
+                    else if (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() ||
+                            (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                            EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                            (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                            EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                            (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                            EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                            (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                            EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                            (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                            (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_sdefn().header().equiv_kind() ||
+                            EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                            (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                            (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_ldefn().header().equiv_kind() ||
+                            EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_ldefn().key_identifier()->_d())))
+                    {
+                        element_identifier_anonymous_array_int16_t_2 = new TypeIdentifier(type_ids_Union_Several_Fields_With_Default.type_identifier2());
+                    }
+                    else
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                            "Array element TypeIdentifier inconsistent.");
+                        return;
+                    }
+                    EquivalenceKind equiv_kind_anonymous_array_int16_t_2 = EK_COMPLETE;
+                    if (TK_NONE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d())
+                    {
+                        equiv_kind_anonymous_array_int16_t_2 = EK_BOTH;
+                    }
+                    CollectionElementFlag element_flags_anonymous_array_int16_t_2 = 0;
+                    PlainCollectionHeader header_anonymous_array_int16_t_2 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_array_int16_t_2, element_flags_anonymous_array_int16_t_2);
+                    std::string type_id_kind_anonymous_array_int16_t_2("TI_PLAIN_ARRAY_SMALL");
+                    if (type_id_kind_anonymous_array_int16_t_2 == "TI_PLAIN_ARRAY_SMALL")
+                    {
+                        SBoundSeq array_bound_seq;
+                            TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<SBound>(2));
+
+                        PlainArraySElemDefn array_sdefn = TypeObjectUtils::build_plain_array_s_elem_defn(header_anonymous_array_int16_t_2, array_bound_seq,
+                                    eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int16_t_2));
+                        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                                TypeObjectUtils::build_and_register_s_array_type_identifier(array_sdefn, "anonymous_array_int16_t_2"))
+                        {
+                            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                "anonymous_array_int16_t_2 already registered in TypeObjectRegistry for a different type.");
+                        }
+                    }
+                    else
+                    {
+                        LBoundSeq array_bound_seq;
+                            TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<LBound>(2));
+
+                        PlainArrayLElemDefn array_ldefn = TypeObjectUtils::build_plain_array_l_elem_defn(header_anonymous_array_int16_t_2, array_bound_seq,
+                                    eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int16_t_2));
+                        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                                TypeObjectUtils::build_and_register_l_array_type_identifier(array_ldefn, "anonymous_array_int16_t_2"))
+                        {
+                            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                "anonymous_array_int16_t_2 already registered in TypeObjectRegistry for a different type.");
+                        }
+                    }
+                    return_code_Union_Several_Fields_With_Default =
+                        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                        "anonymous_array_int16_t_2", type_ids_Union_Several_Fields_With_Default);
+                    if (return_code_Union_Several_Fields_With_Default != eprosima::fastdds::dds::RETCODE_OK)
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                    "anonymous_array_int16_t_2: Given Array TypeIdentifier unknown to TypeObjectRegistry.");
+                        return;
+                    }
+                }
+                CommonAliasBody common_Inner_alias_array_helper;
+                if (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() || TK_NONE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() ||
+                        (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                        (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                        (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                        (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                        (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                        (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_sdefn().header().equiv_kind() ||
+                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                        (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                        (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_ldefn().header().equiv_kind() ||
+                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_ldefn().key_identifier()->_d())))
+                {
+                    common_Inner_alias_array_helper = TypeObjectUtils::build_common_alias_body(related_flags_Inner_alias_array_helper, type_ids_Union_Several_Fields_With_Default.type_identifier1());
+                }
+                else if (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() ||
+                        (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                        (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                        (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                        (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                        (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                        (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_sdefn().header().equiv_kind() ||
+                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                        (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                        (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_ldefn().header().equiv_kind() ||
+                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_ldefn().key_identifier()->_d())))
+                {
+                    common_Inner_alias_array_helper = TypeObjectUtils::build_common_alias_body(related_flags_Inner_alias_array_helper, type_ids_Union_Several_Fields_With_Default.type_identifier2());
+                }
+                else
+                {
+                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                            "Inner_alias_array_helper related TypeIdentifier inconsistent.");
+                    return;
+                }
+                eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_Inner_alias_array_helper;
+                ann_custom_Inner_alias_array_helper.reset();
+                CompleteAliasBody body_Inner_alias_array_helper = TypeObjectUtils::build_complete_alias_body(common_Inner_alias_array_helper, member_ann_builtin_Inner_alias_array_helper, ann_custom_Inner_alias_array_helper);
+                CompleteAliasType alias_type_Inner_alias_array_helper = TypeObjectUtils::build_complete_alias_type(alias_flags_Inner_alias_array_helper, header_Inner_alias_array_helper, body_Inner_alias_array_helper);
+                if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                        TypeObjectUtils::build_and_register_alias_type_object(alias_type_Inner_alias_array_helper, type_name_Inner_alias_array_helper.to_string()))
+                {
+                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "Inner_alias_array_helper already registered in TypeObjectRegistry for a different type.");
+                }
+                return_code_Union_Several_Fields_With_Default =
+                    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                    "Inner_alias_array_helper", type_ids_Union_Several_Fields_With_Default);
+                if (return_code_Union_Several_Fields_With_Default != eprosima::fastdds::dds::RETCODE_OK)
+                {
+                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                "Inner_alias_array_helper: Given Alias TypeIdentifier unknown to TypeObjectRegistry.");
+                    return;
+                }
+            }
+            UnionMemberFlag member_flags_d = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                    false, false);
+            UnionCaseLabelSeq label_seq_d;
+            TypeObjectUtils::add_union_case_label(label_seq_d, static_cast<int32_t>(3));
+            CommonUnionMember common_d;
+            MemberId member_id_d = 0x00000004;
+            if (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() || TK_NONE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() ||
+                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                    (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                    (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                    (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_ldefn().key_identifier()->_d())))
+            {
+                common_d = TypeObjectUtils::build_common_union_member(member_id_d, member_flags_d, type_ids_Union_Several_Fields_With_Default.type_identifier1(),
+                        label_seq_d);
+            }
+            else if (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() ||
+                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                    (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                    (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                    (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_ldefn().key_identifier()->_d())))
+            {
+                common_d = TypeObjectUtils::build_common_union_member(member_id_d, member_flags_d, type_ids_Union_Several_Fields_With_Default.type_identifier2(),
+                        label_seq_d);
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "Union d member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_d = "d";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_d;
+            ann_custom_Union_Several_Fields_With_Default.reset();
+            CompleteMemberDetail detail_d = TypeObjectUtils::build_complete_member_detail(name_d, member_ann_builtin_d, ann_custom_Union_Several_Fields_With_Default);
+            CompleteUnionMember member_d = TypeObjectUtils::build_complete_union_member(common_d, detail_d);
+            TypeObjectUtils::add_complete_union_member(member_seq_Union_Several_Fields_With_Default, member_d);
+        }
+        {
+            return_code_Union_Several_Fields_With_Default =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "Inner_alias_sequence_helper", type_ids_Union_Several_Fields_With_Default);
+
+            if (return_code_Union_Several_Fields_With_Default != eprosima::fastdds::dds::RETCODE_OK)
+            {
+                AliasTypeFlag alias_flags_Inner_alias_sequence_helper = 0;
+                QualifiedTypeName type_name_Inner_alias_sequence_helper = "Inner_alias_sequence_helper";
+                eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_Inner_alias_sequence_helper;
+                eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_Inner_alias_sequence_helper;
+                CompleteTypeDetail detail_Inner_alias_sequence_helper = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_Inner_alias_sequence_helper, ann_custom_Inner_alias_sequence_helper, type_name_Inner_alias_sequence_helper.to_string());
+                CompleteAliasHeader header_Inner_alias_sequence_helper = TypeObjectUtils::build_complete_alias_header(detail_Inner_alias_sequence_helper);
+                AliasMemberFlag related_flags_Inner_alias_sequence_helper = 0;
+                return_code_Union_Several_Fields_With_Default =
+                    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                    "anonymous_sequence_int16_t_unbounded", type_ids_Union_Several_Fields_With_Default);
+
+                if (return_code_Union_Several_Fields_With_Default != eprosima::fastdds::dds::RETCODE_OK)
+                {
+                    return_code_Union_Several_Fields_With_Default =
+                        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                        "_int16_t", type_ids_Union_Several_Fields_With_Default);
+
+                    if (return_code_Union_Several_Fields_With_Default != eprosima::fastdds::dds::RETCODE_OK)
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                "Sequence element TypeIdentifier unknown to TypeObjectRegistry.");
+                        return;
+                    }
+                    TypeIdentifier* element_identifier_anonymous_sequence_int16_t_unbounded {nullptr};
+                    if (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() || TK_NONE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() ||
+                            (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                            EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                            (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                            EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                            (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                            EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                            (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                            EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                            (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                            (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_sdefn().header().equiv_kind() ||
+                            EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                            (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                            (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_ldefn().header().equiv_kind() ||
+                            EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_ldefn().key_identifier()->_d())))
+                    {
+                        element_identifier_anonymous_sequence_int16_t_unbounded = new TypeIdentifier(type_ids_Union_Several_Fields_With_Default.type_identifier1());
+                    }
+                    else if (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() ||
+                            (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                            EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                            (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                            EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                            (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                            EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                            (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                            EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                            (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                            (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_sdefn().header().equiv_kind() ||
+                            EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                            (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                            (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_ldefn().header().equiv_kind() ||
+                            EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_ldefn().key_identifier()->_d())))
+                    {
+                        element_identifier_anonymous_sequence_int16_t_unbounded = new TypeIdentifier(type_ids_Union_Several_Fields_With_Default.type_identifier2());
+                    }
+                    else
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                            "Sequence element TypeIdentifier inconsistent.");
+                        return;
+                    }
+                    EquivalenceKind equiv_kind_anonymous_sequence_int16_t_unbounded = EK_COMPLETE;
+                    if (TK_NONE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d())
+                    {
+                        equiv_kind_anonymous_sequence_int16_t_unbounded = EK_BOTH;
+                    }
+                    CollectionElementFlag element_flags_anonymous_sequence_int16_t_unbounded = 0;
+                    PlainCollectionHeader header_anonymous_sequence_int16_t_unbounded = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_sequence_int16_t_unbounded, element_flags_anonymous_sequence_int16_t_unbounded);
+                    std::string type_id_kind_anonymous_sequence_int16_t_unbounded("TI_PLAIN_SEQUENCE_SMALL");
+                    if (type_id_kind_anonymous_sequence_int16_t_unbounded == "TI_PLAIN_SEQUENCE_SMALL")
+                    {
+                        SBound bound = 0;
+                        PlainSequenceSElemDefn seq_sdefn = TypeObjectUtils::build_plain_sequence_s_elem_defn(header_anonymous_sequence_int16_t_unbounded, bound,
+                                    eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_sequence_int16_t_unbounded));
+                        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                                TypeObjectUtils::build_and_register_s_sequence_type_identifier(seq_sdefn, "anonymous_sequence_int16_t_unbounded"))
+                        {
+                            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                "anonymous_sequence_int16_t_unbounded already registered in TypeObjectRegistry for a different type.");
+                        }
+                    }
+                    else
+                    {
+                        LBound bound = 0;
+                        PlainSequenceLElemDefn seq_ldefn = TypeObjectUtils::build_plain_sequence_l_elem_defn(header_anonymous_sequence_int16_t_unbounded, bound,
+                                    eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_sequence_int16_t_unbounded));
+                        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                                TypeObjectUtils::build_and_register_l_sequence_type_identifier(seq_ldefn, "anonymous_sequence_int16_t_unbounded"))
+                        {
+                            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                "anonymous_sequence_int16_t_unbounded already registered in TypeObjectRegistry for a different type.");
+                        }
+                    }
+                    return_code_Union_Several_Fields_With_Default =
+                        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                        "anonymous_sequence_int16_t_unbounded", type_ids_Union_Several_Fields_With_Default);
+                    if (return_code_Union_Several_Fields_With_Default != eprosima::fastdds::dds::RETCODE_OK)
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                    "anonymous_sequence_int16_t_unbounded: Given Sequence TypeIdentifier unknown to TypeObjectRegistry.");
+                        return;
+                    }
+                }
+                CommonAliasBody common_Inner_alias_sequence_helper;
+                if (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() || TK_NONE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() ||
+                        (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                        (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                        (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                        (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                        (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                        (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_sdefn().header().equiv_kind() ||
+                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                        (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                        (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_ldefn().header().equiv_kind() ||
+                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_ldefn().key_identifier()->_d())))
+                {
+                    common_Inner_alias_sequence_helper = TypeObjectUtils::build_common_alias_body(related_flags_Inner_alias_sequence_helper, type_ids_Union_Several_Fields_With_Default.type_identifier1());
+                }
+                else if (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() ||
+                        (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                        (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                        (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                        (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                        (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                        (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_sdefn().header().equiv_kind() ||
+                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                        (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                        (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_ldefn().header().equiv_kind() ||
+                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_ldefn().key_identifier()->_d())))
+                {
+                    common_Inner_alias_sequence_helper = TypeObjectUtils::build_common_alias_body(related_flags_Inner_alias_sequence_helper, type_ids_Union_Several_Fields_With_Default.type_identifier2());
+                }
+                else
+                {
+                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                            "Inner_alias_sequence_helper related TypeIdentifier inconsistent.");
+                    return;
+                }
+                eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_Inner_alias_sequence_helper;
+                ann_custom_Inner_alias_sequence_helper.reset();
+                CompleteAliasBody body_Inner_alias_sequence_helper = TypeObjectUtils::build_complete_alias_body(common_Inner_alias_sequence_helper, member_ann_builtin_Inner_alias_sequence_helper, ann_custom_Inner_alias_sequence_helper);
+                CompleteAliasType alias_type_Inner_alias_sequence_helper = TypeObjectUtils::build_complete_alias_type(alias_flags_Inner_alias_sequence_helper, header_Inner_alias_sequence_helper, body_Inner_alias_sequence_helper);
+                if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                        TypeObjectUtils::build_and_register_alias_type_object(alias_type_Inner_alias_sequence_helper, type_name_Inner_alias_sequence_helper.to_string()))
+                {
+                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "Inner_alias_sequence_helper already registered in TypeObjectRegistry for a different type.");
+                }
+                return_code_Union_Several_Fields_With_Default =
+                    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                    "Inner_alias_sequence_helper", type_ids_Union_Several_Fields_With_Default);
+                if (return_code_Union_Several_Fields_With_Default != eprosima::fastdds::dds::RETCODE_OK)
+                {
+                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                "Inner_alias_sequence_helper: Given Alias TypeIdentifier unknown to TypeObjectRegistry.");
+                    return;
+                }
+            }
+            UnionMemberFlag member_flags_e = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                    false, false);
+            UnionCaseLabelSeq label_seq_e;
+            TypeObjectUtils::add_union_case_label(label_seq_e, static_cast<int32_t>(4));
+            CommonUnionMember common_e;
+            MemberId member_id_e = 0x00000005;
+            if (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() || TK_NONE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() ||
+                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                    (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                    (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                    (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_ldefn().key_identifier()->_d())))
+            {
+                common_e = TypeObjectUtils::build_common_union_member(member_id_e, member_flags_e, type_ids_Union_Several_Fields_With_Default.type_identifier1(),
+                        label_seq_e);
+            }
+            else if (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() ||
+                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                    (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                    (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                    (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_ldefn().key_identifier()->_d())))
+            {
+                common_e = TypeObjectUtils::build_common_union_member(member_id_e, member_flags_e, type_ids_Union_Several_Fields_With_Default.type_identifier2(),
+                        label_seq_e);
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "Union e member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_e = "e";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_e;
+            ann_custom_Union_Several_Fields_With_Default.reset();
+            CompleteMemberDetail detail_e = TypeObjectUtils::build_complete_member_detail(name_e, member_ann_builtin_e, ann_custom_Union_Several_Fields_With_Default);
+            CompleteUnionMember member_e = TypeObjectUtils::build_complete_union_member(common_e, detail_e);
+            TypeObjectUtils::add_complete_union_member(member_seq_Union_Several_Fields_With_Default, member_e);
+        }
+        {
+            return_code_Union_Several_Fields_With_Default =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "anonymous_sequence_int16_t_30", type_ids_Union_Several_Fields_With_Default);
+
+            if (return_code_Union_Several_Fields_With_Default != eprosima::fastdds::dds::RETCODE_OK)
+            {
+                return_code_Union_Several_Fields_With_Default =
+                    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                    "_int16_t", type_ids_Union_Several_Fields_With_Default);
+
+                if (return_code_Union_Several_Fields_With_Default != eprosima::fastdds::dds::RETCODE_OK)
+                {
+                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                            "Sequence element TypeIdentifier unknown to TypeObjectRegistry.");
+                    return;
+                }
+                TypeIdentifier* element_identifier_anonymous_sequence_int16_t_30 {nullptr};
+                if (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() || TK_NONE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() ||
+                        (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                        (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                        (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                        (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                        (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                        (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_sdefn().header().equiv_kind() ||
+                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                        (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                        (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_ldefn().header().equiv_kind() ||
+                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_ldefn().key_identifier()->_d())))
+                {
+                    element_identifier_anonymous_sequence_int16_t_30 = new TypeIdentifier(type_ids_Union_Several_Fields_With_Default.type_identifier1());
+                }
+                else if (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() ||
+                        (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                        (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                        (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                        (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                        (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                        (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_sdefn().header().equiv_kind() ||
+                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                        (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                        (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_ldefn().header().equiv_kind() ||
+                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_ldefn().key_identifier()->_d())))
+                {
+                    element_identifier_anonymous_sequence_int16_t_30 = new TypeIdentifier(type_ids_Union_Several_Fields_With_Default.type_identifier2());
+                }
+                else
+                {
+                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "Sequence element TypeIdentifier inconsistent.");
+                    return;
+                }
+                EquivalenceKind equiv_kind_anonymous_sequence_int16_t_30 = EK_COMPLETE;
+                if (TK_NONE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d())
+                {
+                    equiv_kind_anonymous_sequence_int16_t_30 = EK_BOTH;
+                }
+                CollectionElementFlag element_flags_anonymous_sequence_int16_t_30 = 0;
+                PlainCollectionHeader header_anonymous_sequence_int16_t_30 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_sequence_int16_t_30, element_flags_anonymous_sequence_int16_t_30);
+                std::string type_id_kind_anonymous_sequence_int16_t_30("TI_PLAIN_SEQUENCE_SMALL");
+                if (type_id_kind_anonymous_sequence_int16_t_30 == "TI_PLAIN_SEQUENCE_SMALL")
+                {
+                    SBound bound = static_cast<SBound>(30);
+                    PlainSequenceSElemDefn seq_sdefn = TypeObjectUtils::build_plain_sequence_s_elem_defn(header_anonymous_sequence_int16_t_30, bound,
+                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_sequence_int16_t_30));
+                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                            TypeObjectUtils::build_and_register_s_sequence_type_identifier(seq_sdefn, "anonymous_sequence_int16_t_30"))
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                            "anonymous_sequence_int16_t_30 already registered in TypeObjectRegistry for a different type.");
+                    }
+                }
+                else
+                {
+                    LBound bound = 30;
+                    PlainSequenceLElemDefn seq_ldefn = TypeObjectUtils::build_plain_sequence_l_elem_defn(header_anonymous_sequence_int16_t_30, bound,
+                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_sequence_int16_t_30));
+                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                            TypeObjectUtils::build_and_register_l_sequence_type_identifier(seq_ldefn, "anonymous_sequence_int16_t_30"))
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                            "anonymous_sequence_int16_t_30 already registered in TypeObjectRegistry for a different type.");
+                    }
+                }
+                return_code_Union_Several_Fields_With_Default =
+                    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                    "anonymous_sequence_int16_t_30", type_ids_Union_Several_Fields_With_Default);
+                if (return_code_Union_Several_Fields_With_Default != eprosima::fastdds::dds::RETCODE_OK)
+                {
+                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                "anonymous_sequence_int16_t_30: Given Sequence TypeIdentifier unknown to TypeObjectRegistry.");
+                    return;
+                }
+            }
+            UnionMemberFlag member_flags_f = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                    true, false);
+            UnionCaseLabelSeq label_seq_f;
+            CommonUnionMember common_f;
+            MemberId member_id_f = 0x00000006;
+            if (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() || TK_NONE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() ||
+                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                    (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                    (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                    (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_ldefn().key_identifier()->_d())))
+            {
+                common_f = TypeObjectUtils::build_common_union_member(member_id_f, member_flags_f, type_ids_Union_Several_Fields_With_Default.type_identifier1(),
+                        label_seq_f);
+            }
+            else if (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() ||
+                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                    (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                    (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                    (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_ldefn().key_identifier()->_d())))
+            {
+                common_f = TypeObjectUtils::build_common_union_member(member_id_f, member_flags_f, type_ids_Union_Several_Fields_With_Default.type_identifier2(),
+                        label_seq_f);
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "Union f member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_f = "f";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_f;
+            ann_custom_Union_Several_Fields_With_Default.reset();
+            CompleteMemberDetail detail_f = TypeObjectUtils::build_complete_member_detail(name_f, member_ann_builtin_f, ann_custom_Union_Several_Fields_With_Default);
+            CompleteUnionMember member_f = TypeObjectUtils::build_complete_union_member(common_f, detail_f);
+            TypeObjectUtils::add_complete_union_member(member_seq_Union_Several_Fields_With_Default, member_f);
+        }
+        CompleteUnionType union_type_Union_Several_Fields_With_Default = TypeObjectUtils::build_complete_union_type(union_flags_Union_Several_Fields_With_Default, header_Union_Several_Fields_With_Default, discriminator_Union_Several_Fields_With_Default,
+                member_seq_Union_Several_Fields_With_Default);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_union_type_object(union_type_Union_Several_Fields_With_Default, type_name_Union_Several_Fields_With_Default.to_string()))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "Union_Several_Fields_With_Default already registered in TypeObjectRegistry for a different type.");
+        }
+        return_code_Union_Several_Fields_With_Default =
+            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+            "Union_Several_Fields_With_Default", type_ids_Union_Several_Fields_With_Default);
+        if (return_code_Union_Several_Fields_With_Default != eprosima::fastdds::dds::RETCODE_OK)
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "Union_Several_Fields_With_Default: Given Union TypeIdentifier unknown to TypeObjectRegistry.");
             return;
         }
     }
@@ -19061,6 +21323,2440 @@ void register_UnionDiscriminatorAlias_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "UnionDiscriminatorAlias: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            return;
+        }
+    }
+}
+void register_UnionSeveralFields_type_identifier()
+{
+    {
+        StructTypeFlag struct_flags_UnionSeveralFields = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+                false, false);
+        ReturnCode_t return_code_UnionSeveralFields;
+        TypeIdentifierPair type_ids_UnionSeveralFields;
+        QualifiedTypeName type_name_UnionSeveralFields = "UnionSeveralFields";
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_UnionSeveralFields;
+        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_UnionSeveralFields;
+        CompleteTypeDetail detail_UnionSeveralFields = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_UnionSeveralFields, ann_custom_UnionSeveralFields, type_name_UnionSeveralFields.to_string());
+        CompleteStructHeader header_UnionSeveralFields;
+        header_UnionSeveralFields = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_UnionSeveralFields);
+        CompleteStructMemberSeq member_seq_UnionSeveralFields;
+        {
+            return_code_UnionSeveralFields =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "Union_Several_Fields", type_ids_UnionSeveralFields);
+
+            if (return_code_UnionSeveralFields != eprosima::fastdds::dds::RETCODE_OK)
+            {
+                {
+                    ReturnCode_t return_code_Union_Several_Fields;
+                    TypeIdentifierPair type_ids_Union_Several_Fields;
+                    UnionTypeFlag union_flags_Union_Several_Fields = TypeObjectUtils::build_union_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+                            false, false);
+                    QualifiedTypeName type_name_Union_Several_Fields = "Union_Several_Fields";
+                    eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_Union_Several_Fields;
+                    eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_Union_Several_Fields;
+                    CompleteTypeDetail detail_Union_Several_Fields = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_Union_Several_Fields, ann_custom_Union_Several_Fields, type_name_Union_Several_Fields.to_string());
+                    CompleteUnionHeader header_Union_Several_Fields = TypeObjectUtils::build_complete_union_header(detail_Union_Several_Fields);
+                    UnionDiscriminatorFlag member_flags_Union_Several_Fields = TypeObjectUtils::build_union_discriminator_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                            false);
+                    return_code_Union_Several_Fields =
+                        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                        "_int32_t", type_ids_Union_Several_Fields);
+
+                    if (return_code_Union_Several_Fields != eprosima::fastdds::dds::RETCODE_OK)
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                "Union discriminator TypeIdentifier unknown to TypeObjectRegistry.");
+                        return;
+                    }
+                    CommonDiscriminatorMember common_Union_Several_Fields;
+                    if (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1()._d() || TK_NONE == type_ids_Union_Several_Fields.type_identifier2()._d())
+                    {
+                        common_Union_Several_Fields = TypeObjectUtils::build_common_discriminator_member(member_flags_Union_Several_Fields, type_ids_Union_Several_Fields.type_identifier1());
+                    }
+                    else if (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2()._d())
+                    {
+                        common_Union_Several_Fields = TypeObjectUtils::build_common_discriminator_member(member_flags_Union_Several_Fields, type_ids_Union_Several_Fields.type_identifier2());
+                    }
+                    else
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                "Union_Several_Fields discriminator TypeIdentifier inconsistent.");
+                        return;
+                    }
+                    type_ann_builtin_Union_Several_Fields.reset();
+                    ann_custom_Union_Several_Fields.reset();
+                    CompleteDiscriminatorMember discriminator_Union_Several_Fields = TypeObjectUtils::build_complete_discriminator_member(common_Union_Several_Fields,
+                            type_ann_builtin_Union_Several_Fields, ann_custom_Union_Several_Fields);
+                    CompleteUnionMemberSeq member_seq_Union_Several_Fields;
+                    {
+                        return_code_Union_Several_Fields =
+                            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                            "InnerStructureHelper", type_ids_Union_Several_Fields);
+
+                        if (return_code_Union_Several_Fields != eprosima::fastdds::dds::RETCODE_OK)
+                        {
+                            {
+                                StructTypeFlag struct_flags_InnerStructureHelper = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+                                        true, false);
+                                ReturnCode_t return_code_InnerStructureHelper;
+                                TypeIdentifierPair type_ids_InnerStructureHelper;
+                                QualifiedTypeName type_name_InnerStructureHelper = "InnerStructureHelper";
+                                eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_InnerStructureHelper;
+                                eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_InnerStructureHelper;
+                                AppliedAnnotationSeq tmp_ann_custom_InnerStructureHelper;
+                                eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_InnerStructureHelper;
+                                if (!tmp_ann_custom_InnerStructureHelper.empty())
+                                {
+                                    ann_custom_InnerStructureHelper = tmp_ann_custom_InnerStructureHelper;
+                                }
+
+                                CompleteTypeDetail detail_InnerStructureHelper = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_InnerStructureHelper, ann_custom_InnerStructureHelper, type_name_InnerStructureHelper.to_string());
+                                CompleteStructHeader header_InnerStructureHelper;
+                                header_InnerStructureHelper = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_InnerStructureHelper);
+                                CompleteStructMemberSeq member_seq_InnerStructureHelper;
+                                {
+                                    return_code_InnerStructureHelper =
+                                        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                                        "_int32_t", type_ids_InnerStructureHelper);
+
+                                    if (return_code_InnerStructureHelper != eprosima::fastdds::dds::RETCODE_OK)
+                                    {
+                                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                                "field1 Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                                        return;
+                                    }
+                                    StructMemberFlag member_flags_field1 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                                            false, false, false, false);
+                                    CommonStructMember common_field1;
+                                    MemberId member_id_field1 = 0x00000000;
+                                    if (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1()._d() || TK_NONE == type_ids_InnerStructureHelper.type_identifier2()._d() ||
+                                            (TI_PLAIN_SEQUENCE_SMALL == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_SEQUENCE_LARGE == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_ARRAY_SMALL == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_ARRAY_LARGE == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_MAP_SMALL == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                            (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                                            (TI_PLAIN_MAP_LARGE == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                            (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().map_ldefn().key_identifier()->_d())))
+                                    {
+                                        common_field1 = TypeObjectUtils::build_common_struct_member(member_id_field1, member_flags_field1, type_ids_InnerStructureHelper.type_identifier1());
+                                    }
+                                    else if (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2()._d() ||
+                                            (TI_PLAIN_SEQUENCE_SMALL == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_SEQUENCE_LARGE == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_ARRAY_SMALL == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_ARRAY_LARGE == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_MAP_SMALL == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                            (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                                            (TI_PLAIN_MAP_LARGE == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                            (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().map_ldefn().key_identifier()->_d())))
+                                    {
+                                        common_field1 = TypeObjectUtils::build_common_struct_member(member_id_field1, member_flags_field1, type_ids_InnerStructureHelper.type_identifier2());
+                                    }
+                                    else
+                                    {
+                                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                                "Structure field1 member TypeIdentifier inconsistent.");
+                                        return;
+                                    }
+                                    MemberName name_field1 = "field1";
+                                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_field1;
+                                    ann_custom_InnerStructureHelper.reset();
+                                    CompleteMemberDetail detail_field1 = TypeObjectUtils::build_complete_member_detail(name_field1, member_ann_builtin_field1, ann_custom_InnerStructureHelper);
+                                    CompleteStructMember member_field1 = TypeObjectUtils::build_complete_struct_member(common_field1, detail_field1);
+                                    TypeObjectUtils::add_complete_struct_member(member_seq_InnerStructureHelper, member_field1);
+                                }
+                                {
+                                    return_code_InnerStructureHelper =
+                                        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                                        "_float", type_ids_InnerStructureHelper);
+
+                                    if (return_code_InnerStructureHelper != eprosima::fastdds::dds::RETCODE_OK)
+                                    {
+                                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                                "field2 Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                                        return;
+                                    }
+                                    StructMemberFlag member_flags_field2 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                                            false, false, false, false);
+                                    CommonStructMember common_field2;
+                                    MemberId member_id_field2 = 0x00000001;
+                                    if (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1()._d() || TK_NONE == type_ids_InnerStructureHelper.type_identifier2()._d() ||
+                                            (TI_PLAIN_SEQUENCE_SMALL == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_SEQUENCE_LARGE == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_ARRAY_SMALL == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_ARRAY_LARGE == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_MAP_SMALL == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                            (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                                            (TI_PLAIN_MAP_LARGE == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                            (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().map_ldefn().key_identifier()->_d())))
+                                    {
+                                        common_field2 = TypeObjectUtils::build_common_struct_member(member_id_field2, member_flags_field2, type_ids_InnerStructureHelper.type_identifier1());
+                                    }
+                                    else if (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2()._d() ||
+                                            (TI_PLAIN_SEQUENCE_SMALL == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_SEQUENCE_LARGE == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_ARRAY_SMALL == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_ARRAY_LARGE == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_MAP_SMALL == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                            (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                                            (TI_PLAIN_MAP_LARGE == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                            (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().map_ldefn().key_identifier()->_d())))
+                                    {
+                                        common_field2 = TypeObjectUtils::build_common_struct_member(member_id_field2, member_flags_field2, type_ids_InnerStructureHelper.type_identifier2());
+                                    }
+                                    else
+                                    {
+                                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                                "Structure field2 member TypeIdentifier inconsistent.");
+                                        return;
+                                    }
+                                    MemberName name_field2 = "field2";
+                                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_field2;
+                                    ann_custom_InnerStructureHelper.reset();
+                                    CompleteMemberDetail detail_field2 = TypeObjectUtils::build_complete_member_detail(name_field2, member_ann_builtin_field2, ann_custom_InnerStructureHelper);
+                                    CompleteStructMember member_field2 = TypeObjectUtils::build_complete_struct_member(common_field2, detail_field2);
+                                    TypeObjectUtils::add_complete_struct_member(member_seq_InnerStructureHelper, member_field2);
+                                }
+                                CompleteStructType struct_type_InnerStructureHelper = TypeObjectUtils::build_complete_struct_type(struct_flags_InnerStructureHelper, header_InnerStructureHelper, member_seq_InnerStructureHelper);
+                                if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                                        TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerStructureHelper, type_name_InnerStructureHelper.to_string()))
+                                {
+                                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                            "InnerStructureHelper already registered in TypeObjectRegistry for a different type.");
+                                }
+                                return_code_InnerStructureHelper =
+                                    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                                    "InnerStructureHelper", type_ids_InnerStructureHelper);
+                                if (return_code_InnerStructureHelper != eprosima::fastdds::dds::RETCODE_OK)
+                                {
+                                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                                "InnerStructureHelper: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+                                    return;
+                                }
+                            }
+                        }
+                        UnionMemberFlag member_flags_a = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                                false, false);
+                        UnionCaseLabelSeq label_seq_a;
+                        TypeObjectUtils::add_union_case_label(label_seq_a, static_cast<int32_t>(0));
+                        CommonUnionMember common_a;
+                        MemberId member_id_a = 0x00000001;
+                        if (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1()._d() || TK_NONE == type_ids_Union_Several_Fields.type_identifier2()._d() ||
+                                (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                                (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_ldefn().key_identifier()->_d())))
+                        {
+                            common_a = TypeObjectUtils::build_common_union_member(member_id_a, member_flags_a, type_ids_Union_Several_Fields.type_identifier1(),
+                                    label_seq_a);
+                        }
+                        else if (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2()._d() ||
+                                (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                                (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_ldefn().key_identifier()->_d())))
+                        {
+                            common_a = TypeObjectUtils::build_common_union_member(member_id_a, member_flags_a, type_ids_Union_Several_Fields.type_identifier2(),
+                                    label_seq_a);
+                        }
+                        else
+                        {
+                            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                    "Union a member TypeIdentifier inconsistent.");
+                            return;
+                        }
+                        MemberName name_a = "a";
+                        eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_a;
+                        ann_custom_Union_Several_Fields.reset();
+                        CompleteMemberDetail detail_a = TypeObjectUtils::build_complete_member_detail(name_a, member_ann_builtin_a, ann_custom_Union_Several_Fields);
+                        CompleteUnionMember member_a = TypeObjectUtils::build_complete_union_member(common_a, detail_a);
+                        TypeObjectUtils::add_complete_union_member(member_seq_Union_Several_Fields, member_a);
+                    }
+                    {
+                        return_code_Union_Several_Fields =
+                            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                            "InnerEmptyStructureHelper", type_ids_Union_Several_Fields);
+
+                        if (return_code_Union_Several_Fields != eprosima::fastdds::dds::RETCODE_OK)
+                        {
+                            {
+                                StructTypeFlag struct_flags_InnerEmptyStructureHelper = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+                                        true, false);
+                                ReturnCode_t return_code_InnerEmptyStructureHelper;
+                                TypeIdentifierPair type_ids_InnerEmptyStructureHelper;
+                                QualifiedTypeName type_name_InnerEmptyStructureHelper = "InnerEmptyStructureHelper";
+                                eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_InnerEmptyStructureHelper;
+                                eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_InnerEmptyStructureHelper;
+                                AppliedAnnotationSeq tmp_ann_custom_InnerEmptyStructureHelper;
+                                eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_InnerEmptyStructureHelper;
+                                if (!tmp_ann_custom_InnerEmptyStructureHelper.empty())
+                                {
+                                    ann_custom_InnerEmptyStructureHelper = tmp_ann_custom_InnerEmptyStructureHelper;
+                                }
+
+                                CompleteTypeDetail detail_InnerEmptyStructureHelper = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_InnerEmptyStructureHelper, ann_custom_InnerEmptyStructureHelper, type_name_InnerEmptyStructureHelper.to_string());
+                                CompleteStructHeader header_InnerEmptyStructureHelper;
+                                header_InnerEmptyStructureHelper = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_InnerEmptyStructureHelper);
+                                CompleteStructMemberSeq member_seq_InnerEmptyStructureHelper;
+                                CompleteStructType struct_type_InnerEmptyStructureHelper = TypeObjectUtils::build_complete_struct_type(struct_flags_InnerEmptyStructureHelper, header_InnerEmptyStructureHelper, member_seq_InnerEmptyStructureHelper);
+                                if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                                        TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerEmptyStructureHelper, type_name_InnerEmptyStructureHelper.to_string()))
+                                {
+                                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                            "InnerEmptyStructureHelper already registered in TypeObjectRegistry for a different type.");
+                                }
+                                return_code_InnerEmptyStructureHelper =
+                                    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                                    "InnerEmptyStructureHelper", type_ids_InnerEmptyStructureHelper);
+                                if (return_code_InnerEmptyStructureHelper != eprosima::fastdds::dds::RETCODE_OK)
+                                {
+                                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                                "InnerEmptyStructureHelper: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+                                    return;
+                                }
+                            }
+                        }
+                        UnionMemberFlag member_flags_b = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                                false, false);
+                        UnionCaseLabelSeq label_seq_b;
+                        TypeObjectUtils::add_union_case_label(label_seq_b, static_cast<int32_t>(1));
+                        CommonUnionMember common_b;
+                        MemberId member_id_b = 0x00000002;
+                        if (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1()._d() || TK_NONE == type_ids_Union_Several_Fields.type_identifier2()._d() ||
+                                (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                                (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_ldefn().key_identifier()->_d())))
+                        {
+                            common_b = TypeObjectUtils::build_common_union_member(member_id_b, member_flags_b, type_ids_Union_Several_Fields.type_identifier1(),
+                                    label_seq_b);
+                        }
+                        else if (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2()._d() ||
+                                (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                                (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_ldefn().key_identifier()->_d())))
+                        {
+                            common_b = TypeObjectUtils::build_common_union_member(member_id_b, member_flags_b, type_ids_Union_Several_Fields.type_identifier2(),
+                                    label_seq_b);
+                        }
+                        else
+                        {
+                            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                    "Union b member TypeIdentifier inconsistent.");
+                            return;
+                        }
+                        MemberName name_b = "b";
+                        eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_b;
+                        ann_custom_Union_Several_Fields.reset();
+                        CompleteMemberDetail detail_b = TypeObjectUtils::build_complete_member_detail(name_b, member_ann_builtin_b, ann_custom_Union_Several_Fields);
+                        CompleteUnionMember member_b = TypeObjectUtils::build_complete_union_member(common_b, detail_b);
+                        TypeObjectUtils::add_complete_union_member(member_seq_Union_Several_Fields, member_b);
+                    }
+                    {
+                        return_code_Union_Several_Fields =
+                            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                            "Inner_alias_bounded_string_helper", type_ids_Union_Several_Fields);
+
+                        if (return_code_Union_Several_Fields != eprosima::fastdds::dds::RETCODE_OK)
+                        {
+                            AliasTypeFlag alias_flags_Inner_alias_bounded_string_helper = 0;
+                            QualifiedTypeName type_name_Inner_alias_bounded_string_helper = "Inner_alias_bounded_string_helper";
+                            eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_Inner_alias_bounded_string_helper;
+                            eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_Inner_alias_bounded_string_helper;
+                            CompleteTypeDetail detail_Inner_alias_bounded_string_helper = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_Inner_alias_bounded_string_helper, ann_custom_Inner_alias_bounded_string_helper, type_name_Inner_alias_bounded_string_helper.to_string());
+                            CompleteAliasHeader header_Inner_alias_bounded_string_helper = TypeObjectUtils::build_complete_alias_header(detail_Inner_alias_bounded_string_helper);
+                            AliasMemberFlag related_flags_Inner_alias_bounded_string_helper = 0;
+                            return_code_Union_Several_Fields =
+                                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                                "anonymous_string_10", type_ids_Union_Several_Fields);
+
+                            if (return_code_Union_Several_Fields != eprosima::fastdds::dds::RETCODE_OK)
+                            {
+                                std::string type_id_kind_anonymous_string_10("TI_STRING8_SMALL");
+                                if (type_id_kind_anonymous_string_10 == "TI_STRING8_SMALL")
+                                {
+                                    SBound bound = static_cast<SBound>(10);
+                                    StringSTypeDefn string_sdefn = TypeObjectUtils::build_string_s_type_defn(bound);
+                                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                                            TypeObjectUtils::build_and_register_s_string_type_identifier(string_sdefn,
+                                            "anonymous_string_10"))
+                                    {
+                                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                            "anonymous_string_10 already registered in TypeObjectRegistry for a different type.");
+                                    }
+                                }
+                                else if (type_id_kind_anonymous_string_10 == "TI_STRING8_LARGE")
+                                {
+                                    LBound bound = 10;
+                                    StringLTypeDefn string_ldefn = TypeObjectUtils::build_string_l_type_defn(bound);
+                                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                                            TypeObjectUtils::build_and_register_l_string_type_identifier(string_ldefn,
+                                            "anonymous_string_10"))
+                                    {
+                                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                            "anonymous_string_10 already registered in TypeObjectRegistry for a different type.");
+                                    }
+                                }
+                                else
+                                {
+                                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                                "anonymous_string_10: Unknown String kind.");
+                                    return;
+                                }
+                                return_code_Union_Several_Fields =
+                                    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                                    "anonymous_string_10", type_ids_Union_Several_Fields);
+                                if (return_code_Union_Several_Fields != eprosima::fastdds::dds::RETCODE_OK)
+                                {
+                                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                                "anonymous_string_10: Given String TypeIdentifier unknown to TypeObjectRegistry.");
+                                    return;
+                                }
+                            }
+                            CommonAliasBody common_Inner_alias_bounded_string_helper;
+                            if (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1()._d() || TK_NONE == type_ids_Union_Several_Fields.type_identifier2()._d() ||
+                                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                    (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                                    (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                    (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_ldefn().key_identifier()->_d())))
+                            {
+                                common_Inner_alias_bounded_string_helper = TypeObjectUtils::build_common_alias_body(related_flags_Inner_alias_bounded_string_helper, type_ids_Union_Several_Fields.type_identifier1());
+                            }
+                            else if (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2()._d() ||
+                                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                    (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                                    (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                    (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_ldefn().key_identifier()->_d())))
+                            {
+                                common_Inner_alias_bounded_string_helper = TypeObjectUtils::build_common_alias_body(related_flags_Inner_alias_bounded_string_helper, type_ids_Union_Several_Fields.type_identifier2());
+                            }
+                            else
+                            {
+                                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                        "Inner_alias_bounded_string_helper related TypeIdentifier inconsistent.");
+                                return;
+                            }
+                            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_Inner_alias_bounded_string_helper;
+                            ann_custom_Inner_alias_bounded_string_helper.reset();
+                            CompleteAliasBody body_Inner_alias_bounded_string_helper = TypeObjectUtils::build_complete_alias_body(common_Inner_alias_bounded_string_helper, member_ann_builtin_Inner_alias_bounded_string_helper, ann_custom_Inner_alias_bounded_string_helper);
+                            CompleteAliasType alias_type_Inner_alias_bounded_string_helper = TypeObjectUtils::build_complete_alias_type(alias_flags_Inner_alias_bounded_string_helper, header_Inner_alias_bounded_string_helper, body_Inner_alias_bounded_string_helper);
+                            if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                                    TypeObjectUtils::build_and_register_alias_type_object(alias_type_Inner_alias_bounded_string_helper, type_name_Inner_alias_bounded_string_helper.to_string()))
+                            {
+                                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                    "Inner_alias_bounded_string_helper already registered in TypeObjectRegistry for a different type.");
+                            }
+                            return_code_Union_Several_Fields =
+                                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                                "Inner_alias_bounded_string_helper", type_ids_Union_Several_Fields);
+                            if (return_code_Union_Several_Fields != eprosima::fastdds::dds::RETCODE_OK)
+                            {
+                                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                            "Inner_alias_bounded_string_helper: Given Alias TypeIdentifier unknown to TypeObjectRegistry.");
+                                return;
+                            }
+                        }
+                        UnionMemberFlag member_flags_c = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                                false, false);
+                        UnionCaseLabelSeq label_seq_c;
+                        TypeObjectUtils::add_union_case_label(label_seq_c, static_cast<int32_t>(2));
+                        CommonUnionMember common_c;
+                        MemberId member_id_c = 0x00000003;
+                        if (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1()._d() || TK_NONE == type_ids_Union_Several_Fields.type_identifier2()._d() ||
+                                (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                                (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_ldefn().key_identifier()->_d())))
+                        {
+                            common_c = TypeObjectUtils::build_common_union_member(member_id_c, member_flags_c, type_ids_Union_Several_Fields.type_identifier1(),
+                                    label_seq_c);
+                        }
+                        else if (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2()._d() ||
+                                (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                                (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_ldefn().key_identifier()->_d())))
+                        {
+                            common_c = TypeObjectUtils::build_common_union_member(member_id_c, member_flags_c, type_ids_Union_Several_Fields.type_identifier2(),
+                                    label_seq_c);
+                        }
+                        else
+                        {
+                            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                    "Union c member TypeIdentifier inconsistent.");
+                            return;
+                        }
+                        MemberName name_c = "c";
+                        eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_c;
+                        ann_custom_Union_Several_Fields.reset();
+                        CompleteMemberDetail detail_c = TypeObjectUtils::build_complete_member_detail(name_c, member_ann_builtin_c, ann_custom_Union_Several_Fields);
+                        CompleteUnionMember member_c = TypeObjectUtils::build_complete_union_member(common_c, detail_c);
+                        TypeObjectUtils::add_complete_union_member(member_seq_Union_Several_Fields, member_c);
+                    }
+                    {
+                        return_code_Union_Several_Fields =
+                            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                            "Inner_alias_array_helper", type_ids_Union_Several_Fields);
+
+                        if (return_code_Union_Several_Fields != eprosima::fastdds::dds::RETCODE_OK)
+                        {
+                            AliasTypeFlag alias_flags_Inner_alias_array_helper = 0;
+                            QualifiedTypeName type_name_Inner_alias_array_helper = "Inner_alias_array_helper";
+                            eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_Inner_alias_array_helper;
+                            eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_Inner_alias_array_helper;
+                            CompleteTypeDetail detail_Inner_alias_array_helper = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_Inner_alias_array_helper, ann_custom_Inner_alias_array_helper, type_name_Inner_alias_array_helper.to_string());
+                            CompleteAliasHeader header_Inner_alias_array_helper = TypeObjectUtils::build_complete_alias_header(detail_Inner_alias_array_helper);
+                            AliasMemberFlag related_flags_Inner_alias_array_helper = 0;
+                            return_code_Union_Several_Fields =
+                                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                                "anonymous_array_int16_t_2", type_ids_Union_Several_Fields);
+
+                            if (return_code_Union_Several_Fields != eprosima::fastdds::dds::RETCODE_OK)
+                            {
+                                return_code_Union_Several_Fields =
+                                    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                                    "_int16_t", type_ids_Union_Several_Fields);
+
+                                if (return_code_Union_Several_Fields != eprosima::fastdds::dds::RETCODE_OK)
+                                {
+                                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                            "Array element TypeIdentifier unknown to TypeObjectRegistry.");
+                                    return;
+                                }
+                                TypeIdentifier* element_identifier_anonymous_array_int16_t_2 {nullptr};
+                                if (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1()._d() || TK_NONE == type_ids_Union_Several_Fields.type_identifier2()._d() ||
+                                        (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                                        (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                                        (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                                        (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                                        (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                        (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                                        (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                        (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_ldefn().key_identifier()->_d())))
+                                {
+                                    element_identifier_anonymous_array_int16_t_2 = new TypeIdentifier(type_ids_Union_Several_Fields.type_identifier1());
+                                }
+                                else if (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2()._d() ||
+                                        (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                                        (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                                        (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                                        (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                                        (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                        (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                                        (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                        (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_ldefn().key_identifier()->_d())))
+                                {
+                                    element_identifier_anonymous_array_int16_t_2 = new TypeIdentifier(type_ids_Union_Several_Fields.type_identifier2());
+                                }
+                                else
+                                {
+                                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                        "Array element TypeIdentifier inconsistent.");
+                                    return;
+                                }
+                                EquivalenceKind equiv_kind_anonymous_array_int16_t_2 = EK_COMPLETE;
+                                if (TK_NONE == type_ids_Union_Several_Fields.type_identifier2()._d())
+                                {
+                                    equiv_kind_anonymous_array_int16_t_2 = EK_BOTH;
+                                }
+                                CollectionElementFlag element_flags_anonymous_array_int16_t_2 = 0;
+                                PlainCollectionHeader header_anonymous_array_int16_t_2 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_array_int16_t_2, element_flags_anonymous_array_int16_t_2);
+                                std::string type_id_kind_anonymous_array_int16_t_2("TI_PLAIN_ARRAY_SMALL");
+                                if (type_id_kind_anonymous_array_int16_t_2 == "TI_PLAIN_ARRAY_SMALL")
+                                {
+                                    SBoundSeq array_bound_seq;
+                                        TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<SBound>(2));
+
+                                    PlainArraySElemDefn array_sdefn = TypeObjectUtils::build_plain_array_s_elem_defn(header_anonymous_array_int16_t_2, array_bound_seq,
+                                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int16_t_2));
+                                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                                            TypeObjectUtils::build_and_register_s_array_type_identifier(array_sdefn, "anonymous_array_int16_t_2"))
+                                    {
+                                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                            "anonymous_array_int16_t_2 already registered in TypeObjectRegistry for a different type.");
+                                    }
+                                }
+                                else
+                                {
+                                    LBoundSeq array_bound_seq;
+                                        TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<LBound>(2));
+
+                                    PlainArrayLElemDefn array_ldefn = TypeObjectUtils::build_plain_array_l_elem_defn(header_anonymous_array_int16_t_2, array_bound_seq,
+                                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int16_t_2));
+                                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                                            TypeObjectUtils::build_and_register_l_array_type_identifier(array_ldefn, "anonymous_array_int16_t_2"))
+                                    {
+                                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                            "anonymous_array_int16_t_2 already registered in TypeObjectRegistry for a different type.");
+                                    }
+                                }
+                                return_code_Union_Several_Fields =
+                                    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                                    "anonymous_array_int16_t_2", type_ids_Union_Several_Fields);
+                                if (return_code_Union_Several_Fields != eprosima::fastdds::dds::RETCODE_OK)
+                                {
+                                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                                "anonymous_array_int16_t_2: Given Array TypeIdentifier unknown to TypeObjectRegistry.");
+                                    return;
+                                }
+                            }
+                            CommonAliasBody common_Inner_alias_array_helper;
+                            if (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1()._d() || TK_NONE == type_ids_Union_Several_Fields.type_identifier2()._d() ||
+                                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                    (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                                    (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                    (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_ldefn().key_identifier()->_d())))
+                            {
+                                common_Inner_alias_array_helper = TypeObjectUtils::build_common_alias_body(related_flags_Inner_alias_array_helper, type_ids_Union_Several_Fields.type_identifier1());
+                            }
+                            else if (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2()._d() ||
+                                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                    (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                                    (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                    (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_ldefn().key_identifier()->_d())))
+                            {
+                                common_Inner_alias_array_helper = TypeObjectUtils::build_common_alias_body(related_flags_Inner_alias_array_helper, type_ids_Union_Several_Fields.type_identifier2());
+                            }
+                            else
+                            {
+                                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                        "Inner_alias_array_helper related TypeIdentifier inconsistent.");
+                                return;
+                            }
+                            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_Inner_alias_array_helper;
+                            ann_custom_Inner_alias_array_helper.reset();
+                            CompleteAliasBody body_Inner_alias_array_helper = TypeObjectUtils::build_complete_alias_body(common_Inner_alias_array_helper, member_ann_builtin_Inner_alias_array_helper, ann_custom_Inner_alias_array_helper);
+                            CompleteAliasType alias_type_Inner_alias_array_helper = TypeObjectUtils::build_complete_alias_type(alias_flags_Inner_alias_array_helper, header_Inner_alias_array_helper, body_Inner_alias_array_helper);
+                            if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                                    TypeObjectUtils::build_and_register_alias_type_object(alias_type_Inner_alias_array_helper, type_name_Inner_alias_array_helper.to_string()))
+                            {
+                                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                    "Inner_alias_array_helper already registered in TypeObjectRegistry for a different type.");
+                            }
+                            return_code_Union_Several_Fields =
+                                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                                "Inner_alias_array_helper", type_ids_Union_Several_Fields);
+                            if (return_code_Union_Several_Fields != eprosima::fastdds::dds::RETCODE_OK)
+                            {
+                                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                            "Inner_alias_array_helper: Given Alias TypeIdentifier unknown to TypeObjectRegistry.");
+                                return;
+                            }
+                        }
+                        UnionMemberFlag member_flags_d = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                                false, false);
+                        UnionCaseLabelSeq label_seq_d;
+                        TypeObjectUtils::add_union_case_label(label_seq_d, static_cast<int32_t>(3));
+                        CommonUnionMember common_d;
+                        MemberId member_id_d = 0x00000004;
+                        if (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1()._d() || TK_NONE == type_ids_Union_Several_Fields.type_identifier2()._d() ||
+                                (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                                (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_ldefn().key_identifier()->_d())))
+                        {
+                            common_d = TypeObjectUtils::build_common_union_member(member_id_d, member_flags_d, type_ids_Union_Several_Fields.type_identifier1(),
+                                    label_seq_d);
+                        }
+                        else if (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2()._d() ||
+                                (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                                (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_ldefn().key_identifier()->_d())))
+                        {
+                            common_d = TypeObjectUtils::build_common_union_member(member_id_d, member_flags_d, type_ids_Union_Several_Fields.type_identifier2(),
+                                    label_seq_d);
+                        }
+                        else
+                        {
+                            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                    "Union d member TypeIdentifier inconsistent.");
+                            return;
+                        }
+                        MemberName name_d = "d";
+                        eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_d;
+                        ann_custom_Union_Several_Fields.reset();
+                        CompleteMemberDetail detail_d = TypeObjectUtils::build_complete_member_detail(name_d, member_ann_builtin_d, ann_custom_Union_Several_Fields);
+                        CompleteUnionMember member_d = TypeObjectUtils::build_complete_union_member(common_d, detail_d);
+                        TypeObjectUtils::add_complete_union_member(member_seq_Union_Several_Fields, member_d);
+                    }
+                    {
+                        return_code_Union_Several_Fields =
+                            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                            "Inner_alias_sequence_helper", type_ids_Union_Several_Fields);
+
+                        if (return_code_Union_Several_Fields != eprosima::fastdds::dds::RETCODE_OK)
+                        {
+                            AliasTypeFlag alias_flags_Inner_alias_sequence_helper = 0;
+                            QualifiedTypeName type_name_Inner_alias_sequence_helper = "Inner_alias_sequence_helper";
+                            eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_Inner_alias_sequence_helper;
+                            eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_Inner_alias_sequence_helper;
+                            CompleteTypeDetail detail_Inner_alias_sequence_helper = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_Inner_alias_sequence_helper, ann_custom_Inner_alias_sequence_helper, type_name_Inner_alias_sequence_helper.to_string());
+                            CompleteAliasHeader header_Inner_alias_sequence_helper = TypeObjectUtils::build_complete_alias_header(detail_Inner_alias_sequence_helper);
+                            AliasMemberFlag related_flags_Inner_alias_sequence_helper = 0;
+                            return_code_Union_Several_Fields =
+                                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                                "anonymous_sequence_int16_t_unbounded", type_ids_Union_Several_Fields);
+
+                            if (return_code_Union_Several_Fields != eprosima::fastdds::dds::RETCODE_OK)
+                            {
+                                return_code_Union_Several_Fields =
+                                    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                                    "_int16_t", type_ids_Union_Several_Fields);
+
+                                if (return_code_Union_Several_Fields != eprosima::fastdds::dds::RETCODE_OK)
+                                {
+                                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                            "Sequence element TypeIdentifier unknown to TypeObjectRegistry.");
+                                    return;
+                                }
+                                TypeIdentifier* element_identifier_anonymous_sequence_int16_t_unbounded {nullptr};
+                                if (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1()._d() || TK_NONE == type_ids_Union_Several_Fields.type_identifier2()._d() ||
+                                        (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                                        (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                                        (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                                        (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                                        (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                        (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                                        (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                        (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_ldefn().key_identifier()->_d())))
+                                {
+                                    element_identifier_anonymous_sequence_int16_t_unbounded = new TypeIdentifier(type_ids_Union_Several_Fields.type_identifier1());
+                                }
+                                else if (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2()._d() ||
+                                        (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                                        (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                                        (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                                        (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                                        (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                        (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                                        (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                        (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                        EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_ldefn().key_identifier()->_d())))
+                                {
+                                    element_identifier_anonymous_sequence_int16_t_unbounded = new TypeIdentifier(type_ids_Union_Several_Fields.type_identifier2());
+                                }
+                                else
+                                {
+                                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                        "Sequence element TypeIdentifier inconsistent.");
+                                    return;
+                                }
+                                EquivalenceKind equiv_kind_anonymous_sequence_int16_t_unbounded = EK_COMPLETE;
+                                if (TK_NONE == type_ids_Union_Several_Fields.type_identifier2()._d())
+                                {
+                                    equiv_kind_anonymous_sequence_int16_t_unbounded = EK_BOTH;
+                                }
+                                CollectionElementFlag element_flags_anonymous_sequence_int16_t_unbounded = 0;
+                                PlainCollectionHeader header_anonymous_sequence_int16_t_unbounded = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_sequence_int16_t_unbounded, element_flags_anonymous_sequence_int16_t_unbounded);
+                                std::string type_id_kind_anonymous_sequence_int16_t_unbounded("TI_PLAIN_SEQUENCE_SMALL");
+                                if (type_id_kind_anonymous_sequence_int16_t_unbounded == "TI_PLAIN_SEQUENCE_SMALL")
+                                {
+                                    SBound bound = 0;
+                                    PlainSequenceSElemDefn seq_sdefn = TypeObjectUtils::build_plain_sequence_s_elem_defn(header_anonymous_sequence_int16_t_unbounded, bound,
+                                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_sequence_int16_t_unbounded));
+                                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                                            TypeObjectUtils::build_and_register_s_sequence_type_identifier(seq_sdefn, "anonymous_sequence_int16_t_unbounded"))
+                                    {
+                                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                            "anonymous_sequence_int16_t_unbounded already registered in TypeObjectRegistry for a different type.");
+                                    }
+                                }
+                                else
+                                {
+                                    LBound bound = 0;
+                                    PlainSequenceLElemDefn seq_ldefn = TypeObjectUtils::build_plain_sequence_l_elem_defn(header_anonymous_sequence_int16_t_unbounded, bound,
+                                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_sequence_int16_t_unbounded));
+                                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                                            TypeObjectUtils::build_and_register_l_sequence_type_identifier(seq_ldefn, "anonymous_sequence_int16_t_unbounded"))
+                                    {
+                                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                            "anonymous_sequence_int16_t_unbounded already registered in TypeObjectRegistry for a different type.");
+                                    }
+                                }
+                                return_code_Union_Several_Fields =
+                                    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                                    "anonymous_sequence_int16_t_unbounded", type_ids_Union_Several_Fields);
+                                if (return_code_Union_Several_Fields != eprosima::fastdds::dds::RETCODE_OK)
+                                {
+                                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                                "anonymous_sequence_int16_t_unbounded: Given Sequence TypeIdentifier unknown to TypeObjectRegistry.");
+                                    return;
+                                }
+                            }
+                            CommonAliasBody common_Inner_alias_sequence_helper;
+                            if (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1()._d() || TK_NONE == type_ids_Union_Several_Fields.type_identifier2()._d() ||
+                                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                    (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                                    (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                    (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_ldefn().key_identifier()->_d())))
+                            {
+                                common_Inner_alias_sequence_helper = TypeObjectUtils::build_common_alias_body(related_flags_Inner_alias_sequence_helper, type_ids_Union_Several_Fields.type_identifier1());
+                            }
+                            else if (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2()._d() ||
+                                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                    (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                                    (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                    (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_ldefn().key_identifier()->_d())))
+                            {
+                                common_Inner_alias_sequence_helper = TypeObjectUtils::build_common_alias_body(related_flags_Inner_alias_sequence_helper, type_ids_Union_Several_Fields.type_identifier2());
+                            }
+                            else
+                            {
+                                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                        "Inner_alias_sequence_helper related TypeIdentifier inconsistent.");
+                                return;
+                            }
+                            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_Inner_alias_sequence_helper;
+                            ann_custom_Inner_alias_sequence_helper.reset();
+                            CompleteAliasBody body_Inner_alias_sequence_helper = TypeObjectUtils::build_complete_alias_body(common_Inner_alias_sequence_helper, member_ann_builtin_Inner_alias_sequence_helper, ann_custom_Inner_alias_sequence_helper);
+                            CompleteAliasType alias_type_Inner_alias_sequence_helper = TypeObjectUtils::build_complete_alias_type(alias_flags_Inner_alias_sequence_helper, header_Inner_alias_sequence_helper, body_Inner_alias_sequence_helper);
+                            if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                                    TypeObjectUtils::build_and_register_alias_type_object(alias_type_Inner_alias_sequence_helper, type_name_Inner_alias_sequence_helper.to_string()))
+                            {
+                                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                    "Inner_alias_sequence_helper already registered in TypeObjectRegistry for a different type.");
+                            }
+                            return_code_Union_Several_Fields =
+                                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                                "Inner_alias_sequence_helper", type_ids_Union_Several_Fields);
+                            if (return_code_Union_Several_Fields != eprosima::fastdds::dds::RETCODE_OK)
+                            {
+                                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                            "Inner_alias_sequence_helper: Given Alias TypeIdentifier unknown to TypeObjectRegistry.");
+                                return;
+                            }
+                        }
+                        UnionMemberFlag member_flags_e = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                                false, false);
+                        UnionCaseLabelSeq label_seq_e;
+                        TypeObjectUtils::add_union_case_label(label_seq_e, static_cast<int32_t>(4));
+                        CommonUnionMember common_e;
+                        MemberId member_id_e = 0x00000005;
+                        if (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1()._d() || TK_NONE == type_ids_Union_Several_Fields.type_identifier2()._d() ||
+                                (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                                (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields.type_identifier1()._d() &&
+                                (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier1().map_ldefn().key_identifier()->_d())))
+                        {
+                            common_e = TypeObjectUtils::build_common_union_member(member_id_e, member_flags_e, type_ids_Union_Several_Fields.type_identifier1(),
+                                    label_seq_e);
+                        }
+                        else if (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2()._d() ||
+                                (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                                (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields.type_identifier2()._d() &&
+                                (EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_Union_Several_Fields.type_identifier2().map_ldefn().key_identifier()->_d())))
+                        {
+                            common_e = TypeObjectUtils::build_common_union_member(member_id_e, member_flags_e, type_ids_Union_Several_Fields.type_identifier2(),
+                                    label_seq_e);
+                        }
+                        else
+                        {
+                            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                    "Union e member TypeIdentifier inconsistent.");
+                            return;
+                        }
+                        MemberName name_e = "e";
+                        eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_e;
+                        ann_custom_Union_Several_Fields.reset();
+                        CompleteMemberDetail detail_e = TypeObjectUtils::build_complete_member_detail(name_e, member_ann_builtin_e, ann_custom_Union_Several_Fields);
+                        CompleteUnionMember member_e = TypeObjectUtils::build_complete_union_member(common_e, detail_e);
+                        TypeObjectUtils::add_complete_union_member(member_seq_Union_Several_Fields, member_e);
+                    }
+                    CompleteUnionType union_type_Union_Several_Fields = TypeObjectUtils::build_complete_union_type(union_flags_Union_Several_Fields, header_Union_Several_Fields, discriminator_Union_Several_Fields,
+                            member_seq_Union_Several_Fields);
+                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                            TypeObjectUtils::build_and_register_union_type_object(union_type_Union_Several_Fields, type_name_Union_Several_Fields.to_string()))
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                "Union_Several_Fields already registered in TypeObjectRegistry for a different type.");
+                    }
+                    return_code_Union_Several_Fields =
+                        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                        "Union_Several_Fields", type_ids_Union_Several_Fields);
+                    if (return_code_Union_Several_Fields != eprosima::fastdds::dds::RETCODE_OK)
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                    "Union_Several_Fields: Given Union TypeIdentifier unknown to TypeObjectRegistry.");
+                        return;
+                    }
+                }
+            }
+            StructMemberFlag member_flags_var_union_several_fields = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                    false, false, false, false);
+            CommonStructMember common_var_union_several_fields;
+            MemberId member_id_var_union_several_fields = 0x00000000;
+            if (EK_COMPLETE == type_ids_UnionSeveralFields.type_identifier1()._d() || TK_NONE == type_ids_UnionSeveralFields.type_identifier2()._d() ||
+                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_UnionSeveralFields.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_UnionSeveralFields.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_UnionSeveralFields.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_UnionSeveralFields.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_SMALL == type_ids_UnionSeveralFields.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_UnionSeveralFields.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_LARGE == type_ids_UnionSeveralFields.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_UnionSeveralFields.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_MAP_SMALL == type_ids_UnionSeveralFields.type_identifier1()._d() &&
+                    (EK_COMPLETE == type_ids_UnionSeveralFields.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_UnionSeveralFields.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                    (TI_PLAIN_MAP_LARGE == type_ids_UnionSeveralFields.type_identifier1()._d() &&
+                    (EK_COMPLETE == type_ids_UnionSeveralFields.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_UnionSeveralFields.type_identifier1().map_ldefn().key_identifier()->_d())))
+            {
+                common_var_union_several_fields = TypeObjectUtils::build_common_struct_member(member_id_var_union_several_fields, member_flags_var_union_several_fields, type_ids_UnionSeveralFields.type_identifier1());
+            }
+            else if (EK_COMPLETE == type_ids_UnionSeveralFields.type_identifier2()._d() ||
+                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_UnionSeveralFields.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_UnionSeveralFields.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_UnionSeveralFields.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_UnionSeveralFields.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_SMALL == type_ids_UnionSeveralFields.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_UnionSeveralFields.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_LARGE == type_ids_UnionSeveralFields.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_UnionSeveralFields.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_MAP_SMALL == type_ids_UnionSeveralFields.type_identifier2()._d() &&
+                    (EK_COMPLETE == type_ids_UnionSeveralFields.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_UnionSeveralFields.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                    (TI_PLAIN_MAP_LARGE == type_ids_UnionSeveralFields.type_identifier2()._d() &&
+                    (EK_COMPLETE == type_ids_UnionSeveralFields.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_UnionSeveralFields.type_identifier2().map_ldefn().key_identifier()->_d())))
+            {
+                common_var_union_several_fields = TypeObjectUtils::build_common_struct_member(member_id_var_union_several_fields, member_flags_var_union_several_fields, type_ids_UnionSeveralFields.type_identifier2());
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "Structure var_union_several_fields member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_var_union_several_fields = "var_union_several_fields";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_var_union_several_fields;
+            ann_custom_UnionSeveralFields.reset();
+            CompleteMemberDetail detail_var_union_several_fields = TypeObjectUtils::build_complete_member_detail(name_var_union_several_fields, member_ann_builtin_var_union_several_fields, ann_custom_UnionSeveralFields);
+            CompleteStructMember member_var_union_several_fields = TypeObjectUtils::build_complete_struct_member(common_var_union_several_fields, detail_var_union_several_fields);
+            TypeObjectUtils::add_complete_struct_member(member_seq_UnionSeveralFields, member_var_union_several_fields);
+        }
+        CompleteStructType struct_type_UnionSeveralFields = TypeObjectUtils::build_complete_struct_type(struct_flags_UnionSeveralFields, header_UnionSeveralFields, member_seq_UnionSeveralFields);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_UnionSeveralFields, type_name_UnionSeveralFields.to_string()))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "UnionSeveralFields already registered in TypeObjectRegistry for a different type.");
+        }
+        return_code_UnionSeveralFields =
+            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+            "UnionSeveralFields", type_ids_UnionSeveralFields);
+        if (return_code_UnionSeveralFields != eprosima::fastdds::dds::RETCODE_OK)
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "UnionSeveralFields: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            return;
+        }
+    }
+}
+void register_UnionSeveralFieldsWithDefault_type_identifier()
+{
+    {
+        StructTypeFlag struct_flags_UnionSeveralFieldsWithDefault = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+                false, false);
+        ReturnCode_t return_code_UnionSeveralFieldsWithDefault;
+        TypeIdentifierPair type_ids_UnionSeveralFieldsWithDefault;
+        QualifiedTypeName type_name_UnionSeveralFieldsWithDefault = "UnionSeveralFieldsWithDefault";
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_UnionSeveralFieldsWithDefault;
+        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_UnionSeveralFieldsWithDefault;
+        CompleteTypeDetail detail_UnionSeveralFieldsWithDefault = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_UnionSeveralFieldsWithDefault, ann_custom_UnionSeveralFieldsWithDefault, type_name_UnionSeveralFieldsWithDefault.to_string());
+        CompleteStructHeader header_UnionSeveralFieldsWithDefault;
+        header_UnionSeveralFieldsWithDefault = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_UnionSeveralFieldsWithDefault);
+        CompleteStructMemberSeq member_seq_UnionSeveralFieldsWithDefault;
+        {
+            return_code_UnionSeveralFieldsWithDefault =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "Union_Several_Fields_With_Default", type_ids_UnionSeveralFieldsWithDefault);
+
+            if (return_code_UnionSeveralFieldsWithDefault != eprosima::fastdds::dds::RETCODE_OK)
+            {
+                {
+                    ReturnCode_t return_code_Union_Several_Fields_With_Default;
+                    TypeIdentifierPair type_ids_Union_Several_Fields_With_Default;
+                    UnionTypeFlag union_flags_Union_Several_Fields_With_Default = TypeObjectUtils::build_union_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+                            false, false);
+                    QualifiedTypeName type_name_Union_Several_Fields_With_Default = "Union_Several_Fields_With_Default";
+                    eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_Union_Several_Fields_With_Default;
+                    eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_Union_Several_Fields_With_Default;
+                    CompleteTypeDetail detail_Union_Several_Fields_With_Default = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_Union_Several_Fields_With_Default, ann_custom_Union_Several_Fields_With_Default, type_name_Union_Several_Fields_With_Default.to_string());
+                    CompleteUnionHeader header_Union_Several_Fields_With_Default = TypeObjectUtils::build_complete_union_header(detail_Union_Several_Fields_With_Default);
+                    UnionDiscriminatorFlag member_flags_Union_Several_Fields_With_Default = TypeObjectUtils::build_union_discriminator_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                            false);
+                    return_code_Union_Several_Fields_With_Default =
+                        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                        "_int32_t", type_ids_Union_Several_Fields_With_Default);
+
+                    if (return_code_Union_Several_Fields_With_Default != eprosima::fastdds::dds::RETCODE_OK)
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                "Union discriminator TypeIdentifier unknown to TypeObjectRegistry.");
+                        return;
+                    }
+                    CommonDiscriminatorMember common_Union_Several_Fields_With_Default;
+                    if (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() || TK_NONE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d())
+                    {
+                        common_Union_Several_Fields_With_Default = TypeObjectUtils::build_common_discriminator_member(member_flags_Union_Several_Fields_With_Default, type_ids_Union_Several_Fields_With_Default.type_identifier1());
+                    }
+                    else if (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d())
+                    {
+                        common_Union_Several_Fields_With_Default = TypeObjectUtils::build_common_discriminator_member(member_flags_Union_Several_Fields_With_Default, type_ids_Union_Several_Fields_With_Default.type_identifier2());
+                    }
+                    else
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                "Union_Several_Fields_With_Default discriminator TypeIdentifier inconsistent.");
+                        return;
+                    }
+                    type_ann_builtin_Union_Several_Fields_With_Default.reset();
+                    ann_custom_Union_Several_Fields_With_Default.reset();
+                    CompleteDiscriminatorMember discriminator_Union_Several_Fields_With_Default = TypeObjectUtils::build_complete_discriminator_member(common_Union_Several_Fields_With_Default,
+                            type_ann_builtin_Union_Several_Fields_With_Default, ann_custom_Union_Several_Fields_With_Default);
+                    CompleteUnionMemberSeq member_seq_Union_Several_Fields_With_Default;
+                    {
+                        return_code_Union_Several_Fields_With_Default =
+                            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                            "InnerStructureHelper", type_ids_Union_Several_Fields_With_Default);
+
+                        if (return_code_Union_Several_Fields_With_Default != eprosima::fastdds::dds::RETCODE_OK)
+                        {
+                            {
+                                StructTypeFlag struct_flags_InnerStructureHelper = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+                                        true, false);
+                                ReturnCode_t return_code_InnerStructureHelper;
+                                TypeIdentifierPair type_ids_InnerStructureHelper;
+                                QualifiedTypeName type_name_InnerStructureHelper = "InnerStructureHelper";
+                                eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_InnerStructureHelper;
+                                eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_InnerStructureHelper;
+                                AppliedAnnotationSeq tmp_ann_custom_InnerStructureHelper;
+                                eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_InnerStructureHelper;
+                                if (!tmp_ann_custom_InnerStructureHelper.empty())
+                                {
+                                    ann_custom_InnerStructureHelper = tmp_ann_custom_InnerStructureHelper;
+                                }
+
+                                CompleteTypeDetail detail_InnerStructureHelper = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_InnerStructureHelper, ann_custom_InnerStructureHelper, type_name_InnerStructureHelper.to_string());
+                                CompleteStructHeader header_InnerStructureHelper;
+                                header_InnerStructureHelper = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_InnerStructureHelper);
+                                CompleteStructMemberSeq member_seq_InnerStructureHelper;
+                                {
+                                    return_code_InnerStructureHelper =
+                                        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                                        "_int32_t", type_ids_InnerStructureHelper);
+
+                                    if (return_code_InnerStructureHelper != eprosima::fastdds::dds::RETCODE_OK)
+                                    {
+                                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                                "field1 Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                                        return;
+                                    }
+                                    StructMemberFlag member_flags_field1 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                                            false, false, false, false);
+                                    CommonStructMember common_field1;
+                                    MemberId member_id_field1 = 0x00000000;
+                                    if (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1()._d() || TK_NONE == type_ids_InnerStructureHelper.type_identifier2()._d() ||
+                                            (TI_PLAIN_SEQUENCE_SMALL == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_SEQUENCE_LARGE == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_ARRAY_SMALL == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_ARRAY_LARGE == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_MAP_SMALL == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                            (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                                            (TI_PLAIN_MAP_LARGE == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                            (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().map_ldefn().key_identifier()->_d())))
+                                    {
+                                        common_field1 = TypeObjectUtils::build_common_struct_member(member_id_field1, member_flags_field1, type_ids_InnerStructureHelper.type_identifier1());
+                                    }
+                                    else if (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2()._d() ||
+                                            (TI_PLAIN_SEQUENCE_SMALL == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_SEQUENCE_LARGE == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_ARRAY_SMALL == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_ARRAY_LARGE == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_MAP_SMALL == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                            (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                                            (TI_PLAIN_MAP_LARGE == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                            (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().map_ldefn().key_identifier()->_d())))
+                                    {
+                                        common_field1 = TypeObjectUtils::build_common_struct_member(member_id_field1, member_flags_field1, type_ids_InnerStructureHelper.type_identifier2());
+                                    }
+                                    else
+                                    {
+                                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                                "Structure field1 member TypeIdentifier inconsistent.");
+                                        return;
+                                    }
+                                    MemberName name_field1 = "field1";
+                                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_field1;
+                                    ann_custom_InnerStructureHelper.reset();
+                                    CompleteMemberDetail detail_field1 = TypeObjectUtils::build_complete_member_detail(name_field1, member_ann_builtin_field1, ann_custom_InnerStructureHelper);
+                                    CompleteStructMember member_field1 = TypeObjectUtils::build_complete_struct_member(common_field1, detail_field1);
+                                    TypeObjectUtils::add_complete_struct_member(member_seq_InnerStructureHelper, member_field1);
+                                }
+                                {
+                                    return_code_InnerStructureHelper =
+                                        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                                        "_float", type_ids_InnerStructureHelper);
+
+                                    if (return_code_InnerStructureHelper != eprosima::fastdds::dds::RETCODE_OK)
+                                    {
+                                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                                "field2 Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                                        return;
+                                    }
+                                    StructMemberFlag member_flags_field2 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                                            false, false, false, false);
+                                    CommonStructMember common_field2;
+                                    MemberId member_id_field2 = 0x00000001;
+                                    if (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1()._d() || TK_NONE == type_ids_InnerStructureHelper.type_identifier2()._d() ||
+                                            (TI_PLAIN_SEQUENCE_SMALL == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_SEQUENCE_LARGE == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_ARRAY_SMALL == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_ARRAY_LARGE == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_MAP_SMALL == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                            (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                                            (TI_PLAIN_MAP_LARGE == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                            (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().map_ldefn().key_identifier()->_d())))
+                                    {
+                                        common_field2 = TypeObjectUtils::build_common_struct_member(member_id_field2, member_flags_field2, type_ids_InnerStructureHelper.type_identifier1());
+                                    }
+                                    else if (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2()._d() ||
+                                            (TI_PLAIN_SEQUENCE_SMALL == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_SEQUENCE_LARGE == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_ARRAY_SMALL == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_ARRAY_LARGE == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_MAP_SMALL == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                            (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                                            (TI_PLAIN_MAP_LARGE == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                            (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().map_ldefn().key_identifier()->_d())))
+                                    {
+                                        common_field2 = TypeObjectUtils::build_common_struct_member(member_id_field2, member_flags_field2, type_ids_InnerStructureHelper.type_identifier2());
+                                    }
+                                    else
+                                    {
+                                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                                "Structure field2 member TypeIdentifier inconsistent.");
+                                        return;
+                                    }
+                                    MemberName name_field2 = "field2";
+                                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_field2;
+                                    ann_custom_InnerStructureHelper.reset();
+                                    CompleteMemberDetail detail_field2 = TypeObjectUtils::build_complete_member_detail(name_field2, member_ann_builtin_field2, ann_custom_InnerStructureHelper);
+                                    CompleteStructMember member_field2 = TypeObjectUtils::build_complete_struct_member(common_field2, detail_field2);
+                                    TypeObjectUtils::add_complete_struct_member(member_seq_InnerStructureHelper, member_field2);
+                                }
+                                CompleteStructType struct_type_InnerStructureHelper = TypeObjectUtils::build_complete_struct_type(struct_flags_InnerStructureHelper, header_InnerStructureHelper, member_seq_InnerStructureHelper);
+                                if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                                        TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerStructureHelper, type_name_InnerStructureHelper.to_string()))
+                                {
+                                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                            "InnerStructureHelper already registered in TypeObjectRegistry for a different type.");
+                                }
+                                return_code_InnerStructureHelper =
+                                    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                                    "InnerStructureHelper", type_ids_InnerStructureHelper);
+                                if (return_code_InnerStructureHelper != eprosima::fastdds::dds::RETCODE_OK)
+                                {
+                                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                                "InnerStructureHelper: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+                                    return;
+                                }
+                            }
+                        }
+                        UnionMemberFlag member_flags_a = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                                false, false);
+                        UnionCaseLabelSeq label_seq_a;
+                        TypeObjectUtils::add_union_case_label(label_seq_a, static_cast<int32_t>(0));
+                        CommonUnionMember common_a;
+                        MemberId member_id_a = 0x00000001;
+                        if (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() || TK_NONE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() ||
+                                (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                                (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_ldefn().key_identifier()->_d())))
+                        {
+                            common_a = TypeObjectUtils::build_common_union_member(member_id_a, member_flags_a, type_ids_Union_Several_Fields_With_Default.type_identifier1(),
+                                    label_seq_a);
+                        }
+                        else if (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() ||
+                                (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                                (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_ldefn().key_identifier()->_d())))
+                        {
+                            common_a = TypeObjectUtils::build_common_union_member(member_id_a, member_flags_a, type_ids_Union_Several_Fields_With_Default.type_identifier2(),
+                                    label_seq_a);
+                        }
+                        else
+                        {
+                            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                    "Union a member TypeIdentifier inconsistent.");
+                            return;
+                        }
+                        MemberName name_a = "a";
+                        eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_a;
+                        ann_custom_Union_Several_Fields_With_Default.reset();
+                        CompleteMemberDetail detail_a = TypeObjectUtils::build_complete_member_detail(name_a, member_ann_builtin_a, ann_custom_Union_Several_Fields_With_Default);
+                        CompleteUnionMember member_a = TypeObjectUtils::build_complete_union_member(common_a, detail_a);
+                        TypeObjectUtils::add_complete_union_member(member_seq_Union_Several_Fields_With_Default, member_a);
+                    }
+                    {
+                        return_code_Union_Several_Fields_With_Default =
+                            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                            "InnerEmptyStructureHelper", type_ids_Union_Several_Fields_With_Default);
+
+                        if (return_code_Union_Several_Fields_With_Default != eprosima::fastdds::dds::RETCODE_OK)
+                        {
+                            {
+                                StructTypeFlag struct_flags_InnerEmptyStructureHelper = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+                                        true, false);
+                                ReturnCode_t return_code_InnerEmptyStructureHelper;
+                                TypeIdentifierPair type_ids_InnerEmptyStructureHelper;
+                                QualifiedTypeName type_name_InnerEmptyStructureHelper = "InnerEmptyStructureHelper";
+                                eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_InnerEmptyStructureHelper;
+                                eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_InnerEmptyStructureHelper;
+                                AppliedAnnotationSeq tmp_ann_custom_InnerEmptyStructureHelper;
+                                eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_InnerEmptyStructureHelper;
+                                if (!tmp_ann_custom_InnerEmptyStructureHelper.empty())
+                                {
+                                    ann_custom_InnerEmptyStructureHelper = tmp_ann_custom_InnerEmptyStructureHelper;
+                                }
+
+                                CompleteTypeDetail detail_InnerEmptyStructureHelper = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_InnerEmptyStructureHelper, ann_custom_InnerEmptyStructureHelper, type_name_InnerEmptyStructureHelper.to_string());
+                                CompleteStructHeader header_InnerEmptyStructureHelper;
+                                header_InnerEmptyStructureHelper = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_InnerEmptyStructureHelper);
+                                CompleteStructMemberSeq member_seq_InnerEmptyStructureHelper;
+                                CompleteStructType struct_type_InnerEmptyStructureHelper = TypeObjectUtils::build_complete_struct_type(struct_flags_InnerEmptyStructureHelper, header_InnerEmptyStructureHelper, member_seq_InnerEmptyStructureHelper);
+                                if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                                        TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerEmptyStructureHelper, type_name_InnerEmptyStructureHelper.to_string()))
+                                {
+                                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                            "InnerEmptyStructureHelper already registered in TypeObjectRegistry for a different type.");
+                                }
+                                return_code_InnerEmptyStructureHelper =
+                                    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                                    "InnerEmptyStructureHelper", type_ids_InnerEmptyStructureHelper);
+                                if (return_code_InnerEmptyStructureHelper != eprosima::fastdds::dds::RETCODE_OK)
+                                {
+                                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                                "InnerEmptyStructureHelper: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+                                    return;
+                                }
+                            }
+                        }
+                        UnionMemberFlag member_flags_b = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                                false, false);
+                        UnionCaseLabelSeq label_seq_b;
+                        TypeObjectUtils::add_union_case_label(label_seq_b, static_cast<int32_t>(1));
+                        CommonUnionMember common_b;
+                        MemberId member_id_b = 0x00000002;
+                        if (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() || TK_NONE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() ||
+                                (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                                (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_ldefn().key_identifier()->_d())))
+                        {
+                            common_b = TypeObjectUtils::build_common_union_member(member_id_b, member_flags_b, type_ids_Union_Several_Fields_With_Default.type_identifier1(),
+                                    label_seq_b);
+                        }
+                        else if (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() ||
+                                (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                                (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_ldefn().key_identifier()->_d())))
+                        {
+                            common_b = TypeObjectUtils::build_common_union_member(member_id_b, member_flags_b, type_ids_Union_Several_Fields_With_Default.type_identifier2(),
+                                    label_seq_b);
+                        }
+                        else
+                        {
+                            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                    "Union b member TypeIdentifier inconsistent.");
+                            return;
+                        }
+                        MemberName name_b = "b";
+                        eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_b;
+                        ann_custom_Union_Several_Fields_With_Default.reset();
+                        CompleteMemberDetail detail_b = TypeObjectUtils::build_complete_member_detail(name_b, member_ann_builtin_b, ann_custom_Union_Several_Fields_With_Default);
+                        CompleteUnionMember member_b = TypeObjectUtils::build_complete_union_member(common_b, detail_b);
+                        TypeObjectUtils::add_complete_union_member(member_seq_Union_Several_Fields_With_Default, member_b);
+                    }
+                    {
+                        return_code_Union_Several_Fields_With_Default =
+                            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                            "Inner_alias_bounded_string_helper", type_ids_Union_Several_Fields_With_Default);
+
+                        if (return_code_Union_Several_Fields_With_Default != eprosima::fastdds::dds::RETCODE_OK)
+                        {
+                            AliasTypeFlag alias_flags_Inner_alias_bounded_string_helper = 0;
+                            QualifiedTypeName type_name_Inner_alias_bounded_string_helper = "Inner_alias_bounded_string_helper";
+                            eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_Inner_alias_bounded_string_helper;
+                            eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_Inner_alias_bounded_string_helper;
+                            CompleteTypeDetail detail_Inner_alias_bounded_string_helper = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_Inner_alias_bounded_string_helper, ann_custom_Inner_alias_bounded_string_helper, type_name_Inner_alias_bounded_string_helper.to_string());
+                            CompleteAliasHeader header_Inner_alias_bounded_string_helper = TypeObjectUtils::build_complete_alias_header(detail_Inner_alias_bounded_string_helper);
+                            AliasMemberFlag related_flags_Inner_alias_bounded_string_helper = 0;
+                            return_code_Union_Several_Fields_With_Default =
+                                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                                "anonymous_string_10", type_ids_Union_Several_Fields_With_Default);
+
+                            if (return_code_Union_Several_Fields_With_Default != eprosima::fastdds::dds::RETCODE_OK)
+                            {
+                                std::string type_id_kind_anonymous_string_10("TI_STRING8_SMALL");
+                                if (type_id_kind_anonymous_string_10 == "TI_STRING8_SMALL")
+                                {
+                                    SBound bound = static_cast<SBound>(10);
+                                    StringSTypeDefn string_sdefn = TypeObjectUtils::build_string_s_type_defn(bound);
+                                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                                            TypeObjectUtils::build_and_register_s_string_type_identifier(string_sdefn,
+                                            "anonymous_string_10"))
+                                    {
+                                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                            "anonymous_string_10 already registered in TypeObjectRegistry for a different type.");
+                                    }
+                                }
+                                else if (type_id_kind_anonymous_string_10 == "TI_STRING8_LARGE")
+                                {
+                                    LBound bound = 10;
+                                    StringLTypeDefn string_ldefn = TypeObjectUtils::build_string_l_type_defn(bound);
+                                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                                            TypeObjectUtils::build_and_register_l_string_type_identifier(string_ldefn,
+                                            "anonymous_string_10"))
+                                    {
+                                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                            "anonymous_string_10 already registered in TypeObjectRegistry for a different type.");
+                                    }
+                                }
+                                else
+                                {
+                                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                                "anonymous_string_10: Unknown String kind.");
+                                    return;
+                                }
+                                return_code_Union_Several_Fields_With_Default =
+                                    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                                    "anonymous_string_10", type_ids_Union_Several_Fields_With_Default);
+                                if (return_code_Union_Several_Fields_With_Default != eprosima::fastdds::dds::RETCODE_OK)
+                                {
+                                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                                "anonymous_string_10: Given String TypeIdentifier unknown to TypeObjectRegistry.");
+                                    return;
+                                }
+                            }
+                            CommonAliasBody common_Inner_alias_bounded_string_helper;
+                            if (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() || TK_NONE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() ||
+                                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                    (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                                    (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                    (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_ldefn().key_identifier()->_d())))
+                            {
+                                common_Inner_alias_bounded_string_helper = TypeObjectUtils::build_common_alias_body(related_flags_Inner_alias_bounded_string_helper, type_ids_Union_Several_Fields_With_Default.type_identifier1());
+                            }
+                            else if (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() ||
+                                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                    (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                                    (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                    (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_ldefn().key_identifier()->_d())))
+                            {
+                                common_Inner_alias_bounded_string_helper = TypeObjectUtils::build_common_alias_body(related_flags_Inner_alias_bounded_string_helper, type_ids_Union_Several_Fields_With_Default.type_identifier2());
+                            }
+                            else
+                            {
+                                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                        "Inner_alias_bounded_string_helper related TypeIdentifier inconsistent.");
+                                return;
+                            }
+                            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_Inner_alias_bounded_string_helper;
+                            ann_custom_Inner_alias_bounded_string_helper.reset();
+                            CompleteAliasBody body_Inner_alias_bounded_string_helper = TypeObjectUtils::build_complete_alias_body(common_Inner_alias_bounded_string_helper, member_ann_builtin_Inner_alias_bounded_string_helper, ann_custom_Inner_alias_bounded_string_helper);
+                            CompleteAliasType alias_type_Inner_alias_bounded_string_helper = TypeObjectUtils::build_complete_alias_type(alias_flags_Inner_alias_bounded_string_helper, header_Inner_alias_bounded_string_helper, body_Inner_alias_bounded_string_helper);
+                            if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                                    TypeObjectUtils::build_and_register_alias_type_object(alias_type_Inner_alias_bounded_string_helper, type_name_Inner_alias_bounded_string_helper.to_string()))
+                            {
+                                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                    "Inner_alias_bounded_string_helper already registered in TypeObjectRegistry for a different type.");
+                            }
+                            return_code_Union_Several_Fields_With_Default =
+                                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                                "Inner_alias_bounded_string_helper", type_ids_Union_Several_Fields_With_Default);
+                            if (return_code_Union_Several_Fields_With_Default != eprosima::fastdds::dds::RETCODE_OK)
+                            {
+                                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                            "Inner_alias_bounded_string_helper: Given Alias TypeIdentifier unknown to TypeObjectRegistry.");
+                                return;
+                            }
+                        }
+                        UnionMemberFlag member_flags_c = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                                false, false);
+                        UnionCaseLabelSeq label_seq_c;
+                        TypeObjectUtils::add_union_case_label(label_seq_c, static_cast<int32_t>(2));
+                        CommonUnionMember common_c;
+                        MemberId member_id_c = 0x00000003;
+                        if (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() || TK_NONE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() ||
+                                (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                                (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_ldefn().key_identifier()->_d())))
+                        {
+                            common_c = TypeObjectUtils::build_common_union_member(member_id_c, member_flags_c, type_ids_Union_Several_Fields_With_Default.type_identifier1(),
+                                    label_seq_c);
+                        }
+                        else if (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() ||
+                                (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                                (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_ldefn().key_identifier()->_d())))
+                        {
+                            common_c = TypeObjectUtils::build_common_union_member(member_id_c, member_flags_c, type_ids_Union_Several_Fields_With_Default.type_identifier2(),
+                                    label_seq_c);
+                        }
+                        else
+                        {
+                            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                    "Union c member TypeIdentifier inconsistent.");
+                            return;
+                        }
+                        MemberName name_c = "c";
+                        eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_c;
+                        ann_custom_Union_Several_Fields_With_Default.reset();
+                        CompleteMemberDetail detail_c = TypeObjectUtils::build_complete_member_detail(name_c, member_ann_builtin_c, ann_custom_Union_Several_Fields_With_Default);
+                        CompleteUnionMember member_c = TypeObjectUtils::build_complete_union_member(common_c, detail_c);
+                        TypeObjectUtils::add_complete_union_member(member_seq_Union_Several_Fields_With_Default, member_c);
+                    }
+                    {
+                        return_code_Union_Several_Fields_With_Default =
+                            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                            "Inner_alias_array_helper", type_ids_Union_Several_Fields_With_Default);
+
+                        if (return_code_Union_Several_Fields_With_Default != eprosima::fastdds::dds::RETCODE_OK)
+                        {
+                            AliasTypeFlag alias_flags_Inner_alias_array_helper = 0;
+                            QualifiedTypeName type_name_Inner_alias_array_helper = "Inner_alias_array_helper";
+                            eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_Inner_alias_array_helper;
+                            eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_Inner_alias_array_helper;
+                            CompleteTypeDetail detail_Inner_alias_array_helper = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_Inner_alias_array_helper, ann_custom_Inner_alias_array_helper, type_name_Inner_alias_array_helper.to_string());
+                            CompleteAliasHeader header_Inner_alias_array_helper = TypeObjectUtils::build_complete_alias_header(detail_Inner_alias_array_helper);
+                            AliasMemberFlag related_flags_Inner_alias_array_helper = 0;
+                            return_code_Union_Several_Fields_With_Default =
+                                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                                "anonymous_array_int16_t_2", type_ids_Union_Several_Fields_With_Default);
+
+                            if (return_code_Union_Several_Fields_With_Default != eprosima::fastdds::dds::RETCODE_OK)
+                            {
+                                return_code_Union_Several_Fields_With_Default =
+                                    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                                    "_int16_t", type_ids_Union_Several_Fields_With_Default);
+
+                                if (return_code_Union_Several_Fields_With_Default != eprosima::fastdds::dds::RETCODE_OK)
+                                {
+                                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                            "Array element TypeIdentifier unknown to TypeObjectRegistry.");
+                                    return;
+                                }
+                                TypeIdentifier* element_identifier_anonymous_array_int16_t_2 {nullptr};
+                                if (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() || TK_NONE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() ||
+                                        (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                                        (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                                        (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                                        (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                                        (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                        (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                                        (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                        (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_ldefn().key_identifier()->_d())))
+                                {
+                                    element_identifier_anonymous_array_int16_t_2 = new TypeIdentifier(type_ids_Union_Several_Fields_With_Default.type_identifier1());
+                                }
+                                else if (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() ||
+                                        (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                                        (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                                        (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                                        (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                                        (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                        (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                                        (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                        (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_ldefn().key_identifier()->_d())))
+                                {
+                                    element_identifier_anonymous_array_int16_t_2 = new TypeIdentifier(type_ids_Union_Several_Fields_With_Default.type_identifier2());
+                                }
+                                else
+                                {
+                                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                        "Array element TypeIdentifier inconsistent.");
+                                    return;
+                                }
+                                EquivalenceKind equiv_kind_anonymous_array_int16_t_2 = EK_COMPLETE;
+                                if (TK_NONE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d())
+                                {
+                                    equiv_kind_anonymous_array_int16_t_2 = EK_BOTH;
+                                }
+                                CollectionElementFlag element_flags_anonymous_array_int16_t_2 = 0;
+                                PlainCollectionHeader header_anonymous_array_int16_t_2 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_array_int16_t_2, element_flags_anonymous_array_int16_t_2);
+                                std::string type_id_kind_anonymous_array_int16_t_2("TI_PLAIN_ARRAY_SMALL");
+                                if (type_id_kind_anonymous_array_int16_t_2 == "TI_PLAIN_ARRAY_SMALL")
+                                {
+                                    SBoundSeq array_bound_seq;
+                                        TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<SBound>(2));
+
+                                    PlainArraySElemDefn array_sdefn = TypeObjectUtils::build_plain_array_s_elem_defn(header_anonymous_array_int16_t_2, array_bound_seq,
+                                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int16_t_2));
+                                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                                            TypeObjectUtils::build_and_register_s_array_type_identifier(array_sdefn, "anonymous_array_int16_t_2"))
+                                    {
+                                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                            "anonymous_array_int16_t_2 already registered in TypeObjectRegistry for a different type.");
+                                    }
+                                }
+                                else
+                                {
+                                    LBoundSeq array_bound_seq;
+                                        TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<LBound>(2));
+
+                                    PlainArrayLElemDefn array_ldefn = TypeObjectUtils::build_plain_array_l_elem_defn(header_anonymous_array_int16_t_2, array_bound_seq,
+                                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int16_t_2));
+                                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                                            TypeObjectUtils::build_and_register_l_array_type_identifier(array_ldefn, "anonymous_array_int16_t_2"))
+                                    {
+                                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                            "anonymous_array_int16_t_2 already registered in TypeObjectRegistry for a different type.");
+                                    }
+                                }
+                                return_code_Union_Several_Fields_With_Default =
+                                    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                                    "anonymous_array_int16_t_2", type_ids_Union_Several_Fields_With_Default);
+                                if (return_code_Union_Several_Fields_With_Default != eprosima::fastdds::dds::RETCODE_OK)
+                                {
+                                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                                "anonymous_array_int16_t_2: Given Array TypeIdentifier unknown to TypeObjectRegistry.");
+                                    return;
+                                }
+                            }
+                            CommonAliasBody common_Inner_alias_array_helper;
+                            if (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() || TK_NONE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() ||
+                                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                    (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                                    (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                    (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_ldefn().key_identifier()->_d())))
+                            {
+                                common_Inner_alias_array_helper = TypeObjectUtils::build_common_alias_body(related_flags_Inner_alias_array_helper, type_ids_Union_Several_Fields_With_Default.type_identifier1());
+                            }
+                            else if (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() ||
+                                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                    (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                                    (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                    (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_ldefn().key_identifier()->_d())))
+                            {
+                                common_Inner_alias_array_helper = TypeObjectUtils::build_common_alias_body(related_flags_Inner_alias_array_helper, type_ids_Union_Several_Fields_With_Default.type_identifier2());
+                            }
+                            else
+                            {
+                                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                        "Inner_alias_array_helper related TypeIdentifier inconsistent.");
+                                return;
+                            }
+                            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_Inner_alias_array_helper;
+                            ann_custom_Inner_alias_array_helper.reset();
+                            CompleteAliasBody body_Inner_alias_array_helper = TypeObjectUtils::build_complete_alias_body(common_Inner_alias_array_helper, member_ann_builtin_Inner_alias_array_helper, ann_custom_Inner_alias_array_helper);
+                            CompleteAliasType alias_type_Inner_alias_array_helper = TypeObjectUtils::build_complete_alias_type(alias_flags_Inner_alias_array_helper, header_Inner_alias_array_helper, body_Inner_alias_array_helper);
+                            if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                                    TypeObjectUtils::build_and_register_alias_type_object(alias_type_Inner_alias_array_helper, type_name_Inner_alias_array_helper.to_string()))
+                            {
+                                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                    "Inner_alias_array_helper already registered in TypeObjectRegistry for a different type.");
+                            }
+                            return_code_Union_Several_Fields_With_Default =
+                                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                                "Inner_alias_array_helper", type_ids_Union_Several_Fields_With_Default);
+                            if (return_code_Union_Several_Fields_With_Default != eprosima::fastdds::dds::RETCODE_OK)
+                            {
+                                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                            "Inner_alias_array_helper: Given Alias TypeIdentifier unknown to TypeObjectRegistry.");
+                                return;
+                            }
+                        }
+                        UnionMemberFlag member_flags_d = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                                false, false);
+                        UnionCaseLabelSeq label_seq_d;
+                        TypeObjectUtils::add_union_case_label(label_seq_d, static_cast<int32_t>(3));
+                        CommonUnionMember common_d;
+                        MemberId member_id_d = 0x00000004;
+                        if (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() || TK_NONE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() ||
+                                (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                                (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_ldefn().key_identifier()->_d())))
+                        {
+                            common_d = TypeObjectUtils::build_common_union_member(member_id_d, member_flags_d, type_ids_Union_Several_Fields_With_Default.type_identifier1(),
+                                    label_seq_d);
+                        }
+                        else if (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() ||
+                                (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                                (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_ldefn().key_identifier()->_d())))
+                        {
+                            common_d = TypeObjectUtils::build_common_union_member(member_id_d, member_flags_d, type_ids_Union_Several_Fields_With_Default.type_identifier2(),
+                                    label_seq_d);
+                        }
+                        else
+                        {
+                            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                    "Union d member TypeIdentifier inconsistent.");
+                            return;
+                        }
+                        MemberName name_d = "d";
+                        eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_d;
+                        ann_custom_Union_Several_Fields_With_Default.reset();
+                        CompleteMemberDetail detail_d = TypeObjectUtils::build_complete_member_detail(name_d, member_ann_builtin_d, ann_custom_Union_Several_Fields_With_Default);
+                        CompleteUnionMember member_d = TypeObjectUtils::build_complete_union_member(common_d, detail_d);
+                        TypeObjectUtils::add_complete_union_member(member_seq_Union_Several_Fields_With_Default, member_d);
+                    }
+                    {
+                        return_code_Union_Several_Fields_With_Default =
+                            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                            "Inner_alias_sequence_helper", type_ids_Union_Several_Fields_With_Default);
+
+                        if (return_code_Union_Several_Fields_With_Default != eprosima::fastdds::dds::RETCODE_OK)
+                        {
+                            AliasTypeFlag alias_flags_Inner_alias_sequence_helper = 0;
+                            QualifiedTypeName type_name_Inner_alias_sequence_helper = "Inner_alias_sequence_helper";
+                            eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_Inner_alias_sequence_helper;
+                            eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_Inner_alias_sequence_helper;
+                            CompleteTypeDetail detail_Inner_alias_sequence_helper = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_Inner_alias_sequence_helper, ann_custom_Inner_alias_sequence_helper, type_name_Inner_alias_sequence_helper.to_string());
+                            CompleteAliasHeader header_Inner_alias_sequence_helper = TypeObjectUtils::build_complete_alias_header(detail_Inner_alias_sequence_helper);
+                            AliasMemberFlag related_flags_Inner_alias_sequence_helper = 0;
+                            return_code_Union_Several_Fields_With_Default =
+                                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                                "anonymous_sequence_int16_t_unbounded", type_ids_Union_Several_Fields_With_Default);
+
+                            if (return_code_Union_Several_Fields_With_Default != eprosima::fastdds::dds::RETCODE_OK)
+                            {
+                                return_code_Union_Several_Fields_With_Default =
+                                    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                                    "_int16_t", type_ids_Union_Several_Fields_With_Default);
+
+                                if (return_code_Union_Several_Fields_With_Default != eprosima::fastdds::dds::RETCODE_OK)
+                                {
+                                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                            "Sequence element TypeIdentifier unknown to TypeObjectRegistry.");
+                                    return;
+                                }
+                                TypeIdentifier* element_identifier_anonymous_sequence_int16_t_unbounded {nullptr};
+                                if (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() || TK_NONE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() ||
+                                        (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                                        (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                                        (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                                        (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                                        (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                        (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                                        (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                        (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_ldefn().key_identifier()->_d())))
+                                {
+                                    element_identifier_anonymous_sequence_int16_t_unbounded = new TypeIdentifier(type_ids_Union_Several_Fields_With_Default.type_identifier1());
+                                }
+                                else if (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() ||
+                                        (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                                        (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                                        (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                                        (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                                        (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                        (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                                        (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                        (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                        EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_ldefn().key_identifier()->_d())))
+                                {
+                                    element_identifier_anonymous_sequence_int16_t_unbounded = new TypeIdentifier(type_ids_Union_Several_Fields_With_Default.type_identifier2());
+                                }
+                                else
+                                {
+                                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                        "Sequence element TypeIdentifier inconsistent.");
+                                    return;
+                                }
+                                EquivalenceKind equiv_kind_anonymous_sequence_int16_t_unbounded = EK_COMPLETE;
+                                if (TK_NONE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d())
+                                {
+                                    equiv_kind_anonymous_sequence_int16_t_unbounded = EK_BOTH;
+                                }
+                                CollectionElementFlag element_flags_anonymous_sequence_int16_t_unbounded = 0;
+                                PlainCollectionHeader header_anonymous_sequence_int16_t_unbounded = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_sequence_int16_t_unbounded, element_flags_anonymous_sequence_int16_t_unbounded);
+                                std::string type_id_kind_anonymous_sequence_int16_t_unbounded("TI_PLAIN_SEQUENCE_SMALL");
+                                if (type_id_kind_anonymous_sequence_int16_t_unbounded == "TI_PLAIN_SEQUENCE_SMALL")
+                                {
+                                    SBound bound = 0;
+                                    PlainSequenceSElemDefn seq_sdefn = TypeObjectUtils::build_plain_sequence_s_elem_defn(header_anonymous_sequence_int16_t_unbounded, bound,
+                                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_sequence_int16_t_unbounded));
+                                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                                            TypeObjectUtils::build_and_register_s_sequence_type_identifier(seq_sdefn, "anonymous_sequence_int16_t_unbounded"))
+                                    {
+                                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                            "anonymous_sequence_int16_t_unbounded already registered in TypeObjectRegistry for a different type.");
+                                    }
+                                }
+                                else
+                                {
+                                    LBound bound = 0;
+                                    PlainSequenceLElemDefn seq_ldefn = TypeObjectUtils::build_plain_sequence_l_elem_defn(header_anonymous_sequence_int16_t_unbounded, bound,
+                                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_sequence_int16_t_unbounded));
+                                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                                            TypeObjectUtils::build_and_register_l_sequence_type_identifier(seq_ldefn, "anonymous_sequence_int16_t_unbounded"))
+                                    {
+                                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                            "anonymous_sequence_int16_t_unbounded already registered in TypeObjectRegistry for a different type.");
+                                    }
+                                }
+                                return_code_Union_Several_Fields_With_Default =
+                                    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                                    "anonymous_sequence_int16_t_unbounded", type_ids_Union_Several_Fields_With_Default);
+                                if (return_code_Union_Several_Fields_With_Default != eprosima::fastdds::dds::RETCODE_OK)
+                                {
+                                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                                "anonymous_sequence_int16_t_unbounded: Given Sequence TypeIdentifier unknown to TypeObjectRegistry.");
+                                    return;
+                                }
+                            }
+                            CommonAliasBody common_Inner_alias_sequence_helper;
+                            if (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() || TK_NONE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() ||
+                                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                    (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                                    (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                    (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_ldefn().key_identifier()->_d())))
+                            {
+                                common_Inner_alias_sequence_helper = TypeObjectUtils::build_common_alias_body(related_flags_Inner_alias_sequence_helper, type_ids_Union_Several_Fields_With_Default.type_identifier1());
+                            }
+                            else if (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() ||
+                                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                    (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                                    (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                    (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_ldefn().key_identifier()->_d())))
+                            {
+                                common_Inner_alias_sequence_helper = TypeObjectUtils::build_common_alias_body(related_flags_Inner_alias_sequence_helper, type_ids_Union_Several_Fields_With_Default.type_identifier2());
+                            }
+                            else
+                            {
+                                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                        "Inner_alias_sequence_helper related TypeIdentifier inconsistent.");
+                                return;
+                            }
+                            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_Inner_alias_sequence_helper;
+                            ann_custom_Inner_alias_sequence_helper.reset();
+                            CompleteAliasBody body_Inner_alias_sequence_helper = TypeObjectUtils::build_complete_alias_body(common_Inner_alias_sequence_helper, member_ann_builtin_Inner_alias_sequence_helper, ann_custom_Inner_alias_sequence_helper);
+                            CompleteAliasType alias_type_Inner_alias_sequence_helper = TypeObjectUtils::build_complete_alias_type(alias_flags_Inner_alias_sequence_helper, header_Inner_alias_sequence_helper, body_Inner_alias_sequence_helper);
+                            if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                                    TypeObjectUtils::build_and_register_alias_type_object(alias_type_Inner_alias_sequence_helper, type_name_Inner_alias_sequence_helper.to_string()))
+                            {
+                                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                    "Inner_alias_sequence_helper already registered in TypeObjectRegistry for a different type.");
+                            }
+                            return_code_Union_Several_Fields_With_Default =
+                                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                                "Inner_alias_sequence_helper", type_ids_Union_Several_Fields_With_Default);
+                            if (return_code_Union_Several_Fields_With_Default != eprosima::fastdds::dds::RETCODE_OK)
+                            {
+                                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                            "Inner_alias_sequence_helper: Given Alias TypeIdentifier unknown to TypeObjectRegistry.");
+                                return;
+                            }
+                        }
+                        UnionMemberFlag member_flags_e = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                                false, false);
+                        UnionCaseLabelSeq label_seq_e;
+                        TypeObjectUtils::add_union_case_label(label_seq_e, static_cast<int32_t>(4));
+                        CommonUnionMember common_e;
+                        MemberId member_id_e = 0x00000005;
+                        if (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() || TK_NONE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() ||
+                                (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                                (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_ldefn().key_identifier()->_d())))
+                        {
+                            common_e = TypeObjectUtils::build_common_union_member(member_id_e, member_flags_e, type_ids_Union_Several_Fields_With_Default.type_identifier1(),
+                                    label_seq_e);
+                        }
+                        else if (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() ||
+                                (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                                (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_ldefn().key_identifier()->_d())))
+                        {
+                            common_e = TypeObjectUtils::build_common_union_member(member_id_e, member_flags_e, type_ids_Union_Several_Fields_With_Default.type_identifier2(),
+                                    label_seq_e);
+                        }
+                        else
+                        {
+                            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                    "Union e member TypeIdentifier inconsistent.");
+                            return;
+                        }
+                        MemberName name_e = "e";
+                        eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_e;
+                        ann_custom_Union_Several_Fields_With_Default.reset();
+                        CompleteMemberDetail detail_e = TypeObjectUtils::build_complete_member_detail(name_e, member_ann_builtin_e, ann_custom_Union_Several_Fields_With_Default);
+                        CompleteUnionMember member_e = TypeObjectUtils::build_complete_union_member(common_e, detail_e);
+                        TypeObjectUtils::add_complete_union_member(member_seq_Union_Several_Fields_With_Default, member_e);
+                    }
+                    {
+                        return_code_Union_Several_Fields_With_Default =
+                            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                            "anonymous_sequence_int16_t_30", type_ids_Union_Several_Fields_With_Default);
+
+                        if (return_code_Union_Several_Fields_With_Default != eprosima::fastdds::dds::RETCODE_OK)
+                        {
+                            return_code_Union_Several_Fields_With_Default =
+                                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                                "_int16_t", type_ids_Union_Several_Fields_With_Default);
+
+                            if (return_code_Union_Several_Fields_With_Default != eprosima::fastdds::dds::RETCODE_OK)
+                            {
+                                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                        "Sequence element TypeIdentifier unknown to TypeObjectRegistry.");
+                                return;
+                            }
+                            TypeIdentifier* element_identifier_anonymous_sequence_int16_t_30 {nullptr};
+                            if (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() || TK_NONE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() ||
+                                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                    (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                                    (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                    (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_ldefn().key_identifier()->_d())))
+                            {
+                                element_identifier_anonymous_sequence_int16_t_30 = new TypeIdentifier(type_ids_Union_Several_Fields_With_Default.type_identifier1());
+                            }
+                            else if (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() ||
+                                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                    (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                                    (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                    (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_ldefn().key_identifier()->_d())))
+                            {
+                                element_identifier_anonymous_sequence_int16_t_30 = new TypeIdentifier(type_ids_Union_Several_Fields_With_Default.type_identifier2());
+                            }
+                            else
+                            {
+                                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                    "Sequence element TypeIdentifier inconsistent.");
+                                return;
+                            }
+                            EquivalenceKind equiv_kind_anonymous_sequence_int16_t_30 = EK_COMPLETE;
+                            if (TK_NONE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d())
+                            {
+                                equiv_kind_anonymous_sequence_int16_t_30 = EK_BOTH;
+                            }
+                            CollectionElementFlag element_flags_anonymous_sequence_int16_t_30 = 0;
+                            PlainCollectionHeader header_anonymous_sequence_int16_t_30 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_sequence_int16_t_30, element_flags_anonymous_sequence_int16_t_30);
+                            std::string type_id_kind_anonymous_sequence_int16_t_30("TI_PLAIN_SEQUENCE_SMALL");
+                            if (type_id_kind_anonymous_sequence_int16_t_30 == "TI_PLAIN_SEQUENCE_SMALL")
+                            {
+                                SBound bound = static_cast<SBound>(30);
+                                PlainSequenceSElemDefn seq_sdefn = TypeObjectUtils::build_plain_sequence_s_elem_defn(header_anonymous_sequence_int16_t_30, bound,
+                                            eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_sequence_int16_t_30));
+                                if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                                        TypeObjectUtils::build_and_register_s_sequence_type_identifier(seq_sdefn, "anonymous_sequence_int16_t_30"))
+                                {
+                                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                        "anonymous_sequence_int16_t_30 already registered in TypeObjectRegistry for a different type.");
+                                }
+                            }
+                            else
+                            {
+                                LBound bound = 30;
+                                PlainSequenceLElemDefn seq_ldefn = TypeObjectUtils::build_plain_sequence_l_elem_defn(header_anonymous_sequence_int16_t_30, bound,
+                                            eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_sequence_int16_t_30));
+                                if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                                        TypeObjectUtils::build_and_register_l_sequence_type_identifier(seq_ldefn, "anonymous_sequence_int16_t_30"))
+                                {
+                                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                        "anonymous_sequence_int16_t_30 already registered in TypeObjectRegistry for a different type.");
+                                }
+                            }
+                            return_code_Union_Several_Fields_With_Default =
+                                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                                "anonymous_sequence_int16_t_30", type_ids_Union_Several_Fields_With_Default);
+                            if (return_code_Union_Several_Fields_With_Default != eprosima::fastdds::dds::RETCODE_OK)
+                            {
+                                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                            "anonymous_sequence_int16_t_30: Given Sequence TypeIdentifier unknown to TypeObjectRegistry.");
+                                return;
+                            }
+                        }
+                        UnionMemberFlag member_flags_f = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                                true, false);
+                        UnionCaseLabelSeq label_seq_f;
+                        CommonUnionMember common_f;
+                        MemberId member_id_f = 0x00000006;
+                        if (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() || TK_NONE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() ||
+                                (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                                (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier1()._d() &&
+                                (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier1().map_ldefn().key_identifier()->_d())))
+                        {
+                            common_f = TypeObjectUtils::build_common_union_member(member_id_f, member_flags_f, type_ids_Union_Several_Fields_With_Default.type_identifier1(),
+                                    label_seq_f);
+                        }
+                        else if (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() ||
+                                (TI_PLAIN_SEQUENCE_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_SEQUENCE_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_MAP_SMALL == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                                (TI_PLAIN_MAP_LARGE == type_ids_Union_Several_Fields_With_Default.type_identifier2()._d() &&
+                                (EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_Union_Several_Fields_With_Default.type_identifier2().map_ldefn().key_identifier()->_d())))
+                        {
+                            common_f = TypeObjectUtils::build_common_union_member(member_id_f, member_flags_f, type_ids_Union_Several_Fields_With_Default.type_identifier2(),
+                                    label_seq_f);
+                        }
+                        else
+                        {
+                            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                    "Union f member TypeIdentifier inconsistent.");
+                            return;
+                        }
+                        MemberName name_f = "f";
+                        eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_f;
+                        ann_custom_Union_Several_Fields_With_Default.reset();
+                        CompleteMemberDetail detail_f = TypeObjectUtils::build_complete_member_detail(name_f, member_ann_builtin_f, ann_custom_Union_Several_Fields_With_Default);
+                        CompleteUnionMember member_f = TypeObjectUtils::build_complete_union_member(common_f, detail_f);
+                        TypeObjectUtils::add_complete_union_member(member_seq_Union_Several_Fields_With_Default, member_f);
+                    }
+                    CompleteUnionType union_type_Union_Several_Fields_With_Default = TypeObjectUtils::build_complete_union_type(union_flags_Union_Several_Fields_With_Default, header_Union_Several_Fields_With_Default, discriminator_Union_Several_Fields_With_Default,
+                            member_seq_Union_Several_Fields_With_Default);
+                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                            TypeObjectUtils::build_and_register_union_type_object(union_type_Union_Several_Fields_With_Default, type_name_Union_Several_Fields_With_Default.to_string()))
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                "Union_Several_Fields_With_Default already registered in TypeObjectRegistry for a different type.");
+                    }
+                    return_code_Union_Several_Fields_With_Default =
+                        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                        "Union_Several_Fields_With_Default", type_ids_Union_Several_Fields_With_Default);
+                    if (return_code_Union_Several_Fields_With_Default != eprosima::fastdds::dds::RETCODE_OK)
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                    "Union_Several_Fields_With_Default: Given Union TypeIdentifier unknown to TypeObjectRegistry.");
+                        return;
+                    }
+                }
+            }
+            StructMemberFlag member_flags_var_union_several_fields_with_default = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                    false, false, false, false);
+            CommonStructMember common_var_union_several_fields_with_default;
+            MemberId member_id_var_union_several_fields_with_default = 0x00000000;
+            if (EK_COMPLETE == type_ids_UnionSeveralFieldsWithDefault.type_identifier1()._d() || TK_NONE == type_ids_UnionSeveralFieldsWithDefault.type_identifier2()._d() ||
+                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_UnionSeveralFieldsWithDefault.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_UnionSeveralFieldsWithDefault.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_UnionSeveralFieldsWithDefault.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_UnionSeveralFieldsWithDefault.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_SMALL == type_ids_UnionSeveralFieldsWithDefault.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_UnionSeveralFieldsWithDefault.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_LARGE == type_ids_UnionSeveralFieldsWithDefault.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_UnionSeveralFieldsWithDefault.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_MAP_SMALL == type_ids_UnionSeveralFieldsWithDefault.type_identifier1()._d() &&
+                    (EK_COMPLETE == type_ids_UnionSeveralFieldsWithDefault.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_UnionSeveralFieldsWithDefault.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                    (TI_PLAIN_MAP_LARGE == type_ids_UnionSeveralFieldsWithDefault.type_identifier1()._d() &&
+                    (EK_COMPLETE == type_ids_UnionSeveralFieldsWithDefault.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_UnionSeveralFieldsWithDefault.type_identifier1().map_ldefn().key_identifier()->_d())))
+            {
+                common_var_union_several_fields_with_default = TypeObjectUtils::build_common_struct_member(member_id_var_union_several_fields_with_default, member_flags_var_union_several_fields_with_default, type_ids_UnionSeveralFieldsWithDefault.type_identifier1());
+            }
+            else if (EK_COMPLETE == type_ids_UnionSeveralFieldsWithDefault.type_identifier2()._d() ||
+                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_UnionSeveralFieldsWithDefault.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_UnionSeveralFieldsWithDefault.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_UnionSeveralFieldsWithDefault.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_UnionSeveralFieldsWithDefault.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_SMALL == type_ids_UnionSeveralFieldsWithDefault.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_UnionSeveralFieldsWithDefault.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_LARGE == type_ids_UnionSeveralFieldsWithDefault.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_UnionSeveralFieldsWithDefault.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_MAP_SMALL == type_ids_UnionSeveralFieldsWithDefault.type_identifier2()._d() &&
+                    (EK_COMPLETE == type_ids_UnionSeveralFieldsWithDefault.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_UnionSeveralFieldsWithDefault.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                    (TI_PLAIN_MAP_LARGE == type_ids_UnionSeveralFieldsWithDefault.type_identifier2()._d() &&
+                    (EK_COMPLETE == type_ids_UnionSeveralFieldsWithDefault.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_UnionSeveralFieldsWithDefault.type_identifier2().map_ldefn().key_identifier()->_d())))
+            {
+                common_var_union_several_fields_with_default = TypeObjectUtils::build_common_struct_member(member_id_var_union_several_fields_with_default, member_flags_var_union_several_fields_with_default, type_ids_UnionSeveralFieldsWithDefault.type_identifier2());
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "Structure var_union_several_fields_with_default member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_var_union_several_fields_with_default = "var_union_several_fields_with_default";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_var_union_several_fields_with_default;
+            ann_custom_UnionSeveralFieldsWithDefault.reset();
+            CompleteMemberDetail detail_var_union_several_fields_with_default = TypeObjectUtils::build_complete_member_detail(name_var_union_several_fields_with_default, member_ann_builtin_var_union_several_fields_with_default, ann_custom_UnionSeveralFieldsWithDefault);
+            CompleteStructMember member_var_union_several_fields_with_default = TypeObjectUtils::build_complete_struct_member(common_var_union_several_fields_with_default, detail_var_union_several_fields_with_default);
+            TypeObjectUtils::add_complete_struct_member(member_seq_UnionSeveralFieldsWithDefault, member_var_union_several_fields_with_default);
+        }
+        CompleteStructType struct_type_UnionSeveralFieldsWithDefault = TypeObjectUtils::build_complete_struct_type(struct_flags_UnionSeveralFieldsWithDefault, header_UnionSeveralFieldsWithDefault, member_seq_UnionSeveralFieldsWithDefault);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_UnionSeveralFieldsWithDefault, type_name_UnionSeveralFieldsWithDefault.to_string()))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "UnionSeveralFieldsWithDefault already registered in TypeObjectRegistry for a different type.");
+        }
+        return_code_UnionSeveralFieldsWithDefault =
+            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+            "UnionSeveralFieldsWithDefault", type_ids_UnionSeveralFieldsWithDefault);
+        if (return_code_UnionSeveralFieldsWithDefault != eprosima::fastdds::dds::RETCODE_OK)
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "UnionSeveralFieldsWithDefault: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
             return;
         }
     }

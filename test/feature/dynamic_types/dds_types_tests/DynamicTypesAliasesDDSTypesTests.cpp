@@ -621,7 +621,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasString8)
     TypeDescriptor::_ref_type alias_descriptor {traits<TypeDescriptor>::make_shared()};
     alias_descriptor->kind(TK_ALIAS);
     alias_descriptor->name(alias_string_name);
-    alias_descriptor->base_type(DynamicTypeBuilderFactory::get_instance()->create_string_type(LENGTH_UNLIMITED)->build());
+    alias_descriptor->base_type(DynamicTypeBuilderFactory::get_instance()->create_string_type(static_cast<uint32_t>(
+                LENGTH_UNLIMITED))->build());
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_type(alias_descriptor)->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -662,7 +663,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasString16)
     alias_descriptor->kind(TK_ALIAS);
     alias_descriptor->name(alias_wstring_name);
     alias_descriptor->base_type(DynamicTypeBuilderFactory::get_instance()->create_wstring_type(
-                LENGTH_UNLIMITED)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_type(alias_descriptor)->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -921,7 +922,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasSequence)
     alias_descriptor->name(alias_sequence_name);
     alias_descriptor->base_type(DynamicTypeBuilderFactory::get_instance()->create_sequence_type(
                 DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT16),
-                LENGTH_UNLIMITED)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_type(alias_descriptor)->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -963,7 +964,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasMap)
     alias_descriptor->name(alias_map_name);
     alias_descriptor->base_type(DynamicTypeBuilderFactory::get_instance()->create_map_type(DynamicTypeBuilderFactory::
                     get_instance()->get_primitive_type(TK_INT16),
-            DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT16), LENGTH_UNLIMITED)->build());
+            DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT16),
+            static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_type(alias_descriptor)->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 

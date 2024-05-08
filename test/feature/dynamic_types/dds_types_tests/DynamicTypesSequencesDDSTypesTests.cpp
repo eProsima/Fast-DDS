@@ -100,7 +100,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceShort)
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_short_seq);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_sequence_type(DynamicTypeBuilderFactory::
-                    get_instance()->get_primitive_type(TK_INT16), LENGTH_UNLIMITED)->build());
+                    get_instance()->get_primitive_type(TK_INT16),
+            static_cast<uint32_t>(static_cast<uint32_t>(LENGTH_UNLIMITED)))->build());
     struct_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {struct_builder->build()};
@@ -134,7 +135,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceUShort)
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ushort_seq);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_sequence_type(DynamicTypeBuilderFactory::
-                    get_instance()->get_primitive_type(TK_UINT16), LENGTH_UNLIMITED)->build());
+                    get_instance()->get_primitive_type(TK_UINT16),
+            static_cast<uint32_t>(static_cast<uint32_t>(LENGTH_UNLIMITED)))->build());
     struct_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {struct_builder->build()};
@@ -168,7 +170,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceLong)
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_long_seq);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_sequence_type(DynamicTypeBuilderFactory::
-                    get_instance()->get_primitive_type(TK_INT32), LENGTH_UNLIMITED)->build());
+                    get_instance()->get_primitive_type(TK_INT32),
+            static_cast<uint32_t>(static_cast<uint32_t>(LENGTH_UNLIMITED)))->build());
     struct_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {struct_builder->build()};
@@ -202,7 +205,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceULong)
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulong_seq);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_sequence_type(DynamicTypeBuilderFactory::
-                    get_instance()->get_primitive_type(TK_UINT32), LENGTH_UNLIMITED)->build());
+                    get_instance()->get_primitive_type(TK_UINT32),
+            static_cast<uint32_t>(static_cast<uint32_t>(LENGTH_UNLIMITED)))->build());
     struct_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {struct_builder->build()};
@@ -236,7 +240,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceLongLong)
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_longlong_seq);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_sequence_type(DynamicTypeBuilderFactory::
-                    get_instance()->get_primitive_type(TK_INT64), LENGTH_UNLIMITED)->build());
+                    get_instance()->get_primitive_type(TK_INT64),
+            static_cast<uint32_t>(static_cast<uint32_t>(LENGTH_UNLIMITED)))->build());
     struct_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {struct_builder->build()};
@@ -270,7 +275,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceULongLong)
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulonglong_seq);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_sequence_type(DynamicTypeBuilderFactory::
-                    get_instance()->get_primitive_type(TK_UINT64), LENGTH_UNLIMITED)->build());
+                    get_instance()->get_primitive_type(TK_UINT64),
+            static_cast<uint32_t>(static_cast<uint32_t>(LENGTH_UNLIMITED)))->build());
     struct_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {struct_builder->build()};
@@ -304,14 +310,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceFloat)
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_float_seq);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_sequence_type(DynamicTypeBuilderFactory::
-                    get_instance()->get_primitive_type(TK_FLOAT32), LENGTH_UNLIMITED)->build());
+                    get_instance()->get_primitive_type(TK_FLOAT32),
+            static_cast<uint32_t>(static_cast<uint32_t>(LENGTH_UNLIMITED)))->build());
     struct_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {struct_builder->build()};
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    Float32Seq value = {0.5, 1.1, 13.12, 5.67884};
+    Float32Seq value {0.5f, 1.1f, 13.12f, 5.67884f};
     Float32Seq test_value;
     EXPECT_EQ(data->set_float32_values(data->get_member_id_by_name(var_float_seq), value), RETCODE_OK);
     EXPECT_EQ(data->get_float32_values(test_value, data->get_member_id_by_name(var_float_seq)), RETCODE_OK);
@@ -338,7 +345,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceDouble)
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_double_seq);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_sequence_type(DynamicTypeBuilderFactory::
-                    get_instance()->get_primitive_type(TK_FLOAT64), LENGTH_UNLIMITED)->build());
+                    get_instance()->get_primitive_type(TK_FLOAT64),
+            static_cast<uint32_t>(static_cast<uint32_t>(LENGTH_UNLIMITED)))->build());
     struct_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {struct_builder->build()};
@@ -372,7 +380,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceLongDouble)
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_longdouble_seq);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_sequence_type(DynamicTypeBuilderFactory::
-                    get_instance()->get_primitive_type(TK_FLOAT128), LENGTH_UNLIMITED)->build());
+                    get_instance()->get_primitive_type(TK_FLOAT128),
+            static_cast<uint32_t>(static_cast<uint32_t>(LENGTH_UNLIMITED)))->build());
     struct_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {struct_builder->build()};
@@ -406,7 +415,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceBoolean)
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_bool_seq);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_sequence_type(DynamicTypeBuilderFactory::
-                    get_instance()->get_primitive_type(TK_BOOLEAN), LENGTH_UNLIMITED)->build());
+                    get_instance()->get_primitive_type(TK_BOOLEAN),
+            static_cast<uint32_t>(static_cast<uint32_t>(LENGTH_UNLIMITED)))->build());
     struct_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {struct_builder->build()};
@@ -440,7 +450,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceOctet)
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_byte_seq);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_sequence_type(DynamicTypeBuilderFactory::
-                    get_instance()->get_primitive_type(TK_BYTE), LENGTH_UNLIMITED)->build());
+                    get_instance()->get_primitive_type(TK_BYTE),
+            static_cast<uint32_t>(static_cast<uint32_t>(LENGTH_UNLIMITED)))->build());
     struct_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {struct_builder->build()};
@@ -474,7 +485,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceChar)
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_char_seq);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_sequence_type(DynamicTypeBuilderFactory::
-                    get_instance()->get_primitive_type(TK_CHAR8), LENGTH_UNLIMITED)->build());
+                    get_instance()->get_primitive_type(TK_CHAR8),
+            static_cast<uint32_t>(static_cast<uint32_t>(LENGTH_UNLIMITED)))->build());
     struct_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {struct_builder->build()};
@@ -508,7 +520,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceWChar)
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_wchar_seq);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_sequence_type(DynamicTypeBuilderFactory::
-                    get_instance()->get_primitive_type(TK_CHAR16), LENGTH_UNLIMITED)->build());
+                    get_instance()->get_primitive_type(TK_CHAR16),
+            static_cast<uint32_t>(static_cast<uint32_t>(LENGTH_UNLIMITED)))->build());
     struct_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {struct_builder->build()};
@@ -542,7 +555,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceString)
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_string_seq);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_sequence_type(DynamicTypeBuilderFactory::
-                    get_instance()->create_string_type(LENGTH_UNLIMITED)->build(), LENGTH_UNLIMITED)->build());
+                    get_instance()->create_string_type(static_cast<uint32_t>(static_cast<uint32_t>(LENGTH_UNLIMITED)))->
+                    build(),
+            static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     struct_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {struct_builder->build()};
@@ -576,7 +591,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceWString)
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_wstring_seq);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_sequence_type(DynamicTypeBuilderFactory::
-                    get_instance()->create_wstring_type(LENGTH_UNLIMITED)->build(), LENGTH_UNLIMITED)->build());
+                    get_instance()->create_wstring_type(static_cast<uint32_t>(static_cast<uint32_t>(LENGTH_UNLIMITED)))
+                    ->build(),
+            static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     struct_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {struct_builder->build()};
@@ -610,7 +627,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceStringBounded)
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_bounded_string_seq);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_sequence_type(
-                create_inner_alias_bounded_string_helper(), LENGTH_UNLIMITED)->build());
+                create_inner_alias_bounded_string_helper(),
+                static_cast<uint32_t>(static_cast<uint32_t>(LENGTH_UNLIMITED)))->build());
     struct_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {struct_builder->build()};
@@ -648,7 +666,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceWStringBounded)
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_bounded_wstring_seq);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_sequence_type(
-                create_inner_alias_bounded_wstring_helper(), LENGTH_UNLIMITED)->build());
+                create_inner_alias_bounded_wstring_helper(),
+                static_cast<uint32_t>(static_cast<uint32_t>(LENGTH_UNLIMITED)))->build());
     struct_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {struct_builder->build()};
@@ -686,7 +705,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceEnum)
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_enum_seq);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_sequence_type(create_inner_enum_helper(),
-            LENGTH_UNLIMITED)->build());
+            static_cast<uint32_t>(static_cast<uint32_t>(LENGTH_UNLIMITED)))->build());
     struct_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {struct_builder->build()};
@@ -727,7 +746,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceBitMask)
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_bitmask_seq);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_sequence_type(create_inner_bitmask_helper(),
-            LENGTH_UNLIMITED)->build());
+            static_cast<uint32_t>(static_cast<uint32_t>(LENGTH_UNLIMITED)))->build());
     struct_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {struct_builder->build()};
@@ -764,7 +783,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceAlias)
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_alias_seq);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_sequence_type(create_inner_alias_helper(),
-            LENGTH_UNLIMITED)->build());
+            static_cast<uint32_t>(static_cast<uint32_t>(LENGTH_UNLIMITED)))->build());
     struct_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {struct_builder->build()};
@@ -798,7 +817,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceShortArray)
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_array_seq);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_sequence_type(
-                create_inner_alias_array_helper(), LENGTH_UNLIMITED)->build());
+                create_inner_alias_array_helper(),
+                static_cast<uint32_t>(static_cast<uint32_t>(LENGTH_UNLIMITED)))->build());
     struct_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {struct_builder->build()};
@@ -849,7 +869,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceSequence)
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_seq_seq);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_sequence_type(
-                create_inner_alias_sequence_helper(), LENGTH_UNLIMITED)->build());
+                create_inner_alias_sequence_helper(),
+                static_cast<uint32_t>(static_cast<uint32_t>(LENGTH_UNLIMITED)))->build());
     struct_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {struct_builder->build()};
@@ -894,7 +915,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceMap)
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_map_seq);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_sequence_type(
-                create_inner_alias_map_helper(), LENGTH_UNLIMITED)->build());
+                create_inner_alias_map_helper(),
+                static_cast<uint32_t>(static_cast<uint32_t>(LENGTH_UNLIMITED)))->build());
     struct_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {struct_builder->build()};
@@ -968,7 +990,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceUnion)
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_union_seq);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_sequence_type(create_inner_union_helper(),
-            LENGTH_UNLIMITED)->build());
+            static_cast<uint32_t>(static_cast<uint32_t>(LENGTH_UNLIMITED)))->build());
     struct_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {struct_builder->build()};
@@ -977,7 +999,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceUnion)
 
     int32_t long_value = 121;
     int32_t test_long_value = 0;
-    float float_value = 10.01;
+    float float_value = 10.01f;
     float test_float_value = 0;
     int16_t short_value = -2;
     int16_t test_short_value = 0;
@@ -1036,7 +1058,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceStructure)
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_struct_seq);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_sequence_type(create_inner_struct_helper(),
-            LENGTH_UNLIMITED)->build());
+            static_cast<uint32_t>(static_cast<uint32_t>(LENGTH_UNLIMITED)))->build());
     struct_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {struct_builder->build()};
@@ -1046,8 +1068,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceStructure)
     int32_t first_long_value = 121;
     int32_t second_long_value = 10001;
     int32_t test_long_value = 10001;
-    float first_float_value = 10.01;
-    float second_float_value = 3.14;
+    float first_float_value = 10.01f;
+    float second_float_value = 3.14f;
     float test_float_value = 0;
     DynamicData::_ref_type seq_data = data->loan_value(data->get_member_id_by_name(var_struct_seq));
     ASSERT_TRUE(seq_data);
@@ -1107,7 +1129,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceBitset)
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_bitset_seq);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_sequence_type(create_inner_bitset_helper(),
-            LENGTH_UNLIMITED)->build());
+            static_cast<uint32_t>(static_cast<uint32_t>(LENGTH_UNLIMITED)))->build());
     struct_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {struct_builder->build()};
@@ -1213,7 +1235,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BoundedSmallSequences)
     member_descriptor = traits<MemberDescriptor>::make_shared();
     member_descriptor->name(var_small_bounded_string_seq);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_sequence_type(DynamicTypeBuilderFactory::
-                    get_instance()->create_string_type(LENGTH_UNLIMITED)->build(), 5)->build());
+                    get_instance()->create_string_type(static_cast<uint32_t>(static_cast<uint32_t>(LENGTH_UNLIMITED)))->
+                    build(), 5)->build());
     struct_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {struct_builder->build()};
@@ -1262,7 +1285,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BoundedBigSequences)
     member_descriptor = traits<MemberDescriptor>::make_shared();
     member_descriptor->name(var_large_bounded_string_seq);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_sequence_type(DynamicTypeBuilderFactory::
-                    get_instance()->create_string_type(LENGTH_UNLIMITED)->build(), 256)->build());
+                    get_instance()->create_string_type(static_cast<uint32_t>(static_cast<uint32_t>(LENGTH_UNLIMITED)))->
+                    build(),
+            256)->build());
     struct_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {struct_builder->build()};

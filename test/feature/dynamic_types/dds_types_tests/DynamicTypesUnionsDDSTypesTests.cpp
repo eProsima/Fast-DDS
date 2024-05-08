@@ -509,8 +509,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionFloat)
     DynamicData::_ref_type union_data = data->loan_value(data->get_member_id_by_name(var_union_float_name));
     ASSERT_TRUE(union_data);
 
-    float value = 16.235;
-    float test_value = 23.0;
+    float value = 16.235f;
+    float test_value = 23.0f;
     EXPECT_EQ(union_data->set_float32_value(union_data->get_member_id_by_name(var_union_member_g), value), RETCODE_OK);
     EXPECT_EQ(union_data->get_float32_value(test_value, union_data->get_member_id_by_name(
                 var_union_member_g)), RETCODE_OK);
@@ -844,7 +844,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionString)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_union_member_n);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_string_type(LENGTH_UNLIMITED)->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_string_type(static_cast<uint32_t>(
+                LENGTH_UNLIMITED))->build());
     member_descriptor->label({13});
     union_builder->add_member(member_descriptor);
 
@@ -894,7 +895,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionWString)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_union_member_o);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_wstring_type(LENGTH_UNLIMITED)->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_wstring_type(static_cast<uint32_t>(
+                LENGTH_UNLIMITED))->build());
     member_descriptor->label({14});
     union_builder->add_member(member_descriptor);
 
@@ -1251,7 +1253,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionSequence)
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_union_member_t);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_sequence_type(DynamicTypeBuilderFactory::
-                    get_instance()->get_primitive_type(TK_INT16), LENGTH_UNLIMITED)->build());
+                    get_instance()->get_primitive_type(TK_INT16), static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     member_descriptor->label({19});
     union_builder->add_member(member_descriptor);
 
@@ -1304,7 +1306,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionMap)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(DynamicTypeBuilderFactory::
                     get_instance()->get_primitive_type(TK_INT32),
             DynamicTypeBuilderFactory::get_instance()->get_primitive_type(
-                TK_INT32), LENGTH_UNLIMITED)->build());
+                TK_INT32), static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     member_descriptor->label({20});
     union_builder->add_member(member_descriptor);
 

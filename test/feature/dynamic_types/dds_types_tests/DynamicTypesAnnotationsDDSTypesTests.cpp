@@ -99,11 +99,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AnnotatedStruct)
     annotation_builder->add_member(annotation_parameter);
     annotation_parameter = traits<MemberDescriptor>::make_shared();
     annotation_parameter->name("var_string");
-    annotation_parameter->type(factory->create_string_type(LENGTH_UNLIMITED)->build());
+    annotation_parameter->type(factory->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     annotation_builder->add_member(annotation_parameter);
     annotation_parameter = traits<MemberDescriptor>::make_shared();
     annotation_parameter->name("var_wstring");
-    annotation_parameter->type(factory->create_wstring_type(LENGTH_UNLIMITED)->build());
+    annotation_parameter->type(factory->create_wstring_type(static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     annotation_builder->add_member(annotation_parameter);
     annotation_parameter = traits<MemberDescriptor>::make_shared();
     annotation_parameter->name("enum_value");
@@ -127,13 +127,12 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AnnotatedStruct)
     annotation_parameter->type(enum_type);
     annotation_parameter->default_value("TWO");
     annotation_builder->add_member(annotation_parameter);
-    const int16_t inner_const_helper = 10;
     annotation_parameter = traits<MemberDescriptor>::make_shared();
     annotation_parameter->name("var_string_10");
     TypeDescriptor::_ref_type alias_type_descriptor {traits<TypeDescriptor>::make_shared()};
     alias_type_descriptor->kind(TK_ALIAS);
     alias_type_descriptor->name("Inner_alias_bounded_string_helper");
-    alias_type_descriptor->base_type(factory->create_string_type(inner_const_helper)->build());
+    alias_type_descriptor->base_type(factory->create_string_type(10)->build());
     DynamicType::_ref_type alias_type {factory->create_type(alias_type_descriptor)->build()};
     annotation_parameter->type(alias_type);
     annotation_builder->add_member(annotation_parameter);

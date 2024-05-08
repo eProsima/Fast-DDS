@@ -262,6 +262,130 @@ private:
 
 };
 
+/*!
+ * @brief This class represents the structure BasicAnnotationsStruct defined by the user in the IDL file.
+ * @ingroup annotations
+ */
+class BasicAnnotationsStruct
+{
+public:
+
+    /*!
+     * @brief Default constructor.
+     */
+    eProsima_user_DllExport BasicAnnotationsStruct()
+    {
+    }
+
+    /*!
+     * @brief Default destructor.
+     */
+    eProsima_user_DllExport ~BasicAnnotationsStruct()
+    {
+    }
+
+    /*!
+     * @brief Copy constructor.
+     * @param x Reference to the object BasicAnnotationsStruct that will be copied.
+     */
+    eProsima_user_DllExport BasicAnnotationsStruct(
+            const BasicAnnotationsStruct& x)
+    {
+                    m_basic_annotations_member = x.m_basic_annotations_member;
+
+    }
+
+    /*!
+     * @brief Move constructor.
+     * @param x Reference to the object BasicAnnotationsStruct that will be copied.
+     */
+    eProsima_user_DllExport BasicAnnotationsStruct(
+            BasicAnnotationsStruct&& x) noexcept
+    {
+        m_basic_annotations_member = x.m_basic_annotations_member;
+    }
+
+    /*!
+     * @brief Copy assignment.
+     * @param x Reference to the object BasicAnnotationsStruct that will be copied.
+     */
+    eProsima_user_DllExport BasicAnnotationsStruct& operator =(
+            const BasicAnnotationsStruct& x)
+    {
+
+                    m_basic_annotations_member = x.m_basic_annotations_member;
+
+        return *this;
+    }
+
+    /*!
+     * @brief Move assignment.
+     * @param x Reference to the object BasicAnnotationsStruct that will be copied.
+     */
+    eProsima_user_DllExport BasicAnnotationsStruct& operator =(
+            BasicAnnotationsStruct&& x) noexcept
+    {
+
+        m_basic_annotations_member = x.m_basic_annotations_member;
+        return *this;
+    }
+
+    /*!
+     * @brief Comparison operator.
+     * @param x BasicAnnotationsStruct object to compare.
+     */
+    eProsima_user_DllExport bool operator ==(
+            const BasicAnnotationsStruct& x) const
+    {
+        return (m_basic_annotations_member == x.m_basic_annotations_member);
+    }
+
+    /*!
+     * @brief Comparison operator.
+     * @param x BasicAnnotationsStruct object to compare.
+     */
+    eProsima_user_DllExport bool operator !=(
+            const BasicAnnotationsStruct& x) const
+    {
+        return !(*this == x);
+    }
+
+    /*!
+     * @brief This function sets a value in member basic_annotations_member
+     * @param _basic_annotations_member New value for member basic_annotations_member
+     */
+    eProsima_user_DllExport void basic_annotations_member(
+            int16_t _basic_annotations_member)
+    {
+        m_basic_annotations_member = _basic_annotations_member;
+    }
+
+    /*!
+     * @brief This function returns the value of member basic_annotations_member
+     * @return Value of member basic_annotations_member
+     */
+    eProsima_user_DllExport int16_t basic_annotations_member() const
+    {
+        return m_basic_annotations_member;
+    }
+
+    /*!
+     * @brief This function returns a reference to member basic_annotations_member
+     * @return Reference to member basic_annotations_member
+     */
+    eProsima_user_DllExport int16_t& basic_annotations_member()
+    {
+        return m_basic_annotations_member;
+    }
+
+
+
+private:
+
+    int16_t m_basic_annotations_member{0};
+
+};
+
 #endif // _FAST_DDS_GENERATED_ANNOTATIONS_HPP_
 
 

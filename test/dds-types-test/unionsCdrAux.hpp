@@ -39,17 +39,9 @@ constexpr uint32_t UnionDiscriminatorEnumLabel_max_key_cdr_typesize {0UL};
 
 
 
-
 constexpr uint32_t UnionLongDouble_max_cdr_typesize {32UL};
 constexpr uint32_t UnionLongDouble_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t UnionDiscriminatorOctet_max_cdr_typesize {24UL};
-constexpr uint32_t UnionDiscriminatorOctet_max_key_cdr_typesize {0UL};
-
-
-
-constexpr uint32_t UnionBoolean_max_cdr_typesize {13UL};
-constexpr uint32_t UnionBoolean_max_key_cdr_typesize {0UL};
 
 constexpr uint32_t UnionDiscriminatorULong_max_cdr_typesize {24UL};
 constexpr uint32_t UnionDiscriminatorULong_max_key_cdr_typesize {0UL};
@@ -57,21 +49,11 @@ constexpr uint32_t UnionDiscriminatorULong_max_key_cdr_typesize {0UL};
 constexpr uint32_t UnionDouble_max_cdr_typesize {24UL};
 constexpr uint32_t UnionDouble_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t UnionArray_max_cdr_typesize {16UL};
-constexpr uint32_t UnionArray_max_key_cdr_typesize {0UL};
-
-constexpr uint32_t UnionBoundedWString_max_cdr_typesize {36UL};
-constexpr uint32_t UnionBoundedWString_max_key_cdr_typesize {0UL};
-
 
 constexpr uint32_t UnionDiscriminatorShort_max_cdr_typesize {24UL};
 constexpr uint32_t UnionDiscriminatorShort_max_key_cdr_typesize {0UL};
 
 
-
-
-constexpr uint32_t UnionULong_max_cdr_typesize {16UL};
-constexpr uint32_t UnionULong_max_key_cdr_typesize {0UL};
 
 constexpr uint32_t UnionDiscriminatorEnum_max_cdr_typesize {24UL};
 constexpr uint32_t UnionDiscriminatorEnum_max_key_cdr_typesize {0UL};
@@ -88,19 +70,6 @@ constexpr uint32_t UnionDiscriminatorUShort_max_key_cdr_typesize {0UL};
 
 
 
-constexpr uint32_t UnionInnerEnumHelper_max_cdr_typesize {16UL};
-constexpr uint32_t UnionInnerEnumHelper_max_key_cdr_typesize {0UL};
-
-
-
-
-
-constexpr uint32_t UnionInnerStructureHelper_max_cdr_typesize {24UL};
-constexpr uint32_t UnionInnerStructureHelper_max_key_cdr_typesize {0UL};
-
-
-constexpr uint32_t UnionDiscriminatorLong_max_cdr_typesize {24UL};
-constexpr uint32_t UnionDiscriminatorLong_max_key_cdr_typesize {0UL};
 
 
 
@@ -108,27 +77,12 @@ constexpr uint32_t UnionDiscriminatorLong_max_key_cdr_typesize {0UL};
 
 
 
-constexpr uint32_t UnionSequence_max_cdr_typesize {16UL};
-constexpr uint32_t UnionSequence_max_key_cdr_typesize {0UL};
-
-
-
-constexpr uint32_t UnionDiscriminatorChar_max_cdr_typesize {24UL};
-constexpr uint32_t UnionDiscriminatorChar_max_key_cdr_typesize {0UL};
-
-
-constexpr uint32_t UnionULongLong_max_cdr_typesize {24UL};
-constexpr uint32_t UnionULongLong_max_key_cdr_typesize {0UL};
 
 constexpr uint32_t UnionLong_max_cdr_typesize {16UL};
 constexpr uint32_t UnionLong_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t UnionBoundedString_max_cdr_typesize {27UL};
-constexpr uint32_t UnionBoundedString_max_key_cdr_typesize {0UL};
-
 constexpr uint32_t UnionDiscriminatorAlias_max_cdr_typesize {24UL};
 constexpr uint32_t UnionDiscriminatorAlias_max_key_cdr_typesize {0UL};
-
 
 
 
@@ -138,6 +92,86 @@ constexpr uint32_t UnionFloat_max_key_cdr_typesize {0UL};
 constexpr uint32_t UnionOctet_max_cdr_typesize {13UL};
 constexpr uint32_t UnionOctet_max_key_cdr_typesize {0UL};
 
+constexpr uint32_t UnionInnerAliasHelper_max_cdr_typesize {16UL};
+constexpr uint32_t UnionInnerAliasHelper_max_key_cdr_typesize {0UL};
+
+
+constexpr uint32_t UnionWChar_max_cdr_typesize {14UL};
+constexpr uint32_t UnionWChar_max_key_cdr_typesize {0UL};
+
+
+
+
+constexpr uint32_t UnionUShort_max_cdr_typesize {14UL};
+constexpr uint32_t UnionUShort_max_key_cdr_typesize {0UL};
+
+constexpr uint32_t UnionShort_max_cdr_typesize {14UL};
+constexpr uint32_t UnionShort_max_key_cdr_typesize {0UL};
+
+constexpr uint32_t UnionInnerBitsetHelper_max_cdr_typesize {24UL};
+constexpr uint32_t UnionInnerBitsetHelper_max_key_cdr_typesize {0UL};
+
+constexpr uint32_t UnionDiscriminatorLongLong_max_cdr_typesize {24UL};
+constexpr uint32_t UnionDiscriminatorLongLong_max_key_cdr_typesize {0UL};
+
+
+constexpr uint32_t UnionDiscriminatorBoolean_max_cdr_typesize {24UL};
+constexpr uint32_t UnionDiscriminatorBoolean_max_key_cdr_typesize {0UL};
+
+constexpr uint32_t UnionSeveralFieldsWithDefault_max_cdr_typesize {76UL};
+constexpr uint32_t UnionSeveralFieldsWithDefault_max_key_cdr_typesize {0UL};
+
+
+
+constexpr uint32_t UnionDiscriminatorOctet_max_cdr_typesize {24UL};
+constexpr uint32_t UnionDiscriminatorOctet_max_key_cdr_typesize {0UL};
+
+
+
+constexpr uint32_t UnionBoolean_max_cdr_typesize {13UL};
+constexpr uint32_t UnionBoolean_max_key_cdr_typesize {0UL};
+
+constexpr uint32_t UnionSeveralFields_max_cdr_typesize {27UL};
+constexpr uint32_t UnionSeveralFields_max_key_cdr_typesize {0UL};
+
+constexpr uint32_t UnionArray_max_cdr_typesize {16UL};
+constexpr uint32_t UnionArray_max_key_cdr_typesize {0UL};
+
+constexpr uint32_t UnionBoundedWString_max_cdr_typesize {36UL};
+constexpr uint32_t UnionBoundedWString_max_key_cdr_typesize {0UL};
+
+
+constexpr uint32_t UnionULong_max_cdr_typesize {16UL};
+constexpr uint32_t UnionULong_max_key_cdr_typesize {0UL};
+
+
+
+constexpr uint32_t UnionInnerEnumHelper_max_cdr_typesize {16UL};
+constexpr uint32_t UnionInnerEnumHelper_max_key_cdr_typesize {0UL};
+
+
+
+constexpr uint32_t UnionInnerStructureHelper_max_cdr_typesize {24UL};
+constexpr uint32_t UnionInnerStructureHelper_max_key_cdr_typesize {0UL};
+
+constexpr uint32_t UnionDiscriminatorLong_max_cdr_typesize {24UL};
+constexpr uint32_t UnionDiscriminatorLong_max_key_cdr_typesize {0UL};
+
+
+
+constexpr uint32_t UnionSequence_max_cdr_typesize {16UL};
+constexpr uint32_t UnionSequence_max_key_cdr_typesize {0UL};
+
+constexpr uint32_t UnionDiscriminatorChar_max_cdr_typesize {24UL};
+constexpr uint32_t UnionDiscriminatorChar_max_key_cdr_typesize {0UL};
+
+constexpr uint32_t UnionULongLong_max_cdr_typesize {24UL};
+constexpr uint32_t UnionULongLong_max_key_cdr_typesize {0UL};
+
+constexpr uint32_t UnionBoundedString_max_cdr_typesize {27UL};
+constexpr uint32_t UnionBoundedString_max_key_cdr_typesize {0UL};
+
+
 constexpr uint32_t UnionDiscriminatorWChar_max_cdr_typesize {24UL};
 constexpr uint32_t UnionDiscriminatorWChar_max_key_cdr_typesize {0UL};
 
@@ -146,19 +180,10 @@ constexpr uint32_t UnionInnerUnionHelper_max_key_cdr_typesize {0UL};
 
 
 
-constexpr uint32_t UnionInnerAliasHelper_max_cdr_typesize {16UL};
-constexpr uint32_t UnionInnerAliasHelper_max_key_cdr_typesize {0UL};
 
-
-
-
-constexpr uint32_t UnionWChar_max_cdr_typesize {14UL};
-constexpr uint32_t UnionWChar_max_key_cdr_typesize {0UL};
 
 constexpr uint32_t UnionDiscriminatorULongLong_max_cdr_typesize {24UL};
 constexpr uint32_t UnionDiscriminatorULongLong_max_key_cdr_typesize {0UL};
-
-
 
 
 constexpr uint32_t UnionInnerBitMaskHelper_max_cdr_typesize {16UL};
@@ -170,30 +195,13 @@ constexpr uint32_t UnionLongLong_max_key_cdr_typesize {0UL};
 
 
 
-
 constexpr uint32_t UnionString_max_cdr_typesize {272UL};
 constexpr uint32_t UnionString_max_key_cdr_typesize {0UL};
-
-constexpr uint32_t UnionUShort_max_cdr_typesize {14UL};
-constexpr uint32_t UnionUShort_max_key_cdr_typesize {0UL};
-
-constexpr uint32_t UnionShort_max_cdr_typesize {14UL};
-constexpr uint32_t UnionShort_max_key_cdr_typesize {0UL};
 
 constexpr uint32_t UnionWString_max_cdr_typesize {526UL};
 constexpr uint32_t UnionWString_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t UnionInnerBitsetHelper_max_cdr_typesize {24UL};
-constexpr uint32_t UnionInnerBitsetHelper_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t UnionDiscriminatorLongLong_max_cdr_typesize {24UL};
-constexpr uint32_t UnionDiscriminatorLongLong_max_key_cdr_typesize {0UL};
-
-
-
-
-constexpr uint32_t UnionDiscriminatorBoolean_max_cdr_typesize {24UL};
-constexpr uint32_t UnionDiscriminatorBoolean_max_key_cdr_typesize {0UL};
 
 
 namespace eprosima {
@@ -357,6 +365,14 @@ eProsima_user_DllExport void serialize_key(
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const UnionDiscriminatorAlias& data);
+
+eProsima_user_DllExport void serialize_key(
+        eprosima::fastcdr::Cdr& scdr,
+        const UnionSeveralFields& data);
+
+eProsima_user_DllExport void serialize_key(
+        eprosima::fastcdr::Cdr& scdr,
+        const UnionSeveralFieldsWithDefault& data);
 
 
 } // namespace fastcdr

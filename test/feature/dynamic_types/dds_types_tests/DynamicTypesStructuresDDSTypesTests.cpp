@@ -325,7 +325,8 @@ DynamicType::_ref_type create_string_struct()
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_string_name);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_string_type(LENGTH_UNLIMITED)->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_string_type(static_cast<uint32_t>(
+                LENGTH_UNLIMITED))->build());
     type_builder->add_member(member_descriptor);
 
     return type_builder->build();
@@ -340,7 +341,8 @@ DynamicType::_ref_type create_wstring_struct()
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_wstring_name);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_wstring_type(LENGTH_UNLIMITED)->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_wstring_type(static_cast<uint32_t>(
+                LENGTH_UNLIMITED))->build());
     type_builder->add_member(member_descriptor);
 
     return type_builder->build();
@@ -447,7 +449,7 @@ DynamicType::_ref_type create_sequence_struct()
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_seq_name);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_sequence_type(DynamicTypeBuilderFactory::
-                    get_instance()->get_primitive_type(TK_INT32), LENGTH_UNLIMITED)->build());
+                    get_instance()->get_primitive_type(TK_INT32), static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     type_builder->add_member(member_descriptor);
 
     return type_builder->build();
@@ -464,7 +466,8 @@ DynamicType::_ref_type create_map_struct()
     member_descriptor->name(var_map_name);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(DynamicTypeBuilderFactory::
                     get_instance()->get_primitive_type(TK_INT32),
-            DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32), LENGTH_UNLIMITED)->build());
+            DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32),
+            static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     type_builder->add_member(member_descriptor);
 
     return type_builder->build();
@@ -1437,7 +1440,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructStructures)
     uint32_t ulong_value = 47;
     int64_t long_long_value = -125;
     uint64_t ulong_long_value = 1001;
-    float float_value = 14.3;
+    float float_value = 14.3f;
     double double_value = 502.12;
     long double long_double_value = 13.2;
     bool bool_value = true;

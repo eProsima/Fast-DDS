@@ -3678,8 +3678,6 @@ eProsima_user_DllExport size_t calculate_serialized_size(
                                 data.second(), current_alignment);
                     break;
 
-        default:
-            break;
     }
 
     calculated_size += calculator.end_calculate_type_serialized_size(previous_encoding, current_alignment);
@@ -3711,8 +3709,6 @@ eProsima_user_DllExport void serialize(
                     scdr << eprosima::fastcdr::MemberId(2) << data.second();
                     break;
 
-        default:
-            break;
     }
 
     scdr.end_serialize_type(current_state);
@@ -3752,9 +3748,6 @@ eProsima_user_DllExport void deserialize(
                                                         break;
                                                     }
 
-                        default:
-                            data._default();
-                            break;
                     }
                 }
                 else
@@ -3769,8 +3762,6 @@ eProsima_user_DllExport void deserialize(
                                                     dcdr >> data.second();
                                                     break;
 
-                        default:
-                            break;
                     }
                     ret_value = false;
                 }
@@ -4567,6 +4558,404 @@ eProsima_user_DllExport void deserialize(
 
                         default:
                             break;
+                    }
+                    ret_value = false;
+                }
+                return ret_value;
+            });
+}
+
+template<>
+eProsima_user_DllExport size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const Union_Several_Fields& data,
+        size_t& current_alignment)
+{
+    static_cast<void>(data);
+
+    eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
+                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
+                                current_alignment)};
+
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(0), data._d(),
+                    current_alignment);
+
+    switch (data._d())
+    {
+                case 0:
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
+                                data.a(), current_alignment);
+                    break;
+
+                case 1:
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2),
+                                data.b(), current_alignment);
+                    break;
+
+                case 2:
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(3),
+                                data.c(), current_alignment);
+                    break;
+
+                case 3:
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(4),
+                                data.d(), current_alignment);
+                    break;
+
+                case 4:
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(5),
+                                data.e(), current_alignment);
+                    break;
+
+        default:
+            break;
+    }
+
+    calculated_size += calculator.end_calculate_type_serialized_size(previous_encoding, current_alignment);
+
+    return calculated_size;
+}
+
+
+template<>
+eProsima_user_DllExport void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const Union_Several_Fields& data)
+{
+    eprosima::fastcdr::Cdr::state current_state(scdr);
+    scdr.begin_serialize_type(current_state,
+            eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
+            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
+
+    scdr << eprosima::fastcdr::MemberId(0) << data._d();
+
+    switch (data._d())
+    {
+                case 0:
+                    scdr << eprosima::fastcdr::MemberId(1) << data.a();
+                    break;
+
+                case 1:
+                    scdr << eprosima::fastcdr::MemberId(2) << data.b();
+                    break;
+
+                case 2:
+                    scdr << eprosima::fastcdr::MemberId(3) << data.c();
+                    break;
+
+                case 3:
+                    scdr << eprosima::fastcdr::MemberId(4) << data.d();
+                    break;
+
+                case 4:
+                    scdr << eprosima::fastcdr::MemberId(5) << data.e();
+                    break;
+
+        default:
+            break;
+    }
+
+    scdr.end_serialize_type(current_state);
+}
+
+template<>
+eProsima_user_DllExport void deserialize(
+        eprosima::fastcdr::Cdr& cdr,
+        Union_Several_Fields& data)
+{
+    cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
+            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
+            [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
+            {
+                bool ret_value = true;
+                if (0 == mid.id)
+                {
+                    int32_t discriminator;
+                    dcdr >> discriminator;
+
+                    switch (discriminator)
+                    {
+                                                case 0:
+                                                    {
+                                                        InnerStructureHelper a_value;
+                                                        data.a(std::move(a_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                                                case 1:
+                                                    {
+                                                        InnerEmptyStructureHelper b_value;
+                                                        data.b(std::move(b_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                                                case 2:
+                                                    {
+                                                        Inner_alias_bounded_string_helper c_value;
+                                                        data.c(std::move(c_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                                                case 3:
+                                                    {
+                                                        Inner_alias_array_helper d_value{0};
+                                                        data.d(std::move(d_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                                                case 4:
+                                                    {
+                                                        Inner_alias_sequence_helper e_value;
+                                                        data.e(std::move(e_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                        default:
+                            data._default();
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (data._d())
+                    {
+                                                case 0:
+                                                    dcdr >> data.a();
+                                                    break;
+
+                                                case 1:
+                                                    dcdr >> data.b();
+                                                    break;
+
+                                                case 2:
+                                                    dcdr >> data.c();
+                                                    break;
+
+                                                case 3:
+                                                    dcdr >> data.d();
+                                                    break;
+
+                                                case 4:
+                                                    dcdr >> data.e();
+                                                    break;
+
+                        default:
+                            break;
+                    }
+                    ret_value = false;
+                }
+                return ret_value;
+            });
+}
+
+template<>
+eProsima_user_DllExport size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const Union_Several_Fields_With_Default& data,
+        size_t& current_alignment)
+{
+    static_cast<void>(data);
+
+    eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
+                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
+                                current_alignment)};
+
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(0), data._d(),
+                    current_alignment);
+
+    switch (data._d())
+    {
+                case 0:
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
+                                data.a(), current_alignment);
+                    break;
+
+                case 1:
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2),
+                                data.b(), current_alignment);
+                    break;
+
+                case 2:
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(3),
+                                data.c(), current_alignment);
+                    break;
+
+                case 3:
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(4),
+                                data.d(), current_alignment);
+                    break;
+
+                case 4:
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(5),
+                                data.e(), current_alignment);
+                    break;
+
+                default:
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(6),
+                                data.f(), current_alignment);
+                    break;
+
+    }
+
+    calculated_size += calculator.end_calculate_type_serialized_size(previous_encoding, current_alignment);
+
+    return calculated_size;
+}
+
+
+template<>
+eProsima_user_DllExport void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const Union_Several_Fields_With_Default& data)
+{
+    eprosima::fastcdr::Cdr::state current_state(scdr);
+    scdr.begin_serialize_type(current_state,
+            eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
+            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
+
+    scdr << eprosima::fastcdr::MemberId(0) << data._d();
+
+    switch (data._d())
+    {
+                case 0:
+                    scdr << eprosima::fastcdr::MemberId(1) << data.a();
+                    break;
+
+                case 1:
+                    scdr << eprosima::fastcdr::MemberId(2) << data.b();
+                    break;
+
+                case 2:
+                    scdr << eprosima::fastcdr::MemberId(3) << data.c();
+                    break;
+
+                case 3:
+                    scdr << eprosima::fastcdr::MemberId(4) << data.d();
+                    break;
+
+                case 4:
+                    scdr << eprosima::fastcdr::MemberId(5) << data.e();
+                    break;
+
+                default:
+                    scdr << eprosima::fastcdr::MemberId(6) << data.f();
+                    break;
+
+    }
+
+    scdr.end_serialize_type(current_state);
+}
+
+template<>
+eProsima_user_DllExport void deserialize(
+        eprosima::fastcdr::Cdr& cdr,
+        Union_Several_Fields_With_Default& data)
+{
+    cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
+            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
+            [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
+            {
+                bool ret_value = true;
+                if (0 == mid.id)
+                {
+                    int32_t discriminator;
+                    dcdr >> discriminator;
+
+                    switch (discriminator)
+                    {
+                                                case 0:
+                                                    {
+                                                        InnerStructureHelper a_value;
+                                                        data.a(std::move(a_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                                                case 1:
+                                                    {
+                                                        InnerEmptyStructureHelper b_value;
+                                                        data.b(std::move(b_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                                                case 2:
+                                                    {
+                                                        Inner_alias_bounded_string_helper c_value;
+                                                        data.c(std::move(c_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                                                case 3:
+                                                    {
+                                                        Inner_alias_array_helper d_value{0};
+                                                        data.d(std::move(d_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                                                case 4:
+                                                    {
+                                                        Inner_alias_sequence_helper e_value;
+                                                        data.e(std::move(e_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                                                default:
+                                                    {
+                                                        std::vector<int16_t> f_value;
+                                                        data.f(std::move(f_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                    }
+                }
+                else
+                {
+                    switch (data._d())
+                    {
+                                                case 0:
+                                                    dcdr >> data.a();
+                                                    break;
+
+                                                case 1:
+                                                    dcdr >> data.b();
+                                                    break;
+
+                                                case 2:
+                                                    dcdr >> data.c();
+                                                    break;
+
+                                                case 3:
+                                                    dcdr >> data.d();
+                                                    break;
+
+                                                case 4:
+                                                    dcdr >> data.e();
+                                                    break;
+
+                                                default:
+                                                    dcdr >> data.f();
+                                                    break;
+
                     }
                     ret_value = false;
                 }
@@ -7532,6 +7921,158 @@ eProsima_user_DllExport void deserialize(
 void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const UnionDiscriminatorAlias& data)
+{
+    static_cast<void>(scdr);
+    static_cast<void>(data);
+}
+
+
+template<>
+eProsima_user_DllExport size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const UnionSeveralFields& data,
+        size_t& current_alignment)
+{
+    static_cast<void>(data);
+
+    eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
+                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
+                                current_alignment)};
+
+
+        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(0),
+                data.var_union_several_fields(), current_alignment);
+
+
+    calculated_size += calculator.end_calculate_type_serialized_size(previous_encoding, current_alignment);
+
+    return calculated_size;
+}
+
+template<>
+eProsima_user_DllExport void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const UnionSeveralFields& data)
+{
+    eprosima::fastcdr::Cdr::state current_state(scdr);
+    scdr.begin_serialize_type(current_state,
+            eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
+            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
+
+    scdr
+        << eprosima::fastcdr::MemberId(0) << data.var_union_several_fields()
+;
+    scdr.end_serialize_type(current_state);
+}
+
+template<>
+eProsima_user_DllExport void deserialize(
+        eprosima::fastcdr::Cdr& cdr,
+        UnionSeveralFields& data)
+{
+    cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
+            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
+            [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
+            {
+                bool ret_value = true;
+                switch (mid.id)
+                {
+                                        case 0:
+                                                dcdr >> data.var_union_several_fields();
+                                            break;
+
+                    default:
+                        ret_value = false;
+                        break;
+                }
+                return ret_value;
+            });
+}
+
+void serialize_key(
+        eprosima::fastcdr::Cdr& scdr,
+        const UnionSeveralFields& data)
+{
+    static_cast<void>(scdr);
+    static_cast<void>(data);
+}
+
+
+template<>
+eProsima_user_DllExport size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const UnionSeveralFieldsWithDefault& data,
+        size_t& current_alignment)
+{
+    static_cast<void>(data);
+
+    eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
+                                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
+                                current_alignment)};
+
+
+        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(0),
+                data.var_union_several_fields_with_default(), current_alignment);
+
+
+    calculated_size += calculator.end_calculate_type_serialized_size(previous_encoding, current_alignment);
+
+    return calculated_size;
+}
+
+template<>
+eProsima_user_DllExport void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const UnionSeveralFieldsWithDefault& data)
+{
+    eprosima::fastcdr::Cdr::state current_state(scdr);
+    scdr.begin_serialize_type(current_state,
+            eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
+            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
+
+    scdr
+        << eprosima::fastcdr::MemberId(0) << data.var_union_several_fields_with_default()
+;
+    scdr.end_serialize_type(current_state);
+}
+
+template<>
+eProsima_user_DllExport void deserialize(
+        eprosima::fastcdr::Cdr& cdr,
+        UnionSeveralFieldsWithDefault& data)
+{
+    cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
+            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
+            [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
+            {
+                bool ret_value = true;
+                switch (mid.id)
+                {
+                                        case 0:
+                                                dcdr >> data.var_union_several_fields_with_default();
+                                            break;
+
+                    default:
+                        ret_value = false;
+                        break;
+                }
+                return ret_value;
+            });
+}
+
+void serialize_key(
+        eprosima::fastcdr::Cdr& scdr,
+        const UnionSeveralFieldsWithDefault& data)
 {
     static_cast<void>(scdr);
     static_cast<void>(data);

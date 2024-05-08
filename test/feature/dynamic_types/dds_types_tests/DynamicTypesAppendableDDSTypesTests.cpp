@@ -598,7 +598,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AppendableEmptyInheritanceStruct)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_str_name);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_string_type(LENGTH_UNLIMITED)->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_string_type(static_cast<uint32_t>(
+                LENGTH_UNLIMITED))->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type = type_builder->build();
@@ -634,7 +635,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AppendableInheritanceStruct)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_str_name);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_string_type(LENGTH_UNLIMITED)->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_string_type(static_cast<uint32_t>(
+                LENGTH_UNLIMITED))->build());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type = type_builder->build();

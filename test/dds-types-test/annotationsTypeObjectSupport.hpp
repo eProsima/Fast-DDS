@@ -69,6 +69,20 @@ eProsima_user_DllExport void register_AnnotatedStruct_type_identifier();
  *        indirectly registered as well.
  */
 eProsima_user_DllExport void register_EmptyAnnotatedStruct_type_identifier();
+/**
+ * @brief Register BasicAnnotationsTest related TypeIdentifier.
+ *        Fully-descriptive TypeIdentifiers are directly registered.
+ *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
+ *        indirectly registered as well.
+ */
+eProsima_user_DllExport void register_BasicAnnotationsTest_type_identifier();
+/**
+ * @brief Register BasicAnnotationsStruct related TypeIdentifier.
+ *        Fully-descriptive TypeIdentifiers are directly registered.
+ *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
+ *        indirectly registered as well.
+ */
+eProsima_user_DllExport void register_BasicAnnotationsStruct_type_identifier();
 
 
 #endif // DOXYGEN_SHOULD_SKIP_THIS_PUBLIC

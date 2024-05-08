@@ -9280,16 +9280,6 @@ public:
     }
 
 
-    void _default()
-    {
-        if (member_destructor_)
-        {
-            member_destructor_();
-        }
-
-        selected_member_ = 0x0FFFFFFFu;
-    }
-
 
 private:
 
@@ -11498,6 +11488,1428 @@ private:
     {
         int32_t m_first;
         int64_t m_second;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
+};
+/*!
+ * @brief This class represents the union Union_Several_Fields defined by the user in the IDL file.
+ * @ingroup unions
+ */
+class Union_Several_Fields
+{
+public:
+
+    /*!
+     * @brief Default constructor.
+     */
+    eProsima_user_DllExport Union_Several_Fields()
+    {
+    }
+
+    /*!
+     * @brief Default destructor.
+     */
+    eProsima_user_DllExport ~Union_Several_Fields()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+    }
+
+    /*!
+     * @brief Copy constructor.
+     * @param x Reference to the object Union_Several_Fields that will be copied.
+     */
+    eProsima_user_DllExport Union_Several_Fields(
+            const Union_Several_Fields& x)
+    {
+        m__d = x.m__d;
+
+        switch (x.selected_member_)
+        {
+                        case 0x00000001:
+                            a_() = x.m_a;
+                            break;
+
+                        case 0x00000002:
+                            b_() = x.m_b;
+                            break;
+
+                        case 0x00000003:
+                            c_() = x.m_c;
+                            break;
+
+                        case 0x00000004:
+                            d_() = x.m_d;
+                            break;
+
+                        case 0x00000005:
+                            e_() = x.m_e;
+                            break;
+
+        }
+    }
+
+    /*!
+     * @brief Move constructor.
+     * @param x Reference to the object Union_Several_Fields that will be copied.
+     */
+    eProsima_user_DllExport Union_Several_Fields(
+            Union_Several_Fields&& x) noexcept
+    {
+        m__d = x.m__d;
+
+        switch (x.selected_member_)
+        {
+                        case 0x00000001:
+                            a_() = std::move(x.m_a);
+                            break;
+
+                        case 0x00000002:
+                            b_() = std::move(x.m_b);
+                            break;
+
+                        case 0x00000003:
+                            c_() = std::move(x.m_c);
+                            break;
+
+                        case 0x00000004:
+                            d_() = std::move(x.m_d);
+                            break;
+
+                        case 0x00000005:
+                            e_() = std::move(x.m_e);
+                            break;
+
+        }
+    }
+
+    /*!
+     * @brief Copy assignment.
+     * @param x Reference to the object Union_Several_Fields that will be copied.
+     */
+    eProsima_user_DllExport Union_Several_Fields& operator =(
+            const Union_Several_Fields& x)
+    {
+        m__d = x.m__d;
+
+        switch (x.selected_member_)
+        {
+                        case 0x00000001:
+                            a_() = x.m_a;
+                            break;
+
+                        case 0x00000002:
+                            b_() = x.m_b;
+                            break;
+
+                        case 0x00000003:
+                            c_() = x.m_c;
+                            break;
+
+                        case 0x00000004:
+                            d_() = x.m_d;
+                            break;
+
+                        case 0x00000005:
+                            e_() = x.m_e;
+                            break;
+
+        }
+
+        return *this;
+    }
+
+    /*!
+     * @brief Move assignment.
+     * @param x Reference to the object Union_Several_Fields that will be copied.
+     */
+    eProsima_user_DllExport Union_Several_Fields& operator =(
+            Union_Several_Fields&& x) noexcept
+    {
+        m__d = x.m__d;
+
+        switch (x.selected_member_)
+        {
+                        case 0x00000001:
+                            a_() = std::move(x.m_a);
+                            break;
+
+                        case 0x00000002:
+                            b_() = std::move(x.m_b);
+                            break;
+
+                        case 0x00000003:
+                            c_() = std::move(x.m_c);
+                            break;
+
+                        case 0x00000004:
+                            d_() = std::move(x.m_d);
+                            break;
+
+                        case 0x00000005:
+                            e_() = std::move(x.m_e);
+                            break;
+
+        }
+
+        return *this;
+    }
+
+    /*!
+     * @brief Comparison operator.
+     * @param x Union_Several_Fields object to compare.
+     */
+    eProsima_user_DllExport bool operator ==(
+            const Union_Several_Fields& x) const
+    {
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
+        {
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_a == x.m_a);
+                                    break;
+
+                                case 0x00000002:
+                                    ret_value = (m_b == x.m_b);
+                                    break;
+
+                                case 0x00000003:
+                                    ret_value = (m_c == x.m_c);
+                                    break;
+
+                                case 0x00000004:
+                                    ret_value = (m_d == x.m_d);
+                                    break;
+
+                                case 0x00000005:
+                                    ret_value = (m_e == x.m_e);
+                                    break;
+
+            }
+        }
+
+        return ret_value;
+    }
+
+    /*!
+     * @brief Comparison operator.
+     * @param x Union_Several_Fields object to compare.
+     */
+    eProsima_user_DllExport bool operator !=(
+            const Union_Several_Fields& x) const
+    {
+        return !(*this == x);
+    }
+
+    /*!
+     * @brief This function sets the discriminator value.
+     * @param __d New value for the discriminator.
+     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the new value doesn't correspond to the selected union member.
+     */
+    eProsima_user_DllExport void _d(
+            int32_t __d)
+    {
+        bool valid_discriminator = false;
+
+        switch (__d)
+        {
+                        case 0:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
+
+                        case 1:
+                            if (0x00000002 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
+
+                        case 2:
+                            if (0x00000003 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
+
+                        case 3:
+                            if (0x00000004 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
+
+                        case 4:
+                            if (0x00000005 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
+
+        }
+
+        if (!valid_discriminator)
+        {
+            throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
+        }
+
+        m__d = __d;
+    }
+
+    /*!
+     * @brief This function returns the value of the discriminator.
+     * @return Value of the discriminator
+     */
+    eProsima_user_DllExport int32_t _d() const
+    {
+        return m__d;
+    }
+
+    /*!
+     * @brief This function copies the value in member a
+     * @param _a New value to be copied in member a
+     */
+    eProsima_user_DllExport void a(
+            const InnerStructureHelper& _a)
+    {
+        a_() = _a;
+        m__d = 0;
+    }
+
+    /*!
+     * @brief This function moves the value in member a
+     * @param _a New value to be moved in member a
+     */
+    eProsima_user_DllExport void a(
+            InnerStructureHelper&& _a)
+    {
+        a_() = _a;
+        m__d = 0;
+    }
+
+    /*!
+     * @brief This function returns a constant reference to member a
+     * @return Constant reference to member a
+     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the requested union member is not the current selection.
+     */
+    eProsima_user_DllExport const InnerStructureHelper& a() const
+    {
+        if (0x00000001 != selected_member_)
+        {
+            throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
+        }
+
+        return m_a;
+    }
+
+    /*!
+     * @brief This function returns a reference to member a
+     * @return Reference to member a
+     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the requested union member is not the current selection.
+     */
+    eProsima_user_DllExport InnerStructureHelper& a()
+    {
+        if (0x00000001 != selected_member_)
+        {
+            throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
+        }
+
+        return m_a;
+    }
+
+
+    /*!
+     * @brief This function copies the value in member b
+     * @param _b New value to be copied in member b
+     */
+    eProsima_user_DllExport void b(
+            const InnerEmptyStructureHelper& _b)
+    {
+        b_() = _b;
+        m__d = 1;
+    }
+
+    /*!
+     * @brief This function moves the value in member b
+     * @param _b New value to be moved in member b
+     */
+    eProsima_user_DllExport void b(
+            InnerEmptyStructureHelper&& _b)
+    {
+        b_() = _b;
+        m__d = 1;
+    }
+
+    /*!
+     * @brief This function returns a constant reference to member b
+     * @return Constant reference to member b
+     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the requested union member is not the current selection.
+     */
+    eProsima_user_DllExport const InnerEmptyStructureHelper& b() const
+    {
+        if (0x00000002 != selected_member_)
+        {
+            throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
+        }
+
+        return m_b;
+    }
+
+    /*!
+     * @brief This function returns a reference to member b
+     * @return Reference to member b
+     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the requested union member is not the current selection.
+     */
+    eProsima_user_DllExport InnerEmptyStructureHelper& b()
+    {
+        if (0x00000002 != selected_member_)
+        {
+            throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
+        }
+
+        return m_b;
+    }
+
+
+    /*!
+     * @brief This function copies the value in member c
+     * @param _c New value to be copied in member c
+     */
+    eProsima_user_DllExport void c(
+            const Inner_alias_bounded_string_helper& _c)
+    {
+        c_() = _c;
+        m__d = 2;
+    }
+
+    /*!
+     * @brief This function moves the value in member c
+     * @param _c New value to be moved in member c
+     */
+    eProsima_user_DllExport void c(
+            Inner_alias_bounded_string_helper&& _c)
+    {
+        c_() = _c;
+        m__d = 2;
+    }
+
+    /*!
+     * @brief This function returns a constant reference to member c
+     * @return Constant reference to member c
+     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the requested union member is not the current selection.
+     */
+    eProsima_user_DllExport const Inner_alias_bounded_string_helper& c() const
+    {
+        if (0x00000003 != selected_member_)
+        {
+            throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
+        }
+
+        return m_c;
+    }
+
+    /*!
+     * @brief This function returns a reference to member c
+     * @return Reference to member c
+     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the requested union member is not the current selection.
+     */
+    eProsima_user_DllExport Inner_alias_bounded_string_helper& c()
+    {
+        if (0x00000003 != selected_member_)
+        {
+            throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
+        }
+
+        return m_c;
+    }
+
+
+    /*!
+     * @brief This function copies the value in member d
+     * @param _d New value to be copied in member d
+     */
+    eProsima_user_DllExport void d(
+            const Inner_alias_array_helper& _d)
+    {
+        d_() = _d;
+        m__d = 3;
+    }
+
+    /*!
+     * @brief This function moves the value in member d
+     * @param _d New value to be moved in member d
+     */
+    eProsima_user_DllExport void d(
+            Inner_alias_array_helper&& _d)
+    {
+        d_() = _d;
+        m__d = 3;
+    }
+
+    /*!
+     * @brief This function returns a constant reference to member d
+     * @return Constant reference to member d
+     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the requested union member is not the current selection.
+     */
+    eProsima_user_DllExport const Inner_alias_array_helper& d() const
+    {
+        if (0x00000004 != selected_member_)
+        {
+            throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
+        }
+
+        return m_d;
+    }
+
+    /*!
+     * @brief This function returns a reference to member d
+     * @return Reference to member d
+     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the requested union member is not the current selection.
+     */
+    eProsima_user_DllExport Inner_alias_array_helper& d()
+    {
+        if (0x00000004 != selected_member_)
+        {
+            throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
+        }
+
+        return m_d;
+    }
+
+
+    /*!
+     * @brief This function copies the value in member e
+     * @param _e New value to be copied in member e
+     */
+    eProsima_user_DllExport void e(
+            const Inner_alias_sequence_helper& _e)
+    {
+        e_() = _e;
+        m__d = 4;
+    }
+
+    /*!
+     * @brief This function moves the value in member e
+     * @param _e New value to be moved in member e
+     */
+    eProsima_user_DllExport void e(
+            Inner_alias_sequence_helper&& _e)
+    {
+        e_() = _e;
+        m__d = 4;
+    }
+
+    /*!
+     * @brief This function returns a constant reference to member e
+     * @return Constant reference to member e
+     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the requested union member is not the current selection.
+     */
+    eProsima_user_DllExport const Inner_alias_sequence_helper& e() const
+    {
+        if (0x00000005 != selected_member_)
+        {
+            throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
+        }
+
+        return m_e;
+    }
+
+    /*!
+     * @brief This function returns a reference to member e
+     * @return Reference to member e
+     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the requested union member is not the current selection.
+     */
+    eProsima_user_DllExport Inner_alias_sequence_helper& e()
+    {
+        if (0x00000005 != selected_member_)
+        {
+            throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
+        }
+
+        return m_e;
+    }
+
+
+    void _default()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+
+        selected_member_ = 0x0FFFFFFFu;
+    }
+
+
+private:
+
+            InnerStructureHelper& a_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = [&]() {m_a.~InnerStructureHelper();};
+                    new(&m_a) InnerStructureHelper();
+    ;
+                }
+
+                return m_a;
+            }
+
+            InnerEmptyStructureHelper& b_()
+            {
+                if (0x00000002 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000002;
+                    member_destructor_ = [&]() {m_b.~InnerEmptyStructureHelper();};
+                    new(&m_b) InnerEmptyStructureHelper();
+    ;
+                }
+
+                return m_b;
+            }
+
+            Inner_alias_bounded_string_helper& c_()
+            {
+                if (0x00000003 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000003;
+                    member_destructor_ = [&]() {m_c.~Inner_alias_bounded_string_helper();};
+                    new(&m_c) Inner_alias_bounded_string_helper();
+    ;
+                }
+
+                return m_c;
+            }
+
+            Inner_alias_array_helper& d_()
+            {
+                if (0x00000004 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000004;
+                    member_destructor_ = [&]() {m_d.~Inner_alias_array_helper();};
+                    new(&m_d) Inner_alias_array_helper();
+    ;
+                }
+
+                return m_d;
+            }
+
+            Inner_alias_sequence_helper& e_()
+            {
+                if (0x00000005 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000005;
+                    member_destructor_ = [&]() {m_e.~Inner_alias_sequence_helper();};
+                    new(&m_e) Inner_alias_sequence_helper();
+    ;
+                }
+
+                return m_e;
+            }
+
+
+    int32_t m__d {5};
+
+    union
+    {
+        InnerStructureHelper m_a;
+        InnerEmptyStructureHelper m_b;
+        Inner_alias_bounded_string_helper m_c;
+        Inner_alias_array_helper m_d;
+        Inner_alias_sequence_helper m_e;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
+};
+/*!
+ * @brief This class represents the union Union_Several_Fields_With_Default defined by the user in the IDL file.
+ * @ingroup unions
+ */
+class Union_Several_Fields_With_Default
+{
+public:
+
+    /*!
+     * @brief Default constructor.
+     */
+    eProsima_user_DllExport Union_Several_Fields_With_Default()
+    {
+        f_();
+    }
+
+    /*!
+     * @brief Default destructor.
+     */
+    eProsima_user_DllExport ~Union_Several_Fields_With_Default()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+    }
+
+    /*!
+     * @brief Copy constructor.
+     * @param x Reference to the object Union_Several_Fields_With_Default that will be copied.
+     */
+    eProsima_user_DllExport Union_Several_Fields_With_Default(
+            const Union_Several_Fields_With_Default& x)
+    {
+        m__d = x.m__d;
+
+        switch (x.selected_member_)
+        {
+                        case 0x00000001:
+                            a_() = x.m_a;
+                            break;
+
+                        case 0x00000002:
+                            b_() = x.m_b;
+                            break;
+
+                        case 0x00000003:
+                            c_() = x.m_c;
+                            break;
+
+                        case 0x00000004:
+                            d_() = x.m_d;
+                            break;
+
+                        case 0x00000005:
+                            e_() = x.m_e;
+                            break;
+
+                        case 0x00000006:
+                            f_() = x.m_f;
+                            break;
+
+        }
+    }
+
+    /*!
+     * @brief Move constructor.
+     * @param x Reference to the object Union_Several_Fields_With_Default that will be copied.
+     */
+    eProsima_user_DllExport Union_Several_Fields_With_Default(
+            Union_Several_Fields_With_Default&& x) noexcept
+    {
+        m__d = x.m__d;
+
+        switch (x.selected_member_)
+        {
+                        case 0x00000001:
+                            a_() = std::move(x.m_a);
+                            break;
+
+                        case 0x00000002:
+                            b_() = std::move(x.m_b);
+                            break;
+
+                        case 0x00000003:
+                            c_() = std::move(x.m_c);
+                            break;
+
+                        case 0x00000004:
+                            d_() = std::move(x.m_d);
+                            break;
+
+                        case 0x00000005:
+                            e_() = std::move(x.m_e);
+                            break;
+
+                        case 0x00000006:
+                            f_() = std::move(x.m_f);
+                            break;
+
+        }
+    }
+
+    /*!
+     * @brief Copy assignment.
+     * @param x Reference to the object Union_Several_Fields_With_Default that will be copied.
+     */
+    eProsima_user_DllExport Union_Several_Fields_With_Default& operator =(
+            const Union_Several_Fields_With_Default& x)
+    {
+        m__d = x.m__d;
+
+        switch (x.selected_member_)
+        {
+                        case 0x00000001:
+                            a_() = x.m_a;
+                            break;
+
+                        case 0x00000002:
+                            b_() = x.m_b;
+                            break;
+
+                        case 0x00000003:
+                            c_() = x.m_c;
+                            break;
+
+                        case 0x00000004:
+                            d_() = x.m_d;
+                            break;
+
+                        case 0x00000005:
+                            e_() = x.m_e;
+                            break;
+
+                        case 0x00000006:
+                            f_() = x.m_f;
+                            break;
+
+        }
+
+        return *this;
+    }
+
+    /*!
+     * @brief Move assignment.
+     * @param x Reference to the object Union_Several_Fields_With_Default that will be copied.
+     */
+    eProsima_user_DllExport Union_Several_Fields_With_Default& operator =(
+            Union_Several_Fields_With_Default&& x) noexcept
+    {
+        m__d = x.m__d;
+
+        switch (x.selected_member_)
+        {
+                        case 0x00000001:
+                            a_() = std::move(x.m_a);
+                            break;
+
+                        case 0x00000002:
+                            b_() = std::move(x.m_b);
+                            break;
+
+                        case 0x00000003:
+                            c_() = std::move(x.m_c);
+                            break;
+
+                        case 0x00000004:
+                            d_() = std::move(x.m_d);
+                            break;
+
+                        case 0x00000005:
+                            e_() = std::move(x.m_e);
+                            break;
+
+                        case 0x00000006:
+                            f_() = std::move(x.m_f);
+                            break;
+
+        }
+
+        return *this;
+    }
+
+    /*!
+     * @brief Comparison operator.
+     * @param x Union_Several_Fields_With_Default object to compare.
+     */
+    eProsima_user_DllExport bool operator ==(
+            const Union_Several_Fields_With_Default& x) const
+    {
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
+        {
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_a == x.m_a);
+                                    break;
+
+                                case 0x00000002:
+                                    ret_value = (m_b == x.m_b);
+                                    break;
+
+                                case 0x00000003:
+                                    ret_value = (m_c == x.m_c);
+                                    break;
+
+                                case 0x00000004:
+                                    ret_value = (m_d == x.m_d);
+                                    break;
+
+                                case 0x00000005:
+                                    ret_value = (m_e == x.m_e);
+                                    break;
+
+                                case 0x00000006:
+                                    ret_value = (m_f == x.m_f);
+                                    break;
+
+            }
+        }
+
+        return ret_value;
+    }
+
+    /*!
+     * @brief Comparison operator.
+     * @param x Union_Several_Fields_With_Default object to compare.
+     */
+    eProsima_user_DllExport bool operator !=(
+            const Union_Several_Fields_With_Default& x) const
+    {
+        return !(*this == x);
+    }
+
+    /*!
+     * @brief This function sets the discriminator value.
+     * @param __d New value for the discriminator.
+     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the new value doesn't correspond to the selected union member.
+     */
+    eProsima_user_DllExport void _d(
+            int32_t __d)
+    {
+        bool valid_discriminator = false;
+
+        switch (__d)
+        {
+                        case 0:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
+
+                        case 1:
+                            if (0x00000002 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
+
+                        case 2:
+                            if (0x00000003 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
+
+                        case 3:
+                            if (0x00000004 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
+
+                        case 4:
+                            if (0x00000005 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
+
+                        default:
+                            if (0x00000006 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
+
+        }
+
+        if (!valid_discriminator)
+        {
+            throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
+        }
+
+        m__d = __d;
+    }
+
+    /*!
+     * @brief This function returns the value of the discriminator.
+     * @return Value of the discriminator
+     */
+    eProsima_user_DllExport int32_t _d() const
+    {
+        return m__d;
+    }
+
+    /*!
+     * @brief This function copies the value in member a
+     * @param _a New value to be copied in member a
+     */
+    eProsima_user_DllExport void a(
+            const InnerStructureHelper& _a)
+    {
+        a_() = _a;
+        m__d = 0;
+    }
+
+    /*!
+     * @brief This function moves the value in member a
+     * @param _a New value to be moved in member a
+     */
+    eProsima_user_DllExport void a(
+            InnerStructureHelper&& _a)
+    {
+        a_() = _a;
+        m__d = 0;
+    }
+
+    /*!
+     * @brief This function returns a constant reference to member a
+     * @return Constant reference to member a
+     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the requested union member is not the current selection.
+     */
+    eProsima_user_DllExport const InnerStructureHelper& a() const
+    {
+        if (0x00000001 != selected_member_)
+        {
+            throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
+        }
+
+        return m_a;
+    }
+
+    /*!
+     * @brief This function returns a reference to member a
+     * @return Reference to member a
+     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the requested union member is not the current selection.
+     */
+    eProsima_user_DllExport InnerStructureHelper& a()
+    {
+        if (0x00000001 != selected_member_)
+        {
+            throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
+        }
+
+        return m_a;
+    }
+
+
+    /*!
+     * @brief This function copies the value in member b
+     * @param _b New value to be copied in member b
+     */
+    eProsima_user_DllExport void b(
+            const InnerEmptyStructureHelper& _b)
+    {
+        b_() = _b;
+        m__d = 1;
+    }
+
+    /*!
+     * @brief This function moves the value in member b
+     * @param _b New value to be moved in member b
+     */
+    eProsima_user_DllExport void b(
+            InnerEmptyStructureHelper&& _b)
+    {
+        b_() = _b;
+        m__d = 1;
+    }
+
+    /*!
+     * @brief This function returns a constant reference to member b
+     * @return Constant reference to member b
+     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the requested union member is not the current selection.
+     */
+    eProsima_user_DllExport const InnerEmptyStructureHelper& b() const
+    {
+        if (0x00000002 != selected_member_)
+        {
+            throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
+        }
+
+        return m_b;
+    }
+
+    /*!
+     * @brief This function returns a reference to member b
+     * @return Reference to member b
+     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the requested union member is not the current selection.
+     */
+    eProsima_user_DllExport InnerEmptyStructureHelper& b()
+    {
+        if (0x00000002 != selected_member_)
+        {
+            throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
+        }
+
+        return m_b;
+    }
+
+
+    /*!
+     * @brief This function copies the value in member c
+     * @param _c New value to be copied in member c
+     */
+    eProsima_user_DllExport void c(
+            const Inner_alias_bounded_string_helper& _c)
+    {
+        c_() = _c;
+        m__d = 2;
+    }
+
+    /*!
+     * @brief This function moves the value in member c
+     * @param _c New value to be moved in member c
+     */
+    eProsima_user_DllExport void c(
+            Inner_alias_bounded_string_helper&& _c)
+    {
+        c_() = _c;
+        m__d = 2;
+    }
+
+    /*!
+     * @brief This function returns a constant reference to member c
+     * @return Constant reference to member c
+     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the requested union member is not the current selection.
+     */
+    eProsima_user_DllExport const Inner_alias_bounded_string_helper& c() const
+    {
+        if (0x00000003 != selected_member_)
+        {
+            throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
+        }
+
+        return m_c;
+    }
+
+    /*!
+     * @brief This function returns a reference to member c
+     * @return Reference to member c
+     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the requested union member is not the current selection.
+     */
+    eProsima_user_DllExport Inner_alias_bounded_string_helper& c()
+    {
+        if (0x00000003 != selected_member_)
+        {
+            throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
+        }
+
+        return m_c;
+    }
+
+
+    /*!
+     * @brief This function copies the value in member d
+     * @param _d New value to be copied in member d
+     */
+    eProsima_user_DllExport void d(
+            const Inner_alias_array_helper& _d)
+    {
+        d_() = _d;
+        m__d = 3;
+    }
+
+    /*!
+     * @brief This function moves the value in member d
+     * @param _d New value to be moved in member d
+     */
+    eProsima_user_DllExport void d(
+            Inner_alias_array_helper&& _d)
+    {
+        d_() = _d;
+        m__d = 3;
+    }
+
+    /*!
+     * @brief This function returns a constant reference to member d
+     * @return Constant reference to member d
+     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the requested union member is not the current selection.
+     */
+    eProsima_user_DllExport const Inner_alias_array_helper& d() const
+    {
+        if (0x00000004 != selected_member_)
+        {
+            throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
+        }
+
+        return m_d;
+    }
+
+    /*!
+     * @brief This function returns a reference to member d
+     * @return Reference to member d
+     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the requested union member is not the current selection.
+     */
+    eProsima_user_DllExport Inner_alias_array_helper& d()
+    {
+        if (0x00000004 != selected_member_)
+        {
+            throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
+        }
+
+        return m_d;
+    }
+
+
+    /*!
+     * @brief This function copies the value in member e
+     * @param _e New value to be copied in member e
+     */
+    eProsima_user_DllExport void e(
+            const Inner_alias_sequence_helper& _e)
+    {
+        e_() = _e;
+        m__d = 4;
+    }
+
+    /*!
+     * @brief This function moves the value in member e
+     * @param _e New value to be moved in member e
+     */
+    eProsima_user_DllExport void e(
+            Inner_alias_sequence_helper&& _e)
+    {
+        e_() = _e;
+        m__d = 4;
+    }
+
+    /*!
+     * @brief This function returns a constant reference to member e
+     * @return Constant reference to member e
+     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the requested union member is not the current selection.
+     */
+    eProsima_user_DllExport const Inner_alias_sequence_helper& e() const
+    {
+        if (0x00000005 != selected_member_)
+        {
+            throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
+        }
+
+        return m_e;
+    }
+
+    /*!
+     * @brief This function returns a reference to member e
+     * @return Reference to member e
+     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the requested union member is not the current selection.
+     */
+    eProsima_user_DllExport Inner_alias_sequence_helper& e()
+    {
+        if (0x00000005 != selected_member_)
+        {
+            throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
+        }
+
+        return m_e;
+    }
+
+
+    /*!
+     * @brief This function copies the value in member f
+     * @param _f New value to be copied in member f
+     */
+    eProsima_user_DllExport void f(
+            const std::vector<int16_t>& _f)
+    {
+        f_() = _f;
+        m__d = 5;
+    }
+
+    /*!
+     * @brief This function moves the value in member f
+     * @param _f New value to be moved in member f
+     */
+    eProsima_user_DllExport void f(
+            std::vector<int16_t>&& _f)
+    {
+        f_() = _f;
+        m__d = 5;
+    }
+
+    /*!
+     * @brief This function returns a constant reference to member f
+     * @return Constant reference to member f
+     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the requested union member is not the current selection.
+     */
+    eProsima_user_DllExport const std::vector<int16_t>& f() const
+    {
+        if (0x00000006 != selected_member_)
+        {
+            throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
+        }
+
+        return m_f;
+    }
+
+    /*!
+     * @brief This function returns a reference to member f
+     * @return Reference to member f
+     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the requested union member is not the current selection.
+     */
+    eProsima_user_DllExport std::vector<int16_t>& f()
+    {
+        if (0x00000006 != selected_member_)
+        {
+            throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
+        }
+
+        return m_f;
+    }
+
+
+
+private:
+
+            InnerStructureHelper& a_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = [&]() {m_a.~InnerStructureHelper();};
+                    new(&m_a) InnerStructureHelper();
+    ;
+                }
+
+                return m_a;
+            }
+
+            InnerEmptyStructureHelper& b_()
+            {
+                if (0x00000002 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000002;
+                    member_destructor_ = [&]() {m_b.~InnerEmptyStructureHelper();};
+                    new(&m_b) InnerEmptyStructureHelper();
+    ;
+                }
+
+                return m_b;
+            }
+
+            Inner_alias_bounded_string_helper& c_()
+            {
+                if (0x00000003 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000003;
+                    member_destructor_ = [&]() {m_c.~Inner_alias_bounded_string_helper();};
+                    new(&m_c) Inner_alias_bounded_string_helper();
+    ;
+                }
+
+                return m_c;
+            }
+
+            Inner_alias_array_helper& d_()
+            {
+                if (0x00000004 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000004;
+                    member_destructor_ = [&]() {m_d.~Inner_alias_array_helper();};
+                    new(&m_d) Inner_alias_array_helper();
+    ;
+                }
+
+                return m_d;
+            }
+
+            Inner_alias_sequence_helper& e_()
+            {
+                if (0x00000005 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000005;
+                    member_destructor_ = [&]() {m_e.~Inner_alias_sequence_helper();};
+                    new(&m_e) Inner_alias_sequence_helper();
+    ;
+                }
+
+                return m_e;
+            }
+
+            std::vector<int16_t>& f_()
+            {
+                if (0x00000006 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000006;
+                    member_destructor_ = [&]() {m_f.~vector();};
+                    new(&m_f) std::vector<int16_t>();
+    ;
+                }
+
+                return m_f;
+            }
+
+
+    int32_t m__d {5};
+
+    union
+    {
+        InnerStructureHelper m_a;
+        InnerEmptyStructureHelper m_b;
+        Inner_alias_bounded_string_helper m_c;
+        Inner_alias_array_helper m_d;
+        Inner_alias_sequence_helper m_e;
+        std::vector<int16_t> m_f;
     };
 
     uint32_t selected_member_ {0x0FFFFFFFu};
@@ -16689,6 +18101,272 @@ public:
 private:
 
     Union_Discriminator_alias m_var_union_discriminator_alias;
+
+};
+/*!
+ * @brief This class represents the structure UnionSeveralFields defined by the user in the IDL file.
+ * @ingroup unions
+ */
+class UnionSeveralFields
+{
+public:
+
+    /*!
+     * @brief Default constructor.
+     */
+    eProsima_user_DllExport UnionSeveralFields()
+    {
+    }
+
+    /*!
+     * @brief Default destructor.
+     */
+    eProsima_user_DllExport ~UnionSeveralFields()
+    {
+    }
+
+    /*!
+     * @brief Copy constructor.
+     * @param x Reference to the object UnionSeveralFields that will be copied.
+     */
+    eProsima_user_DllExport UnionSeveralFields(
+            const UnionSeveralFields& x)
+    {
+                    m_var_union_several_fields = x.m_var_union_several_fields;
+
+    }
+
+    /*!
+     * @brief Move constructor.
+     * @param x Reference to the object UnionSeveralFields that will be copied.
+     */
+    eProsima_user_DllExport UnionSeveralFields(
+            UnionSeveralFields&& x) noexcept
+    {
+        m_var_union_several_fields = std::move(x.m_var_union_several_fields);
+    }
+
+    /*!
+     * @brief Copy assignment.
+     * @param x Reference to the object UnionSeveralFields that will be copied.
+     */
+    eProsima_user_DllExport UnionSeveralFields& operator =(
+            const UnionSeveralFields& x)
+    {
+
+                    m_var_union_several_fields = x.m_var_union_several_fields;
+
+        return *this;
+    }
+
+    /*!
+     * @brief Move assignment.
+     * @param x Reference to the object UnionSeveralFields that will be copied.
+     */
+    eProsima_user_DllExport UnionSeveralFields& operator =(
+            UnionSeveralFields&& x) noexcept
+    {
+
+        m_var_union_several_fields = std::move(x.m_var_union_several_fields);
+        return *this;
+    }
+
+    /*!
+     * @brief Comparison operator.
+     * @param x UnionSeveralFields object to compare.
+     */
+    eProsima_user_DllExport bool operator ==(
+            const UnionSeveralFields& x) const
+    {
+        return (m_var_union_several_fields == x.m_var_union_several_fields);
+    }
+
+    /*!
+     * @brief Comparison operator.
+     * @param x UnionSeveralFields object to compare.
+     */
+    eProsima_user_DllExport bool operator !=(
+            const UnionSeveralFields& x) const
+    {
+        return !(*this == x);
+    }
+
+    /*!
+     * @brief This function copies the value in member var_union_several_fields
+     * @param _var_union_several_fields New value to be copied in member var_union_several_fields
+     */
+    eProsima_user_DllExport void var_union_several_fields(
+            const Union_Several_Fields& _var_union_several_fields)
+    {
+        m_var_union_several_fields = _var_union_several_fields;
+    }
+
+    /*!
+     * @brief This function moves the value in member var_union_several_fields
+     * @param _var_union_several_fields New value to be moved in member var_union_several_fields
+     */
+    eProsima_user_DllExport void var_union_several_fields(
+            Union_Several_Fields&& _var_union_several_fields)
+    {
+        m_var_union_several_fields = std::move(_var_union_several_fields);
+    }
+
+    /*!
+     * @brief This function returns a constant reference to member var_union_several_fields
+     * @return Constant reference to member var_union_several_fields
+     */
+    eProsima_user_DllExport const Union_Several_Fields& var_union_several_fields() const
+    {
+        return m_var_union_several_fields;
+    }
+
+    /*!
+     * @brief This function returns a reference to member var_union_several_fields
+     * @return Reference to member var_union_several_fields
+     */
+    eProsima_user_DllExport Union_Several_Fields& var_union_several_fields()
+    {
+        return m_var_union_several_fields;
+    }
+
+
+
+private:
+
+    Union_Several_Fields m_var_union_several_fields;
+
+};
+/*!
+ * @brief This class represents the structure UnionSeveralFieldsWithDefault defined by the user in the IDL file.
+ * @ingroup unions
+ */
+class UnionSeveralFieldsWithDefault
+{
+public:
+
+    /*!
+     * @brief Default constructor.
+     */
+    eProsima_user_DllExport UnionSeveralFieldsWithDefault()
+    {
+    }
+
+    /*!
+     * @brief Default destructor.
+     */
+    eProsima_user_DllExport ~UnionSeveralFieldsWithDefault()
+    {
+    }
+
+    /*!
+     * @brief Copy constructor.
+     * @param x Reference to the object UnionSeveralFieldsWithDefault that will be copied.
+     */
+    eProsima_user_DllExport UnionSeveralFieldsWithDefault(
+            const UnionSeveralFieldsWithDefault& x)
+    {
+                    m_var_union_several_fields_with_default = x.m_var_union_several_fields_with_default;
+
+    }
+
+    /*!
+     * @brief Move constructor.
+     * @param x Reference to the object UnionSeveralFieldsWithDefault that will be copied.
+     */
+    eProsima_user_DllExport UnionSeveralFieldsWithDefault(
+            UnionSeveralFieldsWithDefault&& x) noexcept
+    {
+        m_var_union_several_fields_with_default = std::move(x.m_var_union_several_fields_with_default);
+    }
+
+    /*!
+     * @brief Copy assignment.
+     * @param x Reference to the object UnionSeveralFieldsWithDefault that will be copied.
+     */
+    eProsima_user_DllExport UnionSeveralFieldsWithDefault& operator =(
+            const UnionSeveralFieldsWithDefault& x)
+    {
+
+                    m_var_union_several_fields_with_default = x.m_var_union_several_fields_with_default;
+
+        return *this;
+    }
+
+    /*!
+     * @brief Move assignment.
+     * @param x Reference to the object UnionSeveralFieldsWithDefault that will be copied.
+     */
+    eProsima_user_DllExport UnionSeveralFieldsWithDefault& operator =(
+            UnionSeveralFieldsWithDefault&& x) noexcept
+    {
+
+        m_var_union_several_fields_with_default = std::move(x.m_var_union_several_fields_with_default);
+        return *this;
+    }
+
+    /*!
+     * @brief Comparison operator.
+     * @param x UnionSeveralFieldsWithDefault object to compare.
+     */
+    eProsima_user_DllExport bool operator ==(
+            const UnionSeveralFieldsWithDefault& x) const
+    {
+        return (m_var_union_several_fields_with_default == x.m_var_union_several_fields_with_default);
+    }
+
+    /*!
+     * @brief Comparison operator.
+     * @param x UnionSeveralFieldsWithDefault object to compare.
+     */
+    eProsima_user_DllExport bool operator !=(
+            const UnionSeveralFieldsWithDefault& x) const
+    {
+        return !(*this == x);
+    }
+
+    /*!
+     * @brief This function copies the value in member var_union_several_fields_with_default
+     * @param _var_union_several_fields_with_default New value to be copied in member var_union_several_fields_with_default
+     */
+    eProsima_user_DllExport void var_union_several_fields_with_default(
+            const Union_Several_Fields_With_Default& _var_union_several_fields_with_default)
+    {
+        m_var_union_several_fields_with_default = _var_union_several_fields_with_default;
+    }
+
+    /*!
+     * @brief This function moves the value in member var_union_several_fields_with_default
+     * @param _var_union_several_fields_with_default New value to be moved in member var_union_several_fields_with_default
+     */
+    eProsima_user_DllExport void var_union_several_fields_with_default(
+            Union_Several_Fields_With_Default&& _var_union_several_fields_with_default)
+    {
+        m_var_union_several_fields_with_default = std::move(_var_union_several_fields_with_default);
+    }
+
+    /*!
+     * @brief This function returns a constant reference to member var_union_several_fields_with_default
+     * @return Constant reference to member var_union_several_fields_with_default
+     */
+    eProsima_user_DllExport const Union_Several_Fields_With_Default& var_union_several_fields_with_default() const
+    {
+        return m_var_union_several_fields_with_default;
+    }
+
+    /*!
+     * @brief This function returns a reference to member var_union_several_fields_with_default
+     * @return Reference to member var_union_several_fields_with_default
+     */
+    eProsima_user_DllExport Union_Several_Fields_With_Default& var_union_several_fields_with_default()
+    {
+        return m_var_union_several_fields_with_default;
+    }
+
+
+
+private:
+
+    Union_Several_Fields_With_Default m_var_union_several_fields_with_default;
 
 };
 

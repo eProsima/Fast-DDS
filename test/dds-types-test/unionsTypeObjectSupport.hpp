@@ -315,6 +315,20 @@ eProsima_user_DllExport void register_Union_Discriminator_enum_labels_type_ident
  */
 eProsima_user_DllExport void register_Union_Discriminator_alias_type_identifier();
 /**
+ * @brief Register Union_Several_Fields related TypeIdentifier.
+ *        Fully-descriptive TypeIdentifiers are directly registered.
+ *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
+ *        indirectly registered as well.
+ */
+eProsima_user_DllExport void register_Union_Several_Fields_type_identifier();
+/**
+ * @brief Register Union_Several_Fields_With_Default related TypeIdentifier.
+ *        Fully-descriptive TypeIdentifiers are directly registered.
+ *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
+ *        indirectly registered as well.
+ */
+eProsima_user_DllExport void register_Union_Several_Fields_With_Default_type_identifier();
+/**
  * @brief Register UnionShort related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
@@ -587,6 +601,20 @@ eProsima_user_DllExport void register_UnionDiscriminatorEnumLabel_type_identifie
  *        indirectly registered as well.
  */
 eProsima_user_DllExport void register_UnionDiscriminatorAlias_type_identifier();
+/**
+ * @brief Register UnionSeveralFields related TypeIdentifier.
+ *        Fully-descriptive TypeIdentifiers are directly registered.
+ *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
+ *        indirectly registered as well.
+ */
+eProsima_user_DllExport void register_UnionSeveralFields_type_identifier();
+/**
+ * @brief Register UnionSeveralFieldsWithDefault related TypeIdentifier.
+ *        Fully-descriptive TypeIdentifiers are directly registered.
+ *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
+ *        indirectly registered as well.
+ */
+eProsima_user_DllExport void register_UnionSeveralFieldsWithDefault_type_identifier();
 
 
 #endif // DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
