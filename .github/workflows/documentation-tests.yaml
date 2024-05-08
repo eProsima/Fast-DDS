@@ -90,7 +90,7 @@ jobs:
         uses: eProsima/eProsima-CI/ubuntu/get_related_branch_from_repo@v0
         with:
           remote_repository: eProsima/Fast-DDS-python
-          fallback_branch: ${{ inputs.fastdds_python_branch || '3.0.x-devel' }}
+          fallback_branch: ${{ inputs.fastdds_python_branch || 'main' }}
 
       - name: Download Fast DDS Python repo
         uses: eProsima/eProsima-CI/external/checkout@v0
@@ -104,7 +104,7 @@ jobs:
         uses: eProsima/eProsima-CI/ubuntu/get_related_branch_from_repo@v0
         with:
           remote_repository: eProsima/Fast-DDS-docs
-          fallback_branch: ${{ inputs.fastdds_docs_branch || '3.0.x-devel' }}
+          fallback_branch: ${{ inputs.fastdds_docs_branch || 'master' }}
 
       - name: Download Fast DDS documentation repo
         uses: eProsima/eProsima-CI/external/checkout@v0
