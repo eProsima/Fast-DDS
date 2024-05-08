@@ -1310,6 +1310,7 @@ public:
             uint32_t sockerBufferSize)
     {
         participant_qos_.transport().listen_socket_buffer_size = sockerBufferSize;
+        participant_qos_.transport().send_socket_buffer_size = sockerBufferSize;
         return *this;
     }
 
