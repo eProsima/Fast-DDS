@@ -117,42 +117,50 @@ bool UDPTransportInterface::DoInputLocatorsMatch(
     return IPLocator::getPhysicalPort(left) == IPLocator::getPhysicalPort(right);
 }
 
+void UDPTransportInterface::configure_send_buffer_size()
+{
+    ip::udp::socket socket(io_service_);
+    socket.open(generate_protocol());
+
+    if (configuration()->sendBufferSize == 0)
+    {
+        socket_base::send_buffer_size option;
+        socket.get_option(option);
+        set_send_buffer_size(static_cast<uint32_t>(option.value()));
+
+        if (configuration()->sendBufferSize < s_minimumSocketBuffer)
+        {
+            set_send_buffer_size(s_minimumSocketBuffer);
+            mSendBufferSize = s_minimumSocketBuffer;
+        }
+    }
+}
+
+void UDPTransportInterface::configure_receive_buffer_size()
+{
+    ip::udp::socket socket(io_service_);
+    socket.open(generate_protocol());
+
+    if (configuration()->receiveBufferSize == 0)
+    {
+        socket_base::receive_buffer_size option;
+        socket.get_option(option);
+        set_receive_buffer_size(static_cast<uint32_t>(option.value()));
+
+        if (configuration()->receiveBufferSize < s_minimumSocketBuffer)
+        {
+            set_receive_buffer_size(s_minimumSocketBuffer);
+            mReceiveBufferSize = s_minimumSocketBuffer;
+        }
+    }
+}
+
 bool UDPTransportInterface::init(
         const fastrtps::rtps::PropertyPolicy*,
         const uint32_t& max_msg_size_no_frag)
 {
-    if (configuration()->sendBufferSize == 0 || configuration()->receiveBufferSize == 0)
-    {
-        // Check system buffer sizes.
-        ip::udp::socket socket(io_service_);
-        socket.open(generate_protocol());
-
-        if (configuration()->sendBufferSize == 0)
-        {
-            socket_base::send_buffer_size option;
-            socket.get_option(option);
-            set_send_buffer_size(static_cast<uint32_t>(option.value()));
-
-            if (configuration()->sendBufferSize < s_minimumSocketBuffer)
-            {
-                set_send_buffer_size(s_minimumSocketBuffer);
-                mSendBufferSize = s_minimumSocketBuffer;
-            }
-        }
-
-        if (configuration()->receiveBufferSize == 0)
-        {
-            socket_base::receive_buffer_size option;
-            socket.get_option(option);
-            set_receive_buffer_size(static_cast<uint32_t>(option.value()));
-
-            if (configuration()->receiveBufferSize < s_minimumSocketBuffer)
-            {
-                set_receive_buffer_size(s_minimumSocketBuffer);
-                mReceiveBufferSize = s_minimumSocketBuffer;
-            }
-        }
-    }
+    configure_send_buffer_size();
+    configure_receive_buffer_size();
 
     uint32_t maximumMessageSize = max_msg_size_no_frag == 0 ? s_maximumMessageSize : max_msg_size_no_frag;
 
