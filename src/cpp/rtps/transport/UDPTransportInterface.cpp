@@ -118,20 +118,55 @@ bool UDPTransportInterface::DoInputLocatorsMatch(
 
 void UDPTransportInterface::configure_send_buffer_size()
 {
+    asio::error_code ec;
     ip::udp::socket socket(io_service_);
-    socket.open(generate_protocol());
+    socket.open(generate_protocol(), ec);
+    if (!!ec)
+    {
+        EPROSIMA_LOG_ERROR(RTPS_MSG_OUT, "Error creating socket: " << ec.message());
+        return;
+    }
 
-    if (configuration()->sendBufferSize == 0)
+    // If sendBufferSize is 0, try using the system default value
+    uint32_t send_buffer_size = configuration()->sendBufferSize;
+    uint32_t initial_value = send_buffer_size;
+    if (send_buffer_size == 0)
     {
         socket_base::send_buffer_size option;
-        socket.get_option(option);
-        set_send_buffer_size(static_cast<uint32_t>(option.value()));
-
-        if (configuration()->sendBufferSize < s_minimumSocketBuffer)
+        socket.get_option(option, ec);
+        if (!ec)
         {
-            set_send_buffer_size(s_minimumSocketBuffer);
-            mSendBufferSize = s_minimumSocketBuffer;
+            send_buffer_size = static_cast<uint32_t>(option.value());
         }
+    }
+
+    // Ensure the minimum value is used
+    if (send_buffer_size < s_minimumSocketBuffer)
+    {
+        send_buffer_size = s_minimumSocketBuffer;
+        set_send_buffer_size(send_buffer_size);
+    }
+
+    // Try to set the highest possible value the system allows
+    for (; send_buffer_size >= s_minimumSocketBuffer; send_buffer_size /= 2)
+    {
+        socket_base::send_buffer_size option(static_cast<int32_t>(send_buffer_size));
+        socket.set_option(option, ec);
+        if (!ec)
+        {
+            set_send_buffer_size(send_buffer_size);
+            break;
+        }
+    }
+
+    // Keep final configuration value
+    mSendBufferSize = configuration()->sendBufferSize;
+
+    // Inform the user if the desired value could not be set
+    if (initial_value != 0 && mSendBufferSize != initial_value)
+    {
+        EPROSIMA_LOG_WARNING(RTPS_MSG_OUT, "UDPTransport sendBufferSize could not be set to the desired value. "
+                << "Using " << mSendBufferSize << " instead of " << initial_value);
     }
 }
 
