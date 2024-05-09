@@ -308,8 +308,8 @@ protected:
 
 private:
 
-    void configure_send_buffer_size();
-    void configure_receive_buffer_size();
+    bool configure_send_buffer_size();
+    bool configure_receive_buffer_size();
 
 };
 
