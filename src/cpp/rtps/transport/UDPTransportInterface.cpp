@@ -23,6 +23,8 @@
 #include <fastdds/rtps/messages/CDRMessage.h>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/utils/IPLocator.h>
+
+#include <rtps/transport/asio_helpers.hpp>
 #include <rtps/transport/UDPSenderResource.hpp>
 #include <statistics/rtps/messages/RTPSStatisticsMessages.hpp>
 
@@ -177,10 +179,16 @@ bool UDPTransportInterface::configure_send_buffer_size()
     }
 
     // Try to set the highest possible value the system allows
-    send_buffer_size = try_setting_send_buffer_size(socket, send_buffer_size, minimum_socket_buffer);
-    set_send_buffer_size(send_buffer_size);
+    if (!asio_helpers::try_setting_buffer_size<socket_base::send_buffer_size>(
+                socket, send_buffer_size, minimum_socket_buffer, send_buffer_size))
+    {
+        EPROSIMA_LOG_ERROR(RTPS_MSG_OUT,
+                "Couldn't set send buffer size to minimum value: " << minimum_socket_buffer);
+        return false;
+    }
 
     // Keep final configuration value
+    set_send_buffer_size(send_buffer_size);
     mSendBufferSize = send_buffer_size;
 
     // Inform the user if the desired value could not be set
@@ -226,19 +234,17 @@ bool UDPTransportInterface::configure_receive_buffer_size()
     }
 
     // Try to set the highest possible value the system allows
-    for (; receive_buffer_size >= minimum_socket_buffer; receive_buffer_size /= 2)
+    if (!asio_helpers::try_setting_buffer_size<socket_base::receive_buffer_size>(
+                socket, receive_buffer_size, minimum_socket_buffer, receive_buffer_size))
     {
-        socket_base::receive_buffer_size option(static_cast<int32_t>(receive_buffer_size));
-        socket.set_option(option, ec);
-        if (!ec)
-        {
-            set_receive_buffer_size(receive_buffer_size);
-            break;
-        }
+        EPROSIMA_LOG_ERROR(RTPS_MSG_OUT,
+                "Couldn't set receive buffer size to minimum value: " << minimum_socket_buffer);
+        return false;
     }
 
     // Keep final configuration value
-    mReceiveBufferSize = configuration()->receiveBufferSize;
+    set_receive_buffer_size(receive_buffer_size);
+    mReceiveBufferSize = receive_buffer_size;
 
     // Inform the user if the desired value could not be set
     if (initial_value != 0 && mReceiveBufferSize != initial_value)
