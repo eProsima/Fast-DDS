@@ -22,7 +22,6 @@
 #include <asio.hpp>
 
 #include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
-#include <fastrtps/utils/IPFinder.h>
 #include <rtps/transport/TCPTransportInterface.h>
 #include <rtps/transport/tcp/RTCPHeader.h>
 
@@ -50,21 +49,9 @@ class TCPv6Transport : public TCPTransportInterface
 protected:
 
     TCPv6TransportDescriptor configuration_;
-    std::vector<asio::ip::address_v6> interface_whitelist_;
 
     //! Constructor with no descriptor is necessary for implementations derived from this class.
     TCPv6Transport();
-
-    virtual bool compare_locator_ip(
-            const Locator& lh,
-            const Locator& rh) const override;
-
-    virtual bool compare_locator_ip_and_port(
-            const Locator& lh,
-            const Locator& rh) const override;
-
-    virtual void fill_local_ip(
-            Locator& loc) const override;
 
     virtual asio::ip::tcp::endpoint generate_endpoint(
             uint16_t port) const override;
@@ -84,34 +71,6 @@ protected:
         return asio::ip::tcp::v6();
     }
 
-    virtual bool get_ips(
-            std::vector<fastrtps::rtps::IPFinder::info_IP>& locNames,
-            bool return_loopback,
-            bool force_lookup) const override;
-
-    /**
-     * Method to get a list of interfaces to bind the socket associated to the given locator.
-     * @return Vector of interfaces in string format.
-     */
-    virtual std::vector<std::string> get_binding_interfaces_list() override;
-
-    bool is_locator_allowed(
-            const Locator& locator) const override;
-
-    //! Checks if the interfaces white list is empty.
-    virtual bool is_interface_whitelist_empty() const override;
-
-    //! Checks if the given interface is allowed by the white list.
-    virtual bool is_interface_allowed(
-            const std::string& iface) const override;
-
-    //! Checks if the given interface is allowed by the white list.
-    bool is_interface_allowed(
-            const asio::ip::address_v6& ip) const;
-
-    virtual bool is_interface_allowed(
-            const Locator& loc) const override;
-
     virtual void set_receive_buffer_size(
             uint32_t size) override;
 
@@ -122,23 +81,12 @@ protected:
             const asio::ip::tcp::endpoint& endpoint,
             Locator& locator) const override;
 
-    //! Checks if the IP addresses are the same without taking into account the IPv6 scope
-    static bool compare_ips(
-            const std::string& ip1,
-            const std::string& ip2);
-
 public:
 
     RTPS_DllAPI TCPv6Transport(
             const TCPv6TransportDescriptor&);
 
     virtual ~TCPv6Transport() override;
-
-    virtual LocatorList NormalizeLocator(
-            const Locator& locator) override;
-
-    virtual bool is_local_locator(
-            const Locator& locator) const override;
 
     TransportDescriptorInterface* get_configuration() override
     {

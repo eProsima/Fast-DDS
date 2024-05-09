@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "TCPTransportInterface.h"
+#include <rtps/transport/TCPTransportInterface.h>
 
 #include <algorithm>
 #include <cassert>
@@ -174,13 +174,45 @@ bool TCPTransportDescriptor::operator ==(
 
 TCPTransportInterface::TCPTransportInterface(
         int32_t transport_kind)
-    : TransportInterface(transport_kind)
+    : SocketTransportInterface(transport_kind)
     , alive_(true)
 #if TLS_FOUND
     , ssl_context_(asio::ssl::context::sslv23)
 #endif // if TLS_FOUND
     , keep_alive_event_(io_service_timers_)
+    , listening_port_(0)
 {
+}
+
+TCPTransportInterface::TCPTransportInterface(
+        int32_t transport_kind,
+        const TCPTransportDescriptor& descriptor)
+    : SocketTransportInterface(transport_kind, descriptor)
+    , alive_(true)
+#if TLS_FOUND
+    , ssl_context_(asio::ssl::context::sslv23)
+#endif // if TLS_FOUND
+    , keep_alive_event_(io_service_timers_)
+    , listening_port_(0)
+{
+    if (!descriptor.listening_ports.empty())
+    {
+        if (descriptor.listening_ports.size() > 1)
+        {
+            EPROSIMA_LOG_WARNING(TRANSPORT_TCP,
+                    "Only one listening port is allowed for TCP transport. Only the first port will be used.");
+        }
+        int32_t kind = is_ipv4() ? LOCATOR_KIND_TCPv4 : LOCATOR_KIND_TCPv6;
+        Locator locator(kind, descriptor.listening_ports.front());
+        listening_port_ = create_acceptor_socket(locator);
+    }
+
+#if !TLS_FOUND
+    if (descriptor.apply_security)
+    {
+        EPROSIMA_LOG_ERROR(RTCP_TLS, "Trying to use TCP Transport with TLS but TLS was not found.");
+    }
+#endif // if !TLS_FOUND
 }
 
 TCPTransportInterface::~TCPTransportInterface()
@@ -333,7 +365,7 @@ uint16_t TCPTransportInterface::create_acceptor_socket(
     uint16_t final_port = 0;
     try
     {
-        if (is_interface_whitelist_empty())
+        if (is_interface_allowlist_empty())
         {
 #if TLS_FOUND
             if (configuration()->apply_security)
@@ -558,12 +590,6 @@ bool TCPTransportInterface::IsInputChannelOpen(
     return IsLocatorSupported(locator) && is_input_port_open(IPLocator::getLogicalPort(locator));
 }
 
-bool TCPTransportInterface::IsLocatorSupported(
-        const Locator& locator) const
-{
-    return locator.kind == transport_kind_;
-}
-
 bool TCPTransportInterface::is_output_channel_open_for(
         const Locator& locator) const
 {
@@ -597,55 +623,6 @@ Locator TCPTransportInterface::RemoteToMainLocal(
     Locator mainLocal(remote);
     mainLocal.set_Invalid_Address();
     return mainLocal;
-}
-
-bool TCPTransportInterface::transform_remote_locator(
-        const Locator& remote_locator,
-        Locator& result_locator,
-        bool allowed_remote_localhost,
-        bool allowed_local_localhost) const
-{
-    if (IsLocatorSupported(remote_locator))
-    {
-        result_locator = remote_locator;
-        if (!is_local_locator(result_locator))
-        {
-            // is_local_locator will return false for multicast addresses as well as remote unicast ones.
-            return true;
-        }
-
-        // If we get here, the locator is a local unicast address
-
-        // Attempt conversion to localhost if remote transport listening on it allows it
-        if (allowed_remote_localhost)
-        {
-            Locator loopbackLocator;
-            fill_local_ip(loopbackLocator);
-            if (is_locator_allowed(loopbackLocator))
-            {
-                // Locator localhost is in the whitelist, so use localhost instead of remote_locator
-                fill_local_ip(result_locator);
-                IPLocator::setPhysicalPort(result_locator, IPLocator::getPhysicalPort(remote_locator));
-                IPLocator::setLogicalPort(result_locator, IPLocator::getLogicalPort(remote_locator));
-                return true;
-            }
-            else if (allowed_local_localhost)
-            {
-                // Abort transformation if localhost not allowed by this transport, but it is by other local transport
-                // and the remote one.
-                return false;
-            }
-        }
-
-        if (!is_locator_allowed(result_locator))
-        {
-            // Neither original remote locator nor localhost allowed: abort.
-            return false;
-        }
-
-        return true;
-    }
-    return false;
 }
 
 void TCPTransportInterface::SenderResourceHasBeenClosed(
@@ -796,17 +773,8 @@ bool TCPTransportInterface::OpenOutputChannel(
     // (Server-Client Topology - Client Side) OR LARGE DATA Topology with PDP discovery before TCP connection
     else
     {
-        // Get listening port (0 if client)
-        uint16_t listening_port = 0;
-        const TCPTransportDescriptor* config = configuration();
-        assert (config != nullptr);
-        if (!config->listening_ports.empty())
-        {
-            listening_port = config->listening_ports.front();
-        }
-
         bool local_lower_interface = false;
-        if (IPLocator::getPhysicalPort(physical_locator) == listening_port)
+        if (IPLocator::getPhysicalPort(physical_locator) == listening_port_) // NOTE: listening port is 0 if client
         {
             std::vector<Locator> list;
             std::vector<fastrtps::rtps::IPFinder::info_IP> local_interfaces;
@@ -829,7 +797,7 @@ bool TCPTransportInterface::OpenOutputChannel(
         // If the remote physical port is higher than our listening port, a new CONNECT channel needs to be created and connected
         // and the locator added to the send_resource_list.
         // If the remote physical port is lower than our listening port, only the locator needs to be added to the send_resource_list.
-        if (IPLocator::getPhysicalPort(physical_locator) > listening_port || local_lower_interface)
+        if (IPLocator::getPhysicalPort(physical_locator) > listening_port_ || local_lower_interface)
         {
             // Client side (either Server-Client or LARGE_DATA)
             EPROSIMA_LOG_INFO(RTCP, "OpenOutputChannel: [CONNECT] @ " << IPLocator::to_string(locator));
@@ -1975,24 +1943,12 @@ void TCPTransportInterface::update_network_interfaces()
     // TODO(jlbueno)
 }
 
-bool TCPTransportInterface::is_localhost_allowed() const
-{
-    Locator local_locator;
-    fill_local_ip(local_locator);
-    return is_locator_allowed(local_locator);
-}
-
-NetmaskFilterInfo TCPTransportInterface::netmask_filter_info() const
-{
-    return {netmask_filter_, allowed_interfaces_};
-}
-
 void TCPTransportInterface::fill_local_physical_port(
         Locator& locator) const
 {
     if (!configuration()->listening_ports.empty())
     {
-        IPLocator::setPhysicalPort(locator, *(configuration()->listening_ports.begin()));
+        IPLocator::setPhysicalPort(locator, listening_port_);
     }
     else
     {
