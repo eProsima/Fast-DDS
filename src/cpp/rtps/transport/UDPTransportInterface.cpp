@@ -118,35 +118,6 @@ bool UDPTransportInterface::DoInputLocatorsMatch(
     return IPLocator::getPhysicalPort(left) == IPLocator::getPhysicalPort(right);
 }
 
-/**
- * @brief Set the send buffer size of the socket to the highest possible value the system allows.
- *
- * @param socket The socket on which to set the send buffer size.
- * @param initial_buffer_value The initial value to try to set.
- * @param minimum_buffer_value The minimum value to set.
- *
- * @return The final value set.
- */
-static uint32_t try_setting_send_buffer_size(
-        asio::ip::udp::socket& socket,
-        uint32_t initial_buffer_value,
-        uint32_t minimum_buffer_value)
-{
-    // Try to set the highest possible value the system allows
-    for (auto send_size = initial_buffer_value; send_size >= minimum_buffer_value; send_size /= 2)
-    {
-        asio::error_code ec;
-        socket_base::send_buffer_size option(static_cast<int32_t>(send_size));
-        socket.set_option(option, ec);
-        if (!ec)
-        {
-            return send_size;
-        }
-    }
-
-    return minimum_buffer_value;
-}
-
 bool UDPTransportInterface::configure_send_buffer_size()
 {
     asio::error_code ec;
@@ -354,9 +325,14 @@ eProsimaUDPSocket UDPTransportInterface::OpenAndBindUnicastOutputSocket(
     getSocketPtr(socket)->open(generate_protocol());
     if (mSendBufferSize != 0)
     {
-        uint32_t configured_value;
-        configured_value = try_setting_send_buffer_size(socket, mSendBufferSize, configuration()->maxMessageSize);
-        if (configured_value != mSendBufferSize)
+        uint32_t configured_value = 0;
+        if (!asio_helpers::try_setting_buffer_size<socket_base::send_buffer_size>(
+                    socket, mSendBufferSize, configuration()->maxMessageSize, configured_value))
+        {
+            EPROSIMA_LOG_ERROR(RTPS_MSG_OUT,
+                    "Couldn't set send buffer size to minimum value: " << configuration()->maxMessageSize);
+        }
+        else if (configured_value != mSendBufferSize)
         {
             EPROSIMA_LOG_WARNING(RTPS_MSG_OUT, "UDPTransport sendBufferSize could not be set to the desired value. "
                     << "Using " << configured_value << " instead of " << mSendBufferSize);
