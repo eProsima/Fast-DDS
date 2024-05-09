@@ -119,6 +119,8 @@ jobs:
           ref: ${{ steps.get_shapes_demo_branch.outputs.deduced_branch }}
 
       # Required for Shapes Demo
+      # Do not setup python as it will internally modify the pythonLocation env variable
+      # and we want to use a fix version
       - name: Install Qt
         uses: jurplel/install-qt-action@v2.13.0
         with:
