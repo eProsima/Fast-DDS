@@ -2341,6 +2341,7 @@ bool DiscoveryDataBase::add_pdp_to_send_(
         eprosima::fastdds::rtps::CacheChange_t* change)
 {
     // Add DATA(p) to send in next iteration if it is not already there
+    std::lock_guard<std::recursive_mutex> guard(mutex_);
     if (std::find(
                 pdp_to_send_.begin(),
                 pdp_to_send_.end(),
