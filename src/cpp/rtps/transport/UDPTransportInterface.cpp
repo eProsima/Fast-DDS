@@ -146,7 +146,7 @@ static uint32_t try_setting_send_buffer_size(
     return minimum_buffer_value;
 }
 
-void UDPTransportInterface::configure_send_buffer_size()
+bool UDPTransportInterface::configure_send_buffer_size()
 {
     asio::error_code ec;
     ip::udp::socket socket(io_service_);
@@ -154,7 +154,7 @@ void UDPTransportInterface::configure_send_buffer_size()
     if (!!ec)
     {
         EPROSIMA_LOG_ERROR(RTPS_MSG_OUT, "Error creating socket: " << ec.message());
-        return;
+        return false;
     }
 
     // If sendBufferSize is 0, try using the system default value
@@ -190,9 +190,11 @@ void UDPTransportInterface::configure_send_buffer_size()
         EPROSIMA_LOG_WARNING(RTPS_MSG_OUT, "UDPTransport sendBufferSize could not be set to the desired value. "
                 << "Using " << mSendBufferSize << " instead of " << initial_value);
     }
+
+    return true;
 }
 
-void UDPTransportInterface::configure_receive_buffer_size()
+bool UDPTransportInterface::configure_receive_buffer_size()
 {
     asio::error_code ec;
     ip::udp::socket socket(io_service_);
@@ -200,7 +202,7 @@ void UDPTransportInterface::configure_receive_buffer_size()
     if (!!ec)
     {
         EPROSIMA_LOG_ERROR(RTPS_MSG_OUT, "Error creating socket: " << ec.message());
-        return;
+        return false;
     }
 
     // If receiveBufferSize is 0, try using the system default value
@@ -245,6 +247,8 @@ void UDPTransportInterface::configure_receive_buffer_size()
         EPROSIMA_LOG_WARNING(RTPS_MSG_OUT, "UDPTransport receiveBufferSize could not be set to the desired value. "
                 << "Using " << mReceiveBufferSize << " instead of " << initial_value);
     }
+
+    return true;
 }
 
 bool UDPTransportInterface::init(
@@ -274,10 +278,7 @@ bool UDPTransportInterface::init(
         return false;
     }
 
-    configure_send_buffer_size();
-    configure_receive_buffer_size();
-
-    return true;
+    return configure_send_buffer_size() && configure_receive_buffer_size();
 }
 
 bool UDPTransportInterface::IsInputChannelOpen(
