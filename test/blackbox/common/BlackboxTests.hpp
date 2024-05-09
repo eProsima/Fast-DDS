@@ -139,6 +139,9 @@ void default_send_print(
 std::list<HelloWorld> default_helloworld_data_generator(
         size_t max = 0);
 
+std::list<HelloWorld> default_large_helloworld_data_generator(
+        size_t max = 0);
+
 std::list<FixedSized> default_fixed_sized_data_generator(
         size_t max = 0);
 
