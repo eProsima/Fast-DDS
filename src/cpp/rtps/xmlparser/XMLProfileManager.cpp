@@ -709,3 +709,26 @@ XMLP_ret XMLProfileManager::extractReplierProfile(
 
     return XMLP_ret::XML_OK;
 }
+
+void XMLProfileManager::DeleteInstance()
+{
+    participant_profiles_.clear();
+    publisher_profiles_.clear();
+    subscriber_profiles_.clear();
+    requester_profiles_.clear();
+    replier_profiles_.clear();
+    topic_profiles_.clear();
+    xml_files_.clear();
+    transport_profiles_.clear();
+
+    // Delete the registered dynamic types builders
+    {
+        namespace dyn_types = eprosima::fastrtps::types;
+        auto factory = dyn_types::DynamicTypeBuilderFactory::get_instance();
+        for (auto&& type : dynamic_types_)
+        {
+            factory->delete_builder(type.second);
+        }
+        dynamic_types_.clear();
+    }
+}
