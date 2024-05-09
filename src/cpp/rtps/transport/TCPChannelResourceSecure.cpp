@@ -280,9 +280,7 @@ asio::ip::tcp::endpoint TCPChannelResourceSecure::local_endpoint(
 void TCPChannelResourceSecure::set_options(
         const TCPTransportDescriptor* options)
 {
-    secure_socket_->lowest_layer().set_option(socket_base::receive_buffer_size(options->receiveBufferSize));
-    secure_socket_->lowest_layer().set_option(socket_base::send_buffer_size(options->sendBufferSize));
-    secure_socket_->lowest_layer().set_option(ip::tcp::no_delay(options->enable_tcp_nodelay));
+    TCPChannelResource::set_socket_options(secure_socket_->lowest_layer(), options);
 }
 
 void TCPChannelResourceSecure::set_tls_verify_mode(
