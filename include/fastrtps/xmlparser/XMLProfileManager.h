@@ -226,17 +226,7 @@ public:
      * FastDDS's Domain calls this method automatically on its destructor, but
      * if using XMLProfileManager outside of FastDDS, it should be called manually.
      */
-    RTPS_DllAPI static void DeleteInstance()
-    {
-        participant_profiles_.clear();
-        publisher_profiles_.clear();
-        subscriber_profiles_.clear();
-        requester_profiles_.clear();
-        replier_profiles_.clear();
-        topic_profiles_.clear();
-        xml_files_.clear();
-        transport_profiles_.clear();
-    }
+    RTPS_DllAPI static void DeleteInstance();
 
     /**
      * Retrieves a DynamicPubSubType for the given dynamic type name.
