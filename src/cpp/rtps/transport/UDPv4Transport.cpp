@@ -26,6 +26,7 @@
 #include <fastrtps/utils/IPLocator.h>
 
 #include <rtps/network/ReceiverResource.h>
+#include <rtps/transport/asio_helpers.hpp>
 
 using namespace std;
 using namespace asio;
@@ -294,7 +295,20 @@ eProsimaUDPSocket UDPv4Transport::OpenAndBindInputSocket(
     getSocketPtr(socket)->open(generate_protocol());
     if (mReceiveBufferSize != 0)
     {
-        getSocketPtr(socket)->set_option(socket_base::receive_buffer_size(mReceiveBufferSize));
+        uint32_t configured_value = 0;
+        uint32_t minimum_value = configuration()->maxMessageSize;
+        if (!asio_helpers::try_setting_buffer_size<socket_base::receive_buffer_size>(
+                    socket, mReceiveBufferSize, minimum_value, configured_value))
+        {
+            EPROSIMA_LOG_ERROR(TRANSPORT_UDPV4,
+                    "Couldn't set receive buffer size to minimum value: " << minimum_value);
+        }
+        else if (mReceiveBufferSize != configured_value)
+        {
+            EPROSIMA_LOG_WARNING(TRANSPORT_UDPV4,
+                    "Receive buffer size could not be set to the desired value. "
+                    << "Using " << configured_value << " instead of " << mReceiveBufferSize);
+        }
     }
 
     if (is_multicast)
