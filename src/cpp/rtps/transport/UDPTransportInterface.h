@@ -308,7 +308,16 @@ protected:
 
 private:
 
+    /**
+     * @brief Prepare transport configuration regarding send buffer size.
+     * @return true if a send buffer size greater than max message size could be set, false otherwise.
+     */
     bool configure_send_buffer_size();
+
+    /**
+     * @brief Prepare transport configuration regarding receive buffer size.
+     * @return true if a receive buffer size greater than max message size could be set, false otherwise.
+     */
     bool configure_receive_buffer_size();
 
 };
