@@ -393,6 +393,10 @@ eProsimaUDPSocket UDPv4Transport::OpenAndBindInputSocket(
 {
     eProsimaUDPSocket socket = createUDPSocket(io_service_);
     getSocketPtr(socket)->open(generate_protocol());
+    if (mReceiveBufferSize != 0)
+    {
+        getSocketPtr(socket)->set_option(socket_base::receive_buffer_size(mReceiveBufferSize));
+    }
 
     if (is_multicast)
     {

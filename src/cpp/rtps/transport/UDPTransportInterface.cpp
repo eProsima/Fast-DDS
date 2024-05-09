@@ -146,35 +146,6 @@ static uint32_t try_setting_send_buffer_size(
     return minimum_buffer_value;
 }
 
-/**
- * @brief Set the receive buffer size of the socket to the highest possible value the system allows.
- *
- * @param socket The socket on which to set the receive buffer size.
- * @param initial_buffer_value The initial value to try to set.
- * @param minimum_buffer_value The minimum value to set.
- *
- * @return The final value set.
- */
-static uint32_t try_setting_receive_buffer_size(
-        asio::ip::udp::socket& socket,
-        uint32_t initial_buffer_value,
-        uint32_t minimum_buffer_value)
-{
-    // Try to set the highest possible value the system allows
-    for (auto recv_size = initial_buffer_value; recv_size >= minimum_buffer_value; recv_size /= 2)
-    {
-        asio::error_code ec;
-        socket_base::receive_buffer_size option(static_cast<int32_t>(recv_size));
-        socket.set_option(option, ec);
-        if (!ec)
-        {
-            return recv_size;
-        }
-    }
-
-    return minimum_buffer_value;
-}
-
 void UDPTransportInterface::configure_send_buffer_size()
 {
     asio::error_code ec;
@@ -250,14 +221,23 @@ void UDPTransportInterface::configure_receive_buffer_size()
     if (receive_buffer_size < minimum_socket_buffer)
     {
         receive_buffer_size = minimum_socket_buffer;
+        set_receive_buffer_size(receive_buffer_size);
     }
 
     // Try to set the highest possible value the system allows
-    receive_buffer_size = try_setting_receive_buffer_size(socket, receive_buffer_size, minimum_socket_buffer);
-    set_receive_buffer_size(receive_buffer_size);
+    for (; receive_buffer_size >= minimum_socket_buffer; receive_buffer_size /= 2)
+    {
+        socket_base::receive_buffer_size option(static_cast<int32_t>(receive_buffer_size));
+        socket.set_option(option, ec);
+        if (!ec)
+        {
+            set_receive_buffer_size(receive_buffer_size);
+            break;
+        }
+    }
 
     // Keep final configuration value
-    mReceiveBufferSize = receive_buffer_size;
+    mReceiveBufferSize = configuration()->receiveBufferSize;
 
     // Inform the user if the desired value could not be set
     if (initial_value != 0 && mReceiveBufferSize != initial_value)
@@ -354,17 +334,6 @@ UDPChannelResource* UDPTransportInterface::CreateInputChannelResource(
 {
     eProsimaUDPSocket unicastSocket = OpenAndBindInputSocket(sInterface,
                     IPLocator::getPhysicalPort(locator), is_multicast);
-    if (mReceiveBufferSize != 0)
-    {
-        uint32_t configured_value;
-        configured_value = try_setting_receive_buffer_size(unicastSocket, mReceiveBufferSize, maxMsgSize);
-        if (configured_value != mReceiveBufferSize)
-        {
-            EPROSIMA_LOG_WARNING(RTPS_MSG_OUT, "UDPTransport receiveBufferSize could not be set to the desired value. "
-                    << "Using " << configured_value << " instead of " << mReceiveBufferSize);
-        }
-    }
-
     UDPChannelResource* p_channel_resource = new UDPChannelResource(this, unicastSocket, maxMsgSize, locator,
                     sInterface, receiver, configuration()->get_thread_config_for_port(locator.port));
     return p_channel_resource;
