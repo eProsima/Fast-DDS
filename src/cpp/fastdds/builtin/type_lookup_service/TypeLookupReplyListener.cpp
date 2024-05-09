@@ -300,11 +300,11 @@ void TypeLookupReplyListener::onNewCacheChangeAdded(
             return;
         }
 
-        // Add reply to the processing queue
-        replies_queue_.push(ReplyWithServerGUID{reply, change->writerGUID});
         {
-            // Notify processor
             std::unique_lock<std::mutex> guard(replies_processor_cv_mutex_);
+            // Add reply to the processing queue
+            replies_queue_.push(ReplyWithServerGUID{reply, change->writerGUID});
+            // Notify processor
             replies_processor_cv_.notify_all();
         }
     }
