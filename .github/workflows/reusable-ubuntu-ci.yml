@@ -125,6 +125,7 @@ jobs:
           version: '5.15.2'
           dir: '${{ github.workspace }}/qt_installation/'
           modules: 'qtcharts'
+          setup-python: 'false'
 
       - name: Colcon build
         continue-on-error: false
