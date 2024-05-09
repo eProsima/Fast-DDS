@@ -133,6 +133,7 @@ public:
      *
      * @param[in] max_wait Max blocking time for this operation.
      * @return RETCODE_OK if there is new unread message, RETCODE_TIMEOUT if timeout
+     *
      * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
     FASTDDS_EXPORTED_API ReturnCode_t wait_for_historical_data(
@@ -761,6 +762,7 @@ public:
      * @param[in] handle
      *
      * @return Any of the standard return codes.
+     *
      * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
     FASTDDS_EXPORTED_API ReturnCode_t get_key_value(
@@ -973,6 +975,7 @@ public:
      * @param[out] publication_data publication data struct
      * @param publication_handle InstanceHandle_t of the publication
      * @return RETCODE_OK
+     *
      * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
     FASTDDS_EXPORTED_API ReturnCode_t get_matched_publication_data(
@@ -984,6 +987,7 @@ public:
      *
      * @param[out] publication_handles Vector where the InstanceHandle_t are returned
      * @return RETCODE_OK
+     *
      * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
     FASTDDS_EXPORTED_API ReturnCode_t get_matched_publications(
