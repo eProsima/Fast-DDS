@@ -1314,7 +1314,7 @@ TEST_F(DynamicTypesTests, DynamicType_uint8)
 
     uint32_t uTest32;
     EXPECT_EQ(data->get_uint32_value(uTest32, MEMBER_ID_INVALID), RETCODE_OK);
-    EXPECT_EQ(1, uTest32);
+    EXPECT_EQ(1u, uTest32);
 
     int64_t iTest64;
     EXPECT_EQ(data->get_int64_value(iTest64, MEMBER_ID_INVALID), RETCODE_OK);
@@ -1322,7 +1322,7 @@ TEST_F(DynamicTypesTests, DynamicType_uint8)
 
     uint64_t uTest64;
     EXPECT_EQ(data->get_uint64_value(uTest64, MEMBER_ID_INVALID), RETCODE_OK);
-    EXPECT_EQ(1, uTest64);
+    EXPECT_EQ(1u, uTest64);
 
     float fTest32;
     EXPECT_EQ(data->get_float32_value(fTest32, MEMBER_ID_INVALID), RETCODE_OK);
@@ -1735,7 +1735,7 @@ TEST_F(DynamicTypesTests, DynamicType_uint16)
 
     uint32_t uTest32;
     EXPECT_EQ(data->get_uint32_value(uTest32, MEMBER_ID_INVALID), RETCODE_OK);
-    EXPECT_EQ(1, uTest32);
+    EXPECT_EQ(1u, uTest32);
 
     int64_t iTest64;
     EXPECT_EQ(data->get_int64_value(iTest64, MEMBER_ID_INVALID), RETCODE_OK);
@@ -3665,7 +3665,7 @@ TEST_F(DynamicTypesTests, DynamicType_boolean)
 
     uint32_t uTest32 {1};
     EXPECT_EQ(data->get_uint32_value(uTest32, MEMBER_ID_INVALID), RETCODE_OK);
-    EXPECT_EQ(0, uTest32);
+    EXPECT_EQ(0u, uTest32);
 
     int8_t iTest8 {1};
     EXPECT_EQ(data->get_int8_value(iTest8, MEMBER_ID_INVALID), RETCODE_OK);
@@ -3912,7 +3912,7 @@ TEST_F(DynamicTypesTests, DynamicType_enum)
     DynamicType::_ref_type created_type {builder->build()};
     ASSERT_TRUE(created_type);
 
-    EXPECT_EQ(3, created_type->get_member_count());
+    EXPECT_EQ(3u, created_type->get_member_count());
     DynamicTypeMember::_ref_type member;
     ASSERT_EQ(RETCODE_OK, created_type->get_member_by_index(member, 0));
     EXPECT_EQ(MEMBER_ID_INVALID, member->get_id());
@@ -4363,9 +4363,9 @@ TEST_F(DynamicTypesTests, DynamicType_string)
 
     // Test get_member_by_name and get_member_by_index.
     EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
-    EXPECT_EQ(0, data->get_member_id_at_index(0));
-    EXPECT_EQ(1, data->get_member_id_at_index(1));
-    EXPECT_EQ(10, data->get_member_id_at_index(10));
+    EXPECT_EQ(0u, data->get_member_id_at_index(0));
+    EXPECT_EQ(1u, data->get_member_id_at_index(1));
+    EXPECT_EQ(10u, data->get_member_id_at_index(10));
     EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(11));
 
     // Test clone.
@@ -4605,9 +4605,9 @@ TEST_F(DynamicTypesTests, DynamicType_wstring)
 
     // Test get_member_by_name and get_member_by_index.
     EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
-    EXPECT_EQ(0, data->get_member_id_at_index(0));
-    EXPECT_EQ(1, data->get_member_id_at_index(1));
-    EXPECT_EQ(10, data->get_member_id_at_index(10));
+    EXPECT_EQ(0u, data->get_member_id_at_index(0));
+    EXPECT_EQ(1u, data->get_member_id_at_index(1));
+    EXPECT_EQ(10u, data->get_member_id_at_index(10));
     EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(11));
 
     // Test clone.
@@ -4913,16 +4913,16 @@ TEST_F(DynamicTypesTests, DynamicType_alias)
     // Test clear functions.
     EXPECT_EQ(RETCODE_OK, data->clear_all_values());
     EXPECT_EQ(data->get_uint32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    EXPECT_EQ(0, test2);
+    EXPECT_EQ(0u, test2);
     EXPECT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
     EXPECT_EQ(RETCODE_OK, data->clear_nonkey_values());
     EXPECT_EQ(data->get_uint32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    EXPECT_EQ(0, test2);
+    EXPECT_EQ(0u, test2);
     EXPECT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
     EXPECT_EQ(RETCODE_OK, data->clear_value(MEMBER_ID_INVALID));
     EXPECT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
     EXPECT_EQ(data->get_uint32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    EXPECT_EQ(0, test2);
+    EXPECT_EQ(0u, test2);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -5315,11 +5315,11 @@ TEST_F(DynamicTypesTests, DynamicType_bitset)
 
     // Testing get_member_by_name and get_member_id_at_index.
     EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name("int3"));
-    EXPECT_EQ(0, data->get_member_id_by_name("int2"));
-    EXPECT_EQ(3, data->get_member_id_by_name("int20"));
+    EXPECT_EQ(0u, data->get_member_id_by_name("int2"));
+    EXPECT_EQ(3u, data->get_member_id_by_name("int20"));
     EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(5));
-    EXPECT_EQ(0, data->get_member_id_at_index(0));
-    EXPECT_EQ(3, data->get_member_id_at_index(1));
+    EXPECT_EQ(0u, data->get_member_id_at_index(0));
+    EXPECT_EQ(3u, data->get_member_id_at_index(1));
 
     const uint8_t set_test_field_1 {6};
     const int32_t set_test_field_2 {6};
@@ -5526,20 +5526,20 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask)
 
     // Testing get_member_by_name and get_member_id_at_index.
     EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name("BIT4"));
-    EXPECT_EQ(0, data->get_member_id_by_name("BIT0"));
-    EXPECT_EQ(1, data->get_member_id_by_name("BIT1"));
-    EXPECT_EQ(2, data->get_member_id_by_name("BIT2"));
-    EXPECT_EQ(3, data->get_member_id_by_name("BIT3"));
-    EXPECT_EQ(5, data->get_member_id_by_name("BIT5"));
+    EXPECT_EQ(0u, data->get_member_id_by_name("BIT0"));
+    EXPECT_EQ(1u, data->get_member_id_by_name("BIT1"));
+    EXPECT_EQ(2u, data->get_member_id_by_name("BIT2"));
+    EXPECT_EQ(3u, data->get_member_id_by_name("BIT3"));
+    EXPECT_EQ(5u, data->get_member_id_by_name("BIT5"));
     EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(5));
-    EXPECT_EQ(0, data->get_member_id_at_index(0));
-    EXPECT_EQ(1, data->get_member_id_at_index(1));
-    EXPECT_EQ(2, data->get_member_id_at_index(2));
-    EXPECT_EQ(3, data->get_member_id_at_index(3));
-    EXPECT_EQ(5, data->get_member_id_at_index(4));
+    EXPECT_EQ(0u, data->get_member_id_at_index(0));
+    EXPECT_EQ(1u, data->get_member_id_at_index(1));
+    EXPECT_EQ(2u, data->get_member_id_at_index(2));
+    EXPECT_EQ(3u, data->get_member_id_at_index(3));
+    EXPECT_EQ(5u, data->get_member_id_at_index(4));
 
     // Testing get_item_count.
-    EXPECT_EQ(0, data->get_item_count());
+    EXPECT_EQ(0u, data->get_item_count());
 
     // Testing getters and setters.
     const uint8_t bitmask_value_set = 0x1;
@@ -5595,7 +5595,7 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask)
     }
 
     // Testing get_item_count.
-    EXPECT_EQ(3, data->get_item_count());
+    EXPECT_EQ(3u, data->get_item_count());
 
     // Encoding/decoding
     for (auto encoding : encodings)
@@ -5700,42 +5700,42 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_int32)
     Int8Seq iTestSeq8 {{2, 3, 4, 5}};
     EXPECT_EQ(data->set_int8_values(0, iTestSeq8), RETCODE_OK);
     EXPECT_EQ(data->get_int32_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(iTestSeq8, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, ::testing::ElementsAreArray(iTestSeq8.begin(), iTestSeq8.end()));
 
     UInt8Seq uTestSeq8 {{3, 4, 5, 6}};
     EXPECT_EQ(data->set_uint8_values(0, uTestSeq8), RETCODE_OK);
     EXPECT_EQ(data->get_int32_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(uTestSeq8, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, ::testing::ElementsAreArray(uTestSeq8.begin(), uTestSeq8.end()));
 
     Int16Seq iTestSeq16 {{2, 3, 4, 5}};
     EXPECT_EQ(data->set_int16_values(0, iTestSeq16), RETCODE_OK);
     EXPECT_EQ(data->get_int32_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(iTestSeq16, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(iTestSeq16.begin(), iTestSeq16.end()));
 
     UInt16Seq uTestSeq16 {{3, 4, 5, 6}};
     EXPECT_EQ(data->set_uint16_values(0, uTestSeq16), RETCODE_OK);
     EXPECT_EQ(data->get_int32_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(uTestSeq16, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(uTestSeq16.begin(), uTestSeq16.end()));
 
     CharSeq cTestSeq8 {{'a', 'b', 'c', 'd'}};
     EXPECT_EQ(data->set_char8_values(0, cTestSeq8), RETCODE_OK);
     EXPECT_EQ(data->get_int32_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(cTestSeq8, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(cTestSeq8.begin(), cTestSeq8.end()));
 
     WcharSeq cTestSeq16 {{L'b', L'c', L'd', L'e'}};
     EXPECT_EQ(data->set_char16_values(0, cTestSeq16), RETCODE_OK);
     EXPECT_EQ(data->get_int32_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(cTestSeq16, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(cTestSeq16.begin(), cTestSeq16.end()));
 
     BooleanSeq bTestSeq {{true, false, false, true}};
     EXPECT_EQ(data->set_boolean_values(0, bTestSeq), RETCODE_OK);
     EXPECT_EQ(data->get_int32_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(bTestSeq, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(bTestSeq.begin(), bTestSeq.end()));
 
     ByteSeq oTestSeq {{2, 3, 4, 5}};
     EXPECT_EQ(data->set_byte_values(0, oTestSeq), RETCODE_OK);
     EXPECT_EQ(data->get_int32_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(oTestSeq, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(oTestSeq.begin(), oTestSeq.end()));
 
     // Try to writer to MEMBER_ID_INVALID
     EXPECT_EQ(data->set_int32_values(MEMBER_ID_INVALID, iTestSeq32), RETCODE_OK);
@@ -5874,9 +5874,9 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_int32)
 
     // Test get_member_by_name and get_member_by_index.
     EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
-    EXPECT_EQ(0, data->get_member_id_at_index(0));
-    EXPECT_EQ(1, data->get_member_id_at_index(1));
-    EXPECT_EQ(4, data->get_member_id_at_index(4));
+    EXPECT_EQ(0u, data->get_member_id_at_index(0));
+    EXPECT_EQ(1u, data->get_member_id_at_index(1));
+    EXPECT_EQ(4u, data->get_member_id_at_index(4));
     EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(5));
 
     // Test clone.
@@ -5916,14 +5916,14 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_int32)
 
     // Remove the elements.
     EXPECT_EQ(RETCODE_OK, data->clear_all_values());
-    EXPECT_EQ(0, data->get_item_count());
+    EXPECT_EQ(0u, data->get_item_count());
     EXPECT_EQ(RETCODE_OK, data->set_int32_values(0, {1, 2, 3}));
     EXPECT_EQ(RETCODE_OK, data->clear_nonkey_values());
-    EXPECT_EQ(0, data->get_item_count());
+    EXPECT_EQ(0u, data->get_item_count());
     EXPECT_EQ(RETCODE_OK, data->set_int32_values(0, {1, 2, 3}));
     EXPECT_EQ(RETCODE_OK, data->clear_value(1));
     EXPECT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
-    EXPECT_EQ(2, data->get_item_count());
+    EXPECT_EQ(2u, data->get_item_count());
     EXPECT_EQ(RETCODE_OK, data->get_int32_values(get_test_value, 0));
     EXPECT_EQ(get_test_value, Int32Seq({1, 3}));
 
@@ -6006,22 +6006,22 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_uint32)
     UInt8Seq uTestSeq8 {{3, 4, 5, 6}};
     EXPECT_EQ(data->set_uint8_values(0, uTestSeq8), RETCODE_OK);
     EXPECT_EQ(data->get_uint32_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(uTestSeq8, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(uTestSeq8.begin(), uTestSeq8.end()));
 
     UInt16Seq uTestSeq16 {{3, 4, 5, 6}};
     EXPECT_EQ(data->set_uint16_values(0, uTestSeq16), RETCODE_OK);
     EXPECT_EQ(data->get_uint32_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(uTestSeq16, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(uTestSeq16.begin(), uTestSeq16.end()));
 
     BooleanSeq bTestSeq {{true, false, false, true}};
     EXPECT_EQ(data->set_boolean_values(0, bTestSeq), RETCODE_OK);
     EXPECT_EQ(data->get_uint32_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(bTestSeq, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(bTestSeq.begin(), bTestSeq.end()));
 
     ByteSeq oTestSeq {{2, 3, 4, 5}};
     EXPECT_EQ(data->set_byte_values(0, oTestSeq), RETCODE_OK);
     EXPECT_EQ(data->get_uint32_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(oTestSeq, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(oTestSeq.begin(), oTestSeq.end()));
 
     EXPECT_EQ(data->set_uint32_values(MEMBER_ID_INVALID, uTestSeq32), RETCODE_OK);
     EXPECT_EQ(data->get_uint32_values(get_test_value, 0), RETCODE_OK);
@@ -6154,15 +6154,15 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_uint32)
     EXPECT_EQ(data->set_uint32_value(4, 5), RETCODE_OK);
     uint32_t test1 {0};
     EXPECT_EQ(data->get_uint32_value(test1, 0), RETCODE_OK);
-    EXPECT_EQ(1, test1);
+    EXPECT_EQ(1u, test1);
     EXPECT_EQ(data->get_uint32_value(test1, 1), RETCODE_OK);
-    EXPECT_EQ(2, test1);
+    EXPECT_EQ(2u, test1);
     EXPECT_EQ(data->get_uint32_value(test1, 2), RETCODE_OK);
-    EXPECT_EQ(3, test1);
+    EXPECT_EQ(3u, test1);
     EXPECT_EQ(data->get_uint32_value(test1, 3), RETCODE_OK);
-    EXPECT_EQ(4, test1);
+    EXPECT_EQ(4u, test1);
     EXPECT_EQ(data->get_uint32_value(test1, 4), RETCODE_OK);
-    EXPECT_EQ(5, test1);
+    EXPECT_EQ(5u, test1);
 
     UInt32Seq test_all {{1, 2, 3, 4, 5}};
     UInt32Seq test_less {{3, 4, 5}};
@@ -6171,9 +6171,9 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_uint32)
 
     // Test get_member_by_name and get_member_by_index.
     EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
-    EXPECT_EQ(0, data->get_member_id_at_index(0));
-    EXPECT_EQ(1, data->get_member_id_at_index(1));
-    EXPECT_EQ(4, data->get_member_id_at_index(4));
+    EXPECT_EQ(0u, data->get_member_id_at_index(0));
+    EXPECT_EQ(1u, data->get_member_id_at_index(1));
+    EXPECT_EQ(4u, data->get_member_id_at_index(4));
     EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(5));
 
     // Test clone.
@@ -6213,14 +6213,14 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_uint32)
 
     // Remove the elements.
     EXPECT_EQ(RETCODE_OK, data->clear_all_values());
-    EXPECT_EQ(0, data->get_item_count());
+    EXPECT_EQ(0u, data->get_item_count());
     EXPECT_EQ(RETCODE_OK, data->set_uint32_values(0, {1, 2, 3}));
     EXPECT_EQ(RETCODE_OK, data->clear_nonkey_values());
-    EXPECT_EQ(0, data->get_item_count());
+    EXPECT_EQ(0u, data->get_item_count());
     EXPECT_EQ(RETCODE_OK, data->set_uint32_values(0, {1, 2, 3}));
     EXPECT_EQ(RETCODE_OK, data->clear_value(1));
     EXPECT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
-    EXPECT_EQ(2, data->get_item_count());
+    EXPECT_EQ(2u, data->get_item_count());
     EXPECT_EQ(RETCODE_OK, data->get_uint32_values(get_test_value, 0));
     EXPECT_EQ(get_test_value, UInt32Seq({1, 3}));
 
@@ -6463,9 +6463,9 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_int8)
 
     // Test get_member_by_name and get_member_by_index.
     EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
-    EXPECT_EQ(0, data->get_member_id_at_index(0));
-    EXPECT_EQ(1, data->get_member_id_at_index(1));
-    EXPECT_EQ(4, data->get_member_id_at_index(4));
+    EXPECT_EQ(0u, data->get_member_id_at_index(0));
+    EXPECT_EQ(1u, data->get_member_id_at_index(1));
+    EXPECT_EQ(4u, data->get_member_id_at_index(4));
     EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(5));
 
     // Test clone.
@@ -6505,14 +6505,14 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_int8)
 
     // Remove the elements.
     EXPECT_EQ(RETCODE_OK, data->clear_all_values());
-    EXPECT_EQ(0, data->get_item_count());
+    EXPECT_EQ(0u, data->get_item_count());
     EXPECT_EQ(RETCODE_OK, data->set_int8_values(0, {1, 2, 3}));
     EXPECT_EQ(RETCODE_OK, data->clear_nonkey_values());
-    EXPECT_EQ(0, data->get_item_count());
+    EXPECT_EQ(0u, data->get_item_count());
     EXPECT_EQ(RETCODE_OK, data->set_int8_values(0, {1, 2, 3}));
     EXPECT_EQ(RETCODE_OK, data->clear_value(1));
     EXPECT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
-    EXPECT_EQ(2, data->get_item_count());
+    EXPECT_EQ(2u, data->get_item_count());
     EXPECT_EQ(RETCODE_OK, data->get_int8_values(get_test_value, 0));
     EXPECT_EQ(get_test_value, Int8Seq({1, 3}));
 
@@ -6764,9 +6764,9 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_uint8)
 
     // Test get_member_by_name and get_member_by_index.
     EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
-    EXPECT_EQ(0, data->get_member_id_at_index(0));
-    EXPECT_EQ(1, data->get_member_id_at_index(1));
-    EXPECT_EQ(4, data->get_member_id_at_index(4));
+    EXPECT_EQ(0u, data->get_member_id_at_index(0));
+    EXPECT_EQ(1u, data->get_member_id_at_index(1));
+    EXPECT_EQ(4u, data->get_member_id_at_index(4));
     EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(5));
 
     // Test clone.
@@ -6806,14 +6806,14 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_uint8)
 
     // Remove the elements.
     EXPECT_EQ(RETCODE_OK, data->clear_all_values());
-    EXPECT_EQ(0, data->get_item_count());
+    EXPECT_EQ(0u, data->get_item_count());
     EXPECT_EQ(RETCODE_OK, data->set_uint8_values(0, {1, 2, 3}));
     EXPECT_EQ(RETCODE_OK, data->clear_nonkey_values());
-    EXPECT_EQ(0, data->get_item_count());
+    EXPECT_EQ(0u, data->get_item_count());
     EXPECT_EQ(RETCODE_OK, data->set_uint8_values(0, {1, 2, 3}));
     EXPECT_EQ(RETCODE_OK, data->clear_value(1));
     EXPECT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
-    EXPECT_EQ(2, data->get_item_count());
+    EXPECT_EQ(2u, data->get_item_count());
     EXPECT_EQ(RETCODE_OK, data->get_uint8_values(get_test_value, 0));
     EXPECT_EQ(get_test_value, UInt8Seq({1, 3}));
 
@@ -6895,27 +6895,27 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_int16)
     Int8Seq iTestSeq8 {{2, 3, 4, 5}};
     EXPECT_EQ(data->set_int8_values(0, iTestSeq8), RETCODE_OK);
     EXPECT_EQ(data->get_int16_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(iTestSeq8, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(iTestSeq8.begin(), iTestSeq8.end()));
 
     UInt8Seq uTestSeq8 {{3, 4, 5, 6}};
     EXPECT_EQ(data->set_uint8_values(0, uTestSeq8), RETCODE_OK);
     EXPECT_EQ(data->get_int16_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(uTestSeq8, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(uTestSeq8.begin(), uTestSeq8.end()));
 
     CharSeq cTestSeq8 {{'a', 'b', 'c', 'd'}};
     EXPECT_EQ(data->set_char8_values(0, cTestSeq8), RETCODE_OK);
     EXPECT_EQ(data->get_int16_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(cTestSeq8, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(cTestSeq8.begin(), cTestSeq8.end()));
 
     BooleanSeq bTestSeq {{true, false, false, true}};
     EXPECT_EQ(data->set_boolean_values(0, bTestSeq), RETCODE_OK);
     EXPECT_EQ(data->get_int16_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(bTestSeq, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(bTestSeq.begin(), bTestSeq.end()));
 
     ByteSeq oTestSeq {{2, 3, 4, 5}};
     EXPECT_EQ(data->set_byte_values(0, oTestSeq), RETCODE_OK);
     EXPECT_EQ(data->get_int16_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(oTestSeq, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(oTestSeq.begin(), oTestSeq.end()));
 
     EXPECT_EQ(data->set_int16_values(MEMBER_ID_INVALID, iTestSeq16), RETCODE_OK);
     EXPECT_EQ(data->get_int16_values(get_test_value, 0), RETCODE_OK);
@@ -7063,9 +7063,9 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_int16)
 
     // Test get_member_by_name and get_member_by_index.
     EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
-    EXPECT_EQ(0, data->get_member_id_at_index(0));
-    EXPECT_EQ(1, data->get_member_id_at_index(1));
-    EXPECT_EQ(4, data->get_member_id_at_index(4));
+    EXPECT_EQ(0u, data->get_member_id_at_index(0));
+    EXPECT_EQ(1u, data->get_member_id_at_index(1));
+    EXPECT_EQ(4u, data->get_member_id_at_index(4));
     EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(5));
 
     // Test clone.
@@ -7105,14 +7105,14 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_int16)
 
     // Remove the elements.
     EXPECT_EQ(RETCODE_OK, data->clear_all_values());
-    EXPECT_EQ(0, data->get_item_count());
+    EXPECT_EQ(0u, data->get_item_count());
     EXPECT_EQ(RETCODE_OK, data->set_int16_values(0, {1, 2, 3}));
     EXPECT_EQ(RETCODE_OK, data->clear_nonkey_values());
-    EXPECT_EQ(0, data->get_item_count());
+    EXPECT_EQ(0u, data->get_item_count());
     EXPECT_EQ(RETCODE_OK, data->set_int16_values(0, {1, 2, 3}));
     EXPECT_EQ(RETCODE_OK, data->clear_value(1));
     EXPECT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
-    EXPECT_EQ(2, data->get_item_count());
+    EXPECT_EQ(2u, data->get_item_count());
     EXPECT_EQ(RETCODE_OK, data->get_int16_values(get_test_value, 0));
     EXPECT_EQ(get_test_value, Int16Seq({1, 3}));
 
@@ -7195,17 +7195,17 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_uint16)
     UInt8Seq uTestSeq8 {{3, 4, 5, 6}};
     EXPECT_EQ(data->set_uint8_values(0, uTestSeq8), RETCODE_OK);
     EXPECT_EQ(data->get_uint16_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(uTestSeq8, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(uTestSeq8.begin(), uTestSeq8.end()));
 
     BooleanSeq bTestSeq {{true, false, false, true}};
     EXPECT_EQ(data->set_boolean_values(0, bTestSeq), RETCODE_OK);
     EXPECT_EQ(data->get_uint16_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(bTestSeq, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(bTestSeq.begin(), bTestSeq.end()));
 
     ByteSeq oTestSeq {{2, 3, 4, 5}};
     EXPECT_EQ(data->set_byte_values(0, oTestSeq), RETCODE_OK);
     EXPECT_EQ(data->get_uint16_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(oTestSeq, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(oTestSeq.begin(), oTestSeq.end()));
 
     EXPECT_EQ(data->set_uint16_values(MEMBER_ID_INVALID, uTestSeq16), RETCODE_OK);
     EXPECT_EQ(data->get_uint16_values(get_test_value, 0), RETCODE_OK);
@@ -7363,9 +7363,9 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_uint16)
 
     // Test get_member_by_name and get_member_by_index.
     EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
-    EXPECT_EQ(0, data->get_member_id_at_index(0));
-    EXPECT_EQ(1, data->get_member_id_at_index(1));
-    EXPECT_EQ(4, data->get_member_id_at_index(4));
+    EXPECT_EQ(0u, data->get_member_id_at_index(0));
+    EXPECT_EQ(1u, data->get_member_id_at_index(1));
+    EXPECT_EQ(4u, data->get_member_id_at_index(4));
     EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(5));
 
     // Test clone.
@@ -7405,14 +7405,14 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_uint16)
 
     // Remove the elements.
     EXPECT_EQ(RETCODE_OK, data->clear_all_values());
-    EXPECT_EQ(0, data->get_item_count());
+    EXPECT_EQ(0u, data->get_item_count());
     EXPECT_EQ(RETCODE_OK, data->set_uint16_values(0, {1, 2, 3}));
     EXPECT_EQ(RETCODE_OK, data->clear_nonkey_values());
-    EXPECT_EQ(0, data->get_item_count());
+    EXPECT_EQ(0u, data->get_item_count());
     EXPECT_EQ(RETCODE_OK, data->set_uint16_values(0, {1, 2, 3}));
     EXPECT_EQ(RETCODE_OK, data->clear_value(1));
     EXPECT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
-    EXPECT_EQ(2, data->get_item_count());
+    EXPECT_EQ(2u, data->get_item_count());
     EXPECT_EQ(RETCODE_OK, data->get_uint16_values(get_test_value, 0));
     EXPECT_EQ(get_test_value, UInt16Seq({1, 3}));
 
@@ -7494,52 +7494,52 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_int64)
     Int32Seq iTestSeq32 {{2, 3, 4, 5}};
     EXPECT_EQ(data->set_int32_values(0, iTestSeq32), RETCODE_OK);
     EXPECT_EQ(data->get_int64_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(iTestSeq32, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(iTestSeq32.begin(), iTestSeq32.end()));
 
     UInt32Seq uTestSeq32 {{3, 4, 5, 6}};
     EXPECT_EQ(data->set_uint32_values(0, uTestSeq32), RETCODE_OK);
     EXPECT_EQ(data->get_int64_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(uTestSeq32, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(uTestSeq32.begin(), uTestSeq32.end()));
 
     Int8Seq iTestSeq8 {{2, 3, 4, 5}};
     EXPECT_EQ(data->set_int8_values(0, iTestSeq8), RETCODE_OK);
     EXPECT_EQ(data->get_int64_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(iTestSeq8, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(iTestSeq8.begin(), iTestSeq8.end()));
 
     UInt8Seq uTestSeq8 {{3, 4, 5, 6}};
     EXPECT_EQ(data->set_uint8_values(0, uTestSeq8), RETCODE_OK);
     EXPECT_EQ(data->get_int64_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(uTestSeq8, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(uTestSeq8.begin(), uTestSeq8.end()));
 
     Int16Seq iTestSeq16 {{2, 3, 4, 5}};
     EXPECT_EQ(data->set_int16_values(0, iTestSeq16), RETCODE_OK);
     EXPECT_EQ(data->get_int64_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(iTestSeq16, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(iTestSeq16.begin(), iTestSeq16.end()));
 
     UInt16Seq uTestSeq16 {{3, 4, 5, 6}};
     EXPECT_EQ(data->set_uint16_values(0, uTestSeq16), RETCODE_OK);
     EXPECT_EQ(data->get_int64_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(uTestSeq16, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(uTestSeq16.begin(), uTestSeq16.end()));
 
     CharSeq cTestSeq8 {{'a', 'b', 'c', 'd'}};
     EXPECT_EQ(data->set_char8_values(0, cTestSeq8), RETCODE_OK);
     EXPECT_EQ(data->get_int64_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(cTestSeq8, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(cTestSeq8.begin(), cTestSeq8.end()));
 
     WcharSeq cTestSeq16 {{L'b', L'c', L'd', L'e'}};
     EXPECT_EQ(data->set_char16_values(0, cTestSeq16), RETCODE_OK);
     EXPECT_EQ(data->get_int64_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(cTestSeq16, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(cTestSeq16.begin(), cTestSeq16.end()));
 
     BooleanSeq bTestSeq {{true, false, false, true}};
     EXPECT_EQ(data->set_boolean_values(0, bTestSeq), RETCODE_OK);
     EXPECT_EQ(data->get_int64_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(bTestSeq, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(bTestSeq.begin(), bTestSeq.end()));
 
     ByteSeq oTestSeq {{2, 3, 4, 5}};
     EXPECT_EQ(data->set_byte_values(0, oTestSeq), RETCODE_OK);
     EXPECT_EQ(data->get_int64_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(oTestSeq, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(oTestSeq.begin(), oTestSeq.end()));
 
     EXPECT_EQ(data->set_int64_values(MEMBER_ID_INVALID, iTestSeq64), RETCODE_OK);
     EXPECT_EQ(data->get_int64_values(get_test_value, 0), RETCODE_OK);
@@ -7585,8 +7585,9 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_int64)
 
     //{{{ Successful getters
     Float128Seq fTestSeq128;
+    Float128Seq fTestSeq128_result {{1.0, 2.0, 3.0, 4.0}};
     EXPECT_EQ(data->get_float128_values(fTestSeq128, 0), RETCODE_OK);
-    EXPECT_THAT(fTestSeq128, testing::ElementsAreArray(iTestSeq64.begin(), iTestSeq64.end()));
+    EXPECT_THAT(fTestSeq128, fTestSeq128_result);
     //}}}
 
     //{{{ Failing getters
@@ -7669,9 +7670,9 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_int64)
 
     // Test get_member_by_name and get_member_by_index.
     EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
-    EXPECT_EQ(0, data->get_member_id_at_index(0));
-    EXPECT_EQ(1, data->get_member_id_at_index(1));
-    EXPECT_EQ(4, data->get_member_id_at_index(4));
+    EXPECT_EQ(0u, data->get_member_id_at_index(0));
+    EXPECT_EQ(1u, data->get_member_id_at_index(1));
+    EXPECT_EQ(4u, data->get_member_id_at_index(4));
     EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(5));
 
     // Test clone.
@@ -7711,14 +7712,14 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_int64)
 
     // Remove the elements.
     EXPECT_EQ(RETCODE_OK, data->clear_all_values());
-    EXPECT_EQ(0, data->get_item_count());
+    EXPECT_EQ(0u, data->get_item_count());
     EXPECT_EQ(RETCODE_OK, data->set_int64_values(0, {1, 2, 3}));
     EXPECT_EQ(RETCODE_OK, data->clear_nonkey_values());
-    EXPECT_EQ(0, data->get_item_count());
+    EXPECT_EQ(0u, data->get_item_count());
     EXPECT_EQ(RETCODE_OK, data->set_int64_values(0, {1, 2, 3}));
     EXPECT_EQ(RETCODE_OK, data->clear_value(1));
     EXPECT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
-    EXPECT_EQ(2, data->get_item_count());
+    EXPECT_EQ(2u, data->get_item_count());
     EXPECT_EQ(RETCODE_OK, data->get_int64_values(get_test_value, 0));
     EXPECT_EQ(get_test_value, Int64Seq({1, 3}));
 
@@ -7801,27 +7802,27 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_uint64)
     UInt32Seq uTestSeq32 {{1, 2, 3, 4}};
     EXPECT_EQ(data->set_uint32_values(0, uTestSeq32), RETCODE_OK);
     EXPECT_EQ(data->get_uint64_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(uTestSeq32, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(uTestSeq32.begin(), uTestSeq32.end()));
 
     UInt8Seq uTestSeq8 {{3, 4, 5, 6}};
     EXPECT_EQ(data->set_uint8_values(0, uTestSeq8), RETCODE_OK);
     EXPECT_EQ(data->get_uint64_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(uTestSeq8, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(uTestSeq8.begin(), uTestSeq8.end()));
 
     UInt16Seq uTestSeq16 {{3, 4, 5, 6}};
     EXPECT_EQ(data->set_uint16_values(0, uTestSeq16), RETCODE_OK);
     EXPECT_EQ(data->get_uint64_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(uTestSeq16, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(uTestSeq16.begin(), uTestSeq16.end()));
 
     BooleanSeq bTestSeq {{true, false, false, true}};
     EXPECT_EQ(data->set_boolean_values(0, bTestSeq), RETCODE_OK);
     EXPECT_EQ(data->get_uint64_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(bTestSeq, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(bTestSeq.begin(), bTestSeq.end()));
 
     ByteSeq oTestSeq {{2, 3, 4, 5}};
     EXPECT_EQ(data->set_byte_values(0, oTestSeq), RETCODE_OK);
     EXPECT_EQ(data->get_uint64_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(oTestSeq, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(oTestSeq.begin(), oTestSeq.end()));
 
     EXPECT_EQ(data->set_uint64_values(MEMBER_ID_INVALID, uTestSeq64), RETCODE_OK);
     EXPECT_EQ(data->get_uint64_values(get_test_value, 0), RETCODE_OK);
@@ -7872,8 +7873,9 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_uint64)
 
     //{{{ Successful getters
     Float128Seq fTestSeq128;
+    Float128Seq fTestSeq128_result {{1.0, 2.0, 3.0, 4.0}};
     EXPECT_EQ(data->get_float128_values(fTestSeq128, 0), RETCODE_OK);
-    EXPECT_THAT(fTestSeq128, testing::ElementsAreArray(uTestSeq64.begin(), uTestSeq64.end()));
+    EXPECT_THAT(fTestSeq128, fTestSeq128_result);
     //}}}
 
     //{{{ Failing getters
@@ -7963,9 +7965,9 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_uint64)
 
     // Test get_member_by_name and get_member_by_index.
     EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
-    EXPECT_EQ(0, data->get_member_id_at_index(0));
-    EXPECT_EQ(1, data->get_member_id_at_index(1));
-    EXPECT_EQ(4, data->get_member_id_at_index(4));
+    EXPECT_EQ(0u, data->get_member_id_at_index(0));
+    EXPECT_EQ(1u, data->get_member_id_at_index(1));
+    EXPECT_EQ(4u, data->get_member_id_at_index(4));
     EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(5));
 
     // Test clone.
@@ -8005,14 +8007,14 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_uint64)
 
     // Remove the elements.
     EXPECT_EQ(RETCODE_OK, data->clear_all_values());
-    EXPECT_EQ(0, data->get_item_count());
+    EXPECT_EQ(0u, data->get_item_count());
     EXPECT_EQ(RETCODE_OK, data->set_uint64_values(0, {1, 2, 3}));
     EXPECT_EQ(RETCODE_OK, data->clear_nonkey_values());
-    EXPECT_EQ(0, data->get_item_count());
+    EXPECT_EQ(0u, data->get_item_count());
     EXPECT_EQ(RETCODE_OK, data->set_uint64_values(0, {1, 2, 3}));
     EXPECT_EQ(RETCODE_OK, data->clear_value(1));
     EXPECT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
-    EXPECT_EQ(2, data->get_item_count());
+    EXPECT_EQ(2u, data->get_item_count());
     EXPECT_EQ(RETCODE_OK, data->get_uint64_values(get_test_value, 0));
     EXPECT_EQ(get_test_value, UInt64Seq({1, 3}));
 
@@ -8095,42 +8097,42 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_float32)
     Int8Seq iTestSeq8 {{2, 3, 4, 5}};
     EXPECT_EQ(data->set_int8_values(0, iTestSeq8), RETCODE_OK);
     EXPECT_EQ(data->get_float32_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(iTestSeq8, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(iTestSeq8.begin(), iTestSeq8.end()));
 
     UInt8Seq uTestSeq8 {{3, 4, 5, 6}};
     EXPECT_EQ(data->set_uint8_values(0, uTestSeq8), RETCODE_OK);
     EXPECT_EQ(data->get_float32_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(uTestSeq8, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(uTestSeq8.begin(), uTestSeq8.end()));
 
     Int16Seq iTestSeq16 {{2, 3, 4, 5}};
     EXPECT_EQ(data->set_int16_values(0, iTestSeq16), RETCODE_OK);
     EXPECT_EQ(data->get_float32_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(iTestSeq16, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(iTestSeq16.begin(), iTestSeq16.end()));
 
     UInt16Seq uTestSeq16 {{3, 4, 5, 6}};
     EXPECT_EQ(data->set_uint16_values(0, uTestSeq16), RETCODE_OK);
     EXPECT_EQ(data->get_float32_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(uTestSeq16, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(uTestSeq16.begin(), uTestSeq16.end()));
 
     CharSeq cTestSeq8 {{'a', 'b', 'c', 'd'}};
     EXPECT_EQ(data->set_char8_values(0, cTestSeq8), RETCODE_OK);
     EXPECT_EQ(data->get_float32_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(cTestSeq8, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(cTestSeq8.begin(), cTestSeq8.end()));
 
     WcharSeq cTestSeq16 {{L'b', L'c', L'd', L'e'}};
     EXPECT_EQ(data->set_char16_values(0, cTestSeq16), RETCODE_OK);
     EXPECT_EQ(data->get_float32_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(cTestSeq16, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(cTestSeq16.begin(), cTestSeq16.end()));
 
     BooleanSeq bTestSeq {{true, false, false, true}};
     EXPECT_EQ(data->set_boolean_values(0, bTestSeq), RETCODE_OK);
     EXPECT_EQ(data->get_float32_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(bTestSeq, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(bTestSeq.begin(), bTestSeq.end()));
 
     ByteSeq oTestSeq {{2, 3, 4, 5}};
     EXPECT_EQ(data->set_byte_values(0, oTestSeq), RETCODE_OK);
     EXPECT_EQ(data->get_float32_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(oTestSeq, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(oTestSeq.begin(), oTestSeq.end()));
 
     EXPECT_EQ(data->set_float32_values(MEMBER_ID_INVALID, fTestSeq32), RETCODE_OK);
     EXPECT_EQ(data->get_float32_values(get_test_value, 0), RETCODE_OK);
@@ -8266,9 +8268,9 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_float32)
 
     // Test get_member_by_name and get_member_by_index.
     EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
-    EXPECT_EQ(0, data->get_member_id_at_index(0));
-    EXPECT_EQ(1, data->get_member_id_at_index(1));
-    EXPECT_EQ(4, data->get_member_id_at_index(4));
+    EXPECT_EQ(0u, data->get_member_id_at_index(0));
+    EXPECT_EQ(1u, data->get_member_id_at_index(1));
+    EXPECT_EQ(4u, data->get_member_id_at_index(4));
     EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(5));
 
     // Test clone.
@@ -8308,14 +8310,14 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_float32)
 
     // Remove the elements.
     EXPECT_EQ(RETCODE_OK, data->clear_all_values());
-    EXPECT_EQ(0, data->get_item_count());
+    EXPECT_EQ(0u, data->get_item_count());
     EXPECT_EQ(RETCODE_OK, data->set_float32_values(0, {1, 2, 3}));
     EXPECT_EQ(RETCODE_OK, data->clear_nonkey_values());
-    EXPECT_EQ(0, data->get_item_count());
+    EXPECT_EQ(0u, data->get_item_count());
     EXPECT_EQ(RETCODE_OK, data->set_float32_values(0, {1, 2, 3}));
     EXPECT_EQ(RETCODE_OK, data->clear_value(1));
     EXPECT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
-    EXPECT_EQ(2, data->get_item_count());
+    EXPECT_EQ(2u, data->get_item_count());
     EXPECT_EQ(RETCODE_OK, data->get_float32_values(get_test_value, 0));
     EXPECT_EQ(get_test_value, Float32Seq({1, 3}));
 
@@ -8398,57 +8400,57 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_float64)
     Int32Seq iTestSeq32 {{2, 3, 4, 5}};
     EXPECT_EQ(data->set_int32_values(0, iTestSeq32), RETCODE_OK);
     EXPECT_EQ(data->get_float64_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(iTestSeq32, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(iTestSeq32.begin(), iTestSeq32.end()));
 
     UInt32Seq uTestSeq32 {{3, 4, 5, 6}};
     EXPECT_EQ(data->set_uint32_values(0, uTestSeq32), RETCODE_OK);
     EXPECT_EQ(data->get_float64_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(uTestSeq32, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(uTestSeq32.begin(), uTestSeq32.end()));
 
     Int8Seq iTestSeq8 {{2, 3, 4, 5}};
     EXPECT_EQ(data->set_int8_values(0, iTestSeq8), RETCODE_OK);
     EXPECT_EQ(data->get_float64_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(iTestSeq8, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(iTestSeq8.begin(), iTestSeq8.end()));
 
     UInt8Seq uTestSeq8 {{3, 4, 5, 6}};
     EXPECT_EQ(data->set_uint8_values(0, uTestSeq8), RETCODE_OK);
     EXPECT_EQ(data->get_float64_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(uTestSeq8, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(uTestSeq8.begin(), uTestSeq8.end()));
 
     Int16Seq iTestSeq16 {{2, 3, 4, 5}};
     EXPECT_EQ(data->set_int16_values(0, iTestSeq16), RETCODE_OK);
     EXPECT_EQ(data->get_float64_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(iTestSeq16, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(iTestSeq16.begin(), iTestSeq16.end()));
 
     UInt16Seq uTestSeq16 {{3, 4, 5, 6}};
     EXPECT_EQ(data->set_uint16_values(0, uTestSeq16), RETCODE_OK);
     EXPECT_EQ(data->get_float64_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(uTestSeq16, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(uTestSeq16.begin(), uTestSeq16.end()));
 
     Float32Seq fTestSeq32 {{2, 3, 4, 5}};
     EXPECT_EQ(data->set_float32_values(0, fTestSeq32), RETCODE_OK);
     EXPECT_EQ(data->get_float64_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(fTestSeq32, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(fTestSeq32.begin(), fTestSeq32.end()));
 
     CharSeq cTestSeq8 {{'a', 'b', 'c', 'd'}};
     EXPECT_EQ(data->set_char8_values(0, cTestSeq8), RETCODE_OK);
     EXPECT_EQ(data->get_float64_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(cTestSeq8, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(cTestSeq8.begin(), cTestSeq8.end()));
 
     WcharSeq cTestSeq16 {{L'b', L'c', L'd', L'e'}};
     EXPECT_EQ(data->set_char16_values(0, cTestSeq16), RETCODE_OK);
     EXPECT_EQ(data->get_float64_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(cTestSeq16, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(cTestSeq16.begin(), cTestSeq16.end()));
 
     BooleanSeq bTestSeq {{true, false, false, true}};
     EXPECT_EQ(data->set_boolean_values(0, bTestSeq), RETCODE_OK);
     EXPECT_EQ(data->get_float64_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(bTestSeq, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(bTestSeq.begin(), bTestSeq.end()));
 
     ByteSeq oTestSeq {{2, 3, 4, 5}};
     EXPECT_EQ(data->set_byte_values(0, oTestSeq), RETCODE_OK);
     EXPECT_EQ(data->get_float64_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(oTestSeq, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(oTestSeq.begin(), oTestSeq.end()));
 
     EXPECT_EQ(data->set_float64_values(MEMBER_ID_INVALID, fTestSeq64), RETCODE_OK);
     EXPECT_EQ(data->get_float64_values(get_test_value, 0), RETCODE_OK);
@@ -8576,9 +8578,9 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_float64)
 
     // Test get_member_by_name and get_member_by_index.
     EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
-    EXPECT_EQ(0, data->get_member_id_at_index(0));
-    EXPECT_EQ(1, data->get_member_id_at_index(1));
-    EXPECT_EQ(4, data->get_member_id_at_index(4));
+    EXPECT_EQ(0u, data->get_member_id_at_index(0));
+    EXPECT_EQ(1u, data->get_member_id_at_index(1));
+    EXPECT_EQ(4u, data->get_member_id_at_index(4));
     EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(5));
 
     // Test clone.
@@ -8618,14 +8620,14 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_float64)
 
     // Remove the elements.
     EXPECT_EQ(RETCODE_OK, data->clear_all_values());
-    EXPECT_EQ(0, data->get_item_count());
+    EXPECT_EQ(0u, data->get_item_count());
     EXPECT_EQ(RETCODE_OK, data->set_float64_values(0, {1, 2, 3}));
     EXPECT_EQ(RETCODE_OK, data->clear_nonkey_values());
-    EXPECT_EQ(0, data->get_item_count());
+    EXPECT_EQ(0u, data->get_item_count());
     EXPECT_EQ(RETCODE_OK, data->set_float64_values(0, {1, 2, 3}));
     EXPECT_EQ(RETCODE_OK, data->clear_value(1));
     EXPECT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
-    EXPECT_EQ(2, data->get_item_count());
+    EXPECT_EQ(2u, data->get_item_count());
     EXPECT_EQ(RETCODE_OK, data->get_float64_values(get_test_value, 0));
     EXPECT_EQ(get_test_value, Float64Seq({1, 3}));
 
@@ -8708,72 +8710,74 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_float128)
     Int32Seq iTestSeq32 {{2, 3, 4, 5}};
     EXPECT_EQ(data->set_int32_values(0, iTestSeq32), RETCODE_OK);
     EXPECT_EQ(data->get_float128_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(iTestSeq32, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(iTestSeq32.begin(), iTestSeq32.end()));
 
     UInt32Seq uTestSeq32 {{3, 4, 5, 6}};
     EXPECT_EQ(data->set_uint32_values(0, uTestSeq32), RETCODE_OK);
     EXPECT_EQ(data->get_float128_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(uTestSeq32, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(uTestSeq32.begin(), uTestSeq32.end()));
 
     Int8Seq iTestSeq8 {{2, 3, 4, 5}};
     EXPECT_EQ(data->set_int8_values(0, iTestSeq8), RETCODE_OK);
     EXPECT_EQ(data->get_float128_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(iTestSeq8, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(iTestSeq8.begin(), iTestSeq8.end()));
 
     UInt8Seq uTestSeq8 {{3, 4, 5, 6}};
     EXPECT_EQ(data->set_uint8_values(0, uTestSeq8), RETCODE_OK);
     EXPECT_EQ(data->get_float128_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(uTestSeq8, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(uTestSeq8.begin(), uTestSeq8.end()));
 
     Int16Seq iTestSeq16 {{2, 3, 4, 5}};
     EXPECT_EQ(data->set_int16_values(0, iTestSeq16), RETCODE_OK);
     EXPECT_EQ(data->get_float128_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(iTestSeq16, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(iTestSeq16.begin(), iTestSeq16.end()));
 
     UInt16Seq uTestSeq16 {{3, 4, 5, 6}};
     EXPECT_EQ(data->set_uint16_values(0, uTestSeq16), RETCODE_OK);
     EXPECT_EQ(data->get_float128_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(uTestSeq16, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(uTestSeq16.begin(), uTestSeq16.end()));
 
     Int64Seq iTestSeq64 {{2, 3, 4, 5}};
+    Float128Seq iTestSeq64_result {{2.0, 3.0, 4.0, 5.0}};
     EXPECT_EQ(data->set_int64_values(0, iTestSeq64), RETCODE_OK);
     EXPECT_EQ(data->get_float128_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(iTestSeq64, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, iTestSeq64_result);
 
     UInt64Seq uTestSeq64 {{3, 4, 5, 6}};
+    Float128Seq uTestSeq64_result {{3.0, 4.0, 5.0, 6.0} };
     EXPECT_EQ(data->set_uint64_values(0, uTestSeq64), RETCODE_OK);
     EXPECT_EQ(data->get_float128_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(uTestSeq64, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, uTestSeq64_result);
 
     Float32Seq fTestSeq32 {{2, 3, 4, 5}};
     EXPECT_EQ(data->set_float32_values(0, fTestSeq32), RETCODE_OK);
     EXPECT_EQ(data->get_float128_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(fTestSeq32, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(fTestSeq32.begin(), fTestSeq32.end()));
 
     Float64Seq fTestSeq64 {{2, 3, 4, 5}};
     EXPECT_EQ(data->set_float64_values(0, fTestSeq64), RETCODE_OK);
     EXPECT_EQ(data->get_float128_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(fTestSeq64, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(fTestSeq64.begin(), fTestSeq64.end()));
 
     CharSeq cTestSeq8 {{'a', 'b', 'c', 'd'}};
     EXPECT_EQ(data->set_char8_values(0, cTestSeq8), RETCODE_OK);
     EXPECT_EQ(data->get_float128_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(cTestSeq8, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(cTestSeq8.begin(), cTestSeq8.end()));
 
     WcharSeq cTestSeq16 {{L'b', L'c', L'd', L'e'}};
     EXPECT_EQ(data->set_char16_values(0, cTestSeq16), RETCODE_OK);
     EXPECT_EQ(data->get_float128_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(cTestSeq16, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(cTestSeq16.begin(), cTestSeq16.end()));
 
     BooleanSeq bTestSeq {{true, false, false, true}};
     EXPECT_EQ(data->set_boolean_values(0, bTestSeq), RETCODE_OK);
     EXPECT_EQ(data->get_float128_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(bTestSeq, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(bTestSeq.begin(), bTestSeq.end()));
 
     ByteSeq oTestSeq {{2, 3, 4, 5}};
     EXPECT_EQ(data->set_byte_values(0, oTestSeq), RETCODE_OK);
     EXPECT_EQ(data->get_float128_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(oTestSeq, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(oTestSeq.begin(), oTestSeq.end()));
 
     EXPECT_EQ(data->set_float128_values(MEMBER_ID_INVALID, fTestSeq128), RETCODE_OK);
     EXPECT_EQ(data->get_float128_values(get_test_value, 0), RETCODE_OK);
@@ -8894,9 +8898,9 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_float128)
 
     // Test get_member_by_name and get_member_by_index.
     EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
-    EXPECT_EQ(0, data->get_member_id_at_index(0));
-    EXPECT_EQ(1, data->get_member_id_at_index(1));
-    EXPECT_EQ(4, data->get_member_id_at_index(4));
+    EXPECT_EQ(0u, data->get_member_id_at_index(0));
+    EXPECT_EQ(1u, data->get_member_id_at_index(1));
+    EXPECT_EQ(4u, data->get_member_id_at_index(4));
     EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(5));
 
     // Test clone.
@@ -8936,14 +8940,14 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_float128)
 
     // Remove the elements.
     EXPECT_EQ(RETCODE_OK, data->clear_all_values());
-    EXPECT_EQ(0, data->get_item_count());
+    EXPECT_EQ(0u, data->get_item_count());
     EXPECT_EQ(RETCODE_OK, data->set_float128_values(0, {1, 2, 3}));
     EXPECT_EQ(RETCODE_OK, data->clear_nonkey_values());
-    EXPECT_EQ(0, data->get_item_count());
+    EXPECT_EQ(0u, data->get_item_count());
     EXPECT_EQ(RETCODE_OK, data->set_float128_values(0, {1, 2, 3}));
     EXPECT_EQ(RETCODE_OK, data->clear_value(1));
     EXPECT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
-    EXPECT_EQ(2, data->get_item_count());
+    EXPECT_EQ(2u, data->get_item_count());
     EXPECT_EQ(RETCODE_OK, data->get_float128_values(get_test_value, 0));
     EXPECT_EQ(get_test_value, Float128Seq({1, 3}));
 
@@ -9184,9 +9188,9 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_char8)
 
     // Test get_member_by_name and get_member_by_index.
     EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
-    EXPECT_EQ(0, data->get_member_id_at_index(0));
-    EXPECT_EQ(1, data->get_member_id_at_index(1));
-    EXPECT_EQ(4, data->get_member_id_at_index(4));
+    EXPECT_EQ(0u, data->get_member_id_at_index(0));
+    EXPECT_EQ(1u, data->get_member_id_at_index(1));
+    EXPECT_EQ(4u, data->get_member_id_at_index(4));
     EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(5));
 
     // Test clone.
@@ -9226,14 +9230,14 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_char8)
 
     // Remove the elements.
     EXPECT_EQ(RETCODE_OK, data->clear_all_values());
-    EXPECT_EQ(0, data->get_item_count());
+    EXPECT_EQ(0u, data->get_item_count());
     EXPECT_EQ(RETCODE_OK, data->set_char8_values(0, {1, 2, 3}));
     EXPECT_EQ(RETCODE_OK, data->clear_nonkey_values());
-    EXPECT_EQ(0, data->get_item_count());
+    EXPECT_EQ(0u, data->get_item_count());
     EXPECT_EQ(RETCODE_OK, data->set_char8_values(0, {1, 2, 3}));
     EXPECT_EQ(RETCODE_OK, data->clear_value(1));
     EXPECT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
-    EXPECT_EQ(2, data->get_item_count());
+    EXPECT_EQ(2u, data->get_item_count());
     EXPECT_EQ(RETCODE_OK, data->get_char8_values(get_test_value, 0));
     EXPECT_EQ(get_test_value, CharSeq({1, 3}));
 
@@ -9316,12 +9320,12 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_char16)
     CharSeq cTestSeq8 {{'b', 'c', 'd', 'e'}};
     EXPECT_EQ(data->set_char8_values(0, cTestSeq8), RETCODE_OK);
     EXPECT_EQ(data->get_char16_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(cTestSeq8, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(cTestSeq8.begin(), cTestSeq8.end()));
 
     ByteSeq oTestSeq {{98, 99, 100, 101}};
     EXPECT_EQ(data->set_byte_values(0, oTestSeq), RETCODE_OK);
     EXPECT_EQ(data->get_char16_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(oTestSeq, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(oTestSeq.begin(), oTestSeq.end()));
 
     EXPECT_EQ(data->set_char16_values(MEMBER_ID_INVALID, cTestSeq16), RETCODE_OK);
     EXPECT_EQ(data->get_char16_values(get_test_value, 0), RETCODE_OK);
@@ -9473,9 +9477,9 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_char16)
 
     // Test get_member_by_name and get_member_by_index.
     EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
-    EXPECT_EQ(0, data->get_member_id_at_index(0));
-    EXPECT_EQ(1, data->get_member_id_at_index(1));
-    EXPECT_EQ(4, data->get_member_id_at_index(4));
+    EXPECT_EQ(0u, data->get_member_id_at_index(0));
+    EXPECT_EQ(1u, data->get_member_id_at_index(1));
+    EXPECT_EQ(4u, data->get_member_id_at_index(4));
     EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(5));
 
     // Test clone.
@@ -9515,14 +9519,14 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_char16)
 
     // Remove the elements.
     EXPECT_EQ(RETCODE_OK, data->clear_all_values());
-    EXPECT_EQ(0, data->get_item_count());
+    EXPECT_EQ(0u, data->get_item_count());
     EXPECT_EQ(RETCODE_OK, data->set_char16_values(0, {1, 2, 3}));
     EXPECT_EQ(RETCODE_OK, data->clear_nonkey_values());
-    EXPECT_EQ(0, data->get_item_count());
+    EXPECT_EQ(0u, data->get_item_count());
     EXPECT_EQ(RETCODE_OK, data->set_char16_values(0, {1, 2, 3}));
     EXPECT_EQ(RETCODE_OK, data->clear_value(1));
     EXPECT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
-    EXPECT_EQ(2, data->get_item_count());
+    EXPECT_EQ(2u, data->get_item_count());
     EXPECT_EQ(RETCODE_OK, data->get_char16_values(get_test_value, 0));
     EXPECT_EQ(get_test_value, WcharSeq({1, 3}));
 
@@ -9778,9 +9782,9 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_byte)
 
     // Test get_member_by_name and get_member_by_index.
     EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
-    EXPECT_EQ(0, data->get_member_id_at_index(0));
-    EXPECT_EQ(1, data->get_member_id_at_index(1));
-    EXPECT_EQ(4, data->get_member_id_at_index(4));
+    EXPECT_EQ(0u, data->get_member_id_at_index(0));
+    EXPECT_EQ(1u, data->get_member_id_at_index(1));
+    EXPECT_EQ(4u, data->get_member_id_at_index(4));
     EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(5));
 
     // Test clone.
@@ -9820,14 +9824,14 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_byte)
 
     // Remove the elements.
     EXPECT_EQ(RETCODE_OK, data->clear_all_values());
-    EXPECT_EQ(0, data->get_item_count());
+    EXPECT_EQ(0u, data->get_item_count());
     EXPECT_EQ(RETCODE_OK, data->set_byte_values(0, {1, 2, 3}));
     EXPECT_EQ(RETCODE_OK, data->clear_nonkey_values());
-    EXPECT_EQ(0, data->get_item_count());
+    EXPECT_EQ(0u, data->get_item_count());
     EXPECT_EQ(RETCODE_OK, data->set_byte_values(0, {1, 2, 3}));
     EXPECT_EQ(RETCODE_OK, data->clear_value(1));
     EXPECT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
-    EXPECT_EQ(2, data->get_item_count());
+    EXPECT_EQ(2u, data->get_item_count());
     EXPECT_EQ(RETCODE_OK, data->get_byte_values(get_test_value, 0));
     EXPECT_EQ(get_test_value, ByteSeq({1, 3}));
 
@@ -10080,9 +10084,9 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_boolean)
 
     // Test get_member_by_name and get_member_by_index.
     EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
-    EXPECT_EQ(0, data->get_member_id_at_index(0));
-    EXPECT_EQ(1, data->get_member_id_at_index(1));
-    EXPECT_EQ(4, data->get_member_id_at_index(4));
+    EXPECT_EQ(0u, data->get_member_id_at_index(0));
+    EXPECT_EQ(1u, data->get_member_id_at_index(1));
+    EXPECT_EQ(4u, data->get_member_id_at_index(4));
     EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(5));
 
     // Test clone.
@@ -10122,14 +10126,14 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_boolean)
 
     // Remove the elements.
     EXPECT_EQ(RETCODE_OK, data->clear_all_values());
-    EXPECT_EQ(0, data->get_item_count());
+    EXPECT_EQ(0u, data->get_item_count());
     EXPECT_EQ(RETCODE_OK, data->set_boolean_values(0, {true, false, true}));
     EXPECT_EQ(RETCODE_OK, data->clear_nonkey_values());
-    EXPECT_EQ(0, data->get_item_count());
+    EXPECT_EQ(0u, data->get_item_count());
     EXPECT_EQ(RETCODE_OK, data->set_boolean_values(0, {true, false, true}));
     EXPECT_EQ(RETCODE_OK, data->clear_value(1));
     EXPECT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
-    EXPECT_EQ(2, data->get_item_count());
+    EXPECT_EQ(2u, data->get_item_count());
     EXPECT_EQ(RETCODE_OK, data->get_boolean_values(get_test_value, 0));
     EXPECT_EQ(get_test_value, BooleanSeq({true, true}));
 
@@ -10219,8 +10223,8 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_of_sequences)
 
     // Test get_member_by_name and get_member_by_index.
     EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
-    EXPECT_EQ(0, data->get_member_id_at_index(0));
-    EXPECT_EQ(1, data->get_member_id_at_index(1));
+    EXPECT_EQ(0u, data->get_member_id_at_index(0));
+    EXPECT_EQ(1u, data->get_member_id_at_index(1));
     EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(2));
 
     // Test clone.
@@ -10367,9 +10371,9 @@ TEST_F(DynamicTypesTests, DynamicType_array)
 
     // Test get_member_by_name and get_member_by_index.
     EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
-    EXPECT_EQ(0, data->get_member_id_at_index(0));
-    EXPECT_EQ(1, data->get_member_id_at_index(1));
-    EXPECT_EQ(7, data->get_member_id_at_index(7));
+    EXPECT_EQ(0u, data->get_member_id_at_index(0));
+    EXPECT_EQ(1u, data->get_member_id_at_index(1));
+    EXPECT_EQ(7u, data->get_member_id_at_index(7));
     EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(8));
 
     //{{{ Successful setters
@@ -10389,7 +10393,7 @@ TEST_F(DynamicTypesTests, DynamicType_array)
     EXPECT_EQ(data->set_int8_value(5, 7), RETCODE_OK);
     EXPECT_EQ(data->set_int8_value(6, 8), RETCODE_OK);
     EXPECT_EQ(data->get_int32_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(iTestSeq8, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(iTestSeq8.begin(), iTestSeq8.end()));
 
     UInt8Seq uTestSeq8 {{3, 4, 5, 6, 7, 8, 9, 0}};
     EXPECT_EQ(data->set_uint8_values(0, {3, 4, 5, 6}), RETCODE_OK);
@@ -10397,7 +10401,7 @@ TEST_F(DynamicTypesTests, DynamicType_array)
     EXPECT_EQ(data->set_uint8_value(5, 8), RETCODE_OK);
     EXPECT_EQ(data->set_uint8_value(6, 9), RETCODE_OK);
     EXPECT_EQ(data->get_int32_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(uTestSeq8, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(uTestSeq8.begin(), uTestSeq8.end()));
 
     Int16Seq iTestSeq16 {{2, 3, 4, 5, 6, 7, 8, 0}};
     EXPECT_EQ(data->set_int16_values(0, {2, 3, 4, 5}), RETCODE_OK);
@@ -10405,7 +10409,7 @@ TEST_F(DynamicTypesTests, DynamicType_array)
     EXPECT_EQ(data->set_int16_value(5, 7), RETCODE_OK);
     EXPECT_EQ(data->set_int16_value(6, 8), RETCODE_OK);
     EXPECT_EQ(data->get_int32_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(iTestSeq16, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(iTestSeq16.begin(), iTestSeq16.end()));
 
     UInt16Seq uTestSeq16 {{3, 4, 5, 6, 7, 8, 9, 0}};
     EXPECT_EQ(data->set_uint16_values(0, {3, 4, 5, 6}), RETCODE_OK);
@@ -10413,7 +10417,7 @@ TEST_F(DynamicTypesTests, DynamicType_array)
     EXPECT_EQ(data->set_uint16_value(5, 8), RETCODE_OK);
     EXPECT_EQ(data->set_uint16_value(6, 9), RETCODE_OK);
     EXPECT_EQ(data->get_int32_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(uTestSeq16, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(uTestSeq16.begin(), uTestSeq16.end()));
 
     CharSeq cTestSeq8 {{'a', 'b', 'c', 'd', 'e', 'f', 'g', 0}};
     EXPECT_EQ(data->set_char8_values(0, {'a', 'b', 'c', 'd'}), RETCODE_OK);
@@ -10421,7 +10425,7 @@ TEST_F(DynamicTypesTests, DynamicType_array)
     EXPECT_EQ(data->set_char8_value(5, 'f'), RETCODE_OK);
     EXPECT_EQ(data->set_char8_value(6, 'g'), RETCODE_OK);
     EXPECT_EQ(data->get_int32_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(cTestSeq8, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(cTestSeq8.begin(), cTestSeq8.end()));
 
     WcharSeq cTestSeq16 {{L'b', L'c', L'd', L'e', L'f', L'g', L'h', 0}};
     EXPECT_EQ(data->set_char16_values(0, {L'b', L'c', L'd', L'e'}), RETCODE_OK);
@@ -10429,7 +10433,7 @@ TEST_F(DynamicTypesTests, DynamicType_array)
     EXPECT_EQ(data->set_char16_value(5, L'g'), RETCODE_OK);
     EXPECT_EQ(data->set_char16_value(6, L'h'), RETCODE_OK);
     EXPECT_EQ(data->get_int32_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(cTestSeq16, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(cTestSeq16.begin(), cTestSeq16.end()));
 
     BooleanSeq bTestSeq {{1, 0, 0, 1, 1, 0, 1, 0}};
     EXPECT_EQ(data->set_boolean_values(0, {true, false, false, true}), RETCODE_OK);
@@ -10437,7 +10441,7 @@ TEST_F(DynamicTypesTests, DynamicType_array)
     EXPECT_EQ(data->set_boolean_value(5, false), RETCODE_OK);
     EXPECT_EQ(data->set_boolean_value(6, true), RETCODE_OK);
     EXPECT_EQ(data->get_int32_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(bTestSeq, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(bTestSeq.begin(), bTestSeq.end()));
 
     ByteSeq oTestSeq {{2, 3, 4, 5, 6, 7, 8, 0}};
     EXPECT_EQ(data->set_byte_values(0, {2, 3, 4, 5}), RETCODE_OK);
@@ -10445,7 +10449,7 @@ TEST_F(DynamicTypesTests, DynamicType_array)
     EXPECT_EQ(data->set_byte_value(5, 7), RETCODE_OK);
     EXPECT_EQ(data->set_byte_value(6, 8), RETCODE_OK);
     EXPECT_EQ(data->get_int32_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(oTestSeq, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+    EXPECT_THAT(get_test_value, testing::ElementsAreArray(oTestSeq.begin(), oTestSeq.end()));
 
     EXPECT_EQ(data->set_int32_values(MEMBER_ID_INVALID, iTestSeq32), RETCODE_OK);
     EXPECT_EQ(data->get_int32_values(get_test_value, 0), RETCODE_OK);
@@ -10672,10 +10676,10 @@ TEST_F(DynamicTypesTests, DynamicType_array_of_arrays)
 
     // Test get_member_by_name and get_member_by_index.
     EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
-    EXPECT_EQ(0, data->get_member_id_at_index(0));
-    EXPECT_EQ(1, data->get_member_id_at_index(1));
-    EXPECT_EQ(2, data->get_member_id_at_index(2));
-    EXPECT_EQ(3, data->get_member_id_at_index(3));
+    EXPECT_EQ(0u, data->get_member_id_at_index(0));
+    EXPECT_EQ(1u, data->get_member_id_at_index(1));
+    EXPECT_EQ(2u, data->get_member_id_at_index(2));
+    EXPECT_EQ(3u, data->get_member_id_at_index(3));
     EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(4));
 
     // Test getters, setters and loan_value.
@@ -11046,11 +11050,11 @@ TEST_F(DynamicTypesTests, DynamicType_map)
     EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(2));
     EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
     EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name("string"));
-    EXPECT_EQ(0, data->get_member_id_by_name("10"));
-    EXPECT_EQ(1, data->get_member_id_by_name("20"));
+    EXPECT_EQ(0u, data->get_member_id_by_name("10"));
+    EXPECT_EQ(1u, data->get_member_id_by_name("20"));
     EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name("30"));
-    EXPECT_EQ(0, data->get_member_id_at_index(0));
-    EXPECT_EQ(1, data->get_member_id_at_index(1));
+    EXPECT_EQ(0u, data->get_member_id_at_index(0));
+    EXPECT_EQ(1u, data->get_member_id_at_index(1));
 
     // Testing getters and setters.
     const int32_t test1 {123};
@@ -11324,11 +11328,11 @@ TEST_F(DynamicTypesTests, DynamicType_map_of_maps)
     EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(2));
     EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
     EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name("string"));
-    EXPECT_EQ(0, data->get_member_id_by_name("-2"));
-    EXPECT_EQ(1, data->get_member_id_by_name("14"));
+    EXPECT_EQ(0u, data->get_member_id_by_name("-2"));
+    EXPECT_EQ(1u, data->get_member_id_by_name("14"));
     EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name("30"));
-    EXPECT_EQ(0, data->get_member_id_at_index(0));
-    EXPECT_EQ(1, data->get_member_id_at_index(1));
+    EXPECT_EQ(0u, data->get_member_id_at_index(0));
+    EXPECT_EQ(1u, data->get_member_id_at_index(1));
 
     // Testing getters and setters.
     {
@@ -11590,11 +11594,11 @@ TEST_F(DynamicTypesTests, DynamicType_structure)
 
     // Test get_member_by_name and get_member_by_index.
     EXPECT_EQ(MEMBER_ID_INVALID, struct_data->get_member_id_by_name(""));
-    EXPECT_EQ(0, struct_data->get_member_id_by_name("int32"));
-    EXPECT_EQ(1, struct_data->get_member_id_by_name("int64"));
+    EXPECT_EQ(0u, struct_data->get_member_id_by_name("int32"));
+    EXPECT_EQ(1u, struct_data->get_member_id_by_name("int64"));
     EXPECT_EQ(MEMBER_ID_INVALID, struct_data->get_member_id_at_index(2));
-    EXPECT_EQ(0, struct_data->get_member_id_at_index(0));
-    EXPECT_EQ(1, struct_data->get_member_id_at_index(1));
+    EXPECT_EQ(0u, struct_data->get_member_id_at_index(0));
+    EXPECT_EQ(1u, struct_data->get_member_id_at_index(1));
 
     // Test getters and setters.
     int32_t test1 {234};
@@ -11785,7 +11789,7 @@ TEST_F(DynamicTypesTests, DynamicType_structure_inheritance)
     EXPECT_EQ(member->get_descriptor(descriptor), RETCODE_OK);
     EXPECT_EQ(descriptor->name(), "int32");
     EXPECT_EQ(descriptor->index(), 0u);
-    EXPECT_EQ(descriptor->id(), 0);
+    EXPECT_EQ(descriptor->id(), 0u);
     EXPECT_TRUE(descriptor->type()->equals(factory->get_primitive_type(TK_INT32)));
     EXPECT_EQ(derived_struct_type->get_member_by_name(member_aux,
             descriptor->name()), RETCODE_OK);
@@ -11798,7 +11802,7 @@ TEST_F(DynamicTypesTests, DynamicType_structure_inheritance)
     EXPECT_EQ(member->get_descriptor(descriptor), RETCODE_OK);
     EXPECT_EQ(descriptor->name(), "int64");
     EXPECT_EQ(descriptor->index(), 1u);
-    EXPECT_EQ(descriptor->id(), 1);
+    EXPECT_EQ(descriptor->id(), 1u);
     EXPECT_TRUE(descriptor->type()->equals(factory->get_primitive_type(TK_INT64)));
     EXPECT_EQ(derived_struct_type->get_member_by_name(member_aux,
             descriptor->name()), RETCODE_OK);
@@ -11811,7 +11815,7 @@ TEST_F(DynamicTypesTests, DynamicType_structure_inheritance)
     EXPECT_EQ(member->get_descriptor(descriptor), RETCODE_OK);
     EXPECT_EQ(descriptor->name(), "child_int32");
     EXPECT_EQ(descriptor->index(), 2u);
-    EXPECT_EQ(descriptor->id(), 2);
+    EXPECT_EQ(descriptor->id(), 2u);
     EXPECT_TRUE(descriptor->type()->equals(factory->get_primitive_type(TK_INT32)));
     EXPECT_EQ(derived_struct_type->get_member_by_name(member_aux,
             descriptor->name()), RETCODE_OK);
@@ -11824,7 +11828,7 @@ TEST_F(DynamicTypesTests, DynamicType_structure_inheritance)
     EXPECT_EQ(member->get_descriptor(descriptor), RETCODE_OK);
     EXPECT_EQ(descriptor->name(), "child_string");
     EXPECT_EQ(descriptor->index(), 3u);
-    EXPECT_EQ(descriptor->id(), 4);
+    EXPECT_EQ(descriptor->id(), 4u);
     EXPECT_TRUE(descriptor->type()->equals(factory->create_string_type(
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build()));
     EXPECT_EQ(derived_struct_type->get_member_by_name(member_aux,
@@ -11850,14 +11854,14 @@ TEST_F(DynamicTypesTests, DynamicType_structure_inheritance)
 
     // Test get_member_by_name and get_member_by_index.
     EXPECT_EQ(MEMBER_ID_INVALID, struct_data->get_member_id_by_name(""));
-    EXPECT_EQ(0, struct_data->get_member_id_by_name("int32"));
-    EXPECT_EQ(1, struct_data->get_member_id_by_name("int64"));
-    EXPECT_EQ(2, struct_data->get_member_id_by_name("child_int32"));
-    EXPECT_EQ(4, struct_data->get_member_id_by_name("child_string"));
-    EXPECT_EQ(0, struct_data->get_member_id_at_index(0));
-    EXPECT_EQ(1, struct_data->get_member_id_at_index(1));
-    EXPECT_EQ(2, struct_data->get_member_id_at_index(2));
-    EXPECT_EQ(4, struct_data->get_member_id_at_index(3));
+    EXPECT_EQ(0u, struct_data->get_member_id_by_name("int32"));
+    EXPECT_EQ(1u, struct_data->get_member_id_by_name("int64"));
+    EXPECT_EQ(2u, struct_data->get_member_id_by_name("child_int32"));
+    EXPECT_EQ(4u, struct_data->get_member_id_by_name("child_string"));
+    EXPECT_EQ(0u, struct_data->get_member_id_at_index(0));
+    EXPECT_EQ(1u, struct_data->get_member_id_at_index(1));
+    EXPECT_EQ(2u, struct_data->get_member_id_at_index(2));
+    EXPECT_EQ(4u, struct_data->get_member_id_at_index(3));
     EXPECT_EQ(MEMBER_ID_INVALID, struct_data->get_member_id_at_index(4));
 
     // Testing getters and setters.
@@ -11909,7 +11913,7 @@ TEST_F(DynamicTypesTests, DynamicType_structure_inheritance)
     EXPECT_EQ(test1, test2);
 
     // Test set_complex_value
-    uint32_t test11 {456};
+    int32_t test11 {456};
     {
         eprosima::fastdds::testing::ScopeLogs _("disable");
         EXPECT_EQ(RETCODE_BAD_PARAMETER, struct_data->set_complex_value(MEMBER_ID_INVALID, complex_data));
@@ -12057,10 +12061,10 @@ TEST_F(DynamicTypesTests, DynamicType_multi_structure)
 
     // Test get_member_by_name and get_member_by_index.
     EXPECT_EQ(MEMBER_ID_INVALID, struct_data->get_member_id_by_name(""));
-    EXPECT_EQ(0, struct_data->get_member_id_by_name("Structure"));
-    EXPECT_EQ(10, struct_data->get_member_id_by_name("int64"));
-    EXPECT_EQ(0, struct_data->get_member_id_at_index(0));
-    EXPECT_EQ(10, struct_data->get_member_id_at_index(1));
+    EXPECT_EQ(0u, struct_data->get_member_id_by_name("Structure"));
+    EXPECT_EQ(10u, struct_data->get_member_id_by_name("int64"));
+    EXPECT_EQ(0u, struct_data->get_member_id_at_index(0));
+    EXPECT_EQ(10u, struct_data->get_member_id_at_index(1));
     EXPECT_EQ(MEMBER_ID_INVALID, struct_data->get_member_id_at_index(2));
 
     // Testing getter, setters and loan_value.
@@ -12307,12 +12311,12 @@ TEST_F(DynamicTypesTests, DynamicType_union)
 
     // Test get_member_by_name and get_member_by_index.
     EXPECT_EQ(MEMBER_ID_INVALID, union_data->get_member_id_by_name(""));
-    EXPECT_EQ(0, union_data->get_member_id_by_name("discriminator"));
-    EXPECT_EQ(1, union_data->get_member_id_by_name("first"));
-    EXPECT_EQ(3, union_data->get_member_id_by_name("second"));
-    EXPECT_EQ(0, union_data->get_member_id_at_index(0));
-    EXPECT_EQ(1, union_data->get_member_id_at_index(1));
-    EXPECT_EQ(3, union_data->get_member_id_at_index(2));
+    EXPECT_EQ(0u, union_data->get_member_id_by_name("discriminator"));
+    EXPECT_EQ(1u, union_data->get_member_id_by_name("first"));
+    EXPECT_EQ(3u, union_data->get_member_id_by_name("second"));
+    EXPECT_EQ(0u, union_data->get_member_id_at_index(0));
+    EXPECT_EQ(1u, union_data->get_member_id_at_index(1));
+    EXPECT_EQ(3u, union_data->get_member_id_at_index(2));
     EXPECT_EQ(MEMBER_ID_INVALID, union_data->get_member_id_at_index(3));
 
     // Testing getters and setters.
@@ -12542,12 +12546,12 @@ TEST_F(DynamicTypesTests, DynamicType_union_with_unions)
 
     // Test get_member_by_name and get_member_by_index.
     EXPECT_EQ(MEMBER_ID_INVALID, union_data->get_member_id_by_name(""));
-    EXPECT_EQ(0, union_data->get_member_id_by_name("discriminator"));
-    EXPECT_EQ(1, union_data->get_member_id_by_name("first"));
-    EXPECT_EQ(2, union_data->get_member_id_by_name("second"));
-    EXPECT_EQ(0, union_data->get_member_id_at_index(0));
-    EXPECT_EQ(1, union_data->get_member_id_at_index(1));
-    EXPECT_EQ(2, union_data->get_member_id_at_index(2));
+    EXPECT_EQ(0u, union_data->get_member_id_by_name("discriminator"));
+    EXPECT_EQ(1u, union_data->get_member_id_by_name("first"));
+    EXPECT_EQ(2u, union_data->get_member_id_by_name("second"));
+    EXPECT_EQ(0u, union_data->get_member_id_at_index(0));
+    EXPECT_EQ(1u, union_data->get_member_id_at_index(1));
+    EXPECT_EQ(2u, union_data->get_member_id_at_index(2));
     EXPECT_EQ(MEMBER_ID_INVALID, union_data->get_member_id_at_index(3));
 
     // Testing getters, setters and loan_value.

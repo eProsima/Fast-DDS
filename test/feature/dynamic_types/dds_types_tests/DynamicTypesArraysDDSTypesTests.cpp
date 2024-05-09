@@ -1179,7 +1179,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayUnion)
         ASSERT_TRUE(union_data);
         EXPECT_EQ(union_data->get_int16_value(test_short_value,
                 union_data->get_member_id_by_name(union_short_member_name)), RETCODE_OK);
-        EXPECT_EQ(test_short_value, 0u);
+        EXPECT_EQ(test_short_value, 0);
         EXPECT_EQ(array_data->return_loaned_value(union_data), RETCODE_OK);
     }
 
@@ -1193,7 +1193,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayUnion)
         EXPECT_EQ(struct_data.var_array_union()[2].shortValue(), short_value);
         for (size_t i = 3; i < struct_data.var_array_union().size(); ++i)
         {
-            EXPECT_EQ(struct_data.var_array_union()[i].shortValue(), 0u);
+            EXPECT_EQ(struct_data.var_array_union()[i].shortValue(), 0);
         }
     }
 
@@ -1261,8 +1261,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayStructure)
                 data_struct->get_member_id_by_name(struct_long_member_name)), RETCODE_OK);
         EXPECT_EQ(data_struct->get_float32_value(test_float_value,
                 data_struct->get_member_id_by_name(struct_float_member_name)), RETCODE_OK);
-        EXPECT_EQ(test_long_value, 0u);
-        EXPECT_EQ(test_float_value, 0u);
+        EXPECT_EQ(test_long_value, 0);
+        EXPECT_EQ(test_float_value, 0);
         EXPECT_EQ(array_data->return_loaned_value(data_struct), RETCODE_OK);
     }
 
@@ -1277,8 +1277,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayStructure)
         EXPECT_EQ(struct_data.var_array_structure()[1].field2(), second_float_value);
         for (size_t i = 2; i < struct_data.var_array_structure().size(); ++i)
         {
-            EXPECT_EQ(struct_data.var_array_structure()[i].field1(), 0u);
-            EXPECT_EQ(struct_data.var_array_structure()[i].field2(), 0u);
+            EXPECT_EQ(struct_data.var_array_structure()[i].field1(), 0);
+            EXPECT_EQ(struct_data.var_array_structure()[i].field2(), 0);
         }
     }
 
@@ -2614,7 +2614,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionAlias)
             {
                 for (size_t k = 0; k < struct_data.var_array_alias()[i][j].size(); ++k)
                 {
-                    EXPECT_EQ(static_cast<uint32_t>(struct_data.var_array_alias()[i][j][k]),
+                    EXPECT_EQ(struct_data.var_array_alias()[i][j][k],
                             test_value[i * struct_data.var_array_alias().size() *
                             struct_data.var_array_alias()[i].size() + j *
                             struct_data.var_array_alias()[i].size() + k]);
@@ -2865,7 +2865,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionUnion)
                     }
                     else
                     {
-                        EXPECT_EQ(struct_data.var_array_union()[i][j][k].shortValue(), 0u);
+                        EXPECT_EQ(struct_data.var_array_union()[i][j][k].shortValue(), 0);
                     }
                 }
             }
@@ -2972,8 +2972,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionStructure)
                     }
                     else
                     {
-                        EXPECT_EQ(struct_data.var_array_structure()[i][j][k].field1(), 0u);
-                        EXPECT_EQ(struct_data.var_array_structure()[i][j][k].field2(), 0u);
+                        EXPECT_EQ(struct_data.var_array_structure()[i][j][k].field1(), 0);
+                        EXPECT_EQ(struct_data.var_array_structure()[i][j][k].field2(), 0);
                     }
                 }
             }
