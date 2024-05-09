@@ -18,10 +18,11 @@
 #include <cassert>
 #include <chrono>
 #include <cstring>
+#include <limits>
 #include <map>
-#include <set>
 #include <memory>
 #include <mutex>
+#include <set>
 #include <string>
 #include <thread>
 #include <utility>
@@ -485,23 +486,38 @@ bool TCPTransportInterface::init(
     }
 
     uint32_t maximumMessageSize = max_msg_size_no_frag == 0 ? s_maximumMessageSize : max_msg_size_no_frag;
+    uint32_t cfg_max_msg_size = configuration()->maxMessageSize;
+    uint32_t cfg_send_size = configuration()->sendBufferSize;
+    uint32_t cfg_recv_size = configuration()->receiveBufferSize;
+    uint32_t max_int_value = static_cast<uint32_t>(std::numeric_limits<int32_t>::max());
 
-    if (configuration()->maxMessageSize > maximumMessageSize)
+    if (cfg_max_msg_size > maximumMessageSize)
     {
-        EPROSIMA_LOG_ERROR(RTCP_MSG_OUT,
-                "maxMessageSize cannot be greater than " << std::to_string(maximumMessageSize));
+        EPROSIMA_LOG_ERROR(TRANSPORT_TCP, "maxMessageSize cannot be greater than " << maximumMessageSize);
         return false;
     }
 
-    if (configuration()->maxMessageSize > configuration()->sendBufferSize)
+    if (cfg_send_size > max_int_value)
     {
-        EPROSIMA_LOG_ERROR(RTCP_MSG_OUT, "maxMessageSize cannot be greater than send_buffer_size");
+        EPROSIMA_LOG_ERROR(TRANSPORT_TCP, "sendBufferSize cannot be greater than " << max_int_value);
         return false;
     }
 
-    if (configuration()->maxMessageSize > configuration()->receiveBufferSize)
+    if (cfg_recv_size > max_int_value)
     {
-        EPROSIMA_LOG_ERROR(RTCP_MSG_OUT, "maxMessageSize cannot be greater than receive_buffer_size");
+        EPROSIMA_LOG_ERROR(TRANSPORT_TCP, "receiveBufferSize cannot be greater than " << max_int_value);
+        return false;
+    }
+
+    if (cfg_max_msg_size > cfg_send_size)
+    {
+        EPROSIMA_LOG_ERROR(TRANSPORT_TCP, "maxMessageSize cannot be greater than sendBufferSize");
+        return false;
+    }
+
+    if (cfg_max_msg_size > cfg_recv_size)
+    {
+        EPROSIMA_LOG_ERROR(TRANSPORT_TCP, "maxMessageSize cannot be greater than receiveBufferSize");
         return false;
     }
 
