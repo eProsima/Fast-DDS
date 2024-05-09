@@ -158,7 +158,13 @@ TEST_F(SecurityTest, discovered_participant_validation_remote_identity_pending_h
     info.guid = participant_data.m_guid;
     EXPECT_CALL(*participant_.getListener(), onParticipantAuthentication(_, info)).Times(1);
 
+    CacheChange_t kx_change_to_add;
+    CacheChange_t* kx_change_to_remove = new CacheChange_t(500);
+    expect_kx_exchange(kx_change_to_add, kx_change_to_remove);
+
     ASSERT_TRUE(manager_.discovered_participant(participant_data));
+
+    volatile_writer_->listener_->onWriterChangeReceivedByAll(volatile_writer_, kx_change_to_remove);
 
     return_handle(remote_identity_handle);
     return_handle(handshake_handle);
@@ -325,7 +331,13 @@ TEST_F(SecurityTest, discovered_participant_validation_remote_identity_pending_h
     info.guid = participant_data.m_guid;
     EXPECT_CALL(*participant_.getListener(), onParticipantAuthentication(_, info)).Times(1);
 
+    CacheChange_t kx_change_to_add;
+    CacheChange_t* kx_change_to_remove = new CacheChange_t(500);
+    expect_kx_exchange(kx_change_to_add, kx_change_to_remove);
+
     ASSERT_TRUE(manager_.discovered_participant(participant_data));
+
+    volatile_writer_->listener_->onWriterChangeReceivedByAll(volatile_writer_, kx_change_to_remove);
 
     destroy_manager_and_change(change);
 

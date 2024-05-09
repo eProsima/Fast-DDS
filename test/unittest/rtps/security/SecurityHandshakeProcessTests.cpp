@@ -337,7 +337,13 @@ TEST_F(SecurityTest, discovered_participant_process_message_ok_begin_handshake_r
     info.guid = participant_data.m_guid;
     EXPECT_CALL(*participant_.getListener(), onParticipantAuthentication(_, info)).Times(1);
 
+    CacheChange_t kx_change_to_add;
+    CacheChange_t* kx_change_to_remove = new CacheChange_t(500);
+    expect_kx_exchange(kx_change_to_add, kx_change_to_remove);
+
     stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
+
+    volatile_writer_->listener_->onWriterChangeReceivedByAll(volatile_writer_, kx_change_to_remove);
 
     return_handle(remote_identity_handle);
     return_handle(handshake_handle);
@@ -522,9 +528,15 @@ TEST_F(SecurityTest, discovered_participant_process_message_pending_handshake_re
             WillOnce(DoAll(SetArgPointee<0>(&remote_identity_handle),
             Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE)));
 
+    CacheChange_t kx_change_to_add;
+    CacheChange_t* kx_change_to_remove = new CacheChange_t(500);
+    expect_kx_exchange(kx_change_to_add, kx_change_to_remove);
+
     ParticipantProxyData participant_data;
     fill_participant_key(participant_data.m_guid);
     ASSERT_TRUE(manager_.discovered_participant(participant_data));
+
+    volatile_writer_->listener_->onWriterChangeReceivedByAll(volatile_writer_, kx_change_to_remove);
 
     ParticipantGenericMessage message;
     message.message_identity().source_guid(participant_data.m_guid);
@@ -722,7 +734,13 @@ TEST_F(SecurityTest, discovered_participant_process_message_ok_process_handshake
     info.guid = remote_participant_key;
     EXPECT_CALL(*participant_.getListener(), onParticipantAuthentication(_, info)).Times(1);
 
+    CacheChange_t kx_change_to_add;
+    CacheChange_t* kx_change_to_remove = new CacheChange_t(500);
+    expect_kx_exchange(kx_change_to_add, kx_change_to_remove);
+
     stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
+
+    volatile_writer_->listener_->onWriterChangeReceivedByAll(volatile_writer_, kx_change_to_remove);
 }
 
 TEST_F(SecurityTest, discovered_participant_process_message_process_handshake_reply_new_change_fail)
@@ -1116,7 +1134,13 @@ TEST_F(SecurityTest, discovered_participant_process_message_ok_process_handshake
     info.guid = remote_participant_key;
     EXPECT_CALL(*participant_.getListener(), onParticipantAuthentication(_, info)).Times(1);
 
+    CacheChange_t kx_change_to_add;
+    CacheChange_t* kx_change_to_remove = new CacheChange_t(500);
+    expect_kx_exchange(kx_change_to_add, kx_change_to_remove);
+
     stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
+
+    volatile_writer_->listener_->onWriterChangeReceivedByAll(volatile_writer_, kx_change_to_remove);
 }
 
 int main(

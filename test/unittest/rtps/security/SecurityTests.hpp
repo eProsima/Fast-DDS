@@ -124,6 +124,10 @@ protected:
     void final_message_process_ok(
             CacheChange_t** final_message_change = nullptr);
 
+    void expect_kx_exchange(
+            CacheChange_t& kx_change_to_add,
+            CacheChange_t* kx_change_to_remove);
+
     void destroy_manager_and_change(
             CacheChange_t*& change,
             bool was_added = true);
@@ -159,7 +163,7 @@ public:
     ::testing::NiceMock<RTPSParticipantImpl> participant_;
     ::testing::NiceMock<StatelessWriter>* stateless_writer_;
     ::testing::NiceMock<StatelessReader>* stateless_reader_;
-    ::testing::NiceMock<StatefulWriter>* volatile_writer_;
+    ::testing::StrictMock<StatefulWriter>* volatile_writer_;
     ::testing::NiceMock<StatefulReader>* volatile_reader_;
     PDP pdp_;
     SecurityPluginFactory plugin_factory_;
