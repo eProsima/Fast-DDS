@@ -442,6 +442,42 @@ bool TCPTransportInterface::init(
         const fastrtps::rtps::PropertyPolicy*,
         const uint32_t& max_msg_size_no_frag)
 {
+    uint32_t maximumMessageSize = max_msg_size_no_frag == 0 ? s_maximumMessageSize : max_msg_size_no_frag;
+    uint32_t cfg_max_msg_size = configuration()->maxMessageSize;
+    uint32_t cfg_send_size = configuration()->sendBufferSize;
+    uint32_t cfg_recv_size = configuration()->receiveBufferSize;
+    uint32_t max_int_value = static_cast<uint32_t>(std::numeric_limits<int32_t>::max());
+
+    if (cfg_max_msg_size > maximumMessageSize)
+    {
+        EPROSIMA_LOG_ERROR(TRANSPORT_TCP, "maxMessageSize cannot be greater than " << maximumMessageSize);
+        return false;
+    }
+
+    if (cfg_send_size > max_int_value)
+    {
+        EPROSIMA_LOG_ERROR(TRANSPORT_TCP, "sendBufferSize cannot be greater than " << max_int_value);
+        return false;
+    }
+
+    if (cfg_recv_size > max_int_value)
+    {
+        EPROSIMA_LOG_ERROR(TRANSPORT_TCP, "receiveBufferSize cannot be greater than " << max_int_value);
+        return false;
+    }
+
+    if ((cfg_send_size > 0) && (cfg_max_msg_size > cfg_send_size))
+    {
+        EPROSIMA_LOG_ERROR(TRANSPORT_TCP, "maxMessageSize cannot be greater than sendBufferSize");
+        return false;
+    }
+
+    if ((cfg_recv_size > 0) && (cfg_max_msg_size > cfg_recv_size))
+    {
+        EPROSIMA_LOG_ERROR(TRANSPORT_TCP, "maxMessageSize cannot be greater than receiveBufferSize");
+        return false;
+    }
+
     if (!apply_tls_config())
     {
         // TODO decide wether the Transport initialization should keep working after this error
@@ -488,42 +524,6 @@ bool TCPTransportInterface::init(
         {
             set_receive_buffer_size(s_minimumSocketBuffer);
         }
-    }
-
-    uint32_t maximumMessageSize = max_msg_size_no_frag == 0 ? s_maximumMessageSize : max_msg_size_no_frag;
-    uint32_t cfg_max_msg_size = configuration()->maxMessageSize;
-    uint32_t cfg_send_size = configuration()->sendBufferSize;
-    uint32_t cfg_recv_size = configuration()->receiveBufferSize;
-    uint32_t max_int_value = static_cast<uint32_t>(std::numeric_limits<int32_t>::max());
-
-    if (cfg_max_msg_size > maximumMessageSize)
-    {
-        EPROSIMA_LOG_ERROR(TRANSPORT_TCP, "maxMessageSize cannot be greater than " << maximumMessageSize);
-        return false;
-    }
-
-    if (cfg_send_size > max_int_value)
-    {
-        EPROSIMA_LOG_ERROR(TRANSPORT_TCP, "sendBufferSize cannot be greater than " << max_int_value);
-        return false;
-    }
-
-    if (cfg_recv_size > max_int_value)
-    {
-        EPROSIMA_LOG_ERROR(TRANSPORT_TCP, "receiveBufferSize cannot be greater than " << max_int_value);
-        return false;
-    }
-
-    if (cfg_max_msg_size > cfg_send_size)
-    {
-        EPROSIMA_LOG_ERROR(TRANSPORT_TCP, "maxMessageSize cannot be greater than sendBufferSize");
-        return false;
-    }
-
-    if (cfg_max_msg_size > cfg_recv_size)
-    {
-        EPROSIMA_LOG_ERROR(TRANSPORT_TCP, "maxMessageSize cannot be greater than receiveBufferSize");
-        return false;
     }
 
     if (!rtcp_message_manager_)
