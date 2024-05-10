@@ -129,20 +129,6 @@ void register_Data64kb_type_identifier()
                 }
                 CollectionElementFlag element_flags_anonymous_sequence_uint8_t_63996 = 0;
                 PlainCollectionHeader header_anonymous_sequence_uint8_t_63996 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_sequence_uint8_t_63996, element_flags_anonymous_sequence_uint8_t_63996);
-                std::string type_id_kind_anonymous_sequence_uint8_t_63996("TI_PLAIN_SEQUENCE_LARGE");
-                if (type_id_kind_anonymous_sequence_uint8_t_63996 == "TI_PLAIN_SEQUENCE_SMALL")
-                {
-                    SBound bound = static_cast<SBound>(63996);
-                    PlainSequenceSElemDefn seq_sdefn = TypeObjectUtils::build_plain_sequence_s_elem_defn(header_anonymous_sequence_uint8_t_63996, bound,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_sequence_uint8_t_63996));
-                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_s_sequence_type_identifier(seq_sdefn, "anonymous_sequence_uint8_t_63996"))
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_sequence_uint8_t_63996 already registered in TypeObjectRegistry for a different type.");
-                    }
-                }
-                else
                 {
                     LBound bound = 63996;
                     PlainSequenceLElemDefn seq_ldefn = TypeObjectUtils::build_plain_sequence_l_elem_defn(header_anonymous_sequence_uint8_t_63996, bound,

@@ -1390,8 +1390,6 @@ void register_StructString_type_identifier()
 
             if (return_code_StructString != eprosima::fastdds::dds::RETCODE_OK)
             {
-                std::string type_id_kind_anonymous_string_unbounded("TI_STRING8_SMALL");
-                if (type_id_kind_anonymous_string_unbounded == "TI_STRING8_SMALL")
                 {
                     SBound bound = 0;
                     StringSTypeDefn string_sdefn = TypeObjectUtils::build_string_s_type_defn(bound);
@@ -1402,24 +1400,6 @@ void register_StructString_type_identifier()
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "anonymous_string_unbounded already registered in TypeObjectRegistry for a different type.");
                     }
-                }
-                else if (type_id_kind_anonymous_string_unbounded == "TI_STRING8_LARGE")
-                {
-                    LBound bound = 255;
-                    StringLTypeDefn string_ldefn = TypeObjectUtils::build_string_l_type_defn(bound);
-                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_l_string_type_identifier(string_ldefn,
-                            "anonymous_string_unbounded"))
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_string_unbounded already registered in TypeObjectRegistry for a different type.");
-                    }
-                }
-                else
-                {
-                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                                "anonymous_string_unbounded: Unknown String kind.");
-                    return;
                 }
                 return_code_StructString =
                     eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -1523,8 +1503,6 @@ void register_StructWString_type_identifier()
 
             if (return_code_StructWString != eprosima::fastdds::dds::RETCODE_OK)
             {
-                std::string type_id_kind_anonymous_wstring_unbounded("TI_STRING16_SMALL");
-                if (type_id_kind_anonymous_wstring_unbounded == "TI_STRING16_SMALL")
                 {
                     SBound bound = 0;
                     StringSTypeDefn string_sdefn = TypeObjectUtils::build_string_s_type_defn(bound);
@@ -1535,24 +1513,6 @@ void register_StructWString_type_identifier()
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "anonymous_wstring_unbounded already registered in TypeObjectRegistry for a different type.");
                     }
-                }
-                else if (type_id_kind_anonymous_wstring_unbounded == "TI_STRING16_LARGE")
-                {
-                    LBound bound = 255;
-                    StringLTypeDefn string_ldefn = TypeObjectUtils::build_string_l_type_defn(bound);
-                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_l_string_type_identifier(string_ldefn,
-                            "anonymous_wstring_unbounded", true))
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_wstring_unbounded already registered in TypeObjectRegistry for a different type.");
-                    }
-                }
-                else
-                {
-                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                                "anonymous_wstring_unbounded: Unknown WString kind.");
-                    return;
                 }
                 return_code_StructWString =
                     eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -1669,8 +1629,6 @@ void register_StructBoundedString_type_identifier()
 
                 if (return_code_StructBoundedString != eprosima::fastdds::dds::RETCODE_OK)
                 {
-                    std::string type_id_kind_anonymous_string_10("TI_STRING8_SMALL");
-                    if (type_id_kind_anonymous_string_10 == "TI_STRING8_SMALL")
                     {
                         SBound bound = static_cast<SBound>(10);
                         StringSTypeDefn string_sdefn = TypeObjectUtils::build_string_s_type_defn(bound);
@@ -1681,24 +1639,6 @@ void register_StructBoundedString_type_identifier()
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "anonymous_string_10 already registered in TypeObjectRegistry for a different type.");
                         }
-                    }
-                    else if (type_id_kind_anonymous_string_10 == "TI_STRING8_LARGE")
-                    {
-                        LBound bound = 10;
-                        StringLTypeDefn string_ldefn = TypeObjectUtils::build_string_l_type_defn(bound);
-                        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                                TypeObjectUtils::build_and_register_l_string_type_identifier(string_ldefn,
-                                "anonymous_string_10"))
-                        {
-                            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                                "anonymous_string_10 already registered in TypeObjectRegistry for a different type.");
-                        }
-                    }
-                    else
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                                    "anonymous_string_10: Unknown String kind.");
-                        return;
                     }
                     return_code_StructBoundedString =
                         eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -1878,8 +1818,6 @@ void register_StructBoundedWString_type_identifier()
 
                 if (return_code_StructBoundedWString != eprosima::fastdds::dds::RETCODE_OK)
                 {
-                    std::string type_id_kind_anonymous_wstring_10("TI_STRING16_SMALL");
-                    if (type_id_kind_anonymous_wstring_10 == "TI_STRING16_SMALL")
                     {
                         SBound bound = static_cast<SBound>(10);
                         StringSTypeDefn string_sdefn = TypeObjectUtils::build_string_s_type_defn(bound);
@@ -1890,24 +1828,6 @@ void register_StructBoundedWString_type_identifier()
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "anonymous_wstring_10 already registered in TypeObjectRegistry for a different type.");
                         }
-                    }
-                    else if (type_id_kind_anonymous_wstring_10 == "TI_STRING16_LARGE")
-                    {
-                        LBound bound = 10;
-                        StringLTypeDefn string_ldefn = TypeObjectUtils::build_string_l_type_defn(bound);
-                        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                                TypeObjectUtils::build_and_register_l_string_type_identifier(string_ldefn,
-                                "anonymous_wstring_10", true))
-                        {
-                            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                                "anonymous_wstring_10 already registered in TypeObjectRegistry for a different type.");
-                        }
-                    }
-                    else
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                                    "anonymous_wstring_10: Unknown WString kind.");
-                        return;
                     }
                     return_code_StructBoundedWString =
                         eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -2637,8 +2557,6 @@ void register_StructShortArray_type_identifier()
                 }
                 CollectionElementFlag element_flags_anonymous_array_int16_t_10 = 0;
                 PlainCollectionHeader header_anonymous_array_int16_t_10 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_array_int16_t_10, element_flags_anonymous_array_int16_t_10);
-                std::string type_id_kind_anonymous_array_int16_t_10("TI_PLAIN_ARRAY_SMALL");
-                if (type_id_kind_anonymous_array_int16_t_10 == "TI_PLAIN_ARRAY_SMALL")
                 {
                     SBoundSeq array_bound_seq;
                         TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<SBound>(10));
@@ -2647,20 +2565,6 @@ void register_StructShortArray_type_identifier()
                                 eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int16_t_10));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
                             TypeObjectUtils::build_and_register_s_array_type_identifier(array_sdefn, "anonymous_array_int16_t_10"))
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_array_int16_t_10 already registered in TypeObjectRegistry for a different type.");
-                    }
-                }
-                else
-                {
-                    LBoundSeq array_bound_seq;
-                        TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<LBound>(10));
-
-                    PlainArrayLElemDefn array_ldefn = TypeObjectUtils::build_plain_array_l_elem_defn(header_anonymous_array_int16_t_10, array_bound_seq,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int16_t_10));
-                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_l_array_type_identifier(array_ldefn, "anonymous_array_int16_t_10"))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "anonymous_array_int16_t_10 already registered in TypeObjectRegistry for a different type.");
@@ -2828,26 +2732,12 @@ void register_StructSequence_type_identifier()
                 }
                 CollectionElementFlag element_flags_anonymous_sequence_int32_t_unbounded = 0;
                 PlainCollectionHeader header_anonymous_sequence_int32_t_unbounded = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_sequence_int32_t_unbounded, element_flags_anonymous_sequence_int32_t_unbounded);
-                std::string type_id_kind_anonymous_sequence_int32_t_unbounded("TI_PLAIN_SEQUENCE_SMALL");
-                if (type_id_kind_anonymous_sequence_int32_t_unbounded == "TI_PLAIN_SEQUENCE_SMALL")
                 {
                     SBound bound = 0;
                     PlainSequenceSElemDefn seq_sdefn = TypeObjectUtils::build_plain_sequence_s_elem_defn(header_anonymous_sequence_int32_t_unbounded, bound,
                                 eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_sequence_int32_t_unbounded));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
                             TypeObjectUtils::build_and_register_s_sequence_type_identifier(seq_sdefn, "anonymous_sequence_int32_t_unbounded"))
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_sequence_int32_t_unbounded already registered in TypeObjectRegistry for a different type.");
-                    }
-                }
-                else
-                {
-                    LBound bound = 0;
-                    PlainSequenceLElemDefn seq_ldefn = TypeObjectUtils::build_plain_sequence_l_elem_defn(header_anonymous_sequence_int32_t_unbounded, bound,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_sequence_int32_t_unbounded));
-                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_l_sequence_type_identifier(seq_ldefn, "anonymous_sequence_int32_t_unbounded"))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "anonymous_sequence_int32_t_unbounded already registered in TypeObjectRegistry for a different type.");
@@ -3075,8 +2965,6 @@ void register_StructMap_type_identifier()
                 CollectionElementFlag element_flags_anonymous_map_int32_t_int32_t_unbounded = 0;
                 CollectionElementFlag key_flags_anonymous_map_int32_t_int32_t_unbounded = 0;
                 PlainCollectionHeader header_anonymous_map_int32_t_int32_t_unbounded = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_map_int32_t_int32_t_unbounded, element_flags_anonymous_map_int32_t_int32_t_unbounded);
-                std::string type_id_kind_anonymous_map_int32_t_int32_t_unbounded("TI_PLAIN_MAP_SMALL");
-                if (type_id_kind_anonymous_map_int32_t_int32_t_unbounded == "TI_PLAIN_MAP_SMALL")
                 {
                     SBound bound = 0;
                     PlainMapSTypeDefn map_sdefn = TypeObjectUtils::build_plain_map_s_type_defn(header_anonymous_map_int32_t_int32_t_unbounded, bound,
@@ -3084,19 +2972,6 @@ void register_StructMap_type_identifier()
                                 eprosima::fastcdr::external<TypeIdentifier>(key_identifier_anonymous_map_int32_t_int32_t_unbounded));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
                             TypeObjectUtils::build_and_register_s_map_type_identifier(map_sdefn, "anonymous_map_int32_t_int32_t_unbounded"))
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_map_int32_t_int32_t_unbounded already registered in TypeObjectRegistry for a different type.");
-                    }
-                }
-                else
-                {
-                    LBound bound = 0;
-                    PlainMapLTypeDefn map_ldefn = TypeObjectUtils::build_plain_map_l_type_defn(header_anonymous_map_int32_t_int32_t_unbounded, bound,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_map_int32_t_int32_t_unbounded), key_flags_anonymous_map_int32_t_int32_t_unbounded,
-                                eprosima::fastcdr::external<TypeIdentifier>(key_identifier_anonymous_map_int32_t_int32_t_unbounded));
-                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_l_map_type_identifier(map_ldefn, "anonymous_map_int32_t_int32_t_unbounded"))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "anonymous_map_int32_t_int32_t_unbounded already registered in TypeObjectRegistry for a different type.");
@@ -6045,8 +5920,6 @@ void register_Structures_type_identifier()
 
                         if (return_code_StructString != eprosima::fastdds::dds::RETCODE_OK)
                         {
-                            std::string type_id_kind_anonymous_string_unbounded("TI_STRING8_SMALL");
-                            if (type_id_kind_anonymous_string_unbounded == "TI_STRING8_SMALL")
                             {
                                 SBound bound = 0;
                                 StringSTypeDefn string_sdefn = TypeObjectUtils::build_string_s_type_defn(bound);
@@ -6057,24 +5930,6 @@ void register_Structures_type_identifier()
                                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                         "anonymous_string_unbounded already registered in TypeObjectRegistry for a different type.");
                                 }
-                            }
-                            else if (type_id_kind_anonymous_string_unbounded == "TI_STRING8_LARGE")
-                            {
-                                LBound bound = 255;
-                                StringLTypeDefn string_ldefn = TypeObjectUtils::build_string_l_type_defn(bound);
-                                if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                                        TypeObjectUtils::build_and_register_l_string_type_identifier(string_ldefn,
-                                        "anonymous_string_unbounded"))
-                                {
-                                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                                        "anonymous_string_unbounded already registered in TypeObjectRegistry for a different type.");
-                                }
-                            }
-                            else
-                            {
-                                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                                            "anonymous_string_unbounded: Unknown String kind.");
-                                return;
                             }
                             return_code_StructString =
                                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -6236,8 +6091,6 @@ void register_Structures_type_identifier()
 
                         if (return_code_StructWString != eprosima::fastdds::dds::RETCODE_OK)
                         {
-                            std::string type_id_kind_anonymous_wstring_unbounded("TI_STRING16_SMALL");
-                            if (type_id_kind_anonymous_wstring_unbounded == "TI_STRING16_SMALL")
                             {
                                 SBound bound = 0;
                                 StringSTypeDefn string_sdefn = TypeObjectUtils::build_string_s_type_defn(bound);
@@ -6248,24 +6101,6 @@ void register_Structures_type_identifier()
                                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                         "anonymous_wstring_unbounded already registered in TypeObjectRegistry for a different type.");
                                 }
-                            }
-                            else if (type_id_kind_anonymous_wstring_unbounded == "TI_STRING16_LARGE")
-                            {
-                                LBound bound = 255;
-                                StringLTypeDefn string_ldefn = TypeObjectUtils::build_string_l_type_defn(bound);
-                                if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                                        TypeObjectUtils::build_and_register_l_string_type_identifier(string_ldefn,
-                                        "anonymous_wstring_unbounded", true))
-                                {
-                                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                                        "anonymous_wstring_unbounded already registered in TypeObjectRegistry for a different type.");
-                                }
-                            }
-                            else
-                            {
-                                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                                            "anonymous_wstring_unbounded: Unknown WString kind.");
-                                return;
                             }
                             return_code_StructWString =
                                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -6440,8 +6275,6 @@ void register_Structures_type_identifier()
 
                             if (return_code_StructBoundedString != eprosima::fastdds::dds::RETCODE_OK)
                             {
-                                std::string type_id_kind_anonymous_string_10("TI_STRING8_SMALL");
-                                if (type_id_kind_anonymous_string_10 == "TI_STRING8_SMALL")
                                 {
                                     SBound bound = static_cast<SBound>(10);
                                     StringSTypeDefn string_sdefn = TypeObjectUtils::build_string_s_type_defn(bound);
@@ -6452,24 +6285,6 @@ void register_Structures_type_identifier()
                                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                             "anonymous_string_10 already registered in TypeObjectRegistry for a different type.");
                                     }
-                                }
-                                else if (type_id_kind_anonymous_string_10 == "TI_STRING8_LARGE")
-                                {
-                                    LBound bound = 10;
-                                    StringLTypeDefn string_ldefn = TypeObjectUtils::build_string_l_type_defn(bound);
-                                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                                            TypeObjectUtils::build_and_register_l_string_type_identifier(string_ldefn,
-                                            "anonymous_string_10"))
-                                    {
-                                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                                            "anonymous_string_10 already registered in TypeObjectRegistry for a different type.");
-                                    }
-                                }
-                                else
-                                {
-                                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                                                "anonymous_string_10: Unknown String kind.");
-                                    return;
                                 }
                                 return_code_StructBoundedString =
                                     eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -6707,8 +6522,6 @@ void register_Structures_type_identifier()
 
                             if (return_code_StructBoundedWString != eprosima::fastdds::dds::RETCODE_OK)
                             {
-                                std::string type_id_kind_anonymous_wstring_10("TI_STRING16_SMALL");
-                                if (type_id_kind_anonymous_wstring_10 == "TI_STRING16_SMALL")
                                 {
                                     SBound bound = static_cast<SBound>(10);
                                     StringSTypeDefn string_sdefn = TypeObjectUtils::build_string_s_type_defn(bound);
@@ -6719,24 +6532,6 @@ void register_Structures_type_identifier()
                                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                             "anonymous_wstring_10 already registered in TypeObjectRegistry for a different type.");
                                     }
-                                }
-                                else if (type_id_kind_anonymous_wstring_10 == "TI_STRING16_LARGE")
-                                {
-                                    LBound bound = 10;
-                                    StringLTypeDefn string_ldefn = TypeObjectUtils::build_string_l_type_defn(bound);
-                                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                                            TypeObjectUtils::build_and_register_l_string_type_identifier(string_ldefn,
-                                            "anonymous_wstring_10", true))
-                                    {
-                                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                                            "anonymous_wstring_10 already registered in TypeObjectRegistry for a different type.");
-                                    }
-                                }
-                                else
-                                {
-                                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                                                "anonymous_wstring_10: Unknown WString kind.");
-                                    return;
                                 }
                                 return_code_StructBoundedWString =
                                     eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -7698,8 +7493,6 @@ void register_Structures_type_identifier()
                             }
                             CollectionElementFlag element_flags_anonymous_array_int16_t_10 = 0;
                             PlainCollectionHeader header_anonymous_array_int16_t_10 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_array_int16_t_10, element_flags_anonymous_array_int16_t_10);
-                            std::string type_id_kind_anonymous_array_int16_t_10("TI_PLAIN_ARRAY_SMALL");
-                            if (type_id_kind_anonymous_array_int16_t_10 == "TI_PLAIN_ARRAY_SMALL")
                             {
                                 SBoundSeq array_bound_seq;
                                     TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<SBound>(10));
@@ -7708,20 +7501,6 @@ void register_Structures_type_identifier()
                                             eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int16_t_10));
                                 if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
                                         TypeObjectUtils::build_and_register_s_array_type_identifier(array_sdefn, "anonymous_array_int16_t_10"))
-                                {
-                                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                                        "anonymous_array_int16_t_10 already registered in TypeObjectRegistry for a different type.");
-                                }
-                            }
-                            else
-                            {
-                                LBoundSeq array_bound_seq;
-                                    TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<LBound>(10));
-
-                                PlainArrayLElemDefn array_ldefn = TypeObjectUtils::build_plain_array_l_elem_defn(header_anonymous_array_int16_t_10, array_bound_seq,
-                                            eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int16_t_10));
-                                if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                                        TypeObjectUtils::build_and_register_l_array_type_identifier(array_ldefn, "anonymous_array_int16_t_10"))
                                 {
                                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                         "anonymous_array_int16_t_10 already registered in TypeObjectRegistry for a different type.");
@@ -7947,26 +7726,12 @@ void register_Structures_type_identifier()
                             }
                             CollectionElementFlag element_flags_anonymous_sequence_int32_t_unbounded = 0;
                             PlainCollectionHeader header_anonymous_sequence_int32_t_unbounded = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_sequence_int32_t_unbounded, element_flags_anonymous_sequence_int32_t_unbounded);
-                            std::string type_id_kind_anonymous_sequence_int32_t_unbounded("TI_PLAIN_SEQUENCE_SMALL");
-                            if (type_id_kind_anonymous_sequence_int32_t_unbounded == "TI_PLAIN_SEQUENCE_SMALL")
                             {
                                 SBound bound = 0;
                                 PlainSequenceSElemDefn seq_sdefn = TypeObjectUtils::build_plain_sequence_s_elem_defn(header_anonymous_sequence_int32_t_unbounded, bound,
                                             eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_sequence_int32_t_unbounded));
                                 if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
                                         TypeObjectUtils::build_and_register_s_sequence_type_identifier(seq_sdefn, "anonymous_sequence_int32_t_unbounded"))
-                                {
-                                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                                        "anonymous_sequence_int32_t_unbounded already registered in TypeObjectRegistry for a different type.");
-                                }
-                            }
-                            else
-                            {
-                                LBound bound = 0;
-                                PlainSequenceLElemDefn seq_ldefn = TypeObjectUtils::build_plain_sequence_l_elem_defn(header_anonymous_sequence_int32_t_unbounded, bound,
-                                            eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_sequence_int32_t_unbounded));
-                                if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                                        TypeObjectUtils::build_and_register_l_sequence_type_identifier(seq_ldefn, "anonymous_sequence_int32_t_unbounded"))
                                 {
                                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                         "anonymous_sequence_int32_t_unbounded already registered in TypeObjectRegistry for a different type.");
@@ -8252,8 +8017,6 @@ void register_Structures_type_identifier()
                             CollectionElementFlag element_flags_anonymous_map_int32_t_int32_t_unbounded = 0;
                             CollectionElementFlag key_flags_anonymous_map_int32_t_int32_t_unbounded = 0;
                             PlainCollectionHeader header_anonymous_map_int32_t_int32_t_unbounded = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_map_int32_t_int32_t_unbounded, element_flags_anonymous_map_int32_t_int32_t_unbounded);
-                            std::string type_id_kind_anonymous_map_int32_t_int32_t_unbounded("TI_PLAIN_MAP_SMALL");
-                            if (type_id_kind_anonymous_map_int32_t_int32_t_unbounded == "TI_PLAIN_MAP_SMALL")
                             {
                                 SBound bound = 0;
                                 PlainMapSTypeDefn map_sdefn = TypeObjectUtils::build_plain_map_s_type_defn(header_anonymous_map_int32_t_int32_t_unbounded, bound,
@@ -8261,19 +8024,6 @@ void register_Structures_type_identifier()
                                             eprosima::fastcdr::external<TypeIdentifier>(key_identifier_anonymous_map_int32_t_int32_t_unbounded));
                                 if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
                                         TypeObjectUtils::build_and_register_s_map_type_identifier(map_sdefn, "anonymous_map_int32_t_int32_t_unbounded"))
-                                {
-                                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                                        "anonymous_map_int32_t_int32_t_unbounded already registered in TypeObjectRegistry for a different type.");
-                                }
-                            }
-                            else
-                            {
-                                LBound bound = 0;
-                                PlainMapLTypeDefn map_ldefn = TypeObjectUtils::build_plain_map_l_type_defn(header_anonymous_map_int32_t_int32_t_unbounded, bound,
-                                            eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_map_int32_t_int32_t_unbounded), key_flags_anonymous_map_int32_t_int32_t_unbounded,
-                                            eprosima::fastcdr::external<TypeIdentifier>(key_identifier_anonymous_map_int32_t_int32_t_unbounded));
-                                if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                                        TypeObjectUtils::build_and_register_l_map_type_identifier(map_ldefn, "anonymous_map_int32_t_int32_t_unbounded"))
                                 {
                                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                         "anonymous_map_int32_t_int32_t_unbounded already registered in TypeObjectRegistry for a different type.");

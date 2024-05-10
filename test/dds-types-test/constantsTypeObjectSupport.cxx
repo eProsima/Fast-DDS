@@ -141,8 +141,6 @@ void register_const_module1_ModuleConstsLiteralsStruct_type_identifier()
                 }
                 CollectionElementFlag element_flags_anonymous_array_int16_t_11 = 0;
                 PlainCollectionHeader header_anonymous_array_int16_t_11 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_array_int16_t_11, element_flags_anonymous_array_int16_t_11);
-                std::string type_id_kind_anonymous_array_int16_t_11("TI_PLAIN_ARRAY_SMALL");
-                if (type_id_kind_anonymous_array_int16_t_11 == "TI_PLAIN_ARRAY_SMALL")
                 {
                     SBoundSeq array_bound_seq;
                         TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<SBound>(11));
@@ -151,20 +149,6 @@ void register_const_module1_ModuleConstsLiteralsStruct_type_identifier()
                                 eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int16_t_11));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
                             TypeObjectUtils::build_and_register_s_array_type_identifier(array_sdefn, "anonymous_array_int16_t_11"))
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_array_int16_t_11 already registered in TypeObjectRegistry for a different type.");
-                    }
-                }
-                else
-                {
-                    LBoundSeq array_bound_seq;
-                        TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<LBound>(11));
-
-                    PlainArrayLElemDefn array_ldefn = TypeObjectUtils::build_plain_array_l_elem_defn(header_anonymous_array_int16_t_11, array_bound_seq,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int16_t_11));
-                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_l_array_type_identifier(array_ldefn, "anonymous_array_int16_t_11"))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "anonymous_array_int16_t_11 already registered in TypeObjectRegistry for a different type.");
@@ -300,8 +284,6 @@ void register_const_module1_ModuleConstsLiteralsStruct_type_identifier()
                 }
                 CollectionElementFlag element_flags_anonymous_array_int16_t_10 = 0;
                 PlainCollectionHeader header_anonymous_array_int16_t_10 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_array_int16_t_10, element_flags_anonymous_array_int16_t_10);
-                std::string type_id_kind_anonymous_array_int16_t_10("TI_PLAIN_ARRAY_SMALL");
-                if (type_id_kind_anonymous_array_int16_t_10 == "TI_PLAIN_ARRAY_SMALL")
                 {
                     SBoundSeq array_bound_seq;
                         TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<SBound>(10));
@@ -310,20 +292,6 @@ void register_const_module1_ModuleConstsLiteralsStruct_type_identifier()
                                 eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int16_t_10));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
                             TypeObjectUtils::build_and_register_s_array_type_identifier(array_sdefn, "anonymous_array_int16_t_10"))
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_array_int16_t_10 already registered in TypeObjectRegistry for a different type.");
-                    }
-                }
-                else
-                {
-                    LBoundSeq array_bound_seq;
-                        TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<LBound>(10));
-
-                    PlainArrayLElemDefn array_ldefn = TypeObjectUtils::build_plain_array_l_elem_defn(header_anonymous_array_int16_t_10, array_bound_seq,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int16_t_10));
-                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_l_array_type_identifier(array_ldefn, "anonymous_array_int16_t_10"))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "anonymous_array_int16_t_10 already registered in TypeObjectRegistry for a different type.");
@@ -774,8 +742,6 @@ void register_const_module2_Module2ConstsLiteralsStruct_type_identifier()
                 }
                 CollectionElementFlag element_flags_anonymous_array_int16_t_22 = 0;
                 PlainCollectionHeader header_anonymous_array_int16_t_22 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_array_int16_t_22, element_flags_anonymous_array_int16_t_22);
-                std::string type_id_kind_anonymous_array_int16_t_22("TI_PLAIN_ARRAY_SMALL");
-                if (type_id_kind_anonymous_array_int16_t_22 == "TI_PLAIN_ARRAY_SMALL")
                 {
                     SBoundSeq array_bound_seq;
                         TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<SBound>(22));
@@ -784,20 +750,6 @@ void register_const_module2_Module2ConstsLiteralsStruct_type_identifier()
                                 eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int16_t_22));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
                             TypeObjectUtils::build_and_register_s_array_type_identifier(array_sdefn, "anonymous_array_int16_t_22"))
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_array_int16_t_22 already registered in TypeObjectRegistry for a different type.");
-                    }
-                }
-                else
-                {
-                    LBoundSeq array_bound_seq;
-                        TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<LBound>(22));
-
-                    PlainArrayLElemDefn array_ldefn = TypeObjectUtils::build_plain_array_l_elem_defn(header_anonymous_array_int16_t_22, array_bound_seq,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int16_t_22));
-                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_l_array_type_identifier(array_ldefn, "anonymous_array_int16_t_22"))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "anonymous_array_int16_t_22 already registered in TypeObjectRegistry for a different type.");
@@ -933,8 +885,6 @@ void register_const_module2_Module2ConstsLiteralsStruct_type_identifier()
                 }
                 CollectionElementFlag element_flags_anonymous_array_int16_t_2 = 0;
                 PlainCollectionHeader header_anonymous_array_int16_t_2 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_array_int16_t_2, element_flags_anonymous_array_int16_t_2);
-                std::string type_id_kind_anonymous_array_int16_t_2("TI_PLAIN_ARRAY_SMALL");
-                if (type_id_kind_anonymous_array_int16_t_2 == "TI_PLAIN_ARRAY_SMALL")
                 {
                     SBoundSeq array_bound_seq;
                         TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<SBound>(2));
@@ -943,20 +893,6 @@ void register_const_module2_Module2ConstsLiteralsStruct_type_identifier()
                                 eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int16_t_2));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
                             TypeObjectUtils::build_and_register_s_array_type_identifier(array_sdefn, "anonymous_array_int16_t_2"))
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_array_int16_t_2 already registered in TypeObjectRegistry for a different type.");
-                    }
-                }
-                else
-                {
-                    LBoundSeq array_bound_seq;
-                        TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<LBound>(2));
-
-                    PlainArrayLElemDefn array_ldefn = TypeObjectUtils::build_plain_array_l_elem_defn(header_anonymous_array_int16_t_2, array_bound_seq,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int16_t_2));
-                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_l_array_type_identifier(array_ldefn, "anonymous_array_int16_t_2"))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "anonymous_array_int16_t_2 already registered in TypeObjectRegistry for a different type.");
@@ -1092,8 +1028,6 @@ void register_const_module2_Module2ConstsLiteralsStruct_type_identifier()
                 }
                 CollectionElementFlag element_flags_anonymous_array_int16_t_22 = 0;
                 PlainCollectionHeader header_anonymous_array_int16_t_22 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_array_int16_t_22, element_flags_anonymous_array_int16_t_22);
-                std::string type_id_kind_anonymous_array_int16_t_22("TI_PLAIN_ARRAY_SMALL");
-                if (type_id_kind_anonymous_array_int16_t_22 == "TI_PLAIN_ARRAY_SMALL")
                 {
                     SBoundSeq array_bound_seq;
                         TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<SBound>(22));
@@ -1102,20 +1036,6 @@ void register_const_module2_Module2ConstsLiteralsStruct_type_identifier()
                                 eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int16_t_22));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
                             TypeObjectUtils::build_and_register_s_array_type_identifier(array_sdefn, "anonymous_array_int16_t_22"))
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_array_int16_t_22 already registered in TypeObjectRegistry for a different type.");
-                    }
-                }
-                else
-                {
-                    LBoundSeq array_bound_seq;
-                        TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<LBound>(22));
-
-                    PlainArrayLElemDefn array_ldefn = TypeObjectUtils::build_plain_array_l_elem_defn(header_anonymous_array_int16_t_22, array_bound_seq,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int16_t_22));
-                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_l_array_type_identifier(array_ldefn, "anonymous_array_int16_t_22"))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "anonymous_array_int16_t_22 already registered in TypeObjectRegistry for a different type.");
@@ -1251,8 +1171,6 @@ void register_const_module2_Module2ConstsLiteralsStruct_type_identifier()
                 }
                 CollectionElementFlag element_flags_anonymous_array_int16_t_11 = 0;
                 PlainCollectionHeader header_anonymous_array_int16_t_11 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_array_int16_t_11, element_flags_anonymous_array_int16_t_11);
-                std::string type_id_kind_anonymous_array_int16_t_11("TI_PLAIN_ARRAY_SMALL");
-                if (type_id_kind_anonymous_array_int16_t_11 == "TI_PLAIN_ARRAY_SMALL")
                 {
                     SBoundSeq array_bound_seq;
                         TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<SBound>(11));
@@ -1261,20 +1179,6 @@ void register_const_module2_Module2ConstsLiteralsStruct_type_identifier()
                                 eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int16_t_11));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
                             TypeObjectUtils::build_and_register_s_array_type_identifier(array_sdefn, "anonymous_array_int16_t_11"))
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_array_int16_t_11 already registered in TypeObjectRegistry for a different type.");
-                    }
-                }
-                else
-                {
-                    LBoundSeq array_bound_seq;
-                        TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<LBound>(11));
-
-                    PlainArrayLElemDefn array_ldefn = TypeObjectUtils::build_plain_array_l_elem_defn(header_anonymous_array_int16_t_11, array_bound_seq,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int16_t_11));
-                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_l_array_type_identifier(array_ldefn, "anonymous_array_int16_t_11"))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "anonymous_array_int16_t_11 already registered in TypeObjectRegistry for a different type.");
@@ -1444,8 +1348,6 @@ void register_ConstsLiteralsStruct_type_identifier()
                 }
                 CollectionElementFlag element_flags_anonymous_array_int16_t_87 = 0;
                 PlainCollectionHeader header_anonymous_array_int16_t_87 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_array_int16_t_87, element_flags_anonymous_array_int16_t_87);
-                std::string type_id_kind_anonymous_array_int16_t_87("TI_PLAIN_ARRAY_SMALL");
-                if (type_id_kind_anonymous_array_int16_t_87 == "TI_PLAIN_ARRAY_SMALL")
                 {
                     SBoundSeq array_bound_seq;
                         TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<SBound>(87));
@@ -1454,20 +1356,6 @@ void register_ConstsLiteralsStruct_type_identifier()
                                 eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int16_t_87));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
                             TypeObjectUtils::build_and_register_s_array_type_identifier(array_sdefn, "anonymous_array_int16_t_87"))
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_array_int16_t_87 already registered in TypeObjectRegistry for a different type.");
-                    }
-                }
-                else
-                {
-                    LBoundSeq array_bound_seq;
-                        TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<LBound>(87));
-
-                    PlainArrayLElemDefn array_ldefn = TypeObjectUtils::build_plain_array_l_elem_defn(header_anonymous_array_int16_t_87, array_bound_seq,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int16_t_87));
-                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_l_array_type_identifier(array_ldefn, "anonymous_array_int16_t_87"))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "anonymous_array_int16_t_87 already registered in TypeObjectRegistry for a different type.");
@@ -1603,8 +1491,6 @@ void register_ConstsLiteralsStruct_type_identifier()
                 }
                 CollectionElementFlag element_flags_anonymous_array_uint16_t_43 = 0;
                 PlainCollectionHeader header_anonymous_array_uint16_t_43 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_array_uint16_t_43, element_flags_anonymous_array_uint16_t_43);
-                std::string type_id_kind_anonymous_array_uint16_t_43("TI_PLAIN_ARRAY_SMALL");
-                if (type_id_kind_anonymous_array_uint16_t_43 == "TI_PLAIN_ARRAY_SMALL")
                 {
                     SBoundSeq array_bound_seq;
                         TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<SBound>(43));
@@ -1613,20 +1499,6 @@ void register_ConstsLiteralsStruct_type_identifier()
                                 eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_uint16_t_43));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
                             TypeObjectUtils::build_and_register_s_array_type_identifier(array_sdefn, "anonymous_array_uint16_t_43"))
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_array_uint16_t_43 already registered in TypeObjectRegistry for a different type.");
-                    }
-                }
-                else
-                {
-                    LBoundSeq array_bound_seq;
-                        TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<LBound>(43));
-
-                    PlainArrayLElemDefn array_ldefn = TypeObjectUtils::build_plain_array_l_elem_defn(header_anonymous_array_uint16_t_43, array_bound_seq,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_uint16_t_43));
-                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_l_array_type_identifier(array_ldefn, "anonymous_array_uint16_t_43"))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "anonymous_array_uint16_t_43 already registered in TypeObjectRegistry for a different type.");
@@ -1762,8 +1634,6 @@ void register_ConstsLiteralsStruct_type_identifier()
                 }
                 CollectionElementFlag element_flags_anonymous_array_int32_t_23 = 0;
                 PlainCollectionHeader header_anonymous_array_int32_t_23 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_array_int32_t_23, element_flags_anonymous_array_int32_t_23);
-                std::string type_id_kind_anonymous_array_int32_t_23("TI_PLAIN_ARRAY_SMALL");
-                if (type_id_kind_anonymous_array_int32_t_23 == "TI_PLAIN_ARRAY_SMALL")
                 {
                     SBoundSeq array_bound_seq;
                         TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<SBound>(23));
@@ -1772,20 +1642,6 @@ void register_ConstsLiteralsStruct_type_identifier()
                                 eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int32_t_23));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
                             TypeObjectUtils::build_and_register_s_array_type_identifier(array_sdefn, "anonymous_array_int32_t_23"))
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_array_int32_t_23 already registered in TypeObjectRegistry for a different type.");
-                    }
-                }
-                else
-                {
-                    LBoundSeq array_bound_seq;
-                        TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<LBound>(23));
-
-                    PlainArrayLElemDefn array_ldefn = TypeObjectUtils::build_plain_array_l_elem_defn(header_anonymous_array_int32_t_23, array_bound_seq,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int32_t_23));
-                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_l_array_type_identifier(array_ldefn, "anonymous_array_int32_t_23"))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "anonymous_array_int32_t_23 already registered in TypeObjectRegistry for a different type.");
@@ -1921,8 +1777,6 @@ void register_ConstsLiteralsStruct_type_identifier()
                 }
                 CollectionElementFlag element_flags_anonymous_array_uint32_t_6 = 0;
                 PlainCollectionHeader header_anonymous_array_uint32_t_6 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_array_uint32_t_6, element_flags_anonymous_array_uint32_t_6);
-                std::string type_id_kind_anonymous_array_uint32_t_6("TI_PLAIN_ARRAY_SMALL");
-                if (type_id_kind_anonymous_array_uint32_t_6 == "TI_PLAIN_ARRAY_SMALL")
                 {
                     SBoundSeq array_bound_seq;
                         TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<SBound>(6));
@@ -1931,20 +1785,6 @@ void register_ConstsLiteralsStruct_type_identifier()
                                 eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_uint32_t_6));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
                             TypeObjectUtils::build_and_register_s_array_type_identifier(array_sdefn, "anonymous_array_uint32_t_6"))
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_array_uint32_t_6 already registered in TypeObjectRegistry for a different type.");
-                    }
-                }
-                else
-                {
-                    LBoundSeq array_bound_seq;
-                        TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<LBound>(6));
-
-                    PlainArrayLElemDefn array_ldefn = TypeObjectUtils::build_plain_array_l_elem_defn(header_anonymous_array_uint32_t_6, array_bound_seq,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_uint32_t_6));
-                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_l_array_type_identifier(array_ldefn, "anonymous_array_uint32_t_6"))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "anonymous_array_uint32_t_6 already registered in TypeObjectRegistry for a different type.");
@@ -2080,8 +1920,6 @@ void register_ConstsLiteralsStruct_type_identifier()
                 }
                 CollectionElementFlag element_flags_anonymous_array_int64_t_8 = 0;
                 PlainCollectionHeader header_anonymous_array_int64_t_8 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_array_int64_t_8, element_flags_anonymous_array_int64_t_8);
-                std::string type_id_kind_anonymous_array_int64_t_8("TI_PLAIN_ARRAY_SMALL");
-                if (type_id_kind_anonymous_array_int64_t_8 == "TI_PLAIN_ARRAY_SMALL")
                 {
                     SBoundSeq array_bound_seq;
                         TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<SBound>(8));
@@ -2090,20 +1928,6 @@ void register_ConstsLiteralsStruct_type_identifier()
                                 eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int64_t_8));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
                             TypeObjectUtils::build_and_register_s_array_type_identifier(array_sdefn, "anonymous_array_int64_t_8"))
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_array_int64_t_8 already registered in TypeObjectRegistry for a different type.");
-                    }
-                }
-                else
-                {
-                    LBoundSeq array_bound_seq;
-                        TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<LBound>(8));
-
-                    PlainArrayLElemDefn array_ldefn = TypeObjectUtils::build_plain_array_l_elem_defn(header_anonymous_array_int64_t_8, array_bound_seq,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int64_t_8));
-                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_l_array_type_identifier(array_ldefn, "anonymous_array_int64_t_8"))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "anonymous_array_int64_t_8 already registered in TypeObjectRegistry for a different type.");
@@ -2239,8 +2063,6 @@ void register_ConstsLiteralsStruct_type_identifier()
                 }
                 CollectionElementFlag element_flags_anonymous_array_uint64_t_67 = 0;
                 PlainCollectionHeader header_anonymous_array_uint64_t_67 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_array_uint64_t_67, element_flags_anonymous_array_uint64_t_67);
-                std::string type_id_kind_anonymous_array_uint64_t_67("TI_PLAIN_ARRAY_SMALL");
-                if (type_id_kind_anonymous_array_uint64_t_67 == "TI_PLAIN_ARRAY_SMALL")
                 {
                     SBoundSeq array_bound_seq;
                         TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<SBound>(67));
@@ -2249,20 +2071,6 @@ void register_ConstsLiteralsStruct_type_identifier()
                                 eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_uint64_t_67));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
                             TypeObjectUtils::build_and_register_s_array_type_identifier(array_sdefn, "anonymous_array_uint64_t_67"))
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_array_uint64_t_67 already registered in TypeObjectRegistry for a different type.");
-                    }
-                }
-                else
-                {
-                    LBoundSeq array_bound_seq;
-                        TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<LBound>(67));
-
-                    PlainArrayLElemDefn array_ldefn = TypeObjectUtils::build_plain_array_l_elem_defn(header_anonymous_array_uint64_t_67, array_bound_seq,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_uint64_t_67));
-                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_l_array_type_identifier(array_ldefn, "anonymous_array_uint64_t_67"))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "anonymous_array_uint64_t_67 already registered in TypeObjectRegistry for a different type.");
@@ -2398,8 +2206,6 @@ void register_ConstsLiteralsStruct_type_identifier()
                 }
                 CollectionElementFlag element_flags_anonymous_array_int8_t_53 = 0;
                 PlainCollectionHeader header_anonymous_array_int8_t_53 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_array_int8_t_53, element_flags_anonymous_array_int8_t_53);
-                std::string type_id_kind_anonymous_array_int8_t_53("TI_PLAIN_ARRAY_SMALL");
-                if (type_id_kind_anonymous_array_int8_t_53 == "TI_PLAIN_ARRAY_SMALL")
                 {
                     SBoundSeq array_bound_seq;
                         TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<SBound>(53));
@@ -2408,20 +2214,6 @@ void register_ConstsLiteralsStruct_type_identifier()
                                 eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int8_t_53));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
                             TypeObjectUtils::build_and_register_s_array_type_identifier(array_sdefn, "anonymous_array_int8_t_53"))
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_array_int8_t_53 already registered in TypeObjectRegistry for a different type.");
-                    }
-                }
-                else
-                {
-                    LBoundSeq array_bound_seq;
-                        TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<LBound>(53));
-
-                    PlainArrayLElemDefn array_ldefn = TypeObjectUtils::build_plain_array_l_elem_defn(header_anonymous_array_int8_t_53, array_bound_seq,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int8_t_53));
-                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_l_array_type_identifier(array_ldefn, "anonymous_array_int8_t_53"))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "anonymous_array_int8_t_53 already registered in TypeObjectRegistry for a different type.");
@@ -2557,8 +2349,6 @@ void register_ConstsLiteralsStruct_type_identifier()
                 }
                 CollectionElementFlag element_flags_anonymous_array_uint8_t_11 = 0;
                 PlainCollectionHeader header_anonymous_array_uint8_t_11 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_array_uint8_t_11, element_flags_anonymous_array_uint8_t_11);
-                std::string type_id_kind_anonymous_array_uint8_t_11("TI_PLAIN_ARRAY_SMALL");
-                if (type_id_kind_anonymous_array_uint8_t_11 == "TI_PLAIN_ARRAY_SMALL")
                 {
                     SBoundSeq array_bound_seq;
                         TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<SBound>(11));
@@ -2567,20 +2357,6 @@ void register_ConstsLiteralsStruct_type_identifier()
                                 eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_uint8_t_11));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
                             TypeObjectUtils::build_and_register_s_array_type_identifier(array_sdefn, "anonymous_array_uint8_t_11"))
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_array_uint8_t_11 already registered in TypeObjectRegistry for a different type.");
-                    }
-                }
-                else
-                {
-                    LBoundSeq array_bound_seq;
-                        TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<LBound>(11));
-
-                    PlainArrayLElemDefn array_ldefn = TypeObjectUtils::build_plain_array_l_elem_defn(header_anonymous_array_uint8_t_11, array_bound_seq,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_uint8_t_11));
-                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_l_array_type_identifier(array_ldefn, "anonymous_array_uint8_t_11"))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "anonymous_array_uint8_t_11 already registered in TypeObjectRegistry for a different type.");
@@ -2716,8 +2492,6 @@ void register_ConstsLiteralsStruct_type_identifier()
                 }
                 CollectionElementFlag element_flags_anonymous_array_int16_t_27 = 0;
                 PlainCollectionHeader header_anonymous_array_int16_t_27 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_array_int16_t_27, element_flags_anonymous_array_int16_t_27);
-                std::string type_id_kind_anonymous_array_int16_t_27("TI_PLAIN_ARRAY_SMALL");
-                if (type_id_kind_anonymous_array_int16_t_27 == "TI_PLAIN_ARRAY_SMALL")
                 {
                     SBoundSeq array_bound_seq;
                         TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<SBound>(27));
@@ -2726,20 +2500,6 @@ void register_ConstsLiteralsStruct_type_identifier()
                                 eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int16_t_27));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
                             TypeObjectUtils::build_and_register_s_array_type_identifier(array_sdefn, "anonymous_array_int16_t_27"))
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_array_int16_t_27 already registered in TypeObjectRegistry for a different type.");
-                    }
-                }
-                else
-                {
-                    LBoundSeq array_bound_seq;
-                        TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<LBound>(27));
-
-                    PlainArrayLElemDefn array_ldefn = TypeObjectUtils::build_plain_array_l_elem_defn(header_anonymous_array_int16_t_27, array_bound_seq,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int16_t_27));
-                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_l_array_type_identifier(array_ldefn, "anonymous_array_int16_t_27"))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "anonymous_array_int16_t_27 already registered in TypeObjectRegistry for a different type.");
@@ -2875,8 +2635,6 @@ void register_ConstsLiteralsStruct_type_identifier()
                 }
                 CollectionElementFlag element_flags_anonymous_array_uint16_t_31 = 0;
                 PlainCollectionHeader header_anonymous_array_uint16_t_31 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_array_uint16_t_31, element_flags_anonymous_array_uint16_t_31);
-                std::string type_id_kind_anonymous_array_uint16_t_31("TI_PLAIN_ARRAY_SMALL");
-                if (type_id_kind_anonymous_array_uint16_t_31 == "TI_PLAIN_ARRAY_SMALL")
                 {
                     SBoundSeq array_bound_seq;
                         TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<SBound>(31));
@@ -2885,20 +2643,6 @@ void register_ConstsLiteralsStruct_type_identifier()
                                 eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_uint16_t_31));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
                             TypeObjectUtils::build_and_register_s_array_type_identifier(array_sdefn, "anonymous_array_uint16_t_31"))
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_array_uint16_t_31 already registered in TypeObjectRegistry for a different type.");
-                    }
-                }
-                else
-                {
-                    LBoundSeq array_bound_seq;
-                        TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<LBound>(31));
-
-                    PlainArrayLElemDefn array_ldefn = TypeObjectUtils::build_plain_array_l_elem_defn(header_anonymous_array_uint16_t_31, array_bound_seq,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_uint16_t_31));
-                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_l_array_type_identifier(array_ldefn, "anonymous_array_uint16_t_31"))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "anonymous_array_uint16_t_31 already registered in TypeObjectRegistry for a different type.");
@@ -3034,8 +2778,6 @@ void register_ConstsLiteralsStruct_type_identifier()
                 }
                 CollectionElementFlag element_flags_anonymous_array_int32_t_74 = 0;
                 PlainCollectionHeader header_anonymous_array_int32_t_74 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_array_int32_t_74, element_flags_anonymous_array_int32_t_74);
-                std::string type_id_kind_anonymous_array_int32_t_74("TI_PLAIN_ARRAY_SMALL");
-                if (type_id_kind_anonymous_array_int32_t_74 == "TI_PLAIN_ARRAY_SMALL")
                 {
                     SBoundSeq array_bound_seq;
                         TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<SBound>(74));
@@ -3044,20 +2786,6 @@ void register_ConstsLiteralsStruct_type_identifier()
                                 eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int32_t_74));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
                             TypeObjectUtils::build_and_register_s_array_type_identifier(array_sdefn, "anonymous_array_int32_t_74"))
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_array_int32_t_74 already registered in TypeObjectRegistry for a different type.");
-                    }
-                }
-                else
-                {
-                    LBoundSeq array_bound_seq;
-                        TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<LBound>(74));
-
-                    PlainArrayLElemDefn array_ldefn = TypeObjectUtils::build_plain_array_l_elem_defn(header_anonymous_array_int32_t_74, array_bound_seq,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int32_t_74));
-                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_l_array_type_identifier(array_ldefn, "anonymous_array_int32_t_74"))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "anonymous_array_int32_t_74 already registered in TypeObjectRegistry for a different type.");
@@ -3193,8 +2921,6 @@ void register_ConstsLiteralsStruct_type_identifier()
                 }
                 CollectionElementFlag element_flags_anonymous_array_uint32_t_64 = 0;
                 PlainCollectionHeader header_anonymous_array_uint32_t_64 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_array_uint32_t_64, element_flags_anonymous_array_uint32_t_64);
-                std::string type_id_kind_anonymous_array_uint32_t_64("TI_PLAIN_ARRAY_SMALL");
-                if (type_id_kind_anonymous_array_uint32_t_64 == "TI_PLAIN_ARRAY_SMALL")
                 {
                     SBoundSeq array_bound_seq;
                         TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<SBound>(64));
@@ -3203,20 +2929,6 @@ void register_ConstsLiteralsStruct_type_identifier()
                                 eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_uint32_t_64));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
                             TypeObjectUtils::build_and_register_s_array_type_identifier(array_sdefn, "anonymous_array_uint32_t_64"))
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_array_uint32_t_64 already registered in TypeObjectRegistry for a different type.");
-                    }
-                }
-                else
-                {
-                    LBoundSeq array_bound_seq;
-                        TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<LBound>(64));
-
-                    PlainArrayLElemDefn array_ldefn = TypeObjectUtils::build_plain_array_l_elem_defn(header_anonymous_array_uint32_t_64, array_bound_seq,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_uint32_t_64));
-                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_l_array_type_identifier(array_ldefn, "anonymous_array_uint32_t_64"))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "anonymous_array_uint32_t_64 already registered in TypeObjectRegistry for a different type.");
@@ -3352,8 +3064,6 @@ void register_ConstsLiteralsStruct_type_identifier()
                 }
                 CollectionElementFlag element_flags_anonymous_array_int64_t_17 = 0;
                 PlainCollectionHeader header_anonymous_array_int64_t_17 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_array_int64_t_17, element_flags_anonymous_array_int64_t_17);
-                std::string type_id_kind_anonymous_array_int64_t_17("TI_PLAIN_ARRAY_SMALL");
-                if (type_id_kind_anonymous_array_int64_t_17 == "TI_PLAIN_ARRAY_SMALL")
                 {
                     SBoundSeq array_bound_seq;
                         TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<SBound>(17));
@@ -3362,20 +3072,6 @@ void register_ConstsLiteralsStruct_type_identifier()
                                 eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int64_t_17));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
                             TypeObjectUtils::build_and_register_s_array_type_identifier(array_sdefn, "anonymous_array_int64_t_17"))
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_array_int64_t_17 already registered in TypeObjectRegistry for a different type.");
-                    }
-                }
-                else
-                {
-                    LBoundSeq array_bound_seq;
-                        TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<LBound>(17));
-
-                    PlainArrayLElemDefn array_ldefn = TypeObjectUtils::build_plain_array_l_elem_defn(header_anonymous_array_int64_t_17, array_bound_seq,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int64_t_17));
-                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_l_array_type_identifier(array_ldefn, "anonymous_array_int64_t_17"))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "anonymous_array_int64_t_17 already registered in TypeObjectRegistry for a different type.");
@@ -3511,8 +3207,6 @@ void register_ConstsLiteralsStruct_type_identifier()
                 }
                 CollectionElementFlag element_flags_anonymous_array_uint64_t_19 = 0;
                 PlainCollectionHeader header_anonymous_array_uint64_t_19 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_array_uint64_t_19, element_flags_anonymous_array_uint64_t_19);
-                std::string type_id_kind_anonymous_array_uint64_t_19("TI_PLAIN_ARRAY_SMALL");
-                if (type_id_kind_anonymous_array_uint64_t_19 == "TI_PLAIN_ARRAY_SMALL")
                 {
                     SBoundSeq array_bound_seq;
                         TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<SBound>(19));
@@ -3521,20 +3215,6 @@ void register_ConstsLiteralsStruct_type_identifier()
                                 eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_uint64_t_19));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
                             TypeObjectUtils::build_and_register_s_array_type_identifier(array_sdefn, "anonymous_array_uint64_t_19"))
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_array_uint64_t_19 already registered in TypeObjectRegistry for a different type.");
-                    }
-                }
-                else
-                {
-                    LBoundSeq array_bound_seq;
-                        TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<LBound>(19));
-
-                    PlainArrayLElemDefn array_ldefn = TypeObjectUtils::build_plain_array_l_elem_defn(header_anonymous_array_uint64_t_19, array_bound_seq,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_uint64_t_19));
-                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_l_array_type_identifier(array_ldefn, "anonymous_array_uint64_t_19"))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "anonymous_array_uint64_t_19 already registered in TypeObjectRegistry for a different type.");
@@ -3670,8 +3350,6 @@ void register_ConstsLiteralsStruct_type_identifier()
                 }
                 CollectionElementFlag element_flags_anonymous_array_int16_t_110 = 0;
                 PlainCollectionHeader header_anonymous_array_int16_t_110 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_array_int16_t_110, element_flags_anonymous_array_int16_t_110);
-                std::string type_id_kind_anonymous_array_int16_t_110("TI_PLAIN_ARRAY_SMALL");
-                if (type_id_kind_anonymous_array_int16_t_110 == "TI_PLAIN_ARRAY_SMALL")
                 {
                     SBoundSeq array_bound_seq;
                         TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<SBound>(110));
@@ -3680,20 +3358,6 @@ void register_ConstsLiteralsStruct_type_identifier()
                                 eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int16_t_110));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
                             TypeObjectUtils::build_and_register_s_array_type_identifier(array_sdefn, "anonymous_array_int16_t_110"))
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_array_int16_t_110 already registered in TypeObjectRegistry for a different type.");
-                    }
-                }
-                else
-                {
-                    LBoundSeq array_bound_seq;
-                        TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<LBound>(110));
-
-                    PlainArrayLElemDefn array_ldefn = TypeObjectUtils::build_plain_array_l_elem_defn(header_anonymous_array_int16_t_110, array_bound_seq,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int16_t_110));
-                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_l_array_type_identifier(array_ldefn, "anonymous_array_int16_t_110"))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "anonymous_array_int16_t_110 already registered in TypeObjectRegistry for a different type.");
@@ -3829,8 +3493,6 @@ void register_ConstsLiteralsStruct_type_identifier()
                 }
                 CollectionElementFlag element_flags_anonymous_array_int16_t_64 = 0;
                 PlainCollectionHeader header_anonymous_array_int16_t_64 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_array_int16_t_64, element_flags_anonymous_array_int16_t_64);
-                std::string type_id_kind_anonymous_array_int16_t_64("TI_PLAIN_ARRAY_SMALL");
-                if (type_id_kind_anonymous_array_int16_t_64 == "TI_PLAIN_ARRAY_SMALL")
                 {
                     SBoundSeq array_bound_seq;
                         TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<SBound>(64));
@@ -3839,20 +3501,6 @@ void register_ConstsLiteralsStruct_type_identifier()
                                 eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int16_t_64));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
                             TypeObjectUtils::build_and_register_s_array_type_identifier(array_sdefn, "anonymous_array_int16_t_64"))
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_array_int16_t_64 already registered in TypeObjectRegistry for a different type.");
-                    }
-                }
-                else
-                {
-                    LBoundSeq array_bound_seq;
-                        TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<LBound>(64));
-
-                    PlainArrayLElemDefn array_ldefn = TypeObjectUtils::build_plain_array_l_elem_defn(header_anonymous_array_int16_t_64, array_bound_seq,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int16_t_64));
-                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_l_array_type_identifier(array_ldefn, "anonymous_array_int16_t_64"))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "anonymous_array_int16_t_64 already registered in TypeObjectRegistry for a different type.");
@@ -3988,8 +3636,6 @@ void register_ConstsLiteralsStruct_type_identifier()
                 }
                 CollectionElementFlag element_flags_anonymous_array_int16_t_109 = 0;
                 PlainCollectionHeader header_anonymous_array_int16_t_109 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_array_int16_t_109, element_flags_anonymous_array_int16_t_109);
-                std::string type_id_kind_anonymous_array_int16_t_109("TI_PLAIN_ARRAY_SMALL");
-                if (type_id_kind_anonymous_array_int16_t_109 == "TI_PLAIN_ARRAY_SMALL")
                 {
                     SBoundSeq array_bound_seq;
                         TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<SBound>(109));
@@ -3998,20 +3644,6 @@ void register_ConstsLiteralsStruct_type_identifier()
                                 eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int16_t_109));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
                             TypeObjectUtils::build_and_register_s_array_type_identifier(array_sdefn, "anonymous_array_int16_t_109"))
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_array_int16_t_109 already registered in TypeObjectRegistry for a different type.");
-                    }
-                }
-                else
-                {
-                    LBoundSeq array_bound_seq;
-                        TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<LBound>(109));
-
-                    PlainArrayLElemDefn array_ldefn = TypeObjectUtils::build_plain_array_l_elem_defn(header_anonymous_array_int16_t_109, array_bound_seq,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int16_t_109));
-                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_l_array_type_identifier(array_ldefn, "anonymous_array_int16_t_109"))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "anonymous_array_int16_t_109 already registered in TypeObjectRegistry for a different type.");
@@ -4147,8 +3779,6 @@ void register_ConstsLiteralsStruct_type_identifier()
                 }
                 CollectionElementFlag element_flags_anonymous_array_int16_t_11 = 0;
                 PlainCollectionHeader header_anonymous_array_int16_t_11 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_array_int16_t_11, element_flags_anonymous_array_int16_t_11);
-                std::string type_id_kind_anonymous_array_int16_t_11("TI_PLAIN_ARRAY_SMALL");
-                if (type_id_kind_anonymous_array_int16_t_11 == "TI_PLAIN_ARRAY_SMALL")
                 {
                     SBoundSeq array_bound_seq;
                         TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<SBound>(11));
@@ -4157,20 +3787,6 @@ void register_ConstsLiteralsStruct_type_identifier()
                                 eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int16_t_11));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
                             TypeObjectUtils::build_and_register_s_array_type_identifier(array_sdefn, "anonymous_array_int16_t_11"))
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_array_int16_t_11 already registered in TypeObjectRegistry for a different type.");
-                    }
-                }
-                else
-                {
-                    LBoundSeq array_bound_seq;
-                        TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<LBound>(11));
-
-                    PlainArrayLElemDefn array_ldefn = TypeObjectUtils::build_plain_array_l_elem_defn(header_anonymous_array_int16_t_11, array_bound_seq,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int16_t_11));
-                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_l_array_type_identifier(array_ldefn, "anonymous_array_int16_t_11"))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "anonymous_array_int16_t_11 already registered in TypeObjectRegistry for a different type.");
@@ -4306,22 +3922,6 @@ void register_ConstsLiteralsStruct_type_identifier()
                 }
                 CollectionElementFlag element_flags_anonymous_array_int16_t_2001 = 0;
                 PlainCollectionHeader header_anonymous_array_int16_t_2001 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_array_int16_t_2001, element_flags_anonymous_array_int16_t_2001);
-                std::string type_id_kind_anonymous_array_int16_t_2001("TI_PLAIN_ARRAY_LARGE");
-                if (type_id_kind_anonymous_array_int16_t_2001 == "TI_PLAIN_ARRAY_SMALL")
-                {
-                    SBoundSeq array_bound_seq;
-                        TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<SBound>(2001));
-
-                    PlainArraySElemDefn array_sdefn = TypeObjectUtils::build_plain_array_s_elem_defn(header_anonymous_array_int16_t_2001, array_bound_seq,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int16_t_2001));
-                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_s_array_type_identifier(array_sdefn, "anonymous_array_int16_t_2001"))
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_array_int16_t_2001 already registered in TypeObjectRegistry for a different type.");
-                    }
-                }
-                else
                 {
                     LBoundSeq array_bound_seq;
                         TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<LBound>(2001));
@@ -4465,8 +4065,6 @@ void register_ConstsLiteralsStruct_type_identifier()
                 }
                 CollectionElementFlag element_flags_anonymous_array_int16_t_3 = 0;
                 PlainCollectionHeader header_anonymous_array_int16_t_3 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_array_int16_t_3, element_flags_anonymous_array_int16_t_3);
-                std::string type_id_kind_anonymous_array_int16_t_3("TI_PLAIN_ARRAY_SMALL");
-                if (type_id_kind_anonymous_array_int16_t_3 == "TI_PLAIN_ARRAY_SMALL")
                 {
                     SBoundSeq array_bound_seq;
                         TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<SBound>(3));
@@ -4475,20 +4073,6 @@ void register_ConstsLiteralsStruct_type_identifier()
                                 eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int16_t_3));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
                             TypeObjectUtils::build_and_register_s_array_type_identifier(array_sdefn, "anonymous_array_int16_t_3"))
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_array_int16_t_3 already registered in TypeObjectRegistry for a different type.");
-                    }
-                }
-                else
-                {
-                    LBoundSeq array_bound_seq;
-                        TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<LBound>(3));
-
-                    PlainArrayLElemDefn array_ldefn = TypeObjectUtils::build_plain_array_l_elem_defn(header_anonymous_array_int16_t_3, array_bound_seq,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int16_t_3));
-                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_l_array_type_identifier(array_ldefn, "anonymous_array_int16_t_3"))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "anonymous_array_int16_t_3 already registered in TypeObjectRegistry for a different type.");
@@ -4624,22 +4208,6 @@ void register_ConstsLiteralsStruct_type_identifier()
                 }
                 CollectionElementFlag element_flags_anonymous_array_int16_t_1914 = 0;
                 PlainCollectionHeader header_anonymous_array_int16_t_1914 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_array_int16_t_1914, element_flags_anonymous_array_int16_t_1914);
-                std::string type_id_kind_anonymous_array_int16_t_1914("TI_PLAIN_ARRAY_LARGE");
-                if (type_id_kind_anonymous_array_int16_t_1914 == "TI_PLAIN_ARRAY_SMALL")
-                {
-                    SBoundSeq array_bound_seq;
-                        TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<SBound>(1914));
-
-                    PlainArraySElemDefn array_sdefn = TypeObjectUtils::build_plain_array_s_elem_defn(header_anonymous_array_int16_t_1914, array_bound_seq,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int16_t_1914));
-                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_s_array_type_identifier(array_sdefn, "anonymous_array_int16_t_1914"))
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_array_int16_t_1914 already registered in TypeObjectRegistry for a different type.");
-                    }
-                }
-                else
                 {
                     LBoundSeq array_bound_seq;
                         TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<LBound>(1914));
@@ -4783,8 +4351,6 @@ void register_ConstsLiteralsStruct_type_identifier()
                 }
                 CollectionElementFlag element_flags_anonymous_array_int16_t_11 = 0;
                 PlainCollectionHeader header_anonymous_array_int16_t_11 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_array_int16_t_11, element_flags_anonymous_array_int16_t_11);
-                std::string type_id_kind_anonymous_array_int16_t_11("TI_PLAIN_ARRAY_SMALL");
-                if (type_id_kind_anonymous_array_int16_t_11 == "TI_PLAIN_ARRAY_SMALL")
                 {
                     SBoundSeq array_bound_seq;
                         TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<SBound>(11));
@@ -4793,20 +4359,6 @@ void register_ConstsLiteralsStruct_type_identifier()
                                 eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int16_t_11));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
                             TypeObjectUtils::build_and_register_s_array_type_identifier(array_sdefn, "anonymous_array_int16_t_11"))
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_array_int16_t_11 already registered in TypeObjectRegistry for a different type.");
-                    }
-                }
-                else
-                {
-                    LBoundSeq array_bound_seq;
-                        TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<LBound>(11));
-
-                    PlainArrayLElemDefn array_ldefn = TypeObjectUtils::build_plain_array_l_elem_defn(header_anonymous_array_int16_t_11, array_bound_seq,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int16_t_11));
-                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_l_array_type_identifier(array_ldefn, "anonymous_array_int16_t_11"))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "anonymous_array_int16_t_11 already registered in TypeObjectRegistry for a different type.");
@@ -4942,8 +4494,6 @@ void register_ConstsLiteralsStruct_type_identifier()
                 }
                 CollectionElementFlag element_flags_anonymous_array_int16_t_1 = 0;
                 PlainCollectionHeader header_anonymous_array_int16_t_1 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_array_int16_t_1, element_flags_anonymous_array_int16_t_1);
-                std::string type_id_kind_anonymous_array_int16_t_1("TI_PLAIN_ARRAY_SMALL");
-                if (type_id_kind_anonymous_array_int16_t_1 == "TI_PLAIN_ARRAY_SMALL")
                 {
                     SBoundSeq array_bound_seq;
                         TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<SBound>(1));
@@ -4952,20 +4502,6 @@ void register_ConstsLiteralsStruct_type_identifier()
                                 eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int16_t_1));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
                             TypeObjectUtils::build_and_register_s_array_type_identifier(array_sdefn, "anonymous_array_int16_t_1"))
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_array_int16_t_1 already registered in TypeObjectRegistry for a different type.");
-                    }
-                }
-                else
-                {
-                    LBoundSeq array_bound_seq;
-                        TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<LBound>(1));
-
-                    PlainArrayLElemDefn array_ldefn = TypeObjectUtils::build_plain_array_l_elem_defn(header_anonymous_array_int16_t_1, array_bound_seq,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int16_t_1));
-                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_l_array_type_identifier(array_ldefn, "anonymous_array_int16_t_1"))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "anonymous_array_int16_t_1 already registered in TypeObjectRegistry for a different type.");
@@ -5101,8 +4637,6 @@ void register_ConstsLiteralsStruct_type_identifier()
                 }
                 CollectionElementFlag element_flags_anonymous_array_int16_t_11 = 0;
                 PlainCollectionHeader header_anonymous_array_int16_t_11 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_array_int16_t_11, element_flags_anonymous_array_int16_t_11);
-                std::string type_id_kind_anonymous_array_int16_t_11("TI_PLAIN_ARRAY_SMALL");
-                if (type_id_kind_anonymous_array_int16_t_11 == "TI_PLAIN_ARRAY_SMALL")
                 {
                     SBoundSeq array_bound_seq;
                         TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<SBound>(11));
@@ -5111,20 +4645,6 @@ void register_ConstsLiteralsStruct_type_identifier()
                                 eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int16_t_11));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
                             TypeObjectUtils::build_and_register_s_array_type_identifier(array_sdefn, "anonymous_array_int16_t_11"))
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_array_int16_t_11 already registered in TypeObjectRegistry for a different type.");
-                    }
-                }
-                else
-                {
-                    LBoundSeq array_bound_seq;
-                        TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<LBound>(11));
-
-                    PlainArrayLElemDefn array_ldefn = TypeObjectUtils::build_plain_array_l_elem_defn(header_anonymous_array_int16_t_11, array_bound_seq,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int16_t_11));
-                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_l_array_type_identifier(array_ldefn, "anonymous_array_int16_t_11"))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "anonymous_array_int16_t_11 already registered in TypeObjectRegistry for a different type.");
@@ -5260,8 +4780,6 @@ void register_ConstsLiteralsStruct_type_identifier()
                 }
                 CollectionElementFlag element_flags_anonymous_array_int16_t_22 = 0;
                 PlainCollectionHeader header_anonymous_array_int16_t_22 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_array_int16_t_22, element_flags_anonymous_array_int16_t_22);
-                std::string type_id_kind_anonymous_array_int16_t_22("TI_PLAIN_ARRAY_SMALL");
-                if (type_id_kind_anonymous_array_int16_t_22 == "TI_PLAIN_ARRAY_SMALL")
                 {
                     SBoundSeq array_bound_seq;
                         TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<SBound>(22));
@@ -5270,20 +4788,6 @@ void register_ConstsLiteralsStruct_type_identifier()
                                 eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int16_t_22));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
                             TypeObjectUtils::build_and_register_s_array_type_identifier(array_sdefn, "anonymous_array_int16_t_22"))
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_array_int16_t_22 already registered in TypeObjectRegistry for a different type.");
-                    }
-                }
-                else
-                {
-                    LBoundSeq array_bound_seq;
-                        TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<LBound>(22));
-
-                    PlainArrayLElemDefn array_ldefn = TypeObjectUtils::build_plain_array_l_elem_defn(header_anonymous_array_int16_t_22, array_bound_seq,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int16_t_22));
-                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_l_array_type_identifier(array_ldefn, "anonymous_array_int16_t_22"))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "anonymous_array_int16_t_22 already registered in TypeObjectRegistry for a different type.");
@@ -5419,8 +4923,6 @@ void register_ConstsLiteralsStruct_type_identifier()
                 }
                 CollectionElementFlag element_flags_anonymous_array_int16_t_55 = 0;
                 PlainCollectionHeader header_anonymous_array_int16_t_55 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_array_int16_t_55, element_flags_anonymous_array_int16_t_55);
-                std::string type_id_kind_anonymous_array_int16_t_55("TI_PLAIN_ARRAY_SMALL");
-                if (type_id_kind_anonymous_array_int16_t_55 == "TI_PLAIN_ARRAY_SMALL")
                 {
                     SBoundSeq array_bound_seq;
                         TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<SBound>(55));
@@ -5429,20 +4931,6 @@ void register_ConstsLiteralsStruct_type_identifier()
                                 eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int16_t_55));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
                             TypeObjectUtils::build_and_register_s_array_type_identifier(array_sdefn, "anonymous_array_int16_t_55"))
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_array_int16_t_55 already registered in TypeObjectRegistry for a different type.");
-                    }
-                }
-                else
-                {
-                    LBoundSeq array_bound_seq;
-                        TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<LBound>(55));
-
-                    PlainArrayLElemDefn array_ldefn = TypeObjectUtils::build_plain_array_l_elem_defn(header_anonymous_array_int16_t_55, array_bound_seq,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int16_t_55));
-                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_l_array_type_identifier(array_ldefn, "anonymous_array_int16_t_55"))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "anonymous_array_int16_t_55 already registered in TypeObjectRegistry for a different type.");
@@ -5578,8 +5066,6 @@ void register_ConstsLiteralsStruct_type_identifier()
                 }
                 CollectionElementFlag element_flags_anonymous_array_int16_t_10 = 0;
                 PlainCollectionHeader header_anonymous_array_int16_t_10 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_array_int16_t_10, element_flags_anonymous_array_int16_t_10);
-                std::string type_id_kind_anonymous_array_int16_t_10("TI_PLAIN_ARRAY_SMALL");
-                if (type_id_kind_anonymous_array_int16_t_10 == "TI_PLAIN_ARRAY_SMALL")
                 {
                     SBoundSeq array_bound_seq;
                         TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<SBound>(10));
@@ -5588,20 +5074,6 @@ void register_ConstsLiteralsStruct_type_identifier()
                                 eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int16_t_10));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
                             TypeObjectUtils::build_and_register_s_array_type_identifier(array_sdefn, "anonymous_array_int16_t_10"))
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_array_int16_t_10 already registered in TypeObjectRegistry for a different type.");
-                    }
-                }
-                else
-                {
-                    LBoundSeq array_bound_seq;
-                        TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<LBound>(10));
-
-                    PlainArrayLElemDefn array_ldefn = TypeObjectUtils::build_plain_array_l_elem_defn(header_anonymous_array_int16_t_10, array_bound_seq,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int16_t_10));
-                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_l_array_type_identifier(array_ldefn, "anonymous_array_int16_t_10"))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "anonymous_array_int16_t_10 already registered in TypeObjectRegistry for a different type.");
@@ -5737,8 +5209,6 @@ void register_ConstsLiteralsStruct_type_identifier()
                 }
                 CollectionElementFlag element_flags_anonymous_array_int16_t_2 = 0;
                 PlainCollectionHeader header_anonymous_array_int16_t_2 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_array_int16_t_2, element_flags_anonymous_array_int16_t_2);
-                std::string type_id_kind_anonymous_array_int16_t_2("TI_PLAIN_ARRAY_SMALL");
-                if (type_id_kind_anonymous_array_int16_t_2 == "TI_PLAIN_ARRAY_SMALL")
                 {
                     SBoundSeq array_bound_seq;
                         TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<SBound>(2));
@@ -5747,20 +5217,6 @@ void register_ConstsLiteralsStruct_type_identifier()
                                 eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int16_t_2));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
                             TypeObjectUtils::build_and_register_s_array_type_identifier(array_sdefn, "anonymous_array_int16_t_2"))
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_array_int16_t_2 already registered in TypeObjectRegistry for a different type.");
-                    }
-                }
-                else
-                {
-                    LBoundSeq array_bound_seq;
-                        TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<LBound>(2));
-
-                    PlainArrayLElemDefn array_ldefn = TypeObjectUtils::build_plain_array_l_elem_defn(header_anonymous_array_int16_t_2, array_bound_seq,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_int16_t_2));
-                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_l_array_type_identifier(array_ldefn, "anonymous_array_int16_t_2"))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "anonymous_array_int16_t_2 already registered in TypeObjectRegistry for a different type.");
