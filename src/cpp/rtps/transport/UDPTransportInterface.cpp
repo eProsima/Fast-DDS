@@ -120,115 +120,6 @@ bool UDPTransportInterface::DoInputLocatorsMatch(
     return IPLocator::getPhysicalPort(left) == IPLocator::getPhysicalPort(right);
 }
 
-bool UDPTransportInterface::configure_send_buffer_size()
-{
-    asio::error_code ec;
-    ip::udp::socket socket(io_service_);
-    socket.open(generate_protocol(), ec);
-    if (!!ec)
-    {
-        EPROSIMA_LOG_ERROR(TRANSPORT_UDP, "Error creating socket: " << ec.message());
-        return false;
-    }
-
-    // If sendBufferSize is 0, try using the system default value
-    uint32_t send_buffer_size = configuration()->sendBufferSize;
-    uint32_t initial_value = send_buffer_size;
-    if (send_buffer_size == 0)
-    {
-        socket_base::send_buffer_size option;
-        socket.get_option(option, ec);
-        if (!ec)
-        {
-            send_buffer_size = static_cast<uint32_t>(option.value());
-        }
-    }
-
-    // Ensure the minimum value is used
-    uint32_t minimum_socket_buffer = configuration()->maxMessageSize;
-    if (send_buffer_size < minimum_socket_buffer)
-    {
-        send_buffer_size = minimum_socket_buffer;
-    }
-
-    // Try to set the highest possible value the system allows
-    if (!asio_helpers::try_setting_buffer_size<socket_base::send_buffer_size>(
-                socket, send_buffer_size, minimum_socket_buffer, send_buffer_size))
-    {
-        EPROSIMA_LOG_ERROR(TRANSPORT_UDP,
-                "Couldn't set send buffer size to minimum value: " << minimum_socket_buffer);
-        return false;
-    }
-
-    // Keep final configuration value
-    set_send_buffer_size(send_buffer_size);
-    mSendBufferSize = send_buffer_size;
-
-    // Inform the user if the desired value could not be set
-    if (initial_value != 0 && mSendBufferSize != initial_value)
-    {
-        EPROSIMA_LOG_WARNING(TRANSPORT_UDP, "UDPTransport sendBufferSize could not be set to the desired value. "
-                << "Using " << mSendBufferSize << " instead of " << initial_value);
-    }
-
-    return true;
-}
-
-bool UDPTransportInterface::configure_receive_buffer_size()
-{
-    asio::error_code ec;
-    ip::udp::socket socket(io_service_);
-    socket.open(generate_protocol(), ec);
-    if (!!ec)
-    {
-        EPROSIMA_LOG_ERROR(TRANSPORT_UDP, "Error creating socket: " << ec.message());
-        return false;
-    }
-
-    // If receiveBufferSize is 0, try using the system default value
-    uint32_t receive_buffer_size = configuration()->receiveBufferSize;
-    uint32_t initial_value = receive_buffer_size;
-    if (receive_buffer_size == 0)
-    {
-        socket_base::receive_buffer_size option;
-        socket.get_option(option, ec);
-        if (!ec)
-        {
-            receive_buffer_size = static_cast<uint32_t>(option.value());
-        }
-    }
-
-    // Ensure the minimum value is used
-    uint32_t minimum_socket_buffer = configuration()->maxMessageSize;
-    if (receive_buffer_size < minimum_socket_buffer)
-    {
-        receive_buffer_size = minimum_socket_buffer;
-        set_receive_buffer_size(receive_buffer_size);
-    }
-
-    // Try to set the highest possible value the system allows
-    if (!asio_helpers::try_setting_buffer_size<socket_base::receive_buffer_size>(
-                socket, receive_buffer_size, minimum_socket_buffer, receive_buffer_size))
-    {
-        EPROSIMA_LOG_ERROR(TRANSPORT_UDP,
-                "Couldn't set receive buffer size to minimum value: " << minimum_socket_buffer);
-        return false;
-    }
-
-    // Keep final configuration value
-    set_receive_buffer_size(receive_buffer_size);
-    mReceiveBufferSize = receive_buffer_size;
-
-    // Inform the user if the desired value could not be set
-    if (initial_value != 0 && mReceiveBufferSize != initial_value)
-    {
-        EPROSIMA_LOG_WARNING(TRANSPORT_UDP, "UDPTransport receiveBufferSize could not be set to the desired value. "
-                << "Using " << mReceiveBufferSize << " instead of " << initial_value);
-    }
-
-    return true;
-}
-
 bool UDPTransportInterface::init(
         const fastrtps::rtps::PropertyPolicy*,
         const uint32_t& max_msg_size_no_frag)
@@ -269,7 +160,39 @@ bool UDPTransportInterface::init(
         return false;
     }
 
-    return configure_send_buffer_size() && configure_receive_buffer_size();
+    asio::error_code ec;
+    ip::udp::socket socket(io_service_);
+    socket.open(generate_protocol(), ec);
+    if (!!ec)
+    {
+        EPROSIMA_LOG_ERROR(TRANSPORT_UDP, "Error creating socket: " << ec.message());
+        return false;
+    }
+
+    bool ret = asio_helpers::configure_buffer_sizes(socket, *configuration(), mSendBufferSize, mReceiveBufferSize);
+    if (ret)
+    {
+        if (cfg_send_size > 0 && mSendBufferSize != cfg_send_size)
+        {
+            EPROSIMA_LOG_WARNING(TRANSPORT_UDP, "UDPTransport sendBufferSize could not be set to the desired value. "
+                               << "Using " << mSendBufferSize << " instead of " << cfg_send_size);
+        }
+
+        if (cfg_recv_size > 0 && mReceiveBufferSize != cfg_recv_size)
+        {
+            EPROSIMA_LOG_WARNING(TRANSPORT_UDP, "UDPTransport receiveBufferSize could not be set to the desired value. "
+                << "Using " << mReceiveBufferSize << " instead of " << cfg_recv_size);
+        }
+
+        set_send_buffer_size(mSendBufferSize);
+        set_receive_buffer_size(mReceiveBufferSize);
+    }
+    else
+    {
+        EPROSIMA_LOG_ERROR(TRANSPORT_UDP, "Couldn't set buffer sizes to minimum value: " << cfg_max_msg_size);
+    }
+
+    return ret;
 }
 
 bool UDPTransportInterface::IsInputChannelOpen(
