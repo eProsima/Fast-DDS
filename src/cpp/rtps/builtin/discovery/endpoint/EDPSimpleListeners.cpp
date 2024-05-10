@@ -86,7 +86,7 @@ void EDPBasePUBListener::add_writer_from_change(
         // Callback function to continue after typelookup is complete
         fastdds::dds::builtin::AsyncGetTypeWriterCallback after_typelookup_callback =
                 [reader, change, edp, &network, writer_added_callback]
-                    (eprosima::ProxyPool<eprosima::fastrtps::rtps::WriterProxyData>::smart_ptr& temp_writer_data)
+                    (eprosima::fastrtps::rtps::WriterProxyData* temp_writer_data)
                 {
                     //LOAD INFORMATION IN DESTINATION WRITER PROXY DATA
                     auto copy_data_fun = [&temp_writer_data, &network](
@@ -113,9 +113,6 @@ void EDPBasePUBListener::add_writer_from_change(
                     GUID_t participant_guid;
                     WriterProxyData* writer_data =
                             edp->mp_PDP->addWriterProxyData(temp_writer_data->guid(), participant_guid, copy_data_fun);
-
-                    // release temporary proxy
-                    temp_writer_data.reset();
 
                     if (writer_data != nullptr)
                     {
@@ -148,8 +145,11 @@ void EDPBasePUBListener::add_writer_from_change(
         else
         {
             EPROSIMA_LOG_INFO(RTPS_EDP, "EDPBasePUBListener: No TypeInformation. Trying fallback mechanism");
-            after_typelookup_callback(temp_writer_data);
+            after_typelookup_callback(temp_writer_data.get());
         }
+        // Release temporary proxy
+        temp_writer_data.reset();
+
 
         // Take the reader lock again if needed.
         reader->getMutex().lock();
@@ -226,8 +226,9 @@ void EDPBaseSUBListener::add_reader_from_change(
         // Callback function to continue after typelookup is complete
         fastdds::dds::builtin::AsyncGetTypeReaderCallback after_typelookup_callback =
                 [reader, change, edp, &network, reader_added_callback]
-                    (eprosima::ProxyPool<eprosima::fastrtps::rtps::ReaderProxyData>::smart_ptr& temp_reader_data)
+                    (eprosima::fastrtps::rtps::ReaderProxyData* temp_reader_data)
                 {
+                    //LOAD INFORMATION IN DESTINATION READER PROXY DATA
                     auto copy_data_fun = [&temp_reader_data, &network](
                         ReaderProxyData* data,
                         bool updating,
@@ -253,9 +254,6 @@ void EDPBaseSUBListener::add_reader_from_change(
                     GUID_t participant_guid;
                     ReaderProxyData* reader_data =
                             edp->mp_PDP->addReaderProxyData(temp_reader_data->guid(), participant_guid, copy_data_fun);
-
-                    // Release the temporary proxy
-                    temp_reader_data.reset();
 
                     if (reader_data != nullptr) //ADDED NEW DATA
                     {
@@ -287,9 +285,11 @@ void EDPBaseSUBListener::add_reader_from_change(
         // If TypeInformation does not exist, try fallback mechanism
         else
         {
-            EPROSIMA_LOG_INFO(RTPS_EDP, "EDPBasePUBListener: No TypeInformation. Trying fallback mechanism");
-            after_typelookup_callback(temp_reader_data);
+            EPROSIMA_LOG_INFO(RTPS_EDP, "EDPBaseSUBListener: No TypeInformation. Trying fallback mechanism");
+            after_typelookup_callback(temp_reader_data.get());
         }
+        // Release the temporary proxy
+        temp_reader_data.reset();
 
         // Take the reader lock again if needed.
         reader->getMutex().lock();

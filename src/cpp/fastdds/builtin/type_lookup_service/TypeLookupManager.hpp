@@ -104,9 +104,9 @@ namespace builtin {
 const SampleIdentity INVALID_SAMPLE_IDENTITY;
 
 using AsyncGetTypeWriterCallback = std::function<
-    void (eprosima::ProxyPool<eprosima::fastrtps::rtps::WriterProxyData>::smart_ptr&)>;
+    void (eprosima::fastrtps::rtps::WriterProxyData*)>;
 using AsyncGetTypeReaderCallback = std::function<
-    void (eprosima::ProxyPool<eprosima::fastrtps::rtps::ReaderProxyData>::smart_ptr&)>;
+    void (eprosima::fastrtps::rtps::ReaderProxyData*)>;
 
 /**
  * Class TypeLookupManager that implements the TypeLookup Service described in the DDS-XTYPES 1.3 specification.
@@ -210,7 +210,7 @@ protected:
             typename eprosima::ProxyPool<ProxyType>::smart_ptr& temp_proxy_data,
             const AsyncCallback& callback,
             std::unordered_map<xtypes::TypeIdentfierWithSize,
-            std::vector<std::pair<typename eprosima::ProxyPool<ProxyType>::smart_ptr,
+            std::vector<std::pair<ProxyType*,
             AsyncCallback>>>& async_get_type_callbacks);
 
     /**
@@ -426,12 +426,12 @@ protected:
 
     //! Collection of all the WriterProxyData and their callbacks related to a TypeIdentfierWithSize, hashed by its TypeIdentfierWithSize.
     std::unordered_map < xtypes::TypeIdentfierWithSize,
-            std::vector<std::pair<eprosima::ProxyPool<eprosima::fastrtps::rtps::WriterProxyData>::smart_ptr,
+            std::vector<std::pair<eprosima::fastrtps::rtps::WriterProxyData*,
             AsyncGetTypeWriterCallback>>> async_get_type_writer_callbacks_;
 
     //! Collection of all the ReaderProxyData and their callbacks related to a TypeIdentfierWithSize, hashed by its TypeIdentfierWithSize.
     std::unordered_map < xtypes::TypeIdentfierWithSize,
-            std::vector<std::pair<eprosima::ProxyPool<eprosima::fastrtps::rtps::ReaderProxyData>::smart_ptr,
+            std::vector<std::pair<eprosima::fastrtps::rtps::ReaderProxyData*,
             AsyncGetTypeReaderCallback>>> async_get_type_reader_callbacks_;
 
     //! Collection of all SampleIdentity and the TypeIdentfierWithSize it originated from, hashed by its SampleIdentity.
