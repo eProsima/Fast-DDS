@@ -329,7 +329,7 @@ ReturnCode_t TypeLookupManager::check_type_identifier_received(
         typename eprosima::ProxyPool<ProxyType>::smart_ptr& temp_proxy_data,
         const AsyncCallback& callback,
         std::unordered_map<xtypes::TypeIdentfierWithSize,
-        std::vector<std::pair<typename eprosima::ProxyPool<ProxyType>::smart_ptr,
+        std::vector<std::pair<ProxyType*,
         AsyncCallback>>>& async_get_type_callbacks)
 {
     xtypes::TypeIdentfierWithSize type_identifier_with_size =
@@ -341,7 +341,7 @@ ReturnCode_t TypeLookupManager::check_type_identifier_received(
                     is_type_identifier_known(type_identifier_with_size))
     {
         // The type is already known, invoke the callback
-        callback(temp_proxy_data);
+        callback(temp_proxy_data.get());
         return RETCODE_OK;
     }
 
@@ -352,7 +352,9 @@ ReturnCode_t TypeLookupManager::check_type_identifier_received(
         if (it != async_get_type_callbacks.end())
         {
             // TypeIdentfierWithSize exists, add the callback
-            it->second.push_back(std::make_pair(std::move(temp_proxy_data), callback));
+            // Make a copy of the proxy to free the EDP pool
+            ProxyType* temp_proxy_data_copy(new ProxyType(*temp_proxy_data));
+            it->second.push_back(std::make_pair(temp_proxy_data_copy, callback));
             // Return without sending new request
             return RETCODE_NO_DATA;
         }
@@ -365,8 +367,10 @@ ReturnCode_t TypeLookupManager::check_type_identifier_received(
     {
         // Store the sent requests and callback
         add_async_get_type_request(get_type_dependencies_request, type_identifier_with_size);
-        std::vector<std::pair<typename eprosima::ProxyPool<ProxyType>::smart_ptr, AsyncCallback>> types;
-        types.push_back(std::make_pair(std::move(temp_proxy_data), callback));
+        std::vector<std::pair<ProxyType*, AsyncCallback>> types;
+        // Make a copy of the proxy to free the EDP pool
+        ProxyType* temp_proxy_data_copy(new ProxyType(*temp_proxy_data));
+        types.push_back(std::make_pair(temp_proxy_data_copy, callback));
         async_get_type_callbacks.emplace(type_identifier_with_size, std::move(types));
 
         return RETCODE_NO_DATA;
@@ -442,6 +446,11 @@ bool TypeLookupManager::remove_async_get_type_callback(
         auto writer_it = async_get_type_writer_callbacks_.find(type_identifier_with_size);
         if (writer_it != async_get_type_writer_callbacks_.end())
         {
+            // Delete the proxies and remove the entry
+            for (auto& proxy_callback_pair : writer_it->second)
+            {
+                delete proxy_callback_pair.first;
+            }
             async_get_type_writer_callbacks_.erase(writer_it);
             removed = true;
         }
@@ -449,6 +458,11 @@ bool TypeLookupManager::remove_async_get_type_callback(
         auto reader_it = async_get_type_reader_callbacks_.find(type_identifier_with_size);
         if (reader_it != async_get_type_reader_callbacks_.end())
         {
+            // Delete the proxies and remove the entry
+            for (auto& proxy_callback_pair : reader_it->second)
+            {
+                delete proxy_callback_pair.first;
+            }
             async_get_type_reader_callbacks_.erase(reader_it);
             removed = true;
         }
