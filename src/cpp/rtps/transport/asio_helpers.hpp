@@ -67,6 +67,84 @@ struct asio_helpers
         return !ec;
     }
 
+    /**
+     * @brief Configure a buffer size on a socket, using the system default value if the initial value is 0.
+     * Ensures that the final buffer size is at least the minimum value.
+     *
+     * @tparam BufferOptionType Type of the buffer option to set.
+     * @tparam SocketType Type of socket on which to set the buffer size option.
+     *
+     * @param socket Socket on which to set the buffer size option.
+     * @param initial_buffer_value Initial value to try to set.
+     * @param minimum_buffer_value Minimum value to set.
+     * @param final_buffer_value Output parameter where the final value set will be stored.
+     *
+     * @return true if the buffer size was successfully set, false otherwise.
+     */
+    template <typename BufferOptionType, typename SocketType>
+    static inline bool configure_buffer_size(
+            SocketType& socket,
+            const uint32_t initial_buffer_value,
+            const uint32_t minimum_buffer_value,
+            uint32_t& final_buffer_value)
+    {
+        final_buffer_value = initial_buffer_value;
+
+        // If the initial value is 0, try using the system default value
+        if (initial_buffer_value == 0)
+        {
+            asio::error_code ec;
+            BufferOptionType option;
+            socket.get_option(option, ec);
+            if (!ec)
+            {
+                final_buffer_value = option.value();
+            }
+        }
+
+        // Ensure the minimum value is used
+        if (final_buffer_value < minimum_buffer_value)
+        {
+            final_buffer_value = minimum_buffer_value;
+        }
+
+        // Try to set the highest possible value the system allows
+        return try_setting_buffer_size<BufferOptionType>(socket, final_buffer_value, minimum_buffer_value,
+                       final_buffer_value);
+    }
+
+    /**
+     * @brief Configure the send and receive buffer sizes on a socket, using the system default value if the initial
+     * values are 0. Ensures that the final buffer sizes are at least the minimum value.
+     *
+     * @tparam SocketType Type of socket on which to set the buffer size options.
+     *
+     * @param socket Socket on which to set the buffer size options.
+     * @param descriptor Transport descriptor with the buffer sizes to set.
+     * @param final_send_buffer_size Output parameter where the final send buffer size will be stored.
+     * @param final_receive_buffer_size Output parameter where the final receive buffer size will be stored.
+     *
+     * @return true if the buffer sizes were successfully set, false otherwise.
+     */
+    template<typename SocketType>
+    static inline bool configure_buffer_sizes(
+            SocketType& socket,
+            const SocketTransportDescriptor& descriptor,
+            uint32_t& final_send_buffer_size,
+            uint32_t& final_receive_buffer_size)
+    {
+        uint32_t minimum_socket_buffer = descriptor.maxMessageSize;
+        uint32_t send_buffer_size = descriptor.sendBufferSize;
+        uint32_t receive_buffer_size = descriptor.receiveBufferSize;
+
+        bool send_buffer_size_set = configure_buffer_size<asio::socket_base::send_buffer_size>(
+            socket, send_buffer_size, minimum_socket_buffer, final_send_buffer_size);
+        bool receive_buffer_size_set = configure_buffer_size<asio::socket_base::receive_buffer_size>(
+            socket, receive_buffer_size, minimum_socket_buffer, final_receive_buffer_size);
+
+        return send_buffer_size_set && receive_buffer_size_set;
+    }
+
 };
 
 }  // namespace rtps
