@@ -560,10 +560,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortShort)
     ASSERT_TRUE(data);
 
     const std::unordered_map<int16_t, int16_t> value {
-        {100, 1},
-        {-100, 2},
-        {50, -1},
-        {-50, -2}
+        {std::int16_t(100), std::int16_t(1)},
+        {std::int16_t(-100), std::int16_t(2)},
+        {std::int16_t(50), std::int16_t(-1)},
+        {std::int16_t(-50), std::int16_t(-2)}
     };
     int16_t test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_short_short_map));
@@ -625,10 +625,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortUShort)
     ASSERT_TRUE(data);
 
     const std::unordered_map<int16_t, uint16_t> value {
-        {100, 1u},
-        {-100, 2u},
-        {50, 100u},
-        {-50, 200u}
+        {std::int16_t(100), std::uint16_t(1)},
+        {std::int16_t(-100), std::uint16_t(2)},
+        {std::int16_t(50), std::uint16_t(100)},
+        {std::int16_t(-50), std::uint16_t(200)}
     };
     uint16_t test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_short_ushort_map));
@@ -690,10 +690,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortLong)
     ASSERT_TRUE(data);
 
     const std::unordered_map<int16_t, int32_t> value {
-        {100, 10000},
-        {-100, 20000},
-        {50, -10000},
-        {-50, -20000}
+        {std::int16_t(100), 10000},
+        {std::int16_t(-100), 20000},
+        {std::int16_t(50), -10000},
+        {std::int16_t(-50), -20000}
     };
     int32_t test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_short_long_map));
@@ -755,10 +755,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortULong)
     ASSERT_TRUE(data);
 
     const std::unordered_map<int16_t, uint32_t> value {
-        {100, 10000u},
-        {-100, 20000u},
-        {50, 1000000u},
-        {-50, 2000000u}
+        {std::int16_t(100), 10000u},
+        {std::int16_t(-100), 20000u},
+        {std::int16_t(50), 1000000u},
+        {std::int16_t(-50), 2000000u}
     };
     uint32_t test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_short_ulong_map));
@@ -820,10 +820,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortLongLong)
     ASSERT_TRUE(data);
 
     const std::unordered_map<int16_t, int64_t> value {
-        {100, 100000000},
-        {-100, 200000000},
-        {50, -100000000},
-        {-50, -200000000}
+        {std::int16_t(100), 100000000},
+        {std::int16_t(-100), 200000000},
+        {std::int16_t(50), -100000000},
+        {std::int16_t(-50), -200000000}
     };
     int64_t test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_short_longlong_map));
@@ -885,10 +885,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortULongLong)
     ASSERT_TRUE(data);
 
     const std::unordered_map<int16_t, uint64_t> value {
-        {100, 100000000u},
-        {-100, 200000000u},
-        {50, 10000000000u},
-        {-50, 20000000000u}
+        {std::int16_t(100), 100000000u},
+        {std::int16_t(-100), 200000000u},
+        {std::int16_t(50), 10000000000u},
+        {std::int16_t(-50), 20000000000u}
     };
     uint64_t test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_short_ulonglong_map));
@@ -950,10 +950,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortFloat)
     ASSERT_TRUE(data);
 
     const std::unordered_map<int16_t, float> value {
-        {100, 3.1f},
-        {-100, 100.1f},
-        {50, -100.3f},
-        {-50, -200.3f}
+        {std::int16_t(100), 3.1f},
+        {std::int16_t(-100), 100.1f},
+        {std::int16_t(50), -100.3f},
+        {std::int16_t(-50), -200.3f}
     };
     float test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_short_float_map));
@@ -1015,10 +1015,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortDouble)
     ASSERT_TRUE(data);
 
     const std::unordered_map<int16_t, double> value {
-        {100, 100000000.3},
-        {-100, 200000000.3},
-        {50, -10000000000.5},
-        {-50, -20000000000.5}
+        {std::int16_t(100), 100000000.3},
+        {std::int16_t(-100), 200000000.3},
+        {std::int16_t(50), -10000000000.5},
+        {std::int16_t(-50), -20000000000.5}
     };
     double test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_short_double_map));
@@ -1080,10 +1080,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortLongDouble)
     ASSERT_TRUE(data);
 
     const std::unordered_map<int16_t, long double> value {
-        {100, 100000000.3},
-        {-100, 200000000.3},
-        {50, -10000000000.5},
-        {-50, -20000000000.5}
+        {std::int16_t(100), 100000000.3},
+        {std::int16_t(-100), 200000000.3},
+        {std::int16_t(50), -10000000000.5},
+        {std::int16_t(-50), -20000000000.5}
     };
     long double test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_short_longdouble_map));
@@ -1145,10 +1145,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortBoolean)
     ASSERT_TRUE(data);
 
     const std::unordered_map<int16_t, bool> value {
-        {100, true},
-        {-100, false},
-        {50, true},
-        {-50, false}
+        {std::int16_t(100), true},
+        {std::int16_t(-100), false},
+        {std::int16_t(50), true},
+        {std::int16_t(-50), false}
     };
     bool test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_short_boolean_map));
@@ -1210,10 +1210,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortOctet)
     ASSERT_TRUE(data);
 
     const std::unordered_map<int16_t, fastrtps::rtps::octet> value {
-        {100, 1u},
-        {-100, 2u},
-        {50, 100u},
-        {-50, 200u}
+        {std::int16_t(100), fastrtps::rtps::octet(1)},
+        {std::int16_t(-100), fastrtps::rtps::octet(2)},
+        {std::int16_t(50), fastrtps::rtps::octet(100)},
+        {std::int16_t(-50), fastrtps::rtps::octet(200)}
     };
     fastrtps::rtps::octet test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_short_octet_map));
@@ -1275,10 +1275,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortChar)
     ASSERT_TRUE(data);
 
     const std::unordered_map<int16_t, char> value {
-        {100, 'a'},
-        {-100, 'A'},
-        {50, '{'},
-        {-50, '}'}
+        {std::int16_t(100), 'a'},
+        {std::int16_t(-100), 'A'},
+        {std::int16_t(50), '{'},
+        {std::int16_t(-50), '}'}
     };
     char test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_short_char_map));
@@ -1340,10 +1340,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortWChar)
     ASSERT_TRUE(data);
 
     const std::unordered_map<int16_t, wchar_t> value {
-        {100, L'a'},
-        {-100, L'A'},
-        {50, L'{'},
-        {-50, L'}'}
+        {std::int16_t(100), L'a'},
+        {std::int16_t(-100), L'A'},
+        {std::int16_t(50), L'{'},
+        {std::int16_t(-50), L'}'}
     };
     wchar_t test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_short_wchar_map));
@@ -1406,10 +1406,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortString)
     ASSERT_TRUE(data);
 
     const std::map<int16_t, std::string> value {
-        {-100, "we"},
-        {-50, "are"},
-        {50, "testing"},
-        {600, "things"}
+        {std::int16_t(-100), "we"},
+        {std::int16_t(-50), "are"},
+        {std::int16_t(50), "testing"},
+        {std::int16_t(600), "things"}
     };
     std::string test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_short_string_map));
@@ -1472,10 +1472,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortWString)
     ASSERT_TRUE(data);
 
     const std::map<int16_t, std::wstring> value {
-        {-100, L"we"},
-        {-50, L"are"},
-        {50, L"testing"},
-        {600, L"things"}
+        {std::int16_t(-100), L"we"},
+        {std::int16_t(-50), L"are"},
+        {std::int16_t(50), L"testing"},
+        {std::int16_t(600), L"things"}
     };
     std::wstring test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_short_wstring_map));
@@ -1537,10 +1537,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerAliasBoundedStringHel
     ASSERT_TRUE(data);
 
     const std::map<int16_t, std::string> value {
-        {-100, "we"},
-        {-50, "are"},
-        {50, "testing"},
-        {600, "things"}
+        {std::int16_t(-100), "we"},
+        {std::int16_t(-50), "are"},
+        {std::int16_t(50), "testing"},
+        {std::int16_t(600), "things"}
     };
     std::string test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_short_inneraliasboundedstringhelper_map));
@@ -1602,10 +1602,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerAliasBoundedWStringHe
     ASSERT_TRUE(data);
 
     const std::map<int16_t, std::wstring> value {
-        {-100, L"we"},
-        {-50, L"are"},
-        {50, L"testing"},
-        {600, L"things"}
+        {std::int16_t(-100), L"we"},
+        {std::int16_t(-50), L"are"},
+        {std::int16_t(50), L"testing"},
+        {std::int16_t(600), L"things"}
     };
     std::wstring test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_short_inneraliasboundedwstringhelper_map));
@@ -1667,10 +1667,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerEnumHelper)
     ASSERT_TRUE(data);
 
     const std::unordered_map<int16_t, InnerEnumHelper> value {
-        {-100, InnerEnumHelper::ENUM_VALUE_2},
-        {50, InnerEnumHelper::ENUM_VALUE_1},
-        {600, InnerEnumHelper::ENUM_VALUE_3},
-        {-50, InnerEnumHelper::ENUM_VALUE_2}
+        {std::int16_t(-100), InnerEnumHelper::ENUM_VALUE_2},
+        {std::int16_t(50), InnerEnumHelper::ENUM_VALUE_1},
+        {std::int16_t(600), InnerEnumHelper::ENUM_VALUE_3},
+        {std::int16_t(-50), InnerEnumHelper::ENUM_VALUE_2}
     };
     uint32_t test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_short_innerenumhelper_map));
@@ -1732,10 +1732,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerBitMaskHelper)
     ASSERT_TRUE(data);
 
     const std::unordered_map<int16_t, uint32_t> value {
-        {-100, InnerBitMaskHelperBits::flag0},
-        {50, 0u},
-        {600, InnerBitMaskHelperBits::flag6 | InnerBitMaskHelperBits::flag0},
-        {-50, InnerBitMaskHelperBits::flag4}
+        {std::int16_t(-100), InnerBitMaskHelperBits::flag0},
+        {std::int16_t(50), 0u},
+        {std::int16_t(600), InnerBitMaskHelperBits::flag6 | InnerBitMaskHelperBits::flag0},
+        {std::int16_t(-50), InnerBitMaskHelperBits::flag4}
     };
     uint32_t test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_short_innerbitmaskhelper_map));
@@ -1797,10 +1797,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerAliasHelper)
     ASSERT_TRUE(data);
 
     const std::unordered_map<int16_t, int32_t> value {
-        {-100, 102},
-        {50, 1},
-        {600, -32},
-        {-50, 43}
+        {std::int16_t(-100), 102},
+        {std::int16_t(50), 1},
+        {std::int16_t(600), -32},
+        {std::int16_t(-50), 43}
     };
     int32_t test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_short_inneraliashelper_map));
@@ -1862,10 +1862,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerAliasArrayHelper)
     ASSERT_TRUE(data);
 
     const std::unordered_map<int16_t, Int16Seq> value {
-        {-100, {{102, -102}} },
-        {50, {{1, -1}} },
-        {600, {{-32, 32}} },
-        {-50, {{43, -43}} }
+        {std::int16_t(-100), {102, -102} },
+        {std::int16_t(50), {1, -1} },
+        {std::int16_t(600), {-32, 32} },
+        {std::int16_t(-50), {43, -43} }
     };
     Int16Seq test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_short_inneraliasarrayhelper_map));
@@ -1927,10 +1927,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerAliasSequenceHelper)
     ASSERT_TRUE(data);
 
     const std::unordered_map<int16_t, Int16Seq> value {
-        {-100, {{102, -102, 304, -304}} },
-        {50, {{}} },
-        {600, {{-32}} },
-        {-50, {{43, -43}} }
+        {std::int16_t(-100), {102, -102, 304, -304} },
+        {std::int16_t(50), {} },
+        {std::int16_t(600), {-32} },
+        {std::int16_t(-50), {43, -43} }
     };
     Int16Seq test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_short_inneraliassequencehelper_map));
@@ -1992,18 +1992,18 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerAliasMapHelper)
     ASSERT_TRUE(data);
 
     const std::unordered_map<int16_t, std::map<int32_t, int32_t>> value {
-        {-100, {
+        {std::int16_t(-100), {
              {1000, -102},
              {2000, -103},
              {-100, 1000}
          }},
-        {50, {
+        {std::int16_t(50), {
          }},
-        {600, {
+        {std::int16_t(600), {
              {-1000, 102},
              {-2000, 103}
          }},
-        {-50, {
+        {std::int16_t(-50), {
              {-3000, 302},
          }}
     };
@@ -2082,10 +2082,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerUnionHelper)
     ASSERT_TRUE(data);
 
     const std::unordered_map<int16_t, std::pair<const char* const, int16_t>> value {
-        {-100, {union_long_member_name, 32}},
-        {50, {union_float_member_name, -12}},
-        {600, {union_short_member_name, 1}},
-        {-50, {union_long_member_name, -32}}
+        {std::int16_t(-100), {union_long_member_name, std::int16_t(32)}},
+        {std::int16_t(50), {union_float_member_name, std::int16_t(-12)}},
+        {std::int16_t(600), {union_short_member_name, std::int16_t(1)}},
+        {std::int16_t(-50), {union_long_member_name, std::int16_t(-32)}}
     };
     double test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_short_innerunionhelper_map));
@@ -2167,10 +2167,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerStructureHelper)
     ASSERT_TRUE(data);
 
     const std::unordered_map<int16_t, std::pair<int32_t, float>> value {
-        {-100, {32, 1.0f}},
-        {50, {-12, -1.0f}},
-        {600, {1, -10.1f}},
-        {-50, {-32, 100.3f}}
+        {std::int16_t(-100), {32, 1.0f}},
+        {std::int16_t(50), {-12, -1.0f}},
+        {std::int16_t(600), {1, -10.1f}},
+        {std::int16_t(-50), {-32, 100.3f}}
     };
     int32_t test_value1;
     float test_value2;
@@ -2249,9 +2249,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerBitsetHelper)
     ASSERT_TRUE(data);
 
     const std::unordered_map<int16_t, std::tuple<uint8_t, bool, uint16_t, int16_t>> value {
-        {-100, {5u, true, 1000u, 2000}},
-        {50, {7u, false, 555u, 20}},
-        {600, {0u, true, 0u, 0}}
+        {std::int16_t(-100), {std::uint8_t(5), true, std::uint16_t(1000), std::int16_t(2000)}},
+        {std::int16_t(50), {std::uint8_t(7), false, std::uint16_t(555), std::int16_t(20)}},
+        {std::int16_t(600), {std::uint8_t(0), true, std::uint16_t(0), std::int16_t(0)}}
     };
     uint8_t test_value1;
     bool test_value2;
@@ -2350,10 +2350,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortShort)
     ASSERT_TRUE(data);
 
     const std::unordered_map<uint16_t, int16_t> value {
-        {100u, 1},
-        {200u, 2},
-        {50u, -1},
-        {70u, -2}
+        {std::uint16_t(100), std::int16_t(1)},
+        {std::uint16_t(200), std::int16_t(2)},
+        {std::uint16_t(50), std::int16_t(-1)},
+        {std::uint16_t(70), std::int16_t(-2)}
     };
     int16_t test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_ushort_short_map));
@@ -2415,10 +2415,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortUShort)
     ASSERT_TRUE(data);
 
     const std::unordered_map<uint16_t, uint16_t> value {
-        {100u, 1u},
-        {200u, 2u},
-        {50u, 100u},
-        {70u, 200u}
+        {std::uint16_t(100), std::uint16_t(1)},
+        {std::uint16_t(200), std::uint16_t(2)},
+        {std::uint16_t(50), std::uint16_t(100)},
+        {std::uint16_t(70), std::uint16_t(200)}
     };
     uint16_t test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_ushort_ushort_map));
@@ -2480,10 +2480,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortLong)
     ASSERT_TRUE(data);
 
     const std::unordered_map<uint16_t, int32_t> value {
-        {100u, 10000},
-        {200u, 20000},
-        {50u, -10000},
-        {70u, -20000}
+        {std::uint16_t(100), 10000},
+        {std::uint16_t(200), 20000},
+        {std::uint16_t(50), -10000},
+        {std::uint16_t(70), -20000}
     };
     int32_t test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_ushort_long_map));
@@ -2545,10 +2545,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortULong)
     ASSERT_TRUE(data);
 
     const std::unordered_map<uint16_t, uint32_t> value {
-        {100u, 10000u},
-        {200u, 20000u},
-        {50u, 1000000u},
-        {70u, 2000000u}
+        {std::uint16_t(100), 10000u},
+        {std::uint16_t(200), 20000u},
+        {std::uint16_t(50), 1000000u},
+        {std::uint16_t(70), 2000000u}
     };
     uint32_t test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_ushort_ulong_map));
@@ -2610,10 +2610,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortLongLong)
     ASSERT_TRUE(data);
 
     const std::unordered_map<uint16_t, int64_t> value {
-        {100u, 100000000},
-        {200u, 200000000},
-        {50u, -100000000},
-        {70u, -200000000}
+        {std::uint16_t(100), 100000000},
+        {std::uint16_t(200), 200000000},
+        {std::uint16_t(50), -100000000},
+        {std::uint16_t(70), -200000000}
     };
     int64_t test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_ushort_longlong_map));
@@ -2675,10 +2675,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortULongLong)
     ASSERT_TRUE(data);
 
     const std::unordered_map<uint16_t, uint64_t> value {
-        {100u, 100000000u},
-        {200u, 200000000u},
-        {50u, 10000000000u},
-        {70u, 20000000000u}
+        {std::uint16_t(100), 100000000u},
+        {std::uint16_t(200), 200000000u},
+        {std::uint16_t(50), 10000000000u},
+        {std::uint16_t(70), 20000000000u}
     };
     uint64_t test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_ushort_ulonglong_map));
@@ -2740,10 +2740,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortFloat)
     ASSERT_TRUE(data);
 
     const std::unordered_map<uint16_t, float> value {
-        {100u, 3.1f},
-        {200u, 100.1f},
-        {50u, -100.3f},
-        {70u, -200.3f}
+        {std::uint16_t(100), 3.1f},
+        {std::uint16_t(200), 100.1f},
+        {std::uint16_t(50), -100.3f},
+        {std::uint16_t(70), -200.3f}
     };
     float test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_ushort_float_map));
@@ -2805,10 +2805,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortDouble)
     ASSERT_TRUE(data);
 
     const std::unordered_map<uint16_t, double> value {
-        {100u, 100000000.3},
-        {200u, 200000000.3},
-        {50u, -10000000000.5},
-        {70u, -20000000000.5}
+        {std::uint16_t(100), 100000000.3},
+        {std::uint16_t(200), 200000000.3},
+        {std::uint16_t(50), -10000000000.5},
+        {std::uint16_t(70), -20000000000.5}
     };
     double test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_ushort_double_map));
@@ -2870,10 +2870,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortLongDouble)
     ASSERT_TRUE(data);
 
     const std::unordered_map<uint16_t, long double> value {
-        {100u, 100000000.3},
-        {200u, 200000000.3},
-        {50u, -10000000000.5},
-        {70u, -20000000000.5}
+        {std::uint16_t(100), 100000000.3},
+        {std::uint16_t(200), 200000000.3},
+        {std::uint16_t(50), -10000000000.5},
+        {std::uint16_t(70), -20000000000.5}
     };
     long double test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_ushort_longdouble_map));
@@ -2935,10 +2935,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortBoolean)
     ASSERT_TRUE(data);
 
     const std::unordered_map<uint16_t, bool> value {
-        {100u, true},
-        {200u, false},
-        {50u, true},
-        {70u, false}
+        {std::uint16_t(100), true},
+        {std::uint16_t(200), false},
+        {std::uint16_t(50), true},
+        {std::uint16_t(70), false}
     };
     bool test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_ushort_boolean_map));
@@ -3000,10 +3000,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortOctet)
     ASSERT_TRUE(data);
 
     const std::unordered_map<uint16_t, fastrtps::rtps::octet> value {
-        {100u, 1u},
-        {200u, 2u},
-        {50u, 100u},
-        {70u, 200u}
+        {std::uint16_t(100), fastrtps::rtps::octet(1)},
+        {std::uint16_t(200), fastrtps::rtps::octet(2)},
+        {std::uint16_t(50), fastrtps::rtps::octet(100)},
+        {std::uint16_t(70), fastrtps::rtps::octet(200)}
     };
     fastrtps::rtps::octet test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_ushort_octet_map));
@@ -3065,10 +3065,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortChar)
     ASSERT_TRUE(data);
 
     const std::unordered_map<uint16_t, char> value {
-        {100u, 'a'},
-        {200u, 'A'},
-        {50u, '{'},
-        {70u, '}'}
+        {std::uint16_t(100), 'a'},
+        {std::uint16_t(200), 'A'},
+        {std::uint16_t(50), '{'},
+        {std::uint16_t(70), '}'}
     };
     char test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_ushort_char_map));
@@ -3130,10 +3130,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortWChar)
     ASSERT_TRUE(data);
 
     const std::unordered_map<uint16_t, wchar_t> value {
-        {100u, L'a'},
-        {200u, L'A'},
-        {50u, L'{'},
-        {70u, L'}'}
+        {std::uint16_t(100), L'a'},
+        {std::uint16_t(200), L'A'},
+        {std::uint16_t(50), L'{'},
+        {std::uint16_t(70), L'}'}
     };
     wchar_t test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_ushort_wchar_map));
@@ -3196,10 +3196,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortString)
     ASSERT_TRUE(data);
 
     const std::map<uint16_t, std::string> value {
-        {10, "we"},
-        {40, "are"},
-        {50, "testing"},
-        {600, "things"}
+        {std::uint16_t(10), "we"},
+        {std::uint16_t(40), "are"},
+        {std::uint16_t(50), "testing"},
+        {std::uint16_t(600), "things"}
     };
     std::string test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_ushort_string_map));
@@ -3262,10 +3262,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortWString)
     ASSERT_TRUE(data);
 
     const std::map<uint16_t, std::wstring> value {
-        {10, L"we"},
-        {40, L"are"},
-        {50, L"testing"},
-        {600, L"things"}
+        {std::uint16_t(1), L"we"},
+        {std::uint16_t(4), L"are"},
+        {std::uint16_t(5), L"testing"},
+        {std::uint16_t(60), L"things"}
     };
     std::wstring test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_ushort_wstring_map));
@@ -3327,10 +3327,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerAliasBoundedStringHe
     ASSERT_TRUE(data);
 
     const std::map<uint16_t, std::string> value {
-        {10, "we"},
-        {40, "are"},
-        {50, "testing"},
-        {600, "things"}
+        {std::uint16_t(10), "we"},
+        {std::uint16_t(40), "are"},
+        {std::uint16_t(50), "testing"},
+        {std::uint16_t(600), "things"}
     };
     std::string test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_ushort_inneraliasboundedstringhelper_map));
@@ -3392,10 +3392,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerAliasBoundedWStringH
     ASSERT_TRUE(data);
 
     const std::map<uint16_t, std::wstring> value {
-        {10, L"we"},
-        {40, L"are"},
-        {50, L"testing"},
-        {600, L"things"}
+        {std::uint16_t(10), L"we"},
+        {std::uint16_t(40), L"are"},
+        {std::uint16_t(50), L"testing"},
+        {std::uint16_t(600), L"things"}
     };
     std::wstring test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_ushort_inneraliasboundedwstringhelper_map));
@@ -3457,10 +3457,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerEnumHelper)
     ASSERT_TRUE(data);
 
     const std::unordered_map<uint16_t, InnerEnumHelper> value {
-        {100u, InnerEnumHelper::ENUM_VALUE_2},
-        {50u, InnerEnumHelper::ENUM_VALUE_1},
-        {600u, InnerEnumHelper::ENUM_VALUE_3},
-        {70u, InnerEnumHelper::ENUM_VALUE_2}
+        {std::uint16_t(100), InnerEnumHelper::ENUM_VALUE_2},
+        {std::uint16_t(50), InnerEnumHelper::ENUM_VALUE_1},
+        {std::uint16_t(600), InnerEnumHelper::ENUM_VALUE_3},
+        {std::uint16_t(70), InnerEnumHelper::ENUM_VALUE_2}
     };
     uint32_t test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_ushort_innerenumhelper_map));
@@ -3523,10 +3523,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerBitMaskHelper)
     ASSERT_TRUE(data);
 
     const std::unordered_map<uint16_t, uint32_t> value {
-        {100u, InnerBitMaskHelperBits::flag0},
-        {50u, 0},
-        {600u, InnerBitMaskHelperBits::flag6 | InnerBitMaskHelperBits::flag0},
-        {70u, InnerBitMaskHelperBits::flag4}
+        {std::uint16_t(100), InnerBitMaskHelperBits::flag0},
+        {std::uint16_t(50), 0},
+        {std::uint16_t(600), InnerBitMaskHelperBits::flag6 | InnerBitMaskHelperBits::flag0},
+        {std::uint16_t(70), InnerBitMaskHelperBits::flag4}
     };
     uint32_t test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_ushort_innerbitmaskhelper_map));
@@ -3588,10 +3588,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerAliasHelper)
     ASSERT_TRUE(data);
 
     const std::unordered_map<uint16_t, int32_t> value {
-        {100u, 102},
-        {50u, 1},
-        {600u, -32},
-        {70u, 43}
+        {std::uint16_t(100), 102},
+        {std::uint16_t(50), 1},
+        {std::uint16_t(600), -32},
+        {std::uint16_t(70), 43}
     };
     int32_t test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_ushort_inneraliashelper_map));
@@ -3653,10 +3653,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerAliasArrayHelper)
     ASSERT_TRUE(data);
 
     const std::unordered_map<uint16_t, Int16Seq> value {
-        {100u, {{102, -102}} },
-        {50u, {{1, -1}} },
-        {600u, {{-32, 32}} },
-        {70u, {{43, -43}} }
+        {std::uint16_t(100), {102, -102} },
+        {std::uint16_t(50), {1, -1} },
+        {std::uint16_t(600), {-32, 32} },
+        {std::uint16_t(70), {43, -43} }
     };
     Int16Seq test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_ushort_inneraliasarrayhelper_map));
@@ -3718,10 +3718,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerAliasSequenceHelper)
     ASSERT_TRUE(data);
 
     const std::unordered_map<uint16_t, Int16Seq> value {
-        {10u, {{102, -102, 304, -304}} },
-        {50u, {{}} },
-        {60u, {{-32}} },
-        {70u, {{43, -43}} }
+        {std::uint16_t(10), {102, -102, 304, -304} },
+        {std::uint16_t(50), {} },
+        {std::uint16_t(60), {-32} },
+        {std::uint16_t(70), {43, -43} }
     };
     Int16Seq test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_ushort_inneraliassequencehelper_map));
@@ -3783,18 +3783,18 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerAliasMapHelper)
     ASSERT_TRUE(data);
 
     const std::unordered_map<uint16_t, std::map<int32_t, int32_t>> value {
-        {100u, {
+        {std::uint16_t(100), {
              {1000, -102},
              {2000, -103},
              {-100, 1000}
          }},
-        {50u, {
+        {std::uint16_t(50), {
          }},
-        {600u, {
+        {std::uint16_t(600), {
              {-1000, 102},
              {-2000, 103}
          }},
-        {70u, {
+        {std::uint16_t(70), {
              {-3000, 302},
          }}
     };
@@ -3873,10 +3873,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerUnionHelper)
     ASSERT_TRUE(data);
 
     const std::unordered_map<uint16_t, std::pair<const char* const, int16_t>> value {
-        {10u, {union_long_member_name, 32}},
-        {50u, {union_float_member_name, -12}},
-        {60u, {union_short_member_name, 1}},
-        {70u, {union_long_member_name, -32}}
+        {std::uint16_t(10), {union_long_member_name, std::int16_t(32)}},
+        {std::uint16_t(50), {union_float_member_name, std::int16_t(-12)}},
+        {std::uint16_t(60), {union_short_member_name, std::int16_t(1)}},
+        {std::uint16_t(70), {union_long_member_name, std::int16_t(-32)}}
     };
     double test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_ushort_innerunionhelper_map));
@@ -3958,10 +3958,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerStructureHelper)
     ASSERT_TRUE(data);
 
     const std::unordered_map<uint16_t, std::pair<int32_t, float>> value {
-        {100u, {32, 1.0f}},
-        {50u, {-12, -1.0f}},
-        {600u, {1, -10.1f}},
-        {70u, {-32, 100.3f}}
+        {std::uint16_t(100), {32, 1.0f}},
+        {std::uint16_t(50), {-12, -1.0f}},
+        {std::uint16_t(600), {1, -10.1f}},
+        {std::uint16_t(70), {-32, 100.3f}}
     };
     int32_t test_value1;
     float test_value2;
@@ -4040,9 +4040,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerBitsetHelper)
     ASSERT_TRUE(data);
 
     const std::unordered_map<uint16_t, std::tuple<uint8_t, bool, uint16_t, int16_t>> value {
-        {100u, {5u, true, 1000u, 2000}},
-        {50u, {7u, false, 555u, 20}},
-        {600u, {0u, true, 0u, 0}}
+        {std::uint16_t(100), {std::uint8_t(5), true, std::uint16_t(1000), std::int16_t(2000)}},
+        {std::uint16_t(50), {std::uint8_t(7), false, std::uint16_t(555), std::int16_t(20)}},
+        {std::uint16_t(600), {std::uint8_t(0), true, std::uint16_t(0), std::int16_t(0)}}
     };
     uint8_t test_value1;
     bool test_value2;
@@ -4141,10 +4141,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongShort)
     ASSERT_TRUE(data);
 
     const std::unordered_map<int32_t, int16_t> value {
-        {-100, 1},
-        {200, 2},
-        {-50, -1},
-        {70, -2}
+        {-100, std::int16_t(1)},
+        {200, std::int16_t(2)},
+        {-50, std::int16_t(-1)},
+        {70, std::int16_t(-2)}
     };
     int16_t test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_long_short_map));
@@ -4206,10 +4206,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongUShort)
     ASSERT_TRUE(data);
 
     const std::unordered_map<int32_t, uint16_t> value {
-        {-100, 1u},
-        {200, 2u},
-        {-50, 100u},
-        {70, 200u}
+        {-100, std::uint16_t(1)},
+        {200, std::uint16_t(2)},
+        {-50, std::uint16_t(100)},
+        {70, std::uint16_t(200)}
     };
     uint16_t test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_long_ushort_map));
@@ -4791,10 +4791,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongOctet)
     ASSERT_TRUE(data);
 
     const std::unordered_map<int32_t, fastrtps::rtps::octet> value {
-        {-100, 1u},
-        {200, 2u},
-        {-50, 100u},
-        {70, 200u}
+        {-100, fastrtps::rtps::octet(1)},
+        {200, fastrtps::rtps::octet(2)},
+        {-50, fastrtps::rtps::octet(100)},
+        {70, fastrtps::rtps::octet(200)}
     };
     fastrtps::rtps::octet test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_long_octet_map));
@@ -5443,10 +5443,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerAliasArrayHelper)
     ASSERT_TRUE(data);
 
     const std::unordered_map<int32_t, Int16Seq> value {
-        {-100, {{102, -102}} },
-        {50, {{1, -1}} },
-        {-600, {{-32, 32}} },
-        {70, {{43, -43}} }
+        {-100, {102, -102} },
+        {50, {1, -1} },
+        {-600, {-32, 32} },
+        {70, {43, -43} }
     };
     Int16Seq test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_long_inneraliasarrayhelper_map));
@@ -5508,10 +5508,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerAliasSequenceHelper)
     ASSERT_TRUE(data);
 
     const std::unordered_map<int32_t, Int16Seq> value {
-        {-10, {{102, -102, 304, -304}} },
-        {-50, {{}} },
-        {60, {{-32}} },
-        {70, {{43, -43}} }
+        {-10, {102, -102, 304, -304} },
+        {-50, {} },
+        {60, {-32} },
+        {70, {43, -43} }
     };
     Int16Seq test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_long_inneraliassequencehelper_map));
@@ -5663,10 +5663,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerUnionHelper)
     ASSERT_TRUE(data);
 
     const std::unordered_map<int32_t, std::pair<const char* const, int16_t>> value {
-        {-10, {union_long_member_name, 32}},
-        {-50, {union_float_member_name, -12}},
-        {60, {union_short_member_name, 1}},
-        {70, {union_long_member_name, -32}}
+        {-10, {union_long_member_name, std::int16_t(32)}},
+        {-50, {union_float_member_name, std::int16_t(-12)}},
+        {60, {union_short_member_name, std::int16_t(1)}},
+        {70, {union_long_member_name, std::int16_t(-32)}}
     };
     double test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_long_innerunionhelper_map));
@@ -5830,9 +5830,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerBitsetHelper)
     ASSERT_TRUE(data);
 
     const std::unordered_map<int32_t, std::tuple<uint8_t, bool, uint16_t, int16_t>> value {
-        {-100, {5u, true, 1000u, 2000}},
-        {50, {7u, false, 555u, 20}},
-        {600, {0u, true, 0u, 0}}
+        {-100, {std::uint8_t(5), true, std::uint16_t(1000), std::int16_t(2000)}},
+        {50, {std::uint8_t(7), false, std::uint16_t(555), std::int16_t(20)}},
+        {600, {std::uint8_t(0), true, std::uint16_t(0), std::int16_t(0)}}
     };
     uint8_t test_value1;
     bool test_value2;
@@ -5931,10 +5931,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongShort)
     ASSERT_TRUE(data);
 
     const std::unordered_map<uint32_t, int16_t> value {
-        {100u, 1},
-        {200u, 2},
-        {50u, -1},
-        {70u, -2}
+        {100u, std::int16_t(1)},
+        {200u, std::int16_t(2)},
+        {50u, std::int16_t(-1)},
+        {70u, std::int16_t(-2)}
     };
     int16_t test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_ulong_short_map));
@@ -5996,10 +5996,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongUShort)
     ASSERT_TRUE(data);
 
     const std::unordered_map<uint32_t, uint16_t> value {
-        {100u, 1u},
-        {200u, 2u},
-        {50u, 100u},
-        {70u, 200u}
+        {100u, std::uint16_t(1)},
+        {200u, std::uint16_t(2)},
+        {50u, std::uint16_t(100)},
+        {70u, std::uint16_t(200)}
     };
     uint16_t test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_ulong_ushort_map));
@@ -6581,10 +6581,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongOctet)
     ASSERT_TRUE(data);
 
     const std::unordered_map<uint32_t, fastrtps::rtps::octet> value {
-        {100u, 1u},
-        {200u, 2u},
-        {50u, 100u},
-        {70u, 200u}
+        {100u, fastrtps::rtps::octet(1)},
+        {200u, fastrtps::rtps::octet(2)},
+        {50u, fastrtps::rtps::octet(100)},
+        {70u, fastrtps::rtps::octet(200)}
     };
     fastrtps::rtps::octet test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_ulong_octet_map));
@@ -7233,10 +7233,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerAliasArrayHelper)
     ASSERT_TRUE(data);
 
     const std::unordered_map<uint32_t, Int16Seq> value {
-        {100u, {{102, -102}} },
-        {50u, {{1, -1}} },
-        {600u, {{-32, 32}} },
-        {70u, {{43, -43}} }
+        {100u, {102, -102} },
+        {50u, {1, -1} },
+        {600u, {-32, 32} },
+        {70u, {43, -43} }
     };
     Int16Seq test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_ulong_inneraliasarrayhelper_map));
@@ -7298,10 +7298,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerAliasSequenceHelper)
     ASSERT_TRUE(data);
 
     const std::unordered_map<uint32_t, Int16Seq> value {
-        {10u, {{102, -102, 304, -304}} },
-        {50u, {{}} },
-        {60u, {{-32}} },
-        {70u, {{43, -43}} }
+        {10u, {102, -102, 304, -304} },
+        {50u, {} },
+        {60u, {-32} },
+        {70u, {43, -43} }
     };
     Int16Seq test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_ulong_inneraliassequencehelper_map));
@@ -7453,10 +7453,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerUnionHelper)
     ASSERT_TRUE(data);
 
     const std::unordered_map<uint32_t, std::pair<const char* const, int16_t>> value {
-        {10u, {union_long_member_name, 32}},
-        {50u, {union_float_member_name, -12}},
-        {60u, {union_short_member_name, 1}},
-        {70u, {union_long_member_name, -32}}
+        {10u, {union_long_member_name, std::int16_t(32)}},
+        {50u, {union_float_member_name, std::int16_t(-12)}},
+        {60u, {union_short_member_name, std::int16_t(1)}},
+        {70u, {union_long_member_name, std::int16_t(-32)}}
     };
     double test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_ulong_innerunionhelper_map));
@@ -7620,9 +7620,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerBitsetHelper)
     ASSERT_TRUE(data);
 
     const std::unordered_map<uint32_t, std::tuple<uint8_t, bool, uint16_t, int16_t>> value {
-        {100u, {5u, true, 1000u, 2000}},
-        {50u, {7u, false, 555u, 20}},
-        {600u, {0u, true, 0u, 0}}
+        {100u, {std::uint8_t(5), true, std::uint16_t(1000), std::int16_t(2000)}},
+        {50u, {std::uint8_t(7), false, std::uint16_t(555), std::int16_t(20)}},
+        {600u, {std::uint8_t(0), true, std::uint16_t(0), std::int16_t(0)}}
     };
     uint8_t test_value1;
     bool test_value2;
@@ -7721,10 +7721,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongShort)
     ASSERT_TRUE(data);
 
     const std::unordered_map<int64_t, int16_t> value {
-        {-100, 1},
-        {200, 2},
-        {-50, -1},
-        {70, -2}
+        {-100, std::int16_t(1)},
+        {200, std::int16_t(2)},
+        {-50, std::int16_t(-1)},
+        {70, std::int16_t(-2)}
     };
     int16_t test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_longlong_short_map));
@@ -7786,10 +7786,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongUShort)
     ASSERT_TRUE(data);
 
     const std::unordered_map<int64_t, uint16_t> value {
-        {-100, 1u},
-        {200, 2u},
-        {-50, 100u},
-        {70, 200u}
+        {-100, std::uint16_t(1)},
+        {200, std::uint16_t(2)},
+        {-50, std::uint16_t(100)},
+        {70, std::uint16_t(200)}
     };
     uint16_t test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_longlong_ushort_map));
@@ -8371,10 +8371,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongOctet)
     ASSERT_TRUE(data);
 
     const std::unordered_map<int64_t, fastrtps::rtps::octet> value {
-        {-100, 1u},
-        {200, 2u},
-        {-50, 100u},
-        {70, 200u}
+        {-100, fastrtps::rtps::octet(1)},
+        {200, fastrtps::rtps::octet(2)},
+        {-50, fastrtps::rtps::octet(100)},
+        {70, fastrtps::rtps::octet(200)}
     };
     fastrtps::rtps::octet test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_longlong_octet_map));
@@ -9023,10 +9023,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerAliasArrayHelper)
     ASSERT_TRUE(data);
 
     const std::unordered_map<int64_t, Int16Seq> value {
-        {-100, {{102, -102}} },
-        {50, {{1, -1}} },
-        {-600, {{-32, 32}} },
-        {70, {{43, -43}} }
+        {-100, {102, -102} },
+        {50, {1, -1} },
+        {-600, {-32, 32} },
+        {70, {43, -43} }
     };
     Int16Seq test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_longlong_inneraliasarrayhelper_map));
@@ -9088,10 +9088,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerAliasSequenceHelpe
     ASSERT_TRUE(data);
 
     const std::unordered_map<int64_t, Int16Seq> value {
-        {-10, {{102, -102, 304, -304}} },
-        {-50, {{}} },
-        {60, {{-32}} },
-        {70, {{43, -43}} }
+        {-10, {102, -102, 304, -304} },
+        {-50, {} },
+        {60, {-32} },
+        {70, {43, -43} }
     };
     Int16Seq test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_longlong_inneraliassequencehelper_map));
@@ -9243,10 +9243,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerUnionHelper)
     ASSERT_TRUE(data);
 
     const std::unordered_map<int64_t, std::pair<const char* const, int16_t>> value {
-        {-10, {union_long_member_name, 32}},
-        {-50, {union_float_member_name, -12}},
-        {60, {union_short_member_name, 1}},
-        {70, {union_long_member_name, -32}}
+        {-10, {union_long_member_name, std::int16_t(32)}},
+        {-50, {union_float_member_name, std::int16_t(-12)}},
+        {60, {union_short_member_name, std::int16_t(1)}},
+        {70, {union_long_member_name, std::int16_t(-32)}}
     };
     double test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_longlong_innerunionhelper_map));
@@ -9410,9 +9410,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerBitsetHelper)
     ASSERT_TRUE(data);
 
     const std::unordered_map<int64_t, std::tuple<uint8_t, bool, uint16_t, int16_t>> value {
-        {-100, {5u, true, 1000u, 2000}},
-        {50, {7u, false, 555u, 20}},
-        {600, {0u, true, 0u, 0}}
+        {-100, {std::uint8_t(5), true, std::uint16_t(1000), std::int16_t(2000)}},
+        {50, {std::uint8_t(7), false, std::uint16_t(555), std::int16_t(20)}},
+        {600, {std::uint8_t(0), true, std::uint16_t(0), std::int16_t(0)}}
     };
     uint8_t test_value1;
     bool test_value2;
@@ -9511,10 +9511,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongShort)
     ASSERT_TRUE(data);
 
     const std::unordered_map<uint64_t, int16_t> value {
-        {100u, 1},
-        {200u, 2},
-        {50u, -1},
-        {70u, -2}
+        {100u, std::int16_t(1)},
+        {200u, std::int16_t(2)},
+        {50u, std::int16_t(-1)},
+        {70u, std::int16_t(-2)}
     };
     int16_t test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_ulonglong_short_map));
@@ -9576,10 +9576,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongUShort)
     ASSERT_TRUE(data);
 
     const std::unordered_map<uint64_t, uint16_t> value {
-        {100u, 1u},
-        {200u, 2u},
-        {50u, 100u},
-        {70u, 200u}
+        {100u, std::uint16_t(1)},
+        {200u, std::uint16_t(2)},
+        {50u, std::uint16_t(100)},
+        {70u, std::uint16_t(200)}
     };
     uint16_t test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_ulonglong_ushort_map));
@@ -10161,10 +10161,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongOctet)
     ASSERT_TRUE(data);
 
     const std::unordered_map<uint64_t, fastrtps::rtps::octet> value {
-        {100u, 1u},
-        {200u, 2u},
-        {50u, 100u},
-        {70u, 200u}
+        {100u, fastrtps::rtps::octet(1)},
+        {200u, fastrtps::rtps::octet(2)},
+        {50u, fastrtps::rtps::octet(100)},
+        {70u, fastrtps::rtps::octet(200)}
     };
     fastrtps::rtps::octet test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_ulonglong_octet_map));
@@ -10813,10 +10813,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerAliasArrayHelper)
     ASSERT_TRUE(data);
 
     const std::unordered_map<uint64_t, Int16Seq> value {
-        {100u, {{102, -102}} },
-        {50u, {{1, -1}} },
-        {600u, {{-32, 32}} },
-        {70u, {{43, -43}} }
+        {100u, {102, -102} },
+        {50u, {1, -1} },
+        {600u, {-32, 32} },
+        {70u, {43, -43} }
     };
     Int16Seq test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_ulonglong_inneraliasarrayhelper_map));
@@ -10878,10 +10878,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerAliasSequenceHelp
     ASSERT_TRUE(data);
 
     const std::unordered_map<uint64_t, Int16Seq> value {
-        {10u, {{102, -102, 304, -304}} },
-        {50u, {{}} },
-        {60u, {{-32}} },
-        {70u, {{43, -43}} }
+        {10u, {102, -102, 304, -304} },
+        {50u, {} },
+        {60u, {-32} },
+        {70u, {43, -43} }
     };
     Int16Seq test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_ulonglong_inneraliassequencehelper_map));
@@ -11033,10 +11033,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerUnionHelper)
     ASSERT_TRUE(data);
 
     const std::unordered_map<uint64_t, std::pair<const char* const, int16_t>> value {
-        {10u, {union_long_member_name, 32}},
-        {50u, {union_float_member_name, -12}},
-        {60u, {union_short_member_name, 1}},
-        {70u, {union_long_member_name, -32}}
+        {10u, {union_long_member_name, std::int16_t(32)}},
+        {50u, {union_float_member_name, std::int16_t(-12)}},
+        {60u, {union_short_member_name, std::int16_t(1)}},
+        {70u, {union_long_member_name, std::int16_t(-32)}}
     };
     double test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_ulonglong_innerunionhelper_map));
@@ -11200,9 +11200,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerBitsetHelper)
     ASSERT_TRUE(data);
 
     const std::unordered_map<uint64_t, std::tuple<uint8_t, bool, uint16_t, int16_t>> value {
-        {100u, {5u, true, 1000u, 2000}},
-        {50u, {7u, false, 555u, 20}},
-        {600u, {0u, true, 0u, 0}}
+        {100u, {std::uint8_t(5), true, std::uint16_t(1000), std::int16_t(2000)}},
+        {50u, {std::uint8_t(7), false, std::uint16_t(555), std::int16_t(20)}},
+        {600u, {std::uint8_t(0), true, std::uint16_t(0), std::int16_t(0)}}
     };
     uint8_t test_value1;
     bool test_value2;
@@ -11302,10 +11302,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringShort)
     ASSERT_TRUE(data);
 
     const std::unordered_map<std::string, int16_t> value {
-        {"we", 1},
-        {"are", 2},
-        {"testing", -1},
-        {"things", -2}
+        {"we", std::int16_t(1)},
+        {"are", std::int16_t(2)},
+        {"testing", std::int16_t(-1)},
+        {"things", std::int16_t(-2)}
     };
     int16_t test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_string_short_map));
@@ -11367,10 +11367,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringUShort)
     ASSERT_TRUE(data);
 
     const std::unordered_map<std::string, uint16_t> value {
-        {"we", 1u},
-        {"are", 2u},
-        {"testing", 100u},
-        {"things", 200u}
+        {"we", std::uint16_t(1)},
+        {"are", std::uint16_t(2)},
+        {"testing", std::uint16_t(100)},
+        {"things", std::uint16_t(200)}
     };
     uint16_t test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_string_ushort_map));
@@ -11952,10 +11952,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringOctet)
     ASSERT_TRUE(data);
 
     const std::unordered_map<std::string, fastrtps::rtps::octet> value {
-        {"we", 1u},
-        {"are", 2u},
-        {"testing", 100u},
-        {"things", 200u}
+        {"we", fastrtps::rtps::octet(1)},
+        {"are", fastrtps::rtps::octet(2)},
+        {"testing", fastrtps::rtps::octet(100)},
+        {"things", fastrtps::rtps::octet(200)}
     };
     fastrtps::rtps::octet test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_string_octet_map));
@@ -12604,10 +12604,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerAliasArrayHelper)
     ASSERT_TRUE(data);
 
     const std::unordered_map<std::string, Int16Seq> value {
-        {"we", {{102, -102}} },
-        {"are", {{1, -1}} },
-        {"testing", {{-32, 32}} },
-        {"things", {{43, -43}} }
+        {"we", {102, -102} },
+        {"are", {1, -1} },
+        {"testing", {-32, 32} },
+        {"things", {43, -43} }
     };
     Int16Seq test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_string_inneraliasarrayhelper_map));
@@ -12669,10 +12669,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerAliasSequenceHelper)
     ASSERT_TRUE(data);
 
     const std::unordered_map<std::string, Int16Seq> value {
-        {"we", {{102, -102, 304, -304}} },
-        {"are", {{}} },
-        {"testing", {{-32}} },
-        {"things", {{43, -43}} }
+        {"we", {102, -102, 304, -304} },
+        {"are", {} },
+        {"testing", {-32} },
+        {"things", {43, -43} }
     };
     Int16Seq test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_string_inneraliassequencehelper_map));
@@ -12825,10 +12825,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerUnionHelper)
     ASSERT_TRUE(data);
 
     const std::unordered_map<std::string, std::pair<const char* const, int16_t>> value {
-        {"we", {union_long_member_name, 32}},
-        {"are", {union_float_member_name, -12}},
-        {"testing", {union_short_member_name, 1}},
-        {"things", {union_long_member_name, -32}}
+        {"we", {union_long_member_name, std::int16_t(32)}},
+        {"are", {union_float_member_name, std::int16_t(-12)}},
+        {"testing", {union_short_member_name, std::int16_t(1)}},
+        {"things", {union_long_member_name, std::int16_t(-32)}}
     };
     double test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_string_innerunionhelper_map));
@@ -12994,9 +12994,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerBitsetHelper)
     ASSERT_TRUE(data);
 
     const std::unordered_map<std::string, std::tuple<uint8_t, bool, uint16_t, int16_t>> value {
-        {"we", {5u, true, 1000u, 2000}},
-        {"are", {7u, false, 555u, 20}},
-        {"testing", {0u, true, 0u, 0}}
+        {"we", {std::uint8_t(5), true, std::uint16_t(1000), std::int16_t(2000)}},
+        {"are", {std::uint8_t(7), false, std::uint16_t(555), std::int16_t(20)}},
+        {"testing", {std::uint8_t(0), true, std::uint16_t(0), std::int16_t(0)}}
     };
     uint8_t test_value1;
     bool test_value2;
@@ -13097,10 +13097,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperSh
     ASSERT_TRUE(data);
 
     const std::unordered_map<std::string, int16_t> value {
-        {"we", 1},
-        {"are", 2},
-        {"testing", -1},
-        {"things", -2}
+        {"we", std::int16_t(1)},
+        {"are", std::int16_t(2)},
+        {"testing", std::int16_t(-1)},
+        {"things", std::int16_t(-2)}
     };
     int16_t test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_inneraliasboundedstringhelper_short_map));
@@ -13161,10 +13161,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperUS
     ASSERT_TRUE(data);
 
     const std::unordered_map<std::string, uint16_t> value {
-        {"we", 1u},
-        {"are", 2u},
-        {"testing", 100u},
-        {"things", 200u}
+        {"we", std::uint16_t(1)},
+        {"are", std::uint16_t(2)},
+        {"testing", std::uint16_t(100)},
+        {"things", std::uint16_t(200)}
     };
     uint16_t test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_inneraliasboundedstringhelper_ushort_map));
@@ -13737,10 +13737,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperOc
     ASSERT_TRUE(data);
 
     const std::unordered_map<std::string, fastrtps::rtps::octet> value {
-        {"we", 1u},
-        {"are", 2u},
-        {"testing", 100u},
-        {"things", 200u}
+        {"we", fastrtps::rtps::octet(1)},
+        {"are", fastrtps::rtps::octet(2)},
+        {"testing", fastrtps::rtps::octet(100)},
+        {"things", fastrtps::rtps::octet(200)}
     };
     fastrtps::rtps::octet test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_inneraliasboundedstringhelper_octet_map));
@@ -14391,10 +14391,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
     ASSERT_TRUE(data);
 
     const std::unordered_map<std::string, Int16Seq> value {
-        {"we", {{102, -102}} },
-        {"are", {{1, -1}} },
-        {"testing", {{-32, 32}} },
-        {"things", {{43, -43}} }
+        {"we", {102, -102} },
+        {"are", {1, -1} },
+        {"testing", {-32, 32} },
+        {"things", {43, -43} }
     };
     Int16Seq test_value;
     auto map_data =
@@ -14457,10 +14457,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
     ASSERT_TRUE(data);
 
     const std::unordered_map<std::string, Int16Seq> value {
-        {"we", {{102, -102, 304, -304}} },
-        {"are", {{}} },
-        {"testing", {{-32}} },
-        {"things", {{43, -43}} }
+        {"we", {102, -102, 304, -304} },
+        {"are", {} },
+        {"testing", {-32} },
+        {"things", {43, -43} }
     };
     Int16Seq test_value;
     auto map_data =
@@ -14616,10 +14616,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
     ASSERT_TRUE(data);
 
     const std::unordered_map<std::string, std::pair<const char* const, int16_t>> value {
-        {"we", {union_long_member_name, 32}},
-        {"are", {union_float_member_name, -12}},
-        {"testing", {union_short_member_name, 1}},
-        {"things", {union_long_member_name, -32}}
+        {"we", {union_long_member_name, std::int16_t(32)}},
+        {"are", {union_float_member_name, std::int16_t(-12)}},
+        {"testing", {union_short_member_name, std::int16_t(1)}},
+        {"things", {union_long_member_name, std::int16_t(-32)}}
     };
     double test_value;
     auto map_data =
@@ -14786,9 +14786,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
     ASSERT_TRUE(data);
 
     const std::unordered_map<std::string, std::tuple<uint8_t, bool, uint16_t, int16_t>> value {
-        {"we", {5u, true, 1000u, 2000}},
-        {"are", {7u, false, 555u, 20}},
-        {"testing", {0u, true, 0u, 0}}
+        {"we", {std::uint8_t(5), true, std::uint16_t(1000), std::int16_t(2000)}},
+        {"are", {std::uint8_t(7), false, std::uint16_t(555), std::int16_t(20)}},
+        {"testing", {std::uint8_t(0), true, std::uint16_t(0), std::int16_t(0)}}
     };
     uint8_t test_value1;
     bool test_value2;

@@ -151,17 +151,6 @@ public:
         return config_file_;
     }
 
-    struct order_member_desc
-        : public std::binary_function<const MemberDescriptor&, const MemberDescriptor&, bool>
-    {
-        result_type operator ()(
-                first_argument_type lhs,
-                second_argument_type rhs ) const
-        {
-            return lhs.index() < rhs.index();
-        }
-
-    };
 };
 
 
@@ -10350,7 +10339,7 @@ TEST_F(DynamicTypesTests, DynamicType_array)
         type_descriptor->key_element_type(nullptr);
     }
 
-    BoundSeq array_dimensions {{ 2, 2, 2 }};
+    BoundSeq array_dimensions {2, 2, 2};
 
     DynamicTypeBuilder::_ref_type builder {factory->create_array_type(
                                                factory->get_primitive_type(
@@ -10650,8 +10639,8 @@ TEST_F(DynamicTypesTests, DynamicType_array_of_arrays)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
-    BoundSeq array_dimensions {{ 2, 2 }};
-    BoundSeq inner_array_dimensions {{ 2 }};
+    BoundSeq array_dimensions {2, 2};
+    BoundSeq inner_array_dimensions {2};
 
     DynamicTypeBuilder::_ref_type builder {factory->create_array_type(
                                                factory->get_primitive_type(

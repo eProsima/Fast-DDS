@@ -79,7 +79,6 @@ constexpr const char* bounded_wstring_multiarray_struct_name = "ArrayMultiDimens
 constexpr const char* enum_multiarray_struct_name = "ArrayMultiDimensionEnum";
 constexpr const char* bitmask_multiarray_struct_name = "ArrayMultiDimensionBitMask";
 constexpr const char* alias_multiarray_struct_name = "ArrayMultiDimensionAlias";
-constexpr const char* array_multiarray_struct_name = "ArrayMultiDimensionShortArray";
 constexpr const char* seq_multiarray_struct_name = "ArrayMultiDimensionSequence";
 constexpr const char* map_multiarray_struct_name = "ArrayMultiDimensionMap";
 constexpr const char* union_multiarray_struct_name = "ArrayMultiDimensionUnion";

@@ -491,7 +491,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasOctet)
 {
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
-    type_descriptor->name("AliasOctet");
+    type_descriptor->name(struct_alias_octet_name);
     DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
     ASSERT_TRUE(type_builder);
 
