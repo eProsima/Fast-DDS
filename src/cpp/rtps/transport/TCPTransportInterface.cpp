@@ -25,6 +25,7 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/utils/System.h>
+
 #include <rtps/transport/tcp/RTCPMessageManager.h>
 #include <rtps/transport/TCPSenderResource.hpp>
 #include <rtps/transport/TCPChannelResourceBasic.h>
@@ -33,6 +34,8 @@
 #include <rtps/transport/TCPChannelResourceSecure.h>
 #include <rtps/transport/TCPAcceptorSecure.h>
 #endif // if TLS_FOUND
+
+#include <rtps/transport/asio_helpers.hpp>
 #include <statistics/rtps/messages/RTPSStatisticsMessages.hpp>
 #include <utils/SystemInfo.hpp>
 
@@ -474,29 +477,29 @@ bool TCPTransportInterface::init(
     }
 
     // Check system buffer sizes.
-    if (configuration()->sendBufferSize == 0)
+    uint32_t send_size = 0;
+    uint32_t recv_size = 0;
+    if (!asio_helpers::configure_buffer_sizes(
+                *initial_peer_local_locator_socket_, *configuration(), send_size, recv_size))
     {
-        socket_base::send_buffer_size option;
-        initial_peer_local_locator_socket_->get_option(option);
-        set_send_buffer_size(option.value());
-
-        if (configuration()->sendBufferSize < s_minimumSocketBuffer)
-        {
-            set_send_buffer_size(s_minimumSocketBuffer);
-        }
+        EPROSIMA_LOG_ERROR(TRANSPORT_TCP, "Couldn't set buffer sizes to minimum value: " << cfg_max_msg_size);
+        return false;
     }
 
-    if (configuration()->receiveBufferSize == 0)
+    if (cfg_send_size > 0 && send_size != cfg_send_size)
     {
-        socket_base::receive_buffer_size option;
-        initial_peer_local_locator_socket_->get_option(option);
-        set_receive_buffer_size(option.value());
-
-        if (configuration()->receiveBufferSize < s_minimumSocketBuffer)
-        {
-            set_receive_buffer_size(s_minimumSocketBuffer);
-        }
+        EPROSIMA_LOG_WARNING(TRANSPORT_TCP, "UDPTransport sendBufferSize could not be set to the desired value. "
+                << "Using " << send_size << " instead of " << cfg_send_size);
     }
+
+    if (cfg_recv_size > 0 && recv_size != cfg_recv_size)
+    {
+        EPROSIMA_LOG_WARNING(TRANSPORT_TCP, "UDPTransport receiveBufferSize could not be set to the desired value. "
+                << "Using " << recv_size << " instead of " << cfg_recv_size);
+    }
+
+    set_send_buffer_size(send_size);
+    set_receive_buffer_size(recv_size);
 
     if (!rtcp_message_manager_)
     {
