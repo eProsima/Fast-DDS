@@ -1403,7 +1403,7 @@ TEST_F(TCPv4Tests, secure_non_blocking_send)
     eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Kind::Info);
 
     uint16_t port = g_default_port;
-    uint32_t msg_size = eprosima::fastdds::rtps::s_minimumSocketBuffer;
+    uint32_t msg_size = 64ul * 1024ul;
     // Create a TCP Server transport
     using TLSOptions = TCPTransportDescriptor::TLSConfig::TLSOptions;
     using TLSVerifyMode = TCPTransportDescriptor::TLSConfig::TLSVerifyMode;
@@ -1963,7 +1963,7 @@ TEST_F(TCPv4Tests, client_announced_local_port_uniqueness)
 TEST_F(TCPv4Tests, non_blocking_send)
 {
     uint16_t port = g_default_port;
-    uint32_t msg_size = eprosima::fastdds::rtps::s_minimumSocketBuffer;
+    uint32_t msg_size = 64ul * 1024ul;
     // Create a TCP Server transport
     eprosima::fastdds::rtps::TCPv4TransportDescriptor senderDescriptor;
     senderDescriptor.add_listener_port(port);
