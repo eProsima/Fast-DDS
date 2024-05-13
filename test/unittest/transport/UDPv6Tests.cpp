@@ -141,6 +141,11 @@ TEST_F(UDPv6Tests, wrong_configuration)
         wrong_descriptor.maxMessageSize = 1470;
         UDPv6Transport transportUnderTest(wrong_descriptor);
         ASSERT_TRUE(transportUnderTest.init());
+        auto* final_cfg = transportUnderTest.configuration();
+        EXPECT_GE(final_cfg->sendBufferSize, final_cfg->maxMessageSize);
+        EXPECT_LT(final_cfg->sendBufferSize, wrong_descriptor.sendBufferSize);
+        EXPECT_GE(final_cfg->receiveBufferSize, final_cfg->maxMessageSize);
+        EXPECT_LT(final_cfg->receiveBufferSize, wrong_descriptor.receiveBufferSize);
         eprosima::fastdds::dds::Log::Flush();
     }
 }
