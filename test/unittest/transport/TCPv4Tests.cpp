@@ -139,6 +139,11 @@ TEST_F(TCPv4Tests, wrong_configuration_values)
         wrong_descriptor.maxMessageSize = 1470;
         TCPv4Transport transportUnderTest(wrong_descriptor);
         ASSERT_TRUE(transportUnderTest.init());
+        auto* final_cfg = transportUnderTest.configuration();
+        EXPECT_GE(final_cfg->sendBufferSize, final_cfg->maxMessageSize);
+        EXPECT_LT(final_cfg->sendBufferSize, wrong_descriptor.sendBufferSize);
+        EXPECT_GE(final_cfg->receiveBufferSize, final_cfg->maxMessageSize);
+        EXPECT_LT(final_cfg->receiveBufferSize, wrong_descriptor.receiveBufferSize);
         eprosima::fastdds::dds::Log::Flush();
     }
 }
