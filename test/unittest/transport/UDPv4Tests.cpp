@@ -32,10 +32,6 @@ using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using UDPv4Transport = eprosima::fastdds::rtps::UDPv4Transport;
 
-#ifndef __APPLE__
-const uint32_t ReceiveBufferCapacity = 65536;
-#endif // ifndef __APPLE__
-
 #if defined(_WIN32)
 #define GET_PID _getpid
 #else
