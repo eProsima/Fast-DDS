@@ -17,6 +17,7 @@
 #include "../DynamicTypesDDSTypesTest.hpp"
 #include "../../../dds-types-test/helpers/basic_inner_types.hpp"
 #include "../../../dds-types-test/inheritancePubSubTypes.h"
+#include "../../../dds-types-test/inheritanceTypeObjectSupport.hpp"
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
@@ -33,11 +34,11 @@ const char* const inner_structure_helper_empty_child_struct_name = "InnerStructu
 const char* const inner_structure_helper_empty_child_child_struct_name = "InnerStructureHelperEmptyChildChild";
 const char* const inner_empty_structure_helper_child_struct_name = "InnerEmptyStructureHelperChild";
 const char* const struct_alias_inheritance_struct_struct_name = "StructAliasInheritanceStruct";
-const char* const struct_inheritance_struct_struct_name = "StructturesInheritanceStruct";
+const char* const structures_inheritance_struct_struct_name = "StructuresInheritanceStruct";
 const char* const inner_bitset_helper_child_bitset_name = "InnerBitsetHelperChild";
 const char* const inner_bitset_helper_child_child_bitset_name = "InnerBitsetHelperChildChild";
 const char* const bitset_alias_inheritance_bitset_bitset_name = "BitsetAliasInheritanceBitset";
-const char* const bitsets_child_inheritance_bitset_bitset_name = "BitsetsChildInheritanceStruct";
+const char* const bitsets_child_inheritance_struct_struct_name = "BitsetsChildInheritanceStruct";
 
 const char* const var_child_longlong = "var_child_longlong";
 const char* const var_child_ulonglong = "var_child_ulonglong";
@@ -88,27 +89,11 @@ DynamicType::_ref_type create_inner_struct_helper_child_child()
 {
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
-    type_descriptor->name(inner_structure_helper_child_struct_name);
+    type_descriptor->name(inner_structure_helper_child_child_struct_name);
     type_descriptor->base_type(create_inner_struct_helper_child());
     DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
-    member_descriptor->name(var_child_longlong);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT64));
-    type_builder->add_member(member_descriptor);
-
-    member_descriptor = traits<MemberDescriptor>::make_shared();
-    member_descriptor->name(var_child_ulonglong);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT64));
-    type_builder->add_member(member_descriptor);
-
-    DynamicType::_ref_type struct_type {type_builder->build()};
-
-    type_descriptor = traits<TypeDescriptor>::make_shared();
-    type_descriptor->kind(TK_STRUCTURE);
-    type_descriptor->name(inner_structure_helper_child_child_struct_name);
-    type_descriptor->base_type(struct_type);
-    type_builder = DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor);
 
     member_descriptor = traits<MemberDescriptor>::make_shared();
     member_descriptor->name(var_child_childlonglong2);
@@ -139,17 +124,9 @@ DynamicType::_ref_type create_inner_struct_helper_empty_child_child()
 {
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
-    type_descriptor->name(inner_structure_helper_empty_child_struct_name);
+    type_descriptor->name(inner_structure_helper_empty_child_child_struct_name);
     type_descriptor->base_type(create_inner_struct_helper_empty_child());
     DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
-
-    DynamicType::_ref_type struct_type {type_builder->build()};
-
-    type_descriptor = traits<TypeDescriptor>::make_shared();
-    type_descriptor->kind(TK_STRUCTURE);
-    type_descriptor->name(inner_structure_helper_empty_child_child_struct_name);
-    type_descriptor->base_type(struct_type);
-    type_builder = DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_char);
@@ -306,6 +283,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_InnerStructureHelperChild)
         EXPECT_EQ(value, struct_data);
     }
 
+    xtypes::TypeIdentifier static_type_id;
+    register_InnerStructureHelperChild_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
+
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
 }
@@ -377,6 +358,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_InnerStructureHelperChildChild)
         EXPECT_EQ(value, struct_data);
     }
 
+    xtypes::TypeIdentifier static_type_id;
+    register_InnerStructureHelperChildChild_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
+
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
 }
@@ -416,6 +401,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_InnerStructureHelperEmptyChild)
                 static_pubsubType);
         EXPECT_EQ(value, struct_data);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_InnerStructureHelperEmptyChild_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -461,6 +450,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_InnerStructureHelperEmptyChildChil
         EXPECT_EQ(value, struct_data);
     }
 
+    xtypes::TypeIdentifier static_type_id;
+    register_InnerStructureHelperEmptyChildChild_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
+
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
 }
@@ -501,6 +494,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_InnerEmptyStructureHelperChild)
                 static_pubsubType);
         EXPECT_EQ(value, struct_data);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_InnerEmptyStructureHelperChild_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -549,14 +546,18 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructAliasInheritanceStruct)
         EXPECT_EQ(value, struct_data);
     }
 
+    xtypes::TypeIdentifier static_type_id;
+    register_StructAliasInheritanceStruct_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
+
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
-TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructInheritanceStruct)
+TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructuresInheritanceStruct)
 {
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
-    type_descriptor->name(struct_inheritance_struct_struct_name);
+    type_descriptor->name(structures_inheritance_struct_struct_name);
     DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
@@ -825,6 +826,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructInheritanceStruct)
         EXPECT_EQ(value, struct_data);
     }
 
+    xtypes::TypeIdentifier static_type_id;
+    register_StructuresInheritanceStruct_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
+
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
@@ -832,7 +837,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BitsetsChildInheritanceStruct)
 {
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
-    type_descriptor->name(bitsets_child_inheritance_bitset_bitset_name);
+    type_descriptor->name(bitsets_child_inheritance_struct_struct_name);
     DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
@@ -974,6 +979,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BitsetsChildInheritanceStruct)
         EXPECT_EQ(short_value, struct_data.var_BitsetAliasInheritanceBitset().d());
         EXPECT_EQ(ushort_value, struct_data.var_BitsetAliasInheritanceBitset().new_bitfield());
     }
+
+    // TypeObject doesn't support represents information about bitset's inheritance.
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }

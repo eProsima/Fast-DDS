@@ -19,6 +19,7 @@
 #include "../DynamicTypesDDSTypesTest.hpp"
 #include "../../../dds-types-test/helpers/basic_inner_typesPubSubTypes.h"
 #include "../../../dds-types-test/enumerationsPubSubTypes.h"
+#include "../../../dds-types-test/enumerationsTypeObjectSupport.hpp"
 #include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
@@ -109,6 +110,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_EnumStructure)
         EXPECT_EQ(static_cast<int32_t>(struct_data.var_scoped_InnerEnumHelper()), scoped_test_value);
     }
 
+    xtypes::TypeIdentifier static_type_id;
+    register_EnumStructure_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
+
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
@@ -144,6 +149,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BitMaskStructure)
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_InnerBitMaskHelper(), test_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_BitMaskStructure_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -182,6 +191,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BoundedBitMaskStructure)
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_InnerBoundedBitMaskHelper(), test_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_BoundedBitMaskStructure_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
