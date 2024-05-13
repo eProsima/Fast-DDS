@@ -56,6 +56,11 @@ jobs:
           path: src/fastrtps
           ref: ${{ inputs.fastdds-branch }}
 
+      - name: Install Fix Python version
+        uses: eProsima/eProsima-CI/external/setup-python@v0
+        with:
+          python-version: '3.11'
+
       - name: Get minimum supported version of CMake
         uses: eProsima/eProsima-CI/external/get-cmake@v0
         with:
@@ -114,12 +119,15 @@ jobs:
           ref: ${{ steps.get_shapes_demo_branch.outputs.deduced_branch }}
 
       # Required for Shapes Demo
+      # Do not setup python as it will internally modify the pythonLocation env variable
+      # and we want to use a fix version
       - name: Install Qt
         uses: jurplel/install-qt-action@v2.13.0
         with:
           version: '5.15.2'
           dir: '${{ github.workspace }}/qt_installation/'
           modules: 'qtcharts'
+          setup-python: 'false'
 
       - name: Colcon build
         continue-on-error: false
