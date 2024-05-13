@@ -198,7 +198,7 @@ endif()
 
 if(Python3_Interpreter_FOUND)
     add_test(NAME SimpleCommunicationBestEffort
-        COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/simple_communication.py)
+        COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/simple_communication.py)
 
     # Set test with label NoMemoryCheck
     set_property(TEST SimpleCommunicationBestEffort PROPERTY LABELS "NoMemoryCheck")
@@ -216,7 +216,7 @@ if(Python3_Interpreter_FOUND)
     endif()
 
     add_test(NAME SimpleCommunicationReliable
-        COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/simple_communication.py)
+        COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/simple_communication.py)
 
     # Set test with label NoMemoryCheck
     set_property(TEST SimpleCommunicationReliable PROPERTY LABELS "NoMemoryCheck")
@@ -234,7 +234,7 @@ if(Python3_Interpreter_FOUND)
     endif()
 
     add_test(NAME SimpleCommunicationReliableBestEffort
-        COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/simple_communication.py)
+        COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/simple_communication.py)
 
     # Set test with label NoMemoryCheck
     set_property(TEST SimpleCommunicationReliableBestEffort PROPERTY LABELS "NoMemoryCheck")
@@ -252,7 +252,7 @@ if(Python3_Interpreter_FOUND)
     endif()
 
     add_test(NAME SimpleMixCommunicationBestEffort
-        COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/simple_mix_communication.py)
+        COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/simple_mix_communication.py)
 
     # Set test with label NoMemoryCheck
     set_property(TEST SimpleMixCommunicationBestEffort PROPERTY LABELS "NoMemoryCheck")
@@ -270,7 +270,7 @@ if(Python3_Interpreter_FOUND)
     endif()
 
     add_test(NAME SimpleMixCommunicationReliable
-        COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/simple_mix_communication.py)
+        COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/simple_mix_communication.py)
 
     # Set test with label NoMemoryCheck
     set_property(TEST SimpleMixCommunicationReliable PROPERTY LABELS "NoMemoryCheck")
@@ -289,7 +289,7 @@ if(Python3_Interpreter_FOUND)
 
     if(SECURITY)
         add_test(NAME SimpleCommunicationSecureBestEffort
-            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/simple_communication.py)
+            COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/simple_communication.py)
 
         # Set test with label NoMemoryCheck
         set_property(TEST SimpleCommunicationSecureBestEffort PROPERTY LABELS "NoMemoryCheck")
@@ -362,7 +362,7 @@ if(Python3_Interpreter_FOUND)
         endif()
 
         add_test(NAME AllowUnauthenticatedSimplePubSecureNoRTPSProtectionSubNonSecure
-            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/multiple_subs_secure_crypto_communication.py
+            COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/multiple_subs_secure_crypto_communication.py
             --n-subs 1
             --pub $<TARGET_FILE:SimpleCommunicationPublisher>
             --xml-pub simple_secure_allow_unauthenticated_pub_profile.xml
@@ -538,7 +538,7 @@ if(Python3_Interpreter_FOUND)
     endif()
 
     add_test(NAME LivelinessAssertion
-        COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/liveliness_assertion.py)
+        COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/liveliness_assertion.py)
 
     # Set test with label NoMemoryCheck
     set_property(TEST LivelinessAssertion PROPERTY LABELS "NoMemoryCheck")
@@ -553,7 +553,7 @@ if(Python3_Interpreter_FOUND)
             "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
     endif()
     add_test(NAME AutomaticLivelinessAssertion
-        COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/automatic_liveliness_assertion.py)
+        COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/automatic_liveliness_assertion.py)
 
     # Set test with label NoMemoryCheck
     set_property(TEST AutomaticLivelinessAssertion PROPERTY LABELS "NoMemoryCheck")
@@ -569,7 +569,7 @@ if(Python3_Interpreter_FOUND)
     endif()
 
     add_test(NAME TwoPublishersCommunicationBestEffort
-        COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/two_publishers_communication.py)
+        COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/two_publishers_communication.py)
 
     # Set test with label NoMemoryCheck
     set_property(TEST TwoPublishersCommunicationBestEffort PROPERTY LABELS "NoMemoryCheck")
@@ -605,7 +605,7 @@ if(Python3_Interpreter_FOUND)
     endif()
 
     add_test(NAME SimpleCommunicationBestEffortFixed
-        COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/simple_communication.py)
+        COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/simple_communication.py)
 
     # Set test with label NoMemoryCheck
     set_property(TEST SimpleCommunicationBestEffortFixed PROPERTY LABELS "NoMemoryCheck")
@@ -627,7 +627,7 @@ if(Python3_Interpreter_FOUND)
     endif()
 
     add_test(NAME SHMCommunicationSubscriberDiesWhileProcessingMessage
-        COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/shm_communication_subscriber_dies_while_processing_message.py)
+        COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/shm_communication_subscriber_dies_while_processing_message.py)
 
     # Set test with label NoMemoryCheck
     set_property(TEST SHMCommunicationSubscriberDiesWhileProcessingMessage PROPERTY LABELS "NoMemoryCheck")
