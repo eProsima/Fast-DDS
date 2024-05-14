@@ -725,7 +725,7 @@ TEST(BuiltinDataSerializationTests, other_vendor_parameter_list_with_custom_pids
         writer_pdata.m_qos.data_sharing.off();
         writer_pdata.m_qos.data_sharing.set_max_domains(0);
         writer_read(data_buffer, buffer_length, writer_pdata);
-        ASSERT_EQ(writer_pdata.m_qos.data_sharing, DataSharingQosPolicy());
+        ASSERT_EQ(writer_pdata.m_qos.data_sharing.kind(), OFF);
 
         // ReaderProxyData check
         ReaderProxyData reader_pdata(max_unicast_locators, max_multicast_locators);
@@ -733,7 +733,7 @@ TEST(BuiltinDataSerializationTests, other_vendor_parameter_list_with_custom_pids
         reader_pdata.m_qos.data_sharing.set_max_domains(0);
         reader_pdata.m_qos.m_disablePositiveACKs.enabled = false;
         reader_read(data_buffer, buffer_length, reader_pdata);
-        ASSERT_EQ(reader_pdata.m_qos.data_sharing, DataSharingQosPolicy());
+        ASSERT_EQ(reader_pdata.m_qos.data_sharing.kind(), OFF);
 
         // CacheChange_t check
         CacheChange_t change;
