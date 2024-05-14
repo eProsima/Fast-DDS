@@ -116,7 +116,7 @@ void RTPSWriter::init(
             {
                 max_output_message_size_ = std::stoul(*max_size_property);
             }
-            catch(const std::exception& e)
+            catch (const std::exception& e)
             {
                 EPROSIMA_LOG_ERROR(RTPS_WRITER, "Error parsing max_message_size property: " << e.what());
             }
