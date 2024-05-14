@@ -176,13 +176,13 @@ bool UDPTransportInterface::init(
         if (cfg_send_size > 0 && mSendBufferSize != cfg_send_size)
         {
             EPROSIMA_LOG_WARNING(TRANSPORT_UDP, "UDPTransport sendBufferSize could not be set to the desired value. "
-                               << "Using " << mSendBufferSize << " instead of " << cfg_send_size);
+                    << "Using " << mSendBufferSize << " instead of " << cfg_send_size);
         }
 
         if (cfg_recv_size > 0 && mReceiveBufferSize != cfg_recv_size)
         {
             EPROSIMA_LOG_WARNING(TRANSPORT_UDP, "UDPTransport receiveBufferSize could not be set to the desired value. "
-                << "Using " << mReceiveBufferSize << " instead of " << cfg_recv_size);
+                    << "Using " << mReceiveBufferSize << " instead of " << cfg_recv_size);
         }
 
         set_send_buffer_size(mSendBufferSize);
