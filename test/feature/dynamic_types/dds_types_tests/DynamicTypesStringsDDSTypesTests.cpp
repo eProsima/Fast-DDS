@@ -18,6 +18,7 @@
 
 #include "../DynamicTypesDDSTypesTest.hpp"
 #include "../../../dds-types-test/stringsPubSubTypes.h"
+#include "../../../dds-types-test/stringsTypeObjectSupport.hpp"
 #include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
@@ -75,6 +76,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StringStruct)
         EXPECT_EQ(struct_data.var_string8(), test_value);
     }
 
+    xtypes::TypeIdentifier static_type_id;
+    register_StringStruct_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
+
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
@@ -109,6 +114,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_WStringStruct)
         EXPECT_EQ(struct_data.var_string16(), test_value);
     }
 
+    xtypes::TypeIdentifier static_type_id;
+    register_WStringStruct_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
+
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
@@ -141,6 +150,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SmallStringStruct)
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_small_string(), test_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_SmallStringStruct_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -175,6 +188,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SmallWStringStruct)
         EXPECT_EQ(struct_data.var_small_wstring(), test_value);
     }
 
+    xtypes::TypeIdentifier static_type_id;
+    register_SmallWStringStruct_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
+
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
@@ -208,6 +225,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_LargeStringStruct)
         EXPECT_EQ(struct_data.var_large_string(), test_value);
     }
 
+    xtypes::TypeIdentifier static_type_id;
+    register_LargeStringStruct_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
+
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
@@ -240,6 +261,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_LargeWStringStruct)
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_large_wstring(), test_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_LargeWStringStruct_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }

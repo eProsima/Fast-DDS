@@ -980,7 +980,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BitsetsChildInheritanceStruct)
         EXPECT_EQ(ushort_value, struct_data.var_BitsetAliasInheritanceBitset().new_bitfield());
     }
 
-    // TypeObject doesn't support represents information about bitset's inheritance.
+    xtypes::TypeIdentifier static_type_id;
+    register_BitsetsChildInheritanceStruct_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
