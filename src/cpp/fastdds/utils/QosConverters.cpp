@@ -181,6 +181,14 @@ void set_qos_from_attributes(
     qos.properties().binary_properties() = attr.properties.binary_properties();
 }
 
+void set_extended_qos_from_attributes(
+        DomainParticipantExtendedQos& extended_qos,
+        const eprosima::fastdds::ParticipantAttributes& attr)
+{
+    extended_qos.domainId() = attr.domainId;
+    set_qos_from_attributes(extended_qos, attr.rtps);
+}
+
 void set_attributes_from_qos(
         fastdds::rtps::RTPSParticipantAttributes& attr,
         const DomainParticipantQos& qos)
@@ -211,6 +219,14 @@ void set_attributes_from_qos(
 #if HAVE_SECURITY
     attr.security_log_thread = qos.security_log_thread();
 #endif // if HAVE_SECURITY
+}
+
+void set_attributes_from_extended_qos(
+        eprosima::fastdds::ParticipantAttributes& attr,
+        const DomainParticipantExtendedQos& extended_qos)
+{
+    attr.domainId = extended_qos.domainId();
+    set_attributes_from_qos(attr.rtps, extended_qos);
 }
 
 void set_qos_from_attributes(
