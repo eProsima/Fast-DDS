@@ -1186,6 +1186,11 @@ TEST(RTPS, participant_ignore_local_endpoints_two_participants)
 TEST(RTPS, max_output_message_size_participant)
 {
     /* Set up */
+    // Create the RTPSReader
+    RTPSWithRegistrationReader<Data1mbPubSubType> reader(TEST_TOPIC_NAME);
+    reader.init();
+    EXPECT_TRUE(reader.isInitialized());
+
     // Create the RTPSParticipants with the appropriate value for the property
     auto testTransport =  std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
     const uint32_t segment_size = 1470;
@@ -1193,13 +1198,9 @@ TEST(RTPS, max_output_message_size_participant)
     testTransport->messages_filter_ = [segment_size](eprosima::fastrtps::rtps::CDRMessage_t& datagram)
             {
                 EXPECT_LE(datagram.length, segment_size);
+                // Never drop samples
                 return false;
             };
-
-    // Create the RTPSReader
-    RTPSWithRegistrationReader<Data1mbPubSubType> reader(TEST_TOPIC_NAME);
-    reader.init();
-    EXPECT_TRUE(reader.isInitialized());
 
     eprosima::fastrtps::rtps::RTPSParticipantAttributes patt;
     patt.useBuiltinTransports = false;
@@ -1245,11 +1246,12 @@ TEST(RTPS, max_output_message_size_writer)
     testTransport->messages_filter_ = [segment_size](eprosima::fastrtps::rtps::CDRMessage_t& datagram)
             {
                 EXPECT_LE(datagram.length, segment_size);
+                // Never drop samples
                 return false;
             };
     RTPSWithRegistrationWriter<Data1mbPubSubType> writer(TEST_TOPIC_NAME);
-    writer.add_property("fastdds.max_message_size",
-            segment_size_str).disable_builtin_transport().add_user_transport_to_pparams(testTransport).init();
+    writer.add_property("fastdds.max_message_size", segment_size_str).
+            disable_builtin_transport().add_user_transport_to_pparams(testTransport).init();
     ASSERT_TRUE(writer.isInitialized());
 
     RTPSWithRegistrationReader<Data1mbPubSubType> reader(TEST_TOPIC_NAME);
