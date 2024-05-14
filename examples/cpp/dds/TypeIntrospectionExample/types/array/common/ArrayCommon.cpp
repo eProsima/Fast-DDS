@@ -13,40 +13,62 @@
 // limitations under the License.
 
 /**
- * @file ComplexCode.h
+ * @file ArrayCommon.cpp
  *
  */
 
-#include <fastrtps/types/DynamicDataPtr.h>
-#include <fastrtps/types/DynamicDataFactory.h>
-#include <fastrtps/types/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/DynamicTypeBuilderPtr.h>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
 
 #include "../../types.hpp"
+#include "../gen/Array.hpp"
+#include "../gen/ArrayTypeObjectSupport.hpp"
 
-using namespace eprosima::fastrtps;
+using namespace eprosima::fastdds::dds;
 
 template <>
-eprosima::fastrtps::types::DynamicData_ptr get_data_by_type<DataTypeKind::ARRAY>(
+void* get_data_by_type_support<DataTypeKind::ARRAY>(
         const unsigned int& index,
-        eprosima::fastrtps::types::DynamicType_ptr dyn_type)
+        TypeSupport type_support)
 {
-    // Create and initialize new data
-    eprosima::fastrtps::types::DynamicData_ptr new_data;
-    new_data = eprosima::fastrtps::types::DynamicDataFactory::get_instance()->create_data(dyn_type);
+    Array_TypeIntrospectionExample* new_data = (Array_TypeIntrospectionExample*)type_support.create_data();
 
     // Set index
-    new_data->set_uint32_value(index, 0);
+    new_data->index(index);
+
+    // Set points
+    std::array<int32_t, 3> points = {index + 1, index * 0.5, index * -1};
+    new_data->points(points);
+
+    return new_data;
+}
+
+template <>
+void* get_dynamic_data_by_type_support<DataTypeKind::ARRAY>(
+        const unsigned int& index,
+        TypeSupport type_support)
+{
+    DynamicData::_ref_type* new_data_ptr = reinterpret_cast<DynamicData::_ref_type*>(type_support.create_data());
+
+    DynamicData::_ref_type new_data = *new_data_ptr;
+
+    // Set index
+    new_data->set_uint32_value(0, index);
 
     // Set points (it requires to loan the array)
-    eprosima::fastrtps::types::DynamicData* array = new_data->loan_value(1);
+    traits<DynamicData>::ref_type array = new_data->loan_value(1);
 
-    array->set_int32_value(index + 1, 0);
-    array->set_int32_value(index * 0.5, 1);
-    array->set_int32_value(index * -1, 2);
+    array->set_int32_value(0, index + 1);
+    array->set_int32_value(1, index * 0.5);
+    array->set_int32_value(2, index * -1);
 
     new_data->return_loaned_value(array);
 
-    // Return data
-    return new_data;
+    return new_data_ptr;
+}
+
+template <>
+void register_type_object_representation_gen<DataTypeKind::ARRAY>()
+{
+    register_Array_type_objects();
 }

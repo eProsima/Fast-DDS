@@ -13,49 +13,81 @@
 // limitations under the License.
 
 /**
- * @file ComplexCode.h
+ * @file PlainCommon.cpp
  *
  */
 
-#include <fastrtps/types/DynamicDataPtr.h>
-#include <fastrtps/types/DynamicDataFactory.h>
-#include <fastrtps/types/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/DynamicTypeBuilderPtr.h>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
 
 #include "../../types.hpp"
+#include "../gen/Plain.hpp"
+#include "../gen/PlainTypeObjectSupport.hpp"
 
-using namespace eprosima::fastrtps;
+using namespace eprosima::fastdds::dds;
 
 template <>
-eprosima::fastrtps::types::DynamicData_ptr get_data_by_type<DataTypeKind::PLAIN>(
+void* get_data_by_type_support<DataTypeKind::PLAIN>(
         const unsigned int& index,
-        eprosima::fastrtps::types::DynamicType_ptr dyn_type)
+        TypeSupport type_support)
 {
-    // Create and initialize new data
-    eprosima::fastrtps::types::DynamicData_ptr new_data;
-    new_data = eprosima::fastrtps::types::DynamicDataFactory::get_instance()->create_data(dyn_type);
+    Plain_TypeIntrospectionExample* new_data = (Plain_TypeIntrospectionExample*)type_support.create_data();
 
     // Set index
-    new_data->set_uint32_value(index, 0);
+    new_data->index(index);
 
-    // Set message (it requires to loan the array)
-    eprosima::fastrtps::types::DynamicData* char_array = new_data->loan_value(1);
+    // Set message
+    std::array<char, 20> message;
+    std::string msg_string = "Hello World " + std::to_string(index % 100000);
+    unsigned int i = 0;
+    for (const char& c : msg_string)
+    {
+        message[i++] = c;
+    }
+    for (;i < 20; i++)
+    {
+        message[i] = '_';
+    }
+    new_data->message(message);
+
+    return new_data;
+}
+
+template <>
+void* get_dynamic_data_by_type_support<DataTypeKind::PLAIN>(
+        const unsigned int& index,
+        TypeSupport type_support)
+{
+    DynamicData::_ref_type* new_data_ptr = reinterpret_cast<DynamicData::_ref_type*>(type_support.create_data());
+
+    DynamicData::_ref_type new_data = *new_data_ptr;
+
+    // Set index
+    new_data->set_uint32_value(0, index);
+
+    // Set points (it requires to loan the array)
+    traits<DynamicData>::ref_type char_array = new_data->loan_value(1);
 
     std::string msg_string = "Hello World " + std::to_string(index % 100000);
 
     unsigned int i = 0;
     for (const char& c : msg_string)
     {
-        char_array->set_char8_value(c, i++);
+        char_array->set_char8_value(i++, c);
     }
 
-    for (; i < 20; i++)
+    for (;i < 20; i++)
     {
-        char_array->set_char8_value('_', i);
+        char_array->set_char8_value(i, '_');
     }
 
     new_data->return_loaned_value(char_array);
 
-    // Return data
-    return new_data;
+    return new_data_ptr;
+}
+
+template <>
+void register_type_object_representation_gen<DataTypeKind::PLAIN>()
+{
+    register_Plain_type_objects();
 }

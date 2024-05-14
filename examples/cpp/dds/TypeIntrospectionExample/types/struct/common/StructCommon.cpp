@@ -13,40 +13,65 @@
 // limitations under the License.
 
 /**
- * @file ComplexCode.h
+ * @file StructCommon.cpp
  *
  */
 
-#include <fastrtps/types/DynamicDataPtr.h>
-#include <fastrtps/types/DynamicDataFactory.h>
-#include <fastrtps/types/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/DynamicTypeBuilderPtr.h>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
 
 #include "../../types.hpp"
+#include "../gen/Struct.hpp"
+#include "../gen/StructTypeObjectSupport.hpp"
 
-using namespace eprosima::fastrtps;
+using namespace eprosima::fastdds::dds;
 
 template <>
-eprosima::fastrtps::types::DynamicData_ptr get_data_by_type<DataTypeKind::STRUCT>(
+void* get_data_by_type_support<DataTypeKind::STRUCT>(
         const unsigned int& index,
-        eprosima::fastrtps::types::DynamicType_ptr dyn_type)
+        TypeSupport type_support)
 {
-    // Create and initialize new data
-    eprosima::fastrtps::types::DynamicData_ptr new_data;
-    new_data = eprosima::fastrtps::types::DynamicDataFactory::get_instance()->create_data(dyn_type);
+    Struct_TypeIntrospectionExample* new_data = (Struct_TypeIntrospectionExample*)type_support.create_data();
 
     // Set index
-    new_data->set_uint32_value(index, 0);
+    new_data->index(index);
 
-    // Set internal points (it requires to loan the array)
-    eprosima::fastrtps::types::DynamicData* internal_struct = new_data->loan_value(1);
+    // Set internal data
+    InternalStruct_TypeIntrospectionExample internal_data;
+    internal_data.x_member(index + 1);
+    internal_data.y_member(index * 0.5);
+    internal_data.z_member(index * -1);
+    new_data->internal_data(internal_data);
 
-    internal_struct->set_int32_value(index + 1, 0);
-    internal_struct->set_int32_value(index * 0.5, 1);
-    internal_struct->set_int32_value(index * -1, 2);
+    return new_data;
+}
+
+template <>
+void* get_dynamic_data_by_type_support<DataTypeKind::STRUCT>(
+        const unsigned int& index,
+        TypeSupport type_support)
+{
+    DynamicData::_ref_type* new_data_ptr = reinterpret_cast<DynamicData::_ref_type*>(type_support.create_data());
+
+    DynamicData::_ref_type new_data = *new_data_ptr;
+
+    // Set index
+    new_data->set_uint32_value(0, index);
+
+    // Set internal data (it requires to loan the struct)
+    traits<DynamicData>::ref_type internal_struct = new_data->loan_value(1);
+
+    internal_struct->set_int32_value(0, index + 1);
+    internal_struct->set_int32_value(1, index * 0.5);
+    internal_struct->set_int32_value(2, index * -1);
 
     new_data->return_loaned_value(internal_struct);
 
-    // Return data
-    return new_data;
+    return new_data_ptr;
+}
+
+template <>
+void register_type_object_representation_gen<DataTypeKind::STRUCT>()
+{
+    register_Struct_type_objects();
 }

@@ -14,7 +14,7 @@
     <type>
         <struct name="ComplexSequence_TypeIntrospectionExample">
             <member name="index" type="uint32"/>
-            <member name="internal_data" type="nonBasic" nonBasicTypeName="InternalSequencePoints_TypeIntrospectionExample" sequenceMaxLength="0"/>
+            <member name="internal_data" type="nonBasic" nonBasicTypeName="InternalSequencePoints_TypeIntrospectionExample" sequenceMaxLength="-1"/>
             <member name="messages" type="nonBasic" nonBasicTypeName="InternalSequenceMessage_TypeIntrospectionExample" sequenceMaxLength="2"/>
         </struct>
     </type>

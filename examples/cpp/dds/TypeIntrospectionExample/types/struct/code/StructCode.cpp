@@ -13,46 +13,80 @@
 // limitations under the License.
 
 /**
- * @file ArrayCode.cpp
+ * @file StructCode.cpp
  *
  */
 
-#include <fastrtps/types/DynamicDataPtr.h>
-#include <fastrtps/types/DynamicDataFactory.h>
-#include <fastrtps/types/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/DynamicTypeBuilderPtr.h>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilder.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilderFactory.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/TypeDescriptor.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicPubSubType.hpp>
 
 #include "../../types.hpp"
 
-using namespace eprosima::fastrtps;
+using namespace eprosima::fastdds::dds;
 
 template <>
-eprosima::fastrtps::types::DynamicType_ptr
-DataType<DataTypeKind::STRUCT, GeneratorKind::CODE>::generate_type_() const
+void
+DataType<DataTypeKind::STRUCT, GeneratorKind::CODE>::generate_type_support_()
 {
     // Tmp variable to avoid calling get_instance many times
-    types::DynamicTypeBuilderFactory* builder_factory =
-            types::DynamicTypeBuilderFactory::get_instance();
+    auto builder_factory = DynamicTypeBuilderFactory::get_instance();
 
     /////
     // Internal data structure
-    types::DynamicTypeBuilder_ptr internal_builder =
-            types::DynamicTypeBuilderFactory::get_instance()->create_struct_builder();
-    internal_builder->add_member(0, "x_member", types::DynamicTypeBuilderFactory::get_instance()->create_int32_type());
-    internal_builder->add_member(1, "y_member", types::DynamicTypeBuilderFactory::get_instance()->create_int32_type());
-    internal_builder->add_member(2, "z_member", types::DynamicTypeBuilderFactory::get_instance()->create_int32_type());
+    TypeDescriptor::_ref_type internal_data_type_descriptor {traits<TypeDescriptor>::make_shared()};
+    internal_data_type_descriptor->kind(TK_STRUCTURE);
+    internal_data_type_descriptor->name("InternalData");
+    auto internal_data_builder = builder_factory->create_type(internal_data_type_descriptor);
+
+    // x member
+    MemberDescriptor::_ref_type x_descriptor {traits<MemberDescriptor>::make_shared()};
+    x_descriptor->id(0);
+    x_descriptor->name("x_member");
+    x_descriptor->type(builder_factory->get_primitive_type(TK_INT32));
+    internal_data_builder->add_member(x_descriptor);
+
+    // y member
+    MemberDescriptor::_ref_type y_descriptor {traits<MemberDescriptor>::make_shared()};
+    y_descriptor->id(1);
+    y_descriptor->name("y_member");
+    y_descriptor->type(builder_factory->get_primitive_type(TK_INT32));
+    internal_data_builder->add_member(y_descriptor);
+
+    // z member
+    MemberDescriptor::_ref_type z_descriptor {traits<MemberDescriptor>::make_shared()};
+    z_descriptor->id(2);
+    z_descriptor->name("z_member");
+    z_descriptor->type(builder_factory->get_primitive_type(TK_INT32));
+    internal_data_builder->add_member(z_descriptor);
 
     /////
-    // Base structure
-    types::DynamicTypeBuilder_ptr builder = builder_factory->create_struct_builder();
-    builder->add_member(0, "index", builder_factory->create_uint32_type());
-    builder->add_member(1, "internal_data", internal_builder->build());
+    // Main Data structure
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    type_descriptor->kind(TK_STRUCTURE);
+    type_descriptor->name(STRUCT_DATA_TYPE_NAME);
+    auto builder = builder_factory->create_type(type_descriptor);
 
-    // Set name
-    builder->set_name(STRUCT_DATA_TYPE_NAME);
+    /////
+    // Add values
+
+    // Index
+    MemberDescriptor::_ref_type index_descriptor {traits<MemberDescriptor>::make_shared()};
+    index_descriptor->id(0);
+    index_descriptor->name("index");
+    index_descriptor->type(builder_factory->get_primitive_type(TK_UINT32));
+    builder->add_member(index_descriptor);
+
+    // Internal data
+    MemberDescriptor::_ref_type internal_data_member_descriptor {traits<MemberDescriptor>::make_shared()};
+    internal_data_member_descriptor->id(1);
+    internal_data_member_descriptor->name("internal_data");
+    internal_data_member_descriptor->type(internal_data_builder->build());
+    builder->add_member(internal_data_member_descriptor);
 
     // Create Dynamic type
-    types::DynamicType_ptr dyn_type = builder->build();
+    auto dynamic_type = builder->build();
 
-    return dyn_type;
+    type_support_.reset(new DynamicPubSubType(dynamic_type));
 }

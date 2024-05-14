@@ -17,36 +17,48 @@
  *
  */
 
-#include <fastrtps/types/DynamicDataPtr.h>
-#include <fastrtps/types/DynamicDataFactory.h>
-#include <fastrtps/types/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/DynamicTypeBuilderPtr.h>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilder.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilderFactory.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/TypeDescriptor.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicPubSubType.hpp>
 
 #include "../../types.hpp"
 
-using namespace eprosima::fastrtps;
+using namespace eprosima::fastdds::dds;
 
 template <>
-eprosima::fastrtps::types::DynamicType_ptr
-DataType<DataTypeKind::HELLO_WORLD, GeneratorKind::CODE>::generate_type_() const
+void
+DataType<DataTypeKind::HELLO_WORLD, GeneratorKind::CODE>::generate_type_support_()
 {
     // Tmp variable to avoid calling get_instance many times
-    types::DynamicTypeBuilderFactory* builder_factory =
-            types::DynamicTypeBuilderFactory::get_instance();
+    auto builder_factory = DynamicTypeBuilderFactory::get_instance();
 
     /////
     // Main Data structure
-    types::DynamicTypeBuilder_ptr builder =
-            builder_factory->create_struct_builder();
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    type_descriptor->kind(TK_STRUCTURE);
+    type_descriptor->name(HELLO_WORLD_DATA_TYPE_NAME);
+    auto builder = builder_factory->create_type(type_descriptor);
 
+    /////
     // Add values
-    builder->add_member(0, "index", builder_factory->create_uint32_type());
-    builder->add_member(1, "message", builder_factory->create_string_type());
 
-    builder->set_name(HELLO_WORLD_DATA_TYPE_NAME);
+    // Index
+    MemberDescriptor::_ref_type index_descriptor {traits<MemberDescriptor>::make_shared()};
+    index_descriptor->id(0);
+    index_descriptor->name("index");
+    index_descriptor->type(builder_factory->get_primitive_type(TK_UINT32));
+    builder->add_member(index_descriptor);
+
+    // Message
+    MemberDescriptor::_ref_type message_descriptor {traits<MemberDescriptor>::make_shared()};
+    message_descriptor->id(1);
+    message_descriptor->name("message");
+    message_descriptor->type(builder_factory->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
+    builder->add_member(message_descriptor);
 
     // Create Dynamic type
-    types::DynamicType_ptr dyn_type = builder->build();
+    auto dynamic_type = builder->build();
 
-    return dyn_type;
+    type_support_.reset(new DynamicPubSubType(dynamic_type));
 }

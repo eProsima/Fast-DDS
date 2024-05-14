@@ -37,8 +37,10 @@ constexpr const char* KEY_DATA_TYPE_ARG = "key";
 constexpr const char* COMPLEX_ARRAY_DATA_TYPE_ARG = "complex_array";
 constexpr const char* COMPLEX_SEQUENCE_DATA_TYPE_ARG = "complex_seq";
 constexpr const char* SUPER_COMPLEX_DATA_TYPE_ARG = "super_complex";
+constexpr const char* DATA_TEST_DATA_TYPE_ARG = "data_test";
 
 constexpr const char* GENERATOR_DATA_TYPE_GEN_ARG = "gen";
+constexpr const char* GENERATOR_DATA_TYPE_GEN_DYN_ARG = "gen_dyn";
 constexpr const char* GENERATOR_DATA_TYPE_CODE_ARG = "code";
 constexpr const char* GENERATOR_DATA_TYPE_XML_ARG = "xml";
 
@@ -132,7 +134,8 @@ struct Arg : public option::Arg
                     data_type != KEY_DATA_TYPE_ARG &&
                     data_type != COMPLEX_ARRAY_DATA_TYPE_ARG &&
                     data_type != COMPLEX_SEQUENCE_DATA_TYPE_ARG &&
-                    data_type != SUPER_COMPLEX_DATA_TYPE_ARG)
+                    data_type != SUPER_COMPLEX_DATA_TYPE_ARG &&
+                    data_type != DATA_TEST_DATA_TYPE_ARG)
             {
                 if (msg)
                 {
@@ -158,12 +161,13 @@ struct Arg : public option::Arg
         {
             std::string data_type = std::string(option.arg);
             if (data_type != GENERATOR_DATA_TYPE_GEN_ARG &&
+                    data_type != GENERATOR_DATA_TYPE_GEN_DYN_ARG &&
                     data_type != GENERATOR_DATA_TYPE_CODE_ARG &&
                     data_type != GENERATOR_DATA_TYPE_XML_ARG)
             {
                 if (msg)
                 {
-                    print_error("Option '", option, "' only accepts <gen|xml|code> values\n");
+                    print_error("Option '", option, "' only accepts <gen|gen_dyn|xml|code> values\n");
                 }
                 return option::ARG_ILLEGAL;
             }
@@ -187,9 +191,6 @@ enum optionIndex
     DATA_TYPE,
     DATA_TYPE_GENERATOR,
     SAMPLES,
-    TYPE_OBJECT,
-    TYPE_INFORMATION,
-    TYPE_INFORMATION_DISABLE,
 };
 
 const option::Descriptor usage[] = {
@@ -216,20 +217,15 @@ const option::Descriptor usage[] = {
     },
     { DATA_TYPE_GENERATOR, 0, "g", "generator",                  Arg::Generator,
       "  -g <generator_name> \t--generator=<generator_name>  \tData Type Generator (Default: gen). "
-      "gen   -> Use IDL file and Fast DDS Gen to generate Data Type introspection information. "
-      "xml   -> Use XML file to generate Data Type introspection information. "
-      "code  -> Use DynamicTypes API to generate Data Type introspection information. "
+      "gen      -> Use IDL file and Fast DDS Gen to generate Data Type introspection information. Publication of struct generated with Fast DDS Gen."
+      "gen_dyn  -> Use IDL file and Fast DDS Gen to generate Data Type introspection information. Publication of DynamicData."
+      "xml      -> Use XML file to generate Data Type introspection information. "
+      "code     -> Use DynamicTypes API to generate Data Type introspection information. "
     },
     { DOMAIN_ID, 0, "d", "domain",                Arg::Numeric,
       "  -d <id> \t--domain=<id>  \tDDS domain ID (Default: 0)." },
     { SAMPLES, 0, "s", "samples",              Arg::Numeric,
       "  -s <num> \t--samples=<num>  \tNumber of samples to send (Default: 0 => infinite samples)." },
-    { TYPE_OBJECT, 0, "o", "type-object",              Arg::None,
-      "  -o \t--type-object=  \tUse Type Object to send Data Type Introspection info." },
-    { TYPE_INFORMATION, 1, "i", "type-information",              Arg::None,
-      "  -i \t--type-information=  \tUse Type Information to send Data Type Introspection info." },
-    { TYPE_INFORMATION_DISABLE, 0, "i", "type-information-disable",              Arg::None,
-      "     \t--type-information-disable=  \tDeactivate Type Information to send Data Type Introspection info." },
     { UNKNOWN_OPT, 0, "", "",                Arg::None,      "\nSubscriber options:"},
 
     { TOPIC_NAME, 0, "t", "topic",                  Arg::String,
@@ -238,12 +234,6 @@ const option::Descriptor usage[] = {
       "  -d <id> \t--domain=<id>  \tDDS domain ID (Default: 0)." },
     { SAMPLES, 0, "s", "samples",              Arg::Numeric,
       "  -s <num> \t--samples=<num>  \tNumber of samples to wait for (Default: 0 => infinite samples)." },
-    { TYPE_OBJECT, 0, "o", "type-object",              Arg::None,
-      "  -o \t--type-object=  \tUse Type Object to send Data Type Introspection info." },
-    { TYPE_INFORMATION, 1, "i", "type-information",              Arg::None,
-      "  -i \t--type-information=  \tUse Type Information to send Data Type Introspection info." },
-    { TYPE_INFORMATION_DISABLE, 0, "i", "type-information-disable",              Arg::None,
-      "     \t--type-information-disable=  \tDeactivate Type Information to send Data Type Introspection info." },
 
     { 0, 0, 0, 0, 0, 0 }
 };

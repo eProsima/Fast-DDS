@@ -17,43 +17,52 @@
  *
  */
 
-#include <fastrtps/types/DynamicDataPtr.h>
-#include <fastrtps/types/DynamicDataFactory.h>
-#include <fastrtps/types/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/DynamicTypeBuilderPtr.h>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilder.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilderFactory.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/TypeDescriptor.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicPubSubType.hpp>
 
 #include "../../types.hpp"
 
-using namespace eprosima::fastrtps;
+using namespace eprosima::fastdds::dds;
 
 template <>
-eprosima::fastrtps::types::DynamicType_ptr
-DataType<DataTypeKind::PLAIN, GeneratorKind::CODE>::generate_type_() const
+void
+DataType<DataTypeKind::PLAIN, GeneratorKind::CODE>::generate_type_support_()
 {
     // Tmp variable to avoid calling get_instance many times
-    types::DynamicTypeBuilderFactory* builder_factory =
-            types::DynamicTypeBuilderFactory::get_instance();
+    auto builder_factory = DynamicTypeBuilderFactory::get_instance();
 
     /////
     // Array internal data structure
-    types::DynamicTypeBuilder_ptr array_builder =
-            types::DynamicTypeBuilderFactory::get_instance()->create_array_builder(
-        builder_factory->create_char8_type(),
-        {20});
+    auto array_builder =
+        builder_factory->create_array_type(
+            builder_factory->get_primitive_type(TK_CHAR8),
+            {20});
 
     /////
-    // Main Data structure
-    types::DynamicTypeBuilder_ptr builder = builder_factory->create_struct_builder();
+    // Base structure
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    type_descriptor->kind(TK_STRUCTURE);
+    type_descriptor->name(PLAIN_DATA_TYPE_NAME);
+    auto builder = builder_factory->create_type(type_descriptor);
 
-    // Add values
-    builder->add_member(0, "index", builder_factory->create_uint32_type());
-    builder->add_member(1, "message", array_builder->build());
+    // Index
+    MemberDescriptor::_ref_type index_descriptor {traits<MemberDescriptor>::make_shared()};
+    index_descriptor->id(0);
+    index_descriptor->name("index");
+    index_descriptor->type(builder_factory->get_primitive_type(TK_UINT32));
+    builder->add_member(index_descriptor);
 
-    // Set name
-    builder->set_name(PLAIN_DATA_TYPE_NAME);
+    // Message
+    MemberDescriptor::_ref_type message_descriptor {traits<MemberDescriptor>::make_shared()};
+    message_descriptor->id(1);
+    message_descriptor->name("message");
+    message_descriptor->type(array_builder->build());
+    builder->add_member(message_descriptor);
 
     // Create Dynamic type
-    types::DynamicType_ptr dyn_type = builder->build();
+    auto dynamic_type = builder->build();
 
-    return dyn_type;
+    type_support_.reset(new DynamicPubSubType(dynamic_type));
 }

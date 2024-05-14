@@ -2,7 +2,7 @@
     <type>
         <struct name="Sequence_TypeIntrospectionExample">
             <member name="index" type="uint32"/>
-            <member name="points" type="int32" sequenceMaxLength="0"/>
+            <member name="points" type="int32" sequenceMaxLength="-1"/>
         </struct>
     </type>
 </types>

@@ -76,6 +76,7 @@ target_sources(fastdds-xtypes-dynamic-types-impl INTERFACE
     dynamic_types/TypeDescriptorImpl.hpp
     dynamic_types/VerbatimTextDescriptorImpl.cpp
     dynamic_types/VerbatimTextDescriptorImpl.hpp
+    utils.cpp
     )
 
 target_link_libraries(fastdds-xtypes-dynamic-types-impl INTERFACE fastdds-xtypes-dynamic-types-api)

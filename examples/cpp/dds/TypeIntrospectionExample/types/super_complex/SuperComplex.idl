@@ -28,7 +28,7 @@ struct InternalMessage_TypeIntrospectionExample
 
 struct SuperComplex_TypeIntrospectionExample
 {
-	unsigned long index;
+    unsigned long index;
     InternalPoints_TypeIntrospectionExample main_point;
     sequence<InternalPoints_TypeIntrospectionExample> internal_data;
     sequence<InternalPoints_TypeIntrospectionExample, 3> internal_data_bounded;

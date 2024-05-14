@@ -60,9 +60,8 @@ int main(
     GeneratorKind generator_kind = GeneratorKind::GEN;
     int count = 0;
     int domain = 0;
-    bool use_type_object = false;
-    bool use_type_information = true;
 
+    // TODO: parametrize sleep
     long sleep = 1000; // This is not set by configuration
 
     if (argc > 1)
@@ -162,6 +161,10 @@ int main(
                     {
                         data_type = DataTypeKind::SUPER_COMPLEX;
                     }
+                    else if (strcmp(opt.arg, DATA_TEST_DATA_TYPE_ARG) == 0)
+                    {
+                        data_type = DataTypeKind::DATA_TEST;
+                    }
                     else
                     {
                         std::cerr << "ERROR: incorrect Data Type." << std::endl;
@@ -174,6 +177,10 @@ int main(
                     if (strcmp(opt.arg, GENERATOR_DATA_TYPE_GEN_ARG) == 0)
                     {
                         generator_kind = GeneratorKind::GEN;
+                    }
+                    else if (strcmp(opt.arg, GENERATOR_DATA_TYPE_GEN_DYN_ARG) == 0)
+                    {
+                        generator_kind = GeneratorKind::GEN_DYN;
                     }
                     else if (strcmp(opt.arg, GENERATOR_DATA_TYPE_CODE_ARG) == 0)
                     {
@@ -194,18 +201,6 @@ int main(
                     count = strtol(opt.arg, nullptr, 10);
                     break;
 
-                case optionIndex::TYPE_OBJECT:
-                    use_type_object = true;
-                    break;
-
-                case optionIndex::TYPE_INFORMATION:
-                    use_type_information = true;
-                    break;
-
-                case optionIndex::TYPE_INFORMATION_DISABLE:
-                    use_type_information = false;
-                    break;
-
                 case optionIndex::UNKNOWN_OPT:
                     std::cerr << "ERROR: " << opt.name << " is not a valid argument." << std::endl;
                     option::printUsage(fwrite, stdout, usage, columns);
@@ -221,24 +216,6 @@ int main(
         return 1;
     }
 
-    if (!use_type_information && !use_type_object)
-    {
-        std::cerr <<
-            "ERROR: type-object and type-information argument are disabled. " <<
-            "Subscriber will not be able to receive Data Type and read messages." <<
-            std::endl;
-        return 1;
-    }
-
-    if (use_type_information && use_type_object)
-    {
-        std::cerr <<
-            "ERROR: type-object and type-information argument are activated. " <<
-            "Subscriber will not be able to receive Data Type and read messages." <<
-            std::endl;
-        return 1;
-    }
-
     try
     {
         switch (type)
@@ -250,9 +227,7 @@ int main(
                     topic_name,
                     static_cast<uint32_t>(domain),
                     data_type,
-                    generator_kind,
-                    use_type_object,
-                    use_type_information);
+                    generator_kind);
 
                 // Run Participant
                 mypub.run(static_cast<uint32_t>(count), static_cast<uint32_t>(sleep));
@@ -264,9 +239,7 @@ int main(
                 // Create Subscriber
                 TypeIntrospectionSubscriber mysub(
                     topic_name,
-                    static_cast<uint32_t>(domain),
-                    use_type_object,
-                    use_type_information);
+                    static_cast<uint32_t>(domain));
 
                 // Run Participant
                 mysub.run(static_cast<uint32_t>(count));

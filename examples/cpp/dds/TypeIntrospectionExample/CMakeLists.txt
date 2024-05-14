@@ -1,4 +1,4 @@
-# Copyright 2021 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+# Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,28 +12,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-cmake_minimum_required(VERSION 2.8.12)
+cmake_minimum_required(VERSION 3.20)
 
-if(NOT CMAKE_VERSION VERSION_LESS 3.0)
-    cmake_policy(SET CMP0048 NEW)
-    cmake_policy(SET CMP0028 NEW)
-endif()
-
-project(TypeIntrospectionExample)
+project(TypeIntrospectionExample VERSION 1 LANGUAGES CXX)
 
 # Find requirements
 if(NOT fastcdr_FOUND)
-    find_package(fastcdr REQUIRED)
+    find_package(fastcdr 2 REQUIRED)
 endif()
 
-if(NOT fastrtps_FOUND)
-    find_package(fastrtps REQUIRED)
+if(NOT fastdds_FOUND)
+    find_package(fastdds 3 REQUIRED)
 endif()
 
 #Check C++11
 include(CheckCXXCompilerFlag)
-if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANG OR
-        CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     check_cxx_compiler_flag(-std=c++11 SUPPORTS_CXX11)
     if(NOT SUPPORTS_CXX11)
         message(FATAL_ERROR "Compiler doesn't support C++11")
@@ -45,12 +39,6 @@ message(STATUS "Configuring TypeIntrospection example...")
 
 file(GLOB IMPLEMENTATION_SOURCES_CPP "*.cpp")
 file(GLOB DATATYPEBASE_SOURCES_CPP "types/*.cpp")
-# file(GLOB DATATYPE_HELLOWORLD_SOURCES_CPP "types/hello_world/**/*.cpp")
-# file(GLOB DATATYPE_HELLOWORLD_SOURCES_CXX "types/hello_world/**/*.cxx")
-# file(GLOB DATATYPE_ARRAY_SOURCES_CPP "types/array/**/*.cpp")
-# file(GLOB DATATYPE_ARRAY_SOURCES_CXX "types/array/**/*.cxx")
-# file(GLOB DATATYPE_STRUCT_SOURCES_CPP "types/struct/**/*.cpp")
-# file(GLOB DATATYPE_STRUCT_SOURCES_CXX "types/struct/**/*.cxx")
 file(GLOB DATATYPE_SOURCES_CPP "types/**/**/*.cpp")
 file(GLOB DATATYPE_SOURCES_CXX "types/**/**/*.cxx")
 
@@ -68,10 +56,9 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
 )
-target_link_libraries(${PROJECT_NAME} fastrtps fastcdr fastdds::optionparser)
+target_link_libraries(${PROJECT_NAME} fastdds fastcdr fastdds::optionparser)
 install(TARGETS ${PROJECT_NAME}
     RUNTIME DESTINATION examples/cpp/dds/${PROJECT_NAME}/${BIN_INSTALL_DIR})
-
 
 file(GLOB DATATYPE_XML "types/**/xml/*.xml")
 
@@ -80,5 +67,5 @@ file(
     COPY
         ${DATATYPE_XML}
     DESTINATION
-        ${PROJECT_BINARY_DIR}
+        ${PROJECT_BINARY_DIR}/xml
     )

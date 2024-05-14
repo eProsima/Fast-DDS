@@ -1,5 +1,5 @@
 struct HelloWorld_TypeIntrospectionExample
 {
-	unsigned long index;
-	string message;
+    unsigned long index;
+    string message;
 };

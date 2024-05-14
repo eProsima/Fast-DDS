@@ -13,7 +13,7 @@ struct InternalArrayMessage_TypeIntrospectionExample
 
 struct ComplexArray_TypeIntrospectionExample
 {
-	unsigned long index;
+    unsigned long index;
     InternalArrayPoints_TypeIntrospectionExample internal_data[3];
     InternalArrayMessage_TypeIntrospectionExample messages[2];
 };
