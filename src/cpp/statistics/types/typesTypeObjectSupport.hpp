@@ -50,7 +50,7 @@ namespace detail {
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_eprosima_fastdds_statistics_detail_EntityId_s_type_identifier();
+eProsima_user_DllExport void register_eprosima_fastdds_statistics_detail_EntityId_s_type_identifier();
 
 /**
  * @brief Register eprosima_fastdds_statistics_detail_GuidPrefix_s related TypeIdentifier.
@@ -58,7 +58,7 @@ void register_eprosima_fastdds_statistics_detail_EntityId_s_type_identifier();
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_eprosima_fastdds_statistics_detail_GuidPrefix_s_type_identifier();
+eProsima_user_DllExport void register_eprosima_fastdds_statistics_detail_GuidPrefix_s_type_identifier();
 
 /**
  * @brief Register eprosima_fastdds_statistics_detail_GUID_s related TypeIdentifier.
@@ -66,7 +66,7 @@ void register_eprosima_fastdds_statistics_detail_GuidPrefix_s_type_identifier();
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_eprosima_fastdds_statistics_detail_GUID_s_type_identifier();
+eProsima_user_DllExport void register_eprosima_fastdds_statistics_detail_GUID_s_type_identifier();
 
 /**
  * @brief Register eprosima_fastdds_statistics_detail_SequenceNumber_s related TypeIdentifier.
@@ -74,7 +74,7 @@ void register_eprosima_fastdds_statistics_detail_GUID_s_type_identifier();
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_eprosima_fastdds_statistics_detail_SequenceNumber_s_type_identifier();
+eProsima_user_DllExport void register_eprosima_fastdds_statistics_detail_SequenceNumber_s_type_identifier();
 
 /**
  * @brief Register eprosima_fastdds_statistics_detail_SampleIdentity_s related TypeIdentifier.
@@ -82,7 +82,7 @@ void register_eprosima_fastdds_statistics_detail_SequenceNumber_s_type_identifie
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_eprosima_fastdds_statistics_detail_SampleIdentity_s_type_identifier();
+eProsima_user_DllExport void register_eprosima_fastdds_statistics_detail_SampleIdentity_s_type_identifier();
 
 /**
  * @brief Register eprosima_fastdds_statistics_detail_Locator_s related TypeIdentifier.
@@ -90,7 +90,7 @@ void register_eprosima_fastdds_statistics_detail_SampleIdentity_s_type_identifie
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_eprosima_fastdds_statistics_detail_Locator_s_type_identifier();
+eProsima_user_DllExport void register_eprosima_fastdds_statistics_detail_Locator_s_type_identifier();
 
 } // namespace detail
 
@@ -100,7 +100,7 @@ void register_eprosima_fastdds_statistics_detail_Locator_s_type_identifier();
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_eprosima_fastdds_statistics_DiscoveryTime_type_identifier();
+eProsima_user_DllExport void register_eprosima_fastdds_statistics_DiscoveryTime_type_identifier();
 
 /**
  * @brief Register eprosima_fastdds_statistics_EntityCount related TypeIdentifier.
@@ -108,7 +108,7 @@ void register_eprosima_fastdds_statistics_DiscoveryTime_type_identifier();
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_eprosima_fastdds_statistics_EntityCount_type_identifier();
+eProsima_user_DllExport void register_eprosima_fastdds_statistics_EntityCount_type_identifier();
 
 /**
  * @brief Register eprosima_fastdds_statistics_SampleIdentityCount related TypeIdentifier.
@@ -116,7 +116,7 @@ void register_eprosima_fastdds_statistics_EntityCount_type_identifier();
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_eprosima_fastdds_statistics_SampleIdentityCount_type_identifier();
+eProsima_user_DllExport void register_eprosima_fastdds_statistics_SampleIdentityCount_type_identifier();
 
 /**
  * @brief Register eprosima_fastdds_statistics_Entity2LocatorTraffic related TypeIdentifier.
@@ -124,7 +124,7 @@ void register_eprosima_fastdds_statistics_SampleIdentityCount_type_identifier();
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_eprosima_fastdds_statistics_Entity2LocatorTraffic_type_identifier();
+eProsima_user_DllExport void register_eprosima_fastdds_statistics_Entity2LocatorTraffic_type_identifier();
 
 /**
  * @brief Register eprosima_fastdds_statistics_WriterReaderData related TypeIdentifier.
@@ -132,7 +132,7 @@ void register_eprosima_fastdds_statistics_Entity2LocatorTraffic_type_identifier(
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_eprosima_fastdds_statistics_WriterReaderData_type_identifier();
+eProsima_user_DllExport void register_eprosima_fastdds_statistics_WriterReaderData_type_identifier();
 
 /**
  * @brief Register eprosima_fastdds_statistics_Locator2LocatorData related TypeIdentifier.
@@ -140,7 +140,7 @@ void register_eprosima_fastdds_statistics_WriterReaderData_type_identifier();
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_eprosima_fastdds_statistics_Locator2LocatorData_type_identifier();
+eProsima_user_DllExport void register_eprosima_fastdds_statistics_Locator2LocatorData_type_identifier();
 
 /**
  * @brief Register eprosima_fastdds_statistics_EntityData related TypeIdentifier.
@@ -148,7 +148,7 @@ void register_eprosima_fastdds_statistics_Locator2LocatorData_type_identifier();
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_eprosima_fastdds_statistics_EntityData_type_identifier();
+eProsima_user_DllExport void register_eprosima_fastdds_statistics_EntityData_type_identifier();
 
 /**
  * @brief Register eprosima_fastdds_statistics_PhysicalData related TypeIdentifier.
@@ -156,7 +156,7 @@ void register_eprosima_fastdds_statistics_EntityData_type_identifier();
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_eprosima_fastdds_statistics_PhysicalData_type_identifier();
+eProsima_user_DllExport void register_eprosima_fastdds_statistics_PhysicalData_type_identifier();
 
 namespace EventKind {
 } // namespace EventKind
@@ -167,7 +167,7 @@ namespace EventKind {
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_eprosima_fastdds_statistics_Data_type_identifier();
+eProsima_user_DllExport void register_eprosima_fastdds_statistics_Data_type_identifier();
 
 } // namespace statistics
 

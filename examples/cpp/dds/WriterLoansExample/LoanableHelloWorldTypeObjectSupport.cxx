@@ -200,22 +200,6 @@ void register_LoanableHelloWorld_type_identifier()
                 }
                 CollectionElementFlag element_flags_anonymous_array_char_256 = 0;
                 PlainCollectionHeader header_anonymous_array_char_256 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_array_char_256, element_flags_anonymous_array_char_256);
-                std::string type_id_kind_anonymous_array_char_256("TI_PLAIN_ARRAY_LARGE");
-                if (type_id_kind_anonymous_array_char_256 == "TI_PLAIN_ARRAY_SMALL")
-                {
-                    SBoundSeq array_bound_seq;
-                        TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<SBound>(256));
-
-                    PlainArraySElemDefn array_sdefn = TypeObjectUtils::build_plain_array_s_elem_defn(header_anonymous_array_char_256, array_bound_seq,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_char_256));
-                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_s_array_type_identifier(array_sdefn, "anonymous_array_char_256"))
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_array_char_256 already registered in TypeObjectRegistry for a different type.");
-                    }
-                }
-                else
                 {
                     LBoundSeq array_bound_seq;
                         TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<LBound>(256));

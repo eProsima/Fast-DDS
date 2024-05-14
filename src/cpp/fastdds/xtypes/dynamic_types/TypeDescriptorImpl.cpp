@@ -130,6 +130,7 @@ ReturnCode_t TypeDescriptorImpl::copy_from(
     key_element_type_ = descriptor.key_element_type_;
     extensibility_kind_ = descriptor.extensibility_kind_;
     is_nested_ = descriptor.is_nested_;
+    is_extensibility_set = descriptor.is_extensibility_set;
 
     return RETCODE_OK;
 }
@@ -188,6 +189,33 @@ bool TypeDescriptorImpl::is_consistent() noexcept
             EPROSIMA_LOG_ERROR(DYN_TYPES, "Descriptor type and the base_type are not of the same kind");
             return false;
         }
+
+        // Check extensibility on structures.
+        if (TK_STRUCTURE == kind_)
+        {
+            if (!is_extensibility_set)
+            {
+                extensibility_kind_ = base_type->get_descriptor().extensibility_kind();
+            }
+            else if (extensibility_kind_ != base_type->get_descriptor().extensibility_kind())
+            {
+                EPROSIMA_LOG_ERROR(DYN_TYPES, "ExtensibilityKind is different from that of base type.");
+                return false;
+            }
+        }
+    }
+
+    if (0 < bound_.size() && (
+                TK_ARRAY != kind_     &&
+                TK_BITMASK != kind_   &&
+                TK_BITSET != kind_    &&
+                TK_MAP != kind_       &&
+                TK_SEQUENCE != kind_  &&
+                TK_STRING8 != kind_   &&
+                TK_STRING16 != kind_  ))
+    {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Descriptor describes a type which not support bound");
+        return false;
     }
 
     // Arrays need one or more bound fields with the lenghts of each dimension.
@@ -199,11 +227,11 @@ bool TypeDescriptorImpl::is_consistent() noexcept
 
     // These types need one bound with the length of the field.
     if (1 != bound_.size() && (
-                TK_SEQUENCE == kind_  ||
-                TK_MAP == kind_       ||
                 TK_BITMASK == kind_   ||
+                TK_MAP == kind_       ||
+                TK_SEQUENCE == kind_  ||
                 TK_STRING8 == kind_   ||
-                TK_STRING16 == kind_))
+                TK_STRING16 == kind_  ))
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES,
                 "Descriptor describes an SEQUENCE|MAP|BITMASK|STRING but bound doesn't contain only one element");
@@ -268,19 +296,51 @@ bool TypeDescriptorImpl::is_consistent() noexcept
             }
         }
     }
+    else
+    {
+        if (discriminator_type_)
+        {
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Descriptor doesn't describe an UNION but discriminant_type was set");
+            return false;
+        }
+    }
 
     // ElementType is used by these types to set the "value" type of the element, otherwise it should be null.
-    if (!element_type_ && (
-                TK_ARRAY == kind_    ||
-                TK_SEQUENCE == kind_ ||
-                TK_STRING8 == kind_  ||
-                TK_STRING16 == kind_ ||
-                TK_MAP == kind_      ||
-                TK_BITMASK == kind_))
+    bool is_kind_with_element_type {
+        TK_ARRAY == kind_    ||
+        TK_BITMASK == kind_  ||
+        TK_MAP == kind_      ||
+        TK_SEQUENCE == kind_ ||
+        TK_STRING8 == kind_  ||
+        TK_STRING16 == kind_ };
+    if (!element_type_ && is_kind_with_element_type)
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES,
                 "Descriptor describes an ARRAY|SEQUENCE|MAP|BITMASK|STRING but element_type was not set");
         return false;
+    }
+    else if (element_type_ && !is_kind_with_element_type)
+    {
+        EPROSIMA_LOG_ERROR(DYN_TYPES,
+                "Descriptor not describes an ARRAY|SEQUENCE|MAP|BITMASK|STRING but element_type was set");
+        return false;
+    }
+    else if (element_type_)
+    {
+        TypeKind element_kind =
+                traits<DynamicType>::narrow<DynamicTypeImpl>(element_type_)->resolve_alias_enclosed_type()
+                        ->get_kind();
+
+        if (TK_STRING8 == kind_ && TK_CHAR8 != element_kind)
+        {
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Elemend type of a TK_STRING8 must be TK_CHAR8.");
+            return false;
+        }
+        else if (TK_STRING16 == kind_ && TK_CHAR16 != element_kind)
+        {
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Elemend type of a TK_STRING16 must be TK_CHAR16.");
+            return false;
+        }
     }
 
     // For Bitmask types is mandatory that this element is boolean.
@@ -294,6 +354,11 @@ bool TypeDescriptorImpl::is_consistent() noexcept
     if (TK_MAP == kind_ && !key_element_type_)
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Descriptor describes a MAP but key_element_type was not set");
+        return false;
+    }
+    else if (TK_MAP != kind_ && key_element_type_)
+    {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Descriptor doesn't describe a MAP but key_element_type was set");
         return false;
     }
 

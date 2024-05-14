@@ -56,6 +56,7 @@ ReturnCode_t MemberDescriptorImpl::copy_from(
     is_must_understand_ = descriptor.is_must_understand_;
     is_shared_ = descriptor.is_shared_;
     is_default_label_ = descriptor.is_default_label_;
+    is_try_construct_kind_set_ = descriptor.is_try_construct_kind_set_;
 
     return RETCODE_OK;
 }
@@ -198,6 +199,73 @@ bool MemberDescriptorImpl::is_consistent() noexcept
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Parent type is a BITMASK and the enclosing type is not BOOLEAN");
         return false;
+    }
+
+    // Check is_key built-in annotation.
+    if (is_key_ && TK_STRUCTURE != parent_kind_)
+    {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "is_key is set but parent type of member is not TK_STRUCTURE.");
+        return false;
+    }
+
+    // Check is_must_understand built-in annotation.
+    if (is_must_understand_)
+    {
+        if (TK_STRUCTURE != parent_kind_)
+        {
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "is_must_understand is set but parent type of member is not TK_STRUCTURE.");
+            return false;
+        }
+        else
+        {
+            EPROSIMA_LOG_WARNING(DYN_TYPES, "is_must_understand is not implemented yet.");
+        }
+    }
+
+    // Check is_optional built-in annotation.
+    if (is_optional_)
+    {
+        if (TK_STRUCTURE != parent_kind_)
+        {
+            {
+                EPROSIMA_LOG_ERROR(DYN_TYPES, "is_optional is set but parent type of member is not TK_STRUCTURE.");
+                return false;
+            }
+        }
+        else
+        {
+            EPROSIMA_LOG_WARNING(DYN_TYPES, "is_optional is not implemented yet.");
+        }
+    }
+
+    // Check is_shared built-in annotation.
+    if (is_shared_)
+    {
+        if (TK_STRUCTURE != parent_kind_ && TK_UNION != parent_kind_)
+        {
+            EPROSIMA_LOG_ERROR(DYN_TYPES,
+                    "is_shared is set but parent type of member is not TK_STRUCTURE or TK_UNION.");
+            return false;
+        }
+        else
+        {
+            EPROSIMA_LOG_WARNING(DYN_TYPES, "is_shared is not implemented yet.");
+        }
+    }
+
+    // Check try_construct built-in annotation.
+    if (is_try_construct_kind_set_)
+    {
+        if (TK_STRUCTURE != parent_kind_ && TK_UNION != parent_kind_)
+        {
+            EPROSIMA_LOG_ERROR(DYN_TYPES,
+                    "try_construct_kind is set but parent type of member is not TK_STRUCTURE or TK_UNION.");
+            return false;
+        }
+        else
+        {
+            EPROSIMA_LOG_WARNING(DYN_TYPES, "type_construct_kind is not implemented yet.");
+        }
     }
 
     // TK_MAP member cannot be key.

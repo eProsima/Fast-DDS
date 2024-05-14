@@ -490,7 +490,7 @@ private:
         }
 
         if (MEMBER_ID_INVALID == selected_union_member_ ||
-                (MEMBER_ID_INVALID ==  enclosing_type_->default_union_member() && !ret_value)) // It is selected the implicit default member.
+                (MEMBER_ID_INVALID == enclosing_type_->default_union_member() && !ret_value)) // It is selected the implicit default member.
         {
             ret_value = true;
 

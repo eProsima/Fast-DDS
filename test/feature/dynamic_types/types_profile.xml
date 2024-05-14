@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<types xmlns="http://www.eprosima.com" >
+<!-- Types defined following OMG Extensible and Dynamic Topic types for DDS, DDS-XTypes Version 1.2 -->
+    <type>
+        <enum name="MyEnum">
+            <enumerator name="A" value="0"/>
+            <enumerator name="B" value="1"/>
+            <enumerator name="C" value="2"/>
+        </enum>
+    </type>
+    <type>
+        <typedef name="MyAliasEnum" type="nonBasic" nonBasicTypeName="MyEnum"/>
+    </type>
+    <type>
+        <typedef name="MyAliasAliasEnum" type="nonBasic" nonBasicTypeName="MyAliasEnum"/>
+    </type>
+    <type>
+        <struct name="EnumStruct">
+            <member name="my_enum" type="nonBasic" nonBasicTypeName="MyEnum"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="AliasStruct">
+            <member name="my_alias" type="nonBasic" nonBasicTypeName="MyAliasEnum"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="AliasAliasStruct">
+            <member name="my_alias_alias" type="nonBasic" nonBasicTypeName="MyAliasAliasEnum"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="BoolStruct">
+            <member name="my_bool" type="boolean"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="OctetStruct">
+            <member name="my_octet" type="byte"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="ShortStruct">
+            <member name="my_int16" type="int16"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="LongStruct">
+            <member name="my_int32" type="int32"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="LongLongStruct">
+            <member name="my_int64" type="int64"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="UShortStruct">
+            <member name="my_uint16" type="uint16"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="ULongStruct">
+            <member name="my_uint32" type="uint32"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="ULongLongStruct">
+            <member name="my_uint64" type="uint64"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="FloatStruct">
+            <member name="my_float32" type="float32"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="DoubleStruct">
+            <member name="my_float64" type="float64"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="LongDoubleStruct">
+            <member name="my_float128" type="float128"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="CharStruct">
+            <member name="my_char" type="char8"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="WCharStruct">
+            <member name="my_wchar" type="char16"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="StringStruct">
+            <member name="my_string" type="string"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="WStringStruct">
+            <member name="my_wstring" type="wstring"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="LargeStringStruct">
+            <member name="my_large_string" type="string" stringMaxLength="41925"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="LargeWStringStruct">
+            <member name="my_large_wstring" type="wstring" stringMaxLength="41925"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="ShortStringStruct">
+            <member name="my_short_string" type="string" stringMaxLength="15"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="ShortWStringStruct">
+            <member name="my_short_wstring" type="wstring" stringMaxLength="15"/>
+        </struct>
+    </type>
+    <type>
+        <typedef name="MyAliasString" type="string"/>
+    </type>
+    <type>
+        <struct name="StructAliasString">
+            <member name="my_alias_string" type="nonBasic" nonBasicTypeName="MyAliasString"/>
+        </struct>
+    </type>
+    <type>
+        <typedef name="MyAliasWString" type="wstring"/>
+    </type>
+    <type>
+        <struct name="StructAliasWString">
+            <member name="my_alias_wstring" type="nonBasic" nonBasicTypeName="MyAliasWString"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="ArrayStruct">
+            <member name="my_array" type="int32" arrayDimensions="2,2,2"/>
+        </struct>
+    </type>
+    <type>
+        <typedef name="MyArray" type="int32" arrayDimensions="2,2"/>
+    </type>
+    <type>
+        <struct name="ArrayArrayStruct">
+            <member name="my_array_array" type="nonBasic" nonBasicTypeName="MyArray" arrayDimensions="2,2"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="ArrayArrayArrayStruct">
+            <member name="my_array_array_array" type="nonBasic" nonBasicTypeName="ArrayArrayStruct" arrayDimensions="2,2"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="SequenceStruct">
+            <member name="my_sequence" type="int32" sequenceMaxLength="2"/>
+        </struct>
+    </type>
+    <type>
+        <typedef name="my_sequence_sequence_inner" type="int32" sequenceMaxLength="2"/>
+    </type>
+    <type>
+        <struct name="SequenceSequenceStruct">
+            <member name="my_sequence_sequence" type="nonBasic" nonBasicTypeName="my_sequence_sequence_inner" sequenceMaxLength="2"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="MapStruct">
+            <member name="my_map" type="int32" key_type="int32" mapMaxLength="7"/>
+        </struct>
+    </type>
+    <type>
+        <typedef name="my_map_map_inner" type="int32" key_type="int32" mapMaxLength="2"/>
+    </type>
+    <type>
+        <struct name="MapMapStruct">
+            <member name="my_map_map" type="nonBasic" nonBasicTypeName="my_map_map_inner" key_type="int32" mapMaxLength="2"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="StructStruct">
+            <member name="a" type="int32"/>
+            <member name="b" type="int64"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="StructStructStruct">
+            <member name="child_struct" type="nonBasic" nonBasicTypeName="StructStruct"/>
+            <member name="child_int64" type="int64"/>
+        </struct>
+    </type>
+    <type>
+        <union name="SimpleUnion">
+            <discriminator type="int32"/>
+            <case>
+                <caseDiscriminator value="0"/>
+                <caseDiscriminator value="default"/>
+                <member name="first" type="int32"/>
+            </case>
+            <case>
+                <caseDiscriminator value="1"/>
+                <member name="second" type="int64"/>
+            </case>
+        </union>
+    </type>
+    <type>
+        <union name="UnionUnion">
+            <discriminator type="int32"/>
+            <case>
+                <caseDiscriminator value="0"/>
+                <caseDiscriminator value="default"/>
+                <member name="first" type="int32"/>
+            </case>
+            <case>
+                <caseDiscriminator value="1"/>
+                <member name="second" type="nonBasic" nonBasicTypeName="SimpleUnion"/>
+            </case>
+        </union>
+    </type>
+    <type>
+        <union name="WCharUnion">
+            <discriminator type="char16"/>
+            <case>
+                <caseDiscriminator value="0"/>
+                <caseDiscriminator value="default"/>
+                <member name="first" type="int32"/>
+            </case>
+            <case>
+                <caseDiscriminator value="1"/>
+                <member name="second" type="int64"/>
+            </case>
+        </union>
+    </type>
+    <type>
+        <struct name="SimpleUnionStruct">
+            <member name="my_union" type="nonBasic" nonBasicTypeName="SimpleUnion"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="UnionUnionStruct">
+            <member name="my_union" type="nonBasic" nonBasicTypeName="UnionUnion"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="WCharUnionStruct">
+            <member name="my_union" type="nonBasic" nonBasicTypeName="WCharUnion"/>
+        </struct>
+    </type>
+    <type>
+        <bitset name="MyBitSet">
+            <bitfield name="a" bit_bound="3"/>
+            <bitfield name="b" bit_bound="1"/>
+            <bitfield bit_bound="4"/>
+            <bitfield name="c" bit_bound="10"/>
+            <bitfield name="d" bit_bound="12" type="int16"/>
+        </bitset>
+    </type>
+    <type>
+        <bitmask name="MyBitMask" bit_bound="8">
+            <bit_value name="flag0" position="0"/>
+            <bit_value name="flag1"/>
+            <bit_value name="flag2" position="2"/>
+            <bit_value name="flag5" position="5"/>
+        </bitmask>
+    </type>
+</types>

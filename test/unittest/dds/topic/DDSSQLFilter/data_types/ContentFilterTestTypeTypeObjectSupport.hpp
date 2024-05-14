@@ -46,14 +46,14 @@ eProsima_user_DllExport void register_ContentFilterTestType_type_objects();
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_StructType_type_identifier();
+eProsima_user_DllExport void register_StructType_type_identifier();
 /**
  * @brief Register ContentFilterTestType related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_ContentFilterTestType_type_identifier();
+eProsima_user_DllExport void register_ContentFilterTestType_type_identifier();
 
 
 #endif // DOXYGEN_SHOULD_SKIP_THIS_PUBLIC

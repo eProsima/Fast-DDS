@@ -123,6 +123,12 @@ public:
     FASTDDS_EXPORTED_API static void SetCategoryFilter(
             const std::regex&);
 
+    //! Unset the category filter.
+    FASTDDS_EXPORTED_API static void UnsetCategoryFilter();
+
+    //! Returns whether a category filter was set or not.
+    FASTDDS_EXPORTED_API static bool HasCategoryFilter();
+
     //! Returns a copy of the current category filter or an empty object otherwise
     FASTDDS_EXPORTED_API static std::regex GetCategoryFilter();
 

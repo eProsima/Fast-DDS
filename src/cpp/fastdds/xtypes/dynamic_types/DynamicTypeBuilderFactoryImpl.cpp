@@ -14,6 +14,7 @@
 
 #include "DynamicTypeBuilderFactoryImpl.hpp"
 
+#include <cassert>
 #include <ios>
 #include <sstream>
 #include <string>
@@ -264,7 +265,6 @@ traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_strin
     {
         return ret_val;
     }
-
     return {};
 }
 
@@ -280,7 +280,6 @@ traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_wstri
     {
         return ret_val;
     }
-
     return {};
 }
 
@@ -297,7 +296,7 @@ ReturnCode_t DynamicTypeBuilderFactoryImpl::delete_instance() noexcept
 }
 
 ReturnCode_t DynamicTypeBuilderFactoryImpl::delete_type(
-        traits<DynamicType>::ref_type type) noexcept
+        traits<DynamicType>::ref_type& type) noexcept
 {
     type.reset();
     return RETCODE_OK;

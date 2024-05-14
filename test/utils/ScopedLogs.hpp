@@ -30,11 +30,15 @@ struct ScopeLogs
     ScopeLogs(
             std::string category_filter)
     {
+        if (dds::Log::HasCategoryFilter())
+        {
 #ifdef __cpp_lib_make_unique
-        filter_ = std::make_unique<std::regex>(dds::Log::GetCategoryFilter());
+            filter_ = std::make_unique<std::regex>(dds::Log::GetCategoryFilter());
 #else
-        filter_ = std::unique_ptr<std::regex>(new std::regex(dds::Log::GetCategoryFilter()));
+            filter_ = std::unique_ptr<std::regex>(new std::regex(dds::Log::GetCategoryFilter()));
 #endif // ifdef __cpp_lib_make_unique
+        }
+        old_ = dds::Log::GetVerbosity();
         dds::Log::SetCategoryFilter(std::regex{category_filter});
     }
 
@@ -48,14 +52,18 @@ struct ScopeLogs
 
     ~ScopeLogs()
     {
+        dds::Log::Flush();
+
         if (filter_)
         {
             dds::Log::SetCategoryFilter(*filter_);
         }
         else
         {
-            dds::Log::SetVerbosity(old_);
+            dds::Log::UnsetCategoryFilter();
         }
+
+        dds::Log::SetVerbosity(old_);
     }
 
     dds::Log::Kind old_;
