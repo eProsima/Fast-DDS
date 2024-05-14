@@ -145,9 +145,11 @@ TEST_F(TCPv6Tests, wrong_configuration_values)
         ASSERT_TRUE(transportUnderTest.init());
         auto* final_cfg = transportUnderTest.configuration();
         EXPECT_GE(final_cfg->sendBufferSize, final_cfg->maxMessageSize);
-        EXPECT_LT(final_cfg->sendBufferSize, wrong_descriptor.sendBufferSize);
+        // The system could allow for the send buffer to be MAX_INT, so we cannot check it to be strictly lower
+        EXPECT_LE(final_cfg->sendBufferSize, wrong_descriptor.sendBufferSize);
         EXPECT_GE(final_cfg->receiveBufferSize, final_cfg->maxMessageSize);
-        EXPECT_LT(final_cfg->receiveBufferSize, wrong_descriptor.receiveBufferSize);
+        // The system could allow for the receive buffer to be MAX_INT, so we cannot check it to be strictly lower
+        EXPECT_LE(final_cfg->receiveBufferSize, wrong_descriptor.receiveBufferSize);
         eprosima::fastdds::dds::Log::Flush();
     }
 }
