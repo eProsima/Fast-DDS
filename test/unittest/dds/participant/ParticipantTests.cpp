@@ -31,6 +31,7 @@
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
+#include <fastdds/dds/domain/qos/DomainParticipantExtendedQos.hpp>
 #include <fastdds/dds/domain/qos/ReplierQos.hpp>
 #include <fastdds/dds/domain/qos/RequesterQos.hpp>
 #include <fastdds/dds/log/Log.hpp>
@@ -467,7 +468,20 @@ TEST(ParticipantTests, CreateDomainParticipant)
     EXPECT_EQ(participant->get_listener(), nullptr);
 
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == RETCODE_OK);
+}
 
+TEST(ParticipantTests, CreateDomainParticipantWithExtendedQos)
+{
+    DomainParticipantExtendedQos extended_qos;
+
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(
+        extended_qos);
+
+    ASSERT_NE(participant, nullptr);
+    EXPECT_EQ(participant->get_listener(), nullptr);
+
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == RETCODE_OK);
 }
 
 /**
@@ -499,7 +513,7 @@ void check_equivalent_qos(
     ASSERT_EQ(qos_1.flow_controllers(), qos_2.flow_controllers());
 }
 
-void check_participant_with_profile (
+void check_participant_with_profile(
         DomainParticipant* participant,
         const std::string& profile_name)
 {
@@ -510,6 +524,29 @@ void check_participant_with_profile (
     EXPECT_EQ(DomainParticipantFactory::get_instance()->get_participant_qos_from_profile(profile_name, profile_qos),
             RETCODE_OK);
     check_equivalent_qos(qos, profile_qos);
+}
+
+void check_equivalent_extended_qos(
+        const DomainParticipantExtendedQos& extended_qos_1,
+        const DomainParticipantExtendedQos& extended_qos_2)
+{
+    ASSERT_EQ(extended_qos_1.domainId(), extended_qos_2.domainId());
+    check_equivalent_qos(extended_qos_1, extended_qos_2);
+}
+
+void check_participant_extended_qos_from_profile(
+        DomainParticipant* participant,
+        const std::string& profile_name)
+{
+    DomainParticipantExtendedQos extended_qos;
+
+    extended_qos = participant->get_qos();
+    extended_qos.domainId() = participant->get_domain_id();
+
+    DomainParticipantExtendedQos profile_extended_qos;
+    EXPECT_EQ(DomainParticipantFactory::get_instance()->get_participant_extended_qos_from_profile(profile_name, profile_extended_qos),
+            RETCODE_OK);
+    check_equivalent_extended_qos(extended_qos, profile_extended_qos);
 }
 
 /**
@@ -569,6 +606,41 @@ TEST(ParticipantTests, CreateDomainParticipantWithProfile)
     ASSERT_EQ(participant->get_domain_id(), domain_id); //Keep the DID given to the method, not the one on the profile
     check_participant_with_profile(participant, "test_participant_profile");
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == RETCODE_OK);
+}
+
+TEST(ParticipantTests, CreateDomainParticipantWithExtendedQosFromProfile)
+{
+    DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profile.xml");
+    uint32_t domain_id = 123u;          // This is the domain ID set in the default profile above
+
+    // Test create_participant_with_profile using the default profile
+    DomainParticipant* default_participant =
+            DomainParticipantFactory::get_instance()->create_participant_with_profile("test_default_participant_profile");
+    ASSERT_NE(default_participant, nullptr);
+    ASSERT_EQ(default_participant->get_domain_id(), domain_id); //Keep the DID given to the method, not the one on the profile
+    check_participant_extended_qos_from_profile(default_participant, "test_default_participant_profile");
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(
+                default_participant) == RETCODE_OK);
+
+    // Test create_participant_with_profile using "test_participant_profile"
+    uint32_t did = 123u;          // This is the domain ID set in the "test_participant_profile"
+
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant_with_profile("test_participant_profile");
+    ASSERT_NE(participant, nullptr);
+    ASSERT_EQ(participant->get_domain_id(), did); //Keep the DID given to the method, not the one on the profile
+    check_participant_extended_qos_from_profile(participant, "test_participant_profile");
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == RETCODE_OK);
+
+    // Test get_participant_extended_qos_from_profile and create_participant with that extended_qos
+    DomainParticipantExtendedQos extended_qos;
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->get_participant_extended_qos_from_profile(
+                "test_participant_profile", extended_qos) == RETCODE_OK);
+
+    DomainParticipant* new_participant =
+            DomainParticipantFactory::get_instance()->create_participant(extended_qos);
+    check_participant_extended_qos_from_profile(new_participant, "test_participant_profile");
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(new_participant) == RETCODE_OK);
 }
 
 TEST(ParticipantTests, CreateDomainParticipantWithDefaultProfile)

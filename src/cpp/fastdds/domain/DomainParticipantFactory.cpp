@@ -205,6 +205,14 @@ DomainParticipant* DomainParticipantFactory::create_participant(
     return dom_part;
 }
 
+DomainParticipant* DomainParticipantFactory::create_participant(
+        const DomainParticipantExtendedQos& extended_qos,
+        DomainParticipantListener* listener,
+        const StatusMask& mask)
+{
+    return create_participant(extended_qos.domainId(), extended_qos, listener, mask);
+}
+
 DomainParticipant* DomainParticipantFactory::create_participant_with_default_profile()
 {
     return create_participant_with_default_profile(nullptr, StatusMask::none());
@@ -329,6 +337,20 @@ ReturnCode_t DomainParticipantFactory::get_participant_qos_from_profile(
     {
         qos = default_participant_qos_;
         utils::set_qos_from_attributes(qos, attr.rtps);
+        return RETCODE_OK;
+    }
+
+    return RETCODE_BAD_PARAMETER;
+}
+
+ReturnCode_t DomainParticipantFactory::get_participant_extended_qos_from_profile(
+        const std::string& profile_name,
+        DomainParticipantExtendedQos& extended_qos) const
+{
+    ParticipantAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fillParticipantAttributes(profile_name, attr, false))
+    {
+        utils::set_extended_qos_from_attributes(extended_qos, attr);
         return RETCODE_OK;
     }
 

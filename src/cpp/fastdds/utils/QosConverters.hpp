@@ -22,6 +22,7 @@
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
+#include <fastdds/dds/domain/qos/DomainParticipantExtendedQos.hpp>
 #include <fastdds/dds/domain/qos/ReplierQos.hpp>
 #include <fastdds/dds/domain/qos/RequesterQos.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
@@ -29,6 +30,7 @@
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/attributes/TopicAttributes.h>
 
+#include <xmlparser/attributes/ParticipantAttributes.hpp>
 #include <xmlparser/attributes/PublisherAttributes.hpp>
 #include <xmlparser/attributes/ReplierAttributes.hpp>
 #include <xmlparser/attributes/RequesterAttributes.hpp>
@@ -80,6 +82,24 @@ void set_qos_from_attributes(
         const eprosima::fastrtps::rtps::RTPSParticipantAttributes& attr);
 
 /**
+ * @brief Fill DomainParticipantExtendedQos from a given attributes ParticipantAttributes object
+ *
+ * For the case of the non-binary properties, instead of the ParticipantAttributes overriding the
+ * property list in the DomainParticipantExtendedQos, a merge is performed in the following manner:
+ *
+ * - If any property from the ParticipantAttributes is not in the DomainParticipantExtendedQos, then it is appended
+ *   to the DomainParticipantExtendedQos.
+ * - If any property from the ParticipantAttributes property is also in the DomainParticipantExtendedQos, then the
+ *   value in the DomainParticipantExtendedQos is overridden with that of the ParticipantAttributes.
+ *
+ * @param[in, out] extended_qos The DomainParticipantExtendedQos to set
+ * @param[in] attr The ParticipantAttributes from which the @c extended_qos is set.
+ */
+void set_extended_qos_from_attributes(
+        DomainParticipantExtendedQos& extended_qos,
+        const eprosima::fastdds::ParticipantAttributes& attr);
+
+/**
  * Obtains the RTPSParticipantAttributes from the DomainParticipantQos provided.
  *
  * @param[out] attr Pointer to the attributes from which to obtain data
@@ -88,6 +108,16 @@ void set_qos_from_attributes(
 void set_attributes_from_qos(
         fastrtps::rtps::RTPSParticipantAttributes& attr,
         const DomainParticipantQos& qos);
+
+/**
+ * Obtains the ParticipantAttributes from the DomainParticipantExtendedQos provided.
+ *
+ * @param[out] attr Pointer to the attributes from which to obtain data
+ * @param[in] extended_qos Pointer to the QoS to write on
+ */
+void set_attributes_from_extended_qos(
+        eprosima::fastdds::ParticipantAttributes& attr,
+        const DomainParticipantExtendedQos& extended_qos);
 
 /**
  * Obtains the TopicQos from the TopicAttributes provided.

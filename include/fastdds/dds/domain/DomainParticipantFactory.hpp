@@ -28,6 +28,7 @@
 #include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
+#include <fastdds/dds/domain/qos/DomainParticipantExtendedQos.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
 #include <fastdds/dds/xtypes/type_representation/ITypeObjectRegistry.hpp>
 #include <fastdds/LibrarySettings.hpp>
@@ -92,6 +93,19 @@ public:
     FASTDDS_EXPORTED_API DomainParticipant* create_participant(
             DomainId_t domain_id,
             const DomainParticipantQos& qos,
+            DomainParticipantListener* listener = nullptr,
+            const StatusMask& mask = StatusMask::all());
+
+    /**
+     * Create a Participant.
+     *
+     * @param extended_qos DomainParticipantExtendedQos Reference.
+     * @param listener DomainParticipantListener Pointer (default: nullptr)
+     * @param mask StatusMask Reference (default: all)
+     * @return DomainParticipant pointer. (nullptr if not created.)
+     */
+    FASTDDS_EXPORTED_API DomainParticipant* create_participant(
+            const DomainParticipantExtendedQos& extended_qos,
             DomainParticipantListener* listener = nullptr,
             const StatusMask& mask = StatusMask::all());
 
@@ -215,6 +229,17 @@ public:
     FASTDDS_EXPORTED_API ReturnCode_t get_participant_qos_from_profile(
             const std::string& profile_name,
             DomainParticipantQos& qos) const;
+
+    /**
+     * Fills the DomainParticipantExtendedQos with the values of the XML profile.
+     *
+     * @param profile_name DomainParticipant profile name.
+     * @param extended_qos DomainParticipantExtendedQos object where the domain and qos are returned.
+     * @return RETCODE_OK if the profile exists. RETCODE_BAD_PARAMETER otherwise.
+     */
+    FASTDDS_EXPORTED_API ReturnCode_t get_participant_extended_qos_from_profile(
+            const std::string& profile_name,
+            DomainParticipantExtendedQos& extended_qos) const;
 
     /**
      * Remove a Participant and all associated publishers and subscribers.
