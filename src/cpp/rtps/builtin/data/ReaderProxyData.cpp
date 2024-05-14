@@ -1078,7 +1078,7 @@ bool ReaderProxyData::readFromCDRMessage(
                                     "Received with error.");
                             return false;
                         }
-                        m_qos.data_sharing.on(".");
+
                         break;
                     }
 
