@@ -227,13 +227,6 @@ public:
             const LocatorList_t& remote_participant_locators,
             const LocatorList_t& participant_initial_peers) const;
 
-<<<<<<< HEAD
-=======
-    /**
-     * Returns transports' netmask filter information (transport's netmask filter kind and allowlist).
-     */
-    std::vector<fastdds::rtps::TransportNetmaskFilterInfo> netmask_filter_info() const;
-
     /**
      * Calculate well-known ports.
      */
@@ -242,7 +235,6 @@ public:
             const RTPSParticipantAttributes& att,
             bool is_multicast) const;
 
->>>>>>> ea5af48d0 (Internal refactor on port handling (#3440))
 private:
 
     std::vector<std::unique_ptr<fastdds::rtps::TransportInterface>> mRegisteredTransports;
@@ -256,19 +248,6 @@ private:
 
     // Whether multicast metatraffic on SHM transport should always be used
     bool enforce_shm_multicast_metatraffic_ = false;
-
-<<<<<<< HEAD
-    /**
-     * Calculate well-known ports.
-     */
-    uint16_t calculate_well_known_port(
-            uint32_t domain_id,
-            const RTPSParticipantAttributes& att,
-            bool is_multicast) const;
-=======
-    // Mask using transport kinds to indicate whether the transports allows localhost
-    NetworkConfigSet_t network_configuration_;
->>>>>>> ea5af48d0 (Internal refactor on port handling (#3440))
 };
 
 } // namespace rtps
