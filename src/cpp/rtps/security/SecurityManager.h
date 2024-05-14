@@ -30,6 +30,7 @@
 #include <fastdds/rtps/resources/TimedEvent.h>
 #include <fastdds/rtps/security/authentication/Handshake.h>
 #include <fastdds/rtps/security/common/ParticipantGenericMessage.h>
+#include <fastdds/rtps/writer/WriterListener.h>
 #include <fastrtps/utils/ProxyPool.hpp>
 #include <fastrtps/utils/shared_mutex.hpp>
 
@@ -44,6 +45,7 @@ namespace fastrtps {
 namespace rtps {
 
 class RTPSParticipantImpl;
+class RTPSWriter;
 class StatelessWriter;
 class StatelessReader;
 class StatefulWriter;
@@ -65,7 +67,7 @@ struct EndpointSecurityAttributes;
  *
  * @ingroup SECURITY_MODULE
  */
-class SecurityManager
+class SecurityManager : private WriterListener
 {
 public:
 
@@ -873,6 +875,10 @@ private:
             std::this_thread::yield();
         }
     }
+
+    void onWriterChangeReceivedByAll(
+            RTPSWriter* writer,
+            CacheChange_t* change) override;
 
     /**
      * Syncronization object for plugin initialization, <tt>mutex_</tt> protection is not necessary to guarantee plugin
