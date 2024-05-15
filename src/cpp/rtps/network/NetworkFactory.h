@@ -195,18 +195,15 @@ public:
      * Add locators to the default unicast configuration.
      * */
     bool getDefaultUnicastLocators(
-            uint32_t domain_id,
             LocatorList_t& locators,
-            const RTPSParticipantAttributes& m_att) const;
+            uint32_t port) const;
 
     /**
      * Fill the locator with the default unicast configuration.
      * */
     bool fill_default_locator_port(
-            uint32_t domain_id,
             Locator_t& locator,
-            const RTPSParticipantAttributes& m_att,
-            bool is_multicast) const;
+            uint32_t port) const;
 
     /**
      * Shutdown method to close the connections of the transports.
@@ -230,6 +227,14 @@ public:
             const LocatorList_t& remote_participant_locators,
             const LocatorList_t& participant_initial_peers) const;
 
+    /**
+     * Calculate well-known ports.
+     */
+    uint16_t calculate_well_known_port(
+            uint32_t domain_id,
+            const RTPSParticipantAttributes& att,
+            bool is_multicast) const;
+
 private:
 
     std::vector<std::unique_ptr<fastdds::rtps::TransportInterface>> mRegisteredTransports;
@@ -243,14 +248,6 @@ private:
 
     // Whether multicast metatraffic on SHM transport should always be used
     bool enforce_shm_multicast_metatraffic_ = false;
-
-    /**
-     * Calculate well-known ports.
-     */
-    uint16_t calculate_well_known_port(
-            uint32_t domain_id,
-            const RTPSParticipantAttributes& att,
-            bool is_multicast) const;
 };
 
 } // namespace rtps
