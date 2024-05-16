@@ -63,7 +63,7 @@ XMLP_ret XMLParser::loadDefaultXMLFile(
     }
     else
     {
-        strcat_s(current_directory, MAX_PATH, DEFAULT_FASTRTPS_PROFILES);
+        strcat_s(current_directory, MAX_PATH, DEFAULT_FASTDDS_PROFILES);
         return loadXML(current_directory, root, true);
     }
 #else
