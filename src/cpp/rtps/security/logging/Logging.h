@@ -23,8 +23,8 @@
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/common/Guid.h>
-#include <fastdds/rtps/security/logging/BuiltinLoggingType.h>
-#include <fastdds/rtps/security/logging/LogOptions.h>
+#include <rtps/security/logging/BuiltinLoggingType.h>
+#include <rtps/security/logging/LogOptions.h>
 #include <rtps/security/exceptions/SecurityException.h>
 
 namespace eprosima {
