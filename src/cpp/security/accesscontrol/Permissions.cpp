@@ -32,12 +32,12 @@
 #include <openssl/err.h>
 #include <openssl/obj_mac.h>
 
+
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
-#include <fastdds/rtps/security/exceptions/SecurityException.h>
-
+#include <rtps/security/exceptions/SecurityException.h>
 #include <security/accesscontrol/AccessPermissionsHandle.h>
 #include <security/accesscontrol/DistinguishedName.h>
 #include <security/accesscontrol/GovernanceParser.h>

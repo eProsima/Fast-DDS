@@ -22,10 +22,10 @@
 #include <fastdds/rtps/common/CDRMessage_t.h>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/common/Token.h>
-#include <fastdds/rtps/security/exceptions/SecurityException.h>
 #include <rtps/security/authentication/Handshake.h>
 #include <rtps/security/common/Handle.h>
 #include <rtps/security/common/SharedSecretHandle.h>
+#include <rtps/security/exceptions/SecurityException.h>
 
 #include <cstdint>
 
