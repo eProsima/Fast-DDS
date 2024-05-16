@@ -20,10 +20,10 @@
 
 
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
-#include <fastdds/rtps/security/authentication/Authentication.h>
 #include <fastdds/rtps/security/cryptography/Cryptography.h>
 #include <fastdds/rtps/security/logging/Logging.h>
 #include <rtps/security/accesscontrol/AccessControl.h>
+#include <rtps/security/authentication/Authentication.h>
 #include <rtps/security/ISecurityPluginFactory.h>
 
 namespace eprosima {

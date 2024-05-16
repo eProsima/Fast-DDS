@@ -23,7 +23,7 @@
 
 #include <gmock/gmock.h>
 
-#include <fastdds/rtps/security/authentication/Authentication.h>
+#include <rtps/security/authentication/Authentication.h>
 
 #include <security/authentication/PKIIdentityHandle.h>
 

@@ -25,7 +25,7 @@
 #include <fastdds/rtps/security/exceptions/SecurityException.h>
 #include <fastdds/rtps/common/Token.h>
 #include <fastdds/rtps/common/CDRMessage_t.h>
-#include <fastdds/rtps/security/authentication/Handshake.h>
+#include <rtps/security/authentication/Handshake.h>
 
 #include <cstdint>
 
