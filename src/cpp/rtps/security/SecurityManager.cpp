@@ -23,6 +23,7 @@
 #include <mutex>
 #include <thread>
 
+
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/attributes/HistoryAttributes.h>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
@@ -31,14 +32,12 @@
 #include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/participant/RTPSParticipantListener.h>
-#include <fastdds/rtps/security/accesscontrol/AccessControl.h>
 #include <fastdds/rtps/security/accesscontrol/EndpointSecurityAttributes.h>
 #include <fastdds/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
 #include <fastdds/rtps/security/accesscontrol/SecurityMaskUtilities.h>
 #include <fastdds/rtps/security/authentication/Authentication.h>
 #include <fastdds/rtps/writer/StatefulWriter.h>
 #include <fastdds/rtps/writer/StatelessWriter.h>
-
 #include <rtps/builtin/discovery/endpoint/EDP.h>
 #include <rtps/builtin/discovery/participant/PDP.h>
 #include <rtps/messages/CDRMessage.hpp>
@@ -47,6 +46,7 @@
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/reader/StatefulReader.hpp>
 #include <rtps/reader/StatelessReader.hpp>
+#include <rtps/security/accesscontrol/AccessControl.h>
 #include <security/OpenSSLInit.hpp>
 
 #define BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_SECURE_WRITER (1 << 20)
