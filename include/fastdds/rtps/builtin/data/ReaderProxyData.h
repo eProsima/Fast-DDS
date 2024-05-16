@@ -27,10 +27,11 @@
 #include <fastdds/rtps/builtin/data/ContentFilterProperty.hpp>
 #include <fastdds/rtps/common/RemoteLocators.hpp>
 #include <fastdds/rtps/common/VendorId_t.hpp>
-#if HAVE_SECURITY
-#include <fastdds/rtps/security/accesscontrol/EndpointSecurityAttributes.h>
-#endif // if HAVE_SECURITY
 #include <fastdds/rtps/attributes/TopicAttributes.h>
+#if HAVE_SECURITY
+#include <rtps/security/accesscontrol/EndpointSecurityAttributes.h>
+#endif // if HAVE_SECURITY
+
 
 namespace eprosima {
 namespace fastrtps {

@@ -27,7 +27,7 @@
 #include <fastdds/rtps/common/Types.h>
 
 #if HAVE_SECURITY
-#include <fastdds/rtps/security/accesscontrol/EndpointSecurityAttributes.h>
+#include <rtps/security/accesscontrol/EndpointSecurityAttributes.h>
 #endif  // HAVE_SECURITY
 
 namespace eprosima {

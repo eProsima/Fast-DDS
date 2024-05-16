@@ -24,7 +24,7 @@
 #include <fastdds/rtps/security/common/Handle.h>
 #include <fastdds/rtps/security/common/SharedSecretHandle.h>
 #include <fastdds/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
-#include <fastdds/rtps/security/accesscontrol/EndpointSecurityAttributes.h>
+#include <rtps/security/accesscontrol/EndpointSecurityAttributes.h>
 
 #include <cassert>
 #include <functional>

@@ -18,9 +18,9 @@
 #ifndef _FASTDDS_RTPS_SECURITY_CRYPTOGRAPHY_CRYPTOKEYFACTORY_H_
 #define _FASTDDS_RTPS_SECURITY_CRYPTOGRAPHY_CRYPTOKEYFACTORY_H_
 
-#include <fastdds/rtps/security/cryptography/CryptoTypes.h>
-#include <fastdds/rtps/security/accesscontrol/EndpointSecurityAttributes.h>
 #include <fastdds/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
+#include <fastdds/rtps/security/cryptography/CryptoTypes.h>
+#include <rtps/security/accesscontrol/EndpointSecurityAttributes.h>
 
 #include <memory>
 

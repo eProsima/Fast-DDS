@@ -29,7 +29,7 @@
 #include <fastdds/rtps/common/RemoteLocators.hpp>
 
 #if HAVE_SECURITY
-#include <fastdds/rtps/security/accesscontrol/EndpointSecurityAttributes.h>
+#include <rtps/security/accesscontrol/EndpointSecurityAttributes.h>
 #endif // if HAVE_SECURITY
 
 namespace eprosima {

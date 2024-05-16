@@ -22,7 +22,7 @@
 #include <fastdds/rtps/common/Token.h>
 #include <security/accesscontrol/PermissionsTypes.h>
 #include <fastdds/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
-#include <fastdds/rtps/security/accesscontrol/EndpointSecurityAttributes.h>
+#include <rtps/security/accesscontrol/EndpointSecurityAttributes.h>
 
 #include <openssl/x509.h>
 #include <string>
