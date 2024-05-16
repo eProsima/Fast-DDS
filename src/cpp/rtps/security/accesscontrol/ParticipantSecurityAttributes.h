@@ -18,7 +18,7 @@
 #ifndef _FASTDDS_RTPS_SECURITY_ACCESSCONTROL_PARTICIPANTSECURITYATTRIBUTES_H_
 #define _FASTDDS_RTPS_SECURITY_ACCESSCONTROL_PARTICIPANTSECURITYATTRIBUTES_H_
 
-#include <fastdds/rtps/security/accesscontrol/SecurityMaskUtilities.h>
+#include <rtps/security/accesscontrol/SecurityMaskUtilities.h>
 
 namespace eprosima {
 namespace fastrtps {
