@@ -1307,14 +1307,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceBitset)
         seq_data = data->loan_value(data->get_member_id_by_name(var_bitset_seq));
         ASSERT_TRUE(seq_data);
         EXPECT_EQ(struct_data.var_sequence_bitset().size(), seq_data->get_item_count());
-        EXPECT_EQ(struct_data.var_sequence_bitset()[0].a(), first_octet_value);
-        EXPECT_EQ(struct_data.var_sequence_bitset()[0].b(), first_bool_value);
-        EXPECT_EQ(struct_data.var_sequence_bitset()[0].c(), first_ushort_value);
-        EXPECT_EQ(struct_data.var_sequence_bitset()[0].d(), first_short_value);
-        EXPECT_EQ(struct_data.var_sequence_bitset()[1].a(), second_octet_value);
-        EXPECT_EQ(struct_data.var_sequence_bitset()[1].b(), second_bool_value);
-        EXPECT_EQ(struct_data.var_sequence_bitset()[1].c(), second_ushort_value);
-        EXPECT_EQ(struct_data.var_sequence_bitset()[1].d(), second_short_value);
+        EXPECT_EQ(struct_data.var_sequence_bitset()[0].a, first_octet_value);
+        EXPECT_EQ(struct_data.var_sequence_bitset()[0].b, first_bool_value);
+        EXPECT_EQ(struct_data.var_sequence_bitset()[0].c, first_ushort_value);
+        EXPECT_EQ(struct_data.var_sequence_bitset()[0].d, first_short_value);
+        EXPECT_EQ(struct_data.var_sequence_bitset()[1].a, second_octet_value);
+        EXPECT_EQ(struct_data.var_sequence_bitset()[1].b, second_bool_value);
+        EXPECT_EQ(struct_data.var_sequence_bitset()[1].c, second_ushort_value);
+        EXPECT_EQ(struct_data.var_sequence_bitset()[1].d, second_short_value);
         EXPECT_EQ(data->return_loaned_value(seq_data), RETCODE_OK);
     }
 

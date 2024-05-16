@@ -1267,10 +1267,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasBitset)
         AliasBitset alias_data;
         TypeSupport static_pubsubType {new AliasBitsetPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, alias_data, static_pubsubType);
-        EXPECT_EQ(alias_data.value().a(), test_octet_value);
-        EXPECT_EQ(alias_data.value().b(), test_bool_value);
-        EXPECT_EQ(alias_data.value().c(), test_ushort_value);
-        EXPECT_EQ(alias_data.value().d(), test_short_value);
+        EXPECT_EQ(alias_data.value().a, test_octet_value);
+        EXPECT_EQ(alias_data.value().b, test_bool_value);
+        EXPECT_EQ(alias_data.value().c, test_ushort_value);
+        EXPECT_EQ(alias_data.value().d, test_short_value);
     }
 
     xtypes::TypeIdentifier static_type_id;

@@ -1488,20 +1488,20 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayBitset)
         ArrayBitset struct_data;
         TypeSupport static_pubsubType {new ArrayBitsetPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
-        EXPECT_EQ(struct_data.var_array_bitset()[0].a(), first_octet_value);
-        EXPECT_EQ(struct_data.var_array_bitset()[0].b(), first_bool_value);
-        EXPECT_EQ(struct_data.var_array_bitset()[0].c(), first_ushort_value);
-        EXPECT_EQ(struct_data.var_array_bitset()[0].d(), first_short_value);
-        EXPECT_EQ(struct_data.var_array_bitset()[1].a(), second_octet_value);
-        EXPECT_EQ(struct_data.var_array_bitset()[1].b(), second_bool_value);
-        EXPECT_EQ(struct_data.var_array_bitset()[1].c(), second_ushort_value);
-        EXPECT_EQ(struct_data.var_array_bitset()[1].d(), second_short_value);
+        EXPECT_EQ(struct_data.var_array_bitset()[0].a, first_octet_value);
+        EXPECT_EQ(struct_data.var_array_bitset()[0].b, first_bool_value);
+        EXPECT_EQ(struct_data.var_array_bitset()[0].c, first_ushort_value);
+        EXPECT_EQ(struct_data.var_array_bitset()[0].d, first_short_value);
+        EXPECT_EQ(struct_data.var_array_bitset()[1].a, second_octet_value);
+        EXPECT_EQ(struct_data.var_array_bitset()[1].b, second_bool_value);
+        EXPECT_EQ(struct_data.var_array_bitset()[1].c, second_ushort_value);
+        EXPECT_EQ(struct_data.var_array_bitset()[1].d, second_short_value);
         for (size_t i = 2; i < struct_data.var_array_bitset().size(); ++i)
         {
-            EXPECT_EQ(struct_data.var_array_bitset()[i].a(), 0u);
-            EXPECT_EQ(struct_data.var_array_bitset()[i].b(), false);
-            EXPECT_EQ(struct_data.var_array_bitset()[i].c(), 0u);
-            EXPECT_EQ(struct_data.var_array_bitset()[i].d(), 0);
+            EXPECT_EQ(struct_data.var_array_bitset()[i].a, 0u);
+            EXPECT_EQ(struct_data.var_array_bitset()[i].b, false);
+            EXPECT_EQ(struct_data.var_array_bitset()[i].c, 0u);
+            EXPECT_EQ(struct_data.var_array_bitset()[i].d, 0);
         }
     }
 
@@ -3302,31 +3302,31 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionBitset)
                 {
                     if (i == 0 && j == 0 && k == 0)
                     {
-                        EXPECT_EQ(struct_data.var_array_bitset()[i][j][k].a(), first_octet_value);
-                        EXPECT_EQ(struct_data.var_array_bitset()[i][j][k].b(), first_bool_value);
-                        EXPECT_EQ(struct_data.var_array_bitset()[i][j][k].c(), first_ushort_value);
-                        EXPECT_EQ(struct_data.var_array_bitset()[i][j][k].d(), first_short_value);
+                        EXPECT_EQ(struct_data.var_array_bitset()[i][j][k].a, first_octet_value);
+                        EXPECT_EQ(struct_data.var_array_bitset()[i][j][k].b, first_bool_value);
+                        EXPECT_EQ(struct_data.var_array_bitset()[i][j][k].c, first_ushort_value);
+                        EXPECT_EQ(struct_data.var_array_bitset()[i][j][k].d, first_short_value);
                     }
                     else if (i == 0 && j == 3 && k == 3)
                     {
-                        EXPECT_EQ(struct_data.var_array_bitset()[i][j][k].a(), second_octet_value);
-                        EXPECT_EQ(struct_data.var_array_bitset()[i][j][k].b(), second_bool_value);
-                        EXPECT_EQ(struct_data.var_array_bitset()[i][j][k].c(), second_ushort_value);
-                        EXPECT_EQ(struct_data.var_array_bitset()[i][j][k].d(), second_short_value);
+                        EXPECT_EQ(struct_data.var_array_bitset()[i][j][k].a, second_octet_value);
+                        EXPECT_EQ(struct_data.var_array_bitset()[i][j][k].b, second_bool_value);
+                        EXPECT_EQ(struct_data.var_array_bitset()[i][j][k].c, second_ushort_value);
+                        EXPECT_EQ(struct_data.var_array_bitset()[i][j][k].d, second_short_value);
                     }
                     else if (i == 8 && j == 5 && k == 7)
                     {
-                        EXPECT_EQ(struct_data.var_array_bitset()[i][j][k].a(), third_octet_value);
-                        EXPECT_EQ(struct_data.var_array_bitset()[i][j][k].b(), third_bool_value);
-                        EXPECT_EQ(struct_data.var_array_bitset()[i][j][k].c(), third_ushort_value);
-                        EXPECT_EQ(struct_data.var_array_bitset()[i][j][k].d(), third_short_value);
+                        EXPECT_EQ(struct_data.var_array_bitset()[i][j][k].a, third_octet_value);
+                        EXPECT_EQ(struct_data.var_array_bitset()[i][j][k].b, third_bool_value);
+                        EXPECT_EQ(struct_data.var_array_bitset()[i][j][k].c, third_ushort_value);
+                        EXPECT_EQ(struct_data.var_array_bitset()[i][j][k].d, third_short_value);
                     }
                     else
                     {
-                        EXPECT_EQ(struct_data.var_array_bitset()[i][j][k].a(), 0u);
-                        EXPECT_EQ(struct_data.var_array_bitset()[i][j][k].b(), false);
-                        EXPECT_EQ(struct_data.var_array_bitset()[i][j][k].c(), 0u);
-                        EXPECT_EQ(struct_data.var_array_bitset()[i][j][k].d(), 0);
+                        EXPECT_EQ(struct_data.var_array_bitset()[i][j][k].a, 0u);
+                        EXPECT_EQ(struct_data.var_array_bitset()[i][j][k].b, false);
+                        EXPECT_EQ(struct_data.var_array_bitset()[i][j][k].c, 0u);
+                        EXPECT_EQ(struct_data.var_array_bitset()[i][j][k].d, 0);
                     }
                 }
             }

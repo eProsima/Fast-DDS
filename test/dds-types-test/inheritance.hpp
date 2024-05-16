@@ -22,7 +22,6 @@
 #ifndef _FAST_DDS_GENERATED_INHERITANCE_HPP_
 #define _FAST_DDS_GENERATED_INHERITANCE_HPP_
 
-#include <bitset>
 #include <cstdint>
 #include <utility>
 #include "helpers/basic_inner_types.hpp"
@@ -1301,77 +1300,25 @@ private:
 
 };
 /*!
- * @brief This class represents the structure InnerBitsetHelperChild defined by the user in the IDL file.
+ * @brief This structure represents the bitset InnerBitsetHelperChild defined by the user in the IDL file.
  * @ingroup inheritance
  */
-class InnerBitsetHelperChild : public InnerBitsetHelper
+struct InnerBitsetHelperChild
 {
-public:
+        uint8_t a : 3;
 
-    /*!
-     * @brief Default constructor.
-     */
-    eProsima_user_DllExport InnerBitsetHelperChild()
-    : InnerBitsetHelper()
-    {
-    }
+        bool b : 1;
 
-    /*!
-     * @brief Default destructor.
-     */
-    eProsima_user_DllExport ~InnerBitsetHelperChild()
-    {
-    }
+        uint8_t  : 4;
 
-    /*!
-     * @brief Copy constructor.
-     * @param x Reference to the object InnerBitsetHelperChild that will be copied.
-     */
-    eProsima_user_DllExport InnerBitsetHelperChild(
-            const InnerBitsetHelperChild& x)
-    : InnerBitsetHelper(x)
-    {
-        m_bitset = x.m_bitset;
-    }
+        uint16_t c : 10;
 
-    /*!
-     * @brief Move constructor.
-     * @param x Reference to the object InnerBitsetHelperChild that will be copied.
-     */
-    eProsima_user_DllExport InnerBitsetHelperChild(
-            InnerBitsetHelperChild&& x) noexcept
-    : InnerBitsetHelper(std::move(x))
-    {
-        m_bitset = x.m_bitset;
-    }
+        uint8_t  : 3;
 
-    /*!
-     * @brief Copy assignment.
-     * @param x Reference to the object InnerBitsetHelperChild that will be copied.
-     */
-    eProsima_user_DllExport InnerBitsetHelperChild& operator =(
-            const InnerBitsetHelperChild& x)
-    {
-            InnerBitsetHelper::operator =(x);
+        int16_t d : 12;
 
-        m_bitset = x.m_bitset;
+        uint32_t child_w : 17;
 
-        return *this;
-    }
-
-    /*!
-     * @brief Move assignment.
-     * @param x Reference to the object InnerBitsetHelperChild that will be copied.
-     */
-    eProsima_user_DllExport InnerBitsetHelperChild& operator =(
-            InnerBitsetHelperChild&& x) noexcept
-    {
-            InnerBitsetHelper::operator =(std::move(x));
-
-        m_bitset = x.m_bitset;
-
-        return *this;
-    }
 
     /*!
      * @brief Comparison operator.
@@ -1380,9 +1327,11 @@ public:
     eProsima_user_DllExport bool operator ==(
             const InnerBitsetHelperChild& x) const
     {
-            if (InnerBitsetHelper::operator !=(x)) return false;
-
-        return m_bitset == x.m_bitset;
+        return (a == x.a &&
+           b == x.b &&
+           c == x.c &&
+           d == x.d &&
+           child_w == x.child_w);
     }
 
     /*!
@@ -1394,148 +1343,29 @@ public:
     {
         return !(*this == x);
     }
-
-    /*!
-     * @brief This function sets a value in member child_w
-     * @param _child_w New value for member child_w
-     */
-    eProsima_user_DllExport void child_w(
-            uint32_t _child_w)
-    {
-        int base = 0;
-        int size = 17;
-        for (int i = base; i < base + size; ++i)
-        {
-            m_bitset.set(i, !!(_child_w & 0x01));
-            _child_w = _child_w >> 1;
-        }
-
-    }
-
-    /*!
-     * @brief This function returns the value of member child_w
-     * @return Value of member child_w
-     */
-    eProsima_user_DllExport uint32_t child_w() const
-    {
-        int base = 0;
-        int size = 17;
-        std::bitset<17> aux;
-        for (int i = 0; i < size; ++i)
-        {
-            aux.set(i, m_bitset.test(i + base));
-        }
-        return static_cast<uint32_t>(aux.to_ullong());
-
-    }
-
-
-    eProsima_user_DllExport std::bitset<50> bitset() const
-    {
-        std::string str_value;
-
-        str_value = static_cast<const InnerBitsetHelper*>(this)->bitset().to_string() + str_value;
-
-        str_value = m_bitset.to_string() + str_value;
-
-        return std::bitset<50>(str_value);
-    }
-
-    eProsima_user_DllExport void bitset(
-            const std::bitset<50>& bitset)
-    {
-        std::string str_value {bitset.to_string()};
-        size_t base_diff {0};
-        size_t last_post {std::string::npos};
-
-        {
-            base_diff += 33;
-            std::bitset<33> internal_bitset(str_value.substr(str_value.length() - base_diff, last_post));
-            static_cast<InnerBitsetHelper*>(this)->bitset(internal_bitset);
-            last_post = base_diff;
-        }
-
-        base_diff += 17;
-        m_bitset = std::bitset<17>(str_value.substr(str_value.length() - base_diff, last_post));
-    }
-
-
-private:
-
-    std::bitset<17> m_bitset;
 };
 /*!
- * @brief This class represents the structure InnerBitsetHelperChildChild defined by the user in the IDL file.
+ * @brief This structure represents the bitset InnerBitsetHelperChildChild defined by the user in the IDL file.
  * @ingroup inheritance
  */
-class InnerBitsetHelperChildChild : public InnerBitsetHelperChild
+struct InnerBitsetHelperChildChild
 {
-public:
+        uint8_t a : 3;
 
-    /*!
-     * @brief Default constructor.
-     */
-    eProsima_user_DllExport InnerBitsetHelperChildChild()
-    : InnerBitsetHelperChild()
-    {
-    }
+        bool b : 1;
 
-    /*!
-     * @brief Default destructor.
-     */
-    eProsima_user_DllExport ~InnerBitsetHelperChildChild()
-    {
-    }
+        uint8_t  : 4;
 
-    /*!
-     * @brief Copy constructor.
-     * @param x Reference to the object InnerBitsetHelperChildChild that will be copied.
-     */
-    eProsima_user_DllExport InnerBitsetHelperChildChild(
-            const InnerBitsetHelperChildChild& x)
-    : InnerBitsetHelperChild(x)
-    {
-        m_bitset = x.m_bitset;
-    }
+        uint16_t c : 10;
 
-    /*!
-     * @brief Move constructor.
-     * @param x Reference to the object InnerBitsetHelperChildChild that will be copied.
-     */
-    eProsima_user_DllExport InnerBitsetHelperChildChild(
-            InnerBitsetHelperChildChild&& x) noexcept
-    : InnerBitsetHelperChild(std::move(x))
-    {
-        m_bitset = x.m_bitset;
-    }
+        uint8_t  : 3;
 
-    /*!
-     * @brief Copy assignment.
-     * @param x Reference to the object InnerBitsetHelperChildChild that will be copied.
-     */
-    eProsima_user_DllExport InnerBitsetHelperChildChild& operator =(
-            const InnerBitsetHelperChildChild& x)
-    {
-            InnerBitsetHelperChild::operator =(x);
+        int16_t d : 12;
 
-        m_bitset = x.m_bitset;
+        uint32_t child_w : 17;
 
-        return *this;
-    }
+        uint16_t childchild_z : 14;
 
-    /*!
-     * @brief Move assignment.
-     * @param x Reference to the object InnerBitsetHelperChildChild that will be copied.
-     */
-    eProsima_user_DllExport InnerBitsetHelperChildChild& operator =(
-            InnerBitsetHelperChildChild&& x) noexcept
-    {
-            InnerBitsetHelperChild::operator =(std::move(x));
-
-        m_bitset = x.m_bitset;
-
-        return *this;
-    }
 
     /*!
      * @brief Comparison operator.
@@ -1544,9 +1374,12 @@ public:
     eProsima_user_DllExport bool operator ==(
             const InnerBitsetHelperChildChild& x) const
     {
-            if (InnerBitsetHelperChild::operator !=(x)) return false;
-
-        return m_bitset == x.m_bitset;
+        return (a == x.a &&
+           b == x.b &&
+           c == x.c &&
+           d == x.d &&
+           child_w == x.child_w &&
+           childchild_z == x.childchild_z);
     }
 
     /*!
@@ -1558,148 +1391,27 @@ public:
     {
         return !(*this == x);
     }
-
-    /*!
-     * @brief This function sets a value in member childchild_z
-     * @param _childchild_z New value for member childchild_z
-     */
-    eProsima_user_DllExport void childchild_z(
-            uint16_t _childchild_z)
-    {
-        int base = 0;
-        int size = 14;
-        for (int i = base; i < base + size; ++i)
-        {
-            m_bitset.set(i, !!(_childchild_z & 0x01));
-            _childchild_z = _childchild_z >> 1;
-        }
-
-    }
-
-    /*!
-     * @brief This function returns the value of member childchild_z
-     * @return Value of member childchild_z
-     */
-    eProsima_user_DllExport uint16_t childchild_z() const
-    {
-        int base = 0;
-        int size = 14;
-        std::bitset<14> aux;
-        for (int i = 0; i < size; ++i)
-        {
-            aux.set(i, m_bitset.test(i + base));
-        }
-        return static_cast<uint16_t>(aux.to_ullong());
-
-    }
-
-
-    eProsima_user_DllExport std::bitset<64> bitset() const
-    {
-        std::string str_value;
-
-        str_value = static_cast<const InnerBitsetHelperChild*>(this)->bitset().to_string() + str_value;
-
-        str_value = m_bitset.to_string() + str_value;
-
-        return std::bitset<64>(str_value);
-    }
-
-    eProsima_user_DllExport void bitset(
-            const std::bitset<64>& bitset)
-    {
-        std::string str_value {bitset.to_string()};
-        size_t base_diff {0};
-        size_t last_post {std::string::npos};
-
-        {
-            base_diff += 50;
-            std::bitset<50> internal_bitset(str_value.substr(str_value.length() - base_diff, last_post));
-            static_cast<InnerBitsetHelperChild*>(this)->bitset(internal_bitset);
-            last_post = base_diff;
-        }
-
-        base_diff += 14;
-        m_bitset = std::bitset<14>(str_value.substr(str_value.length() - base_diff, last_post));
-    }
-
-
-private:
-
-    std::bitset<14> m_bitset;
 };
 /*!
- * @brief This class represents the structure BitsetAliasInheritanceBitset defined by the user in the IDL file.
+ * @brief This structure represents the bitset BitsetAliasInheritanceBitset defined by the user in the IDL file.
  * @ingroup inheritance
  */
-class BitsetAliasInheritanceBitset : public inner_bitset_helper_alias
+struct BitsetAliasInheritanceBitset
 {
-public:
+        uint8_t a : 3;
 
-    /*!
-     * @brief Default constructor.
-     */
-    eProsima_user_DllExport BitsetAliasInheritanceBitset()
-    : inner_bitset_helper_alias()
-    {
-    }
+        bool b : 1;
 
-    /*!
-     * @brief Default destructor.
-     */
-    eProsima_user_DllExport ~BitsetAliasInheritanceBitset()
-    {
-    }
+        uint8_t  : 4;
 
-    /*!
-     * @brief Copy constructor.
-     * @param x Reference to the object BitsetAliasInheritanceBitset that will be copied.
-     */
-    eProsima_user_DllExport BitsetAliasInheritanceBitset(
-            const BitsetAliasInheritanceBitset& x)
-    : inner_bitset_helper_alias(x)
-    {
-        m_bitset = x.m_bitset;
-    }
+        uint16_t c : 10;
 
-    /*!
-     * @brief Move constructor.
-     * @param x Reference to the object BitsetAliasInheritanceBitset that will be copied.
-     */
-    eProsima_user_DllExport BitsetAliasInheritanceBitset(
-            BitsetAliasInheritanceBitset&& x) noexcept
-    : inner_bitset_helper_alias(std::move(x))
-    {
-        m_bitset = x.m_bitset;
-    }
+        uint8_t  : 3;
 
-    /*!
-     * @brief Copy assignment.
-     * @param x Reference to the object BitsetAliasInheritanceBitset that will be copied.
-     */
-    eProsima_user_DllExport BitsetAliasInheritanceBitset& operator =(
-            const BitsetAliasInheritanceBitset& x)
-    {
-            inner_bitset_helper_alias::operator =(x);
+        int16_t d : 12;
 
-        m_bitset = x.m_bitset;
+        uint16_t new_bitfield : 10;
 
-        return *this;
-    }
-
-    /*!
-     * @brief Move assignment.
-     * @param x Reference to the object BitsetAliasInheritanceBitset that will be copied.
-     */
-    eProsima_user_DllExport BitsetAliasInheritanceBitset& operator =(
-            BitsetAliasInheritanceBitset&& x) noexcept
-    {
-            inner_bitset_helper_alias::operator =(std::move(x));
-
-        m_bitset = x.m_bitset;
-
-        return *this;
-    }
 
     /*!
      * @brief Comparison operator.
@@ -1708,9 +1420,11 @@ public:
     eProsima_user_DllExport bool operator ==(
             const BitsetAliasInheritanceBitset& x) const
     {
-            if (inner_bitset_helper_alias::operator !=(x)) return false;
-
-        return m_bitset == x.m_bitset;
+        return (a == x.a &&
+           b == x.b &&
+           c == x.c &&
+           d == x.d &&
+           new_bitfield == x.new_bitfield);
     }
 
     /*!
@@ -1722,75 +1436,6 @@ public:
     {
         return !(*this == x);
     }
-
-    /*!
-     * @brief This function sets a value in member new_bitfield
-     * @param _new_bitfield New value for member new_bitfield
-     */
-    eProsima_user_DllExport void new_bitfield(
-            uint16_t _new_bitfield)
-    {
-        int base = 0;
-        int size = 10;
-        for (int i = base; i < base + size; ++i)
-        {
-            m_bitset.set(i, !!(_new_bitfield & 0x01));
-            _new_bitfield = _new_bitfield >> 1;
-        }
-
-    }
-
-    /*!
-     * @brief This function returns the value of member new_bitfield
-     * @return Value of member new_bitfield
-     */
-    eProsima_user_DllExport uint16_t new_bitfield() const
-    {
-        int base = 0;
-        int size = 10;
-        std::bitset<10> aux;
-        for (int i = 0; i < size; ++i)
-        {
-            aux.set(i, m_bitset.test(i + base));
-        }
-        return static_cast<uint16_t>(aux.to_ullong());
-
-    }
-
-
-    eProsima_user_DllExport std::bitset<43> bitset() const
-    {
-        std::string str_value;
-
-        str_value = static_cast<const inner_bitset_helper_alias*>(this)->bitset().to_string() + str_value;
-
-        str_value = m_bitset.to_string() + str_value;
-
-        return std::bitset<43>(str_value);
-    }
-
-    eProsima_user_DllExport void bitset(
-            const std::bitset<43>& bitset)
-    {
-        std::string str_value {bitset.to_string()};
-        size_t base_diff {0};
-        size_t last_post {std::string::npos};
-
-        {
-            base_diff += 33;
-            std::bitset<33> internal_bitset(str_value.substr(str_value.length() - base_diff, last_post));
-            static_cast<inner_bitset_helper_alias*>(this)->bitset(internal_bitset);
-            last_post = base_diff;
-        }
-
-        base_diff += 10;
-        m_bitset = std::bitset<10>(str_value.substr(str_value.length() - base_diff, last_post));
-    }
-
-
-private:
-
-    std::bitset<10> m_bitset;
 };
 /*!
  * @brief This class represents the structure BitsetsChildInheritanceStruct defined by the user in the IDL file.

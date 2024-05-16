@@ -778,7 +778,7 @@ protected:
      * @return ReturnCode_t RETCODE_OK always.
      */
     ReturnCode_t register_typeobject_w_alias_dynamic_type(
-            const DynamicType::_ref_type& dynamic_type,
+            const traits<DynamicTypeImpl>::ref_type& dynamic_type,
             TypeIdentifier& type_id);
 
     /**
@@ -791,7 +791,7 @@ protected:
      * @return ReturnCode_t RETCODE_OK always.
      */
     ReturnCode_t register_typeobject_w_annotation_dynamic_type(
-            const DynamicType::_ref_type& dynamic_type,
+            const traits<DynamicTypeImpl>::ref_type& dynamic_type,
             TypeIdentifier& type_id);
 
     /**
@@ -817,7 +817,7 @@ protected:
      * @return ReturnCode_t RETCODE_OK always.
      */
     ReturnCode_t register_typeobject_w_union_dynamic_type(
-            const DynamicType::_ref_type& dynamic_type,
+            const traits<DynamicTypeImpl>::ref_type& dynamic_type,
             TypeIdentifier& type_id);
 
     /**
@@ -830,7 +830,7 @@ protected:
      * @return ReturnCode_t RETCODE_OK always.
      */
     ReturnCode_t register_typeobject_w_bitset_dynamic_type(
-            const DynamicType::_ref_type& dynamic_type,
+            const traits<DynamicTypeImpl>::ref_type& dynamic_type,
             TypeIdentifier& type_id);
 
     /**
@@ -843,7 +843,7 @@ protected:
      * @return ReturnCode_t RETCODE_OK always.
      */
     ReturnCode_t register_typeobject_w_sequence_dynamic_type(
-            const DynamicType::_ref_type& dynamic_type,
+            const traits<DynamicTypeImpl>::ref_type& dynamic_type,
             TypeIdentifier& type_id);
 
     /**
@@ -856,7 +856,7 @@ protected:
      * @return ReturnCode_t RETCODE_OK always.
      */
     ReturnCode_t register_typeobject_w_array_dynamic_type(
-            const DynamicType::_ref_type& dynamic_type,
+            const traits<DynamicTypeImpl>::ref_type& dynamic_type,
             TypeIdentifier& type_id);
 
     /**
@@ -869,7 +869,7 @@ protected:
      * @return ReturnCode_t RETCODE_OK always.
      */
     ReturnCode_t register_typeobject_w_map_dynamic_type(
-            const DynamicType::_ref_type& dynamic_type,
+            const traits<DynamicTypeImpl>::ref_type& dynamic_type,
             TypeIdentifier& type_id);
 
     /**
@@ -882,7 +882,7 @@ protected:
      * @return ReturnCode_t RETCODE_OK always.
      */
     ReturnCode_t register_typeobject_w_enum_dynamic_type(
-            const DynamicType::_ref_type& dynamic_type,
+            const traits<DynamicTypeImpl>::ref_type& dynamic_type,
             TypeIdentifier& type_id);
 
     /**
@@ -895,7 +895,7 @@ protected:
      * @return ReturnCode_t RETCODE_OK always.
      */
     ReturnCode_t register_typeobject_w_bitmask_dynamic_type(
-            const DynamicType::_ref_type& dynamic_type,
+            const traits<DynamicTypeImpl>::ref_type& dynamic_type,
             TypeIdentifier& type_id);
 
     /**
@@ -908,7 +908,7 @@ protected:
      * @return ReturnCode_t RETCODE_OK always.
      */
     ReturnCode_t typeidentifier_w_sequence_dynamic_type(
-            const DynamicType::_ref_type& dynamic_type,
+            const traits<DynamicTypeImpl>::ref_type& dynamic_type,
             TypeIdentifier& type_id);
 
     /**
@@ -921,7 +921,7 @@ protected:
      * @return ReturnCode_t RETCODE_OK always.
      */
     ReturnCode_t typeidentifier_w_array_dynamic_type(
-            const DynamicType::_ref_type& dynamic_type,
+            const traits<DynamicTypeImpl>::ref_type& dynamic_type,
             TypeIdentifier& type_id);
 
     /**
@@ -934,7 +934,7 @@ protected:
      * @return ReturnCode_t RETCODE_OK always.
      */
     ReturnCode_t typeidentifier_w_map_dynamic_type(
-            const DynamicType::_ref_type& dynamic_type,
+            const traits<DynamicTypeImpl>::ref_type& dynamic_type,
             TypeIdentifier& type_id);
 
     /**
@@ -947,7 +947,7 @@ protected:
      * @return ReturnCode_t RETCODE_OK always.
      */
     ReturnCode_t typeidentifier_w_string_dynamic_type(
-            const DynamicType::_ref_type& dynamic_type,
+            const traits<DynamicTypeImpl>::ref_type& dynamic_type,
             TypeIdentifier& type_id);
 
     /**
@@ -960,7 +960,7 @@ protected:
      * @return ReturnCode_t RETCODE_OK always.
      */
     ReturnCode_t typeidentifier_w_wstring_dynamic_type(
-            const DynamicType::_ref_type& dynamic_type,
+            const traits<DynamicTypeImpl>::ref_type& dynamic_type,
             TypeIdentifier& type_id);
 
     /**
@@ -1006,7 +1006,7 @@ protected:
      * @return ReturnCode_t RETCODE_OK always.
      */
     ReturnCode_t complete_type_detail(
-            const DynamicType::_ref_type& dynamic_type,
+            const traits<DynamicTypeImpl>::ref_type& dynamic_type,
             CompleteTypeDetail& detail);
 
     /**
@@ -1016,9 +1016,6 @@ protected:
      * @param member_detail CompleteMemberDetail instance
      * @return ReturnCode_t RETCODE_OK always.
      */
-    ReturnCode_t complete_member_detail(
-            const MemberDescriptor::_ref_type& member_descriptor,
-            CompleteMemberDetail& member_detail);
     ReturnCode_t complete_member_detail(
             const MemberDescriptorImpl& member_descriptor,
             CompleteMemberDetail& member_detail);

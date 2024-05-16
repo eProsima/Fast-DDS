@@ -4638,7 +4638,59 @@ void register_BitsetsChildInheritanceStruct_type_identifier(
                 CompleteBitsetHeader header_InnerBitsetHelperChild = TypeObjectUtils::build_complete_bitset_header(detail_InnerBitsetHelperChild);
                 CompleteBitfieldSeq field_seq_InnerBitsetHelperChild;
                 {
-                    uint16_t position_child_w = 0;
+                    uint16_t position_a = 0;
+                    BitsetMemberFlag flags_a = 0;
+                    uint8_t bitcount_a = 3;
+                    TypeKind holder_type_a = TK_BYTE;
+                    CommonBitfield common_a = TypeObjectUtils::build_common_bitfield(position_a, flags_a, bitcount_a, holder_type_a);
+                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_a;
+                    ann_custom_InnerBitsetHelperChild.reset();
+                    MemberName name_a = "a";
+                    CompleteMemberDetail detail_a = TypeObjectUtils::build_complete_member_detail(name_a, member_ann_builtin_a, ann_custom_InnerBitsetHelperChild);
+                    CompleteBitfield bitfield_a = TypeObjectUtils::build_complete_bitfield(common_a, detail_a);
+                    TypeObjectUtils::add_complete_bitfield(field_seq_InnerBitsetHelperChild, bitfield_a);
+                }
+                {
+                    uint16_t position_b = 3;
+                    BitsetMemberFlag flags_b = 0;
+                    uint8_t bitcount_b = 1;
+                    TypeKind holder_type_b = TK_BOOLEAN;
+                    CommonBitfield common_b = TypeObjectUtils::build_common_bitfield(position_b, flags_b, bitcount_b, holder_type_b);
+                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_b;
+                    ann_custom_InnerBitsetHelperChild.reset();
+                    MemberName name_b = "b";
+                    CompleteMemberDetail detail_b = TypeObjectUtils::build_complete_member_detail(name_b, member_ann_builtin_b, ann_custom_InnerBitsetHelperChild);
+                    CompleteBitfield bitfield_b = TypeObjectUtils::build_complete_bitfield(common_b, detail_b);
+                    TypeObjectUtils::add_complete_bitfield(field_seq_InnerBitsetHelperChild, bitfield_b);
+                }
+                {
+                    uint16_t position_c = 8;
+                    BitsetMemberFlag flags_c = 0;
+                    uint8_t bitcount_c = 10;
+                    TypeKind holder_type_c = TK_UINT16;
+                    CommonBitfield common_c = TypeObjectUtils::build_common_bitfield(position_c, flags_c, bitcount_c, holder_type_c);
+                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_c;
+                    ann_custom_InnerBitsetHelperChild.reset();
+                    MemberName name_c = "c";
+                    CompleteMemberDetail detail_c = TypeObjectUtils::build_complete_member_detail(name_c, member_ann_builtin_c, ann_custom_InnerBitsetHelperChild);
+                    CompleteBitfield bitfield_c = TypeObjectUtils::build_complete_bitfield(common_c, detail_c);
+                    TypeObjectUtils::add_complete_bitfield(field_seq_InnerBitsetHelperChild, bitfield_c);
+                }
+                {
+                    uint16_t position_d = 21;
+                    BitsetMemberFlag flags_d = 0;
+                    uint8_t bitcount_d = 12;
+                    TypeKind holder_type_d = TK_INT16;
+                    CommonBitfield common_d = TypeObjectUtils::build_common_bitfield(position_d, flags_d, bitcount_d, holder_type_d);
+                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_d;
+                    ann_custom_InnerBitsetHelperChild.reset();
+                    MemberName name_d = "d";
+                    CompleteMemberDetail detail_d = TypeObjectUtils::build_complete_member_detail(name_d, member_ann_builtin_d, ann_custom_InnerBitsetHelperChild);
+                    CompleteBitfield bitfield_d = TypeObjectUtils::build_complete_bitfield(common_d, detail_d);
+                    TypeObjectUtils::add_complete_bitfield(field_seq_InnerBitsetHelperChild, bitfield_d);
+                }
+                {
+                    uint16_t position_child_w = 33;
                     BitsetMemberFlag flags_child_w = 0;
                     uint8_t bitcount_child_w = 17;
                     TypeKind holder_type_child_w = TK_UINT32;
@@ -4737,7 +4789,72 @@ void register_BitsetsChildInheritanceStruct_type_identifier(
                 CompleteBitsetHeader header_InnerBitsetHelperChildChild = TypeObjectUtils::build_complete_bitset_header(detail_InnerBitsetHelperChildChild);
                 CompleteBitfieldSeq field_seq_InnerBitsetHelperChildChild;
                 {
-                    uint16_t position_childchild_z = 0;
+                    uint16_t position_a = 0;
+                    BitsetMemberFlag flags_a = 0;
+                    uint8_t bitcount_a = 3;
+                    TypeKind holder_type_a = TK_BYTE;
+                    CommonBitfield common_a = TypeObjectUtils::build_common_bitfield(position_a, flags_a, bitcount_a, holder_type_a);
+                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_a;
+                    ann_custom_InnerBitsetHelperChildChild.reset();
+                    MemberName name_a = "a";
+                    CompleteMemberDetail detail_a = TypeObjectUtils::build_complete_member_detail(name_a, member_ann_builtin_a, ann_custom_InnerBitsetHelperChildChild);
+                    CompleteBitfield bitfield_a = TypeObjectUtils::build_complete_bitfield(common_a, detail_a);
+                    TypeObjectUtils::add_complete_bitfield(field_seq_InnerBitsetHelperChildChild, bitfield_a);
+                }
+                {
+                    uint16_t position_b = 3;
+                    BitsetMemberFlag flags_b = 0;
+                    uint8_t bitcount_b = 1;
+                    TypeKind holder_type_b = TK_BOOLEAN;
+                    CommonBitfield common_b = TypeObjectUtils::build_common_bitfield(position_b, flags_b, bitcount_b, holder_type_b);
+                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_b;
+                    ann_custom_InnerBitsetHelperChildChild.reset();
+                    MemberName name_b = "b";
+                    CompleteMemberDetail detail_b = TypeObjectUtils::build_complete_member_detail(name_b, member_ann_builtin_b, ann_custom_InnerBitsetHelperChildChild);
+                    CompleteBitfield bitfield_b = TypeObjectUtils::build_complete_bitfield(common_b, detail_b);
+                    TypeObjectUtils::add_complete_bitfield(field_seq_InnerBitsetHelperChildChild, bitfield_b);
+                }
+                {
+                    uint16_t position_c = 8;
+                    BitsetMemberFlag flags_c = 0;
+                    uint8_t bitcount_c = 10;
+                    TypeKind holder_type_c = TK_UINT16;
+                    CommonBitfield common_c = TypeObjectUtils::build_common_bitfield(position_c, flags_c, bitcount_c, holder_type_c);
+                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_c;
+                    ann_custom_InnerBitsetHelperChildChild.reset();
+                    MemberName name_c = "c";
+                    CompleteMemberDetail detail_c = TypeObjectUtils::build_complete_member_detail(name_c, member_ann_builtin_c, ann_custom_InnerBitsetHelperChildChild);
+                    CompleteBitfield bitfield_c = TypeObjectUtils::build_complete_bitfield(common_c, detail_c);
+                    TypeObjectUtils::add_complete_bitfield(field_seq_InnerBitsetHelperChildChild, bitfield_c);
+                }
+                {
+                    uint16_t position_d = 21;
+                    BitsetMemberFlag flags_d = 0;
+                    uint8_t bitcount_d = 12;
+                    TypeKind holder_type_d = TK_INT16;
+                    CommonBitfield common_d = TypeObjectUtils::build_common_bitfield(position_d, flags_d, bitcount_d, holder_type_d);
+                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_d;
+                    ann_custom_InnerBitsetHelperChildChild.reset();
+                    MemberName name_d = "d";
+                    CompleteMemberDetail detail_d = TypeObjectUtils::build_complete_member_detail(name_d, member_ann_builtin_d, ann_custom_InnerBitsetHelperChildChild);
+                    CompleteBitfield bitfield_d = TypeObjectUtils::build_complete_bitfield(common_d, detail_d);
+                    TypeObjectUtils::add_complete_bitfield(field_seq_InnerBitsetHelperChildChild, bitfield_d);
+                }
+                {
+                    uint16_t position_child_w = 33;
+                    BitsetMemberFlag flags_child_w = 0;
+                    uint8_t bitcount_child_w = 17;
+                    TypeKind holder_type_child_w = TK_UINT32;
+                    CommonBitfield common_child_w = TypeObjectUtils::build_common_bitfield(position_child_w, flags_child_w, bitcount_child_w, holder_type_child_w);
+                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_child_w;
+                    ann_custom_InnerBitsetHelperChildChild.reset();
+                    MemberName name_child_w = "child_w";
+                    CompleteMemberDetail detail_child_w = TypeObjectUtils::build_complete_member_detail(name_child_w, member_ann_builtin_child_w, ann_custom_InnerBitsetHelperChildChild);
+                    CompleteBitfield bitfield_child_w = TypeObjectUtils::build_complete_bitfield(common_child_w, detail_child_w);
+                    TypeObjectUtils::add_complete_bitfield(field_seq_InnerBitsetHelperChildChild, bitfield_child_w);
+                }
+                {
+                    uint16_t position_childchild_z = 50;
                     BitsetMemberFlag flags_childchild_z = 0;
                     uint8_t bitcount_childchild_z = 14;
                     TypeKind holder_type_childchild_z = TK_UINT16;
@@ -4836,7 +4953,59 @@ void register_BitsetsChildInheritanceStruct_type_identifier(
                 CompleteBitsetHeader header_BitsetAliasInheritanceBitset = TypeObjectUtils::build_complete_bitset_header(detail_BitsetAliasInheritanceBitset);
                 CompleteBitfieldSeq field_seq_BitsetAliasInheritanceBitset;
                 {
-                    uint16_t position_new_bitfield = 0;
+                    uint16_t position_a = 0;
+                    BitsetMemberFlag flags_a = 0;
+                    uint8_t bitcount_a = 3;
+                    TypeKind holder_type_a = TK_BYTE;
+                    CommonBitfield common_a = TypeObjectUtils::build_common_bitfield(position_a, flags_a, bitcount_a, holder_type_a);
+                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_a;
+                    ann_custom_BitsetAliasInheritanceBitset.reset();
+                    MemberName name_a = "a";
+                    CompleteMemberDetail detail_a = TypeObjectUtils::build_complete_member_detail(name_a, member_ann_builtin_a, ann_custom_BitsetAliasInheritanceBitset);
+                    CompleteBitfield bitfield_a = TypeObjectUtils::build_complete_bitfield(common_a, detail_a);
+                    TypeObjectUtils::add_complete_bitfield(field_seq_BitsetAliasInheritanceBitset, bitfield_a);
+                }
+                {
+                    uint16_t position_b = 3;
+                    BitsetMemberFlag flags_b = 0;
+                    uint8_t bitcount_b = 1;
+                    TypeKind holder_type_b = TK_BOOLEAN;
+                    CommonBitfield common_b = TypeObjectUtils::build_common_bitfield(position_b, flags_b, bitcount_b, holder_type_b);
+                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_b;
+                    ann_custom_BitsetAliasInheritanceBitset.reset();
+                    MemberName name_b = "b";
+                    CompleteMemberDetail detail_b = TypeObjectUtils::build_complete_member_detail(name_b, member_ann_builtin_b, ann_custom_BitsetAliasInheritanceBitset);
+                    CompleteBitfield bitfield_b = TypeObjectUtils::build_complete_bitfield(common_b, detail_b);
+                    TypeObjectUtils::add_complete_bitfield(field_seq_BitsetAliasInheritanceBitset, bitfield_b);
+                }
+                {
+                    uint16_t position_c = 8;
+                    BitsetMemberFlag flags_c = 0;
+                    uint8_t bitcount_c = 10;
+                    TypeKind holder_type_c = TK_UINT16;
+                    CommonBitfield common_c = TypeObjectUtils::build_common_bitfield(position_c, flags_c, bitcount_c, holder_type_c);
+                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_c;
+                    ann_custom_BitsetAliasInheritanceBitset.reset();
+                    MemberName name_c = "c";
+                    CompleteMemberDetail detail_c = TypeObjectUtils::build_complete_member_detail(name_c, member_ann_builtin_c, ann_custom_BitsetAliasInheritanceBitset);
+                    CompleteBitfield bitfield_c = TypeObjectUtils::build_complete_bitfield(common_c, detail_c);
+                    TypeObjectUtils::add_complete_bitfield(field_seq_BitsetAliasInheritanceBitset, bitfield_c);
+                }
+                {
+                    uint16_t position_d = 21;
+                    BitsetMemberFlag flags_d = 0;
+                    uint8_t bitcount_d = 12;
+                    TypeKind holder_type_d = TK_INT16;
+                    CommonBitfield common_d = TypeObjectUtils::build_common_bitfield(position_d, flags_d, bitcount_d, holder_type_d);
+                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_d;
+                    ann_custom_BitsetAliasInheritanceBitset.reset();
+                    MemberName name_d = "d";
+                    CompleteMemberDetail detail_d = TypeObjectUtils::build_complete_member_detail(name_d, member_ann_builtin_d, ann_custom_BitsetAliasInheritanceBitset);
+                    CompleteBitfield bitfield_d = TypeObjectUtils::build_complete_bitfield(common_d, detail_d);
+                    TypeObjectUtils::add_complete_bitfield(field_seq_BitsetAliasInheritanceBitset, bitfield_d);
+                }
+                {
+                    uint16_t position_new_bitfield = 33;
                     BitsetMemberFlag flags_new_bitfield = 0;
                     uint8_t bitcount_new_bitfield = 10;
                     TypeKind holder_type_new_bitfield = TK_UINT16;

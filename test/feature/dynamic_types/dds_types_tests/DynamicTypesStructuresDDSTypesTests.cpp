@@ -1319,10 +1319,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructBitset)
         StructBitset data_struct;
         TypeSupport static_pubsubType {new StructBitsetPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, data_struct, static_pubsubType);
-        EXPECT_EQ(data_struct.var_bitset().a(), test_octet_value);
-        EXPECT_EQ(data_struct.var_bitset().b(), test_bool_value);
-        EXPECT_EQ(data_struct.var_bitset().c(), test_ushort_value);
-        EXPECT_EQ(data_struct.var_bitset().d(), test_short_value);
+        EXPECT_EQ(data_struct.var_bitset().a, test_octet_value);
+        EXPECT_EQ(data_struct.var_bitset().b, test_bool_value);
+        EXPECT_EQ(data_struct.var_bitset().c, test_ushort_value);
+        EXPECT_EQ(data_struct.var_bitset().d, test_short_value);
     }
 
     xtypes::TypeIdentifier static_type_id;
@@ -1415,10 +1415,10 @@ void check_structure_static_data(
     EXPECT_EQ(struct_data.var_StructUnion().var_union().shortValue(), testing_values.test_short_value);
     EXPECT_EQ(struct_data.var_StructStructure().var_structure().field1(), testing_values.test_long_value);
     EXPECT_EQ(struct_data.var_StructStructure().var_structure().field2(), testing_values.test_float_value);
-    EXPECT_EQ(struct_data.var_StructBitset().var_bitset().a(), testing_values.test_octet_value);
-    EXPECT_EQ(struct_data.var_StructBitset().var_bitset().b(), testing_values.test_bool_value);
-    EXPECT_EQ(struct_data.var_StructBitset().var_bitset().c(), testing_values.test_ushort_value);
-    EXPECT_EQ(struct_data.var_StructBitset().var_bitset().d(), testing_values.test_short_value);
+    EXPECT_EQ(struct_data.var_StructBitset().var_bitset().a, testing_values.test_octet_value);
+    EXPECT_EQ(struct_data.var_StructBitset().var_bitset().b, testing_values.test_bool_value);
+    EXPECT_EQ(struct_data.var_StructBitset().var_bitset().c, testing_values.test_ushort_value);
+    EXPECT_EQ(struct_data.var_StructBitset().var_bitset().d, testing_values.test_short_value);
 
     EXPECT_EQ(map_struct_data->return_loaned_value(map_data), RETCODE_OK);
     EXPECT_EQ(data->return_loaned_value(map_struct_data), RETCODE_OK);

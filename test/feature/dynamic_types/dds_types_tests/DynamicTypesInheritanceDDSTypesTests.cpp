@@ -19,6 +19,7 @@
 #include "../../../dds-types-test/inheritancePubSubTypes.h"
 #include "../../../dds-types-test/inheritanceTypeObjectSupport.hpp"
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
@@ -962,27 +963,39 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BitsetsChildInheritanceStruct)
         TypeSupport static_pubsubType {new BitsetsChildInheritanceStructPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
-        EXPECT_EQ(octet_value, struct_data.var_InnerBitsetHelperChild().a());
-        EXPECT_EQ(bool_value, struct_data.var_InnerBitsetHelperChild().b());
-        EXPECT_EQ(ushort_value, struct_data.var_InnerBitsetHelperChild().c());
-        EXPECT_EQ(short_value, struct_data.var_InnerBitsetHelperChild().d());
-        EXPECT_EQ(long_value, struct_data.var_InnerBitsetHelperChild().child_w());
-        EXPECT_EQ(octet_value, struct_data.var_InnerBitsetHelperChildChild().a());
-        EXPECT_EQ(bool_value, struct_data.var_InnerBitsetHelperChildChild().b());
-        EXPECT_EQ(ushort_value, struct_data.var_InnerBitsetHelperChildChild().c());
-        EXPECT_EQ(short_value, struct_data.var_InnerBitsetHelperChildChild().d());
-        EXPECT_EQ(long_value, struct_data.var_InnerBitsetHelperChildChild().child_w());
-        EXPECT_EQ(ushort_value, struct_data.var_InnerBitsetHelperChildChild().childchild_z());
-        EXPECT_EQ(octet_value, struct_data.var_BitsetAliasInheritanceBitset().a());
-        EXPECT_EQ(bool_value, struct_data.var_BitsetAliasInheritanceBitset().b());
-        EXPECT_EQ(ushort_value, struct_data.var_BitsetAliasInheritanceBitset().c());
-        EXPECT_EQ(short_value, struct_data.var_BitsetAliasInheritanceBitset().d());
-        EXPECT_EQ(ushort_value, struct_data.var_BitsetAliasInheritanceBitset().new_bitfield());
+        EXPECT_EQ(octet_value, struct_data.var_InnerBitsetHelperChild().a);
+        EXPECT_EQ(bool_value, struct_data.var_InnerBitsetHelperChild().b);
+        EXPECT_EQ(ushort_value, struct_data.var_InnerBitsetHelperChild().c);
+        EXPECT_EQ(short_value, struct_data.var_InnerBitsetHelperChild().d);
+        EXPECT_EQ(long_value, struct_data.var_InnerBitsetHelperChild().child_w);
+        EXPECT_EQ(octet_value, struct_data.var_InnerBitsetHelperChildChild().a);
+        EXPECT_EQ(bool_value, struct_data.var_InnerBitsetHelperChildChild().b);
+        EXPECT_EQ(ushort_value, struct_data.var_InnerBitsetHelperChildChild().c);
+        EXPECT_EQ(short_value, struct_data.var_InnerBitsetHelperChildChild().d);
+        EXPECT_EQ(long_value, struct_data.var_InnerBitsetHelperChildChild().child_w);
+        EXPECT_EQ(ushort_value, struct_data.var_InnerBitsetHelperChildChild().childchild_z);
+        EXPECT_EQ(octet_value, struct_data.var_BitsetAliasInheritanceBitset().a);
+        EXPECT_EQ(bool_value, struct_data.var_BitsetAliasInheritanceBitset().b);
+        EXPECT_EQ(ushort_value, struct_data.var_BitsetAliasInheritanceBitset().c);
+        EXPECT_EQ(short_value, struct_data.var_BitsetAliasInheritanceBitset().d);
+        EXPECT_EQ(ushort_value, struct_data.var_BitsetAliasInheritanceBitset().new_bitfield);
     }
 
     xtypes::TypeIdentifier static_type_id;
     register_BitsetsChildInheritanceStruct_type_identifier(static_type_id);
-    check_typeobject_registry(struct_type, static_type_id);
+    EXPECT_NE(static_type_id, xtypes::TypeIdentifier());
+    xtypes::TypeIdentifier dynamic_type_id;
+    EXPECT_EQ(RETCODE_OK, DomainParticipantFactory::get_instance()->type_object_registry().
+                    register_typeobject_w_dynamic_type(struct_type, dynamic_type_id));
+    EXPECT_EQ(static_type_id, dynamic_type_id);
+    xtypes::TypeObject type_object;
+    EXPECT_EQ(RETCODE_OK, DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(
+                dynamic_type_id, type_object));
+    DynamicTypeBuilder::_ref_type builder = DynamicTypeBuilderFactory::get_instance()->create_type_w_type_object(
+        type_object);
+    ASSERT_NE(builder, nullptr);
+    // This `builder` will never be equal than origin `struct_type` because translation to TypeObject removes inheritance
+    // and makes the bitset plain.
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }

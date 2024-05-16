@@ -2417,10 +2417,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerBitsetHelper)
         {
             auto it = struct_data.var_map_short_innerbitsethelper().find(map_element.first);
             ASSERT_NE(struct_data.var_map_short_innerbitsethelper().end(), it);
-            EXPECT_EQ(std::get<0>(map_element.second), it->second.a());
-            EXPECT_EQ(std::get<1>(map_element.second), it->second.b());
-            EXPECT_EQ(std::get<2>(map_element.second), it->second.c());
-            EXPECT_EQ(std::get<3>(map_element.second), it->second.d());
+            EXPECT_EQ(std::get<0>(map_element.second), it->second.a);
+            EXPECT_EQ(std::get<1>(map_element.second), it->second.b);
+            EXPECT_EQ(std::get<2>(map_element.second), it->second.c);
+            EXPECT_EQ(std::get<3>(map_element.second), it->second.d);
         }
     }
 
@@ -4312,10 +4312,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerBitsetHelper)
         {
             auto it = struct_data.var_map_ushort_innerbitsethelper().find(map_element.first);
             ASSERT_NE(struct_data.var_map_ushort_innerbitsethelper().end(), it);
-            EXPECT_EQ(std::get<0>(map_element.second), it->second.a());
-            EXPECT_EQ(std::get<1>(map_element.second), it->second.b());
-            EXPECT_EQ(std::get<2>(map_element.second), it->second.c());
-            EXPECT_EQ(std::get<3>(map_element.second), it->second.d());
+            EXPECT_EQ(std::get<0>(map_element.second), it->second.a);
+            EXPECT_EQ(std::get<1>(map_element.second), it->second.b);
+            EXPECT_EQ(std::get<2>(map_element.second), it->second.c);
+            EXPECT_EQ(std::get<3>(map_element.second), it->second.d);
         }
     }
 
@@ -6206,10 +6206,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerBitsetHelper)
         {
             auto it = struct_data.var_map_long_innerbitsethelper().find(map_element.first);
             ASSERT_NE(struct_data.var_map_long_innerbitsethelper().end(), it);
-            EXPECT_EQ(std::get<0>(map_element.second), it->second.a());
-            EXPECT_EQ(std::get<1>(map_element.second), it->second.b());
-            EXPECT_EQ(std::get<2>(map_element.second), it->second.c());
-            EXPECT_EQ(std::get<3>(map_element.second), it->second.d());
+            EXPECT_EQ(std::get<0>(map_element.second), it->second.a);
+            EXPECT_EQ(std::get<1>(map_element.second), it->second.b);
+            EXPECT_EQ(std::get<2>(map_element.second), it->second.c);
+            EXPECT_EQ(std::get<3>(map_element.second), it->second.d);
         }
     }
 
@@ -8100,10 +8100,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerBitsetHelper)
         {
             auto it = struct_data.var_map_ulong_innerbitsethelper().find(map_element.first);
             ASSERT_NE(struct_data.var_map_ulong_innerbitsethelper().end(), it);
-            EXPECT_EQ(std::get<0>(map_element.second), it->second.a());
-            EXPECT_EQ(std::get<1>(map_element.second), it->second.b());
-            EXPECT_EQ(std::get<2>(map_element.second), it->second.c());
-            EXPECT_EQ(std::get<3>(map_element.second), it->second.d());
+            EXPECT_EQ(std::get<0>(map_element.second), it->second.a);
+            EXPECT_EQ(std::get<1>(map_element.second), it->second.b);
+            EXPECT_EQ(std::get<2>(map_element.second), it->second.c);
+            EXPECT_EQ(std::get<3>(map_element.second), it->second.d);
         }
     }
 
@@ -9994,10 +9994,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerBitsetHelper)
         {
             auto it = struct_data.var_map_longlong_innerbitsethelper().find(map_element.first);
             ASSERT_NE(struct_data.var_map_longlong_innerbitsethelper().end(), it);
-            EXPECT_EQ(std::get<0>(map_element.second), it->second.a());
-            EXPECT_EQ(std::get<1>(map_element.second), it->second.b());
-            EXPECT_EQ(std::get<2>(map_element.second), it->second.c());
-            EXPECT_EQ(std::get<3>(map_element.second), it->second.d());
+            EXPECT_EQ(std::get<0>(map_element.second), it->second.a);
+            EXPECT_EQ(std::get<1>(map_element.second), it->second.b);
+            EXPECT_EQ(std::get<2>(map_element.second), it->second.c);
+            EXPECT_EQ(std::get<3>(map_element.second), it->second.d);
         }
     }
 
@@ -11888,10 +11888,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerBitsetHelper)
         {
             auto it = struct_data.var_map_u_long_long_inner_bitset_helper().find(map_element.first);
             ASSERT_NE(struct_data.var_map_u_long_long_inner_bitset_helper().end(), it);
-            EXPECT_EQ(std::get<0>(map_element.second), it->second.a());
-            EXPECT_EQ(std::get<1>(map_element.second), it->second.b());
-            EXPECT_EQ(std::get<2>(map_element.second), it->second.c());
-            EXPECT_EQ(std::get<3>(map_element.second), it->second.d());
+            EXPECT_EQ(std::get<0>(map_element.second), it->second.a);
+            EXPECT_EQ(std::get<1>(map_element.second), it->second.b);
+            EXPECT_EQ(std::get<2>(map_element.second), it->second.c);
+            EXPECT_EQ(std::get<3>(map_element.second), it->second.d);
         }
     }
 
@@ -13786,10 +13786,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerBitsetHelper)
         {
             auto it = struct_data.var_map_string_innerbitsethelper().find(map_element.first);
             ASSERT_NE(struct_data.var_map_string_innerbitsethelper().end(), it);
-            EXPECT_EQ(std::get<0>(map_element.second), it->second.a());
-            EXPECT_EQ(std::get<1>(map_element.second), it->second.b());
-            EXPECT_EQ(std::get<2>(map_element.second), it->second.c());
-            EXPECT_EQ(std::get<3>(map_element.second), it->second.d());
+            EXPECT_EQ(std::get<0>(map_element.second), it->second.a);
+            EXPECT_EQ(std::get<1>(map_element.second), it->second.b);
+            EXPECT_EQ(std::get<2>(map_element.second), it->second.c);
+            EXPECT_EQ(std::get<3>(map_element.second), it->second.d);
         }
     }
 
@@ -15683,10 +15683,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
         {
             auto it = struct_data.var_map_inneraliasboundedstringhelper_innerbitsethelper().find(map_element.first);
             ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_innerbitsethelper().end(), it);
-            EXPECT_EQ(std::get<0>(map_element.second), it->second.a());
-            EXPECT_EQ(std::get<1>(map_element.second), it->second.b());
-            EXPECT_EQ(std::get<2>(map_element.second), it->second.c());
-            EXPECT_EQ(std::get<3>(map_element.second), it->second.d());
+            EXPECT_EQ(std::get<0>(map_element.second), it->second.a);
+            EXPECT_EQ(std::get<1>(map_element.second), it->second.b);
+            EXPECT_EQ(std::get<2>(map_element.second), it->second.c);
+            EXPECT_EQ(std::get<3>(map_element.second), it->second.d);
         }
     }
 

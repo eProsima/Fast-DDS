@@ -1659,10 +1659,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionInnerBitsetHelper)
         TypeSupport static_pubsubType {new UnionInnerBitsetHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
-        EXPECT_EQ(struct_data.var_union_my_bitset().x().a(), test_octet_value);
-        EXPECT_EQ(struct_data.var_union_my_bitset().x().b(), test_bool_value);
-        EXPECT_EQ(struct_data.var_union_my_bitset().x().c(), test_ushort_value);
-        EXPECT_EQ(struct_data.var_union_my_bitset().x().d(), test_short_value);
+        EXPECT_EQ(struct_data.var_union_my_bitset().x().a, test_octet_value);
+        EXPECT_EQ(struct_data.var_union_my_bitset().x().b, test_bool_value);
+        EXPECT_EQ(struct_data.var_union_my_bitset().x().c, test_ushort_value);
+        EXPECT_EQ(struct_data.var_union_my_bitset().x().d, test_short_value);
     }
 
     xtypes::TypeIdentifier static_type_id;
