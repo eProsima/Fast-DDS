@@ -23,8 +23,8 @@
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
 #include <fastdds/rtps/security/common/Handle.h>
 #include <fastdds/rtps/security/common/SharedSecretHandle.h>
-#include <fastdds/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
 #include <rtps/security/accesscontrol/EndpointSecurityAttributes.h>
+#include <rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
 
 #include <cassert>
 #include <functional>

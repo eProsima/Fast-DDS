@@ -26,7 +26,7 @@
 #include <fastdds/rtps/common/Token.h>
 #include <fastdds/rtps/common/VendorId_t.hpp>
 #if HAVE_SECURITY
-#include <fastdds/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
+#include <rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
 #endif // if HAVE_SECURITY
 
 namespace eprosima {
