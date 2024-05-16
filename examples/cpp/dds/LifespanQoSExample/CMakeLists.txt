@@ -22,7 +22,7 @@ if(NOT fastcdr_FOUND)
 endif()
 
 if(NOT fastdds_FOUND)
-    find_package(fastdds 2.12 REQUIRED)
+    find_package(fastdds 3 REQUIRED)
 endif()
 
 #Check C++11
