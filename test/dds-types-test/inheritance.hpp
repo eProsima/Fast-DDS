@@ -1659,9 +1659,9 @@ public:
 
 private:
 
-    InnerBitsetHelperChild m_var_InnerBitsetHelperChild;
-    InnerBitsetHelperChildChild m_var_InnerBitsetHelperChildChild;
-    BitsetAliasInheritanceBitset m_var_BitsetAliasInheritanceBitset;
+    InnerBitsetHelperChild m_var_InnerBitsetHelperChild{};
+    InnerBitsetHelperChildChild m_var_InnerBitsetHelperChildChild{};
+    BitsetAliasInheritanceBitset m_var_BitsetAliasInheritanceBitset{};
 
 };
 

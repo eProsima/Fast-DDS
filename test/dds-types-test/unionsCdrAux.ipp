@@ -2840,7 +2840,7 @@ eProsima_user_DllExport void deserialize(
                     {
                                                 case 23:
                                                     {
-                                                        InnerBitsetHelper x_value;
+                                                        InnerBitsetHelper x_value{};
                                                         data.x(std::move(x_value));
                                                         data._d(discriminator);
                                                         break;
