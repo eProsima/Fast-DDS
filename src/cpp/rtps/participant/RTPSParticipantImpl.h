@@ -435,6 +435,19 @@ public:
         return has_shm_transport_;
     }
 
+    //! Check if the participant has at least one TCP transport
+    bool has_tcp_transports();
+
+    /**
+     * This method creates the needed sender resources for a locator list, but forces
+     * each logical port to be zero. It is used to enforce the proper creation of a
+     * CONNECT channel in TCP scenarios.
+     *
+     * @param locators List of unicast locators.
+     */
+    void create_tcp_connections(
+            const LocatorList_t& locators);
+
     uint32_t get_min_network_send_buffer_size()
     {
         return m_network_Factory.get_min_send_buffer_size();

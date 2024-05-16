@@ -679,10 +679,14 @@ bool TCPTransportInterface::OpenOutputChannel(
         return false;
     }
 
+    bool always_connect = false;
     uint16_t logical_port = IPLocator::getLogicalPort(locator);
     if (0 == logical_port)
     {
-        return false;
+        // During builtin endpoints setup, a logical port equal to 0 indicates that the locator belongs
+        // to discovery server remote server. A connect channel is always needed.
+        // Should only be called once to avoid adding a logical port equal to 0.
+        always_connect = true;
     }
 
     Locator physical_locator = IPLocator::toPhysicalLocator(locator);
@@ -701,6 +705,8 @@ bool TCPTransportInterface::OpenOutputChannel(
                 IPLocator::WanToLanLocator(physical_locator) ==
                 tcp_sender_resource->locator())))
         {
+
+            // If missing, logical port will be added in first send()
             // Add logical port to channel if it's not there yet
             auto channel_resource = channel_resources_.find(physical_locator);
 
@@ -711,14 +717,17 @@ bool TCPTransportInterface::OpenOutputChannel(
                 channel_resource = channel_resources_.find(IPLocator::toPhysicalLocator(wan_locator));
             }
 
-            if (channel_resource != channel_resources_.end())
+            if (logical_port != 0)
             {
-                channel_resource->second->add_logical_port(logical_port, rtcp_message_manager_.get());
-            }
-            else
-            {
-                std::lock_guard<std::mutex> channelPendingLock(channel_pending_logical_ports_mutex_);
-                channel_pending_logical_ports_[physical_locator].insert(logical_port);
+                if (channel_resource != channel_resources_.end())
+                {
+                    channel_resource->second->add_logical_port(logical_port, rtcp_message_manager_.get());
+                }
+                else
+                {
+                    std::lock_guard<std::mutex> channelPendingLock(channel_pending_logical_ports_mutex_);
+                    channel_pending_logical_ports_[physical_locator].insert(logical_port);
+                }
             }
 
             statistics_info_.add_entry(locator);
@@ -792,7 +801,9 @@ bool TCPTransportInterface::OpenOutputChannel(
         // If the remote physical port is higher than our listening port, a new CONNECT channel needs to be created and connected
         // and the locator added to the send_resource_list.
         // If the remote physical port is lower than our listening port, only the locator needs to be added to the send_resource_list.
-        if (IPLocator::getPhysicalPort(physical_locator) > listening_port || local_lower_interface)
+        // If the ports are equal, the CONNECT channel is created if the local interface is lower.
+        // If this locator belong to a DS server, a CONNECT channel is always needed.
+        if (always_connect || IPLocator::getPhysicalPort(physical_locator) > listening_port || local_lower_interface)
         {
             // Client side (either Server-Client or LARGE_DATA)
             EPROSIMA_LOG_INFO(OpenOutputChannel, "OpenOutputChannel: [CONNECT] (physical: "
@@ -814,7 +825,11 @@ bool TCPTransportInterface::OpenOutputChannel(
 
             channel_resources_[physical_locator] = channel;
             channel->connect(channel_resources_[physical_locator]);
-            channel->add_logical_port(logical_port, rtcp_message_manager_.get());
+            // Add logical port only if it's not 0
+            if (!always_connect)
+            {
+                channel->add_logical_port(logical_port, rtcp_message_manager_.get());
+            }
         }
         else
         {

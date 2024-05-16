@@ -30,6 +30,7 @@
 #include <fastdds/rtps/participant/RTPSParticipantListener.h>
 #include <fastdds/rtps/reader/StatefulReader.h>
 #include <fastdds/rtps/writer/StatefulWriter.h>
+#include <fastdds/rtps/transport/TCPTransportDescriptor.h>
 
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
@@ -511,6 +512,15 @@ bool PDPServer::create_ds_pdp_reliable_endpoints(
     // locators
     {
         eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
+
+        // TCP Clients need to handle logical ports
+        if (mp_RTPSParticipant->has_tcp_transports())
+        {
+            for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
+            {
+                mp_RTPSParticipant->create_tcp_connections(it.metatrafficUnicastLocatorList);
+            }
+        }
 
         for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
         {
@@ -1183,8 +1193,20 @@ void PDPServer::update_remote_servers_list()
 
     eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
 
+    // TCP Clients need to handle logical ports
+    bool set_logicals = mp_RTPSParticipant->has_tcp_transports();
+
     for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
     {
+        if (!endpoints->reader.reader_->matched_writer_is_matched(it.GetPDPWriter()) ||
+                !endpoints->writer.writer_->matched_reader_is_matched(it.GetPDPReader()))
+        {
+            if (set_logicals)
+            {
+                mp_RTPSParticipant->create_tcp_connections(it.metatrafficUnicastLocatorList);
+            }
+        }
+
         if (!endpoints->reader.reader_->matched_writer_is_matched(it.GetPDPWriter()))
         {
             match_pdp_writer_nts_(it);
@@ -1200,6 +1222,9 @@ void PDPServer::update_remote_servers_list()
     {
         discovery_db_.add_server(server.guidPrefix);
     }
+
+    // Need to reactivate the server thread to send the DATA(p) to the new servers
+    awake_server_thread();
 }
 
 bool PDPServer::process_writers_acknowledgements()
