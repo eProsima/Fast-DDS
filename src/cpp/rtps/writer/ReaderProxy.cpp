@@ -57,23 +57,27 @@ ReaderProxy::ReaderProxy(
     , nack_supression_event_(nullptr)
     , initial_heartbeat_event_(nullptr)
     , timers_enabled_(false)
-    , last_acknack_count_(0)
+    , next_expected_acknack_count_(0)
     , last_nackfrag_count_(0)
 {
-    nack_supression_event_ = new TimedEvent(writer_->getRTPSParticipant()->getEventResource(),
-                    [&]() -> bool
-                    {
-                        writer_->perform_nack_supression(guid());
-                        return false;
-                    },
-                    TimeConv::Time_t2MilliSecondsDouble(times.nackSupressionDuration));
+    auto participant = writer_->getRTPSParticipant();
+    if (nullptr != participant)
+    {
+        nack_supression_event_ = new TimedEvent(participant->getEventResource(),
+                        [&]() -> bool
+                        {
+                            writer_->perform_nack_supression(guid());
+                            return false;
+                        },
+                        TimeConv::Time_t2MilliSecondsDouble(times.nackSupressionDuration));
 
-    initial_heartbeat_event_ = new TimedEvent(writer_->getRTPSParticipant()->getEventResource(),
-                    [&]() -> bool
-                    {
-                        writer_->intraprocess_heartbeat(this);
-                        return false;
-                    }, 0);
+        initial_heartbeat_event_ = new TimedEvent(participant->getEventResource(),
+                        [&]() -> bool
+                        {
+                            writer_->intraprocess_heartbeat(this);
+                            return false;
+                        }, 0);
+    }
 
     stop();
 }
@@ -135,7 +139,7 @@ void ReaderProxy::start(
     }
 
     timers_enabled_.store(is_remote_and_reliable());
-    if (is_local_reader())
+    if (is_local_reader() && initial_heartbeat_event_)
     {
         initial_heartbeat_event_->restart_timer();
     }
@@ -166,24 +170,30 @@ void ReaderProxy::stop()
     disable_timers();
 
     changes_for_reader_.clear();
-    last_acknack_count_ = 0;
+    next_expected_acknack_count_ = 0;
     last_nackfrag_count_ = 0;
     changes_low_mark_ = SequenceNumber_t();
 }
 
 void ReaderProxy::disable_timers()
 {
-    if (timers_enabled_.exchange(false))
+    if (timers_enabled_.exchange(false) && nack_supression_event_)
     {
         nack_supression_event_->cancel_timer();
     }
-    initial_heartbeat_event_->cancel_timer();
+    if (initial_heartbeat_event_)
+    {
+        initial_heartbeat_event_->cancel_timer();
+    }
 }
 
 void ReaderProxy::update_nack_supression_interval(
         const Duration_t& interval)
 {
-    nack_supression_event_->update_interval(interval);
+    if (nack_supression_event_)
+    {
+        nack_supression_event_->update_interval(interval);
+    }
 }
 
 void ReaderProxy::add_change(
@@ -191,7 +201,7 @@ void ReaderProxy::add_change(
         bool is_relevant,
         bool restart_nack_supression)
 {
-    if (restart_nack_supression && timers_enabled_.load())
+    if (restart_nack_supression && timers_enabled_.load() && nack_supression_event_)
     {
         nack_supression_event_->restart_timer();
     }
@@ -205,7 +215,7 @@ void ReaderProxy::add_change(
         bool restart_nack_supression,
         const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
 {
-    if (restart_nack_supression && timers_enabled_)
+    if (restart_nack_supression && timers_enabled_ && nack_supression_event_)
     {
         nack_supression_event_->restart_timer(max_blocking_time);
     }
@@ -459,7 +469,7 @@ void ReaderProxy::from_unsent_to_status(
     // It will use acked_changes_set().
     assert(is_reliable_);
 
-    if (restart_nack_supression && is_remote_and_reliable())
+    if (restart_nack_supression && is_remote_and_reliable() && nack_supression_event_)
     {
         assert(timers_enabled_.load());
         nack_supression_event_->restart_timer();
