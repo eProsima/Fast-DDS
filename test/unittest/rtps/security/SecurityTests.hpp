@@ -21,23 +21,14 @@
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/history/WriterHistory.h>
-<<<<<<< HEAD
-#include <fastdds/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
-=======
-#include <fastdds/rtps/reader/StatefulReader.h>
-#include <fastdds/rtps/reader/StatelessReader.h>
->>>>>>> 52ea02774 (Refs #20820: Make accesscontrol/ParameterTypes private)
-#include <fastdds/rtps/security/common/Handle.h>
 #include <fastdds/rtps/writer/StatefulWriter.h>
 #include <fastdds/rtps/writer/StatelessWriter.h>
 #include <rtps/builtin/discovery/participant/PDP.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
-<<<<<<< HEAD
 #include <rtps/reader/StatefulReader.hpp>
 #include <rtps/reader/StatelessReader.hpp>
-=======
 #include <rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
->>>>>>> 52ea02774 (Refs #20820: Make accesscontrol/ParameterTypes private)
+#include <rtps/security/common/Handle.h>
 #include <rtps/security/MockAuthenticationPlugin.h>
 #include <rtps/security/MockCryptographyPlugin.h>
 #include <rtps/security/SecurityManager.h>

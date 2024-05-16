@@ -18,14 +18,14 @@
 #ifndef _FASTDDS_RTPS_SECURITY_AUTHENTICATION_AUTHENTICATION_H_
 #define _FASTDDS_RTPS_SECURITY_AUTHENTICATION_AUTHENTICATION_H_
 
-#include <fastdds/rtps/security/common/Handle.h>
-#include <fastdds/rtps/security/common/SharedSecretHandle.h>
-#include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
-#include <fastdds/rtps/security/exceptions/SecurityException.h>
-#include <fastdds/rtps/common/Token.h>
 #include <fastdds/rtps/common/CDRMessage_t.h>
+#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/Token.h>
+#include <fastdds/rtps/security/exceptions/SecurityException.h>
 #include <rtps/security/authentication/Handshake.h>
+#include <rtps/security/common/Handle.h>
+#include <rtps/security/common/SharedSecretHandle.h>
 
 #include <cstdint>
 

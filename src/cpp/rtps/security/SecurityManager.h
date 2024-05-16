@@ -33,11 +33,11 @@
 #include <fastdds/rtps/common/SequenceNumber.h>
 #include <fastdds/rtps/common/SerializedPayload.h>
 #include <fastdds/rtps/reader/ReaderListener.h>
-#include <fastdds/rtps/security/authentication/Handshake.h>
-#include <fastdds/rtps/security/common/ParticipantGenericMessage.h>
 #include <fastdds/rtps/writer/WriterListener.h>
 
 #include <rtps/resources/TimedEvent.h>
+#include <rtps/security/authentication/Handshake.h>
+#include <rtps/security/common/ParticipantGenericMessage.h>
 #include <rtps/security/ISecurityPluginFactory.h>
 #include <utils/ProxyPool.hpp>
 #include <utils/shared_mutex.hpp>

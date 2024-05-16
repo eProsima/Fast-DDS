@@ -18,8 +18,8 @@
 #ifndef _FASTDDS_RTPS_SECURITY_ACCESSCONTROL_ACCESSCONTROL_H_
 #define _FASTDDS_RTPS_SECURITY_ACCESSCONTROL_ACCESSCONTROL_H_
 
-#include <fastdds/rtps/security/common/Handle.h>
 #include <fastdds/rtps/common/Token.h>
+#include <rtps/security/common/Handle.h>
 
 namespace eprosima {
 namespace fastrtps {

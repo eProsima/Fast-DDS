@@ -31,7 +31,7 @@
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/rtps/common/Locator.h>
 
-#include <fastdds/rtps/security/common/ParticipantGenericMessage.h>
+#include <rtps/security/common/ParticipantGenericMessage.h>
 
 namespace eprosima {
 namespace fastrtps {
