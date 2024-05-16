@@ -41,7 +41,7 @@
 - [ ] Tests that thoroughly check the new feature have been added/Regression tests checking the bug and its fix have been added. <!-- Blackbox tests checking the new functionality are required. Changes that add/modify public API must include unit tests covering all possible cases. In case that no tests are provided, please justify why. -->
 - [ ] Any new/modified methods have been properly documented using Doxygen. <!-- Even internal classes, and private methods and members should be documented, not only the public API. -->
 - [ ] Any new configuration API has an equivalent XML API (with the corresponding XSD extension) <!-- C++ configurable parameters should also be configurable using XML files. -->
-- [ ] Changes are ABI compatible. <!-- Bug fixes should be ABI compatible if possible so a backport to previous affected releases can be made. -->
+- [ ] Changes are backport compatible: they do **NOT** break ABI nor change library core behavior. <!-- Bug fixes should be ABI compatible if possible so a backport to previous affected releases can be made. -->
 - [ ] Changes are API compatible. <!-- Public API must not be broken within the same major release. -->
 - [ ] Documentation builds and tests pass locally. <!-- Check there are no typos in the Doxygen documentation. -->
 - [ ] New feature has been added to the `versions.md` file (if applicable).
