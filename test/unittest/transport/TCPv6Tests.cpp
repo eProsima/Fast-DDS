@@ -320,7 +320,7 @@ TEST_F(TCPv6Tests, client_announced_local_port_uniqueness)
 TEST_F(TCPv6Tests, non_blocking_send)
 {
     uint16_t port = g_default_port;
-    uint32_t msg_size = eprosima::fastdds::rtps::s_minimumSocketBuffer;
+    uint32_t msg_size = 64ul * 1024ul;
     // Create a TCP Server transport
     TCPv6TransportDescriptor senderDescriptor;
     senderDescriptor.add_listener_port(port);
