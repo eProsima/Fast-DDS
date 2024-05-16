@@ -355,7 +355,7 @@ XMLP_ret XMLParser::parseXMLAliasDynamicType(
                 }
                 else
                 {
-                    EPROSIMA_LOG_ERROR(XMLPARSER, "Error parsing alias type: Type '" << name << "' already defined.");
+                    logError(XMLPARSER, "Error parsing alias type: Type '" << name << "' already defined.");
                     ret = XMLP_ret::XML_ERROR;
                 }
             }
@@ -413,7 +413,7 @@ XMLP_ret XMLParser::parseXMLBitsetDynamicType(
     }
     if (nullptr != XMLProfileManager::getDynamicTypeByName(name))
     {
-        EPROSIMA_LOG_ERROR(XMLPARSER, "Error parsing 'bitsetDcl' type: Type '" << name << "' already defined.");
+        logError(XMLPARSER, "Error parsing 'bitsetDcl' type: Type '" << name << "' already defined.");
         return XMLP_ret::XML_ERROR;
     }
 
@@ -651,7 +651,7 @@ XMLP_ret XMLParser::parseXMLBitmaskDynamicType(
     }
     if (nullptr != XMLProfileManager::getDynamicTypeByName(name))
     {
-        EPROSIMA_LOG_ERROR(XMLPARSER, "Error parsing 'bitmaskDcl' type: Type '" << name << "' already defined.");
+        logError(XMLPARSER, "Error parsing 'bitmaskDcl' type: Type '" << name << "' already defined.");
         return XMLP_ret::XML_ERROR;
     }
 
@@ -715,7 +715,7 @@ XMLP_ret XMLParser::parseXMLEnumDynamicType(
     }
     if (nullptr != XMLProfileManager::getDynamicTypeByName(enumName))
     {
-        EPROSIMA_LOG_ERROR(XMLPARSER, "Error parsing 'enum' type: Type '" << enumName << "' already defined.");
+        logError(XMLPARSER, "Error parsing 'enum' type: Type '" << enumName << "' already defined.");
         return XMLP_ret::XML_ERROR;
     }
 
@@ -770,7 +770,7 @@ XMLP_ret XMLParser::parseXMLStructDynamicType(
     }
     if (nullptr != XMLProfileManager::getDynamicTypeByName(name))
     {
-        EPROSIMA_LOG_ERROR(XMLPARSER, "Error parsing 'structDcl' type: Type '" << name << "' already defined.");
+        logError(XMLPARSER, "Error parsing 'structDcl' type: Type '" << name << "' already defined.");
         return XMLP_ret::XML_ERROR;
     }
 
@@ -855,12 +855,12 @@ XMLP_ret XMLParser::parseXMLUnionDynamicType(
     const char* name = p_root->Attribute(NAME);
     if (nullptr == name || name[0] == '\0')
     {
-        EPROSIMA_LOG_ERROR(XMLPARSER, "Missing required attribute 'name' in 'unionDcl'.");
+        logError(XMLPARSER, "Missing required attribute 'name' in 'unionDcl'.");
         return XMLP_ret::XML_ERROR;
     }
     if (nullptr != XMLProfileManager::getDynamicTypeByName(name))
     {
-        EPROSIMA_LOG_ERROR(XMLPARSER, "Error parsing 'unionDcl' type: Type '" << name << "' already defined.");
+        logError(XMLPARSER, "Error parsing 'unionDcl' type: Type '" << name << "' already defined.");
         return XMLP_ret::XML_ERROR;
     }
 
