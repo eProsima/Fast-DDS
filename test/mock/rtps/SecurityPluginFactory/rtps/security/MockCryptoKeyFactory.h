@@ -20,8 +20,8 @@
 
 #include <gmock/gmock.h>
 
-#include <fastdds/rtps/security/cryptography/CryptoKeyFactory.h>
-#include <fastdds/rtps/security/cryptography/CryptoTypes.h>
+#include <rtps/security/cryptography/CryptoKeyFactory.h>
+#include <rtps/security/cryptography/CryptoTypes.h>
 
 #include <security/cryptography/AESGCMGMAC_Types.h>
 

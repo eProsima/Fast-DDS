@@ -18,7 +18,7 @@
 #ifndef _FASTDDS_RTPS_SECURITY_CRYPTOGRAPHY_CRYPTOKEYEXCHANGE_H_
 #define _FASTDDS_RTPS_SECURITY_CRYPTOGRAPHY_CRYPTOKEYEXCHANGE_H_
 
-#include <fastdds/rtps/security/cryptography/CryptoTypes.h>
+#include <rtps/security/cryptography/CryptoTypes.h>
 
 namespace eprosima {
 namespace fastrtps {

@@ -19,8 +19,8 @@
 #ifndef _RTPS_SECURITY_MOCKCRYPTOGRAPHYPLUGIN_H_
 #define _RTPS_SECURITY_MOCKCRYPTOGRAPHYPLUGIN_H_
 
-#include <fastdds/rtps/security/cryptography/Cryptography.h>
 
+#include <rtps/security/cryptography/Cryptography.h>
 #include <rtps/security/MockCryptoKeyExchange.h>
 #include <rtps/security/MockCryptoKeyFactory.h>
 #include <rtps/security/MockCryptoTransform.h>

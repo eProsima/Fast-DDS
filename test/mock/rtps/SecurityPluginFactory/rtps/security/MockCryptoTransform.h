@@ -20,8 +20,8 @@
 
 #include <gmock/gmock.h>
 
-#include <fastdds/rtps/security/cryptography/CryptoTransform.h>
-#include <fastdds/rtps/security/cryptography/CryptoTypes.h>
+#include <rtps/security/cryptography/CryptoTransform.h>
+#include <rtps/security/cryptography/CryptoTypes.h>
 
 namespace eprosima {
 namespace fastrtps {

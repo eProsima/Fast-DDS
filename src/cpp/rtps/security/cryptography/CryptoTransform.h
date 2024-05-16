@@ -20,7 +20,7 @@
 
 #include <memory>
 
-#include <fastdds/rtps/security/cryptography/CryptoTypes.h>
+#include <rtps/security/cryptography/CryptoTypes.h>
 #include <fastdds/rtps/common/CDRMessage_t.h>
 #include <fastdds/rtps/common/SerializedPayload.h>
 
