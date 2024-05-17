@@ -463,7 +463,7 @@ TEST_F(TCPv6Tests, non_blocking_send)
     data = message.data();
     size = message.size();
     buffer_list.clear();
-    buffer_list.push_back(NetworkBuffer(data, size));
+    buffer_list.emplace_back(data, size);
     bytes_sent = sender_channel_resource->send(nullptr, 0, buffer_list, size, ec);
     ASSERT_EQ(bytes_sent, 0u);
 

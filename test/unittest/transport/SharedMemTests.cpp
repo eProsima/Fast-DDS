@@ -745,7 +745,7 @@ TEST_F(SHMTransportTests, send_and_receive_between_ports)
     std::list<NetworkBuffer> buffer_list;
     for (size_t i = 0; i < 5; ++i)
     {
-        buffer_list.push_back(NetworkBuffer(&message[i], 1));
+        buffer_list.emplace_back(&message[i], 1);
     }
 
     std::function<void()> recCallback = [&]()
@@ -812,7 +812,7 @@ TEST_F(SHMTransportTests, port_and_segment_overflow_discard)
     std::list<NetworkBuffer> buffer_list;
     for (size_t i = 0; i < 4; ++i)
     {
-        buffer_list.push_back(NetworkBuffer(&message[i], 1));
+        buffer_list.emplace_back(&message[i], 1);
     }
 
     LocatorList locator_list;
@@ -825,7 +825,7 @@ TEST_F(SHMTransportTests, port_and_segment_overflow_discard)
         // to cause segment overflow
         octet message_big[4096] = { 'H', 'e', 'l', 'l'};
         std::list<NetworkBuffer> buffer_list_big;
-        buffer_list_big.push_back(NetworkBuffer(message_big, 4096));
+        buffer_list_big.emplace_back(message_big, 4096);
 
         EXPECT_TRUE(send_resource_list.at(0)->send(buffer_list_big, sizeof(message_big), &locators_begin, &locators_end,
                 (std::chrono::steady_clock::now() + std::chrono::microseconds(100))));
@@ -2070,7 +2070,7 @@ TEST_F(SHMTransportTests, dump_file)
         std::list<NetworkBuffer> buffer_list;
         for (size_t i = 0; i < 5; ++i)
         {
-            buffer_list.push_back(NetworkBuffer(&message[i], 1));
+            buffer_list.emplace_back(&message[i], 1);
         }
 
         std::function<void()> recCallback = [&]()

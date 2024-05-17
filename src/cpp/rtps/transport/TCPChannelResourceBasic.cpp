@@ -165,10 +165,7 @@ size_t TCPChannelResourceBasic::send(
         {
             asio_buffers.push_back(asio::buffer(header, header_size));
         }
-        for (const NetworkBuffer& buffer : buffers)
-        {
-            asio_buffers.push_back(asio::buffer(buffer.buffer, buffer.size));
-        }
+        asio_buffers.insert(asio_buffers.end(), buffers.begin(), buffers.end());
         bytes_sent = asio::write(*socket_.get(), asio_buffers, ec);
     }
 

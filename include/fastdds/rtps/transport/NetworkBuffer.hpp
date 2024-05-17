@@ -39,17 +39,9 @@ namespace rtps {
 struct NetworkBuffer final
 {
     //! Pointer to the buffer where the data is stored.
-    const void* buffer;
+    const void* buffer = nullptr;
     //! Number of bytes to use starting at @c buffer.
-    uint32_t size;
-
-    NetworkBuffer(
-            const void* ptr,
-            uint32_t s)
-        : buffer(ptr)
-        , size(s)
-    {
-    }
+    uint32_t size = 0;
 
     NetworkBuffer()
         : buffer(nullptr)
@@ -63,24 +55,6 @@ struct NetworkBuffer final
         : buffer(ptr)
         , size(s)
     {
-    }
-
-    NetworkBuffer(
-            const NetworkBuffer& copy)
-        : buffer(copy.buffer)
-        , size(copy.size)
-    {
-    }
-
-    NetworkBuffer& operator =(
-            const NetworkBuffer& copy)
-    {
-        if (this != &copy)
-        {
-            buffer = copy.buffer;
-            size = copy.size;
-        }
-        return *this;
     }
 
     //! Conversion operator to asio::const_buffer.

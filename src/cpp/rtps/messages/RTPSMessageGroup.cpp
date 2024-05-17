@@ -143,19 +143,19 @@ bool RTPSMessageGroup::append_submessage()
         CDRMessage_t new_sub_msg = *submessage_msg_;
         copied_messages_.push_back(new_sub_msg);
 
-        buffers_to_send_.push_back(NetworkBuffer(copied_messages_.back().buffer, copied_messages_.back().length));
+        buffers_to_send_.emplace_back(copied_messages_.back().buffer, copied_messages_.back().length);
         buffers_bytes_ += copied_messages_.back().length;
     }
 
     if (nullptr != pending_buffer_.buffer)
     {
         // Add pending buffer & padding to buffers_to_send_
-        buffers_to_send_.push_back(NetworkBuffer(pending_buffer_));
+        buffers_to_send_.emplace_back(pending_buffer_);
         buffers_bytes_ += pending_buffer_.size;
         pending_buffer_ = NetworkBuffer();
         if (pending_padding_ > 0)
         {
-            buffers_to_send_.push_back(NetworkBuffer(padding_, pending_padding_));
+            buffers_to_send_.emplace_back(padding_, pending_padding_);
             buffers_bytes_ += pending_padding_;
             pending_padding_ = 0;
         }
@@ -381,7 +381,7 @@ void RTPSMessageGroup::send()
 #ifdef FASTDDS_STATISTICS
             CDRMessage_t stats_msg;
             eprosima::fastdds::statistics::rtps::add_statistics_submessage(&stats_msg);
-            buffers_to_send_.push_back(NetworkBuffer(stats_msg.buffer, stats_msg.length));
+            buffers_to_send_.emplace_back(stats_msg.buffer, stats_msg.length);
             buffers_bytes_ += stats_msg.length;
 #endif // FASTDDS_STATISTICS
 

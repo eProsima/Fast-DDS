@@ -266,8 +266,6 @@ private:
     void check_and_maybe_flush(
             const GuidPrefix_t& destination_guid_prefix);
 
-    void append_pending_payload();
-
     bool insert_submessage(
             bool is_big_submessage)
     {
@@ -278,6 +276,14 @@ private:
             const GuidPrefix_t& destination_guid_prefix,
             bool is_big_submessage);
 
+
+    /**
+     * @brief Checks if there is enough space in the CDRMessage to accommodate the given length.
+     *
+     * @param msg Pointer to the CDRMessage to be checked.
+     * @param length The length to be checked for space availability.
+     * @return True if there is enough space, false otherwise.
+     */
     bool check_space(
             CDRMessage_t* msg,
             const uint32_t length);
@@ -339,10 +345,10 @@ private:
 
     uint32_t current_sent_bytes_ = 0;
 
-    // Next buffer that will be send
+    // Next buffer that will be sent
     eprosima::fastdds::rtps::NetworkBuffer pending_buffer_;
 
-    // List of buffers that will be send along the header
+    // List of buffers that will be sent along the header
     std::list<eprosima::fastdds::rtps::NetworkBuffer> buffers_to_send_;
 
     // Bytes to send in the next list of buffers

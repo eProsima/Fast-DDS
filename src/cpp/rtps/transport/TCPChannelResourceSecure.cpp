@@ -223,10 +223,7 @@ size_t TCPChannelResourceSecure::send(
         {
             asio_buffers.push_back(asio::buffer(header, header_size));
         }
-        for (const NetworkBuffer& buffer : buffers)
-        {
-            asio_buffers.push_back(asio::buffer(buffer.buffer, buffer.size));
-        }
+        asio_buffers.insert(asio_buffers.end(), buffers.begin(), buffers.end());
 
         // Work around meanwhile
         std::promise<size_t> write_bytes_promise;

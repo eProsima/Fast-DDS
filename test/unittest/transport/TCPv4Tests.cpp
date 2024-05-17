@@ -288,7 +288,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_ports)
     std::list<NetworkBuffer> buffer_list;
     for (size_t i = 0; i < 5; ++i)
     {
-        buffer_list.push_back(NetworkBuffer(&message[i], 1));
+        buffer_list.emplace_back(&message[i], 1);
     }
 
     Semaphore sem;
@@ -350,7 +350,7 @@ TEST_F(TCPv4Tests, send_is_rejected_if_buffer_size_is_bigger_to_size_specified_i
     // Then
     std::vector<octet> receiveBufferWrongSize(descriptor.sendBufferSize + 1);
     std::list<NetworkBuffer> buffer_list;
-    buffer_list.push_back(NetworkBuffer(receiveBufferWrongSize.data(), (uint32_t)receiveBufferWrongSize.size()));
+    buffer_list.emplace_back(receiveBufferWrongSize.data(), (uint32_t)receiveBufferWrongSize.size());
     ASSERT_FALSE(send_resource_list.at(0)->send(buffer_list, (uint32_t)receiveBufferWrongSize.size(),
             &destination_begin, &destination_end, (std::chrono::steady_clock::now() + std::chrono::microseconds(100))));
 }
@@ -420,7 +420,7 @@ TEST_F(TCPv4Tests, send_to_wrong_interface)
     std::list<NetworkBuffer> buffer_list;
     for (size_t i = 0; i < message.size(); ++i)
     {
-        buffer_list.push_back(NetworkBuffer(&message[i], 1));
+        buffer_list.emplace_back(&message[i], 1);
     }
     ASSERT_FALSE(send_resource_list.at(0)->send(buffer_list, (uint32_t)message.size(), &wrong_begin, &wrong_end,
             (std::chrono::steady_clock::now() + std::chrono::microseconds(100))));
@@ -455,7 +455,7 @@ TEST_F(TCPv4Tests, send_to_blocked_interface)
     std::list<NetworkBuffer> buffer_list;
     for (size_t i = 0; i < message.size(); ++i)
     {
-        buffer_list.push_back(NetworkBuffer(&message[i], 1));
+        buffer_list.emplace_back(&message[i], 1);
     }
     ASSERT_FALSE(send_resource_list.at(0)->send(buffer_list, (uint32_t)message.size(), &wrong_begin, &wrong_end,
             (std::chrono::steady_clock::now() + std::chrono::microseconds(100))));
@@ -520,7 +520,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_allowed_interfaces_ports)
                 std::list<NetworkBuffer> buffer_list;
                 for (size_t i = 0; i < 5; ++i)
                 {
-                    buffer_list.push_back(NetworkBuffer(&message[i], 1));
+                    buffer_list.emplace_back(&message[i], 1);
                 }
                 bool bOk = false;
                 std::function<void()> recCallback = [&]()
@@ -633,7 +633,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_allowed_interfaces_ports_by_name)
         std::list<NetworkBuffer> buffer_list;
         for (size_t i = 0; i < 5; ++i)
         {
-            buffer_list.push_back(NetworkBuffer(&message[i], 1));
+            buffer_list.emplace_back(&message[i], 1);
         }
         bool bOk = false;
         std::function<void()> recCallback = [&]()
@@ -777,7 +777,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_secure_ports_client_verifies)
         std::list<NetworkBuffer> buffer_list;
         for (size_t i = 0; i < 5; ++i)
         {
-            buffer_list.push_back(NetworkBuffer(&message[i], 1));
+            buffer_list.emplace_back(&message[i], 1);
         }
 
         Semaphore sem;
@@ -881,7 +881,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_secure_ports_server_verifies)
         std::list<NetworkBuffer> buffer_list;
         for (size_t i = 0; i < 5; ++i)
         {
-            buffer_list.push_back(NetworkBuffer(&message[i], 1));
+            buffer_list.emplace_back(&message[i], 1);
         }
 
         Semaphore sem;
@@ -988,7 +988,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_both_secure_ports)
         std::list<NetworkBuffer> buffer_list;
         for (size_t i = 0; i < 5; ++i)
         {
-            buffer_list.push_back(NetworkBuffer(&message[i], 1));
+            buffer_list.emplace_back(&message[i], 1);
         }
 
         Semaphore sem;
@@ -1095,7 +1095,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_both_secure_ports_untrusted)
         std::list<NetworkBuffer> buffer_list;
         for (size_t i = 0; i < 5; ++i)
         {
-            buffer_list.push_back(NetworkBuffer(&message[i], 1));
+            buffer_list.emplace_back(&message[i], 1);
         }
 
         Semaphore sem;
@@ -1206,7 +1206,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_secure_clients_1)
         std::list<NetworkBuffer> buffer_list;
         for (size_t i = 0; i < 5; ++i)
         {
-            buffer_list.push_back(NetworkBuffer(&message[i], 1));
+            buffer_list.emplace_back(&message[i], 1);
         }
 
         Semaphore sem;
@@ -1310,7 +1310,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_secure_ports_untrusted_server)
         std::list<NetworkBuffer> buffer_list;
         for (size_t i = 0; i < 5; ++i)
         {
-            buffer_list.push_back(NetworkBuffer(&message[i], 1));
+            buffer_list.emplace_back(&message[i], 1);
         }
 
         Semaphore sem;
@@ -1425,7 +1425,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_both_secure_ports_with_sni)
         std::list<NetworkBuffer> buffer_list;
         for (size_t i = 0; i < 5; ++i)
         {
-            buffer_list.push_back(NetworkBuffer(&message[i], 1));
+            buffer_list.emplace_back(&message[i], 1);
         }
 
         Semaphore sem;
@@ -1606,7 +1606,7 @@ TEST_F(TCPv4Tests, secure_non_blocking_send)
     data = message.data();
     size = message.size();
     buffer_list.clear();
-    buffer_list.push_back(NetworkBuffer(data, size));
+    buffer_list.emplace_back(data, size);
     bytes_sent = sender_channel_resource->send(nullptr, 0, buffer_list, size, ec);
     ASSERT_EQ(bytes_sent, 0u);
 
@@ -1661,7 +1661,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_allowed_localhost_interfaces_ports)
         std::list<NetworkBuffer> buffer_list;
         for (size_t i = 0; i < 5; ++i)
         {
-            buffer_list.push_back(NetworkBuffer(&message[i], 1));
+            buffer_list.emplace_back(&message[i], 1);
         }
         bool bOk = false;
         std::function<void()> recCallback = [&]()
@@ -1761,7 +1761,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_blocked_interfaces_ports)
                 std::list<NetworkBuffer> buffer_list;
                 for (size_t i = 0; i < 5; ++i)
                 {
-                    buffer_list.push_back(NetworkBuffer(&message[i], 1));
+                    buffer_list.emplace_back(&message[i], 1);
                 }
                 bool bOk = false;
                 std::function<void()> recCallback = [&]()
@@ -2133,7 +2133,7 @@ TEST_F(TCPv4Tests, non_blocking_send)
     data = message.data();
     size = message.size();
     buffer_list.clear();
-    buffer_list.push_back(NetworkBuffer(data, size));
+    buffer_list.emplace_back(data, size);
     bytes_sent = sender_channel_resource->send(nullptr, 0, buffer_list, size, ec);
     ASSERT_EQ(bytes_sent, 0u);
 

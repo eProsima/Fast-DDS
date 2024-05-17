@@ -428,7 +428,7 @@ std::shared_ptr<SharedMemManager::Buffer> SharedMemTransport::copy_to_shared_buf
 
     std::shared_ptr<SharedMemManager::Buffer> shared_buffer =
             shared_mem_segment_->alloc_buffer(total_bytes, max_blocking_time_point);
-    void* pos = shared_buffer->data();
+    uint8_t* pos = static_cast<uint8_t*>(shared_buffer->data());
 
     // Statistics submessage is always the last buffer to be added
     // If statistics message is present, skip last buffer
@@ -438,9 +438,9 @@ std::shared_ptr<SharedMemManager::Buffer> SharedMemTransport::copy_to_shared_buf
     for (auto it = buffers.begin(); it != it_end; ++it)
     {
         // Direct copy from the const_buffer to the mutable shared_buffer
-        memcpy(pos, ((*it).buffer), (*it).size);
+        memcpy(pos, (it->buffer), it->size);
         // Static cast to avoid pointer arithmetic on void*
-        pos = static_cast<char*>(pos) + (*it).size;
+        pos += it->size;
     }
 
     return shared_buffer;
