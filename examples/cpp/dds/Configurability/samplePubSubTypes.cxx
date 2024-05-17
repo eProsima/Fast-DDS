@@ -221,7 +221,8 @@ bool samplePubSubType::getKey(
 
 void samplePubSubType::register_type_object_representation() const
 {
-    register_sample_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_sample_type_identifier(type_id);
 }
 
 

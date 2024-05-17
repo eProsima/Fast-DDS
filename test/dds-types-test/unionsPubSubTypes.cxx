@@ -221,7 +221,8 @@ bool UnionShortPubSubType::getKey(
 
 void UnionShortPubSubType::register_type_object_representation() const
 {
-    register_unions_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_UnionShort_type_identifier(type_id);
 }
 
 UnionUShortPubSubType::UnionUShortPubSubType()
@@ -414,7 +415,8 @@ bool UnionUShortPubSubType::getKey(
 
 void UnionUShortPubSubType::register_type_object_representation() const
 {
-    register_unions_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_UnionUShort_type_identifier(type_id);
 }
 
 UnionLongPubSubType::UnionLongPubSubType()
@@ -607,7 +609,8 @@ bool UnionLongPubSubType::getKey(
 
 void UnionLongPubSubType::register_type_object_representation() const
 {
-    register_unions_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_UnionLong_type_identifier(type_id);
 }
 
 UnionULongPubSubType::UnionULongPubSubType()
@@ -800,7 +803,8 @@ bool UnionULongPubSubType::getKey(
 
 void UnionULongPubSubType::register_type_object_representation() const
 {
-    register_unions_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_UnionULong_type_identifier(type_id);
 }
 
 UnionLongLongPubSubType::UnionLongLongPubSubType()
@@ -993,7 +997,8 @@ bool UnionLongLongPubSubType::getKey(
 
 void UnionLongLongPubSubType::register_type_object_representation() const
 {
-    register_unions_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_UnionLongLong_type_identifier(type_id);
 }
 
 UnionULongLongPubSubType::UnionULongLongPubSubType()
@@ -1186,7 +1191,8 @@ bool UnionULongLongPubSubType::getKey(
 
 void UnionULongLongPubSubType::register_type_object_representation() const
 {
-    register_unions_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_UnionULongLong_type_identifier(type_id);
 }
 
 UnionFloatPubSubType::UnionFloatPubSubType()
@@ -1379,7 +1385,8 @@ bool UnionFloatPubSubType::getKey(
 
 void UnionFloatPubSubType::register_type_object_representation() const
 {
-    register_unions_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_UnionFloat_type_identifier(type_id);
 }
 
 UnionDoublePubSubType::UnionDoublePubSubType()
@@ -1572,7 +1579,8 @@ bool UnionDoublePubSubType::getKey(
 
 void UnionDoublePubSubType::register_type_object_representation() const
 {
-    register_unions_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_UnionDouble_type_identifier(type_id);
 }
 
 UnionLongDoublePubSubType::UnionLongDoublePubSubType()
@@ -1765,7 +1773,8 @@ bool UnionLongDoublePubSubType::getKey(
 
 void UnionLongDoublePubSubType::register_type_object_representation() const
 {
-    register_unions_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_UnionLongDouble_type_identifier(type_id);
 }
 
 UnionBooleanPubSubType::UnionBooleanPubSubType()
@@ -1958,7 +1967,8 @@ bool UnionBooleanPubSubType::getKey(
 
 void UnionBooleanPubSubType::register_type_object_representation() const
 {
-    register_unions_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_UnionBoolean_type_identifier(type_id);
 }
 
 UnionOctetPubSubType::UnionOctetPubSubType()
@@ -2151,7 +2161,8 @@ bool UnionOctetPubSubType::getKey(
 
 void UnionOctetPubSubType::register_type_object_representation() const
 {
-    register_unions_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_UnionOctet_type_identifier(type_id);
 }
 
 UnionCharPubSubType::UnionCharPubSubType()
@@ -2344,7 +2355,8 @@ bool UnionCharPubSubType::getKey(
 
 void UnionCharPubSubType::register_type_object_representation() const
 {
-    register_unions_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_UnionChar_type_identifier(type_id);
 }
 
 UnionWCharPubSubType::UnionWCharPubSubType()
@@ -2537,7 +2549,8 @@ bool UnionWCharPubSubType::getKey(
 
 void UnionWCharPubSubType::register_type_object_representation() const
 {
-    register_unions_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_UnionWChar_type_identifier(type_id);
 }
 
 UnionStringPubSubType::UnionStringPubSubType()
@@ -2730,7 +2743,8 @@ bool UnionStringPubSubType::getKey(
 
 void UnionStringPubSubType::register_type_object_representation() const
 {
-    register_unions_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_UnionString_type_identifier(type_id);
 }
 
 UnionWStringPubSubType::UnionWStringPubSubType()
@@ -2923,7 +2937,8 @@ bool UnionWStringPubSubType::getKey(
 
 void UnionWStringPubSubType::register_type_object_representation() const
 {
-    register_unions_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_UnionWString_type_identifier(type_id);
 }
 
 UnionBoundedStringPubSubType::UnionBoundedStringPubSubType()
@@ -3116,7 +3131,8 @@ bool UnionBoundedStringPubSubType::getKey(
 
 void UnionBoundedStringPubSubType::register_type_object_representation() const
 {
-    register_unions_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_UnionBoundedString_type_identifier(type_id);
 }
 
 UnionBoundedWStringPubSubType::UnionBoundedWStringPubSubType()
@@ -3309,7 +3325,8 @@ bool UnionBoundedWStringPubSubType::getKey(
 
 void UnionBoundedWStringPubSubType::register_type_object_representation() const
 {
-    register_unions_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_UnionBoundedWString_type_identifier(type_id);
 }
 
 UnionInnerEnumHelperPubSubType::UnionInnerEnumHelperPubSubType()
@@ -3502,7 +3519,8 @@ bool UnionInnerEnumHelperPubSubType::getKey(
 
 void UnionInnerEnumHelperPubSubType::register_type_object_representation() const
 {
-    register_unions_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_UnionInnerEnumHelper_type_identifier(type_id);
 }
 
 UnionInnerBitMaskHelperPubSubType::UnionInnerBitMaskHelperPubSubType()
@@ -3695,7 +3713,8 @@ bool UnionInnerBitMaskHelperPubSubType::getKey(
 
 void UnionInnerBitMaskHelperPubSubType::register_type_object_representation() const
 {
-    register_unions_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_UnionInnerBitMaskHelper_type_identifier(type_id);
 }
 
 UnionInnerAliasHelperPubSubType::UnionInnerAliasHelperPubSubType()
@@ -3888,7 +3907,8 @@ bool UnionInnerAliasHelperPubSubType::getKey(
 
 void UnionInnerAliasHelperPubSubType::register_type_object_representation() const
 {
-    register_unions_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_UnionInnerAliasHelper_type_identifier(type_id);
 }
 
 UnionArrayPubSubType::UnionArrayPubSubType()
@@ -4081,7 +4101,8 @@ bool UnionArrayPubSubType::getKey(
 
 void UnionArrayPubSubType::register_type_object_representation() const
 {
-    register_unions_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_UnionArray_type_identifier(type_id);
 }
 
 UnionSequencePubSubType::UnionSequencePubSubType()
@@ -4274,7 +4295,8 @@ bool UnionSequencePubSubType::getKey(
 
 void UnionSequencePubSubType::register_type_object_representation() const
 {
-    register_unions_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_UnionSequence_type_identifier(type_id);
 }
 
 UnionMapPubSubType::UnionMapPubSubType()
@@ -4467,7 +4489,8 @@ bool UnionMapPubSubType::getKey(
 
 void UnionMapPubSubType::register_type_object_representation() const
 {
-    register_unions_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_UnionMap_type_identifier(type_id);
 }
 
 UnionInnerUnionHelperPubSubType::UnionInnerUnionHelperPubSubType()
@@ -4660,7 +4683,8 @@ bool UnionInnerUnionHelperPubSubType::getKey(
 
 void UnionInnerUnionHelperPubSubType::register_type_object_representation() const
 {
-    register_unions_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_UnionInnerUnionHelper_type_identifier(type_id);
 }
 
 UnionInnerStructureHelperPubSubType::UnionInnerStructureHelperPubSubType()
@@ -4853,7 +4877,8 @@ bool UnionInnerStructureHelperPubSubType::getKey(
 
 void UnionInnerStructureHelperPubSubType::register_type_object_representation() const
 {
-    register_unions_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_UnionInnerStructureHelper_type_identifier(type_id);
 }
 
 UnionInnerBitsetHelperPubSubType::UnionInnerBitsetHelperPubSubType()
@@ -5046,7 +5071,8 @@ bool UnionInnerBitsetHelperPubSubType::getKey(
 
 void UnionInnerBitsetHelperPubSubType::register_type_object_representation() const
 {
-    register_unions_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_UnionInnerBitsetHelper_type_identifier(type_id);
 }
 
 UnionDiscriminatorShortPubSubType::UnionDiscriminatorShortPubSubType()
@@ -5239,7 +5265,8 @@ bool UnionDiscriminatorShortPubSubType::getKey(
 
 void UnionDiscriminatorShortPubSubType::register_type_object_representation() const
 {
-    register_unions_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_UnionDiscriminatorShort_type_identifier(type_id);
 }
 
 UnionDiscriminatorUShortPubSubType::UnionDiscriminatorUShortPubSubType()
@@ -5432,7 +5459,8 @@ bool UnionDiscriminatorUShortPubSubType::getKey(
 
 void UnionDiscriminatorUShortPubSubType::register_type_object_representation() const
 {
-    register_unions_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_UnionDiscriminatorUShort_type_identifier(type_id);
 }
 
 UnionDiscriminatorLongPubSubType::UnionDiscriminatorLongPubSubType()
@@ -5625,7 +5653,8 @@ bool UnionDiscriminatorLongPubSubType::getKey(
 
 void UnionDiscriminatorLongPubSubType::register_type_object_representation() const
 {
-    register_unions_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_UnionDiscriminatorLong_type_identifier(type_id);
 }
 
 UnionDiscriminatorULongPubSubType::UnionDiscriminatorULongPubSubType()
@@ -5818,7 +5847,8 @@ bool UnionDiscriminatorULongPubSubType::getKey(
 
 void UnionDiscriminatorULongPubSubType::register_type_object_representation() const
 {
-    register_unions_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_UnionDiscriminatorULong_type_identifier(type_id);
 }
 
 UnionDiscriminatorLongLongPubSubType::UnionDiscriminatorLongLongPubSubType()
@@ -6011,7 +6041,8 @@ bool UnionDiscriminatorLongLongPubSubType::getKey(
 
 void UnionDiscriminatorLongLongPubSubType::register_type_object_representation() const
 {
-    register_unions_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_UnionDiscriminatorLongLong_type_identifier(type_id);
 }
 
 UnionDiscriminatorULongLongPubSubType::UnionDiscriminatorULongLongPubSubType()
@@ -6204,7 +6235,8 @@ bool UnionDiscriminatorULongLongPubSubType::getKey(
 
 void UnionDiscriminatorULongLongPubSubType::register_type_object_representation() const
 {
-    register_unions_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_UnionDiscriminatorULongLong_type_identifier(type_id);
 }
 
 UnionDiscriminatorBooleanPubSubType::UnionDiscriminatorBooleanPubSubType()
@@ -6397,7 +6429,8 @@ bool UnionDiscriminatorBooleanPubSubType::getKey(
 
 void UnionDiscriminatorBooleanPubSubType::register_type_object_representation() const
 {
-    register_unions_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_UnionDiscriminatorBoolean_type_identifier(type_id);
 }
 
 UnionDiscriminatorOctetPubSubType::UnionDiscriminatorOctetPubSubType()
@@ -6590,7 +6623,8 @@ bool UnionDiscriminatorOctetPubSubType::getKey(
 
 void UnionDiscriminatorOctetPubSubType::register_type_object_representation() const
 {
-    register_unions_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_UnionDiscriminatorOctet_type_identifier(type_id);
 }
 
 UnionDiscriminatorCharPubSubType::UnionDiscriminatorCharPubSubType()
@@ -6783,7 +6817,8 @@ bool UnionDiscriminatorCharPubSubType::getKey(
 
 void UnionDiscriminatorCharPubSubType::register_type_object_representation() const
 {
-    register_unions_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_UnionDiscriminatorChar_type_identifier(type_id);
 }
 
 UnionDiscriminatorWCharPubSubType::UnionDiscriminatorWCharPubSubType()
@@ -6976,7 +7011,8 @@ bool UnionDiscriminatorWCharPubSubType::getKey(
 
 void UnionDiscriminatorWCharPubSubType::register_type_object_representation() const
 {
-    register_unions_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_UnionDiscriminatorWChar_type_identifier(type_id);
 }
 
 UnionDiscriminatorEnumPubSubType::UnionDiscriminatorEnumPubSubType()
@@ -7169,7 +7205,8 @@ bool UnionDiscriminatorEnumPubSubType::getKey(
 
 void UnionDiscriminatorEnumPubSubType::register_type_object_representation() const
 {
-    register_unions_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_UnionDiscriminatorEnum_type_identifier(type_id);
 }
 
 UnionDiscriminatorEnumLabelPubSubType::UnionDiscriminatorEnumLabelPubSubType()
@@ -7362,7 +7399,8 @@ bool UnionDiscriminatorEnumLabelPubSubType::getKey(
 
 void UnionDiscriminatorEnumLabelPubSubType::register_type_object_representation() const
 {
-    register_unions_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_UnionDiscriminatorEnumLabel_type_identifier(type_id);
 }
 
 UnionDiscriminatorAliasPubSubType::UnionDiscriminatorAliasPubSubType()
@@ -7555,7 +7593,8 @@ bool UnionDiscriminatorAliasPubSubType::getKey(
 
 void UnionDiscriminatorAliasPubSubType::register_type_object_representation() const
 {
-    register_unions_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_UnionDiscriminatorAlias_type_identifier(type_id);
 }
 
 UnionSeveralFieldsPubSubType::UnionSeveralFieldsPubSubType()
@@ -7748,7 +7787,8 @@ bool UnionSeveralFieldsPubSubType::getKey(
 
 void UnionSeveralFieldsPubSubType::register_type_object_representation() const
 {
-    register_unions_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_UnionSeveralFields_type_identifier(type_id);
 }
 
 UnionSeveralFieldsWithDefaultPubSubType::UnionSeveralFieldsWithDefaultPubSubType()
@@ -7941,7 +7981,8 @@ bool UnionSeveralFieldsWithDefaultPubSubType::getKey(
 
 void UnionSeveralFieldsWithDefaultPubSubType::register_type_object_representation() const
 {
-    register_unions_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_UnionSeveralFieldsWithDefault_type_identifier(type_id);
 }
 
 

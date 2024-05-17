@@ -39,59 +39,6 @@
 
 using namespace eprosima::fastdds::dds::xtypes;
 
-void register_mutable_type_objects()
-{
-    static std::once_flag once_flag;
-    std::call_once(once_flag, []()
-            {
-                TypeIdentifier type_id;
-                register_InnerStructureHelper_type_identifier(type_id);
-
-                register_InnerEmptyStructureHelper_type_identifier(type_id);
-
-                register_InnerUnionHelper_type_identifier(type_id);
-
-                register_MutableShortStruct_type_identifier(type_id);
-
-                register_MutableUShortStruct_type_identifier(type_id);
-
-                register_MutableLongStruct_type_identifier(type_id);
-
-                register_MutableULongStruct_type_identifier(type_id);
-
-                register_MutableLongLongStruct_type_identifier(type_id);
-
-                register_MutableULongLongStruct_type_identifier(type_id);
-
-                register_MutableFloatStruct_type_identifier(type_id);
-
-                register_MutableDoubleStruct_type_identifier(type_id);
-
-                register_MutableLongDoubleStruct_type_identifier(type_id);
-
-                register_MutableBooleanStruct_type_identifier(type_id);
-
-                register_MutableOctetStruct_type_identifier(type_id);
-
-                register_MutableCharStruct_type_identifier(type_id);
-
-                register_MutableWCharStruct_type_identifier(type_id);
-
-                register_MutableUnionStruct_type_identifier(type_id);
-
-                register_MutableEmptyStruct_type_identifier(type_id);
-
-                register_MutableEmptyInheritanceStruct_type_identifier(type_id);
-
-                register_MutableInheritanceStruct_type_identifier(type_id);
-
-                register_MutableInheritanceEmptyStruct_type_identifier(type_id);
-
-                register_MutableExtensibilityInheritance_type_identifier(type_id);
-
-            });
-}
-
 // TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
 void register_MutableShortStruct_type_identifier(
         TypeIdentifier& type_id)

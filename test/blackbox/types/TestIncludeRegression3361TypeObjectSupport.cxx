@@ -38,15 +38,6 @@
 
 using namespace eprosima::fastdds::dds::xtypes;
 
-void register_TestIncludeRegression3361_type_objects()
-{
-    static std::once_flag once_flag;
-    std::call_once(once_flag, []()
-            {
-                TypeIdentifier type_id;
-            });
-}
-
 namespace TestModule {
 } // namespace TestModule
 

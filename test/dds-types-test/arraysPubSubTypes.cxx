@@ -221,7 +221,8 @@ bool ArrayShortPubSubType::getKey(
 
 void ArrayShortPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayShort_type_identifier(type_id);
 }
 
 ArrayUShortPubSubType::ArrayUShortPubSubType()
@@ -414,7 +415,8 @@ bool ArrayUShortPubSubType::getKey(
 
 void ArrayUShortPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayUShort_type_identifier(type_id);
 }
 
 ArrayLongPubSubType::ArrayLongPubSubType()
@@ -607,7 +609,8 @@ bool ArrayLongPubSubType::getKey(
 
 void ArrayLongPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayLong_type_identifier(type_id);
 }
 
 ArrayULongPubSubType::ArrayULongPubSubType()
@@ -800,7 +803,8 @@ bool ArrayULongPubSubType::getKey(
 
 void ArrayULongPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayULong_type_identifier(type_id);
 }
 
 ArrayLongLongPubSubType::ArrayLongLongPubSubType()
@@ -993,7 +997,8 @@ bool ArrayLongLongPubSubType::getKey(
 
 void ArrayLongLongPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayLongLong_type_identifier(type_id);
 }
 
 ArrayULongLongPubSubType::ArrayULongLongPubSubType()
@@ -1186,7 +1191,8 @@ bool ArrayULongLongPubSubType::getKey(
 
 void ArrayULongLongPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayULongLong_type_identifier(type_id);
 }
 
 ArrayFloatPubSubType::ArrayFloatPubSubType()
@@ -1379,7 +1385,8 @@ bool ArrayFloatPubSubType::getKey(
 
 void ArrayFloatPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayFloat_type_identifier(type_id);
 }
 
 ArrayDoublePubSubType::ArrayDoublePubSubType()
@@ -1572,7 +1579,8 @@ bool ArrayDoublePubSubType::getKey(
 
 void ArrayDoublePubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayDouble_type_identifier(type_id);
 }
 
 ArrayLongDoublePubSubType::ArrayLongDoublePubSubType()
@@ -1765,7 +1773,8 @@ bool ArrayLongDoublePubSubType::getKey(
 
 void ArrayLongDoublePubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayLongDouble_type_identifier(type_id);
 }
 
 ArrayBooleanPubSubType::ArrayBooleanPubSubType()
@@ -1958,7 +1967,8 @@ bool ArrayBooleanPubSubType::getKey(
 
 void ArrayBooleanPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayBoolean_type_identifier(type_id);
 }
 
 ArrayOctetPubSubType::ArrayOctetPubSubType()
@@ -2151,7 +2161,8 @@ bool ArrayOctetPubSubType::getKey(
 
 void ArrayOctetPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayOctet_type_identifier(type_id);
 }
 
 ArrayCharPubSubType::ArrayCharPubSubType()
@@ -2344,7 +2355,8 @@ bool ArrayCharPubSubType::getKey(
 
 void ArrayCharPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayChar_type_identifier(type_id);
 }
 
 ArrayWCharPubSubType::ArrayWCharPubSubType()
@@ -2537,7 +2549,8 @@ bool ArrayWCharPubSubType::getKey(
 
 void ArrayWCharPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayWChar_type_identifier(type_id);
 }
 
 ArrayStringPubSubType::ArrayStringPubSubType()
@@ -2730,7 +2743,8 @@ bool ArrayStringPubSubType::getKey(
 
 void ArrayStringPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayString_type_identifier(type_id);
 }
 
 ArrayWStringPubSubType::ArrayWStringPubSubType()
@@ -2923,7 +2937,8 @@ bool ArrayWStringPubSubType::getKey(
 
 void ArrayWStringPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayWString_type_identifier(type_id);
 }
 
 ArrayBoundedStringPubSubType::ArrayBoundedStringPubSubType()
@@ -3116,7 +3131,8 @@ bool ArrayBoundedStringPubSubType::getKey(
 
 void ArrayBoundedStringPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayBoundedString_type_identifier(type_id);
 }
 
 ArrayBoundedWStringPubSubType::ArrayBoundedWStringPubSubType()
@@ -3309,7 +3325,8 @@ bool ArrayBoundedWStringPubSubType::getKey(
 
 void ArrayBoundedWStringPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayBoundedWString_type_identifier(type_id);
 }
 
 ArrayEnumPubSubType::ArrayEnumPubSubType()
@@ -3502,7 +3519,8 @@ bool ArrayEnumPubSubType::getKey(
 
 void ArrayEnumPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayEnum_type_identifier(type_id);
 }
 
 ArrayBitMaskPubSubType::ArrayBitMaskPubSubType()
@@ -3695,7 +3713,8 @@ bool ArrayBitMaskPubSubType::getKey(
 
 void ArrayBitMaskPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayBitMask_type_identifier(type_id);
 }
 
 ArrayAliasPubSubType::ArrayAliasPubSubType()
@@ -3888,7 +3907,8 @@ bool ArrayAliasPubSubType::getKey(
 
 void ArrayAliasPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayAlias_type_identifier(type_id);
 }
 
 ArrayShortArrayPubSubType::ArrayShortArrayPubSubType()
@@ -4081,7 +4101,8 @@ bool ArrayShortArrayPubSubType::getKey(
 
 void ArrayShortArrayPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayShortArray_type_identifier(type_id);
 }
 
 ArraySequencePubSubType::ArraySequencePubSubType()
@@ -4274,7 +4295,8 @@ bool ArraySequencePubSubType::getKey(
 
 void ArraySequencePubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArraySequence_type_identifier(type_id);
 }
 
 ArrayMapPubSubType::ArrayMapPubSubType()
@@ -4467,7 +4489,8 @@ bool ArrayMapPubSubType::getKey(
 
 void ArrayMapPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayMap_type_identifier(type_id);
 }
 
 ArrayUnionPubSubType::ArrayUnionPubSubType()
@@ -4660,7 +4683,8 @@ bool ArrayUnionPubSubType::getKey(
 
 void ArrayUnionPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayUnion_type_identifier(type_id);
 }
 
 ArrayStructurePubSubType::ArrayStructurePubSubType()
@@ -4853,7 +4877,8 @@ bool ArrayStructurePubSubType::getKey(
 
 void ArrayStructurePubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayStructure_type_identifier(type_id);
 }
 
 ArrayBitsetPubSubType::ArrayBitsetPubSubType()
@@ -5046,7 +5071,8 @@ bool ArrayBitsetPubSubType::getKey(
 
 void ArrayBitsetPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayBitset_type_identifier(type_id);
 }
 
 ArrayMultiDimensionShortPubSubType::ArrayMultiDimensionShortPubSubType()
@@ -5239,7 +5265,8 @@ bool ArrayMultiDimensionShortPubSubType::getKey(
 
 void ArrayMultiDimensionShortPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayMultiDimensionShort_type_identifier(type_id);
 }
 
 ArrayMultiDimensionUShortPubSubType::ArrayMultiDimensionUShortPubSubType()
@@ -5432,7 +5459,8 @@ bool ArrayMultiDimensionUShortPubSubType::getKey(
 
 void ArrayMultiDimensionUShortPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayMultiDimensionUShort_type_identifier(type_id);
 }
 
 ArrayMultiDimensionLongPubSubType::ArrayMultiDimensionLongPubSubType()
@@ -5625,7 +5653,8 @@ bool ArrayMultiDimensionLongPubSubType::getKey(
 
 void ArrayMultiDimensionLongPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayMultiDimensionLong_type_identifier(type_id);
 }
 
 ArrayMultiDimensionULongPubSubType::ArrayMultiDimensionULongPubSubType()
@@ -5818,7 +5847,8 @@ bool ArrayMultiDimensionULongPubSubType::getKey(
 
 void ArrayMultiDimensionULongPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayMultiDimensionULong_type_identifier(type_id);
 }
 
 ArrayMultiDimensionLongLongPubSubType::ArrayMultiDimensionLongLongPubSubType()
@@ -6011,7 +6041,8 @@ bool ArrayMultiDimensionLongLongPubSubType::getKey(
 
 void ArrayMultiDimensionLongLongPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayMultiDimensionLongLong_type_identifier(type_id);
 }
 
 ArrayMultiDimensionULongLongPubSubType::ArrayMultiDimensionULongLongPubSubType()
@@ -6204,7 +6235,8 @@ bool ArrayMultiDimensionULongLongPubSubType::getKey(
 
 void ArrayMultiDimensionULongLongPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayMultiDimensionULongLong_type_identifier(type_id);
 }
 
 ArrayMultiDimensionFloatPubSubType::ArrayMultiDimensionFloatPubSubType()
@@ -6397,7 +6429,8 @@ bool ArrayMultiDimensionFloatPubSubType::getKey(
 
 void ArrayMultiDimensionFloatPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayMultiDimensionFloat_type_identifier(type_id);
 }
 
 ArrayMultiDimensionDoublePubSubType::ArrayMultiDimensionDoublePubSubType()
@@ -6590,7 +6623,8 @@ bool ArrayMultiDimensionDoublePubSubType::getKey(
 
 void ArrayMultiDimensionDoublePubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayMultiDimensionDouble_type_identifier(type_id);
 }
 
 ArrayMultiDimensionLongDoublePubSubType::ArrayMultiDimensionLongDoublePubSubType()
@@ -6783,7 +6817,8 @@ bool ArrayMultiDimensionLongDoublePubSubType::getKey(
 
 void ArrayMultiDimensionLongDoublePubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayMultiDimensionLongDouble_type_identifier(type_id);
 }
 
 ArrayMultiDimensionBooleanPubSubType::ArrayMultiDimensionBooleanPubSubType()
@@ -6976,7 +7011,8 @@ bool ArrayMultiDimensionBooleanPubSubType::getKey(
 
 void ArrayMultiDimensionBooleanPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayMultiDimensionBoolean_type_identifier(type_id);
 }
 
 ArrayMultiDimensionOctetPubSubType::ArrayMultiDimensionOctetPubSubType()
@@ -7169,7 +7205,8 @@ bool ArrayMultiDimensionOctetPubSubType::getKey(
 
 void ArrayMultiDimensionOctetPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayMultiDimensionOctet_type_identifier(type_id);
 }
 
 ArrayMultiDimensionCharPubSubType::ArrayMultiDimensionCharPubSubType()
@@ -7362,7 +7399,8 @@ bool ArrayMultiDimensionCharPubSubType::getKey(
 
 void ArrayMultiDimensionCharPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayMultiDimensionChar_type_identifier(type_id);
 }
 
 ArrayMultiDimensionWCharPubSubType::ArrayMultiDimensionWCharPubSubType()
@@ -7555,7 +7593,8 @@ bool ArrayMultiDimensionWCharPubSubType::getKey(
 
 void ArrayMultiDimensionWCharPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayMultiDimensionWChar_type_identifier(type_id);
 }
 
 ArrayMultiDimensionStringPubSubType::ArrayMultiDimensionStringPubSubType()
@@ -7748,7 +7787,8 @@ bool ArrayMultiDimensionStringPubSubType::getKey(
 
 void ArrayMultiDimensionStringPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayMultiDimensionString_type_identifier(type_id);
 }
 
 ArrayMultiDimensionWStringPubSubType::ArrayMultiDimensionWStringPubSubType()
@@ -7941,7 +7981,8 @@ bool ArrayMultiDimensionWStringPubSubType::getKey(
 
 void ArrayMultiDimensionWStringPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayMultiDimensionWString_type_identifier(type_id);
 }
 
 ArrayMultiDimensionBoundedStringPubSubType::ArrayMultiDimensionBoundedStringPubSubType()
@@ -8134,7 +8175,8 @@ bool ArrayMultiDimensionBoundedStringPubSubType::getKey(
 
 void ArrayMultiDimensionBoundedStringPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayMultiDimensionBoundedString_type_identifier(type_id);
 }
 
 ArrayMultiDimensionBoundedWStringPubSubType::ArrayMultiDimensionBoundedWStringPubSubType()
@@ -8327,7 +8369,8 @@ bool ArrayMultiDimensionBoundedWStringPubSubType::getKey(
 
 void ArrayMultiDimensionBoundedWStringPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayMultiDimensionBoundedWString_type_identifier(type_id);
 }
 
 ArrayMultiDimensionEnumPubSubType::ArrayMultiDimensionEnumPubSubType()
@@ -8520,7 +8563,8 @@ bool ArrayMultiDimensionEnumPubSubType::getKey(
 
 void ArrayMultiDimensionEnumPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayMultiDimensionEnum_type_identifier(type_id);
 }
 
 ArrayMultiDimensionBitMaskPubSubType::ArrayMultiDimensionBitMaskPubSubType()
@@ -8713,7 +8757,8 @@ bool ArrayMultiDimensionBitMaskPubSubType::getKey(
 
 void ArrayMultiDimensionBitMaskPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayMultiDimensionBitMask_type_identifier(type_id);
 }
 
 ArrayMultiDimensionAliasPubSubType::ArrayMultiDimensionAliasPubSubType()
@@ -8906,7 +8951,8 @@ bool ArrayMultiDimensionAliasPubSubType::getKey(
 
 void ArrayMultiDimensionAliasPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayMultiDimensionAlias_type_identifier(type_id);
 }
 
 ArrayMultiDimensionSequencePubSubType::ArrayMultiDimensionSequencePubSubType()
@@ -9099,7 +9145,8 @@ bool ArrayMultiDimensionSequencePubSubType::getKey(
 
 void ArrayMultiDimensionSequencePubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayMultiDimensionSequence_type_identifier(type_id);
 }
 
 ArrayMultiDimensionMapPubSubType::ArrayMultiDimensionMapPubSubType()
@@ -9292,7 +9339,8 @@ bool ArrayMultiDimensionMapPubSubType::getKey(
 
 void ArrayMultiDimensionMapPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayMultiDimensionMap_type_identifier(type_id);
 }
 
 ArrayMultiDimensionUnionPubSubType::ArrayMultiDimensionUnionPubSubType()
@@ -9485,7 +9533,8 @@ bool ArrayMultiDimensionUnionPubSubType::getKey(
 
 void ArrayMultiDimensionUnionPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayMultiDimensionUnion_type_identifier(type_id);
 }
 
 ArrayMultiDimensionStructurePubSubType::ArrayMultiDimensionStructurePubSubType()
@@ -9678,7 +9727,8 @@ bool ArrayMultiDimensionStructurePubSubType::getKey(
 
 void ArrayMultiDimensionStructurePubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayMultiDimensionStructure_type_identifier(type_id);
 }
 
 ArrayMultiDimensionBitsetPubSubType::ArrayMultiDimensionBitsetPubSubType()
@@ -9871,7 +9921,8 @@ bool ArrayMultiDimensionBitsetPubSubType::getKey(
 
 void ArrayMultiDimensionBitsetPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayMultiDimensionBitset_type_identifier(type_id);
 }
 
 
@@ -10066,7 +10117,8 @@ bool ArraySingleDimensionLiteralsShortPubSubType::getKey(
 
 void ArraySingleDimensionLiteralsShortPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArraySingleDimensionLiteralsShort_type_identifier(type_id);
 }
 
 ArraySingleDimensionLiteralsUnsignedShortPubSubType::ArraySingleDimensionLiteralsUnsignedShortPubSubType()
@@ -10259,7 +10311,8 @@ bool ArraySingleDimensionLiteralsUnsignedShortPubSubType::getKey(
 
 void ArraySingleDimensionLiteralsUnsignedShortPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArraySingleDimensionLiteralsUnsignedShort_type_identifier(type_id);
 }
 
 ArraySingleDimensionLiteralsLongPubSubType::ArraySingleDimensionLiteralsLongPubSubType()
@@ -10452,7 +10505,8 @@ bool ArraySingleDimensionLiteralsLongPubSubType::getKey(
 
 void ArraySingleDimensionLiteralsLongPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArraySingleDimensionLiteralsLong_type_identifier(type_id);
 }
 
 ArraySingleDimensionLiteralsUnsignedLongPubSubType::ArraySingleDimensionLiteralsUnsignedLongPubSubType()
@@ -10645,7 +10699,8 @@ bool ArraySingleDimensionLiteralsUnsignedLongPubSubType::getKey(
 
 void ArraySingleDimensionLiteralsUnsignedLongPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArraySingleDimensionLiteralsUnsignedLong_type_identifier(type_id);
 }
 
 ArraySingleDimensionLiteralsLongLongPubSubType::ArraySingleDimensionLiteralsLongLongPubSubType()
@@ -10838,7 +10893,8 @@ bool ArraySingleDimensionLiteralsLongLongPubSubType::getKey(
 
 void ArraySingleDimensionLiteralsLongLongPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArraySingleDimensionLiteralsLongLong_type_identifier(type_id);
 }
 
 ArraySingleDimensionLiteralsUnsignedLongLongPubSubType::ArraySingleDimensionLiteralsUnsignedLongLongPubSubType()
@@ -11031,7 +11087,8 @@ bool ArraySingleDimensionLiteralsUnsignedLongLongPubSubType::getKey(
 
 void ArraySingleDimensionLiteralsUnsignedLongLongPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArraySingleDimensionLiteralsUnsignedLongLong_type_identifier(type_id);
 }
 
 ArraySingleDimensionLiteralsFloatPubSubType::ArraySingleDimensionLiteralsFloatPubSubType()
@@ -11224,7 +11281,8 @@ bool ArraySingleDimensionLiteralsFloatPubSubType::getKey(
 
 void ArraySingleDimensionLiteralsFloatPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArraySingleDimensionLiteralsFloat_type_identifier(type_id);
 }
 
 ArraySingleDimensionLiteralsDoublePubSubType::ArraySingleDimensionLiteralsDoublePubSubType()
@@ -11417,7 +11475,8 @@ bool ArraySingleDimensionLiteralsDoublePubSubType::getKey(
 
 void ArraySingleDimensionLiteralsDoublePubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArraySingleDimensionLiteralsDouble_type_identifier(type_id);
 }
 
 ArraySingleDimensionLiteralsLongDoublePubSubType::ArraySingleDimensionLiteralsLongDoublePubSubType()
@@ -11610,7 +11669,8 @@ bool ArraySingleDimensionLiteralsLongDoublePubSubType::getKey(
 
 void ArraySingleDimensionLiteralsLongDoublePubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArraySingleDimensionLiteralsLongDouble_type_identifier(type_id);
 }
 
 ArraySingleDimensionLiteralsBooleanPubSubType::ArraySingleDimensionLiteralsBooleanPubSubType()
@@ -11803,7 +11863,8 @@ bool ArraySingleDimensionLiteralsBooleanPubSubType::getKey(
 
 void ArraySingleDimensionLiteralsBooleanPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArraySingleDimensionLiteralsBoolean_type_identifier(type_id);
 }
 
 ArraySingleDimensionLiteralsOctetPubSubType::ArraySingleDimensionLiteralsOctetPubSubType()
@@ -11996,7 +12057,8 @@ bool ArraySingleDimensionLiteralsOctetPubSubType::getKey(
 
 void ArraySingleDimensionLiteralsOctetPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArraySingleDimensionLiteralsOctet_type_identifier(type_id);
 }
 
 ArraySingleDimensionLiteralsCharPubSubType::ArraySingleDimensionLiteralsCharPubSubType()
@@ -12189,7 +12251,8 @@ bool ArraySingleDimensionLiteralsCharPubSubType::getKey(
 
 void ArraySingleDimensionLiteralsCharPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArraySingleDimensionLiteralsChar_type_identifier(type_id);
 }
 
 ArraySingleDimensionLiteralsWCharPubSubType::ArraySingleDimensionLiteralsWCharPubSubType()
@@ -12382,7 +12445,8 @@ bool ArraySingleDimensionLiteralsWCharPubSubType::getKey(
 
 void ArraySingleDimensionLiteralsWCharPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArraySingleDimensionLiteralsWChar_type_identifier(type_id);
 }
 
 ArraySingleDimensionLiteralsStringPubSubType::ArraySingleDimensionLiteralsStringPubSubType()
@@ -12575,7 +12639,8 @@ bool ArraySingleDimensionLiteralsStringPubSubType::getKey(
 
 void ArraySingleDimensionLiteralsStringPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArraySingleDimensionLiteralsString_type_identifier(type_id);
 }
 
 ArraySingleDimensionLiteralsWStringPubSubType::ArraySingleDimensionLiteralsWStringPubSubType()
@@ -12768,7 +12833,8 @@ bool ArraySingleDimensionLiteralsWStringPubSubType::getKey(
 
 void ArraySingleDimensionLiteralsWStringPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArraySingleDimensionLiteralsWString_type_identifier(type_id);
 }
 
 ArraySingleDimensionLiteralsBoundedStringPubSubType::ArraySingleDimensionLiteralsBoundedStringPubSubType()
@@ -12961,7 +13027,8 @@ bool ArraySingleDimensionLiteralsBoundedStringPubSubType::getKey(
 
 void ArraySingleDimensionLiteralsBoundedStringPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArraySingleDimensionLiteralsBoundedString_type_identifier(type_id);
 }
 
 ArraySingleDimensionLiteralsBoundedWStringPubSubType::ArraySingleDimensionLiteralsBoundedWStringPubSubType()
@@ -13154,7 +13221,8 @@ bool ArraySingleDimensionLiteralsBoundedWStringPubSubType::getKey(
 
 void ArraySingleDimensionLiteralsBoundedWStringPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArraySingleDimensionLiteralsBoundedWString_type_identifier(type_id);
 }
 
 ArraySingleDimensionLiteralsEnumPubSubType::ArraySingleDimensionLiteralsEnumPubSubType()
@@ -13347,7 +13415,8 @@ bool ArraySingleDimensionLiteralsEnumPubSubType::getKey(
 
 void ArraySingleDimensionLiteralsEnumPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArraySingleDimensionLiteralsEnum_type_identifier(type_id);
 }
 
 ArraySingleDimensionLiteralsBitMaskPubSubType::ArraySingleDimensionLiteralsBitMaskPubSubType()
@@ -13540,7 +13609,8 @@ bool ArraySingleDimensionLiteralsBitMaskPubSubType::getKey(
 
 void ArraySingleDimensionLiteralsBitMaskPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArraySingleDimensionLiteralsBitMask_type_identifier(type_id);
 }
 
 ArraySingleDimensionLiteralsAliasPubSubType::ArraySingleDimensionLiteralsAliasPubSubType()
@@ -13733,7 +13803,8 @@ bool ArraySingleDimensionLiteralsAliasPubSubType::getKey(
 
 void ArraySingleDimensionLiteralsAliasPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArraySingleDimensionLiteralsAlias_type_identifier(type_id);
 }
 
 ArraySingleDimensionLiteralsShortArrayPubSubType::ArraySingleDimensionLiteralsShortArrayPubSubType()
@@ -13926,7 +13997,8 @@ bool ArraySingleDimensionLiteralsShortArrayPubSubType::getKey(
 
 void ArraySingleDimensionLiteralsShortArrayPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArraySingleDimensionLiteralsShortArray_type_identifier(type_id);
 }
 
 ArraySingleDimensionLiteralsSequencePubSubType::ArraySingleDimensionLiteralsSequencePubSubType()
@@ -14119,7 +14191,8 @@ bool ArraySingleDimensionLiteralsSequencePubSubType::getKey(
 
 void ArraySingleDimensionLiteralsSequencePubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArraySingleDimensionLiteralsSequence_type_identifier(type_id);
 }
 
 ArraySingleDimensionLiteralsMapPubSubType::ArraySingleDimensionLiteralsMapPubSubType()
@@ -14312,7 +14385,8 @@ bool ArraySingleDimensionLiteralsMapPubSubType::getKey(
 
 void ArraySingleDimensionLiteralsMapPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArraySingleDimensionLiteralsMap_type_identifier(type_id);
 }
 
 ArraySingleDimensionLiteralsUnionPubSubType::ArraySingleDimensionLiteralsUnionPubSubType()
@@ -14505,7 +14579,8 @@ bool ArraySingleDimensionLiteralsUnionPubSubType::getKey(
 
 void ArraySingleDimensionLiteralsUnionPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArraySingleDimensionLiteralsUnion_type_identifier(type_id);
 }
 
 ArraySingleDimensionLiteralsStructurePubSubType::ArraySingleDimensionLiteralsStructurePubSubType()
@@ -14698,7 +14773,8 @@ bool ArraySingleDimensionLiteralsStructurePubSubType::getKey(
 
 void ArraySingleDimensionLiteralsStructurePubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArraySingleDimensionLiteralsStructure_type_identifier(type_id);
 }
 
 ArraySingleDimensionLiteralsBitsetPubSubType::ArraySingleDimensionLiteralsBitsetPubSubType()
@@ -14891,7 +14967,8 @@ bool ArraySingleDimensionLiteralsBitsetPubSubType::getKey(
 
 void ArraySingleDimensionLiteralsBitsetPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArraySingleDimensionLiteralsBitset_type_identifier(type_id);
 }
 
 ArrayMultiDimensionLiteralsShortPubSubType::ArrayMultiDimensionLiteralsShortPubSubType()
@@ -15084,7 +15161,8 @@ bool ArrayMultiDimensionLiteralsShortPubSubType::getKey(
 
 void ArrayMultiDimensionLiteralsShortPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayMultiDimensionLiteralsShort_type_identifier(type_id);
 }
 
 ArrayMultiDimensionLiteralsUShortPubSubType::ArrayMultiDimensionLiteralsUShortPubSubType()
@@ -15277,7 +15355,8 @@ bool ArrayMultiDimensionLiteralsUShortPubSubType::getKey(
 
 void ArrayMultiDimensionLiteralsUShortPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayMultiDimensionLiteralsUShort_type_identifier(type_id);
 }
 
 ArrayMultiDimensionLiteralsLongPubSubType::ArrayMultiDimensionLiteralsLongPubSubType()
@@ -15470,7 +15549,8 @@ bool ArrayMultiDimensionLiteralsLongPubSubType::getKey(
 
 void ArrayMultiDimensionLiteralsLongPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayMultiDimensionLiteralsLong_type_identifier(type_id);
 }
 
 ArrayMultiDimensionLiteralsULongPubSubType::ArrayMultiDimensionLiteralsULongPubSubType()
@@ -15663,7 +15743,8 @@ bool ArrayMultiDimensionLiteralsULongPubSubType::getKey(
 
 void ArrayMultiDimensionLiteralsULongPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayMultiDimensionLiteralsULong_type_identifier(type_id);
 }
 
 ArrayMultiDimensionLiteralsLongLongPubSubType::ArrayMultiDimensionLiteralsLongLongPubSubType()
@@ -15856,7 +15937,8 @@ bool ArrayMultiDimensionLiteralsLongLongPubSubType::getKey(
 
 void ArrayMultiDimensionLiteralsLongLongPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayMultiDimensionLiteralsLongLong_type_identifier(type_id);
 }
 
 ArrayMultiDimensionLiteralsULongLongPubSubType::ArrayMultiDimensionLiteralsULongLongPubSubType()
@@ -16049,7 +16131,8 @@ bool ArrayMultiDimensionLiteralsULongLongPubSubType::getKey(
 
 void ArrayMultiDimensionLiteralsULongLongPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayMultiDimensionLiteralsULongLong_type_identifier(type_id);
 }
 
 ArrayMultiDimensionLiteralsFloatPubSubType::ArrayMultiDimensionLiteralsFloatPubSubType()
@@ -16242,7 +16325,8 @@ bool ArrayMultiDimensionLiteralsFloatPubSubType::getKey(
 
 void ArrayMultiDimensionLiteralsFloatPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayMultiDimensionLiteralsFloat_type_identifier(type_id);
 }
 
 ArrayMultiDimensionLiteralsDoublePubSubType::ArrayMultiDimensionLiteralsDoublePubSubType()
@@ -16435,7 +16519,8 @@ bool ArrayMultiDimensionLiteralsDoublePubSubType::getKey(
 
 void ArrayMultiDimensionLiteralsDoublePubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayMultiDimensionLiteralsDouble_type_identifier(type_id);
 }
 
 ArrayMultiDimensionLiteralsLongDoublePubSubType::ArrayMultiDimensionLiteralsLongDoublePubSubType()
@@ -16628,7 +16713,8 @@ bool ArrayMultiDimensionLiteralsLongDoublePubSubType::getKey(
 
 void ArrayMultiDimensionLiteralsLongDoublePubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayMultiDimensionLiteralsLongDouble_type_identifier(type_id);
 }
 
 ArrayMultiDimensionLiteralsBooleanPubSubType::ArrayMultiDimensionLiteralsBooleanPubSubType()
@@ -16821,7 +16907,8 @@ bool ArrayMultiDimensionLiteralsBooleanPubSubType::getKey(
 
 void ArrayMultiDimensionLiteralsBooleanPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayMultiDimensionLiteralsBoolean_type_identifier(type_id);
 }
 
 ArrayMultiDimensionLiteralsOctetPubSubType::ArrayMultiDimensionLiteralsOctetPubSubType()
@@ -17014,7 +17101,8 @@ bool ArrayMultiDimensionLiteralsOctetPubSubType::getKey(
 
 void ArrayMultiDimensionLiteralsOctetPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayMultiDimensionLiteralsOctet_type_identifier(type_id);
 }
 
 ArrayMultiDimensionLiteralsCharPubSubType::ArrayMultiDimensionLiteralsCharPubSubType()
@@ -17207,7 +17295,8 @@ bool ArrayMultiDimensionLiteralsCharPubSubType::getKey(
 
 void ArrayMultiDimensionLiteralsCharPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayMultiDimensionLiteralsChar_type_identifier(type_id);
 }
 
 ArrayMultiDimensionLiteralsWCharPubSubType::ArrayMultiDimensionLiteralsWCharPubSubType()
@@ -17400,7 +17489,8 @@ bool ArrayMultiDimensionLiteralsWCharPubSubType::getKey(
 
 void ArrayMultiDimensionLiteralsWCharPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayMultiDimensionLiteralsWChar_type_identifier(type_id);
 }
 
 ArrayMultiDimensionLiteralsStringPubSubType::ArrayMultiDimensionLiteralsStringPubSubType()
@@ -17593,7 +17683,8 @@ bool ArrayMultiDimensionLiteralsStringPubSubType::getKey(
 
 void ArrayMultiDimensionLiteralsStringPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayMultiDimensionLiteralsString_type_identifier(type_id);
 }
 
 ArrayMultiDimensionLiteralsWStringPubSubType::ArrayMultiDimensionLiteralsWStringPubSubType()
@@ -17786,7 +17877,8 @@ bool ArrayMultiDimensionLiteralsWStringPubSubType::getKey(
 
 void ArrayMultiDimensionLiteralsWStringPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayMultiDimensionLiteralsWString_type_identifier(type_id);
 }
 
 ArrayMultiDimensionLiteralsBoundedStringPubSubType::ArrayMultiDimensionLiteralsBoundedStringPubSubType()
@@ -17979,7 +18071,8 @@ bool ArrayMultiDimensionLiteralsBoundedStringPubSubType::getKey(
 
 void ArrayMultiDimensionLiteralsBoundedStringPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayMultiDimensionLiteralsBoundedString_type_identifier(type_id);
 }
 
 ArrayMultiDimensionLiteralsBoundedWStringPubSubType::ArrayMultiDimensionLiteralsBoundedWStringPubSubType()
@@ -18172,7 +18265,8 @@ bool ArrayMultiDimensionLiteralsBoundedWStringPubSubType::getKey(
 
 void ArrayMultiDimensionLiteralsBoundedWStringPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayMultiDimensionLiteralsBoundedWString_type_identifier(type_id);
 }
 
 ArrayMultiDimensionLiteralsEnumPubSubType::ArrayMultiDimensionLiteralsEnumPubSubType()
@@ -18365,7 +18459,8 @@ bool ArrayMultiDimensionLiteralsEnumPubSubType::getKey(
 
 void ArrayMultiDimensionLiteralsEnumPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayMultiDimensionLiteralsEnum_type_identifier(type_id);
 }
 
 ArrayMultiDimensionLiteralsBitMaskPubSubType::ArrayMultiDimensionLiteralsBitMaskPubSubType()
@@ -18558,7 +18653,8 @@ bool ArrayMultiDimensionLiteralsBitMaskPubSubType::getKey(
 
 void ArrayMultiDimensionLiteralsBitMaskPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayMultiDimensionLiteralsBitMask_type_identifier(type_id);
 }
 
 ArrayMultiDimensionLiteralsAliasPubSubType::ArrayMultiDimensionLiteralsAliasPubSubType()
@@ -18751,7 +18847,8 @@ bool ArrayMultiDimensionLiteralsAliasPubSubType::getKey(
 
 void ArrayMultiDimensionLiteralsAliasPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayMultiDimensionLiteralsAlias_type_identifier(type_id);
 }
 
 ArrayMultiDimensionLiteralsSequencePubSubType::ArrayMultiDimensionLiteralsSequencePubSubType()
@@ -18944,7 +19041,8 @@ bool ArrayMultiDimensionLiteralsSequencePubSubType::getKey(
 
 void ArrayMultiDimensionLiteralsSequencePubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayMultiDimensionLiteralsSequence_type_identifier(type_id);
 }
 
 ArrayMultiDimensionLiteralsMapPubSubType::ArrayMultiDimensionLiteralsMapPubSubType()
@@ -19137,7 +19235,8 @@ bool ArrayMultiDimensionLiteralsMapPubSubType::getKey(
 
 void ArrayMultiDimensionLiteralsMapPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayMultiDimensionLiteralsMap_type_identifier(type_id);
 }
 
 ArrayMultiDimensionLiteralsUnionPubSubType::ArrayMultiDimensionLiteralsUnionPubSubType()
@@ -19330,7 +19429,8 @@ bool ArrayMultiDimensionLiteralsUnionPubSubType::getKey(
 
 void ArrayMultiDimensionLiteralsUnionPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayMultiDimensionLiteralsUnion_type_identifier(type_id);
 }
 
 ArrayMultiDimensionLiteralsStructurePubSubType::ArrayMultiDimensionLiteralsStructurePubSubType()
@@ -19523,7 +19623,8 @@ bool ArrayMultiDimensionLiteralsStructurePubSubType::getKey(
 
 void ArrayMultiDimensionLiteralsStructurePubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayMultiDimensionLiteralsStructure_type_identifier(type_id);
 }
 
 ArrayMultiDimensionLiteralsBitSetPubSubType::ArrayMultiDimensionLiteralsBitSetPubSubType()
@@ -19716,7 +19817,8 @@ bool ArrayMultiDimensionLiteralsBitSetPubSubType::getKey(
 
 void ArrayMultiDimensionLiteralsBitSetPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ArrayMultiDimensionLiteralsBitSet_type_identifier(type_id);
 }
 
 BoundedSmallArraysPubSubType::BoundedSmallArraysPubSubType()
@@ -19909,7 +20011,8 @@ bool BoundedSmallArraysPubSubType::getKey(
 
 void BoundedSmallArraysPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_BoundedSmallArrays_type_identifier(type_id);
 }
 
 BoundedBigArraysPubSubType::BoundedBigArraysPubSubType()
@@ -20102,7 +20205,8 @@ bool BoundedBigArraysPubSubType::getKey(
 
 void BoundedBigArraysPubSubType::register_type_object_representation() const
 {
-    register_arrays_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_BoundedBigArrays_type_identifier(type_id);
 }
 
 

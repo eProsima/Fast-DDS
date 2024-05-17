@@ -498,11 +498,11 @@ public:
 
 private:
 
-    InnerBitsetHelper m_var_InnerBitsetHelper{};
-    InnerTypedBitsetHelper m_var_InnerTypedBitsetHelper{};
-    InnerTypedBitsetHelper2 m_var_InnerTypedBitsetHelper2{};
-    InnerTypedBitsetHelper3 m_var_InnerTypedBitsetHelper3{};
-    InnerTypedBitsetHelper4 m_var_InnerTypedBitsetHelper4{};
+    InnerBitsetHelper m_var_InnerBitsetHelper;
+    InnerTypedBitsetHelper m_var_InnerTypedBitsetHelper;
+    InnerTypedBitsetHelper2 m_var_InnerTypedBitsetHelper2;
+    InnerTypedBitsetHelper3 m_var_InnerTypedBitsetHelper3;
+    InnerTypedBitsetHelper4 m_var_InnerTypedBitsetHelper4;
 
 };
 

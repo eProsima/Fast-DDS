@@ -221,7 +221,8 @@ bool StringStructPubSubType::getKey(
 
 void StringStructPubSubType::register_type_object_representation() const
 {
-    register_strings_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_StringStruct_type_identifier(type_id);
 }
 
 WStringStructPubSubType::WStringStructPubSubType()
@@ -414,7 +415,8 @@ bool WStringStructPubSubType::getKey(
 
 void WStringStructPubSubType::register_type_object_representation() const
 {
-    register_strings_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_WStringStruct_type_identifier(type_id);
 }
 
 SmallStringStructPubSubType::SmallStringStructPubSubType()
@@ -607,7 +609,8 @@ bool SmallStringStructPubSubType::getKey(
 
 void SmallStringStructPubSubType::register_type_object_representation() const
 {
-    register_strings_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_SmallStringStruct_type_identifier(type_id);
 }
 
 SmallWStringStructPubSubType::SmallWStringStructPubSubType()
@@ -800,7 +803,8 @@ bool SmallWStringStructPubSubType::getKey(
 
 void SmallWStringStructPubSubType::register_type_object_representation() const
 {
-    register_strings_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_SmallWStringStruct_type_identifier(type_id);
 }
 
 LargeStringStructPubSubType::LargeStringStructPubSubType()
@@ -993,7 +997,8 @@ bool LargeStringStructPubSubType::getKey(
 
 void LargeStringStructPubSubType::register_type_object_representation() const
 {
-    register_strings_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_LargeStringStruct_type_identifier(type_id);
 }
 
 LargeWStringStructPubSubType::LargeWStringStructPubSubType()
@@ -1186,7 +1191,8 @@ bool LargeWStringStructPubSubType::getKey(
 
 void LargeWStringStructPubSubType::register_type_object_representation() const
 {
-    register_strings_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_LargeWStringStruct_type_identifier(type_id);
 }
 
 

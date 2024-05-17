@@ -39,66 +39,11 @@
 
 using namespace eprosima::fastdds::dds::xtypes;
 
-void register_monitorservice_types_type_objects()
-{
-    static std::once_flag once_flag;
-    std::call_once(once_flag, []()
-            {
-                TypeIdentifier type_id;
-                eprosima::fastdds::statistics::detail::register_eprosima_fastdds_statistics_detail_EntityId_s_type_identifier(type_id);
-
-                eprosima::fastdds::statistics::detail::register_eprosima_fastdds_statistics_detail_GuidPrefix_s_type_identifier(type_id);
-
-                eprosima::fastdds::statistics::detail::register_eprosima_fastdds_statistics_detail_GUID_s_type_identifier(type_id);
-
-                eprosima::fastdds::statistics::detail::register_eprosima_fastdds_statistics_detail_SequenceNumber_s_type_identifier(type_id);
-
-                eprosima::fastdds::statistics::detail::register_eprosima_fastdds_statistics_detail_SampleIdentity_s_type_identifier(type_id);
-
-                eprosima::fastdds::statistics::detail::register_eprosima_fastdds_statistics_detail_Locator_s_type_identifier(type_id);
-
-                eprosima::fastdds::statistics::register_eprosima_fastdds_statistics_DiscoveryTime_type_identifier(type_id);
-
-                eprosima::fastdds::statistics::register_eprosima_fastdds_statistics_EntityCount_type_identifier(type_id);
-
-                eprosima::fastdds::statistics::register_eprosima_fastdds_statistics_SampleIdentityCount_type_identifier(type_id);
-
-                eprosima::fastdds::statistics::register_eprosima_fastdds_statistics_Entity2LocatorTraffic_type_identifier(type_id);
-
-                eprosima::fastdds::statistics::register_eprosima_fastdds_statistics_WriterReaderData_type_identifier(type_id);
-
-                eprosima::fastdds::statistics::register_eprosima_fastdds_statistics_Locator2LocatorData_type_identifier(type_id);
-
-                eprosima::fastdds::statistics::register_eprosima_fastdds_statistics_EntityData_type_identifier(type_id);
-
-                eprosima::fastdds::statistics::register_eprosima_fastdds_statistics_PhysicalData_type_identifier(type_id);
-
-                eprosima::fastdds::statistics::register_eprosima_fastdds_statistics_Data_type_identifier(type_id);
-
-                eprosima::fastdds::statistics::register_eprosima_fastdds_statistics_Connection_type_identifier(type_id);
-
-                eprosima::fastdds::statistics::register_eprosima_fastdds_statistics_QosPolicyCount_s_type_identifier(type_id);
-
-                eprosima::fastdds::statistics::register_eprosima_fastdds_statistics_BaseStatus_s_type_identifier(type_id);
-
-                eprosima::fastdds::statistics::register_eprosima_fastdds_statistics_IncompatibleQoSStatus_s_type_identifier(type_id);
-
-                eprosima::fastdds::statistics::register_eprosima_fastdds_statistics_LivelinessChangedStatus_s_type_identifier(type_id);
-
-                eprosima::fastdds::statistics::register_eprosima_fastdds_statistics_DeadlineMissedStatus_s_type_identifier(type_id);
-
-                eprosima::fastdds::statistics::register_eprosima_fastdds_statistics_MonitorServiceData_type_identifier(type_id);
-
-                eprosima::fastdds::statistics::register_eprosima_fastdds_statistics_MonitorServiceStatusData_type_identifier(type_id);
-
-            });
-}
-
 namespace eprosima {
 namespace fastdds {
 namespace statistics {
 // TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
-void register_eprosima_fastdds_statistics_Connection_type_identifier(
+void register_Connection_type_identifier(
         TypeIdentifier& type_id)
 {
     {
@@ -1732,7 +1677,7 @@ void register_eprosima_fastdds_statistics_Connection_type_identifier(
     }
 }
 // TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
-void register_eprosima_fastdds_statistics_QosPolicyCount_s_type_identifier(
+void register_QosPolicyCount_s_type_identifier(
         TypeIdentifier& type_id)
 {
     {
@@ -1899,7 +1844,7 @@ void register_eprosima_fastdds_statistics_QosPolicyCount_s_type_identifier(
     }
 }
 // TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
-void register_eprosima_fastdds_statistics_BaseStatus_s_type_identifier(
+void register_BaseStatus_s_type_identifier(
         TypeIdentifier& type_id)
 {
     {
@@ -2000,7 +1945,7 @@ void register_eprosima_fastdds_statistics_BaseStatus_s_type_identifier(
     }
 }
 // TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
-void register_eprosima_fastdds_statistics_IncompatibleQoSStatus_s_type_identifier(
+void register_IncompatibleQoSStatus_s_type_identifier(
         TypeIdentifier& type_id)
 {
     {
@@ -2550,7 +2495,7 @@ void register_eprosima_fastdds_statistics_IncompatibleQoSStatus_s_type_identifie
     }
 }
 // TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
-void register_eprosima_fastdds_statistics_LivelinessChangedStatus_s_type_identifier(
+void register_LivelinessChangedStatus_s_type_identifier(
         TypeIdentifier& type_id)
 {
     {
@@ -2864,7 +2809,7 @@ void register_eprosima_fastdds_statistics_LivelinessChangedStatus_s_type_identif
     }
 }
 // TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
-void register_eprosima_fastdds_statistics_DeadlineMissedStatus_s_type_identifier(
+void register_DeadlineMissedStatus_s_type_identifier(
         TypeIdentifier& type_id)
 {
     {
@@ -3114,7 +3059,7 @@ void register_eprosima_fastdds_statistics_DeadlineMissedStatus_s_type_identifier
 namespace StatusKind {
 } // namespace StatusKind
 // TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
-void register_eprosima_fastdds_statistics_MonitorServiceData_type_identifier(
+void register_MonitorServiceData_type_identifier(
         TypeIdentifier& type_id)
 {
     {
@@ -7282,7 +7227,7 @@ void register_eprosima_fastdds_statistics_MonitorServiceData_type_identifier(
     }
 }
 // TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
-void register_eprosima_fastdds_statistics_MonitorServiceStatusData_type_identifier(
+void register_MonitorServiceStatusData_type_identifier(
         TypeIdentifier& type_id)
 {
     {

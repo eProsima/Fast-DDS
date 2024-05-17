@@ -39,30 +39,9 @@
 
 using namespace eprosima::fastdds::dds::xtypes;
 
-void register_constants_type_objects()
-{
-    static std::once_flag once_flag;
-    std::call_once(once_flag, []()
-            {
-                TypeIdentifier type_id;
-                register_InnerStructureHelper_type_identifier(type_id);
-
-                register_InnerEmptyStructureHelper_type_identifier(type_id);
-
-                register_InnerUnionHelper_type_identifier(type_id);
-
-                const_module1::register_const_module1_ModuleConstsLiteralsStruct_type_identifier(type_id);
-
-                const_module2::register_const_module2_Module2ConstsLiteralsStruct_type_identifier(type_id);
-
-                register_ConstsLiteralsStruct_type_identifier(type_id);
-
-            });
-}
-
 namespace const_module1 {
 // TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
-void register_const_module1_ModuleConstsLiteralsStruct_type_identifier(
+void register_ModuleConstsLiteralsStruct_type_identifier(
         TypeIdentifier& type_id)
 {
     {
@@ -682,7 +661,7 @@ void register_const_module1_ModuleConstsLiteralsStruct_type_identifier(
 } // namespace const_module1
 namespace const_module2 {
 // TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
-void register_const_module2_Module2ConstsLiteralsStruct_type_identifier(
+void register_Module2ConstsLiteralsStruct_type_identifier(
         TypeIdentifier& type_id)
 {
     {

@@ -221,7 +221,8 @@ bool RequestTypePubSubType::getKey(
 
 void RequestTypePubSubType::register_type_object_representation() const
 {
-    register_Calculator_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_RequestType_type_identifier(type_id);
 }
 
 ReplyTypePubSubType::ReplyTypePubSubType()
@@ -414,7 +415,8 @@ bool ReplyTypePubSubType::getKey(
 
 void ReplyTypePubSubType::register_type_object_representation() const
 {
-    register_Calculator_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ReplyType_type_identifier(type_id);
 }
 
 

@@ -36,11 +36,6 @@
 #define eProsima_user_DllExport
 #endif  // _WIN32
 
-/**
- * @brief Register every TypeObject representation defined in the IDL file in Fast DDS TypeObjectRegistry.
- */
-eProsima_user_DllExport void register_structures_type_objects();
-
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 /**
@@ -381,7 +376,7 @@ eProsima_user_DllExport void register_Structures_type_identifier(
         eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
 namespace testing_1 {
 /**
- * @brief Register testing_1_foo related TypeIdentifier.
+ * @brief Register foo related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
@@ -390,13 +385,13 @@ namespace testing_1 {
  *             The returned TypeIdentifier corresponds to the complete TypeIdentifier in case of hashed TypeIdentifiers.
  *             Invalid TypeIdentifier is returned in case of error.
  */
-eProsima_user_DllExport void register_testing_1_foo_type_identifier(
+eProsima_user_DllExport void register_foo_type_identifier(
         eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
 
 } // namespace testing_1
 namespace testing_2 {
 /**
- * @brief Register testing_2_foo related TypeIdentifier.
+ * @brief Register foo related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
@@ -405,7 +400,7 @@ namespace testing_2 {
  *             The returned TypeIdentifier corresponds to the complete TypeIdentifier in case of hashed TypeIdentifiers.
  *             Invalid TypeIdentifier is returned in case of error.
  */
-eProsima_user_DllExport void register_testing_2_foo_type_identifier(
+eProsima_user_DllExport void register_foo_type_identifier(
         eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
 
 } // namespace testing_2

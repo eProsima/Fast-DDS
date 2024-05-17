@@ -221,7 +221,8 @@ bool HelloMsgPubSubType::getKey(
 
 void HelloMsgPubSubType::register_type_object_representation() const
 {
-    register_deadlinepayload_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_HelloMsg_type_identifier(type_id);
 }
 
 

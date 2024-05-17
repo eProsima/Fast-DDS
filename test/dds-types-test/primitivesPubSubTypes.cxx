@@ -221,7 +221,8 @@ bool ShortStructPubSubType::getKey(
 
 void ShortStructPubSubType::register_type_object_representation() const
 {
-    register_primitives_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ShortStruct_type_identifier(type_id);
 }
 
 UShortStructPubSubType::UShortStructPubSubType()
@@ -414,7 +415,8 @@ bool UShortStructPubSubType::getKey(
 
 void UShortStructPubSubType::register_type_object_representation() const
 {
-    register_primitives_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_UShortStruct_type_identifier(type_id);
 }
 
 LongStructPubSubType::LongStructPubSubType()
@@ -607,7 +609,8 @@ bool LongStructPubSubType::getKey(
 
 void LongStructPubSubType::register_type_object_representation() const
 {
-    register_primitives_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_LongStruct_type_identifier(type_id);
 }
 
 ULongStructPubSubType::ULongStructPubSubType()
@@ -800,7 +803,8 @@ bool ULongStructPubSubType::getKey(
 
 void ULongStructPubSubType::register_type_object_representation() const
 {
-    register_primitives_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ULongStruct_type_identifier(type_id);
 }
 
 LongLongStructPubSubType::LongLongStructPubSubType()
@@ -993,7 +997,8 @@ bool LongLongStructPubSubType::getKey(
 
 void LongLongStructPubSubType::register_type_object_representation() const
 {
-    register_primitives_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_LongLongStruct_type_identifier(type_id);
 }
 
 ULongLongStructPubSubType::ULongLongStructPubSubType()
@@ -1186,7 +1191,8 @@ bool ULongLongStructPubSubType::getKey(
 
 void ULongLongStructPubSubType::register_type_object_representation() const
 {
-    register_primitives_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ULongLongStruct_type_identifier(type_id);
 }
 
 FloatStructPubSubType::FloatStructPubSubType()
@@ -1379,7 +1385,8 @@ bool FloatStructPubSubType::getKey(
 
 void FloatStructPubSubType::register_type_object_representation() const
 {
-    register_primitives_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_FloatStruct_type_identifier(type_id);
 }
 
 DoubleStructPubSubType::DoubleStructPubSubType()
@@ -1572,7 +1579,8 @@ bool DoubleStructPubSubType::getKey(
 
 void DoubleStructPubSubType::register_type_object_representation() const
 {
-    register_primitives_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_DoubleStruct_type_identifier(type_id);
 }
 
 LongDoubleStructPubSubType::LongDoubleStructPubSubType()
@@ -1765,7 +1773,8 @@ bool LongDoubleStructPubSubType::getKey(
 
 void LongDoubleStructPubSubType::register_type_object_representation() const
 {
-    register_primitives_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_LongDoubleStruct_type_identifier(type_id);
 }
 
 BooleanStructPubSubType::BooleanStructPubSubType()
@@ -1958,7 +1967,8 @@ bool BooleanStructPubSubType::getKey(
 
 void BooleanStructPubSubType::register_type_object_representation() const
 {
-    register_primitives_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_BooleanStruct_type_identifier(type_id);
 }
 
 OctetStructPubSubType::OctetStructPubSubType()
@@ -2151,7 +2161,8 @@ bool OctetStructPubSubType::getKey(
 
 void OctetStructPubSubType::register_type_object_representation() const
 {
-    register_primitives_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_OctetStruct_type_identifier(type_id);
 }
 
 CharStructPubSubType::CharStructPubSubType()
@@ -2344,7 +2355,8 @@ bool CharStructPubSubType::getKey(
 
 void CharStructPubSubType::register_type_object_representation() const
 {
-    register_primitives_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_CharStruct_type_identifier(type_id);
 }
 
 WCharStructPubSubType::WCharStructPubSubType()
@@ -2537,7 +2549,8 @@ bool WCharStructPubSubType::getKey(
 
 void WCharStructPubSubType::register_type_object_representation() const
 {
-    register_primitives_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_WCharStruct_type_identifier(type_id);
 }
 
 Int8StructPubSubType::Int8StructPubSubType()
@@ -2730,7 +2743,8 @@ bool Int8StructPubSubType::getKey(
 
 void Int8StructPubSubType::register_type_object_representation() const
 {
-    register_primitives_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_Int8Struct_type_identifier(type_id);
 }
 
 Uint8StructPubSubType::Uint8StructPubSubType()
@@ -2923,7 +2937,8 @@ bool Uint8StructPubSubType::getKey(
 
 void Uint8StructPubSubType::register_type_object_representation() const
 {
-    register_primitives_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_Uint8Struct_type_identifier(type_id);
 }
 
 Int16StructPubSubType::Int16StructPubSubType()
@@ -3116,7 +3131,8 @@ bool Int16StructPubSubType::getKey(
 
 void Int16StructPubSubType::register_type_object_representation() const
 {
-    register_primitives_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_Int16Struct_type_identifier(type_id);
 }
 
 Uint16StructPubSubType::Uint16StructPubSubType()
@@ -3309,7 +3325,8 @@ bool Uint16StructPubSubType::getKey(
 
 void Uint16StructPubSubType::register_type_object_representation() const
 {
-    register_primitives_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_Uint16Struct_type_identifier(type_id);
 }
 
 Int32StructPubSubType::Int32StructPubSubType()
@@ -3502,7 +3519,8 @@ bool Int32StructPubSubType::getKey(
 
 void Int32StructPubSubType::register_type_object_representation() const
 {
-    register_primitives_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_Int32Struct_type_identifier(type_id);
 }
 
 Uint32StructPubSubType::Uint32StructPubSubType()
@@ -3695,7 +3713,8 @@ bool Uint32StructPubSubType::getKey(
 
 void Uint32StructPubSubType::register_type_object_representation() const
 {
-    register_primitives_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_Uint32Struct_type_identifier(type_id);
 }
 
 Int64StructPubSubType::Int64StructPubSubType()
@@ -3888,7 +3907,8 @@ bool Int64StructPubSubType::getKey(
 
 void Int64StructPubSubType::register_type_object_representation() const
 {
-    register_primitives_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_Int64Struct_type_identifier(type_id);
 }
 
 Uint64StructPubSubType::Uint64StructPubSubType()
@@ -4081,7 +4101,8 @@ bool Uint64StructPubSubType::getKey(
 
 void Uint64StructPubSubType::register_type_object_representation() const
 {
-    register_primitives_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_Uint64Struct_type_identifier(type_id);
 }
 
 

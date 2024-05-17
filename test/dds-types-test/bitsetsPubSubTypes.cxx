@@ -221,7 +221,8 @@ bool BitsetStructPubSubType::getKey(
 
 void BitsetStructPubSubType::register_type_object_representation() const
 {
-    register_bitsets_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_BitsetStruct_type_identifier(type_id);
 }
 
 

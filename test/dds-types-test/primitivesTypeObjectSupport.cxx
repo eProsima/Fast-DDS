@@ -38,57 +38,6 @@
 
 using namespace eprosima::fastdds::dds::xtypes;
 
-void register_primitives_type_objects()
-{
-    static std::once_flag once_flag;
-    std::call_once(once_flag, []()
-            {
-                TypeIdentifier type_id;
-                register_ShortStruct_type_identifier(type_id);
-
-                register_UShortStruct_type_identifier(type_id);
-
-                register_LongStruct_type_identifier(type_id);
-
-                register_ULongStruct_type_identifier(type_id);
-
-                register_LongLongStruct_type_identifier(type_id);
-
-                register_ULongLongStruct_type_identifier(type_id);
-
-                register_FloatStruct_type_identifier(type_id);
-
-                register_DoubleStruct_type_identifier(type_id);
-
-                register_LongDoubleStruct_type_identifier(type_id);
-
-                register_BooleanStruct_type_identifier(type_id);
-
-                register_OctetStruct_type_identifier(type_id);
-
-                register_CharStruct_type_identifier(type_id);
-
-                register_WCharStruct_type_identifier(type_id);
-
-                register_Int8Struct_type_identifier(type_id);
-
-                register_Uint8Struct_type_identifier(type_id);
-
-                register_Int16Struct_type_identifier(type_id);
-
-                register_Uint16Struct_type_identifier(type_id);
-
-                register_Int32Struct_type_identifier(type_id);
-
-                register_Uint32Struct_type_identifier(type_id);
-
-                register_Int64Struct_type_identifier(type_id);
-
-                register_Uint64Struct_type_identifier(type_id);
-
-            });
-}
-
 // TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
 void register_ShortStruct_type_identifier(
         TypeIdentifier& type_id)

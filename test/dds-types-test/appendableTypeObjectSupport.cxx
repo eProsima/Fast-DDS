@@ -39,59 +39,6 @@
 
 using namespace eprosima::fastdds::dds::xtypes;
 
-void register_appendable_type_objects()
-{
-    static std::once_flag once_flag;
-    std::call_once(once_flag, []()
-            {
-                TypeIdentifier type_id;
-                register_InnerStructureHelper_type_identifier(type_id);
-
-                register_InnerEmptyStructureHelper_type_identifier(type_id);
-
-                register_InnerUnionHelper_type_identifier(type_id);
-
-                register_AppendableShortStruct_type_identifier(type_id);
-
-                register_AppendableUShortStruct_type_identifier(type_id);
-
-                register_AppendableLongStruct_type_identifier(type_id);
-
-                register_AppendableULongStruct_type_identifier(type_id);
-
-                register_AppendableLongLongStruct_type_identifier(type_id);
-
-                register_AppendableULongLongStruct_type_identifier(type_id);
-
-                register_AppendableFloatStruct_type_identifier(type_id);
-
-                register_AppendableDoubleStruct_type_identifier(type_id);
-
-                register_AppendableLongDoubleStruct_type_identifier(type_id);
-
-                register_AppendableBooleanStruct_type_identifier(type_id);
-
-                register_AppendableOctetStruct_type_identifier(type_id);
-
-                register_AppendableCharStruct_type_identifier(type_id);
-
-                register_AppendableWCharStruct_type_identifier(type_id);
-
-                register_AppendableUnionStruct_type_identifier(type_id);
-
-                register_AppendableEmptyStruct_type_identifier(type_id);
-
-                register_AppendableEmptyInheritanceStruct_type_identifier(type_id);
-
-                register_AppendableInheritanceStruct_type_identifier(type_id);
-
-                register_AppendableInheritanceEmptyStruct_type_identifier(type_id);
-
-                register_AppendableExtensibilityInheritance_type_identifier(type_id);
-
-            });
-}
-
 // TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
 void register_AppendableShortStruct_type_identifier(
         TypeIdentifier& type_id)

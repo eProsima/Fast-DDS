@@ -39,89 +39,6 @@
 
 using namespace eprosima::fastdds::dds::xtypes;
 
-void register_structures_type_objects()
-{
-    static std::once_flag once_flag;
-    std::call_once(once_flag, []()
-            {
-                TypeIdentifier type_id;
-                register_InnerStructureHelper_type_identifier(type_id);
-
-                register_InnerEmptyStructureHelper_type_identifier(type_id);
-
-                register_InnerUnionHelper_type_identifier(type_id);
-
-                register_StructShort_type_identifier(type_id);
-
-                register_StructUnsignedShort_type_identifier(type_id);
-
-                register_StructLong_type_identifier(type_id);
-
-                register_StructUnsignedLong_type_identifier(type_id);
-
-                register_StructLongLong_type_identifier(type_id);
-
-                register_StructUnsignedLongLong_type_identifier(type_id);
-
-                register_StructFloat_type_identifier(type_id);
-
-                register_StructDouble_type_identifier(type_id);
-
-                register_StructLongDouble_type_identifier(type_id);
-
-                register_StructBoolean_type_identifier(type_id);
-
-                register_StructOctet_type_identifier(type_id);
-
-                register_StructChar8_type_identifier(type_id);
-
-                register_StructChar16_type_identifier(type_id);
-
-                register_StructString_type_identifier(type_id);
-
-                register_StructWString_type_identifier(type_id);
-
-                register_StructBoundedString_type_identifier(type_id);
-
-                register_StructBoundedWString_type_identifier(type_id);
-
-                register_StructEnum_type_identifier(type_id);
-
-                register_StructBitMask_type_identifier(type_id);
-
-                register_StructAlias_type_identifier(type_id);
-
-                register_StructShortArray_type_identifier(type_id);
-
-                register_StructSequence_type_identifier(type_id);
-
-                register_StructMap_type_identifier(type_id);
-
-                register_StructUnion_type_identifier(type_id);
-
-                register_StructStructure_type_identifier(type_id);
-
-                register_StructBitset_type_identifier(type_id);
-
-                register_StructEmpty_type_identifier(type_id);
-
-                register_Structures_type_identifier(type_id);
-
-                testing_1::register_testing_1_foo_type_identifier(type_id);
-
-                testing_2::register_testing_2_foo_type_identifier(type_id);
-
-                register_bar_type_identifier(type_id);
-
-                register_root1_type_identifier(type_id);
-
-                register_root2_type_identifier(type_id);
-
-                register_root_type_identifier(type_id);
-
-            });
-}
-
 // TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
 void register_StructShort_type_identifier(
         TypeIdentifier& type_id)
@@ -9592,7 +9509,7 @@ void register_Structures_type_identifier(
 }
 namespace testing_1 {
 // TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
-void register_testing_1_foo_type_identifier(
+void register_foo_type_identifier(
         TypeIdentifier& type_id)
 {
     {
@@ -9762,7 +9679,7 @@ void register_testing_1_foo_type_identifier(
 } // namespace testing_1
 namespace testing_2 {
 // TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
-void register_testing_2_foo_type_identifier(
+void register_foo_type_identifier(
         TypeIdentifier& type_id)
 {
     {

@@ -221,7 +221,8 @@ bool KeyedShortStructPubSubType::getKey(
 
 void KeyedShortStructPubSubType::register_type_object_representation() const
 {
-    register_key_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_KeyedShortStruct_type_identifier(type_id);
 }
 
 KeyedUShortStructPubSubType::KeyedUShortStructPubSubType()
@@ -414,7 +415,8 @@ bool KeyedUShortStructPubSubType::getKey(
 
 void KeyedUShortStructPubSubType::register_type_object_representation() const
 {
-    register_key_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_KeyedUShortStruct_type_identifier(type_id);
 }
 
 KeyedLongStructPubSubType::KeyedLongStructPubSubType()
@@ -607,7 +609,8 @@ bool KeyedLongStructPubSubType::getKey(
 
 void KeyedLongStructPubSubType::register_type_object_representation() const
 {
-    register_key_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_KeyedLongStruct_type_identifier(type_id);
 }
 
 KeyedULongStructPubSubType::KeyedULongStructPubSubType()
@@ -800,7 +803,8 @@ bool KeyedULongStructPubSubType::getKey(
 
 void KeyedULongStructPubSubType::register_type_object_representation() const
 {
-    register_key_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_KeyedULongStruct_type_identifier(type_id);
 }
 
 KeyedLongLongStructPubSubType::KeyedLongLongStructPubSubType()
@@ -993,7 +997,8 @@ bool KeyedLongLongStructPubSubType::getKey(
 
 void KeyedLongLongStructPubSubType::register_type_object_representation() const
 {
-    register_key_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_KeyedLongLongStruct_type_identifier(type_id);
 }
 
 KeyedULongLongStructPubSubType::KeyedULongLongStructPubSubType()
@@ -1186,7 +1191,8 @@ bool KeyedULongLongStructPubSubType::getKey(
 
 void KeyedULongLongStructPubSubType::register_type_object_representation() const
 {
-    register_key_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_KeyedULongLongStruct_type_identifier(type_id);
 }
 
 KeyedFloatStructPubSubType::KeyedFloatStructPubSubType()
@@ -1379,7 +1385,8 @@ bool KeyedFloatStructPubSubType::getKey(
 
 void KeyedFloatStructPubSubType::register_type_object_representation() const
 {
-    register_key_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_KeyedFloatStruct_type_identifier(type_id);
 }
 
 KeyedDoubleStructPubSubType::KeyedDoubleStructPubSubType()
@@ -1572,7 +1579,8 @@ bool KeyedDoubleStructPubSubType::getKey(
 
 void KeyedDoubleStructPubSubType::register_type_object_representation() const
 {
-    register_key_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_KeyedDoubleStruct_type_identifier(type_id);
 }
 
 KeyedLongDoubleStructPubSubType::KeyedLongDoubleStructPubSubType()
@@ -1765,7 +1773,8 @@ bool KeyedLongDoubleStructPubSubType::getKey(
 
 void KeyedLongDoubleStructPubSubType::register_type_object_representation() const
 {
-    register_key_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_KeyedLongDoubleStruct_type_identifier(type_id);
 }
 
 KeyedBooleanStructPubSubType::KeyedBooleanStructPubSubType()
@@ -1958,7 +1967,8 @@ bool KeyedBooleanStructPubSubType::getKey(
 
 void KeyedBooleanStructPubSubType::register_type_object_representation() const
 {
-    register_key_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_KeyedBooleanStruct_type_identifier(type_id);
 }
 
 KeyedOctetStructPubSubType::KeyedOctetStructPubSubType()
@@ -2151,7 +2161,8 @@ bool KeyedOctetStructPubSubType::getKey(
 
 void KeyedOctetStructPubSubType::register_type_object_representation() const
 {
-    register_key_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_KeyedOctetStruct_type_identifier(type_id);
 }
 
 KeyedCharStructPubSubType::KeyedCharStructPubSubType()
@@ -2344,7 +2355,8 @@ bool KeyedCharStructPubSubType::getKey(
 
 void KeyedCharStructPubSubType::register_type_object_representation() const
 {
-    register_key_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_KeyedCharStruct_type_identifier(type_id);
 }
 
 KeyedWCharStructPubSubType::KeyedWCharStructPubSubType()
@@ -2537,7 +2549,8 @@ bool KeyedWCharStructPubSubType::getKey(
 
 void KeyedWCharStructPubSubType::register_type_object_representation() const
 {
-    register_key_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_KeyedWCharStruct_type_identifier(type_id);
 }
 
 KeyedEmptyStructPubSubType::KeyedEmptyStructPubSubType()
@@ -2730,7 +2743,8 @@ bool KeyedEmptyStructPubSubType::getKey(
 
 void KeyedEmptyStructPubSubType::register_type_object_representation() const
 {
-    register_key_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_KeyedEmptyStruct_type_identifier(type_id);
 }
 
 KeyedEmptyInheritanceStructPubSubType::KeyedEmptyInheritanceStructPubSubType()
@@ -2923,7 +2937,8 @@ bool KeyedEmptyInheritanceStructPubSubType::getKey(
 
 void KeyedEmptyInheritanceStructPubSubType::register_type_object_representation() const
 {
-    register_key_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_KeyedEmptyInheritanceStruct_type_identifier(type_id);
 }
 
 KeyedInheritanceStructPubSubType::KeyedInheritanceStructPubSubType()
@@ -3116,7 +3131,8 @@ bool KeyedInheritanceStructPubSubType::getKey(
 
 void KeyedInheritanceStructPubSubType::register_type_object_representation() const
 {
-    register_key_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_KeyedInheritanceStruct_type_identifier(type_id);
 }
 
 InheritanceKeyedEmptyStructPubSubType::InheritanceKeyedEmptyStructPubSubType()
@@ -3309,7 +3325,8 @@ bool InheritanceKeyedEmptyStructPubSubType::getKey(
 
 void InheritanceKeyedEmptyStructPubSubType::register_type_object_representation() const
 {
-    register_key_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_InheritanceKeyedEmptyStruct_type_identifier(type_id);
 }
 
 

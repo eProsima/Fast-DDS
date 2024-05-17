@@ -1651,14 +1651,6 @@ fastrtps::TopicAttributes DataWriterImpl::get_topic_attributes(
     topic_att.topicDataType = topic.get_type_name();
     topic_att.topicKind = type->m_isGetKeyDefined ? WITH_KEY : NO_KEY;
     topic_att.auto_fill_type_information = type->auto_fill_type_information();
-    if (type->type_identifier())
-    {
-        topic_att.type_id = *type->type_identifier();
-    }
-    if (type->type_object())
-    {
-        topic_att.type = *type->type_object();
-    }
     if (type->type_information())
     {
         topic_att.type_information = *type->type_information();

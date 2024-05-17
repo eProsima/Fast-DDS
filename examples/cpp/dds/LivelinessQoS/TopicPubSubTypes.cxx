@@ -221,7 +221,8 @@ bool TopicPubSubType::getKey(
 
 void TopicPubSubType::register_type_object_representation() const
 {
-    register_Topic_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_Topic_type_identifier(type_id);
 }
 
 

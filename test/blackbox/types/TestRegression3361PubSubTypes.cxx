@@ -221,7 +221,8 @@ bool TestRegression3361PubSubType::getKey(
 
 void TestRegression3361PubSubType::register_type_object_representation() const
 {
-    register_TestRegression3361_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_TestRegression3361_type_identifier(type_id);
 }
 
 

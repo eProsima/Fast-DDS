@@ -38,27 +38,6 @@
 
 using namespace eprosima::fastdds::dds::xtypes;
 
-void register_strings_type_objects()
-{
-    static std::once_flag once_flag;
-    std::call_once(once_flag, []()
-            {
-                TypeIdentifier type_id;
-                register_StringStruct_type_identifier(type_id);
-
-                register_WStringStruct_type_identifier(type_id);
-
-                register_SmallStringStruct_type_identifier(type_id);
-
-                register_SmallWStringStruct_type_identifier(type_id);
-
-                register_LargeStringStruct_type_identifier(type_id);
-
-                register_LargeWStringStruct_type_identifier(type_id);
-
-            });
-}
-
 // TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
 void register_StringStruct_type_identifier(
         TypeIdentifier& type_id)

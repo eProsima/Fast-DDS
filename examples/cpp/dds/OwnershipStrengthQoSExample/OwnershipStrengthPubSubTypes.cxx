@@ -221,7 +221,8 @@ bool ExampleMessagePubSubType::getKey(
 
 void ExampleMessagePubSubType::register_type_object_representation() const
 {
-    register_OwnershipStrength_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_ExampleMessage_type_identifier(type_id);
 }
 
 

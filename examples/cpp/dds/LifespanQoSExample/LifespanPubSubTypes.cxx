@@ -221,7 +221,8 @@ bool LifespanPubSubType::getKey(
 
 void LifespanPubSubType::register_type_object_representation() const
 {
-    register_Lifespan_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_Lifespan_type_identifier(type_id);
 }
 
 

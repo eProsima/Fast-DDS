@@ -38,39 +38,6 @@
 
 using namespace eprosima::fastdds::dds::xtypes;
 
-void register_member_id_type_objects()
-{
-    static std::once_flag once_flag;
-    std::call_once(once_flag, []()
-            {
-                TypeIdentifier type_id;
-                register_FixId_type_identifier(type_id);
-
-                register_FixHexId_type_identifier(type_id);
-
-                register_FixHashidDefault_type_identifier(type_id);
-
-                register_FixHashid_type_identifier(type_id);
-
-                register_FixMix_type_identifier(type_id);
-
-                register_AutoidDefault_type_identifier(type_id);
-
-                register_AutoidSequential_type_identifier(type_id);
-
-                register_AutoidHash_type_identifier(type_id);
-
-                register_DerivedAutoidDefault_type_identifier(type_id);
-
-                register_DerivedEmptyAutoidSequential_type_identifier(type_id);
-
-                register_DerivedAutoidSequential_type_identifier(type_id);
-
-                register_DerivedAutoidHash_type_identifier(type_id);
-
-            });
-}
-
 // TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
 void register_FixId_type_identifier(
         TypeIdentifier& type_id)

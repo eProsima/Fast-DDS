@@ -39,59 +39,6 @@
 
 using namespace eprosima::fastdds::dds::xtypes;
 
-void register_final_type_objects()
-{
-    static std::once_flag once_flag;
-    std::call_once(once_flag, []()
-            {
-                TypeIdentifier type_id;
-                register_InnerStructureHelper_type_identifier(type_id);
-
-                register_InnerEmptyStructureHelper_type_identifier(type_id);
-
-                register_InnerUnionHelper_type_identifier(type_id);
-
-                register_FinalShortStruct_type_identifier(type_id);
-
-                register_FinalUShortStruct_type_identifier(type_id);
-
-                register_FinalLongStruct_type_identifier(type_id);
-
-                register_FinalULongStruct_type_identifier(type_id);
-
-                register_FinalLongLongStruct_type_identifier(type_id);
-
-                register_FinalULongLongStruct_type_identifier(type_id);
-
-                register_FinalFloatStruct_type_identifier(type_id);
-
-                register_FinalDoubleStruct_type_identifier(type_id);
-
-                register_FinalLongDoubleStruct_type_identifier(type_id);
-
-                register_FinalBooleanStruct_type_identifier(type_id);
-
-                register_FinalOctetStruct_type_identifier(type_id);
-
-                register_FinalCharStruct_type_identifier(type_id);
-
-                register_FinalWCharStruct_type_identifier(type_id);
-
-                register_FinalUnionStruct_type_identifier(type_id);
-
-                register_FinalEmptyStruct_type_identifier(type_id);
-
-                register_FinalEmptyInheritanceStruct_type_identifier(type_id);
-
-                register_FinalInheritanceStruct_type_identifier(type_id);
-
-                register_InheritanceEmptyStruct_type_identifier(type_id);
-
-                register_FinalExtensibilityInheritance_type_identifier(type_id);
-
-            });
-}
-
 // TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
 void register_FinalShortStruct_type_identifier(
         TypeIdentifier& type_id)

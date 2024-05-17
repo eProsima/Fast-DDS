@@ -221,7 +221,8 @@ bool Data1mbPubSubType::getKey(
 
 void Data1mbPubSubType::register_type_object_representation() const
 {
-    register_Data1mb_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_Data1mb_type_identifier(type_id);
 }
 
 

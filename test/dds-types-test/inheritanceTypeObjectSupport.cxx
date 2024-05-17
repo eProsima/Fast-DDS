@@ -39,37 +39,6 @@
 
 using namespace eprosima::fastdds::dds::xtypes;
 
-void register_inheritance_type_objects()
-{
-    static std::once_flag once_flag;
-    std::call_once(once_flag, []()
-            {
-                TypeIdentifier type_id;
-                register_InnerStructureHelper_type_identifier(type_id);
-
-                register_InnerEmptyStructureHelper_type_identifier(type_id);
-
-                register_InnerUnionHelper_type_identifier(type_id);
-
-                register_InnerStructureHelperChild_type_identifier(type_id);
-
-                register_InnerStructureHelperChildChild_type_identifier(type_id);
-
-                register_InnerStructureHelperEmptyChild_type_identifier(type_id);
-
-                register_InnerStructureHelperEmptyChildChild_type_identifier(type_id);
-
-                register_InnerEmptyStructureHelperChild_type_identifier(type_id);
-
-                register_StructAliasInheritanceStruct_type_identifier(type_id);
-
-                register_StructuresInheritanceStruct_type_identifier(type_id);
-
-                register_BitsetsChildInheritanceStruct_type_identifier(type_id);
-
-            });
-}
-
 // TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
 void register_InnerStructureHelperChild_type_identifier(
         TypeIdentifier& type_id)

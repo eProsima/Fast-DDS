@@ -221,7 +221,8 @@ bool InnerStructureHelperPubSubType::getKey(
 
 void InnerStructureHelperPubSubType::register_type_object_representation() const
 {
-    register_basic_inner_types_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_InnerStructureHelper_type_identifier(type_id);
 }
 
 InnerEmptyStructureHelperPubSubType::InnerEmptyStructureHelperPubSubType()
@@ -414,7 +415,8 @@ bool InnerEmptyStructureHelperPubSubType::getKey(
 
 void InnerEmptyStructureHelperPubSubType::register_type_object_representation() const
 {
-    register_basic_inner_types_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_InnerEmptyStructureHelper_type_identifier(type_id);
 }
 
 

@@ -39,33 +39,6 @@
 
 using namespace eprosima::fastdds::dds::xtypes;
 
-void register_annotations_type_objects()
-{
-    static std::once_flag once_flag;
-    std::call_once(once_flag, []()
-            {
-                TypeIdentifier type_id;
-                register_InnerStructureHelper_type_identifier(type_id);
-
-                register_InnerEmptyStructureHelper_type_identifier(type_id);
-
-                register_InnerUnionHelper_type_identifier(type_id);
-
-                register_AnnotationTest_type_identifier(type_id);
-
-                register_EmptyAnnotationTest_type_identifier(type_id);
-
-                register_AnnotatedStruct_type_identifier(type_id);
-
-                register_EmptyAnnotatedStruct_type_identifier(type_id);
-
-                register_BasicAnnotationsTest_type_identifier(type_id);
-
-                register_BasicAnnotationsStruct_type_identifier(type_id);
-
-            });
-}
-
 void register_AnnotationTest_type_identifier(
         TypeIdentifier& type_id)
 {

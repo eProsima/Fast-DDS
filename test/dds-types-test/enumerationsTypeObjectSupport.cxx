@@ -39,27 +39,6 @@
 
 using namespace eprosima::fastdds::dds::xtypes;
 
-void register_enumerations_type_objects()
-{
-    static std::once_flag once_flag;
-    std::call_once(once_flag, []()
-            {
-                TypeIdentifier type_id;
-                register_InnerStructureHelper_type_identifier(type_id);
-
-                register_InnerEmptyStructureHelper_type_identifier(type_id);
-
-                register_InnerUnionHelper_type_identifier(type_id);
-
-                register_EnumStructure_type_identifier(type_id);
-
-                register_BitMaskStructure_type_identifier(type_id);
-
-                register_BoundedBitMaskStructure_type_identifier(type_id);
-
-            });
-}
-
 namespace Test {
 } // namespace Test
 // TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method

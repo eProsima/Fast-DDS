@@ -39,23 +39,6 @@
 
 using namespace eprosima::fastdds::dds::xtypes;
 
-void register_bitsets_type_objects()
-{
-    static std::once_flag once_flag;
-    std::call_once(once_flag, []()
-            {
-                TypeIdentifier type_id;
-                register_InnerStructureHelper_type_identifier(type_id);
-
-                register_InnerEmptyStructureHelper_type_identifier(type_id);
-
-                register_InnerUnionHelper_type_identifier(type_id);
-
-                register_BitsetStruct_type_identifier(type_id);
-
-            });
-}
-
 // TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
 void register_BitsetStruct_type_identifier(
         TypeIdentifier& type_id)

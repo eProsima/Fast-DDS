@@ -221,7 +221,8 @@ bool KeyedHelloWorldPubSubType::getKey(
 
 void KeyedHelloWorldPubSubType::register_type_object_representation() const
 {
-    register_KeyedHelloWorld_type_objects();
+    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
+    register_KeyedHelloWorld_type_identifier(type_id);
 }
 
 
