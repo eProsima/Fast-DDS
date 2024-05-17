@@ -74,4 +74,4 @@ jobs:
       cmake_args: ${{ inputs.cmake_args || '' }}
       ctest_args: ${{ inputs.ctest_args || '' }}
       fastdds_ref: ${{ inputs.fastdds_ref || github.ref || '2.14.x' }}
-      discovery_server_ref: ${{ inputs.discovery_server_ref || '2.14.x' }}
+      discovery_server_ref: ${{ inputs.discovery_server_ref || '1.2.x' }}
