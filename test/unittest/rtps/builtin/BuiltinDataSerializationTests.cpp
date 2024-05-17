@@ -140,10 +140,6 @@ TEST(BuiltinDataSerializationTests, ok_with_defaults)
     }
 }
 
-<<<<<<< HEAD
-// Regression test for redmine issue #10547
-TEST(BuiltinDataSerializationTests, ignore_unsupported_type_info)
-=======
 TEST(BuiltinDataSerializationTests, msg_without_datasharing)
 {
     {
@@ -223,11 +219,8 @@ TEST(BuiltinDataSerializationTests, msg_with_datasharing)
     }
 }
 
-
-// Regression test for redmine issue #10547.
-// Update against OpenDDS 3.27. With this version we can read the remote DATA(w).
-TEST(BuiltinDataSerializationTests, interoperability_with_opendds_3_27)
->>>>>>> 904c52302 (Set DataSharing in Writer|ReaderProxyData (#4761))
+// Regression test for redmine issue #10547
+TEST(BuiltinDataSerializationTests, ignore_unsupported_type_info)
 {
     // DATA(w)
     {
