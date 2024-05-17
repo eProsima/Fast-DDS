@@ -855,7 +855,7 @@ inline bool QosPoliciesSerializer<DataSharingQosPolicy>::read_content_from_cdr_m
     uint32_t pos_ref = cdr_message->pos;
 
     // If the parameter is sent, the remote endpoint is datasharing compatible
-    qos_policy.automatic();
+    qos_policy.on(".");
 
     uint32_t num_domains = 0;
     bool valid = fastrtps::rtps::CDRMessage::readUInt32(cdr_message, &num_domains);
