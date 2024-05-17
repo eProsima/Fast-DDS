@@ -104,8 +104,8 @@ endforeach(latency_test_name)
 ###########################################################################
 # Create tests                                                            #
 ###########################################################################
-find_package(PythonInterp 3 REQUIRED)
-if(PYTHONINTERP_FOUND)
+find_package(Python3 COMPONENTS Interpreter REQUIRED)
+if(Python3_Interpreter_FOUND)
     # Loop over the test names
     foreach(latency_test_name ${LATENCY_TEST_LIST})
 
@@ -135,7 +135,7 @@ if(PYTHONINTERP_FOUND)
         # Add the test
         add_test(
             NAME performance.latency.${latency_test_name}
-            COMMAND ${PYTHON_EXECUTABLE}
+            COMMAND ${Python3_EXECUTABLE}
             ${CMAKE_CURRENT_SOURCE_DIR}/latency_tests.py
             ${LATENCY_TEST_BIN}
             --xml_file ${CMAKE_CURRENT_SOURCE_DIR}/xml/${latency_test_name}.xml
@@ -172,7 +172,7 @@ if(PYTHONINTERP_FOUND)
 
             add_test(
                 NAME performance.latency.${latency_test_name}.security
-                COMMAND ${PYTHON_EXECUTABLE}
+                COMMAND ${Python3_EXECUTABLE}
                 ${CMAKE_CURRENT_SOURCE_DIR}/latency_tests.py
                 ${LATENCY_TEST_BIN}
                 --xml_file ${CMAKE_CURRENT_SOURCE_DIR}/xml/${latency_test_name}.xml
@@ -198,7 +198,7 @@ if(PYTHONINTERP_FOUND)
 
             add_test(
                 NAME performance.latency.${latency_test_name}.data_sharing
-                COMMAND ${PYTHON_EXECUTABLE}
+                COMMAND ${Python3_EXECUTABLE}
                 ${CMAKE_CURRENT_SOURCE_DIR}/latency_tests.py
                 ${LATENCY_TEST_BIN}
                 --xml_file ${CMAKE_CURRENT_SOURCE_DIR}/xml/${latency_test_name}.xml
@@ -218,7 +218,7 @@ if(PYTHONINTERP_FOUND)
 
             add_test(
                 NAME performance.latency.${latency_test_name}.data_loans
-                COMMAND ${PYTHON_EXECUTABLE}
+                COMMAND ${Python3_EXECUTABLE}
                 ${CMAKE_CURRENT_SOURCE_DIR}/latency_tests.py
                 ${LATENCY_TEST_BIN}
                 --xml_file ${CMAKE_CURRENT_SOURCE_DIR}/xml/${latency_test_name}.xml
@@ -236,7 +236,7 @@ if(PYTHONINTERP_FOUND)
 
                 add_test(
                     NAME performance.latency.${latency_test_name}.data_loans.security
-                    COMMAND ${PYTHON_EXECUTABLE}
+                    COMMAND ${Python3_EXECUTABLE}
                     ${CMAKE_CURRENT_SOURCE_DIR}/latency_tests.py
                     ${LATENCY_TEST_BIN}
                     --xml_file ${CMAKE_CURRENT_SOURCE_DIR}/xml/${latency_test_name}.xml
@@ -265,7 +265,7 @@ if(PYTHONINTERP_FOUND)
 
             add_test(
                 NAME performance.latency.${latency_test_name}.data_loans_and_sharing
-                COMMAND ${PYTHON_EXECUTABLE}
+                COMMAND ${Python3_EXECUTABLE}
                 ${CMAKE_CURRENT_SOURCE_DIR}/latency_tests.py
                 ${LATENCY_TEST_BIN}
                 --xml_file ${CMAKE_CURRENT_SOURCE_DIR}/xml/${latency_test_name}.xml
