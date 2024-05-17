@@ -48,4 +48,4 @@ jobs:
       colcon-args: ${{ inputs.colcon-args }}
       cmake-args: '-DSECURITY=ON ${{ inputs.cmake-args }}'
       ctest-args: ${{ inputs.ctest-args }}
-      fastdds_branch: ${{ inputs.fastdds_branch || github.ref || 'master' }}
+      fastdds_branch: ${{ inputs.fastdds_branch || github.ref || '2.14.x' }}
