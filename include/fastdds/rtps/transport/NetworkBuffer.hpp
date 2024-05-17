@@ -21,6 +21,8 @@
 
 #include <cstdint>
 
+#include <fastdds/rtps/common/Types.h>
+
 namespace asio {
 // Forward declaration of asio::const_buffer
 class const_buffer;
