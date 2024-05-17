@@ -219,9 +219,9 @@ bool MutableShortStructPubSubType::getKey(
     return true;
 }
 
-void MutableShortStructPubSubType::register_type_object_representation() const
+void MutableShortStructPubSubType::register_type_object_representation()
 {
-    register_mutable_type_objects();
+    register_MutableShortStruct_type_identifier(type_identifiers_);
 }
 
 MutableUShortStructPubSubType::MutableUShortStructPubSubType()
@@ -412,9 +412,9 @@ bool MutableUShortStructPubSubType::getKey(
     return true;
 }
 
-void MutableUShortStructPubSubType::register_type_object_representation() const
+void MutableUShortStructPubSubType::register_type_object_representation()
 {
-    register_mutable_type_objects();
+    register_MutableUShortStruct_type_identifier(type_identifiers_);
 }
 
 MutableLongStructPubSubType::MutableLongStructPubSubType()
@@ -605,9 +605,9 @@ bool MutableLongStructPubSubType::getKey(
     return true;
 }
 
-void MutableLongStructPubSubType::register_type_object_representation() const
+void MutableLongStructPubSubType::register_type_object_representation()
 {
-    register_mutable_type_objects();
+    register_MutableLongStruct_type_identifier(type_identifiers_);
 }
 
 MutableULongStructPubSubType::MutableULongStructPubSubType()
@@ -798,9 +798,9 @@ bool MutableULongStructPubSubType::getKey(
     return true;
 }
 
-void MutableULongStructPubSubType::register_type_object_representation() const
+void MutableULongStructPubSubType::register_type_object_representation()
 {
-    register_mutable_type_objects();
+    register_MutableULongStruct_type_identifier(type_identifiers_);
 }
 
 MutableLongLongStructPubSubType::MutableLongLongStructPubSubType()
@@ -991,9 +991,9 @@ bool MutableLongLongStructPubSubType::getKey(
     return true;
 }
 
-void MutableLongLongStructPubSubType::register_type_object_representation() const
+void MutableLongLongStructPubSubType::register_type_object_representation()
 {
-    register_mutable_type_objects();
+    register_MutableLongLongStruct_type_identifier(type_identifiers_);
 }
 
 MutableULongLongStructPubSubType::MutableULongLongStructPubSubType()
@@ -1184,9 +1184,9 @@ bool MutableULongLongStructPubSubType::getKey(
     return true;
 }
 
-void MutableULongLongStructPubSubType::register_type_object_representation() const
+void MutableULongLongStructPubSubType::register_type_object_representation()
 {
-    register_mutable_type_objects();
+    register_MutableULongLongStruct_type_identifier(type_identifiers_);
 }
 
 MutableFloatStructPubSubType::MutableFloatStructPubSubType()
@@ -1377,9 +1377,9 @@ bool MutableFloatStructPubSubType::getKey(
     return true;
 }
 
-void MutableFloatStructPubSubType::register_type_object_representation() const
+void MutableFloatStructPubSubType::register_type_object_representation()
 {
-    register_mutable_type_objects();
+    register_MutableFloatStruct_type_identifier(type_identifiers_);
 }
 
 MutableDoubleStructPubSubType::MutableDoubleStructPubSubType()
@@ -1570,9 +1570,9 @@ bool MutableDoubleStructPubSubType::getKey(
     return true;
 }
 
-void MutableDoubleStructPubSubType::register_type_object_representation() const
+void MutableDoubleStructPubSubType::register_type_object_representation()
 {
-    register_mutable_type_objects();
+    register_MutableDoubleStruct_type_identifier(type_identifiers_);
 }
 
 MutableLongDoubleStructPubSubType::MutableLongDoubleStructPubSubType()
@@ -1763,9 +1763,9 @@ bool MutableLongDoubleStructPubSubType::getKey(
     return true;
 }
 
-void MutableLongDoubleStructPubSubType::register_type_object_representation() const
+void MutableLongDoubleStructPubSubType::register_type_object_representation()
 {
-    register_mutable_type_objects();
+    register_MutableLongDoubleStruct_type_identifier(type_identifiers_);
 }
 
 MutableBooleanStructPubSubType::MutableBooleanStructPubSubType()
@@ -1956,9 +1956,9 @@ bool MutableBooleanStructPubSubType::getKey(
     return true;
 }
 
-void MutableBooleanStructPubSubType::register_type_object_representation() const
+void MutableBooleanStructPubSubType::register_type_object_representation()
 {
-    register_mutable_type_objects();
+    register_MutableBooleanStruct_type_identifier(type_identifiers_);
 }
 
 MutableOctetStructPubSubType::MutableOctetStructPubSubType()
@@ -2149,9 +2149,9 @@ bool MutableOctetStructPubSubType::getKey(
     return true;
 }
 
-void MutableOctetStructPubSubType::register_type_object_representation() const
+void MutableOctetStructPubSubType::register_type_object_representation()
 {
-    register_mutable_type_objects();
+    register_MutableOctetStruct_type_identifier(type_identifiers_);
 }
 
 MutableCharStructPubSubType::MutableCharStructPubSubType()
@@ -2342,9 +2342,9 @@ bool MutableCharStructPubSubType::getKey(
     return true;
 }
 
-void MutableCharStructPubSubType::register_type_object_representation() const
+void MutableCharStructPubSubType::register_type_object_representation()
 {
-    register_mutable_type_objects();
+    register_MutableCharStruct_type_identifier(type_identifiers_);
 }
 
 MutableWCharStructPubSubType::MutableWCharStructPubSubType()
@@ -2535,9 +2535,9 @@ bool MutableWCharStructPubSubType::getKey(
     return true;
 }
 
-void MutableWCharStructPubSubType::register_type_object_representation() const
+void MutableWCharStructPubSubType::register_type_object_representation()
 {
-    register_mutable_type_objects();
+    register_MutableWCharStruct_type_identifier(type_identifiers_);
 }
 
 MutableUnionStructPubSubType::MutableUnionStructPubSubType()
@@ -2728,9 +2728,9 @@ bool MutableUnionStructPubSubType::getKey(
     return true;
 }
 
-void MutableUnionStructPubSubType::register_type_object_representation() const
+void MutableUnionStructPubSubType::register_type_object_representation()
 {
-    register_mutable_type_objects();
+    register_MutableUnionStruct_type_identifier(type_identifiers_);
 }
 
 MutableEmptyStructPubSubType::MutableEmptyStructPubSubType()
@@ -2921,9 +2921,9 @@ bool MutableEmptyStructPubSubType::getKey(
     return true;
 }
 
-void MutableEmptyStructPubSubType::register_type_object_representation() const
+void MutableEmptyStructPubSubType::register_type_object_representation()
 {
-    register_mutable_type_objects();
+    register_MutableEmptyStruct_type_identifier(type_identifiers_);
 }
 
 MutableEmptyInheritanceStructPubSubType::MutableEmptyInheritanceStructPubSubType()
@@ -3114,9 +3114,9 @@ bool MutableEmptyInheritanceStructPubSubType::getKey(
     return true;
 }
 
-void MutableEmptyInheritanceStructPubSubType::register_type_object_representation() const
+void MutableEmptyInheritanceStructPubSubType::register_type_object_representation()
 {
-    register_mutable_type_objects();
+    register_MutableEmptyInheritanceStruct_type_identifier(type_identifiers_);
 }
 
 MutableInheritanceStructPubSubType::MutableInheritanceStructPubSubType()
@@ -3307,9 +3307,9 @@ bool MutableInheritanceStructPubSubType::getKey(
     return true;
 }
 
-void MutableInheritanceStructPubSubType::register_type_object_representation() const
+void MutableInheritanceStructPubSubType::register_type_object_representation()
 {
-    register_mutable_type_objects();
+    register_MutableInheritanceStruct_type_identifier(type_identifiers_);
 }
 
 MutableInheritanceEmptyStructPubSubType::MutableInheritanceEmptyStructPubSubType()
@@ -3500,9 +3500,9 @@ bool MutableInheritanceEmptyStructPubSubType::getKey(
     return true;
 }
 
-void MutableInheritanceEmptyStructPubSubType::register_type_object_representation() const
+void MutableInheritanceEmptyStructPubSubType::register_type_object_representation()
 {
-    register_mutable_type_objects();
+    register_MutableInheritanceEmptyStruct_type_identifier(type_identifiers_);
 }
 
 MutableExtensibilityInheritancePubSubType::MutableExtensibilityInheritancePubSubType()
@@ -3693,9 +3693,9 @@ bool MutableExtensibilityInheritancePubSubType::getKey(
     return true;
 }
 
-void MutableExtensibilityInheritancePubSubType::register_type_object_representation() const
+void MutableExtensibilityInheritancePubSubType::register_type_object_representation()
 {
-    register_mutable_type_objects();
+    register_MutableExtensibilityInheritance_type_identifier(type_identifiers_);
 }
 
 

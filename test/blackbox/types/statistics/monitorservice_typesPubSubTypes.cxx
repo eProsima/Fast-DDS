@@ -222,9 +222,9 @@ namespace eprosima {
                 return true;
             }
 
-            void ConnectionPubSubType::register_type_object_representation() const
+            void ConnectionPubSubType::register_type_object_representation()
             {
-                register_monitorservice_types_type_objects();
+                register_Connection_type_identifier(type_identifiers_);
             }
 
             QosPolicyCount_sPubSubType::QosPolicyCount_sPubSubType()
@@ -415,9 +415,9 @@ namespace eprosima {
                 return true;
             }
 
-            void QosPolicyCount_sPubSubType::register_type_object_representation() const
+            void QosPolicyCount_sPubSubType::register_type_object_representation()
             {
-                register_monitorservice_types_type_objects();
+                register_QosPolicyCount_s_type_identifier(type_identifiers_);
             }
 
             BaseStatus_sPubSubType::BaseStatus_sPubSubType()
@@ -608,9 +608,9 @@ namespace eprosima {
                 return true;
             }
 
-            void BaseStatus_sPubSubType::register_type_object_representation() const
+            void BaseStatus_sPubSubType::register_type_object_representation()
             {
-                register_monitorservice_types_type_objects();
+                register_BaseStatus_s_type_identifier(type_identifiers_);
             }
 
 
@@ -802,9 +802,9 @@ namespace eprosima {
                 return true;
             }
 
-            void IncompatibleQoSStatus_sPubSubType::register_type_object_representation() const
+            void IncompatibleQoSStatus_sPubSubType::register_type_object_representation()
             {
-                register_monitorservice_types_type_objects();
+                register_IncompatibleQoSStatus_s_type_identifier(type_identifiers_);
             }
 
             LivelinessChangedStatus_sPubSubType::LivelinessChangedStatus_sPubSubType()
@@ -995,9 +995,9 @@ namespace eprosima {
                 return true;
             }
 
-            void LivelinessChangedStatus_sPubSubType::register_type_object_representation() const
+            void LivelinessChangedStatus_sPubSubType::register_type_object_representation()
             {
-                register_monitorservice_types_type_objects();
+                register_LivelinessChangedStatus_s_type_identifier(type_identifiers_);
             }
 
             DeadlineMissedStatus_sPubSubType::DeadlineMissedStatus_sPubSubType()
@@ -1188,9 +1188,9 @@ namespace eprosima {
                 return true;
             }
 
-            void DeadlineMissedStatus_sPubSubType::register_type_object_representation() const
+            void DeadlineMissedStatus_sPubSubType::register_type_object_representation()
             {
-                register_monitorservice_types_type_objects();
+                register_DeadlineMissedStatus_s_type_identifier(type_identifiers_);
             }
 
 
@@ -1388,9 +1388,9 @@ namespace eprosima {
                 return true;
             }
 
-            void MonitorServiceStatusDataPubSubType::register_type_object_representation() const
+            void MonitorServiceStatusDataPubSubType::register_type_object_representation()
             {
-                register_monitorservice_types_type_objects();
+                register_MonitorServiceStatusData_type_identifier(type_identifiers_);
             }
 
         } // namespace statistics

@@ -219,9 +219,9 @@ bool Data64kbPubSubType::getKey(
     return true;
 }
 
-void Data64kbPubSubType::register_type_object_representation() const
+void Data64kbPubSubType::register_type_object_representation()
 {
-    register_Data64kb_type_objects();
+    register_Data64kb_type_identifier(type_identifiers_);
 }
 
 

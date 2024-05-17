@@ -219,9 +219,9 @@ bool AnnotatedStructPubSubType::getKey(
     return true;
 }
 
-void AnnotatedStructPubSubType::register_type_object_representation() const
+void AnnotatedStructPubSubType::register_type_object_representation()
 {
-    register_annotations_type_objects();
+    register_AnnotatedStruct_type_identifier(type_identifiers_);
 }
 
 EmptyAnnotatedStructPubSubType::EmptyAnnotatedStructPubSubType()
@@ -412,9 +412,9 @@ bool EmptyAnnotatedStructPubSubType::getKey(
     return true;
 }
 
-void EmptyAnnotatedStructPubSubType::register_type_object_representation() const
+void EmptyAnnotatedStructPubSubType::register_type_object_representation()
 {
-    register_annotations_type_objects();
+    register_EmptyAnnotatedStruct_type_identifier(type_identifiers_);
 }
 
 
@@ -606,9 +606,9 @@ bool BasicAnnotationsStructPubSubType::getKey(
     return true;
 }
 
-void BasicAnnotationsStructPubSubType::register_type_object_representation() const
+void BasicAnnotationsStructPubSubType::register_type_object_representation()
 {
-    register_annotations_type_objects();
+    register_BasicAnnotationsStruct_type_identifier(type_identifiers_);
 }
 
 

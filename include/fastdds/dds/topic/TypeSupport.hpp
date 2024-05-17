@@ -239,9 +239,7 @@ public:
         return get()->m_typeSize == type_support->m_typeSize
                && get()->m_isGetKeyDefined == type_support->m_isGetKeyDefined
                && get()->m_topicDataTypeName == type_support->m_topicDataTypeName
-               && get()->type_identifier() == type_support->type_identifier()
-               && get()->type_information() == type_support->type_information()
-               && get()->type_object() == type_support->type_object();
+               && get()->type_information() == type_support->type_information();
     }
 
     /**

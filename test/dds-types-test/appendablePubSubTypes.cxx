@@ -219,9 +219,9 @@ bool AppendableShortStructPubSubType::getKey(
     return true;
 }
 
-void AppendableShortStructPubSubType::register_type_object_representation() const
+void AppendableShortStructPubSubType::register_type_object_representation()
 {
-    register_appendable_type_objects();
+    register_AppendableShortStruct_type_identifier(type_identifiers_);
 }
 
 AppendableUShortStructPubSubType::AppendableUShortStructPubSubType()
@@ -412,9 +412,9 @@ bool AppendableUShortStructPubSubType::getKey(
     return true;
 }
 
-void AppendableUShortStructPubSubType::register_type_object_representation() const
+void AppendableUShortStructPubSubType::register_type_object_representation()
 {
-    register_appendable_type_objects();
+    register_AppendableUShortStruct_type_identifier(type_identifiers_);
 }
 
 AppendableLongStructPubSubType::AppendableLongStructPubSubType()
@@ -605,9 +605,9 @@ bool AppendableLongStructPubSubType::getKey(
     return true;
 }
 
-void AppendableLongStructPubSubType::register_type_object_representation() const
+void AppendableLongStructPubSubType::register_type_object_representation()
 {
-    register_appendable_type_objects();
+    register_AppendableLongStruct_type_identifier(type_identifiers_);
 }
 
 AppendableULongStructPubSubType::AppendableULongStructPubSubType()
@@ -798,9 +798,9 @@ bool AppendableULongStructPubSubType::getKey(
     return true;
 }
 
-void AppendableULongStructPubSubType::register_type_object_representation() const
+void AppendableULongStructPubSubType::register_type_object_representation()
 {
-    register_appendable_type_objects();
+    register_AppendableULongStruct_type_identifier(type_identifiers_);
 }
 
 AppendableLongLongStructPubSubType::AppendableLongLongStructPubSubType()
@@ -991,9 +991,9 @@ bool AppendableLongLongStructPubSubType::getKey(
     return true;
 }
 
-void AppendableLongLongStructPubSubType::register_type_object_representation() const
+void AppendableLongLongStructPubSubType::register_type_object_representation()
 {
-    register_appendable_type_objects();
+    register_AppendableLongLongStruct_type_identifier(type_identifiers_);
 }
 
 AppendableULongLongStructPubSubType::AppendableULongLongStructPubSubType()
@@ -1184,9 +1184,9 @@ bool AppendableULongLongStructPubSubType::getKey(
     return true;
 }
 
-void AppendableULongLongStructPubSubType::register_type_object_representation() const
+void AppendableULongLongStructPubSubType::register_type_object_representation()
 {
-    register_appendable_type_objects();
+    register_AppendableULongLongStruct_type_identifier(type_identifiers_);
 }
 
 AppendableFloatStructPubSubType::AppendableFloatStructPubSubType()
@@ -1377,9 +1377,9 @@ bool AppendableFloatStructPubSubType::getKey(
     return true;
 }
 
-void AppendableFloatStructPubSubType::register_type_object_representation() const
+void AppendableFloatStructPubSubType::register_type_object_representation()
 {
-    register_appendable_type_objects();
+    register_AppendableFloatStruct_type_identifier(type_identifiers_);
 }
 
 AppendableDoubleStructPubSubType::AppendableDoubleStructPubSubType()
@@ -1570,9 +1570,9 @@ bool AppendableDoubleStructPubSubType::getKey(
     return true;
 }
 
-void AppendableDoubleStructPubSubType::register_type_object_representation() const
+void AppendableDoubleStructPubSubType::register_type_object_representation()
 {
-    register_appendable_type_objects();
+    register_AppendableDoubleStruct_type_identifier(type_identifiers_);
 }
 
 AppendableLongDoubleStructPubSubType::AppendableLongDoubleStructPubSubType()
@@ -1763,9 +1763,9 @@ bool AppendableLongDoubleStructPubSubType::getKey(
     return true;
 }
 
-void AppendableLongDoubleStructPubSubType::register_type_object_representation() const
+void AppendableLongDoubleStructPubSubType::register_type_object_representation()
 {
-    register_appendable_type_objects();
+    register_AppendableLongDoubleStruct_type_identifier(type_identifiers_);
 }
 
 AppendableBooleanStructPubSubType::AppendableBooleanStructPubSubType()
@@ -1956,9 +1956,9 @@ bool AppendableBooleanStructPubSubType::getKey(
     return true;
 }
 
-void AppendableBooleanStructPubSubType::register_type_object_representation() const
+void AppendableBooleanStructPubSubType::register_type_object_representation()
 {
-    register_appendable_type_objects();
+    register_AppendableBooleanStruct_type_identifier(type_identifiers_);
 }
 
 AppendableOctetStructPubSubType::AppendableOctetStructPubSubType()
@@ -2149,9 +2149,9 @@ bool AppendableOctetStructPubSubType::getKey(
     return true;
 }
 
-void AppendableOctetStructPubSubType::register_type_object_representation() const
+void AppendableOctetStructPubSubType::register_type_object_representation()
 {
-    register_appendable_type_objects();
+    register_AppendableOctetStruct_type_identifier(type_identifiers_);
 }
 
 AppendableCharStructPubSubType::AppendableCharStructPubSubType()
@@ -2342,9 +2342,9 @@ bool AppendableCharStructPubSubType::getKey(
     return true;
 }
 
-void AppendableCharStructPubSubType::register_type_object_representation() const
+void AppendableCharStructPubSubType::register_type_object_representation()
 {
-    register_appendable_type_objects();
+    register_AppendableCharStruct_type_identifier(type_identifiers_);
 }
 
 AppendableWCharStructPubSubType::AppendableWCharStructPubSubType()
@@ -2535,9 +2535,9 @@ bool AppendableWCharStructPubSubType::getKey(
     return true;
 }
 
-void AppendableWCharStructPubSubType::register_type_object_representation() const
+void AppendableWCharStructPubSubType::register_type_object_representation()
 {
-    register_appendable_type_objects();
+    register_AppendableWCharStruct_type_identifier(type_identifiers_);
 }
 
 AppendableUnionStructPubSubType::AppendableUnionStructPubSubType()
@@ -2728,9 +2728,9 @@ bool AppendableUnionStructPubSubType::getKey(
     return true;
 }
 
-void AppendableUnionStructPubSubType::register_type_object_representation() const
+void AppendableUnionStructPubSubType::register_type_object_representation()
 {
-    register_appendable_type_objects();
+    register_AppendableUnionStruct_type_identifier(type_identifiers_);
 }
 
 AppendableEmptyStructPubSubType::AppendableEmptyStructPubSubType()
@@ -2921,9 +2921,9 @@ bool AppendableEmptyStructPubSubType::getKey(
     return true;
 }
 
-void AppendableEmptyStructPubSubType::register_type_object_representation() const
+void AppendableEmptyStructPubSubType::register_type_object_representation()
 {
-    register_appendable_type_objects();
+    register_AppendableEmptyStruct_type_identifier(type_identifiers_);
 }
 
 AppendableEmptyInheritanceStructPubSubType::AppendableEmptyInheritanceStructPubSubType()
@@ -3114,9 +3114,9 @@ bool AppendableEmptyInheritanceStructPubSubType::getKey(
     return true;
 }
 
-void AppendableEmptyInheritanceStructPubSubType::register_type_object_representation() const
+void AppendableEmptyInheritanceStructPubSubType::register_type_object_representation()
 {
-    register_appendable_type_objects();
+    register_AppendableEmptyInheritanceStruct_type_identifier(type_identifiers_);
 }
 
 AppendableInheritanceStructPubSubType::AppendableInheritanceStructPubSubType()
@@ -3307,9 +3307,9 @@ bool AppendableInheritanceStructPubSubType::getKey(
     return true;
 }
 
-void AppendableInheritanceStructPubSubType::register_type_object_representation() const
+void AppendableInheritanceStructPubSubType::register_type_object_representation()
 {
-    register_appendable_type_objects();
+    register_AppendableInheritanceStruct_type_identifier(type_identifiers_);
 }
 
 AppendableInheritanceEmptyStructPubSubType::AppendableInheritanceEmptyStructPubSubType()
@@ -3500,9 +3500,9 @@ bool AppendableInheritanceEmptyStructPubSubType::getKey(
     return true;
 }
 
-void AppendableInheritanceEmptyStructPubSubType::register_type_object_representation() const
+void AppendableInheritanceEmptyStructPubSubType::register_type_object_representation()
 {
-    register_appendable_type_objects();
+    register_AppendableInheritanceEmptyStruct_type_identifier(type_identifiers_);
 }
 
 AppendableExtensibilityInheritancePubSubType::AppendableExtensibilityInheritancePubSubType()
@@ -3693,9 +3693,9 @@ bool AppendableExtensibilityInheritancePubSubType::getKey(
     return true;
 }
 
-void AppendableExtensibilityInheritancePubSubType::register_type_object_representation() const
+void AppendableExtensibilityInheritancePubSubType::register_type_object_representation()
 {
-    register_appendable_type_objects();
+    register_AppendableExtensibilityInheritance_type_identifier(type_identifiers_);
 }
 
 

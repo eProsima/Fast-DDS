@@ -219,9 +219,9 @@ bool UnboundedHelloWorldPubSubType::getKey(
     return true;
 }
 
-void UnboundedHelloWorldPubSubType::register_type_object_representation() const
+void UnboundedHelloWorldPubSubType::register_type_object_representation()
 {
-    register_UnboundedHelloWorld_type_objects();
+    register_UnboundedHelloWorld_type_identifier(type_identifiers_);
 }
 
 

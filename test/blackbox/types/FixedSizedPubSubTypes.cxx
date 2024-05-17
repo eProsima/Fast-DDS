@@ -219,9 +219,9 @@ bool FixedSizedPubSubType::getKey(
     return true;
 }
 
-void FixedSizedPubSubType::register_type_object_representation() const
+void FixedSizedPubSubType::register_type_object_representation()
 {
-    register_FixedSized_type_objects();
+    register_FixedSized_type_identifier(type_identifiers_);
 }
 
 

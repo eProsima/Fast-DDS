@@ -225,7 +225,7 @@ namespace builtin {
         return true;
     }
 
-    void TypeLookup_getTypes_InPubSubType::register_type_object_representation() const
+    void TypeLookup_getTypes_InPubSubType::register_type_object_representation()
     {
         EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
             "TypeObject type representation support disabled in generated code");
@@ -419,7 +419,7 @@ namespace builtin {
         return true;
     }
 
-    void TypeLookup_getTypes_OutPubSubType::register_type_object_representation() const
+    void TypeLookup_getTypes_OutPubSubType::register_type_object_representation()
     {
         EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
             "TypeObject type representation support disabled in generated code");
@@ -614,7 +614,7 @@ namespace builtin {
         return true;
     }
 
-    void TypeLookup_getTypeDependencies_InPubSubType::register_type_object_representation() const
+    void TypeLookup_getTypeDependencies_InPubSubType::register_type_object_representation()
     {
         EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
             "TypeObject type representation support disabled in generated code");
@@ -808,7 +808,7 @@ namespace builtin {
         return true;
     }
 
-    void TypeLookup_getTypeDependencies_OutPubSubType::register_type_object_representation() const
+    void TypeLookup_getTypeDependencies_OutPubSubType::register_type_object_representation()
     {
         EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
             "TypeObject type representation support disabled in generated code");
@@ -1004,7 +1004,7 @@ namespace builtin {
         return true;
     }
 
-    void TypeLookup_RequestPubSubType::register_type_object_representation() const
+    void TypeLookup_RequestPubSubType::register_type_object_representation()
     {
         EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
             "TypeObject type representation support disabled in generated code");
@@ -1199,7 +1199,7 @@ namespace builtin {
         return true;
     }
 
-    void TypeLookup_ReplyPubSubType::register_type_object_representation() const
+    void TypeLookup_ReplyPubSubType::register_type_object_representation()
     {
         EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
             "TypeObject type representation support disabled in generated code");

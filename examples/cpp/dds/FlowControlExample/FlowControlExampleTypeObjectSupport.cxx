@@ -38,26 +38,19 @@
 
 using namespace eprosima::fastdds::dds::xtypes;
 
-void register_FlowControlExample_type_objects()
-{
-    static std::once_flag once_flag;
-    std::call_once(once_flag, []()
-            {
-                TypeIdentifier type_id;
-                register_FlowControlExample_type_identifier(type_id);
-
-            });
-}
-
 // TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
 void register_FlowControlExample_type_identifier(
-        TypeIdentifier& type_id)
+        TypeIdentifierPair& type_ids_FlowControlExample)
 {
+
+    ReturnCode_t return_code_FlowControlExample {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_FlowControlExample =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "FlowControlExample", type_ids_FlowControlExample);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_FlowControlExample)
     {
-        StructTypeFlag struct_flags_FlowControlExample = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_FlowControlExample = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
-        ReturnCode_t return_code_FlowControlExample;
-        TypeIdentifierPair type_ids_FlowControlExample;
         QualifiedTypeName type_name_FlowControlExample = "FlowControlExample";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_FlowControlExample;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_FlowControlExample;
@@ -66,69 +59,33 @@ void register_FlowControlExample_type_identifier(
         header_FlowControlExample = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_FlowControlExample);
         CompleteStructMemberSeq member_seq_FlowControlExample;
         {
-            return_code_FlowControlExample =
+            TypeIdentifierPair type_ids_message;
+            ReturnCode_t return_code_message {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_message =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "anonymous_array_char_600000", type_ids_FlowControlExample);
+                "anonymous_array_char_600000", type_ids_message);
 
-            if (return_code_FlowControlExample != eprosima::fastdds::dds::RETCODE_OK)
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_message)
             {
-                return_code_FlowControlExample =
+                return_code_message =
                     eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                    "_char", type_ids_FlowControlExample);
+                    "_char", type_ids_message);
 
-                if (return_code_FlowControlExample != eprosima::fastdds::dds::RETCODE_OK)
+                if (eprosima::fastdds::dds::RETCODE_OK != return_code_message)
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "Array element TypeIdentifier unknown to TypeObjectRegistry.");
-                    type_id = TypeIdentifier();
                     return;
                 }
-                TypeIdentifier* element_identifier_anonymous_array_char_600000 {nullptr};
-                if (EK_COMPLETE == type_ids_FlowControlExample.type_identifier1()._d() || TK_NONE == type_ids_FlowControlExample.type_identifier2()._d() ||
-                        (TI_PLAIN_SEQUENCE_SMALL == type_ids_FlowControlExample.type_identifier1()._d() &&
-                        EK_COMPLETE == type_ids_FlowControlExample.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                        (TI_PLAIN_SEQUENCE_LARGE == type_ids_FlowControlExample.type_identifier1()._d() &&
-                        EK_COMPLETE == type_ids_FlowControlExample.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                        (TI_PLAIN_ARRAY_SMALL == type_ids_FlowControlExample.type_identifier1()._d() &&
-                        EK_COMPLETE == type_ids_FlowControlExample.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                        (TI_PLAIN_ARRAY_LARGE == type_ids_FlowControlExample.type_identifier1()._d() &&
-                        EK_COMPLETE == type_ids_FlowControlExample.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                        (TI_PLAIN_MAP_SMALL == type_ids_FlowControlExample.type_identifier1()._d() &&
-                        (EK_COMPLETE == type_ids_FlowControlExample.type_identifier1().map_sdefn().header().equiv_kind() ||
-                        EK_COMPLETE == type_ids_FlowControlExample.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                        (TI_PLAIN_MAP_LARGE == type_ids_FlowControlExample.type_identifier1()._d() &&
-                        (EK_COMPLETE == type_ids_FlowControlExample.type_identifier1().map_ldefn().header().equiv_kind() ||
-                        EK_COMPLETE == type_ids_FlowControlExample.type_identifier1().map_ldefn().key_identifier()->_d())))
+                bool element_identifier_anonymous_array_char_600000_ec {false};
+                TypeIdentifier* element_identifier_anonymous_array_char_600000 {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_message, element_identifier_anonymous_array_char_600000_ec))};
+                if (!element_identifier_anonymous_array_char_600000_ec)
                 {
-                    element_identifier_anonymous_array_char_600000 = new TypeIdentifier(type_ids_FlowControlExample.type_identifier1());
-                }
-                else if (EK_COMPLETE == type_ids_FlowControlExample.type_identifier2()._d() ||
-                        (TI_PLAIN_SEQUENCE_SMALL == type_ids_FlowControlExample.type_identifier2()._d() &&
-                        EK_COMPLETE == type_ids_FlowControlExample.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                        (TI_PLAIN_SEQUENCE_LARGE == type_ids_FlowControlExample.type_identifier2()._d() &&
-                        EK_COMPLETE == type_ids_FlowControlExample.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                        (TI_PLAIN_ARRAY_SMALL == type_ids_FlowControlExample.type_identifier2()._d() &&
-                        EK_COMPLETE == type_ids_FlowControlExample.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                        (TI_PLAIN_ARRAY_LARGE == type_ids_FlowControlExample.type_identifier2()._d() &&
-                        EK_COMPLETE == type_ids_FlowControlExample.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                        (TI_PLAIN_MAP_SMALL == type_ids_FlowControlExample.type_identifier2()._d() &&
-                        (EK_COMPLETE == type_ids_FlowControlExample.type_identifier2().map_sdefn().header().equiv_kind() ||
-                        EK_COMPLETE == type_ids_FlowControlExample.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                        (TI_PLAIN_MAP_LARGE == type_ids_FlowControlExample.type_identifier2()._d() &&
-                        (EK_COMPLETE == type_ids_FlowControlExample.type_identifier2().map_ldefn().header().equiv_kind() ||
-                        EK_COMPLETE == type_ids_FlowControlExample.type_identifier2().map_ldefn().key_identifier()->_d())))
-                {
-                    element_identifier_anonymous_array_char_600000 = new TypeIdentifier(type_ids_FlowControlExample.type_identifier2());
-                }
-                else
-                {
-                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Array element TypeIdentifier inconsistent.");
-                    type_id = TypeIdentifier();
+                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Array element TypeIdentifier inconsistent.");
                     return;
                 }
                 EquivalenceKind equiv_kind_anonymous_array_char_600000 = EK_COMPLETE;
-                if (TK_NONE == type_ids_FlowControlExample.type_identifier2()._d())
+                if (TK_NONE == type_ids_message.type_identifier2()._d())
                 {
                     equiv_kind_anonymous_array_char_600000 = EK_BOTH;
                 }
@@ -141,68 +98,21 @@ void register_FlowControlExample_type_identifier(
                     PlainArrayLElemDefn array_ldefn = TypeObjectUtils::build_plain_array_l_elem_defn(header_anonymous_array_char_600000, array_bound_seq,
                                 eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_char_600000));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_l_array_type_identifier(array_ldefn, "anonymous_array_char_600000"))
+                            TypeObjectUtils::build_and_register_l_array_type_identifier(array_ldefn, "anonymous_array_char_600000", type_ids_message))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "anonymous_array_char_600000 already registered in TypeObjectRegistry for a different type.");
                     }
                 }
-                return_code_FlowControlExample =
-                    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                    "anonymous_array_char_600000", type_ids_FlowControlExample);
-                if (return_code_FlowControlExample != eprosima::fastdds::dds::RETCODE_OK)
-                {
-                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                                "anonymous_array_char_600000: Given Array TypeIdentifier unknown to TypeObjectRegistry.");
-                    type_id = TypeIdentifier();
-                    return;
-                }
             }
-            StructMemberFlag member_flags_message = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_message = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            CommonStructMember common_message;
             MemberId member_id_message = 0x00000000;
-            if (EK_COMPLETE == type_ids_FlowControlExample.type_identifier1()._d() || TK_NONE == type_ids_FlowControlExample.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_FlowControlExample.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FlowControlExample.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_FlowControlExample.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FlowControlExample.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_FlowControlExample.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FlowControlExample.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_FlowControlExample.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FlowControlExample.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_FlowControlExample.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_FlowControlExample.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FlowControlExample.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_FlowControlExample.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_FlowControlExample.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FlowControlExample.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_message_ec {false};
+            CommonStructMember common_message {TypeObjectUtils::build_common_struct_member(member_id_message, member_flags_message, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_message, common_message_ec))};
+            if (!common_message_ec)
             {
-                common_message = TypeObjectUtils::build_common_struct_member(member_id_message, member_flags_message, type_ids_FlowControlExample.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_FlowControlExample.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_FlowControlExample.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FlowControlExample.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_FlowControlExample.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FlowControlExample.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_FlowControlExample.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FlowControlExample.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_FlowControlExample.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FlowControlExample.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_FlowControlExample.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_FlowControlExample.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FlowControlExample.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_FlowControlExample.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_FlowControlExample.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FlowControlExample.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_message = TypeObjectUtils::build_common_struct_member(member_id_message, member_flags_message, type_ids_FlowControlExample.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure message member TypeIdentifier inconsistent.");
-                type_id = TypeIdentifier();
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure message member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_message = "message";
@@ -213,62 +123,26 @@ void register_FlowControlExample_type_identifier(
             TypeObjectUtils::add_complete_struct_member(member_seq_FlowControlExample, member_message);
         }
         {
-            return_code_FlowControlExample =
+            TypeIdentifierPair type_ids_wasFast;
+            ReturnCode_t return_code_wasFast {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_wasFast =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "_char", type_ids_FlowControlExample);
+                "_char", type_ids_wasFast);
 
-            if (return_code_FlowControlExample != eprosima::fastdds::dds::RETCODE_OK)
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_wasFast)
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "wasFast Structure member TypeIdentifier unknown to TypeObjectRegistry.");
-                type_id = TypeIdentifier();
                 return;
             }
-            StructMemberFlag member_flags_wasFast = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_wasFast = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            CommonStructMember common_wasFast;
             MemberId member_id_wasFast = 0x00000001;
-            if (EK_COMPLETE == type_ids_FlowControlExample.type_identifier1()._d() || TK_NONE == type_ids_FlowControlExample.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_FlowControlExample.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FlowControlExample.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_FlowControlExample.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FlowControlExample.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_FlowControlExample.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FlowControlExample.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_FlowControlExample.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FlowControlExample.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_FlowControlExample.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_FlowControlExample.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FlowControlExample.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_FlowControlExample.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_FlowControlExample.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FlowControlExample.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_wasFast_ec {false};
+            CommonStructMember common_wasFast {TypeObjectUtils::build_common_struct_member(member_id_wasFast, member_flags_wasFast, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_wasFast, common_wasFast_ec))};
+            if (!common_wasFast_ec)
             {
-                common_wasFast = TypeObjectUtils::build_common_struct_member(member_id_wasFast, member_flags_wasFast, type_ids_FlowControlExample.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_FlowControlExample.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_FlowControlExample.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FlowControlExample.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_FlowControlExample.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FlowControlExample.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_FlowControlExample.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FlowControlExample.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_FlowControlExample.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FlowControlExample.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_FlowControlExample.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_FlowControlExample.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FlowControlExample.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_FlowControlExample.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_FlowControlExample.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FlowControlExample.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_wasFast = TypeObjectUtils::build_common_struct_member(member_id_wasFast, member_flags_wasFast, type_ids_FlowControlExample.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure wasFast member TypeIdentifier inconsistent.");
-                type_id = TypeIdentifier();
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure wasFast member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_wasFast = "wasFast";
@@ -280,20 +154,10 @@ void register_FlowControlExample_type_identifier(
         }
         CompleteStructType struct_type_FlowControlExample = TypeObjectUtils::build_complete_struct_type(struct_flags_FlowControlExample, header_FlowControlExample, member_seq_FlowControlExample);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_FlowControlExample, type_name_FlowControlExample.to_string(), type_id))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_FlowControlExample, type_name_FlowControlExample.to_string(), type_ids_FlowControlExample))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "FlowControlExample already registered in TypeObjectRegistry for a different type.");
-        }
-        return_code_FlowControlExample =
-            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-            "FlowControlExample", type_ids_FlowControlExample);
-        if (return_code_FlowControlExample != eprosima::fastdds::dds::RETCODE_OK)
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "FlowControlExample: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
-            type_id = TypeIdentifier();
-            return;
         }
     }
 }

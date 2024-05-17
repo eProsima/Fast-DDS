@@ -35,11 +35,6 @@
 #define eProsima_user_DllExport
 #endif  // _WIN32
 
-/**
- * @brief Register every TypeObject representation defined in the IDL file in Fast DDS TypeObjectRegistry.
- */
-eProsima_user_DllExport void register_member_id_type_objects();
-
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 /**
@@ -53,7 +48,7 @@ eProsima_user_DllExport void register_member_id_type_objects();
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_FixId_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register FixHexId related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -65,7 +60,7 @@ eProsima_user_DllExport void register_FixId_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_FixHexId_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register FixHashidDefault related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -77,7 +72,7 @@ eProsima_user_DllExport void register_FixHexId_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_FixHashidDefault_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register FixHashid related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -89,7 +84,7 @@ eProsima_user_DllExport void register_FixHashidDefault_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_FixHashid_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register FixMix related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -101,7 +96,7 @@ eProsima_user_DllExport void register_FixHashid_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_FixMix_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register AutoidDefault related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -113,7 +108,7 @@ eProsima_user_DllExport void register_FixMix_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_AutoidDefault_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register AutoidSequential related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -125,7 +120,7 @@ eProsima_user_DllExport void register_AutoidDefault_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_AutoidSequential_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register AutoidHash related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -137,7 +132,7 @@ eProsima_user_DllExport void register_AutoidSequential_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_AutoidHash_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register DerivedAutoidDefault related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -149,7 +144,7 @@ eProsima_user_DllExport void register_AutoidHash_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_DerivedAutoidDefault_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register DerivedEmptyAutoidSequential related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -161,7 +156,7 @@ eProsima_user_DllExport void register_DerivedAutoidDefault_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_DerivedEmptyAutoidSequential_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register DerivedAutoidSequential related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -173,7 +168,7 @@ eProsima_user_DllExport void register_DerivedEmptyAutoidSequential_type_identifi
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_DerivedAutoidSequential_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register DerivedAutoidHash related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -185,7 +180,7 @@ eProsima_user_DllExport void register_DerivedAutoidSequential_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_DerivedAutoidHash_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 
 
 #endif // DOXYGEN_SHOULD_SKIP_THIS_PUBLIC

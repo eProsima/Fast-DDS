@@ -219,9 +219,9 @@ bool samplePubSubType::getKey(
     return true;
 }
 
-void samplePubSubType::register_type_object_representation() const
+void samplePubSubType::register_type_object_representation()
 {
-    register_sample_type_objects();
+    register_sample_type_identifier(type_identifiers_);
 }
 
 

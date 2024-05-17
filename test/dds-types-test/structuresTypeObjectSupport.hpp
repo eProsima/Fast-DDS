@@ -36,11 +36,6 @@
 #define eProsima_user_DllExport
 #endif  // _WIN32
 
-/**
- * @brief Register every TypeObject representation defined in the IDL file in Fast DDS TypeObjectRegistry.
- */
-eProsima_user_DllExport void register_structures_type_objects();
-
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 /**
@@ -54,7 +49,7 @@ eProsima_user_DllExport void register_structures_type_objects();
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_StructShort_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register StructUnsignedShort related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -66,7 +61,7 @@ eProsima_user_DllExport void register_StructShort_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_StructUnsignedShort_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register StructLong related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -78,7 +73,7 @@ eProsima_user_DllExport void register_StructUnsignedShort_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_StructLong_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register StructUnsignedLong related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -90,7 +85,7 @@ eProsima_user_DllExport void register_StructLong_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_StructUnsignedLong_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register StructLongLong related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -102,7 +97,7 @@ eProsima_user_DllExport void register_StructUnsignedLong_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_StructLongLong_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register StructUnsignedLongLong related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -114,7 +109,7 @@ eProsima_user_DllExport void register_StructLongLong_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_StructUnsignedLongLong_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register StructFloat related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -126,7 +121,7 @@ eProsima_user_DllExport void register_StructUnsignedLongLong_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_StructFloat_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register StructDouble related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -138,7 +133,7 @@ eProsima_user_DllExport void register_StructFloat_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_StructDouble_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register StructLongDouble related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -150,7 +145,7 @@ eProsima_user_DllExport void register_StructDouble_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_StructLongDouble_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register StructBoolean related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -162,7 +157,7 @@ eProsima_user_DllExport void register_StructLongDouble_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_StructBoolean_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register StructOctet related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -174,7 +169,7 @@ eProsima_user_DllExport void register_StructBoolean_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_StructOctet_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register StructChar8 related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -186,7 +181,7 @@ eProsima_user_DllExport void register_StructOctet_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_StructChar8_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register StructChar16 related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -198,7 +193,7 @@ eProsima_user_DllExport void register_StructChar8_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_StructChar16_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register StructString related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -210,7 +205,7 @@ eProsima_user_DllExport void register_StructChar16_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_StructString_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register StructWString related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -222,7 +217,7 @@ eProsima_user_DllExport void register_StructString_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_StructWString_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register StructBoundedString related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -234,7 +229,7 @@ eProsima_user_DllExport void register_StructWString_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_StructBoundedString_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register StructBoundedWString related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -246,7 +241,7 @@ eProsima_user_DllExport void register_StructBoundedString_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_StructBoundedWString_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register StructEnum related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -258,7 +253,7 @@ eProsima_user_DllExport void register_StructBoundedWString_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_StructEnum_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register StructBitMask related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -270,7 +265,7 @@ eProsima_user_DllExport void register_StructEnum_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_StructBitMask_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register StructAlias related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -282,7 +277,7 @@ eProsima_user_DllExport void register_StructBitMask_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_StructAlias_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register StructShortArray related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -294,7 +289,7 @@ eProsima_user_DllExport void register_StructAlias_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_StructShortArray_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register StructSequence related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -306,7 +301,7 @@ eProsima_user_DllExport void register_StructShortArray_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_StructSequence_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register StructMap related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -318,7 +313,7 @@ eProsima_user_DllExport void register_StructSequence_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_StructMap_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register StructUnion related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -330,7 +325,7 @@ eProsima_user_DllExport void register_StructMap_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_StructUnion_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register StructStructure related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -342,7 +337,7 @@ eProsima_user_DllExport void register_StructUnion_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_StructStructure_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register StructBitset related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -354,7 +349,7 @@ eProsima_user_DllExport void register_StructStructure_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_StructBitset_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register StructEmpty related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -366,7 +361,7 @@ eProsima_user_DllExport void register_StructBitset_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_StructEmpty_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register Structures related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -378,10 +373,10 @@ eProsima_user_DllExport void register_StructEmpty_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_Structures_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 namespace testing_1 {
 /**
- * @brief Register testing_1_foo related TypeIdentifier.
+ * @brief Register foo related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
@@ -390,13 +385,13 @@ namespace testing_1 {
  *             The returned TypeIdentifier corresponds to the complete TypeIdentifier in case of hashed TypeIdentifiers.
  *             Invalid TypeIdentifier is returned in case of error.
  */
-eProsima_user_DllExport void register_testing_1_foo_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+eProsima_user_DllExport void register_foo_type_identifier(
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 
 } // namespace testing_1
 namespace testing_2 {
 /**
- * @brief Register testing_2_foo related TypeIdentifier.
+ * @brief Register foo related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
@@ -405,8 +400,8 @@ namespace testing_2 {
  *             The returned TypeIdentifier corresponds to the complete TypeIdentifier in case of hashed TypeIdentifiers.
  *             Invalid TypeIdentifier is returned in case of error.
  */
-eProsima_user_DllExport void register_testing_2_foo_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+eProsima_user_DllExport void register_foo_type_identifier(
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 
 } // namespace testing_2
 /**
@@ -420,7 +415,7 @@ eProsima_user_DllExport void register_testing_2_foo_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_bar_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register root1 related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -432,7 +427,7 @@ eProsima_user_DllExport void register_bar_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_root1_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register root2 related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -444,7 +439,7 @@ eProsima_user_DllExport void register_root1_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_root2_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register root related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -456,7 +451,7 @@ eProsima_user_DllExport void register_root2_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_root_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 
 
 #endif // DOXYGEN_SHOULD_SKIP_THIS_PUBLIC

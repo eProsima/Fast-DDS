@@ -38,26 +38,19 @@
 
 using namespace eprosima::fastdds::dds::xtypes;
 
-void register_StringTest_type_objects()
-{
-    static std::once_flag once_flag;
-    std::call_once(once_flag, []()
-            {
-                TypeIdentifier type_id;
-                register_StringTest_type_identifier(type_id);
-
-            });
-}
-
 // TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
 void register_StringTest_type_identifier(
-        TypeIdentifier& type_id)
+        TypeIdentifierPair& type_ids_StringTest)
 {
+
+    ReturnCode_t return_code_StringTest {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_StringTest =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "StringTest", type_ids_StringTest);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_StringTest)
     {
-        StructTypeFlag struct_flags_StringTest = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_StringTest = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
-        ReturnCode_t return_code_StringTest;
-        TypeIdentifierPair type_ids_StringTest;
         QualifiedTypeName type_name_StringTest = "StringTest";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_StringTest;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_StringTest;
@@ -66,79 +59,34 @@ void register_StringTest_type_identifier(
         header_StringTest = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_StringTest);
         CompleteStructMemberSeq member_seq_StringTest;
         {
-            return_code_StringTest =
+            TypeIdentifierPair type_ids_message;
+            ReturnCode_t return_code_message {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_message =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "anonymous_string_10000", type_ids_StringTest);
+                "anonymous_string_10000", type_ids_message);
 
-            if (return_code_StringTest != eprosima::fastdds::dds::RETCODE_OK)
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_message)
             {
                 {
                     LBound bound = 10000;
                     StringLTypeDefn string_ldefn = TypeObjectUtils::build_string_l_type_defn(bound);
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
                             TypeObjectUtils::build_and_register_l_string_type_identifier(string_ldefn,
-                            "anonymous_string_10000"))
+                            "anonymous_string_10000", type_ids_message))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "anonymous_string_10000 already registered in TypeObjectRegistry for a different type.");
                     }
                 }
-                return_code_StringTest =
-                    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                    "anonymous_string_10000", type_ids_StringTest);
-                if (return_code_StringTest != eprosima::fastdds::dds::RETCODE_OK)
-                {
-                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                                "anonymous_string_10000: Given String TypeIdentifier unknown to TypeObjectRegistry.");
-                    type_id = TypeIdentifier();
-                    return;
-                }
             }
-            StructMemberFlag member_flags_message = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_message = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            CommonStructMember common_message;
             MemberId member_id_message = 0x00000000;
-            if (EK_COMPLETE == type_ids_StringTest.type_identifier1()._d() || TK_NONE == type_ids_StringTest.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_StringTest.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_StringTest.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_StringTest.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_StringTest.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_StringTest.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_StringTest.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_StringTest.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_StringTest.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_StringTest.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_StringTest.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_StringTest.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_StringTest.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_StringTest.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_StringTest.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_message_ec {false};
+            CommonStructMember common_message {TypeObjectUtils::build_common_struct_member(member_id_message, member_flags_message, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_message, common_message_ec))};
+            if (!common_message_ec)
             {
-                common_message = TypeObjectUtils::build_common_struct_member(member_id_message, member_flags_message, type_ids_StringTest.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_StringTest.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_StringTest.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_StringTest.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_StringTest.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_StringTest.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_StringTest.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_StringTest.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_StringTest.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_StringTest.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_StringTest.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_StringTest.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_StringTest.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_StringTest.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_StringTest.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_StringTest.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_message = TypeObjectUtils::build_common_struct_member(member_id_message, member_flags_message, type_ids_StringTest.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure message member TypeIdentifier inconsistent.");
-                type_id = TypeIdentifier();
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure message member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_message = "message";
@@ -150,20 +98,10 @@ void register_StringTest_type_identifier(
         }
         CompleteStructType struct_type_StringTest = TypeObjectUtils::build_complete_struct_type(struct_flags_StringTest, header_StringTest, member_seq_StringTest);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_StringTest, type_name_StringTest.to_string(), type_id))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_StringTest, type_name_StringTest.to_string(), type_ids_StringTest))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "StringTest already registered in TypeObjectRegistry for a different type.");
-        }
-        return_code_StringTest =
-            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-            "StringTest", type_ids_StringTest);
-        if (return_code_StringTest != eprosima::fastdds::dds::RETCODE_OK)
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "StringTest: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
-            type_id = TypeIdentifier();
-            return;
         }
     }
 }

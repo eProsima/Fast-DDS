@@ -223,9 +223,9 @@ namespace eprosima {
                     return true;
                 }
 
-                void EntityId_sPubSubType::register_type_object_representation() const
+                void EntityId_sPubSubType::register_type_object_representation()
                 {
-                    register_types_type_objects();
+                    register_EntityId_s_type_identifier(type_identifiers_);
                 }
 
                 GuidPrefix_sPubSubType::GuidPrefix_sPubSubType()
@@ -416,9 +416,9 @@ namespace eprosima {
                     return true;
                 }
 
-                void GuidPrefix_sPubSubType::register_type_object_representation() const
+                void GuidPrefix_sPubSubType::register_type_object_representation()
                 {
-                    register_types_type_objects();
+                    register_GuidPrefix_s_type_identifier(type_identifiers_);
                 }
 
                 GUID_sPubSubType::GUID_sPubSubType()
@@ -609,9 +609,9 @@ namespace eprosima {
                     return true;
                 }
 
-                void GUID_sPubSubType::register_type_object_representation() const
+                void GUID_sPubSubType::register_type_object_representation()
                 {
-                    register_types_type_objects();
+                    register_GUID_s_type_identifier(type_identifiers_);
                 }
 
                 SequenceNumber_sPubSubType::SequenceNumber_sPubSubType()
@@ -802,9 +802,9 @@ namespace eprosima {
                     return true;
                 }
 
-                void SequenceNumber_sPubSubType::register_type_object_representation() const
+                void SequenceNumber_sPubSubType::register_type_object_representation()
                 {
-                    register_types_type_objects();
+                    register_SequenceNumber_s_type_identifier(type_identifiers_);
                 }
 
                 SampleIdentity_sPubSubType::SampleIdentity_sPubSubType()
@@ -995,9 +995,9 @@ namespace eprosima {
                     return true;
                 }
 
-                void SampleIdentity_sPubSubType::register_type_object_representation() const
+                void SampleIdentity_sPubSubType::register_type_object_representation()
                 {
-                    register_types_type_objects();
+                    register_SampleIdentity_s_type_identifier(type_identifiers_);
                 }
 
                 Locator_sPubSubType::Locator_sPubSubType()
@@ -1188,9 +1188,9 @@ namespace eprosima {
                     return true;
                 }
 
-                void Locator_sPubSubType::register_type_object_representation() const
+                void Locator_sPubSubType::register_type_object_representation()
                 {
-                    register_types_type_objects();
+                    register_Locator_s_type_identifier(type_identifiers_);
                 }
 
             } // namespace detail
@@ -1383,9 +1383,9 @@ namespace eprosima {
                 return true;
             }
 
-            void DiscoveryTimePubSubType::register_type_object_representation() const
+            void DiscoveryTimePubSubType::register_type_object_representation()
             {
-                register_types_type_objects();
+                register_DiscoveryTime_type_identifier(type_identifiers_);
             }
 
             EntityCountPubSubType::EntityCountPubSubType()
@@ -1576,9 +1576,9 @@ namespace eprosima {
                 return true;
             }
 
-            void EntityCountPubSubType::register_type_object_representation() const
+            void EntityCountPubSubType::register_type_object_representation()
             {
-                register_types_type_objects();
+                register_EntityCount_type_identifier(type_identifiers_);
             }
 
             SampleIdentityCountPubSubType::SampleIdentityCountPubSubType()
@@ -1769,9 +1769,9 @@ namespace eprosima {
                 return true;
             }
 
-            void SampleIdentityCountPubSubType::register_type_object_representation() const
+            void SampleIdentityCountPubSubType::register_type_object_representation()
             {
-                register_types_type_objects();
+                register_SampleIdentityCount_type_identifier(type_identifiers_);
             }
 
             Entity2LocatorTrafficPubSubType::Entity2LocatorTrafficPubSubType()
@@ -1962,9 +1962,9 @@ namespace eprosima {
                 return true;
             }
 
-            void Entity2LocatorTrafficPubSubType::register_type_object_representation() const
+            void Entity2LocatorTrafficPubSubType::register_type_object_representation()
             {
-                register_types_type_objects();
+                register_Entity2LocatorTraffic_type_identifier(type_identifiers_);
             }
 
             WriterReaderDataPubSubType::WriterReaderDataPubSubType()
@@ -2155,9 +2155,9 @@ namespace eprosima {
                 return true;
             }
 
-            void WriterReaderDataPubSubType::register_type_object_representation() const
+            void WriterReaderDataPubSubType::register_type_object_representation()
             {
-                register_types_type_objects();
+                register_WriterReaderData_type_identifier(type_identifiers_);
             }
 
             Locator2LocatorDataPubSubType::Locator2LocatorDataPubSubType()
@@ -2348,9 +2348,9 @@ namespace eprosima {
                 return true;
             }
 
-            void Locator2LocatorDataPubSubType::register_type_object_representation() const
+            void Locator2LocatorDataPubSubType::register_type_object_representation()
             {
-                register_types_type_objects();
+                register_Locator2LocatorData_type_identifier(type_identifiers_);
             }
 
             EntityDataPubSubType::EntityDataPubSubType()
@@ -2541,9 +2541,9 @@ namespace eprosima {
                 return true;
             }
 
-            void EntityDataPubSubType::register_type_object_representation() const
+            void EntityDataPubSubType::register_type_object_representation()
             {
-                register_types_type_objects();
+                register_EntityData_type_identifier(type_identifiers_);
             }
 
             PhysicalDataPubSubType::PhysicalDataPubSubType()
@@ -2734,9 +2734,9 @@ namespace eprosima {
                 return true;
             }
 
-            void PhysicalDataPubSubType::register_type_object_representation() const
+            void PhysicalDataPubSubType::register_type_object_representation()
             {
-                register_types_type_objects();
+                register_PhysicalData_type_identifier(type_identifiers_);
             }
 
             namespace EventKind {

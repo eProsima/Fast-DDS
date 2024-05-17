@@ -219,9 +219,9 @@ bool short_optionalPubSubType::getKey(
     return true;
 }
 
-void short_optionalPubSubType::register_type_object_representation() const
+void short_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_short_optional_type_identifier(type_identifiers_);
 }
 
 ushort_optionalPubSubType::ushort_optionalPubSubType()
@@ -412,9 +412,9 @@ bool ushort_optionalPubSubType::getKey(
     return true;
 }
 
-void ushort_optionalPubSubType::register_type_object_representation() const
+void ushort_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_ushort_optional_type_identifier(type_identifiers_);
 }
 
 long_optionalPubSubType::long_optionalPubSubType()
@@ -605,9 +605,9 @@ bool long_optionalPubSubType::getKey(
     return true;
 }
 
-void long_optionalPubSubType::register_type_object_representation() const
+void long_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_long_optional_type_identifier(type_identifiers_);
 }
 
 ulong_optionalPubSubType::ulong_optionalPubSubType()
@@ -798,9 +798,9 @@ bool ulong_optionalPubSubType::getKey(
     return true;
 }
 
-void ulong_optionalPubSubType::register_type_object_representation() const
+void ulong_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_ulong_optional_type_identifier(type_identifiers_);
 }
 
 longlong_optionalPubSubType::longlong_optionalPubSubType()
@@ -991,9 +991,9 @@ bool longlong_optionalPubSubType::getKey(
     return true;
 }
 
-void longlong_optionalPubSubType::register_type_object_representation() const
+void longlong_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_longlong_optional_type_identifier(type_identifiers_);
 }
 
 ulonglong_optionalPubSubType::ulonglong_optionalPubSubType()
@@ -1184,9 +1184,9 @@ bool ulonglong_optionalPubSubType::getKey(
     return true;
 }
 
-void ulonglong_optionalPubSubType::register_type_object_representation() const
+void ulonglong_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_ulonglong_optional_type_identifier(type_identifiers_);
 }
 
 float_optionalPubSubType::float_optionalPubSubType()
@@ -1377,9 +1377,9 @@ bool float_optionalPubSubType::getKey(
     return true;
 }
 
-void float_optionalPubSubType::register_type_object_representation() const
+void float_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_float_optional_type_identifier(type_identifiers_);
 }
 
 double_optionalPubSubType::double_optionalPubSubType()
@@ -1570,9 +1570,9 @@ bool double_optionalPubSubType::getKey(
     return true;
 }
 
-void double_optionalPubSubType::register_type_object_representation() const
+void double_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_double_optional_type_identifier(type_identifiers_);
 }
 
 longdouble_optionalPubSubType::longdouble_optionalPubSubType()
@@ -1763,9 +1763,9 @@ bool longdouble_optionalPubSubType::getKey(
     return true;
 }
 
-void longdouble_optionalPubSubType::register_type_object_representation() const
+void longdouble_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_longdouble_optional_type_identifier(type_identifiers_);
 }
 
 boolean_optionalPubSubType::boolean_optionalPubSubType()
@@ -1956,9 +1956,9 @@ bool boolean_optionalPubSubType::getKey(
     return true;
 }
 
-void boolean_optionalPubSubType::register_type_object_representation() const
+void boolean_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_boolean_optional_type_identifier(type_identifiers_);
 }
 
 octet_optionalPubSubType::octet_optionalPubSubType()
@@ -2149,9 +2149,9 @@ bool octet_optionalPubSubType::getKey(
     return true;
 }
 
-void octet_optionalPubSubType::register_type_object_representation() const
+void octet_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_octet_optional_type_identifier(type_identifiers_);
 }
 
 char_optionalPubSubType::char_optionalPubSubType()
@@ -2342,9 +2342,9 @@ bool char_optionalPubSubType::getKey(
     return true;
 }
 
-void char_optionalPubSubType::register_type_object_representation() const
+void char_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_char_optional_type_identifier(type_identifiers_);
 }
 
 wchar_optionalPubSubType::wchar_optionalPubSubType()
@@ -2535,9 +2535,9 @@ bool wchar_optionalPubSubType::getKey(
     return true;
 }
 
-void wchar_optionalPubSubType::register_type_object_representation() const
+void wchar_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_wchar_optional_type_identifier(type_identifiers_);
 }
 
 short_align_1_optionalPubSubType::short_align_1_optionalPubSubType()
@@ -2728,9 +2728,9 @@ bool short_align_1_optionalPubSubType::getKey(
     return true;
 }
 
-void short_align_1_optionalPubSubType::register_type_object_representation() const
+void short_align_1_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_short_align_1_optional_type_identifier(type_identifiers_);
 }
 
 short_align_2_optionalPubSubType::short_align_2_optionalPubSubType()
@@ -2921,9 +2921,9 @@ bool short_align_2_optionalPubSubType::getKey(
     return true;
 }
 
-void short_align_2_optionalPubSubType::register_type_object_representation() const
+void short_align_2_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_short_align_2_optional_type_identifier(type_identifiers_);
 }
 
 short_align_4_optionalPubSubType::short_align_4_optionalPubSubType()
@@ -3114,9 +3114,9 @@ bool short_align_4_optionalPubSubType::getKey(
     return true;
 }
 
-void short_align_4_optionalPubSubType::register_type_object_representation() const
+void short_align_4_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_short_align_4_optional_type_identifier(type_identifiers_);
 }
 
 ushort_align_1_optionalPubSubType::ushort_align_1_optionalPubSubType()
@@ -3307,9 +3307,9 @@ bool ushort_align_1_optionalPubSubType::getKey(
     return true;
 }
 
-void ushort_align_1_optionalPubSubType::register_type_object_representation() const
+void ushort_align_1_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_ushort_align_1_optional_type_identifier(type_identifiers_);
 }
 
 ushort_align_2_optionalPubSubType::ushort_align_2_optionalPubSubType()
@@ -3500,9 +3500,9 @@ bool ushort_align_2_optionalPubSubType::getKey(
     return true;
 }
 
-void ushort_align_2_optionalPubSubType::register_type_object_representation() const
+void ushort_align_2_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_ushort_align_2_optional_type_identifier(type_identifiers_);
 }
 
 ushort_align_4_optionalPubSubType::ushort_align_4_optionalPubSubType()
@@ -3693,9 +3693,9 @@ bool ushort_align_4_optionalPubSubType::getKey(
     return true;
 }
 
-void ushort_align_4_optionalPubSubType::register_type_object_representation() const
+void ushort_align_4_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_ushort_align_4_optional_type_identifier(type_identifiers_);
 }
 
 long_align_1_optionalPubSubType::long_align_1_optionalPubSubType()
@@ -3886,9 +3886,9 @@ bool long_align_1_optionalPubSubType::getKey(
     return true;
 }
 
-void long_align_1_optionalPubSubType::register_type_object_representation() const
+void long_align_1_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_long_align_1_optional_type_identifier(type_identifiers_);
 }
 
 long_align_2_optionalPubSubType::long_align_2_optionalPubSubType()
@@ -4079,9 +4079,9 @@ bool long_align_2_optionalPubSubType::getKey(
     return true;
 }
 
-void long_align_2_optionalPubSubType::register_type_object_representation() const
+void long_align_2_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_long_align_2_optional_type_identifier(type_identifiers_);
 }
 
 long_align_4_optionalPubSubType::long_align_4_optionalPubSubType()
@@ -4272,9 +4272,9 @@ bool long_align_4_optionalPubSubType::getKey(
     return true;
 }
 
-void long_align_4_optionalPubSubType::register_type_object_representation() const
+void long_align_4_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_long_align_4_optional_type_identifier(type_identifiers_);
 }
 
 ulong_align_1_optionalPubSubType::ulong_align_1_optionalPubSubType()
@@ -4465,9 +4465,9 @@ bool ulong_align_1_optionalPubSubType::getKey(
     return true;
 }
 
-void ulong_align_1_optionalPubSubType::register_type_object_representation() const
+void ulong_align_1_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_ulong_align_1_optional_type_identifier(type_identifiers_);
 }
 
 ulong_align_2_optionalPubSubType::ulong_align_2_optionalPubSubType()
@@ -4658,9 +4658,9 @@ bool ulong_align_2_optionalPubSubType::getKey(
     return true;
 }
 
-void ulong_align_2_optionalPubSubType::register_type_object_representation() const
+void ulong_align_2_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_ulong_align_2_optional_type_identifier(type_identifiers_);
 }
 
 ulong_align_4_optionalPubSubType::ulong_align_4_optionalPubSubType()
@@ -4851,9 +4851,9 @@ bool ulong_align_4_optionalPubSubType::getKey(
     return true;
 }
 
-void ulong_align_4_optionalPubSubType::register_type_object_representation() const
+void ulong_align_4_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_ulong_align_4_optional_type_identifier(type_identifiers_);
 }
 
 longlong_align_1_optionalPubSubType::longlong_align_1_optionalPubSubType()
@@ -5044,9 +5044,9 @@ bool longlong_align_1_optionalPubSubType::getKey(
     return true;
 }
 
-void longlong_align_1_optionalPubSubType::register_type_object_representation() const
+void longlong_align_1_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_longlong_align_1_optional_type_identifier(type_identifiers_);
 }
 
 longlong_align_2_optionalPubSubType::longlong_align_2_optionalPubSubType()
@@ -5237,9 +5237,9 @@ bool longlong_align_2_optionalPubSubType::getKey(
     return true;
 }
 
-void longlong_align_2_optionalPubSubType::register_type_object_representation() const
+void longlong_align_2_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_longlong_align_2_optional_type_identifier(type_identifiers_);
 }
 
 longlong_align_4_optionalPubSubType::longlong_align_4_optionalPubSubType()
@@ -5430,9 +5430,9 @@ bool longlong_align_4_optionalPubSubType::getKey(
     return true;
 }
 
-void longlong_align_4_optionalPubSubType::register_type_object_representation() const
+void longlong_align_4_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_longlong_align_4_optional_type_identifier(type_identifiers_);
 }
 
 ulonglong_align_1_optionalPubSubType::ulonglong_align_1_optionalPubSubType()
@@ -5623,9 +5623,9 @@ bool ulonglong_align_1_optionalPubSubType::getKey(
     return true;
 }
 
-void ulonglong_align_1_optionalPubSubType::register_type_object_representation() const
+void ulonglong_align_1_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_ulonglong_align_1_optional_type_identifier(type_identifiers_);
 }
 
 ulonglong_align_2_optionalPubSubType::ulonglong_align_2_optionalPubSubType()
@@ -5816,9 +5816,9 @@ bool ulonglong_align_2_optionalPubSubType::getKey(
     return true;
 }
 
-void ulonglong_align_2_optionalPubSubType::register_type_object_representation() const
+void ulonglong_align_2_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_ulonglong_align_2_optional_type_identifier(type_identifiers_);
 }
 
 ulonglong_align_4_optionalPubSubType::ulonglong_align_4_optionalPubSubType()
@@ -6009,9 +6009,9 @@ bool ulonglong_align_4_optionalPubSubType::getKey(
     return true;
 }
 
-void ulonglong_align_4_optionalPubSubType::register_type_object_representation() const
+void ulonglong_align_4_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_ulonglong_align_4_optional_type_identifier(type_identifiers_);
 }
 
 float_align_1_optionalPubSubType::float_align_1_optionalPubSubType()
@@ -6202,9 +6202,9 @@ bool float_align_1_optionalPubSubType::getKey(
     return true;
 }
 
-void float_align_1_optionalPubSubType::register_type_object_representation() const
+void float_align_1_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_float_align_1_optional_type_identifier(type_identifiers_);
 }
 
 float_align_2_optionalPubSubType::float_align_2_optionalPubSubType()
@@ -6395,9 +6395,9 @@ bool float_align_2_optionalPubSubType::getKey(
     return true;
 }
 
-void float_align_2_optionalPubSubType::register_type_object_representation() const
+void float_align_2_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_float_align_2_optional_type_identifier(type_identifiers_);
 }
 
 float_align_4_optionalPubSubType::float_align_4_optionalPubSubType()
@@ -6588,9 +6588,9 @@ bool float_align_4_optionalPubSubType::getKey(
     return true;
 }
 
-void float_align_4_optionalPubSubType::register_type_object_representation() const
+void float_align_4_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_float_align_4_optional_type_identifier(type_identifiers_);
 }
 
 double_align_1_optionalPubSubType::double_align_1_optionalPubSubType()
@@ -6781,9 +6781,9 @@ bool double_align_1_optionalPubSubType::getKey(
     return true;
 }
 
-void double_align_1_optionalPubSubType::register_type_object_representation() const
+void double_align_1_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_double_align_1_optional_type_identifier(type_identifiers_);
 }
 
 double_align_2_optionalPubSubType::double_align_2_optionalPubSubType()
@@ -6974,9 +6974,9 @@ bool double_align_2_optionalPubSubType::getKey(
     return true;
 }
 
-void double_align_2_optionalPubSubType::register_type_object_representation() const
+void double_align_2_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_double_align_2_optional_type_identifier(type_identifiers_);
 }
 
 double_align_4_optionalPubSubType::double_align_4_optionalPubSubType()
@@ -7167,9 +7167,9 @@ bool double_align_4_optionalPubSubType::getKey(
     return true;
 }
 
-void double_align_4_optionalPubSubType::register_type_object_representation() const
+void double_align_4_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_double_align_4_optional_type_identifier(type_identifiers_);
 }
 
 longdouble_align_1_optionalPubSubType::longdouble_align_1_optionalPubSubType()
@@ -7360,9 +7360,9 @@ bool longdouble_align_1_optionalPubSubType::getKey(
     return true;
 }
 
-void longdouble_align_1_optionalPubSubType::register_type_object_representation() const
+void longdouble_align_1_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_longdouble_align_1_optional_type_identifier(type_identifiers_);
 }
 
 longdouble_align_2_optionalPubSubType::longdouble_align_2_optionalPubSubType()
@@ -7553,9 +7553,9 @@ bool longdouble_align_2_optionalPubSubType::getKey(
     return true;
 }
 
-void longdouble_align_2_optionalPubSubType::register_type_object_representation() const
+void longdouble_align_2_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_longdouble_align_2_optional_type_identifier(type_identifiers_);
 }
 
 longdouble_align_4_optionalPubSubType::longdouble_align_4_optionalPubSubType()
@@ -7746,9 +7746,9 @@ bool longdouble_align_4_optionalPubSubType::getKey(
     return true;
 }
 
-void longdouble_align_4_optionalPubSubType::register_type_object_representation() const
+void longdouble_align_4_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_longdouble_align_4_optional_type_identifier(type_identifiers_);
 }
 
 boolean_align_1_optionalPubSubType::boolean_align_1_optionalPubSubType()
@@ -7939,9 +7939,9 @@ bool boolean_align_1_optionalPubSubType::getKey(
     return true;
 }
 
-void boolean_align_1_optionalPubSubType::register_type_object_representation() const
+void boolean_align_1_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_boolean_align_1_optional_type_identifier(type_identifiers_);
 }
 
 boolean_align_2_optionalPubSubType::boolean_align_2_optionalPubSubType()
@@ -8132,9 +8132,9 @@ bool boolean_align_2_optionalPubSubType::getKey(
     return true;
 }
 
-void boolean_align_2_optionalPubSubType::register_type_object_representation() const
+void boolean_align_2_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_boolean_align_2_optional_type_identifier(type_identifiers_);
 }
 
 boolean_align_4_optionalPubSubType::boolean_align_4_optionalPubSubType()
@@ -8325,9 +8325,9 @@ bool boolean_align_4_optionalPubSubType::getKey(
     return true;
 }
 
-void boolean_align_4_optionalPubSubType::register_type_object_representation() const
+void boolean_align_4_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_boolean_align_4_optional_type_identifier(type_identifiers_);
 }
 
 octet_align_1_optionalPubSubType::octet_align_1_optionalPubSubType()
@@ -8518,9 +8518,9 @@ bool octet_align_1_optionalPubSubType::getKey(
     return true;
 }
 
-void octet_align_1_optionalPubSubType::register_type_object_representation() const
+void octet_align_1_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_octet_align_1_optional_type_identifier(type_identifiers_);
 }
 
 octet_align_2_optionalPubSubType::octet_align_2_optionalPubSubType()
@@ -8711,9 +8711,9 @@ bool octet_align_2_optionalPubSubType::getKey(
     return true;
 }
 
-void octet_align_2_optionalPubSubType::register_type_object_representation() const
+void octet_align_2_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_octet_align_2_optional_type_identifier(type_identifiers_);
 }
 
 octet_align_4_optionalPubSubType::octet_align_4_optionalPubSubType()
@@ -8904,9 +8904,9 @@ bool octet_align_4_optionalPubSubType::getKey(
     return true;
 }
 
-void octet_align_4_optionalPubSubType::register_type_object_representation() const
+void octet_align_4_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_octet_align_4_optional_type_identifier(type_identifiers_);
 }
 
 char_align_1_optionalPubSubType::char_align_1_optionalPubSubType()
@@ -9097,9 +9097,9 @@ bool char_align_1_optionalPubSubType::getKey(
     return true;
 }
 
-void char_align_1_optionalPubSubType::register_type_object_representation() const
+void char_align_1_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_char_align_1_optional_type_identifier(type_identifiers_);
 }
 
 char_align_2_optionalPubSubType::char_align_2_optionalPubSubType()
@@ -9290,9 +9290,9 @@ bool char_align_2_optionalPubSubType::getKey(
     return true;
 }
 
-void char_align_2_optionalPubSubType::register_type_object_representation() const
+void char_align_2_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_char_align_2_optional_type_identifier(type_identifiers_);
 }
 
 char_align_4_optionalPubSubType::char_align_4_optionalPubSubType()
@@ -9483,9 +9483,9 @@ bool char_align_4_optionalPubSubType::getKey(
     return true;
 }
 
-void char_align_4_optionalPubSubType::register_type_object_representation() const
+void char_align_4_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_char_align_4_optional_type_identifier(type_identifiers_);
 }
 
 wchar_align_1_optionalPubSubType::wchar_align_1_optionalPubSubType()
@@ -9676,9 +9676,9 @@ bool wchar_align_1_optionalPubSubType::getKey(
     return true;
 }
 
-void wchar_align_1_optionalPubSubType::register_type_object_representation() const
+void wchar_align_1_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_wchar_align_1_optional_type_identifier(type_identifiers_);
 }
 
 wchar_align_2_optionalPubSubType::wchar_align_2_optionalPubSubType()
@@ -9869,9 +9869,9 @@ bool wchar_align_2_optionalPubSubType::getKey(
     return true;
 }
 
-void wchar_align_2_optionalPubSubType::register_type_object_representation() const
+void wchar_align_2_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_wchar_align_2_optional_type_identifier(type_identifiers_);
 }
 
 wchar_align_4_optionalPubSubType::wchar_align_4_optionalPubSubType()
@@ -10062,9 +10062,9 @@ bool wchar_align_4_optionalPubSubType::getKey(
     return true;
 }
 
-void wchar_align_4_optionalPubSubType::register_type_object_representation() const
+void wchar_align_4_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_wchar_align_4_optional_type_identifier(type_identifiers_);
 }
 
 sequence_short_optionalPubSubType::sequence_short_optionalPubSubType()
@@ -10255,9 +10255,9 @@ bool sequence_short_optionalPubSubType::getKey(
     return true;
 }
 
-void sequence_short_optionalPubSubType::register_type_object_representation() const
+void sequence_short_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_sequence_short_optional_type_identifier(type_identifiers_);
 }
 
 sequence_short_align_1_optionalPubSubType::sequence_short_align_1_optionalPubSubType()
@@ -10448,9 +10448,9 @@ bool sequence_short_align_1_optionalPubSubType::getKey(
     return true;
 }
 
-void sequence_short_align_1_optionalPubSubType::register_type_object_representation() const
+void sequence_short_align_1_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_sequence_short_align_1_optional_type_identifier(type_identifiers_);
 }
 
 sequence_short_align_2_optionalPubSubType::sequence_short_align_2_optionalPubSubType()
@@ -10641,9 +10641,9 @@ bool sequence_short_align_2_optionalPubSubType::getKey(
     return true;
 }
 
-void sequence_short_align_2_optionalPubSubType::register_type_object_representation() const
+void sequence_short_align_2_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_sequence_short_align_2_optional_type_identifier(type_identifiers_);
 }
 
 sequence_short_align_4_optionalPubSubType::sequence_short_align_4_optionalPubSubType()
@@ -10834,9 +10834,9 @@ bool sequence_short_align_4_optionalPubSubType::getKey(
     return true;
 }
 
-void sequence_short_align_4_optionalPubSubType::register_type_object_representation() const
+void sequence_short_align_4_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_sequence_short_align_4_optional_type_identifier(type_identifiers_);
 }
 
 string_unbounded_optionalPubSubType::string_unbounded_optionalPubSubType()
@@ -11027,9 +11027,9 @@ bool string_unbounded_optionalPubSubType::getKey(
     return true;
 }
 
-void string_unbounded_optionalPubSubType::register_type_object_representation() const
+void string_unbounded_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_string_unbounded_optional_type_identifier(type_identifiers_);
 }
 
 string_unbounded_align_1_optionalPubSubType::string_unbounded_align_1_optionalPubSubType()
@@ -11220,9 +11220,9 @@ bool string_unbounded_align_1_optionalPubSubType::getKey(
     return true;
 }
 
-void string_unbounded_align_1_optionalPubSubType::register_type_object_representation() const
+void string_unbounded_align_1_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_string_unbounded_align_1_optional_type_identifier(type_identifiers_);
 }
 
 string_unbounded_align_2_optionalPubSubType::string_unbounded_align_2_optionalPubSubType()
@@ -11413,9 +11413,9 @@ bool string_unbounded_align_2_optionalPubSubType::getKey(
     return true;
 }
 
-void string_unbounded_align_2_optionalPubSubType::register_type_object_representation() const
+void string_unbounded_align_2_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_string_unbounded_align_2_optional_type_identifier(type_identifiers_);
 }
 
 string_unbounded_align_4_optionalPubSubType::string_unbounded_align_4_optionalPubSubType()
@@ -11606,9 +11606,9 @@ bool string_unbounded_align_4_optionalPubSubType::getKey(
     return true;
 }
 
-void string_unbounded_align_4_optionalPubSubType::register_type_object_representation() const
+void string_unbounded_align_4_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_string_unbounded_align_4_optional_type_identifier(type_identifiers_);
 }
 
 string_bounded_optionalPubSubType::string_bounded_optionalPubSubType()
@@ -11799,9 +11799,9 @@ bool string_bounded_optionalPubSubType::getKey(
     return true;
 }
 
-void string_bounded_optionalPubSubType::register_type_object_representation() const
+void string_bounded_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_string_bounded_optional_type_identifier(type_identifiers_);
 }
 
 string_bounded_align_1_optionalPubSubType::string_bounded_align_1_optionalPubSubType()
@@ -11992,9 +11992,9 @@ bool string_bounded_align_1_optionalPubSubType::getKey(
     return true;
 }
 
-void string_bounded_align_1_optionalPubSubType::register_type_object_representation() const
+void string_bounded_align_1_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_string_bounded_align_1_optional_type_identifier(type_identifiers_);
 }
 
 string_bounded_align_2_optionalPubSubType::string_bounded_align_2_optionalPubSubType()
@@ -12185,9 +12185,9 @@ bool string_bounded_align_2_optionalPubSubType::getKey(
     return true;
 }
 
-void string_bounded_align_2_optionalPubSubType::register_type_object_representation() const
+void string_bounded_align_2_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_string_bounded_align_2_optional_type_identifier(type_identifiers_);
 }
 
 string_bounded_align_4_optionalPubSubType::string_bounded_align_4_optionalPubSubType()
@@ -12378,9 +12378,9 @@ bool string_bounded_align_4_optionalPubSubType::getKey(
     return true;
 }
 
-void string_bounded_align_4_optionalPubSubType::register_type_object_representation() const
+void string_bounded_align_4_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_string_bounded_align_4_optional_type_identifier(type_identifiers_);
 }
 
 map_short_optionalPubSubType::map_short_optionalPubSubType()
@@ -12571,9 +12571,9 @@ bool map_short_optionalPubSubType::getKey(
     return true;
 }
 
-void map_short_optionalPubSubType::register_type_object_representation() const
+void map_short_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_map_short_optional_type_identifier(type_identifiers_);
 }
 
 map_short_align_1_optionalPubSubType::map_short_align_1_optionalPubSubType()
@@ -12764,9 +12764,9 @@ bool map_short_align_1_optionalPubSubType::getKey(
     return true;
 }
 
-void map_short_align_1_optionalPubSubType::register_type_object_representation() const
+void map_short_align_1_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_map_short_align_1_optional_type_identifier(type_identifiers_);
 }
 
 map_short_align_2_optionalPubSubType::map_short_align_2_optionalPubSubType()
@@ -12957,9 +12957,9 @@ bool map_short_align_2_optionalPubSubType::getKey(
     return true;
 }
 
-void map_short_align_2_optionalPubSubType::register_type_object_representation() const
+void map_short_align_2_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_map_short_align_2_optional_type_identifier(type_identifiers_);
 }
 
 map_short_align_4_optionalPubSubType::map_short_align_4_optionalPubSubType()
@@ -13150,9 +13150,9 @@ bool map_short_align_4_optionalPubSubType::getKey(
     return true;
 }
 
-void map_short_align_4_optionalPubSubType::register_type_object_representation() const
+void map_short_align_4_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_map_short_align_4_optional_type_identifier(type_identifiers_);
 }
 
 array_short_optionalPubSubType::array_short_optionalPubSubType()
@@ -13343,9 +13343,9 @@ bool array_short_optionalPubSubType::getKey(
     return true;
 }
 
-void array_short_optionalPubSubType::register_type_object_representation() const
+void array_short_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_array_short_optional_type_identifier(type_identifiers_);
 }
 
 array_short_align_1_optionalPubSubType::array_short_align_1_optionalPubSubType()
@@ -13536,9 +13536,9 @@ bool array_short_align_1_optionalPubSubType::getKey(
     return true;
 }
 
-void array_short_align_1_optionalPubSubType::register_type_object_representation() const
+void array_short_align_1_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_array_short_align_1_optional_type_identifier(type_identifiers_);
 }
 
 array_short_align_2_optionalPubSubType::array_short_align_2_optionalPubSubType()
@@ -13729,9 +13729,9 @@ bool array_short_align_2_optionalPubSubType::getKey(
     return true;
 }
 
-void array_short_align_2_optionalPubSubType::register_type_object_representation() const
+void array_short_align_2_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_array_short_align_2_optional_type_identifier(type_identifiers_);
 }
 
 array_short_align_4_optionalPubSubType::array_short_align_4_optionalPubSubType()
@@ -13922,9 +13922,9 @@ bool array_short_align_4_optionalPubSubType::getKey(
     return true;
 }
 
-void array_short_align_4_optionalPubSubType::register_type_object_representation() const
+void array_short_align_4_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_array_short_align_4_optional_type_identifier(type_identifiers_);
 }
 
 struct_optionalPubSubType::struct_optionalPubSubType()
@@ -14115,9 +14115,9 @@ bool struct_optionalPubSubType::getKey(
     return true;
 }
 
-void struct_optionalPubSubType::register_type_object_representation() const
+void struct_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_struct_optional_type_identifier(type_identifiers_);
 }
 
 struct_align_1_optionalPubSubType::struct_align_1_optionalPubSubType()
@@ -14308,9 +14308,9 @@ bool struct_align_1_optionalPubSubType::getKey(
     return true;
 }
 
-void struct_align_1_optionalPubSubType::register_type_object_representation() const
+void struct_align_1_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_struct_align_1_optional_type_identifier(type_identifiers_);
 }
 
 struct_align_2_optionalPubSubType::struct_align_2_optionalPubSubType()
@@ -14501,9 +14501,9 @@ bool struct_align_2_optionalPubSubType::getKey(
     return true;
 }
 
-void struct_align_2_optionalPubSubType::register_type_object_representation() const
+void struct_align_2_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_struct_align_2_optional_type_identifier(type_identifiers_);
 }
 
 struct_align_4_optionalPubSubType::struct_align_4_optionalPubSubType()
@@ -14694,9 +14694,9 @@ bool struct_align_4_optionalPubSubType::getKey(
     return true;
 }
 
-void struct_align_4_optionalPubSubType::register_type_object_representation() const
+void struct_align_4_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_struct_align_4_optional_type_identifier(type_identifiers_);
 }
 
 InnerStructOptionalPubSubType::InnerStructOptionalPubSubType()
@@ -14887,9 +14887,9 @@ bool InnerStructOptionalPubSubType::getKey(
     return true;
 }
 
-void InnerStructOptionalPubSubType::register_type_object_representation() const
+void InnerStructOptionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_InnerStructOptional_type_identifier(type_identifiers_);
 }
 
 opt_struct_optionalPubSubType::opt_struct_optionalPubSubType()
@@ -15080,9 +15080,9 @@ bool opt_struct_optionalPubSubType::getKey(
     return true;
 }
 
-void opt_struct_optionalPubSubType::register_type_object_representation() const
+void opt_struct_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_opt_struct_optional_type_identifier(type_identifiers_);
 }
 
 opt_struct_align_1_optionalPubSubType::opt_struct_align_1_optionalPubSubType()
@@ -15273,9 +15273,9 @@ bool opt_struct_align_1_optionalPubSubType::getKey(
     return true;
 }
 
-void opt_struct_align_1_optionalPubSubType::register_type_object_representation() const
+void opt_struct_align_1_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_opt_struct_align_1_optional_type_identifier(type_identifiers_);
 }
 
 opt_struct_align_2_optionalPubSubType::opt_struct_align_2_optionalPubSubType()
@@ -15466,9 +15466,9 @@ bool opt_struct_align_2_optionalPubSubType::getKey(
     return true;
 }
 
-void opt_struct_align_2_optionalPubSubType::register_type_object_representation() const
+void opt_struct_align_2_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_opt_struct_align_2_optional_type_identifier(type_identifiers_);
 }
 
 opt_struct_align_4_optionalPubSubType::opt_struct_align_4_optionalPubSubType()
@@ -15659,9 +15659,9 @@ bool opt_struct_align_4_optionalPubSubType::getKey(
     return true;
 }
 
-void opt_struct_align_4_optionalPubSubType::register_type_object_representation() const
+void opt_struct_align_4_optionalPubSubType::register_type_object_representation()
 {
-    register_optional_type_objects();
+    register_opt_struct_align_4_optional_type_identifier(type_identifiers_);
 }
 
 

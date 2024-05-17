@@ -203,70 +203,6 @@ public:
     }
 
     /**
-     * Get the type identifier
-     *
-     * @return TypeIdV1
-     */
-    FASTDDS_EXPORTED_API inline const std::shared_ptr<TypeIdV1> type_identifier() const
-    {
-        return type_identifier_;
-    }
-
-    /**
-     * Set type identifier
-     *
-     * @param id new value for TypeIdV1
-     */
-    FASTDDS_EXPORTED_API inline void type_identifier(
-            const TypeIdV1& id)
-    {
-        type_identifier_ = std::make_shared<TypeIdV1>(id);
-    }
-
-    /**
-     * Set type identifier
-     *
-     * @param id shared pointer to TypeIdV1
-     */
-    FASTDDS_EXPORTED_API inline void type_identifier(
-            const std::shared_ptr<TypeIdV1> id)
-    {
-        type_identifier_ = std::move(id);
-    }
-
-    /**
-     * Get the type object
-     *
-     * @return TypeObjectV1
-     */
-    FASTDDS_EXPORTED_API inline const std::shared_ptr<TypeObjectV1> type_object() const
-    {
-        return type_object_;
-    }
-
-    /**
-     * Set type object
-     *
-     * @param object new value for TypeObjectV1
-     */
-    FASTDDS_EXPORTED_API inline void type_object(
-            const TypeObjectV1& object)
-    {
-        type_object_ = std::make_shared<TypeObjectV1>(object);
-    }
-
-    /**
-     * Set type object
-     *
-     * @param object shared pointer to TypeObjectV1
-     */
-    FASTDDS_EXPORTED_API inline void type_object(
-            std::shared_ptr<TypeObjectV1> object)
-    {
-        type_object_ = std::move(object);
-    }
-
-    /**
      * Get the type information
      *
      * @return TypeInformationParameter
@@ -353,11 +289,6 @@ public:
 
 protected:
 
-    //!Type Identifier XTYPES 1.1
-    std::shared_ptr<TypeIdV1> type_identifier_;
-    //!Type Object XTYPES 1.1
-    std::shared_ptr<TypeObjectV1> type_object_;
-    //!XTYPES 1.2
     std::shared_ptr<xtypes::TypeInformationParameter> type_information_;
 
 private:

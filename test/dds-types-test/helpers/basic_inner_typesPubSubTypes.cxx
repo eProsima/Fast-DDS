@@ -219,9 +219,9 @@ bool InnerStructureHelperPubSubType::getKey(
     return true;
 }
 
-void InnerStructureHelperPubSubType::register_type_object_representation() const
+void InnerStructureHelperPubSubType::register_type_object_representation()
 {
-    register_basic_inner_types_type_objects();
+    register_InnerStructureHelper_type_identifier(type_identifiers_);
 }
 
 InnerEmptyStructureHelperPubSubType::InnerEmptyStructureHelperPubSubType()
@@ -412,9 +412,9 @@ bool InnerEmptyStructureHelperPubSubType::getKey(
     return true;
 }
 
-void InnerEmptyStructureHelperPubSubType::register_type_object_representation() const
+void InnerEmptyStructureHelperPubSubType::register_type_object_representation()
 {
-    register_basic_inner_types_type_objects();
+    register_InnerEmptyStructureHelper_type_identifier(type_identifiers_);
 }
 
 
