@@ -29,7 +29,8 @@ using TransportInterface = fastdds::rtps::TransportInterface;
 
 static const uint32_t s_maximumMessageSize = fastdds::rtps::s_maximumMessageSize;
 static const uint32_t s_maximumInitialPeersRange = fastdds::rtps::s_maximumInitialPeersRange;
-static const uint32_t s_minimumSocketBuffer = fastdds::rtps::s_minimumSocketBuffer;
+FASTDDS_DEPRECATED_UNTIL(3, s_minimumSocketBuffer, "Minimum socket buffer is now taken from the maximum msg size")
+static const uint32_t s_minimumSocketBuffer = 65536;
 static const std::string s_IPv4AddressAny = fastdds::rtps::s_IPv4AddressAny;
 static const std::string s_IPv6AddressAny = fastdds::rtps::s_IPv6AddressAny;
 
