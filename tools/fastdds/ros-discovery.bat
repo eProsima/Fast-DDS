@@ -22,12 +22,13 @@ if not %ERRORLEVEL%==0 (
 )
 
 :: Python version in the form "Major.Minor"
-if %PYTHON_VERSION%=="" (
-      echo error retrieving python version. Please, make sure python is installed and accessible.
-      exit /B 65
-   )
+if not "%PYTHON_VERSION%" == "" (
+      :: Use launcher to profit from shebang hints on fastdds.py
+      :: Select the correct python version to source the appropriate paths
+      py -%PYTHON_VERSION% "%dir%\..\tools\fastdds\fastdds.py" discovery %args%
+) else (
+	  :: Use launcher to profit from shebang hints on fastdds.py
+      :: Select latest available python version
+      py "%dir%\..\tools\fastdds\fastdds.py" discovery %args%
 )
 
-:: Use launcher to profit from shebang hints on fastdds.py
-:: Select the correct python version to source the appropriate paths
-py -%PYTHON_VERSION% "%dir%\..\tools\fastdds\fastdds.py" discovery %args%
