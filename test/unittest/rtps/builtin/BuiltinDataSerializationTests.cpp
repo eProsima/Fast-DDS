@@ -143,7 +143,6 @@ TEST(BuiltinDataSerializationTests, ok_with_defaults)
 TEST(BuiltinDataSerializationTests, msg_without_datasharing)
 {
     {
-        // This was captured with wireshark from OpenDDS iShapes 3.16
         uint8_t data_r_buffer[] =
         {
             // Encapsulation
@@ -160,7 +159,6 @@ TEST(BuiltinDataSerializationTests, msg_without_datasharing)
     }
 
     {
-        // This was captured with wireshark from OpenDDS iShapes 3.16
         uint8_t data_w_buffer[] =
         {
             // Encapsulation
@@ -181,7 +179,6 @@ TEST(BuiltinDataSerializationTests, msg_without_datasharing)
 TEST(BuiltinDataSerializationTests, msg_with_datasharing)
 {
     {
-        // This was captured with wireshark from OpenDDS iShapes 3.16
         uint8_t data_r_buffer[] =
         {
             // Encapsulation
@@ -202,7 +199,6 @@ TEST(BuiltinDataSerializationTests, msg_with_datasharing)
     }
 
     {
-        // This was captured with wireshark from OpenDDS iShapes 3.16
         uint8_t data_w_buffer[] =
         {
             // Encapsulation
