@@ -785,7 +785,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasEnum)
         AliasEnum alias_data;
         TypeSupport static_pubsubType {new AliasEnumPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, alias_data, static_pubsubType);
-        EXPECT_EQ(static_cast<uint32_t>(alias_data.value()), test_value);
+        EXPECT_EQ(static_cast<int32_t>(alias_data.value()), test_value);
     }
 
     xtypes::TypeIdentifier static_type_id;

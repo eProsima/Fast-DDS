@@ -1549,8 +1549,8 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_bitset_dynamic_type(
     for (auto& bitfield : bitfields)
     {
         MemberDescriptorImpl& member_descriptor {bitfield->get_descriptor()};
-        CommonBitfield common {TypeObjectUtils::build_common_bitfield(member_descriptor.id(), 0,
-                                       type_descriptor.bound().at(member_descriptor.index()),
+        CommonBitfield common {TypeObjectUtils::build_common_bitfield(static_cast<uint16_t>(member_descriptor.id()), 0,
+                                       static_cast<uint8_t>(type_descriptor.bound().at(member_descriptor.index())),
                                        type_kind(member_descriptor.type()->get_kind()))};
         CompleteMemberDetail member_detail;
         complete_member_detail(member_descriptor, member_detail);
@@ -1776,7 +1776,7 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_bitmask_dynamic_type(
     const TypeDescriptorImpl& type_descriptor {dynamic_type->get_descriptor()};
 
     CommonEnumeratedHeader common {TypeObjectUtils::build_common_enumerated_header(
-                                       type_descriptor.bound().front(), true)};
+                                       static_cast<BitBound>(type_descriptor.bound().front()), true)};
     CompleteTypeDetail detail;
     complete_type_detail(dynamic_type, detail);
     CompleteEnumeratedHeader header {TypeObjectUtils::build_complete_enumerated_header(common, detail, true)};
@@ -1786,7 +1786,8 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_bitmask_dynamic_type(
     for (auto& bitflag : bitflags)
     {
         MemberDescriptorImpl& member_descriptor {bitflag->get_descriptor()};
-        CommonBitflag common_bitflag {TypeObjectUtils::build_common_bitflag(member_descriptor.id(), 0)};
+        CommonBitflag common_bitflag {TypeObjectUtils::build_common_bitflag(
+                                          static_cast<uint16_t>(member_descriptor.id()), 0)};
         CompleteMemberDetail member_detail;
         complete_member_detail(member_descriptor, member_detail);
         CompleteBitflag bitflag_member {TypeObjectUtils::build_complete_bitflag(common_bitflag, member_detail)};
@@ -1827,7 +1828,7 @@ ReturnCode_t TypeObjectRegistry::typeidentifier_w_sequence_dynamic_type(
             256 > type_descriptor.bound().front())
     {
         SBound bound = (static_cast<uint32_t>(LENGTH_UNLIMITED) == type_descriptor.bound().front()) ?
-                0 : type_descriptor.bound().front();
+                0 : static_cast<SBound>(type_descriptor.bound().front());
         PlainSequenceSElemDefn seq_defn {TypeObjectUtils::build_plain_sequence_s_elem_defn(header, bound,
                                                  external_element_type_id)};
         type_id.seq_sdefn(seq_defn);
@@ -1911,7 +1912,7 @@ ReturnCode_t TypeObjectRegistry::typeidentifier_w_map_dynamic_type(
             256 > type_descriptor.bound().front())
     {
         SBound bound = (static_cast<uint32_t>(LENGTH_UNLIMITED) == type_descriptor.bound().front()) ?
-                0 : type_descriptor.bound().front();
+                0 : static_cast<SBound>(type_descriptor.bound().front());
         PlainMapSTypeDefn map_defn {TypeObjectUtils::build_plain_map_s_type_defn(header, bound,
                                             external_element_type_id, 0, external_key_type_id)};
         type_id.map_sdefn(map_defn);
@@ -1939,7 +1940,7 @@ ReturnCode_t TypeObjectRegistry::typeidentifier_w_string_dynamic_type(
             256 > type_descriptor.bound().front())
     {
         SBound bound = (static_cast<uint32_t>(LENGTH_UNLIMITED) == type_descriptor.bound().front()) ?
-                0 : type_descriptor.bound().front();
+                0 : static_cast<SBound>(type_descriptor.bound().front());
         StringSTypeDefn string_defn {TypeObjectUtils::build_string_s_type_defn(bound)};
         type_id.string_sdefn(string_defn);
     }
@@ -1980,7 +1981,7 @@ ReturnCode_t TypeObjectRegistry::apply_custom_annotations(
     if (0 != dynamic_type->get_annotation_count())
     {
         AnnotationDescriptor::_ref_type annotation_descriptor {traits<AnnotationDescriptor>::make_shared()};
-        for (size_t i {0}; i < dynamic_type->get_annotation_count(); ++i)
+        for (uint32_t i {0}; i < dynamic_type->get_annotation_count(); ++i)
         {
             dynamic_type->get_annotation(annotation_descriptor, i);
 
@@ -2058,8 +2059,8 @@ ReturnCode_t TypeObjectRegistry::set_annotation_parameter_value(
                             TypeValueConverter::sto(value) : false));
             break;
         case TK_BYTE:
-            param_value = TypeObjectUtils::build_annotation_parameter_value_byte(!value.empty() ?
-                            TypeValueConverter::sto(value) : 0);
+            param_value = TypeObjectUtils::build_annotation_parameter_value_byte(static_cast<uint8_t>(!value.empty() ?
+                            TypeValueConverter::sto(value) : 0));
             break;
         case TK_INT8:
             param_value = TypeObjectUtils::build_annotation_parameter_value(static_cast<int8_t>(!value.empty() ?
@@ -2356,9 +2357,9 @@ PlacementKind TypeObjectRegistry::placement_kind(
     std::string lower_case_placement_kind;
     // XTypes v1.3 Section 7.2.2.4.8.2 [The placement] shall be interpreted in a case-insensitive manner.
     std::transform(placement_kind.begin(), placement_kind.end(), lower_case_placement_kind.begin(),
-            [](unsigned char c)
+            [](char c)
             {
-                return std::tolower(c);
+                return static_cast<char>(std::tolower(c));
             });
     if (lower_case_placement_kind == begin_declaration_file_str)
     {
