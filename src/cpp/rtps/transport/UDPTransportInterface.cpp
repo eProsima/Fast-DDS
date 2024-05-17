@@ -14,15 +14,18 @@
 
 #include <rtps/transport/UDPTransportInterface.h>
 
-#include <utility>
-#include <cstring>
 #include <algorithm>
 #include <chrono>
+#include <cstring>
+#include <limits>
+#include <utility>
 
+#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/transport/TransportInterface.h>
 #include <fastdds/rtps/messages/CDRMessage.h>
-#include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/utils/IPLocator.h>
+
+#include <rtps/transport/asio_helpers.hpp>
 #include <rtps/transport/UDPSenderResource.hpp>
 #include <statistics/rtps/messages/RTPSStatisticsMessages.hpp>
 
@@ -119,8 +122,15 @@ bool UDPTransportInterface::DoInputLocatorsMatch(
 bool UDPTransportInterface::init(
         const fastrtps::rtps::PropertyPolicy*)
 {
-    if (configuration()->sendBufferSize == 0 || configuration()->receiveBufferSize == 0)
+    uint32_t maximumMessageSize = s_maximumMessageSize;
+    uint32_t cfg_max_msg_size = configuration()->maxMessageSize;
+    uint32_t cfg_send_size = configuration()->sendBufferSize;
+    uint32_t cfg_recv_size = configuration()->receiveBufferSize;
+    uint32_t max_int_value = static_cast<uint32_t>(std::numeric_limits<int32_t>::max());
+
+    if (cfg_max_msg_size > maximumMessageSize)
     {
+<<<<<<< HEAD
         // Check system buffer sizes.
         ip::udp::socket socket(io_service_);
         socket.open(generate_protocol());
@@ -155,25 +165,80 @@ bool UDPTransportInterface::init(
     if (configuration()->maxMessageSize > s_maximumMessageSize)
     {
         logError(RTPS_MSG_OUT, "maxMessageSize cannot be greater than 65000");
+=======
+        EPROSIMA_LOG_ERROR(TRANSPORT_UDP, "maxMessageSize cannot be greater than " << maximumMessageSize);
+>>>>>>> 532acfa74 (Handle errors when setting socket buffer sizes (#4760) (#4795))
         return false;
     }
 
-    if (configuration()->maxMessageSize > configuration()->sendBufferSize)
+    if (cfg_send_size > max_int_value)
     {
+<<<<<<< HEAD
         logError(RTPS_MSG_OUT, "maxMessageSize cannot be greater than send_buffer_size");
+=======
+        EPROSIMA_LOG_ERROR(TRANSPORT_UDP, "sendBufferSize cannot be greater than " << max_int_value);
+>>>>>>> 532acfa74 (Handle errors when setting socket buffer sizes (#4760) (#4795))
         return false;
     }
 
-    if (configuration()->maxMessageSize > configuration()->receiveBufferSize)
+    if (cfg_recv_size > max_int_value)
     {
+<<<<<<< HEAD
         logError(RTPS_MSG_OUT, "maxMessageSize cannot be greater than receive_buffer_size");
+=======
+        EPROSIMA_LOG_ERROR(TRANSPORT_UDP, "receiveBufferSize cannot be greater than " << max_int_value);
+        return false;
+    }
+
+    if ((cfg_send_size > 0) && (cfg_max_msg_size > cfg_send_size))
+    {
+        EPROSIMA_LOG_ERROR(TRANSPORT_UDP, "maxMessageSize cannot be greater than sendBufferSize");
+        return false;
+    }
+
+    if ((cfg_recv_size > 0) && (cfg_max_msg_size > cfg_recv_size))
+    {
+        EPROSIMA_LOG_ERROR(TRANSPORT_UDP, "maxMessageSize cannot be greater than receiveBufferSize");
+>>>>>>> 532acfa74 (Handle errors when setting socket buffer sizes (#4760) (#4795))
         return false;
     }
 
     // TODO(Ricardo) Create an event that update this list.
     get_ips(currentInterfaces);
 
-    return true;
+    asio::error_code ec;
+    ip::udp::socket socket(io_service_);
+    socket.open(generate_protocol(), ec);
+    if (!!ec)
+    {
+        EPROSIMA_LOG_ERROR(TRANSPORT_UDP, "Error creating socket: " << ec.message());
+        return false;
+    }
+
+    bool ret = asio_helpers::configure_buffer_sizes(socket, *configuration(), mSendBufferSize, mReceiveBufferSize);
+    if (ret)
+    {
+        if (cfg_send_size > 0 && mSendBufferSize != cfg_send_size)
+        {
+            EPROSIMA_LOG_WARNING(TRANSPORT_UDP, "UDPTransport sendBufferSize could not be set to the desired value. "
+                    << "Using " << mSendBufferSize << " instead of " << cfg_send_size);
+        }
+
+        if (cfg_recv_size > 0 && mReceiveBufferSize != cfg_recv_size)
+        {
+            EPROSIMA_LOG_WARNING(TRANSPORT_UDP, "UDPTransport receiveBufferSize could not be set to the desired value. "
+                    << "Using " << mReceiveBufferSize << " instead of " << cfg_recv_size);
+        }
+
+        set_send_buffer_size(mSendBufferSize);
+        set_receive_buffer_size(mReceiveBufferSize);
+    }
+    else
+    {
+        EPROSIMA_LOG_ERROR(TRANSPORT_UDP, "Couldn't set buffer sizes to minimum value: " << cfg_max_msg_size);
+    }
+
+    return ret;
 }
 
 bool UDPTransportInterface::IsInputChannelOpen(
@@ -211,8 +276,13 @@ bool UDPTransportInterface::OpenAndBindInputSockets(
     catch (asio::system_error const& e)
     {
         (void)e;
+<<<<<<< HEAD
         logInfo(RTPS_MSG_OUT, "UDPTransport Error binding at port: (" << IPLocator::getPhysicalPort(locator) << ")"
                                                                       << " with msg: " << e.what());
+=======
+        EPROSIMA_LOG_INFO(TRANSPORT_UDP, "UDPTransport Error binding at port: ("
+                << IPLocator::getPhysicalPort(locator) << ")" << " with msg: " << e.what());
+>>>>>>> 532acfa74 (Handle errors when setting socket buffer sizes (#4760) (#4795))
         mInputSockets.erase(IPLocator::getPhysicalPort(locator));
         return false;
     }
@@ -242,7 +312,18 @@ eProsimaUDPSocket UDPTransportInterface::OpenAndBindUnicastOutputSocket(
     getSocketPtr(socket)->open(generate_protocol());
     if (mSendBufferSize != 0)
     {
-        getSocketPtr(socket)->set_option(socket_base::send_buffer_size(static_cast<int32_t>(mSendBufferSize)));
+        uint32_t configured_value = 0;
+        if (!asio_helpers::try_setting_buffer_size<socket_base::send_buffer_size>(
+                    socket, mSendBufferSize, configuration()->maxMessageSize, configured_value))
+        {
+            EPROSIMA_LOG_ERROR(TRANSPORT_UDP,
+                    "Couldn't set send buffer size to minimum value: " << configuration()->maxMessageSize);
+        }
+        else if (configured_value != mSendBufferSize)
+        {
+            EPROSIMA_LOG_WARNING(TRANSPORT_UDP, "UDPTransport sendBufferSize could not be set to the desired value. "
+                    << "Using " << configured_value << " instead of " << mSendBufferSize);
+        }
     }
     getSocketPtr(socket)->set_option(ip::multicast::hops(configuration()->TTL));
     getSocketPtr(socket)->bind(endpoint);
@@ -300,7 +381,11 @@ bool UDPTransportInterface::OpenOutputChannel(
                 catch (asio::system_error const& e)
                 {
                     (void)e;
+<<<<<<< HEAD
                     logWarning(RTPS_MSG_OUT, "UDPTransport Error binding interface "
+=======
+                    EPROSIMA_LOG_WARNING(TRANSPORT_UDP, "UDPTransport Error binding interface "
+>>>>>>> 532acfa74 (Handle errors when setting socket buffer sizes (#4760) (#4795))
                             << localhost_name() << " (skipping) with msg: " << e.what());
                 }
             }
@@ -324,7 +409,11 @@ bool UDPTransportInterface::OpenOutputChannel(
                     catch (asio::system_error const& e)
                     {
                         (void)e;
+<<<<<<< HEAD
                         logWarning(RTPS_MSG_OUT, "UDPTransport Error binding interface "
+=======
+                        EPROSIMA_LOG_WARNING(TRANSPORT_UDP, "UDPTransport Error binding interface "
+>>>>>>> 532acfa74 (Handle errors when setting socket buffer sizes (#4760) (#4795))
                                 << (*locIt).name << " (skipping) with msg: " << e.what());
                     }
                 }
@@ -356,7 +445,11 @@ bool UDPTransportInterface::OpenOutputChannel(
     {
         (void)e;
         /* TODO Que hacer?
+<<<<<<< HEAD
            logError(RTPS_MSG_OUT, "UDPTransport Error binding at port: (" << IPLocator::getPhysicalPort(locator) << ")"
+=======
+           EPROSIMA_LOG_ERROR(TRANSPORT_UDP, "UDPTransport Error binding at port: (" << IPLocator::getPhysicalPort(locator) << ")"
+>>>>>>> 532acfa74 (Handle errors when setting socket buffer sizes (#4760) (#4795))
             << " with msg: " << e.what());
            for (auto& socket : mOutputSockets)
            {
@@ -501,23 +594,41 @@ bool UDPTransportInterface::send(
                 if ((ec.value() == asio::error::would_block) ||
                         (ec.value() == asio::error::try_again))
                 {
+<<<<<<< HEAD
                     logWarning(RTPS_MSG_OUT, "UDP send would have blocked. Packet is dropped.");
                     return true;
                 }
 
                 logWarning(RTPS_MSG_OUT, ec.message());
+=======
+                    EPROSIMA_LOG_WARNING(TRANSPORT_UDP, "UDP send would have blocked. Packet is dropped.");
+                    return true;
+                }
+
+                EPROSIMA_LOG_WARNING(TRANSPORT_UDP, ec.message());
+>>>>>>> 532acfa74 (Handle errors when setting socket buffer sizes (#4760) (#4795))
                 return false;
             }
         }
         catch (const std::exception& error)
         {
+<<<<<<< HEAD
             logWarning(RTPS_MSG_OUT, error.what());
+=======
+            EPROSIMA_LOG_WARNING(TRANSPORT_UDP, error.what());
+>>>>>>> 532acfa74 (Handle errors when setting socket buffer sizes (#4760) (#4795))
             return false;
         }
 
         (void)bytesSent;
+<<<<<<< HEAD
         logInfo(RTPS_MSG_OUT, "UDPTransport: " << bytesSent << " bytes TO endpoint: " << destinationEndpoint
                                                << " FROM " << getSocketPtr(socket)->local_endpoint());
+=======
+        EPROSIMA_LOG_INFO(TRANSPORT_UDP,
+                "UDPTransport: " << bytesSent << " bytes TO endpoint: " << destinationEndpoint <<
+                " FROM " << getSocketPtr(socket)->local_endpoint());
+>>>>>>> 532acfa74 (Handle errors when setting socket buffer sizes (#4760) (#4795))
         success = true;
     }
 
