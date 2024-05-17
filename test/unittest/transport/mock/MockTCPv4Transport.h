@@ -56,7 +56,7 @@ public:
     }
 
     bool send(
-            const octet* send_buffer,
+            const fastrtps::rtps::octet* send_buffer,
             uint32_t send_buffer_size,
             const Locator_t& send_resource_locator,
             const Locator_t& remote_locator)
