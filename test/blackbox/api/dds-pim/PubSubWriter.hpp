@@ -280,11 +280,10 @@ public:
     typedef typename type_support::type type;
 
     PubSubWriter(
-            const std::string& topic_name,
-            eprosima::fastdds::dds::DomainParticipant* participant = nullptr)
+            const std::string& topic_name)
         : participant_listener_(*this)
         , listener_(*this)
-        , participant_(participant)
+        , participant_(nullptr)
         , topic_(nullptr)
         , publisher_(nullptr)
         , datawriter_(nullptr)

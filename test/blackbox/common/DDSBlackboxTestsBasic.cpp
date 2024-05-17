@@ -780,12 +780,10 @@ TEST(DDSBasic, max_output_message_size_participant)
             };
 
     // Create the DomainParticipants with the appropriate value for the property
-    DomainParticipantQos participant_qos;
-    participant_qos.properties().properties().emplace_back("fastdds.max_message_size", segment_size_str);
-    DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant((uint32_t)GET_PID() % 230, participant_qos);
-    PubSubWriter<Data1mbPubSubType> writer(TEST_TOPIC_NAME, participant);
-    writer.disable_builtin_transport()
+    eprosima::fastrtps::rtps::PropertyPolicy property_policy;
+    property_policy.properties().emplace_back("fastdds.max_message_size", segment_size_str);
+    PubSubWriter<Data1mbPubSubType> writer(TEST_TOPIC_NAME);
+    writer.property_policy(property_policy).disable_builtin_transport()
             .add_user_transport_to_pparams(testTransport).init();
     EXPECT_TRUE(writer.isInitialized());
 
@@ -804,8 +802,6 @@ TEST(DDSBasic, max_output_message_size_participant)
     // Wait for reception
     reader.block_for_all(std::chrono::seconds(1));
     EXPECT_EQ(reader.getReceivedCount(), 1u);
-
-    DomainParticipantFactory::get_instance()->delete_participant(participant);
 }
 
 /**
@@ -828,8 +824,8 @@ TEST(DDSBasic, max_output_message_size_writer)
     eprosima::fastrtps::rtps::PropertyPolicy property_policy;
     property_policy.properties().emplace_back("fastdds.max_message_size", segment_size_str);
     PubSubWriter<Data1mbPubSubType> writer(TEST_TOPIC_NAME);
-    writer.property_policy(property_policy).disable_builtin_transport().add_user_transport_to_pparams(testTransport);
-    writer.init();
+    writer.entity_property_policy(property_policy).disable_builtin_transport()
+            .add_user_transport_to_pparams(testTransport).init();
     ASSERT_TRUE(writer.isInitialized());
 
     PubSubReader<Data1mbPubSubType> reader(TEST_TOPIC_NAME);
