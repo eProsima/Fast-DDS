@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+    <profiles>
+        
+        <data_writer profile_name="datawriter_profile">
+            <qos>
+                <deadline>
+                    <period>
+                        <sec>1</sec>
+                    </period>    
+                </deadline>
+            </qos>
+
+        </data_writer>
+
+        <data_reader profile_name="datareader_profile">
+            <qos>
+                <deadline>
+                    <period>
+                        <sec>1</sec>
+                    </period>    
+                </deadline>
+            </qos>
+        </data_reader>
+
+        
+    </profiles>
+
+</dds>
+

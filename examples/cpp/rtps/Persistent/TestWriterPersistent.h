@@ -62,10 +62,6 @@ public:
         }
 
         int n_matched;
-
-    private:
-
-        using eprosima::fastrtps::rtps::WriterListener::onWriterMatched;
     }
     m_listener;
 };

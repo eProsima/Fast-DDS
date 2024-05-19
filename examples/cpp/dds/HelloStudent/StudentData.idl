@@ -1,0 +1,5 @@
+struct StudentInfo
+{
+	unsigned long id;
+	string name;
+};
