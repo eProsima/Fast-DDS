@@ -90,6 +90,23 @@ set(${PROJECT_NAME}_source_files
     fastdds/topic/TopicProxyFactory.cpp
     fastdds/topic/TypeSupport.cpp
     fastdds/utils/QosConverters.cpp
+    fastdds/xtypes/dynamic_types/AnnotationDescriptorImpl.cpp
+    fastdds/xtypes/dynamic_types/DynamicDataFactory.cpp
+    fastdds/xtypes/dynamic_types/DynamicDataImpl.cpp
+    fastdds/xtypes/dynamic_types/DynamicDataFactoryImpl.cpp
+    fastdds/xtypes/dynamic_types/DynamicPubSubType.cpp
+    fastdds/xtypes/dynamic_types/DynamicTypeImpl.cpp
+    fastdds/xtypes/dynamic_types/DynamicTypeBuilderFactory.cpp
+    fastdds/xtypes/dynamic_types/DynamicTypeBuilderImpl.cpp
+    fastdds/xtypes/dynamic_types/DynamicTypeBuilderFactoryImpl.cpp
+    fastdds/xtypes/dynamic_types/DynamicTypeMemberImpl.cpp
+    fastdds/xtypes/dynamic_types/MemberDescriptorImpl.cpp
+    fastdds/xtypes/dynamic_types/TypeDescriptorImpl.cpp
+    fastdds/xtypes/dynamic_types/VerbatimTextDescriptorImpl.cpp
+    fastdds/xtypes/exception/Exception.cpp
+    fastdds/xtypes/type_representation/dds_xtypes_typeobjectPubSubTypes.cxx
+    fastdds/xtypes/type_representation/TypeObjectRegistry.cpp
+    fastdds/xtypes/type_representation/TypeObjectUtils.cpp
     rtps/attributes/EndpointSecurityAttributes.cpp
     rtps/attributes/PropertyPolicy.cpp
     rtps/attributes/RTPSParticipantAttributes.cpp
@@ -478,9 +495,6 @@ target_link_libraries(${PROJECT_NAME}
 
     PRIVATE
     eProsima_atomic
-    fastdds::log
-    fastdds::xtypes::dynamic-types::impl
-    fastdds::xtypes::type-representation
     )
 
 if(MSVC OR MSVC_IDE)
