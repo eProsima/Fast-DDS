@@ -48,14 +48,14 @@ configure_file("cycles_tests.py" "cycles_tests.py")
 configure_file("memory_tests.py" "memory_tests.py")
 configure_file("memory_analysis.py" "memory_analysis.py")
 
-find_package(PythonInterp 3 REQUIRED)
+find_package(Python3 COMPONENTS Interpreter REQUIRED)
 
-if(PYTHONINTERP_FOUND)
+if(Python3_Interpreter_FOUND)
     ###############################################################################
     # MemoryTest
     ###############################################################################
     add_test(NAME MemoryTest
-        COMMAND ${PYTHON_EXECUTABLE} memory_tests.py)
+        COMMAND ${Python3_EXECUTABLE} memory_tests.py)
 
     # Set test with label NoMemoryCheck
     set_property(TEST MemoryTest PROPERTY LABELS "NoMemoryCheck")
@@ -77,7 +77,7 @@ if(PYTHONINTERP_FOUND)
     # CyclesTest
     ###############################################################################
     add_test(NAME CyclesTest
-        COMMAND ${PYTHON_EXECUTABLE} cycles_tests.py)
+        COMMAND ${Python3_EXECUTABLE} cycles_tests.py)
 
     # Set test with label NoMemoryCheck
     set_property(TEST CyclesTest PROPERTY LABELS "NoMemoryCheck")
