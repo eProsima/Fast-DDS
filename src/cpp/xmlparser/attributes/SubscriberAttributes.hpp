@@ -19,14 +19,14 @@
 #ifndef _FASTDDS_SUBSCRIBERATTRIBUTES_H_
 #define _FASTDDS_SUBSCRIBERATTRIBUTES_H_
 
+#include <fastdds/dds/subscriber/qos/ReaderQos.hpp>
 #include <fastdds/rtps/attributes/ExternalLocators.hpp>
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
 #include <fastdds/rtps/attributes/ReaderAttributes.h>
 #include <fastdds/rtps/attributes/TopicAttributes.h>
-#include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/rtps/resources/ResourceManagement.h>
-#include <fastrtps/qos/ReaderQos.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -43,7 +43,7 @@ public:
     fastrtps::TopicAttributes topic;
 
     //! Reader QOs.
-    fastrtps::ReaderQos qos;
+    dds::ReaderQos qos;
 
     //! Times for a RELIABLE Reader
     fastrtps::rtps::ReaderTimes times;

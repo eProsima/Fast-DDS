@@ -20,13 +20,16 @@
 #ifndef _TEST_BLACKBOX_RTPSASSOCKETWRITER_HPP_
 #define _TEST_BLACKBOX_RTPSASSOCKETWRITER_HPP_
 
-#include <asio.hpp>
-#include <gtest/gtest.h>
 #include <list>
 #include <string>
 
+#include <asio.hpp>
+
+#include <gtest/gtest.h>
+
 #include <fastcdr/Cdr.h>
 #include <fastcdr/FastBuffer.h>
+
 #include <fastdds/rtps/attributes/HistoryAttributes.h>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/attributes/WriterAttributes.h>
@@ -36,8 +39,8 @@
 #include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastdds/rtps/writer/WriterListener.h>
+
 #include <fastdds/utils/IPLocator.h>
-#include <fastrtps/rtps/rtps_fwd.h>
 
 using eprosima::fastrtps::rtps::IPLocator;
 

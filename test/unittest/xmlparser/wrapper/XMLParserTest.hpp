@@ -20,6 +20,7 @@
 #include <xmlparser/XMLParser.h>
 
 using namespace eprosima::fastdds;
+using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
