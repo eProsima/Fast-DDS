@@ -18,10 +18,11 @@
 #include <cassert>
 #include <chrono>
 #include <cstring>
+#include <limits>
 #include <map>
-#include <set>
 #include <memory>
 #include <mutex>
+#include <set>
 #include <string>
 #include <thread>
 #include <utility>
@@ -53,6 +54,7 @@
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/utils/System.h>
 
+#include <rtps/transport/asio_helpers.hpp>
 #include <statistics/rtps/messages/RTPSStatisticsMessages.hpp>
 #include <utils/SystemInfo.hpp>
 #include <utils/thread.hpp>
@@ -442,6 +444,42 @@ bool TCPTransportInterface::DoInputLocatorsMatch(
 bool TCPTransportInterface::init(
         const fastrtps::rtps::PropertyPolicy* properties)
 {
+    uint32_t maximumMessageSize = max_msg_size_no_frag == 0 ? s_maximumMessageSize : max_msg_size_no_frag;
+    uint32_t cfg_max_msg_size = configuration()->maxMessageSize;
+    uint32_t cfg_send_size = configuration()->sendBufferSize;
+    uint32_t cfg_recv_size = configuration()->receiveBufferSize;
+    uint32_t max_int_value = static_cast<uint32_t>(std::numeric_limits<int32_t>::max());
+
+    if (cfg_max_msg_size > maximumMessageSize)
+    {
+        EPROSIMA_LOG_ERROR(TRANSPORT_TCP, "maxMessageSize cannot be greater than " << maximumMessageSize);
+        return false;
+    }
+
+    if (cfg_send_size > max_int_value)
+    {
+        EPROSIMA_LOG_ERROR(TRANSPORT_TCP, "sendBufferSize cannot be greater than " << max_int_value);
+        return false;
+    }
+
+    if (cfg_recv_size > max_int_value)
+    {
+        EPROSIMA_LOG_ERROR(TRANSPORT_TCP, "receiveBufferSize cannot be greater than " << max_int_value);
+        return false;
+    }
+
+    if ((cfg_send_size > 0) && (cfg_max_msg_size > cfg_send_size))
+    {
+        EPROSIMA_LOG_ERROR(TRANSPORT_TCP, "maxMessageSize cannot be greater than sendBufferSize");
+        return false;
+    }
+
+    if ((cfg_recv_size > 0) && (cfg_max_msg_size > cfg_recv_size))
+    {
+        EPROSIMA_LOG_ERROR(TRANSPORT_TCP, "maxMessageSize cannot be greater than receiveBufferSize");
+        return false;
+    }
+
     if (!apply_tls_config())
     {
         // TODO decide wether the Transport initialization should keep working after this error
@@ -474,8 +512,12 @@ bool TCPTransportInterface::init(
     }
 
     // Check system buffer sizes.
-    if (configuration()->sendBufferSize == 0)
+    uint32_t send_size = 0;
+    uint32_t recv_size = 0;
+    if (!asio_helpers::configure_buffer_sizes(
+                *initial_peer_local_locator_socket_, *configuration(), send_size, recv_size))
     {
+<<<<<<< HEAD
         socket_base::send_buffer_size option;
         initial_peer_local_locator_socket_->get_option(option);
         set_send_buffer_size(option.value());
@@ -501,20 +543,26 @@ bool TCPTransportInterface::init(
     if (configuration()->maxMessageSize > s_maximumMessageSize)
     {
         EPROSIMA_LOG_ERROR(RTCP_MSG_OUT, "maxMessageSize cannot be greater than 65000");
+=======
+        EPROSIMA_LOG_ERROR(TRANSPORT_TCP, "Couldn't set buffer sizes to minimum value: " << cfg_max_msg_size);
+>>>>>>> 53cd211a8 (Handle errors when setting socket buffer sizes (#4760) (#4796))
         return false;
     }
 
-    if (configuration()->maxMessageSize > configuration()->sendBufferSize)
+    if (cfg_send_size > 0 && send_size != cfg_send_size)
     {
-        EPROSIMA_LOG_ERROR(RTCP_MSG_OUT, "maxMessageSize cannot be greater than send_buffer_size");
-        return false;
+        EPROSIMA_LOG_WARNING(TRANSPORT_TCP, "UDPTransport sendBufferSize could not be set to the desired value. "
+                << "Using " << send_size << " instead of " << cfg_send_size);
     }
 
-    if (configuration()->maxMessageSize > configuration()->receiveBufferSize)
+    if (cfg_recv_size > 0 && recv_size != cfg_recv_size)
     {
-        EPROSIMA_LOG_ERROR(RTCP_MSG_OUT, "maxMessageSize cannot be greater than receive_buffer_size");
-        return false;
+        EPROSIMA_LOG_WARNING(TRANSPORT_TCP, "UDPTransport receiveBufferSize could not be set to the desired value. "
+                << "Using " << recv_size << " instead of " << cfg_recv_size);
     }
+
+    set_send_buffer_size(send_size);
+    set_receive_buffer_size(recv_size);
 
     if (!rtcp_message_manager_)
     {
