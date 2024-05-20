@@ -432,6 +432,7 @@ target_compile_definitions(XMLLoadFileTests PRIVATE
     $<$<BOOL:${MSVC}>:NOMINMAX> # avoid conflict with std::min & std::max in visual studio
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+    HAVE_LOG_NO_INFO=0 FASTDDS_ENFORCE_LOG_INFO # Need LOG_INFO in this test
     )
 target_include_directories(XMLLoadFileTests PRIVATE
     ${PROJECT_SOURCE_DIR}/test/mock/dds/TypeObjectRegistry
