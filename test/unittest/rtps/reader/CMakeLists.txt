@@ -78,6 +78,7 @@ target_compile_definitions(WriterProxyAcknackTests PRIVATE
     RETURN_VALID_PARTICIPANT
     )
 target_include_directories(WriterProxyAcknackTests PRIVATE
+    ${Asio_INCLUDE_DIR}
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/reader
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/Endpoint
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/ExternalLocatorsProcessor
