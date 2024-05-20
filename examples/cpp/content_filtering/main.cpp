@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file CustomFilter_main.cpp
+ * @file main.cpp
  *
  */
 
@@ -22,8 +22,8 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <optionparser.hpp>
 
-#include "ContentFilteredTopicExamplePublisher.hpp"
-#include "ContentFilteredTopicExampleSubscriber.hpp"
+#include "PublisherApp.hpp"
+#include "SubscriberApp.hpp"
 
 using eprosima::fastdds::dds::Log;
 namespace option = eprosima::option;

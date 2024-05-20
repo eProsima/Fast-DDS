@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * @file ContentFilteredTopicExampleSubscriber.cpp
+ * @file SubscriberApp.cpp
  *
  */
 
-#include "ContentFilteredTopicExampleSubscriber.hpp"
+#include "SubscriberApp.hpp"
 
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>

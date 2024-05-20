@@ -13,12 +13,12 @@
 // limitations under the License.
 
 /**
- * @file ContentFilteredTopicExamplePublisher.hpp
+ * @file PublisherApp.hpp
  *
  */
 
-#ifndef _CONTENTFILTEREDTOPICEXAMPLEPUBLISHER_H_
-#define _CONTENTFILTEREDTOPICEXAMPLEPUBLISHER_H_
+#ifndef _CONTENT_FILTER_PUBLISHER_H_
+#define _CONTENT_FILTER_PUBLISHER_H_
 
 #include <atomic>
 
@@ -96,4 +96,4 @@ private:
 
 };
 
-#endif // _CONTENTFILTEREDTOPICEXAMPLEPUBLISHER_H_
+#endif // _CONTENT_FILTER_PUBLISHER_H_

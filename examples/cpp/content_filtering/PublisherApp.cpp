@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * @file ContentFilteredTopicExamplePublisher.cpp
+ * @file PublisherApp.cpp
  *
  */
 
-#include "ContentFilteredTopicExamplePublisher.hpp"
+#include "PublisherApp.hpp"
 
 #include <thread>
 

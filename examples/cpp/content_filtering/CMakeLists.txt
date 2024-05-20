@@ -14,7 +14,7 @@
 
 cmake_minimum_required(VERSION 3.20)
 
-project("ContentFilterTopic" VERSION 1 LANGUAGES CXX)
+project(fastdds_content_filtering_example VERSION 1 LANGUAGES CXX)
 
 # Find requirements
 if(NOT fastcdr_FOUND)
@@ -25,22 +25,17 @@ if(NOT fastdds_FOUND)
     find_package(fastdds 3 REQUIRED)
 endif()
 
-message(STATUS "Configuring ContentFilterTopic examples...")
+message(STATUS "Configuring content filtering example...")
 
-set(CFT_COMMON_SOURCES
-    ContentFilteredTopicExample_main.cpp
-    ContentFilteredTopicExamplePublisher.cpp
-    ContentFilteredTopicExampleSubscriber.cpp
-    HelloWorldPubSubTypes.cxx
-    HelloWorldTypeObjectSupport.cxx
-    )
+file(GLOB HELLO_WORLD_SOURCES_CXX "*.cxx")
+file(GLOB HELLO_WORLD_SOURCES_CPP "*.cpp")
 
-add_executable(DDSContentFilteredTopicExample ${CFT_COMMON_SOURCES})
-target_compile_definitions(DDSContentFilteredTopicExample PRIVATE
+add_executable(content_filtering ${HELLO_WORLD_SOURCES_CXX} ${HELLO_WORLD_SOURCES_CPP})
+target_compile_definitions(content_filtering PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
 )
-target_compile_features(DDSContentFilteredTopicExample PRIVATE cxx_std_11)
-target_link_libraries(DDSContentFilteredTopicExample fastdds fastcdr fastdds::optionparser)
-install(TARGETS DDSContentFilteredTopicExample
-    RUNTIME DESTINATION examples/cpp/dds/ContentFilteredTopicExample/${BIN_INSTALL_DIR})
+target_compile_features(content_filtering PRIVATE cxx_std_11)
+target_link_libraries(content_filtering fastdds fastcdr fastdds::optionparser)
+install(TARGETS content_filtering
+    RUNTIME DESTINATION ${DATA_INSTALL_DIR}/fastdds/examples/cpp/content_filtering/${BIN_INSTALL_DIR})

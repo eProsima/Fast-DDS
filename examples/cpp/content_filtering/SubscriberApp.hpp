@@ -13,12 +13,12 @@
 // limitations under the License.
 
 /**
- * @file ContentFilteredTopicExampleSubscriber.hpp
+ * @file SubscriberApp.hpp
  *
  */
 
-#ifndef _CONTENTFILTEREDTOPICEXAMPLESUBSCRIBER_HPP_
-#define _CONTENTFILTEREDTOPICEXAMPLESUBSCRIBER_HPP_
+#ifndef _CONTENT_FILTER_SUBSCRIBER_H_
+#define _CONTENT_FILTER_SUBSCRIBER_H_
 
 #include <atomic>
 
@@ -103,4 +103,4 @@ private:
 
 };
 
-#endif // _CONTENTFILTEREDTOPICEXAMPLESUBSCRIBER_HPP_
+#endif // _CONTENT_FILTER_SUBSCRIBER_H_
