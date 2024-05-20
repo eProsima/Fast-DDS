@@ -140,6 +140,85 @@ TEST(BuiltinDataSerializationTests, ok_with_defaults)
     }
 }
 
+TEST(BuiltinDataSerializationTests, msg_without_datasharing)
+{
+    {
+        uint8_t data_r_buffer[] =
+        {
+            // Encapsulation
+            0x00, 0x03, 0x00, 0x00
+        };
+
+        CDRMessage_t msg(0);
+        msg.init(data_r_buffer, static_cast<uint32_t>(sizeof(data_r_buffer)));
+        msg.length = msg.max_size;
+
+        ReaderProxyData out(max_unicast_locators, max_multicast_locators);
+        out.readFromCDRMessage(&msg, network, false, true);
+        ASSERT_EQ(out.m_qos.data_sharing.kind(), OFF);
+    }
+
+    {
+        uint8_t data_w_buffer[] =
+        {
+            // Encapsulation
+            0x00, 0x03, 0x00, 0x00
+
+        };
+
+        CDRMessage_t msg(0);
+        msg.init(data_w_buffer, static_cast<uint32_t>(sizeof(data_w_buffer)));
+        msg.length = msg.max_size;
+
+        ReaderProxyData out(max_unicast_locators, max_multicast_locators);
+        out.readFromCDRMessage(&msg, network, false, true);
+        ASSERT_EQ(out.m_qos.data_sharing.kind(), OFF);
+    }
+}
+
+TEST(BuiltinDataSerializationTests, msg_with_datasharing)
+{
+    {
+        uint8_t data_r_buffer[] =
+        {
+            // Encapsulation
+            0x00, 0x03, 0x00, 0x00,
+            //Data Sharing
+            0x06, 0x80, 0x0c, 0x00,
+            0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x6c, 0x9b, 0xf9, 0xbe, 0x1c, 0xb8
+
+        };
+
+        CDRMessage_t msg(0);
+        msg.init(data_r_buffer, static_cast<uint32_t>(sizeof(data_r_buffer)));
+        msg.length = msg.max_size;
+
+        ReaderProxyData out(max_unicast_locators, max_multicast_locators);
+        out.readFromCDRMessage(&msg, network, false, true);
+        ASSERT_EQ(out.m_qos.data_sharing.kind(), ON);
+    }
+
+    {
+        uint8_t data_w_buffer[] =
+        {
+            // Encapsulation
+            0x00, 0x03, 0x00, 0x00,
+            //Data Sharing
+            0x06, 0x80, 0x0c, 0x00,
+            0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x6c, 0x9b, 0xf9, 0xbe, 0x1c, 0xb8
+
+        };
+
+        CDRMessage_t msg(0);
+        msg.init(data_w_buffer, static_cast<uint32_t>(sizeof(data_w_buffer)));
+        msg.length = msg.max_size;
+
+        ReaderProxyData out(max_unicast_locators, max_multicast_locators);
+        out.readFromCDRMessage(&msg, network, false, true);
+        ASSERT_EQ(out.m_qos.data_sharing.kind(), ON);
+    }
+}
+
 // Regression test for redmine issue #10547
 TEST(BuiltinDataSerializationTests, ignore_unsupported_type_info)
 {
@@ -617,7 +696,7 @@ TEST(BuiltinDataSerializationTests, other_vendor_parameter_list_with_custom_pids
         writer_pdata.m_qos.data_sharing.off();
         writer_pdata.m_qos.data_sharing.set_max_domains(0);
         writer_read(data_buffer, buffer_length, writer_pdata);
-        ASSERT_EQ(writer_pdata.m_qos.data_sharing, DataSharingQosPolicy());
+        ASSERT_EQ(writer_pdata.m_qos.data_sharing.kind(), OFF);
 
         // ReaderProxyData check
         ReaderProxyData reader_pdata(max_unicast_locators, max_multicast_locators);
@@ -625,7 +704,7 @@ TEST(BuiltinDataSerializationTests, other_vendor_parameter_list_with_custom_pids
         reader_pdata.m_qos.data_sharing.set_max_domains(0);
         reader_pdata.m_qos.m_disablePositiveACKs.enabled = false;
         reader_read(data_buffer, buffer_length, reader_pdata);
-        ASSERT_EQ(reader_pdata.m_qos.data_sharing, DataSharingQosPolicy());
+        ASSERT_EQ(reader_pdata.m_qos.data_sharing.kind(), OFF);
 
         // CacheChange_t check
         CacheChange_t change;
