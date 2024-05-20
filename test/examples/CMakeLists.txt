@@ -61,8 +61,8 @@ endif()
 # Configure TinyXML2 library path if installed in user library path
 if(NOT (TINYXML2_FROM_SOURCE OR TINYXML2_FROM_THIRDPARTY))
     get_filename_component(TINYXML2_LIB_DIR ${TINYXML2_LIBRARY} DIRECTORY)
-    set(TINYXML2_LIB_DIR_COMPOSE_VOLUME "- ${TINYXML2_LIB_DIR}:/usr/local/shared/fastdds:ro")
-    set(TINYXML2_LIB_DIR_COMPOSE_LD_LIBRARY_PATH ":/usr/local/shared/fastdds")
+    set(TINYXML2_LIB_DIR_COMPOSE_VOLUME "- ${TINYXML2_LIB_DIR}:${CMAKE_INSTALL_PREFIX}/${DATA_INSTALL_DIR}/fastdds:ro")
+    set(TINYXML2_LIB_DIR_COMPOSE_LD_LIBRARY_PATH ":${CMAKE_INSTALL_PREFIX}/${DATA_INSTALL_DIR}/fastdds")
 endif()
 
 # Find all docker compose yml files for testing
