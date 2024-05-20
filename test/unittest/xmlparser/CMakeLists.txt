@@ -429,7 +429,9 @@ add_executable(XMLLoadFileTests ${XMLLOADFILE_SOURCE})
 target_compile_definitions(XMLLoadFileTests PRIVATE
     BOOST_ASIO_STANDALONE
     ASIO_STANDALONE
-    $<$<BOOL:${MSVC}>:NOMINMAX> # avoid conflic with std::min & std::max in visual studio
+    $<$<BOOL:${MSVC}>:NOMINMAX> # avoid conflict with std::min & std::max in visual studio
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
 target_include_directories(XMLLoadFileTests PRIVATE
     ${PROJECT_SOURCE_DIR}/test/mock/dds/TypeObjectRegistry
