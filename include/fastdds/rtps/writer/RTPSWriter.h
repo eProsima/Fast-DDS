@@ -32,24 +32,13 @@
 #include <fastdds/rtps/Endpoint.h>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
 #include <fastdds/rtps/messages/RTPSMessageGroup.h>
-<<<<<<< HEAD
-=======
 #include <fastdds/statistics/rtps/monitor_service/connections_fwd.hpp>
 #include <fastdds/statistics/rtps/StatisticsCommon.hpp>
 #include <fastrtps/qos/LivelinessLostStatus.h>
 
 
->>>>>>> fb841b9a1 (Refactor IStatusQueryable and make monitor service interfaces private (#4651))
 #include "DeliveryRetCode.hpp"
 #include "LocatorSelectorSender.hpp"
-#include <fastrtps/qos/LivelinessLostStatus.h>
-
-#include <fastdds/statistics/rtps/StatisticsCommon.hpp>
-
-#ifdef FASTDDS_STATISTICS
-#include <fastdds/statistics/rtps/monitor_service/interfaces/IConnectionsQueryable.hpp>
-#include <fastdds/statistics/rtps/monitor_service/interfaces/IConnectionsObserver.hpp>
-#endif // ifdef FASTDDS_STATISTICS
 
 namespace eprosima {
 
