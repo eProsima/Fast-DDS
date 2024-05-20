@@ -144,7 +144,7 @@ TEST(BuiltinDataSerializationTests, msg_without_datasharing)
         msg.length = msg.max_size;
 
         ReaderProxyData out(max_unicast_locators, max_multicast_locators);
-        out.readFromCDRMessage(&msg, network, false, true);
+        out.readFromCDRMessage(&msg, network, true);
         ASSERT_EQ(out.m_qos.data_sharing.kind(), OFF);
     }
 
@@ -161,7 +161,7 @@ TEST(BuiltinDataSerializationTests, msg_without_datasharing)
         msg.length = msg.max_size;
 
         ReaderProxyData out(max_unicast_locators, max_multicast_locators);
-        out.readFromCDRMessage(&msg, network, false, true);
+        out.readFromCDRMessage(&msg, network, true);
         ASSERT_EQ(out.m_qos.data_sharing.kind(), OFF);
     }
 }
@@ -184,7 +184,7 @@ TEST(BuiltinDataSerializationTests, msg_with_datasharing)
         msg.length = msg.max_size;
 
         ReaderProxyData out(max_unicast_locators, max_multicast_locators);
-        out.readFromCDRMessage(&msg, network, false, true);
+        out.readFromCDRMessage(&msg, network, true);
         ASSERT_EQ(out.m_qos.data_sharing.kind(), ON);
     }
 
@@ -204,7 +204,7 @@ TEST(BuiltinDataSerializationTests, msg_with_datasharing)
         msg.length = msg.max_size;
 
         ReaderProxyData out(max_unicast_locators, max_multicast_locators);
-        out.readFromCDRMessage(&msg, network, false, true);
+        out.readFromCDRMessage(&msg, network, true);
         ASSERT_EQ(out.m_qos.data_sharing.kind(), ON);
     }
 }
