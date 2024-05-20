@@ -169,7 +169,7 @@ inline uint32_t get_statistics_message_pos(
 }
 
 inline bool is_statistics_buffer(
-        const NetworkBuffer& stat_buffer)
+        const eprosima::fastdds::rtps::NetworkBuffer& stat_buffer)
 {
     return statistics_submessage_length == stat_buffer.size &&
            FASTDDS_STATISTICS_NETWORK_SUBMESSAGE ==
@@ -228,7 +228,7 @@ inline void set_statistics_submessage_from_transport(
 }
 
 inline bool remove_statistics_buffer(
-        const NetworkBuffer& stat_buffer,
+        const eprosima::fastdds::rtps::NetworkBuffer& stat_buffer,
         uint32_t& total_bytes)
 {
     static_cast<void>(stat_buffer);

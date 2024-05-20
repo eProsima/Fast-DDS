@@ -439,7 +439,6 @@ std::shared_ptr<SharedMemManager::Buffer> SharedMemTransport::copy_to_shared_buf
     {
         // Direct copy from the const_buffer to the mutable shared_buffer
         memcpy(pos, (it->buffer), it->size);
-        // Static cast to avoid pointer arithmetic on void*
         pos += it->size;
     }
 

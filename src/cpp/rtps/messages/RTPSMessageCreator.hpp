@@ -26,13 +26,11 @@
 #include <fastdds/rtps/common/VendorId_t.hpp>
 #include <fastdds/rtps/network/NetworkBuffer.hpp>
 
-using NetworkBuffer = eprosima::fastdds::rtps::NetworkBuffer;
-
-#include <rtps/messages/CDRMessage.hpp>
-
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
+
+using NetworkBuffer = eprosima::fastdds::rtps::NetworkBuffer;
 
 //!An interface to add inline qos parameters to a CDRMessage
 class InlineQosWriter

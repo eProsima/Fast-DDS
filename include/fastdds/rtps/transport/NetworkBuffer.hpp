@@ -43,11 +43,7 @@ struct NetworkBuffer final
     //! Number of bytes to use starting at @c buffer.
     uint32_t size = 0;
 
-    NetworkBuffer()
-        : buffer(nullptr)
-        , size(0)
-    {
-    }
+    NetworkBuffer() = default;
 
     NetworkBuffer(
             const fastrtps::rtps::octet* ptr,
