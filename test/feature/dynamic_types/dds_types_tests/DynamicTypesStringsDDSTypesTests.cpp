@@ -18,6 +18,7 @@
 
 #include "../DynamicTypesDDSTypesTest.hpp"
 #include "../../../dds-types-test/stringsPubSubTypes.h"
+#include "../../../dds-types-test/stringsTypeObjectSupport.hpp"
 #include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
@@ -70,10 +71,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StringStruct)
     for (auto encoding : encodings)
     {
         StringStruct struct_data;
-        StringStructPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new StringStructPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_string8(), test_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_StringStruct_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -104,10 +109,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_WStringStruct)
     for (auto encoding : encodings)
     {
         WStringStruct struct_data;
-        WStringStructPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new WStringStructPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_string16(), test_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_WStringStruct_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -137,10 +146,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SmallStringStruct)
     for (auto encoding : encodings)
     {
         SmallStringStruct struct_data;
-        SmallStringStructPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new SmallStringStructPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_small_string(), test_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_SmallStringStruct_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -170,10 +183,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SmallWStringStruct)
     for (auto encoding : encodings)
     {
         SmallWStringStruct struct_data;
-        SmallWStringStructPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new SmallWStringStructPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_small_wstring(), test_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_SmallWStringStruct_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -203,10 +220,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_LargeStringStruct)
     for (auto encoding : encodings)
     {
         LargeStringStruct struct_data;
-        LargeStringStructPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new LargeStringStructPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_large_string(), test_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_LargeStringStruct_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -236,10 +257,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_LargeWStringStruct)
     for (auto encoding : encodings)
     {
         LargeWStringStruct struct_data;
-        LargeWStringStructPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new LargeWStringStructPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_large_wstring(), test_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_LargeWStringStruct_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }

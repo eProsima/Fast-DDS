@@ -17,6 +17,7 @@
 #include "../DynamicTypesDDSTypesTest.hpp"
 #include "../../../dds-types-test/helpers/basic_inner_typesPubSubTypes.h"
 #include "../../../dds-types-test/bitsetsPubSubTypes.h"
+#include "../../../dds-types-test/bitsetsTypeObjectSupport.hpp"
 #include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
@@ -213,11 +214,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BitsetStruct)
     DynamicData::_ref_type var_innerbitsethelper_data =
             data->loan_value(data->get_member_id_by_name(var_innerbitsethelper_name));
     ASSERT_TRUE(var_innerbitsethelper_data);
-    EXPECT_EQ(var_innerbitsethelper_data->set_uint8_value(
-                var_innerbitsethelper_data->get_member_id_by_name(bitfield_a), uint8_value), RETCODE_OK);
-    EXPECT_EQ(var_innerbitsethelper_data->get_uint8_value(
-                test_uint8_value, var_innerbitsethelper_data->get_member_id_by_name(bitfield_a)), RETCODE_OK);
-    EXPECT_EQ(uint8_value, test_uint8_value);
+    EXPECT_EQ(var_innerbitsethelper_data->set_byte_value(
+                var_innerbitsethelper_data->get_member_id_by_name(bitfield_a), octet_value), RETCODE_OK);
+    EXPECT_EQ(var_innerbitsethelper_data->get_byte_value(
+                test_octet_value, var_innerbitsethelper_data->get_member_id_by_name(bitfield_a)), RETCODE_OK);
+    EXPECT_EQ(octet_value, test_octet_value);
     EXPECT_EQ(var_innerbitsethelper_data->set_boolean_value(
                 var_innerbitsethelper_data->get_member_id_by_name(bitfield_b), bool_value), RETCODE_OK);
     EXPECT_EQ(var_innerbitsethelper_data->get_boolean_value(
@@ -308,28 +309,32 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BitsetStruct)
     for (auto encoding : encodings)
     {
         BitsetStruct data_struct;
-        BitsetStructPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new BitsetStructPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, data_struct,
                 static_pubsubType);
-        EXPECT_EQ(data_struct.var_InnerBitsetHelper().a(), test_uint8_value);
-        EXPECT_EQ(data_struct.var_InnerBitsetHelper().b(), test_bool_value);
-        EXPECT_EQ(data_struct.var_InnerBitsetHelper().c(), test_ushort_value);
-        EXPECT_EQ(data_struct.var_InnerBitsetHelper().d(), test_short_value);
+        EXPECT_EQ(data_struct.var_InnerBitsetHelper().a, test_uint8_value);
+        EXPECT_EQ(data_struct.var_InnerBitsetHelper().b, test_bool_value);
+        EXPECT_EQ(data_struct.var_InnerBitsetHelper().c, test_ushort_value);
+        EXPECT_EQ(data_struct.var_InnerBitsetHelper().d, test_short_value);
 
-        EXPECT_EQ(data_struct.var_InnerTypedBitsetHelper().boolean_bitfield(), test_bool_value);
-        EXPECT_EQ(data_struct.var_InnerTypedBitsetHelper().byte_bitfield(), test_octet_value);
-        EXPECT_EQ(data_struct.var_InnerTypedBitsetHelper().int8_bitfield(), test_int8_value);
-        EXPECT_EQ(data_struct.var_InnerTypedBitsetHelper().uint8_bitfield(), test_uint8_value);
-        EXPECT_EQ(data_struct.var_InnerTypedBitsetHelper().short_bitfield(), test_short_value);
-        EXPECT_EQ(data_struct.var_InnerTypedBitsetHelper().ushort_bitfield(), test_ushort_value);
+        EXPECT_EQ(data_struct.var_InnerTypedBitsetHelper().boolean_bitfield, test_bool_value);
+        EXPECT_EQ(data_struct.var_InnerTypedBitsetHelper().byte_bitfield, test_octet_value);
+        EXPECT_EQ(data_struct.var_InnerTypedBitsetHelper().int8_bitfield, test_int8_value);
+        EXPECT_EQ(data_struct.var_InnerTypedBitsetHelper().uint8_bitfield, test_uint8_value);
+        EXPECT_EQ(data_struct.var_InnerTypedBitsetHelper().short_bitfield, test_short_value);
+        EXPECT_EQ(data_struct.var_InnerTypedBitsetHelper().ushort_bitfield, test_ushort_value);
 
-        EXPECT_EQ(data_struct.var_InnerTypedBitsetHelper2().long_bitfield(), test_long_value);
-        EXPECT_EQ(data_struct.var_InnerTypedBitsetHelper2().ulong_bitfield(), test_ulong_value);
+        EXPECT_EQ(data_struct.var_InnerTypedBitsetHelper2().long_bitfield, test_long_value);
+        EXPECT_EQ(data_struct.var_InnerTypedBitsetHelper2().ulong_bitfield, test_ulong_value);
 
-        EXPECT_EQ(data_struct.var_InnerTypedBitsetHelper3().long_long_bitfield(), test_long_long_value);
+        EXPECT_EQ(data_struct.var_InnerTypedBitsetHelper3().long_long_bitfield, test_long_long_value);
 
-        EXPECT_EQ(data_struct.var_InnerTypedBitsetHelper4().ulong_long_bitfield(), test_ulong_long_value);
+        EXPECT_EQ(data_struct.var_InnerTypedBitsetHelper4().ulong_long_bitfield, test_ulong_long_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_BitsetStruct_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }

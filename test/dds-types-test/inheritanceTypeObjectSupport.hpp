@@ -22,6 +22,8 @@
 #ifndef _FAST_DDS_GENERATED_INHERITANCE_TYPE_OBJECT_SUPPORT_HPP_
 #define _FAST_DDS_GENERATED_INHERITANCE_TYPE_OBJECT_SUPPORT_HPP_
 
+#include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
+
 #include "helpers/basic_inner_typesTypeObjectSupport.hpp"
 
 #if defined(_WIN32)
@@ -46,57 +48,97 @@ eProsima_user_DllExport void register_inheritance_type_objects();
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
+ *
+ * @param[out] TypeIdentifier of the registered type.
+ *             The returned TypeIdentifier corresponds to the complete TypeIdentifier in case of hashed TypeIdentifiers.
+ *             Invalid TypeIdentifier is returned in case of error.
  */
-eProsima_user_DllExport void register_InnerStructureHelperChild_type_identifier();
+eProsima_user_DllExport void register_InnerStructureHelperChild_type_identifier(
+        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
 /**
  * @brief Register InnerStructureHelperChildChild related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
+ *
+ * @param[out] TypeIdentifier of the registered type.
+ *             The returned TypeIdentifier corresponds to the complete TypeIdentifier in case of hashed TypeIdentifiers.
+ *             Invalid TypeIdentifier is returned in case of error.
  */
-eProsima_user_DllExport void register_InnerStructureHelperChildChild_type_identifier();
+eProsima_user_DllExport void register_InnerStructureHelperChildChild_type_identifier(
+        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
 /**
  * @brief Register InnerStructureHelperEmptyChild related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
+ *
+ * @param[out] TypeIdentifier of the registered type.
+ *             The returned TypeIdentifier corresponds to the complete TypeIdentifier in case of hashed TypeIdentifiers.
+ *             Invalid TypeIdentifier is returned in case of error.
  */
-eProsima_user_DllExport void register_InnerStructureHelperEmptyChild_type_identifier();
+eProsima_user_DllExport void register_InnerStructureHelperEmptyChild_type_identifier(
+        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
 /**
  * @brief Register InnerStructureHelperEmptyChildChild related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
+ *
+ * @param[out] TypeIdentifier of the registered type.
+ *             The returned TypeIdentifier corresponds to the complete TypeIdentifier in case of hashed TypeIdentifiers.
+ *             Invalid TypeIdentifier is returned in case of error.
  */
-eProsima_user_DllExport void register_InnerStructureHelperEmptyChildChild_type_identifier();
+eProsima_user_DllExport void register_InnerStructureHelperEmptyChildChild_type_identifier(
+        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
 /**
  * @brief Register InnerEmptyStructureHelperChild related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
+ *
+ * @param[out] TypeIdentifier of the registered type.
+ *             The returned TypeIdentifier corresponds to the complete TypeIdentifier in case of hashed TypeIdentifiers.
+ *             Invalid TypeIdentifier is returned in case of error.
  */
-eProsima_user_DllExport void register_InnerEmptyStructureHelperChild_type_identifier();
+eProsima_user_DllExport void register_InnerEmptyStructureHelperChild_type_identifier(
+        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
 /**
  * @brief Register StructAliasInheritanceStruct related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
+ *
+ * @param[out] TypeIdentifier of the registered type.
+ *             The returned TypeIdentifier corresponds to the complete TypeIdentifier in case of hashed TypeIdentifiers.
+ *             Invalid TypeIdentifier is returned in case of error.
  */
-eProsima_user_DllExport void register_StructAliasInheritanceStruct_type_identifier();
+eProsima_user_DllExport void register_StructAliasInheritanceStruct_type_identifier(
+        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
 /**
  * @brief Register StructuresInheritanceStruct related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
+ *
+ * @param[out] TypeIdentifier of the registered type.
+ *             The returned TypeIdentifier corresponds to the complete TypeIdentifier in case of hashed TypeIdentifiers.
+ *             Invalid TypeIdentifier is returned in case of error.
  */
-eProsima_user_DllExport void register_StructuresInheritanceStruct_type_identifier();
+eProsima_user_DllExport void register_StructuresInheritanceStruct_type_identifier(
+        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
 /**
  * @brief Register BitsetsChildInheritanceStruct related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
+ *
+ * @param[out] TypeIdentifier of the registered type.
+ *             The returned TypeIdentifier corresponds to the complete TypeIdentifier in case of hashed TypeIdentifiers.
+ *             Invalid TypeIdentifier is returned in case of error.
  */
-eProsima_user_DllExport void register_BitsetsChildInheritanceStruct_type_identifier();
+eProsima_user_DllExport void register_BitsetsChildInheritanceStruct_type_identifier(
+        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
 
 
 #endif // DOXYGEN_SHOULD_SKIP_THIS_PUBLIC

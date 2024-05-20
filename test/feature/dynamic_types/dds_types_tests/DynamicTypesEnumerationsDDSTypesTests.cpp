@@ -19,6 +19,7 @@
 #include "../DynamicTypesDDSTypesTest.hpp"
 #include "../../../dds-types-test/helpers/basic_inner_typesPubSubTypes.h"
 #include "../../../dds-types-test/enumerationsPubSubTypes.h"
+#include "../../../dds-types-test/enumerationsTypeObjectSupport.hpp"
 #include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
@@ -47,15 +48,15 @@ DynamicType::_ref_type create_scoped_inner_enum_helper()
     DynamicTypeBuilder::_ref_type enum_builder {DynamicTypeBuilderFactory::get_instance()->create_type(enum_descriptor)};
 
     MemberDescriptor::_ref_type enum_literal_descriptor {traits<MemberDescriptor>::make_shared()};
-    enum_literal_descriptor->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32));
+    enum_literal_descriptor->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32));
     enum_literal_descriptor->name(enum_value_1_name);
     enum_builder->add_member(enum_literal_descriptor);
     enum_literal_descriptor = traits<MemberDescriptor>::make_shared();
-    enum_literal_descriptor->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32));
+    enum_literal_descriptor->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32));
     enum_literal_descriptor->name(enum_value_2_name);
     enum_builder->add_member(enum_literal_descriptor);
     enum_literal_descriptor = traits<MemberDescriptor>::make_shared();
-    enum_literal_descriptor->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32));
+    enum_literal_descriptor->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32));
     enum_literal_descriptor->name(enum_value_3_name);
     enum_builder->add_member(enum_literal_descriptor);
 
@@ -86,28 +87,32 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_EnumStructure)
 
     InnerEnumHelper value = InnerEnumHelper::ENUM_VALUE_2;
     ::Test::InnerEnumHelper scoped_value = ::Test::InnerEnumHelper::ENUM_VALUE_3;
-    uint32_t test_value = 0;
-    uint32_t scoped_test_value = 0;
-    EXPECT_EQ(data->set_uint32_value(data->get_member_id_by_name(
-                var_innerenumhelper_name), static_cast<uint32_t>(value)), RETCODE_OK);
-    EXPECT_EQ(data->get_uint32_value(test_value, data->get_member_id_by_name(var_innerenumhelper_name)), RETCODE_OK);
-    EXPECT_EQ(static_cast<uint32_t>(value), test_value);
+    int32_t test_value = 0;
+    int32_t scoped_test_value = 0;
+    EXPECT_EQ(data->set_int32_value(data->get_member_id_by_name(
+                var_innerenumhelper_name), static_cast<int32_t>(value)), RETCODE_OK);
+    EXPECT_EQ(data->get_int32_value(test_value, data->get_member_id_by_name(var_innerenumhelper_name)), RETCODE_OK);
+    EXPECT_EQ(static_cast<int32_t>(value), test_value);
 
-    EXPECT_EQ(data->set_uint32_value(data->get_member_id_by_name(
-                var_scoped_innerenumhelper), static_cast<uint32_t>(scoped_value)), RETCODE_OK);
-    EXPECT_EQ(data->get_uint32_value(scoped_test_value, data->get_member_id_by_name(
+    EXPECT_EQ(data->set_int32_value(data->get_member_id_by_name(
+                var_scoped_innerenumhelper), static_cast<int32_t>(scoped_value)), RETCODE_OK);
+    EXPECT_EQ(data->get_int32_value(scoped_test_value, data->get_member_id_by_name(
                 var_scoped_innerenumhelper)), RETCODE_OK);
-    EXPECT_EQ(static_cast<uint32_t>(scoped_value), scoped_test_value);
+    EXPECT_EQ(static_cast<int32_t>(scoped_value), scoped_test_value);
 
     for (auto encoding : encodings)
     {
         EnumStructure struct_data;
-        EnumStructurePubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new EnumStructurePubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
-        EXPECT_EQ(static_cast<uint32_t>(struct_data.var_InnerEnumHelper()), test_value);
-        EXPECT_EQ(static_cast<uint32_t>(struct_data.var_scoped_InnerEnumHelper()), scoped_test_value);
+        EXPECT_EQ(static_cast<int32_t>(struct_data.var_InnerEnumHelper()), test_value);
+        EXPECT_EQ(static_cast<int32_t>(struct_data.var_scoped_InnerEnumHelper()), scoped_test_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_EnumStructure_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -139,11 +144,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BitMaskStructure)
     for (auto encoding : encodings)
     {
         BitMaskStructure struct_data;
-        BitMaskStructurePubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new BitMaskStructurePubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_InnerBitMaskHelper(), test_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_BitMaskStructure_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -177,11 +186,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BoundedBitMaskStructure)
     for (auto encoding : encodings)
     {
         BoundedBitMaskStructure struct_data;
-        BoundedBitMaskStructurePubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new BoundedBitMaskStructurePubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_InnerBoundedBitMaskHelper(), test_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_BoundedBitMaskStructure_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }

@@ -858,10 +858,6 @@ const CompleteTypeDetail TypeObjectUtils::build_complete_type_detail(
         const eprosima::fastcdr::optional<AppliedAnnotationSeq>& ann_custom,
         const QualifiedTypeName& type_name)
 {
-    if (type_name.size() == 0)
-    {
-        throw InvalidArgumentError("QualifiedTypeName cannot be empty");
-    }
 #if !defined(NDEBUG)
     if (ann_builtin.has_value())
     {
@@ -1694,43 +1690,47 @@ ReturnCode_t TypeObjectUtils::build_and_register_alias_type_object(
 #endif // !defined(NDEBUG)
     CompleteTypeObject type_object;
     type_object.alias_type(alias_type);
-    return type_object_registry_observer().register_type_object(type_name, type_object);
+    TypeIdentifier type_id;
+    return type_object_registry_observer().register_type_object(type_name, type_object, type_id);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_annotation_type_object(
         const CompleteAnnotationType& annotation_type,
-        const std::string& type_name)
+        const std::string& type_name,
+        TypeIdentifier& type_id)
 {
 #if !defined(NDEBUG)
     complete_annotation_type_consistency(annotation_type);
 #endif // !defined(NDEBUG)
     CompleteTypeObject type_object;
     type_object.annotation_type(annotation_type);
-    return type_object_registry_observer().register_type_object(type_name, type_object);
+    return type_object_registry_observer().register_type_object(type_name, type_object, type_id);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_struct_type_object(
         const CompleteStructType& struct_type,
-        const std::string& type_name)
+        const std::string& type_name,
+        TypeIdentifier& type_id)
 {
 #if !defined(NDEBUG)
     complete_struct_type_consistency(struct_type);
 #endif // !defined(NDEBUG)
     CompleteTypeObject type_object;
     type_object.struct_type(struct_type);
-    return type_object_registry_observer().register_type_object(type_name, type_object);
+    return type_object_registry_observer().register_type_object(type_name, type_object, type_id);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_union_type_object(
         const CompleteUnionType& union_type,
-        const std::string& type_name)
+        const std::string& type_name,
+        TypeIdentifier& type_id)
 {
 #if !defined(NDEBUG)
     complete_union_type_consistency(union_type);
 #endif // !defined(NDEBUG)
     CompleteTypeObject type_object;
     type_object.union_type(union_type);
-    return type_object_registry_observer().register_type_object(type_name, type_object);
+    return type_object_registry_observer().register_type_object(type_name, type_object, type_id);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_bitset_type_object(
@@ -1742,7 +1742,8 @@ ReturnCode_t TypeObjectUtils::build_and_register_bitset_type_object(
 #endif // !defined(NDEBUG)
     CompleteTypeObject type_object;
     type_object.bitset_type(bitset_type);
-    return type_object_registry_observer().register_type_object(type_name, type_object);
+    TypeIdentifier type_id;
+    return type_object_registry_observer().register_type_object(type_name, type_object, type_id);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_sequence_type_object(
@@ -1754,7 +1755,8 @@ ReturnCode_t TypeObjectUtils::build_and_register_sequence_type_object(
 #endif // !defined(NDEBUG)
     CompleteTypeObject type_object;
     type_object.sequence_type(sequence_type);
-    return type_object_registry_observer().register_type_object(type_name, type_object);
+    TypeIdentifier type_id;
+    return type_object_registry_observer().register_type_object(type_name, type_object, type_id);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_array_type_object(
@@ -1766,7 +1768,8 @@ ReturnCode_t TypeObjectUtils::build_and_register_array_type_object(
 #endif // !defined(NDEBUG)
     CompleteTypeObject type_object;
     type_object.array_type(array_type);
-    return type_object_registry_observer().register_type_object(type_name, type_object);
+    TypeIdentifier type_id;
+    return type_object_registry_observer().register_type_object(type_name, type_object, type_id);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_map_type_object(
@@ -1778,7 +1781,8 @@ ReturnCode_t TypeObjectUtils::build_and_register_map_type_object(
 #endif // !defined(NDEBUG)
     CompleteTypeObject type_object;
     type_object.map_type(map_type);
-    return type_object_registry_observer().register_type_object(type_name, type_object);
+    TypeIdentifier type_id;
+    return type_object_registry_observer().register_type_object(type_name, type_object, type_id);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_enumerated_type_object(
@@ -1790,7 +1794,8 @@ ReturnCode_t TypeObjectUtils::build_and_register_enumerated_type_object(
 #endif // !defined(NDEBUG)
     CompleteTypeObject type_object;
     type_object.enumerated_type(enumerated_type);
-    return type_object_registry_observer().register_type_object(type_name, type_object);
+    TypeIdentifier type_id;
+    return type_object_registry_observer().register_type_object(type_name, type_object, type_id);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_bitmask_type_object(
@@ -1802,7 +1807,8 @@ ReturnCode_t TypeObjectUtils::build_and_register_bitmask_type_object(
 #endif // !defined(NDEBUG)
     CompleteTypeObject type_object;
     type_object.bitmask_type(bitmask_type);
-    return type_object_registry_observer().register_type_object(type_name, type_object);
+    TypeIdentifier type_id;
+    return type_object_registry_observer().register_type_object(type_name, type_object, type_id);
 }
 
 const NameHash TypeObjectUtils::name_hash(
@@ -2538,10 +2544,6 @@ void TypeObjectUtils::applied_builtin_type_annotations_consistency(
 void TypeObjectUtils::complete_type_detail_consistency(
         const CompleteTypeDetail& complete_type_detail)
 {
-    if (complete_type_detail.type_name().size() == 0)
-    {
-        throw InvalidArgumentError("QualifiedTypeName cannot be empty");
-    }
     if (complete_type_detail.ann_builtin().has_value())
     {
         applied_builtin_type_annotations_consistency(complete_type_detail.ann_builtin().value());

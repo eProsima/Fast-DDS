@@ -23,6 +23,7 @@
 #include "../DynamicTypesDDSTypesTest.hpp"
 #include "../../../dds-types-test/helpers/basic_inner_types.hpp"
 #include "../../../dds-types-test/mapsPubSubTypes.h"
+#include "../../../dds-types-test/mapsTypeObjectSupport.hpp"
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
@@ -151,7 +152,7 @@ constexpr const char* const ulong_innerstructurehelper_map_struct_name = "MapULo
 constexpr const char* const ulong_innerbitsethelper_map_struct_name = "MapULongInnerBitsetHelper";
 constexpr const char* const longlong_short_map_struct_name = "MapLongLongShort";
 constexpr const char* const longlong_ushort_map_struct_name = "MapLongLongUShort";
-constexpr const char* const longlong_long_map_struct_name = "MapLongKeyLongLongValue";
+constexpr const char* const longlong_long_map_struct_name = "MapLongLongKeyLongValue";
 constexpr const char* const longlong_ulong_map_struct_name = "MapLongLongULong";
 constexpr const char* const longlong_longlong_map_struct_name = "MapLongLongLongLong";
 constexpr const char* const longlong_ulonglong_map_struct_name = "MapLongLongULongLong";
@@ -431,11 +432,11 @@ constexpr const char* const var_ulonglong_short_map = "var_map_u_long_long_short
 constexpr const char* const var_ulonglong_ushort_map = "var_map_u_long_long_u_short";
 constexpr const char* const var_ulonglong_long_map = "var_map_u_long_long_long";
 constexpr const char* const var_ulonglong_ulong_map = "var_map_u_long_long_u_long";
-constexpr const char* const var_ulonglong_longlong_map = "var_map_u_long_long_longlong";
-constexpr const char* const var_ulonglong_ulonglong_map = "var_map_u_long_long_u_longlong";
+constexpr const char* const var_ulonglong_longlong_map = "var_map_u_long_long_long_long";
+constexpr const char* const var_ulonglong_ulonglong_map = "var_map_u_long_long_u_long_long";
 constexpr const char* const var_ulonglong_float_map = "var_map_u_long_long_float";
 constexpr const char* const var_ulonglong_double_map = "var_map_u_long_long_double";
-constexpr const char* const var_ulonglong_longdouble_map = "var_map_u_long_long_long double";
+constexpr const char* const var_ulonglong_longdouble_map = "var_map_u_long_long_long_double";
 constexpr const char* const var_ulonglong_boolean_map = "var_map_u_long_long_boolean";
 constexpr const char* const var_ulonglong_octet_map = "var_map_u_long_long_octet";
 constexpr const char* const var_ulonglong_char_map = "var_map_u_long_long_char";
@@ -588,7 +589,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortShort)
     for (auto encoding : encodings)
     {
         MapShortShort struct_data;
-        MapShortShortPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapShortShortPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_short_short().size());
@@ -599,6 +600,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortShort)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapShortShort_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -653,7 +658,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortUShort)
     for (auto encoding : encodings)
     {
         MapShortUShort struct_data;
-        MapShortUShortPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapShortUShortPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_short_ushort().size());
@@ -664,6 +669,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortUShort)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapShortUShort_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -718,7 +727,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortLong)
     for (auto encoding : encodings)
     {
         MapShortLong struct_data;
-        MapShortLongPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapShortLongPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_short_long().size());
@@ -729,6 +738,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortLong)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapShortLong_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -783,7 +796,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortULong)
     for (auto encoding : encodings)
     {
         MapShortULong struct_data;
-        MapShortULongPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapShortULongPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_short_ulong().size());
@@ -794,6 +807,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortULong)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapShortULong_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -848,7 +865,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortLongLong)
     for (auto encoding : encodings)
     {
         MapShortLongLong struct_data;
-        MapShortLongLongPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapShortLongLongPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_short_longlong().size());
@@ -859,6 +876,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortLongLong)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapShortLongLong_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -913,7 +934,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortULongLong)
     for (auto encoding : encodings)
     {
         MapShortULongLong struct_data;
-        MapShortULongLongPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapShortULongLongPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_short_ulonglong().size());
@@ -924,6 +945,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortULongLong)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapShortULongLong_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -978,7 +1003,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortFloat)
     for (auto encoding : encodings)
     {
         MapShortFloat struct_data;
-        MapShortFloatPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapShortFloatPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_short_float().size());
@@ -989,6 +1014,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortFloat)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapShortFloat_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -1043,7 +1072,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortDouble)
     for (auto encoding : encodings)
     {
         MapShortDouble struct_data;
-        MapShortDoublePubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapShortDoublePubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_short_double().size());
@@ -1054,6 +1083,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortDouble)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapShortDouble_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -1108,7 +1141,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortLongDouble)
     for (auto encoding : encodings)
     {
         MapShortLongDouble struct_data;
-        MapShortLongDoublePubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapShortLongDoublePubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_short_longdouble().size());
@@ -1119,6 +1152,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortLongDouble)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapShortLongDouble_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -1173,7 +1210,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortBoolean)
     for (auto encoding : encodings)
     {
         MapShortBoolean struct_data;
-        MapShortBooleanPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapShortBooleanPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_short_boolean().size());
@@ -1184,6 +1221,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortBoolean)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapShortBoolean_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -1238,7 +1279,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortOctet)
     for (auto encoding : encodings)
     {
         MapShortOctet struct_data;
-        MapShortOctetPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapShortOctetPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_short_octet().size());
@@ -1249,6 +1290,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortOctet)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapShortOctet_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -1303,7 +1348,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortChar)
     for (auto encoding : encodings)
     {
         MapShortChar struct_data;
-        MapShortCharPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapShortCharPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_short_char().size());
@@ -1314,6 +1359,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortChar)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapShortChar_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -1368,7 +1417,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortWChar)
     for (auto encoding : encodings)
     {
         MapShortWChar struct_data;
-        MapShortWCharPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapShortWCharPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_short_wchar().size());
@@ -1379,6 +1428,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortWChar)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapShortWChar_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -1434,7 +1487,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortString)
     for (auto encoding : encodings)
     {
         MapShortString struct_data;
-        MapShortStringPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapShortStringPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_short_string().size());
@@ -1445,6 +1498,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortString)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapShortString_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -1500,7 +1557,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortWString)
     for (auto encoding : encodings)
     {
         MapShortWString struct_data;
-        MapShortWStringPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapShortWStringPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_short_wstring().size());
@@ -1511,6 +1568,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortWString)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapShortWString_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -1565,7 +1626,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerAliasBoundedStringHel
     for (auto encoding : encodings)
     {
         MapShortInnerAliasBoundedStringHelper struct_data;
-        MapShortInnerAliasBoundedStringHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapShortInnerAliasBoundedStringHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_short_inneraliasboundedstringhelper().size());
@@ -1576,6 +1637,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerAliasBoundedStringHel
             EXPECT_EQ(map_element.second, it->second.to_string());
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapShortInnerAliasBoundedStringHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -1630,7 +1695,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerAliasBoundedWStringHe
     for (auto encoding : encodings)
     {
         MapShortInnerAliasBoundedWStringHelper struct_data;
-        MapShortInnerAliasBoundedWStringHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapShortInnerAliasBoundedWStringHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_short_inneraliasboundedwstringhelper().size());
@@ -1641,6 +1706,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerAliasBoundedWStringHe
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapShortInnerAliasBoundedWStringHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -1672,21 +1741,21 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerEnumHelper)
         {std::int16_t(600), InnerEnumHelper::ENUM_VALUE_3},
         {std::int16_t(-50), InnerEnumHelper::ENUM_VALUE_2}
     };
-    uint32_t test_value;
+    int32_t test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_short_innerenumhelper_map));
     ASSERT_TRUE(map_data);
     // Set values
     for (auto const& map_element : value)
     {
         EXPECT_EQ(RETCODE_OK,
-                map_data->set_uint32_value(map_data->get_member_id_by_name(std::to_string(map_element.first)),
-                static_cast<uint32_t>(map_element.second)));
+                map_data->set_int32_value(map_data->get_member_id_by_name(std::to_string(map_element.first)),
+                static_cast<int32_t>(map_element.second)));
     }
     // Check values
     for (auto const& map_element : value)
     {
         EXPECT_EQ(RETCODE_OK,
-                map_data->get_uint32_value(test_value, map_data->get_member_id_by_name(std::to_string(
+                map_data->get_int32_value(test_value, map_data->get_member_id_by_name(std::to_string(
                     map_element.first))));
         EXPECT_EQ(map_element.second, static_cast<InnerEnumHelper>(test_value));
     }
@@ -1695,7 +1764,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerEnumHelper)
     for (auto encoding : encodings)
     {
         MapShortInnerEnumHelper struct_data;
-        MapShortInnerEnumHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapShortInnerEnumHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_short_innerenumhelper().size());
@@ -1706,6 +1775,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerEnumHelper)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapShortInnerEnumHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -1760,7 +1833,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerBitMaskHelper)
     for (auto encoding : encodings)
     {
         MapShortInnerBitMaskHelper struct_data;
-        MapShortInnerBitMaskHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapShortInnerBitMaskHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_short_innerbitmaskhelper().size());
@@ -1771,6 +1844,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerBitMaskHelper)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapShortInnerBitMaskHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -1825,7 +1902,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerAliasHelper)
     for (auto encoding : encodings)
     {
         MapShortInnerAliasHelper struct_data;
-        MapShortInnerAliasHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapShortInnerAliasHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_short_inneraliashelper().size());
@@ -1836,6 +1913,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerAliasHelper)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapShortInnerAliasHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -1890,7 +1971,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerAliasArrayHelper)
     for (auto encoding : encodings)
     {
         MapShortInnerAliasArrayHelper struct_data;
-        MapShortInnerAliasArrayHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapShortInnerAliasArrayHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_short_inneraliasarrayhelper().size());
@@ -1901,6 +1982,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerAliasArrayHelper)
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapShortInnerAliasArrayHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -1955,7 +2040,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerAliasSequenceHelper)
     for (auto encoding : encodings)
     {
         MapShortInnerAliasSequenceHelper struct_data;
-        MapShortInnerAliasSequenceHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapShortInnerAliasSequenceHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_short_inneraliassequencehelper().size());
@@ -1966,6 +2051,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerAliasSequenceHelper)
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapShortInnerAliasSequenceHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -2045,7 +2134,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerAliasMapHelper)
     for (auto encoding : encodings)
     {
         MapShortInnerAliasMapHelper struct_data;
-        MapShortInnerAliasMapHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapShortInnerAliasMapHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_short_inneraliasmaphelper().size());
@@ -2056,6 +2145,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerAliasMapHelper)
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapShortInnerAliasMapHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -2118,7 +2211,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerUnionHelper)
     for (auto encoding : encodings)
     {
         MapShortInnerUnionHelper struct_data;
-        MapShortInnerUnionHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapShortInnerUnionHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_short_innerunionhelper().size());
@@ -2141,6 +2234,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerUnionHelper)
 
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapShortInnerUnionHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -2211,7 +2308,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerStructureHelper)
     for (auto encoding : encodings)
     {
         MapShortInnerStructureHelper struct_data;
-        MapShortInnerStructureHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapShortInnerStructureHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_short_innerstructurehelper().size());
@@ -2223,6 +2320,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerStructureHelper)
             EXPECT_EQ(map_element.second.second, it->second.field2());
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapShortInnerStructureHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -2248,12 +2349,12 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerBitsetHelper)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    const std::unordered_map<int16_t, std::tuple<uint8_t, bool, uint16_t, int16_t>> value {
-        {std::int16_t(-100), {std::uint8_t(5), true, std::uint16_t(1000), std::int16_t(2000)}},
-        {std::int16_t(50), {std::uint8_t(7), false, std::uint16_t(555), std::int16_t(20)}},
-        {std::int16_t(600), {std::uint8_t(0), true, std::uint16_t(0), std::int16_t(0)}}
+    const std::unordered_map<int16_t, std::tuple<eprosima::fastrtps::rtps::octet, bool, uint16_t, int16_t>> value {
+        {std::int16_t(-100), {eprosima::fastrtps::rtps::octet(5), true, std::uint16_t(1000), std::int16_t(2000)}},
+        {std::int16_t(50), {eprosima::fastrtps::rtps::octet(7), false, std::uint16_t(555), std::int16_t(20)}},
+        {std::int16_t(600), {eprosima::fastrtps::rtps::octet(0), true, std::uint16_t(0), std::int16_t(0)}}
     };
-    uint8_t test_value1;
+    eprosima::fastrtps::rtps::octet test_value1;
     bool test_value2;
     uint16_t test_value3;
     int16_t test_value4;
@@ -2265,7 +2366,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerBitsetHelper)
         auto inner_bitset = map_data->loan_value(map_data->get_member_id_by_name(std::to_string(map_element.first)));
 
         EXPECT_EQ(RETCODE_OK,
-                inner_bitset->set_uint8_value(inner_bitset->get_member_id_by_name(bitfield_a),
+                inner_bitset->set_byte_value(inner_bitset->get_member_id_by_name(bitfield_a),
                 std::get<0>(map_element.second)));
         EXPECT_EQ(RETCODE_OK,
                 inner_bitset->set_boolean_value(inner_bitset->get_member_id_by_name(bitfield_b),
@@ -2285,7 +2386,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerBitsetHelper)
         auto inner_bitset = map_data->loan_value(map_data->get_member_id_by_name(std::to_string(map_element.first)));
 
         EXPECT_EQ(RETCODE_OK,
-                inner_bitset->get_uint8_value(test_value1,
+                inner_bitset->get_byte_value(test_value1,
                 inner_bitset->get_member_id_by_name(bitfield_a)));
         EXPECT_EQ(std::get<0>(map_element.second), test_value1);
         EXPECT_EQ(RETCODE_OK,
@@ -2308,7 +2409,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerBitsetHelper)
     for (auto encoding : encodings)
     {
         MapShortInnerBitsetHelper struct_data;
-        MapShortInnerBitsetHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapShortInnerBitsetHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_short_innerbitsethelper().size());
@@ -2316,12 +2417,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerBitsetHelper)
         {
             auto it = struct_data.var_map_short_innerbitsethelper().find(map_element.first);
             ASSERT_NE(struct_data.var_map_short_innerbitsethelper().end(), it);
-            EXPECT_EQ(std::get<0>(map_element.second), it->second.a());
-            EXPECT_EQ(std::get<1>(map_element.second), it->second.b());
-            EXPECT_EQ(std::get<2>(map_element.second), it->second.c());
-            EXPECT_EQ(std::get<3>(map_element.second), it->second.d());
+            EXPECT_EQ(std::get<0>(map_element.second), it->second.a);
+            EXPECT_EQ(std::get<1>(map_element.second), it->second.b);
+            EXPECT_EQ(std::get<2>(map_element.second), it->second.c);
+            EXPECT_EQ(std::get<3>(map_element.second), it->second.d);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapShortInnerBitsetHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -2378,7 +2483,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortShort)
     for (auto encoding : encodings)
     {
         MapUShortShort struct_data;
-        MapUShortShortPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapUShortShortPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ushort_short().size());
@@ -2389,6 +2494,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortShort)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapUShortShort_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -2443,7 +2552,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortUShort)
     for (auto encoding : encodings)
     {
         MapUShortUShort struct_data;
-        MapUShortUShortPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapUShortUShortPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ushort_ushort().size());
@@ -2454,6 +2563,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortUShort)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapUShortUShort_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -2508,7 +2621,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortLong)
     for (auto encoding : encodings)
     {
         MapUShortLong struct_data;
-        MapUShortLongPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapUShortLongPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ushort_long().size());
@@ -2519,6 +2632,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortLong)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapUShortLong_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -2573,7 +2690,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortULong)
     for (auto encoding : encodings)
     {
         MapUShortULong struct_data;
-        MapUShortULongPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapUShortULongPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ushort_ulong().size());
@@ -2584,6 +2701,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortULong)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapUShortULong_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -2638,7 +2759,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortLongLong)
     for (auto encoding : encodings)
     {
         MapUShortLongLong struct_data;
-        MapUShortLongLongPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapUShortLongLongPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ushort_longlong().size());
@@ -2649,6 +2770,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortLongLong)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapUShortLongLong_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -2703,7 +2828,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortULongLong)
     for (auto encoding : encodings)
     {
         MapUShortULongLong struct_data;
-        MapUShortULongLongPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapUShortULongLongPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ushort_ulonglong().size());
@@ -2714,6 +2839,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortULongLong)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapUShortULongLong_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -2768,7 +2897,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortFloat)
     for (auto encoding : encodings)
     {
         MapUShortFloat struct_data;
-        MapUShortFloatPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapUShortFloatPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ushort_float().size());
@@ -2779,6 +2908,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortFloat)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapUShortFloat_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -2833,7 +2966,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortDouble)
     for (auto encoding : encodings)
     {
         MapUShortDouble struct_data;
-        MapUShortDoublePubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapUShortDoublePubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ushort_double().size());
@@ -2844,6 +2977,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortDouble)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapUShortDouble_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -2898,7 +3035,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortLongDouble)
     for (auto encoding : encodings)
     {
         MapUShortLongDouble struct_data;
-        MapUShortLongDoublePubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapUShortLongDoublePubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ushort_longdouble().size());
@@ -2909,6 +3046,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortLongDouble)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapUShortLongDouble_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -2963,7 +3104,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortBoolean)
     for (auto encoding : encodings)
     {
         MapUShortBoolean struct_data;
-        MapUShortBooleanPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapUShortBooleanPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ushort_boolean().size());
@@ -2974,6 +3115,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortBoolean)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapUShortBoolean_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -3028,7 +3173,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortOctet)
     for (auto encoding : encodings)
     {
         MapUShortOctet struct_data;
-        MapUShortOctetPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapUShortOctetPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ushort_octet().size());
@@ -3039,6 +3184,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortOctet)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapUShortOctet_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -3093,7 +3242,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortChar)
     for (auto encoding : encodings)
     {
         MapUShortChar struct_data;
-        MapUShortCharPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapUShortCharPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ushort_char().size());
@@ -3104,6 +3253,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortChar)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapUShortChar_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -3158,7 +3311,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortWChar)
     for (auto encoding : encodings)
     {
         MapUShortWChar struct_data;
-        MapUShortWCharPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapUShortWCharPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ushort_wchar().size());
@@ -3169,6 +3322,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortWChar)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapUShortWChar_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -3224,7 +3381,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortString)
     for (auto encoding : encodings)
     {
         MapUShortString struct_data;
-        MapUShortStringPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapUShortStringPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ushort_string().size());
@@ -3235,6 +3392,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortString)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapUShortString_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -3290,7 +3451,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortWString)
     for (auto encoding : encodings)
     {
         MapUShortWString struct_data;
-        MapUShortWStringPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapUShortWStringPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ushort_wstring().size());
@@ -3301,6 +3462,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortWString)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapUShortWString_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -3355,7 +3520,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerAliasBoundedStringHe
     for (auto encoding : encodings)
     {
         MapUShortInnerAliasBoundedStringHelper struct_data;
-        MapUShortInnerAliasBoundedStringHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapUShortInnerAliasBoundedStringHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ushort_inneraliasboundedstringhelper().size());
@@ -3366,6 +3531,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerAliasBoundedStringHe
             EXPECT_EQ(map_element.second, it->second.to_string());
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapUShortInnerAliasBoundedStringHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -3420,7 +3589,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerAliasBoundedWStringH
     for (auto encoding : encodings)
     {
         MapUShortInnerAliasBoundedWStringHelper struct_data;
-        MapUShortInnerAliasBoundedWStringHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapUShortInnerAliasBoundedWStringHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ushort_inneraliasboundedwstringhelper().size());
@@ -3431,6 +3600,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerAliasBoundedWStringH
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapUShortInnerAliasBoundedWStringHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -3462,21 +3635,21 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerEnumHelper)
         {std::uint16_t(600), InnerEnumHelper::ENUM_VALUE_3},
         {std::uint16_t(70), InnerEnumHelper::ENUM_VALUE_2}
     };
-    uint32_t test_value;
+    int32_t test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_ushort_innerenumhelper_map));
     ASSERT_TRUE(map_data);
     // Set values
     for (auto const& map_element : value)
     {
         EXPECT_EQ(RETCODE_OK,
-                map_data->set_uint32_value(map_data->get_member_id_by_name(std::to_string(map_element.first)),
-                static_cast<uint32_t>(map_element.second)));
+                map_data->set_int32_value(map_data->get_member_id_by_name(std::to_string(map_element.first)),
+                static_cast<int32_t>(map_element.second)));
     }
     // Check values
     for (auto const& map_element : value)
     {
         EXPECT_EQ(RETCODE_OK,
-                map_data->get_uint32_value(test_value, map_data->get_member_id_by_name(std::to_string(
+                map_data->get_int32_value(test_value, map_data->get_member_id_by_name(std::to_string(
                     map_element.first))));
         EXPECT_EQ(map_element.second, static_cast<InnerEnumHelper>(test_value));
     }
@@ -3485,7 +3658,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerEnumHelper)
     for (auto encoding : encodings)
     {
         MapUShortInnerEnumHelper struct_data;
-        MapUShortInnerEnumHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapUShortInnerEnumHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ushort_innerenumhelper().size());
@@ -3497,6 +3670,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerEnumHelper)
         }
     }
 
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapUShortInnerEnumHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -3551,7 +3728,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerBitMaskHelper)
     for (auto encoding : encodings)
     {
         MapUShortInnerBitMaskHelper struct_data;
-        MapUShortInnerBitMaskHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapUShortInnerBitMaskHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ushort_innerbitmaskhelper().size());
@@ -3562,6 +3739,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerBitMaskHelper)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapUShortInnerBitMaskHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -3616,7 +3797,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerAliasHelper)
     for (auto encoding : encodings)
     {
         MapUShortInnerAliasHelper struct_data;
-        MapUShortInnerAliasHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapUShortInnerAliasHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ushort_inneraliashelper().size());
@@ -3627,6 +3808,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerAliasHelper)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapUShortInnerAliasHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -3681,7 +3866,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerAliasArrayHelper)
     for (auto encoding : encodings)
     {
         MapUShortInnerAliasArrayHelper struct_data;
-        MapUShortInnerAliasArrayHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapUShortInnerAliasArrayHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ushort_inneraliasarrayhelper().size());
@@ -3692,6 +3877,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerAliasArrayHelper)
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapUShortInnerAliasArrayHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -3746,7 +3935,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerAliasSequenceHelper)
     for (auto encoding : encodings)
     {
         MapUShortInnerAliasSequenceHelper struct_data;
-        MapUShortInnerAliasSequenceHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapUShortInnerAliasSequenceHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ushort_inneraliassequencehelper().size());
@@ -3757,6 +3946,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerAliasSequenceHelper)
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapUShortInnerAliasSequenceHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -3836,7 +4029,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerAliasMapHelper)
     for (auto encoding : encodings)
     {
         MapUShortInnerAliasMapHelper struct_data;
-        MapUShortInnerAliasMapHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapUShortInnerAliasMapHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ushort_inneraliasmaphelper().size());
@@ -3847,6 +4040,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerAliasMapHelper)
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapUShortInnerAliasMapHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -3909,7 +4106,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerUnionHelper)
     for (auto encoding : encodings)
     {
         MapUShortInnerUnionHelper struct_data;
-        MapUShortInnerUnionHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapUShortInnerUnionHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ushort_innerunionhelper().size());
@@ -3932,6 +4129,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerUnionHelper)
 
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapUShortInnerUnionHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -4002,7 +4203,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerStructureHelper)
     for (auto encoding : encodings)
     {
         MapUShortInnerStructureHelper struct_data;
-        MapUShortInnerStructureHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapUShortInnerStructureHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ushort_innerstructurehelper().size());
@@ -4014,6 +4215,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerStructureHelper)
             EXPECT_EQ(map_element.second.second, it->second.field2());
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapUShortInnerStructureHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -4039,12 +4244,12 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerBitsetHelper)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    const std::unordered_map<uint16_t, std::tuple<uint8_t, bool, uint16_t, int16_t>> value {
-        {std::uint16_t(100), {std::uint8_t(5), true, std::uint16_t(1000), std::int16_t(2000)}},
-        {std::uint16_t(50), {std::uint8_t(7), false, std::uint16_t(555), std::int16_t(20)}},
-        {std::uint16_t(600), {std::uint8_t(0), true, std::uint16_t(0), std::int16_t(0)}}
+    const std::unordered_map<uint16_t, std::tuple<eprosima::fastrtps::rtps::octet, bool, uint16_t, int16_t>> value {
+        {std::uint16_t(100), {eprosima::fastrtps::rtps::octet(5), true, std::uint16_t(1000), std::int16_t(2000)}},
+        {std::uint16_t(50), {eprosima::fastrtps::rtps::octet(7), false, std::uint16_t(555), std::int16_t(20)}},
+        {std::uint16_t(600), {eprosima::fastrtps::rtps::octet(0), true, std::uint16_t(0), std::int16_t(0)}}
     };
-    uint8_t test_value1;
+    eprosima::fastrtps::rtps::octet test_value1;
     bool test_value2;
     uint16_t test_value3;
     int16_t test_value4;
@@ -4056,7 +4261,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerBitsetHelper)
         auto inner_bitset = map_data->loan_value(map_data->get_member_id_by_name(std::to_string(map_element.first)));
 
         EXPECT_EQ(RETCODE_OK,
-                inner_bitset->set_uint8_value(inner_bitset->get_member_id_by_name(bitfield_a),
+                inner_bitset->set_byte_value(inner_bitset->get_member_id_by_name(bitfield_a),
                 std::get<0>(map_element.second)));
         EXPECT_EQ(RETCODE_OK,
                 inner_bitset->set_boolean_value(inner_bitset->get_member_id_by_name(bitfield_b),
@@ -4076,7 +4281,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerBitsetHelper)
         auto inner_bitset = map_data->loan_value(map_data->get_member_id_by_name(std::to_string(map_element.first)));
 
         EXPECT_EQ(RETCODE_OK,
-                inner_bitset->get_uint8_value(test_value1,
+                inner_bitset->get_byte_value(test_value1,
                 inner_bitset->get_member_id_by_name(bitfield_a)));
         EXPECT_EQ(std::get<0>(map_element.second), test_value1);
         EXPECT_EQ(RETCODE_OK,
@@ -4099,7 +4304,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerBitsetHelper)
     for (auto encoding : encodings)
     {
         MapUShortInnerBitsetHelper struct_data;
-        MapUShortInnerBitsetHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapUShortInnerBitsetHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ushort_innerbitsethelper().size());
@@ -4107,12 +4312,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerBitsetHelper)
         {
             auto it = struct_data.var_map_ushort_innerbitsethelper().find(map_element.first);
             ASSERT_NE(struct_data.var_map_ushort_innerbitsethelper().end(), it);
-            EXPECT_EQ(std::get<0>(map_element.second), it->second.a());
-            EXPECT_EQ(std::get<1>(map_element.second), it->second.b());
-            EXPECT_EQ(std::get<2>(map_element.second), it->second.c());
-            EXPECT_EQ(std::get<3>(map_element.second), it->second.d());
+            EXPECT_EQ(std::get<0>(map_element.second), it->second.a);
+            EXPECT_EQ(std::get<1>(map_element.second), it->second.b);
+            EXPECT_EQ(std::get<2>(map_element.second), it->second.c);
+            EXPECT_EQ(std::get<3>(map_element.second), it->second.d);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapUShortInnerBitsetHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -4169,7 +4378,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongShort)
     for (auto encoding : encodings)
     {
         MapLongShort struct_data;
-        MapLongShortPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapLongShortPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_long_short().size());
@@ -4180,6 +4389,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongShort)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapLongShort_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -4234,7 +4447,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongUShort)
     for (auto encoding : encodings)
     {
         MapLongUShort struct_data;
-        MapLongUShortPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapLongUShortPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_long_ushort().size());
@@ -4245,6 +4458,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongUShort)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapLongUShort_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -4299,7 +4516,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLong)
     for (auto encoding : encodings)
     {
         MapLongLong struct_data;
-        MapLongLongPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapLongLongPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_long_long().size());
@@ -4310,6 +4527,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLong)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapLongLong_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -4364,7 +4585,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongULong)
     for (auto encoding : encodings)
     {
         MapLongULong struct_data;
-        MapLongULongPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapLongULongPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_long_ulong().size());
@@ -4375,6 +4596,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongULong)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapLongULong_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -4429,7 +4654,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongKeyLongLongValue)
     for (auto encoding : encodings)
     {
         MapLongKeyLongLongValue struct_data;
-        MapLongKeyLongLongValuePubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapLongKeyLongLongValuePubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_long_longlong().size());
@@ -4440,6 +4665,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongKeyLongLongValue)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapLongKeyLongLongValue_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -4494,7 +4723,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongULongLong)
     for (auto encoding : encodings)
     {
         MapLongULongLong struct_data;
-        MapLongULongLongPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapLongULongLongPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_long_ulonglong().size());
@@ -4505,6 +4734,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongULongLong)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapLongULongLong_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -4559,7 +4792,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongFloat)
     for (auto encoding : encodings)
     {
         MapLongFloat struct_data;
-        MapLongFloatPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapLongFloatPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_long_float().size());
@@ -4570,6 +4803,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongFloat)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapLongFloat_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -4624,7 +4861,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongDouble)
     for (auto encoding : encodings)
     {
         MapLongDouble struct_data;
-        MapLongDoublePubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapLongDoublePubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_long_double().size());
@@ -4635,6 +4872,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongDouble)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapLongDouble_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -4689,7 +4930,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongKeyLongDoubleValue)
     for (auto encoding : encodings)
     {
         MapLongKeyLongDoubleValue struct_data;
-        MapLongKeyLongDoubleValuePubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapLongKeyLongDoubleValuePubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_long_longdouble().size());
@@ -4700,6 +4941,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongKeyLongDoubleValue)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapLongKeyLongDoubleValue_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -4754,7 +4999,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongBoolean)
     for (auto encoding : encodings)
     {
         MapLongBoolean struct_data;
-        MapLongBooleanPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapLongBooleanPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_long_boolean().size());
@@ -4765,6 +5010,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongBoolean)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapLongBoolean_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -4819,7 +5068,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongOctet)
     for (auto encoding : encodings)
     {
         MapLongOctet struct_data;
-        MapLongOctetPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapLongOctetPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_long_octet().size());
@@ -4830,6 +5079,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongOctet)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapLongOctet_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -4884,7 +5137,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongChar)
     for (auto encoding : encodings)
     {
         MapLongChar struct_data;
-        MapLongCharPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapLongCharPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_long_char().size());
@@ -4895,6 +5148,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongChar)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapLongChar_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -4949,7 +5206,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongWChar)
     for (auto encoding : encodings)
     {
         MapLongWChar struct_data;
-        MapLongWCharPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapLongWCharPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_long_wchar().size());
@@ -4960,6 +5217,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongWChar)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapLongWChar_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -5015,7 +5276,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongString)
     for (auto encoding : encodings)
     {
         MapLongString struct_data;
-        MapLongStringPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapLongStringPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_long_string().size());
@@ -5026,6 +5287,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongString)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapLongString_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -5081,7 +5346,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongWString)
     for (auto encoding : encodings)
     {
         MapLongWString struct_data;
-        MapLongWStringPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapLongWStringPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_long_wstring().size());
@@ -5092,6 +5357,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongWString)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapLongWString_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -5146,7 +5415,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerAliasBoundedStringHelp
     for (auto encoding : encodings)
     {
         MapLongInnerAliasBoundedStringHelper struct_data;
-        MapLongInnerAliasBoundedStringHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapLongInnerAliasBoundedStringHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_long_inneraliasboundedstringhelper().size());
@@ -5157,6 +5426,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerAliasBoundedStringHelp
             EXPECT_EQ(map_element.second, it->second.to_string());
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapLongInnerAliasBoundedStringHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -5211,7 +5484,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerAliasBoundedWStringHel
     for (auto encoding : encodings)
     {
         MapLongInnerAliasBoundedWStringHelper struct_data;
-        MapLongInnerAliasBoundedWStringHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapLongInnerAliasBoundedWStringHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_long_inneraliasboundedwstringhelper().size());
@@ -5222,6 +5495,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerAliasBoundedWStringHel
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapLongInnerAliasBoundedWStringHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -5253,21 +5530,21 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerEnumHelper)
         {-600, InnerEnumHelper::ENUM_VALUE_3},
         {70, InnerEnumHelper::ENUM_VALUE_2}
     };
-    uint32_t test_value;
+    int32_t test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_long_innerenumhelper_map));
     ASSERT_TRUE(map_data);
     // Set values
     for (auto const& map_element : value)
     {
         EXPECT_EQ(RETCODE_OK,
-                map_data->set_uint32_value(map_data->get_member_id_by_name(std::to_string(map_element.first)),
-                static_cast<uint32_t>(map_element.second)));
+                map_data->set_int32_value(map_data->get_member_id_by_name(std::to_string(map_element.first)),
+                static_cast<int32_t>(map_element.second)));
     }
     // Check values
     for (auto const& map_element : value)
     {
         EXPECT_EQ(RETCODE_OK,
-                map_data->get_uint32_value(test_value, map_data->get_member_id_by_name(std::to_string(
+                map_data->get_int32_value(test_value, map_data->get_member_id_by_name(std::to_string(
                     map_element.first))));
         EXPECT_EQ(map_element.second, static_cast<InnerEnumHelper>(test_value));
     }
@@ -5276,7 +5553,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerEnumHelper)
     for (auto encoding : encodings)
     {
         MapLongInnerEnumHelper struct_data;
-        MapLongInnerEnumHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapLongInnerEnumHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_long_innerenumhelper().size());
@@ -5287,6 +5564,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerEnumHelper)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapLongInnerEnumHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -5341,7 +5622,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerBitMaskHelper)
     for (auto encoding : encodings)
     {
         MapLongInnerBitMaskHelper struct_data;
-        MapLongInnerBitMaskHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapLongInnerBitMaskHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_long_innerbitmaskhelper().size());
@@ -5352,6 +5633,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerBitMaskHelper)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapLongInnerBitMaskHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -5406,7 +5691,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerAliasHelper)
     for (auto encoding : encodings)
     {
         MapLongInnerAliasHelper struct_data;
-        MapLongInnerAliasHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapLongInnerAliasHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_long_inneraliashelper().size());
@@ -5417,6 +5702,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerAliasHelper)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapLongInnerAliasHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -5471,7 +5760,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerAliasArrayHelper)
     for (auto encoding : encodings)
     {
         MapLongInnerAliasArrayHelper struct_data;
-        MapLongInnerAliasArrayHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapLongInnerAliasArrayHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_long_inneraliasarrayhelper().size());
@@ -5482,6 +5771,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerAliasArrayHelper)
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapLongInnerAliasArrayHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -5536,7 +5829,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerAliasSequenceHelper)
     for (auto encoding : encodings)
     {
         MapLongInnerAliasSequenceHelper struct_data;
-        MapLongInnerAliasSequenceHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapLongInnerAliasSequenceHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_long_inneraliassequencehelper().size());
@@ -5547,6 +5840,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerAliasSequenceHelper)
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapLongInnerAliasSequenceHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -5626,7 +5923,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerAliasMapHelper)
     for (auto encoding : encodings)
     {
         MapLongInnerAliasMapHelper struct_data;
-        MapLongInnerAliasMapHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapLongInnerAliasMapHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_long_inneraliasmaphelper().size());
@@ -5637,6 +5934,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerAliasMapHelper)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapLongInnerAliasMapHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -5699,7 +6000,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerUnionHelper)
     for (auto encoding : encodings)
     {
         MapLongInnerUnionHelper struct_data;
-        MapLongInnerUnionHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapLongInnerUnionHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_long_innerunionhelper().size());
@@ -5722,6 +6023,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerUnionHelper)
 
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapLongInnerUnionHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -5792,7 +6097,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerStructureHelper)
     for (auto encoding : encodings)
     {
         MapLongInnerStructureHelper struct_data;
-        MapLongInnerStructureHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapLongInnerStructureHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_long_innerstructurehelper().size());
@@ -5804,6 +6109,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerStructureHelper)
             EXPECT_EQ(map_element.second.second, it->second.field2());
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapLongInnerStructureHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -5829,12 +6138,12 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerBitsetHelper)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    const std::unordered_map<int32_t, std::tuple<uint8_t, bool, uint16_t, int16_t>> value {
-        {-100, {std::uint8_t(5), true, std::uint16_t(1000), std::int16_t(2000)}},
-        {50, {std::uint8_t(7), false, std::uint16_t(555), std::int16_t(20)}},
-        {600, {std::uint8_t(0), true, std::uint16_t(0), std::int16_t(0)}}
+    const std::unordered_map<int32_t, std::tuple<eprosima::fastrtps::rtps::octet, bool, uint16_t, int16_t>> value {
+        {-100, {eprosima::fastrtps::rtps::octet(5), true, std::uint16_t(1000), std::int16_t(2000)}},
+        {50, {eprosima::fastrtps::rtps::octet(7), false, std::uint16_t(555), std::int16_t(20)}},
+        {600, {eprosima::fastrtps::rtps::octet(0), true, std::uint16_t(0), std::int16_t(0)}}
     };
-    uint8_t test_value1;
+    eprosima::fastrtps::rtps::octet test_value1;
     bool test_value2;
     uint16_t test_value3;
     int16_t test_value4;
@@ -5846,7 +6155,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerBitsetHelper)
         auto inner_bitset = map_data->loan_value(map_data->get_member_id_by_name(std::to_string(map_element.first)));
 
         EXPECT_EQ(RETCODE_OK,
-                inner_bitset->set_uint8_value(inner_bitset->get_member_id_by_name(bitfield_a),
+                inner_bitset->set_byte_value(inner_bitset->get_member_id_by_name(bitfield_a),
                 std::get<0>(map_element.second)));
         EXPECT_EQ(RETCODE_OK,
                 inner_bitset->set_boolean_value(inner_bitset->get_member_id_by_name(bitfield_b),
@@ -5866,7 +6175,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerBitsetHelper)
         auto inner_bitset = map_data->loan_value(map_data->get_member_id_by_name(std::to_string(map_element.first)));
 
         EXPECT_EQ(RETCODE_OK,
-                inner_bitset->get_uint8_value(test_value1,
+                inner_bitset->get_byte_value(test_value1,
                 inner_bitset->get_member_id_by_name(bitfield_a)));
         EXPECT_EQ(std::get<0>(map_element.second), test_value1);
         EXPECT_EQ(RETCODE_OK,
@@ -5889,7 +6198,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerBitsetHelper)
     for (auto encoding : encodings)
     {
         MapLongInnerBitsetHelper struct_data;
-        MapLongInnerBitsetHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapLongInnerBitsetHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_long_innerbitsethelper().size());
@@ -5897,12 +6206,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerBitsetHelper)
         {
             auto it = struct_data.var_map_long_innerbitsethelper().find(map_element.first);
             ASSERT_NE(struct_data.var_map_long_innerbitsethelper().end(), it);
-            EXPECT_EQ(std::get<0>(map_element.second), it->second.a());
-            EXPECT_EQ(std::get<1>(map_element.second), it->second.b());
-            EXPECT_EQ(std::get<2>(map_element.second), it->second.c());
-            EXPECT_EQ(std::get<3>(map_element.second), it->second.d());
+            EXPECT_EQ(std::get<0>(map_element.second), it->second.a);
+            EXPECT_EQ(std::get<1>(map_element.second), it->second.b);
+            EXPECT_EQ(std::get<2>(map_element.second), it->second.c);
+            EXPECT_EQ(std::get<3>(map_element.second), it->second.d);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapLongInnerBitsetHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -5959,7 +6272,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongShort)
     for (auto encoding : encodings)
     {
         MapULongShort struct_data;
-        MapULongShortPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapULongShortPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ulong_short().size());
@@ -5970,6 +6283,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongShort)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapULongShort_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -6024,7 +6341,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongUShort)
     for (auto encoding : encodings)
     {
         MapULongUShort struct_data;
-        MapULongUShortPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapULongUShortPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ulong_ushort().size());
@@ -6035,6 +6352,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongUShort)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapULongUShort_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -6089,7 +6410,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLong)
     for (auto encoding : encodings)
     {
         MapULongLong struct_data;
-        MapULongLongPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapULongLongPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ulong_long().size());
@@ -6100,6 +6421,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLong)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapULongLong_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -6154,7 +6479,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongULong)
     for (auto encoding : encodings)
     {
         MapULongULong struct_data;
-        MapULongULongPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapULongULongPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ulong_ulong().size());
@@ -6165,6 +6490,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongULong)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapULongULong_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -6219,7 +6548,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapKeyULongValueLongLong)
     for (auto encoding : encodings)
     {
         MapKeyULongValueLongLong struct_data;
-        MapKeyULongValueLongLongPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapKeyULongValueLongLongPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ulong_longlong().size());
@@ -6230,6 +6559,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapKeyULongValueLongLong)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapKeyULongValueLongLong_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -6284,7 +6617,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongULongLong)
     for (auto encoding : encodings)
     {
         MapULongULongLong struct_data;
-        MapULongULongLongPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapULongULongLongPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ulong_ulonglong().size());
@@ -6295,6 +6628,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongULongLong)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapULongULongLong_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -6349,7 +6686,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongFloat)
     for (auto encoding : encodings)
     {
         MapULongFloat struct_data;
-        MapULongFloatPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapULongFloatPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ulong_float().size());
@@ -6360,6 +6697,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongFloat)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapULongFloat_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -6414,7 +6755,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongDouble)
     for (auto encoding : encodings)
     {
         MapULongDouble struct_data;
-        MapULongDoublePubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapULongDoublePubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ulong_double().size());
@@ -6425,6 +6766,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongDouble)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapULongDouble_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -6479,7 +6824,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapKeyULongValueLongDouble)
     for (auto encoding : encodings)
     {
         MapKeyULongValueLongDouble struct_data;
-        MapKeyULongValueLongDoublePubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapKeyULongValueLongDoublePubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ulong_longdouble().size());
@@ -6490,6 +6835,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapKeyULongValueLongDouble)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapKeyULongValueLongDouble_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -6544,7 +6893,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongBoolean)
     for (auto encoding : encodings)
     {
         MapULongBoolean struct_data;
-        MapULongBooleanPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapULongBooleanPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ulong_boolean().size());
@@ -6555,6 +6904,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongBoolean)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapULongBoolean_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -6609,7 +6962,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongOctet)
     for (auto encoding : encodings)
     {
         MapULongOctet struct_data;
-        MapULongOctetPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapULongOctetPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ulong_octet().size());
@@ -6620,6 +6973,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongOctet)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapULongOctet_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -6674,7 +7031,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongChar)
     for (auto encoding : encodings)
     {
         MapULongChar struct_data;
-        MapULongCharPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapULongCharPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ulong_char().size());
@@ -6685,6 +7042,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongChar)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapULongChar_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -6739,7 +7100,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongWChar)
     for (auto encoding : encodings)
     {
         MapULongWChar struct_data;
-        MapULongWCharPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapULongWCharPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ulong_wchar().size());
@@ -6750,6 +7111,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongWChar)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapULongWChar_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -6805,7 +7170,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongString)
     for (auto encoding : encodings)
     {
         MapULongString struct_data;
-        MapULongStringPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapULongStringPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ulong_string().size());
@@ -6816,6 +7181,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongString)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapULongString_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -6871,7 +7240,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongWString)
     for (auto encoding : encodings)
     {
         MapULongWString struct_data;
-        MapULongWStringPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapULongWStringPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ulong_wstring().size());
@@ -6882,6 +7251,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongWString)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapULongWString_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -6936,7 +7309,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerAliasBoundedStringHel
     for (auto encoding : encodings)
     {
         MapULongInnerAliasBoundedStringHelper struct_data;
-        MapULongInnerAliasBoundedStringHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapULongInnerAliasBoundedStringHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ulong_inneraliasboundedstringhelper().size());
@@ -6947,6 +7320,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerAliasBoundedStringHel
             EXPECT_EQ(map_element.second, it->second.to_string());
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapULongInnerAliasBoundedStringHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -7001,7 +7378,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerAliasBoundedWStringHe
     for (auto encoding : encodings)
     {
         MapULongInnerAliasBoundedWStringHelper struct_data;
-        MapULongInnerAliasBoundedWStringHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapULongInnerAliasBoundedWStringHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ulong_inneraliasboundedwstringhelper().size());
@@ -7012,6 +7389,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerAliasBoundedWStringHe
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapULongInnerAliasBoundedWStringHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -7043,21 +7424,21 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerEnumHelper)
         {600u, InnerEnumHelper::ENUM_VALUE_3},
         {70u, InnerEnumHelper::ENUM_VALUE_2}
     };
-    uint32_t test_value;
+    int32_t test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_ulong_innerenumhelper_map));
     ASSERT_TRUE(map_data);
     // Set values
     for (auto const& map_element : value)
     {
         EXPECT_EQ(RETCODE_OK,
-                map_data->set_uint32_value(map_data->get_member_id_by_name(std::to_string(map_element.first)),
-                static_cast<uint32_t>(map_element.second)));
+                map_data->set_int32_value(map_data->get_member_id_by_name(std::to_string(map_element.first)),
+                static_cast<int32_t>(map_element.second)));
     }
     // Check values
     for (auto const& map_element : value)
     {
         EXPECT_EQ(RETCODE_OK,
-                map_data->get_uint32_value(test_value, map_data->get_member_id_by_name(std::to_string(
+                map_data->get_int32_value(test_value, map_data->get_member_id_by_name(std::to_string(
                     map_element.first))));
         EXPECT_EQ(map_element.second, static_cast<InnerEnumHelper>(test_value));
     }
@@ -7066,7 +7447,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerEnumHelper)
     for (auto encoding : encodings)
     {
         MapULongInnerEnumHelper struct_data;
-        MapULongInnerEnumHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapULongInnerEnumHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ulong_innerenumhelper().size());
@@ -7077,6 +7458,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerEnumHelper)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapULongInnerEnumHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -7131,7 +7516,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerBitMaskHelper)
     for (auto encoding : encodings)
     {
         MapULongInnerBitMaskHelper struct_data;
-        MapULongInnerBitMaskHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapULongInnerBitMaskHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ulong_innerbitmaskhelper().size());
@@ -7142,6 +7527,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerBitMaskHelper)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapULongInnerBitMaskHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -7196,7 +7585,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerAliasHelper)
     for (auto encoding : encodings)
     {
         MapULongInnerAliasHelper struct_data;
-        MapULongInnerAliasHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapULongInnerAliasHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ulong_inneraliashelper().size());
@@ -7207,6 +7596,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerAliasHelper)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapULongInnerAliasHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -7261,7 +7654,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerAliasArrayHelper)
     for (auto encoding : encodings)
     {
         MapULongInnerAliasArrayHelper struct_data;
-        MapULongInnerAliasArrayHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapULongInnerAliasArrayHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ulong_inneraliasarrayhelper().size());
@@ -7272,6 +7665,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerAliasArrayHelper)
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapULongInnerAliasArrayHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -7326,7 +7723,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerAliasSequenceHelper)
     for (auto encoding : encodings)
     {
         MapULongInnerAliasSequenceHelper struct_data;
-        MapULongInnerAliasSequenceHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapULongInnerAliasSequenceHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ulong_inneraliassequencehelper().size());
@@ -7337,6 +7734,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerAliasSequenceHelper)
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapULongInnerAliasSequenceHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -7416,7 +7817,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerAliasMapHelper)
     for (auto encoding : encodings)
     {
         MapULongInnerAliasMapHelper struct_data;
-        MapULongInnerAliasMapHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapULongInnerAliasMapHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ulong_inneraliasmaphelper().size());
@@ -7427,6 +7828,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerAliasMapHelper)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapULongInnerAliasMapHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -7489,7 +7894,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerUnionHelper)
     for (auto encoding : encodings)
     {
         MapULongInnerUnionHelper struct_data;
-        MapULongInnerUnionHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapULongInnerUnionHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ulong_innerunionhelper().size());
@@ -7512,6 +7917,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerUnionHelper)
 
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapULongInnerUnionHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -7582,7 +7991,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerStructureHelper)
     for (auto encoding : encodings)
     {
         MapULongInnerStructureHelper struct_data;
-        MapULongInnerStructureHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapULongInnerStructureHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ulong_innerstructurehelper().size());
@@ -7594,6 +8003,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerStructureHelper)
             EXPECT_EQ(map_element.second.second, it->second.field2());
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapULongInnerStructureHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -7619,12 +8032,12 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerBitsetHelper)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    const std::unordered_map<uint32_t, std::tuple<uint8_t, bool, uint16_t, int16_t>> value {
-        {100u, {std::uint8_t(5), true, std::uint16_t(1000), std::int16_t(2000)}},
-        {50u, {std::uint8_t(7), false, std::uint16_t(555), std::int16_t(20)}},
-        {600u, {std::uint8_t(0), true, std::uint16_t(0), std::int16_t(0)}}
+    const std::unordered_map<uint32_t, std::tuple<eprosima::fastrtps::rtps::octet, bool, uint16_t, int16_t>> value {
+        {100u, {eprosima::fastrtps::rtps::octet(5), true, std::uint16_t(1000), std::int16_t(2000)}},
+        {50u, {eprosima::fastrtps::rtps::octet(7), false, std::uint16_t(555), std::int16_t(20)}},
+        {600u, {eprosima::fastrtps::rtps::octet(0), true, std::uint16_t(0), std::int16_t(0)}}
     };
-    uint8_t test_value1;
+    eprosima::fastrtps::rtps::octet test_value1;
     bool test_value2;
     uint16_t test_value3;
     int16_t test_value4;
@@ -7636,7 +8049,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerBitsetHelper)
         auto inner_bitset = map_data->loan_value(map_data->get_member_id_by_name(std::to_string(map_element.first)));
 
         EXPECT_EQ(RETCODE_OK,
-                inner_bitset->set_uint8_value(inner_bitset->get_member_id_by_name(bitfield_a),
+                inner_bitset->set_byte_value(inner_bitset->get_member_id_by_name(bitfield_a),
                 std::get<0>(map_element.second)));
         EXPECT_EQ(RETCODE_OK,
                 inner_bitset->set_boolean_value(inner_bitset->get_member_id_by_name(bitfield_b),
@@ -7656,7 +8069,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerBitsetHelper)
         auto inner_bitset = map_data->loan_value(map_data->get_member_id_by_name(std::to_string(map_element.first)));
 
         EXPECT_EQ(RETCODE_OK,
-                inner_bitset->get_uint8_value(test_value1,
+                inner_bitset->get_byte_value(test_value1,
                 inner_bitset->get_member_id_by_name(bitfield_a)));
         EXPECT_EQ(std::get<0>(map_element.second), test_value1);
         EXPECT_EQ(RETCODE_OK,
@@ -7679,7 +8092,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerBitsetHelper)
     for (auto encoding : encodings)
     {
         MapULongInnerBitsetHelper struct_data;
-        MapULongInnerBitsetHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapULongInnerBitsetHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_ulong_innerbitsethelper().size());
@@ -7687,12 +8100,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerBitsetHelper)
         {
             auto it = struct_data.var_map_ulong_innerbitsethelper().find(map_element.first);
             ASSERT_NE(struct_data.var_map_ulong_innerbitsethelper().end(), it);
-            EXPECT_EQ(std::get<0>(map_element.second), it->second.a());
-            EXPECT_EQ(std::get<1>(map_element.second), it->second.b());
-            EXPECT_EQ(std::get<2>(map_element.second), it->second.c());
-            EXPECT_EQ(std::get<3>(map_element.second), it->second.d());
+            EXPECT_EQ(std::get<0>(map_element.second), it->second.a);
+            EXPECT_EQ(std::get<1>(map_element.second), it->second.b);
+            EXPECT_EQ(std::get<2>(map_element.second), it->second.c);
+            EXPECT_EQ(std::get<3>(map_element.second), it->second.d);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapULongInnerBitsetHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -7749,7 +8166,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongShort)
     for (auto encoding : encodings)
     {
         MapLongLongShort struct_data;
-        MapLongLongShortPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapLongLongShortPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_longlong_short().size());
@@ -7760,6 +8177,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongShort)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapLongLongShort_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -7814,7 +8235,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongUShort)
     for (auto encoding : encodings)
     {
         MapLongLongUShort struct_data;
-        MapLongLongUShortPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapLongLongUShortPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_longlong_ushort().size());
@@ -7825,6 +8246,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongUShort)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapLongLongUShort_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -7879,7 +8304,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongKeyLongValue)
     for (auto encoding : encodings)
     {
         MapLongLongKeyLongValue struct_data;
-        MapLongLongKeyLongValuePubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapLongLongKeyLongValuePubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_longlong_long().size());
@@ -7890,6 +8315,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongKeyLongValue)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapLongLongKeyLongValue_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -7944,7 +8373,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongULong)
     for (auto encoding : encodings)
     {
         MapLongLongULong struct_data;
-        MapLongLongULongPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapLongLongULongPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_longlong_ulong().size());
@@ -7955,6 +8384,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongULong)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapLongLongULong_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -8009,7 +8442,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongLongLong)
     for (auto encoding : encodings)
     {
         MapLongLongLongLong struct_data;
-        MapLongLongLongLongPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapLongLongLongLongPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_longlong_longlong().size());
@@ -8020,6 +8453,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongLongLong)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapLongLongLongLong_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -8074,7 +8511,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongULongLong)
     for (auto encoding : encodings)
     {
         MapLongLongULongLong struct_data;
-        MapLongLongULongLongPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapLongLongULongLongPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_longlong_ulonglong().size());
@@ -8085,6 +8522,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongULongLong)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapLongLongULongLong_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -8139,7 +8580,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongFloat)
     for (auto encoding : encodings)
     {
         MapLongLongFloat struct_data;
-        MapLongLongFloatPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapLongLongFloatPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_longlong_float().size());
@@ -8150,6 +8591,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongFloat)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapLongLongFloat_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -8204,7 +8649,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongKeyDoubleValue)
     for (auto encoding : encodings)
     {
         MapLongLongKeyDoubleValue struct_data;
-        MapLongLongKeyDoubleValuePubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapLongLongKeyDoubleValuePubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_longlong_double().size());
@@ -8215,6 +8660,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongKeyDoubleValue)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapLongLongKeyDoubleValue_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -8269,7 +8718,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongLongDouble)
     for (auto encoding : encodings)
     {
         MapLongLongLongDouble struct_data;
-        MapLongLongLongDoublePubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapLongLongLongDoublePubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_longlong_longdouble().size());
@@ -8280,6 +8729,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongLongDouble)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapLongLongLongDouble_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -8334,7 +8787,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongBoolean)
     for (auto encoding : encodings)
     {
         MapLongLongBoolean struct_data;
-        MapLongLongBooleanPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapLongLongBooleanPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_longlong_boolean().size());
@@ -8345,6 +8798,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongBoolean)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapLongLongBoolean_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -8399,7 +8856,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongOctet)
     for (auto encoding : encodings)
     {
         MapLongLongOctet struct_data;
-        MapLongLongOctetPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapLongLongOctetPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_longlong_octet().size());
@@ -8410,6 +8867,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongOctet)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapLongLongOctet_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -8464,7 +8925,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongChar)
     for (auto encoding : encodings)
     {
         MapLongLongChar struct_data;
-        MapLongLongCharPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapLongLongCharPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_longlong_char().size());
@@ -8475,6 +8936,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongChar)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapLongLongChar_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -8529,7 +8994,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongWChar)
     for (auto encoding : encodings)
     {
         MapLongLongWChar struct_data;
-        MapLongLongWCharPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapLongLongWCharPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_longlong_wchar().size());
@@ -8540,6 +9005,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongWChar)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapLongLongWChar_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -8595,7 +9064,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongString)
     for (auto encoding : encodings)
     {
         MapLongLongString struct_data;
-        MapLongLongStringPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapLongLongStringPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_longlong_string().size());
@@ -8606,6 +9075,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongString)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapLongLongString_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -8661,7 +9134,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongWString)
     for (auto encoding : encodings)
     {
         MapLongLongWString struct_data;
-        MapLongLongWStringPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapLongLongWStringPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_longlong_wstring().size());
@@ -8672,6 +9145,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongWString)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapLongLongWString_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -8726,7 +9203,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerAliasBoundedString
     for (auto encoding : encodings)
     {
         MapLongLongInnerAliasBoundedStringHelper struct_data;
-        MapLongLongInnerAliasBoundedStringHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapLongLongInnerAliasBoundedStringHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_longlong_inneraliasboundedstringhelper().size());
@@ -8737,6 +9214,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerAliasBoundedString
             EXPECT_EQ(map_element.second, it->second.to_string());
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapLongLongInnerAliasBoundedStringHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -8791,7 +9272,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerAliasBoundedWStrin
     for (auto encoding : encodings)
     {
         MapLongLongInnerAliasBoundedWStringHelper struct_data;
-        MapLongLongInnerAliasBoundedWStringHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapLongLongInnerAliasBoundedWStringHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_longlong_inneraliasboundedwstringhelper().size());
@@ -8802,6 +9283,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerAliasBoundedWStrin
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapLongLongInnerAliasBoundedWStringHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -8833,21 +9318,21 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerEnumHelper)
         {-600, InnerEnumHelper::ENUM_VALUE_3},
         {70, InnerEnumHelper::ENUM_VALUE_2}
     };
-    uint32_t test_value;
+    int32_t test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_longlong_innerenumhelper_map));
     ASSERT_TRUE(map_data);
     // Set values
     for (auto const& map_element : value)
     {
         EXPECT_EQ(RETCODE_OK,
-                map_data->set_uint32_value(map_data->get_member_id_by_name(std::to_string(map_element.first)),
-                static_cast<uint32_t>(map_element.second)));
+                map_data->set_int32_value(map_data->get_member_id_by_name(std::to_string(map_element.first)),
+                static_cast<int32_t>(map_element.second)));
     }
     // Check values
     for (auto const& map_element : value)
     {
         EXPECT_EQ(RETCODE_OK,
-                map_data->get_uint32_value(test_value, map_data->get_member_id_by_name(std::to_string(
+                map_data->get_int32_value(test_value, map_data->get_member_id_by_name(std::to_string(
                     map_element.first))));
         EXPECT_EQ(map_element.second, static_cast<InnerEnumHelper>(test_value));
     }
@@ -8856,7 +9341,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerEnumHelper)
     for (auto encoding : encodings)
     {
         MapLongLongInnerEnumHelper struct_data;
-        MapLongLongInnerEnumHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapLongLongInnerEnumHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_longlong_innerenumhelper().size());
@@ -8867,6 +9352,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerEnumHelper)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapLongLongInnerEnumHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -8921,7 +9410,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerBitMaskHelper)
     for (auto encoding : encodings)
     {
         MapLongLongInnerBitMaskHelper struct_data;
-        MapLongLongInnerBitMaskHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapLongLongInnerBitMaskHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_longlong_innerbitmaskhelper().size());
@@ -8932,6 +9421,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerBitMaskHelper)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapLongLongInnerBitMaskHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -8986,7 +9479,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerAliasHelper)
     for (auto encoding : encodings)
     {
         MapLongLongInnerAliasHelper struct_data;
-        MapLongLongInnerAliasHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapLongLongInnerAliasHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_longlong_inneraliashelper().size());
@@ -8997,6 +9490,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerAliasHelper)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapLongLongInnerAliasHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -9051,7 +9548,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerAliasArrayHelper)
     for (auto encoding : encodings)
     {
         MapLongLongInnerAliasArrayHelper struct_data;
-        MapLongLongInnerAliasArrayHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapLongLongInnerAliasArrayHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_longlong_inneraliasarrayhelper().size());
@@ -9062,6 +9559,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerAliasArrayHelper)
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapLongLongInnerAliasArrayHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -9116,7 +9617,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerAliasSequenceHelpe
     for (auto encoding : encodings)
     {
         MapLongLongInnerAliasSequenceHelper struct_data;
-        MapLongLongInnerAliasSequenceHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapLongLongInnerAliasSequenceHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_longlong_inneraliassequencehelper().size());
@@ -9127,6 +9628,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerAliasSequenceHelpe
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapLongLongInnerAliasSequenceHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -9206,7 +9711,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerAliasMapHelper)
     for (auto encoding : encodings)
     {
         MapLongLongInnerAliasMapHelper struct_data;
-        MapLongLongInnerAliasMapHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapLongLongInnerAliasMapHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_longlong_inneraliasmaphelper().size());
@@ -9217,6 +9722,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerAliasMapHelper)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapLongLongInnerAliasMapHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -9279,7 +9788,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerUnionHelper)
     for (auto encoding : encodings)
     {
         MapLongLongInnerUnionHelper struct_data;
-        MapLongLongInnerUnionHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapLongLongInnerUnionHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_longlong_innerunionhelper().size());
@@ -9302,6 +9811,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerUnionHelper)
 
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapLongLongInnerUnionHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -9372,7 +9885,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerStructureHelper)
     for (auto encoding : encodings)
     {
         MapLongLongInnerStructureHelper struct_data;
-        MapLongLongInnerStructureHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapLongLongInnerStructureHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_longlong_innerstructurehelper().size());
@@ -9384,6 +9897,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerStructureHelper)
             EXPECT_EQ(map_element.second.second, it->second.field2());
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapLongLongInnerStructureHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -9409,12 +9926,12 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerBitsetHelper)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    const std::unordered_map<int64_t, std::tuple<uint8_t, bool, uint16_t, int16_t>> value {
-        {-100, {std::uint8_t(5), true, std::uint16_t(1000), std::int16_t(2000)}},
-        {50, {std::uint8_t(7), false, std::uint16_t(555), std::int16_t(20)}},
-        {600, {std::uint8_t(0), true, std::uint16_t(0), std::int16_t(0)}}
+    const std::unordered_map<int64_t, std::tuple<eprosima::fastrtps::rtps::octet, bool, uint16_t, int16_t>> value {
+        {-100, {eprosima::fastrtps::rtps::octet(5), true, std::uint16_t(1000), std::int16_t(2000)}},
+        {50, {eprosima::fastrtps::rtps::octet(7), false, std::uint16_t(555), std::int16_t(20)}},
+        {600, {eprosima::fastrtps::rtps::octet(0), true, std::uint16_t(0), std::int16_t(0)}}
     };
-    uint8_t test_value1;
+    eprosima::fastrtps::rtps::octet test_value1;
     bool test_value2;
     uint16_t test_value3;
     int16_t test_value4;
@@ -9426,7 +9943,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerBitsetHelper)
         auto inner_bitset = map_data->loan_value(map_data->get_member_id_by_name(std::to_string(map_element.first)));
 
         EXPECT_EQ(RETCODE_OK,
-                inner_bitset->set_uint8_value(inner_bitset->get_member_id_by_name(bitfield_a),
+                inner_bitset->set_byte_value(inner_bitset->get_member_id_by_name(bitfield_a),
                 std::get<0>(map_element.second)));
         EXPECT_EQ(RETCODE_OK,
                 inner_bitset->set_boolean_value(inner_bitset->get_member_id_by_name(bitfield_b),
@@ -9446,7 +9963,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerBitsetHelper)
         auto inner_bitset = map_data->loan_value(map_data->get_member_id_by_name(std::to_string(map_element.first)));
 
         EXPECT_EQ(RETCODE_OK,
-                inner_bitset->get_uint8_value(test_value1,
+                inner_bitset->get_byte_value(test_value1,
                 inner_bitset->get_member_id_by_name(bitfield_a)));
         EXPECT_EQ(std::get<0>(map_element.second), test_value1);
         EXPECT_EQ(RETCODE_OK,
@@ -9469,7 +9986,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerBitsetHelper)
     for (auto encoding : encodings)
     {
         MapLongLongInnerBitsetHelper struct_data;
-        MapLongLongInnerBitsetHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapLongLongInnerBitsetHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_longlong_innerbitsethelper().size());
@@ -9477,12 +9994,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerBitsetHelper)
         {
             auto it = struct_data.var_map_longlong_innerbitsethelper().find(map_element.first);
             ASSERT_NE(struct_data.var_map_longlong_innerbitsethelper().end(), it);
-            EXPECT_EQ(std::get<0>(map_element.second), it->second.a());
-            EXPECT_EQ(std::get<1>(map_element.second), it->second.b());
-            EXPECT_EQ(std::get<2>(map_element.second), it->second.c());
-            EXPECT_EQ(std::get<3>(map_element.second), it->second.d());
+            EXPECT_EQ(std::get<0>(map_element.second), it->second.a);
+            EXPECT_EQ(std::get<1>(map_element.second), it->second.b);
+            EXPECT_EQ(std::get<2>(map_element.second), it->second.c);
+            EXPECT_EQ(std::get<3>(map_element.second), it->second.d);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapLongLongInnerBitsetHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -9539,7 +10060,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongShort)
     for (auto encoding : encodings)
     {
         MapULongLongShort struct_data;
-        MapULongLongShortPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapULongLongShortPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_short().size());
@@ -9550,6 +10071,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongShort)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapULongLongShort_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -9604,7 +10129,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongUShort)
     for (auto encoding : encodings)
     {
         MapULongLongUShort struct_data;
-        MapULongLongUShortPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapULongLongUShortPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_u_short().size());
@@ -9615,6 +10140,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongUShort)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapULongLongUShort_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -9669,7 +10198,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongLong)
     for (auto encoding : encodings)
     {
         MapULongLongLong struct_data;
-        MapULongLongLongPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapULongLongLongPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_long().size());
@@ -9680,6 +10209,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongLong)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapULongLongLong_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -9734,7 +10267,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongULong)
     for (auto encoding : encodings)
     {
         MapULongLongULong struct_data;
-        MapULongLongULongPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapULongLongULongPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_u_long().size());
@@ -9745,6 +10278,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongULong)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapULongLongULong_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -9799,7 +10336,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongLongLong)
     for (auto encoding : encodings)
     {
         MapULongLongLongLong struct_data;
-        MapULongLongLongLongPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapULongLongLongLongPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_long_long().size());
@@ -9810,6 +10347,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongLongLong)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapULongLongLongLong_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -9864,7 +10405,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongULongLong)
     for (auto encoding : encodings)
     {
         MapULongLongULongLong struct_data;
-        MapULongLongULongLongPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapULongLongULongLongPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_u_long_long().size());
@@ -9875,6 +10416,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongULongLong)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapULongLongULongLong_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -9929,7 +10474,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongFloat)
     for (auto encoding : encodings)
     {
         MapULongLongFloat struct_data;
-        MapULongLongFloatPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapULongLongFloatPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_float().size());
@@ -9940,6 +10485,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongFloat)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapULongLongFloat_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -9994,7 +10543,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapKeyULongLongValueDouble)
     for (auto encoding : encodings)
     {
         MapKeyULongLongValueDouble struct_data;
-        MapKeyULongLongValueDoublePubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapKeyULongLongValueDoublePubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_double().size());
@@ -10005,6 +10554,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapKeyULongLongValueDouble)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapKeyULongLongValueDouble_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -10059,7 +10612,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongLongDouble)
     for (auto encoding : encodings)
     {
         MapULongLongLongDouble struct_data;
-        MapULongLongLongDoublePubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapULongLongLongDoublePubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_long_double().size());
@@ -10070,6 +10623,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongLongDouble)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapULongLongLongDouble_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -10124,7 +10681,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongBoolean)
     for (auto encoding : encodings)
     {
         MapULongLongBoolean struct_data;
-        MapULongLongBooleanPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapULongLongBooleanPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_boolean().size());
@@ -10135,6 +10692,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongBoolean)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapULongLongBoolean_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -10189,7 +10750,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongOctet)
     for (auto encoding : encodings)
     {
         MapULongLongOctet struct_data;
-        MapULongLongOctetPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapULongLongOctetPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_octet().size());
@@ -10200,6 +10761,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongOctet)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapULongLongOctet_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -10254,7 +10819,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongChar)
     for (auto encoding : encodings)
     {
         MapULongLongChar struct_data;
-        MapULongLongCharPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapULongLongCharPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_char().size());
@@ -10265,6 +10830,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongChar)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapULongLongChar_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -10319,7 +10888,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongWChar)
     for (auto encoding : encodings)
     {
         MapULongLongWChar struct_data;
-        MapULongLongWCharPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapULongLongWCharPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_wchar().size());
@@ -10330,6 +10899,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongWChar)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapULongLongWChar_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -10385,7 +10958,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongString)
     for (auto encoding : encodings)
     {
         MapULongLongString struct_data;
-        MapULongLongStringPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapULongLongStringPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_string().size());
@@ -10396,6 +10969,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongString)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapULongLongString_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -10451,7 +11028,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongWString)
     for (auto encoding : encodings)
     {
         MapULongLongWString struct_data;
-        MapULongLongWStringPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapULongLongWStringPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_wstring().size());
@@ -10462,6 +11039,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongWString)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapULongLongWString_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -10516,7 +11097,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerAliasBoundedStrin
     for (auto encoding : encodings)
     {
         MapULongLongInnerAliasBoundedStringHelper struct_data;
-        MapULongLongInnerAliasBoundedStringHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapULongLongInnerAliasBoundedStringHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_inner_alias_bounded_string_helper().size());
@@ -10527,6 +11108,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerAliasBoundedStrin
             EXPECT_EQ(map_element.second, it->second.to_string());
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapULongLongInnerAliasBoundedStringHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -10581,7 +11166,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerAliasBoundedWStri
     for (auto encoding : encodings)
     {
         MapULongLongInnerAliasBoundedWStringHelper struct_data;
-        MapULongLongInnerAliasBoundedWStringHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapULongLongInnerAliasBoundedWStringHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_inner_alias_bounded_wstring_helper().size());
@@ -10592,6 +11177,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerAliasBoundedWStri
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapULongLongInnerAliasBoundedWStringHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -10623,21 +11212,21 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerEnumHelper)
         {600u, InnerEnumHelper::ENUM_VALUE_3},
         {70u, InnerEnumHelper::ENUM_VALUE_2}
     };
-    uint32_t test_value;
+    int32_t test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_ulonglong_innerenumhelper_map));
     ASSERT_TRUE(map_data);
     // Set values
     for (auto const& map_element : value)
     {
         EXPECT_EQ(RETCODE_OK,
-                map_data->set_uint32_value(map_data->get_member_id_by_name(std::to_string(map_element.first)),
-                static_cast<uint32_t>(map_element.second)));
+                map_data->set_int32_value(map_data->get_member_id_by_name(std::to_string(map_element.first)),
+                static_cast<int32_t>(map_element.second)));
     }
     // Check values
     for (auto const& map_element : value)
     {
         EXPECT_EQ(RETCODE_OK,
-                map_data->get_uint32_value(test_value, map_data->get_member_id_by_name(std::to_string(
+                map_data->get_int32_value(test_value, map_data->get_member_id_by_name(std::to_string(
                     map_element.first))));
         EXPECT_EQ(map_element.second, static_cast<InnerEnumHelper>(test_value));
     }
@@ -10646,7 +11235,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerEnumHelper)
     for (auto encoding : encodings)
     {
         MapULongLongInnerEnumHelper struct_data;
-        MapULongLongInnerEnumHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapULongLongInnerEnumHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_inner_enum_helper().size());
@@ -10657,6 +11246,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerEnumHelper)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapULongLongInnerEnumHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -10711,7 +11304,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerBitMaskHelper)
     for (auto encoding : encodings)
     {
         MapULongLongInnerBitMaskHelper struct_data;
-        MapULongLongInnerBitMaskHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapULongLongInnerBitMaskHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_inner_bit_mask_helper().size());
@@ -10722,6 +11315,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerBitMaskHelper)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapULongLongInnerBitMaskHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -10776,7 +11373,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerAliasHelper)
     for (auto encoding : encodings)
     {
         MapULongLongInnerAliasHelper struct_data;
-        MapULongLongInnerAliasHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapULongLongInnerAliasHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_inner_alias_helper().size());
@@ -10787,6 +11384,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerAliasHelper)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapULongLongInnerAliasHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -10841,7 +11442,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerAliasArrayHelper)
     for (auto encoding : encodings)
     {
         MapULongLongInnerAliasArrayHelper struct_data;
-        MapULongLongInnerAliasArrayHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapULongLongInnerAliasArrayHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_inner_alias_array_helper().size());
@@ -10852,6 +11453,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerAliasArrayHelper)
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapULongLongInnerAliasArrayHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -10906,7 +11511,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerAliasSequenceHelp
     for (auto encoding : encodings)
     {
         MapULongLongInnerAliasSequenceHelper struct_data;
-        MapULongLongInnerAliasSequenceHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapULongLongInnerAliasSequenceHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_inner_alias_sequence_helper().size());
@@ -10917,6 +11522,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerAliasSequenceHelp
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapULongLongInnerAliasSequenceHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -10996,7 +11605,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerAliasMapHelper)
     for (auto encoding : encodings)
     {
         MapULongLongInnerAliasMapHelper struct_data;
-        MapULongLongInnerAliasMapHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapULongLongInnerAliasMapHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_inner_alias_map_helper().size());
@@ -11007,6 +11616,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerAliasMapHelper)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapULongLongInnerAliasMapHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -11069,7 +11682,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerUnionHelper)
     for (auto encoding : encodings)
     {
         MapULongLongInnerUnionHelper struct_data;
-        MapULongLongInnerUnionHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapULongLongInnerUnionHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_inner_union_helper().size());
@@ -11092,6 +11705,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerUnionHelper)
 
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapULongLongInnerUnionHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -11162,7 +11779,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerStructureHelper)
     for (auto encoding : encodings)
     {
         MapULongLongInnerStructureHelper struct_data;
-        MapULongLongInnerStructureHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapULongLongInnerStructureHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_inner_structure_helper().size());
@@ -11174,6 +11791,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerStructureHelper)
             EXPECT_EQ(map_element.second.second, it->second.field2());
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapULongLongInnerStructureHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -11199,12 +11820,12 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerBitsetHelper)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    const std::unordered_map<uint64_t, std::tuple<uint8_t, bool, uint16_t, int16_t>> value {
-        {100u, {std::uint8_t(5), true, std::uint16_t(1000), std::int16_t(2000)}},
-        {50u, {std::uint8_t(7), false, std::uint16_t(555), std::int16_t(20)}},
-        {600u, {std::uint8_t(0), true, std::uint16_t(0), std::int16_t(0)}}
+    const std::unordered_map<uint64_t, std::tuple<eprosima::fastrtps::rtps::octet, bool, uint16_t, int16_t>> value {
+        {100u, {eprosima::fastrtps::rtps::octet(5), true, std::uint16_t(1000), std::int16_t(2000)}},
+        {50u, {eprosima::fastrtps::rtps::octet(7), false, std::uint16_t(555), std::int16_t(20)}},
+        {600u, {eprosima::fastrtps::rtps::octet(0), true, std::uint16_t(0), std::int16_t(0)}}
     };
-    uint8_t test_value1;
+    eprosima::fastrtps::rtps::octet test_value1;
     bool test_value2;
     uint16_t test_value3;
     int16_t test_value4;
@@ -11216,7 +11837,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerBitsetHelper)
         auto inner_bitset = map_data->loan_value(map_data->get_member_id_by_name(std::to_string(map_element.first)));
 
         EXPECT_EQ(RETCODE_OK,
-                inner_bitset->set_uint8_value(inner_bitset->get_member_id_by_name(bitfield_a),
+                inner_bitset->set_byte_value(inner_bitset->get_member_id_by_name(bitfield_a),
                 std::get<0>(map_element.second)));
         EXPECT_EQ(RETCODE_OK,
                 inner_bitset->set_boolean_value(inner_bitset->get_member_id_by_name(bitfield_b),
@@ -11236,7 +11857,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerBitsetHelper)
         auto inner_bitset = map_data->loan_value(map_data->get_member_id_by_name(std::to_string(map_element.first)));
 
         EXPECT_EQ(RETCODE_OK,
-                inner_bitset->get_uint8_value(test_value1,
+                inner_bitset->get_byte_value(test_value1,
                 inner_bitset->get_member_id_by_name(bitfield_a)));
         EXPECT_EQ(std::get<0>(map_element.second), test_value1);
         EXPECT_EQ(RETCODE_OK,
@@ -11259,7 +11880,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerBitsetHelper)
     for (auto encoding : encodings)
     {
         MapULongLongInnerBitsetHelper struct_data;
-        MapULongLongInnerBitsetHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapULongLongInnerBitsetHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_u_long_long_inner_bitset_helper().size());
@@ -11267,12 +11888,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerBitsetHelper)
         {
             auto it = struct_data.var_map_u_long_long_inner_bitset_helper().find(map_element.first);
             ASSERT_NE(struct_data.var_map_u_long_long_inner_bitset_helper().end(), it);
-            EXPECT_EQ(std::get<0>(map_element.second), it->second.a());
-            EXPECT_EQ(std::get<1>(map_element.second), it->second.b());
-            EXPECT_EQ(std::get<2>(map_element.second), it->second.c());
-            EXPECT_EQ(std::get<3>(map_element.second), it->second.d());
+            EXPECT_EQ(std::get<0>(map_element.second), it->second.a);
+            EXPECT_EQ(std::get<1>(map_element.second), it->second.b);
+            EXPECT_EQ(std::get<2>(map_element.second), it->second.c);
+            EXPECT_EQ(std::get<3>(map_element.second), it->second.d);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapULongLongInnerBitsetHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -11329,7 +11954,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringShort)
     for (auto encoding : encodings)
     {
         MapStringShort struct_data;
-        MapStringShortPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapStringShortPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_string_short().size());
@@ -11340,6 +11965,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringShort)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapStringShort_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -11394,7 +12023,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringUShort)
     for (auto encoding : encodings)
     {
         MapStringUShort struct_data;
-        MapStringUShortPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapStringUShortPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_string_ushort().size());
@@ -11405,6 +12034,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringUShort)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapStringUShort_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -11459,7 +12092,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringLong)
     for (auto encoding : encodings)
     {
         MapStringLong struct_data;
-        MapStringLongPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapStringLongPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_string_long().size());
@@ -11470,6 +12103,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringLong)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapStringLong_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -11524,7 +12161,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringULong)
     for (auto encoding : encodings)
     {
         MapStringULong struct_data;
-        MapStringULongPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapStringULongPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_string_ulong().size());
@@ -11535,6 +12172,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringULong)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapStringULong_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -11589,7 +12230,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringLongLong)
     for (auto encoding : encodings)
     {
         MapStringLongLong struct_data;
-        MapStringLongLongPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapStringLongLongPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_string_longlong().size());
@@ -11600,6 +12241,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringLongLong)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapStringLongLong_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -11654,7 +12299,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringULongLong)
     for (auto encoding : encodings)
     {
         MapStringULongLong struct_data;
-        MapStringULongLongPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapStringULongLongPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_string_ulonglong().size());
@@ -11665,6 +12310,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringULongLong)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapStringULongLong_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -11719,7 +12368,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringFloat)
     for (auto encoding : encodings)
     {
         MapStringFloat struct_data;
-        MapStringFloatPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapStringFloatPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_string_float().size());
@@ -11730,6 +12379,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringFloat)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapStringFloat_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -11784,7 +12437,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringDouble)
     for (auto encoding : encodings)
     {
         MapStringDouble struct_data;
-        MapStringDoublePubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapStringDoublePubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_string_double().size());
@@ -11795,6 +12448,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringDouble)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapStringDouble_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -11849,7 +12506,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringLongDouble)
     for (auto encoding : encodings)
     {
         MapStringLongDouble struct_data;
-        MapStringLongDoublePubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapStringLongDoublePubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_string_longdouble().size());
@@ -11860,6 +12517,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringLongDouble)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapStringLongDouble_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -11914,7 +12575,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringBoolean)
     for (auto encoding : encodings)
     {
         MapStringBoolean struct_data;
-        MapStringBooleanPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapStringBooleanPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_string_boolean().size());
@@ -11925,6 +12586,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringBoolean)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapStringBoolean_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -11979,7 +12644,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringOctet)
     for (auto encoding : encodings)
     {
         MapStringOctet struct_data;
-        MapStringOctetPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapStringOctetPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_string_octet().size());
@@ -11990,6 +12655,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringOctet)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapStringOctet_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -12044,7 +12713,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringChar)
     for (auto encoding : encodings)
     {
         MapStringChar struct_data;
-        MapStringCharPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapStringCharPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_string_char().size());
@@ -12055,6 +12724,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringChar)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapStringChar_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -12109,7 +12782,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringWChar)
     for (auto encoding : encodings)
     {
         MapStringWChar struct_data;
-        MapStringWCharPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapStringWCharPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_string_wchar().size());
@@ -12120,6 +12793,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringWChar)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapStringWChar_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -12175,7 +12852,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringString)
     for (auto encoding : encodings)
     {
         MapStringString struct_data;
-        MapStringStringPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapStringStringPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_string_string().size());
@@ -12186,6 +12863,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringString)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapStringString_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -12241,7 +12922,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringWString)
     for (auto encoding : encodings)
     {
         MapStringWString struct_data;
-        MapStringWStringPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapStringWStringPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_string_wstring().size());
@@ -12252,6 +12933,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringWString)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapStringWString_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -12306,7 +12991,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerAliasBoundedStringHe
     for (auto encoding : encodings)
     {
         MapStringInnerAliasBoundedStringHelper struct_data;
-        MapStringInnerAliasBoundedStringHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapStringInnerAliasBoundedStringHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_string_inneraliasboundedstringhelper().size());
@@ -12317,6 +13002,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerAliasBoundedStringHe
             EXPECT_EQ(map_element.second, it->second.to_string());
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapStringInnerAliasBoundedStringHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -12371,7 +13060,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerAliasBoundedWStringH
     for (auto encoding : encodings)
     {
         MapStringInnerAliasBoundedWStringHelper struct_data;
-        MapStringInnerAliasBoundedWStringHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapStringInnerAliasBoundedWStringHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_string_inneraliasboundedwstringhelper().size());
@@ -12382,6 +13071,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerAliasBoundedWStringH
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapStringInnerAliasBoundedWStringHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -12414,21 +13107,21 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerEnumHelper)
         {"testing", InnerEnumHelper::ENUM_VALUE_3},
         {"things", InnerEnumHelper::ENUM_VALUE_2}
     };
-    uint32_t test_value;
+    int32_t test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_string_innerenumhelper_map));
     ASSERT_TRUE(map_data);
     // Set values
     for (auto const& map_element : value)
     {
         EXPECT_EQ(RETCODE_OK,
-                map_data->set_uint32_value(map_data->get_member_id_by_name(map_element.first),
-                static_cast<uint32_t>(map_element.second)));
+                map_data->set_int32_value(map_data->get_member_id_by_name(map_element.first),
+                static_cast<int32_t>(map_element.second)));
     }
     // Check values
     for (auto const& map_element : value)
     {
         EXPECT_EQ(RETCODE_OK,
-                map_data->get_uint32_value(test_value, map_data->get_member_id_by_name(map_element.first)));
+                map_data->get_int32_value(test_value, map_data->get_member_id_by_name(map_element.first)));
         EXPECT_EQ(map_element.second, static_cast<InnerEnumHelper>(test_value));
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
@@ -12436,7 +13129,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerEnumHelper)
     for (auto encoding : encodings)
     {
         MapStringInnerEnumHelper struct_data;
-        MapStringInnerEnumHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapStringInnerEnumHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_string_innerenumhelper().size());
@@ -12447,6 +13140,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerEnumHelper)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapStringInnerEnumHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -12501,7 +13198,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerBitMaskHelper)
     for (auto encoding : encodings)
     {
         MapStringInnerBitMaskHelper struct_data;
-        MapStringInnerBitMaskHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapStringInnerBitMaskHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_string_innerbitmaskhelper().size());
@@ -12512,6 +13209,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerBitMaskHelper)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapStringInnerBitMaskHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -12566,7 +13267,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerAliasHelper)
     for (auto encoding : encodings)
     {
         MapStringInnerAliasHelper struct_data;
-        MapStringInnerAliasHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapStringInnerAliasHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_string_inneraliashelper().size());
@@ -12577,6 +13278,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerAliasHelper)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapStringInnerAliasHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -12631,7 +13336,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerAliasArrayHelper)
     for (auto encoding : encodings)
     {
         MapStringInnerAliasArrayHelper struct_data;
-        MapStringInnerAliasArrayHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapStringInnerAliasArrayHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_string_inneraliasarrayhelper().size());
@@ -12642,6 +13347,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerAliasArrayHelper)
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapStringInnerAliasArrayHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -12696,7 +13405,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerAliasSequenceHelper)
     for (auto encoding : encodings)
     {
         MapStringInnerAliasSequenceHelper struct_data;
-        MapStringInnerAliasSequenceHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapStringInnerAliasSequenceHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_string_inneraliassequencehelper().size());
@@ -12707,6 +13416,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerAliasSequenceHelper)
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapStringInnerAliasSequenceHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -12787,7 +13500,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerAliasMapHelper)
     for (auto encoding : encodings)
     {
         MapStringInnerAliasMapHelper struct_data;
-        MapStringInnerAliasMapHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapStringInnerAliasMapHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_string_inneraliasmaphelper().size());
@@ -12798,6 +13511,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerAliasMapHelper)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapStringInnerAliasMapHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -12861,7 +13578,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerUnionHelper)
     for (auto encoding : encodings)
     {
         MapStringInnerUnionHelper struct_data;
-        MapStringInnerUnionHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapStringInnerUnionHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_string_innerunionhelper().size());
@@ -12884,6 +13601,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerUnionHelper)
 
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapStringInnerUnionHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -12955,7 +13676,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerStructureHelper)
     for (auto encoding : encodings)
     {
         MapStringInnerStructureHelper struct_data;
-        MapStringInnerStructureHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapStringInnerStructureHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_string_innerstructurehelper().size());
@@ -12967,6 +13688,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerStructureHelper)
             EXPECT_EQ(map_element.second.second, it->second.field2());
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapStringInnerStructureHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -12993,12 +13718,12 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerBitsetHelper)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    const std::unordered_map<std::string, std::tuple<uint8_t, bool, uint16_t, int16_t>> value {
-        {"we", {std::uint8_t(5), true, std::uint16_t(1000), std::int16_t(2000)}},
-        {"are", {std::uint8_t(7), false, std::uint16_t(555), std::int16_t(20)}},
-        {"testing", {std::uint8_t(0), true, std::uint16_t(0), std::int16_t(0)}}
+    const std::unordered_map<std::string, std::tuple<eprosima::fastrtps::rtps::octet, bool, uint16_t, int16_t>> value {
+        {"we", {eprosima::fastrtps::rtps::octet(5), true, std::uint16_t(1000), std::int16_t(2000)}},
+        {"are", {eprosima::fastrtps::rtps::octet(7), false, std::uint16_t(555), std::int16_t(20)}},
+        {"testing", {eprosima::fastrtps::rtps::octet(0), true, std::uint16_t(0), std::int16_t(0)}}
     };
-    uint8_t test_value1;
+    eprosima::fastrtps::rtps::octet test_value1;
     bool test_value2;
     uint16_t test_value3;
     int16_t test_value4;
@@ -13010,7 +13735,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerBitsetHelper)
         auto inner_bitset = map_data->loan_value(map_data->get_member_id_by_name(map_element.first));
 
         EXPECT_EQ(RETCODE_OK,
-                inner_bitset->set_uint8_value(inner_bitset->get_member_id_by_name(bitfield_a),
+                inner_bitset->set_byte_value(inner_bitset->get_member_id_by_name(bitfield_a),
                 std::get<0>(map_element.second)));
         EXPECT_EQ(RETCODE_OK,
                 inner_bitset->set_boolean_value(inner_bitset->get_member_id_by_name(bitfield_b),
@@ -13030,7 +13755,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerBitsetHelper)
         auto inner_bitset = map_data->loan_value(map_data->get_member_id_by_name(map_element.first));
 
         EXPECT_EQ(RETCODE_OK,
-                inner_bitset->get_uint8_value(test_value1,
+                inner_bitset->get_byte_value(test_value1,
                 inner_bitset->get_member_id_by_name(bitfield_a)));
         EXPECT_EQ(std::get<0>(map_element.second), test_value1);
         EXPECT_EQ(RETCODE_OK,
@@ -13053,7 +13778,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerBitsetHelper)
     for (auto encoding : encodings)
     {
         MapStringInnerBitsetHelper struct_data;
-        MapStringInnerBitsetHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapStringInnerBitsetHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_string_innerbitsethelper().size());
@@ -13061,12 +13786,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerBitsetHelper)
         {
             auto it = struct_data.var_map_string_innerbitsethelper().find(map_element.first);
             ASSERT_NE(struct_data.var_map_string_innerbitsethelper().end(), it);
-            EXPECT_EQ(std::get<0>(map_element.second), it->second.a());
-            EXPECT_EQ(std::get<1>(map_element.second), it->second.b());
-            EXPECT_EQ(std::get<2>(map_element.second), it->second.c());
-            EXPECT_EQ(std::get<3>(map_element.second), it->second.d());
+            EXPECT_EQ(std::get<0>(map_element.second), it->second.a);
+            EXPECT_EQ(std::get<1>(map_element.second), it->second.b);
+            EXPECT_EQ(std::get<2>(map_element.second), it->second.c);
+            EXPECT_EQ(std::get<3>(map_element.second), it->second.d);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapStringInnerBitsetHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -13124,7 +13853,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperSh
     for (auto encoding : encodings)
     {
         MapInnerAliasBoundedStringHelperShort struct_data;
-        MapInnerAliasBoundedStringHelperShortPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapInnerAliasBoundedStringHelperShortPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_short().size());
@@ -13135,6 +13864,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperSh
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapInnerAliasBoundedStringHelperShort_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -13188,7 +13921,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperUS
     for (auto encoding : encodings)
     {
         MapInnerAliasBoundedStringHelperUShort struct_data;
-        MapInnerAliasBoundedStringHelperUShortPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapInnerAliasBoundedStringHelperUShortPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_ushort().size());
@@ -13199,6 +13932,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperUS
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapInnerAliasBoundedStringHelperUShort_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -13252,7 +13989,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperLo
     for (auto encoding : encodings)
     {
         MapInnerAliasBoundedStringHelperLong struct_data;
-        MapInnerAliasBoundedStringHelperLongPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapInnerAliasBoundedStringHelperLongPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_long().size());
@@ -13263,6 +14000,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperLo
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapInnerAliasBoundedStringHelperLong_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -13316,7 +14057,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperUL
     for (auto encoding : encodings)
     {
         MapInnerAliasBoundedStringHelperULong struct_data;
-        MapInnerAliasBoundedStringHelperULongPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapInnerAliasBoundedStringHelperULongPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_ulong().size());
@@ -13327,6 +14068,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperUL
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapInnerAliasBoundedStringHelperULong_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -13380,7 +14125,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperLo
     for (auto encoding : encodings)
     {
         MapInnerAliasBoundedStringHelperLongLong struct_data;
-        MapInnerAliasBoundedStringHelperLongLongPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapInnerAliasBoundedStringHelperLongLongPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_longlong().size());
@@ -13391,6 +14136,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperLo
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapInnerAliasBoundedStringHelperLongLong_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -13444,7 +14193,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperUL
     for (auto encoding : encodings)
     {
         MapInnerAliasBoundedStringHelperULongLong struct_data;
-        MapInnerAliasBoundedStringHelperULongLongPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapInnerAliasBoundedStringHelperULongLongPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_ulonglong().size());
@@ -13455,6 +14204,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperUL
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapInnerAliasBoundedStringHelperULongLong_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -13508,7 +14261,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperFl
     for (auto encoding : encodings)
     {
         MapInnerAliasBoundedStringHelperFloat struct_data;
-        MapInnerAliasBoundedStringHelperFloatPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapInnerAliasBoundedStringHelperFloatPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_float().size());
@@ -13519,6 +14272,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperFl
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapInnerAliasBoundedStringHelperFloat_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -13572,7 +14329,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperDo
     for (auto encoding : encodings)
     {
         MapInnerAliasBoundedStringHelperDouble struct_data;
-        MapInnerAliasBoundedStringHelperDoublePubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapInnerAliasBoundedStringHelperDoublePubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_double().size());
@@ -13583,6 +14340,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperDo
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapInnerAliasBoundedStringHelperDouble_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -13636,7 +14397,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperLo
     for (auto encoding : encodings)
     {
         MapInnerAliasBoundedStringHelperLongDouble struct_data;
-        MapInnerAliasBoundedStringHelperLongDoublePubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapInnerAliasBoundedStringHelperLongDoublePubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_longdouble().size());
@@ -13647,6 +14408,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperLo
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapInnerAliasBoundedStringHelperLongDouble_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -13700,7 +14465,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperBo
     for (auto encoding : encodings)
     {
         MapInnerAliasBoundedStringHelperBoolean struct_data;
-        MapInnerAliasBoundedStringHelperBooleanPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapInnerAliasBoundedStringHelperBooleanPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_boolean().size());
@@ -13711,6 +14476,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperBo
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapInnerAliasBoundedStringHelperBoolean_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -13764,7 +14533,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperOc
     for (auto encoding : encodings)
     {
         MapInnerAliasBoundedStringHelperOctet struct_data;
-        MapInnerAliasBoundedStringHelperOctetPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapInnerAliasBoundedStringHelperOctetPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_octet().size());
@@ -13775,6 +14544,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperOc
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapInnerAliasBoundedStringHelperOctet_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -13828,7 +14601,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperCh
     for (auto encoding : encodings)
     {
         MapInnerAliasBoundedStringHelperChar struct_data;
-        MapInnerAliasBoundedStringHelperCharPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapInnerAliasBoundedStringHelperCharPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_char().size());
@@ -13839,6 +14612,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperCh
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapInnerAliasBoundedStringHelperChar_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -13892,7 +14669,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperWC
     for (auto encoding : encodings)
     {
         MapInnerAliasBoundedStringHelperWChar struct_data;
-        MapInnerAliasBoundedStringHelperWCharPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapInnerAliasBoundedStringHelperWCharPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_wchar().size());
@@ -13903,6 +14680,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperWC
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapInnerAliasBoundedStringHelperWChar_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -13957,7 +14738,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperSt
     for (auto encoding : encodings)
     {
         MapInnerAliasBoundedStringHelperString struct_data;
-        MapInnerAliasBoundedStringHelperStringPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapInnerAliasBoundedStringHelperStringPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_string().size());
@@ -13968,6 +14749,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperSt
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapInnerAliasBoundedStringHelperString_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -14022,7 +14807,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperWS
     for (auto encoding : encodings)
     {
         MapInnerAliasBoundedStringHelperWString struct_data;
-        MapInnerAliasBoundedStringHelperWStringPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapInnerAliasBoundedStringHelperWStringPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_wstring().size());
@@ -14033,6 +14818,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperWS
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapInnerAliasBoundedStringHelperWString_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -14088,7 +14877,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
     for (auto encoding : encodings)
     {
         MapInnerAliasBoundedStringHelperInnerAliasBoundedStringHelper struct_data;
-        MapInnerAliasBoundedStringHelperInnerAliasBoundedStringHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapInnerAliasBoundedStringHelperInnerAliasBoundedStringHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(),
@@ -14101,6 +14890,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
             EXPECT_EQ(map_element.second, it->second.to_string());
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapInnerAliasBoundedStringHelperInnerAliasBoundedStringHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -14156,7 +14949,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
     for (auto encoding : encodings)
     {
         MapInnerAliasBoundedStringHelperInnerAliasBoundedWStringHelper struct_data;
-        MapInnerAliasBoundedStringHelperInnerAliasBoundedWStringHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapInnerAliasBoundedStringHelperInnerAliasBoundedWStringHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(),
@@ -14169,6 +14962,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapInnerAliasBoundedStringHelperInnerAliasBoundedWStringHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -14200,7 +14997,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
         {"testing", InnerEnumHelper::ENUM_VALUE_3},
         {"things", InnerEnumHelper::ENUM_VALUE_2}
     };
-    uint32_t test_value;
+    int32_t test_value;
     auto map_data =
             data->loan_value(data->get_member_id_by_name(var_inneraliasboundedstringhelper_innerenumhelper_map));
     ASSERT_TRUE(map_data);
@@ -14208,14 +15005,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
     for (auto const& map_element : value)
     {
         EXPECT_EQ(RETCODE_OK,
-                map_data->set_uint32_value(map_data->get_member_id_by_name(map_element.first),
-                static_cast<uint32_t>(map_element.second)));
+                map_data->set_int32_value(map_data->get_member_id_by_name(map_element.first),
+                static_cast<int32_t>(map_element.second)));
     }
     // Check values
     for (auto const& map_element : value)
     {
         EXPECT_EQ(RETCODE_OK,
-                map_data->get_uint32_value(test_value, map_data->get_member_id_by_name(map_element.first)));
+                map_data->get_int32_value(test_value, map_data->get_member_id_by_name(map_element.first)));
         EXPECT_EQ(map_element.second, static_cast<InnerEnumHelper>(test_value));
     }
     EXPECT_EQ(RETCODE_OK, data->return_loaned_value(map_data));
@@ -14223,7 +15020,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
     for (auto encoding : encodings)
     {
         MapInnerAliasBoundedStringHelperInnerEnumHelper struct_data;
-        MapInnerAliasBoundedStringHelperInnerEnumHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapInnerAliasBoundedStringHelperInnerEnumHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_innerenumhelper().size());
@@ -14234,6 +15031,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapInnerAliasBoundedStringHelperInnerEnumHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -14289,7 +15090,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
     for (auto encoding : encodings)
     {
         MapInnerAliasBoundedStringHelperInnerBitMaskHelper struct_data;
-        MapInnerAliasBoundedStringHelperInnerBitMaskHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapInnerAliasBoundedStringHelperInnerBitMaskHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_innerbitmaskhelper().size());
@@ -14300,6 +15101,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapInnerAliasBoundedStringHelperInnerBitMaskHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -14354,7 +15159,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
     for (auto encoding : encodings)
     {
         MapInnerAliasBoundedStringHelperInnerAliasHelper struct_data;
-        MapInnerAliasBoundedStringHelperInnerAliasHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapInnerAliasBoundedStringHelperInnerAliasHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_inneraliashelper().size());
@@ -14365,6 +15170,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapInnerAliasBoundedStringHelperInnerAliasHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -14420,7 +15229,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
     for (auto encoding : encodings)
     {
         MapInnerAliasBoundedStringHelperInnerAliasArrayHelper struct_data;
-        MapInnerAliasBoundedStringHelperInnerAliasArrayHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapInnerAliasBoundedStringHelperInnerAliasArrayHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_inneraliasarrayhelper().size());
@@ -14431,6 +15240,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapInnerAliasBoundedStringHelperInnerAliasArrayHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -14486,7 +15299,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
     for (auto encoding : encodings)
     {
         MapInnerAliasBoundedStringHelperInnerAliasSequenceHelper struct_data;
-        MapInnerAliasBoundedStringHelperInnerAliasSequenceHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapInnerAliasBoundedStringHelperInnerAliasSequenceHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_inneraliassequencehelper().size());
@@ -14498,6 +15311,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapInnerAliasBoundedStringHelperInnerAliasSequenceHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -14579,7 +15396,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
     for (auto encoding : encodings)
     {
         MapInnerAliasBoundedStringHelperInnerAliasMapHelper struct_data;
-        MapInnerAliasBoundedStringHelperInnerAliasMapHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapInnerAliasBoundedStringHelperInnerAliasMapHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_inneraliasmaphelper().size());
@@ -14590,6 +15407,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapInnerAliasBoundedStringHelperInnerAliasMapHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -14653,7 +15474,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
     for (auto encoding : encodings)
     {
         MapInnerAliasBoundedStringHelperInnerUnionHelper struct_data;
-        MapInnerAliasBoundedStringHelperInnerUnionHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapInnerAliasBoundedStringHelperInnerUnionHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_innerunionhelper().size());
@@ -14676,6 +15497,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
 
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapInnerAliasBoundedStringHelperInnerUnionHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -14748,7 +15573,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
     for (auto encoding : encodings)
     {
         MapInnerAliasBoundedStringHelperInnerStructureHelper struct_data;
-        MapInnerAliasBoundedStringHelperInnerStructureHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapInnerAliasBoundedStringHelperInnerStructureHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_innerstructurehelper().size());
@@ -14760,6 +15585,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
             EXPECT_EQ(map_element.second.second, it->second.field2());
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapInnerAliasBoundedStringHelperInnerStructureHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -14785,12 +15614,12 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    const std::unordered_map<std::string, std::tuple<uint8_t, bool, uint16_t, int16_t>> value {
-        {"we", {std::uint8_t(5), true, std::uint16_t(1000), std::int16_t(2000)}},
-        {"are", {std::uint8_t(7), false, std::uint16_t(555), std::int16_t(20)}},
-        {"testing", {std::uint8_t(0), true, std::uint16_t(0), std::int16_t(0)}}
+    const std::unordered_map<std::string, std::tuple<eprosima::fastrtps::rtps::octet, bool, uint16_t, int16_t>> value {
+        {"we", {eprosima::fastrtps::rtps::octet(5), true, std::uint16_t(1000), std::int16_t(2000)}},
+        {"are", {eprosima::fastrtps::rtps::octet(7), false, std::uint16_t(555), std::int16_t(20)}},
+        {"testing", {eprosima::fastrtps::rtps::octet(0), true, std::uint16_t(0), std::int16_t(0)}}
     };
-    uint8_t test_value1;
+    eprosima::fastrtps::rtps::octet test_value1;
     bool test_value2;
     uint16_t test_value3;
     int16_t test_value4;
@@ -14803,7 +15632,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
         auto inner_bitset = map_data->loan_value(map_data->get_member_id_by_name(map_element.first));
 
         EXPECT_EQ(RETCODE_OK,
-                inner_bitset->set_uint8_value(inner_bitset->get_member_id_by_name(bitfield_a),
+                inner_bitset->set_byte_value(inner_bitset->get_member_id_by_name(bitfield_a),
                 std::get<0>(map_element.second)));
         EXPECT_EQ(RETCODE_OK,
                 inner_bitset->set_boolean_value(inner_bitset->get_member_id_by_name(bitfield_b),
@@ -14823,7 +15652,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
         auto inner_bitset = map_data->loan_value(map_data->get_member_id_by_name(map_element.first));
 
         EXPECT_EQ(RETCODE_OK,
-                inner_bitset->get_uint8_value(test_value1,
+                inner_bitset->get_byte_value(test_value1,
                 inner_bitset->get_member_id_by_name(bitfield_a)));
         EXPECT_EQ(std::get<0>(map_element.second), test_value1);
         EXPECT_EQ(RETCODE_OK,
@@ -14846,7 +15675,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
     for (auto encoding : encodings)
     {
         MapInnerAliasBoundedStringHelperInnerBitsetHelper struct_data;
-        MapInnerAliasBoundedStringHelperInnerBitsetHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new MapInnerAliasBoundedStringHelperInnerBitsetHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value.size(), struct_data.var_map_inneraliasboundedstringhelper_innerbitsethelper().size());
@@ -14854,12 +15683,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
         {
             auto it = struct_data.var_map_inneraliasboundedstringhelper_innerbitsethelper().find(map_element.first);
             ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_innerbitsethelper().end(), it);
-            EXPECT_EQ(std::get<0>(map_element.second), it->second.a());
-            EXPECT_EQ(std::get<1>(map_element.second), it->second.b());
-            EXPECT_EQ(std::get<2>(map_element.second), it->second.c());
-            EXPECT_EQ(std::get<3>(map_element.second), it->second.d());
+            EXPECT_EQ(std::get<0>(map_element.second), it->second.a);
+            EXPECT_EQ(std::get<1>(map_element.second), it->second.b);
+            EXPECT_EQ(std::get<2>(map_element.second), it->second.c);
+            EXPECT_EQ(std::get<3>(map_element.second), it->second.d);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_MapInnerAliasBoundedStringHelperInnerBitsetHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -14986,7 +15819,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BoundedSmallMap)
     for (auto encoding : encodings)
     {
         BoundedSmallMap struct_data;
-        BoundedSmallMapPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new BoundedSmallMapPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value_small_map.size(), struct_data.var_small_map().size());
@@ -15013,6 +15846,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BoundedSmallMap)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_BoundedSmallMap_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -15138,7 +15975,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BoundedLargeMap)
     for (auto encoding : encodings)
     {
         BoundedLargeMap struct_data;
-        BoundedLargeMapPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new BoundedLargeMapPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value_large_map.size(), struct_data.var_large_map().size());
@@ -15165,6 +16002,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BoundedLargeMap)
             EXPECT_EQ(map_element.second, it->second);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_BoundedLargeMap_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 

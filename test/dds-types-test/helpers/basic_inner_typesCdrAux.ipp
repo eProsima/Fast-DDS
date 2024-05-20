@@ -327,10 +327,10 @@ eProsima_user_DllExport void deserialize(
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
-        const InnerBitsetHelper& data,
+        const InnerBitsetHelper&,
         size_t& current_alignment)
 {
-    return calculator.calculate_serialized_size(data.bitset(), current_alignment);
+    return calculator.calculate_serialized_size(std::bitset<33>{}, current_alignment);
 }
 
 template<>
@@ -338,7 +338,26 @@ eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const InnerBitsetHelper& data)
 {
-    scdr << data.bitset();
+    std::bitset<33> bitset;
+
+        bitset <<= 12;
+        bitset |= (data.d & 0xFFF);
+
+        bitset <<= 3;
+
+        bitset <<= 10;
+        bitset |= (data.c & 0x3FF);
+
+        bitset <<= 4;
+
+        bitset <<= 1;
+        bitset |= (data.b & 0x1);
+
+        bitset <<= 3;
+        bitset |= (data.a & 0x7);
+
+
+    scdr << bitset;
 }
 
 template<>
@@ -348,7 +367,23 @@ eProsima_user_DllExport void deserialize(
 {
     std::bitset<33> bitset;
     dcdr >> bitset;
-    data.bitset(bitset);
+
+        data.a = static_cast<uint8_t>(bitset.to_ullong() & 0x7);
+        bitset >>= 3;
+
+        data.b = static_cast<bool>(bitset.to_ullong() & 0x1);
+        bitset >>= 1;
+
+        bitset >>= 4;
+
+        data.c = static_cast<uint16_t>(bitset.to_ullong() & 0x3FF);
+        bitset >>= 10;
+
+        bitset >>= 3;
+
+        data.d = static_cast<int16_t>(bitset.to_ullong() & 0xFFF);
+        bitset >>= 12;
+
 }
 
 

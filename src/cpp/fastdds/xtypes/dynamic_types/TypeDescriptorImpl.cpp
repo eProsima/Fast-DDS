@@ -130,7 +130,7 @@ ReturnCode_t TypeDescriptorImpl::copy_from(
     key_element_type_ = descriptor.key_element_type_;
     extensibility_kind_ = descriptor.extensibility_kind_;
     is_nested_ = descriptor.is_nested_;
-    is_extensibility_set = descriptor.is_extensibility_set;
+    is_extensibility_set_ = descriptor.is_extensibility_set_;
 
     return RETCODE_OK;
 }
@@ -193,7 +193,7 @@ bool TypeDescriptorImpl::is_consistent() noexcept
         // Check extensibility on structures.
         if (TK_STRUCTURE == kind_)
         {
-            if (!is_extensibility_set)
+            if (!is_extensibility_set_)
             {
                 extensibility_kind_ = base_type->get_descriptor().extensibility_kind();
             }

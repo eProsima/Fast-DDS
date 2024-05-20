@@ -16,6 +16,7 @@
 
 #include <gtest/gtest.h>
 
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
@@ -42,6 +43,24 @@ void DynamicTypesDDSTypesTest::TearDown()
     DynamicTypeBuilderFactory::delete_instance();
 }
 
+void DynamicTypesDDSTypesTest::check_typeobject_registry(
+        const DynamicType::_ref_type& dyn_type,
+        const xtypes::TypeIdentifier& static_type_id)
+{
+    EXPECT_NE(static_type_id, xtypes::TypeIdentifier());
+    xtypes::TypeIdentifier dynamic_type_id;
+    EXPECT_EQ(RETCODE_OK, DomainParticipantFactory::get_instance()->type_object_registry().
+                    register_typeobject_w_dynamic_type(dyn_type, dynamic_type_id));
+    EXPECT_EQ(static_type_id, dynamic_type_id);
+    xtypes::TypeObject type_object;
+    EXPECT_EQ(RETCODE_OK, DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(
+                dynamic_type_id, type_object));
+    DynamicTypeBuilder::_ref_type builder = DynamicTypeBuilderFactory::get_instance()->create_type_w_type_object(
+        type_object);
+    ASSERT_NE(builder, nullptr);
+    EXPECT_TRUE(builder->equals(dyn_type));
+}
+
 DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_enum_helper()
 {
     TypeDescriptor::_ref_type enum_descriptor {traits<TypeDescriptor>::make_shared()};
@@ -50,15 +69,15 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_enum_helper()
     DynamicTypeBuilder::_ref_type enum_builder {DynamicTypeBuilderFactory::get_instance()->create_type(enum_descriptor)};
 
     MemberDescriptor::_ref_type enum_literal_descriptor {traits<MemberDescriptor>::make_shared()};
-    enum_literal_descriptor->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32));
+    enum_literal_descriptor->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32));
     enum_literal_descriptor->name(enum_value_1_name);
     enum_builder->add_member(enum_literal_descriptor);
     enum_literal_descriptor = traits<MemberDescriptor>::make_shared();
-    enum_literal_descriptor->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32));
+    enum_literal_descriptor->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32));
     enum_literal_descriptor->name(enum_value_2_name);
     enum_builder->add_member(enum_literal_descriptor);
     enum_literal_descriptor = traits<MemberDescriptor>::make_shared();
-    enum_literal_descriptor->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32));
+    enum_literal_descriptor->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32));
     enum_literal_descriptor->name(enum_value_3_name);
     enum_builder->add_member(enum_literal_descriptor);
 
@@ -215,7 +234,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_bitset_helper()
 
     MemberDescriptor::_ref_type bitset_member {traits<MemberDescriptor>::make_shared()};
     bitset_member->name(bitfield_a);
-    bitset_member->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT8));
+    bitset_member->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_BYTE));
     bitset_member->id(0);
     bitset_builder->add_member(bitset_member);
     bitset_member = traits<MemberDescriptor>::make_shared();

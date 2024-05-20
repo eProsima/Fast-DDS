@@ -19,6 +19,7 @@
 #include "../DynamicTypesDDSTypesTest.hpp"
 #include "../../../dds-types-test/helpers/basic_inner_types.hpp"
 #include "../../../dds-types-test/aliasesPubSubTypes.h"
+#include "../../../dds-types-test/aliasesTypeObjectSupport.hpp"
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
@@ -119,10 +120,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasInt16)
     for (auto encoding : encodings)
     {
         AliasInt16 alias_data;
-        AliasInt16PubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new AliasInt16PubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, alias_data, static_pubsubType);
         EXPECT_EQ(alias_data.value(), test_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_AliasInt16_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -159,10 +164,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasUint16)
     for (auto encoding : encodings)
     {
         AliasUint16 alias_data;
-        AliasUint16PubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new AliasUint16PubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, alias_data, static_pubsubType);
         EXPECT_EQ(alias_data.value(), test_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_AliasUint16_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -199,10 +208,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasInt32)
     for (auto encoding : encodings)
     {
         AliasInt32 alias_data;
-        AliasInt32PubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new AliasInt32PubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, alias_data, static_pubsubType);
         EXPECT_EQ(alias_data.value(), test_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_AliasInt32_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -239,10 +252,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasUInt32)
     for (auto encoding : encodings)
     {
         AliasUInt32 alias_data;
-        AliasUInt32PubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new AliasUInt32PubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, alias_data, static_pubsubType);
         EXPECT_EQ(alias_data.value(), test_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_AliasUInt32_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -279,10 +296,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasInt64)
     for (auto encoding : encodings)
     {
         AliasInt64 alias_data;
-        AliasInt64PubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new AliasInt64PubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, alias_data, static_pubsubType);
         EXPECT_EQ(alias_data.value(), test_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_AliasInt64_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -319,10 +340,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasUInt64)
     for (auto encoding : encodings)
     {
         AliasUInt64 alias_data;
-        AliasUInt64PubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new AliasUInt64PubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, alias_data, static_pubsubType);
         EXPECT_EQ(alias_data.value(), test_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_AliasUInt64_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -359,10 +384,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasFloat32)
     for (auto encoding : encodings)
     {
         AliasFloat32 alias_data;
-        AliasFloat32PubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new AliasFloat32PubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, alias_data, static_pubsubType);
         EXPECT_EQ(alias_data.value(), test_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_AliasFloat32_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -399,10 +428,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasFloat64)
     for (auto encoding : encodings)
     {
         AliasFloat64 alias_data;
-        AliasFloat64PubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new AliasFloat64PubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, alias_data, static_pubsubType);
         EXPECT_EQ(alias_data.value(), test_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_AliasFloat64_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -439,10 +472,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasFloat128)
     for (auto encoding : encodings)
     {
         AliasFloat128 alias_data;
-        AliasFloat128PubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new AliasFloat128PubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, alias_data, static_pubsubType);
         EXPECT_EQ(alias_data.value(), test_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_AliasFloat128_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -479,10 +516,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasBool)
     for (auto encoding : encodings)
     {
         AliasBool alias_data;
-        AliasBoolPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new AliasBoolPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, alias_data, static_pubsubType);
         EXPECT_EQ(alias_data.value(), test_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_AliasBool_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -519,10 +560,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasOctet)
     for (auto encoding : encodings)
     {
         AliasOctet alias_data;
-        AliasOctetPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new AliasOctetPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, alias_data, static_pubsubType);
         EXPECT_EQ(alias_data.value(), test_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_AliasOctet_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -559,10 +604,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasChar8)
     for (auto encoding : encodings)
     {
         AliasChar8 alias_data;
-        AliasChar8PubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new AliasChar8PubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, alias_data, static_pubsubType);
         EXPECT_EQ(alias_data.value(), test_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_AliasChar8_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -599,10 +648,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasChar16)
     for (auto encoding : encodings)
     {
         AliasChar16 alias_data;
-        AliasChar16PubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new AliasChar16PubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, alias_data, static_pubsubType);
         EXPECT_EQ(alias_data.value(), test_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_AliasChar16_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -640,10 +693,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasString8)
     for (auto encoding : encodings)
     {
         AliasString8 alias_data;
-        AliasString8PubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new AliasString8PubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, alias_data, static_pubsubType);
         EXPECT_EQ(alias_data.value(), test_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_AliasString8_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -681,10 +738,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasString16)
     for (auto encoding : encodings)
     {
         AliasString16 alias_data;
-        AliasString16PubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new AliasString16PubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, alias_data, static_pubsubType);
         EXPECT_EQ(alias_data.value(), test_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_AliasString16_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -713,19 +774,23 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasEnum)
     ASSERT_TRUE(data);
 
     InnerEnumHelper value = InnerEnumHelper::ENUM_VALUE_2;
-    uint32_t test_value = 0;
-    EXPECT_EQ(data->set_uint32_value(data->get_member_id_by_name(
-                struct_member_name), static_cast<uint32_t>(value)), RETCODE_OK);
-    EXPECT_EQ(data->get_uint32_value(test_value, data->get_member_id_by_name(struct_member_name)), RETCODE_OK);
-    EXPECT_EQ(static_cast<uint32_t>(value), test_value);
+    int32_t test_value {0};
+    EXPECT_EQ(data->set_int32_value(data->get_member_id_by_name(
+                struct_member_name), static_cast<int32_t>(value)), RETCODE_OK);
+    EXPECT_EQ(data->get_int32_value(test_value, data->get_member_id_by_name(struct_member_name)), RETCODE_OK);
+    EXPECT_EQ(static_cast<int32_t>(value), test_value);
 
     for (auto encoding : encodings)
     {
         AliasEnum alias_data;
-        AliasEnumPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new AliasEnumPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, alias_data, static_pubsubType);
-        EXPECT_EQ(static_cast<uint32_t>(alias_data.value()), test_value);
+        EXPECT_EQ(static_cast<int32_t>(alias_data.value()), test_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_AliasEnum_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -763,10 +828,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasBitmask)
     for (auto encoding : encodings)
     {
         AliasBitmask alias_data;
-        AliasBitmaskPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new AliasBitmaskPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, alias_data, static_pubsubType);
         EXPECT_EQ(alias_data.value(), test_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_AliasBitmask_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -803,10 +872,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasAlias)
     for (auto encoding : encodings)
     {
         AliasAlias alias_data;
-        AliasAliasPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new AliasAliasPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, alias_data, static_pubsubType);
         EXPECT_EQ(alias_data.value(), test_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_AliasAlias_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -845,7 +918,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasArray)
     for (auto encoding : encodings)
     {
         AliasArray alias_data;
-        AliasArrayPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new AliasArrayPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, alias_data, static_pubsubType);
         EXPECT_EQ(test_value.size(), alias_data.value().size());
         for (size_t i = 0; i < test_value.size(); ++i)
@@ -853,6 +926,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasArray)
             EXPECT_EQ(alias_data.value()[i], test_value[i]);
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_AliasArray_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -891,7 +968,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasMultiArray)
     for (auto encoding : encodings)
     {
         AliasMultiArray alias_data;
-        AliasMultiArrayPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new AliasMultiArrayPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, alias_data, static_pubsubType);
         EXPECT_EQ(test_value.size(), alias_data.value().size() * alias_data.value()[0].size());
         for (size_t i = 0; i < alias_data.value().size(); ++i)
@@ -902,6 +979,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasMultiArray)
             }
         }
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_AliasMultiArray_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -940,10 +1021,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasSequence)
     for (auto encoding : encodings)
     {
         AliasSequence alias_data;
-        AliasSequencePubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new AliasSequencePubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, alias_data, static_pubsubType);
         EXPECT_EQ(alias_data.value(), test_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_AliasSequence_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -996,7 +1081,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasMap)
     for (auto encoding : encodings)
     {
         AliasMap alias_data;
-        AliasMapPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new AliasMapPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, alias_data, static_pubsubType);
         map_data = data->loan_value(data->get_member_id_by_name(struct_member_name));
         ASSERT_TRUE(map_data);
@@ -1005,6 +1090,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasMap)
         EXPECT_EQ(alias_data.value()[second_key], second_value);
         EXPECT_EQ(data->return_loaned_value(map_data), RETCODE_OK);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_AliasMap_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -1053,10 +1142,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasUnion)
     for (auto encoding : encodings)
     {
         AliasUnion alias_data;
-        AliasUnionPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new AliasUnionPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, alias_data, static_pubsubType);
         EXPECT_EQ(alias_data.value().shortValue(), test_short_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_AliasUnion_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -1105,11 +1198,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasStruct)
     for (auto encoding : encodings)
     {
         AliasStruct alias_data;
-        AliasStructPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new AliasStructPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, alias_data, static_pubsubType);
         EXPECT_EQ(alias_data.value().field1(), test_long_value);
         EXPECT_EQ(alias_data.value().field2(), test_float_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_AliasStruct_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -1137,8 +1234,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasBitset)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    uint8_t octet_value = 5;
-    uint8_t test_octet_value = 0;
+    eprosima::fastrtps::rtps::octet octet_value = 5;
+    eprosima::fastrtps::rtps::octet test_octet_value = 0;
     bool bool_value = true;
     bool test_bool_value = false;
     uint16_t ushort_value = 1000;
@@ -1147,8 +1244,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasBitset)
     int16_t test_short_value = 0;
     DynamicData::_ref_type bitset_data = data->loan_value(data->get_member_id_by_name(struct_member_name));
     ASSERT_TRUE(bitset_data);
-    EXPECT_EQ(bitset_data->set_uint8_value(bitset_data->get_member_id_by_name(bitfield_a), octet_value), RETCODE_OK);
-    EXPECT_EQ(bitset_data->get_uint8_value(test_octet_value, bitset_data->get_member_id_by_name(bitfield_a)),
+    EXPECT_EQ(bitset_data->set_byte_value(bitset_data->get_member_id_by_name(bitfield_a), octet_value), RETCODE_OK);
+    EXPECT_EQ(bitset_data->get_byte_value(test_octet_value, bitset_data->get_member_id_by_name(bitfield_a)),
             RETCODE_OK);
     EXPECT_EQ(octet_value, test_octet_value);
     EXPECT_EQ(bitset_data->set_boolean_value(bitset_data->get_member_id_by_name(bitfield_b), bool_value), RETCODE_OK);
@@ -1168,13 +1265,17 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasBitset)
     for (auto encoding : encodings)
     {
         AliasBitset alias_data;
-        AliasBitsetPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new AliasBitsetPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, alias_data, static_pubsubType);
-        EXPECT_EQ(alias_data.value().a(), test_octet_value);
-        EXPECT_EQ(alias_data.value().b(), test_bool_value);
-        EXPECT_EQ(alias_data.value().c(), test_ushort_value);
-        EXPECT_EQ(alias_data.value().d(), test_short_value);
+        EXPECT_EQ(alias_data.value().a, test_octet_value);
+        EXPECT_EQ(alias_data.value().b, test_bool_value);
+        EXPECT_EQ(alias_data.value().c, test_ushort_value);
+        EXPECT_EQ(alias_data.value().d, test_short_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_AliasBitset_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }

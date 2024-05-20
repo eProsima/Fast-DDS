@@ -44,18 +44,21 @@ void register_relative_path_include_type_objects()
     static std::once_flag once_flag;
     std::call_once(once_flag, []()
             {
-                register_InnerStructureHelper_type_identifier();
+                TypeIdentifier type_id;
+                register_InnerStructureHelper_type_identifier(type_id);
 
-                register_InnerEmptyStructureHelper_type_identifier();
+                register_InnerEmptyStructureHelper_type_identifier(type_id);
 
-                register_InnerUnionHelper_type_identifier();
+                register_InnerUnionHelper_type_identifier(type_id);
 
-                register_RelativePathIncludeStruct_type_identifier();
+                register_RelativePathIncludeStruct_type_identifier(type_id);
 
             });
 }
 
-void register_RelativePathIncludeStruct_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_RelativePathIncludeStruct_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_RelativePathIncludeStruct = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
@@ -130,6 +133,7 @@ void register_RelativePathIncludeStruct_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "InnerEnumHelper: Given Enum TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
             }
@@ -177,6 +181,7 @@ void register_RelativePathIncludeStruct_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure value member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_value = "value";
@@ -188,7 +193,7 @@ void register_RelativePathIncludeStruct_type_identifier()
         }
         CompleteStructType struct_type_RelativePathIncludeStruct = TypeObjectUtils::build_complete_struct_type(struct_flags_RelativePathIncludeStruct, header_RelativePathIncludeStruct, member_seq_RelativePathIncludeStruct);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_RelativePathIncludeStruct, type_name_RelativePathIncludeStruct.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_RelativePathIncludeStruct, type_name_RelativePathIncludeStruct.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "RelativePathIncludeStruct already registered in TypeObjectRegistry for a different type.");
@@ -200,6 +205,7 @@ void register_RelativePathIncludeStruct_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "RelativePathIncludeStruct: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }

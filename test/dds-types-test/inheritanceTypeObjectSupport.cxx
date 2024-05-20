@@ -44,32 +44,35 @@ void register_inheritance_type_objects()
     static std::once_flag once_flag;
     std::call_once(once_flag, []()
             {
-                register_InnerStructureHelper_type_identifier();
+                TypeIdentifier type_id;
+                register_InnerStructureHelper_type_identifier(type_id);
 
-                register_InnerEmptyStructureHelper_type_identifier();
+                register_InnerEmptyStructureHelper_type_identifier(type_id);
 
-                register_InnerUnionHelper_type_identifier();
+                register_InnerUnionHelper_type_identifier(type_id);
 
-                register_InnerStructureHelperChild_type_identifier();
+                register_InnerStructureHelperChild_type_identifier(type_id);
 
-                register_InnerStructureHelperChildChild_type_identifier();
+                register_InnerStructureHelperChildChild_type_identifier(type_id);
 
-                register_InnerStructureHelperEmptyChild_type_identifier();
+                register_InnerStructureHelperEmptyChild_type_identifier(type_id);
 
-                register_InnerStructureHelperEmptyChildChild_type_identifier();
+                register_InnerStructureHelperEmptyChildChild_type_identifier(type_id);
 
-                register_InnerEmptyStructureHelperChild_type_identifier();
+                register_InnerEmptyStructureHelperChild_type_identifier(type_id);
 
-                register_StructAliasInheritanceStruct_type_identifier();
+                register_StructAliasInheritanceStruct_type_identifier(type_id);
 
-                register_StructuresInheritanceStruct_type_identifier();
+                register_StructuresInheritanceStruct_type_identifier(type_id);
 
-                register_BitsetsChildInheritanceStruct_type_identifier();
+                register_BitsetsChildInheritanceStruct_type_identifier(type_id);
 
             });
 }
 
-void register_InnerStructureHelperChild_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_InnerStructureHelperChild_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_InnerStructureHelperChild = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
@@ -110,6 +113,7 @@ void register_InnerStructureHelperChild_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "field1 Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     StructMemberFlag member_flags_field1 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -156,6 +160,7 @@ void register_InnerStructureHelperChild_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "Structure field1 member TypeIdentifier inconsistent.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     MemberName name_field1 = "field1";
@@ -174,6 +179,7 @@ void register_InnerStructureHelperChild_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "field2 Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     StructMemberFlag member_flags_field2 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -220,6 +226,7 @@ void register_InnerStructureHelperChild_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "Structure field2 member TypeIdentifier inconsistent.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     MemberName name_field2 = "field2";
@@ -231,7 +238,7 @@ void register_InnerStructureHelperChild_type_identifier()
                 }
                 CompleteStructType struct_type_InnerStructureHelper = TypeObjectUtils::build_complete_struct_type(struct_flags_InnerStructureHelper, header_InnerStructureHelper, member_seq_InnerStructureHelper);
                 if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                        TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerStructureHelper, type_name_InnerStructureHelper.to_string()))
+                        TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerStructureHelper, type_name_InnerStructureHelper.to_string(), type_id))
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "InnerStructureHelper already registered in TypeObjectRegistry for a different type.");
@@ -243,8 +250,11 @@ void register_InnerStructureHelperChild_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "InnerStructureHelper: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
+                return_code_InnerStructureHelperChild = return_code_InnerStructureHelper;
+                type_ids_InnerStructureHelperChild = type_ids_InnerStructureHelper;
             }
         }
         QualifiedTypeName type_name_InnerStructureHelperChild = "InnerStructureHelperChild";
@@ -264,6 +274,7 @@ void register_InnerStructureHelperChild_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "InnerStructureHelperChild Structure: base_type TypeIdentifier registered in TypeObjectRegistry is inconsistent.");
+            type_id = TypeIdentifier();
             return;
         }
         CompleteStructMemberSeq member_seq_InnerStructureHelperChild;
@@ -276,6 +287,7 @@ void register_InnerStructureHelperChild_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "var_child_longlong Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_var_child_longlong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -322,6 +334,7 @@ void register_InnerStructureHelperChild_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_child_longlong member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_child_longlong = "var_child_longlong";
@@ -340,6 +353,7 @@ void register_InnerStructureHelperChild_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "var_child_ulonglong Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_var_child_ulonglong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -386,6 +400,7 @@ void register_InnerStructureHelperChild_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_child_ulonglong member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_child_ulonglong = "var_child_ulonglong";
@@ -397,7 +412,7 @@ void register_InnerStructureHelperChild_type_identifier()
         }
         CompleteStructType struct_type_InnerStructureHelperChild = TypeObjectUtils::build_complete_struct_type(struct_flags_InnerStructureHelperChild, header_InnerStructureHelperChild, member_seq_InnerStructureHelperChild);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerStructureHelperChild, type_name_InnerStructureHelperChild.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerStructureHelperChild, type_name_InnerStructureHelperChild.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "InnerStructureHelperChild already registered in TypeObjectRegistry for a different type.");
@@ -409,11 +424,14 @@ void register_InnerStructureHelperChild_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "InnerStructureHelperChild: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_InnerStructureHelperChildChild_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_InnerStructureHelperChildChild_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_InnerStructureHelperChildChild = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
@@ -465,6 +483,7 @@ void register_InnerStructureHelperChildChild_type_identifier()
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                         "field1 Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                                type_id = TypeIdentifier();
                                 return;
                             }
                             StructMemberFlag member_flags_field1 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -511,6 +530,7 @@ void register_InnerStructureHelperChildChild_type_identifier()
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                         "Structure field1 member TypeIdentifier inconsistent.");
+                                type_id = TypeIdentifier();
                                 return;
                             }
                             MemberName name_field1 = "field1";
@@ -529,6 +549,7 @@ void register_InnerStructureHelperChildChild_type_identifier()
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                         "field2 Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                                type_id = TypeIdentifier();
                                 return;
                             }
                             StructMemberFlag member_flags_field2 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -575,6 +596,7 @@ void register_InnerStructureHelperChildChild_type_identifier()
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                         "Structure field2 member TypeIdentifier inconsistent.");
+                                type_id = TypeIdentifier();
                                 return;
                             }
                             MemberName name_field2 = "field2";
@@ -586,7 +608,7 @@ void register_InnerStructureHelperChildChild_type_identifier()
                         }
                         CompleteStructType struct_type_InnerStructureHelper = TypeObjectUtils::build_complete_struct_type(struct_flags_InnerStructureHelper, header_InnerStructureHelper, member_seq_InnerStructureHelper);
                         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                                TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerStructureHelper, type_name_InnerStructureHelper.to_string()))
+                                TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerStructureHelper, type_name_InnerStructureHelper.to_string(), type_id))
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "InnerStructureHelper already registered in TypeObjectRegistry for a different type.");
@@ -598,8 +620,11 @@ void register_InnerStructureHelperChildChild_type_identifier()
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                         "InnerStructureHelper: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+                            type_id = TypeIdentifier();
                             return;
                         }
+                        return_code_InnerStructureHelperChild = return_code_InnerStructureHelper;
+                        type_ids_InnerStructureHelperChild = type_ids_InnerStructureHelper;
                     }
                 }
                 QualifiedTypeName type_name_InnerStructureHelperChild = "InnerStructureHelperChild";
@@ -619,6 +644,7 @@ void register_InnerStructureHelperChildChild_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "InnerStructureHelperChild Structure: base_type TypeIdentifier registered in TypeObjectRegistry is inconsistent.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 CompleteStructMemberSeq member_seq_InnerStructureHelperChild;
@@ -631,6 +657,7 @@ void register_InnerStructureHelperChildChild_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "var_child_longlong Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     StructMemberFlag member_flags_var_child_longlong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -677,6 +704,7 @@ void register_InnerStructureHelperChildChild_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "Structure var_child_longlong member TypeIdentifier inconsistent.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     MemberName name_var_child_longlong = "var_child_longlong";
@@ -695,6 +723,7 @@ void register_InnerStructureHelperChildChild_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "var_child_ulonglong Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     StructMemberFlag member_flags_var_child_ulonglong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -741,6 +770,7 @@ void register_InnerStructureHelperChildChild_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "Structure var_child_ulonglong member TypeIdentifier inconsistent.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     MemberName name_var_child_ulonglong = "var_child_ulonglong";
@@ -752,7 +782,7 @@ void register_InnerStructureHelperChildChild_type_identifier()
                 }
                 CompleteStructType struct_type_InnerStructureHelperChild = TypeObjectUtils::build_complete_struct_type(struct_flags_InnerStructureHelperChild, header_InnerStructureHelperChild, member_seq_InnerStructureHelperChild);
                 if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                        TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerStructureHelperChild, type_name_InnerStructureHelperChild.to_string()))
+                        TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerStructureHelperChild, type_name_InnerStructureHelperChild.to_string(), type_id))
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "InnerStructureHelperChild already registered in TypeObjectRegistry for a different type.");
@@ -764,8 +794,11 @@ void register_InnerStructureHelperChildChild_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "InnerStructureHelperChild: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
+                return_code_InnerStructureHelperChildChild = return_code_InnerStructureHelperChild;
+                type_ids_InnerStructureHelperChildChild = type_ids_InnerStructureHelperChild;
             }
         }
         QualifiedTypeName type_name_InnerStructureHelperChildChild = "InnerStructureHelperChildChild";
@@ -785,6 +818,7 @@ void register_InnerStructureHelperChildChild_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "InnerStructureHelperChildChild Structure: base_type TypeIdentifier registered in TypeObjectRegistry is inconsistent.");
+            type_id = TypeIdentifier();
             return;
         }
         CompleteStructMemberSeq member_seq_InnerStructureHelperChildChild;
@@ -797,6 +831,7 @@ void register_InnerStructureHelperChildChild_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "var_child_childlonglong2 Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_var_child_childlonglong2 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -843,6 +878,7 @@ void register_InnerStructureHelperChildChild_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_child_childlonglong2 member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_child_childlonglong2 = "var_child_childlonglong2";
@@ -861,6 +897,7 @@ void register_InnerStructureHelperChildChild_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "var_childchild_ulonglong2 Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_var_childchild_ulonglong2 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -907,6 +944,7 @@ void register_InnerStructureHelperChildChild_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_childchild_ulonglong2 member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_childchild_ulonglong2 = "var_childchild_ulonglong2";
@@ -918,7 +956,7 @@ void register_InnerStructureHelperChildChild_type_identifier()
         }
         CompleteStructType struct_type_InnerStructureHelperChildChild = TypeObjectUtils::build_complete_struct_type(struct_flags_InnerStructureHelperChildChild, header_InnerStructureHelperChildChild, member_seq_InnerStructureHelperChildChild);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerStructureHelperChildChild, type_name_InnerStructureHelperChildChild.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerStructureHelperChildChild, type_name_InnerStructureHelperChildChild.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "InnerStructureHelperChildChild already registered in TypeObjectRegistry for a different type.");
@@ -930,11 +968,14 @@ void register_InnerStructureHelperChildChild_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "InnerStructureHelperChildChild: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_InnerStructureHelperEmptyChild_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_InnerStructureHelperEmptyChild_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_InnerStructureHelperEmptyChild = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
@@ -975,6 +1016,7 @@ void register_InnerStructureHelperEmptyChild_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "field1 Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     StructMemberFlag member_flags_field1 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -1021,6 +1063,7 @@ void register_InnerStructureHelperEmptyChild_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "Structure field1 member TypeIdentifier inconsistent.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     MemberName name_field1 = "field1";
@@ -1039,6 +1082,7 @@ void register_InnerStructureHelperEmptyChild_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "field2 Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     StructMemberFlag member_flags_field2 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -1085,6 +1129,7 @@ void register_InnerStructureHelperEmptyChild_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "Structure field2 member TypeIdentifier inconsistent.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     MemberName name_field2 = "field2";
@@ -1096,7 +1141,7 @@ void register_InnerStructureHelperEmptyChild_type_identifier()
                 }
                 CompleteStructType struct_type_InnerStructureHelper = TypeObjectUtils::build_complete_struct_type(struct_flags_InnerStructureHelper, header_InnerStructureHelper, member_seq_InnerStructureHelper);
                 if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                        TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerStructureHelper, type_name_InnerStructureHelper.to_string()))
+                        TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerStructureHelper, type_name_InnerStructureHelper.to_string(), type_id))
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "InnerStructureHelper already registered in TypeObjectRegistry for a different type.");
@@ -1108,8 +1153,11 @@ void register_InnerStructureHelperEmptyChild_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "InnerStructureHelper: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
+                return_code_InnerStructureHelperEmptyChild = return_code_InnerStructureHelper;
+                type_ids_InnerStructureHelperEmptyChild = type_ids_InnerStructureHelper;
             }
         }
         QualifiedTypeName type_name_InnerStructureHelperEmptyChild = "InnerStructureHelperEmptyChild";
@@ -1129,12 +1177,13 @@ void register_InnerStructureHelperEmptyChild_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "InnerStructureHelperEmptyChild Structure: base_type TypeIdentifier registered in TypeObjectRegistry is inconsistent.");
+            type_id = TypeIdentifier();
             return;
         }
         CompleteStructMemberSeq member_seq_InnerStructureHelperEmptyChild;
         CompleteStructType struct_type_InnerStructureHelperEmptyChild = TypeObjectUtils::build_complete_struct_type(struct_flags_InnerStructureHelperEmptyChild, header_InnerStructureHelperEmptyChild, member_seq_InnerStructureHelperEmptyChild);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerStructureHelperEmptyChild, type_name_InnerStructureHelperEmptyChild.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerStructureHelperEmptyChild, type_name_InnerStructureHelperEmptyChild.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "InnerStructureHelperEmptyChild already registered in TypeObjectRegistry for a different type.");
@@ -1146,11 +1195,14 @@ void register_InnerStructureHelperEmptyChild_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "InnerStructureHelperEmptyChild: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_InnerStructureHelperEmptyChildChild_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_InnerStructureHelperEmptyChildChild_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_InnerStructureHelperEmptyChildChild = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
@@ -1202,6 +1254,7 @@ void register_InnerStructureHelperEmptyChildChild_type_identifier()
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                         "field1 Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                                type_id = TypeIdentifier();
                                 return;
                             }
                             StructMemberFlag member_flags_field1 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -1248,6 +1301,7 @@ void register_InnerStructureHelperEmptyChildChild_type_identifier()
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                         "Structure field1 member TypeIdentifier inconsistent.");
+                                type_id = TypeIdentifier();
                                 return;
                             }
                             MemberName name_field1 = "field1";
@@ -1266,6 +1320,7 @@ void register_InnerStructureHelperEmptyChildChild_type_identifier()
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                         "field2 Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                                type_id = TypeIdentifier();
                                 return;
                             }
                             StructMemberFlag member_flags_field2 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -1312,6 +1367,7 @@ void register_InnerStructureHelperEmptyChildChild_type_identifier()
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                         "Structure field2 member TypeIdentifier inconsistent.");
+                                type_id = TypeIdentifier();
                                 return;
                             }
                             MemberName name_field2 = "field2";
@@ -1323,7 +1379,7 @@ void register_InnerStructureHelperEmptyChildChild_type_identifier()
                         }
                         CompleteStructType struct_type_InnerStructureHelper = TypeObjectUtils::build_complete_struct_type(struct_flags_InnerStructureHelper, header_InnerStructureHelper, member_seq_InnerStructureHelper);
                         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                                TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerStructureHelper, type_name_InnerStructureHelper.to_string()))
+                                TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerStructureHelper, type_name_InnerStructureHelper.to_string(), type_id))
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "InnerStructureHelper already registered in TypeObjectRegistry for a different type.");
@@ -1335,8 +1391,11 @@ void register_InnerStructureHelperEmptyChildChild_type_identifier()
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                         "InnerStructureHelper: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+                            type_id = TypeIdentifier();
                             return;
                         }
+                        return_code_InnerStructureHelperEmptyChild = return_code_InnerStructureHelper;
+                        type_ids_InnerStructureHelperEmptyChild = type_ids_InnerStructureHelper;
                     }
                 }
                 QualifiedTypeName type_name_InnerStructureHelperEmptyChild = "InnerStructureHelperEmptyChild";
@@ -1356,12 +1415,13 @@ void register_InnerStructureHelperEmptyChildChild_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "InnerStructureHelperEmptyChild Structure: base_type TypeIdentifier registered in TypeObjectRegistry is inconsistent.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 CompleteStructMemberSeq member_seq_InnerStructureHelperEmptyChild;
                 CompleteStructType struct_type_InnerStructureHelperEmptyChild = TypeObjectUtils::build_complete_struct_type(struct_flags_InnerStructureHelperEmptyChild, header_InnerStructureHelperEmptyChild, member_seq_InnerStructureHelperEmptyChild);
                 if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                        TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerStructureHelperEmptyChild, type_name_InnerStructureHelperEmptyChild.to_string()))
+                        TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerStructureHelperEmptyChild, type_name_InnerStructureHelperEmptyChild.to_string(), type_id))
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "InnerStructureHelperEmptyChild already registered in TypeObjectRegistry for a different type.");
@@ -1373,8 +1433,11 @@ void register_InnerStructureHelperEmptyChildChild_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "InnerStructureHelperEmptyChild: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
+                return_code_InnerStructureHelperEmptyChildChild = return_code_InnerStructureHelperEmptyChild;
+                type_ids_InnerStructureHelperEmptyChildChild = type_ids_InnerStructureHelperEmptyChild;
             }
         }
         QualifiedTypeName type_name_InnerStructureHelperEmptyChildChild = "InnerStructureHelperEmptyChildChild";
@@ -1394,6 +1457,7 @@ void register_InnerStructureHelperEmptyChildChild_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "InnerStructureHelperEmptyChildChild Structure: base_type TypeIdentifier registered in TypeObjectRegistry is inconsistent.");
+            type_id = TypeIdentifier();
             return;
         }
         CompleteStructMemberSeq member_seq_InnerStructureHelperEmptyChildChild;
@@ -1406,6 +1470,7 @@ void register_InnerStructureHelperEmptyChildChild_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "var_char Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_var_char = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -1452,6 +1517,7 @@ void register_InnerStructureHelperEmptyChildChild_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_char member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_char = "var_char";
@@ -1463,7 +1529,7 @@ void register_InnerStructureHelperEmptyChildChild_type_identifier()
         }
         CompleteStructType struct_type_InnerStructureHelperEmptyChildChild = TypeObjectUtils::build_complete_struct_type(struct_flags_InnerStructureHelperEmptyChildChild, header_InnerStructureHelperEmptyChildChild, member_seq_InnerStructureHelperEmptyChildChild);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerStructureHelperEmptyChildChild, type_name_InnerStructureHelperEmptyChildChild.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerStructureHelperEmptyChildChild, type_name_InnerStructureHelperEmptyChildChild.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "InnerStructureHelperEmptyChildChild already registered in TypeObjectRegistry for a different type.");
@@ -1475,11 +1541,14 @@ void register_InnerStructureHelperEmptyChildChild_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "InnerStructureHelperEmptyChildChild: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_InnerEmptyStructureHelperChild_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_InnerEmptyStructureHelperChild_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_InnerEmptyStructureHelperChild = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
@@ -1513,7 +1582,7 @@ void register_InnerEmptyStructureHelperChild_type_identifier()
                 CompleteStructMemberSeq member_seq_InnerEmptyStructureHelper;
                 CompleteStructType struct_type_InnerEmptyStructureHelper = TypeObjectUtils::build_complete_struct_type(struct_flags_InnerEmptyStructureHelper, header_InnerEmptyStructureHelper, member_seq_InnerEmptyStructureHelper);
                 if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                        TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerEmptyStructureHelper, type_name_InnerEmptyStructureHelper.to_string()))
+                        TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerEmptyStructureHelper, type_name_InnerEmptyStructureHelper.to_string(), type_id))
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "InnerEmptyStructureHelper already registered in TypeObjectRegistry for a different type.");
@@ -1525,8 +1594,11 @@ void register_InnerEmptyStructureHelperChild_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "InnerEmptyStructureHelper: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
+                return_code_InnerEmptyStructureHelperChild = return_code_InnerEmptyStructureHelper;
+                type_ids_InnerEmptyStructureHelperChild = type_ids_InnerEmptyStructureHelper;
             }
         }
         QualifiedTypeName type_name_InnerEmptyStructureHelperChild = "InnerEmptyStructureHelperChild";
@@ -1546,6 +1618,7 @@ void register_InnerEmptyStructureHelperChild_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "InnerEmptyStructureHelperChild Structure: base_type TypeIdentifier registered in TypeObjectRegistry is inconsistent.");
+            type_id = TypeIdentifier();
             return;
         }
         CompleteStructMemberSeq member_seq_InnerEmptyStructureHelperChild;
@@ -1558,6 +1631,7 @@ void register_InnerEmptyStructureHelperChild_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "var_child_longlong Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_var_child_longlong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -1604,6 +1678,7 @@ void register_InnerEmptyStructureHelperChild_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_child_longlong member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_child_longlong = "var_child_longlong";
@@ -1622,6 +1697,7 @@ void register_InnerEmptyStructureHelperChild_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "var_child_ulonglong Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_var_child_ulonglong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -1668,6 +1744,7 @@ void register_InnerEmptyStructureHelperChild_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_child_ulonglong member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_child_ulonglong = "var_child_ulonglong";
@@ -1679,7 +1756,7 @@ void register_InnerEmptyStructureHelperChild_type_identifier()
         }
         CompleteStructType struct_type_InnerEmptyStructureHelperChild = TypeObjectUtils::build_complete_struct_type(struct_flags_InnerEmptyStructureHelperChild, header_InnerEmptyStructureHelperChild, member_seq_InnerEmptyStructureHelperChild);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerEmptyStructureHelperChild, type_name_InnerEmptyStructureHelperChild.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerEmptyStructureHelperChild, type_name_InnerEmptyStructureHelperChild.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "InnerEmptyStructureHelperChild already registered in TypeObjectRegistry for a different type.");
@@ -1691,11 +1768,14 @@ void register_InnerEmptyStructureHelperChild_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "InnerEmptyStructureHelperChild: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_StructAliasInheritanceStruct_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_StructAliasInheritanceStruct_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_StructAliasInheritanceStruct = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
@@ -1749,6 +1829,7 @@ void register_StructAliasInheritanceStruct_type_identifier()
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "field1 Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                            type_id = TypeIdentifier();
                             return;
                         }
                         StructMemberFlag member_flags_field1 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -1795,6 +1876,7 @@ void register_StructAliasInheritanceStruct_type_identifier()
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "Structure field1 member TypeIdentifier inconsistent.");
+                            type_id = TypeIdentifier();
                             return;
                         }
                         MemberName name_field1 = "field1";
@@ -1813,6 +1895,7 @@ void register_StructAliasInheritanceStruct_type_identifier()
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "field2 Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                            type_id = TypeIdentifier();
                             return;
                         }
                         StructMemberFlag member_flags_field2 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -1859,6 +1942,7 @@ void register_StructAliasInheritanceStruct_type_identifier()
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "Structure field2 member TypeIdentifier inconsistent.");
+                            type_id = TypeIdentifier();
                             return;
                         }
                         MemberName name_field2 = "field2";
@@ -1870,7 +1954,7 @@ void register_StructAliasInheritanceStruct_type_identifier()
                     }
                     CompleteStructType struct_type_InnerStructureHelper = TypeObjectUtils::build_complete_struct_type(struct_flags_InnerStructureHelper, header_InnerStructureHelper, member_seq_InnerStructureHelper);
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerStructureHelper, type_name_InnerStructureHelper.to_string()))
+                            TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerStructureHelper, type_name_InnerStructureHelper.to_string(), type_id))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "InnerStructureHelper already registered in TypeObjectRegistry for a different type.");
@@ -1882,8 +1966,11 @@ void register_StructAliasInheritanceStruct_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "InnerStructureHelper: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+                        type_id = TypeIdentifier();
                         return;
                     }
+                    return_code_StructAliasInheritanceStruct = return_code_InnerStructureHelper;
+                    type_ids_StructAliasInheritanceStruct = type_ids_InnerStructureHelper;
                 }
             }
             CommonAliasBody common_inner_structure_helper_alias;
@@ -1927,6 +2014,7 @@ void register_StructAliasInheritanceStruct_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "inner_structure_helper_alias related TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_inner_structure_helper_alias;
@@ -1946,6 +2034,7 @@ void register_StructAliasInheritanceStruct_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "inner_structure_helper_alias: Given Alias TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
         }
@@ -1966,6 +2055,7 @@ void register_StructAliasInheritanceStruct_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "StructAliasInheritanceStruct Structure: base_type TypeIdentifier registered in TypeObjectRegistry is inconsistent.");
+            type_id = TypeIdentifier();
             return;
         }
         CompleteStructMemberSeq member_seq_StructAliasInheritanceStruct;
@@ -1978,6 +2068,7 @@ void register_StructAliasInheritanceStruct_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "new_member Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_new_member = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -2024,6 +2115,7 @@ void register_StructAliasInheritanceStruct_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure new_member member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_new_member = "new_member";
@@ -2035,7 +2127,7 @@ void register_StructAliasInheritanceStruct_type_identifier()
         }
         CompleteStructType struct_type_StructAliasInheritanceStruct = TypeObjectUtils::build_complete_struct_type(struct_flags_StructAliasInheritanceStruct, header_StructAliasInheritanceStruct, member_seq_StructAliasInheritanceStruct);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_StructAliasInheritanceStruct, type_name_StructAliasInheritanceStruct.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_StructAliasInheritanceStruct, type_name_StructAliasInheritanceStruct.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "StructAliasInheritanceStruct already registered in TypeObjectRegistry for a different type.");
@@ -2047,11 +2139,14 @@ void register_StructAliasInheritanceStruct_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "StructAliasInheritanceStruct: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_StructuresInheritanceStruct_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_StructuresInheritanceStruct_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_StructuresInheritanceStruct = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
@@ -2111,6 +2206,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                                 {
                                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                             "field1 Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                                    type_id = TypeIdentifier();
                                     return;
                                 }
                                 StructMemberFlag member_flags_field1 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -2157,6 +2253,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                                 {
                                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                             "Structure field1 member TypeIdentifier inconsistent.");
+                                    type_id = TypeIdentifier();
                                     return;
                                 }
                                 MemberName name_field1 = "field1";
@@ -2175,6 +2272,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                                 {
                                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                             "field2 Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                                    type_id = TypeIdentifier();
                                     return;
                                 }
                                 StructMemberFlag member_flags_field2 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -2221,6 +2319,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                                 {
                                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                             "Structure field2 member TypeIdentifier inconsistent.");
+                                    type_id = TypeIdentifier();
                                     return;
                                 }
                                 MemberName name_field2 = "field2";
@@ -2232,7 +2331,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                             }
                             CompleteStructType struct_type_InnerStructureHelper = TypeObjectUtils::build_complete_struct_type(struct_flags_InnerStructureHelper, header_InnerStructureHelper, member_seq_InnerStructureHelper);
                             if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                                    TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerStructureHelper, type_name_InnerStructureHelper.to_string()))
+                                    TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerStructureHelper, type_name_InnerStructureHelper.to_string(), type_id))
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                         "InnerStructureHelper already registered in TypeObjectRegistry for a different type.");
@@ -2244,8 +2343,11 @@ void register_StructuresInheritanceStruct_type_identifier()
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                             "InnerStructureHelper: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+                                type_id = TypeIdentifier();
                                 return;
                             }
+                            return_code_InnerStructureHelperChild = return_code_InnerStructureHelper;
+                            type_ids_InnerStructureHelperChild = type_ids_InnerStructureHelper;
                         }
                     }
                     QualifiedTypeName type_name_InnerStructureHelperChild = "InnerStructureHelperChild";
@@ -2265,6 +2367,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "InnerStructureHelperChild Structure: base_type TypeIdentifier registered in TypeObjectRegistry is inconsistent.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     CompleteStructMemberSeq member_seq_InnerStructureHelperChild;
@@ -2277,6 +2380,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "var_child_longlong Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                            type_id = TypeIdentifier();
                             return;
                         }
                         StructMemberFlag member_flags_var_child_longlong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -2323,6 +2427,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "Structure var_child_longlong member TypeIdentifier inconsistent.");
+                            type_id = TypeIdentifier();
                             return;
                         }
                         MemberName name_var_child_longlong = "var_child_longlong";
@@ -2341,6 +2446,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "var_child_ulonglong Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                            type_id = TypeIdentifier();
                             return;
                         }
                         StructMemberFlag member_flags_var_child_ulonglong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -2387,6 +2493,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "Structure var_child_ulonglong member TypeIdentifier inconsistent.");
+                            type_id = TypeIdentifier();
                             return;
                         }
                         MemberName name_var_child_ulonglong = "var_child_ulonglong";
@@ -2398,7 +2505,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                     }
                     CompleteStructType struct_type_InnerStructureHelperChild = TypeObjectUtils::build_complete_struct_type(struct_flags_InnerStructureHelperChild, header_InnerStructureHelperChild, member_seq_InnerStructureHelperChild);
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerStructureHelperChild, type_name_InnerStructureHelperChild.to_string()))
+                            TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerStructureHelperChild, type_name_InnerStructureHelperChild.to_string(), type_id))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "InnerStructureHelperChild already registered in TypeObjectRegistry for a different type.");
@@ -2410,8 +2517,11 @@ void register_StructuresInheritanceStruct_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "InnerStructureHelperChild: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+                        type_id = TypeIdentifier();
                         return;
                     }
+                    return_code_StructuresInheritanceStruct = return_code_InnerStructureHelperChild;
+                    type_ids_StructuresInheritanceStruct = type_ids_InnerStructureHelperChild;
                 }
             }
             StructMemberFlag member_flags_var_InnerStructureHelperChild = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -2458,6 +2568,7 @@ void register_StructuresInheritanceStruct_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_InnerStructureHelperChild member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_InnerStructureHelperChild = "var_InnerStructureHelperChild";
@@ -2524,6 +2635,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                                         {
                                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                                     "field1 Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                                            type_id = TypeIdentifier();
                                             return;
                                         }
                                         StructMemberFlag member_flags_field1 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -2570,6 +2682,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                                         {
                                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                                     "Structure field1 member TypeIdentifier inconsistent.");
+                                            type_id = TypeIdentifier();
                                             return;
                                         }
                                         MemberName name_field1 = "field1";
@@ -2588,6 +2701,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                                         {
                                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                                     "field2 Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                                            type_id = TypeIdentifier();
                                             return;
                                         }
                                         StructMemberFlag member_flags_field2 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -2634,6 +2748,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                                         {
                                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                                     "Structure field2 member TypeIdentifier inconsistent.");
+                                            type_id = TypeIdentifier();
                                             return;
                                         }
                                         MemberName name_field2 = "field2";
@@ -2645,7 +2760,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                                     }
                                     CompleteStructType struct_type_InnerStructureHelper = TypeObjectUtils::build_complete_struct_type(struct_flags_InnerStructureHelper, header_InnerStructureHelper, member_seq_InnerStructureHelper);
                                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                                            TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerStructureHelper, type_name_InnerStructureHelper.to_string()))
+                                            TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerStructureHelper, type_name_InnerStructureHelper.to_string(), type_id))
                                     {
                                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                                 "InnerStructureHelper already registered in TypeObjectRegistry for a different type.");
@@ -2657,8 +2772,11 @@ void register_StructuresInheritanceStruct_type_identifier()
                                     {
                                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                                     "InnerStructureHelper: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+                                        type_id = TypeIdentifier();
                                         return;
                                     }
+                                    return_code_InnerStructureHelperChild = return_code_InnerStructureHelper;
+                                    type_ids_InnerStructureHelperChild = type_ids_InnerStructureHelper;
                                 }
                             }
                             QualifiedTypeName type_name_InnerStructureHelperChild = "InnerStructureHelperChild";
@@ -2678,6 +2796,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                         "InnerStructureHelperChild Structure: base_type TypeIdentifier registered in TypeObjectRegistry is inconsistent.");
+                                type_id = TypeIdentifier();
                                 return;
                             }
                             CompleteStructMemberSeq member_seq_InnerStructureHelperChild;
@@ -2690,6 +2809,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                                 {
                                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                             "var_child_longlong Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                                    type_id = TypeIdentifier();
                                     return;
                                 }
                                 StructMemberFlag member_flags_var_child_longlong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -2736,6 +2856,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                                 {
                                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                             "Structure var_child_longlong member TypeIdentifier inconsistent.");
+                                    type_id = TypeIdentifier();
                                     return;
                                 }
                                 MemberName name_var_child_longlong = "var_child_longlong";
@@ -2754,6 +2875,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                                 {
                                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                             "var_child_ulonglong Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                                    type_id = TypeIdentifier();
                                     return;
                                 }
                                 StructMemberFlag member_flags_var_child_ulonglong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -2800,6 +2922,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                                 {
                                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                             "Structure var_child_ulonglong member TypeIdentifier inconsistent.");
+                                    type_id = TypeIdentifier();
                                     return;
                                 }
                                 MemberName name_var_child_ulonglong = "var_child_ulonglong";
@@ -2811,7 +2934,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                             }
                             CompleteStructType struct_type_InnerStructureHelperChild = TypeObjectUtils::build_complete_struct_type(struct_flags_InnerStructureHelperChild, header_InnerStructureHelperChild, member_seq_InnerStructureHelperChild);
                             if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                                    TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerStructureHelperChild, type_name_InnerStructureHelperChild.to_string()))
+                                    TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerStructureHelperChild, type_name_InnerStructureHelperChild.to_string(), type_id))
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                         "InnerStructureHelperChild already registered in TypeObjectRegistry for a different type.");
@@ -2823,8 +2946,11 @@ void register_StructuresInheritanceStruct_type_identifier()
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                             "InnerStructureHelperChild: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+                                type_id = TypeIdentifier();
                                 return;
                             }
+                            return_code_InnerStructureHelperChildChild = return_code_InnerStructureHelperChild;
+                            type_ids_InnerStructureHelperChildChild = type_ids_InnerStructureHelperChild;
                         }
                     }
                     QualifiedTypeName type_name_InnerStructureHelperChildChild = "InnerStructureHelperChildChild";
@@ -2844,6 +2970,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "InnerStructureHelperChildChild Structure: base_type TypeIdentifier registered in TypeObjectRegistry is inconsistent.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     CompleteStructMemberSeq member_seq_InnerStructureHelperChildChild;
@@ -2856,6 +2983,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "var_child_childlonglong2 Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                            type_id = TypeIdentifier();
                             return;
                         }
                         StructMemberFlag member_flags_var_child_childlonglong2 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -2902,6 +3030,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "Structure var_child_childlonglong2 member TypeIdentifier inconsistent.");
+                            type_id = TypeIdentifier();
                             return;
                         }
                         MemberName name_var_child_childlonglong2 = "var_child_childlonglong2";
@@ -2920,6 +3049,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "var_childchild_ulonglong2 Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                            type_id = TypeIdentifier();
                             return;
                         }
                         StructMemberFlag member_flags_var_childchild_ulonglong2 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -2966,6 +3096,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "Structure var_childchild_ulonglong2 member TypeIdentifier inconsistent.");
+                            type_id = TypeIdentifier();
                             return;
                         }
                         MemberName name_var_childchild_ulonglong2 = "var_childchild_ulonglong2";
@@ -2977,7 +3108,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                     }
                     CompleteStructType struct_type_InnerStructureHelperChildChild = TypeObjectUtils::build_complete_struct_type(struct_flags_InnerStructureHelperChildChild, header_InnerStructureHelperChildChild, member_seq_InnerStructureHelperChildChild);
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerStructureHelperChildChild, type_name_InnerStructureHelperChildChild.to_string()))
+                            TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerStructureHelperChildChild, type_name_InnerStructureHelperChildChild.to_string(), type_id))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "InnerStructureHelperChildChild already registered in TypeObjectRegistry for a different type.");
@@ -2989,8 +3120,11 @@ void register_StructuresInheritanceStruct_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "InnerStructureHelperChildChild: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+                        type_id = TypeIdentifier();
                         return;
                     }
+                    return_code_StructuresInheritanceStruct = return_code_InnerStructureHelperChildChild;
+                    type_ids_StructuresInheritanceStruct = type_ids_InnerStructureHelperChildChild;
                 }
             }
             StructMemberFlag member_flags_var_InnerStructureHelperChildChild = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -3037,6 +3171,7 @@ void register_StructuresInheritanceStruct_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_InnerStructureHelperChildChild member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_InnerStructureHelperChildChild = "var_InnerStructureHelperChildChild";
@@ -3092,6 +3227,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                                 {
                                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                             "field1 Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                                    type_id = TypeIdentifier();
                                     return;
                                 }
                                 StructMemberFlag member_flags_field1 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -3138,6 +3274,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                                 {
                                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                             "Structure field1 member TypeIdentifier inconsistent.");
+                                    type_id = TypeIdentifier();
                                     return;
                                 }
                                 MemberName name_field1 = "field1";
@@ -3156,6 +3293,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                                 {
                                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                             "field2 Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                                    type_id = TypeIdentifier();
                                     return;
                                 }
                                 StructMemberFlag member_flags_field2 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -3202,6 +3340,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                                 {
                                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                             "Structure field2 member TypeIdentifier inconsistent.");
+                                    type_id = TypeIdentifier();
                                     return;
                                 }
                                 MemberName name_field2 = "field2";
@@ -3213,7 +3352,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                             }
                             CompleteStructType struct_type_InnerStructureHelper = TypeObjectUtils::build_complete_struct_type(struct_flags_InnerStructureHelper, header_InnerStructureHelper, member_seq_InnerStructureHelper);
                             if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                                    TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerStructureHelper, type_name_InnerStructureHelper.to_string()))
+                                    TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerStructureHelper, type_name_InnerStructureHelper.to_string(), type_id))
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                         "InnerStructureHelper already registered in TypeObjectRegistry for a different type.");
@@ -3225,8 +3364,11 @@ void register_StructuresInheritanceStruct_type_identifier()
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                             "InnerStructureHelper: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+                                type_id = TypeIdentifier();
                                 return;
                             }
+                            return_code_InnerStructureHelperEmptyChild = return_code_InnerStructureHelper;
+                            type_ids_InnerStructureHelperEmptyChild = type_ids_InnerStructureHelper;
                         }
                     }
                     QualifiedTypeName type_name_InnerStructureHelperEmptyChild = "InnerStructureHelperEmptyChild";
@@ -3246,12 +3388,13 @@ void register_StructuresInheritanceStruct_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "InnerStructureHelperEmptyChild Structure: base_type TypeIdentifier registered in TypeObjectRegistry is inconsistent.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     CompleteStructMemberSeq member_seq_InnerStructureHelperEmptyChild;
                     CompleteStructType struct_type_InnerStructureHelperEmptyChild = TypeObjectUtils::build_complete_struct_type(struct_flags_InnerStructureHelperEmptyChild, header_InnerStructureHelperEmptyChild, member_seq_InnerStructureHelperEmptyChild);
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerStructureHelperEmptyChild, type_name_InnerStructureHelperEmptyChild.to_string()))
+                            TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerStructureHelperEmptyChild, type_name_InnerStructureHelperEmptyChild.to_string(), type_id))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "InnerStructureHelperEmptyChild already registered in TypeObjectRegistry for a different type.");
@@ -3263,8 +3406,11 @@ void register_StructuresInheritanceStruct_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "InnerStructureHelperEmptyChild: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+                        type_id = TypeIdentifier();
                         return;
                     }
+                    return_code_StructuresInheritanceStruct = return_code_InnerStructureHelperEmptyChild;
+                    type_ids_StructuresInheritanceStruct = type_ids_InnerStructureHelperEmptyChild;
                 }
             }
             StructMemberFlag member_flags_var_InnerStructureHelperEmptyChild = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -3311,6 +3457,7 @@ void register_StructuresInheritanceStruct_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_InnerStructureHelperEmptyChild member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_InnerStructureHelperEmptyChild = "var_InnerStructureHelperEmptyChild";
@@ -3377,6 +3524,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                                         {
                                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                                     "field1 Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                                            type_id = TypeIdentifier();
                                             return;
                                         }
                                         StructMemberFlag member_flags_field1 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -3423,6 +3571,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                                         {
                                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                                     "Structure field1 member TypeIdentifier inconsistent.");
+                                            type_id = TypeIdentifier();
                                             return;
                                         }
                                         MemberName name_field1 = "field1";
@@ -3441,6 +3590,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                                         {
                                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                                     "field2 Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                                            type_id = TypeIdentifier();
                                             return;
                                         }
                                         StructMemberFlag member_flags_field2 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -3487,6 +3637,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                                         {
                                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                                     "Structure field2 member TypeIdentifier inconsistent.");
+                                            type_id = TypeIdentifier();
                                             return;
                                         }
                                         MemberName name_field2 = "field2";
@@ -3498,7 +3649,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                                     }
                                     CompleteStructType struct_type_InnerStructureHelper = TypeObjectUtils::build_complete_struct_type(struct_flags_InnerStructureHelper, header_InnerStructureHelper, member_seq_InnerStructureHelper);
                                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                                            TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerStructureHelper, type_name_InnerStructureHelper.to_string()))
+                                            TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerStructureHelper, type_name_InnerStructureHelper.to_string(), type_id))
                                     {
                                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                                 "InnerStructureHelper already registered in TypeObjectRegistry for a different type.");
@@ -3510,8 +3661,11 @@ void register_StructuresInheritanceStruct_type_identifier()
                                     {
                                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                                     "InnerStructureHelper: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+                                        type_id = TypeIdentifier();
                                         return;
                                     }
+                                    return_code_InnerStructureHelperEmptyChild = return_code_InnerStructureHelper;
+                                    type_ids_InnerStructureHelperEmptyChild = type_ids_InnerStructureHelper;
                                 }
                             }
                             QualifiedTypeName type_name_InnerStructureHelperEmptyChild = "InnerStructureHelperEmptyChild";
@@ -3531,12 +3685,13 @@ void register_StructuresInheritanceStruct_type_identifier()
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                         "InnerStructureHelperEmptyChild Structure: base_type TypeIdentifier registered in TypeObjectRegistry is inconsistent.");
+                                type_id = TypeIdentifier();
                                 return;
                             }
                             CompleteStructMemberSeq member_seq_InnerStructureHelperEmptyChild;
                             CompleteStructType struct_type_InnerStructureHelperEmptyChild = TypeObjectUtils::build_complete_struct_type(struct_flags_InnerStructureHelperEmptyChild, header_InnerStructureHelperEmptyChild, member_seq_InnerStructureHelperEmptyChild);
                             if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                                    TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerStructureHelperEmptyChild, type_name_InnerStructureHelperEmptyChild.to_string()))
+                                    TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerStructureHelperEmptyChild, type_name_InnerStructureHelperEmptyChild.to_string(), type_id))
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                         "InnerStructureHelperEmptyChild already registered in TypeObjectRegistry for a different type.");
@@ -3548,8 +3703,11 @@ void register_StructuresInheritanceStruct_type_identifier()
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                             "InnerStructureHelperEmptyChild: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+                                type_id = TypeIdentifier();
                                 return;
                             }
+                            return_code_InnerStructureHelperEmptyChildChild = return_code_InnerStructureHelperEmptyChild;
+                            type_ids_InnerStructureHelperEmptyChildChild = type_ids_InnerStructureHelperEmptyChild;
                         }
                     }
                     QualifiedTypeName type_name_InnerStructureHelperEmptyChildChild = "InnerStructureHelperEmptyChildChild";
@@ -3569,6 +3727,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "InnerStructureHelperEmptyChildChild Structure: base_type TypeIdentifier registered in TypeObjectRegistry is inconsistent.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     CompleteStructMemberSeq member_seq_InnerStructureHelperEmptyChildChild;
@@ -3581,6 +3740,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "var_char Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                            type_id = TypeIdentifier();
                             return;
                         }
                         StructMemberFlag member_flags_var_char = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -3627,6 +3787,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "Structure var_char member TypeIdentifier inconsistent.");
+                            type_id = TypeIdentifier();
                             return;
                         }
                         MemberName name_var_char = "var_char";
@@ -3638,7 +3799,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                     }
                     CompleteStructType struct_type_InnerStructureHelperEmptyChildChild = TypeObjectUtils::build_complete_struct_type(struct_flags_InnerStructureHelperEmptyChildChild, header_InnerStructureHelperEmptyChildChild, member_seq_InnerStructureHelperEmptyChildChild);
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerStructureHelperEmptyChildChild, type_name_InnerStructureHelperEmptyChildChild.to_string()))
+                            TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerStructureHelperEmptyChildChild, type_name_InnerStructureHelperEmptyChildChild.to_string(), type_id))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "InnerStructureHelperEmptyChildChild already registered in TypeObjectRegistry for a different type.");
@@ -3650,8 +3811,11 @@ void register_StructuresInheritanceStruct_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "InnerStructureHelperEmptyChildChild: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+                        type_id = TypeIdentifier();
                         return;
                     }
+                    return_code_StructuresInheritanceStruct = return_code_InnerStructureHelperEmptyChildChild;
+                    type_ids_StructuresInheritanceStruct = type_ids_InnerStructureHelperEmptyChildChild;
                 }
             }
             StructMemberFlag member_flags_var_InnerStructureHelperEmptyChildChild = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -3698,6 +3862,7 @@ void register_StructuresInheritanceStruct_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_InnerStructureHelperEmptyChildChild member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_InnerStructureHelperEmptyChildChild = "var_InnerStructureHelperEmptyChildChild";
@@ -3746,7 +3911,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                             CompleteStructMemberSeq member_seq_InnerEmptyStructureHelper;
                             CompleteStructType struct_type_InnerEmptyStructureHelper = TypeObjectUtils::build_complete_struct_type(struct_flags_InnerEmptyStructureHelper, header_InnerEmptyStructureHelper, member_seq_InnerEmptyStructureHelper);
                             if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                                    TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerEmptyStructureHelper, type_name_InnerEmptyStructureHelper.to_string()))
+                                    TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerEmptyStructureHelper, type_name_InnerEmptyStructureHelper.to_string(), type_id))
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                         "InnerEmptyStructureHelper already registered in TypeObjectRegistry for a different type.");
@@ -3758,8 +3923,11 @@ void register_StructuresInheritanceStruct_type_identifier()
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                             "InnerEmptyStructureHelper: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+                                type_id = TypeIdentifier();
                                 return;
                             }
+                            return_code_InnerEmptyStructureHelperChild = return_code_InnerEmptyStructureHelper;
+                            type_ids_InnerEmptyStructureHelperChild = type_ids_InnerEmptyStructureHelper;
                         }
                     }
                     QualifiedTypeName type_name_InnerEmptyStructureHelperChild = "InnerEmptyStructureHelperChild";
@@ -3779,6 +3947,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "InnerEmptyStructureHelperChild Structure: base_type TypeIdentifier registered in TypeObjectRegistry is inconsistent.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     CompleteStructMemberSeq member_seq_InnerEmptyStructureHelperChild;
@@ -3791,6 +3960,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "var_child_longlong Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                            type_id = TypeIdentifier();
                             return;
                         }
                         StructMemberFlag member_flags_var_child_longlong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -3837,6 +4007,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "Structure var_child_longlong member TypeIdentifier inconsistent.");
+                            type_id = TypeIdentifier();
                             return;
                         }
                         MemberName name_var_child_longlong = "var_child_longlong";
@@ -3855,6 +4026,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "var_child_ulonglong Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                            type_id = TypeIdentifier();
                             return;
                         }
                         StructMemberFlag member_flags_var_child_ulonglong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -3901,6 +4073,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "Structure var_child_ulonglong member TypeIdentifier inconsistent.");
+                            type_id = TypeIdentifier();
                             return;
                         }
                         MemberName name_var_child_ulonglong = "var_child_ulonglong";
@@ -3912,7 +4085,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                     }
                     CompleteStructType struct_type_InnerEmptyStructureHelperChild = TypeObjectUtils::build_complete_struct_type(struct_flags_InnerEmptyStructureHelperChild, header_InnerEmptyStructureHelperChild, member_seq_InnerEmptyStructureHelperChild);
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerEmptyStructureHelperChild, type_name_InnerEmptyStructureHelperChild.to_string()))
+                            TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerEmptyStructureHelperChild, type_name_InnerEmptyStructureHelperChild.to_string(), type_id))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "InnerEmptyStructureHelperChild already registered in TypeObjectRegistry for a different type.");
@@ -3924,8 +4097,11 @@ void register_StructuresInheritanceStruct_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "InnerEmptyStructureHelperChild: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+                        type_id = TypeIdentifier();
                         return;
                     }
+                    return_code_StructuresInheritanceStruct = return_code_InnerEmptyStructureHelperChild;
+                    type_ids_StructuresInheritanceStruct = type_ids_InnerEmptyStructureHelperChild;
                 }
             }
             StructMemberFlag member_flags_var_InnerEmptyStructureHelperChild = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -3972,6 +4148,7 @@ void register_StructuresInheritanceStruct_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_InnerEmptyStructureHelperChild member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_InnerEmptyStructureHelperChild = "var_InnerEmptyStructureHelperChild";
@@ -4040,6 +4217,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                                     {
                                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                                 "field1 Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                                        type_id = TypeIdentifier();
                                         return;
                                     }
                                     StructMemberFlag member_flags_field1 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -4086,6 +4264,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                                     {
                                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                                 "Structure field1 member TypeIdentifier inconsistent.");
+                                        type_id = TypeIdentifier();
                                         return;
                                     }
                                     MemberName name_field1 = "field1";
@@ -4104,6 +4283,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                                     {
                                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                                 "field2 Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                                        type_id = TypeIdentifier();
                                         return;
                                     }
                                     StructMemberFlag member_flags_field2 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -4150,6 +4330,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                                     {
                                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                                 "Structure field2 member TypeIdentifier inconsistent.");
+                                        type_id = TypeIdentifier();
                                         return;
                                     }
                                     MemberName name_field2 = "field2";
@@ -4161,7 +4342,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                                 }
                                 CompleteStructType struct_type_InnerStructureHelper = TypeObjectUtils::build_complete_struct_type(struct_flags_InnerStructureHelper, header_InnerStructureHelper, member_seq_InnerStructureHelper);
                                 if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                                        TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerStructureHelper, type_name_InnerStructureHelper.to_string()))
+                                        TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerStructureHelper, type_name_InnerStructureHelper.to_string(), type_id))
                                 {
                                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                             "InnerStructureHelper already registered in TypeObjectRegistry for a different type.");
@@ -4173,8 +4354,11 @@ void register_StructuresInheritanceStruct_type_identifier()
                                 {
                                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                                 "InnerStructureHelper: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+                                    type_id = TypeIdentifier();
                                     return;
                                 }
+                                return_code_StructAliasInheritanceStruct = return_code_InnerStructureHelper;
+                                type_ids_StructAliasInheritanceStruct = type_ids_InnerStructureHelper;
                             }
                         }
                         CommonAliasBody common_inner_structure_helper_alias;
@@ -4218,6 +4402,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "inner_structure_helper_alias related TypeIdentifier inconsistent.");
+                            type_id = TypeIdentifier();
                             return;
                         }
                         eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_inner_structure_helper_alias;
@@ -4237,6 +4422,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                         "inner_structure_helper_alias: Given Alias TypeIdentifier unknown to TypeObjectRegistry.");
+                            type_id = TypeIdentifier();
                             return;
                         }
                     }
@@ -4257,6 +4443,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "StructAliasInheritanceStruct Structure: base_type TypeIdentifier registered in TypeObjectRegistry is inconsistent.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     CompleteStructMemberSeq member_seq_StructAliasInheritanceStruct;
@@ -4269,6 +4456,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "new_member Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                            type_id = TypeIdentifier();
                             return;
                         }
                         StructMemberFlag member_flags_new_member = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -4315,6 +4503,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "Structure new_member member TypeIdentifier inconsistent.");
+                            type_id = TypeIdentifier();
                             return;
                         }
                         MemberName name_new_member = "new_member";
@@ -4326,7 +4515,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                     }
                     CompleteStructType struct_type_StructAliasInheritanceStruct = TypeObjectUtils::build_complete_struct_type(struct_flags_StructAliasInheritanceStruct, header_StructAliasInheritanceStruct, member_seq_StructAliasInheritanceStruct);
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_struct_type_object(struct_type_StructAliasInheritanceStruct, type_name_StructAliasInheritanceStruct.to_string()))
+                            TypeObjectUtils::build_and_register_struct_type_object(struct_type_StructAliasInheritanceStruct, type_name_StructAliasInheritanceStruct.to_string(), type_id))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "StructAliasInheritanceStruct already registered in TypeObjectRegistry for a different type.");
@@ -4338,8 +4527,11 @@ void register_StructuresInheritanceStruct_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "StructAliasInheritanceStruct: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+                        type_id = TypeIdentifier();
                         return;
                     }
+                    return_code_StructuresInheritanceStruct = return_code_StructAliasInheritanceStruct;
+                    type_ids_StructuresInheritanceStruct = type_ids_StructAliasInheritanceStruct;
                 }
             }
             StructMemberFlag member_flags_var_StructAliasInheritanceStruct = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -4386,6 +4578,7 @@ void register_StructuresInheritanceStruct_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_StructAliasInheritanceStruct member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_StructAliasInheritanceStruct = "var_StructAliasInheritanceStruct";
@@ -4397,7 +4590,7 @@ void register_StructuresInheritanceStruct_type_identifier()
         }
         CompleteStructType struct_type_StructuresInheritanceStruct = TypeObjectUtils::build_complete_struct_type(struct_flags_StructuresInheritanceStruct, header_StructuresInheritanceStruct, member_seq_StructuresInheritanceStruct);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_StructuresInheritanceStruct, type_name_StructuresInheritanceStruct.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_StructuresInheritanceStruct, type_name_StructuresInheritanceStruct.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "StructuresInheritanceStruct already registered in TypeObjectRegistry for a different type.");
@@ -4409,11 +4602,14 @@ void register_StructuresInheritanceStruct_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "StructuresInheritanceStruct: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_BitsetsChildInheritanceStruct_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_BitsetsChildInheritanceStruct_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_BitsetsChildInheritanceStruct = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
@@ -4442,7 +4638,59 @@ void register_BitsetsChildInheritanceStruct_type_identifier()
                 CompleteBitsetHeader header_InnerBitsetHelperChild = TypeObjectUtils::build_complete_bitset_header(detail_InnerBitsetHelperChild);
                 CompleteBitfieldSeq field_seq_InnerBitsetHelperChild;
                 {
-                    uint16_t position_child_w = 0;
+                    uint16_t position_a = 0;
+                    BitsetMemberFlag flags_a = 0;
+                    uint8_t bitcount_a = 3;
+                    TypeKind holder_type_a = TK_BYTE;
+                    CommonBitfield common_a = TypeObjectUtils::build_common_bitfield(position_a, flags_a, bitcount_a, holder_type_a);
+                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_a;
+                    ann_custom_InnerBitsetHelperChild.reset();
+                    MemberName name_a = "a";
+                    CompleteMemberDetail detail_a = TypeObjectUtils::build_complete_member_detail(name_a, member_ann_builtin_a, ann_custom_InnerBitsetHelperChild);
+                    CompleteBitfield bitfield_a = TypeObjectUtils::build_complete_bitfield(common_a, detail_a);
+                    TypeObjectUtils::add_complete_bitfield(field_seq_InnerBitsetHelperChild, bitfield_a);
+                }
+                {
+                    uint16_t position_b = 3;
+                    BitsetMemberFlag flags_b = 0;
+                    uint8_t bitcount_b = 1;
+                    TypeKind holder_type_b = TK_BOOLEAN;
+                    CommonBitfield common_b = TypeObjectUtils::build_common_bitfield(position_b, flags_b, bitcount_b, holder_type_b);
+                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_b;
+                    ann_custom_InnerBitsetHelperChild.reset();
+                    MemberName name_b = "b";
+                    CompleteMemberDetail detail_b = TypeObjectUtils::build_complete_member_detail(name_b, member_ann_builtin_b, ann_custom_InnerBitsetHelperChild);
+                    CompleteBitfield bitfield_b = TypeObjectUtils::build_complete_bitfield(common_b, detail_b);
+                    TypeObjectUtils::add_complete_bitfield(field_seq_InnerBitsetHelperChild, bitfield_b);
+                }
+                {
+                    uint16_t position_c = 8;
+                    BitsetMemberFlag flags_c = 0;
+                    uint8_t bitcount_c = 10;
+                    TypeKind holder_type_c = TK_UINT16;
+                    CommonBitfield common_c = TypeObjectUtils::build_common_bitfield(position_c, flags_c, bitcount_c, holder_type_c);
+                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_c;
+                    ann_custom_InnerBitsetHelperChild.reset();
+                    MemberName name_c = "c";
+                    CompleteMemberDetail detail_c = TypeObjectUtils::build_complete_member_detail(name_c, member_ann_builtin_c, ann_custom_InnerBitsetHelperChild);
+                    CompleteBitfield bitfield_c = TypeObjectUtils::build_complete_bitfield(common_c, detail_c);
+                    TypeObjectUtils::add_complete_bitfield(field_seq_InnerBitsetHelperChild, bitfield_c);
+                }
+                {
+                    uint16_t position_d = 21;
+                    BitsetMemberFlag flags_d = 0;
+                    uint8_t bitcount_d = 12;
+                    TypeKind holder_type_d = TK_INT16;
+                    CommonBitfield common_d = TypeObjectUtils::build_common_bitfield(position_d, flags_d, bitcount_d, holder_type_d);
+                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_d;
+                    ann_custom_InnerBitsetHelperChild.reset();
+                    MemberName name_d = "d";
+                    CompleteMemberDetail detail_d = TypeObjectUtils::build_complete_member_detail(name_d, member_ann_builtin_d, ann_custom_InnerBitsetHelperChild);
+                    CompleteBitfield bitfield_d = TypeObjectUtils::build_complete_bitfield(common_d, detail_d);
+                    TypeObjectUtils::add_complete_bitfield(field_seq_InnerBitsetHelperChild, bitfield_d);
+                }
+                {
+                    uint16_t position_child_w = 33;
                     BitsetMemberFlag flags_child_w = 0;
                     uint8_t bitcount_child_w = 17;
                     TypeKind holder_type_child_w = TK_UINT32;
@@ -4468,6 +4716,7 @@ void register_BitsetsChildInheritanceStruct_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "InnerBitsetHelperChild: Given Bitset TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
             }
@@ -4515,6 +4764,7 @@ void register_BitsetsChildInheritanceStruct_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_InnerBitsetHelperChild member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_InnerBitsetHelperChild = "var_InnerBitsetHelperChild";
@@ -4539,7 +4789,72 @@ void register_BitsetsChildInheritanceStruct_type_identifier()
                 CompleteBitsetHeader header_InnerBitsetHelperChildChild = TypeObjectUtils::build_complete_bitset_header(detail_InnerBitsetHelperChildChild);
                 CompleteBitfieldSeq field_seq_InnerBitsetHelperChildChild;
                 {
-                    uint16_t position_childchild_z = 0;
+                    uint16_t position_a = 0;
+                    BitsetMemberFlag flags_a = 0;
+                    uint8_t bitcount_a = 3;
+                    TypeKind holder_type_a = TK_BYTE;
+                    CommonBitfield common_a = TypeObjectUtils::build_common_bitfield(position_a, flags_a, bitcount_a, holder_type_a);
+                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_a;
+                    ann_custom_InnerBitsetHelperChildChild.reset();
+                    MemberName name_a = "a";
+                    CompleteMemberDetail detail_a = TypeObjectUtils::build_complete_member_detail(name_a, member_ann_builtin_a, ann_custom_InnerBitsetHelperChildChild);
+                    CompleteBitfield bitfield_a = TypeObjectUtils::build_complete_bitfield(common_a, detail_a);
+                    TypeObjectUtils::add_complete_bitfield(field_seq_InnerBitsetHelperChildChild, bitfield_a);
+                }
+                {
+                    uint16_t position_b = 3;
+                    BitsetMemberFlag flags_b = 0;
+                    uint8_t bitcount_b = 1;
+                    TypeKind holder_type_b = TK_BOOLEAN;
+                    CommonBitfield common_b = TypeObjectUtils::build_common_bitfield(position_b, flags_b, bitcount_b, holder_type_b);
+                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_b;
+                    ann_custom_InnerBitsetHelperChildChild.reset();
+                    MemberName name_b = "b";
+                    CompleteMemberDetail detail_b = TypeObjectUtils::build_complete_member_detail(name_b, member_ann_builtin_b, ann_custom_InnerBitsetHelperChildChild);
+                    CompleteBitfield bitfield_b = TypeObjectUtils::build_complete_bitfield(common_b, detail_b);
+                    TypeObjectUtils::add_complete_bitfield(field_seq_InnerBitsetHelperChildChild, bitfield_b);
+                }
+                {
+                    uint16_t position_c = 8;
+                    BitsetMemberFlag flags_c = 0;
+                    uint8_t bitcount_c = 10;
+                    TypeKind holder_type_c = TK_UINT16;
+                    CommonBitfield common_c = TypeObjectUtils::build_common_bitfield(position_c, flags_c, bitcount_c, holder_type_c);
+                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_c;
+                    ann_custom_InnerBitsetHelperChildChild.reset();
+                    MemberName name_c = "c";
+                    CompleteMemberDetail detail_c = TypeObjectUtils::build_complete_member_detail(name_c, member_ann_builtin_c, ann_custom_InnerBitsetHelperChildChild);
+                    CompleteBitfield bitfield_c = TypeObjectUtils::build_complete_bitfield(common_c, detail_c);
+                    TypeObjectUtils::add_complete_bitfield(field_seq_InnerBitsetHelperChildChild, bitfield_c);
+                }
+                {
+                    uint16_t position_d = 21;
+                    BitsetMemberFlag flags_d = 0;
+                    uint8_t bitcount_d = 12;
+                    TypeKind holder_type_d = TK_INT16;
+                    CommonBitfield common_d = TypeObjectUtils::build_common_bitfield(position_d, flags_d, bitcount_d, holder_type_d);
+                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_d;
+                    ann_custom_InnerBitsetHelperChildChild.reset();
+                    MemberName name_d = "d";
+                    CompleteMemberDetail detail_d = TypeObjectUtils::build_complete_member_detail(name_d, member_ann_builtin_d, ann_custom_InnerBitsetHelperChildChild);
+                    CompleteBitfield bitfield_d = TypeObjectUtils::build_complete_bitfield(common_d, detail_d);
+                    TypeObjectUtils::add_complete_bitfield(field_seq_InnerBitsetHelperChildChild, bitfield_d);
+                }
+                {
+                    uint16_t position_child_w = 33;
+                    BitsetMemberFlag flags_child_w = 0;
+                    uint8_t bitcount_child_w = 17;
+                    TypeKind holder_type_child_w = TK_UINT32;
+                    CommonBitfield common_child_w = TypeObjectUtils::build_common_bitfield(position_child_w, flags_child_w, bitcount_child_w, holder_type_child_w);
+                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_child_w;
+                    ann_custom_InnerBitsetHelperChildChild.reset();
+                    MemberName name_child_w = "child_w";
+                    CompleteMemberDetail detail_child_w = TypeObjectUtils::build_complete_member_detail(name_child_w, member_ann_builtin_child_w, ann_custom_InnerBitsetHelperChildChild);
+                    CompleteBitfield bitfield_child_w = TypeObjectUtils::build_complete_bitfield(common_child_w, detail_child_w);
+                    TypeObjectUtils::add_complete_bitfield(field_seq_InnerBitsetHelperChildChild, bitfield_child_w);
+                }
+                {
+                    uint16_t position_childchild_z = 50;
                     BitsetMemberFlag flags_childchild_z = 0;
                     uint8_t bitcount_childchild_z = 14;
                     TypeKind holder_type_childchild_z = TK_UINT16;
@@ -4565,6 +4880,7 @@ void register_BitsetsChildInheritanceStruct_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "InnerBitsetHelperChildChild: Given Bitset TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
             }
@@ -4612,6 +4928,7 @@ void register_BitsetsChildInheritanceStruct_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_InnerBitsetHelperChildChild member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_InnerBitsetHelperChildChild = "var_InnerBitsetHelperChildChild";
@@ -4636,7 +4953,59 @@ void register_BitsetsChildInheritanceStruct_type_identifier()
                 CompleteBitsetHeader header_BitsetAliasInheritanceBitset = TypeObjectUtils::build_complete_bitset_header(detail_BitsetAliasInheritanceBitset);
                 CompleteBitfieldSeq field_seq_BitsetAliasInheritanceBitset;
                 {
-                    uint16_t position_new_bitfield = 0;
+                    uint16_t position_a = 0;
+                    BitsetMemberFlag flags_a = 0;
+                    uint8_t bitcount_a = 3;
+                    TypeKind holder_type_a = TK_BYTE;
+                    CommonBitfield common_a = TypeObjectUtils::build_common_bitfield(position_a, flags_a, bitcount_a, holder_type_a);
+                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_a;
+                    ann_custom_BitsetAliasInheritanceBitset.reset();
+                    MemberName name_a = "a";
+                    CompleteMemberDetail detail_a = TypeObjectUtils::build_complete_member_detail(name_a, member_ann_builtin_a, ann_custom_BitsetAliasInheritanceBitset);
+                    CompleteBitfield bitfield_a = TypeObjectUtils::build_complete_bitfield(common_a, detail_a);
+                    TypeObjectUtils::add_complete_bitfield(field_seq_BitsetAliasInheritanceBitset, bitfield_a);
+                }
+                {
+                    uint16_t position_b = 3;
+                    BitsetMemberFlag flags_b = 0;
+                    uint8_t bitcount_b = 1;
+                    TypeKind holder_type_b = TK_BOOLEAN;
+                    CommonBitfield common_b = TypeObjectUtils::build_common_bitfield(position_b, flags_b, bitcount_b, holder_type_b);
+                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_b;
+                    ann_custom_BitsetAliasInheritanceBitset.reset();
+                    MemberName name_b = "b";
+                    CompleteMemberDetail detail_b = TypeObjectUtils::build_complete_member_detail(name_b, member_ann_builtin_b, ann_custom_BitsetAliasInheritanceBitset);
+                    CompleteBitfield bitfield_b = TypeObjectUtils::build_complete_bitfield(common_b, detail_b);
+                    TypeObjectUtils::add_complete_bitfield(field_seq_BitsetAliasInheritanceBitset, bitfield_b);
+                }
+                {
+                    uint16_t position_c = 8;
+                    BitsetMemberFlag flags_c = 0;
+                    uint8_t bitcount_c = 10;
+                    TypeKind holder_type_c = TK_UINT16;
+                    CommonBitfield common_c = TypeObjectUtils::build_common_bitfield(position_c, flags_c, bitcount_c, holder_type_c);
+                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_c;
+                    ann_custom_BitsetAliasInheritanceBitset.reset();
+                    MemberName name_c = "c";
+                    CompleteMemberDetail detail_c = TypeObjectUtils::build_complete_member_detail(name_c, member_ann_builtin_c, ann_custom_BitsetAliasInheritanceBitset);
+                    CompleteBitfield bitfield_c = TypeObjectUtils::build_complete_bitfield(common_c, detail_c);
+                    TypeObjectUtils::add_complete_bitfield(field_seq_BitsetAliasInheritanceBitset, bitfield_c);
+                }
+                {
+                    uint16_t position_d = 21;
+                    BitsetMemberFlag flags_d = 0;
+                    uint8_t bitcount_d = 12;
+                    TypeKind holder_type_d = TK_INT16;
+                    CommonBitfield common_d = TypeObjectUtils::build_common_bitfield(position_d, flags_d, bitcount_d, holder_type_d);
+                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_d;
+                    ann_custom_BitsetAliasInheritanceBitset.reset();
+                    MemberName name_d = "d";
+                    CompleteMemberDetail detail_d = TypeObjectUtils::build_complete_member_detail(name_d, member_ann_builtin_d, ann_custom_BitsetAliasInheritanceBitset);
+                    CompleteBitfield bitfield_d = TypeObjectUtils::build_complete_bitfield(common_d, detail_d);
+                    TypeObjectUtils::add_complete_bitfield(field_seq_BitsetAliasInheritanceBitset, bitfield_d);
+                }
+                {
+                    uint16_t position_new_bitfield = 33;
                     BitsetMemberFlag flags_new_bitfield = 0;
                     uint8_t bitcount_new_bitfield = 10;
                     TypeKind holder_type_new_bitfield = TK_UINT16;
@@ -4662,6 +5031,7 @@ void register_BitsetsChildInheritanceStruct_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "BitsetAliasInheritanceBitset: Given Bitset TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
             }
@@ -4709,6 +5079,7 @@ void register_BitsetsChildInheritanceStruct_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_BitsetAliasInheritanceBitset member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_BitsetAliasInheritanceBitset = "var_BitsetAliasInheritanceBitset";
@@ -4720,7 +5091,7 @@ void register_BitsetsChildInheritanceStruct_type_identifier()
         }
         CompleteStructType struct_type_BitsetsChildInheritanceStruct = TypeObjectUtils::build_complete_struct_type(struct_flags_BitsetsChildInheritanceStruct, header_BitsetsChildInheritanceStruct, member_seq_BitsetsChildInheritanceStruct);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_BitsetsChildInheritanceStruct, type_name_BitsetsChildInheritanceStruct.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_BitsetsChildInheritanceStruct, type_name_BitsetsChildInheritanceStruct.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "BitsetsChildInheritanceStruct already registered in TypeObjectRegistry for a different type.");
@@ -4732,6 +5103,7 @@ void register_BitsetsChildInheritanceStruct_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "BitsetsChildInheritanceStruct: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }

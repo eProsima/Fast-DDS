@@ -19,6 +19,7 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
@@ -35,22 +36,34 @@ using namespace eprosima::fastdds::dds;
 
 std::array<DataRepresentationId_t, 2> encodings {{XCDR_DATA_REPRESENTATION, XCDR2_DATA_REPRESENTATION}};
 
-void encoding_deconding_test(
+void encoding_decoding_test(
         DynamicType::_ref_type created_type,
         DynamicData::_ref_type encoding_data,
         DynamicData::_ref_type decoding_data,
         DataRepresentationId_t encoding
         )
 {
-    DynamicPubSubType pubsubType(created_type);
+    TypeSupport pubsubType {new DynamicPubSubType(created_type)};
     uint32_t payloadSize =
-            static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&encoding_data, encoding)());
+            static_cast<uint32_t>(pubsubType.get_serialized_size_provider(&encoding_data, encoding)());
     SerializedPayload_t payload(payloadSize);
     EXPECT_TRUE(pubsubType.serialize(&encoding_data, &payload, encoding));
     EXPECT_EQ(payload.length, payloadSize);
-    EXPECT_LE(payload.length, pubsubType.m_typeSize);
+    EXPECT_LE(payload.length, pubsubType->m_typeSize);
     EXPECT_TRUE(pubsubType.deserialize(&payload, &decoding_data));
     EXPECT_TRUE(decoding_data->equals(encoding_data));
+
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(
+        0, PARTICIPANT_QOS_DEFAULT);
+    if (0 == created_type->get_name().size())
+    {
+        EXPECT_EQ(RETCODE_OK, participant->register_type(pubsubType, "test"));
+    }
+    else
+    {
+        EXPECT_EQ(RETCODE_OK, participant->register_type(pubsubType));
+    }
+    DomainParticipantFactory::get_instance()->delete_participant(participant);
 }
 
 // Testing the primitive creation APIS
@@ -783,7 +796,7 @@ TEST_F(DynamicTypesTests, DynamicType_int32)
         int32_t test3 {0};
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
         EXPECT_EQ(data2->get_int32_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
-        encoding_deconding_test(created_type, data, data2, encoding);
+        encoding_decoding_test(created_type, data, data2, encoding);
         ASSERT_EQ(data2->get_int32_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
         EXPECT_EQ(test1, test3);
         EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
@@ -993,7 +1006,7 @@ TEST_F(DynamicTypesTests, DynamicType_uint32)
     {
         uint32_t test3 {0};
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        encoding_deconding_test(created_type, data, data2, encoding);
+        encoding_decoding_test(created_type, data, data2, encoding);
         EXPECT_EQ(data2->get_uint32_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
         EXPECT_EQ(test1, test3);
         EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
@@ -1198,7 +1211,7 @@ TEST_F(DynamicTypesTests, DynamicType_int8)
     {
         int8_t test3 {0};
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        encoding_deconding_test(created_type, data, data2, encoding);
+        encoding_decoding_test(created_type, data, data2, encoding);
         EXPECT_EQ(data2->get_int8_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
         EXPECT_EQ(test1, test3);
         EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
@@ -1410,7 +1423,7 @@ TEST_F(DynamicTypesTests, DynamicType_uint8)
     {
         uint8_t test3 {0};
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        encoding_deconding_test(created_type, data, data2, encoding);
+        encoding_decoding_test(created_type, data, data2, encoding);
         EXPECT_EQ(data2->get_uint8_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
         EXPECT_EQ(test1, test3);
         EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
@@ -1624,7 +1637,7 @@ TEST_F(DynamicTypesTests, DynamicType_int16)
     {
         int16_t test3 {0};
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        encoding_deconding_test(created_type, data, data2, encoding);
+        encoding_decoding_test(created_type, data, data2, encoding);
         EXPECT_EQ(data2->get_int16_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
         EXPECT_EQ(test1, test3);
         EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
@@ -1835,7 +1848,7 @@ TEST_F(DynamicTypesTests, DynamicType_uint16)
     {
         uint16_t test3 {0};
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        encoding_deconding_test(created_type, data, data2, encoding);
+        encoding_decoding_test(created_type, data, data2, encoding);
         EXPECT_EQ(data2->get_uint16_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
         EXPECT_EQ(test1, test3);
         EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
@@ -2056,7 +2069,7 @@ TEST_F(DynamicTypesTests, DynamicType_int64)
     {
         int64_t test3 {0};
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        encoding_deconding_test(created_type, data, data2, encoding);
+        encoding_decoding_test(created_type, data, data2, encoding);
         EXPECT_EQ(data2->get_int64_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
         EXPECT_EQ(test1, test3);
         EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
@@ -2258,7 +2271,7 @@ TEST_F(DynamicTypesTests, DynamicType_uint64)
     {
         uint64_t test3 {0};
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        encoding_deconding_test(created_type, data, data2, encoding);
+        encoding_decoding_test(created_type, data, data2, encoding);
         EXPECT_EQ(data2->get_uint64_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
         EXPECT_EQ(test1, test3);
         EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
@@ -2475,7 +2488,7 @@ TEST_F(DynamicTypesTests, DynamicType_float32)
     {
         float test3 {0};
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        encoding_deconding_test(created_type, data, data2, encoding);
+        encoding_decoding_test(created_type, data, data2, encoding);
         EXPECT_EQ(data2->get_float32_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
         EXPECT_EQ(test1, test3);
         EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
@@ -2699,7 +2712,7 @@ TEST_F(DynamicTypesTests, DynamicType_float64)
     {
         double test3 {0};
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        encoding_deconding_test(created_type, data, data2, encoding);
+        encoding_decoding_test(created_type, data, data2, encoding);
         EXPECT_EQ(data2->get_float64_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
         EXPECT_EQ(test1, test3);
         EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
@@ -2931,7 +2944,7 @@ TEST_F(DynamicTypesTests, DynamicType_float128)
     {
         long double test3 {0};
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        encoding_deconding_test(created_type, data, data2, encoding);
+        encoding_decoding_test(created_type, data, data2, encoding);
         EXPECT_EQ(data2->get_float128_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
         EXPECT_EQ(test1, test3);
         EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
@@ -3137,7 +3150,7 @@ TEST_F(DynamicTypesTests, DynamicType_char8)
     {
         char test3 {0};
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        encoding_deconding_test(created_type, data, data2, encoding);
+        encoding_decoding_test(created_type, data, data2, encoding);
         EXPECT_EQ(data2->get_char8_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
         EXPECT_EQ(test1, test3);
         EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
@@ -3342,7 +3355,7 @@ TEST_F(DynamicTypesTests, DynamicType_char16)
     {
         wchar_t test3 {0};
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        encoding_deconding_test(created_type, data, data2, encoding);
+        encoding_decoding_test(created_type, data, data2, encoding);
         EXPECT_EQ(data2->get_char16_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
         EXPECT_EQ(test1, test3);
         EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
@@ -3559,7 +3572,7 @@ TEST_F(DynamicTypesTests, DynamicType_byte)
     {
         octet test3 {0};
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        encoding_deconding_test(created_type, data, data2, encoding);
+        encoding_decoding_test(created_type, data, data2, encoding);
         EXPECT_EQ(data2->get_byte_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
         EXPECT_EQ(test1, test3);
         EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
@@ -3773,7 +3786,7 @@ TEST_F(DynamicTypesTests, DynamicType_boolean)
     {
         bool test3 {false};
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        encoding_deconding_test(created_type, data, data2, encoding);
+        encoding_decoding_test(created_type, data, data2, encoding);
         EXPECT_EQ(data2->get_boolean_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
         EXPECT_EQ(test1, test3);
         EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
@@ -4102,7 +4115,7 @@ TEST_F(DynamicTypesTests, DynamicType_enum)
     {
         uint32_t test3 {0};
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        encoding_deconding_test(created_type, data, data2, encoding);
+        encoding_decoding_test(created_type, data, data2, encoding);
         EXPECT_EQ(data2->get_uint32_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
         EXPECT_EQ(test1, test3);
         EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
@@ -4386,7 +4399,7 @@ TEST_F(DynamicTypesTests, DynamicType_string)
     {
         std::string test3;
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        encoding_deconding_test(created_type, data, data2, encoding);
+        encoding_decoding_test(created_type, data, data2, encoding);
         EXPECT_EQ(data2->get_string_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
         EXPECT_EQ(test1, test3);
         EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
@@ -4628,7 +4641,7 @@ TEST_F(DynamicTypesTests, DynamicType_wstring)
     {
         std::wstring test3;
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        encoding_deconding_test(created_type, data, data2, encoding);
+        encoding_decoding_test(created_type, data, data2, encoding);
         EXPECT_EQ(data2->get_wstring_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
         EXPECT_EQ(test1, test3);
         EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
@@ -4893,7 +4906,7 @@ TEST_F(DynamicTypesTests, DynamicType_alias)
     {
         uint32_t test3 {0};
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        encoding_deconding_test(created_type, data, data2, encoding);
+        encoding_decoding_test(created_type, data, data2, encoding);
         EXPECT_EQ(data2->get_uint32_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
         EXPECT_EQ(test1, test3);
         EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
@@ -5153,7 +5166,7 @@ TEST_F(DynamicTypesTests, DynamicType_nested_alias)
     {
         std::string test3;
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(nested_alias_type)};
-        encoding_deconding_test(nested_alias_type, data, data2, encoding);
+        encoding_decoding_test(nested_alias_type, data, data2, encoding);
         EXPECT_EQ(data2->get_string_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
         EXPECT_EQ(test1, test3);
         EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
@@ -5378,7 +5391,7 @@ TEST_F(DynamicTypesTests, DynamicType_bitset)
     for (auto encoding : encodings)
     {
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        encoding_deconding_test(created_type, data, data2, encoding);
+        encoding_decoding_test(created_type, data, data2, encoding);
         EXPECT_EQ(data2->get_uint8_value(get_test_field_1, 0), RETCODE_OK);
         EXPECT_EQ(set_test_field_1 & 0x3, get_test_field_1);
         EXPECT_EQ(data2->get_int32_value(get_test_field_2, 3), RETCODE_OK);
@@ -5590,7 +5603,7 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask)
     for (auto encoding : encodings)
     {
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        encoding_deconding_test(created_type, data, data2, encoding);
+        encoding_decoding_test(created_type, data, data2, encoding);
         EXPECT_EQ(data->get_uint8_value(bitmask_value_get, MEMBER_ID_INVALID), RETCODE_OK);
         EXPECT_EQ(bitmask_value_get, 0x25);
         EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
@@ -5897,7 +5910,7 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_int32)
     {
         Int32Seq test3;
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        encoding_deconding_test(created_type, data, data2, encoding);
+        encoding_decoding_test(created_type, data, data2, encoding);
         EXPECT_EQ(data2->get_int32_values(test3, 0), RETCODE_OK);
         EXPECT_EQ(test_all, test3);
         EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
@@ -6194,7 +6207,7 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_uint32)
     {
         UInt32Seq test3;
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        encoding_deconding_test(created_type, data, data2, encoding);
+        encoding_decoding_test(created_type, data, data2, encoding);
         EXPECT_EQ(data2->get_uint32_values(test3, 0), RETCODE_OK);
         EXPECT_EQ(test_all, test3);
         EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
@@ -6486,7 +6499,7 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_int8)
     {
         Int8Seq test3;
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        encoding_deconding_test(created_type, data, data2, encoding);
+        encoding_decoding_test(created_type, data, data2, encoding);
         EXPECT_EQ(data2->get_int8_values(test3, 0), RETCODE_OK);
         EXPECT_EQ(test_all, test3);
         EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
@@ -6787,7 +6800,7 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_uint8)
     {
         UInt8Seq test3;
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        encoding_deconding_test(created_type, data, data2, encoding);
+        encoding_decoding_test(created_type, data, data2, encoding);
         EXPECT_EQ(data2->get_uint8_values(test3, 0), RETCODE_OK);
         EXPECT_EQ(test_all, test3);
         EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
@@ -7086,7 +7099,7 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_int16)
     {
         Int16Seq test3;
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        encoding_deconding_test(created_type, data, data2, encoding);
+        encoding_decoding_test(created_type, data, data2, encoding);
         EXPECT_EQ(data2->get_int16_values(test3, 0), RETCODE_OK);
         EXPECT_EQ(test_all, test3);
         EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
@@ -7386,7 +7399,7 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_uint16)
     {
         UInt16Seq test3;
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        encoding_deconding_test(created_type, data, data2, encoding);
+        encoding_decoding_test(created_type, data, data2, encoding);
         EXPECT_EQ(data2->get_uint16_values(test3, 0), RETCODE_OK);
         EXPECT_EQ(test_all, test3);
         EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
@@ -7693,7 +7706,7 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_int64)
     {
         Int64Seq test3;
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        encoding_deconding_test(created_type, data, data2, encoding);
+        encoding_decoding_test(created_type, data, data2, encoding);
         EXPECT_EQ(data2->get_int64_values(test3, 0), RETCODE_OK);
         EXPECT_EQ(test_all, test3);
         EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
@@ -7988,7 +8001,7 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_uint64)
     {
         UInt64Seq test3;
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        encoding_deconding_test(created_type, data, data2, encoding);
+        encoding_decoding_test(created_type, data, data2, encoding);
         EXPECT_EQ(data2->get_uint64_values(test3, 0), RETCODE_OK);
         EXPECT_EQ(test_all, test3);
         EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
@@ -8291,7 +8304,7 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_float32)
     {
         Float32Seq test3;
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        encoding_deconding_test(created_type, data, data2, encoding);
+        encoding_decoding_test(created_type, data, data2, encoding);
         EXPECT_EQ(data2->get_float32_values(test3, 0), RETCODE_OK);
         EXPECT_EQ(test_all, test3);
         EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
@@ -8601,7 +8614,7 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_float64)
     {
         Float64Seq test3;
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        encoding_deconding_test(created_type, data, data2, encoding);
+        encoding_decoding_test(created_type, data, data2, encoding);
         EXPECT_EQ(data2->get_float64_values(test3, 0), RETCODE_OK);
         EXPECT_EQ(test_all, test3);
         EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
@@ -8921,7 +8934,7 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_float128)
     {
         Float128Seq test3;
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        encoding_deconding_test(created_type, data, data2, encoding);
+        encoding_decoding_test(created_type, data, data2, encoding);
         EXPECT_EQ(data2->get_float128_values(test3, 0), RETCODE_OK);
         EXPECT_EQ(test_all, test3);
         EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
@@ -9211,7 +9224,7 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_char8)
     {
         CharSeq test3;
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        encoding_deconding_test(created_type, data, data2, encoding);
+        encoding_decoding_test(created_type, data, data2, encoding);
         EXPECT_EQ(data2->get_char8_values(test3, 0), RETCODE_OK);
         EXPECT_EQ(test_all, test3);
         EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
@@ -9500,7 +9513,7 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_char16)
     {
         WcharSeq test3;
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        encoding_deconding_test(created_type, data, data2, encoding);
+        encoding_decoding_test(created_type, data, data2, encoding);
         EXPECT_EQ(data2->get_char16_values(test3, 0), RETCODE_OK);
         EXPECT_EQ(test_all, test3);
         EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
@@ -9805,7 +9818,7 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_byte)
     {
         ByteSeq test3;
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        encoding_deconding_test(created_type, data, data2, encoding);
+        encoding_decoding_test(created_type, data, data2, encoding);
         EXPECT_EQ(data2->get_byte_values(test3, 0), RETCODE_OK);
         EXPECT_EQ(test_all, test3);
         EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
@@ -10107,7 +10120,7 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_boolean)
     {
         BooleanSeq test3;
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        encoding_deconding_test(created_type, data, data2, encoding);
+        encoding_decoding_test(created_type, data, data2, encoding);
         EXPECT_EQ(data2->get_boolean_values(test3, 0), RETCODE_OK);
         EXPECT_EQ(test_all, test3);
         EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
@@ -10249,7 +10262,7 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_of_sequences)
     {
         Int32Seq test3;
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        encoding_deconding_test(created_type, data, data2, encoding);
+        encoding_decoding_test(created_type, data, data2, encoding);
         seq_data = data2->loan_value(0);
         ASSERT_TRUE(seq_data);
         EXPECT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
@@ -10606,7 +10619,7 @@ TEST_F(DynamicTypesTests, DynamicType_array)
     {
         Int32Seq test3;
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        encoding_deconding_test(created_type, data, data2, encoding);
+        encoding_decoding_test(created_type, data, data2, encoding);
         EXPECT_EQ(data2->get_int32_values(test3, 0), RETCODE_OK);
         EXPECT_EQ(iTestSeq32, test3);
         EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
@@ -10789,7 +10802,7 @@ TEST_F(DynamicTypesTests, DynamicType_array_of_arrays)
     {
         Int32Seq test3;
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        encoding_deconding_test(created_type, data, data2, encoding);
+        encoding_decoding_test(created_type, data, data2, encoding);
         seq_data = data2->loan_value(0);
         ASSERT_TRUE(seq_data);
         EXPECT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
@@ -11238,7 +11251,7 @@ TEST_F(DynamicTypesTests, DynamicType_map)
     for (auto encoding : encodings)
     {
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        encoding_deconding_test(created_type, data, data2, encoding);
+        encoding_decoding_test(created_type, data, data2, encoding);
         EXPECT_EQ(data2->get_int32_value(test2, data->get_member_id_by_name(
                     "10")), RETCODE_OK);
         EXPECT_EQ(test1, test2);
@@ -11412,7 +11425,7 @@ TEST_F(DynamicTypesTests, DynamicType_map_of_maps)
     for (auto encoding : encodings)
     {
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        encoding_deconding_test(created_type, data, data2, encoding);
+        encoding_decoding_test(created_type, data, data2, encoding);
         EXPECT_EQ(2u, data2->get_item_count());
         loan_data = data2->loan_value(data2->get_member_id_by_name("-2"));
         ASSERT_TRUE(loan_data);
@@ -11654,7 +11667,7 @@ TEST_F(DynamicTypesTests, DynamicType_structure)
     for (auto encoding : encodings)
     {
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(struct_type)};
-        encoding_deconding_test(struct_type, struct_data, data2, encoding);
+        encoding_decoding_test(struct_type, struct_data, data2, encoding);
         EXPECT_EQ(data2->get_int32_value(test2, 0), RETCODE_OK);
         EXPECT_EQ(test1, test2);
         EXPECT_EQ(data2->get_int64_value(test4, 1), RETCODE_OK);
@@ -11933,7 +11946,7 @@ TEST_F(DynamicTypesTests, DynamicType_structure_inheritance)
     for (auto encoding : encodings)
     {
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(derived_struct_type)};
-        encoding_deconding_test(derived_struct_type, struct_data, data2, encoding);
+        encoding_decoding_test(derived_struct_type, struct_data, data2, encoding);
         EXPECT_EQ(data2->get_int32_value(test2, 0), RETCODE_OK);
         EXPECT_EQ(test11, test2);
         EXPECT_EQ(data2->get_int64_value(test4, 1), RETCODE_OK);
@@ -12123,7 +12136,7 @@ TEST_F(DynamicTypesTests, DynamicType_multi_structure)
     for (auto encoding : encodings)
     {
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(struct_type)};
-        encoding_deconding_test(struct_type, struct_data, data2, encoding);
+        encoding_decoding_test(struct_type, struct_data, data2, encoding);
         EXPECT_EQ(data2->get_int64_value(test2, 10), RETCODE_OK);
         EXPECT_EQ(test1, test2);
         inner_struct_data = struct_data->loan_value(0);
@@ -12418,7 +12431,7 @@ TEST_F(DynamicTypesTests, DynamicType_union)
     for (auto encoding : encodings)
     {
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(union_type)};
-        encoding_deconding_test(union_type, union_data, data2, encoding);
+        encoding_decoding_test(union_type, union_data, data2, encoding);
         EXPECT_EQ(data2->get_int32_value(discriminator_value, 0), RETCODE_OK);
         EXPECT_EQ(4, discriminator_value);
         {
@@ -12609,7 +12622,7 @@ TEST_F(DynamicTypesTests, DynamicType_union_with_unions)
     for (auto encoding : encodings)
     {
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(union_type)};
-        encoding_deconding_test(union_type, union_data, data2, encoding);
+        encoding_decoding_test(union_type, union_data, data2, encoding);
         EXPECT_EQ(data2->get_int32_value(discriminator_value, 0), RETCODE_OK);
         EXPECT_EQ(4, discriminator_value);
         child_data = union_data->loan_value(2);
@@ -12701,9 +12714,9 @@ TEST_F(DynamicTypesTests, DynamicType_KeyHash_standard_example_1)
     EXPECT_EQ(RETCODE_OK, data->set_int32_value(1, 10));
     EXPECT_EQ(RETCODE_OK, data->set_int32_value(1, 20));
 
-    DynamicPubSubType pubsubType(struct_type);
+    TypeSupport pubsubType {new DynamicPubSubType(struct_type)};
     eprosima::fastrtps::rtps::InstanceHandle_t instance_handle;
-    EXPECT_TRUE(pubsubType.getKey(&data, &instance_handle));
+    ASSERT_TRUE(pubsubType.get_key(&data, &instance_handle));
 
     const uint8_t expected_key_hash[] {
         0x12, 0x34, 0x56, 0x78,
@@ -12712,7 +12725,19 @@ TEST_F(DynamicTypesTests, DynamicType_KeyHash_standard_example_1)
         0x00, 0x00, 0x00, 0x00
     };
 
-    EXPECT_EQ(0, memcmp(expected_key_hash, &instance_handle, 16));
+    ASSERT_EQ(0, memcmp(expected_key_hash, &instance_handle, 16));
+
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(
+        0, PARTICIPANT_QOS_DEFAULT);
+    if (0 == struct_type->get_name().size())
+    {
+        EXPECT_EQ(RETCODE_OK, participant->register_type(pubsubType, "test"));
+    }
+    else
+    {
+        EXPECT_EQ(RETCODE_OK, participant->register_type(pubsubType));
+    }
+    DomainParticipantFactory::get_instance()->delete_participant(participant);
 }
 
 TEST_F(DynamicTypesTests, DynamicType_KeyHash_standard_example_2)
@@ -12759,9 +12784,9 @@ TEST_F(DynamicTypesTests, DynamicType_KeyHash_standard_example_2)
     EXPECT_EQ(RETCODE_OK, data->set_int32_value(2, 10));
     EXPECT_EQ(RETCODE_OK, data->set_int32_value(3, 20));
 
-    DynamicPubSubType pubsubType(struct_type);
+    TypeSupport pubsubType {new DynamicPubSubType(struct_type)};
     eprosima::fastrtps::rtps::InstanceHandle_t instance_handle;
-    EXPECT_TRUE(pubsubType.getKey(&data, &instance_handle));
+    ASSERT_TRUE(pubsubType.get_key(&data, &instance_handle));
 
     const uint8_t expected_key_hash[] {
         0xf9, 0x1a, 0x59, 0xe3,
@@ -12770,7 +12795,19 @@ TEST_F(DynamicTypesTests, DynamicType_KeyHash_standard_example_2)
         0xf5, 0xb6, 0xe3, 0x6e
     };
 
-    EXPECT_EQ(0, memcmp(expected_key_hash, &instance_handle, 16));
+    ASSERT_EQ(0, memcmp(expected_key_hash, &instance_handle, 16));
+
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(
+        0, PARTICIPANT_QOS_DEFAULT);
+    if (0 == struct_type->get_name().size())
+    {
+        EXPECT_EQ(RETCODE_OK, participant->register_type(pubsubType, "test"));
+    }
+    else
+    {
+        EXPECT_EQ(RETCODE_OK, participant->register_type(pubsubType));
+    }
+    DomainParticipantFactory::get_instance()->delete_participant(participant);
 }
 
 TEST_F(DynamicTypesTests, DynamicType_KeyHash_standard_example_3)
@@ -12854,9 +12891,9 @@ TEST_F(DynamicTypesTests, DynamicType_KeyHash_standard_example_3)
     EXPECT_EQ(RETCODE_OK, data->set_int32_value(20, 100));
     EXPECT_EQ(RETCODE_OK, data->set_int32_value(10, 200));
 
-    DynamicPubSubType pubsubType(struct_type);
+    TypeSupport pubsubType {new DynamicPubSubType(struct_type)};
     eprosima::fastrtps::rtps::InstanceHandle_t instance_handle;
-    EXPECT_TRUE(pubsubType.getKey(&data, &instance_handle));
+    ASSERT_TRUE(pubsubType.get_key(&data, &instance_handle));
 
     const uint8_t expected_key_hash[] {
         0x37, 0x4b, 0x96, 0xe2,
@@ -12865,7 +12902,19 @@ TEST_F(DynamicTypesTests, DynamicType_KeyHash_standard_example_3)
         0xbb, 0x6e, 0xb7, 0x1e
     };
 
-    EXPECT_EQ(0, memcmp(expected_key_hash, &instance_handle, 16));
+    ASSERT_EQ(0, memcmp(expected_key_hash, &instance_handle, 16));
+
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(
+        0, PARTICIPANT_QOS_DEFAULT);
+    if (0 == struct_type->get_name().size())
+    {
+        EXPECT_EQ(RETCODE_OK, participant->register_type(pubsubType, "test"));
+    }
+    else
+    {
+        EXPECT_EQ(RETCODE_OK, participant->register_type(pubsubType));
+    }
+    DomainParticipantFactory::get_instance()->delete_participant(participant);
 }
 
 TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_enum)

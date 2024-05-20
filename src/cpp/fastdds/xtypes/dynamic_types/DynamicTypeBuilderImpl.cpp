@@ -64,6 +64,7 @@ DynamicTypeBuilderImpl::DynamicTypeBuilderImpl(
         }
 
         next_index_ = static_cast<uint32_t>(members_.size());
+        index_own_members_ = static_cast<uint32_t>(members_.size());
     }
     else if (TK_UNION == type_descriptor_.kind())
     {
@@ -678,6 +679,7 @@ traits<DynamicType>::ref_type DynamicTypeBuilderImpl::build() noexcept
             ret_val->members_ = members_;
             ret_val->default_value_ = default_value_;
             ret_val->default_union_member_ = default_union_member_;
+            ret_val->index_own_members_ = index_own_members_;
         }
     }
 

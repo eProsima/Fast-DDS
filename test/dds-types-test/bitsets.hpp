@@ -22,7 +22,6 @@
 #ifndef _FAST_DDS_GENERATED_BITSETS_HPP_
 #define _FAST_DDS_GENERATED_BITSETS_HPP_
 
-#include <bitset>
 #include <cstdint>
 #include <utility>
 #include "helpers/basic_inner_types.hpp"
@@ -52,72 +51,23 @@
 #endif // _WIN32
 
 /*!
- * @brief This class represents the structure InnerTypedBitsetHelper defined by the user in the IDL file.
+ * @brief This structure represents the bitset InnerTypedBitsetHelper defined by the user in the IDL file.
  * @ingroup bitsets
  */
-class InnerTypedBitsetHelper
+struct InnerTypedBitsetHelper
 {
-public:
+        bool boolean_bitfield : 1;
 
-    /*!
-     * @brief Default constructor.
-     */
-    eProsima_user_DllExport InnerTypedBitsetHelper()
-    {
-    }
+        uint8_t byte_bitfield : 8;
 
-    /*!
-     * @brief Default destructor.
-     */
-    eProsima_user_DllExport ~InnerTypedBitsetHelper()
-    {
-    }
+        int8_t int8_bitfield : 8;
 
-    /*!
-     * @brief Copy constructor.
-     * @param x Reference to the object InnerTypedBitsetHelper that will be copied.
-     */
-    eProsima_user_DllExport InnerTypedBitsetHelper(
-            const InnerTypedBitsetHelper& x)
-    {
-        m_bitset = x.m_bitset;
-    }
+        uint8_t uint8_bitfield : 8;
 
-    /*!
-     * @brief Move constructor.
-     * @param x Reference to the object InnerTypedBitsetHelper that will be copied.
-     */
-    eProsima_user_DllExport InnerTypedBitsetHelper(
-            InnerTypedBitsetHelper&& x) noexcept
-    {
-        m_bitset = x.m_bitset;
-    }
+        int16_t short_bitfield : 16;
 
-    /*!
-     * @brief Copy assignment.
-     * @param x Reference to the object InnerTypedBitsetHelper that will be copied.
-     */
-    eProsima_user_DllExport InnerTypedBitsetHelper& operator =(
-            const InnerTypedBitsetHelper& x)
-    {
+        uint16_t ushort_bitfield : 16;
 
-        m_bitset = x.m_bitset;
-
-        return *this;
-    }
-
-    /*!
-     * @brief Move assignment.
-     * @param x Reference to the object InnerTypedBitsetHelper that will be copied.
-     */
-    eProsima_user_DllExport InnerTypedBitsetHelper& operator =(
-            InnerTypedBitsetHelper&& x) noexcept
-    {
-
-        m_bitset = x.m_bitset;
-
-        return *this;
-    }
 
     /*!
      * @brief Comparison operator.
@@ -126,8 +76,12 @@ public:
     eProsima_user_DllExport bool operator ==(
             const InnerTypedBitsetHelper& x) const
     {
-
-        return m_bitset == x.m_bitset;
+        return (boolean_bitfield == x.boolean_bitfield &&
+           byte_bitfield == x.byte_bitfield &&
+           int8_bitfield == x.int8_bitfield &&
+           uint8_bitfield == x.uint8_bitfield &&
+           short_bitfield == x.short_bitfield &&
+           ushort_bitfield == x.ushort_bitfield);
     }
 
     /*!
@@ -139,296 +93,17 @@ public:
     {
         return !(*this == x);
     }
-
-    /*!
-     * @brief This function sets a value in member boolean_bitfield
-     * @param _boolean_bitfield New value for member boolean_bitfield
-     */
-    eProsima_user_DllExport void boolean_bitfield(
-            bool _boolean_bitfield)
-    {
-        int base = 0;
-        m_bitset.set(base, _boolean_bitfield);
-    }
-
-    /*!
-     * @brief This function returns the value of member boolean_bitfield
-     * @return Value of member boolean_bitfield
-     */
-    eProsima_user_DllExport bool boolean_bitfield() const
-    {
-        int base = 0;
-        return m_bitset.test(base);
-    }
-
-
-    /*!
-     * @brief This function sets a value in member byte_bitfield
-     * @param _byte_bitfield New value for member byte_bitfield
-     */
-    eProsima_user_DllExport void byte_bitfield(
-            uint8_t _byte_bitfield)
-    {
-        int base = 1;
-        int size = 8;
-        for (int i = base; i < base + size; ++i)
-        {
-            m_bitset.set(i, !!(_byte_bitfield & 0x01));
-            _byte_bitfield = _byte_bitfield >> 1;
-        }
-
-    }
-
-    /*!
-     * @brief This function returns the value of member byte_bitfield
-     * @return Value of member byte_bitfield
-     */
-    eProsima_user_DllExport uint8_t byte_bitfield() const
-    {
-        int base = 1;
-        int size = 8;
-        std::bitset<8> aux;
-        for (int i = 0; i < size; ++i)
-        {
-            aux.set(i, m_bitset.test(i + base));
-        }
-        return static_cast<uint8_t>(aux.to_ullong());
-
-    }
-
-
-    /*!
-     * @brief This function sets a value in member int8_bitfield
-     * @param _int8_bitfield New value for member int8_bitfield
-     */
-    eProsima_user_DllExport void int8_bitfield(
-            int8_t _int8_bitfield)
-    {
-        int base = 9;
-        int size = 8;
-        for (int i = base; i < base + size; ++i)
-        {
-            m_bitset.set(i, !!(_int8_bitfield & 0x01));
-            _int8_bitfield = _int8_bitfield >> 1;
-        }
-
-    }
-
-    /*!
-     * @brief This function returns the value of member int8_bitfield
-     * @return Value of member int8_bitfield
-     */
-    eProsima_user_DllExport int8_t int8_bitfield() const
-    {
-        int base = 9;
-        int size = 8;
-        std::bitset<8> aux;
-        for (int i = 0; i < size; ++i)
-        {
-            aux.set(i, m_bitset.test(i + base));
-        }
-        return static_cast<int8_t>(aux.to_ullong());
-
-    }
-
-
-    /*!
-     * @brief This function sets a value in member uint8_bitfield
-     * @param _uint8_bitfield New value for member uint8_bitfield
-     */
-    eProsima_user_DllExport void uint8_bitfield(
-            uint8_t _uint8_bitfield)
-    {
-        int base = 17;
-        int size = 8;
-        for (int i = base; i < base + size; ++i)
-        {
-            m_bitset.set(i, !!(_uint8_bitfield & 0x01));
-            _uint8_bitfield = _uint8_bitfield >> 1;
-        }
-
-    }
-
-    /*!
-     * @brief This function returns the value of member uint8_bitfield
-     * @return Value of member uint8_bitfield
-     */
-    eProsima_user_DllExport uint8_t uint8_bitfield() const
-    {
-        int base = 17;
-        int size = 8;
-        std::bitset<8> aux;
-        for (int i = 0; i < size; ++i)
-        {
-            aux.set(i, m_bitset.test(i + base));
-        }
-        return static_cast<uint8_t>(aux.to_ullong());
-
-    }
-
-
-    /*!
-     * @brief This function sets a value in member short_bitfield
-     * @param _short_bitfield New value for member short_bitfield
-     */
-    eProsima_user_DllExport void short_bitfield(
-            int16_t _short_bitfield)
-    {
-        int base = 25;
-        int size = 16;
-        for (int i = base; i < base + size; ++i)
-        {
-            m_bitset.set(i, !!(_short_bitfield & 0x01));
-            _short_bitfield = _short_bitfield >> 1;
-        }
-
-    }
-
-    /*!
-     * @brief This function returns the value of member short_bitfield
-     * @return Value of member short_bitfield
-     */
-    eProsima_user_DllExport int16_t short_bitfield() const
-    {
-        int base = 25;
-        int size = 16;
-        std::bitset<16> aux;
-        for (int i = 0; i < size; ++i)
-        {
-            aux.set(i, m_bitset.test(i + base));
-        }
-        return static_cast<int16_t>(aux.to_ullong());
-
-    }
-
-
-    /*!
-     * @brief This function sets a value in member ushort_bitfield
-     * @param _ushort_bitfield New value for member ushort_bitfield
-     */
-    eProsima_user_DllExport void ushort_bitfield(
-            uint16_t _ushort_bitfield)
-    {
-        int base = 41;
-        int size = 16;
-        for (int i = base; i < base + size; ++i)
-        {
-            m_bitset.set(i, !!(_ushort_bitfield & 0x01));
-            _ushort_bitfield = _ushort_bitfield >> 1;
-        }
-
-    }
-
-    /*!
-     * @brief This function returns the value of member ushort_bitfield
-     * @return Value of member ushort_bitfield
-     */
-    eProsima_user_DllExport uint16_t ushort_bitfield() const
-    {
-        int base = 41;
-        int size = 16;
-        std::bitset<16> aux;
-        for (int i = 0; i < size; ++i)
-        {
-            aux.set(i, m_bitset.test(i + base));
-        }
-        return static_cast<uint16_t>(aux.to_ullong());
-
-    }
-
-
-    eProsima_user_DllExport std::bitset<57> bitset() const
-    {
-        std::string str_value;
-
-        str_value = m_bitset.to_string() + str_value;
-
-        return std::bitset<57>(str_value);
-    }
-
-    eProsima_user_DllExport void bitset(
-            const std::bitset<57>& bitset)
-    {
-        std::string str_value {bitset.to_string()};
-        size_t base_diff {0};
-        size_t last_post {std::string::npos};
-
-        base_diff += 57;
-        m_bitset = std::bitset<57>(str_value.substr(str_value.length() - base_diff, last_post));
-    }
-
-
-private:
-
-    std::bitset<57> m_bitset;
 };
 /*!
- * @brief This class represents the structure InnerTypedBitsetHelper2 defined by the user in the IDL file.
+ * @brief This structure represents the bitset InnerTypedBitsetHelper2 defined by the user in the IDL file.
  * @ingroup bitsets
  */
-class InnerTypedBitsetHelper2
+struct InnerTypedBitsetHelper2
 {
-public:
+        int32_t long_bitfield : 32;
 
-    /*!
-     * @brief Default constructor.
-     */
-    eProsima_user_DllExport InnerTypedBitsetHelper2()
-    {
-    }
+        uint32_t ulong_bitfield : 32;
 
-    /*!
-     * @brief Default destructor.
-     */
-    eProsima_user_DllExport ~InnerTypedBitsetHelper2()
-    {
-    }
-
-    /*!
-     * @brief Copy constructor.
-     * @param x Reference to the object InnerTypedBitsetHelper2 that will be copied.
-     */
-    eProsima_user_DllExport InnerTypedBitsetHelper2(
-            const InnerTypedBitsetHelper2& x)
-    {
-        m_bitset = x.m_bitset;
-    }
-
-    /*!
-     * @brief Move constructor.
-     * @param x Reference to the object InnerTypedBitsetHelper2 that will be copied.
-     */
-    eProsima_user_DllExport InnerTypedBitsetHelper2(
-            InnerTypedBitsetHelper2&& x) noexcept
-    {
-        m_bitset = x.m_bitset;
-    }
-
-    /*!
-     * @brief Copy assignment.
-     * @param x Reference to the object InnerTypedBitsetHelper2 that will be copied.
-     */
-    eProsima_user_DllExport InnerTypedBitsetHelper2& operator =(
-            const InnerTypedBitsetHelper2& x)
-    {
-
-        m_bitset = x.m_bitset;
-
-        return *this;
-    }
-
-    /*!
-     * @brief Move assignment.
-     * @param x Reference to the object InnerTypedBitsetHelper2 that will be copied.
-     */
-    eProsima_user_DllExport InnerTypedBitsetHelper2& operator =(
-            InnerTypedBitsetHelper2&& x) noexcept
-    {
-
-        m_bitset = x.m_bitset;
-
-        return *this;
-    }
 
     /*!
      * @brief Comparison operator.
@@ -437,8 +112,8 @@ public:
     eProsima_user_DllExport bool operator ==(
             const InnerTypedBitsetHelper2& x) const
     {
-
-        return m_bitset == x.m_bitset;
+        return (long_bitfield == x.long_bitfield &&
+           ulong_bitfield == x.ulong_bitfield);
     }
 
     /*!
@@ -450,169 +125,15 @@ public:
     {
         return !(*this == x);
     }
-
-    /*!
-     * @brief This function sets a value in member long_bitfield
-     * @param _long_bitfield New value for member long_bitfield
-     */
-    eProsima_user_DllExport void long_bitfield(
-            int32_t _long_bitfield)
-    {
-        int base = 0;
-        int size = 32;
-        for (int i = base; i < base + size; ++i)
-        {
-            m_bitset.set(i, !!(_long_bitfield & 0x01));
-            _long_bitfield = _long_bitfield >> 1;
-        }
-
-    }
-
-    /*!
-     * @brief This function returns the value of member long_bitfield
-     * @return Value of member long_bitfield
-     */
-    eProsima_user_DllExport int32_t long_bitfield() const
-    {
-        int base = 0;
-        int size = 32;
-        std::bitset<32> aux;
-        for (int i = 0; i < size; ++i)
-        {
-            aux.set(i, m_bitset.test(i + base));
-        }
-        return static_cast<int32_t>(aux.to_ullong());
-
-    }
-
-
-    /*!
-     * @brief This function sets a value in member ulong_bitfield
-     * @param _ulong_bitfield New value for member ulong_bitfield
-     */
-    eProsima_user_DllExport void ulong_bitfield(
-            uint32_t _ulong_bitfield)
-    {
-        int base = 32;
-        int size = 32;
-        for (int i = base; i < base + size; ++i)
-        {
-            m_bitset.set(i, !!(_ulong_bitfield & 0x01));
-            _ulong_bitfield = _ulong_bitfield >> 1;
-        }
-
-    }
-
-    /*!
-     * @brief This function returns the value of member ulong_bitfield
-     * @return Value of member ulong_bitfield
-     */
-    eProsima_user_DllExport uint32_t ulong_bitfield() const
-    {
-        int base = 32;
-        int size = 32;
-        std::bitset<32> aux;
-        for (int i = 0; i < size; ++i)
-        {
-            aux.set(i, m_bitset.test(i + base));
-        }
-        return static_cast<uint32_t>(aux.to_ullong());
-
-    }
-
-
-    eProsima_user_DllExport std::bitset<64> bitset() const
-    {
-        std::string str_value;
-
-        str_value = m_bitset.to_string() + str_value;
-
-        return std::bitset<64>(str_value);
-    }
-
-    eProsima_user_DllExport void bitset(
-            const std::bitset<64>& bitset)
-    {
-        std::string str_value {bitset.to_string()};
-        size_t base_diff {0};
-        size_t last_post {std::string::npos};
-
-        base_diff += 64;
-        m_bitset = std::bitset<64>(str_value.substr(str_value.length() - base_diff, last_post));
-    }
-
-
-private:
-
-    std::bitset<64> m_bitset;
 };
 /*!
- * @brief This class represents the structure InnerTypedBitsetHelper3 defined by the user in the IDL file.
+ * @brief This structure represents the bitset InnerTypedBitsetHelper3 defined by the user in the IDL file.
  * @ingroup bitsets
  */
-class InnerTypedBitsetHelper3
+struct InnerTypedBitsetHelper3
 {
-public:
+        int64_t long_long_bitfield : 64;
 
-    /*!
-     * @brief Default constructor.
-     */
-    eProsima_user_DllExport InnerTypedBitsetHelper3()
-    {
-    }
-
-    /*!
-     * @brief Default destructor.
-     */
-    eProsima_user_DllExport ~InnerTypedBitsetHelper3()
-    {
-    }
-
-    /*!
-     * @brief Copy constructor.
-     * @param x Reference to the object InnerTypedBitsetHelper3 that will be copied.
-     */
-    eProsima_user_DllExport InnerTypedBitsetHelper3(
-            const InnerTypedBitsetHelper3& x)
-    {
-        m_bitset = x.m_bitset;
-    }
-
-    /*!
-     * @brief Move constructor.
-     * @param x Reference to the object InnerTypedBitsetHelper3 that will be copied.
-     */
-    eProsima_user_DllExport InnerTypedBitsetHelper3(
-            InnerTypedBitsetHelper3&& x) noexcept
-    {
-        m_bitset = x.m_bitset;
-    }
-
-    /*!
-     * @brief Copy assignment.
-     * @param x Reference to the object InnerTypedBitsetHelper3 that will be copied.
-     */
-    eProsima_user_DllExport InnerTypedBitsetHelper3& operator =(
-            const InnerTypedBitsetHelper3& x)
-    {
-
-        m_bitset = x.m_bitset;
-
-        return *this;
-    }
-
-    /*!
-     * @brief Move assignment.
-     * @param x Reference to the object InnerTypedBitsetHelper3 that will be copied.
-     */
-    eProsima_user_DllExport InnerTypedBitsetHelper3& operator =(
-            InnerTypedBitsetHelper3&& x) noexcept
-    {
-
-        m_bitset = x.m_bitset;
-
-        return *this;
-    }
 
     /*!
      * @brief Comparison operator.
@@ -621,8 +142,7 @@ public:
     eProsima_user_DllExport bool operator ==(
             const InnerTypedBitsetHelper3& x) const
     {
-
-        return m_bitset == x.m_bitset;
+        return (long_long_bitfield == x.long_long_bitfield);
     }
 
     /*!
@@ -634,134 +154,15 @@ public:
     {
         return !(*this == x);
     }
-
-    /*!
-     * @brief This function sets a value in member long_long_bitfield
-     * @param _long_long_bitfield New value for member long_long_bitfield
-     */
-    eProsima_user_DllExport void long_long_bitfield(
-            int64_t _long_long_bitfield)
-    {
-        int base = 0;
-        int size = 64;
-        for (int i = base; i < base + size; ++i)
-        {
-            m_bitset.set(i, !!(_long_long_bitfield & 0x01));
-            _long_long_bitfield = _long_long_bitfield >> 1;
-        }
-
-    }
-
-    /*!
-     * @brief This function returns the value of member long_long_bitfield
-     * @return Value of member long_long_bitfield
-     */
-    eProsima_user_DllExport int64_t long_long_bitfield() const
-    {
-        int base = 0;
-        int size = 64;
-        std::bitset<64> aux;
-        for (int i = 0; i < size; ++i)
-        {
-            aux.set(i, m_bitset.test(i + base));
-        }
-        return static_cast<int64_t>(aux.to_ullong());
-
-    }
-
-
-    eProsima_user_DllExport std::bitset<64> bitset() const
-    {
-        std::string str_value;
-
-        str_value = m_bitset.to_string() + str_value;
-
-        return std::bitset<64>(str_value);
-    }
-
-    eProsima_user_DllExport void bitset(
-            const std::bitset<64>& bitset)
-    {
-        std::string str_value {bitset.to_string()};
-        size_t base_diff {0};
-        size_t last_post {std::string::npos};
-
-        base_diff += 64;
-        m_bitset = std::bitset<64>(str_value.substr(str_value.length() - base_diff, last_post));
-    }
-
-
-private:
-
-    std::bitset<64> m_bitset;
 };
 /*!
- * @brief This class represents the structure InnerTypedBitsetHelper4 defined by the user in the IDL file.
+ * @brief This structure represents the bitset InnerTypedBitsetHelper4 defined by the user in the IDL file.
  * @ingroup bitsets
  */
-class InnerTypedBitsetHelper4
+struct InnerTypedBitsetHelper4
 {
-public:
+        uint64_t ulong_long_bitfield : 64;
 
-    /*!
-     * @brief Default constructor.
-     */
-    eProsima_user_DllExport InnerTypedBitsetHelper4()
-    {
-    }
-
-    /*!
-     * @brief Default destructor.
-     */
-    eProsima_user_DllExport ~InnerTypedBitsetHelper4()
-    {
-    }
-
-    /*!
-     * @brief Copy constructor.
-     * @param x Reference to the object InnerTypedBitsetHelper4 that will be copied.
-     */
-    eProsima_user_DllExport InnerTypedBitsetHelper4(
-            const InnerTypedBitsetHelper4& x)
-    {
-        m_bitset = x.m_bitset;
-    }
-
-    /*!
-     * @brief Move constructor.
-     * @param x Reference to the object InnerTypedBitsetHelper4 that will be copied.
-     */
-    eProsima_user_DllExport InnerTypedBitsetHelper4(
-            InnerTypedBitsetHelper4&& x) noexcept
-    {
-        m_bitset = x.m_bitset;
-    }
-
-    /*!
-     * @brief Copy assignment.
-     * @param x Reference to the object InnerTypedBitsetHelper4 that will be copied.
-     */
-    eProsima_user_DllExport InnerTypedBitsetHelper4& operator =(
-            const InnerTypedBitsetHelper4& x)
-    {
-
-        m_bitset = x.m_bitset;
-
-        return *this;
-    }
-
-    /*!
-     * @brief Move assignment.
-     * @param x Reference to the object InnerTypedBitsetHelper4 that will be copied.
-     */
-    eProsima_user_DllExport InnerTypedBitsetHelper4& operator =(
-            InnerTypedBitsetHelper4&& x) noexcept
-    {
-
-        m_bitset = x.m_bitset;
-
-        return *this;
-    }
 
     /*!
      * @brief Comparison operator.
@@ -770,8 +171,7 @@ public:
     eProsima_user_DllExport bool operator ==(
             const InnerTypedBitsetHelper4& x) const
     {
-
-        return m_bitset == x.m_bitset;
+        return (ulong_long_bitfield == x.ulong_long_bitfield);
     }
 
     /*!
@@ -783,66 +183,6 @@ public:
     {
         return !(*this == x);
     }
-
-    /*!
-     * @brief This function sets a value in member ulong_long_bitfield
-     * @param _ulong_long_bitfield New value for member ulong_long_bitfield
-     */
-    eProsima_user_DllExport void ulong_long_bitfield(
-            uint64_t _ulong_long_bitfield)
-    {
-        int base = 0;
-        int size = 64;
-        for (int i = base; i < base + size; ++i)
-        {
-            m_bitset.set(i, !!(_ulong_long_bitfield & 0x01));
-            _ulong_long_bitfield = _ulong_long_bitfield >> 1;
-        }
-
-    }
-
-    /*!
-     * @brief This function returns the value of member ulong_long_bitfield
-     * @return Value of member ulong_long_bitfield
-     */
-    eProsima_user_DllExport uint64_t ulong_long_bitfield() const
-    {
-        int base = 0;
-        int size = 64;
-        std::bitset<64> aux;
-        for (int i = 0; i < size; ++i)
-        {
-            aux.set(i, m_bitset.test(i + base));
-        }
-        return static_cast<uint64_t>(aux.to_ullong());
-
-    }
-
-
-    eProsima_user_DllExport std::bitset<64> bitset() const
-    {
-        std::string str_value;
-
-        str_value = m_bitset.to_string() + str_value;
-
-        return std::bitset<64>(str_value);
-    }
-
-    eProsima_user_DllExport void bitset(
-            const std::bitset<64>& bitset)
-    {
-        std::string str_value {bitset.to_string()};
-        size_t base_diff {0};
-        size_t last_post {std::string::npos};
-
-        base_diff += 64;
-        m_bitset = std::bitset<64>(str_value.substr(str_value.length() - base_diff, last_post));
-    }
-
-
-private:
-
-    std::bitset<64> m_bitset;
 };
 /*!
  * @brief This class represents the structure BitsetStruct defined by the user in the IDL file.
@@ -1158,11 +498,11 @@ public:
 
 private:
 
-    InnerBitsetHelper m_var_InnerBitsetHelper;
-    InnerTypedBitsetHelper m_var_InnerTypedBitsetHelper;
-    InnerTypedBitsetHelper2 m_var_InnerTypedBitsetHelper2;
-    InnerTypedBitsetHelper3 m_var_InnerTypedBitsetHelper3;
-    InnerTypedBitsetHelper4 m_var_InnerTypedBitsetHelper4;
+    InnerBitsetHelper m_var_InnerBitsetHelper{};
+    InnerTypedBitsetHelper m_var_InnerTypedBitsetHelper{};
+    InnerTypedBitsetHelper2 m_var_InnerTypedBitsetHelper2{};
+    InnerTypedBitsetHelper3 m_var_InnerTypedBitsetHelper3{};
+    InnerTypedBitsetHelper4 m_var_InnerTypedBitsetHelper4{};
 
 };
 

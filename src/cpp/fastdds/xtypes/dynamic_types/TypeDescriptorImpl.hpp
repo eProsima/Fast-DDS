@@ -46,7 +46,7 @@ class TypeDescriptorImpl : public virtual TypeDescriptor
 
     ExtensibilityKind extensibility_kind_ {ExtensibilityKind::APPENDABLE};
 
-    bool is_extensibility_set {false};
+    bool is_extensibility_set_ {false};
 
     bool is_nested_ {false};
 
@@ -204,7 +204,7 @@ public:
             ExtensibilityKind extensibility_kind) noexcept override
     {
         extensibility_kind_ = extensibility_kind;
-        is_extensibility_set = true;
+        is_extensibility_set_ = true;
     }
 
     bool is_nested() const noexcept override
@@ -236,6 +236,12 @@ public:
             TypeDescriptorImpl& descriptor) noexcept;
 
     bool is_consistent() noexcept override;
+
+    bool is_extensibility_set() const noexcept
+    {
+        return is_extensibility_set_;
+    }
+
 };
 
 } // namespace dds

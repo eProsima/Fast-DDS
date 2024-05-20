@@ -99,18 +99,6 @@ public:
     {
     }
 
-    /*!
-     * @brief TypeSupport constructor that receives a DynamicPubSubType.
-     * It will copy the instance so the user will keep the ownership of his object.
-     *
-     * @param ptr
-     */
-    FASTDDS_EXPORTED_API TypeSupport(
-            DynamicPubSubType ptr)
-        : std::shared_ptr<TopicDataType>(std::make_shared<DynamicPubSubType>(std::move(ptr)))
-    {
-    }
-
     /**
      * @brief Registers the type on a participant
      *

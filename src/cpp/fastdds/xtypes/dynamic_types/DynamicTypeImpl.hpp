@@ -96,6 +96,11 @@ public:
         return type_descriptor_;
     }
 
+    uint32_t get_index_own_members() const noexcept
+    {
+        return index_own_members_;
+    }
+
     int32_t default_value() const noexcept
     {
         return default_value_;
@@ -123,6 +128,9 @@ private:
 
     //! Points to the default union member.
     MemberId default_union_member_ {MEMBER_ID_INVALID};
+
+    //! Index pointing the first own member, not inherited from a base_type.
+    uint32_t index_own_members_ {0};
 
     //! Collection of all members sorted by MemberId.
     DynamicTypeMembersById member_;

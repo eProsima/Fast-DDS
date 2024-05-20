@@ -528,24 +528,29 @@ traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_struc
     type_descriptor.kind(TK_STRUCTURE);
     type_descriptor.name(struct_type.header().detail().type_name());
     type_descriptor.is_nested(struct_type.struct_flags() & xtypes::IS_NESTED);
-    type_descriptor.extensibility_kind(struct_type.struct_flags() & xtypes::IS_FINAL ? ExtensibilityKind::FINAL :
-            (struct_type.struct_flags() &
-            xtypes::IS_MUTABLE ? ExtensibilityKind::MUTABLE : ExtensibilityKind::APPENDABLE));
-
-    ret_val = std::make_shared<DynamicTypeBuilderImpl>(type_descriptor);
-
+    if (struct_type.struct_flags() & (xtypes::IS_FINAL | xtypes::IS_APPENDABLE | xtypes::IS_MUTABLE))
+    {
+        type_descriptor.extensibility_kind(struct_type.struct_flags() & xtypes::IS_FINAL ? ExtensibilityKind::FINAL :
+                (struct_type.struct_flags() &
+                xtypes::IS_MUTABLE ? ExtensibilityKind::MUTABLE : ExtensibilityKind::APPENDABLE));
+    }
+    bool inheritance_correct {true};
     if (xtypes::TK_NONE != struct_type.header().base_type()._d())
     {
         traits<DynamicType>::ref_type base_type = base_type_from_type_identifier(struct_type.header().base_type());
         if (base_type)
         {
-            ret_val->get_descriptor().base_type(base_type);
+            type_descriptor.base_type(base_type);
         }
         else
         {
             EPROSIMA_LOG_ERROR(DYN_TYPES, "Inconsistent base TypeIdentifier");
-            ret_val.reset();
+            inheritance_correct = false;
         }
+    }
+    if (inheritance_correct)
+    {
+        ret_val = std::make_shared<DynamicTypeBuilderImpl>(type_descriptor);
     }
 
     if (ret_val)

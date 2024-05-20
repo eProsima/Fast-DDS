@@ -75,13 +75,28 @@ bool MemberDescriptorImpl::equals(
            (type_ && type_->equals(descriptor.type_)) &&
            default_value_ == descriptor.default_value_ &&
            index_ == descriptor.index_ &&
-           label_ == descriptor.label_ &&
+           equal_labels(descriptor.label_) &&
            try_construct_kind_ == descriptor.try_construct_kind_ &&
            is_key_ == descriptor.is_key_ &&
            is_optional_ == descriptor.is_optional_ &&
            is_must_understand_ == descriptor.is_must_understand_ &&
            is_shared_ == descriptor.is_shared_ &&
            is_default_label_ == descriptor.is_default_label_;
+}
+
+bool MemberDescriptorImpl::equal_labels(
+        UnionCaseLabelSeq& labels) noexcept
+{
+    bool ret_code = true;
+    ret_code &= (labels.size() == label_.size());
+    if (ret_code)
+    {
+        for (size_t count {0}; ret_code && count < label_.size(); ++count)
+        {
+            ret_code &= label_.end() != std::find(label_.begin(), label_.end(), labels[count]);
+        }
+    }
+    return ret_code;
 }
 
 bool MemberDescriptorImpl::is_consistent() noexcept
@@ -264,7 +279,7 @@ bool MemberDescriptorImpl::is_consistent() noexcept
         }
         else
         {
-            EPROSIMA_LOG_WARNING(DYN_TYPES, "type_construct_kind is not implemented yet.");
+            EPROSIMA_LOG_WARNING(DYN_TYPES, "try_construct_kind is not implemented yet.");
         }
     }
 

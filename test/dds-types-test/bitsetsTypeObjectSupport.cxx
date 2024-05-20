@@ -44,18 +44,21 @@ void register_bitsets_type_objects()
     static std::once_flag once_flag;
     std::call_once(once_flag, []()
             {
-                register_InnerStructureHelper_type_identifier();
+                TypeIdentifier type_id;
+                register_InnerStructureHelper_type_identifier(type_id);
 
-                register_InnerEmptyStructureHelper_type_identifier();
+                register_InnerEmptyStructureHelper_type_identifier(type_id);
 
-                register_InnerUnionHelper_type_identifier();
+                register_InnerUnionHelper_type_identifier(type_id);
 
-                register_BitsetStruct_type_identifier();
+                register_BitsetStruct_type_identifier(type_id);
 
             });
 }
 
-void register_BitsetStruct_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_BitsetStruct_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_BitsetStruct = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
@@ -149,6 +152,7 @@ void register_BitsetStruct_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "InnerBitsetHelper: Given Bitset TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
             }
@@ -196,6 +200,7 @@ void register_BitsetStruct_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_InnerBitsetHelper member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_InnerBitsetHelper = "var_InnerBitsetHelper";
@@ -311,6 +316,7 @@ void register_BitsetStruct_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "InnerTypedBitsetHelper: Given Bitset TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
             }
@@ -358,6 +364,7 @@ void register_BitsetStruct_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_InnerTypedBitsetHelper member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_InnerTypedBitsetHelper = "var_InnerTypedBitsetHelper";
@@ -421,6 +428,7 @@ void register_BitsetStruct_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "InnerTypedBitsetHelper2: Given Bitset TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
             }
@@ -468,6 +476,7 @@ void register_BitsetStruct_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_InnerTypedBitsetHelper2 member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_InnerTypedBitsetHelper2 = "var_InnerTypedBitsetHelper2";
@@ -518,6 +527,7 @@ void register_BitsetStruct_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "InnerTypedBitsetHelper3: Given Bitset TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
             }
@@ -565,6 +575,7 @@ void register_BitsetStruct_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_InnerTypedBitsetHelper3 member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_InnerTypedBitsetHelper3 = "var_InnerTypedBitsetHelper3";
@@ -615,6 +626,7 @@ void register_BitsetStruct_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "InnerTypedBitsetHelper4: Given Bitset TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
             }
@@ -662,6 +674,7 @@ void register_BitsetStruct_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_InnerTypedBitsetHelper4 member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_InnerTypedBitsetHelper4 = "var_InnerTypedBitsetHelper4";
@@ -673,7 +686,7 @@ void register_BitsetStruct_type_identifier()
         }
         CompleteStructType struct_type_BitsetStruct = TypeObjectUtils::build_complete_struct_type(struct_flags_BitsetStruct, header_BitsetStruct, member_seq_BitsetStruct);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_BitsetStruct, type_name_BitsetStruct.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_BitsetStruct, type_name_BitsetStruct.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "BitsetStruct already registered in TypeObjectRegistry for a different type.");
@@ -685,6 +698,7 @@ void register_BitsetStruct_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "BitsetStruct: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
