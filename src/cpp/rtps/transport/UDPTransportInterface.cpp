@@ -122,44 +122,6 @@ bool UDPTransportInterface::DoInputLocatorsMatch(
 bool UDPTransportInterface::init(
         const fastrtps::rtps::PropertyPolicy*)
 {
-<<<<<<< HEAD
-    if (configuration()->sendBufferSize == 0 || configuration()->receiveBufferSize == 0)
-    {
-        // Check system buffer sizes.
-        ip::udp::socket socket(io_service_);
-        socket.open(generate_protocol());
-
-        if (configuration()->sendBufferSize == 0)
-        {
-            socket_base::send_buffer_size option;
-            socket.get_option(option);
-            set_send_buffer_size(static_cast<uint32_t>(option.value()));
-
-            if (configuration()->sendBufferSize < s_minimumSocketBuffer)
-            {
-                set_send_buffer_size(s_minimumSocketBuffer);
-                mSendBufferSize = s_minimumSocketBuffer;
-            }
-        }
-
-        if (configuration()->receiveBufferSize == 0)
-        {
-            socket_base::receive_buffer_size option;
-            socket.get_option(option);
-            set_receive_buffer_size(static_cast<uint32_t>(option.value()));
-
-            if (configuration()->receiveBufferSize < s_minimumSocketBuffer)
-            {
-                set_receive_buffer_size(s_minimumSocketBuffer);
-                mReceiveBufferSize = s_minimumSocketBuffer;
-            }
-        }
-    }
-
-    if (configuration()->maxMessageSize > s_maximumMessageSize)
-    {
-        EPROSIMA_LOG_ERROR(RTPS_MSG_OUT, "maxMessageSize cannot be greater than 65000");
-=======
     uint32_t maximumMessageSize = max_msg_size_no_frag == 0 ? s_maximumMessageSize : max_msg_size_no_frag;
     uint32_t cfg_max_msg_size = configuration()->maxMessageSize;
     uint32_t cfg_send_size = configuration()->sendBufferSize;
@@ -169,7 +131,6 @@ bool UDPTransportInterface::init(
     if (cfg_max_msg_size > maximumMessageSize)
     {
         EPROSIMA_LOG_ERROR(TRANSPORT_UDP, "maxMessageSize cannot be greater than " << maximumMessageSize);
->>>>>>> 53cd211a8 (Handle errors when setting socket buffer sizes (#4760) (#4796))
         return false;
     }
 
@@ -185,12 +146,6 @@ bool UDPTransportInterface::init(
         return false;
     }
 
-<<<<<<< HEAD
-    // TODO(Ricardo) Create an event that update this list.
-    get_ips(currentInterfaces);
-
-    return true;
-=======
     if ((cfg_send_size > 0) && (cfg_max_msg_size > cfg_send_size))
     {
         EPROSIMA_LOG_ERROR(TRANSPORT_UDP, "maxMessageSize cannot be greater than sendBufferSize");
@@ -202,6 +157,9 @@ bool UDPTransportInterface::init(
         EPROSIMA_LOG_ERROR(TRANSPORT_UDP, "maxMessageSize cannot be greater than receiveBufferSize");
         return false;
     }
+
+    // TODO(Ricardo) Create an event that update this list.
+    get_ips(currentInterfaces);
 
     asio::error_code ec;
     ip::udp::socket socket(io_service_);
@@ -236,7 +194,6 @@ bool UDPTransportInterface::init(
     }
 
     return ret;
->>>>>>> 53cd211a8 (Handle errors when setting socket buffer sizes (#4760) (#4796))
 }
 
 bool UDPTransportInterface::IsInputChannelOpen(

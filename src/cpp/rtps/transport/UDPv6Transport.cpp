@@ -23,13 +23,8 @@
 #include <fastdds/rtps/transport/SenderResource.h>
 #include <fastdds/rtps/transport/TransportInterface.h>
 #include <fastrtps/utils/IPLocator.h>
-<<<<<<< HEAD
-=======
 
-#include <rtps/network/utils/netmask_filter.hpp>
 #include <rtps/transport/asio_helpers.hpp>
-#include <utils/SystemInfo.hpp>
->>>>>>> 53cd211a8 (Handle errors when setting socket buffer sizes (#4760) (#4796))
 
 using namespace std;
 using namespace asio;

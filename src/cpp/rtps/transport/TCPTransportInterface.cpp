@@ -517,35 +517,7 @@ bool TCPTransportInterface::init(
     if (!asio_helpers::configure_buffer_sizes(
                 *initial_peer_local_locator_socket_, *configuration(), send_size, recv_size))
     {
-<<<<<<< HEAD
-        socket_base::send_buffer_size option;
-        initial_peer_local_locator_socket_->get_option(option);
-        set_send_buffer_size(option.value());
-
-        if (configuration()->sendBufferSize < s_minimumSocketBuffer)
-        {
-            set_send_buffer_size(s_minimumSocketBuffer);
-        }
-    }
-
-    if (configuration()->receiveBufferSize == 0)
-    {
-        socket_base::receive_buffer_size option;
-        initial_peer_local_locator_socket_->get_option(option);
-        set_receive_buffer_size(option.value());
-
-        if (configuration()->receiveBufferSize < s_minimumSocketBuffer)
-        {
-            set_receive_buffer_size(s_minimumSocketBuffer);
-        }
-    }
-
-    if (configuration()->maxMessageSize > s_maximumMessageSize)
-    {
-        EPROSIMA_LOG_ERROR(RTCP_MSG_OUT, "maxMessageSize cannot be greater than 65000");
-=======
         EPROSIMA_LOG_ERROR(TRANSPORT_TCP, "Couldn't set buffer sizes to minimum value: " << cfg_max_msg_size);
->>>>>>> 53cd211a8 (Handle errors when setting socket buffer sizes (#4760) (#4796))
         return false;
     }
 
