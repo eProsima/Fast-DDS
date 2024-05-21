@@ -52,19 +52,19 @@ BuiltinProtocols::BuiltinProtocols()
 
 BuiltinProtocols::~BuiltinProtocols()
 {
-    // This needs to be done first because of the WriterProxydata and ReaderProxyData smart_ptr
-    delete typelookup_manager_;
-
-    // Send participant is disposed
     if (mp_PDP != nullptr)
     {
+        // Send participant is disposed
         mp_PDP->announceParticipantState(true, true);
+        // Consider all discovered participants as disposed
+        mp_PDP->disable();
     }
 
-    // TODO Auto-generated destructor stub
+    // The type lookup manager should be deleted first, since it will access the PDP database
+    delete typelookup_manager_;
+
     delete mp_WLP;
     delete mp_PDP;
-
 }
 
 bool BuiltinProtocols::initBuiltinProtocols(

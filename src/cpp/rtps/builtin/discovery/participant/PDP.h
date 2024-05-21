@@ -131,6 +131,11 @@ public:
      */
     bool enable();
 
+    /**
+     * @brief Disable the Participant Discovery Protocol
+     */
+    void disable();
+
     virtual bool init(
             RTPSParticipantImpl* part) = 0;
 
