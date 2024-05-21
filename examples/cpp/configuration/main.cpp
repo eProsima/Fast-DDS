@@ -77,18 +77,18 @@ int main(
         if (samples == 0)
         {
             std::cout << app_name << " running. Please press Ctrl+C to stop the "
-                    << app_name << " at any time." << std::endl;
+                      << app_name << " at any time." << std::endl;
         }
         else
         {
             std::cout << app_name << " running for " << samples << " samples. Please press Ctrl+C to stop the "
-                    << app_name << " at any time." << std::endl;
+                      << app_name << " at any time." << std::endl;
         }
 
         stop_app_handler = [&](int signum)
                 {
                     std::cout << "\n" << CLIParser::parse_signal(signum) << " received, stopping " << app_name
-                            << " execution." << std::endl;
+                              << " execution." << std::endl;
                     app->stop();
                 };
 
@@ -101,7 +101,7 @@ int main(
 
         thread.join();
     }
-    
+
     Log::Reset();
     return ret;
 }
