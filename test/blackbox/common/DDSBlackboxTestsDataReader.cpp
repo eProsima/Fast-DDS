@@ -29,6 +29,7 @@
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
+#include <rtps/messages/CDRMessage.hpp>
 
 #include "BlackboxTests.hpp"
 #include "PubSubParticipant.hpp"

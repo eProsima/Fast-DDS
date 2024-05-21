@@ -329,6 +329,20 @@ void RTPSMessageGroup::flush_and_reset()
     current_dst_ = c_GuidPrefix_Unknown;
 }
 
+void RTPSMessageGroup::sender(
+        Endpoint* endpoint,
+        RTPSMessageSenderInterface* msg_sender)
+{
+    assert((endpoint != nullptr && msg_sender != nullptr) || (endpoint == nullptr && msg_sender == nullptr));
+    if (endpoint != endpoint_ || msg_sender != sender_)
+    {
+        flush_and_reset();
+    }
+
+    endpoint_ = endpoint;
+    sender_ = msg_sender;
+}
+
 void RTPSMessageGroup::check_and_maybe_flush(
         const GuidPrefix_t& destination_guid_prefix)
 {

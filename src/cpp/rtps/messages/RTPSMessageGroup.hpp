@@ -221,17 +221,7 @@ public:
      */
     void sender(
             Endpoint* endpoint,
-            RTPSMessageSenderInterface* msg_sender)
-    {
-        assert((endpoint != nullptr && msg_sender != nullptr) || (endpoint == nullptr && msg_sender == nullptr));
-        if (endpoint != endpoint_ || msg_sender != sender_)
-        {
-            flush_and_reset();
-        }
-
-        endpoint_ = endpoint;
-        sender_ = msg_sender;
-    }
+            RTPSMessageSenderInterface* msg_sender);
 
     //! Maximum fragment size minus the headers
     static inline constexpr uint32_t get_max_fragment_payload_size()
