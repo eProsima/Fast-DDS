@@ -310,13 +310,13 @@ TEST(SubscriberTests, ChangeDefaultDataReaderQos)
     qos.reliable_reader_qos().disable_positive_ACKs.duration.seconds = 13;
     qos.reliable_reader_qos().disable_positive_ACKs.duration.nanosec = 320u;
     // .type_consistency
-    qos.type_consistency().representation.m_value.push_back(XML_DATA_REPRESENTATION);
-    qos.type_consistency().representation.m_value.push_back(XCDR_DATA_REPRESENTATION);
-    qos.type_consistency().type_consistency.m_ignore_sequence_bounds = false;
-    qos.type_consistency().type_consistency.m_ignore_string_bounds = false;
-    qos.type_consistency().type_consistency.m_ignore_member_names = true;
-    qos.type_consistency().type_consistency.m_prevent_type_widening = true;
-    qos.type_consistency().type_consistency.m_force_type_validation = true;
+    qos.representation().m_value.push_back(XML_DATA_REPRESENTATION);
+    qos.representation().m_value.push_back(XCDR_DATA_REPRESENTATION);
+    qos.type_consistency().m_ignore_sequence_bounds = false;
+    qos.type_consistency().m_ignore_string_bounds = false;
+    qos.type_consistency().m_ignore_member_names = true;
+    qos.type_consistency().m_prevent_type_widening = true;
+    qos.type_consistency().m_force_type_validation = true;
     // .expects_inline_qos
     qos.expects_inline_qos(true);
     // .properties
@@ -431,13 +431,13 @@ TEST(SubscriberTests, ChangeDefaultDataReaderQos)
     EXPECT_EQ(13, wqos.reliable_reader_qos().disable_positive_ACKs.duration.seconds);
     EXPECT_EQ(320u, wqos.reliable_reader_qos().disable_positive_ACKs.duration.nanosec);
     // .type_consistency
-    EXPECT_EQ(XML_DATA_REPRESENTATION, wqos.type_consistency().representation.m_value.at(0));
-    EXPECT_EQ(XCDR_DATA_REPRESENTATION, wqos.type_consistency().representation.m_value.at(1));
-    EXPECT_FALSE(wqos.type_consistency().type_consistency.m_ignore_sequence_bounds);
-    EXPECT_FALSE(wqos.type_consistency().type_consistency.m_ignore_string_bounds);
-    EXPECT_TRUE(wqos.type_consistency().type_consistency.m_ignore_member_names);
-    EXPECT_TRUE(wqos.type_consistency().type_consistency.m_prevent_type_widening);
-    EXPECT_TRUE(wqos.type_consistency().type_consistency.m_force_type_validation);
+    EXPECT_EQ(XML_DATA_REPRESENTATION, wqos.representation().m_value.at(0));
+    EXPECT_EQ(XCDR_DATA_REPRESENTATION, wqos.representation().m_value.at(1));
+    EXPECT_FALSE(wqos.type_consistency().m_ignore_sequence_bounds);
+    EXPECT_FALSE(wqos.type_consistency().m_ignore_string_bounds);
+    EXPECT_TRUE(wqos.type_consistency().m_ignore_member_names);
+    EXPECT_TRUE(wqos.type_consistency().m_prevent_type_widening);
+    EXPECT_TRUE(wqos.type_consistency().m_force_type_validation);
     // .expects_inline_qos
     EXPECT_TRUE(wqos.expects_inline_qos());
     // .properties
@@ -911,7 +911,7 @@ template<>
 void TestsSubscriberQosCommonUtils::set_representation_qos(
         eprosima::fastdds::dds::DataReaderQos& qos)
 {
-    qos.type_consistency().representation.m_value.push_back(
+    qos.representation().m_value.push_back(
         eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
 }
 

@@ -1717,6 +1717,11 @@ void DataReaderImpl::set_qos(
         to.type_consistency() = from.type_consistency();
         to.type_consistency().hasChanged = true;
     }
+    if (first_time || !(to.representation() == from.representation()))
+    {
+        to.representation() = from.representation();
+        to.representation().hasChanged = true;
+    }
     if (first_time && (to.history().kind != from.history().kind ||
             to.history().depth != from.history().depth))
     {
@@ -1804,9 +1809,9 @@ std::shared_ptr<IPayloadPool> DataReaderImpl::get_payload_pool()
 {
     // Check whether DataReader's type is plain in all its data representations
     bool is_plain = true;
-    if (qos_.type_consistency().representation.m_value.size() > 0)
+    if (qos_.representation().m_value.size() > 0)
     {
-        for (auto data_representation : qos_.type_consistency().representation.m_value)
+        for (auto data_representation : qos_.representation().m_value)
         {
             is_plain = is_plain && type_->is_plain(data_representation);
         }

@@ -464,7 +464,7 @@ template<>
 void TestsDataReaderQosCommonUtils::set_representation_qos(
         eprosima::fastdds::dds::DataReaderQos& qos)
 {
-    qos.type_consistency().representation.m_value.push_back(
+    qos.representation().m_value.push_back(
         eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
 }
 

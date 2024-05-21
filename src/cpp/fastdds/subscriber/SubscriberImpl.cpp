@@ -441,7 +441,6 @@ ReturnCode_t SubscriberImpl::copy_from_topic_qos(
         DataReaderQos& reader_qos,
         const TopicQos& topic_qos)
 {
-    TypeConsistencyQos new_value;
     reader_qos.durability(topic_qos.durability());
     reader_qos.durability_service(topic_qos.durability_service());
     reader_qos.deadline(topic_qos.deadline());
@@ -452,7 +451,7 @@ ReturnCode_t SubscriberImpl::copy_from_topic_qos(
     reader_qos.history(topic_qos.history());
     reader_qos.resource_limits(topic_qos.resource_limits());
     reader_qos.ownership(topic_qos.ownership());
-    reader_qos.type_consistency().representation = topic_qos.representation();
+    reader_qos.representation() = topic_qos.representation();
     return RETCODE_OK;
 }
 

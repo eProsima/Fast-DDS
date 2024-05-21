@@ -110,8 +110,8 @@ void set_qos_from_attributes(
     qos.user_data().setValue(attr.qos.m_userData);
     qos.ownership() = attr.qos.m_ownership;
     qos.destination_order() = attr.qos.m_destinationOrder;
-    qos.type_consistency().type_consistency = attr.qos.type_consistency;
-    qos.type_consistency().representation = attr.qos.representation;
+    qos.type_consistency() = attr.qos.type_consistency;
+    qos.representation() = attr.qos.representation;
     qos.time_based_filter() = attr.qos.m_timeBasedFilter;
     qos.history() = attr.topic.historyQos;
     qos.resource_limits() = attr.topic.resourceLimitsQos;

@@ -126,45 +126,6 @@ public:
     int32_t max_samples_per_read = 32;
 };
 
-//! Qos Policy to configure the XTypes Qos associated to the DataReader
-class TypeConsistencyQos : public QosPolicy
-{
-public:
-
-    /**
-     * @brief Constructor
-     */
-    FASTDDS_EXPORTED_API TypeConsistencyQos()
-        : QosPolicy(false)
-    {
-    }
-
-    /**
-     * @brief Destructor
-     */
-    virtual FASTDDS_EXPORTED_API ~TypeConsistencyQos() = default;
-
-    bool operator ==(
-            const TypeConsistencyQos& b) const
-    {
-        return (this->type_consistency == b.type_consistency) &&
-               (this->representation == b.representation) &&
-               QosPolicy::operator ==(b);
-    }
-
-    inline void clear() override
-    {
-        TypeConsistencyQos reset = TypeConsistencyQos();
-        std::swap(*this, reset);
-    }
-
-    //!Type consistency enforcement Qos.
-    TypeConsistencyEnforcementQosPolicy type_consistency;
-
-    //!Data Representation Qos.
-    DataRepresentationQosPolicy representation;
-};
-
 /**
  * Class DataReaderQos, containing all the possible Qos that can be set for a determined DataReader.
  * Although these values can be set and are transmitted
@@ -203,6 +164,7 @@ public:
                (durability_service_ == b.durability_service()) &&
                (reliable_reader_qos_ == b.reliable_reader_qos()) &&
                (type_consistency_ == b.type_consistency()) &&
+               (representation_ == b.representation()) &&
                (expects_inline_qos_ == b.expects_inline_qos()) &&
                (properties_ == b.properties()) &&
                (endpoint_ == b.endpoint()) &&
@@ -679,34 +641,65 @@ public:
     }
 
     /**
-     * Getter for TypeConsistencyQos
+     * Getter for TypeConsistencyEnforcementQosPolicy
      *
-     * @return TypeConsistencyQos reference
+     * @return TypeConsistencyEnforcementQosPolicy reference
      */
-    FASTDDS_EXPORTED_API TypeConsistencyQos& type_consistency()
+    FASTDDS_EXPORTED_API TypeConsistencyEnforcementQosPolicy& type_consistency()
     {
         return type_consistency_;
     }
 
     /**
-     * Getter for TypeConsistencyQos
+     * Getter for TypeConsistencyEnforcementQosPolicy
      *
-     * @return TypeConsistencyQos const reference
+     * @return TypeConsistencyEnforcementQosPolicy const reference
      */
-    FASTDDS_EXPORTED_API const TypeConsistencyQos& type_consistency() const
+    FASTDDS_EXPORTED_API const TypeConsistencyEnforcementQosPolicy& type_consistency() const
     {
         return type_consistency_;
     }
 
     /**
-     * Setter for TypeConsistencyQos
+     * Setter for TypeConsistencyEnforcementQosPolicy
      *
-     * @param new_value new value for the TypeConsistencyQos
+     * @param new_value new value for the TypeConsistencyEnforcementQosPolicy
      */
     FASTDDS_EXPORTED_API void type_consistency(
-            const TypeConsistencyQos& new_value)
+            const TypeConsistencyEnforcementQosPolicy& new_value)
     {
         type_consistency_ = new_value;
+    }
+
+    /**
+     * Getter for DataRepresentationQosPolicy
+     *
+     * @return DataRepresentationQosPolicy reference
+     */
+    const DataRepresentationQosPolicy& representation() const
+    {
+        return representation_;
+    }
+
+    /**
+     * Getter for DataRepresentationQosPolicy
+     *
+     * @return DataRepresentationQosPolicy reference
+     */
+    DataRepresentationQosPolicy& representation()
+    {
+        return representation_;
+    }
+
+    /**
+     * Setter for DataRepresentationQosPolicy
+     *
+     * @param representation new value for the DataRepresentationQosPolicy
+     */
+    void representation(
+            const DataRepresentationQosPolicy& representation)
+    {
+        representation_ = representation;
     }
 
     /**
@@ -901,8 +894,11 @@ private:
     //!Reliable reader configuration (Extension)
     RTPSReliableReaderQos reliable_reader_qos_;
 
-    //! Tipe consistency (Extension)
-    TypeConsistencyQos type_consistency_;
+    //! Type consistency (Extension)
+    TypeConsistencyEnforcementQosPolicy type_consistency_;
+
+    //! Data representation (Extension)
+    DataRepresentationQosPolicy representation_;
 
     //!Expects Inline QOS (Extension).
     bool expects_inline_qos_;
