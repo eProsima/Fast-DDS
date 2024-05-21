@@ -1144,123 +1144,131 @@ bool PDP::remove_remote_participant(
     }
     this->mp_mutex->unlock();
 
-    if (pdata != nullptr)
+    if (nullptr != pdata)
     {
-        if (mp_EDP != nullptr)
-        {
-            RTPSParticipantListener* listener = mp_RTPSParticipant->getListener();
-
-            for (auto pit : *pdata->m_readers)
-            {
-                ReaderProxyData* rit = pit.second;
-                GUID_t reader_guid(rit->guid());
-                if (reader_guid != c_Guid_Unknown)
-                {
-                    mp_EDP->unpairReaderProxy(partGUID, reader_guid);
-
-                    if (listener)
-                    {
-                        ReaderDiscoveryInfo info(std::move(*rit));
-                        info.status = ReaderDiscoveryInfo::REMOVED_READER;
-                        listener->onReaderDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
-                    }
-                }
-            }
-            for (auto pit : *pdata->m_writers)
-            {
-                WriterProxyData* wit = pit.second;
-                GUID_t writer_guid(wit->guid());
-                if (writer_guid != c_Guid_Unknown)
-                {
-                    mp_EDP->unpairWriterProxy(partGUID, writer_guid,
-                            reason == ParticipantDiscoveryInfo::DISCOVERY_STATUS::DROPPED_PARTICIPANT);
-
-                    if (listener)
-                    {
-                        WriterDiscoveryInfo info(std::move(*wit));
-                        info.status = WriterDiscoveryInfo::REMOVED_WRITER;
-                        listener->onWriterDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
-                    }
-                }
-            }
-        }
-
-        if (mp_builtin->mp_WLP != nullptr)
-        {
-            this->mp_builtin->mp_WLP->removeRemoteEndpoints(pdata);
-        }
-
-        mp_builtin->typelookup_manager_->remove_remote_endpoints(pdata);
-
-        this->mp_EDP->removeRemoteEndpoints(pdata);
-        this->removeRemoteEndpoints(pdata);
-
-#if HAVE_SECURITY
-        mp_builtin->mp_participantImpl->security_manager().remove_participant(*pdata);
-#endif // if HAVE_SECURITY
-
-        builtin_endpoints_->remove_from_pdp_reader_history(pdata->m_key);
-
-        auto listener =  mp_RTPSParticipant->getListener();
-        if (listener != nullptr)
-        {
-            std::lock_guard<std::mutex> lock(callback_mtx_);
-            ParticipantDiscoveryInfo info(*pdata);
-            info.status = reason;
-            bool should_be_ignored = false;
-            listener->onParticipantDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(
-                        info), should_be_ignored);
-        }
-
-        this->mp_mutex->lock();
-
-        // Delete from sender resource list (TCP only)
-        LocatorList_t remote_participant_locators;
-        for (auto& remote_participant_default_locator : pdata->default_locators.unicast)
-        {
-            remote_participant_locators.push_back(remote_participant_default_locator);
-        }
-        for (auto& remote_participant_metatraffic_locator : pdata->metatraffic_locators.unicast)
-        {
-            remote_participant_locators.push_back(remote_participant_metatraffic_locator);
-        }
-        if (!remote_participant_locators.empty())
-        {
-            mp_RTPSParticipant->update_removed_participant(remote_participant_locators);
-        }
-
-        // Return reader proxy objects to pool
-        for (auto pit : *pdata->m_readers)
-        {
-            pit.second->clear();
-            reader_proxies_pool_.push_back(pit.second);
-        }
-        pdata->m_readers->clear();
-
-        // Return writer proxy objects to pool
-        for (auto pit : *pdata->m_writers)
-        {
-            pit.second->clear();
-            writer_proxies_pool_.push_back(pit.second);
-        }
-        pdata->m_writers->clear();
-
-        // Cancel lease event
-        if (pdata->lease_duration_event != nullptr)
-        {
-            pdata->lease_duration_event->cancel_timer();
-        }
-
-        // Return proxy object to pool
-        pdata->clear();
-        participant_proxies_pool_.push_back(pdata);
-
-        this->mp_mutex->unlock();
-
+        RTPSParticipantListener* listener = mp_RTPSParticipant->getListener();
+        remote_participant_removed(pdata, partGUID, reason, listener);
         return true;
     }
 
     return false;
+}
+
+void PDP::remote_participant_removed(
+        ParticipantProxyData* pdata,
+        const GUID_t& partGUID,
+        ParticipantDiscoveryInfo::DISCOVERY_STATUS reason,
+        RTPSParticipantListener* listener)
+{
+    assert(pdata != nullptr);
+
+    if (mp_EDP != nullptr)
+    {
+        for (auto pit : *pdata->m_readers)
+        {
+            ReaderProxyData* rit = pit.second;
+            GUID_t reader_guid(rit->guid());
+            if (reader_guid != c_Guid_Unknown)
+            {
+                mp_EDP->unpairReaderProxy(partGUID, reader_guid);
+
+                if (listener)
+                {
+                    ReaderDiscoveryInfo info(std::move(*rit));
+                    info.status = ReaderDiscoveryInfo::REMOVED_READER;
+                    listener->onReaderDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
+                }
+            }
+        }
+        for (auto pit : *pdata->m_writers)
+        {
+            WriterProxyData* wit = pit.second;
+            GUID_t writer_guid(wit->guid());
+            if (writer_guid != c_Guid_Unknown)
+            {
+                mp_EDP->unpairWriterProxy(partGUID, writer_guid,
+                        reason == ParticipantDiscoveryInfo::DISCOVERY_STATUS::DROPPED_PARTICIPANT);
+
+                if (listener)
+                {
+                    WriterDiscoveryInfo info(std::move(*wit));
+                    info.status = WriterDiscoveryInfo::REMOVED_WRITER;
+                    listener->onWriterDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
+                }
+            }
+        }
+    }
+
+    if (mp_builtin->mp_WLP != nullptr)
+    {
+        this->mp_builtin->mp_WLP->removeRemoteEndpoints(pdata);
+    }
+
+    mp_builtin->typelookup_manager_->remove_remote_endpoints(pdata);
+
+    this->mp_EDP->removeRemoteEndpoints(pdata);
+    this->removeRemoteEndpoints(pdata);
+
+#if HAVE_SECURITY
+    mp_builtin->mp_participantImpl->security_manager().remove_participant(*pdata);
+#endif // if HAVE_SECURITY
+
+    builtin_endpoints_->remove_from_pdp_reader_history(pdata->m_key);
+
+    if (listener != nullptr)
+    {
+        std::lock_guard<std::mutex> lock(callback_mtx_);
+        ParticipantDiscoveryInfo info(*pdata);
+        info.status = reason;
+        bool should_be_ignored = false;
+        listener->onParticipantDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(
+                    info), should_be_ignored);
+    }
+
+    this->mp_mutex->lock();
+
+    // Delete from sender resource list (TCP only)
+    LocatorList_t remote_participant_locators;
+    for (auto& remote_participant_default_locator : pdata->default_locators.unicast)
+    {
+        remote_participant_locators.push_back(remote_participant_default_locator);
+    }
+    for (auto& remote_participant_metatraffic_locator : pdata->metatraffic_locators.unicast)
+    {
+        remote_participant_locators.push_back(remote_participant_metatraffic_locator);
+    }
+    if (!remote_participant_locators.empty())
+    {
+        mp_RTPSParticipant->update_removed_participant(remote_participant_locators);
+    }
+
+    // Return reader proxy objects to pool
+    for (auto pit : *pdata->m_readers)
+    {
+        pit.second->clear();
+        reader_proxies_pool_.push_back(pit.second);
+    }
+    pdata->m_readers->clear();
+
+    // Return writer proxy objects to pool
+    for (auto pit : *pdata->m_writers)
+    {
+        pit.second->clear();
+        writer_proxies_pool_.push_back(pit.second);
+    }
+    pdata->m_writers->clear();
+
+    // Cancel lease event
+    if (pdata->lease_duration_event != nullptr)
+    {
+        pdata->lease_duration_event->cancel_timer();
+    }
+
+    // Return proxy object to pool
+    pdata->clear();
+    participant_proxies_pool_.push_back(pdata);
+
+    this->mp_mutex->unlock();
 }
 
 const BuiltinAttributes& PDP::builtin_attributes() const

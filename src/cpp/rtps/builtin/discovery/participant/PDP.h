@@ -628,6 +628,22 @@ private:
      */
     void set_external_participant_properties_(
             ParticipantProxyData* participant_data);
+
+    /**
+     * Performs unmatching of user and built-in endpoints after removing a ParticipantProxyData from the
+     * participant_proxies_ collection.
+     *
+     * @param pdata ParticipantProxyData that was removed.
+     * @param partGUID GUID of the removed participant.
+     * @param reason Reason why the participant was removed.
+     * @param listener Listener to be notified of the unmatches / removal.
+     */
+    void remote_participant_removed(
+            ParticipantProxyData* pdata,
+            const GUID_t& partGUID,
+            ParticipantDiscoveryInfo::DISCOVERY_STATUS reason,
+            RTPSParticipantListener* listener);
+
 };
 
 
