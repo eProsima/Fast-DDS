@@ -100,11 +100,11 @@ private:
 
     std::condition_variable cv_;
 
-    int16_t matched_;
+    int32_t matched_;
 
     std::mutex mutex_;
 
-    uint16_t period_ms_;
+    uint32_t period_ms_;
 
     uint16_t samples_;
 

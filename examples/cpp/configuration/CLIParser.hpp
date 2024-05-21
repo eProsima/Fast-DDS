@@ -249,7 +249,7 @@ public:
         }
 
         // max value allowed taking into account that the input is receiving millisecond values
-        uint32_t max_duration = floor(std::numeric_limits<uint32_t>::max() * 1e-3); // = 4294967
+        uint32_t max_duration = static_cast<uint32_t>(floor(std::numeric_limits<uint32_t>::max() * 1e-3)); // = 4294967
 
         for (int i = 2; i < argc; ++i)
         {
@@ -346,8 +346,8 @@ public:
                         }
                         else
                         {
-                            config.pub_config.ttl = static_cast<uint16_t>(input);
-                            config.sub_config.ttl = static_cast<uint16_t>(input);
+                            config.pub_config.ttl = static_cast<uint8_t>(input);
+                            config.sub_config.ttl = static_cast<uint8_t>(input);
                         }
                     }
                     catch (const std::invalid_argument& e)
@@ -854,7 +854,7 @@ public:
                             }
                             else
                             {
-                                config.pub_config.wait = static_cast<uint32_t>(input);
+                                config.pub_config.wait = static_cast<uint16_t>(input);
                             }
                         }
                         catch (const std::invalid_argument& e)
@@ -1098,10 +1098,12 @@ public:
                 return "SIGINT";
             case SIGTERM:
                 return "SIGTERM";
+#ifndef _WIN32
             case SIGQUIT:
                 return "SIGQUIT";
             case SIGHUP:
                 return "SIGHUP";
+#endif // _WIN32
             default:
                 return "UNKNOWN SIGNAL";
         }
