@@ -43,12 +43,15 @@ void register_Configuration_type_objects()
     static std::once_flag once_flag;
     std::call_once(once_flag, []()
             {
-                register_Configuration_type_identifier();
+                TypeIdentifier type_id;
+                register_Configuration_type_identifier(type_id);
 
             });
 }
 
-void register_Configuration_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_Configuration_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_Configuration = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
@@ -78,6 +81,7 @@ void register_Configuration_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "index Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_index = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -124,6 +128,7 @@ void register_Configuration_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure index member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_index = "index";
@@ -148,6 +153,7 @@ void register_Configuration_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "Array element TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 TypeIdentifier* element_identifier_anonymous_array_char_20 {nullptr};
@@ -191,6 +197,7 @@ void register_Configuration_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Array element TypeIdentifier inconsistent.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 EquivalenceKind equiv_kind_anonymous_array_char_20 = EK_COMPLETE;
@@ -200,8 +207,6 @@ void register_Configuration_type_identifier()
                 }
                 CollectionElementFlag element_flags_anonymous_array_char_20 = 0;
                 PlainCollectionHeader header_anonymous_array_char_20 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_array_char_20, element_flags_anonymous_array_char_20);
-                std::string type_id_kind_anonymous_array_char_20("TI_PLAIN_ARRAY_SMALL");
-                if (type_id_kind_anonymous_array_char_20 == "TI_PLAIN_ARRAY_SMALL")
                 {
                     SBoundSeq array_bound_seq;
                         TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<SBound>(20));
@@ -215,20 +220,6 @@ void register_Configuration_type_identifier()
                             "anonymous_array_char_20 already registered in TypeObjectRegistry for a different type.");
                     }
                 }
-                else
-                {
-                    LBoundSeq array_bound_seq;
-                        TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<LBound>(20));
-
-                    PlainArrayLElemDefn array_ldefn = TypeObjectUtils::build_plain_array_l_elem_defn(header_anonymous_array_char_20, array_bound_seq,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_char_20));
-                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_l_array_type_identifier(array_ldefn, "anonymous_array_char_20"))
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_array_char_20 already registered in TypeObjectRegistry for a different type.");
-                    }
-                }
                 return_code_Configuration =
                     eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
                     "anonymous_array_char_20", type_ids_Configuration);
@@ -236,6 +227,7 @@ void register_Configuration_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "anonymous_array_char_20: Given Array TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
             }
@@ -283,6 +275,7 @@ void register_Configuration_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure message member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_message = "message";
@@ -307,6 +300,7 @@ void register_Configuration_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "Sequence element TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 TypeIdentifier* element_identifier_anonymous_sequence_uint8_t_unbounded {nullptr};
@@ -350,6 +344,7 @@ void register_Configuration_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Sequence element TypeIdentifier inconsistent.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 EquivalenceKind equiv_kind_anonymous_sequence_uint8_t_unbounded = EK_COMPLETE;
@@ -359,26 +354,12 @@ void register_Configuration_type_identifier()
                 }
                 CollectionElementFlag element_flags_anonymous_sequence_uint8_t_unbounded = 0;
                 PlainCollectionHeader header_anonymous_sequence_uint8_t_unbounded = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_sequence_uint8_t_unbounded, element_flags_anonymous_sequence_uint8_t_unbounded);
-                std::string type_id_kind_anonymous_sequence_uint8_t_unbounded("TI_PLAIN_SEQUENCE_SMALL");
-                if (type_id_kind_anonymous_sequence_uint8_t_unbounded == "TI_PLAIN_SEQUENCE_SMALL")
                 {
                     SBound bound = 0;
                     PlainSequenceSElemDefn seq_sdefn = TypeObjectUtils::build_plain_sequence_s_elem_defn(header_anonymous_sequence_uint8_t_unbounded, bound,
                                 eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_sequence_uint8_t_unbounded));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
                             TypeObjectUtils::build_and_register_s_sequence_type_identifier(seq_sdefn, "anonymous_sequence_uint8_t_unbounded"))
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_sequence_uint8_t_unbounded already registered in TypeObjectRegistry for a different type.");
-                    }
-                }
-                else
-                {
-                    LBound bound = 0;
-                    PlainSequenceLElemDefn seq_ldefn = TypeObjectUtils::build_plain_sequence_l_elem_defn(header_anonymous_sequence_uint8_t_unbounded, bound,
-                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_sequence_uint8_t_unbounded));
-                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_l_sequence_type_identifier(seq_ldefn, "anonymous_sequence_uint8_t_unbounded"))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "anonymous_sequence_uint8_t_unbounded already registered in TypeObjectRegistry for a different type.");
@@ -391,6 +372,7 @@ void register_Configuration_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "anonymous_sequence_uint8_t_unbounded: Given Sequence TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
             }
@@ -438,6 +420,7 @@ void register_Configuration_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure data member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_data = "data";
@@ -449,7 +432,7 @@ void register_Configuration_type_identifier()
         }
         CompleteStructType struct_type_Configuration = TypeObjectUtils::build_complete_struct_type(struct_flags_Configuration, header_Configuration, member_seq_Configuration);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_Configuration, type_name_Configuration.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_Configuration, type_name_Configuration.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "Configuration already registered in TypeObjectRegistry for a different type.");
@@ -461,6 +444,7 @@ void register_Configuration_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Configuration: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
