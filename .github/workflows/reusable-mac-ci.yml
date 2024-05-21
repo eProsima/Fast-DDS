@@ -86,7 +86,18 @@ jobs:
       - name: Setup CCache
         uses: eProsima/eProsima-CI/external/setup-ccache-action@v0
 
-      # TODO(eduponz): Update known hosts file for DNS resolver testing. NOTE: The runner cannot modify /etc/hosts.
+      - name: Set up hosts file for DNS testing
+        run: |
+          sudo echo "" | sudo tee -a /etc/hosts
+          sudo echo "127.0.0.1 localhost.test" | sudo tee -a /etc/hosts
+          sudo echo "::1 localhost.test" | sudo tee -a /etc/hosts
+          sudo echo "154.56.134.194 www.eprosima.com.test" | sudo tee -a /etc/hosts
+          sudo echo "216.58.215.164 www.acme.com.test" | sudo tee -a /etc/hosts
+          sudo echo "2a00:1450:400e:803::2004 www.acme.com.test" | sudo tee -a /etc/hosts
+          sudo echo "140.82.121.4 www.foo.com.test" | sudo tee -a /etc/hosts
+          sudo echo "140.82.121.3 www.foo.com.test" | sudo tee -a /etc/hosts
+          sudo echo "ff1e::ffff:efff:1 acme.org.test" | sudo tee -a /etc/hosts
+
       # TODO(eduponz): Set up libp11 and SoftHSM. NOTE: using SoftHSM requires adding the runner to a group,
       #                which entails logout/login or rebooting the machine. This is not feasible in a CI environment.
 
