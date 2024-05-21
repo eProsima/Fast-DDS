@@ -22,14 +22,14 @@
 #endif // ifdef _WIN32
 
 #include <gtest/gtest.h>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 #include "../logging/mock/MockConsumer.h"
 
 #include <xmlparser/XMLProfileManager.h>
 #include <xmlparser/XMLParserCommon.h>
 
+using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps;
-using namespace ::xmlparser;
 using namespace ::testing;
 
 class XMLLoadFileTests : public ::testing::Test
@@ -59,7 +59,7 @@ protected:
     }
 
     eprosima::fastdds::dds::MockConsumer* mock_consumer_;
-    std::unique_ptr<eprosima::fastrtps::LogConsumer> log_consumer_;
+    std::unique_ptr<LogConsumer> log_consumer_;
 
 private:
 
@@ -92,14 +92,14 @@ TEST_F(XMLLoadFileTests, load_twice_default_xml)
     uint32_t ret = GetCurrentDirectory(MAX_PATH, current_directory);
     ASSERT_NE(ret, 0u);
     strcat_s(current_directory, MAX_PATH, "\\");
-    strcat_s(current_directory, MAX_PATH, DEFAULT_FASTDDS_PROFILES);
+    strcat_s(current_directory, MAX_PATH, xmlparser::DEFAULT_FASTDDS_PROFILES);
     // Set environment variable
-    _putenv_s("FASTRTPS_DEFAULT_PROFILES_FILE", current_directory);
+    _putenv_s("FASTDDS_DEFAULT_PROFILES_FILE", current_directory);
 #else
     char current_directory[PATH_MAX];
     ASSERT_NE(getcwd(current_directory, PATH_MAX), (void*)NULL);
     strcat(current_directory, "/");
-    strcat(current_directory, DEFAULT_FASTDDS_PROFILES);
+    strcat(current_directory, xmlparser::DEFAULT_FASTDDS_PROFILES);
     // Set environment variable
     setenv("FASTDDS_DEFAULT_PROFILES_FILE", current_directory, 1);
 #endif // _WIN32
