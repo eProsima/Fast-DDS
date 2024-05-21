@@ -14,7 +14,7 @@
 
 cmake_minimum_required(VERSION 3.20)
 
-project(fastdds_content_filtering_example VERSION 1 LANGUAGES CXX)
+project(fastdds_content_filter_example VERSION 1 LANGUAGES CXX)
 
 # Find requirements
 if(NOT fastcdr_FOUND)
@@ -30,12 +30,12 @@ message(STATUS "Configuring content filtering example...")
 file(GLOB HELLO_WORLD_SOURCES_CXX "*.cxx")
 file(GLOB HELLO_WORLD_SOURCES_CPP "*.cpp")
 
-add_executable(content_filtering ${HELLO_WORLD_SOURCES_CXX} ${HELLO_WORLD_SOURCES_CPP})
-target_compile_definitions(content_filtering PRIVATE
+add_executable(content_filter ${HELLO_WORLD_SOURCES_CXX} ${HELLO_WORLD_SOURCES_CPP})
+target_compile_definitions(content_filter PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
 )
-target_compile_features(content_filtering PRIVATE cxx_std_11)
-target_link_libraries(content_filtering fastdds fastcdr fastdds::optionparser)
-install(TARGETS content_filtering
-    RUNTIME DESTINATION ${DATA_INSTALL_DIR}/fastdds/examples/cpp/content_filtering/${BIN_INSTALL_DIR})
+target_compile_features(content_filter PRIVATE cxx_std_11)
+target_link_libraries(content_filter fastdds fastcdr fastdds::optionparser)
+install(TARGETS content_filter
+    RUNTIME DESTINATION ${DATA_INSTALL_DIR}/fastdds/examples/cpp/content_filter/${BIN_INSTALL_DIR})

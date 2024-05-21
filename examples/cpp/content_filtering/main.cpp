@@ -43,7 +43,12 @@ int main(
     auto ret = EXIT_SUCCESS;
     const std::string topic_name = "content_filter_topic";
     CLIParser::hello_world_config config = CLIParser::parse_cli_options(argc, argv);
+
+    // Initialize variables with default values
     uint16_t samples = 0;
+    uint16_t type = 1;
+    uint16_t sleep = 100;
+
     switch (config.entity)
     {
         case CLIParser::EntityKind::PUBLISHER:

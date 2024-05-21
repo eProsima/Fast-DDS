@@ -56,7 +56,7 @@ public:
     };
 
     //! Configuration structure for the application
-    struct hello_world_config
+    struct content_filter_config
     {
         CLIParser::EntityKind entity = CLIParser::EntityKind::UNDEFINED;
         publisher_config pub_config;
@@ -73,7 +73,7 @@ public:
     static void print_help(
             uint8_t return_code)
     {
-        std::cout << "Usage: hello_world <entity> [options]"                                                  << std::endl;
+        std::cout << "Usage: content_filter <entity> [options]"                                                  << std::endl;
         std::cout << ""                                                                                       << std::endl;
         std::cout << "Entities:"                                                                              << std::endl;
         std::cout << " publisher                                         Run a publisher entity"              << std::endl;
