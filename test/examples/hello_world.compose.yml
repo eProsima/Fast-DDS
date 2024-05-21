@@ -2,7 +2,7 @@
 version: "3"
 
 services:
-  publisher:
+  waitset-subscriber:
     image: @DOCKER_IMAGE_NAME@
     volumes:
       - @PROJECT_BINARY_DIR@:@PROJECT_BINARY_DIR@
@@ -11,10 +11,11 @@ services:
     environment:
       # TODO(eduponz): LD_LIBRARY_PATH is not the correct variable for Windows
       LD_LIBRARY_PATH: @PROJECT_BINARY_DIR@/src/cpp:@fastcdr_LIB_DIR@@TINYXML2_LIB_DIR_COMPOSE_LD_LIBRARY_PATH@
-      EXAMPLE_DIR: @PROJECT_BINARY_DIR@/examples/cpp/dds/BasicConfigurationExample
-    command: @SHELL_EXECUTABLE@ -c "$${EXAMPLE_DIR}/BasicConfigurationExample@FILE_EXTENSION@ publisher --wait 2 --samples 10 --interval 10 --reliable --transient & $${EXAMPLE_DIR}/BasicConfigurationExample@FILE_EXTENSION@ subscriber --samples 10 --reliable --transient"
+      EXAMPLE_DIR: @PROJECT_BINARY_DIR@/examples/cpp/hello_world@FILE_EXTENSION@
+      FASTDDS_DEFAULT_PROFILES_FILE: @PROJECT_BINARY_DIR@/examples/cpp/hello_world/hello_world_profile.xml
+    command: @SHELL_EXECUTABLE@ -c "$${EXAMPLE_DIR}/hello_world@FILE_EXTENSION@ subscriber --waitset --samples 10"
 
-  subscriber:
+  subscriber-publisher:
     image: @DOCKER_IMAGE_NAME@
     volumes:
       - @PROJECT_BINARY_DIR@:@PROJECT_BINARY_DIR@
@@ -23,5 +24,8 @@ services:
     environment:
       # TODO(eduponz): LD_LIBRARY_PATH is not the correct variable for Windows
       LD_LIBRARY_PATH: @PROJECT_BINARY_DIR@/src/cpp:@fastcdr_LIB_DIR@@TINYXML2_LIB_DIR_COMPOSE_LD_LIBRARY_PATH@
-      EXAMPLE_DIR: @PROJECT_BINARY_DIR@/examples/cpp/dds/BasicConfigurationExample@FILE_EXTENSION@
-    command: @SHELL_EXECUTABLE@ -c "$${EXAMPLE_DIR}/BasicConfigurationExample@FILE_EXTENSION@ subscriber --samples 10 --reliable --transient"
+      EXAMPLE_DIR: @PROJECT_BINARY_DIR@/examples/cpp/hello_world
+      FASTDDS_DEFAULT_PROFILES_FILE: @PROJECT_BINARY_DIR@/examples/cpp/hello_world/hello_world_profile.xml
+    command: @SHELL_EXECUTABLE@ -c "$${EXAMPLE_DIR}/hello_world@FILE_EXTENSION@ subscriber --samples 10 & $${EXAMPLE_DIR}/hello_world@FILE_EXTENSION@ publisher --samples 10"
+    depends_on:
+      - waitset-subscriber

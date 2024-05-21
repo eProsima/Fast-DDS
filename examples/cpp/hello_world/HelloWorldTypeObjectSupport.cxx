@@ -54,13 +54,20 @@ void register_HelloWorld_type_identifier(
         TypeIdentifier& type_id)
 {
     {
-        StructTypeFlag struct_flags_HelloWorld = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_HelloWorld = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         ReturnCode_t return_code_HelloWorld;
         TypeIdentifierPair type_ids_HelloWorld;
         QualifiedTypeName type_name_HelloWorld = "HelloWorld";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_HelloWorld;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_HelloWorld;
+        AppliedAnnotationSeq tmp_ann_custom_HelloWorld;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_HelloWorld;
+        if (!tmp_ann_custom_HelloWorld.empty())
+        {
+            ann_custom_HelloWorld = tmp_ann_custom_HelloWorld;
+        }
+
         CompleteTypeDetail detail_HelloWorld = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_HelloWorld, ann_custom_HelloWorld, type_name_HelloWorld.to_string());
         CompleteStructHeader header_HelloWorld;
         header_HelloWorld = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_HelloWorld);
