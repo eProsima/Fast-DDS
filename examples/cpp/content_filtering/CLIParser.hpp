@@ -15,6 +15,7 @@
 #include <csignal>
 #include <cstdlib>
 #include <iostream>
+#include <thread>
 
 #include <fastdds/dds/log/Log.hpp>
 
@@ -100,11 +101,11 @@ public:
      *
      * @warning This method finishes the execution of the program if the input arguments are invalid
      */
-    static hello_world_config parse_cli_options(
+    static content_filter_config parse_cli_options(
             int argc,
             char* argv[])
     {
-        hello_world_config config;
+        content_filter_config config;
 
         if (argc < 2)
         {

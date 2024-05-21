@@ -33,7 +33,22 @@
 
 using namespace eprosima::fastdds::dds;
 
-bool ContentFilteredTopicExamplePublisher::init()
+namespace eprosima {
+namespace fastdds {
+namespace examples {
+namespace content_filter {
+
+PublisherApp::PublisherApp(
+        const CLIParser::publisher_config& config,
+        const std::string& topic_name)
+    : participant_(nullptr)
+    , publisher_(nullptr)
+    , topic_(nullptr)
+    , writer_(nullptr)
+    , type_(new HelloWorldPubSubType())
+    , matched_(0)
+    , samples_(config.samples)
+    , stop_(false)
 {
     // Initialize internal variables
     matched_ = 0;
@@ -47,9 +62,9 @@ bool ContentFilteredTopicExamplePublisher::init()
     pqos.name("Participant_pub");
     // Create DomainParticipant in domain 0
     participant_ = DomainParticipantFactory::get_instance()->create_participant(0, pqos);
-    if (nullptr == participant_)
+    if (participant_ == nullptr)
     {
-        return false;
+        throw std::runtime_error("Participant initialization failed");
     }
 
     // Register the type
@@ -57,53 +72,52 @@ bool ContentFilteredTopicExamplePublisher::init()
 
     // Create the Publisher
     publisher_ = participant_->create_publisher(PUBLISHER_QOS_DEFAULT, nullptr);
-    if (nullptr == publisher_)
+    if (publisher_ == nullptr)
     {
-        return false;
+        throw std::runtime_error("Publisher initialization failed");
     }
 
     // Create the Topic
-    topic_ = participant_->create_topic("HelloWorldTopic", type_->getName(), TOPIC_QOS_DEFAULT);
-    if (nullptr == topic_)
+    topic_ = participant_->create_topic(topic_name, type_.get_type_name(), TOPIC_QOS_DEFAULT);
+    if (topic_ == nullptr)
     {
-        return false;
+        throw std::runtime_error("Topic initialization failed");
     }
 
     // Create the DataWriter
     writer_ = publisher_->create_datawriter(topic_, DATAWRITER_QOS_DEFAULT, this);
-    if (nullptr == writer_)
+    if (writer_ == nullptr)
     {
-        return false;
+        throw std::runtime_error("DataWriter initialization failed");
     }
-    return true;
 }
 
-ContentFilteredTopicExamplePublisher::~ContentFilteredTopicExamplePublisher()
+PublisherApp::~PublisherApp()
 {
-    // Delete DDS entities contained within the DomainParticipant
-    participant_->delete_contained_entities();
-    // Delete DomainParticipant
-    DomainParticipantFactory::get_instance()->delete_participant(participant_);
+    if (participant_ != nullptr)
+    {
+        // Delete DDS entities contained within the DomainParticipant
+        participant_->delete_contained_entities();
+        // Delete DomainParticipant
+        DomainParticipantFactory::get_instance()->delete_participant(participant_);
+    }
 }
 
-void ContentFilteredTopicExamplePublisher::on_publication_matched(
+void PublisherApp::on_publication_matched(
         DataWriter*,
         const PublicationMatchedStatus& info)
 {
-    // New remote DataReader discovered
     if (info.current_count_change == 1)
     {
-        matched_ = info.current_count;
-        first_connected_ = true;
+        matched_ = static_cast<int16_t>(info.current_count);
         std::cout << "Publisher matched." << std::endl;
+        cv_.notify_one();
     }
-    // New remote DataReader undiscovered
     else if (info.current_count_change == -1)
     {
-        matched_ = info.current_count;
+        matched_ = static_cast<int16_t>(info.current_count);
         std::cout << "Publisher unmatched." << std::endl;
     }
-    // Non-valid option
     else
     {
         std::cout << info.current_count_change
@@ -111,75 +125,55 @@ void ContentFilteredTopicExamplePublisher::on_publication_matched(
     }
 }
 
-void ContentFilteredTopicExamplePublisher::runThread(
-        uint32_t samples,
-        uint32_t sleep)
+void PublisherApp::run()
 {
-    // Publish samples continously until stopped by the user
-    if (samples == 0)
+    while (!is_stopped() && ((samples_ == 0) || (hello_.index() < samples_)))
     {
-        while (!stop_)
+        if (publish())
         {
-            if (publish(false))
-            {
-                std::cout << "Message: " << hello_.message() << " with index: " << hello_.index()
-                          << " SENT" << std::endl;
-            }
-            std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
+            std::cout << "Message: '" << hello_.message() << "' with index: '" << hello_.index()
+                      << "' SENT" << std::endl;
         }
-    }
-    // Publish given number of samples
-    else
-    {
-        for (uint32_t i = 0; i < samples; ++i)
-        {
-            if (!publish())
-            {
-                --i;
-            }
-            else
-            {
-                std::cout << "Message: " << hello_.message() << " with index: " << hello_.index()
-                          << " SENT" << std::endl;
-            }
-            std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
-        }
+        // Wait for period or stop event
+        std::unique_lock<std::mutex> period_lock(mutex_);
+        cv_.wait_for(period_lock, std::chrono::milliseconds(period_ms_), [&]()
+                {
+                    return is_stopped();
+                });
     }
 }
 
-void ContentFilteredTopicExamplePublisher::run(
-        uint32_t samples,
-        uint32_t sleep)
+bool PublisherApp::publish()
 {
-    // Spawn publisher application thread
-    stop_ = false;
-    std::thread thread(&ContentFilteredTopicExamplePublisher::runThread, this, samples, sleep);
-    // Thread runs indefinitely until stopped by the user
-    if (samples == 0)
-    {
-        std::cout << "Publisher running. Please press enter to stop the Publisher at any time." << std::endl;
-        std::cin.ignore();
-        stop_ = true;
-    }
-    // Thread runs only for the given samples
-    else
-    {
-        std::cout << "Publisher running " << samples << " samples." << std::endl;
-    }
-    thread.join();
-}
+    bool ret = false;
+    // Wait for the data endpoints discovery
+    std::unique_lock<std::mutex> matched_lock(mutex_);
+    cv_.wait(matched_lock, [&]()
+            {
+                // at least one has been discovered
+                return ((matched_ > 0) || is_stopped());
+            });
 
-bool ContentFilteredTopicExamplePublisher::publish(
-        bool wait_for_listener)
-{
-    // Wait until there is a matched DataReader, unless wait_for_listener flag is set to false
-    if (first_connected_ || !wait_for_listener || matched_ > 0)
+    if (!is_stopped())
     {
-        // Update sample
         hello_.index(hello_.index() + 1);
-        // Write sample
-        writer_->write(&hello_);
-        return true;
+        ret = writer_->write(&hello_);
     }
-    return false;
+    return ret;
 }
+
+bool PublisherApp::is_stopped()
+{
+    return stop_.load();
+}
+
+void PublisherApp::stop()
+{
+    stop_.store(true);
+    cv_.notify_one();
+}
+
+} // namespace content_filter
+} // namespace examples
+} // namespace fastdds
+} // namespace eprosima

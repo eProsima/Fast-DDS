@@ -17,83 +17,82 @@
  *
  */
 
-#ifndef _CONTENT_FILTER_PUBLISHER_H_
-#define _CONTENT_FILTER_PUBLISHER_H_
+#ifndef _CONTENT_FILTER_PUBLISHER_APP_HPP_
+#define _CONTENT_FILTER_PUBLISHER_APP_HPP_
 
-#include <atomic>
+#include <condition_variable>
 
-#include <fastdds/dds/core/status/PublicationMatchedStatus.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
-#include <fastdds/dds/publisher/DataWriter.hpp>
-#include <fastdds/dds/publisher/Publisher.hpp>
-#include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
+#include "Application.hpp"
+#include "CLIParser.hpp"
 #include "HelloWorldPubSubTypes.h"
 
-//! Publisher application class
-class ContentFilteredTopicExamplePublisher : public eprosima::fastdds::dds::DataWriterListener
+using namespace eprosima::fastdds::dds;
+
+namespace eprosima {
+namespace fastdds {
+namespace examples {
+namespace content_filter {
+class PublisherApp : public Application, public DataWriterListener
 {
 public:
 
-    //! Constructor
-    ContentFilteredTopicExamplePublisher() = default;
+    PublisherApp(
+            const CLIParser::publisher_config& config,
+            const std::string& topic_name);
 
-    //! Destructor
-    virtual ~ContentFilteredTopicExamplePublisher();
+    ~PublisherApp();
 
-    //! Initialize
-    bool init();
+    //! Publisher matched method
+    void on_publication_matched(
+            DataWriter* writer,
+            const PublicationMatchedStatus& info) override;
 
-    //! Publish a sample
-    bool publish(
-            bool wait_for_listener = true);
+    //! Run publisher
+    void run() override;
 
-    //! Run for the given number of samples (0 => infinite samples)
-    void run(
-            uint32_t number,
-            uint32_t sleep);
+    //! Stop publisher
+    void stop() override;
 
 private:
 
-    //! Data type
+    //! Return the current state of execution
+    bool is_stopped();
+
+    //! Publish a sample
+    bool publish();
+
     HelloWorld hello_;
 
-    //! DDS DomainParticipant pointer
-    eprosima::fastdds::dds::DomainParticipant* participant_ = nullptr;
+    DomainParticipant* participant_;
 
-    //! DDS Publisher pointer
-    eprosima::fastdds::dds::Publisher* publisher_ = nullptr;
+    Publisher* publisher_;
 
-    //! DDS Topic pointer
-    eprosima::fastdds::dds::Topic* topic_ = nullptr;
+    Topic* topic_;
 
-    //! DDS DataWriter pointer
-    eprosima::fastdds::dds::DataWriter* writer_ = nullptr;
+    DataWriter* writer_;
 
-    //! DDS TypeSupport pointer
-    eprosima::fastdds::dds::TypeSupport type_ = eprosima::fastdds::dds::TypeSupport(new HelloWorldPubSubType());
+    TypeSupport type_;
 
-    //! Flag to terminate application
+    int16_t matched_;
+
+    uint16_t samples_;
+
+    std::mutex mutex_;
+
+    std::condition_variable cv_;
+
     std::atomic<bool> stop_;
 
-    //! Number of DataReaders matched with the publisher application
-    std::atomic<int> matched_;
-
-    //! Flag set once the first subscriber is discovered and matched
-    std::atomic<bool> first_connected_;
-
-    //! Discovery callback specialization when the DataWriter received discovery information from a remote DataReader
-    void on_publication_matched(
-            eprosima::fastdds::dds::DataWriter* writer,
-            const eprosima::fastdds::dds::PublicationMatchedStatus& info) override;
-
-    //! Publisher application thread
-    void runThread(
-            uint32_t number,
-            uint32_t sleep);
-
+    const uint32_t period_ms_ = 100; // in ms
 };
 
-#endif // _CONTENT_FILTER_PUBLISHER_H_
+} // namespace content_filter
+} // namespace examples
+} // namespace fastdds
+} // namespace eprosima
+
+#endif // _CONTENT_FILTER_PUBLISHER_APP_HPP_

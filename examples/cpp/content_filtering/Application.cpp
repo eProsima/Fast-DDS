@@ -32,7 +32,7 @@ namespace content_filter {
 
 //! Factory method to create a publisher or subscriber
 std::shared_ptr<Application> Application::make_app(
-        const CLIParser::hello_world_config& config,
+        const CLIParser::content_filter_config& config,
         const std::string& topic_name)
 {
     std::shared_ptr<Application> entity;
