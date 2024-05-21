@@ -24,7 +24,7 @@
 #include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastdds/rtps/common/WriteParams.h>
 #include <fastdds/core/policy//ParameterSerializer.hpp>
-#include <rtps/messages/RTPSMessageGroup.h>
+#include <rtps/messages/RTPSMessageGroup.hpp>
 
 namespace eprosima {
 namespace fastrtps {

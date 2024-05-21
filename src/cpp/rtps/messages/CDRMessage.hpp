@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file CDRMessage.h
+ * @file CDRMessage.hpp
  */
 
 #ifndef _FASTDDS_RTPS_CDRMESSAGE_H_

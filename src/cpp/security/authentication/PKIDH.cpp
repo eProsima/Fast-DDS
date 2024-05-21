@@ -26,7 +26,8 @@
 #include <fastdds/rtps/security/logging/Logging.h>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
-#include <rtps/messages/CDRMessage.h>
+
+#include <rtps/messages/CDRMessage.hpp>
 #include <security/authentication/PKIIdentityHandle.h>
 #include <openssl/opensslv.h>
 

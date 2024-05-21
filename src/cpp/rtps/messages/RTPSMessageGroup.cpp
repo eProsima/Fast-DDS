@@ -17,12 +17,12 @@
  *
  */
 
-#include "RTPSMessageGroup.h"
+#include "RTPSMessageGroup.hpp"
 
 #include <algorithm>
 
 #include <fastdds/dds/log/Log.hpp>
-#include <rtps/messages/RTPSMessageCreator.h>
+#include <rtps/messages/RTPSMessageCreator.hpp>
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
 

@@ -19,7 +19,7 @@
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
-#include <rtps/messages/CDRMessage.h>
+#include <rtps/messages/CDRMessage.hpp>
 #include <security/accesscontrol/AccessPermissionsHandle.h>
 #include <security/accesscontrol/Permissions.h>
 #include <security/authentication/PKIDH.h>

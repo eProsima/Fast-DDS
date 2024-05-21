@@ -25,7 +25,7 @@
 #include <rtps/builtin/discovery/participant/DS/DiscoveryServerPDPEndpointsSecure.hpp>
 #include <rtps/builtin/discovery/participant/PDP.h>
 #include <rtps/builtin/discovery/participant/timedevent/DSClientEvent.h>
-#include <rtps/messages/RTPSMessageGroup.h>
+#include <rtps/messages/RTPSMessageGroup.hpp>
 
 namespace eprosima {
 namespace fastdds {

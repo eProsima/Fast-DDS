@@ -19,7 +19,7 @@
  *
  */
 
-#include "CDRMessage.h"
+#include "CDRMessage.hpp"
 
 #include <cassert>
 #include <cstring>

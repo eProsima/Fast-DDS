@@ -22,8 +22,8 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <fastdds/rtps/common/CDRMessage_t.h>
-#include <rtps/messages/CDRMessage.h>
-#include <rtps/messages/RTPSMessageCreator.h>
+#include <rtps/messages/CDRMessage.hpp>
+#include <rtps/messages/RTPSMessageCreator.hpp>
 
 namespace eprosima {
 namespace fastrtps {

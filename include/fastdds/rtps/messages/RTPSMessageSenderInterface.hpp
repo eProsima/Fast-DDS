@@ -26,11 +26,12 @@
 #include <vector>
 
 #include <fastdds/rtps/common/Guid.h>
-#include <fastdds/rtps/common/CDRMessage_t.h>
 
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
+
+struct CDRMessage_t;
 
 /**
  * An interface used in \ref RTPSMessageGroup to handle destinations management

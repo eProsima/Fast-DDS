@@ -23,7 +23,7 @@
 #include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/common/CDRMessage_t.h>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
-#include <rtps/messages/CDRMessage.h>
+#include <rtps/messages/CDRMessage.hpp>
 #include <gtest/gtest.h>
 
 #include "../types/HelloWorldTypeObjectSupport.hpp"

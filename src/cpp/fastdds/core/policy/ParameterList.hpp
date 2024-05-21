@@ -24,7 +24,7 @@
 #include <fastdds/rtps/messages/RTPS_messages.h>
 #include <fastdds/rtps/common/CDRMessage_t.h>
 #include <fastdds/rtps/common/CacheChange.h>
-#include <rtps/messages/CDRMessage.h>
+#include <rtps/messages/CDRMessage.hpp>
 
 #include <functional>
 

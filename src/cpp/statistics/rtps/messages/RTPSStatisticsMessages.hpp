@@ -25,8 +25,8 @@
 
 #include <fastdds/rtps/common/CDRMessage_t.h>
 #include <fastdds/rtps/common/Types.h>
-#include <rtps/messages/CDRMessage.h>
-#include <rtps/messages/RTPSMessageCreator.h>
+#include <rtps/messages/CDRMessage.hpp>
+#include <rtps/messages/RTPSMessageCreator.hpp>
 
 #define FASTDDS_STATISTICS_NETWORK_SUBMESSAGE 0x80
 

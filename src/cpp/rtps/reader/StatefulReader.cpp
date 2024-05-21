@@ -32,7 +32,7 @@
 #include <rtps/DataSharing/DataSharingListener.hpp>
 #include <rtps/DataSharing/ReaderPool.hpp>
 #include <rtps/history/HistoryAttributesExtension.hpp>
-#include <rtps/messages/RTPSMessageGroup.h>
+#include <rtps/messages/RTPSMessageGroup.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/reader/WriterProxy.h>
 #include <rtps/writer/LivelinessManager.hpp>

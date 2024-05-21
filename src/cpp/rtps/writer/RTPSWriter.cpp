@@ -29,8 +29,8 @@
 #include <rtps/DataSharing/WriterPool.hpp>
 #include <rtps/history/BasicPayloadPool.hpp>
 #include <rtps/history/CacheChangePool.h>
-#include <rtps/messages/RTPSMessageCreator.h>
-#include <rtps/messages/RTPSMessageGroup.h>
+#include <rtps/messages/RTPSMessageCreator.hpp>
+#include <rtps/messages/RTPSMessageGroup.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <statistics/rtps/StatisticsBase.hpp>
 #include <statistics/rtps/messages/RTPSStatisticsMessages.hpp>

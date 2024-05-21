@@ -27,7 +27,7 @@
 #include <fastdds/rtps/transport/SenderResource.h>
 #include <fastdds/rtps/transport/TransportInterface.h>
 
-#include <rtps/messages/CDRMessage.h>
+#include <rtps/messages/CDRMessage.hpp>
 #include <rtps/messages/MessageReceiver.h>
 #include <rtps/network/ReceiverResource.h>
 #include <rtps/transport/shared_mem/SharedMemChannelResource.hpp>

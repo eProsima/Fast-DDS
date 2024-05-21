@@ -23,7 +23,7 @@
 #include <fastdds/rtps/transport/TransportInterface.h>
 #include <fastdds/utils/IPLocator.h>
 
-#include <rtps/messages/CDRMessage.h>
+#include <rtps/messages/CDRMessage.hpp>
 #include <rtps/messages/MessageReceiver.h>
 #include <rtps/network/ReceiverResource.h>
 #include <rtps/network/utils/netmask_filter.hpp>

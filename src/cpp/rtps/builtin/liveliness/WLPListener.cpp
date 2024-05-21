@@ -37,7 +37,7 @@
 #include <rtps/builtin/BuiltinProtocols.h>
 #include <rtps/builtin/discovery/participant/PDPSimple.h>
 #include <rtps/builtin/liveliness/WLP.h>
-#include <rtps/messages/CDRMessage.h>
+#include <rtps/messages/CDRMessage.hpp>
 #include <rtps/writer/LivelinessManager.hpp>
 
 namespace eprosima {

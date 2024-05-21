@@ -30,7 +30,7 @@
 #include <fastdds/rtps/common/Types.h>
 #include <fastdds/rtps/common/VendorId_t.hpp>
 
-#include <rtps/messages/CDRMessage.h>
+#include <rtps/messages/CDRMessage.hpp>
 #include <rtps/network/NetworkFactory.h>
 
 namespace eprosima {

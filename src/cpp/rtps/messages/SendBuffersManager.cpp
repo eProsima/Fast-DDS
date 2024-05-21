@@ -18,7 +18,7 @@
 
 #include "SendBuffersManager.hpp"
 
-#include "RTPSMessageGroup.h"
+#include "RTPSMessageGroup.hpp"
 #include "../participant/RTPSParticipantImpl.h"
 
 namespace eprosima {

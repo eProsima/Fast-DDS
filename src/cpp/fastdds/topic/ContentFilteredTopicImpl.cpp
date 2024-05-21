@@ -29,7 +29,7 @@
 #include <fastdds/topic/ContentFilterUtils.hpp>
 #include <fastdds/topic/TopicProxy.hpp>
 #include <fastdds/utils/md5.h>
-#include <rtps/messages/CDRMessage.h>
+#include <rtps/messages/CDRMessage.hpp>
 
 namespace eprosima {
 namespace fastdds {
