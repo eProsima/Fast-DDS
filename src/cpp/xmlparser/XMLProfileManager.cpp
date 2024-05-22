@@ -17,7 +17,9 @@
 #include <cstdlib>
 #ifdef _WIN32
 #include <windows.h>
-#endif // ifdef _WIN32
+#else
+#include <unistd.h>
+#endif // _WIN32
 
 #include <tinyxml2.h>
 
@@ -197,10 +199,21 @@ void XMLProfileManager::loadDefaultXMLFile()
     // Try to load the default XML file set with an environment variable.
 #ifdef _WIN32
     char file_path[MAX_PATH];
+    char absolute_path[MAX_PATH];
+    char current_directory[MAX_PATH];
+    char** filename = {nullptr};
     size_t size = MAX_PATH;
     if (getenv_s(&size, file_path, size, DEFAULT_FASTDDS_ENV_VARIABLE) == 0 && size > 0)
     {
-        loadXMLFile(file_path);
+        // Use absolute path to ensure the file is loaded only once
+        if (GetFullPathName(file_path, MAX_PATH, absolute_path, filename) == 0)
+        {
+            EPROSIMA_LOG_ERROR(XMLPARSER, "GetFullPathName failed " << GetLastError());
+        }
+        else
+        {
+            loadXMLFile(absolute_path);
+        }
     }
 
     // Should take into account '\0'
@@ -210,13 +223,32 @@ void XMLProfileManager::loadDefaultXMLFile()
     // Try to load the default XML file if variable does not exist or is not set to '1'
     if (!(getenv_s(&size, skip_xml, size, SKIP_DEFAULT_XML_FILE) == 0 && skip_xml[0] == '1'))
     {
-        loadXMLFile(DEFAULT_FASTDDS_PROFILES);
+        // Try to load the default XML file.
+        if (GetCurrentDirectory(MAX_PATH, current_directory) == 0)
+        {
+            EPROSIMA_LOG_ERROR(XMLPARSER, "GetCurrentDirectory failed " << GetLastError());
+        }
+        else
+        {
+            strcat_s(current_directory, MAX_PATH, "\\");
+            strcat_s(current_directory, MAX_PATH, DEFAULT_FASTDDS_PROFILES);
+            loadXMLFile(current_directory, true);
+        }
     }
 #else
+    char absolute_path[PATH_MAX];
 
     if (const char* file_path = std::getenv(DEFAULT_FASTDDS_ENV_VARIABLE))
     {
-        loadXMLFile(file_path);
+        char* res = realpath(file_path, absolute_path);
+        if (res)
+        {
+            loadXMLFile(absolute_path);
+        }
+        else
+        {
+            EPROSIMA_LOG_ERROR(XMLPARSER, "realpath failed " << std::strerror(errno));
+        }
     }
 
     const char* skip_xml = std::getenv(SKIP_DEFAULT_XML_FILE);
@@ -224,7 +256,16 @@ void XMLProfileManager::loadDefaultXMLFile()
     // Try to load the default XML file if variable does not exist or is not set to '1'
     if (!(skip_xml != nullptr && skip_xml[0] == '1'))
     {
-        loadXMLFile(DEFAULT_FASTDDS_PROFILES);
+        if (getcwd(absolute_path, PATH_MAX) == NULL)
+        {
+            EPROSIMA_LOG_ERROR(XMLPARSER, "getcwd failed " << std::strerror(errno));
+        }
+        else
+        {
+            strcat(absolute_path, "/");
+            strcat(absolute_path, DEFAULT_FASTDDS_PROFILES);
+            loadXMLFile(absolute_path, true);
+        }
     }
 
 #endif // ifdef _WIN32
@@ -311,6 +352,13 @@ XMLP_ret XMLProfileManager::loadXMLNode(
 XMLP_ret XMLProfileManager::loadXMLFile(
         const std::string& filename)
 {
+    return loadXMLFile(filename, false);
+}
+
+XMLP_ret XMLProfileManager::loadXMLFile(
+        const std::string& filename,
+        bool is_default)
+{
     if (filename.empty())
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "Error loading XML file, filename empty");
@@ -325,10 +373,10 @@ XMLP_ret XMLProfileManager::loadXMLFile(
     }
 
     up_base_node_t root_node;
-    XMLP_ret loaded_ret = XMLParser::loadXML(filename, root_node);
+    XMLP_ret loaded_ret = XMLParser::loadXML(filename, root_node, is_default);
     if (!root_node || loaded_ret != XMLP_ret::XML_OK)
     {
-        if (filename != std::string(DEFAULT_FASTDDS_PROFILES))
+        if (!is_default)
         {
             EPROSIMA_LOG_ERROR(XMLPARSER, "Error parsing '" << filename << "'");
         }

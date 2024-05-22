@@ -60,10 +60,20 @@ public:
 
     template<typename Pred>
     void wait(
-            Pred pred)
+            Pred pred,
+            std::chrono::seconds timeout = std::chrono::seconds::zero())
     {
         std::unique_lock<std::mutex> lock(mMutex);
-        cv_.wait(lock, pred);
+
+        if (timeout == std::chrono::seconds::zero())
+        {
+            cv_.wait(lock, pred);
+        }
+        else
+        {
+            cv_.wait_for(lock, timeout, pred);
+        }
+
     }
 
     void wait_for_at_least_entries(
@@ -73,6 +83,16 @@ public:
                        {
                            return mEntriesConsumed.size() >= num_entries;
                        });
+    }
+
+    void wait_for_at_least_entries_for(
+            size_t num_entries,
+            std::chrono::seconds timeout)
+    {
+        return wait([this, num_entries]() -> bool
+                       {
+                           return mEntriesConsumed.size() >= num_entries;
+                       }, timeout);
     }
 
     void clear_entries()
