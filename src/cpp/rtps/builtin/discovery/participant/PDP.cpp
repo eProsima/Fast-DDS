@@ -35,7 +35,6 @@
 #include <fastdds/rtps/participant/RTPSParticipantListener.h>
 #include <fastdds/rtps/reader/StatefulReader.h>
 #include <fastdds/rtps/reader/StatelessReader.h>
-#include <fastdds/rtps/resources/TimedEvent.h>
 #include <fastdds/rtps/writer/StatelessWriter.h>
 
 #include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
@@ -49,6 +48,7 @@
 #include <rtps/builtin/liveliness/WLP.h>
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <rtps/network/utils/external_locators.hpp>
+#include <rtps/resources/TimedEvent.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <utils/shared_mutex.hpp>
 #include <utils/TimeConversion.hpp>

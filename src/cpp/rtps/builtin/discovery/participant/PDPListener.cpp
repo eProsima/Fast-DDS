@@ -27,13 +27,13 @@
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 #include <fastdds/rtps/participant/RTPSParticipantListener.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
-#include <fastdds/rtps/resources/TimedEvent.h>
 
 #include <rtps/builtin/discovery/endpoint/EDP.h>
 #include <rtps/builtin/discovery/participant/PDP.h>
 #include <rtps/builtin/discovery/participant/PDPEndpoints.hpp>
 #include <rtps/network/utils/external_locators.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/resources/TimedEvent.h>
 #ifdef FASTDDS_STATISTICS
 #include <statistics/rtps/monitor-service/interfaces/IConnectionsObserver.hpp>
 #endif //FASTDDS_STATISTICS

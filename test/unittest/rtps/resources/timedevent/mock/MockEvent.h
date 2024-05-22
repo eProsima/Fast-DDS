@@ -21,7 +21,7 @@
 
 #include <asio.hpp>
 
-#include <fastdds/rtps/resources/TimedEvent.h>
+#include <rtps/resources/TimedEvent.h>
 
 class MockEvent
 {

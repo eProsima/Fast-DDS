@@ -38,7 +38,6 @@
 #include <fastdds/rtps/attributes/TopicAttributes.h>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/rtps/resources/ResourceEvent.h>
-#include <fastdds/rtps/resources/TimedEvent.h>
 #include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastdds/rtps/writer/StatefulWriter.h>
@@ -49,6 +48,7 @@
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/RTPSDomainImpl.hpp>
+#include <rtps/resources/TimedEvent.h>
 #include <utils/TimeConversion.hpp>
 #ifdef FASTDDS_STATISTICS
 #include <statistics/fastdds/domain/DomainParticipantImpl.hpp>

@@ -28,11 +28,11 @@
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/common/VendorId_t.hpp>
-#include <fastdds/rtps/resources/TimedEvent.h>
 
 #include <rtps/builtin/BuiltinProtocols.h>
 #include <rtps/builtin/discovery/participant/PDPSimple.h>
 #include <rtps/network/NetworkFactory.h>
+#include <rtps/resources/TimedEvent.h>
 #include <rtps/transport/shared_mem/SHMLocator.hpp>
 #include <utils/TimeConversion.hpp>
 
