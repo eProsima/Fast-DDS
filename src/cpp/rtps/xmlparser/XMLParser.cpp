@@ -18,6 +18,11 @@
 #include <iostream>
 #include <string>
 #include <unordered_map>
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <unistd.h>
+#endif // _WIN32
 
 #include <tinyxml2.h>
 
@@ -45,7 +50,36 @@ using namespace eprosima::fastdds::xml::detail;
 XMLP_ret XMLParser::loadDefaultXMLFile(
         up_base_node_t& root)
 {
+<<<<<<< HEAD:src/cpp/rtps/xmlparser/XMLParser.cpp
     return loadXML(DEFAULT_FASTRTPS_PROFILES, root);
+=======
+    // Use absolute path to ensure that the file is loaded only once
+#ifdef _WIN32
+    char current_directory[MAX_PATH];
+    if (GetCurrentDirectory(MAX_PATH, current_directory) == 0)
+    {
+        EPROSIMA_LOG_ERROR(XMLPARSER, "GetCurrentDirectory failed " << GetLastError());
+    }
+    else
+    {
+        strcat_s(current_directory, MAX_PATH, DEFAULT_FASTDDS_PROFILES);
+        return loadXML(current_directory, root, true);
+    }
+#else
+    char current_directory[PATH_MAX];
+    if (getcwd(current_directory, PATH_MAX) == NULL)
+    {
+        EPROSIMA_LOG_ERROR(XMLPARSER, "getcwd failed " << std::strerror(errno));
+    }
+    else
+    {
+        strcat(current_directory, "/");
+        strcat(current_directory, DEFAULT_FASTDDS_PROFILES);
+        return loadXML(current_directory, root, true);
+    }
+#endif // _WIN32
+    return XMLP_ret::XML_ERROR;
+>>>>>>> 0919ff294 (Use absolute paths when loading XML files (#4751)):src/cpp/xmlparser/XMLParser.cpp
 }
 
 XMLP_ret XMLParser::parseXML(
@@ -416,6 +450,11 @@ XMLP_ret XMLParser::validateXMLTransportElements(
                 strcmp(name, MAX_MESSAGE_SIZE) == 0 ||
                 strcmp(name, MAX_INITIAL_PEERS_RANGE) == 0 ||
                 strcmp(name, WHITE_LIST) == 0 ||
+<<<<<<< HEAD:src/cpp/rtps/xmlparser/XMLParser.cpp
+=======
+                strcmp(name, NETMASK_FILTER) == 0 ||
+                strcmp(name, NETWORK_INTERFACES) == 0 ||
+>>>>>>> 0919ff294 (Use absolute paths when loading XML files (#4751)):src/cpp/xmlparser/XMLParser.cpp
                 strcmp(name, TTL) == 0 ||
                 strcmp(name, NON_BLOCKING_SEND) == 0 ||
                 strcmp(name, UDP_OUTPUT_PORT) == 0 ||
@@ -598,7 +637,7 @@ XMLP_ret XMLParser::parseXMLSocketTransportData(
                     p_aux1 != nullptr; p_aux1 = p_aux1->NextSiblingElement())
             {
                 address = p_aux1->Name();
-                if (strcmp(address, ADDRESS) == 0 || strcmp(address, INTERFACE) == 0)
+                if (strcmp(address, ADDRESS) == 0 || strcmp(address, NETWORK_INTERFACE) == 0)
                 {
                     std::string text = get_element_text(p_aux1);
                     if (!text.empty())
@@ -613,6 +652,211 @@ XMLP_ret XMLParser::parseXMLSocketTransportData(
                 }
             }
         }
+<<<<<<< HEAD:src/cpp/rtps/xmlparser/XMLParser.cpp
+=======
+        else if (strcmp(name, NETMASK_FILTER) == 0)
+        {
+            std::string netmask_filter_str;
+            if (XMLP_ret::XML_OK != getXMLString(p_aux0, &netmask_filter_str, 0))
+            {
+                EPROSIMA_LOG_ERROR(XMLPARSER, "Invalid element found into 'netmask_filter'.");
+                return XMLP_ret::XML_ERROR;
+            }
+
+            try
+            {
+                p_transport->netmask_filter = fastdds::rtps::network::netmask_filter::string_to_netmask_filter_kind(
+                    netmask_filter_str);
+            }
+            catch (const std::invalid_argument& e)
+            {
+                EPROSIMA_LOG_ERROR(XMLPARSER, "Invalid element found into 'netmask_filter' : " << e.what());
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, NETWORK_INTERFACES) == 0)
+        {
+            if (XMLP_ret::XML_OK != parseXMLInterfaces(p_aux0, p_transport))
+            {
+                EPROSIMA_LOG_ERROR(XMLPARSER, "Failed to parse 'interfaces' element.");
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+    }
+    return XMLP_ret::XML_OK;
+}
+
+XMLP_ret XMLParser::parseXMLInterfaces(
+        tinyxml2::XMLElement* p_root,
+        std::shared_ptr<fastdds::rtps::SocketTransportDescriptor> p_transport)
+{
+    /*
+        <xs:complexType name="interfacesType">
+            <xs:all>
+                <xs:element name="allowlist" type="allowlistType" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="blocklist" type="blocklistType" minOccurs="0" maxOccurs="1"/>
+            </xs:all>
+        </xs:complexType>
+     */
+    tinyxml2::XMLElement* p_aux0 = nullptr;
+    const char* name = nullptr;
+    for (p_aux0 = p_root->FirstChildElement(); p_aux0 != nullptr; p_aux0 = p_aux0->NextSiblingElement())
+    {
+        name = p_aux0->Name();
+        if (strcmp(name, ALLOWLIST) == 0)
+        {
+            if (XMLP_ret::XML_OK != parseXMLAllowlist(p_aux0, p_transport))
+            {
+                EPROSIMA_LOG_ERROR(XMLPARSER, "Failed to parse 'allowlist'.");
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, BLOCKLIST) == 0)
+        {
+            if (XMLP_ret::XML_OK != parseXMLBlocklist(p_aux0, p_transport))
+            {
+                EPROSIMA_LOG_ERROR(XMLPARSER, "Failed to parse 'blocklist'.");
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else
+        {
+            EPROSIMA_LOG_ERROR(XMLPARSER, "Invalid element found in 'interfaces'. Name: " << name);
+            return XMLP_ret::XML_ERROR;
+        }
+    }
+    return XMLP_ret::XML_OK;
+}
+
+XMLP_ret XMLParser::parseXMLAllowlist(
+        tinyxml2::XMLElement* p_root,
+        std::shared_ptr<fastdds::rtps::SocketTransportDescriptor> p_transport)
+{
+    /*
+        <xs:complexType name="allowlistType">
+            <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                <xs:element name="interface" minOccurs="0" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:attribute name="name" type="string" use="required"/>
+                        <xs:attribute name="netmask_filter" type="netmaskFilterType" use="optional"/>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+     */
+    static const char* INTERFACE_NAME = "interface";
+    static const char* NAME_ATTR_NAME = "name";
+    static const char* NETMASK_FILTER_ATTR_NAME = "netmask_filter";
+
+    const tinyxml2::XMLElement* p_aux0 = nullptr;
+    const char* name = nullptr;
+    for (p_aux0 = p_root->FirstChildElement(); p_aux0 != nullptr; p_aux0 = p_aux0->NextSiblingElement())
+    {
+        name = p_aux0->Name();
+        if (strcmp(name, INTERFACE_NAME) == 0)
+        {
+            // Parse interface name (device/ip)
+            std::string iface_name;
+            auto iface_name_attr = p_aux0->FindAttribute(NAME_ATTR_NAME);
+            if (nullptr != iface_name_attr)
+            {
+                iface_name = iface_name_attr->Value();
+                if (iface_name.empty())
+                {
+                    EPROSIMA_LOG_ERROR(XMLPARSER,
+                            "Failed to parse 'allowlist' element. Attribute 'name' cannot be empty.");
+                    return XMLP_ret::XML_ERROR;
+                }
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(XMLPARSER,
+                        "Failed to parse 'allowlist' element. Required attribute 'name' not found.");
+                return XMLP_ret::XML_ERROR;
+            }
+
+            // Parse netmask filter
+            fastdds::rtps::NetmaskFilterKind netmask_filter{fastdds::rtps::NetmaskFilterKind::AUTO};
+            auto netmask_filter_attr = p_aux0->FindAttribute(NETMASK_FILTER_ATTR_NAME);
+            if (nullptr != netmask_filter_attr)
+            {
+                try
+                {
+                    netmask_filter = fastdds::rtps::network::netmask_filter::string_to_netmask_filter_kind(
+                        netmask_filter_attr->Value());
+                }
+                catch (const std::invalid_argument& e)
+                {
+                    EPROSIMA_LOG_ERROR(XMLPARSER,
+                            "Failed to parse 'allowlist' element. Invalid value found in 'netmask_filter' : " <<
+                            e.what());
+                    return XMLP_ret::XML_ERROR;
+                }
+            }
+            // Add valid item to allowlist
+            p_transport->interface_allowlist.emplace_back(iface_name, netmask_filter);
+        }
+        else
+        {
+            EPROSIMA_LOG_ERROR(XMLPARSER, "Invalid element found in 'allowlist'. Name: " << name);
+            return XMLP_ret::XML_ERROR;
+        }
+    }
+    return XMLP_ret::XML_OK;
+}
+
+XMLP_ret XMLParser::parseXMLBlocklist(
+        tinyxml2::XMLElement* p_root,
+        std::shared_ptr<fastdds::rtps::SocketTransportDescriptor> p_transport)
+{
+    /*
+        <xs:complexType name="blocklistType">
+            <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                <xs:element name="interface" minOccurs="0" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:attribute name="name" type="string" use="required"/>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+       </xs:complexType>
+     */
+    static const char* INTERFACE_NAME = "interface";
+    static const char* NAME_ATTR_NAME = "name";
+
+    const tinyxml2::XMLElement* p_aux0 = nullptr;
+    const char* name = nullptr;
+    for (p_aux0 = p_root->FirstChildElement(); p_aux0 != nullptr; p_aux0 = p_aux0->NextSiblingElement())
+    {
+        name = p_aux0->Name();
+        if (strcmp(name, INTERFACE_NAME) == 0)
+        {
+            // Parse interface name (device/ip)
+            auto iface = p_aux0->FindAttribute(NAME_ATTR_NAME);
+            if (nullptr != iface)
+            {
+                std::string iface_name = iface->Value();
+                if (iface_name.empty())
+                {
+                    EPROSIMA_LOG_ERROR(XMLPARSER,
+                            "Failed to parse 'blocklist' element. Attribute 'name' cannot be empty.");
+                    return XMLP_ret::XML_ERROR;
+                }
+                // Add valid item to blocklist
+                p_transport->interface_blocklist.emplace_back(iface_name);
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(XMLPARSER,
+                        "Failed to parse 'blocklist' element. Required attribute 'name' not found.");
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else
+        {
+            EPROSIMA_LOG_ERROR(XMLPARSER, "Invalid element found in 'blocklist'. Name: " << name);
+            return XMLP_ret::XML_ERROR;
+        }
+>>>>>>> 0919ff294 (Use absolute paths when loading XML files (#4751)):src/cpp/xmlparser/XMLParser.cpp
     }
     return XMLP_ret::XML_OK;
 }
@@ -1840,6 +2084,14 @@ XMLP_ret XMLParser::loadXML(
         const std::string& filename,
         up_base_node_t& root)
 {
+    return loadXML(filename, root, false);
+}
+
+XMLP_ret XMLParser::loadXML(
+        const std::string& filename,
+        up_base_node_t& root,
+        bool is_default)
+{
     if (filename.empty())
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "Error loading XML file, filename empty");
@@ -1849,7 +2101,11 @@ XMLP_ret XMLParser::loadXML(
     tinyxml2::XMLDocument xmlDoc;
     if (tinyxml2::XMLError::XML_SUCCESS != xmlDoc.LoadFile(filename.c_str()))
     {
+<<<<<<< HEAD:src/cpp/rtps/xmlparser/XMLParser.cpp
         if (filename != std::string(DEFAULT_FASTRTPS_PROFILES))
+=======
+        if (!is_default)
+>>>>>>> 0919ff294 (Use absolute paths when loading XML files (#4751)):src/cpp/xmlparser/XMLParser.cpp
         {
             EPROSIMA_LOG_ERROR(XMLPARSER, "Error opening '" << filename << "'");
         }
