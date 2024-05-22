@@ -136,6 +136,7 @@ file(GLOB DDS_BLACKBOXTESTS_TEST_SOURCE "common/DDSBlackboxTests*.cpp")
 set(DDS_BLACKBOXTESTS_SOURCE
     ${DDS_BLACKBOXTESTS_TEST_SOURCE}
     ${BLACKBOXTESTS_SOURCE}
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/CDRMessage.cpp
     )
 
 # Prepare static discovery xml file for blackbox tests.

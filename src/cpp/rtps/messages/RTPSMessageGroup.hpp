@@ -21,16 +21,15 @@
 #define _FASTDDS_RTPS_RTPSMESSAGEGROUP_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <fastdds/rtps/common/FragmentNumber.h>
-#include <fastdds/rtps/messages/RTPSMessageSenderInterface.hpp>
-
-#include <rtps/messages/RTPSMessageCreator.hpp>
-
 #include <vector>
 #include <chrono>
 #include <cassert>
 #include <memory>
 
+#include <fastdds/rtps/common/FragmentNumber.h>
+#include <fastdds/rtps/messages/RTPSMessageSenderInterface.hpp>
+
+#include <rtps/messages/RTPSMessageCreator.hpp>
 
 namespace eprosima {
 namespace fastrtps {

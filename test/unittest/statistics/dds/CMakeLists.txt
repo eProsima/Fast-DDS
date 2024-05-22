@@ -222,6 +222,7 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/TopicPayloadPool.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/TopicPayloadPoolRegistry.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/WriterHistory.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/CDRMessage.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/MessageReceiver.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/RTPSGapBuilder.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/RTPSMessageCreator.cpp
@@ -395,6 +396,7 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/TopicPayloadPool.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/TopicPayloadPoolRegistry.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/WriterHistory.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/CDRMessage.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/MessageReceiver.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/RTPSGapBuilder.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/RTPSMessageCreator.cpp

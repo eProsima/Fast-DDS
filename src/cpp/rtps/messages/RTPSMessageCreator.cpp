@@ -17,11 +17,11 @@
  *
  */
 
+#include <rtps/messages/RTPSMessageCreator.hpp>
+
 #include <fastdds/core/policy/ParameterList.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/common/VendorId_t.hpp>
-#include <rtps/messages/CDRMessage.hpp>
-#include <rtps/messages/RTPSMessageCreator.hpp>
 
 using namespace eprosima::fastrtps;
 using ParameterList = eprosima::fastdds::dds::ParameterList;

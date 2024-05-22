@@ -350,8 +350,6 @@ bool skip(
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-#include "CDRMessage.cpp"
-
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* _FASTDDS_RTPS_CDRMESSAGE_H_ */

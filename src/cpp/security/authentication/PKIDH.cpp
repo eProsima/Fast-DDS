@@ -23,13 +23,14 @@
 #include <security/authentication/PKIDH.h>
 
 #include <fastdds/core/policy/ParameterList.hpp>
-#include <fastdds/rtps/security/logging/Logging.h>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastdds/rtps/security/logging/Logging.h>
 
+#include <openssl/opensslv.h>
 #include <rtps/messages/CDRMessage.hpp>
 #include <security/authentication/PKIIdentityHandle.h>
-#include <openssl/opensslv.h>
+
 
 #if OPENSSL_VERSION_NUMBER >= 0x10100000L
 #define IS_OPENSSL_1_1 1

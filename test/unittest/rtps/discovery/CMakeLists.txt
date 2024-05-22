@@ -92,6 +92,7 @@ set(TCPTransportInterface_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TransportInterface.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/ChannelResource.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/PortBasedTransportDescriptor.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/CDRMessage.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/RTPSMessageCreator.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/tcp/RTCPMessageManager.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/tcp/TCPControlMessage.cpp

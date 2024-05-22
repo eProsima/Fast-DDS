@@ -34,8 +34,7 @@ namespace rtps {
 struct CDRMessage_t;
 
 /**
- * An interface used in \ref RTPSMessageGroup to handle destinations management
- * and message sending.
+ * Interface to handle destinations management and message sending.
  */
 class RTPSMessageSenderInterface
 {

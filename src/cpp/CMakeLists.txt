@@ -139,6 +139,7 @@ set(${PROJECT_NAME}_source_files
     rtps/history/TopicPayloadPool.cpp
     rtps/history/TopicPayloadPoolRegistry.cpp
     rtps/history/WriterHistory.cpp
+    rtps/messages/CDRMessage.cpp
     rtps/messages/MessageReceiver.cpp
     rtps/messages/RTPSGapBuilder.cpp
     rtps/messages/RTPSMessageCreator.cpp
