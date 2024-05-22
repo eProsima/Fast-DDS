@@ -1,8 +1,12 @@
 Forthcoming
 -----------
 
+Version 2.10.4
+--------------
+
 * Added `non_blocking_send` to TCP Transport.
 * Added authentication handshake properties.
+* Added `max_message_size` property to configure maximum output message size.
 
 Version 2.10.3
 --------------
