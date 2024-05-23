@@ -46,7 +46,16 @@ public:
 
     ReturnCode_t register_typeobject_w_dynamic_type(
             const DynamicType::_ref_type&,
-            TypeIdentifier&)
+            TypeIdentifierPair&)
+    {
+        return fastdds::dds::RETCODE_OK;
+    }
+
+    //TODO(richiware) remove
+    ReturnCode_t get_type_information(
+            const TypeIdentifierPair&,
+            TypeInformation&,
+            bool = false)
     {
         return fastdds::dds::RETCODE_OK;
     }

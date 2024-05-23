@@ -108,6 +108,30 @@ public:
             TypeIdentifierPair& type_ids) override;
 
     /**
+     * @brief Register a remote TypeObject.
+     *        This auxiliary method might register only the minimal TypeObject and TypeIdentifier or register both
+     *        TypeObjects constructing the minimal from the complete TypeObject information.
+     *        TypeObject consistency is not checked in this method as the order of the dependencies received by the
+     *        TypeLookupService is not guaranteed.
+     *        The consistency is checked by the TypeLookupService after all dependencies are registered.
+     *
+     * @pre @ref TypeIdentifierPair::type_identifier1 discriminator must match TypeObject discriminator or be TK_NONE.
+     *      @ref TypeIdentifierPair::type_identifier1 consistency is only checked in Debug build mode.
+     *
+     * @param[in] type_object Related TypeObject being registered.
+     * @param[inout] type_ids Returns the registered @ref TypeIdentifier.
+     * @ref TypeIdentifierPair::type_identifier1 might be TK_NONE.
+     * In other case this function will check it is consistence with the provided @TypeObject.
+     * @return ReturnCode_t RETCODE_OK if correctly registered.
+     *                      RETCODE_PRECONDITION_NOT_MET if the discriminators differ.
+     *                      RETCODE_PRECONDITION_NOT_MET if the TypeIdentifier is not consistent with the given
+     *                      TypeObject.
+     */
+    ReturnCode_t register_type_object(
+            const TypeObject& type_object,
+            TypeIdentifierPair& type_ids) override;
+
+    /**
      * @brief Register an indirect hash TypeIdentifier.
      *
      * @pre TypeIdentifier must not be a direct hash TypeIdentifier.
@@ -182,6 +206,7 @@ public:
      *
      * @param[in] type_ids @ref TypeIdentifier which type information is queried.
      * @param[out] type_information Related TypeInformation for the given @ref TypeIdentifier.
+     * @param[in] with_dependencies
      * @return ReturnCode_t RETCODE_OK if the type_ids are found within the registry.
      *                      RETCODE_NO_DATA if the given type_ids is not found.
      *                      RETCODE_BAD_PARAMETER if the given @ref TypeIdentifier corresponds to a indirect hash TypeIdentifier.
@@ -189,7 +214,8 @@ public:
      */
     ReturnCode_t get_type_information(
             const TypeIdentifierPair& type_ids,
-            TypeInformation& type_information);
+            TypeInformation& type_information,
+            bool with_dependencies = false) override;
 
     /**
      * @brief Get the type dependencies of the given direct hash type identifiers.
@@ -232,30 +258,6 @@ public:
     const TypeIdentifier calculate_type_identifier(
             const TypeObject& type_object,
             uint32_t& type_object_serialized_size);
-
-    /**
-     * @brief Register a remote TypeObject.
-     *        This auxiliary method might register only the minimal TypeObject and TypeIdentifier or register both
-     *        TypeObjects constructing the minimal from the complete TypeObject information.
-     *        TypeObject consistency is not checked in this method as the order of the dependencies received by the
-     *        TypeLookupService is not guaranteed.
-     *        The consistency is checked by the TypeLookupService after all dependencies are registered.
-     *
-     * @pre @ref TypeIdentifierPair::type_identifier1 discriminator must match TypeObject discriminator or be TK_NONE.
-     *      @ref TypeIdentifierPair::type_identifier1 consistency is only checked in Debug build mode.
-     *
-     * @param[in] type_object Related TypeObject being registered.
-     * @param[inout] type_ids Returns the registered @ref TypeIdentifier.
-     * @ref TypeIdentifierPair::type_identifier1 might be TK_NONE.
-     * In other case this function will check it is consistence with the provided @TypeObject.
-     * @return ReturnCode_t RETCODE_OK if correctly registered.
-     *                      RETCODE_PRECONDITION_NOT_MET if the discriminators differ.
-     *                      RETCODE_PRECONDITION_NOT_MET if the TypeIdentifier is not consistent with the given
-     *                      TypeObject.
-     */
-    ReturnCode_t register_type_object(
-            const TypeObject& type_object,
-            TypeIdentifierPair& type_ids);
 
     /**
      * @brief Register DynamicType TypeObject.

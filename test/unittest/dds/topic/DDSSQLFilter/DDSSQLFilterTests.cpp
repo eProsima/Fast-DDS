@@ -149,8 +149,8 @@ protected:
 
     void SetUp() override
     {
-        eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-        register_ContentFilterTestType_type_identifier(type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+        register_ContentFilterTestType_type_identifier(type_ids);
         eprosima::fastdds::dds::Log::ClearConsumers();
     }
 
@@ -1018,8 +1018,8 @@ protected:
 
     void SetUp() override
     {
-        eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-        register_ContentFilterTestType_type_identifier(type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+        register_ContentFilterTestType_type_identifier(type_ids);
         eprosima::fastdds::dds::Log::ClearConsumers();
     }
 
