@@ -40,13 +40,18 @@ using namespace eprosima::fastdds::dds::xtypes;
 
 // TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
 void register_FilteringExample_type_identifier(
-        TypeIdentifier& type_id)
+        TypeIdentifierPair& type_ids_FilteringExample)
 {
+
+    ReturnCode_t return_code_FilteringExample {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_FilteringExample =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "FilteringExample", type_ids_FilteringExample);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_FilteringExample)
     {
         StructTypeFlag struct_flags_FilteringExample = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
                 false, false);
-        ReturnCode_t return_code_FilteringExample;
-        TypeIdentifierPair type_ids_FilteringExample;
+        static_cast<void>(return_code_FilteringExample);
         QualifiedTypeName type_name_FilteringExample = "FilteringExample";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_FilteringExample;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_FilteringExample;
@@ -55,62 +60,64 @@ void register_FilteringExample_type_identifier(
         header_FilteringExample = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_FilteringExample);
         CompleteStructMemberSeq member_seq_FilteringExample;
         {
-            return_code_FilteringExample =
+            TypeIdentifierPair type_ids_sampleNumber;
+            ReturnCode_t return_code_sampleNumber {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_sampleNumber =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "_int32_t", type_ids_FilteringExample);
+                "_int32_t", type_ids_sampleNumber);
 
-            if (return_code_FilteringExample != eprosima::fastdds::dds::RETCODE_OK)
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_sampleNumber)
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "sampleNumber Structure member TypeIdentifier unknown to TypeObjectRegistry.");
-                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_sampleNumber = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
             CommonStructMember common_sampleNumber;
             MemberId member_id_sampleNumber = 0x00000000;
-            if (EK_COMPLETE == type_ids_FilteringExample.type_identifier1()._d() || TK_NONE == type_ids_FilteringExample.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_FilteringExample.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FilteringExample.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_FilteringExample.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FilteringExample.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_FilteringExample.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FilteringExample.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_FilteringExample.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FilteringExample.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_FilteringExample.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_FilteringExample.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FilteringExample.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_FilteringExample.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_FilteringExample.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FilteringExample.type_identifier1().map_ldefn().key_identifier()->_d())))
+            if (EK_COMPLETE == type_ids_sampleNumber.type_identifier1()._d() || TK_NONE == type_ids_sampleNumber.type_identifier2()._d() ||
+                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_sampleNumber.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_sampleNumber.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_sampleNumber.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_sampleNumber.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_SMALL == type_ids_sampleNumber.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_sampleNumber.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_LARGE == type_ids_sampleNumber.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_sampleNumber.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_MAP_SMALL == type_ids_sampleNumber.type_identifier1()._d() &&
+                    (EK_COMPLETE == type_ids_sampleNumber.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_sampleNumber.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                    (TI_PLAIN_MAP_LARGE == type_ids_sampleNumber.type_identifier1()._d() &&
+                    (EK_COMPLETE == type_ids_sampleNumber.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_sampleNumber.type_identifier1().map_ldefn().key_identifier()->_d())))
             {
-                common_sampleNumber = TypeObjectUtils::build_common_struct_member(member_id_sampleNumber, member_flags_sampleNumber, type_ids_FilteringExample.type_identifier1());
+                common_sampleNumber = TypeObjectUtils::build_common_struct_member(member_id_sampleNumber,
+                        member_flags_sampleNumber, type_ids_sampleNumber.type_identifier1());
             }
-            else if (EK_COMPLETE == type_ids_FilteringExample.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_FilteringExample.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FilteringExample.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_FilteringExample.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FilteringExample.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_FilteringExample.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FilteringExample.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_FilteringExample.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FilteringExample.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_FilteringExample.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_FilteringExample.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FilteringExample.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_FilteringExample.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_FilteringExample.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FilteringExample.type_identifier2().map_ldefn().key_identifier()->_d())))
+            else if (EK_COMPLETE == type_ids_sampleNumber.type_identifier2()._d() ||
+                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_sampleNumber.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_sampleNumber.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_sampleNumber.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_sampleNumber.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_SMALL == type_ids_sampleNumber.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_sampleNumber.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_LARGE == type_ids_sampleNumber.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_sampleNumber.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_MAP_SMALL == type_ids_sampleNumber.type_identifier2()._d() &&
+                    (EK_COMPLETE == type_ids_sampleNumber.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_sampleNumber.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                    (TI_PLAIN_MAP_LARGE == type_ids_sampleNumber.type_identifier2()._d() &&
+                    (EK_COMPLETE == type_ids_sampleNumber.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_sampleNumber.type_identifier2().map_ldefn().key_identifier()->_d())))
             {
-                common_sampleNumber = TypeObjectUtils::build_common_struct_member(member_id_sampleNumber, member_flags_sampleNumber, type_ids_FilteringExample.type_identifier2());
+                common_sampleNumber = TypeObjectUtils::build_common_struct_member(member_id_sampleNumber,
+                        member_flags_sampleNumber, type_ids_sampleNumber.type_identifier2());
             }
             else
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure sampleNumber member TypeIdentifier inconsistent.");
-                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_sampleNumber = "sampleNumber";
@@ -122,20 +129,10 @@ void register_FilteringExample_type_identifier(
         }
         CompleteStructType struct_type_FilteringExample = TypeObjectUtils::build_complete_struct_type(struct_flags_FilteringExample, header_FilteringExample, member_seq_FilteringExample);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_FilteringExample, type_name_FilteringExample.to_string(), type_id))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_FilteringExample, type_name_FilteringExample.to_string(), type_ids_FilteringExample))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "FilteringExample already registered in TypeObjectRegistry for a different type.");
-        }
-        return_code_FilteringExample =
-            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-            "FilteringExample", type_ids_FilteringExample);
-        if (return_code_FilteringExample != eprosima::fastdds::dds::RETCODE_OK)
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "FilteringExample: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
-            type_id = TypeIdentifier();
-            return;
         }
     }
 }

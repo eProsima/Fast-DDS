@@ -166,7 +166,7 @@ public:
      * BitsetTypeFlag:      Unused. No flags apply.
      */
 
-    /*************** Indirect Hash TypeIdentifiers ***************************/
+    //{{{ Indirect Hash TypeIdentifiers
 
     /**
      * @brief Build StringSTypeDefn instance.
@@ -381,7 +381,10 @@ public:
      */
     FASTDDS_EXPORTED_API static const ExtendedTypeDefn build_extended_type_defn();
 
-    /*************** Register Indirect Hash TypeIdentifiers ***************************/
+    //}}}
+
+    //{{{ Register Indirect Hash TypeIdentifiers
+
     /**
      * Primitive types are registered when TypeObjectRegistry is instantiated.
      */
@@ -391,6 +394,7 @@ public:
      *
      * @param[in] string StringSTypeDefn union member to set.
      * @param[in] type_name Type name to be registered.
+     * @param[out] type_ids TypeIdentifiers corresponding to the StringSTypeDefn just registered.
      * @param[in] wstring Flag to build a wstring. Default false.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given member is inconsistent
      *            (only in Debug build mode).
@@ -402,6 +406,7 @@ public:
     FASTDDS_EXPORTED_API static ReturnCode_t build_and_register_s_string_type_identifier(
             const StringSTypeDefn& string,
             const std::string& type_name,
+            TypeIdentifierPair& type_ids,
             bool wstring = false);
 
     /**
@@ -409,6 +414,7 @@ public:
      *
      * @param[in] string StringLTypeDefn union member to set.
      * @param[in] type_name Type name to be registered.
+     * @param[out] type_ids TypeIdentifiers corresponding to the StringLTypeDefn just registered.
      * @param[in] wstring Flag to build a wstring. Default false.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given member is inconsistent
      *            (only in Debug build mode).
@@ -420,6 +426,7 @@ public:
     FASTDDS_EXPORTED_API static ReturnCode_t build_and_register_l_string_type_identifier(
             const StringLTypeDefn& string,
             const std::string& type_name,
+            TypeIdentifierPair& type_ids,
             bool wstring = false);
 
     /**
@@ -427,6 +434,7 @@ public:
      *
      * @param[in] plain_seq PlainSequenceSElemDefn union member to set.
      * @param[in] type_name Type name to be registered.
+     * @param[out] type_ids TypeIdentifiers corresponding to the PlainSequenceSElemDefn just registered.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given member is inconsistent
      *            (only in Debug build mode).
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
@@ -436,13 +444,15 @@ public:
      */
     FASTDDS_EXPORTED_API static ReturnCode_t build_and_register_s_sequence_type_identifier(
             const PlainSequenceSElemDefn& plain_seq,
-            const std::string& type_name);
+            const std::string& type_name,
+            TypeIdentifierPair& type_ids);
 
     /**
      * @brief Register large sequence TypeIdentifier into TypeObjectRegistry.
      *
      * @param[in] plain_seq PlainSequenceLElemDefn union member to set.
      * @param[in] type_name Type name to be registered.
+     * @param[out] type_ids TypeIdentifiers corresponding to the PlainSequenceLElemDefn just registered.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given member is inconsistent
      *            (only in Debug build mode).
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
@@ -452,13 +462,15 @@ public:
      */
     FASTDDS_EXPORTED_API static ReturnCode_t build_and_register_l_sequence_type_identifier(
             const PlainSequenceLElemDefn& plain_seq,
-            const std::string& type_name);
+            const std::string& type_name,
+            TypeIdentifierPair& type_ids);
 
     /**
      * @brief Register small array TypeIdentifier into TypeObjectRegistry.
      *
      * @param[in] plain_array PlainArraySElemDefn union member to set.
      * @param[in] type_name Type name to be registered.
+     * @param[out] type_ids TypeIdentifiers corresponding to the PlainArraySElemDefn just registered.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given member is inconsistent
      *            (only in Debug build mode).
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
@@ -468,13 +480,15 @@ public:
      */
     FASTDDS_EXPORTED_API static ReturnCode_t build_and_register_s_array_type_identifier(
             const PlainArraySElemDefn& plain_array,
-            const std::string& type_name);
+            const std::string& type_name,
+            TypeIdentifierPair& type_ids);
 
     /**
      * @brief Register large array TypeIdentifier into TypeObjectRegistry.
      *
      * @param[in] plain_array PlainArrayLElemDefn union member to set.
      * @param[in] type_name Type name to be registered.
+     * @param[out] type_ids TypeIdentifiers corresponding to the PlainArrayLElemDefn just registered.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given member is inconsistent
      *            (only in Debug build mode).
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
@@ -484,13 +498,15 @@ public:
      */
     FASTDDS_EXPORTED_API static ReturnCode_t build_and_register_l_array_type_identifier(
             const PlainArrayLElemDefn& plain_array,
-            const std::string& type_name);
+            const std::string& type_name,
+            TypeIdentifierPair& type_ids);
 
     /**
      * @brief Register small map TypeIdentifier into TypeObjectRegistry.
      *
      * @param[in] plain_map PlainMapSTypeDefn union member to set.
      * @param[in] type_name Type name to be registered.
+     * @param[out] type_ids TypeIdentifiers corresponding to the PlainMapSTypeDefn just registered.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given member is inconsistent
      *            (only in Debug build mode).
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
@@ -500,13 +516,15 @@ public:
      */
     FASTDDS_EXPORTED_API static ReturnCode_t build_and_register_s_map_type_identifier(
             const PlainMapSTypeDefn& plain_map,
-            const std::string& type_name);
+            const std::string& type_name,
+            TypeIdentifierPair& type_ids);
 
     /**
      * @brief Register large map TypeIdentifier into TypeObjectRegistry.
      *
      * @param[in] plain_map PlainMapLTypeDefn union member to set.
      * @param[in] type_name Type name to be registered.
+     * @param[out] type_ids TypeIdentifiers corresponding to the PlainMapLTypeDefn just registered.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given member is inconsistent
      *            (only in Debug build mode).
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
@@ -516,7 +534,8 @@ public:
      */
     FASTDDS_EXPORTED_API static ReturnCode_t build_and_register_l_map_type_identifier(
             const PlainMapLTypeDefn& plain_map,
-            const std::string& type_name);
+            const std::string& type_name,
+            TypeIdentifierPair& type_ids);
 
     /**
      * @brief Register StronglyConnectedComponent TypeIdentifier into TypeObjectRegistry.
@@ -531,8 +550,9 @@ public:
     FASTDDS_EXPORTED_API static ReturnCode_t build_and_register_scc_type_identifier(
             const StronglyConnectedComponentId& scc,
             const std::string& type_name);
+    //}}}
 
-    /*************** Annotation usage ***************************/
+    //{{{ Annotation usage
     /**
      * @brief Build ExtendedAnnotationParameterValue instance (empty. Available for future extension).
      *
@@ -767,8 +787,9 @@ public:
             PlacementKind placement,
             const eprosima::fastcdr::fixed_string<32>& language,
             const std::string& text);
+    //}}}
 
-    /*************** Aggregate types: ***************************/
+    //{{{ Aggregate types
     /**
      * @brief Build AppliedBuiltinMemberAnnotations instance.
      *
@@ -922,8 +943,9 @@ public:
     /**
      * MinimalStructType constructed from CompleteStructType.
      */
+    //}}}
 
-    /*************** Union: *********************************************/
+    //{{{ Union
 
     /**
      * @brief Add label to the union case label sequence.
@@ -1068,8 +1090,9 @@ public:
     /**
      * MinimalUnionType constructed from CompleteUnionType.
      */
+    //}}}
 
-    /*************** Annotation: ****************************************/
+    //{{{ Annotation
 
     /**
      * @brief Build CommonAnnotationParameter instance.
@@ -1154,8 +1177,9 @@ public:
     /**
      * MinimalAnnotationType constructed from CompleteAnnotationType.
      */
+    //}}}
 
-    /*************** Alias: *********************************************/
+    //{{{ Alias
 
     /**
      * @brief Build CommonAliasBody instance.
@@ -1226,8 +1250,9 @@ public:
     /**
      * MinimalAliasType constructed from CompleteAliasType.
      */
+    //}}}
 
-    /*************** Collections: ***************************************/
+    //{{{ Collections
 
     /**
      * @brief Build CompleteElementDetail instance.
@@ -1303,8 +1328,9 @@ public:
     /**
      * MinimalCollectionHeader constructed from CompleteCollectionHeader.
      */
+    //}}}
 
-    /*************** Sequence: ******************************************/
+    //{{{ Sequence
 
     /**
      * @brief Build CompleteSequenceType instance.
@@ -1326,8 +1352,9 @@ public:
     /**
      * MinimalSequenceType constructed from CompleteSequenceType.
      */
+    //}}}
 
-    /*************** Array: *********************************************/
+    //{{{ Array
 
     /**
      * @brief Build CommonArrayHeader instance.
@@ -1377,8 +1404,9 @@ public:
     /**
      * MinimalArrayType constructed from CompleteArrayType.
      */
+    //}}}
 
-    /*************** Map: ***********************************************/
+    //{{{ Map
 
     /**
      * @brief Build CompleteMapType instance.
@@ -1404,8 +1432,9 @@ public:
     /**
      * MinimalMapType constructed from CompleteMapType.
      */
+    //}}}
 
-    /*************** Enumeration: **************************************/
+    //{{{ Enumeration
 
     /**
      * @brief Build CommonEnumeratedLiteral instance.
@@ -1508,8 +1537,9 @@ public:
     /**
      * MinimalEnumeratedType constructed from CompleteEnumeratedType.
      */
+    //}}}
 
-    /*************** Bitmask: *******************************************/
+    //{{{ Bitmask
 
     /**
      * @brief Build CommonBitflag instance.
@@ -1582,8 +1612,9 @@ public:
             BitmaskTypeFlag bitmask_flags,
             const CompleteBitmaskHeader& header,
             const CompleteBitflagSeq& flag_seq);
+    //}}}
 
-    /*************** Bitset: ********************************************/
+    //{{{ Bitset
 
     /**
      * @brief Build CommonBitfield instance.
@@ -1675,8 +1706,9 @@ public:
     /**
      * MinimalBitsetType constructed from CompleteBitsetType.
      */
+    //}}}
 
-    /*************** Type Object: ***************************************/
+    //{{{ Type Object
 
     /**
      * @brief Build CompleteExtendedType instance. (empty. Available for future extension)
@@ -1691,6 +1723,8 @@ public:
      *
      * @param[in] alias_type CompleteAliasType.
      * @param[in] type_name Name to be registered in the registry.
+     * @param[out] type_ids TypeIdentifiers corresponding to the CompleteAliasType just registered and the
+     * generated MinimalAliasType.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given type is inconsistent
      *            (only in Debug build mode).
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
@@ -1700,7 +1734,8 @@ public:
      */
     FASTDDS_EXPORTED_API static ReturnCode_t build_and_register_alias_type_object(
             const CompleteAliasType& alias_type,
-            const std::string& type_name);
+            const std::string& type_name,
+            TypeIdentifierPair& type_ids);
 
     /**
      * @brief Register annotation TypeObject into TypeObjectRegistry.
@@ -1708,7 +1743,8 @@ public:
      *
      * @param[in] annotation_type CompleteAnnotationType.
      * @param[in] type_name Name to be registered in the registry.
-     * @param[out] type_id Complete TypeIdentifier corresponding to the CompleteAnnotationType being registered.
+     * @param[out] type_ids TypeIdentifiers corresponding to the CompleteAnnotationType just registered and the
+     * generated MinimalAnnotationType.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given type is inconsistent
      *            (only in Debug build mode).
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
@@ -1719,7 +1755,7 @@ public:
     FASTDDS_EXPORTED_API static ReturnCode_t build_and_register_annotation_type_object(
             const CompleteAnnotationType& annotation_type,
             const std::string& type_name,
-            TypeIdentifier& type_id);
+            TypeIdentifierPair& type_ids);
 
     /**
      * @brief Register structure TypeObject into TypeObjectRegistry.
@@ -1727,7 +1763,8 @@ public:
      *
      * @param[in] struct_type CompleteStructType.
      * @param[in] type_name Name to be registered in the registry.
-     * @param[out] type_id Complete TypeIdentifier corresponding to the CompleteStructType being registered.
+     * @param[out] type_ids TypeIdentifiers corresponding to the CompleteStructType just registered and the
+     * generated MinimalStructType.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given type is inconsistent
      *            (only in Debug build mode).
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
@@ -1738,7 +1775,7 @@ public:
     FASTDDS_EXPORTED_API static ReturnCode_t build_and_register_struct_type_object(
             const CompleteStructType& struct_type,
             const std::string& type_name,
-            TypeIdentifier& type_id);
+            TypeIdentifierPair& type_ids);
 
     /**
      * @brief Register union TypeObject into TypeObjectRegistry.
@@ -1746,7 +1783,8 @@ public:
      *
      * @param[in] union_type CompleteUnionType.
      * @param[in] type_name Name to be registered in the registry.
-     * @param[out] type_id Complete TypeIdentifier corresponding to the CompleteUnionType being registered.
+     * @param[out] type_ids TypeIdentifiers corresponding to the CompleteUnionType just registered and the
+     * generated MinimalUnionType.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given type is inconsistent
      *            (only in Debug build mode).
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
@@ -1757,7 +1795,7 @@ public:
     FASTDDS_EXPORTED_API static ReturnCode_t build_and_register_union_type_object(
             const CompleteUnionType& union_type,
             const std::string& type_name,
-            TypeIdentifier& type_id);
+            TypeIdentifierPair& type_ids);
 
     /**
      * @brief Register bitset TypeObject into TypeObjectRegistry.
@@ -1765,6 +1803,8 @@ public:
      *
      * @param[in] bitset_type CompleteBitsetType.
      * @param[in] type_name Name to be registered in the registry.
+     * @param[out] type_ids TypeIdentifiers corresponding to the CompleteBitsetType just registered and the
+     * generated MinimalBitsetType.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given type is inconsistent
      *            (only in Debug build mode).
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
@@ -1774,7 +1814,8 @@ public:
      */
     FASTDDS_EXPORTED_API static ReturnCode_t build_and_register_bitset_type_object(
             const CompleteBitsetType& bitset_type,
-            const std::string& type_name);
+            const std::string& type_name,
+            TypeIdentifierPair& type_ids);
 
     /**
      * @brief Register sequence TypeObject into TypeObjectRegistry.
@@ -1833,6 +1874,8 @@ public:
      *
      * @param[in] enumerated_type CompleteEnumeratedType.
      * @param[in] type_name Name to be registered in the registry.
+     * @param[out] type_ids TypeIdentifiers corresponding to the CompleteEnumeratedType just registered and the
+     * generated MinimalEnumeratedType.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given type is inconsistent
      *            (only in Debug build mode).
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
@@ -1842,7 +1885,8 @@ public:
      */
     FASTDDS_EXPORTED_API static ReturnCode_t build_and_register_enumerated_type_object(
             const CompleteEnumeratedType& enumerated_type,
-            const std::string& type_name);
+            const std::string& type_name,
+            TypeIdentifierPair& type_ids);
 
     /**
      * @brief Register bitmask TypeObject into TypeObjectRegistry.
@@ -1850,6 +1894,8 @@ public:
      *
      * @param[in] bitmask_type CompleteBitmaskType.
      * @param[in] type_name Name to be registered in the registry.
+     * @param[out] type_ids TypeIdentifiers corresponding to the CompleteBitmaskType just registered and the
+     * generated MinimalBitmaskType.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given type is inconsistent
      *            (only in Debug build mode).
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
@@ -1859,9 +1905,11 @@ public:
      */
     FASTDDS_EXPORTED_API static ReturnCode_t build_and_register_bitmask_type_object(
             const CompleteBitmaskType& bitmask_type,
-            const std::string& type_name);
+            const std::string& type_name,
+            TypeIdentifierPair& type_ids);
+    //}}}
 
-    /*************** Auxiliary public methods ***************************/
+    //{{{ Auxiliary public methods
 
     /**
      * @brief Calculate the MD5 hash of the provided name.
@@ -1882,6 +1930,19 @@ public:
     FASTDDS_EXPORTED_API static void type_object_consistency(
             const TypeObject& type_object);
 
+
+    /**
+     * @brief If one of the @ref TypeIdentifier in @ref TypeIdentifierPair is complete, returns its reference.
+     *
+     * @param[in] type_ids @ref TypeIdentifierPair used to retrieve the @ref TypeIdentifier.
+     * @param[out] bool Returns if there was an error.
+     * @return Reference to the complete @TypeIdentifier.
+     */
+    FASTDDS_EXPORTED_API static const TypeIdentifier& retrieve_complete_type_identifier(
+            const TypeIdentifierPair& type_ids,
+            bool& ec);
+    //}}}
+
 private:
 
     friend class TypeObjectRegistry;
@@ -1893,7 +1954,7 @@ private:
 
 protected:
 
-    /*************** Auxiliary methods ***************************/
+    //{{{ Auxiliary methods
 
     /**
      * @brief Set the try construct behavior in a given MemberFlag
@@ -1971,8 +2032,9 @@ protected:
      */
     static bool is_indirect_hash_type_identifier(
             const TypeIdentifier& type_identifier);
+    //}}}
 
-    /*************** Consistency methods (Debug) ***************************/
+    //{{{ Consistency methods (Debug)
 
     /**
      * TypeObjectHashId is always consistent. Default constructor already sets the discriminator to one valid value.
@@ -3051,6 +3113,7 @@ protected:
      */
     static void minimal_type_object_consistency(
             const MinimalTypeObject& minimal_type_object);
+    //}}}
 };
 
 } // xtypes

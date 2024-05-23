@@ -28,6 +28,7 @@
 #include <fastdds/dds/xtypes/dynamic_types/MemberDescriptor.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/TypeDescriptor.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/Types.hpp>
+#include <fastdds/dds/xtypes/type_representation/TypeObjectUtils.hpp>
 
 const char* const inner_structure_helper_child_struct_name = "InnerStructureHelperChild";
 const char* const inner_structure_helper_child_child_struct_name = "InnerStructureHelperChildChild";
@@ -284,9 +285,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_InnerStructureHelperChild)
         EXPECT_EQ(value, struct_data);
     }
 
-    xtypes::TypeIdentifier static_type_id;
-    register_InnerStructureHelperChild_type_identifier(static_type_id);
-    check_typeobject_registry(struct_type, static_type_id);
+    xtypes::TypeIdentifierPair static_type_ids;
+    register_InnerStructureHelperChild_type_identifier(static_type_ids);
+    check_typeobject_registry(struct_type, static_type_ids);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -359,9 +360,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_InnerStructureHelperChildChild)
         EXPECT_EQ(value, struct_data);
     }
 
-    xtypes::TypeIdentifier static_type_id;
-    register_InnerStructureHelperChildChild_type_identifier(static_type_id);
-    check_typeobject_registry(struct_type, static_type_id);
+    xtypes::TypeIdentifierPair static_type_ids;
+    register_InnerStructureHelperChildChild_type_identifier(static_type_ids);
+    check_typeobject_registry(struct_type, static_type_ids);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -403,9 +404,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_InnerStructureHelperEmptyChild)
         EXPECT_EQ(value, struct_data);
     }
 
-    xtypes::TypeIdentifier static_type_id;
-    register_InnerStructureHelperEmptyChild_type_identifier(static_type_id);
-    check_typeobject_registry(struct_type, static_type_id);
+    xtypes::TypeIdentifierPair static_type_ids;
+    register_InnerStructureHelperEmptyChild_type_identifier(static_type_ids);
+    check_typeobject_registry(struct_type, static_type_ids);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -451,9 +452,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_InnerStructureHelperEmptyChildChil
         EXPECT_EQ(value, struct_data);
     }
 
-    xtypes::TypeIdentifier static_type_id;
-    register_InnerStructureHelperEmptyChildChild_type_identifier(static_type_id);
-    check_typeobject_registry(struct_type, static_type_id);
+    xtypes::TypeIdentifierPair static_type_ids;
+    register_InnerStructureHelperEmptyChildChild_type_identifier(static_type_ids);
+    check_typeobject_registry(struct_type, static_type_ids);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -496,9 +497,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_InnerEmptyStructureHelperChild)
         EXPECT_EQ(value, struct_data);
     }
 
-    xtypes::TypeIdentifier static_type_id;
-    register_InnerEmptyStructureHelperChild_type_identifier(static_type_id);
-    check_typeobject_registry(struct_type, static_type_id);
+    xtypes::TypeIdentifierPair static_type_ids;
+    register_InnerEmptyStructureHelperChild_type_identifier(static_type_ids);
+    check_typeobject_registry(struct_type, static_type_ids);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 
@@ -547,9 +548,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructAliasInheritanceStruct)
         EXPECT_EQ(value, struct_data);
     }
 
-    xtypes::TypeIdentifier static_type_id;
-    register_StructAliasInheritanceStruct_type_identifier(static_type_id);
-    check_typeobject_registry(struct_type, static_type_id);
+    xtypes::TypeIdentifierPair static_type_ids;
+    register_StructAliasInheritanceStruct_type_identifier(static_type_ids);
+    check_typeobject_registry(struct_type, static_type_ids);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -827,9 +828,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructuresInheritanceStruct)
         EXPECT_EQ(value, struct_data);
     }
 
-    xtypes::TypeIdentifier static_type_id;
-    register_StructuresInheritanceStruct_type_identifier(static_type_id);
-    check_typeobject_registry(struct_type, static_type_id);
+    xtypes::TypeIdentifierPair static_type_ids;
+    register_StructuresInheritanceStruct_type_identifier(static_type_ids);
+    check_typeobject_registry(struct_type, static_type_ids);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -981,16 +982,18 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BitsetsChildInheritanceStruct)
         EXPECT_EQ(ushort_value, struct_data.var_BitsetAliasInheritanceBitset().new_bitfield);
     }
 
-    xtypes::TypeIdentifier static_type_id;
-    register_BitsetsChildInheritanceStruct_type_identifier(static_type_id);
-    EXPECT_NE(static_type_id, xtypes::TypeIdentifier());
-    xtypes::TypeIdentifier dynamic_type_id;
+    xtypes::TypeIdentifierPair static_type_ids;
+    register_BitsetsChildInheritanceStruct_type_identifier(static_type_ids);
+    EXPECT_NE(static_type_ids, xtypes::TypeIdentifierPair());
+    xtypes::TypeIdentifierPair dynamic_type_ids;
     EXPECT_EQ(RETCODE_OK, DomainParticipantFactory::get_instance()->type_object_registry().
-                    register_typeobject_w_dynamic_type(struct_type, dynamic_type_id));
-    EXPECT_EQ(static_type_id, dynamic_type_id);
+                    register_typeobject_w_dynamic_type(struct_type, dynamic_type_ids));
+    EXPECT_EQ(static_type_ids.type_identifier1(), dynamic_type_ids.type_identifier1());
+    EXPECT_EQ(static_type_ids.type_identifier2(), dynamic_type_ids.type_identifier2());
     xtypes::TypeObject type_object;
+    bool ec {false};
     EXPECT_EQ(RETCODE_OK, DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(
-                dynamic_type_id, type_object));
+                xtypes::TypeObjectUtils::retrieve_complete_type_identifier(dynamic_type_ids, ec), type_object));
     DynamicTypeBuilder::_ref_type builder = DynamicTypeBuilderFactory::get_instance()->create_type_w_type_object(
         type_object);
     ASSERT_NE(builder, nullptr);

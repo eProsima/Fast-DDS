@@ -54,7 +54,8 @@ public:
      *
      * @param[in] type_name Name of the type being registered.
      * @param[in] complete_type_object CompleteTypeObject related to the given type name.
-     * @param[out] type_id TypeIdentifier corresponding to the CompleteTypeObject just registered.
+     * @param[out] type_ids TypeIdentifiers corresponding to the CompleteTypeObject just registered and the
+     * generated MinimalTypeObject.
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
      *                      RETCODE_BAD_PARAMETER if there is already another different TypeObject registered with the
      *                      given type_name.
@@ -64,18 +65,18 @@ public:
     virtual FASTDDS_EXPORTED_API ReturnCode_t register_type_object(
             const std::string& type_name,
             const CompleteTypeObject& complete_type_object,
-            TypeIdentifier& type_id) = 0;
+            TypeIdentifierPair& type_ids) = 0;
 
     /**
      * @brief Register DynamicType TypeObject.
      *
      * @param[in] dynamic_type DynamicType to be registered.
-     * @param[out] type_id TypeIdentifier corresponding to the registered DynamicType TypeObject.
+     * @param[out] type_ids TypeIdentifiers corresponding to the registered DynamicType TypeObject.
      * @return ReturnCode_t RETCODE_OK always.
      */
     virtual FASTDDS_EXPORTED_API ReturnCode_t register_typeobject_w_dynamic_type(
             const DynamicType::_ref_type& dynamic_type,
-            TypeIdentifier& type_id) = 0;
+            TypeIdentifierPair& type_ids) = 0;
 
     /**
      * @brief Register an indirect hash TypeIdentifier.
@@ -85,7 +86,8 @@ public:
      * @pre type_name must not be empty.
      *
      * @param[in] type_name Name of the type being registered.
-     * @param[in] type_identifier TypeIdentier related to the given type name.
+     * @param[inout] type_identifier TypeIdentifier related to the given type name. It must be set in
+     * @ref TypeIdentifierPair::type_identifier1. At the end this object is filled with both TypeIdentifiers.
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
      *                      RETCODE_BAD_PARAMETER if there is already another different TypeIdentifier registered with
      *                      the given type_name.
@@ -94,7 +96,7 @@ public:
      */
     virtual FASTDDS_EXPORTED_API ReturnCode_t register_type_identifier(
             const std::string& type_name,
-            const TypeIdentifier& type_identifier) = 0;
+            TypeIdentifierPair& type_identifier) = 0;
 
     /**
      * @brief Get the TypeObjects related to the given type name.

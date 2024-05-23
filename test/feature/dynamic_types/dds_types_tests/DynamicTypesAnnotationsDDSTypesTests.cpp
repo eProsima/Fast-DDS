@@ -219,9 +219,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_EmptyAnnotatedStruct)
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
     }
 
-    xtypes::TypeIdentifier static_type_id;
-    register_EmptyAnnotatedStruct_type_identifier(static_type_id);
-    check_typeobject_registry(struct_type, static_type_id);
+    xtypes::TypeIdentifierPair static_type_ids;
+    register_EmptyAnnotatedStruct_type_identifier(static_type_ids);
+    check_typeobject_registry(struct_type, static_type_ids);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }

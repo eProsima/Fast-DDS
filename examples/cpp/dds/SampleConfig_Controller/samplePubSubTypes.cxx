@@ -219,10 +219,10 @@ bool samplePubSubType::getKey(
     return true;
 }
 
-void samplePubSubType::register_type_object_representation() const
+void samplePubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_sample_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_sample_type_identifier(type_ids);
 }
 
 

@@ -1773,9 +1773,10 @@ fastrtps::TopicAttributes DataReaderImpl::topic_attributes() const
     topic_att.historyQos = qos_.history();
     topic_att.resourceLimitsQos = qos_.resource_limits();
     topic_att.auto_fill_type_information = type_->auto_fill_type_information();
-    if (type_->type_information())
+    if (0 < type_->type_information().complete().typeid_with_size().typeobject_serialized_size() ||
+            0 < type_->type_information().minimal().typeid_with_size().typeobject_serialized_size())
     {
-        topic_att.type_information = *type_->type_information();
+        topic_att.type_information = type_->type_information();
     }
 
     return topic_att;

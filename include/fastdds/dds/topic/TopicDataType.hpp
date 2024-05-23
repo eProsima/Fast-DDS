@@ -24,6 +24,7 @@
 #include <string>
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobject.hpp>
 #include <fastdds/fastdds_dll.hpp>
 #include <fastdds/rtps/common/CdrSerialization.hpp>
 #include <fastdds/rtps/common/InstanceHandle.h>
@@ -205,9 +206,9 @@ public:
     /**
      * Get the type information
      *
-     * @return TypeInformationParameter
+     * @return @ref xtypes::TypeInformation
      */
-    FASTDDS_EXPORTED_API inline const std::shared_ptr<xtypes::TypeInformationParameter> type_information() const
+    FASTDDS_EXPORTED_API inline const xtypes::TypeInformation& type_information() const
     {
         return type_information_;
     }
@@ -215,21 +216,21 @@ public:
     /**
      * Set type information
      *
-     * @param info new value for TypeInformationParameter
+     * @param info @ref xtypes::TypeInformation
      */
     FASTDDS_EXPORTED_API inline void type_information(
-            const xtypes::TypeInformationParameter& info)
+            const xtypes::TypeInformation& info)
     {
-        type_information_ = std::make_shared<xtypes::TypeInformationParameter>(info);
+        type_information_ = info;
     }
 
     /**
      * Set type information
      *
-     * @param info shared pointer to TypeInformationParameter
+     * @param info @ref xtypes::TypeInformation
      */
     FASTDDS_EXPORTED_API inline void type_information(
-            std::shared_ptr<xtypes::TypeInformationParameter> info)
+            xtypes::TypeInformation&& info)
     {
         type_information_ = std::move(info);
     }
@@ -276,7 +277,7 @@ public:
     /**
      * @brief Register TypeObject type representation
      */
-    FASTDDS_EXPORTED_API virtual inline void register_type_object_representation() const
+    FASTDDS_EXPORTED_API virtual inline void register_type_object_representation()
     {
     }
 
@@ -289,7 +290,7 @@ public:
 
 protected:
 
-    std::shared_ptr<xtypes::TypeInformationParameter> type_information_;
+    xtypes::TypeInformation type_information_;
 
 private:
 

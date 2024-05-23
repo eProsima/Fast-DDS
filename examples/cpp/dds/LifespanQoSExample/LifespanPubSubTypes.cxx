@@ -219,10 +219,10 @@ bool LifespanPubSubType::getKey(
     return true;
 }
 
-void LifespanPubSubType::register_type_object_representation() const
+void LifespanPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_Lifespan_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_Lifespan_type_identifier(type_ids);
 }
 
 
