@@ -676,7 +676,7 @@ public:
      *
      * @return DataRepresentationQosPolicy reference
      */
-    const DataRepresentationQosPolicy& representation() const
+    FASTDDS_EXPORTED_API const DataRepresentationQosPolicy& representation() const
     {
         return representation_;
     }
@@ -686,7 +686,7 @@ public:
      *
      * @return DataRepresentationQosPolicy reference
      */
-    DataRepresentationQosPolicy& representation()
+    FASTDDS_EXPORTED_API DataRepresentationQosPolicy& representation()
     {
         return representation_;
     }
@@ -696,7 +696,7 @@ public:
      *
      * @param representation new value for the DataRepresentationQosPolicy
      */
-    void representation(
+    FASTDDS_EXPORTED_API void representation(
             const DataRepresentationQosPolicy& representation)
     {
         representation_ = representation;

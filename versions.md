@@ -33,6 +33,7 @@ Forthcoming
 * Calling `DataReader::return_loan` returns `ReturnCode_t::RETCODE_OK` both for empty sequences and for sequences that were not loaned.
 * Refactor examples:
   * Hello world example with wait-sets and environment XML profiles.
+* Removed `TypeConsistencyQos` from DataReader, and included `TypeConsistencyEnforcementQosPolicy` and `DataRepresentationQosPolicy`
 
 Version 2.14.0
 --------------
