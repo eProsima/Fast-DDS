@@ -34,6 +34,7 @@ Forthcoming
 * Refactor examples:
   * Hello world example with wait-sets and environment XML profiles.
 * Removed `TypeConsistencyQos` from DataReader, and included `TypeConsistencyEnforcementQosPolicy` and `DataRepresentationQosPolicy`
+* Added new `flow_controller_descriptor_list` XML configuration, remove `ThroughtputController`.
 
 Version 2.14.0
 --------------
