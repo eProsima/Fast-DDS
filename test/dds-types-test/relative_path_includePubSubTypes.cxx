@@ -219,10 +219,10 @@ bool RelativePathIncludeStructPubSubType::getKey(
     return true;
 }
 
-void RelativePathIncludeStructPubSubType::register_type_object_representation() const
+void RelativePathIncludeStructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_RelativePathIncludeStruct_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_RelativePathIncludeStruct_type_identifier(type_ids);
 }
 
 

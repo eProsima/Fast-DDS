@@ -219,10 +219,10 @@ bool StructTypePubSubType::getKey(
     return true;
 }
 
-void StructTypePubSubType::register_type_object_representation() const
+void StructTypePubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_StructType_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_StructType_type_identifier(type_ids);
 }
 
 
@@ -415,10 +415,10 @@ bool ContentFilterTestTypePubSubType::getKey(
     return true;
 }
 
-void ContentFilterTestTypePubSubType::register_type_object_representation() const
+void ContentFilterTestTypePubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_ContentFilterTestType_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_ContentFilterTestType_type_identifier(type_ids);
 }
 
 

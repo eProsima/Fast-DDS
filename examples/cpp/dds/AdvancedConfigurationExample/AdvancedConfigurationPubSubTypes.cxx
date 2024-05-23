@@ -219,10 +219,10 @@ bool AdvancedConfigurationPubSubType::getKey(
     return true;
 }
 
-void AdvancedConfigurationPubSubType::register_type_object_representation() const
+void AdvancedConfigurationPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_AdvancedConfiguration_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_AdvancedConfiguration_type_identifier(type_ids);
 }
 
 

@@ -3361,7 +3361,7 @@ public:
 
 private:
 
-    InnerBitsetHelper m_var_bitset;
+    InnerBitsetHelper m_var_bitset{};
 
 };
 /*!

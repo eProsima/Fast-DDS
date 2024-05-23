@@ -234,15 +234,22 @@ ReturnCode_t DynamicPubSubType::set_dynamic_type(
     return RETCODE_BAD_PARAMETER;
 }
 
-void DynamicPubSubType::register_type_object_representation() const
+void DynamicPubSubType::register_type_object_representation()
 {
     if (dynamic_type_)
     {
-        xtypes::TypeIdentifier type_id;
+        xtypes::TypeIdentifierPair type_ids;
         if (RETCODE_OK != fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
-                        register_typeobject_w_dynamic_type(dynamic_type_, type_id))
+                        register_typeobject_w_dynamic_type(dynamic_type_, type_ids))
         {
             EPROSIMA_LOG_ERROR(DYN_TYPES, "Error registering DynamicType TypeObject representation.");
+        }
+        // TODO(richiware) review
+        if (RETCODE_OK !=
+                fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().get_type_information(
+                    type_ids, type_information_))
+        {
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error retrieving DynamicType TypeInformation.");
         }
     }
     else

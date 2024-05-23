@@ -219,10 +219,10 @@ bool FixedSizedPubSubType::getKey(
     return true;
 }
 
-void FixedSizedPubSubType::register_type_object_representation() const
+void FixedSizedPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_FixedSized_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_FixedSized_type_identifier(type_ids);
 }
 
 

@@ -219,10 +219,10 @@ bool KeyedHelloWorldPubSubType::getKey(
     return true;
 }
 
-void KeyedHelloWorldPubSubType::register_type_object_representation() const
+void KeyedHelloWorldPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_KeyedHelloWorld_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_KeyedHelloWorld_type_identifier(type_ids);
 }
 
 

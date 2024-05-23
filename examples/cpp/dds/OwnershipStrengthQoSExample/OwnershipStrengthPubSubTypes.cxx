@@ -219,10 +219,10 @@ bool ExampleMessagePubSubType::getKey(
     return true;
 }
 
-void ExampleMessagePubSubType::register_type_object_representation() const
+void ExampleMessagePubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_ExampleMessage_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_ExampleMessage_type_identifier(type_ids);
 }
 
 

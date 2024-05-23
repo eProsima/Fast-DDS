@@ -219,10 +219,10 @@ bool UnboundedHelloWorldPubSubType::getKey(
     return true;
 }
 
-void UnboundedHelloWorldPubSubType::register_type_object_representation() const
+void UnboundedHelloWorldPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_UnboundedHelloWorld_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_UnboundedHelloWorld_type_identifier(type_ids);
 }
 
 

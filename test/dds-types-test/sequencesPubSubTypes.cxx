@@ -219,10 +219,10 @@ bool SequenceShortPubSubType::getKey(
     return true;
 }
 
-void SequenceShortPubSubType::register_type_object_representation() const
+void SequenceShortPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_SequenceShort_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_SequenceShort_type_identifier(type_ids);
 }
 
 SequenceUShortPubSubType::SequenceUShortPubSubType()
@@ -413,10 +413,10 @@ bool SequenceUShortPubSubType::getKey(
     return true;
 }
 
-void SequenceUShortPubSubType::register_type_object_representation() const
+void SequenceUShortPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_SequenceUShort_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_SequenceUShort_type_identifier(type_ids);
 }
 
 SequenceLongPubSubType::SequenceLongPubSubType()
@@ -607,10 +607,10 @@ bool SequenceLongPubSubType::getKey(
     return true;
 }
 
-void SequenceLongPubSubType::register_type_object_representation() const
+void SequenceLongPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_SequenceLong_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_SequenceLong_type_identifier(type_ids);
 }
 
 SequenceULongPubSubType::SequenceULongPubSubType()
@@ -801,10 +801,10 @@ bool SequenceULongPubSubType::getKey(
     return true;
 }
 
-void SequenceULongPubSubType::register_type_object_representation() const
+void SequenceULongPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_SequenceULong_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_SequenceULong_type_identifier(type_ids);
 }
 
 SequenceLongLongPubSubType::SequenceLongLongPubSubType()
@@ -995,10 +995,10 @@ bool SequenceLongLongPubSubType::getKey(
     return true;
 }
 
-void SequenceLongLongPubSubType::register_type_object_representation() const
+void SequenceLongLongPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_SequenceLongLong_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_SequenceLongLong_type_identifier(type_ids);
 }
 
 SequenceULongLongPubSubType::SequenceULongLongPubSubType()
@@ -1189,10 +1189,10 @@ bool SequenceULongLongPubSubType::getKey(
     return true;
 }
 
-void SequenceULongLongPubSubType::register_type_object_representation() const
+void SequenceULongLongPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_SequenceULongLong_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_SequenceULongLong_type_identifier(type_ids);
 }
 
 SequenceFloatPubSubType::SequenceFloatPubSubType()
@@ -1383,10 +1383,10 @@ bool SequenceFloatPubSubType::getKey(
     return true;
 }
 
-void SequenceFloatPubSubType::register_type_object_representation() const
+void SequenceFloatPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_SequenceFloat_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_SequenceFloat_type_identifier(type_ids);
 }
 
 SequenceDoublePubSubType::SequenceDoublePubSubType()
@@ -1577,10 +1577,10 @@ bool SequenceDoublePubSubType::getKey(
     return true;
 }
 
-void SequenceDoublePubSubType::register_type_object_representation() const
+void SequenceDoublePubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_SequenceDouble_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_SequenceDouble_type_identifier(type_ids);
 }
 
 SequenceLongDoublePubSubType::SequenceLongDoublePubSubType()
@@ -1771,10 +1771,10 @@ bool SequenceLongDoublePubSubType::getKey(
     return true;
 }
 
-void SequenceLongDoublePubSubType::register_type_object_representation() const
+void SequenceLongDoublePubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_SequenceLongDouble_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_SequenceLongDouble_type_identifier(type_ids);
 }
 
 SequenceBooleanPubSubType::SequenceBooleanPubSubType()
@@ -1965,10 +1965,10 @@ bool SequenceBooleanPubSubType::getKey(
     return true;
 }
 
-void SequenceBooleanPubSubType::register_type_object_representation() const
+void SequenceBooleanPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_SequenceBoolean_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_SequenceBoolean_type_identifier(type_ids);
 }
 
 SequenceOctetPubSubType::SequenceOctetPubSubType()
@@ -2159,10 +2159,10 @@ bool SequenceOctetPubSubType::getKey(
     return true;
 }
 
-void SequenceOctetPubSubType::register_type_object_representation() const
+void SequenceOctetPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_SequenceOctet_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_SequenceOctet_type_identifier(type_ids);
 }
 
 SequenceCharPubSubType::SequenceCharPubSubType()
@@ -2353,10 +2353,10 @@ bool SequenceCharPubSubType::getKey(
     return true;
 }
 
-void SequenceCharPubSubType::register_type_object_representation() const
+void SequenceCharPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_SequenceChar_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_SequenceChar_type_identifier(type_ids);
 }
 
 SequenceWCharPubSubType::SequenceWCharPubSubType()
@@ -2547,10 +2547,10 @@ bool SequenceWCharPubSubType::getKey(
     return true;
 }
 
-void SequenceWCharPubSubType::register_type_object_representation() const
+void SequenceWCharPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_SequenceWChar_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_SequenceWChar_type_identifier(type_ids);
 }
 
 SequenceStringPubSubType::SequenceStringPubSubType()
@@ -2741,10 +2741,10 @@ bool SequenceStringPubSubType::getKey(
     return true;
 }
 
-void SequenceStringPubSubType::register_type_object_representation() const
+void SequenceStringPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_SequenceString_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_SequenceString_type_identifier(type_ids);
 }
 
 SequenceWStringPubSubType::SequenceWStringPubSubType()
@@ -2935,10 +2935,10 @@ bool SequenceWStringPubSubType::getKey(
     return true;
 }
 
-void SequenceWStringPubSubType::register_type_object_representation() const
+void SequenceWStringPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_SequenceWString_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_SequenceWString_type_identifier(type_ids);
 }
 
 SequenceStringBoundedPubSubType::SequenceStringBoundedPubSubType()
@@ -3129,10 +3129,10 @@ bool SequenceStringBoundedPubSubType::getKey(
     return true;
 }
 
-void SequenceStringBoundedPubSubType::register_type_object_representation() const
+void SequenceStringBoundedPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_SequenceStringBounded_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_SequenceStringBounded_type_identifier(type_ids);
 }
 
 SequenceWStringBoundedPubSubType::SequenceWStringBoundedPubSubType()
@@ -3323,10 +3323,10 @@ bool SequenceWStringBoundedPubSubType::getKey(
     return true;
 }
 
-void SequenceWStringBoundedPubSubType::register_type_object_representation() const
+void SequenceWStringBoundedPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_SequenceWStringBounded_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_SequenceWStringBounded_type_identifier(type_ids);
 }
 
 SequenceEnumPubSubType::SequenceEnumPubSubType()
@@ -3517,10 +3517,10 @@ bool SequenceEnumPubSubType::getKey(
     return true;
 }
 
-void SequenceEnumPubSubType::register_type_object_representation() const
+void SequenceEnumPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_SequenceEnum_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_SequenceEnum_type_identifier(type_ids);
 }
 
 SequenceBitMaskPubSubType::SequenceBitMaskPubSubType()
@@ -3711,10 +3711,10 @@ bool SequenceBitMaskPubSubType::getKey(
     return true;
 }
 
-void SequenceBitMaskPubSubType::register_type_object_representation() const
+void SequenceBitMaskPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_SequenceBitMask_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_SequenceBitMask_type_identifier(type_ids);
 }
 
 SequenceAliasPubSubType::SequenceAliasPubSubType()
@@ -3905,10 +3905,10 @@ bool SequenceAliasPubSubType::getKey(
     return true;
 }
 
-void SequenceAliasPubSubType::register_type_object_representation() const
+void SequenceAliasPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_SequenceAlias_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_SequenceAlias_type_identifier(type_ids);
 }
 
 SequenceShortArrayPubSubType::SequenceShortArrayPubSubType()
@@ -4099,10 +4099,10 @@ bool SequenceShortArrayPubSubType::getKey(
     return true;
 }
 
-void SequenceShortArrayPubSubType::register_type_object_representation() const
+void SequenceShortArrayPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_SequenceShortArray_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_SequenceShortArray_type_identifier(type_ids);
 }
 
 SequenceSequencePubSubType::SequenceSequencePubSubType()
@@ -4293,10 +4293,10 @@ bool SequenceSequencePubSubType::getKey(
     return true;
 }
 
-void SequenceSequencePubSubType::register_type_object_representation() const
+void SequenceSequencePubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_SequenceSequence_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_SequenceSequence_type_identifier(type_ids);
 }
 
 SequenceMapPubSubType::SequenceMapPubSubType()
@@ -4487,10 +4487,10 @@ bool SequenceMapPubSubType::getKey(
     return true;
 }
 
-void SequenceMapPubSubType::register_type_object_representation() const
+void SequenceMapPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_SequenceMap_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_SequenceMap_type_identifier(type_ids);
 }
 
 SequenceUnionPubSubType::SequenceUnionPubSubType()
@@ -4681,10 +4681,10 @@ bool SequenceUnionPubSubType::getKey(
     return true;
 }
 
-void SequenceUnionPubSubType::register_type_object_representation() const
+void SequenceUnionPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_SequenceUnion_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_SequenceUnion_type_identifier(type_ids);
 }
 
 SequenceStructurePubSubType::SequenceStructurePubSubType()
@@ -4875,10 +4875,10 @@ bool SequenceStructurePubSubType::getKey(
     return true;
 }
 
-void SequenceStructurePubSubType::register_type_object_representation() const
+void SequenceStructurePubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_SequenceStructure_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_SequenceStructure_type_identifier(type_ids);
 }
 
 SequenceBitsetPubSubType::SequenceBitsetPubSubType()
@@ -5069,10 +5069,10 @@ bool SequenceBitsetPubSubType::getKey(
     return true;
 }
 
-void SequenceBitsetPubSubType::register_type_object_representation() const
+void SequenceBitsetPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_SequenceBitset_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_SequenceBitset_type_identifier(type_ids);
 }
 
 BoundedSmallSequencesPubSubType::BoundedSmallSequencesPubSubType()
@@ -5263,10 +5263,10 @@ bool BoundedSmallSequencesPubSubType::getKey(
     return true;
 }
 
-void BoundedSmallSequencesPubSubType::register_type_object_representation() const
+void BoundedSmallSequencesPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_BoundedSmallSequences_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_BoundedSmallSequences_type_identifier(type_ids);
 }
 
 BoundedBigSequencesPubSubType::BoundedBigSequencesPubSubType()
@@ -5457,10 +5457,10 @@ bool BoundedBigSequencesPubSubType::getKey(
     return true;
 }
 
-void BoundedBigSequencesPubSubType::register_type_object_representation() const
+void BoundedBigSequencesPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_BoundedBigSequences_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_BoundedBigSequences_type_identifier(type_ids);
 }
 
 

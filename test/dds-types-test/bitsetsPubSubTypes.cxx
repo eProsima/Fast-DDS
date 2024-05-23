@@ -219,10 +219,10 @@ bool BitsetStructPubSubType::getKey(
     return true;
 }
 
-void BitsetStructPubSubType::register_type_object_representation() const
+void BitsetStructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_BitsetStruct_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_BitsetStruct_type_identifier(type_ids);
 }
 
 

@@ -222,10 +222,10 @@ namespace eprosima {
                 return true;
             }
 
-            void ConnectionPubSubType::register_type_object_representation() const
+            void ConnectionPubSubType::register_type_object_representation()
             {
-                eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-                register_Connection_type_identifier(type_id);
+                eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+                register_Connection_type_identifier(type_ids);
             }
 
             QosPolicyCount_sPubSubType::QosPolicyCount_sPubSubType()
@@ -416,10 +416,10 @@ namespace eprosima {
                 return true;
             }
 
-            void QosPolicyCount_sPubSubType::register_type_object_representation() const
+            void QosPolicyCount_sPubSubType::register_type_object_representation()
             {
-                eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-                register_QosPolicyCount_s_type_identifier(type_id);
+                eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+                register_QosPolicyCount_s_type_identifier(type_ids);
             }
 
             BaseStatus_sPubSubType::BaseStatus_sPubSubType()
@@ -610,10 +610,10 @@ namespace eprosima {
                 return true;
             }
 
-            void BaseStatus_sPubSubType::register_type_object_representation() const
+            void BaseStatus_sPubSubType::register_type_object_representation()
             {
-                eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-                register_BaseStatus_s_type_identifier(type_id);
+                eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+                register_BaseStatus_s_type_identifier(type_ids);
             }
 
 
@@ -805,10 +805,10 @@ namespace eprosima {
                 return true;
             }
 
-            void IncompatibleQoSStatus_sPubSubType::register_type_object_representation() const
+            void IncompatibleQoSStatus_sPubSubType::register_type_object_representation()
             {
-                eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-                register_IncompatibleQoSStatus_s_type_identifier(type_id);
+                eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+                register_IncompatibleQoSStatus_s_type_identifier(type_ids);
             }
 
             LivelinessChangedStatus_sPubSubType::LivelinessChangedStatus_sPubSubType()
@@ -999,10 +999,10 @@ namespace eprosima {
                 return true;
             }
 
-            void LivelinessChangedStatus_sPubSubType::register_type_object_representation() const
+            void LivelinessChangedStatus_sPubSubType::register_type_object_representation()
             {
-                eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-                register_LivelinessChangedStatus_s_type_identifier(type_id);
+                eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+                register_LivelinessChangedStatus_s_type_identifier(type_ids);
             }
 
             DeadlineMissedStatus_sPubSubType::DeadlineMissedStatus_sPubSubType()
@@ -1193,10 +1193,10 @@ namespace eprosima {
                 return true;
             }
 
-            void DeadlineMissedStatus_sPubSubType::register_type_object_representation() const
+            void DeadlineMissedStatus_sPubSubType::register_type_object_representation()
             {
-                eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-                register_DeadlineMissedStatus_s_type_identifier(type_id);
+                eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+                register_DeadlineMissedStatus_s_type_identifier(type_ids);
             }
 
 
@@ -1394,10 +1394,10 @@ namespace eprosima {
                 return true;
             }
 
-            void MonitorServiceStatusDataPubSubType::register_type_object_representation() const
+            void MonitorServiceStatusDataPubSubType::register_type_object_representation()
             {
-                eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-                register_MonitorServiceStatusData_type_identifier(type_id);
+                eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+                register_MonitorServiceStatusData_type_identifier(type_ids);
             }
 
         } // namespace statistics

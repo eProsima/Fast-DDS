@@ -219,10 +219,10 @@ bool TopicPubSubType::getKey(
     return true;
 }
 
-void TopicPubSubType::register_type_object_representation() const
+void TopicPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_Topic_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_Topic_type_identifier(type_ids);
 }
 
 

@@ -219,10 +219,10 @@ bool CustomPayloadPoolDataPubSubType::getKey(
     return true;
 }
 
-void CustomPayloadPoolDataPubSubType::register_type_object_representation() const
+void CustomPayloadPoolDataPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_CustomPayloadPoolData_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_CustomPayloadPoolData_type_identifier(type_ids);
 }
 
 

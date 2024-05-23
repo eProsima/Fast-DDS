@@ -219,10 +219,10 @@ bool FilteringExamplePubSubType::getKey(
     return true;
 }
 
-void FilteringExamplePubSubType::register_type_object_representation() const
+void FilteringExamplePubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_FilteringExample_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_FilteringExample_type_identifier(type_ids);
 }
 
 

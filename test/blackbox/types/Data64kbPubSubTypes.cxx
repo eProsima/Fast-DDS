@@ -219,10 +219,10 @@ bool Data64kbPubSubType::getKey(
     return true;
 }
 
-void Data64kbPubSubType::register_type_object_representation() const
+void Data64kbPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_Data64kb_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_Data64kb_type_identifier(type_ids);
 }
 
 

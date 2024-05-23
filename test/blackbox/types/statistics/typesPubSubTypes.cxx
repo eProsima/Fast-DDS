@@ -223,10 +223,10 @@ namespace eprosima {
                     return true;
                 }
 
-                void EntityId_sPubSubType::register_type_object_representation() const
+                void EntityId_sPubSubType::register_type_object_representation()
                 {
-                    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-                    register_EntityId_s_type_identifier(type_id);
+                    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+                    register_EntityId_s_type_identifier(type_ids);
                 }
 
                 GuidPrefix_sPubSubType::GuidPrefix_sPubSubType()
@@ -417,10 +417,10 @@ namespace eprosima {
                     return true;
                 }
 
-                void GuidPrefix_sPubSubType::register_type_object_representation() const
+                void GuidPrefix_sPubSubType::register_type_object_representation()
                 {
-                    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-                    register_GuidPrefix_s_type_identifier(type_id);
+                    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+                    register_GuidPrefix_s_type_identifier(type_ids);
                 }
 
                 GUID_sPubSubType::GUID_sPubSubType()
@@ -611,10 +611,10 @@ namespace eprosima {
                     return true;
                 }
 
-                void GUID_sPubSubType::register_type_object_representation() const
+                void GUID_sPubSubType::register_type_object_representation()
                 {
-                    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-                    register_GUID_s_type_identifier(type_id);
+                    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+                    register_GUID_s_type_identifier(type_ids);
                 }
 
                 SequenceNumber_sPubSubType::SequenceNumber_sPubSubType()
@@ -805,10 +805,10 @@ namespace eprosima {
                     return true;
                 }
 
-                void SequenceNumber_sPubSubType::register_type_object_representation() const
+                void SequenceNumber_sPubSubType::register_type_object_representation()
                 {
-                    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-                    register_SequenceNumber_s_type_identifier(type_id);
+                    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+                    register_SequenceNumber_s_type_identifier(type_ids);
                 }
 
                 SampleIdentity_sPubSubType::SampleIdentity_sPubSubType()
@@ -999,10 +999,10 @@ namespace eprosima {
                     return true;
                 }
 
-                void SampleIdentity_sPubSubType::register_type_object_representation() const
+                void SampleIdentity_sPubSubType::register_type_object_representation()
                 {
-                    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-                    register_SampleIdentity_s_type_identifier(type_id);
+                    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+                    register_SampleIdentity_s_type_identifier(type_ids);
                 }
 
                 Locator_sPubSubType::Locator_sPubSubType()
@@ -1193,10 +1193,10 @@ namespace eprosima {
                     return true;
                 }
 
-                void Locator_sPubSubType::register_type_object_representation() const
+                void Locator_sPubSubType::register_type_object_representation()
                 {
-                    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-                    register_Locator_s_type_identifier(type_id);
+                    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+                    register_Locator_s_type_identifier(type_ids);
                 }
 
             } // namespace detail
@@ -1389,10 +1389,10 @@ namespace eprosima {
                 return true;
             }
 
-            void DiscoveryTimePubSubType::register_type_object_representation() const
+            void DiscoveryTimePubSubType::register_type_object_representation()
             {
-                eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-                register_DiscoveryTime_type_identifier(type_id);
+                eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+                register_DiscoveryTime_type_identifier(type_ids);
             }
 
             EntityCountPubSubType::EntityCountPubSubType()
@@ -1583,10 +1583,10 @@ namespace eprosima {
                 return true;
             }
 
-            void EntityCountPubSubType::register_type_object_representation() const
+            void EntityCountPubSubType::register_type_object_representation()
             {
-                eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-                register_EntityCount_type_identifier(type_id);
+                eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+                register_EntityCount_type_identifier(type_ids);
             }
 
             SampleIdentityCountPubSubType::SampleIdentityCountPubSubType()
@@ -1777,10 +1777,10 @@ namespace eprosima {
                 return true;
             }
 
-            void SampleIdentityCountPubSubType::register_type_object_representation() const
+            void SampleIdentityCountPubSubType::register_type_object_representation()
             {
-                eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-                register_SampleIdentityCount_type_identifier(type_id);
+                eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+                register_SampleIdentityCount_type_identifier(type_ids);
             }
 
             Entity2LocatorTrafficPubSubType::Entity2LocatorTrafficPubSubType()
@@ -1971,10 +1971,10 @@ namespace eprosima {
                 return true;
             }
 
-            void Entity2LocatorTrafficPubSubType::register_type_object_representation() const
+            void Entity2LocatorTrafficPubSubType::register_type_object_representation()
             {
-                eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-                register_Entity2LocatorTraffic_type_identifier(type_id);
+                eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+                register_Entity2LocatorTraffic_type_identifier(type_ids);
             }
 
             WriterReaderDataPubSubType::WriterReaderDataPubSubType()
@@ -2165,10 +2165,10 @@ namespace eprosima {
                 return true;
             }
 
-            void WriterReaderDataPubSubType::register_type_object_representation() const
+            void WriterReaderDataPubSubType::register_type_object_representation()
             {
-                eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-                register_WriterReaderData_type_identifier(type_id);
+                eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+                register_WriterReaderData_type_identifier(type_ids);
             }
 
             Locator2LocatorDataPubSubType::Locator2LocatorDataPubSubType()
@@ -2359,10 +2359,10 @@ namespace eprosima {
                 return true;
             }
 
-            void Locator2LocatorDataPubSubType::register_type_object_representation() const
+            void Locator2LocatorDataPubSubType::register_type_object_representation()
             {
-                eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-                register_Locator2LocatorData_type_identifier(type_id);
+                eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+                register_Locator2LocatorData_type_identifier(type_ids);
             }
 
             EntityDataPubSubType::EntityDataPubSubType()
@@ -2553,10 +2553,10 @@ namespace eprosima {
                 return true;
             }
 
-            void EntityDataPubSubType::register_type_object_representation() const
+            void EntityDataPubSubType::register_type_object_representation()
             {
-                eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-                register_EntityData_type_identifier(type_id);
+                eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+                register_EntityData_type_identifier(type_ids);
             }
 
             PhysicalDataPubSubType::PhysicalDataPubSubType()
@@ -2747,10 +2747,10 @@ namespace eprosima {
                 return true;
             }
 
-            void PhysicalDataPubSubType::register_type_object_representation() const
+            void PhysicalDataPubSubType::register_type_object_representation()
             {
-                eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-                register_PhysicalData_type_identifier(type_id);
+                eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+                register_PhysicalData_type_identifier(type_ids);
             }
 
             namespace EventKind {

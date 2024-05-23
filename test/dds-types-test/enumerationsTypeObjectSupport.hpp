@@ -39,6 +39,19 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 namespace Test {
+/**
+ * @brief Register InnerEnumHelper related TypeIdentifier.
+ *        Fully-descriptive TypeIdentifiers are directly registered.
+ *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
+ *        indirectly registered as well.
+ *
+ * @param[out] TypeIdentifier of the registered type.
+ *             The returned TypeIdentifier corresponds to the complete TypeIdentifier in case of hashed TypeIdentifiers.
+ *             Invalid TypeIdentifier is returned in case of error.
+ */
+eProsima_user_DllExport void register_InnerEnumHelper_type_identifier(
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
+
 } // namespace Test
 /**
  * @brief Register EnumStructure related TypeIdentifier.
@@ -51,7 +64,7 @@ namespace Test {
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_EnumStructure_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register BitMaskStructure related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -63,7 +76,7 @@ eProsima_user_DllExport void register_EnumStructure_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_BitMaskStructure_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register BoundedBitMaskStructure related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -75,7 +88,7 @@ eProsima_user_DllExport void register_BitMaskStructure_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_BoundedBitMaskStructure_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 
 
 #endif // DOXYGEN_SHOULD_SKIP_THIS_PUBLIC

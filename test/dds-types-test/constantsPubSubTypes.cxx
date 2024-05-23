@@ -220,10 +220,10 @@ namespace const_module1 {
         return true;
     }
 
-    void ModuleConstsLiteralsStructPubSubType::register_type_object_representation() const
+    void ModuleConstsLiteralsStructPubSubType::register_type_object_representation()
     {
-        eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-        register_ModuleConstsLiteralsStruct_type_identifier(type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+        register_ModuleConstsLiteralsStruct_type_identifier(type_ids);
     }
 
 } // namespace const_module1
@@ -417,10 +417,10 @@ namespace const_module2 {
         return true;
     }
 
-    void Module2ConstsLiteralsStructPubSubType::register_type_object_representation() const
+    void Module2ConstsLiteralsStructPubSubType::register_type_object_representation()
     {
-        eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-        register_Module2ConstsLiteralsStruct_type_identifier(type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+        register_Module2ConstsLiteralsStruct_type_identifier(type_ids);
     }
 
 } // namespace const_module2
@@ -613,10 +613,10 @@ bool ConstsLiteralsStructPubSubType::getKey(
     return true;
 }
 
-void ConstsLiteralsStructPubSubType::register_type_object_representation() const
+void ConstsLiteralsStructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_ConstsLiteralsStruct_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_ConstsLiteralsStruct_type_identifier(type_ids);
 }
 
 

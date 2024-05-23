@@ -52,7 +52,7 @@ namespace detail {
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_EntityId_s_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 
 /**
  * @brief Register GuidPrefix_s related TypeIdentifier.
@@ -65,7 +65,7 @@ eProsima_user_DllExport void register_EntityId_s_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_GuidPrefix_s_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 
 /**
  * @brief Register GUID_s related TypeIdentifier.
@@ -78,7 +78,7 @@ eProsima_user_DllExport void register_GuidPrefix_s_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_GUID_s_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 
 /**
  * @brief Register SequenceNumber_s related TypeIdentifier.
@@ -91,7 +91,7 @@ eProsima_user_DllExport void register_GUID_s_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_SequenceNumber_s_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 
 /**
  * @brief Register SampleIdentity_s related TypeIdentifier.
@@ -104,7 +104,7 @@ eProsima_user_DllExport void register_SequenceNumber_s_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_SampleIdentity_s_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 
 /**
  * @brief Register Locator_s related TypeIdentifier.
@@ -117,7 +117,7 @@ eProsima_user_DllExport void register_SampleIdentity_s_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_Locator_s_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 
 } // namespace detail
 
@@ -132,7 +132,7 @@ eProsima_user_DllExport void register_Locator_s_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_DiscoveryTime_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 
 /**
  * @brief Register EntityCount related TypeIdentifier.
@@ -145,7 +145,7 @@ eProsima_user_DllExport void register_DiscoveryTime_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_EntityCount_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 
 /**
  * @brief Register SampleIdentityCount related TypeIdentifier.
@@ -158,7 +158,7 @@ eProsima_user_DllExport void register_EntityCount_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_SampleIdentityCount_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 
 /**
  * @brief Register Entity2LocatorTraffic related TypeIdentifier.
@@ -171,7 +171,7 @@ eProsima_user_DllExport void register_SampleIdentityCount_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_Entity2LocatorTraffic_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 
 /**
  * @brief Register WriterReaderData related TypeIdentifier.
@@ -184,7 +184,7 @@ eProsima_user_DllExport void register_Entity2LocatorTraffic_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_WriterReaderData_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 
 /**
  * @brief Register Locator2LocatorData related TypeIdentifier.
@@ -197,7 +197,7 @@ eProsima_user_DllExport void register_WriterReaderData_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_Locator2LocatorData_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 
 /**
  * @brief Register EntityData related TypeIdentifier.
@@ -210,7 +210,7 @@ eProsima_user_DllExport void register_Locator2LocatorData_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_EntityData_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 
 /**
  * @brief Register PhysicalData related TypeIdentifier.
@@ -223,7 +223,7 @@ eProsima_user_DllExport void register_EntityData_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_PhysicalData_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 
 namespace EventKind {
 } // namespace EventKind
@@ -239,7 +239,7 @@ namespace EventKind {
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_Data_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 
 } // namespace statistics
 

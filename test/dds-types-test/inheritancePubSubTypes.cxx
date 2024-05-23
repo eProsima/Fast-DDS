@@ -219,10 +219,10 @@ bool InnerStructureHelperChildPubSubType::getKey(
     return true;
 }
 
-void InnerStructureHelperChildPubSubType::register_type_object_representation() const
+void InnerStructureHelperChildPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_InnerStructureHelperChild_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_InnerStructureHelperChild_type_identifier(type_ids);
 }
 
 InnerStructureHelperChildChildPubSubType::InnerStructureHelperChildChildPubSubType()
@@ -413,10 +413,10 @@ bool InnerStructureHelperChildChildPubSubType::getKey(
     return true;
 }
 
-void InnerStructureHelperChildChildPubSubType::register_type_object_representation() const
+void InnerStructureHelperChildChildPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_InnerStructureHelperChildChild_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_InnerStructureHelperChildChild_type_identifier(type_ids);
 }
 
 InnerStructureHelperEmptyChildPubSubType::InnerStructureHelperEmptyChildPubSubType()
@@ -607,10 +607,10 @@ bool InnerStructureHelperEmptyChildPubSubType::getKey(
     return true;
 }
 
-void InnerStructureHelperEmptyChildPubSubType::register_type_object_representation() const
+void InnerStructureHelperEmptyChildPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_InnerStructureHelperEmptyChild_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_InnerStructureHelperEmptyChild_type_identifier(type_ids);
 }
 
 InnerStructureHelperEmptyChildChildPubSubType::InnerStructureHelperEmptyChildChildPubSubType()
@@ -801,10 +801,10 @@ bool InnerStructureHelperEmptyChildChildPubSubType::getKey(
     return true;
 }
 
-void InnerStructureHelperEmptyChildChildPubSubType::register_type_object_representation() const
+void InnerStructureHelperEmptyChildChildPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_InnerStructureHelperEmptyChildChild_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_InnerStructureHelperEmptyChildChild_type_identifier(type_ids);
 }
 
 InnerEmptyStructureHelperChildPubSubType::InnerEmptyStructureHelperChildPubSubType()
@@ -995,10 +995,10 @@ bool InnerEmptyStructureHelperChildPubSubType::getKey(
     return true;
 }
 
-void InnerEmptyStructureHelperChildPubSubType::register_type_object_representation() const
+void InnerEmptyStructureHelperChildPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_InnerEmptyStructureHelperChild_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_InnerEmptyStructureHelperChild_type_identifier(type_ids);
 }
 
 StructAliasInheritanceStructPubSubType::StructAliasInheritanceStructPubSubType()
@@ -1189,10 +1189,10 @@ bool StructAliasInheritanceStructPubSubType::getKey(
     return true;
 }
 
-void StructAliasInheritanceStructPubSubType::register_type_object_representation() const
+void StructAliasInheritanceStructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_StructAliasInheritanceStruct_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_StructAliasInheritanceStruct_type_identifier(type_ids);
 }
 
 StructuresInheritanceStructPubSubType::StructuresInheritanceStructPubSubType()
@@ -1383,10 +1383,10 @@ bool StructuresInheritanceStructPubSubType::getKey(
     return true;
 }
 
-void StructuresInheritanceStructPubSubType::register_type_object_representation() const
+void StructuresInheritanceStructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_StructuresInheritanceStruct_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_StructuresInheritanceStruct_type_identifier(type_ids);
 }
 
 
@@ -1580,10 +1580,10 @@ bool BitsetsChildInheritanceStructPubSubType::getKey(
     return true;
 }
 
-void BitsetsChildInheritanceStructPubSubType::register_type_object_representation() const
+void BitsetsChildInheritanceStructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_BitsetsChildInheritanceStruct_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_BitsetsChildInheritanceStruct_type_identifier(type_ids);
 }
 
 

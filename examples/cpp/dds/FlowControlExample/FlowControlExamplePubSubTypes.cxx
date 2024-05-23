@@ -219,10 +219,10 @@ bool FlowControlExamplePubSubType::getKey(
     return true;
 }
 
-void FlowControlExamplePubSubType::register_type_object_representation() const
+void FlowControlExamplePubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_FlowControlExample_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_FlowControlExample_type_identifier(type_ids);
 }
 
 

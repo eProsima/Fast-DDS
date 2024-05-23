@@ -222,10 +222,10 @@ bool EnumStructurePubSubType::getKey(
     return true;
 }
 
-void EnumStructurePubSubType::register_type_object_representation() const
+void EnumStructurePubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_EnumStructure_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_EnumStructure_type_identifier(type_ids);
 }
 
 BitMaskStructurePubSubType::BitMaskStructurePubSubType()
@@ -416,10 +416,10 @@ bool BitMaskStructurePubSubType::getKey(
     return true;
 }
 
-void BitMaskStructurePubSubType::register_type_object_representation() const
+void BitMaskStructurePubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_BitMaskStructure_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_BitMaskStructure_type_identifier(type_ids);
 }
 
 BoundedBitMaskStructurePubSubType::BoundedBitMaskStructurePubSubType()
@@ -610,10 +610,10 @@ bool BoundedBitMaskStructurePubSubType::getKey(
     return true;
 }
 
-void BoundedBitMaskStructurePubSubType::register_type_object_representation() const
+void BoundedBitMaskStructurePubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_BoundedBitMaskStructure_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_BoundedBitMaskStructure_type_identifier(type_ids);
 }
 
 

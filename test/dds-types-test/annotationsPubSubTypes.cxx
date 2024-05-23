@@ -219,10 +219,10 @@ bool AnnotatedStructPubSubType::getKey(
     return true;
 }
 
-void AnnotatedStructPubSubType::register_type_object_representation() const
+void AnnotatedStructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_AnnotatedStruct_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_AnnotatedStruct_type_identifier(type_ids);
 }
 
 EmptyAnnotatedStructPubSubType::EmptyAnnotatedStructPubSubType()
@@ -413,10 +413,10 @@ bool EmptyAnnotatedStructPubSubType::getKey(
     return true;
 }
 
-void EmptyAnnotatedStructPubSubType::register_type_object_representation() const
+void EmptyAnnotatedStructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_EmptyAnnotatedStruct_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_EmptyAnnotatedStruct_type_identifier(type_ids);
 }
 
 
@@ -608,10 +608,10 @@ bool BasicAnnotationsStructPubSubType::getKey(
     return true;
 }
 
-void BasicAnnotationsStructPubSubType::register_type_object_representation() const
+void BasicAnnotationsStructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_BasicAnnotationsStruct_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_BasicAnnotationsStruct_type_identifier(type_ids);
 }
 
 

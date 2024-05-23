@@ -219,10 +219,10 @@ bool RequestTypePubSubType::getKey(
     return true;
 }
 
-void RequestTypePubSubType::register_type_object_representation() const
+void RequestTypePubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_RequestType_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_RequestType_type_identifier(type_ids);
 }
 
 ReplyTypePubSubType::ReplyTypePubSubType()
@@ -413,10 +413,10 @@ bool ReplyTypePubSubType::getKey(
     return true;
 }
 
-void ReplyTypePubSubType::register_type_object_representation() const
+void ReplyTypePubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_ReplyType_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_ReplyType_type_identifier(type_ids);
 }
 
 

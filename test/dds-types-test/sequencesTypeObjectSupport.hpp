@@ -49,7 +49,7 @@
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_SequenceShort_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register SequenceUShort related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -61,7 +61,7 @@ eProsima_user_DllExport void register_SequenceShort_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_SequenceUShort_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register SequenceLong related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -73,7 +73,7 @@ eProsima_user_DllExport void register_SequenceUShort_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_SequenceLong_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register SequenceULong related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -85,7 +85,7 @@ eProsima_user_DllExport void register_SequenceLong_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_SequenceULong_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register SequenceLongLong related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -97,7 +97,7 @@ eProsima_user_DllExport void register_SequenceULong_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_SequenceLongLong_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register SequenceULongLong related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -109,7 +109,7 @@ eProsima_user_DllExport void register_SequenceLongLong_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_SequenceULongLong_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register SequenceFloat related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -121,7 +121,7 @@ eProsima_user_DllExport void register_SequenceULongLong_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_SequenceFloat_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register SequenceDouble related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -133,7 +133,7 @@ eProsima_user_DllExport void register_SequenceFloat_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_SequenceDouble_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register SequenceLongDouble related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -145,7 +145,7 @@ eProsima_user_DllExport void register_SequenceDouble_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_SequenceLongDouble_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register SequenceBoolean related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -157,7 +157,7 @@ eProsima_user_DllExport void register_SequenceLongDouble_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_SequenceBoolean_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register SequenceOctet related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -169,7 +169,7 @@ eProsima_user_DllExport void register_SequenceBoolean_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_SequenceOctet_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register SequenceChar related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -181,7 +181,7 @@ eProsima_user_DllExport void register_SequenceOctet_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_SequenceChar_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register SequenceWChar related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -193,7 +193,7 @@ eProsima_user_DllExport void register_SequenceChar_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_SequenceWChar_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register SequenceString related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -205,7 +205,7 @@ eProsima_user_DllExport void register_SequenceWChar_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_SequenceString_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register SequenceWString related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -217,7 +217,7 @@ eProsima_user_DllExport void register_SequenceString_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_SequenceWString_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register SequenceStringBounded related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -229,7 +229,7 @@ eProsima_user_DllExport void register_SequenceWString_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_SequenceStringBounded_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register SequenceWStringBounded related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -241,7 +241,7 @@ eProsima_user_DllExport void register_SequenceStringBounded_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_SequenceWStringBounded_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register SequenceEnum related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -253,7 +253,7 @@ eProsima_user_DllExport void register_SequenceWStringBounded_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_SequenceEnum_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register SequenceBitMask related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -265,7 +265,7 @@ eProsima_user_DllExport void register_SequenceEnum_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_SequenceBitMask_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register SequenceAlias related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -277,7 +277,7 @@ eProsima_user_DllExport void register_SequenceBitMask_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_SequenceAlias_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register SequenceShortArray related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -289,7 +289,7 @@ eProsima_user_DllExport void register_SequenceAlias_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_SequenceShortArray_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register SequenceSequence related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -301,7 +301,7 @@ eProsima_user_DllExport void register_SequenceShortArray_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_SequenceSequence_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register SequenceMap related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -313,7 +313,7 @@ eProsima_user_DllExport void register_SequenceSequence_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_SequenceMap_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register SequenceUnion related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -325,7 +325,7 @@ eProsima_user_DllExport void register_SequenceMap_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_SequenceUnion_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register SequenceStructure related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -337,7 +337,7 @@ eProsima_user_DllExport void register_SequenceUnion_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_SequenceStructure_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register SequenceBitset related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -349,7 +349,7 @@ eProsima_user_DllExport void register_SequenceStructure_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_SequenceBitset_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register BoundedSmallSequences related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -361,7 +361,7 @@ eProsima_user_DllExport void register_SequenceBitset_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_BoundedSmallSequences_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register BoundedBigSequences related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -373,7 +373,7 @@ eProsima_user_DllExport void register_BoundedSmallSequences_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_BoundedBigSequences_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 
 
 #endif // DOXYGEN_SHOULD_SKIP_THIS_PUBLIC

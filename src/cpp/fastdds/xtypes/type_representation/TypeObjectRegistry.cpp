@@ -56,7 +56,7 @@ bool TypeRegistryEntry::operator !=(
 ReturnCode_t TypeObjectRegistry::register_type_object(
         const std::string& type_name,
         const CompleteTypeObject& complete_type_object,
-        TypeIdentifier& type_id)
+        TypeIdentifierPair& type_ids)
 {
     if (type_name.empty())
     {
@@ -77,12 +77,10 @@ ReturnCode_t TypeObjectRegistry::register_type_object(
     TypeRegistryEntry minimal_entry;
     complete_entry.type_object_.complete(complete_type_object);
     minimal_entry.type_object_ = build_minimal_from_complete_type_object(complete_type_object);
-    TypeIdentifierPair type_ids;
     type_ids.type_identifier1(calculate_type_identifier(minimal_entry.type_object_,
             minimal_entry.type_object_serialized_size_));
     type_ids.type_identifier2(calculate_type_identifier(complete_entry.type_object_,
             complete_entry.type_object_serialized_size_));
-    type_id = type_ids.type_identifier2();
 
     std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
     auto type_ids_result {local_type_identifiers_.insert({type_name, type_ids})};
@@ -114,17 +112,17 @@ ReturnCode_t TypeObjectRegistry::register_type_object(
 
 ReturnCode_t TypeObjectRegistry::register_type_identifier(
         const std::string& type_name,
-        const TypeIdentifier& type_identifier)
+        TypeIdentifierPair& type_identifier)
 {
     // Preconditions
-    if (TypeObjectUtils::is_direct_hash_type_identifier(type_identifier) || type_name.empty())
+    if (TypeObjectUtils::is_direct_hash_type_identifier(type_identifier.type_identifier1()) || type_name.empty())
     {
         return eprosima::fastdds::dds::RETCODE_PRECONDITION_NOT_MET;
     }
 #if !defined(NDEBUG)
     try
     {
-        TypeObjectUtils::type_identifier_consistency(type_identifier);
+        TypeObjectUtils::type_identifier_consistency(type_identifier.type_identifier1());
     }
     catch (eprosima::fastdds::dds::xtypes::InvalidArgumentError& exception)
     {
@@ -132,100 +130,96 @@ ReturnCode_t TypeObjectRegistry::register_type_identifier(
         return eprosima::fastdds::dds::RETCODE_PRECONDITION_NOT_MET;
     }
 #endif // !defined(NDEBUG)
-    TypeIdentifierPair type_identifiers;
-    type_identifiers.type_identifier1(type_identifier);
 
-    switch (type_identifier._d())
+    switch (type_identifier.type_identifier1()._d())
     {
         case TI_PLAIN_SEQUENCE_SMALL:
-            if (EK_BOTH != type_identifier.seq_sdefn().header().equiv_kind())
+            if (EK_BOTH != type_identifier.type_identifier1().seq_sdefn().header().equiv_kind())
             {
-                type_identifiers.type_identifier2(type_identifier);
-                type_identifiers.type_identifier1().seq_sdefn().header().equiv_kind(EK_MINIMAL);
-                type_identifiers.type_identifier1().seq_sdefn().element_identifier(new TypeIdentifier(
+                type_identifier.type_identifier2(type_identifier.type_identifier1());
+                type_identifier.type_identifier1().seq_sdefn().header().equiv_kind(EK_MINIMAL);
+                type_identifier.type_identifier1().seq_sdefn().element_identifier(new TypeIdentifier(
                             get_complementary_type_identifier(
-                                *type_identifiers.type_identifier2().seq_sdefn().element_identifier())));
+                                *type_identifier.type_identifier2().seq_sdefn().element_identifier())));
             }
             break;
         case TI_PLAIN_SEQUENCE_LARGE:
-            if (EK_BOTH != type_identifier.seq_ldefn().header().equiv_kind())
+            if (EK_BOTH != type_identifier.type_identifier1().seq_ldefn().header().equiv_kind())
             {
-                type_identifiers.type_identifier2(type_identifier);
-                type_identifiers.type_identifier1().seq_ldefn().header().equiv_kind(EK_MINIMAL);
-                type_identifiers.type_identifier1().seq_ldefn().element_identifier(new TypeIdentifier(
+                type_identifier.type_identifier2(type_identifier.type_identifier1());
+                type_identifier.type_identifier1().seq_ldefn().header().equiv_kind(EK_MINIMAL);
+                type_identifier.type_identifier1().seq_ldefn().element_identifier(new TypeIdentifier(
                             get_complementary_type_identifier(
-                                *type_identifiers.type_identifier2().seq_ldefn().element_identifier())));
+                                *type_identifier.type_identifier2().seq_ldefn().element_identifier())));
             }
             break;
         case TI_PLAIN_ARRAY_SMALL:
-            if (EK_BOTH != type_identifier.array_sdefn().header().equiv_kind())
+            if (EK_BOTH != type_identifier.type_identifier1().array_sdefn().header().equiv_kind())
             {
-                type_identifiers.type_identifier2(type_identifier);
-                type_identifiers.type_identifier1().array_sdefn().header().equiv_kind(EK_MINIMAL);
-                type_identifiers.type_identifier1().array_sdefn().element_identifier(new TypeIdentifier(
+                type_identifier.type_identifier2(type_identifier.type_identifier1());
+                type_identifier.type_identifier1().array_sdefn().header().equiv_kind(EK_MINIMAL);
+                type_identifier.type_identifier1().array_sdefn().element_identifier(new TypeIdentifier(
                             get_complementary_type_identifier(
-                                *type_identifiers.type_identifier2().array_sdefn().element_identifier())));
+                                *type_identifier.type_identifier2().array_sdefn().element_identifier())));
             }
             break;
         case TI_PLAIN_ARRAY_LARGE:
-            if (EK_BOTH != type_identifier.array_ldefn().header().equiv_kind())
+            if (EK_BOTH != type_identifier.type_identifier1().array_ldefn().header().equiv_kind())
             {
-                type_identifiers.type_identifier2(type_identifier);
-                type_identifiers.type_identifier1().array_ldefn().header().equiv_kind(EK_MINIMAL);
-                type_identifiers.type_identifier1().array_ldefn().element_identifier(new TypeIdentifier(
+                type_identifier.type_identifier2(type_identifier.type_identifier1());
+                type_identifier.type_identifier1().array_ldefn().header().equiv_kind(EK_MINIMAL);
+                type_identifier.type_identifier1().array_ldefn().element_identifier(new TypeIdentifier(
                             get_complementary_type_identifier(
-                                *type_identifiers.type_identifier2().array_ldefn().element_identifier())));
+                                *type_identifier.type_identifier2().array_ldefn().element_identifier())));
             }
             break;
         case TI_PLAIN_MAP_SMALL:
-            if (EK_BOTH != type_identifier.map_sdefn().header().equiv_kind())
+            if (EK_BOTH != type_identifier.type_identifier1().map_sdefn().header().equiv_kind())
             {
-                type_identifiers.type_identifier2(type_identifier);
-                type_identifiers.type_identifier1().map_sdefn().header().equiv_kind(EK_MINIMAL);
-                type_identifiers.type_identifier1().map_sdefn().element_identifier(new TypeIdentifier(
+                type_identifier.type_identifier2(type_identifier.type_identifier1());
+                type_identifier.type_identifier1().map_sdefn().header().equiv_kind(EK_MINIMAL);
+                type_identifier.type_identifier1().map_sdefn().element_identifier(new TypeIdentifier(
                             get_complementary_type_identifier(
-                                *type_identifiers.type_identifier2().map_sdefn().element_identifier())));
+                                *type_identifier.type_identifier2().map_sdefn().element_identifier())));
             }
-            if (TypeObjectUtils::is_direct_hash_type_identifier(*type_identifier.map_sdefn().key_identifier()))
+            if (TypeObjectUtils::is_direct_hash_type_identifier(*type_identifier.type_identifier1().map_sdefn().
+                            key_identifier()))
             {
-                if (TK_NONE == type_identifiers.type_identifier2()._d())
-                {
-                    type_identifiers.type_identifier2(type_identifier);
-                }
-                type_identifiers.type_identifier1().map_sdefn().key_identifier(new TypeIdentifier(
+                type_identifier.type_identifier2(type_identifier.type_identifier1());
+                type_identifier.type_identifier1().map_sdefn().key_identifier(new TypeIdentifier(
                             get_complementary_type_identifier(
-                                *type_identifiers.type_identifier2().map_sdefn().key_identifier())));
+                                *type_identifier.type_identifier2().map_sdefn().key_identifier())));
             }
             break;
         case TI_PLAIN_MAP_LARGE:
-            if (EK_BOTH != type_identifier.map_ldefn().header().equiv_kind())
+            if (EK_BOTH != type_identifier.type_identifier1().map_ldefn().header().equiv_kind())
             {
-                type_identifiers.type_identifier2(type_identifier);
-                type_identifiers.type_identifier1().map_ldefn().header().equiv_kind(EK_MINIMAL);
-                type_identifiers.type_identifier1().map_ldefn().element_identifier(new TypeIdentifier(
+                type_identifier.type_identifier2(type_identifier.type_identifier1());
+                type_identifier.type_identifier1().map_ldefn().header().equiv_kind(EK_MINIMAL);
+                type_identifier.type_identifier1().map_ldefn().element_identifier(new TypeIdentifier(
                             get_complementary_type_identifier(
-                                *type_identifiers.type_identifier2().map_ldefn().element_identifier())));
+                                *type_identifier.type_identifier2().map_ldefn().element_identifier())));
             }
-            if (TypeObjectUtils::is_direct_hash_type_identifier(*type_identifier.map_ldefn().key_identifier()))
+            if (TypeObjectUtils::is_direct_hash_type_identifier(*type_identifier.type_identifier1().map_ldefn().
+                            key_identifier()))
             {
-                if (TK_NONE == type_identifiers.type_identifier2()._d())
-                {
-                    type_identifiers.type_identifier2(type_identifier);
-                }
-                type_identifiers.type_identifier1().map_ldefn().key_identifier(new TypeIdentifier(
+                type_identifier.type_identifier2(type_identifier.type_identifier1());
+                type_identifier.type_identifier1().map_ldefn().key_identifier(new TypeIdentifier(
                             get_complementary_type_identifier(
-                                *type_identifiers.type_identifier2().map_ldefn().key_identifier())));
+                                *type_identifier.type_identifier2().map_ldefn().key_identifier())));
             }
             break;
         default:
+            ExtendedTypeDefn reset_type_id;
+            type_identifier.type_identifier2().extended_defn(reset_type_id);
             break;
     }
 
     std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
-    auto result {local_type_identifiers_.insert({type_name, type_identifiers})};
+    auto result {local_type_identifiers_.insert({type_name, type_identifier})};
     if (!result.second)
     {
-        if (local_type_identifiers_[type_name] != type_identifiers)
+        if (local_type_identifiers_[type_name] != type_identifier)
         {
             return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
         }
@@ -311,46 +305,59 @@ ReturnCode_t TypeObjectRegistry::get_type_object(
 }
 
 ReturnCode_t TypeObjectRegistry::get_type_information(
-        const std::string& type_name,
+        const TypeIdentifierPair& type_ids,
         TypeInformation& type_information)
 {
-    TypeIdentifierPair type_ids;
-    ReturnCode_t ret_code {get_type_identifiers(type_name, type_ids)};
-    if (eprosima::fastdds::dds::RETCODE_OK == ret_code)
+    if (TK_NONE == type_ids.type_identifier1()._d() ||
+            TK_NONE == type_ids.type_identifier2()._d())
     {
-        if (!TypeObjectUtils::is_direct_hash_type_identifier(type_ids.type_identifier1()) ||
-                !TypeObjectUtils::is_direct_hash_type_identifier(type_ids.type_identifier2()))
-        {
-            return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
-        }
-        if (EK_COMPLETE == type_ids.type_identifier1()._d())
-        {
-            type_information.complete().typeid_with_size().type_id(type_ids.type_identifier1());
-            type_information.complete().dependent_typeid_count(NO_DEPENDENCIES);
-            type_information.minimal().typeid_with_size().type_id(type_ids.type_identifier2());
-            type_information.minimal().dependent_typeid_count(NO_DEPENDENCIES);
-
-            std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
-            type_information.complete().typeid_with_size().typeobject_serialized_size(type_registry_entries_.at(
-                        type_ids.type_identifier1()).type_object_serialized_size_);
-            type_information.minimal().typeid_with_size().typeobject_serialized_size(type_registry_entries_.at(
-                        type_ids.type_identifier2()).type_object_serialized_size_);
-        }
-        else
-        {
-            type_information.minimal().typeid_with_size().type_id(type_ids.type_identifier1());
-            type_information.minimal().dependent_typeid_count(NO_DEPENDENCIES);
-            type_information.complete().typeid_with_size().type_id(type_ids.type_identifier2());
-            type_information.complete().dependent_typeid_count(NO_DEPENDENCIES);
-
-            std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
-            type_information.minimal().typeid_with_size().typeobject_serialized_size(type_registry_entries_.at(
-                        type_ids.type_identifier1()).type_object_serialized_size_);
-            type_information.complete().typeid_with_size().typeobject_serialized_size(type_registry_entries_.at(
-                        type_ids.type_identifier2()).type_object_serialized_size_);
-        }
+        return RETCODE_PRECONDITION_NOT_MET;
     }
-    return ret_code;
+
+    if (!TypeObjectUtils::is_direct_hash_type_identifier(type_ids.type_identifier1()) ||
+            !TypeObjectUtils::is_direct_hash_type_identifier(type_ids.type_identifier2()))
+    {
+        return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
+    }
+
+    if (type_registry_entries_.end() == type_registry_entries_.find(type_ids.type_identifier1()) ||
+            type_registry_entries_.end() == type_registry_entries_.find(type_ids.type_identifier2()))
+    {
+        return RETCODE_NO_DATA;
+    }
+
+    if (!TypeObjectUtils::is_direct_hash_type_identifier(type_ids.type_identifier1()) ||
+            !TypeObjectUtils::is_direct_hash_type_identifier(type_ids.type_identifier2()))
+    {
+        return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
+    }
+    if (EK_COMPLETE == type_ids.type_identifier1()._d())
+    {
+        type_information.complete().typeid_with_size().type_id(type_ids.type_identifier1());
+        type_information.complete().dependent_typeid_count(NO_DEPENDENCIES);
+        type_information.minimal().typeid_with_size().type_id(type_ids.type_identifier2());
+        type_information.minimal().dependent_typeid_count(NO_DEPENDENCIES);
+
+        std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
+        type_information.complete().typeid_with_size().typeobject_serialized_size(type_registry_entries_.at(
+                    type_ids.type_identifier1()).type_object_serialized_size_);
+        type_information.minimal().typeid_with_size().typeobject_serialized_size(type_registry_entries_.at(
+                    type_ids.type_identifier2()).type_object_serialized_size_);
+    }
+    else
+    {
+        type_information.minimal().typeid_with_size().type_id(type_ids.type_identifier1());
+        type_information.minimal().dependent_typeid_count(NO_DEPENDENCIES);
+        type_information.complete().typeid_with_size().type_id(type_ids.type_identifier2());
+        type_information.complete().dependent_typeid_count(NO_DEPENDENCIES);
+
+        std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
+        type_information.minimal().typeid_with_size().typeobject_serialized_size(type_registry_entries_.at(
+                    type_ids.type_identifier1()).type_object_serialized_size_);
+        type_information.complete().typeid_with_size().typeobject_serialized_size(type_registry_entries_.at(
+                    type_ids.type_identifier2()).type_object_serialized_size_);
+    }
+    return RETCODE_OK;
 }
 
 ReturnCode_t TypeObjectRegistry::get_type_dependencies(
@@ -449,25 +456,39 @@ TypeObjectRegistry::TypeObjectRegistry()
 }
 
 ReturnCode_t TypeObjectRegistry::register_type_object(
-        const TypeIdentifier& type_identifier,
-        const TypeObject& type_object)
+        const TypeObject& type_object,
+        TypeIdentifierPair& type_ids)
 {
     uint32_t type_object_serialized_size {0};
-    if (type_identifier._d() != type_object._d() ||
-            type_identifier != calculate_type_identifier(type_object, type_object_serialized_size))
+    TypeIdentifier type_identifier {calculate_type_identifier(type_object, type_object_serialized_size)};
+
+    if (TK_NONE == type_ids.type_identifier1()._d())
+    {
+        if (EK_COMPLETE == type_object._d())
+        {
+            type_ids.type_identifier2(type_identifier);
+        }
+        else
+        {
+            type_ids.type_identifier1(type_identifier);
+        }
+    }
+    else if (type_ids.type_identifier1()._d() != type_object._d() ||
+            type_identifier != type_ids.type_identifier1())
     {
         return eprosima::fastdds::dds::RETCODE_PRECONDITION_NOT_MET;
     }
+
     if (EK_COMPLETE == type_object._d())
     {
         TypeRegistryEntry entry;
         entry.type_object_ = build_minimal_from_complete_type_object(type_object.complete());
-        TypeIdentifier minimal_type_id {calculate_type_identifier(entry.type_object_,
-                                                entry.type_object_serialized_size_)};
+        type_ids.type_identifier1(calculate_type_identifier(entry.type_object_, entry.type_object_serialized_size_));
 
         std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
-        type_registry_entries_.insert({minimal_type_id, entry});
+        type_registry_entries_.insert({type_ids.type_identifier1(), entry});
     }
+
     TypeRegistryEntry entry;
     entry.type_object_ = type_object;
     entry.type_object_serialized_size_ = type_object_serialized_size;
@@ -1176,28 +1197,30 @@ const TypeIdentifier TypeObjectRegistry::minimal_from_complete_type_identifier(
 
 ReturnCode_t TypeObjectRegistry::register_typeobject_w_dynamic_type(
         const DynamicType::_ref_type& dynamic_type,
-        TypeIdentifier& type_id)
+        TypeIdentifierPair& type_ids)
 {
     ReturnCode_t ret_code {eprosima::fastdds::dds::RETCODE_OK};
     traits<DynamicTypeImpl>::ref_type dynamic_type_impl {traits<DynamicType>::narrow<DynamicTypeImpl>(dynamic_type)};
-
     ExtendedTypeDefn reset_type_id;
+    type_ids.type_identifier1().extended_defn(reset_type_id);
+    type_ids.type_identifier2().extended_defn(reset_type_id);
+
     switch (dynamic_type_impl->get_kind())
     {
         case eprosima::fastdds::dds::TK_ALIAS:
-            ret_code = register_typeobject_w_alias_dynamic_type(dynamic_type_impl, type_id);
+            ret_code = register_typeobject_w_alias_dynamic_type(dynamic_type_impl, type_ids);
             break;
         case eprosima::fastdds::dds::TK_ANNOTATION:
-            ret_code = register_typeobject_w_annotation_dynamic_type(dynamic_type_impl, type_id);
+            ret_code = register_typeobject_w_annotation_dynamic_type(dynamic_type_impl, type_ids);
             break;
         case eprosima::fastdds::dds::TK_STRUCTURE:
-            ret_code = register_typeobject_w_struct_dynamic_type(dynamic_type_impl, type_id);
+            ret_code = register_typeobject_w_struct_dynamic_type(dynamic_type_impl, type_ids);
             break;
         case eprosima::fastdds::dds::TK_UNION:
-            ret_code = register_typeobject_w_union_dynamic_type(dynamic_type_impl, type_id);
+            ret_code = register_typeobject_w_union_dynamic_type(dynamic_type_impl, type_ids);
             break;
         case eprosima::fastdds::dds::TK_BITSET:
-            ret_code = register_typeobject_w_bitset_dynamic_type(dynamic_type_impl, type_id);
+            ret_code = register_typeobject_w_bitset_dynamic_type(dynamic_type_impl, type_ids);
             break;
         case eprosima::fastdds::dds::TK_SEQUENCE:
         {
@@ -1205,11 +1228,11 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_dynamic_type(
             if (0 == dynamic_type_impl->get_annotation_count() && 0 == dynamic_type_impl->get_verbatim_text_count() &&
                     0 == type_descriptor.element_type()->get_annotation_count())
             {
-                ret_code = typeidentifier_w_sequence_dynamic_type(dynamic_type_impl, type_id);
+                ret_code = typeidentifier_w_sequence_dynamic_type(dynamic_type_impl, type_ids.type_identifier1());
             }
             else
             {
-                ret_code = register_typeobject_w_sequence_dynamic_type(dynamic_type_impl, type_id);
+                ret_code = register_typeobject_w_sequence_dynamic_type(dynamic_type_impl, type_ids);
             }
             break;
         }
@@ -1219,11 +1242,11 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_dynamic_type(
             if (0 == dynamic_type_impl->get_annotation_count() && 0 == dynamic_type_impl->get_verbatim_text_count() &&
                     0 == type_descriptor.element_type()->get_annotation_count())
             {
-                ret_code = typeidentifier_w_array_dynamic_type(dynamic_type_impl, type_id);
+                ret_code = typeidentifier_w_array_dynamic_type(dynamic_type_impl, type_ids.type_identifier1());
             }
             else
             {
-                ret_code = register_typeobject_w_array_dynamic_type(dynamic_type_impl, type_id);
+                ret_code = register_typeobject_w_array_dynamic_type(dynamic_type_impl, type_ids);
             }
             break;
         }
@@ -1234,85 +1257,67 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_dynamic_type(
                     0 == type_descriptor.element_type()->get_annotation_count() &&
                     0 == type_descriptor.key_element_type()->get_annotation_count())
             {
-                ret_code = typeidentifier_w_map_dynamic_type(dynamic_type_impl, type_id);
+                ret_code = typeidentifier_w_map_dynamic_type(dynamic_type_impl, type_ids.type_identifier1());
             }
             else
             {
-                ret_code = register_typeobject_w_map_dynamic_type(dynamic_type_impl, type_id);
+                ret_code = register_typeobject_w_map_dynamic_type(dynamic_type_impl, type_ids);
             }
             break;
         }
         case eprosima::fastdds::dds::TK_ENUM:
-            ret_code = register_typeobject_w_enum_dynamic_type(dynamic_type_impl, type_id);
+            ret_code = register_typeobject_w_enum_dynamic_type(dynamic_type_impl, type_ids);
             break;
         case eprosima::fastdds::dds::TK_BITMASK:
-            ret_code = register_typeobject_w_bitmask_dynamic_type(dynamic_type_impl, type_id);
+            ret_code = register_typeobject_w_bitmask_dynamic_type(dynamic_type_impl, type_ids);
             break;
         case eprosima::fastdds::dds::TK_BOOLEAN:
-            type_id.extended_defn(reset_type_id);
-            type_id._d(TK_BOOLEAN);
+            type_ids.type_identifier1()._d(TK_BOOLEAN);
             break;
         case eprosima::fastdds::dds::TK_BYTE:
-            type_id.extended_defn(reset_type_id);
-            type_id._d(TK_BYTE);
+            type_ids.type_identifier1()._d(TK_BYTE);
             break;
         case eprosima::fastdds::dds::TK_INT16:
-            type_id.extended_defn(reset_type_id);
-            type_id._d(TK_INT16);
+            type_ids.type_identifier1()._d(TK_INT16);
             break;
         case eprosima::fastdds::dds::TK_INT32:
-            type_id.extended_defn(reset_type_id);
-            type_id._d(TK_INT32);
+            type_ids.type_identifier1()._d(TK_INT32);
             break;
         case eprosima::fastdds::dds::TK_INT64:
-            type_id.extended_defn(reset_type_id);
-            type_id._d(TK_INT64);
+            type_ids.type_identifier1()._d(TK_INT64);
             break;
         case eprosima::fastdds::dds::TK_UINT16:
-            type_id.extended_defn(reset_type_id);
-            type_id._d(TK_UINT16);
+            type_ids.type_identifier1()._d(TK_UINT16);
             break;
         case eprosima::fastdds::dds::TK_UINT32:
-            type_id.extended_defn(reset_type_id);
-            type_id._d(TK_UINT32);
+            type_ids.type_identifier1()._d(TK_UINT32);
             break;
         case eprosima::fastdds::dds::TK_UINT64:
-            type_id.extended_defn(reset_type_id);
-            type_id._d(TK_UINT64);
+            type_ids.type_identifier1()._d(TK_UINT64);
             break;
         case eprosima::fastdds::dds::TK_FLOAT32:
-            type_id.extended_defn(reset_type_id);
-            type_id._d(TK_FLOAT32);
+            type_ids.type_identifier1()._d(TK_FLOAT32);
             break;
         case eprosima::fastdds::dds::TK_FLOAT64:
-            type_id.extended_defn(reset_type_id);
-            type_id._d(TK_FLOAT64);
+            type_ids.type_identifier1()._d(TK_FLOAT64);
             break;
         case eprosima::fastdds::dds::TK_FLOAT128:
-            type_id.extended_defn(reset_type_id);
-            type_id._d(TK_FLOAT128);
+            type_ids.type_identifier1()._d(TK_FLOAT128);
             break;
         case eprosima::fastdds::dds::TK_INT8:
-            type_id.extended_defn(reset_type_id);
-            type_id._d(TK_INT8);
-            break;
-        case eprosima::fastdds::dds::TK_UINT8:
-            type_id.extended_defn(reset_type_id);
-            type_id._d(TK_UINT8);
+            type_ids.type_identifier1()._d(TK_UINT8);
             break;
         case eprosima::fastdds::dds::TK_CHAR8:
-            type_id.extended_defn(reset_type_id);
-            type_id._d(TK_CHAR8);
+            type_ids.type_identifier1()._d(TK_CHAR8);
             break;
         case eprosima::fastdds::dds::TK_CHAR16:
-            type_id.extended_defn(reset_type_id);
-            type_id._d(TK_CHAR16);
+            type_ids.type_identifier1()._d(TK_CHAR16);
             break;
         case eprosima::fastdds::dds::TK_STRING8:
-            typeidentifier_w_string_dynamic_type(dynamic_type_impl, type_id);
+            typeidentifier_w_string_dynamic_type(dynamic_type_impl, type_ids.type_identifier1());
             break;
         case eprosima::fastdds::dds::TK_STRING16:
-            typeidentifier_w_wstring_dynamic_type(dynamic_type_impl, type_id);
+            typeidentifier_w_wstring_dynamic_type(dynamic_type_impl, type_ids.type_identifier1());
             break;
             // DynamicType consistency is ensure by DynamicTypeBuilder.
     }
@@ -1325,7 +1330,7 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_dynamic_type(
 
 ReturnCode_t TypeObjectRegistry::register_typeobject_w_alias_dynamic_type(
         const traits<DynamicTypeImpl>::ref_type& dynamic_type,
-        TypeIdentifier& type_id)
+        TypeIdentifierPair& type_ids)
 {
     ReturnCode_t ret_code {RETCODE_OK};
 
@@ -1335,10 +1340,13 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_alias_dynamic_type(
 
     const TypeDescriptorImpl& type_descriptor {dynamic_type->get_descriptor()};
 
-    TypeIdentifier alias_type_id;
-    register_typeobject_w_dynamic_type(type_descriptor.base_type(), alias_type_id);
+    TypeIdentifierPair alias_type_ids;
+    register_typeobject_w_dynamic_type(type_descriptor.base_type(), alias_type_ids);
 
-    CommonAliasBody common {TypeObjectUtils::build_common_alias_body(0, alias_type_id)};
+    bool ec {false};
+    CommonAliasBody common {TypeObjectUtils::build_common_alias_body(0, TypeObjectUtils::retrieve_complete_type_identifier(
+                                        alias_type_ids,
+                                        ec))};
     CompleteAliasBody body {TypeObjectUtils::build_complete_alias_body(common,
                                     eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
                                     eprosima::fastcdr::optional<AppliedAnnotationSeq>())};
@@ -1347,9 +1355,7 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_alias_dynamic_type(
     complete_typeobject.alias_type(alias_type);
     TypeObject typeobject;
     typeobject.complete(complete_typeobject);
-    uint32_t dummy;
-    type_id = calculate_type_identifier(typeobject, dummy);
-    ret_code = register_type_object(type_id, typeobject);
+    ret_code = register_type_object(typeobject, type_ids);
     assert(RETCODE_OK == ret_code);
 
     return ret_code;
@@ -1357,7 +1363,7 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_alias_dynamic_type(
 
 ReturnCode_t TypeObjectRegistry::register_typeobject_w_annotation_dynamic_type(
         const traits<DynamicTypeImpl>::ref_type& dynamic_type,
-        TypeIdentifier& type_id)
+        TypeIdentifierPair& type_ids)
 {
     ReturnCode_t ret_code {RETCODE_OK};
 
@@ -1368,9 +1374,12 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_annotation_dynamic_type(
     for (auto& member : parameters)
     {
         MemberDescriptorImpl& member_descriptor {member->get_descriptor()};
-        TypeIdentifier parameter_type_id;
-        register_typeobject_w_dynamic_type(member_descriptor.type(), parameter_type_id);
-        CommonAnnotationParameter common {TypeObjectUtils::build_common_annotation_parameter(0, parameter_type_id)};
+        TypeIdentifierPair parameter_type_ids;
+        register_typeobject_w_dynamic_type(member_descriptor.type(), parameter_type_ids);
+        bool ec {false};
+        CommonAnnotationParameter common {TypeObjectUtils::build_common_annotation_parameter(0, TypeObjectUtils::retrieve_complete_type_identifier(
+                                                      parameter_type_ids,
+                                                      ec))};
 
         AnnotationParameterValue default_value;
         set_annotation_parameter_value(member_descriptor.type(), member_descriptor.default_value(),
@@ -1386,9 +1395,7 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_annotation_dynamic_type(
     complete_typeobject.annotation_type(annotation_type);
     TypeObject typeobject;
     typeobject.complete(complete_typeobject);
-    uint32_t dummy;
-    type_id = calculate_type_identifier(typeobject, dummy);
-    ret_code = register_type_object(type_id, typeobject);
+    ret_code = register_type_object(typeobject, type_ids);
     assert(RETCODE_OK == ret_code);
 
     return ret_code;
@@ -1396,7 +1403,7 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_annotation_dynamic_type(
 
 ReturnCode_t TypeObjectRegistry::register_typeobject_w_struct_dynamic_type(
         const traits<DynamicTypeImpl>::ref_type& dynamic_type,
-        TypeIdentifier& type_id)
+        TypeIdentifierPair& type_ids)
 {
     ReturnCode_t ret_code {RETCODE_OK};
 
@@ -1411,13 +1418,16 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_struct_dynamic_type(
     CompleteTypeDetail detail;
     complete_type_detail(dynamic_type, detail);
 
-    TypeIdentifier base_type_id;
+    TypeIdentifierPair base_type_ids;
     if (type_descriptor.base_type())
     {
-        register_typeobject_w_dynamic_type(type_descriptor.base_type(), base_type_id);
+        register_typeobject_w_dynamic_type(type_descriptor.base_type(), base_type_ids);
     }
 
-    CompleteStructHeader header {TypeObjectUtils::build_complete_struct_header(base_type_id, detail)};
+    bool ec {false};
+    CompleteStructHeader header {TypeObjectUtils::build_complete_struct_header(TypeObjectUtils::retrieve_complete_type_identifier(
+                                             base_type_ids,
+                                             ec), detail)};
 
     auto& struct_members {dynamic_type->get_all_members_by_index()};
     CompleteStructMemberSeq member_seq;
@@ -1431,10 +1441,11 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_struct_dynamic_type(
             try_construct_kind(member_descriptor.try_construct_kind()) : TryConstructKind::NOT_APPLIED,
             member_descriptor.is_optional(), member_descriptor.is_must_understand(), member_descriptor.is_key(),
             member_descriptor.is_shared());
-        TypeIdentifier member_type_id;
-        register_typeobject_w_dynamic_type(member_descriptor.type(), member_type_id);
+        TypeIdentifierPair member_type_ids;
+        register_typeobject_w_dynamic_type(member_descriptor.type(), member_type_ids);
         CommonStructMember common {TypeObjectUtils::build_common_struct_member(member_descriptor.id(),
-                                           member_flags, member_type_id)};
+                                           member_flags,
+                                           TypeObjectUtils::retrieve_complete_type_identifier(member_type_ids, ec))};
 
         CompleteMemberDetail member_detail;
         complete_member_detail(member_descriptor, member_detail);
@@ -1447,9 +1458,7 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_struct_dynamic_type(
     complete_typeobject.struct_type(struct_type);
     TypeObject typeobject;
     typeobject.complete(complete_typeobject);
-    uint32_t dummy;
-    type_id = calculate_type_identifier(typeobject, dummy);
-    ret_code = register_type_object(type_id, typeobject);
+    ret_code = register_type_object(typeobject, type_ids);
     assert(RETCODE_OK == ret_code);
 
     return ret_code;
@@ -1457,7 +1466,7 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_struct_dynamic_type(
 
 ReturnCode_t TypeObjectRegistry::register_typeobject_w_union_dynamic_type(
         const traits<DynamicTypeImpl>::ref_type& dynamic_type,
-        TypeIdentifier& type_id)
+        TypeIdentifierPair& type_ids)
 {
     ReturnCode_t ret_code {RETCODE_OK};
 
@@ -1476,10 +1485,13 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_union_dynamic_type(
     // Union discriminator is described using a TypeDescriptor and not a MemberDescriptor (!)
     UnionDiscriminatorFlag discriminator_flags {TypeObjectUtils::build_union_discriminator_flag(
                                                     TryConstructKind::NOT_APPLIED, false)};
-    TypeIdentifier discriminator_type_id;
-    register_typeobject_w_dynamic_type(type_descriptor.discriminator_type(), discriminator_type_id);
+    TypeIdentifierPair discriminator_type_ids;
+    register_typeobject_w_dynamic_type(type_descriptor.discriminator_type(), discriminator_type_ids);
+    bool ec {false};
     CommonDiscriminatorMember common_discriminator {TypeObjectUtils::build_common_discriminator_member(
-                                                        discriminator_flags, discriminator_type_id)};
+                                                        discriminator_flags, TypeObjectUtils::retrieve_complete_type_identifier(
+                                                            discriminator_type_ids,
+                                                            ec))};
 
     eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> ann_builtin;
     apply_verbatim_annotation(type_descriptor.discriminator_type(), ann_builtin);
@@ -1501,15 +1513,16 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_union_dynamic_type(
                                                   member_descriptor.try_construct_kind()) :
                                               TryConstructKind::NOT_APPLIED, member_descriptor.is_default_label(),
                                               member_descriptor.is_shared())};
-            TypeIdentifier member_type_id;
-            register_typeobject_w_dynamic_type(member_descriptor.type(), member_type_id);
+            TypeIdentifierPair member_type_ids;
+            register_typeobject_w_dynamic_type(member_descriptor.type(), member_type_ids);
             UnionCaseLabelSeq labels;
             for (int32_t label : member_descriptor.label())
             {
                 TypeObjectUtils::add_union_case_label(labels, label);
             }
             CommonUnionMember common {TypeObjectUtils::build_common_union_member(member_descriptor.id(), member_flags,
-                                              member_type_id, labels)};
+                                              TypeObjectUtils::retrieve_complete_type_identifier(member_type_ids,
+                                              ec), labels)};
 
             CompleteMemberDetail member_detail;
             complete_member_detail(member_descriptor, member_detail);
@@ -1524,9 +1537,7 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_union_dynamic_type(
     complete_typeobject.union_type(union_type);
     TypeObject typeobject;
     typeobject.complete(complete_typeobject);
-    uint32_t dummy;
-    type_id = calculate_type_identifier(typeobject, dummy);
-    ret_code = register_type_object(type_id, typeobject);
+    ret_code = register_type_object(typeobject, type_ids);
     assert(RETCODE_OK == ret_code);
 
     return ret_code;
@@ -1534,7 +1545,7 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_union_dynamic_type(
 
 ReturnCode_t TypeObjectRegistry::register_typeobject_w_bitset_dynamic_type(
         const traits<DynamicTypeImpl>::ref_type& dynamic_type,
-        TypeIdentifier& type_id)
+        TypeIdentifierPair& type_ids)
 {
     ReturnCode_t ret_code {RETCODE_OK};
 
@@ -1563,9 +1574,7 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_bitset_dynamic_type(
     complete_typeobject.bitset_type(bitset_type);
     TypeObject typeobject;
     typeobject.complete(complete_typeobject);
-    uint32_t dummy;
-    type_id = calculate_type_identifier(typeobject, dummy);
-    ret_code = register_type_object(type_id, typeobject);
+    ret_code = register_type_object(typeobject, type_ids);
     assert(RETCODE_OK == ret_code);
 
     return ret_code;
@@ -1573,7 +1582,7 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_bitset_dynamic_type(
 
 ReturnCode_t TypeObjectRegistry::register_typeobject_w_sequence_dynamic_type(
         const traits<DynamicTypeImpl>::ref_type& dynamic_type,
-        TypeIdentifier& type_id)
+        TypeIdentifierPair& type_ids)
 {
     ReturnCode_t ret_code {RETCODE_OK};
 
@@ -1588,10 +1597,13 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_sequence_dynamic_type(
 
     CompleteCollectionHeader header {TypeObjectUtils::build_complete_collection_header(common, detail)};
 
-    TypeIdentifier element_type_id;
-    register_typeobject_w_dynamic_type(type_descriptor.element_type(), element_type_id);
+    TypeIdentifierPair element_type_ids;
+    register_typeobject_w_dynamic_type(type_descriptor.element_type(), element_type_ids);
     // CollectionElementFlags are not applicable (!)
-    CommonCollectionElement common_element {TypeObjectUtils::build_common_collection_element(0, element_type_id)};
+    bool ec {false};
+    CommonCollectionElement common_element {TypeObjectUtils::build_common_collection_element(0, TypeObjectUtils::retrieve_complete_type_identifier(
+                                                        element_type_ids,
+                                                        ec))};
 
     eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom;
     apply_custom_annotations(type_descriptor.element_type(), ann_custom);
@@ -1606,9 +1618,7 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_sequence_dynamic_type(
     complete_typeobject.sequence_type(sequence_type);
     TypeObject typeobject;
     typeobject.complete(complete_typeobject);
-    uint32_t dummy;
-    type_id = calculate_type_identifier(typeobject, dummy);
-    ret_code = register_type_object(type_id, typeobject);
+    ret_code = register_type_object(typeobject, type_ids);
     assert(RETCODE_OK == ret_code);
 
     return ret_code;
@@ -1616,7 +1626,7 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_sequence_dynamic_type(
 
 ReturnCode_t TypeObjectRegistry::register_typeobject_w_array_dynamic_type(
         const traits<DynamicTypeImpl>::ref_type& dynamic_type,
-        TypeIdentifier& type_id)
+        TypeIdentifierPair& type_ids)
 {
     ReturnCode_t ret_code {RETCODE_OK};
 
@@ -1629,10 +1639,13 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_array_dynamic_type(
 
     CompleteArrayHeader header {TypeObjectUtils::build_complete_array_header(common, detail)};
 
-    TypeIdentifier element_type_id;
-    register_typeobject_w_dynamic_type(type_descriptor.element_type(), element_type_id);
+    TypeIdentifierPair element_type_ids;
+    register_typeobject_w_dynamic_type(type_descriptor.element_type(), element_type_ids);
     // CollectionElementFlags are not applicable (!)
-    CommonCollectionElement common_element {TypeObjectUtils::build_common_collection_element(0, element_type_id)};
+    bool ec {false};
+    CommonCollectionElement common_element {TypeObjectUtils::build_common_collection_element(0, TypeObjectUtils::retrieve_complete_type_identifier(
+                                                        element_type_ids,
+                                                        ec))};
 
     eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom;
     apply_custom_annotations(type_descriptor.element_type(), ann_custom);
@@ -1646,9 +1659,7 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_array_dynamic_type(
     complete_typeobject.array_type(array_type);
     TypeObject typeobject;
     typeobject.complete(complete_typeobject);
-    uint32_t dummy;
-    type_id = calculate_type_identifier(typeobject, dummy);
-    ret_code = register_type_object(type_id, typeobject);
+    ret_code = register_type_object(typeobject, type_ids);
     assert(RETCODE_OK == ret_code);
 
     return ret_code;
@@ -1656,7 +1667,7 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_array_dynamic_type(
 
 ReturnCode_t TypeObjectRegistry::register_typeobject_w_map_dynamic_type(
         const traits<DynamicTypeImpl>::ref_type& dynamic_type,
-        TypeIdentifier& type_id)
+        TypeIdentifierPair& type_ids)
 {
     ReturnCode_t ret_code {RETCODE_OK};
 
@@ -1671,10 +1682,13 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_map_dynamic_type(
 
     CompleteCollectionHeader header {TypeObjectUtils::build_complete_collection_header(common, detail)};
 
-    TypeIdentifier element_type_id;
-    register_typeobject_w_dynamic_type(type_descriptor.element_type(), element_type_id);
+    TypeIdentifierPair element_type_ids;
+    register_typeobject_w_dynamic_type(type_descriptor.element_type(), element_type_ids);
     // CollectionElementFlags are not applicable (!)
-    CommonCollectionElement common_element {TypeObjectUtils::build_common_collection_element(0, element_type_id)};
+    bool ec {false};
+    CommonCollectionElement common_element {TypeObjectUtils::build_common_collection_element(0, TypeObjectUtils::retrieve_complete_type_identifier(
+                                                        element_type_ids,
+                                                        ec))};
 
     eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom;
     apply_custom_annotations(type_descriptor.element_type(), ann_custom);
@@ -1684,9 +1698,11 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_map_dynamic_type(
     CompleteCollectionElement element {TypeObjectUtils::build_complete_collection_element(common_element,
                                                detail_element)};
 
-    TypeIdentifier key_type_id;
-    register_typeobject_w_dynamic_type(type_descriptor.key_element_type(), key_type_id);
-    CommonCollectionElement common_key {TypeObjectUtils::build_common_collection_element(0, key_type_id)};
+    TypeIdentifierPair key_type_ids;
+    register_typeobject_w_dynamic_type(type_descriptor.key_element_type(), key_type_ids);
+    CommonCollectionElement common_key {TypeObjectUtils::build_common_collection_element(0, TypeObjectUtils::retrieve_complete_type_identifier(
+                                                    key_type_ids,
+                                                    ec))};
     eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_key;
     apply_custom_annotations(type_descriptor.key_element_type(), ann_custom_key);
     CompleteElementDetail detail_key {TypeObjectUtils::build_complete_element_detail(
@@ -1699,9 +1715,7 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_map_dynamic_type(
     complete_typeobject.map_type(map_type);
     TypeObject typeobject;
     typeobject.complete(complete_typeobject);
-    uint32_t dummy;
-    type_id = calculate_type_identifier(typeobject, dummy);
-    ret_code = register_type_object(type_id, typeobject);
+    ret_code = register_type_object(typeobject, type_ids);
     assert(RETCODE_OK == ret_code);
 
     return ret_code;
@@ -1709,7 +1723,7 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_map_dynamic_type(
 
 ReturnCode_t TypeObjectRegistry::register_typeobject_w_enum_dynamic_type(
         const traits<DynamicTypeImpl>::ref_type& dynamic_type,
-        TypeIdentifier& type_id)
+        TypeIdentifierPair& type_ids)
 {
     ReturnCode_t ret_code {RETCODE_OK};
 
@@ -1759,9 +1773,7 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_enum_dynamic_type(
     complete_typeobject.enumerated_type(enumerated_type);
     TypeObject typeobject;
     typeobject.complete(complete_typeobject);
-    uint32_t dummy;
-    type_id = calculate_type_identifier(typeobject, dummy);
-    ret_code = register_type_object(type_id, typeobject);
+    ret_code = register_type_object(typeobject, type_ids);
     assert(RETCODE_OK == ret_code);
 
     return ret_code;
@@ -1769,7 +1781,7 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_enum_dynamic_type(
 
 ReturnCode_t TypeObjectRegistry::register_typeobject_w_bitmask_dynamic_type(
         const traits<DynamicTypeImpl>::ref_type& dynamic_type,
-        TypeIdentifier& type_id)
+        TypeIdentifierPair& type_ids)
 {
     ReturnCode_t ret_code {RETCODE_OK};
 
@@ -1798,9 +1810,7 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_bitmask_dynamic_type(
     complete_typeobject.bitmask_type(bitmask_type);
     TypeObject typeobject;
     typeobject.complete(complete_typeobject);
-    uint32_t dummy;
-    type_id = calculate_type_identifier(typeobject, dummy);
-    ret_code = register_type_object(type_id, typeobject);
+    ret_code = register_type_object(typeobject, type_ids);
     assert(RETCODE_OK == ret_code);
 
     return ret_code;
@@ -1814,9 +1824,11 @@ ReturnCode_t TypeObjectRegistry::typeidentifier_w_sequence_dynamic_type(
 
     const TypeDescriptorImpl& type_descriptor {dynamic_type->get_descriptor()};
 
-    TypeIdentifier element_type_id;
-    register_typeobject_w_dynamic_type(type_descriptor.element_type(), element_type_id);
+    TypeIdentifierPair element_type_ids;
+    register_typeobject_w_dynamic_type(type_descriptor.element_type(), element_type_ids);
 
+    bool ec {false};
+    const TypeIdentifier& element_type_id {TypeObjectUtils::retrieve_complete_type_identifier(element_type_ids, ec)};
     EquivalenceKind equiv_kind {equivalence_kind(element_type_id)};
     // CollectionElementFlags cannot be applied because element_type is a DynamicType and the applicable annotations are
     // contained in MemberDescriptor (accessible through DynamicTypeMember). XTypes inconsistency (!)
@@ -1851,9 +1863,11 @@ ReturnCode_t TypeObjectRegistry::typeidentifier_w_array_dynamic_type(
 
     const TypeDescriptorImpl& type_descriptor {dynamic_type->get_descriptor()};
 
-    TypeIdentifier element_type_id;
-    register_typeobject_w_dynamic_type(type_descriptor.element_type(), element_type_id);
+    TypeIdentifierPair element_type_ids;
+    register_typeobject_w_dynamic_type(type_descriptor.element_type(), element_type_ids);
 
+    bool ec {false};
+    const TypeIdentifier& element_type_id {TypeObjectUtils::retrieve_complete_type_identifier(element_type_ids, ec)};
     EquivalenceKind equiv_kind {equivalence_kind(element_type_id)};
     PlainCollectionHeader header {TypeObjectUtils::build_plain_collection_header(equiv_kind, 0)};
 
@@ -1897,11 +1911,14 @@ ReturnCode_t TypeObjectRegistry::typeidentifier_w_map_dynamic_type(
 
     const TypeDescriptorImpl& type_descriptor {dynamic_type->get_descriptor()};
 
-    TypeIdentifier element_type_id;
-    register_typeobject_w_dynamic_type(type_descriptor.element_type(), element_type_id);
-    TypeIdentifier key_type_id;
-    register_typeobject_w_dynamic_type(type_descriptor.key_element_type(), key_type_id);
+    TypeIdentifierPair element_type_ids;
+    register_typeobject_w_dynamic_type(type_descriptor.element_type(), element_type_ids);
+    TypeIdentifierPair key_type_ids;
+    register_typeobject_w_dynamic_type(type_descriptor.key_element_type(), key_type_ids);
 
+    bool ec {false};
+    const TypeIdentifier& element_type_id {TypeObjectUtils::retrieve_complete_type_identifier(element_type_ids, ec)};
+    const TypeIdentifier& key_type_id {TypeObjectUtils::retrieve_complete_type_identifier(key_type_ids, ec)};
     EquivalenceKind equiv_kind {equivalence_kind(element_type_id, key_type_id)};
     PlainCollectionHeader header {TypeObjectUtils::build_plain_collection_header(equiv_kind, 0)};
     eprosima::fastcdr::external<TypeIdentifier> external_element_type_id =
@@ -1985,9 +2002,9 @@ ReturnCode_t TypeObjectRegistry::apply_custom_annotations(
         {
             dynamic_type->get_annotation(annotation_descriptor, i);
 
-            TypeIdentifier annotation_typeid;
+            TypeIdentifierPair annotation_typeids;
             register_typeobject_w_annotation_dynamic_type(traits<DynamicType>::narrow<DynamicTypeImpl>(
-                        annotation_descriptor->type()), annotation_typeid);
+                        annotation_descriptor->type()), annotation_typeids);
 
             Parameters parameter_seq;
             annotation_descriptor->get_all_value(parameter_seq); // Always returns RETCODE_OK
@@ -2015,7 +2032,10 @@ ReturnCode_t TypeObjectRegistry::apply_custom_annotations(
             {
                 param_seq = tmp_param_seq;
             }
-            AppliedAnnotation applied_annotation {TypeObjectUtils::build_applied_annotation(annotation_typeid,
+            bool ec {false};
+            AppliedAnnotation applied_annotation {TypeObjectUtils::build_applied_annotation(TypeObjectUtils::retrieve_complete_type_identifier(
+                                                              annotation_typeids,
+                                                              ec),
                                                           param_seq)};
             TypeObjectUtils::add_applied_annotation(tmp_ann_custom, applied_annotation);
         }

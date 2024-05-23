@@ -224,7 +224,7 @@ bool EntityId_tPubSubType::getKey(
     return true;
 }
 
-void EntityId_tPubSubType::register_type_object_representation() const
+void EntityId_tPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
         "TypeObject type representation support disabled in generated code");
@@ -418,7 +418,7 @@ bool GUID_tPubSubType::getKey(
     return true;
 }
 
-void GUID_tPubSubType::register_type_object_representation() const
+void GUID_tPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
         "TypeObject type representation support disabled in generated code");
@@ -612,7 +612,7 @@ bool SequenceNumber_tPubSubType::getKey(
     return true;
 }
 
-void SequenceNumber_tPubSubType::register_type_object_representation() const
+void SequenceNumber_tPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
         "TypeObject type representation support disabled in generated code");
@@ -806,7 +806,7 @@ bool SampleIdentityPubSubType::getKey(
     return true;
 }
 
-void SampleIdentityPubSubType::register_type_object_representation() const
+void SampleIdentityPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
         "TypeObject type representation support disabled in generated code");
@@ -1001,7 +1001,7 @@ namespace rpc {
         return true;
     }
 
-    void RequestHeaderPubSubType::register_type_object_representation() const
+    void RequestHeaderPubSubType::register_type_object_representation()
     {
         EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
             "TypeObject type representation support disabled in generated code");
@@ -1195,7 +1195,7 @@ namespace rpc {
         return true;
     }
 
-    void ReplyHeaderPubSubType::register_type_object_representation() const
+    void ReplyHeaderPubSubType::register_type_object_representation()
     {
         EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
             "TypeObject type representation support disabled in generated code");

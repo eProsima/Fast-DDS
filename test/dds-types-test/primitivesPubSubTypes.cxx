@@ -219,10 +219,10 @@ bool ShortStructPubSubType::getKey(
     return true;
 }
 
-void ShortStructPubSubType::register_type_object_representation() const
+void ShortStructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_ShortStruct_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_ShortStruct_type_identifier(type_ids);
 }
 
 UShortStructPubSubType::UShortStructPubSubType()
@@ -413,10 +413,10 @@ bool UShortStructPubSubType::getKey(
     return true;
 }
 
-void UShortStructPubSubType::register_type_object_representation() const
+void UShortStructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_UShortStruct_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_UShortStruct_type_identifier(type_ids);
 }
 
 LongStructPubSubType::LongStructPubSubType()
@@ -607,10 +607,10 @@ bool LongStructPubSubType::getKey(
     return true;
 }
 
-void LongStructPubSubType::register_type_object_representation() const
+void LongStructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_LongStruct_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_LongStruct_type_identifier(type_ids);
 }
 
 ULongStructPubSubType::ULongStructPubSubType()
@@ -801,10 +801,10 @@ bool ULongStructPubSubType::getKey(
     return true;
 }
 
-void ULongStructPubSubType::register_type_object_representation() const
+void ULongStructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_ULongStruct_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_ULongStruct_type_identifier(type_ids);
 }
 
 LongLongStructPubSubType::LongLongStructPubSubType()
@@ -995,10 +995,10 @@ bool LongLongStructPubSubType::getKey(
     return true;
 }
 
-void LongLongStructPubSubType::register_type_object_representation() const
+void LongLongStructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_LongLongStruct_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_LongLongStruct_type_identifier(type_ids);
 }
 
 ULongLongStructPubSubType::ULongLongStructPubSubType()
@@ -1189,10 +1189,10 @@ bool ULongLongStructPubSubType::getKey(
     return true;
 }
 
-void ULongLongStructPubSubType::register_type_object_representation() const
+void ULongLongStructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_ULongLongStruct_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_ULongLongStruct_type_identifier(type_ids);
 }
 
 FloatStructPubSubType::FloatStructPubSubType()
@@ -1383,10 +1383,10 @@ bool FloatStructPubSubType::getKey(
     return true;
 }
 
-void FloatStructPubSubType::register_type_object_representation() const
+void FloatStructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_FloatStruct_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_FloatStruct_type_identifier(type_ids);
 }
 
 DoubleStructPubSubType::DoubleStructPubSubType()
@@ -1577,10 +1577,10 @@ bool DoubleStructPubSubType::getKey(
     return true;
 }
 
-void DoubleStructPubSubType::register_type_object_representation() const
+void DoubleStructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_DoubleStruct_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_DoubleStruct_type_identifier(type_ids);
 }
 
 LongDoubleStructPubSubType::LongDoubleStructPubSubType()
@@ -1771,10 +1771,10 @@ bool LongDoubleStructPubSubType::getKey(
     return true;
 }
 
-void LongDoubleStructPubSubType::register_type_object_representation() const
+void LongDoubleStructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_LongDoubleStruct_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_LongDoubleStruct_type_identifier(type_ids);
 }
 
 BooleanStructPubSubType::BooleanStructPubSubType()
@@ -1965,10 +1965,10 @@ bool BooleanStructPubSubType::getKey(
     return true;
 }
 
-void BooleanStructPubSubType::register_type_object_representation() const
+void BooleanStructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_BooleanStruct_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_BooleanStruct_type_identifier(type_ids);
 }
 
 OctetStructPubSubType::OctetStructPubSubType()
@@ -2159,10 +2159,10 @@ bool OctetStructPubSubType::getKey(
     return true;
 }
 
-void OctetStructPubSubType::register_type_object_representation() const
+void OctetStructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_OctetStruct_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_OctetStruct_type_identifier(type_ids);
 }
 
 CharStructPubSubType::CharStructPubSubType()
@@ -2353,10 +2353,10 @@ bool CharStructPubSubType::getKey(
     return true;
 }
 
-void CharStructPubSubType::register_type_object_representation() const
+void CharStructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_CharStruct_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_CharStruct_type_identifier(type_ids);
 }
 
 WCharStructPubSubType::WCharStructPubSubType()
@@ -2547,10 +2547,10 @@ bool WCharStructPubSubType::getKey(
     return true;
 }
 
-void WCharStructPubSubType::register_type_object_representation() const
+void WCharStructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_WCharStruct_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_WCharStruct_type_identifier(type_ids);
 }
 
 Int8StructPubSubType::Int8StructPubSubType()
@@ -2741,10 +2741,10 @@ bool Int8StructPubSubType::getKey(
     return true;
 }
 
-void Int8StructPubSubType::register_type_object_representation() const
+void Int8StructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_Int8Struct_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_Int8Struct_type_identifier(type_ids);
 }
 
 Uint8StructPubSubType::Uint8StructPubSubType()
@@ -2935,10 +2935,10 @@ bool Uint8StructPubSubType::getKey(
     return true;
 }
 
-void Uint8StructPubSubType::register_type_object_representation() const
+void Uint8StructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_Uint8Struct_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_Uint8Struct_type_identifier(type_ids);
 }
 
 Int16StructPubSubType::Int16StructPubSubType()
@@ -3129,10 +3129,10 @@ bool Int16StructPubSubType::getKey(
     return true;
 }
 
-void Int16StructPubSubType::register_type_object_representation() const
+void Int16StructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_Int16Struct_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_Int16Struct_type_identifier(type_ids);
 }
 
 Uint16StructPubSubType::Uint16StructPubSubType()
@@ -3323,10 +3323,10 @@ bool Uint16StructPubSubType::getKey(
     return true;
 }
 
-void Uint16StructPubSubType::register_type_object_representation() const
+void Uint16StructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_Uint16Struct_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_Uint16Struct_type_identifier(type_ids);
 }
 
 Int32StructPubSubType::Int32StructPubSubType()
@@ -3517,10 +3517,10 @@ bool Int32StructPubSubType::getKey(
     return true;
 }
 
-void Int32StructPubSubType::register_type_object_representation() const
+void Int32StructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_Int32Struct_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_Int32Struct_type_identifier(type_ids);
 }
 
 Uint32StructPubSubType::Uint32StructPubSubType()
@@ -3711,10 +3711,10 @@ bool Uint32StructPubSubType::getKey(
     return true;
 }
 
-void Uint32StructPubSubType::register_type_object_representation() const
+void Uint32StructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_Uint32Struct_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_Uint32Struct_type_identifier(type_ids);
 }
 
 Int64StructPubSubType::Int64StructPubSubType()
@@ -3905,10 +3905,10 @@ bool Int64StructPubSubType::getKey(
     return true;
 }
 
-void Int64StructPubSubType::register_type_object_representation() const
+void Int64StructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_Int64Struct_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_Int64Struct_type_identifier(type_ids);
 }
 
 Uint64StructPubSubType::Uint64StructPubSubType()
@@ -4099,10 +4099,10 @@ bool Uint64StructPubSubType::getKey(
     return true;
 }
 
-void Uint64StructPubSubType::register_type_object_representation() const
+void Uint64StructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_Uint64Struct_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_Uint64Struct_type_identifier(type_ids);
 }
 
 

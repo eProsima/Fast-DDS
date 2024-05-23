@@ -219,10 +219,10 @@ bool LoanableHelloWorldPubSubType::getKey(
     return true;
 }
 
-void LoanableHelloWorldPubSubType::register_type_object_representation() const
+void LoanableHelloWorldPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_LoanableHelloWorld_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_LoanableHelloWorld_type_identifier(type_ids);
 }
 
 

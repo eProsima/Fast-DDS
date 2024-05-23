@@ -219,10 +219,10 @@ bool TestRegression3361PubSubType::getKey(
     return true;
 }
 
-void TestRegression3361PubSubType::register_type_object_representation() const
+void TestRegression3361PubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifier type_id;
-    register_TestRegression3361_type_identifier(type_id);
+    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
+    register_TestRegression3361_type_identifier(type_ids);
 }
 
 

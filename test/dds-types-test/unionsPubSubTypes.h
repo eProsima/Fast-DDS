@@ -90,7 +90,7 @@ public:
             void* data) override;
 
     //Register TypeObject representation in Fast DDS TypeObjectRegistry
-    eProsima_user_DllExport void register_type_object_representation() const override;
+    eProsima_user_DllExport void register_type_object_representation() override;
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
@@ -181,7 +181,7 @@ public:
             void* data) override;
 
     //Register TypeObject representation in Fast DDS TypeObjectRegistry
-    eProsima_user_DllExport void register_type_object_representation() const override;
+    eProsima_user_DllExport void register_type_object_representation() override;
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
@@ -272,7 +272,7 @@ public:
             void* data) override;
 
     //Register TypeObject representation in Fast DDS TypeObjectRegistry
-    eProsima_user_DllExport void register_type_object_representation() const override;
+    eProsima_user_DllExport void register_type_object_representation() override;
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
@@ -363,7 +363,7 @@ public:
             void* data) override;
 
     //Register TypeObject representation in Fast DDS TypeObjectRegistry
-    eProsima_user_DllExport void register_type_object_representation() const override;
+    eProsima_user_DllExport void register_type_object_representation() override;
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
@@ -454,7 +454,7 @@ public:
             void* data) override;
 
     //Register TypeObject representation in Fast DDS TypeObjectRegistry
-    eProsima_user_DllExport void register_type_object_representation() const override;
+    eProsima_user_DllExport void register_type_object_representation() override;
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
@@ -545,7 +545,7 @@ public:
             void* data) override;
 
     //Register TypeObject representation in Fast DDS TypeObjectRegistry
-    eProsima_user_DllExport void register_type_object_representation() const override;
+    eProsima_user_DllExport void register_type_object_representation() override;
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
@@ -636,7 +636,7 @@ public:
             void* data) override;
 
     //Register TypeObject representation in Fast DDS TypeObjectRegistry
-    eProsima_user_DllExport void register_type_object_representation() const override;
+    eProsima_user_DllExport void register_type_object_representation() override;
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
@@ -727,7 +727,7 @@ public:
             void* data) override;
 
     //Register TypeObject representation in Fast DDS TypeObjectRegistry
-    eProsima_user_DllExport void register_type_object_representation() const override;
+    eProsima_user_DllExport void register_type_object_representation() override;
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
@@ -818,7 +818,7 @@ public:
             void* data) override;
 
     //Register TypeObject representation in Fast DDS TypeObjectRegistry
-    eProsima_user_DllExport void register_type_object_representation() const override;
+    eProsima_user_DllExport void register_type_object_representation() override;
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
@@ -909,7 +909,7 @@ public:
             void* data) override;
 
     //Register TypeObject representation in Fast DDS TypeObjectRegistry
-    eProsima_user_DllExport void register_type_object_representation() const override;
+    eProsima_user_DllExport void register_type_object_representation() override;
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
@@ -1000,7 +1000,7 @@ public:
             void* data) override;
 
     //Register TypeObject representation in Fast DDS TypeObjectRegistry
-    eProsima_user_DllExport void register_type_object_representation() const override;
+    eProsima_user_DllExport void register_type_object_representation() override;
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
@@ -1091,7 +1091,7 @@ public:
             void* data) override;
 
     //Register TypeObject representation in Fast DDS TypeObjectRegistry
-    eProsima_user_DllExport void register_type_object_representation() const override;
+    eProsima_user_DllExport void register_type_object_representation() override;
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
@@ -1182,7 +1182,7 @@ public:
             void* data) override;
 
     //Register TypeObject representation in Fast DDS TypeObjectRegistry
-    eProsima_user_DllExport void register_type_object_representation() const override;
+    eProsima_user_DllExport void register_type_object_representation() override;
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
@@ -1273,7 +1273,7 @@ public:
             void* data) override;
 
     //Register TypeObject representation in Fast DDS TypeObjectRegistry
-    eProsima_user_DllExport void register_type_object_representation() const override;
+    eProsima_user_DllExport void register_type_object_representation() override;
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
@@ -1364,7 +1364,7 @@ public:
             void* data) override;
 
     //Register TypeObject representation in Fast DDS TypeObjectRegistry
-    eProsima_user_DllExport void register_type_object_representation() const override;
+    eProsima_user_DllExport void register_type_object_representation() override;
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
@@ -1455,7 +1455,7 @@ public:
             void* data) override;
 
     //Register TypeObject representation in Fast DDS TypeObjectRegistry
-    eProsima_user_DllExport void register_type_object_representation() const override;
+    eProsima_user_DllExport void register_type_object_representation() override;
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
@@ -1546,7 +1546,7 @@ public:
             void* data) override;
 
     //Register TypeObject representation in Fast DDS TypeObjectRegistry
-    eProsima_user_DllExport void register_type_object_representation() const override;
+    eProsima_user_DllExport void register_type_object_representation() override;
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
@@ -1637,7 +1637,7 @@ public:
             void* data) override;
 
     //Register TypeObject representation in Fast DDS TypeObjectRegistry
-    eProsima_user_DllExport void register_type_object_representation() const override;
+    eProsima_user_DllExport void register_type_object_representation() override;
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
@@ -1728,7 +1728,7 @@ public:
             void* data) override;
 
     //Register TypeObject representation in Fast DDS TypeObjectRegistry
-    eProsima_user_DllExport void register_type_object_representation() const override;
+    eProsima_user_DllExport void register_type_object_representation() override;
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
@@ -1819,7 +1819,7 @@ public:
             void* data) override;
 
     //Register TypeObject representation in Fast DDS TypeObjectRegistry
-    eProsima_user_DllExport void register_type_object_representation() const override;
+    eProsima_user_DllExport void register_type_object_representation() override;
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
@@ -1910,7 +1910,7 @@ public:
             void* data) override;
 
     //Register TypeObject representation in Fast DDS TypeObjectRegistry
-    eProsima_user_DllExport void register_type_object_representation() const override;
+    eProsima_user_DllExport void register_type_object_representation() override;
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
@@ -2001,7 +2001,7 @@ public:
             void* data) override;
 
     //Register TypeObject representation in Fast DDS TypeObjectRegistry
-    eProsima_user_DllExport void register_type_object_representation() const override;
+    eProsima_user_DllExport void register_type_object_representation() override;
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
@@ -2092,7 +2092,7 @@ public:
             void* data) override;
 
     //Register TypeObject representation in Fast DDS TypeObjectRegistry
-    eProsima_user_DllExport void register_type_object_representation() const override;
+    eProsima_user_DllExport void register_type_object_representation() override;
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
@@ -2183,7 +2183,7 @@ public:
             void* data) override;
 
     //Register TypeObject representation in Fast DDS TypeObjectRegistry
-    eProsima_user_DllExport void register_type_object_representation() const override;
+    eProsima_user_DllExport void register_type_object_representation() override;
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
@@ -2274,7 +2274,7 @@ public:
             void* data) override;
 
     //Register TypeObject representation in Fast DDS TypeObjectRegistry
-    eProsima_user_DllExport void register_type_object_representation() const override;
+    eProsima_user_DllExport void register_type_object_representation() override;
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
@@ -2365,7 +2365,7 @@ public:
             void* data) override;
 
     //Register TypeObject representation in Fast DDS TypeObjectRegistry
-    eProsima_user_DllExport void register_type_object_representation() const override;
+    eProsima_user_DllExport void register_type_object_representation() override;
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
@@ -2456,7 +2456,7 @@ public:
             void* data) override;
 
     //Register TypeObject representation in Fast DDS TypeObjectRegistry
-    eProsima_user_DllExport void register_type_object_representation() const override;
+    eProsima_user_DllExport void register_type_object_representation() override;
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
@@ -2547,7 +2547,7 @@ public:
             void* data) override;
 
     //Register TypeObject representation in Fast DDS TypeObjectRegistry
-    eProsima_user_DllExport void register_type_object_representation() const override;
+    eProsima_user_DllExport void register_type_object_representation() override;
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
@@ -2638,7 +2638,7 @@ public:
             void* data) override;
 
     //Register TypeObject representation in Fast DDS TypeObjectRegistry
-    eProsima_user_DllExport void register_type_object_representation() const override;
+    eProsima_user_DllExport void register_type_object_representation() override;
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
@@ -2729,7 +2729,7 @@ public:
             void* data) override;
 
     //Register TypeObject representation in Fast DDS TypeObjectRegistry
-    eProsima_user_DllExport void register_type_object_representation() const override;
+    eProsima_user_DllExport void register_type_object_representation() override;
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
@@ -2820,7 +2820,7 @@ public:
             void* data) override;
 
     //Register TypeObject representation in Fast DDS TypeObjectRegistry
-    eProsima_user_DllExport void register_type_object_representation() const override;
+    eProsima_user_DllExport void register_type_object_representation() override;
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
@@ -2911,7 +2911,7 @@ public:
             void* data) override;
 
     //Register TypeObject representation in Fast DDS TypeObjectRegistry
-    eProsima_user_DllExport void register_type_object_representation() const override;
+    eProsima_user_DllExport void register_type_object_representation() override;
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
@@ -3002,7 +3002,7 @@ public:
             void* data) override;
 
     //Register TypeObject representation in Fast DDS TypeObjectRegistry
-    eProsima_user_DllExport void register_type_object_representation() const override;
+    eProsima_user_DllExport void register_type_object_representation() override;
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
@@ -3093,7 +3093,7 @@ public:
             void* data) override;
 
     //Register TypeObject representation in Fast DDS TypeObjectRegistry
-    eProsima_user_DllExport void register_type_object_representation() const override;
+    eProsima_user_DllExport void register_type_object_representation() override;
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
@@ -3184,7 +3184,7 @@ public:
             void* data) override;
 
     //Register TypeObject representation in Fast DDS TypeObjectRegistry
-    eProsima_user_DllExport void register_type_object_representation() const override;
+    eProsima_user_DllExport void register_type_object_representation() override;
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
@@ -3275,7 +3275,7 @@ public:
             void* data) override;
 
     //Register TypeObject representation in Fast DDS TypeObjectRegistry
-    eProsima_user_DllExport void register_type_object_representation() const override;
+    eProsima_user_DllExport void register_type_object_representation() override;
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
@@ -3366,7 +3366,7 @@ public:
             void* data) override;
 
     //Register TypeObject representation in Fast DDS TypeObjectRegistry
-    eProsima_user_DllExport void register_type_object_representation() const override;
+    eProsima_user_DllExport void register_type_object_representation() override;
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
@@ -3457,7 +3457,7 @@ public:
             void* data) override;
 
     //Register TypeObject representation in Fast DDS TypeObjectRegistry
-    eProsima_user_DllExport void register_type_object_representation() const override;
+    eProsima_user_DllExport void register_type_object_representation() override;
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
@@ -3548,7 +3548,7 @@ public:
             void* data) override;
 
     //Register TypeObject representation in Fast DDS TypeObjectRegistry
-    eProsima_user_DllExport void register_type_object_representation() const override;
+    eProsima_user_DllExport void register_type_object_representation() override;
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
@@ -3639,7 +3639,7 @@ public:
             void* data) override;
 
     //Register TypeObject representation in Fast DDS TypeObjectRegistry
-    eProsima_user_DllExport void register_type_object_representation() const override;
+    eProsima_user_DllExport void register_type_object_representation() override;
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
@@ -3730,7 +3730,7 @@ public:
             void* data) override;
 
     //Register TypeObject representation in Fast DDS TypeObjectRegistry
-    eProsima_user_DllExport void register_type_object_representation() const override;
+    eProsima_user_DllExport void register_type_object_representation() override;
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override

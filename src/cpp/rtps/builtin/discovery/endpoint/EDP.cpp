@@ -172,12 +172,20 @@ bool EDP::newLocalReaderProxyData(
                     // TypeInformation
                     if (!att.type_information.assigned())
                     {
-                        fastdds::dds::xtypes::TypeInformation type_info;
+                        // TODO(richiware) review
+                        fastdds::dds::xtypes::TypeIdentifierPair type_ids;
                         if (eprosima::fastdds::dds::RETCODE_OK ==
                                 eprosima::fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer()
-                                        .get_type_information(rpd->typeName().c_str(), type_info))
+                                        .get_type_identifiers(rpd->typeName().c_str(), type_ids))
                         {
-                            rpd->type_information() = type_info;
+                            fastdds::dds::xtypes::TypeInformation type_info;
+                            if (eprosima::fastdds::dds::RETCODE_OK ==
+                                    eprosima::fastrtps::rtps::RTPSDomainImpl::get_instance()->
+                                            type_object_registry_observer()
+                                            .get_type_information(type_ids, type_info))
+                            {
+                                rpd->type_information() = type_info;
+                            }
                         }
                     }
                 }
@@ -279,12 +287,19 @@ bool EDP::newLocalWriterProxyData(
                     // TypeInformation
                     if (!att.type_information.assigned())
                     {
-                        fastdds::dds::xtypes::TypeInformation type_info;
+                        fastdds::dds::xtypes::TypeIdentifierPair type_ids;
                         if (eprosima::fastdds::dds::RETCODE_OK ==
                                 eprosima::fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer()
-                                        .get_type_information(wpd->typeName().c_str(), type_info))
+                                        .get_type_identifiers(wpd->typeName().c_str(), type_ids))
                         {
-                            wpd->type_information() = type_info;
+                            fastdds::dds::xtypes::TypeInformation type_info;
+                            if (eprosima::fastdds::dds::RETCODE_OK ==
+                                    eprosima::fastrtps::rtps::RTPSDomainImpl::get_instance()->
+                                            type_object_registry_observer()
+                                            .get_type_information(type_ids, type_info))
+                            {
+                                wpd->type_information() = type_info;
+                            }
                         }
                     }
                 }
@@ -373,12 +388,19 @@ bool EDP::updatedLocalReader(
                     // TypeInformation
                     if (!rdata->type_information().assigned())
                     {
-                        fastdds::dds::xtypes::TypeInformation type_info;
+                        fastdds::dds::xtypes::TypeIdentifierPair type_ids;
                         if (eprosima::fastdds::dds::RETCODE_OK ==
                                 eprosima::fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer()
-                                        .get_type_information(rdata->typeName().c_str(), type_info))
+                                        .get_type_identifiers(rdata->typeName().c_str(), type_ids))
                         {
-                            rdata->type_information() = type_info;
+                            fastdds::dds::xtypes::TypeInformation type_info;
+                            if (eprosima::fastdds::dds::RETCODE_OK ==
+                                    eprosima::fastrtps::rtps::RTPSDomainImpl::get_instance()->
+                                            type_object_registry_observer()
+                                            .get_type_information(type_ids, type_info))
+                            {
+                                rdata->type_information() = type_info;
+                            }
                         }
                     }
                 }
@@ -440,12 +462,19 @@ bool EDP::updatedLocalWriter(
                     // TypeInformation
                     if (!wdata->type_information().assigned())
                     {
-                        fastdds::dds::xtypes::TypeInformation type_info;
+                        fastdds::dds::xtypes::TypeIdentifierPair type_ids;
                         if (eprosima::fastdds::dds::RETCODE_OK ==
                                 eprosima::fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer()
-                                        .get_type_information(wdata->typeName().c_str(), type_info))
+                                        .get_type_identifiers(wdata->typeName().c_str(), type_ids))
                         {
-                            wdata->type_information() = type_info;
+                            fastdds::dds::xtypes::TypeInformation type_info;
+                            if (eprosima::fastdds::dds::RETCODE_OK ==
+                                    eprosima::fastrtps::rtps::RTPSDomainImpl::get_instance()->
+                                            type_object_registry_observer()
+                                            .get_type_information(type_ids, type_info))
+                            {
+                                wdata->type_information() = type_info;
+                            }
                         }
                     }
                 }
