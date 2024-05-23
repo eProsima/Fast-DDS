@@ -27,6 +27,7 @@
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 
 using namespace eprosima::fastdds::dds;
+using namespace eprosima::fastdds::rtps;
 using namespace eprosima::fastrtps::rtps;
 
 FlowControlExamplePublisher::FlowControlExamplePublisher()
@@ -71,6 +72,13 @@ bool FlowControlExamplePublisher::init()
     DomainParticipantQos pqos;
     pqos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastrtps::c_TimeInfinite;
     pqos.name("Participant_publisher");  //You can put here the name you want
+
+    // This controller allows 300kb per second.
+    auto slow_flow_controller_descriptor = std::make_shared<eprosima::fastdds::rtps::FlowControllerDescriptor>();
+    slow_flow_controller_descriptor->name = "slow_flow_controller_descriptor";
+    slow_flow_controller_descriptor->max_bytes_per_period = 300000;
+    slow_flow_controller_descriptor->period_ms = static_cast<uint64_t>(1000);
+    pqos.flow_controllers().push_back(slow_flow_controller_descriptor);
 
     participant_ = DomainParticipantFactory::get_instance()->create_participant(0, pqos);
 
@@ -121,10 +129,7 @@ bool FlowControlExamplePublisher::init()
     // Create slow DataWriter
     DataWriterQos wsqos;
     wsqos.publish_mode().kind = ASYNCHRONOUS_PUBLISH_MODE;
-
-    // This controller allows 300kb per second.
-    ThroughputControllerDescriptor slowPublisherThroughputController{300000, 1000};
-    wsqos.throughput_controller() = slowPublisherThroughputController;
+    wsqos.publish_mode().flow_controller_name = slow_flow_controller_descriptor->name;;
 
     slow_writer_ = slow_publisher_->create_datawriter(topic_, wsqos, &m_listener);
 
