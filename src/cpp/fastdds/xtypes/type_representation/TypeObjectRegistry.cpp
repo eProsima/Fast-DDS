@@ -306,7 +306,8 @@ ReturnCode_t TypeObjectRegistry::get_type_object(
 
 ReturnCode_t TypeObjectRegistry::get_type_information(
         const TypeIdentifierPair& type_ids,
-        TypeInformation& type_information)
+        TypeInformation& type_information,
+        bool with_dependencies)
 {
     if (TK_NONE == type_ids.type_identifier1()._d() ||
             TK_NONE == type_ids.type_identifier2()._d())
@@ -334,9 +335,46 @@ ReturnCode_t TypeObjectRegistry::get_type_information(
     if (EK_COMPLETE == type_ids.type_identifier1()._d())
     {
         type_information.complete().typeid_with_size().type_id(type_ids.type_identifier1());
-        type_information.complete().dependent_typeid_count(NO_DEPENDENCIES);
         type_information.minimal().typeid_with_size().type_id(type_ids.type_identifier2());
-        type_information.minimal().dependent_typeid_count(NO_DEPENDENCIES);
+
+        if (with_dependencies)
+        {
+            std::unordered_set<TypeIdentfierWithSize> type_dependencies;
+            if (RETCODE_OK == get_type_dependencies_impl({type_ids.type_identifier1()},
+                    type_dependencies))
+            {
+                type_information.complete().dependent_typeid_count(static_cast<int32_t>(type_dependencies.size()));
+                for (auto& dependency : type_dependencies)
+                {
+                    type_information.complete().dependent_typeids().emplace_back(std::move(dependency));
+                }
+                type_dependencies.clear();
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Error retrieving complete type dependenciest.");
+            }
+
+            if (RETCODE_OK == get_type_dependencies_impl({type_ids.type_identifier2()},
+                    type_dependencies))
+            {
+                type_information.minimal().dependent_typeid_count(static_cast<int32_t>(type_dependencies.size()));
+                for (auto& dependency : type_dependencies)
+                {
+                    type_information.minimal().dependent_typeids().emplace_back(std::move(dependency));
+                }
+                type_dependencies.clear();
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Error retrieving minimal type dependenciest.");
+            }
+        }
+        else
+        {
+            type_information.complete().dependent_typeid_count(NO_DEPENDENCIES);
+            type_information.minimal().dependent_typeid_count(NO_DEPENDENCIES);
+        }
 
         std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
         type_information.complete().typeid_with_size().typeobject_serialized_size(type_registry_entries_.at(
@@ -347,9 +385,46 @@ ReturnCode_t TypeObjectRegistry::get_type_information(
     else
     {
         type_information.minimal().typeid_with_size().type_id(type_ids.type_identifier1());
-        type_information.minimal().dependent_typeid_count(NO_DEPENDENCIES);
         type_information.complete().typeid_with_size().type_id(type_ids.type_identifier2());
-        type_information.complete().dependent_typeid_count(NO_DEPENDENCIES);
+
+        if (with_dependencies)
+        {
+            std::unordered_set<TypeIdentfierWithSize> type_dependencies;
+            if (RETCODE_OK == get_type_dependencies_impl({type_ids.type_identifier1()},
+                    type_dependencies))
+            {
+                type_information.minimal().dependent_typeid_count(static_cast<int32_t>(type_dependencies.size()));
+                for (auto& dependency : type_dependencies)
+                {
+                    type_information.minimal().dependent_typeids().emplace_back(std::move(dependency));
+                }
+                type_dependencies.clear();
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Error retrieving minimal type dependenciest.");
+            }
+
+            if (RETCODE_OK == get_type_dependencies_impl({type_ids.type_identifier2()},
+                    type_dependencies))
+            {
+                type_information.complete().dependent_typeid_count(static_cast<int32_t>(type_dependencies.size()));
+                for (auto& dependency : type_dependencies)
+                {
+                    type_information.complete().dependent_typeids().emplace_back(std::move(dependency));
+                }
+                type_dependencies.clear();
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Error retrieving complete type dependenciest.");
+            }
+        }
+        else
+        {
+            type_information.minimal().dependent_typeid_count(NO_DEPENDENCIES);
+            type_information.complete().dependent_typeid_count(NO_DEPENDENCIES);
+        }
 
         std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
         type_information.minimal().typeid_with_size().typeobject_serialized_size(type_registry_entries_.at(
@@ -477,6 +552,10 @@ ReturnCode_t TypeObjectRegistry::register_type_object(
             type_identifier != type_ids.type_identifier1())
     {
         return eprosima::fastdds::dds::RETCODE_PRECONDITION_NOT_MET;
+    }
+    else if (EK_COMPLETE == type_object._d())
+    {
+        type_ids.type_identifier2(type_identifier);
     }
 
     if (EK_COMPLETE == type_object._d())
