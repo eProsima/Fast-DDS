@@ -48,15 +48,7 @@ const char* SEND_BUFFER_SIZE = "sendBufferSize";
 const char* TTL = "TTL";
 const char* NON_BLOCKING_SEND = "non_blocking_send";
 const char* WHITE_LIST = "interfaceWhiteList";
-<<<<<<< HEAD:src/cpp/rtps/xmlparser/XMLParserCommon.cpp
-const char* INTERFACE = "interface";
-=======
 const char* NETWORK_INTERFACE = "interface";
-const char* NETMASK_FILTER = "netmask_filter";
-const char* NETWORK_INTERFACES = "interfaces";
-const char* ALLOWLIST = "allowlist";
-const char* BLOCKLIST = "blocklist";
->>>>>>> 0919ff294 (Use absolute paths when loading XML files (#4751)):src/cpp/xmlparser/XMLParserCommon.cpp
 const char* MAX_MESSAGE_SIZE = "maxMessageSize";
 const char* MAX_INITIAL_PEERS_RANGE = "maxInitialPeersRange";
 const char* KEEP_ALIVE_FREQUENCY = "keep_alive_frequency_ms";
