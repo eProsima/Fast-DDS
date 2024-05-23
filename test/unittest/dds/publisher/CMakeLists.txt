@@ -160,6 +160,7 @@ set(DATAWRITERTESTS_SOURCE DataWriterTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/participant/RTPSParticipant.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/participant/RTPSParticipantImpl.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/PersistenceFactory.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/reader/reader_utils.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/reader/RTPSReader.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/reader/StatefulPersistentReader.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/reader/StatefulReader.cpp

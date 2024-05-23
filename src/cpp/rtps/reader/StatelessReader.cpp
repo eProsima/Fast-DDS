@@ -31,11 +31,11 @@
 #include <fastdds/rtps/reader/StatelessReader.h>
 #include <fastdds/rtps/writer/LivelinessManager.h>
 
-#include <rtps/participant/RTPSParticipantImpl.h>
+#include "reader_utils.hpp"
+#include "rtps/RTPSDomainImpl.hpp"
 #include <rtps/DataSharing/DataSharingListener.hpp>
 #include <rtps/DataSharing/ReaderPool.hpp>
-
-#include "rtps/RTPSDomainImpl.hpp"
+#include <rtps/participant/RTPSParticipantImpl.h>
 
 #define IDSTRING "(ID:" << std::this_thread::get_id() << ") " <<
 
@@ -589,9 +589,10 @@ bool StatelessReader::processDataMsg(
                 return false;
             }
 
-            if (data_filter_ && !data_filter_->is_relevant(*change, m_guid))
+            if (!fastdds::rtps::change_is_relevant_for_filter(*change, m_guid, data_filter_))
             {
                 update_last_notified(change->writerGUID, change->sequenceNumber);
+                // Change was filtered out, so there isn't anything else to do
                 return true;
             }
 
@@ -804,7 +805,8 @@ bool StatelessReader::processDataFragMsg(
                 {
                     // Temporarilly assign the inline qos while evaluating the data filter
                     change_completed->inline_qos = incomingChange->inline_qos;
-                    bool filtered_out = data_filter_ && !data_filter_->is_relevant(*change_completed, m_guid);
+                    bool filtered_out = !fastdds::rtps::change_is_relevant_for_filter(*change_completed, m_guid,
+                                    data_filter_);
                     change_completed->inline_qos = SerializedPayload_t();
 
                     if (filtered_out)

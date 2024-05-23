@@ -32,6 +32,7 @@
 #include <fastdds/rtps/writer/LivelinessManager.h>
 #include <fastrtps/utils/TimeConversion.h>
 
+#include "reader_utils.hpp"
 #include <rtps/DataSharing/DataSharingListener.hpp>
 #include <rtps/DataSharing/ReaderPool.hpp>
 #include <rtps/history/HistoryAttributesExtension.hpp>
@@ -596,7 +597,7 @@ bool StatefulReader::processDataMsg(
                 return false;
             }
 
-            if (data_filter_ && !data_filter_->is_relevant(*change, m_guid))
+            if (!fastdds::rtps::change_is_relevant_for_filter(*change, m_guid, data_filter_))
             {
                 if (pWP)
                 {
@@ -604,6 +605,7 @@ bool StatefulReader::processDataMsg(
                     NotifyChanges(pWP);
                     send_ack_if_datasharing(this, mp_history, pWP, change->sequenceNumber);
                 }
+                // Change was filtered out, so there isn't anything else to do
                 return true;
             }
 
@@ -779,7 +781,8 @@ bool StatefulReader::processDataFragMsg(
 
                     // Temporarilly assign the inline qos while evaluating the data filter
                     work_change->inline_qos = incomingChange->inline_qos;
-                    bool filtered_out = data_filter_ && !data_filter_->is_relevant(*work_change, m_guid);
+                    bool filtered_out =
+                            !fastdds::rtps::change_is_relevant_for_filter(*work_change, m_guid, data_filter_);
                     work_change->inline_qos = SerializedPayload_t();
 
                     if (filtered_out)
