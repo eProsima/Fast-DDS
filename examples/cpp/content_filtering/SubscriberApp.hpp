@@ -17,10 +17,11 @@
  *
  */
 
-#ifndef _CONTENT_FILTER_SUBSCRIBER_H_
-#define _CONTENT_FILTER_SUBSCRIBER_H_
+#ifndef _CONTENT_FILTER_SUBSCRIBER_APP_HPP_
+#define _CONTENT_FILTER_SUBSCRIBER_APP_HPP_
 
 #include <atomic>
+#include <condition_variable>
 
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
@@ -32,75 +33,78 @@
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
+#include "Application.hpp"
+#include "CLIParser.hpp"
 #include "HelloWorldPubSubTypes.h"
 #include "MyCustomFilterFactory.hpp"
 
-// Subscriber application class
-class ContentFilteredTopicExampleSubscriber : public eprosima::fastdds::dds::DataReaderListener
+using namespace eprosima::fastdds::dds;
+namespace eprosima {
+namespace fastdds {
+namespace examples {
+namespace content_filter {
+class SubscriberApp : public Application, public DataReaderListener
 {
 public:
 
     //! Constructor
-    ContentFilteredTopicExampleSubscriber() = default;
+    SubscriberApp(
+            const CLIParser::subscriber_config& config,
+            const std::string& topic_name);
 
     //! Destructor
-    virtual ~ContentFilteredTopicExampleSubscriber();
+    ~SubscriberApp();
 
-    /**
-     * @brief Initialize the subscriber
-     *
-     * @param custom_filter Whether the default SQL filter or the custom defined filter is used.
-     *                      By default the SQL filter is used.
-     * @return true if correctly initialized.
-     * @return false otherwise.
-     */
-    bool init(
-            bool custom_filter = false);
+    //! Subscription callback
+    void on_data_available(
+            DataReader* reader) override;
 
-    //! Run the subscriber application
-    void run();
+    //! Subscriber matched method
+    void on_subscription_matched(
+            DataReader* reader,
+            const SubscriptionMatchedStatus& info) override;
+
+    //! Run subscriber
+    void run() override;
+
+    //! Trigger the end of execution
+    void stop() override;
 
 private:
 
-    //! DDS DomainParticipant pointer
-    eprosima::fastdds::dds::DomainParticipant* participant_ = nullptr;
+    //! Return the current state of execution
+    bool is_stopped();
 
-    //! DDS Subscriber pointer
-    eprosima::fastdds::dds::Subscriber* subscriber_ = nullptr;
+    HelloWorld hello_;
 
-    //! DDS Topic pointer
-    eprosima::fastdds::dds::Topic* topic_ = nullptr;
+    DomainParticipant* participant_;
+
+    Subscriber* subscriber_;
+
+    Topic* topic_;
+
+    DataReader* reader_;
+
+    TypeSupport type_;
+
+    uint16_t samples_;
 
     //! DDS ContentFilteredTopic pointer
-    eprosima::fastdds::dds::ContentFilteredTopic* filter_topic_ = nullptr;
-
-    //! DDS DataReader pointer
-    eprosima::fastdds::dds::DataReader* reader_ = nullptr;
-
-    //! DDS TypeSupport pointer
-    eprosima::fastdds::dds::TypeSupport type_ = eprosima::fastdds::dds::TypeSupport(new HelloWorldPubSubType());
+    ContentFilteredTopic* filter_topic_;
 
     //! Custom filter factory
     MyCustomFilterFactory filter_factory;
 
-    //! Data type
-    HelloWorld hello_;
+    std::atomic<bool> stop_;
 
-    //! Number of DataWriters matched with the subscriber application
-    std::atomic<int> matched_;
+    mutable std::mutex terminate_cv_mtx_;
 
-    //! Number of received samples
-    uint32_t samples_  = 0;
-
-    //! Callback specialization when data is notified to the DataReader
-    void on_data_available(
-            eprosima::fastdds::dds::DataReader* reader) override;
-
-    //! Discovery callback specialization when the DataReader receives discovery information from a remote DataWriter
-    void on_subscription_matched(
-            eprosima::fastdds::dds::DataReader* reader,
-            const eprosima::fastdds::dds::SubscriptionMatchedStatus& info) override;
-
+    std::condition_variable terminate_cv_;
 };
 
-#endif // _CONTENT_FILTER_SUBSCRIBER_H_
+} // namespace content_filter
+} // namespace examples
+} // namespace fastdds
+} // namespace eprosima
+
+#endif // _CONTENT_FILTER_SUBSCRIBER_APP_HPP_

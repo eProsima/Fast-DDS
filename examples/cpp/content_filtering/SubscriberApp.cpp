@@ -19,6 +19,8 @@
 
 #include "SubscriberApp.hpp"
 
+#include <stdexcept>
+
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
@@ -30,31 +32,39 @@
 #include "HelloWorldTypeObjectSupport.hpp"
 
 using namespace eprosima::fastdds::dds;
-
-bool ContentFilteredTopicExampleSubscriber::init(
-        bool custom_filter)
+namespace eprosima {
+namespace fastdds {
+namespace examples {
+namespace content_filter {
+SubscriberApp::SubscriberApp(
+        const CLIParser::subscriber_config& config,
+        const std::string& topic_name)
+    : participant_(nullptr)
+    , subscriber_(nullptr)
+    , topic_(nullptr)
+    , reader_(nullptr)
+    , type_(new HelloWorldPubSubType())
+    , filter_topic_(nullptr)
+    , stop_(false)
 {
-    // Initialize internal variables
-    matched_ = 0;
-
     // Set DomainParticipant name
     DomainParticipantQos pqos;
     pqos.name("Participant_sub");
     // Create DomainParticipant
     participant_ = DomainParticipantFactory::get_instance()->create_participant(0, pqos);
-    if (nullptr == participant_)
+    if (participant_ == nullptr)
     {
-        return false;
+        throw std::runtime_error("Participant initialization failed");
     }
 
     // If using the custom filter
-    if (custom_filter)
+    if (config.custom_filter)
     {
         // Register the filter factory
         if (eprosima::fastdds::dds::RETCODE_OK !=
                 participant_->register_content_filter_factory("MY_CUSTOM_FILTER", &filter_factory))
         {
-            return false;
+            throw std::runtime_error("Custom filter initialization failed");
         }
     }
 
@@ -63,29 +73,29 @@ bool ContentFilteredTopicExampleSubscriber::init(
 
     // Create the Subscriber
     subscriber_ = participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT, nullptr);
-    if (nullptr == subscriber_)
+    if (subscriber_ == nullptr)
     {
-        return false;
+        throw std::runtime_error("Subscriber initialization failed");
     }
 
     // Create the Topic
-    topic_ = participant_->create_topic("HelloWorldTopic", type_->getName(), TOPIC_QOS_DEFAULT);
-    if (nullptr == topic_)
+    topic_ = participant_->create_topic(topic_name, type_.get_type_name(), TOPIC_QOS_DEFAULT);
+    if (topic_ == nullptr)
     {
-        return false;
+        throw std::runtime_error("Topic initialization failed");
     }
 
     // Create the ContentFilteredTopic
     std::string expression;
     std::vector<std::string> parameters;
-    if (custom_filter)
+    if (config.custom_filter)
     {
         // Custom filter: reject samples where index > parameters[0] and index < parameters[1].
         // Custom filter does not use expression. However, an empty expression disables filtering, so some expression
         // must be set.
         expression = " ";
         parameters.push_back("3");
-        parameters.push_back("5");
+        parameters.push_back("7");
         filter_topic_ =
                 participant_->create_contentfilteredtopic("HelloWorldFilteredTopic1", topic_, expression, parameters,
                         "MY_CUSTOM_FILTER");
@@ -99,9 +109,9 @@ bool ContentFilteredTopicExampleSubscriber::init(
         filter_topic_ =
                 participant_->create_contentfilteredtopic("HelloWorldFilteredTopic1", topic_, expression, parameters);
     }
-    if (nullptr == filter_topic_)
+    if (filter_topic_ == nullptr)
     {
-        return false;
+        throw std::runtime_error("Filter Topic initialization failed");
     }
 
     // Create the DataReader
@@ -111,35 +121,35 @@ bool ContentFilteredTopicExampleSubscriber::init(
     rqos.reliability().kind = RELIABLE_RELIABILITY_QOS;
     rqos.durability().kind = TRANSIENT_LOCAL_DURABILITY_QOS;
     reader_ = subscriber_->create_datareader(filter_topic_, rqos, this);
-    if (nullptr == reader_)
+    if (reader_ == nullptr)
     {
-        return false;
+        throw std::runtime_error("Data Reader initialization failed");
     }
-    return true;
 }
 
-ContentFilteredTopicExampleSubscriber::~ContentFilteredTopicExampleSubscriber()
+SubscriberApp::~SubscriberApp()
 {
-    // Delete DDS entities contained within the DomainParticipant
-    participant_->delete_contained_entities();
-    // Delete DomainParticipant
-    DomainParticipantFactory::get_instance()->delete_participant(participant_);
+    if (participant_ != nullptr)
+    {
+        // Delete DDS entities contained within the DomainParticipant
+        participant_->delete_contained_entities();
+        // Delete DomainParticipant
+        DomainParticipantFactory::get_instance()->delete_participant(participant_);
+    }
 }
 
-void ContentFilteredTopicExampleSubscriber::on_subscription_matched(
+void SubscriberApp::on_subscription_matched(
         DataReader*,
         const SubscriptionMatchedStatus& info)
 {
     // New remote DataWriter discovered
     if (info.current_count_change == 1)
     {
-        matched_ = info.current_count;
         std::cout << "Subscriber matched." << std::endl;
     }
     // New remote DataWriter undiscovered
     else if (info.current_count_change == -1)
     {
-        matched_ = info.current_count;
         std::cout << "Subscriber unmatched." << std::endl;
     }
     // Non-valid option
@@ -150,26 +160,45 @@ void ContentFilteredTopicExampleSubscriber::on_subscription_matched(
     }
 }
 
-void ContentFilteredTopicExampleSubscriber::on_data_available(
+void SubscriberApp::on_data_available(
         DataReader* reader)
 {
     SampleInfo info;
     // Take next sample from DataReader's history
-    if (eprosima::fastdds::dds::RETCODE_OK == reader->take_next_sample(&hello_, &info))
+    while ((!is_stopped()) && (eprosima::fastdds::dds::RETCODE_OK == reader->take_next_sample(&hello_, &info)))
     {
         // Some samples only update the instance state. Only if it is a valid sample (with data)
-        if (ALIVE_INSTANCE_STATE == info.instance_state)
+        if ((info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data)
         {
             samples_++;
             // Print structure data
-            std::cout << "Message " << hello_.message() << " " << hello_.index() << " RECEIVED" << std::endl;
+            std::cout << "Message: '" << hello_.message() << "' with index: '" << hello_.index()
+                      << "' RECEIVED" << std::endl;
         }
     }
 }
 
-void ContentFilteredTopicExampleSubscriber::run()
+void SubscriberApp::run()
 {
-    // Subscriber application thread running until stopped by the user
-    std::cout << "Subscriber running. Please press enter to stop the Subscriber" << std::endl;
-    std::cin.ignore();
+    std::unique_lock<std::mutex> lck(terminate_cv_mtx_);
+    terminate_cv_.wait(lck, [&]
+            {
+                return is_stopped();
+            });
 }
+
+bool SubscriberApp::is_stopped()
+{
+    return stop_.load();
+}
+
+void SubscriberApp::stop()
+{
+    stop_.store(true);
+    terminate_cv_.notify_all();
+}
+
+} // namespace content_filter
+} // namespace examples
+} // namespace fastdds
+} // namespace eprosima

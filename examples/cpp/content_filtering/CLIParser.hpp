@@ -221,7 +221,6 @@ public:
                     if (config.entity == CLIParser::EntityKind::SUBSCRIBER)
                     {
                         std::string filter_type = argv[++i];
-                        std::cout<<"FILTER TYPE: "<<filter_type<<std::endl;
                         if (filter_type == "custom")
                         {
                             config.sub_config.custom_filter = true;
