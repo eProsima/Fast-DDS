@@ -892,47 +892,128 @@ XMLP_ret XMLParser::getXMLTransports(
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLThroughputController(
+XMLP_ret XMLParser::getXMLFlowControllerDescriptorList(
         tinyxml2::XMLElement* elem,
-        ThroughputControllerDescriptor& throughputController,
+        FlowControllerDescriptorList& flow_controller_descriptor_list,
         uint8_t ident)
 {
     /*
-        <xs:complexType name="throughputControllerType">
-            <xs:all minOccurs="0">
-                <xs:element name="bytesPerPeriod" type="uint32Type" minOccurs="0"/>
-                <xs:element name="periodMillisecs" type="uint32Type" minOccurs="0"/>
-            </xs:all>
+        <xs:complexType name="flowControllerDescriptorListType">
+            <xs:sequence>
+                <xs:element name="flow_controller_descriptor" type="flowControllerDescriptorType" maxOccurs="unbounded"/>
+            </xs:sequence>
         </xs:complexType>
      */
 
     tinyxml2::XMLElement* p_aux0 = nullptr;
-    const char* name = nullptr;
-    for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
+    p_aux0 = elem->FirstChildElement(FLOW_CONTROLLER_DESCRIPTOR);
+    if (nullptr == p_aux0)
     {
-        name = p_aux0->Name();
-        if (strcmp(name, BYTES_PER_SECOND) == 0)
+        EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << elem->Value() << "' without content");
+        return XMLP_ret::XML_ERROR;
+    }
+
+    while (nullptr != p_aux0)
+    {
+        /*
+            <xs:complexType name="flowControllerDescriptorType">
+                <xs:all>
+                    <xs:element name="name" type="string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="scheduler" type="flowControllerSchedulerPolicy" minOccurs="0" maxOccurs="1"/>
+                    <xs:element name="max_bytes_per_period" type="int32" minOccurs="0" maxOccurs="1"/>
+                    <xs:element name="period_ms" type="uint64" minOccurs="0" maxOccurs="1"/>
+                    <xs:element name="sender_thread" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
+                </xs:all>
+            </xs:complexType>
+
+            <xs:simpleType name="flowControllerSchedulerPolicy">
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="FIFO" />
+                    <xs:enumeration value="ROUND_ROBIN" />
+                    <xs:enumeration value="HIGH_PRIORITY" />
+                    <xs:enumeration value="PRIORITY_WITH_RESERVATION" />
+                </xs:restriction>
+            </xs:simpleType>
+        */
+
+        tinyxml2::XMLElement* p_aux1;
+        bool name_defined = false;
+
+        auto flow_controller_descriptor = std::make_shared<FlowControllerDescriptor>();
+
+        for (p_aux1 = p_aux0->FirstChildElement(); p_aux1 != NULL; p_aux1 = p_aux1->NextSiblingElement())
         {
-            // bytesPerPeriod - uint32Type
-            if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &throughputController.bytesPerPeriod, ident))
+            const char* name = p_aux1->Name();
+
+            if (strcmp(name, NAME) == 0)
             {
+                // name - stringType
+                flow_controller_descriptor->name = get_element_text(p_aux1);
+                if (flow_controller_descriptor->name.empty())
+                {
+                    EPROSIMA_LOG_ERROR(XMLPARSER, "<" << p_aux1->Value() << "> getXMLString XML_ERROR!");
+                    return XMLP_ret::XML_ERROR;
+                }
+                name_defined = true;
+            }
+            else if (strcmp(name, SCHEDULER) == 0)
+            {
+                std::string text = get_element_text(p_aux1);
+                if (text.empty())
+                {
+                    EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << SCHEDULER << "' without content");
+                    return XMLP_ret::XML_ERROR;
+                }
+
+                // scheduler - flowControllerSchedulerPolicy
+                if (!get_element_enum_value(text.c_str(), flow_controller_descriptor->scheduler,
+                    FIFO, FlowControllerSchedulerPolicy::FIFO,
+                    HIGH_PRIORITY, FlowControllerSchedulerPolicy::HIGH_PRIORITY,
+                    ROUND_ROBIN, FlowControllerSchedulerPolicy::ROUND_ROBIN,
+                    PRIORITY_WITH_RESERVATION, FlowControllerSchedulerPolicy::PRIORITY_WITH_RESERVATION))
+                {
+                    EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << SCHEDULER << "' with bad content");
+                    return XMLP_ret::XML_ERROR;
+                }
+            }
+            else if (strcmp(name, MAX_BYTES_PER_PERIOD) == 0)
+            {
+                // max_bytes_per_period - int32Type
+                if (XMLP_ret::XML_OK != getXMLInt(p_aux1, &flow_controller_descriptor->max_bytes_per_period, ident))
+                {
+                    return XMLP_ret::XML_ERROR;
+                }
+            }
+            else if (strcmp(name, PERIOD_MILLISECS) == 0)
+            {
+                // period_ms - uint64Type
+                if (XMLP_ret::XML_OK != getXMLUint(p_aux1, &flow_controller_descriptor->period_ms, ident))
+                {
+                    return XMLP_ret::XML_ERROR;
+                }
+            }
+            else if (strcmp(name, SENDER_THREAD) == 0)
+            {
+                // sender_thread - threadSettingsType
+                getXMLThreadSettings(*p_aux1, flow_controller_descriptor->sender_thread);
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(XMLPARSER, "Invalid element found into 'flowControllerDescriptorType'. Name: " << name);
                 return XMLP_ret::XML_ERROR;
             }
         }
-        else if (strcmp(name, PERIOD_MILLISECS) == 0)
+
+        if (!name_defined)
         {
-            // periodMillisecs - uint32Type
-            if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &throughputController.periodMillisecs, ident))
-            {
-                return XMLP_ret::XML_ERROR;
-            }
-        }
-        else
-        {
-            EPROSIMA_LOG_ERROR(XMLPARSER, "Invalid element found into 'portType'. Name: " << name);
+            EPROSIMA_LOG_ERROR(XMLPARSER, "Flow Controller Descriptor requires a 'name'");
             return XMLP_ret::XML_ERROR;
         }
+
+        flow_controller_descriptor_list.push_back(flow_controller_descriptor);
+        p_aux0 = p_aux0->NextSiblingElement(FLOW_CONTROLLER_DESCRIPTOR);
     }
+
     return XMLP_ret::XML_OK;
 }
 
@@ -2647,6 +2728,15 @@ XMLP_ret XMLParser::getXMLPublishModeQos(
                 return XMLP_ret::XML_ERROR;
             }
         }
+        else if (strcmp(name, FLOW_CONTROLLER_NAME) == 0) {
+
+            publishMode.flow_controller_name = get_element_text(p_aux0);
+            if (publishMode.flow_controller_name.empty())
+            {
+                EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << FLOW_CONTROLLER_NAME << "' without content");
+                return XMLP_ret::XML_ERROR;
+            }
+        }
         else
         {
             EPROSIMA_LOG_ERROR(XMLPARSER, "Invalid element found into 'publishModeQosPolicyType'. Name: " << name);
@@ -4139,7 +4229,6 @@ XMLP_ret XMLParser::getXMLPublisherAttributes(
                 <xs:element name="ignore_non_matching_locators" type="boolType" minOccurs="0"/>
                 <xs:element name="unicastLocatorList" type="locatorListType" minOccurs="0"/>
                 <xs:element name="multicastLocatorList" type="locatorListType" minOccurs="0"/>
-                <xs:element name="throughputController" type="throughputControllerType" minOccurs="0"/>
                 <xs:element name="historyMemoryPolicy" type="historyMemoryPolicyType" minOccurs="0"/>
                 <xs:element name="propertiesPolicy" type="propertyPolicyType" minOccurs="0"/>
                 <xs:element name="userDefinedID" type="int16Type" minOccurs="0"/>
@@ -4224,15 +4313,6 @@ XMLP_ret XMLParser::getXMLPublisherAttributes(
         {
             // remoteLocatorList
             if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux0, publisher.remoteLocatorList, ident))
-            {
-                return XMLP_ret::XML_ERROR;
-            }
-        }
-        else if (strcmp(name, THROUGHPUT_CONT) == 0)
-        {
-            // throughputController
-            if (XMLP_ret::XML_OK !=
-                    getXMLThroughputController(p_aux0, publisher.throughputController, ident))
             {
                 return XMLP_ret::XML_ERROR;
             }

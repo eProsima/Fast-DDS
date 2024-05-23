@@ -104,6 +104,8 @@ class XMLParser
 
 public:
 
+    using FlowControllerDescriptorList = std::vector<std::shared_ptr<fastdds::rtps::FlowControllerDescriptor>>;
+
     /**
      * Load the default XML file.
      * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
@@ -546,9 +548,9 @@ protected:
             ResourceLimitedContainerConfig& resourceLimitsQos,
             uint8_t ident);
 
-    static XMLP_ret getXMLThroughputController(
+    static XMLP_ret getXMLFlowControllerDescriptorList(
             tinyxml2::XMLElement* elem,
-            rtps::ThroughputControllerDescriptor& throughputController,
+            FlowControllerDescriptorList& flow_controller_descriptor_list,
             uint8_t ident);
 
     static XMLP_ret getXMLPortParameters(

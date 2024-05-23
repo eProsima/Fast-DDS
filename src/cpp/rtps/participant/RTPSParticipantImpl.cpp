@@ -876,25 +876,19 @@ bool RTPSParticipantImpl::create_writer(
 
     // Retrieve flow controller.
     // If not default flow controller, publish_mode must be asynchronously.
-    if (nullptr == flow_controller &&
-            (fastdds::rtps::FASTDDS_FLOW_CONTROLLER_DEFAULT == flow_controller_name ||
-            ASYNCHRONOUS_WRITER == param.mode))
+    if (fastdds::rtps::FASTDDS_FLOW_CONTROLLER_DEFAULT != param.flow_controller_name &&
+            SYNCHRONOUS_WRITER == param.mode)
     {
-        flow_controller = flow_controller_factory_.retrieve_flow_controller(flow_controller_name, param);
+        EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Cannot use a flow controller in synchronously publication mode.");
+        return false;
     }
+
+    flow_controller = flow_controller_factory_.retrieve_flow_controller(param.flow_controller_name, param);
 
     if (nullptr == flow_controller)
     {
-        if (fastdds::rtps::FASTDDS_FLOW_CONTROLLER_DEFAULT != flow_controller_name &&
-                SYNCHRONOUS_WRITER == param.mode)
-        {
-            EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Cannot use a flow controller in synchronously publication mode.");
-        }
-        else
-        {
-            EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Cannot create the writer. Couldn't find flow controller "
-                    << flow_controller_name << " for writer.");
-        }
+        EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Cannot create the writer. Couldn't find flow controller "
+                    << param.flow_controller_name << " for writer.");
         return false;
     }
 
