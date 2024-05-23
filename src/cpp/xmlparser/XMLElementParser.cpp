@@ -934,7 +934,7 @@ XMLP_ret XMLParser::getXMLFlowControllerDescriptorList(
                     <xs:enumeration value="PRIORITY_WITH_RESERVATION" />
                 </xs:restriction>
             </xs:simpleType>
-        */
+         */
 
         tinyxml2::XMLElement* p_aux1;
         bool name_defined = false;
@@ -967,10 +967,10 @@ XMLP_ret XMLParser::getXMLFlowControllerDescriptorList(
 
                 // scheduler - flowControllerSchedulerPolicy
                 if (!get_element_enum_value(text.c_str(), flow_controller_descriptor->scheduler,
-                    FIFO, FlowControllerSchedulerPolicy::FIFO,
-                    HIGH_PRIORITY, FlowControllerSchedulerPolicy::HIGH_PRIORITY,
-                    ROUND_ROBIN, FlowControllerSchedulerPolicy::ROUND_ROBIN,
-                    PRIORITY_WITH_RESERVATION, FlowControllerSchedulerPolicy::PRIORITY_WITH_RESERVATION))
+                        FIFO, FlowControllerSchedulerPolicy::FIFO,
+                        HIGH_PRIORITY, FlowControllerSchedulerPolicy::HIGH_PRIORITY,
+                        ROUND_ROBIN, FlowControllerSchedulerPolicy::ROUND_ROBIN,
+                        PRIORITY_WITH_RESERVATION, FlowControllerSchedulerPolicy::PRIORITY_WITH_RESERVATION))
                 {
                     EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << SCHEDULER << "' with bad content");
                     return XMLP_ret::XML_ERROR;
@@ -999,7 +999,8 @@ XMLP_ret XMLParser::getXMLFlowControllerDescriptorList(
             }
             else
             {
-                EPROSIMA_LOG_ERROR(XMLPARSER, "Invalid element found into 'flowControllerDescriptorType'. Name: " << name);
+                EPROSIMA_LOG_ERROR(XMLPARSER,
+                        "Invalid element found into 'flowControllerDescriptorType'. Name: " << name);
                 return XMLP_ret::XML_ERROR;
             }
         }
@@ -2728,7 +2729,8 @@ XMLP_ret XMLParser::getXMLPublishModeQos(
                 return XMLP_ret::XML_ERROR;
             }
         }
-        else if (strcmp(name, FLOW_CONTROLLER_NAME) == 0) {
+        else if (strcmp(name, FLOW_CONTROLLER_NAME) == 0)
+        {
 
             publishMode.flow_controller_name = get_element_text(p_aux0);
             if (publishMode.flow_controller_name.empty())

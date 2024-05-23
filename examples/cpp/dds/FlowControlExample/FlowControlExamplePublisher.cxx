@@ -129,7 +129,7 @@ bool FlowControlExamplePublisher::init()
     // Create slow DataWriter
     DataWriterQos wsqos;
     wsqos.publish_mode().kind = ASYNCHRONOUS_PUBLISH_MODE;
-    wsqos.publish_mode().flow_controller_name = slow_flow_controller_descriptor->name;;
+    wsqos.publish_mode().flow_controller_name = slow_flow_controller_descriptor->name;
 
     slow_writer_ = slow_publisher_->create_datawriter(topic_, wsqos, &m_listener);
 

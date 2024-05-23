@@ -101,10 +101,12 @@ public:
     void init()
     {
         //Create participant
-        participant_attr_.builtin.discovery_config.discoveryProtocol = eprosima::fastrtps::rtps::DiscoveryProtocol::NONE;
+        participant_attr_.builtin.discovery_config.discoveryProtocol =
+                eprosima::fastrtps::rtps::DiscoveryProtocol::NONE;
         participant_attr_.builtin.use_WriterLivelinessProtocol = false;
         participant_attr_.participantID = 2;
-        participant_ = eprosima::fastrtps::rtps::RTPSDomain::createParticipant((uint32_t)GET_PID() % 230, participant_attr_);
+        participant_ = eprosima::fastrtps::rtps::RTPSDomain::createParticipant(
+            (uint32_t)GET_PID() % 230, participant_attr_);
         ASSERT_NE(participant_, nullptr);
 
         //Create writerhistory

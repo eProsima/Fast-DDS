@@ -888,7 +888,7 @@ bool RTPSParticipantImpl::create_writer(
     if (nullptr == flow_controller)
     {
         EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Cannot create the writer. Couldn't find flow controller "
-                    << param.flow_controller_name << " for writer.");
+                << param.flow_controller_name << " for writer.");
         return false;
     }
 
