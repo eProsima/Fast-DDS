@@ -2679,7 +2679,6 @@ public:
                (this->participant_id == b.participant_id) &&
                (this->builtin == b.builtin) &&
                (this->port == b.port) &&
-               (this->throughput_controller == b.throughput_controller) &&
                (this->default_unicast_locator_list == b.default_unicast_locator_list) &&
                (this->default_multicast_locator_list == b.default_multicast_locator_list) &&
                (this->default_external_unicast_locators == b.default_external_unicast_locators) &&
@@ -2704,13 +2703,6 @@ public:
 
     //! Port Parameters
     fastrtps::rtps::PortParameters port;
-
-    /**
-     * @brief Throughput controller parameters. Leave default for uncontrolled flow.
-     *
-     * @deprecated Use flow_controllers() on DomainParticipantQoS
-     */
-    fastrtps::rtps::ThroughputControllerDescriptor throughput_controller;
 
     /**
      * Default list of Unicast Locators to be used for any Endpoint defined inside this RTPSParticipant in the case

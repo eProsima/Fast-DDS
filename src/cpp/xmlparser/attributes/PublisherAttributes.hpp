@@ -28,7 +28,6 @@
 #include <fastdds/rtps/attributes/WriterAttributes.h>
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/common/Time_t.h>
-#include <fastdds/rtps/flowcontrol/ThroughputControllerDescriptor.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -83,9 +82,6 @@ public:
 
     //! Whether locators that don't match with the announced locators should be kept.
     bool ignore_non_matching_locators = false;
-
-    //! Throughput controller
-    fastrtps::rtps::ThroughputControllerDescriptor throughputController;
 
     //! Underlying History memory policy
     fastrtps::rtps::MemoryManagementPolicy_t historyMemoryPolicy =

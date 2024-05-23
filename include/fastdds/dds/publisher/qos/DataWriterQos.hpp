@@ -114,7 +114,6 @@ public:
                (this->reliable_writer_qos_ == b.reliable_writer_qos()) &&
                (this->endpoint_ == b.endpoint()) &&
                (this->writer_resource_limits_ == b.writer_resource_limits()) &&
-               (this->throughput_controller_ == b.throughput_controller()) &&
                (this->data_sharing_ == b.data_sharing());
     }
 
@@ -773,40 +772,6 @@ public:
     }
 
     /**
-     * Getter for ThroughputControllerDescriptor
-     *
-     * @return ThroughputControllerDescriptor reference
-     * @deprecated Use flow_controllers() on DomainParticipantQoS
-     */
-    FASTDDS_EXPORTED_API fastrtps::rtps::ThroughputControllerDescriptor& throughput_controller()
-    {
-        return throughput_controller_;
-    }
-
-    /**
-     * Getter for ThroughputControllerDescriptor
-     *
-     * @return ThroughputControllerDescriptor reference
-     * @deprecated Use flow_controllers() on DomainParticipantQoS
-     */
-    FASTDDS_EXPORTED_API const fastrtps::rtps::ThroughputControllerDescriptor& throughput_controller() const
-    {
-        return throughput_controller_;
-    }
-
-    /**
-     * Setter for ThroughputControllerDescriptor
-     *
-     * @param throughput_controller new value for the ThroughputControllerDescriptor
-     * @deprecated Use flow_controllers() on DomainParticipantQoS
-     */
-    FASTDDS_EXPORTED_API void throughput_controller(
-            const fastrtps::rtps::ThroughputControllerDescriptor& throughput_controller)
-    {
-        throughput_controller_ = throughput_controller;
-    }
-
-    /**
      * Getter for DataSharingQosPolicy
      *
      * @return DataSharingQosPolicy reference
@@ -901,9 +866,6 @@ private:
 
     //!Writer Resource Limits Qos
     WriterResourceLimitsQos writer_resource_limits_;
-
-    //!Throughput controller
-    fastrtps::rtps::ThroughputControllerDescriptor throughput_controller_;
 
     //!DataSharing configuration
     DataSharingQosPolicy data_sharing_;

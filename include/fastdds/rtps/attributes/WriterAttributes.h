@@ -26,7 +26,6 @@
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/rtps/flowcontrol/FlowControllerConsts.hpp>
-#include <fastdds/rtps/flowcontrol/ThroughputControllerDescriptor.h>
 #include <fastdds/utils/collections/ResourceLimitedContainerConfig.hpp>
 
 namespace eprosima {
@@ -122,13 +121,6 @@ public:
 
     //!Indicates if the Writer is synchronous or asynchronous
     RTPSWriterPublishMode mode;
-
-    /**
-     * @brief Throughput controller, always the last one to apply
-     *
-     * @deprecated Use flow_controllers on RTPSParticipantAttributes
-     */
-    ThroughputControllerDescriptor throughputController;
 
     //! Disable the sending of heartbeat piggybacks.
     bool disable_heartbeat_piggyback;

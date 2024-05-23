@@ -36,7 +36,6 @@ void set_qos_from_attributes(
 {
     qos.writer_resource_limits().matched_subscriber_allocation = attr.matched_subscriber_allocation;
     qos.properties() = attr.properties;
-    qos.throughput_controller() = attr.throughputController;
     qos.endpoint().unicast_locator_list = attr.unicastLocatorList;
     qos.endpoint().multicast_locator_list = attr.multicastLocatorList;
     qos.endpoint().remote_locator_list = attr.remoteLocatorList;
@@ -145,7 +144,6 @@ void set_qos_from_attributes(
     qos.wire_protocol().participant_id = attr.participantID;
     qos.wire_protocol().builtin = attr.builtin;
     qos.wire_protocol().port = attr.port;
-    qos.wire_protocol().throughput_controller = attr.throughputController;
     qos.wire_protocol().default_unicast_locator_list = attr.defaultUnicastLocatorList;
     qos.wire_protocol().default_multicast_locator_list = attr.defaultMulticastLocatorList;
     qos.wire_protocol().default_external_unicast_locators = attr.default_external_unicast_locators;
@@ -194,7 +192,6 @@ void set_attributes_from_qos(
     attr.participantID = qos.wire_protocol().participant_id;
     attr.builtin = qos.wire_protocol().builtin;
     attr.port = qos.wire_protocol().port;
-    attr.throughputController = qos.wire_protocol().throughput_controller;
     attr.defaultUnicastLocatorList = qos.wire_protocol().default_unicast_locator_list;
     attr.defaultMulticastLocatorList = qos.wire_protocol().default_multicast_locator_list;
     attr.default_external_unicast_locators = qos.wire_protocol().default_external_unicast_locators;

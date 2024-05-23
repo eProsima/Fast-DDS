@@ -692,16 +692,6 @@ void RTPSParticipantImpl::setup_output_traffic()
     // This must be done after initiate network layer.
     flow_controller_factory_.init(this);
 
-    // Support old API
-    if (m_att.throughputController.bytesPerPeriod != UINT32_MAX && m_att.throughputController.periodMillisecs != 0)
-    {
-        fastdds::rtps::FlowControllerDescriptor old_descriptor;
-        old_descriptor.name = guid_str_.c_str();
-        old_descriptor.max_bytes_per_period = m_att.throughputController.bytesPerPeriod;
-        old_descriptor.period_ms = m_att.throughputController.periodMillisecs;
-        flow_controller_factory_.register_flow_controller(old_descriptor);
-    }
-
     // Register user's flow controllers.
     for (auto flow_controller_desc : m_att.flow_controllers)
     {
@@ -883,43 +873,6 @@ bool RTPSParticipantImpl::create_writer(
 
     GUID_t guid(m_guid.guidPrefix, entId);
     fastdds::rtps::FlowController* flow_controller = nullptr;
-    const char* flow_controller_name = param.flow_controller_name;
-
-    // Support of old flow controller style.
-    if (param.throughputController.bytesPerPeriod != UINT32_MAX && param.throughputController.periodMillisecs != 0)
-    {
-        flow_controller_name = guid_str_.c_str();
-        if (ASYNCHRONOUS_WRITER == param.mode)
-        {
-            fastdds::rtps::FlowControllerDescriptor old_descriptor;
-            old_descriptor.name = guid_str_.c_str();
-            old_descriptor.max_bytes_per_period = param.throughputController.bytesPerPeriod;
-            old_descriptor.period_ms = param.throughputController.periodMillisecs;
-            flow_controller_factory_.register_flow_controller(old_descriptor);
-            flow_controller =  flow_controller_factory_.retrieve_flow_controller(guid_str_.c_str(), param);
-        }
-        else
-        {
-            EPROSIMA_LOG_WARNING(RTPS_PARTICIPANT,
-                    "Throughput flow controller was configured while writer's publish mode is configured as synchronous." \
-                    "Throughput flow controller configuration is not taken into account.");
-
-        }
-    }
-    if (m_att.throughputController.bytesPerPeriod != UINT32_MAX && m_att.throughputController.periodMillisecs != 0)
-    {
-        if (ASYNCHRONOUS_WRITER == param.mode && nullptr == flow_controller)
-        {
-            flow_controller_name = guid_str_.c_str();
-            flow_controller = flow_controller_factory_.retrieve_flow_controller(guid_str_, param);
-        }
-        else
-        {
-            EPROSIMA_LOG_WARNING(RTPS_PARTICIPANT,
-                    "Throughput flow controller was configured while writer's publish mode is configured as synchronous." \
-                    "Throughput flow controller configuration is not taken into account.");
-        }
-    }
 
     // Retrieve flow controller.
     // If not default flow controller, publish_mode must be asynchronously.

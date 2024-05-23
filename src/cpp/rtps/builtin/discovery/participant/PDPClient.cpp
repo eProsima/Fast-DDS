@@ -413,9 +413,11 @@ bool PDPClient::create_ds_pdp_reliable_endpoints(
     }
 #endif // HAVE_SECURITY
 
-    if (pattr.throughputController.bytesPerPeriod != UINT32_MAX && pattr.throughputController.periodMillisecs != 0)
+    // We assume that if we have at least one flow controller defined, we use async flow controller
+    if (!pattr.flow_controllers.empty())
     {
         watt.mode = ASYNCHRONOUS_WRITER;
+        watt.flow_controller_name = fastdds::rtps::async_flow_controller_name;
     }
 
     RTPSWriter* wout = nullptr;
