@@ -1384,6 +1384,9 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_dynamic_type(
             type_ids.type_identifier1()._d(TK_FLOAT128);
             break;
         case eprosima::fastdds::dds::TK_INT8:
+            type_ids.type_identifier1()._d(TK_INT8);
+            break;
+        case eprosima::fastdds::dds::TK_UINT8:
             type_ids.type_identifier1()._d(TK_UINT8);
             break;
         case eprosima::fastdds::dds::TK_CHAR8:
