@@ -22,12 +22,13 @@
 
 #include <security/authentication/PKIDH.h>
 
+#include <openssl/opensslv.h>
+
 #include <fastdds/core/policy/ParameterList.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastdds/rtps/security/logging/Logging.h>
 
-#include <openssl/opensslv.h>
 #include <rtps/messages/CDRMessage.hpp>
 #include <security/authentication/PKIIdentityHandle.h>
 

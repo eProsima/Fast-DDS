@@ -19,7 +19,7 @@
  *
  */
 
-#include <rtps/messages/CDRMessage.hpp>
+#include "CDRMessage.hpp"
 
 #include <cassert>
 #include <cstring>
