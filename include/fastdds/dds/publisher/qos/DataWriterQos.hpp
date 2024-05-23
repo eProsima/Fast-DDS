@@ -58,6 +58,12 @@ public:
                (this->disable_heartbeat_piggyback == b.disable_heartbeat_piggyback);
     }
 
+    inline void clear()
+    {
+        RTPSReliableWriterQos reset = RTPSReliableWriterQos();
+        std::swap(*this, reset);
+    }
+
     //!Writer Timing Attributes
     fastdds::rtps::WriterTimes times;
 

@@ -46,7 +46,7 @@ ReaderQos DataReaderQos::get_readerqos(
     qos.m_lifespan = lifespan();
     //qos.m_topicData --> TODO: Fill with TopicQos info
     qos.m_durabilityService = durability_service();
-    qos.m_disablePositiveACKs = reliable_reader_qos().disable_positive_ACKs;
+    qos.m_disablePositiveACKs = reliable_reader_qos().disable_positive_acks;
     qos.type_consistency = type_consistency();
     qos.representation = representation();
     qos.data_sharing = data_sharing();

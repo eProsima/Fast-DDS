@@ -1002,8 +1002,8 @@ public:
     PubSubReader& keep_duration(
             const eprosima::fastdds::Duration_t duration)
     {
-        datareader_qos_.reliable_reader_qos().disable_positive_ACKs.enabled = true;
-        datareader_qos_.reliable_reader_qos().disable_positive_ACKs.duration = duration;
+        datareader_qos_.reliable_reader_qos().disable_positive_acks.enabled = true;
+        datareader_qos_.reliable_reader_qos().disable_positive_acks.duration = duration;
         return *this;
     }
 

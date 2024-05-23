@@ -181,7 +181,7 @@ ReturnCode_t DataReaderImpl::enable()
     att.liveliness_kind = qos_.liveliness().kind;
     att.matched_writers_allocation = qos_.reader_resource_limits().matched_publisher_allocation;
     att.expects_inline_qos = qos_.expects_inline_qos();
-    att.disable_positive_acks = qos_.reliable_reader_qos().disable_positive_ACKs.enabled;
+    att.disable_positive_acks = qos_.reliable_reader_qos().disable_positive_acks.enabled;
     att.data_sharing_listener_thread = qos_.data_sharing().data_sharing_listener_thread();
 
     // TODO(Ricardo) Remove in future
@@ -1633,8 +1633,8 @@ bool DataReaderImpl::can_qos_be_updated(
         EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK,
                 "Unique network flows request cannot be changed after the creation of a DataReader.");
     }
-    if (to.reliable_reader_qos().disable_positive_ACKs.enabled !=
-            from.reliable_reader_qos().disable_positive_ACKs.enabled)
+    if (to.reliable_reader_qos().disable_positive_acks.enabled !=
+            from.reliable_reader_qos().disable_positive_acks.enabled)
     {
         updatable = false;
         EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK,

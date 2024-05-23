@@ -98,7 +98,7 @@ void set_qos_from_attributes(
     qos.endpoint().user_defined_id = attr.getUserDefinedID();
     qos.endpoint().entity_id = attr.getEntityID();
     qos.reliable_reader_qos().times = attr.times;
-    qos.reliable_reader_qos().disable_positive_ACKs = attr.qos.m_disablePositiveACKs;
+    qos.reliable_reader_qos().disable_positive_acks = attr.qos.m_disablePositiveACKs;
     qos.durability() = attr.qos.m_durability;
     qos.durability_service() = attr.qos.m_durabilityService;
     qos.deadline() = attr.qos.m_deadline;
