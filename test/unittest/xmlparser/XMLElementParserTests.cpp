@@ -1119,7 +1119,6 @@ TEST_F(XMLParserTests, getXMLPublisherAttributes_NegativeClauses)
         "<unicastLocatorList><bad_element></bad_element></unicastLocatorList>",
         "<multicastLocatorList><bad_element></bad_element></multicastLocatorList>",
         "<remoteLocatorList><bad_element></bad_element></remoteLocatorList>",
-        "<throughputController><bad_element></bad_element></throughputController>",
         "<historyMemoryPolicy><bad_element></bad_element></historyMemoryPolicy>",
         "<propertiesPolicy><bad_element></bad_element></propertiesPolicy>",
         "<userDefinedID><bad_element></bad_element></userDefinedID>",
@@ -2073,25 +2072,24 @@ TEST_F(XMLParserTests, getXMLBuiltinAttributes_NegativeClauses)
 }
 
 /*
- * This test checks the negative cases in the xml child element of <ThroughputController>
+ * This test checks the negative cases in the xml child element of <flow_controller_descriptor_list>
  * 1. Check an invalid tag of:
- *      <dbytesPerPeriod>
- *      <periodMillisecs>
+ *      <flow_controller_descriptor>
  * 2. Check invalid element
  */
-TEST_F(XMLParserTests, getXMLThroughputController_NegativeClauses)
+TEST_F(XMLParserTests, getXMLFlowControllerDescriptorList_NegativeClauses)
 {
     uint8_t ident = 1;
-    ThroughputControllerDescriptor throughputController;
+    XMLParserTest::FlowControllerDescriptorList flow_controller_descriptor_list;
     tinyxml2::XMLDocument xml_doc;
     tinyxml2::XMLElement* titleElement;
 
     // Parametrized XML
     const char* xml_p =
             "\
-            <throughputController>\
+            <flow_controller_descriptor_list>\
                 %s\
-            </throughputController>\
+            </flow_controller_descriptor_list>\
             ";
     constexpr size_t xml_len {1000};
     char xml[xml_len];
@@ -2107,8 +2105,7 @@ TEST_F(XMLParserTests, getXMLThroughputController_NegativeClauses)
 
     std::vector<std::string> field_vec =
     {
-        "bytesPerPeriod",
-        "periodMillisecs",
+        "flow_controller_descriptor"
     };
 
     for (std::string tag : field_vec)
@@ -2118,7 +2115,7 @@ TEST_F(XMLParserTests, getXMLThroughputController_NegativeClauses)
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_ERROR,
-                XMLParserTest::getXMLThroughputController_wrapper(titleElement, throughputController, ident));
+                XMLParserTest::getXMLFlowControllerDescriptorList_wrapper(titleElement, flow_controller_descriptor_list, ident));
     }
 
     // Invalid element
@@ -2126,7 +2123,7 @@ TEST_F(XMLParserTests, getXMLThroughputController_NegativeClauses)
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
     titleElement = xml_doc.RootElement();
     EXPECT_EQ(XMLP_ret::XML_ERROR,
-            XMLParserTest::getXMLThroughputController_wrapper(titleElement, throughputController, ident));
+            XMLParserTest::getXMLFlowControllerDescriptorList_wrapper(titleElement, flow_controller_descriptor_list, ident));
 }
 
 /*

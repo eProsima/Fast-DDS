@@ -137,7 +137,7 @@ protected:
 
     std::string xml_filename_ = "test_xml_profile.xml";
 
-    const std::pair<std::string, std::string> c_environment_values_[162]
+    const std::pair<std::string, std::string> c_environment_values_[167]
     {
         {"XML_PROFILES_ENV_VAR_1",   "123"},
         {"XML_PROFILES_ENV_VAR_2",   "4"},
@@ -300,7 +300,12 @@ protected:
         {"XML_PROFILES_ENV_VAR_159", "0"},
         {"XML_PROFILES_ENV_VAR_160", "0"},
         {"XML_PROFILES_ENV_VAR_161", "-1"},
-        {"XML_PROFILES_ENV_VAR_162",  "ON"}
+        {"XML_PROFILES_ENV_VAR_162", "ON"},
+        {"XML_PROFILES_ENV_VAR_163", "test_flow_controller"},
+        {"XML_PROFILES_ENV_VAR_164", "HIGH_PRIORITY"},
+        {"XML_PROFILES_ENV_VAR_165", "2048"},
+        {"XML_PROFILES_ENV_VAR_166",  "45"},
+        {"XML_PROFILES_ENV_VAR_167",  "test_flow_controller"},
     };
 
 };
@@ -559,8 +564,8 @@ TEST_P(XMLProfileParserTests, XMLParserParticipant)
     EXPECT_EQ(port.offsetd2, 123);
     EXPECT_EQ(port.offsetd3, 456);
     EXPECT_EQ(rtps_atts.participantID, 9898);
-    //EXPECT_EQ(rtps_atts.throughputController.bytesPerPeriod, 2048u);
-    //EXPECT_EQ(rtps_atts.throughputController.periodMillisecs, 45u);
+    EXPECT_EQ(rtps_atts.flow_controllers.at(0)->max_bytes_per_period, 2048u);
+    EXPECT_EQ(rtps_atts.flow_controllers.at(0)->period_ms, 45u);
     EXPECT_EQ(rtps_atts.useBuiltinTransports, true);
     EXPECT_EQ(rtps_atts.netmaskFilter, eprosima::fastdds::rtps::NetmaskFilterKind::ON);
     EXPECT_EQ(std::string(rtps_atts.getName()), "test_name");
@@ -659,8 +664,8 @@ TEST_F(XMLProfileParserBasicTests, XMLParserParticipantDeprecated)
     EXPECT_EQ(port.offsetd2, 123);
     EXPECT_EQ(port.offsetd3, 456);
     EXPECT_EQ(rtps_atts.participantID, 9898);
-    EXPECT_EQ(rtps_atts.throughputController.bytesPerPeriod, 2048u);
-    EXPECT_EQ(rtps_atts.throughputController.periodMillisecs, 45u);
+    EXPECT_EQ(rtps_atts.flow_controllers.at(0)->max_bytes_per_period, 2048u);
+    EXPECT_EQ(rtps_atts.flow_controllers.at(0)->period_ms, 45u);
     EXPECT_EQ(rtps_atts.useBuiltinTransports, true);
     EXPECT_EQ(std::string(rtps_atts.getName()), "test_name");
 }
@@ -742,8 +747,8 @@ TEST_P(XMLProfileParserTests, XMLParserDefaultParticipantProfile)
     EXPECT_EQ(port.offsetd2, 123);
     EXPECT_EQ(port.offsetd3, 456);
     EXPECT_EQ(rtps_atts.participantID, 9898);
-    //EXPECT_EQ(rtps_atts.throughputController.bytesPerPeriod, 2048u);
-    //EXPECT_EQ(rtps_atts.throughputController.periodMillisecs, 45u);
+    EXPECT_EQ(rtps_atts.flow_controllers.at(0)->max_bytes_per_period, 2048u);
+    EXPECT_EQ(rtps_atts.flow_controllers.at(0)->period_ms, 45u);
     EXPECT_EQ(rtps_atts.useBuiltinTransports, true);
     EXPECT_EQ(std::string(rtps_atts.getName()), "test_name");
 }
@@ -825,8 +830,8 @@ TEST_F(XMLProfileParserBasicTests, XMLParserDefaultParticipantProfileDeprecated)
     EXPECT_EQ(port.offsetd2, 123);
     EXPECT_EQ(port.offsetd3, 456);
     EXPECT_EQ(rtps_atts.participantID, 9898);
-    EXPECT_EQ(rtps_atts.throughputController.bytesPerPeriod, 2048u);
-    EXPECT_EQ(rtps_atts.throughputController.periodMillisecs, 45u);
+    EXPECT_EQ(rtps_atts.flow_controllers.at(0)->max_bytes_per_period, 2048u);
+    EXPECT_EQ(rtps_atts.flow_controllers.at(0)->period_ms, 45u);
     EXPECT_EQ(rtps_atts.useBuiltinTransports, true);
     EXPECT_EQ(std::string(rtps_atts.getName()), "test_name");
 }
@@ -869,6 +874,7 @@ TEST_P(XMLProfileParserTests, XMLParserPublisher)
     EXPECT_EQ(pub_qos.m_partition.names()[0], "partition_name_a");
     EXPECT_EQ(pub_qos.m_partition.names()[1], "partition_name_b");
     EXPECT_EQ(pub_qos.m_publishMode.kind, ASYNCHRONOUS_PUBLISH_MODE);
+    EXPECT_EQ(pub_qos.m_publishMode.flow_controller_name, "test_flow_controller");
     EXPECT_EQ(pub_times.initialHeartbeatDelay, c_TimeZero);
     EXPECT_EQ(pub_times.heartbeatPeriod.seconds, 11);
     EXPECT_EQ(pub_times.heartbeatPeriod.nanosec, 32u);
@@ -897,8 +903,6 @@ TEST_P(XMLProfileParserTests, XMLParserPublisher)
     //locator.port = 2021;
     //EXPECT_EQ(*(loc_list_it = publisher_atts.outLocatorList.begin()), locator);
     //EXPECT_EQ(loc_list_it->get_port(), 2021);
-    //EXPECT_EQ(publisher_atts.throughputController.bytesPerPeriod, 9236u);
-    //EXPECT_EQ(publisher_atts.throughputController.periodMillisecs, 234u);
     EXPECT_EQ(publisher_atts.historyMemoryPolicy, DYNAMIC_RESERVE_MEMORY_MODE);
     EXPECT_EQ(publisher_atts.getUserDefinedID(), 67);
     EXPECT_EQ(publisher_atts.getEntityID(), 87);
@@ -944,6 +948,7 @@ TEST_F(XMLProfileParserBasicTests, XMLParserPublisherDeprecated)
     EXPECT_EQ(pub_qos.m_partition.names()[0], "partition_name_a");
     EXPECT_EQ(pub_qos.m_partition.names()[1], "partition_name_b");
     EXPECT_EQ(pub_qos.m_publishMode.kind, ASYNCHRONOUS_PUBLISH_MODE);
+    EXPECT_EQ(pub_qos.m_publishMode.flow_controller_name, "test_flow_controller");
     EXPECT_EQ(pub_times.initialHeartbeatDelay, c_TimeZero);
     EXPECT_EQ(pub_times.heartbeatPeriod.seconds, 11);
     EXPECT_EQ(pub_times.heartbeatPeriod.nanosec, 32u);
@@ -972,8 +977,6 @@ TEST_F(XMLProfileParserBasicTests, XMLParserPublisherDeprecated)
     //locator.port = 2021;
     //EXPECT_EQ(*(loc_list_it = publisher_atts.outLocatorList.begin()), locator);
     //EXPECT_EQ(loc_list_it->get_port(), 2021);
-    EXPECT_EQ(publisher_atts.throughputController.bytesPerPeriod, 9236u);
-    EXPECT_EQ(publisher_atts.throughputController.periodMillisecs, 234u);
     EXPECT_EQ(publisher_atts.historyMemoryPolicy, DYNAMIC_RESERVE_MEMORY_MODE);
     EXPECT_EQ(publisher_atts.getUserDefinedID(), 67);
     EXPECT_EQ(publisher_atts.getEntityID(), 87);
@@ -1017,6 +1020,7 @@ TEST_P(XMLProfileParserTests, XMLParserDefaultPublisherProfile)
     EXPECT_EQ(pub_qos.m_partition.names()[0], "partition_name_a");
     EXPECT_EQ(pub_qos.m_partition.names()[1], "partition_name_b");
     EXPECT_EQ(pub_qos.m_publishMode.kind, ASYNCHRONOUS_PUBLISH_MODE);
+    EXPECT_EQ(pub_qos.m_publishMode.flow_controller_name, "test_flow_controller");
     EXPECT_EQ(pub_times.initialHeartbeatDelay, c_TimeZero);
     EXPECT_EQ(pub_times.heartbeatPeriod.seconds, 11);
     EXPECT_EQ(pub_times.heartbeatPeriod.nanosec, 32u);
@@ -1045,8 +1049,6 @@ TEST_P(XMLProfileParserTests, XMLParserDefaultPublisherProfile)
     //locator.port = 2021;
     //EXPECT_EQ(*(loc_list_it = publisher_atts.outLocatorList.begin()), locator);
     //EXPECT_EQ(loc_list_it->get_port(), 2021);
-    //EXPECT_EQ(publisher_atts.throughputController.bytesPerPeriod, 9236u);
-    //EXPECT_EQ(publisher_atts.throughputController.periodMillisecs, 234u);
     EXPECT_EQ(publisher_atts.historyMemoryPolicy, DYNAMIC_RESERVE_MEMORY_MODE);
     EXPECT_EQ(publisher_atts.getUserDefinedID(), 67);
     EXPECT_EQ(publisher_atts.getEntityID(), 87);
@@ -1090,6 +1092,7 @@ TEST_F(XMLProfileParserBasicTests, XMLParserDefaultPublisherProfileDeprecated)
     EXPECT_EQ(pub_qos.m_partition.names()[0], "partition_name_a");
     EXPECT_EQ(pub_qos.m_partition.names()[1], "partition_name_b");
     EXPECT_EQ(pub_qos.m_publishMode.kind, ASYNCHRONOUS_PUBLISH_MODE);
+    EXPECT_EQ(pub_qos.m_publishMode.flow_controller_name, "test_flow_controller");
     EXPECT_EQ(pub_times.initialHeartbeatDelay, c_TimeZero);
     EXPECT_EQ(pub_times.heartbeatPeriod.seconds, 11);
     EXPECT_EQ(pub_times.heartbeatPeriod.nanosec, 32u);
@@ -1118,8 +1121,6 @@ TEST_F(XMLProfileParserBasicTests, XMLParserDefaultPublisherProfileDeprecated)
     //locator.port = 2021;
     //EXPECT_EQ(*(loc_list_it = publisher_atts.outLocatorList.begin()), locator);
     //EXPECT_EQ(loc_list_it->get_port(), 2021);
-    EXPECT_EQ(publisher_atts.throughputController.bytesPerPeriod, 9236u);
-    EXPECT_EQ(publisher_atts.throughputController.periodMillisecs, 234u);
     EXPECT_EQ(publisher_atts.historyMemoryPolicy, DYNAMIC_RESERVE_MEMORY_MODE);
     EXPECT_EQ(publisher_atts.getUserDefinedID(), 67);
     EXPECT_EQ(publisher_atts.getEntityID(), 87);

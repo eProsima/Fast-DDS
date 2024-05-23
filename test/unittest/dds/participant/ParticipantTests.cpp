@@ -1558,14 +1558,6 @@ TEST(ParticipantTests, ChangeWireProtocolQos)
     participant->get_qos(set_qos);
     ASSERT_FALSE(set_qos == qos);
 
-    // Check changing wire_protocol().throughput_controller is NOT OK
-    participant->get_qos(qos);
-    fastrtps::rtps::ThroughputControllerDescriptor controller{300000, 1000};
-    qos.wire_protocol().throughput_controller = controller;
-    ASSERT_TRUE(participant->set_qos(qos) == RETCODE_IMMUTABLE_POLICY);
-    participant->get_qos(set_qos);
-    ASSERT_FALSE(set_qos == qos);
-
     // Check changing wire_protocol().default_unicast_locator_list is NOT OK
     participant->get_qos(qos);
     fastrtps::rtps::Locator_t loc;

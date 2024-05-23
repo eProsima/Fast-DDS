@@ -35,7 +35,6 @@
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/rtps/common/Types.h>
 #include <fastdds/rtps/flowcontrol/FlowControllerDescriptor.hpp>
-#include <fastdds/rtps/flowcontrol/ThroughputControllerDescriptor.h>
 #include <fastdds/rtps/resources/ResourceManagement.h>
 #include <fastdds/rtps/transport/network/NetmaskFilterKind.hpp>
 #include <fastdds/rtps/transport/TransportInterface.h>
@@ -453,7 +452,6 @@ public:
                (this->port == b.port) &&
                (this->userData == b.userData) &&
                (this->participantID == b.participantID) &&
-               (this->throughputController == b.throughputController) &&
                (this->useBuiltinTransports == b.useBuiltinTransports) &&
                (this->properties == b.properties) &&
                (this->prefix == b.prefix) &&
@@ -573,13 +571,6 @@ public:
 
     //! Participant ID
     int32_t participantID = -1;
-
-    /**
-     * @brief Throughput controller parameters. Leave default for uncontrolled flow.
-     *
-     * @deprecated Use flow_controllers on RTPSParticipantAttributes
-     */
-    ThroughputControllerDescriptor throughputController;
 
     //! User defined transports to use alongside or in place of builtins.
     std::vector<std::shared_ptr<fastdds::rtps::TransportDescriptorInterface>> userTransports;
