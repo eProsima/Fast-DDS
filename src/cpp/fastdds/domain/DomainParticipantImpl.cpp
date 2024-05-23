@@ -1713,7 +1713,7 @@ bool DomainParticipantImpl::can_qos_be_updated(
     if (!(to.properties() == from.properties()))
     {
         updatable = false;
-        EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK, "PropertyPolilyQos cannot be changed after the participant is enabled");
+        EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK, "PropertyPolicyQos cannot be changed after the participant is enabled");
     }
     if (!(to.wire_protocol() == from.wire_protocol()))
     {
