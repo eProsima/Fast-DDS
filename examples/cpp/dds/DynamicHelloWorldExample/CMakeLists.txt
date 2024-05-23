@@ -18,7 +18,7 @@ project(DDSDynamicHelloWorldExample VERSION 1 LANGUAGES CXX)
 
 # Find requirements
 if(NOT fastcdr_FOUND)
-    find_package(fastcdr 2 REQUIRED)
+    find_package(fastcdr REQUIRED)
 endif()
 
 if(NOT fastrtps_FOUND)
