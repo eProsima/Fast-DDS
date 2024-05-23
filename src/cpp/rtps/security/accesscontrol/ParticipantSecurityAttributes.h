@@ -37,20 +37,30 @@ typedef uint32_t PluginParticipantSecurityAttributesMask;
 
 struct PluginParticipantSecurityAttributes
 {
-    PluginParticipantSecurityAttributes() :
-        is_rtps_encrypted(false), is_discovery_encrypted(false), is_liveliness_encrypted(false),
-        is_rtps_origin_authenticated(false), is_discovery_origin_authenticated(false),
-        is_liveliness_origin_authenticated(false)
-    {}
+    PluginParticipantSecurityAttributes()
+        : is_rtps_encrypted(false)
+        , is_discovery_encrypted(false)
+        , is_liveliness_encrypted(false)
+        , is_rtps_origin_authenticated(false)
+        , is_discovery_origin_authenticated(false)
+        , is_liveliness_origin_authenticated(false)
+    {
+    }
 
-    explicit PluginParticipantSecurityAttributes(const PluginParticipantSecurityAttributesMask mask) :
-        is_rtps_encrypted((mask & PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ENCRYPTED) != 0),
-        is_discovery_encrypted((mask & PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_BUILTIN_IS_DISCOVERY_ENCRYPTED) != 0),
-        is_liveliness_encrypted((mask & PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_LIVELINESS_ENCRYPTED) != 0),
-        is_rtps_origin_authenticated((mask & PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ORIGIN_AUTHENTICATED) != 0),
-        is_discovery_origin_authenticated((mask & PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_DISCOVERY_ORIGIN_AUTHENTICATED) != 0),
-        is_liveliness_origin_authenticated((mask & PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_LIVELINESS_ORIGIN_AUTHENTICATED) != 0)
-    {}
+    explicit PluginParticipantSecurityAttributes(
+            const PluginParticipantSecurityAttributesMask mask)
+        : is_rtps_encrypted((mask & PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ENCRYPTED) != 0)
+        , is_discovery_encrypted(
+            (mask & PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_BUILTIN_IS_DISCOVERY_ENCRYPTED) != 0)
+        , is_liveliness_encrypted((mask & PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_LIVELINESS_ENCRYPTED) != 0)
+        , is_rtps_origin_authenticated(
+            (mask & PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ORIGIN_AUTHENTICATED) != 0)
+        , is_discovery_origin_authenticated((mask &
+                PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_DISCOVERY_ORIGIN_AUTHENTICATED) != 0)
+        , is_liveliness_origin_authenticated((mask &
+                PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_LIVELINESS_ORIGIN_AUTHENTICATED) != 0)
+    {
+    }
 
     bool is_rtps_encrypted;
 
@@ -67,14 +77,33 @@ struct PluginParticipantSecurityAttributes
     inline PluginParticipantSecurityAttributesMask mask() const
     {
         PluginParticipantSecurityAttributesMask rv = PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_VALID;
-        if (is_rtps_encrypted) rv |= PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ENCRYPTED;
-        if (is_discovery_encrypted) rv |= PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_BUILTIN_IS_DISCOVERY_ENCRYPTED;
-        if (is_liveliness_encrypted) rv |= PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_LIVELINESS_ENCRYPTED;
-        if (is_rtps_origin_authenticated) rv |= PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ORIGIN_AUTHENTICATED;
-        if (is_discovery_origin_authenticated) rv |= PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_DISCOVERY_ORIGIN_AUTHENTICATED;
-        if (is_liveliness_origin_authenticated) rv |= PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_LIVELINESS_ORIGIN_AUTHENTICATED;
+        if (is_rtps_encrypted)
+        {
+            rv |= PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ENCRYPTED;
+        }
+        if (is_discovery_encrypted)
+        {
+            rv |= PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_BUILTIN_IS_DISCOVERY_ENCRYPTED;
+        }
+        if (is_liveliness_encrypted)
+        {
+            rv |= PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_LIVELINESS_ENCRYPTED;
+        }
+        if (is_rtps_origin_authenticated)
+        {
+            rv |= PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ORIGIN_AUTHENTICATED;
+        }
+        if (is_discovery_origin_authenticated)
+        {
+            rv |= PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_DISCOVERY_ORIGIN_AUTHENTICATED;
+        }
+        if (is_liveliness_origin_authenticated)
+        {
+            rv |= PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_LIVELINESS_ORIGIN_AUTHENTICATED;
+        }
         return rv;
     }
+
 };
 
 typedef uint32_t ParticipantSecurityAttributesMask;
@@ -86,19 +115,26 @@ typedef uint32_t ParticipantSecurityAttributesMask;
 
 struct ParticipantSecurityAttributes
 {
-    ParticipantSecurityAttributes() :
-        allow_unauthenticated_participants(false), is_access_protected(true),
-        is_rtps_protected(false), is_discovery_protected(false), is_liveliness_protected(false),
-        plugin_participant_attributes (0UL)
-    {}
+    ParticipantSecurityAttributes()
+        : allow_unauthenticated_participants(false)
+        , is_access_protected(true)
+        , is_rtps_protected(false)
+        , is_discovery_protected(false)
+        , is_liveliness_protected(false)
+        , plugin_participant_attributes (0UL)
+    {
+    }
 
-    explicit ParticipantSecurityAttributes(const ParticipantSecurityAttributesMask mask) :
-        allow_unauthenticated_participants(false), is_access_protected(true),
-        is_rtps_protected((mask & PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_PROTECTED) != 0),
-        is_discovery_protected((mask & PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_DISCOVERY_PROTECTED) != 0),
-        is_liveliness_protected((mask & PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_LIVELINESS_PROTECTED) != 0),
-        plugin_participant_attributes(0UL)
-    {}
+    explicit ParticipantSecurityAttributes(
+            const ParticipantSecurityAttributesMask mask)
+        : allow_unauthenticated_participants(false)
+        , is_access_protected(true)
+        , is_rtps_protected((mask & PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_PROTECTED) != 0)
+        , is_discovery_protected((mask & PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_DISCOVERY_PROTECTED) != 0)
+        , is_liveliness_protected((mask & PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_LIVELINESS_PROTECTED) != 0)
+        , plugin_participant_attributes(0UL)
+    {
+    }
 
     bool allow_unauthenticated_participants;
 
@@ -115,23 +151,34 @@ struct ParticipantSecurityAttributes
     inline ParticipantSecurityAttributesMask mask() const
     {
         ParticipantSecurityAttributesMask rv = PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_VALID;
-        if (is_rtps_protected) rv |= PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_PROTECTED;
-        if (is_discovery_protected) rv |= PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_DISCOVERY_PROTECTED;
-        if (is_liveliness_protected) rv |= PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_LIVELINESS_PROTECTED;
+        if (is_rtps_protected)
+        {
+            rv |= PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_PROTECTED;
+        }
+        if (is_discovery_protected)
+        {
+            rv |= PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_DISCOVERY_PROTECTED;
+        }
+        if (is_liveliness_protected)
+        {
+            rv |= PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_LIVELINESS_PROTECTED;
+        }
         return rv;
     }
 
-    inline bool match(const ParticipantSecurityAttributesMask remoteMask,
-        const PluginParticipantSecurityAttributesMask remotePluginMask) const
+    inline bool match(
+            const ParticipantSecurityAttributesMask remoteMask,
+            const PluginParticipantSecurityAttributesMask remotePluginMask) const
     {
         return security_mask_matches(mask(), remoteMask) &&
-            security_mask_matches(plugin_participant_attributes, remotePluginMask);
+               security_mask_matches(plugin_participant_attributes, remotePluginMask);
     }
+
 };
 
-}
-}
-}
-}
+} // namespace security
+} // namespace rtps
+} // namespace fastrtps
+} // namespace eprosima
 
 #endif // _FASTDDS_RTPS_SECURITY_ACCESSCONTROL_PARTICIPANTSECURITYATTRIBUTES_H_

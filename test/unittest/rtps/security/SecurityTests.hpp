@@ -17,7 +17,6 @@
 
 #include <gtest/gtest.h>
 
-
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/history/WriterHistory.h>

@@ -23,7 +23,6 @@
 #include <mutex>
 #include <thread>
 
-
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/attributes/HistoryAttributes.h>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
@@ -34,6 +33,7 @@
 #include <fastdds/rtps/participant/RTPSParticipantListener.h>
 #include <fastdds/rtps/writer/StatefulWriter.h>
 #include <fastdds/rtps/writer/StatelessWriter.h>
+
 #include <rtps/builtin/discovery/endpoint/EDP.h>
 #include <rtps/builtin/discovery/participant/PDP.h>
 #include <rtps/messages/CDRMessage.hpp>
