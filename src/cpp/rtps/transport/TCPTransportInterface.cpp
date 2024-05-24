@@ -1014,9 +1014,6 @@ void TCPTransportInterface::perform_listen_operation(
         {
             remote_locator = remote_endpoint_to_locator(channel);
 
-            uint32_t port = channel->local_endpoint().port();
-            set_name_to_current_thread("dds.tcp.%u", port);
-
             if (channel->tcp_connection_type() == TCPChannelResource::TCPConnectionType::TCP_CONNECT_TYPE)
             {
                 rtcp_message_manager->sendConnectionRequest(channel);

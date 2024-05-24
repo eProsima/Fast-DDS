@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <array>
 #include <cstdio>
 #include <cstring>
 #include <limits>
@@ -27,38 +28,43 @@
 
 namespace eprosima {
 
-template<typename... Args>
+template<typename ... Args>
 static void set_name_to_current_thread_impl(
-    const char* fmt, Args... args)
+        std::array<char, 16>& thread_name_buffer,
+        const char* fmt,
+        Args... args)
 {
-    char thread_name[16]{};
-    snprintf(thread_name, 16, fmt, args...);
+    snprintf(thread_name_buffer.data(), 16, fmt, args ...);
     auto id = pthread_self();
-    pthread_setname_np(id, thread_name);
+    pthread_setname_np(id, thread_name_buffer.data());
 }
 
 void set_name_to_current_thread(
+        std::array<char, 16>& thread_name_buffer,
         const char* name)
 {
-    set_name_to_current_thread_impl("%s", name);
+    set_name_to_current_thread_impl(thread_name_buffer, "%s", name);
 }
 
 void set_name_to_current_thread(
+        std::array<char, 16>& thread_name_buffer,
         const char* fmt,
         uint32_t arg)
 {
-    set_name_to_current_thread_impl(fmt, arg);
+    set_name_to_current_thread_impl(thread_name_buffer, fmt, arg);
 }
 
 void set_name_to_current_thread(
+        std::array<char, 16>& thread_name_buffer,
         const char* fmt,
         uint32_t arg1,
         uint32_t arg2)
 {
-    set_name_to_current_thread_impl(fmt, arg1, arg2);
+    set_name_to_current_thread_impl(thread_name_buffer, fmt, arg1, arg2);
 }
 
 static void configure_current_thread_scheduler(
+        const char* thread_name,
         int sched_class,
         int sched_priority)
 {
@@ -81,9 +87,9 @@ static void configure_current_thread_scheduler(
     // Set Scheduler Class and Priority
     //
 
-    if((sched_class == SCHED_OTHER) ||
-       (sched_class == SCHED_BATCH) ||
-       (sched_class == SCHED_IDLE))
+    if ((sched_class == SCHED_OTHER) ||
+            (sched_class == SCHED_BATCH) ||
+            (sched_class == SCHED_IDLE))
     {
         //
         // BATCH and IDLE do not have explicit priority values.
@@ -95,12 +101,22 @@ static void configure_current_thread_scheduler(
         // Sched OTHER has a nice value, that we pull from the priority parameter.
         //
 
-        if(0 == result && sched_class == SCHED_OTHER && change_priority)
+        if (0 == result && sched_class == SCHED_OTHER && change_priority)
         {
             result = setpriority(PRIO_PROCESS, gettid(), sched_priority);
+            if (0 != result)
+            {
+                EPROSIMA_LOG_ERROR(SYSTEM, "Problem to set priority of thread with id [" << self_tid << "," << thread_name << "] to value " << sched_priority << ". Error '" << strerror(
+                            result) << "'");
+            }
+        }
+        else if (0 != result)
+        {
+            EPROSIMA_LOG_ERROR(SYSTEM, "Problem to set scheduler of thread with id [" << self_tid << "," << thread_name << "] to value " << sched_class << ". Error '" << strerror(
+                        result) << "'");
         }
     }
-    else if((sched_class == SCHED_FIFO) ||
+    else if ((sched_class == SCHED_FIFO) ||
             (sched_class == SCHED_RR))
     {
         //
@@ -109,15 +125,16 @@ static void configure_current_thread_scheduler(
 
         param.sched_priority = change_priority ? sched_priority : current_param.sched_priority;
         result = pthread_setschedparam(self_tid, sched_class, &param);
-    }
-
-    if (0 != result)
-    {
-        EPROSIMA_LOG_ERROR(SYSTEM, "Error '" << strerror(result) << "' configuring scheduler for thread " << self_tid);
+        if (0 != result)
+        {
+            EPROSIMA_LOG_ERROR(SYSTEM, "Problem to set scheduler of thread with id [" << self_tid << "," << thread_name << "] to value " << sched_class << " with priority " << param.sched_priority << ". Error '" << strerror(
+                        result) << "'");
+        }
     }
 }
 
 static void configure_current_thread_affinity(
+        const char* thread_name,
         uint64_t affinity_mask)
 {
     int a;
@@ -141,9 +158,9 @@ static void configure_current_thread_affinity(
     //
     cpu_count = get_nprocs_conf();
 
-    for(a = 0; a < cpu_count; a++)
+    for (a = 0; a < cpu_count; a++)
     {
-        if(0 != (affinity_mask & 1))
+        if (0 != (affinity_mask & 1))
         {
             CPU_SET(a, &cpu_set);
             result++;
@@ -156,26 +173,28 @@ static void configure_current_thread_affinity(
         EPROSIMA_LOG_ERROR(SYSTEM, "Affinity mask has more processors than the ones present in the system");
     }
 
-    if(result > 0)
+    if (result > 0)
     {
 #ifdef ANDROID
         result = sched_setaffinity(self_tid, sizeof(cpu_set_t), &cpu_set);
 #else
         result = pthread_setaffinity_np(self_tid, sizeof(cpu_set_t), &cpu_set);
-#endif
+#endif // ifdef ANDROID
     }
 
     if (0 != result)
     {
-        EPROSIMA_LOG_ERROR(SYSTEM, "Error '" << strerror(result) << "' configuring affinity for thread " << self_tid);
+        EPROSIMA_LOG_ERROR(SYSTEM, "Problem to set affinity of thread with id [" << self_tid << "," << thread_name << "] to value " << affinity_mask << ". Error '" << strerror(
+                    result) << "'");
     }
 }
 
 void apply_thread_settings_to_current_thread(
+        const char* thread_name,
         const fastdds::rtps::ThreadSettings& settings)
 {
-    configure_current_thread_scheduler(settings.scheduling_policy, settings.priority);
-    configure_current_thread_affinity(settings.affinity);
+    configure_current_thread_scheduler(thread_name, settings.scheduling_policy, settings.priority);
+    configure_current_thread_affinity(thread_name, settings.affinity);
 }
 
 }  // namespace eprosima
