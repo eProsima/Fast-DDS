@@ -46,7 +46,7 @@
 #include <rtps/builtin/discovery/participant/timedevent/DServerEvent.hpp>
 #include <rtps/builtin/liveliness/WLP.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
-#include <rtps/reader/StatefulReader.h>
+#include <rtps/reader/StatefulReader.hpp>
 #include <utils/TimeConversion.hpp>
 
 namespace eprosima {

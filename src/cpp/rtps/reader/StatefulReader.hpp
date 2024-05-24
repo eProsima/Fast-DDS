@@ -13,18 +13,17 @@
 // limitations under the License.
 
 /**
- * @file StatelessReader.h
+ * @file StatefulReader.hpp
  */
 
-
-#ifndef _FASTDDS_RTPS_READER_STATELESSREADER_H_
-#define _FASTDDS_RTPS_READER_STATELESSREADER_H_
+#ifndef _FASTDDS_RTPS_READER_STATEFULREADER_H_
+#define _FASTDDS_RTPS_READER_STATEFULREADER_H_
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <map>
 #include <mutex>
 
+#include <fastdds/rtps/common/CDRMessage_t.h>
 #include <fastdds/rtps/common/VendorId_t.hpp>
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>
@@ -33,28 +32,31 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
+class WriterProxy;
+class RTPSMessageSenderInterface;
+
 /**
- * Class StatelessReader, specialization of the RTPSReader for Best Effort Readers.
+ * Class StatefulReader, specialization of RTPSReader than stores the state of the matched writers.
  * @ingroup READER_MODULE
  */
-class StatelessReader : public RTPSReader
+class StatefulReader : public RTPSReader
 {
-    friend class RTPSParticipantImpl;
-
 public:
 
-    virtual ~StatelessReader();
+    friend class RTPSParticipantImpl;
+
+    virtual ~StatefulReader();
 
 protected:
 
-    StatelessReader(
+    StatefulReader(
             RTPSParticipantImpl* pimpl,
             const GUID_t& guid,
             const ReaderAttributes& att,
             ReaderHistory* hist,
             ReaderListener* listen = nullptr);
 
-    StatelessReader(
+    StatefulReader(
             RTPSParticipantImpl* pimpl,
             const GUID_t& guid,
             const ReaderAttributes& att,
@@ -62,7 +64,7 @@ protected:
             ReaderHistory* hist,
             ReaderListener* listen = nullptr);
 
-    StatelessReader(
+    StatefulReader(
             RTPSParticipantImpl* pimpl,
             const GUID_t& guid,
             const ReaderAttributes& att,
@@ -74,8 +76,8 @@ protected:
 public:
 
     /**
-     * Add a matched writer represented by a WriterProxyData object.
-     * @param wdata Pointer to the WPD object to add.
+     * Add a matched writer represented by its attributes.
+     * @param wdata Attributes of the writer to add.
      * @return True if correctly added.
      */
     bool matched_writer_add(
@@ -100,20 +102,19 @@ public:
             const GUID_t& writer_guid) override;
 
     /**
-     * Method to indicate the reader that some change has been removed due to HistoryQos requirements.
-     * @param change Pointer to the CacheChange_t.
-     * @param prox Pointer to the WriterProxy.
-     * @return True if correctly removed.
+     * Look for a specific WriterProxy.
+     * @param writerGUID GUID_t of the writer we are looking for.
+     * @param WP Pointer to pointer to a WriterProxy.
+     * @return True if found.
      */
-    bool change_removed_by_history(
-            CacheChange_t* change,
-            WriterProxy* prox = nullptr) override;
+    bool matched_writer_lookup(
+            const GUID_t& writerGUID,
+            WriterProxy** WP);
 
     /**
      * Processes a new DATA message.
-     *
      * @param change Pointer to the CacheChange_t.
-     * @return true if the reader accepts messages from the.
+     * @return true if the reader accepts messages.
      */
     bool processDataMsg(
             CacheChange_t* change) override;
@@ -136,7 +137,7 @@ public:
     /**
      * Processes a new HEARTBEAT message.
      *
-     * @return true if the reader accepts messages from the.
+     * @return true if the reader accepts messages.
      */
     bool processHeartbeatMsg(
             const GUID_t& writerGUID,
@@ -154,18 +155,48 @@ public:
             fastdds::rtps::VendorId_t origin_vendor_id = c_VendorId_Unknown) override;
 
     /**
+     * Method to indicate the reader that some change has been removed due to HistoryQos requirements.
+     * @param change Pointer to the CacheChange_t.
+     * @param prox Pointer to the WriterProxy.
+     * @return True if correctly removed.
+     */
+    bool change_removed_by_history(
+            CacheChange_t* change,
+            WriterProxy* prox = nullptr) override;
+
+    /**
      * This method is called when a new change is received. This method calls the received_change of the History
      * and depending on the implementation performs different actions.
      * @param a_change Pointer of the change to add.
+     * @param prox Pointer to the WriterProxy that adds the Change.
+     * @param unknown_missing_changes_up_to The number of changes from the same writer with a lower sequence number that
+     *                                      could potentially be received in the future.
      * @return True if added.
      */
     bool change_received(
-            CacheChange_t* a_change);
+            CacheChange_t* a_change,
+            WriterProxy* prox,
+            size_t unknown_missing_changes_up_to);
+
+    /**
+     * Get the RTPS participant
+     * @return Associated RTPS participant
+     */
+    inline RTPSParticipantImpl* getRTPSParticipant() const
+    {
+        return mp_RTPSParticipant;
+    }
+
+    /**
+     * Get reference to associated RTPS partiicipant's \c ResourceEvent
+     * @return Reference to associated RTPS partiicipant's \c ResourceEvent
+     */
+    ResourceEvent& getEventResource() const;
 
     /**
      * Read the next unread CacheChange_t from the history
      * @param change Pointer to pointer of CacheChange_t
-     * @param wpout Pointer to pointer of the matched writer proxy
+     * @param wpout Pointer to pointer the matched writer proxy
      * @return True if read.
      */
     bool nextUnreadCache(
@@ -175,12 +206,29 @@ public:
     /**
      * Take the next CacheChange_t from the history;
      * @param change Pointer to pointer of CacheChange_t
-     * @param wpout Pointer to pointer of the matched writer proxy
+     * @param wpout Pointer to pointer the matched writer proxy
      * @return True if read.
      */
     bool nextUntakenCache(
             CacheChange_t** change,
             WriterProxy** wpout = nullptr) override;
+
+    /**
+     * Update the times parameters of the Reader.
+     * @param times ReaderTimes reference.
+     * @return True if correctly updated.
+     */
+    bool updateTimes(
+            const ReaderTimes& times);
+
+    /**
+     *
+     * @return Reference to the ReaderTimes.
+     */
+    inline ReaderTimes& getTimes()
+    {
+        return times_;
+    }
 
     /**
      * Get the number of matched writers
@@ -193,29 +241,55 @@ public:
 
     /*!
      * @brief Returns there is a clean state with all Writers.
-     * StatelessReader allways return true;
-     * @return true
+     * It occurs when the Reader received all samples sent by Writers. In other words,
+     * its WriterProxies are up to date.
+     * @return There is a clean state with all Writers.
      */
-    bool isInCleanState() override
-    {
-        return true;
-    }
+    bool isInCleanState() override;
 
     /**
-     * Get the RTPS participant
-     * @return Associated RTPS participant
+     * Sends an acknack message from this reader.
+     * @param writer Pointer to the info of the remote writer.
+     * @param sns Sequence number bitmap with the acknack information.
+     * @param sender Message sender interface.
+     * @param is_final Value for final flag.
      */
-    inline RTPSParticipantImpl* getRTPSParticipant() const
-    {
-        return mp_RTPSParticipant;
-    }
+    void send_acknack(
+            const WriterProxy* writer,
+            const SequenceNumberSet_t& sns,
+            RTPSMessageSenderInterface* sender,
+            bool is_final);
 
     /**
-     * @brief Assert liveliness of remote writer
-     * @param guid The guid of the remote writer
+     * Sends an acknack message from this reader in response to a heartbeat.
+     * @param writer Pointer to the proxy representing the writer to send the acknack to.
+     * @param sender Message sender interface.
+     * @param heartbeat_was_final Final flag of the last received heartbeat.
+     */
+    void send_acknack(
+            const WriterProxy* writer,
+            RTPSMessageSenderInterface* sender,
+            bool heartbeat_was_final);
+
+    /**
+     * Use the participant of this reader to send a message to certain locator.
+     * @param message Message to be sent.
+     * @param locators_begin Destination locators iterator begin.
+     * @param locators_end Destination locators iterator end.
+     * @param max_blocking_time_point Future time point where any blocking should end.
+     */
+    bool send_sync_nts(
+            CDRMessage_t* message,
+            const Locators& locators_begin,
+            const Locators& locators_end,
+            std::chrono::steady_clock::time_point& max_blocking_time_point);
+
+    /**
+     * Assert the livelines of a matched writer.
+     * @param writer GUID of the writer to assert.
      */
     void assert_writer_liveliness(
-            const GUID_t& guid) override;
+            const GUID_t& writer) override;
 
     /**
      * Called just before a change is going to be deserialized.
@@ -260,40 +334,44 @@ public:
 
 private:
 
-    struct RemoteWriterInfo_t
-    {
-        GUID_t guid;
-        GUID_t persistence_guid;
-        bool has_manual_topic_liveliness = false;
-        CacheChange_t* fragmented_change = nullptr;
-        bool is_datasharing = false;
-        uint32_t ownership_strength;
-    };
+    void init(
+            RTPSParticipantImpl* pimpl,
+            const ReaderAttributes& att);
 
     bool acceptMsgFrom(
-            const GUID_t& entityId,
-            ChangeKind_t change_kind);
+            const GUID_t& entityGUID,
+            WriterProxy** wp) const;
 
-    bool thereIsUpperRecordOf(
-            const GUID_t& guid,
-            const SequenceNumber_t& seq);
-
-    /**
-     * @brief A method to check if a matched writer has manual_by_topic liveliness
-     * @param guid The guid of the remote writer
-     * @return True if writer has manual_by_topic livelinesss
+    /*!
+     * @remarks Non thread-safe.
      */
-    bool writer_has_manual_liveliness(
-            const GUID_t& guid);
+    bool findWriterProxy(
+            const GUID_t& writerGUID,
+            WriterProxy** wp) const;
+
+    void NotifyChanges(
+            WriterProxy* wp);
 
     void remove_changes_from(
             const GUID_t& writerGUID,
             bool is_payload_pool_lost = false);
 
-
-    //!List of GUID_t os matched writers.
-    //!Is only used in the Discovery, to correctly notify the user using SubscriptionListener::onSubscriptionMatched();
-    ResourceLimitedVector<RemoteWriterInfo_t> matched_writers_;
+    //! Acknack Count
+    uint32_t acknack_count_;
+    //! NACKFRAG Count
+    uint32_t nackfrag_count_;
+    //!ReaderTimes of the StatefulReader.
+    ReaderTimes times_;
+    //! Vector containing pointers to all the active WriterProxies.
+    ResourceLimitedVector<WriterProxy*> matched_writers_;
+    //! Vector containing pointers to all the inactive, ready for reuse, WriterProxies.
+    ResourceLimitedVector<WriterProxy*> matched_writers_pool_;
+    //!
+    ResourceLimitedContainerConfig proxy_changes_config_;
+    //! True to disable positive ACKs
+    bool disable_positive_acks_;
+    //! False when being destroyed
+    bool is_alive_;
 };
 
 } /* namespace rtps */
@@ -302,4 +380,4 @@ private:
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#endif /* _FASTDDS_RTPS_READER_STATELESSREADER_H_ */
+#endif // _FASTDDS_RTPS_READER_STATEFULREADER_H_

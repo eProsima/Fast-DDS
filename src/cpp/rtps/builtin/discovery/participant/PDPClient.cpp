@@ -45,7 +45,7 @@
 #include <rtps/builtin/discovery/participant/timedevent/DSClientEvent.h>
 #include <rtps/builtin/liveliness/WLP.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
-#include <rtps/reader/StatefulReader.h>
+#include <rtps/reader/StatefulReader.hpp>
 #include <utils/shared_mutex.hpp>
 #include <utils/SystemInfo.hpp>
 #include <utils/TimeConversion.hpp>

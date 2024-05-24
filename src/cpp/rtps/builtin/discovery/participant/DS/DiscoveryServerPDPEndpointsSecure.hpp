@@ -25,7 +25,7 @@
 #include <fastdds/rtps/common/EntityId_t.hpp>
 #include <rtps/builtin/BuiltinReader.hpp>
 #include <rtps/builtin/discovery/participant/DS/DiscoveryServerPDPEndpoints.hpp>
-#include <rtps/reader/StatelessReader.h>
+#include <rtps/reader/StatelessReader.hpp>
 
 namespace eprosima {
 namespace fastdds {

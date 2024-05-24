@@ -38,7 +38,7 @@
 
 #include <rtps/builtin/BuiltinProtocols.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
-#include <rtps/reader/StatefulReader.h>
+#include <rtps/reader/StatefulReader.hpp>
 #include <rtps/RTPSDomainImpl.hpp>
 
 namespace eprosima {

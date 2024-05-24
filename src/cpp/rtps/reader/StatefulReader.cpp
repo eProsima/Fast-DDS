@@ -17,7 +17,7 @@
  *
  */
 
-#include <rtps/reader/StatefulReader.h>
+#include <rtps/reader/StatefulReader.hpp>
 
 #include <cassert>
 #include <mutex>

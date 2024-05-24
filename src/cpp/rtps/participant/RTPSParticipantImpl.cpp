@@ -60,10 +60,10 @@
 #include <rtps/network/utils/netmask_filter.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/persistence/PersistenceService.h>
-#include <rtps/reader/StatefulPersistentReader.h>
-#include <rtps/reader/StatelessPersistentReader.h>
-#include <rtps/reader/StatefulReader.h>
-#include <rtps/reader/StatelessReader.h>
+#include <rtps/reader/StatefulPersistentReader.hpp>
+#include <rtps/reader/StatelessPersistentReader.hpp>
+#include <rtps/reader/StatefulReader.hpp>
+#include <rtps/reader/StatelessReader.hpp>
 #include <statistics/rtps/GuidUtils.hpp>
 #include <utils/Semaphore.hpp>
 #include <utils/string_utilities.hpp>

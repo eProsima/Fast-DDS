@@ -42,9 +42,9 @@
 #include <rtps/builtin/liveliness/WLP.h>
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
-#include <rtps/reader/StatefulReader.h>
+#include <rtps/reader/StatefulReader.hpp>
 #include <rtps/resources/TimedEvent.h>
-#include <rtps/reader/StatelessReader.h>
+#include <rtps/reader/StatelessReader.hpp>
 
 namespace eprosima {
 namespace fastrtps {

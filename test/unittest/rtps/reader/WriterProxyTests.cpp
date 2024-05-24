@@ -24,7 +24,7 @@
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
-#include <rtps/reader/StatefulReader.h>
+#include <rtps/reader/StatefulReader.hpp>
 #include <rtps/reader/WriterProxy.h>
 #include <rtps/reader/WriterProxy.cpp>
 #include <rtps/resources/TimedEvent.h>

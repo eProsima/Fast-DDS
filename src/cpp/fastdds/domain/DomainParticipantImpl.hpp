@@ -41,7 +41,7 @@
 #include <fastdds/rtps/participant/RTPSParticipantListener.h>
 #include "fastdds/topic/DDSSQLFilter/DDSFilterFactory.hpp"
 #include <fastdds/topic/TopicProxyFactory.hpp>
-#include <rtps/reader/StatefulReader.h>
+#include <rtps/reader/StatefulReader.hpp>
 
 namespace eprosima {
 namespace fastrtps {

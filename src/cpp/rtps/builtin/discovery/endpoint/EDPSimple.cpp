@@ -41,7 +41,7 @@
 #include <rtps/builtin/discovery/participant/PDP.h>
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
-#include <rtps/reader/StatefulReader.h>
+#include <rtps/reader/StatefulReader.hpp>
 #ifdef FASTDDS_STATISTICS
 #include <statistics/rtps/monitor-service/interfaces/IProxyObserver.hpp>
 #endif //FASTDDS_STATISTICS

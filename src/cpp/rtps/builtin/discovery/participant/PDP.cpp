@@ -48,8 +48,8 @@
 #include <rtps/network/utils/external_locators.hpp>
 #include <rtps/resources/TimedEvent.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
-#include <rtps/reader/StatefulReader.h>
-#include <rtps/reader/StatelessReader.h>
+#include <rtps/reader/StatefulReader.hpp>
+#include <rtps/reader/StatelessReader.hpp>
 #include <utils/shared_mutex.hpp>
 #include <utils/TimeConversion.hpp>
 

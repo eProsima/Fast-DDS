@@ -27,8 +27,8 @@
 
 #include <rtps/builtin/discovery/participant/PDP.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
-#include <rtps/reader/StatefulReader.h>
-#include <rtps/reader/StatelessReader.h>
+#include <rtps/reader/StatefulReader.hpp>
+#include <rtps/reader/StatelessReader.hpp>
 #include <rtps/security/MockAuthenticationPlugin.h>
 #include <rtps/security/MockCryptographyPlugin.h>
 #include <rtps/security/SecurityManager.h>

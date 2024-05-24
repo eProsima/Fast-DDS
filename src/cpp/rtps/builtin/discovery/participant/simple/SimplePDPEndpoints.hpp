@@ -27,7 +27,7 @@
 #include <rtps/builtin/BuiltinWriter.hpp>
 #include <rtps/builtin/discovery/participant/PDPEndpoints.hpp>
 #include <rtps/history/ITopicPayloadPool.h>
-#include <rtps/reader/StatelessReader.h>
+#include <rtps/reader/StatelessReader.hpp>
 
 namespace eprosima {
 namespace fastdds {
