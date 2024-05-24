@@ -28,7 +28,6 @@
 
 #include <fastdds/rtps/common/all_common.h>
 #include <fastdds/rtps/common/Token.h>
-#include <fastdds/rtps/messages/CDRMessage.h>
 
 #if HAVE_SECURITY
 #include <fastdds/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>

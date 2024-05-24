@@ -20,11 +20,12 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <fastdds/rtps/common/CacheChange.h>
-#include <fastdds/rtps/common/CDRMessage_t.h>
 #include <fastdds/rtps/common/FragmentNumber.h>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/common/SequenceNumber.h>
 #include <fastdds/rtps/common/VendorId_t.hpp>
+
+#include <rtps/messages/CDRMessage.hpp>
 
 namespace eprosima {
 namespace fastrtps {

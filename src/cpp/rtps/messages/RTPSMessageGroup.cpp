@@ -17,11 +17,12 @@
  *
  */
 
+#include "RTPSMessageGroup.hpp"
+
 #include <algorithm>
 
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/rtps/messages/RTPSMessageCreator.h>
-#include <fastdds/rtps/messages/RTPSMessageGroup.h>
+#include <rtps/messages/RTPSMessageCreator.hpp>
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
 
@@ -326,6 +327,20 @@ void RTPSMessageGroup::flush_and_reset()
     flush();
 
     current_dst_ = c_GuidPrefix_Unknown;
+}
+
+void RTPSMessageGroup::sender(
+        Endpoint* endpoint,
+        RTPSMessageSenderInterface* msg_sender)
+{
+    assert((endpoint != nullptr && msg_sender != nullptr) || (endpoint == nullptr && msg_sender == nullptr));
+    if (endpoint != endpoint_ || msg_sender != sender_)
+    {
+        flush_and_reset();
+    }
+
+    endpoint_ = endpoint;
+    sender_ = msg_sender;
 }
 
 void RTPSMessageGroup::check_and_maybe_flush(

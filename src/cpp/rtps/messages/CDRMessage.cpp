@@ -15,9 +15,11 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 /**
- * @file CDRMessage.hpp
+ * @file CDRMessage.cpp
  *
  */
+
+#include "CDRMessage.hpp"
 
 #include <cassert>
 #include <cstring>
@@ -31,7 +33,7 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-inline bool CDRMessage::initCDRMsg(
+bool CDRMessage::initCDRMsg(
         CDRMessage_t* msg,
         uint32_t payload_size)
 {
@@ -46,7 +48,7 @@ inline bool CDRMessage::initCDRMsg(
     return true;
 }
 
-inline bool CDRMessage::wrapVector(
+bool CDRMessage::wrapVector(
         CDRMessage_t* msg,
         std::vector<octet>& vectorToWrap)
 {
@@ -63,14 +65,14 @@ inline bool CDRMessage::wrapVector(
     return true;
 }
 
-inline bool CDRMessage::appendMsg(
+bool CDRMessage::appendMsg(
         CDRMessage_t* first,
         CDRMessage_t* second)
 {
     return(CDRMessage::addData(first, second->buffer, second->length));
 }
 
-inline bool CDRMessage::readEntityId(
+bool CDRMessage::readEntityId(
         CDRMessage_t* msg,
         EntityId_t* id)
 {
@@ -83,7 +85,7 @@ inline bool CDRMessage::readEntityId(
     return true;
 }
 
-inline bool CDRMessage::readData(
+bool CDRMessage::readData(
         CDRMessage_t* msg,
         octet* o,
         uint32_t length)
@@ -108,7 +110,7 @@ inline bool CDRMessage::readData(
     return true;
 }
 
-inline bool CDRMessage::read_array_with_max_size(
+bool CDRMessage::read_array_with_max_size(
         CDRMessage_t* msg,
         octet* arr,
         size_t max_size)
@@ -128,7 +130,7 @@ inline bool CDRMessage::read_array_with_max_size(
     return valid;
 }
 
-inline bool CDRMessage::readDataReversed(
+bool CDRMessage::readDataReversed(
         CDRMessage_t* msg,
         octet* o,
         uint32_t length)
@@ -141,7 +143,7 @@ inline bool CDRMessage::readDataReversed(
     return true;
 }
 
-inline bool CDRMessage::readInt32(
+bool CDRMessage::readInt32(
         CDRMessage_t* msg,
         int32_t* lo)
 {
@@ -165,7 +167,7 @@ inline bool CDRMessage::readInt32(
     return true;
 }
 
-inline bool CDRMessage::readUInt32(
+bool CDRMessage::readUInt32(
         CDRMessage_t* msg,
         uint32_t* ulo)
 {
@@ -189,7 +191,7 @@ inline bool CDRMessage::readUInt32(
     return true;
 }
 
-inline bool CDRMessage::readInt64(
+bool CDRMessage::readInt64(
         CDRMessage_t* msg,
         int64_t* lolo)
 {
@@ -216,7 +218,7 @@ inline bool CDRMessage::readInt64(
     return true;
 }
 
-inline bool CDRMessage::readUInt64(
+bool CDRMessage::readUInt64(
         CDRMessage_t* msg,
         uint64_t* ulolo)
 {
@@ -243,7 +245,7 @@ inline bool CDRMessage::readUInt64(
     return true;
 }
 
-inline bool CDRMessage::readSequenceNumber(
+bool CDRMessage::readSequenceNumber(
         CDRMessage_t* msg,
         SequenceNumber_t* sn)
 {
@@ -256,7 +258,7 @@ inline bool CDRMessage::readSequenceNumber(
     return valid;
 }
 
-inline SequenceNumberSet_t CDRMessage::readSequenceNumberSet(
+SequenceNumberSet_t CDRMessage::readSequenceNumberSet(
         CDRMessage_t* msg)
 {
     bool valid = true;
@@ -289,7 +291,7 @@ inline SequenceNumberSet_t CDRMessage::readSequenceNumberSet(
     return SequenceNumberSet_t (c_SequenceNumber_Unknown);
 }
 
-inline bool CDRMessage::readFragmentNumberSet(
+bool CDRMessage::readFragmentNumberSet(
         CDRMessage_t* msg,
         FragmentNumberSet_t* fns)
 {
@@ -317,7 +319,7 @@ inline bool CDRMessage::readFragmentNumberSet(
     return valid;
 }
 
-inline bool CDRMessage::readTimestamp(
+bool CDRMessage::readTimestamp(
         CDRMessage_t* msg,
         rtps::Time_t* ts)
 {
@@ -329,7 +331,7 @@ inline bool CDRMessage::readTimestamp(
     return valid;
 }
 
-inline bool CDRMessage::readLocator(
+bool CDRMessage::readLocator(
         CDRMessage_t* msg,
         Locator_t* loc)
 {
@@ -345,7 +347,7 @@ inline bool CDRMessage::readLocator(
     return valid;
 }
 
-inline bool CDRMessage::readInt16(
+bool CDRMessage::readInt16(
         CDRMessage_t* msg,
         int16_t* i16)
 {
@@ -368,7 +370,7 @@ inline bool CDRMessage::readInt16(
     return true;
 }
 
-inline bool CDRMessage::readUInt16(
+bool CDRMessage::readUInt16(
         CDRMessage_t* msg,
         uint16_t* i16)
 {
@@ -391,7 +393,7 @@ inline bool CDRMessage::readUInt16(
     return true;
 }
 
-inline bool CDRMessage::readOctet(
+bool CDRMessage::readOctet(
         CDRMessage_t* msg,
         octet* o)
 {
@@ -404,7 +406,7 @@ inline bool CDRMessage::readOctet(
     return true;
 }
 
-inline bool CDRMessage::readOctetVector(
+bool CDRMessage::readOctetVector(
         CDRMessage_t* msg,
         std::vector<octet>* ocvec)
 {
@@ -420,7 +422,7 @@ inline bool CDRMessage::readOctetVector(
     return valid;
 }
 
-inline bool CDRMessage::readString(
+bool CDRMessage::readString(
         CDRMessage_t* msg,
         std::string* stri)
 {
@@ -447,7 +449,7 @@ inline bool CDRMessage::readString(
     return valid;
 }
 
-inline bool CDRMessage::readString(
+bool CDRMessage::readString(
         CDRMessage_t* msg,
         fastcdr::string_255* stri)
 {
@@ -470,14 +472,14 @@ inline bool CDRMessage::readString(
     return valid;
 }
 
-inline bool CDRMessage::hasSpace(
+bool CDRMessage::hasSpace(
         CDRMessage_t* msg,
         const uint32_t length)
 {
     return msg && (msg->pos + length <= msg->max_size);
 }
 
-inline void CDRMessage::copyToBuffer(
+void CDRMessage::copyToBuffer(
         CDRMessage_t* msg,
         const octet* data,
         const uint32_t length,
@@ -498,7 +500,7 @@ inline void CDRMessage::copyToBuffer(
     msg->length += length;
 }
 
-inline bool CDRMessage::addData(
+bool CDRMessage::addData(
         CDRMessage_t* msg,
         const octet* data,
         const uint32_t length)
@@ -511,7 +513,7 @@ inline bool CDRMessage::addData(
     return true;
 }
 
-inline bool CDRMessage::addDataReversed(
+bool CDRMessage::addDataReversed(
         CDRMessage_t* msg,
         const octet* data,
         const uint32_t length)
@@ -525,7 +527,7 @@ inline bool CDRMessage::addDataReversed(
 }
 
 template<typename T>
-inline bool CDRMessage::addPrimitive(
+bool CDRMessage::addPrimitive(
         CDRMessage_t* msg,
         T value)
 {
@@ -539,49 +541,49 @@ inline bool CDRMessage::addPrimitive(
     return true;
 }
 
-inline bool CDRMessage::addOctet(
+bool CDRMessage::addOctet(
         CDRMessage_t* msg,
         octet O)
 {
     return addPrimitive(msg, O);
 }
 
-inline bool CDRMessage::addUInt16(
+bool CDRMessage::addUInt16(
         CDRMessage_t* msg,
         uint16_t us)
 {
     return addPrimitive(msg, us);
 }
 
-inline bool CDRMessage::addInt32(
+bool CDRMessage::addInt32(
         CDRMessage_t* msg,
         int32_t lo)
 {
     return addPrimitive(msg, lo);
 }
 
-inline bool CDRMessage::addUInt32(
+bool CDRMessage::addUInt32(
         CDRMessage_t* msg,
         uint32_t ulo)
 {
     return addPrimitive(msg, ulo);
 }
 
-inline bool CDRMessage::addInt64(
+bool CDRMessage::addInt64(
         CDRMessage_t* msg,
         int64_t lolo)
 {
     return addPrimitive(msg, lolo);
 }
 
-inline bool CDRMessage::addUInt64(
+bool CDRMessage::addUInt64(
         CDRMessage_t* msg,
         uint64_t ulolo)
 {
     return addPrimitive(msg, ulolo);
 }
 
-inline bool CDRMessage::addOctetVector(
+bool CDRMessage::addOctetVector(
         CDRMessage_t* msg,
         const std::vector<octet>* ocvec,
         bool add_final_padding)
@@ -617,7 +619,7 @@ inline bool CDRMessage::addOctetVector(
     return valid;
 }
 
-inline bool CDRMessage::addEntityId(
+bool CDRMessage::addEntityId(
         CDRMessage_t* msg,
         const EntityId_t* ID)
 {
@@ -631,7 +633,7 @@ inline bool CDRMessage::addEntityId(
     return true;
 }
 
-inline bool CDRMessage::addSequenceNumber(
+bool CDRMessage::addSequenceNumber(
         CDRMessage_t* msg,
         const SequenceNumber_t* sn)
 {
@@ -641,7 +643,7 @@ inline bool CDRMessage::addSequenceNumber(
     return true;
 }
 
-inline bool CDRMessage::addSequenceNumberSet(
+bool CDRMessage::addSequenceNumberSet(
         CDRMessage_t* msg,
         const SequenceNumberSet_t* sns)
 {
@@ -670,7 +672,7 @@ inline bool CDRMessage::addSequenceNumberSet(
     return true;
 }
 
-inline bool CDRMessage::addFragmentNumberSet(
+bool CDRMessage::addFragmentNumberSet(
         CDRMessage_t* msg,
         FragmentNumberSet_t* fns)
 {
@@ -704,7 +706,7 @@ inline bool CDRMessage::addFragmentNumberSet(
     return true;
 }
 
-inline bool CDRMessage::addLocator(
+bool CDRMessage::addLocator(
         CDRMessage_t* msg,
         const Locator_t& loc)
 {
@@ -714,7 +716,7 @@ inline bool CDRMessage::addLocator(
     return true;
 }
 
-inline bool CDRMessage::add_string(
+bool CDRMessage::add_string(
         CDRMessage_t* msg,
         const char* in_str)
 {
@@ -729,21 +731,21 @@ inline bool CDRMessage::add_string(
     return valid;
 }
 
-inline bool CDRMessage::add_string(
+bool CDRMessage::add_string(
         CDRMessage_t* msg,
         const std::string& in_str)
 {
     return add_string(msg, in_str.c_str());
 }
 
-inline bool CDRMessage::add_string(
+bool CDRMessage::add_string(
         CDRMessage_t* msg,
         const fastcdr::string_255& in_str)
 {
     return add_string(msg, in_str.c_str());
 }
 
-inline bool CDRMessage::addProperty(
+bool CDRMessage::addProperty(
         CDRMessage_t* msg,
         const Property& property)
 {
@@ -764,7 +766,7 @@ inline bool CDRMessage::addProperty(
     return true;
 }
 
-inline bool CDRMessage::readProperty(
+bool CDRMessage::readProperty(
         CDRMessage_t* msg,
         Property& property)
 {
@@ -782,7 +784,7 @@ inline bool CDRMessage::readProperty(
     return true;
 }
 
-inline bool CDRMessage::addBinaryProperty(
+bool CDRMessage::addBinaryProperty(
         CDRMessage_t* msg,
         const BinaryProperty& binary_property,
         bool add_final_padding)
@@ -804,7 +806,7 @@ inline bool CDRMessage::addBinaryProperty(
     return true;
 }
 
-inline bool CDRMessage::readBinaryProperty(
+bool CDRMessage::readBinaryProperty(
         CDRMessage_t* msg,
         BinaryProperty& binary_property)
 {
@@ -823,7 +825,7 @@ inline bool CDRMessage::readBinaryProperty(
     return true;
 }
 
-inline bool CDRMessage::addPropertySeq(
+bool CDRMessage::addPropertySeq(
         CDRMessage_t* msg,
         const PropertySeq& properties)
 {
@@ -858,7 +860,7 @@ inline bool CDRMessage::addPropertySeq(
     return returnedValue;
 }
 
-inline bool CDRMessage::readPropertySeq(
+bool CDRMessage::readPropertySeq(
         CDRMessage_t* msg,
         PropertySeq& properties,
         const uint32_t parameter_length)
@@ -889,7 +891,7 @@ inline bool CDRMessage::readPropertySeq(
 
 }
 
-inline bool CDRMessage::addBinaryPropertySeq(
+bool CDRMessage::addBinaryPropertySeq(
         CDRMessage_t* msg,
         const BinaryPropertySeq& binary_properties,
         bool add_final_padding)
@@ -928,7 +930,7 @@ inline bool CDRMessage::addBinaryPropertySeq(
     return returnedValue;
 }
 
-inline bool CDRMessage::addBinaryPropertySeq(
+bool CDRMessage::addBinaryPropertySeq(
         CDRMessage_t* msg,
         const BinaryPropertySeq& binary_properties,
         const std::string& name_start,
@@ -968,7 +970,7 @@ inline bool CDRMessage::addBinaryPropertySeq(
     return returnedValue;
 }
 
-inline bool CDRMessage::readBinaryPropertySeq(
+bool CDRMessage::readBinaryPropertySeq(
         CDRMessage_t* msg,
         BinaryPropertySeq& binary_properties,
         const uint32_t parameter_length)
@@ -999,7 +1001,7 @@ inline bool CDRMessage::readBinaryPropertySeq(
     return returnedValue;
 }
 
-inline bool CDRMessage::addDataHolder(
+bool CDRMessage::addDataHolder(
         CDRMessage_t* msg,
         const DataHolder& data_holder)
 {
@@ -1021,7 +1023,7 @@ inline bool CDRMessage::addDataHolder(
     return true;
 }
 
-inline bool CDRMessage::readDataHolder(
+bool CDRMessage::readDataHolder(
         CDRMessage_t* msg,
         DataHolder& data_holder,
         const uint32_t parameter_length)
@@ -1045,7 +1047,7 @@ inline bool CDRMessage::readDataHolder(
 
 }
 
-inline bool CDRMessage::addDataHolderSeq(
+bool CDRMessage::addDataHolderSeq(
         CDRMessage_t* msg,
         const DataHolderSeq& data_holders)
 {
@@ -1069,7 +1071,7 @@ inline bool CDRMessage::addDataHolderSeq(
     return returnedValue;
 }
 
-inline bool CDRMessage::readDataHolderSeq(
+bool CDRMessage::readDataHolderSeq(
         CDRMessage_t* msg,
         DataHolderSeq& data_holders)
 {
@@ -1101,7 +1103,7 @@ inline bool CDRMessage::readDataHolderSeq(
     return returnedValue;
 }
 
-inline bool CDRMessage::addMessageIdentity(
+bool CDRMessage::addMessageIdentity(
         CDRMessage_t* msg,
         const security::MessageIdentity& message_identity)
 {
@@ -1123,7 +1125,7 @@ inline bool CDRMessage::addMessageIdentity(
     return true;
 }
 
-inline bool CDRMessage::readMessageIdentity(
+bool CDRMessage::readMessageIdentity(
         CDRMessage_t* msg,
         security::MessageIdentity& message_identity)
 {
@@ -1145,7 +1147,7 @@ inline bool CDRMessage::readMessageIdentity(
     return true;
 }
 
-inline bool CDRMessage::addParticipantGenericMessage(
+bool CDRMessage::addParticipantGenericMessage(
         CDRMessage_t* msg,
         const security::ParticipantGenericMessage& message)
 {
@@ -1195,7 +1197,7 @@ inline bool CDRMessage::addParticipantGenericMessage(
     return true;
 }
 
-inline bool CDRMessage::readParticipantGenericMessage(
+bool CDRMessage::readParticipantGenericMessage(
         CDRMessage_t* msg,
         security::ParticipantGenericMessage& message)
 {
@@ -1245,7 +1247,7 @@ inline bool CDRMessage::readParticipantGenericMessage(
     return true;
 }
 
-inline bool CDRMessage::skip(
+bool CDRMessage::skip(
         CDRMessage_t* msg,
         uint32_t length)
 {

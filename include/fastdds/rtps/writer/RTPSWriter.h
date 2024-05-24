@@ -34,7 +34,6 @@
 #include <fastdds/rtps/common/VendorId_t.hpp>
 #include <fastdds/rtps/Endpoint.h>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
-#include <fastdds/rtps/messages/RTPSMessageGroup.h>
 #include <fastdds/rtps/writer/DeliveryRetCode.hpp>
 #include <fastdds/rtps/writer/LocatorSelectorSender.hpp>
 #include <fastdds/statistics/rtps/monitor_service/connections_fwd.hpp>
@@ -61,6 +60,7 @@ namespace rtps {
 class WriterListener;
 class WriterHistory;
 class DataSharingNotifier;
+class RTPSMessageGroup;
 struct CacheChange_t;
 
 /**
@@ -587,49 +587,6 @@ protected:
             const ReaderProxyData& rdata) const;
 
     bool is_pool_initialized() const;
-
-    template<typename Functor>
-    bool send_data_or_fragments(
-            RTPSMessageGroup& group,
-            CacheChange_t* change,
-            bool inline_qos,
-            Functor sent_fun)
-    {
-        bool sent_ok = true;
-
-        uint32_t n_fragments = change->getFragmentCount();
-        if (n_fragments > 0)
-        {
-            for (FragmentNumber_t frag = 1; frag <= n_fragments; frag++)
-            {
-                sent_ok &= group.add_data_frag(*change, frag, inline_qos);
-                if (sent_ok)
-                {
-                    sent_fun(change, frag);
-                }
-                else
-                {
-                    EPROSIMA_LOG_ERROR(RTPS_WRITER,
-                            "Error sending fragment (" << change->sequenceNumber << ", " << frag << ")");
-                    break;
-                }
-            }
-        }
-        else
-        {
-            sent_ok = group.add_data(*change, inline_qos);
-            if (sent_ok)
-            {
-                sent_fun(change, 0);
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(RTPS_WRITER, "Error sending change " << change->sequenceNumber);
-            }
-        }
-
-        return sent_ok;
-    }
 
     void add_statistics_sent_submessage(
             CacheChange_t* change,

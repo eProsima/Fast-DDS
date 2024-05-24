@@ -16,12 +16,20 @@
 #define _FASTDDS_TEST_UDPV4_TRANSPORT_DESCRIPTOR_
 
 #include <functional>
+#include <atomic>
 
 #include <fastdds/rtps/transport/SocketTransportDescriptor.h>
 #include <fastdds/rtps/common/SequenceNumber.h>
-#include <fastdds/rtps/messages/CDRMessage.h>
+
+
 
 namespace eprosima {
+namespace fastrtps {
+namespace rtps {
+
+struct CDRMessage_t;
+} //rtps
+} //fastrtps
 namespace fastdds {
 namespace rtps {
 
@@ -32,7 +40,7 @@ namespace rtps {
 struct test_UDPv4TransportDescriptor : public SocketTransportDescriptor
 {
     //! Custom message filtering functions
-    typedef std::function<bool (fastrtps::rtps::CDRMessage_t& msg)> filter;
+    typedef std::function<bool (eprosima::fastrtps::rtps::CDRMessage_t& msg)> filter;
     //! Locator filtering function
     typedef std::function<bool (const Locator& destination)> DestinationLocatorFilter;
 
