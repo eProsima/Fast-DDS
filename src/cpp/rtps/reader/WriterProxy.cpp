@@ -620,7 +620,7 @@ void WriterProxy::update_heartbeat_response_interval(
 }
 
 bool WriterProxy::send(
-        const std::list<eprosima::fastdds::rtps::NetworkBuffer>& buffers,
+        const std::vector<eprosima::fastdds::rtps::NetworkBuffer>& buffers,
         const uint32_t& total_bytes,
         std::chrono::steady_clock::time_point max_blocking_time_point) const
 {

@@ -713,7 +713,7 @@ void StatelessWriter::unsent_changes_reset()
 }
 
 bool StatelessWriter::send_nts(
-        const std::list<eprosima::fastdds::rtps::NetworkBuffer>& buffers,
+        const std::vector<eprosima::fastdds::rtps::NetworkBuffer>& buffers,
         const uint32_t& total_bytes,
         const LocatorSelectorSender& locator_selector,
         std::chrono::steady_clock::time_point& max_blocking_time_point) const

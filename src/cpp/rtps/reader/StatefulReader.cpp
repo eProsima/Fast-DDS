@@ -1635,7 +1635,7 @@ void StatefulReader::send_acknack(
 }
 
 bool StatefulReader::send_sync_nts(
-        const std::list<eprosima::fastdds::rtps::NetworkBuffer>& buffers,
+        const std::vector<eprosima::fastdds::rtps::NetworkBuffer>& buffers,
         const uint32_t& total_bytes,
         const Locators& locators_begin,
         const Locators& locators_end,

@@ -146,7 +146,7 @@ public:
     /**
      * Blocking Send through the specified channel. In both modes, using a localLocator of 0.0.0.0 will
      * send through all whitelisted interfaces provided the channel is open.
-     * @param buffers List of buffers to send.
+     * @param buffers Vector of buffers to send.
      * @param send_buffer_size Total amount of bytes to send. It will be used as a bounds check for the previous
      * argument. It must not exceed the send_buffer_size fed to this class during construction.
      * @param socket channel we're sending from.
@@ -155,7 +155,7 @@ public:
      * @param timeout Maximum time this function will block
      */
     virtual bool send(
-            const std::list<NetworkBuffer>& buffers,
+            const std::vector<NetworkBuffer>& buffers,
             uint32_t total_bytes,
             fastrtps::rtps::LocatorsIterator* destination_locators_begin,
             fastrtps::rtps::LocatorsIterator* destination_locators_end,
@@ -249,13 +249,13 @@ protected:
 private:
 
     /**
-     * Copies a list of buffers into the shared_buffer.
-     * @param buffers List of buffers to copy.
+     * Copies a Vector of buffers into the shared_buffer.
+     * @param buffers Vector of buffers to copy.
      * @param total_bytes Total amount of bytes of the whole list of buffers.
      * @param max_blocking_time_point Maximum time this function will block.
      */
     std::shared_ptr<SharedMemManager::Buffer> copy_to_shared_buffer(
-            const std::list<NetworkBuffer>& buffers,
+            const std::vector<NetworkBuffer>& buffers,
             const uint32_t total_bytes,
             const std::chrono::steady_clock::time_point& max_blocking_time_point);
 

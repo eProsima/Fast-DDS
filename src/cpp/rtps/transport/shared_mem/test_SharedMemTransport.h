@@ -30,7 +30,7 @@ public:
             const test_SharedMemTransportDescriptor&);
 
     bool send(
-            const std::list<NetworkBuffer>& buffers,
+            const std::vector<NetworkBuffer>& buffers,
             uint32_t total_bytes,
             fastrtps::rtps::LocatorsIterator* destination_locators_begin,
             fastrtps::rtps::LocatorsIterator* destination_locators_end,

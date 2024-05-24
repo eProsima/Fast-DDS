@@ -242,7 +242,7 @@ TEST_F(UDPv6Tests, send_and_receive_between_ports)
     ASSERT_FALSE(send_resource_list.empty());
     ASSERT_TRUE(transportUnderTest.IsInputChannelOpen(multicastLocator));
     octet message[5] = { 'H', 'e', 'l', 'l', 'o' };
-    std::list<NetworkBuffer> buffer_list;
+    std::vector<NetworkBuffer> buffer_list;
     for (size_t i = 0; i < 5; ++i)
     {
         buffer_list.emplace_back(&message[i], 1);
@@ -307,7 +307,7 @@ TEST_F(UDPv6Tests, send_to_loopback)
     ASSERT_FALSE(send_resource_list.empty());
     ASSERT_TRUE(transportUnderTest.IsInputChannelOpen(multicastLocator));
     octet message[5] = { 'H', 'e', 'l', 'l', 'o' };
-    std::list<NetworkBuffer> buffer_list;
+    std::vector<NetworkBuffer> buffer_list;
     for (size_t i = 0; i < 5; ++i)
     {
         buffer_list.emplace_back(&message[i], 1);
@@ -373,7 +373,7 @@ TEST_F(UDPv6Tests, send_is_rejected_if_buffer_size_is_bigger_to_size_specified_i
 
     // Then
     std::vector<octet> receiveBufferWrongSize(descriptor.sendBufferSize + 1);
-    std::list<NetworkBuffer> buffer_list;
+    std::vector<NetworkBuffer> buffer_list;
     buffer_list.emplace_back(receiveBufferWrongSize.data(), (uint32_t)receiveBufferWrongSize.size());
     ASSERT_FALSE(send_resource_list.at(0)->send(buffer_list, (uint32_t)receiveBufferWrongSize.size(),
             &locators_begin, &locators_end, (std::chrono::steady_clock::now() + std::chrono::microseconds(100))));
@@ -442,7 +442,7 @@ TEST_F(UDPv6Tests, send_to_wrong_interface)
     Locators locators_end(locator_list.end());
 
     std::vector<octet> message = { 'H', 'e', 'l', 'l', 'o' };
-    std::list<NetworkBuffer> buffer_list;
+    std::vector<NetworkBuffer> buffer_list;
     for (size_t i = 0; i < message.size(); ++i)
     {
         buffer_list.emplace_back(&message[i], 1);
@@ -509,7 +509,7 @@ TEST_F(UDPv6Tests, send_to_allowed_interface)
 
             // Sending through a ALLOWED IP will work
             std::vector<octet> message = { 'H', 'e', 'l', 'l', 'o' };
-            std::list<NetworkBuffer> buffer_list;
+            std::vector<NetworkBuffer> buffer_list;
             for (size_t i = 0; i < message.size(); ++i)
             {
                 buffer_list.emplace_back(&message[i], 1);
@@ -567,7 +567,7 @@ TEST_F(UDPv6Tests, send_and_receive_between_allowed_sockets_using_localhost)
     ASSERT_FALSE(send_resource_list.empty());
     ASSERT_TRUE(transportUnderTest.IsInputChannelOpen(unicastLocator));
     octet message[5] = { 'H', 'e', 'l', 'l', 'o' };
-    std::list<NetworkBuffer> buffer_list;
+    std::vector<NetworkBuffer> buffer_list;
     for (size_t i = 0; i < 5; ++i)
     {
         buffer_list.emplace_back(&message[i], 1);
@@ -633,7 +633,7 @@ TEST_F(UDPv6Tests, send_and_receive_between_allowed_sockets_using_unicast)
         ASSERT_FALSE(send_resource_list.empty());
         ASSERT_TRUE(transportUnderTest.IsInputChannelOpen(unicastLocator));
         octet message[5] = { 'H', 'e', 'l', 'l', 'o' };
-        std::list<NetworkBuffer> buffer_list;
+        std::vector<NetworkBuffer> buffer_list;
         for (size_t i = 0; i < 5; ++i)
         {
             buffer_list.emplace_back(&message[i], 1);
@@ -700,7 +700,7 @@ TEST_F(UDPv6Tests, send_and_receive_between_allowed_sockets_using_unicast_to_mul
         ASSERT_FALSE(send_resource_list.empty());
         ASSERT_TRUE(transportUnderTest.IsInputChannelOpen(unicastLocator));
         octet message[5] = { 'H', 'e', 'l', 'l', 'o' };
-        std::list<NetworkBuffer> buffer_list;
+        std::vector<NetworkBuffer> buffer_list;
         for (size_t i = 0; i < 5; ++i)
         {
             buffer_list.emplace_back(&message[i], 1);
@@ -797,7 +797,7 @@ TEST_F(UDPv6Tests, simple_throughput)
 
     octet sample_data[sample_size];
     memset(sample_data, 0, sizeof(sample_data));
-    std::list<NetworkBuffer> buffer_list;
+    std::vector<NetworkBuffer> buffer_list;
     for (size_t i = 0; i < sample_size; ++i)
     {
         buffer_list.emplace_back(&sample_data[i], 1);

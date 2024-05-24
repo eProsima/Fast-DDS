@@ -58,7 +58,7 @@ size_t MockTCPChannelResource::send(
 size_t MockTCPChannelResource::send(
         const octet*,
         size_t,
-        const std::list<NetworkBuffer>&,
+        const std::vector<NetworkBuffer>&,
         uint32_t,
         asio::error_code&)
 {

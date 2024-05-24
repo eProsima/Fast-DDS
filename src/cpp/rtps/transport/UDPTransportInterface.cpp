@@ -493,7 +493,7 @@ bool UDPTransportInterface::transform_remote_locator(
 }
 
 bool UDPTransportInterface::send(
-        const std::list<NetworkBuffer>& buffers,
+        const std::vector<NetworkBuffer>& buffers,
         uint32_t total_bytes,
         eProsimaUDPSocket& socket,
         fastrtps::rtps::LocatorsIterator* destination_locators_begin,
@@ -529,7 +529,7 @@ bool UDPTransportInterface::send(
 }
 
 bool UDPTransportInterface::send(
-        const std::list<NetworkBuffer>& buffers,
+        const std::vector<NetworkBuffer>& buffers,
         uint32_t total_bytes,
         eProsimaUDPSocket& socket,
         const Locator& remote_locator,

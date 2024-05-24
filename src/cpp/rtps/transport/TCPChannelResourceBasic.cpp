@@ -143,7 +143,7 @@ uint32_t TCPChannelResourceBasic::read(
 size_t TCPChannelResourceBasic::send(
         const octet* header,
         size_t header_size,
-        const std::list<NetworkBuffer>& buffers,
+        const std::vector<NetworkBuffer>& buffers,
         uint32_t total_bytes,
         asio::error_code& ec)
 {

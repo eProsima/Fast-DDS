@@ -40,7 +40,7 @@ public:
                 };
 
         send_buffers_lambda_ = [this, &transport](
-            const std::list<NetworkBuffer>& buffers,
+            const std::vector<NetworkBuffer>& buffers,
             uint32_t total_bytes,
             fastrtps::rtps::LocatorsIterator* destination_locators_begin,
             fastrtps::rtps::LocatorsIterator* destination_locators_end,

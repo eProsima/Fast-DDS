@@ -353,8 +353,8 @@ private:
     // Next buffer that will be sent
     eprosima::fastdds::rtps::NetworkBuffer pending_buffer_;
 
-    // List of buffers that will be sent along the header
-    std::list<eprosima::fastdds::rtps::NetworkBuffer> buffers_to_send_;
+    // Vector of buffers that will be sent along the header
+    std::vector<eprosima::fastdds::rtps::NetworkBuffer> buffers_to_send_;
 
     // Bytes to send in the next list of buffers
     uint32_t buffers_bytes_ = 0;

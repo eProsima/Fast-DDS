@@ -418,7 +418,7 @@ bool SharedMemTransport::transform_remote_locator(
 }
 
 std::shared_ptr<SharedMemManager::Buffer> SharedMemTransport::copy_to_shared_buffer(
-        const std::list<NetworkBuffer>& buffers,
+        const std::vector<NetworkBuffer>& buffers,
         uint32_t total_bytes,
         const std::chrono::steady_clock::time_point& max_blocking_time_point)
 {
@@ -446,7 +446,7 @@ std::shared_ptr<SharedMemManager::Buffer> SharedMemTransport::copy_to_shared_buf
 }
 
 bool SharedMemTransport::send(
-        const std::list<NetworkBuffer>& buffers,
+        const std::vector<NetworkBuffer>& buffers,
         uint32_t total_bytes,
         fastrtps::rtps::LocatorsIterator* destination_locators_begin,
         fastrtps::rtps::LocatorsIterator* destination_locators_end,

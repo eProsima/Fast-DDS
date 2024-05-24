@@ -445,7 +445,7 @@ TEST_F(TCPv6Tests, non_blocking_send)
     const octet* data = message.data();
     size_t size = message.size();
     NetworkBuffer buffers(data, size);
-    std::list<NetworkBuffer> buffer_list;
+    std::vector<NetworkBuffer> buffer_list;
     buffer_list.push_back(buffers);
 
     // Send the message with no header. Since TCP actually allocates twice the size of the buffer requested

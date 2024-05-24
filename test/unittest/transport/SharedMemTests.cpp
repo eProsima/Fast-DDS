@@ -742,7 +742,7 @@ TEST_F(SHMTransportTests, send_and_receive_between_ports)
     ASSERT_FALSE(send_resource_list.empty());
     ASSERT_TRUE(transportUnderTest.IsInputChannelOpen(unicastLocator));
     octet message[5] = { 'H', 'e', 'l', 'l', 'o' };
-    std::list<NetworkBuffer> buffer_list;
+    std::vector<NetworkBuffer> buffer_list;
     for (size_t i = 0; i < 5; ++i)
     {
         buffer_list.emplace_back(&message[i], 1);
@@ -809,7 +809,7 @@ TEST_F(SHMTransportTests, port_and_segment_overflow_discard)
     ASSERT_TRUE(transportUnderTest.OpenOutputChannel(send_resource_list, outputChannelLocator));
     ASSERT_FALSE(send_resource_list.empty());
     octet message[4] = { 'H', 'e', 'l', 'l'};
-    std::list<NetworkBuffer> buffer_list;
+    std::vector<NetworkBuffer> buffer_list;
     for (size_t i = 0; i < 4; ++i)
     {
         buffer_list.emplace_back(&message[i], 1);
@@ -824,7 +824,7 @@ TEST_F(SHMTransportTests, port_and_segment_overflow_discard)
         // Internally the segment is bigger than "my_descriptor.segment_size" so a bigger buffer is tried
         // to cause segment overflow
         octet message_big[4096] = { 'H', 'e', 'l', 'l'};
-        std::list<NetworkBuffer> buffer_list_big;
+        std::vector<NetworkBuffer> buffer_list_big;
         buffer_list_big.emplace_back(message_big, 4096);
 
         EXPECT_TRUE(send_resource_list.at(0)->send(buffer_list_big, sizeof(message_big), &locators_begin, &locators_end,
@@ -2067,7 +2067,7 @@ TEST_F(SHMTransportTests, dump_file)
         ASSERT_FALSE(send_resource_list.empty());
         ASSERT_TRUE(transportUnderTest.IsInputChannelOpen(unicastLocator));
         octet message[5] = { 'H', 'e', 'l', 'l', 'o' };
-        std::list<NetworkBuffer> buffer_list;
+        std::vector<NetworkBuffer> buffer_list;
         for (size_t i = 0; i < 5; ++i)
         {
             buffer_list.emplace_back(&message[i], 1);

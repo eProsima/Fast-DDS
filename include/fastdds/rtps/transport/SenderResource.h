@@ -48,7 +48,7 @@ public:
 
     /**
      * Sends to a destination locator, through the channel managed by this resource.
-     * @param buffers List of buffers to send.
+     * @param buffers Vector of buffers to send.
      * @param total_bytes Length of all buffers to be sent. Will be used as a boundary for
      * the previous parameter.
      * @param destination_locators_begin destination endpoint Locators iterator begin.
@@ -57,7 +57,7 @@ public:
      * @return Success of the send operation.
      */
     bool send(
-            const std::list<NetworkBuffer>& buffers,
+            const std::vector<NetworkBuffer>& buffers,
             const uint32_t& total_bytes,
             LocatorsIterator* destination_locators_begin,
             LocatorsIterator* destination_locators_end,
@@ -109,7 +109,7 @@ protected:
     std::function<void()> clean_up;
 
     std::function<bool(
-                const std::list<NetworkBuffer>&,
+                const std::vector<NetworkBuffer>&,
                 uint32_t,
                 LocatorsIterator* destination_locators_begin,
                 LocatorsIterator* destination_locators_end,

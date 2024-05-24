@@ -258,14 +258,14 @@ public:
 
     /**
      * Use the participant of this reader to send a message to certain locator.
-     * @param buffers List of buffers to send.
+     * @param buffers Vector of buffers to send.
      * @param total_bytes Total number of bytes to send.
      * @param locators_begin Destination locators iterator begin.
      * @param locators_end Destination locators iterator end.
      * @param max_blocking_time_point Future time point where any blocking should end.
      */
     bool send_sync_nts(
-            const std::list<eprosima::fastdds::rtps::NetworkBuffer>& buffers,
+            const std::vector<eprosima::fastdds::rtps::NetworkBuffer>& buffers,
             const uint32_t& total_bytes,
             const Locators& locators_begin,
             const Locators& locators_end,

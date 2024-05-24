@@ -313,7 +313,7 @@ bool TCPTransportInterface::check_crc(
 
 void TCPTransportInterface::calculate_crc(
         TCPHeader& header,
-        const std::list<NetworkBuffer>& buffers) const
+        const std::vector<NetworkBuffer>& buffers) const
 {
     uint32_t crc(0);
     for (const NetworkBuffer& buffer : buffers)
@@ -419,7 +419,7 @@ uint16_t TCPTransportInterface::create_acceptor_socket(
 
 void TCPTransportInterface::fill_rtcp_header(
         TCPHeader& header,
-        const std::list<NetworkBuffer>& buffers,
+        const std::vector<NetworkBuffer>& buffers,
         uint32_t total_bytes,
         uint16_t logical_port) const
 {
@@ -1425,7 +1425,7 @@ bool TCPTransportInterface::Receive(
 }
 
 bool TCPTransportInterface::send(
-        const std::list<NetworkBuffer>& buffers,
+        const std::vector<NetworkBuffer>& buffers,
         uint32_t total_bytes,
         const fastrtps::rtps::Locator_t& locator,
         fastrtps::rtps::LocatorsIterator* destination_locators_begin,
@@ -1449,7 +1449,7 @@ bool TCPTransportInterface::send(
 }
 
 bool TCPTransportInterface::send(
-        const std::list<NetworkBuffer>& buffers,
+        const std::vector<NetworkBuffer>& buffers,
         uint32_t total_bytes,
         const fastrtps::rtps::Locator_t& locator,
         const Locator& remote_locator)

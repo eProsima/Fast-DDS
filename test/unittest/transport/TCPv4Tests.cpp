@@ -285,7 +285,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_ports)
     ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(send_resource_list, outputLocator));
     ASSERT_FALSE(send_resource_list.empty());
     octet message[5] = { 'H', 'e', 'l', 'l', 'o' };
-    std::list<NetworkBuffer> buffer_list;
+    std::vector<NetworkBuffer> buffer_list;
     for (size_t i = 0; i < 5; ++i)
     {
         buffer_list.emplace_back(&message[i], 1);
@@ -349,7 +349,7 @@ TEST_F(TCPv4Tests, send_is_rejected_if_buffer_size_is_bigger_to_size_specified_i
 
     // Then
     std::vector<octet> receiveBufferWrongSize(descriptor.sendBufferSize + 1);
-    std::list<NetworkBuffer> buffer_list;
+    std::vector<NetworkBuffer> buffer_list;
     buffer_list.emplace_back(receiveBufferWrongSize.data(), (uint32_t)receiveBufferWrongSize.size());
     ASSERT_FALSE(send_resource_list.at(0)->send(buffer_list, (uint32_t)receiveBufferWrongSize.size(),
             &destination_begin, &destination_end, (std::chrono::steady_clock::now() + std::chrono::microseconds(100))));
@@ -417,7 +417,7 @@ TEST_F(TCPv4Tests, send_to_wrong_interface)
     Locators wrong_end(locator_list.end());
 
     std::vector<octet> message = { 'H', 'e', 'l', 'l', 'o' };
-    std::list<NetworkBuffer> buffer_list;
+    std::vector<NetworkBuffer> buffer_list;
     for (size_t i = 0; i < message.size(); ++i)
     {
         buffer_list.emplace_back(&message[i], 1);
@@ -452,7 +452,7 @@ TEST_F(TCPv4Tests, send_to_blocked_interface)
     Locators wrong_end(locator_list.end());
 
     std::vector<octet> message = { 'H', 'e', 'l', 'l', 'o' };
-    std::list<NetworkBuffer> buffer_list;
+    std::vector<NetworkBuffer> buffer_list;
     for (size_t i = 0; i < message.size(); ++i)
     {
         buffer_list.emplace_back(&message[i], 1);
@@ -517,7 +517,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_allowed_interfaces_ports)
                 ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(send_resource_list, outputLocator));
                 ASSERT_FALSE(send_resource_list.empty());
                 octet message[5] = { 'H', 'e', 'l', 'l', 'o' };
-                std::list<NetworkBuffer> buffer_list;
+                std::vector<NetworkBuffer> buffer_list;
                 for (size_t i = 0; i < 5; ++i)
                 {
                     buffer_list.emplace_back(&message[i], 1);
@@ -630,7 +630,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_allowed_interfaces_ports_by_name)
         ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(send_resource_list, outputLocator));
         ASSERT_FALSE(send_resource_list.empty());
         octet message[5] = { 'H', 'e', 'l', 'l', 'o' };
-        std::list<NetworkBuffer> buffer_list;
+        std::vector<NetworkBuffer> buffer_list;
         for (size_t i = 0; i < 5; ++i)
         {
             buffer_list.emplace_back(&message[i], 1);
@@ -774,7 +774,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_secure_ports_client_verifies)
         ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(send_resource_list, outputLocator));
         ASSERT_FALSE(send_resource_list.empty());
         octet message[5] = { 'H', 'e', 'l', 'l', 'o' };
-        std::list<NetworkBuffer> buffer_list;
+        std::vector<NetworkBuffer> buffer_list;
         for (size_t i = 0; i < 5; ++i)
         {
             buffer_list.emplace_back(&message[i], 1);
@@ -878,7 +878,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_secure_ports_server_verifies)
         ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(send_resource_list, outputLocator));
         ASSERT_FALSE(send_resource_list.empty());
         octet message[5] = { 'H', 'e', 'l', 'l', 'o' };
-        std::list<NetworkBuffer> buffer_list;
+        std::vector<NetworkBuffer> buffer_list;
         for (size_t i = 0; i < 5; ++i)
         {
             buffer_list.emplace_back(&message[i], 1);
@@ -985,7 +985,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_both_secure_ports)
         ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(send_resource_list, outputLocator));
         ASSERT_FALSE(send_resource_list.empty());
         octet message[5] = { 'H', 'e', 'l', 'l', 'o' };
-        std::list<NetworkBuffer> buffer_list;
+        std::vector<NetworkBuffer> buffer_list;
         for (size_t i = 0; i < 5; ++i)
         {
             buffer_list.emplace_back(&message[i], 1);
@@ -1092,7 +1092,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_both_secure_ports_untrusted)
         ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(send_resource_list, outputLocator));
         ASSERT_FALSE(send_resource_list.empty());
         octet message[5] = { 'H', 'e', 'l', 'l', 'o' };
-        std::list<NetworkBuffer> buffer_list;
+        std::vector<NetworkBuffer> buffer_list;
         for (size_t i = 0; i < 5; ++i)
         {
             buffer_list.emplace_back(&message[i], 1);
@@ -1203,7 +1203,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_secure_clients_1)
         ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(send_resource_list, outputLocator));
         ASSERT_FALSE(send_resource_list.empty());
         octet message[5] = { 'H', 'e', 'l', 'l', 'o' };
-        std::list<NetworkBuffer> buffer_list;
+        std::vector<NetworkBuffer> buffer_list;
         for (size_t i = 0; i < 5; ++i)
         {
             buffer_list.emplace_back(&message[i], 1);
@@ -1307,7 +1307,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_secure_ports_untrusted_server)
         ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(send_resource_list, outputLocator));
         ASSERT_FALSE(send_resource_list.empty());
         octet message[5] = { 'H', 'e', 'l', 'l', 'o' };
-        std::list<NetworkBuffer> buffer_list;
+        std::vector<NetworkBuffer> buffer_list;
         for (size_t i = 0; i < 5; ++i)
         {
             buffer_list.emplace_back(&message[i], 1);
@@ -1422,7 +1422,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_both_secure_ports_with_sni)
         ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(send_resource_list, outputLocator));
         ASSERT_FALSE(send_resource_list.empty());
         octet message[5] = { 'H', 'e', 'l', 'l', 'o' };
-        std::list<NetworkBuffer> buffer_list;
+        std::vector<NetworkBuffer> buffer_list;
         for (size_t i = 0; i < 5; ++i)
         {
             buffer_list.emplace_back(&message[i], 1);
@@ -1586,7 +1586,7 @@ TEST_F(TCPv4Tests, secure_non_blocking_send)
     const octet* data = message.data();
     size_t size = message.size();
     NetworkBuffer buffers(data, size);
-    std::list<NetworkBuffer> buffer_list;
+    std::vector<NetworkBuffer> buffer_list;
     buffer_list.push_back(buffers);
 
     // Send the message with no header. Since TCP actually allocates twice the size of the buffer requested
@@ -1658,7 +1658,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_allowed_localhost_interfaces_ports)
         ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(send_resource_list, outputLocator));
         ASSERT_FALSE(send_resource_list.empty());
         octet message[5] = { 'H', 'e', 'l', 'l', 'o' };
-        std::list<NetworkBuffer> buffer_list;
+        std::vector<NetworkBuffer> buffer_list;
         for (size_t i = 0; i < 5; ++i)
         {
             buffer_list.emplace_back(&message[i], 1);
@@ -1758,7 +1758,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_blocked_interfaces_ports)
                 ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(send_resource_list, outputLocator));
                 ASSERT_FALSE(send_resource_list.empty());
                 octet message[5] = { 'H', 'e', 'l', 'l', 'o' };
-                std::list<NetworkBuffer> buffer_list;
+                std::vector<NetworkBuffer> buffer_list;
                 for (size_t i = 0; i < 5; ++i)
                 {
                     buffer_list.emplace_back(&message[i], 1);
@@ -2115,7 +2115,7 @@ TEST_F(TCPv4Tests, non_blocking_send)
     const octet* data = message.data();
     size_t size = message.size();
     NetworkBuffer buffers(data, size);
-    std::list<NetworkBuffer> buffer_list;
+    std::vector<NetworkBuffer> buffer_list;
     buffer_list.push_back(buffers);
 
     // Send the message with no header. Since TCP actually allocates twice the size of the buffer requested

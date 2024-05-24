@@ -107,7 +107,7 @@ public:
     MOCK_METHOD0(getEventResource, ResourceEvent & ());
 
     bool send_sync_nts(
-            const std::list<eprosima::fastdds::rtps::NetworkBuffer>& /*buffers*/,
+            const std::vector<eprosima::fastdds::rtps::NetworkBuffer>& /*buffers*/,
             const uint32_t& /*total_bytes*/,
             const LocatorsIterator& /*destination_locators_begin*/,
             const LocatorsIterator& /*destination_locators_end*/,

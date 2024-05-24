@@ -143,11 +143,11 @@ protected:
 
     void calculate_crc(
             TCPHeader& header,
-            const std::list<NetworkBuffer>& buffers) const;
+            const std::vector<NetworkBuffer>& buffers) const;
 
     void fill_rtcp_header(
             TCPHeader& header,
-            const std::list<NetworkBuffer>& buffers,
+            const std::vector<NetworkBuffer>& buffers,
             uint32_t total_bytes,
             uint16_t logical_port) const;
 
@@ -224,7 +224,7 @@ protected:
      * There must exist a channel bound to the locator, otherwise the send will be skipped.
      */
     bool send(
-            const std::list<NetworkBuffer>& buffers,
+            const std::vector<NetworkBuffer>& buffers,
             uint32_t total_bytes,
             const eprosima::fastrtps::rtps::Locator_t& locator,
             const Locator& remote_locator);
@@ -389,7 +389,7 @@ public:
 
     /**
      * Blocking Send through the specified channel.
-     * @param buffers List of buffers to send.
+     * @param buffers Vector of buffers to send.
      * @param total_bytes Total amount of bytes to send. It will be used as a bounds check for the previous argument.
      * It must not exceed the send_buffer_size fed to this class during construction.
      * @param locator Physical locator we're sending to.
@@ -399,7 +399,7 @@ public:
      * so should not be reuse.
      */
     bool send(
-            const std::list<NetworkBuffer>& buffers,
+            const std::vector<NetworkBuffer>& buffers,
             uint32_t total_bytes,
             const fastrtps::rtps::Locator_t& locator,
             fastrtps::rtps::LocatorsIterator* destination_locators_begin,

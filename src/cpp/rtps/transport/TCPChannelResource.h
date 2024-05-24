@@ -156,7 +156,7 @@ public:
             asio::error_code& ec)
     {
         NetworkBuffer buffers(data, data_size);
-        std::list<NetworkBuffer> buffer_list;
+        std::vector<NetworkBuffer> buffer_list;
         buffer_list.push_back(buffers);
         return send(header, header_size, buffer_list, data_size, ec);
     }
@@ -167,7 +167,7 @@ public:
      *
      * @param header Pointer to the TCP header data.
      * @param header_size Size of the TCP header data.
-     * @param buffers List of network buffers containing the data to be sent.
+     * @param buffers Vector of network buffers containing the data to be sent.
      * @param total_bytes Total number of bytes to be sent.
      * @param ec Reference to an asio::error_code object to store any error that occurs during the send operation.
      * @return The number of bytes actually sent.
@@ -175,7 +175,7 @@ public:
     virtual size_t send(
             const fastrtps::rtps::octet* header,
             size_t header_size,
-            const std::list<NetworkBuffer>& buffers,
+            const std::vector<NetworkBuffer>& buffers,
             uint32_t total_bytes,
             asio::error_code& ec) = 0;
 
