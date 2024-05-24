@@ -18,11 +18,12 @@
 #ifndef _FASTDDS_RTPS_SECURITY_CRYPTOGRAPHY_CRYPTOKEYFACTORY_H_
 #define _FASTDDS_RTPS_SECURITY_CRYPTOGRAPHY_CRYPTOKEYFACTORY_H_
 
-#include <rtps/security/cryptography/CryptoTypes.h>
-#include <rtps/security/accesscontrol/EndpointSecurityAttributes.h>
-#include <rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
-
 #include <memory>
+
+#include <fastdds/rtps/attributes/EndpointSecurityAttributes.h>
+
+#include <rtps/security/cryptography/CryptoTypes.h>
+#include <rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
 
 namespace eprosima {
 namespace fastrtps {

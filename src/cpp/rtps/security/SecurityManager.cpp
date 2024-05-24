@@ -24,6 +24,7 @@
 #include <thread>
 
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/attributes/EndpointSecurityAttributes.h>
 #include <fastdds/rtps/attributes/HistoryAttributes.h>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
@@ -43,7 +44,6 @@
 #include <rtps/reader/StatefulReader.hpp>
 #include <rtps/reader/StatelessReader.hpp>
 #include <rtps/security/accesscontrol/AccessControl.h>
-#include <rtps/security/accesscontrol/EndpointSecurityAttributes.h>
 #include <rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
 #include <rtps/security/accesscontrol/SecurityMaskUtilities.h>
 #include <rtps/security/authentication/Authentication.h>

@@ -18,7 +18,7 @@
 #ifndef _FASTDDS_RTPS_SECURITY_ACCESSCONTROL_ENDPOINTSECURITYATTRIBUTES_H_
 #define _FASTDDS_RTPS_SECURITY_ACCESSCONTROL_ENDPOINTSECURITYATTRIBUTES_H_
 
-#include <rtps/security/accesscontrol/SecurityMaskUtilities.h>
+#include <cstdint>
 
 namespace eprosima {
 namespace fastrtps {
@@ -56,23 +56,7 @@ struct PluginEndpointSecurityAttributes
     bool is_submessage_origin_authenticated;
     bool is_payload_encrypted;
 
-    inline PluginEndpointSecurityAttributesMask mask() const
-    {
-        PluginEndpointSecurityAttributesMask rv = PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_VALID;
-        if (is_submessage_encrypted)
-        {
-            rv |= PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED;
-        }
-        if (is_submessage_origin_authenticated)
-        {
-            rv |= PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ORIGIN_AUTHENTICATED;
-        }
-        if (is_payload_encrypted)
-        {
-            rv |= PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_PAYLOAD_ENCRYPTED;
-        }
-        return rv;
-    }
+    PluginEndpointSecurityAttributesMask mask() const;
 
 };
 
@@ -130,47 +114,11 @@ struct EndpointSecurityAttributes
 
     PluginEndpointSecurityAttributesMask plugin_endpoint_attributes;
 
-    inline EndpointSecurityAttributesMask mask() const
-    {
-        EndpointSecurityAttributesMask rv = ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_VALID;
-        if (is_read_protected)
-        {
-            rv |= ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_READ_PROTECTED;
-        }
-        if (is_write_protected)
-        {
-            rv |= ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_WRITE_PROTECTED;
-        }
-        if (is_discovery_protected)
-        {
-            rv |= ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_DISCOVERY_PROTECTED;
-        }
-        if (is_liveliness_protected)
-        {
-            rv |= ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_LIVELINESS_PROTECTED;
-        }
-        if (is_submessage_protected)
-        {
-            rv |= ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_PROTECTED;
-        }
-        if (is_payload_protected)
-        {
-            rv |= ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_PAYLOAD_PROTECTED;
-        }
-        if (is_key_protected)
-        {
-            rv |= ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_KEY_PROTECTED;
-        }
-        return rv;
-    }
+    EndpointSecurityAttributesMask mask() const;
 
-    inline bool match(
+    bool match(
             const EndpointSecurityAttributesMask remoteMask,
-            const PluginEndpointSecurityAttributesMask remotePluginMask) const
-    {
-        return security_mask_matches(mask(), remoteMask) &&
-               security_mask_matches(plugin_endpoint_attributes, remotePluginMask);
-    }
+            const PluginEndpointSecurityAttributesMask remotePluginMask) const;
 
 };
 

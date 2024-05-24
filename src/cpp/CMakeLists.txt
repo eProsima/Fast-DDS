@@ -90,6 +90,7 @@ set(${PROJECT_NAME}_source_files
     fastdds/topic/TopicProxyFactory.cpp
     fastdds/topic/TypeSupport.cpp
     fastdds/utils/QosConverters.cpp
+    rtps/attributes/EndpointSecurityAttributes.cpp
     rtps/attributes/PropertyPolicy.cpp
     rtps/attributes/RTPSParticipantAttributes.cpp
     rtps/attributes/ThreadSettings.cpp

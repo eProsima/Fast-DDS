@@ -25,11 +25,9 @@
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/common/Types.h>
-
 #if HAVE_SECURITY
-#include <rtps/security/accesscontrol/EndpointSecurityAttributes.h>
-#endif  // HAVE_SECURITY
-
+#include <fastdds/rtps/attributes/EndpointSecurityAttributes.h>
+#endif // if HAVE_SECURITY
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
@@ -164,7 +162,7 @@ private:
     int16_t m_entityID = -1;
 
 #if HAVE_SECURITY
-    //! Security attributes
+     //! Security attributes
     security::EndpointSecurityAttributes security_attributes_;
 #endif // HAVE_SECURITY
 
