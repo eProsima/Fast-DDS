@@ -36,7 +36,7 @@
 
 #include "AllocTestType.hpp"
 
-class AllocTestSubscriber : public eprosima::fastdds::dds::DataReaderListener
+class AllocTestSubscriber
 {
 public:
 
@@ -58,13 +58,6 @@ public:
             uint32_t number,
             bool wait_unmatching);
 
-    void on_subscription_matched(
-            eprosima::fastdds::dds::DataReader* reader,
-            const eprosima::fastdds::dds::SubscriptionMatchedStatus& status) override;
-
-    void on_data_available(
-            eprosima::fastdds::dds::DataReader* reader) override;
-
 private:
 
     void wait_match();
@@ -75,8 +68,6 @@ private:
             uint32_t n);
 
     eprosima::fastdds::dds::TypeSupport type_;
-
-    AllocTestType data_;
 
     eprosima::fastdds::dds::DomainParticipant* participant_;
 
@@ -90,13 +81,38 @@ private:
 
     std::string output_file_;
 
-    std::atomic<uint16_t> matched_;
+    class SubListener : public eprosima::fastdds::dds::DataReaderListener
+    {
+    public:
 
-    std::atomic<uint16_t> samples_;
+        SubListener()
+            : matched_(0)
+            , samples_(0)
+        {
+        }
 
-    mutable std::mutex mtx_;
+        ~SubListener() override
+        {
+        }
 
-    std::condition_variable cv_;
+        void on_data_available(
+                eprosima::fastdds::dds::DataReader* reader) override;
+
+        void on_subscription_matched(
+                eprosima::fastdds::dds::DataReader* reader,
+                const eprosima::fastdds::dds::SubscriptionMatchedStatus& info) override;
+
+        AllocTestType data_;
+
+        std::atomic<uint16_t> matched_;
+
+        std::atomic<uint16_t> samples_;
+
+        mutable std::mutex mtx_;
+
+        std::condition_variable cv_;
+    }
+    listener_;
 
 };
 

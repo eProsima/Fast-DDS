@@ -53,7 +53,6 @@ AllocTestPublisher::AllocTestPublisher()
     , writer_(nullptr)
     , profile_("")
     , output_file_("")
-    , matched_(0)
 {
 }
 
@@ -100,7 +99,7 @@ bool AllocTestPublisher::init(
     CHECK_ENTITY_CREATION(publisher_);
 
     std::string prof = "test_publisher_profile_" + profile_;
-    writer_ = publisher_->create_datawriter_with_profile(topic_, prof, this);
+    writer_ = publisher_->create_datawriter_with_profile(topic_, prof, &listener_);
     CHECK_ENTITY_CREATION(writer_);
 
     bool show_allocation_traces = std::getenv("FASTDDS_PROFILING_PRINT_TRACES") != nullptr;
@@ -108,7 +107,7 @@ bool AllocTestPublisher::init(
     return ret == RETCODE_OK;
 }
 
-void AllocTestPublisher::on_publication_matched(
+void AllocTestPublisher::PubListener::on_publication_matched(
         DataWriter* /*writer*/,
         const PublicationMatchedStatus& status)
 {
@@ -132,24 +131,24 @@ void AllocTestPublisher::on_publication_matched(
 
 bool AllocTestPublisher::is_matched()
 {
-    return matched_ > 0;
+    return listener_.matched_ > 0;
 }
 
 void AllocTestPublisher::wait_match()
 {
-    std::unique_lock<std::mutex> lck(mtx_);
-    cv_.wait(lck, [this]()
+    std::unique_lock<std::mutex> lck(listener_.mtx_);
+    listener_.cv_.wait(lck, [this]()
             {
-                return matched_ > 0;
+                return listener_.matched_ > 0;
             });
 }
 
 void AllocTestPublisher::wait_unmatch()
 {
-    std::unique_lock<std::mutex> lck(mtx_);
-    cv_.wait(lck, [this]()
+    std::unique_lock<std::mutex> lck(listener_.mtx_);
+    listener_.cv_.wait(lck, [this]()
             {
-                return matched_ <= 0;
+                return listener_.matched_ <= 0;
             });
 }
 

@@ -59,8 +59,6 @@ AllocTestSubscriber::AllocTestSubscriber()
     , reader_(nullptr)
     , profile_("")
     , output_file_("")
-    , matched_(0)
-    , samples_(0)
 {
 }
 
@@ -105,7 +103,7 @@ bool AllocTestSubscriber::init(
     CHECK_ENTITY_CREATION(subscriber_);
 
     std::string prof = "test_subscriber_profile_" + profile_;
-    reader_ = subscriber_->create_datareader_with_profile(topic_, prof, this);
+    reader_ = subscriber_->create_datareader_with_profile(topic_, prof, &listener_);
     CHECK_ENTITY_CREATION(reader_);
 
     bool show_allocation_traces = std::getenv("FASTDDS_PROFILING_PRINT_TRACES") != nullptr;
@@ -113,7 +111,7 @@ bool AllocTestSubscriber::init(
     return ret == RETCODE_OK;
 }
 
-void AllocTestSubscriber::on_subscription_matched(
+void AllocTestSubscriber::SubListener::on_subscription_matched(
         DataReader* /*reader*/,
         const SubscriptionMatchedStatus& status)
 {
@@ -135,7 +133,7 @@ void AllocTestSubscriber::on_subscription_matched(
     cv_.notify_all();
 }
 
-void AllocTestSubscriber::on_data_available(
+void AllocTestSubscriber::SubListener::on_data_available(
         DataReader* reader)
 {
     SampleInfo info;
@@ -153,29 +151,29 @@ void AllocTestSubscriber::on_data_available(
 
 void AllocTestSubscriber::wait_match()
 {
-    std::unique_lock<std::mutex> lck(mtx_);
-    cv_.wait(lck, [this]()
+    std::unique_lock<std::mutex> lck(listener_.mtx_);
+    listener_.cv_.wait(lck, [this]()
             {
-                return matched_ > 0;
+                return listener_.matched_ > 0;
             });
 }
 
 void AllocTestSubscriber::wait_unmatch()
 {
-    std::unique_lock<std::mutex> lck(mtx_);
-    cv_.wait(lck, [this]()
+    std::unique_lock<std::mutex> lck(listener_.mtx_);
+    listener_.cv_.wait(lck, [this]()
             {
-                return matched_ <= 0;
+                return listener_.matched_ <= 0;
             });
 }
 
 void AllocTestSubscriber::wait_until_total_received_at_least(
         uint32_t n)
 {
-    std::unique_lock<std::mutex> lock(mtx_);
-    cv_.wait(lock, [this, n]()
+    std::unique_lock<std::mutex> lock(listener_.mtx_);
+    listener_.cv_.wait(lock, [this, n]()
             {
-                return samples_ >= n;
+                return listener_.samples_ >= n;
             });
 }
 
