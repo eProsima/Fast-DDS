@@ -33,7 +33,6 @@
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 #include <fastdds/rtps/reader/ReaderDiscoveryInfo.h>
 #include <fastdds/rtps/writer/WriterDiscoveryInfo.h>
-#include <fastdds/statistics/rtps/monitor_service/interfaces/IProxyObserver.hpp>
 #include <fastdds/statistics/rtps/monitor_service/interfaces/IProxyQueryable.hpp>
 #include <fastrtps/qos/QosPolicies.h>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
@@ -42,6 +41,14 @@
 namespace eprosima {
 
 namespace fastdds {
+namespace statistics {
+namespace rtps {
+
+struct IProxyObserver;
+
+} // namespace rtps
+} // namespace statistics
+
 namespace rtps {
 
 class PDPServerListener;

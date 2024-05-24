@@ -32,16 +32,13 @@
 #include <fastdds/rtps/Endpoint.h>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
 #include <fastdds/rtps/messages/RTPSMessageGroup.h>
-#include "DeliveryRetCode.hpp"
-#include "LocatorSelectorSender.hpp"
+#include <fastdds/statistics/rtps/monitor_service/connections_fwd.hpp>
+#include <fastdds/statistics/rtps/StatisticsCommon.hpp>
 #include <fastrtps/qos/LivelinessLostStatus.h>
 
-#include <fastdds/statistics/rtps/StatisticsCommon.hpp>
 
-#ifdef FASTDDS_STATISTICS
-#include <fastdds/statistics/rtps/monitor_service/interfaces/IConnectionsQueryable.hpp>
-#include <fastdds/statistics/rtps/monitor_service/interfaces/IConnectionsObserver.hpp>
-#endif // ifdef FASTDDS_STATISTICS
+#include "DeliveryRetCode.hpp"
+#include "LocatorSelectorSender.hpp"
 
 namespace eprosima {
 

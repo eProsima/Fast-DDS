@@ -21,18 +21,18 @@
 #define _FASTDDS_SUBSCRIBERIMPL_HPP_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <fastrtps/attributes/SubscriberAttributes.h>
+#include <map>
+#include <mutex>
 
+#include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
-#include <fastdds/dds/core/status/StatusMask.hpp>
+#include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/types/TypesBase.h>
 
-#include <fastdds/statistics/rtps/monitor_service/interfaces/IStatusQueryable.hpp>
+#include <statistics/rtps/monitor-service/interfaces/IStatusQueryable.hpp>
 
-#include <mutex>
-#include <map>
 
 using eprosima::fastrtps::types::ReturnCode_t;
 
@@ -231,8 +231,7 @@ public:
 
 #ifdef FASTDDS_STATISTICS
     bool get_monitoring_status(
-            const uint32_t& status_id,
-            statistics::rtps::DDSEntityStatus*& status,
+            statistics::MonitorServiceData& status,
             const fastrtps::rtps::GUID_t& entity_guid);
 #endif //FASTDDS_STATISTICS
 

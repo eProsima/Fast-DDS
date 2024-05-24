@@ -26,18 +26,12 @@
 #include <fastdds/dds/core/status/LivelinessChangedStatus.hpp>
 #include <fastdds/rtps/common/Guid.h>
 
+#include <statistics/types/monitorservice_types.h>
+
 namespace eprosima {
 namespace fastdds {
 namespace statistics {
 namespace rtps {
-
-struct DDSEntityStatus : public eprosima::fastdds::dds::IncompatibleQosStatus,
-    public eprosima::fastdds::dds::BaseStatus,
-    public eprosima::fastdds::dds::LivelinessChangedStatus,
-    public eprosima::fastdds::dds::DeadlineMissedStatus
-{
-
-};
 
 struct IStatusQueryable
 {
@@ -52,8 +46,7 @@ struct IStatusQueryable
      */
     virtual bool get_monitoring_status(
             const fastrtps::rtps::GUID_t& guid,
-            const uint32_t& status_kind,
-            DDSEntityStatus*& status) = 0;
+            MonitorServiceData& status) = 0;
 
 };
 

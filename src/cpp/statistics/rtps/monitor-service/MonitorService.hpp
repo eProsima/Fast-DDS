@@ -31,9 +31,9 @@
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/resources/TimedEvent.h>
 #include <fastdds/rtps/writer/StatefulWriter.h>
-#include <fastdds/statistics/rtps/monitor_service/Interfaces.hpp>
 #include <fastrtps/qos/WriterQos.h>
 
+#include "Interfaces.hpp"
 #include <rtps/history/ITopicPayloadPool.h>
 #include <statistics/rtps/monitor-service/MonitorServiceListener.hpp>
 #include <statistics/types/monitorservice_types.h>
@@ -59,8 +59,7 @@ public:
 
     inline bool get_monitoring_status(
             const fastrtps::rtps::GUID_t&,
-            const uint32_t&,
-            rtps::DDSEntityStatus*&) override
+            MonitorServiceData&) override
     {
         return true;
     }
