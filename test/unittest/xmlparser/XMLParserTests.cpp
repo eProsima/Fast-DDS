@@ -532,7 +532,7 @@ TEST_F(XMLParserTests, Data)
     EXPECT_EQ(port.offsetd2, 123);
     EXPECT_EQ(port.offsetd3, 456);
     EXPECT_EQ(rtps_atts.participantID, 9898);
-    EXPECT_EQ(rtps_atts.flow_controllers.at(0)->max_bytes_per_period, 2048u);
+    EXPECT_EQ(rtps_atts.flow_controllers.at(0)->max_bytes_per_period, 2048);
     EXPECT_EQ(rtps_atts.flow_controllers.at(0)->period_ms, 45u);
     EXPECT_EQ(rtps_atts.useBuiltinTransports, true);
     EXPECT_EQ(std::string(rtps_atts.getName()), "test_name");
@@ -626,7 +626,7 @@ TEST_F(XMLParserTests, DataDeprecated)
     EXPECT_EQ(port.offsetd2, 123);
     EXPECT_EQ(port.offsetd3, 456);
     EXPECT_EQ(rtps_atts.participantID, 9898);
-    EXPECT_EQ(rtps_atts.flow_controllers.at(0)->max_bytes_per_period, 2048u);
+    EXPECT_EQ(rtps_atts.flow_controllers.at(0)->max_bytes_per_period, 2048);
     EXPECT_EQ(rtps_atts.flow_controllers.at(0)->period_ms, 45u);
     EXPECT_EQ(rtps_atts.useBuiltinTransports, true);
     EXPECT_EQ(std::string(rtps_atts.getName()), "test_name");
@@ -720,7 +720,7 @@ TEST_F(XMLParserTests, DataBuffer)
     EXPECT_EQ(port.offsetd2, 123);
     EXPECT_EQ(port.offsetd3, 456);
     EXPECT_EQ(rtps_atts.participantID, 9898);
-    EXPECT_EQ(rtps_atts.flow_controllers.at(0)->max_bytes_per_period, 2048u);
+    EXPECT_EQ(rtps_atts.flow_controllers.at(0)->max_bytes_per_period, 2048);
     EXPECT_EQ(rtps_atts.flow_controllers.at(0)->period_ms, 45u);
     EXPECT_EQ(rtps_atts.useBuiltinTransports, true);
     EXPECT_EQ(std::string(rtps_atts.getName()), "test_name");
@@ -814,7 +814,7 @@ TEST_F(XMLParserTests, DataBufferDeprecated)
     EXPECT_EQ(port.offsetd2, 123);
     EXPECT_EQ(port.offsetd3, 456);
     EXPECT_EQ(rtps_atts.participantID, 9898);
-    EXPECT_EQ(rtps_atts.flow_controllers.at(0)->max_bytes_per_period, 2048u);
+    EXPECT_EQ(rtps_atts.flow_controllers.at(0)->max_bytes_per_period, 2048);
     EXPECT_EQ(rtps_atts.flow_controllers.at(0)->period_ms, 45u);
     EXPECT_EQ(rtps_atts.useBuiltinTransports, true);
     EXPECT_EQ(std::string(rtps_atts.getName()), "test_name");

@@ -564,7 +564,7 @@ TEST_P(XMLProfileParserTests, XMLParserParticipant)
     EXPECT_EQ(port.offsetd2, 123);
     EXPECT_EQ(port.offsetd3, 456);
     EXPECT_EQ(rtps_atts.participantID, 9898);
-    EXPECT_EQ(rtps_atts.flow_controllers.at(0)->max_bytes_per_period, 2048u);
+    EXPECT_EQ(rtps_atts.flow_controllers.at(0)->max_bytes_per_period, 2048);
     EXPECT_EQ(rtps_atts.flow_controllers.at(0)->period_ms, 45u);
     EXPECT_EQ(rtps_atts.useBuiltinTransports, true);
     EXPECT_EQ(rtps_atts.netmaskFilter, eprosima::fastdds::rtps::NetmaskFilterKind::ON);
@@ -664,7 +664,7 @@ TEST_F(XMLProfileParserBasicTests, XMLParserParticipantDeprecated)
     EXPECT_EQ(port.offsetd2, 123);
     EXPECT_EQ(port.offsetd3, 456);
     EXPECT_EQ(rtps_atts.participantID, 9898);
-    EXPECT_EQ(rtps_atts.flow_controllers.at(0)->max_bytes_per_period, 2048u);
+    EXPECT_EQ(rtps_atts.flow_controllers.at(0)->max_bytes_per_period, 2048);
     EXPECT_EQ(rtps_atts.flow_controllers.at(0)->period_ms, 45u);
     EXPECT_EQ(rtps_atts.useBuiltinTransports, true);
     EXPECT_EQ(std::string(rtps_atts.getName()), "test_name");
@@ -747,7 +747,7 @@ TEST_P(XMLProfileParserTests, XMLParserDefaultParticipantProfile)
     EXPECT_EQ(port.offsetd2, 123);
     EXPECT_EQ(port.offsetd3, 456);
     EXPECT_EQ(rtps_atts.participantID, 9898);
-    EXPECT_EQ(rtps_atts.flow_controllers.at(0)->max_bytes_per_period, 2048u);
+    EXPECT_EQ(rtps_atts.flow_controllers.at(0)->max_bytes_per_period, 2048);
     EXPECT_EQ(rtps_atts.flow_controllers.at(0)->period_ms, 45u);
     EXPECT_EQ(rtps_atts.useBuiltinTransports, true);
     EXPECT_EQ(std::string(rtps_atts.getName()), "test_name");
@@ -830,7 +830,7 @@ TEST_F(XMLProfileParserBasicTests, XMLParserDefaultParticipantProfileDeprecated)
     EXPECT_EQ(port.offsetd2, 123);
     EXPECT_EQ(port.offsetd3, 456);
     EXPECT_EQ(rtps_atts.participantID, 9898);
-    EXPECT_EQ(rtps_atts.flow_controllers.at(0)->max_bytes_per_period, 2048u);
+    EXPECT_EQ(rtps_atts.flow_controllers.at(0)->max_bytes_per_period, 2048);
     EXPECT_EQ(rtps_atts.flow_controllers.at(0)->period_ms, 45u);
     EXPECT_EQ(rtps_atts.useBuiltinTransports, true);
     EXPECT_EQ(std::string(rtps_atts.getName()), "test_name");
