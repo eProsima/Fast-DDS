@@ -444,7 +444,7 @@ void PDP::disable()
     // Unmatch all remote participants
     for (ParticipantProxyData* pdata : participants)
     {
-        remote_participant_removed(pdata, pdata->m_guid,
+        actions_on_remote_participant_removed(pdata, pdata->m_guid,
                 ParticipantDiscoveryInfo::DISCOVERY_STATUS::REMOVED_PARTICIPANT, nullptr);
     }
 }
@@ -1168,14 +1168,14 @@ bool PDP::remove_remote_participant(
     if (nullptr != pdata)
     {
         RTPSParticipantListener* listener = mp_RTPSParticipant->getListener();
-        remote_participant_removed(pdata, partGUID, reason, listener);
+        actions_on_remote_participant_removed(pdata, partGUID, reason, listener);
         return true;
     }
 
     return false;
 }
 
-void PDP::remote_participant_removed(
+void PDP::actions_on_remote_participant_removed(
         ParticipantProxyData* pdata,
         const GUID_t& partGUID,
         ParticipantDiscoveryInfo::DISCOVERY_STATUS reason,

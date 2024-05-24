@@ -635,7 +635,7 @@ private:
             ParticipantProxyData* participant_data);
 
     /**
-     * Performs unmatching of user and built-in endpoints after removing a ParticipantProxyData from the
+     * Performs all the necessary actions after removing a ParticipantProxyData from the
      * participant_proxies_ collection.
      *
      * @param pdata ParticipantProxyData that was removed.
@@ -643,7 +643,7 @@ private:
      * @param reason Reason why the participant was removed.
      * @param listener Listener to be notified of the unmatches / removal.
      */
-    void remote_participant_removed(
+    void actions_on_remote_participant_removed(
             ParticipantProxyData* pdata,
             const GUID_t& partGUID,
             ParticipantDiscoveryInfo::DISCOVERY_STATUS reason,
