@@ -290,6 +290,7 @@ RTPSMessageGroup::RTPSMessageGroup(
         CDRMessage::initCDRMsg(encrypt_msg_);
     }
 #endif // if HAVE_SECURITY
+
 }
 
 RTPSMessageGroup::RTPSMessageGroup(
@@ -379,10 +380,7 @@ void RTPSMessageGroup::send()
             buffers_bytes_ += msgToSend->length;
 
 #ifdef FASTDDS_STATISTICS
-            CDRMessage_t stats_msg;
-            eprosima::fastdds::statistics::rtps::add_statistics_submessage(&stats_msg);
-            buffers_to_send_.emplace_back(stats_msg.buffer, stats_msg.length);
-            buffers_bytes_ += stats_msg.length;
+            add_stats_submsg();
 #endif // FASTDDS_STATISTICS
 
             if (!sender_->send(buffers_to_send_,
@@ -916,6 +914,28 @@ bool RTPSMessageGroup::create_gap_submessage(
 
     return true;
 }
+
+#ifdef FASTDDS_STATISTICS
+void RTPSMessageGroup::add_stats_submsg()
+{
+    // Use empty space of header_msg_ buffer to create the msg
+    uint32_t header_pos = header_msg_->pos;
+    uint32_t header_length = header_msg_->length;
+    uint32_t stats_pos = header_msg_->max_size - eprosima::fastdds::statistics::rtps::statistics_submessage_length;
+    header_msg_->pos = stats_pos;
+
+    eprosima::fastdds::statistics::rtps::add_statistics_submessage(header_msg_);
+
+    // Add into buffers_to_send_ the submessage added to header_msg_
+    buffers_to_send_->emplace_back(&header_msg_->buffer[stats_pos],
+            eprosima::fastdds::statistics::rtps::statistics_submessage_length);
+    buffers_bytes_ += eprosima::fastdds::statistics::rtps::statistics_submessage_length;
+
+    // Restore position
+    header_msg_->pos = header_pos;
+    header_msg_->length = header_length;
+}
+#endif // FASTDDS_STATISTICS
 
 bool RTPSMessageGroup::add_acknack(
         const SequenceNumberSet_t& SNSet,

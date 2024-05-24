@@ -317,6 +317,11 @@ private:
             const SequenceNumberSet_t& gap_bitmap,
             const EntityId_t& reader_id);
 
+#ifdef FASTDDS_STATISTICS
+    //! Append the Statistics message to the header_msg_ and add the corresponding buffer to buffers_to_send_.
+    void add_stats_submsg();
+#endif // FASTDDS_STATISTICS
+
     RTPSMessageSenderInterface* sender_ = nullptr;
 
     Endpoint* endpoint_ = nullptr;
