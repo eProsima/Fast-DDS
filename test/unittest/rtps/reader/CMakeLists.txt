@@ -73,6 +73,8 @@ endif()
 
 add_executable(WriterProxyAcknackTests ${WRITERPROXYACKNACKTESTS_SOURCE})
 target_compile_definitions(WriterProxyAcknackTests PRIVATE
+    BOOST_ASIO_STANDALONE
+    ASIO_STANDALONE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     RETURN_VALID_PARTICIPANT
@@ -95,5 +97,6 @@ target_include_directories(WriterProxyAcknackTests PRIVATE
     )
 target_link_libraries(WriterProxyAcknackTests foonathan_memory
     GTest::gmock
-    ${CMAKE_DL_LIBS})
+    ${CMAKE_DL_LIBS}
+    ${THIRDPARTY_BOOST_LINK_LIBS})
 add_gtest(WriterProxyAcknackTests SOURCES ${WRITERPROXYACKNACKTESTS_SOURCE})
