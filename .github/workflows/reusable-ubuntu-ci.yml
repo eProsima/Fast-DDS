@@ -120,7 +120,11 @@ jobs:
         uses: eProsima/eProsima-CI/ubuntu/get_related_branch_from_repo@v0
         with:
           remote_repository: eProsima/ShapesDemo
+<<<<<<< HEAD
           fallback_branch: ${{ inputs.fastdds-branch || '2.14.x' }}
+=======
+          fallback_branch: 'master'
+>>>>>>> e3172347c (Set fallback branch for get_related_branch_from_repo correctly (#4816))
 
       - name: Download Shapes Demo repo
         uses: eProsima/eProsima-CI/external/checkout@v0
