@@ -1761,7 +1761,7 @@
                     </xs:restriction>
                 </xs:simpleType>
             </xs:element>
-            <xs:element name="flow_controller_name" type="string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="flow_controller_name" type="string" minOccurs="0" maxOccurs="1"/>
         </xs:all>
     </xs:complexType>
 
