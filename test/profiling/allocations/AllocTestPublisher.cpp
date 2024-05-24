@@ -27,7 +27,6 @@
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
-#include <fastrtps/types/TypesBase.h>
 
 #include "AllocTestCommon.h"
 #include "AllocTestTypePubSubTypes.h"
@@ -35,13 +34,13 @@
 using namespace eprosima::fastdds::dds;
 
 #define CHECK_RETURN_CODE(ret) \
-    if (ReturnCode_t::RETCODE_OK != ret) \
+    if (RETCODE_OK != ret) \
     { \
         return false; \
     }
 
 #define CHECK_ENTITY_CREATION(entity) \
-    if (nullptr != entity) \
+    if (nullptr == entity) \
     { \
         return false; \
     }
@@ -78,7 +77,7 @@ bool AllocTestPublisher::init(
     profile_ = profile;
     output_file_ = output_file;
 
-    ReturnCode_t ret = ReturnCode_t::RETCODE_OK;
+    ReturnCode_t ret = RETCODE_OK;
 
     std::shared_ptr<DomainParticipantFactory> factory = DomainParticipantFactory::get_shared_instance();
     ret = factory->load_XML_profiles_file("test_xml_profile.xml");
@@ -106,7 +105,7 @@ bool AllocTestPublisher::init(
 
     bool show_allocation_traces = std::getenv("FASTDDS_PROFILING_PRINT_TRACES") != nullptr;
     eprosima_profiling::entities_created(show_allocation_traces);
-    return ret == ReturnCode_t::RETCODE_OK;
+    return ret == RETCODE_OK;
 }
 
 void AllocTestPublisher::on_publication_matched(
