@@ -75,7 +75,7 @@ def failure_test_list(
 
     # failed tests
     saved_lines = []
-    with open(log_file_path, 'r') as file:
+    with open(log_file_path, 'r', encoding='utf-8', errors='replace') as file:
         for line in reversed(file.readlines()):
             saved_lines.append(line)
             if (re.search('.*The following tests FAILED:.*', line)):
