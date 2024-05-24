@@ -15,7 +15,7 @@
 /*!
  * @file LoggingLevel.cpp
  */
-#include <fastdds/rtps/security/logging/LoggingLevel.h>
+#include <rtps/security/logging/LoggingLevel.h>
 
 #include <rtps/security/exceptions/SecurityException.h>
 

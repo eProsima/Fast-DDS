@@ -23,12 +23,9 @@
 #include <fastdds/rtps/reader/ReaderListener.h>
 
 
-namespace eprosima
-{
-namespace fastrtps
-{
-namespace rtps
-{
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
 class RTPSParticipant;
 class ReaderHistory;
 class RTPSReader;

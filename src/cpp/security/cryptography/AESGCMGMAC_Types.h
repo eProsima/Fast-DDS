@@ -19,17 +19,19 @@
 #ifndef _SECURITY_AUTHENTICATION_AESGCMGMAC_TYPES_H_
 #define _SECURITY_AUTHENTICATION_AESGCMGMAC_TYPES_H_
 
-#include <fastdds/rtps/attributes/PropertyPolicy.h>
-#include <fastdds/rtps/security/common/Handle.h>
-#include <fastdds/rtps/security/common/SharedSecretHandle.h>
-#include <fastdds/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
-#include <fastdds/rtps/security/accesscontrol/EndpointSecurityAttributes.h>
-#include <rtps/security/exceptions/SecurityException.h>
-
 #include <cassert>
 #include <functional>
 #include <limits>
 #include <mutex>
+
+#include <fastdds/rtps/attributes/PropertyPolicy.h>
+#include <fastdds/rtps/attributes/EndpointSecurityAttributes.h>
+
+#include <rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
+#include <rtps/security/common/Handle.h>
+#include <rtps/security/common/SharedSecretHandle.h>
+#include <rtps/security/exceptions/SecurityException.h>
+#include <rtps/security/cryptography/CryptoTypes.h>
 
 // Fix compilation error on Windows
 #if defined(WIN32) && defined(max)

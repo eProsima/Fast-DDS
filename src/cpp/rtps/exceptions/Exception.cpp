@@ -16,30 +16,45 @@
 
 using namespace eprosima::fastrtps::rtps;
 
-Exception::Exception(const char* const& message) : message_(message), minor_(0)
+Exception::Exception(
+        const char* const& message)
+    : message_(message)
+    , minor_(0)
 {
 }
 
-Exception::Exception(const Exception &ex) : message_(ex.message_), minor_(ex.minor_)
+Exception::Exception(
+        const Exception& ex)
+    : message_(ex.message_)
+    , minor_(ex.minor_)
 {
 }
 
-Exception::Exception(Exception&& ex) : message_(std::move(ex.message_)), minor_(ex.minor_)
+Exception::Exception(
+        Exception&& ex)
+    : message_(std::move(ex.message_))
+    , minor_(ex.minor_)
 {
 }
 
-Exception::Exception(const  char* const& message, const int32_t minor) : message_(message), minor_(minor)
+Exception::Exception(
+        const char* const& message,
+        const int32_t minor)
+    : message_(message)
+    , minor_(minor)
 {
 }
 
-Exception& Exception::operator=(const Exception &ex)
+Exception& Exception::operator =(
+        const Exception& ex)
 {
     message_ = ex.message_;
     minor_ = ex.minor_;
     return *this;
 }
 
-Exception& Exception::operator=(Exception&& ex)
+Exception& Exception::operator =(
+        Exception&& ex)
 {
     message_ = std::move(ex.message_);
     minor_ = ex.minor_;
@@ -55,7 +70,8 @@ const int32_t& Exception::minor() const
     return minor_;
 }
 
-void Exception::minor(const int32_t &minor)
+void Exception::minor(
+        const int32_t& minor)
 {
     minor_ = minor;
 }

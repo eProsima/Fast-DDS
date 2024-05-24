@@ -24,12 +24,9 @@
 #include <cstdio>
 #include <string>
 
-namespace eprosima
-{
-namespace fastrtps
-{
-namespace rtps
-{
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
 class RTPSParticipant;
 class WriterHistory;
 class RTPSWriter;
