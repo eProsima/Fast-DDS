@@ -444,7 +444,7 @@ bool TCPTransportInterface::DoInputLocatorsMatch(
 bool TCPTransportInterface::init(
         const fastrtps::rtps::PropertyPolicy* properties)
 {
-    uint32_t maximumMessageSize = max_msg_size_no_frag == 0 ? s_maximumMessageSize : max_msg_size_no_frag;
+    uint32_t maximumMessageSize = s_maximumMessageSize;
     uint32_t cfg_max_msg_size = configuration()->maxMessageSize;
     uint32_t cfg_send_size = configuration()->sendBufferSize;
     uint32_t cfg_recv_size = configuration()->receiveBufferSize;
