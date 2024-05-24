@@ -334,7 +334,7 @@ void PDP::initializeParticipantProxyData(
     if (mp_RTPSParticipant->is_secure())
     {
         IdentityToken* identity_token = nullptr;
-        if (mp_RTPSParticipant->security_manager().get_identity_token(&identity_token) && identity_token != nullptr)
+        if (mp_RTPSParticipant->security_manager().get_identity_token(&identity_token) && (nullptr != identity_token))
         {
             participant_data->identity_token_ = std::move(*identity_token);
             mp_RTPSParticipant->security_manager().return_identity_token(identity_token);
@@ -342,7 +342,7 @@ void PDP::initializeParticipantProxyData(
 
         PermissionsToken* permissions_token = nullptr;
         if (mp_RTPSParticipant->security_manager().get_permissions_token(&permissions_token)
-                && permissions_token != nullptr)
+                && (nullptr != permissions_token))
         {
             participant_data->permissions_token_ = std::move(*permissions_token);
             mp_RTPSParticipant->security_manager().return_permissions_token(permissions_token);
@@ -382,7 +382,7 @@ bool PDP::initPDP(
     ParticipantProxyData* pdata = add_participant_proxy_data(mp_RTPSParticipant->getGuid(), false, nullptr);
     mp_mutex->unlock();
 
-    if (pdata == nullptr)
+    if (nullptr == pdata)
     {
         return false;
     }
@@ -489,7 +489,7 @@ void PDP::announceParticipantState(
                     },
                     ALIVE, key);
 
-                if (change != nullptr)
+                if (nullptr != change)
                 {
                     CDRMessage_t aux_msg(change->serializedPayload);
 
@@ -534,7 +534,7 @@ void PDP::announceParticipantState(
                             },
                             NOT_ALIVE_DISPOSED_UNREGISTERED, key);
 
-            if (change != nullptr)
+            if (nullptr != change)
             {
                 CDRMessage_t aux_msg(change->serializedPayload);
 
@@ -589,7 +589,7 @@ void PDP::notify_and_maybe_ignore_new_participant(
             << " DefLoc:" << pdata->default_locators);
 
     RTPSParticipantListener* listener = getRTPSParticipant()->getListener();
-    if (listener != nullptr)
+    if (listener)
     {
         {
             std::lock_guard<std::mutex> cb_lock(callback_mtx_);
@@ -1178,9 +1178,9 @@ void PDP::remote_participant_removed(
         ParticipantDiscoveryInfo::DISCOVERY_STATUS reason,
         RTPSParticipantListener* listener)
 {
-    assert(pdata != nullptr);
+    assert(nullptr != pdata);
 
-    if (mp_EDP != nullptr)
+    if (nullptr != mp_EDP)
     {
         for (auto pit : *pdata->m_readers)
         {
@@ -1217,7 +1217,7 @@ void PDP::remote_participant_removed(
         }
     }
 
-    if (mp_builtin->mp_WLP != nullptr)
+    if (nullptr != mp_builtin->mp_WLP)
     {
         this->mp_builtin->mp_WLP->removeRemoteEndpoints(pdata);
     }
@@ -1233,7 +1233,7 @@ void PDP::remote_participant_removed(
 
     builtin_endpoints_->remove_from_pdp_reader_history(pdata->m_key);
 
-    if (listener != nullptr)
+    if (listener)
     {
         std::lock_guard<std::mutex> lock(callback_mtx_);
         ParticipantDiscoveryInfo info(*pdata);
@@ -1277,7 +1277,7 @@ void PDP::remote_participant_removed(
     pdata->m_writers->clear();
 
     // Cancel lease event
-    if (pdata->lease_duration_event != nullptr)
+    if (nullptr != pdata->lease_duration_event)
     {
         pdata->lease_duration_event->cancel_timer();
     }
