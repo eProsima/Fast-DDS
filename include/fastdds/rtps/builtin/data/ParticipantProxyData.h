@@ -32,9 +32,6 @@
 #include <fastdds/rtps/common/RemoteLocators.hpp>
 #include <fastdds/rtps/common/Token.h>
 #include <fastdds/rtps/common/VendorId_t.hpp>
-#if HAVE_SECURITY
-#include <rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
-#endif // if HAVE_SECURITY
 
 #define BUILTIN_PARTICIPANT_DATA_MAX_SIZE 100
 #define TYPELOOKUP_DATA_MAX_SIZE 5000
@@ -50,6 +47,12 @@ class RTPSParticipantImpl;
 class ReaderProxyData;
 class WriterProxyData;
 class NetworkFactory;
+
+#if HAVE_SECURITY
+namespace security {
+struct ParticipantSecurityAttributes;
+} /* namespace security */
+#endif // if HAVE_SECURITY
 
 // proxy specific declarations
 template<class Proxy>

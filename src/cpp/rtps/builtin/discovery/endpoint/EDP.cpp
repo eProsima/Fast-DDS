@@ -40,6 +40,9 @@
 #include <rtps/network/utils/external_locators.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/RTPSDomainImpl.hpp>
+#if HAVE_SECURITY
+#include <rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
+#endif // if HAVE_SECURITY
 #include <utils/collections/node_size_helpers.hpp>
 #include <utils/StringMatching.hpp>
 #ifdef FASTDDS_STATISTICS

@@ -46,10 +46,13 @@
 #include <rtps/builtin/liveliness/WLP.h>
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <rtps/network/utils/external_locators.hpp>
-#include <rtps/resources/TimedEvent.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/reader/StatefulReader.hpp>
 #include <rtps/reader/StatelessReader.hpp>
+#include <rtps/resources/TimedEvent.h>
+#if HAVE_SECURITY
+#include <rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
+#endif // if HAVE_SECURITY
 #include <utils/shared_mutex.hpp>
 #include <utils/TimeConversion.hpp>
 
