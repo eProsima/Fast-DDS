@@ -139,7 +139,7 @@
             ├ allocation                           [0~1],
             ├ userData                             [0~1],
             ├ prefix                               [0~1],
-            ├ flow_controller_descriptor_list          [flowControllerDescriptorListType],
+            ├ flow_controller_descriptor_list      [flowControllerDescriptorListType],
             ├ builtin_controllers_sender_thread    [threadSettingsType],
             ├ timed_events_thread                  [threadSettingsType],
             ├ discovery_server_thread              [threadSettingsType],
@@ -1749,7 +1749,7 @@
     </xs:complexType>
 
     <!--QoS Publish Mode:
-        └ kind [string] ("ASYNCHRONOUS", "SYNCHRONOUS")
+        ├ kind [string] ("ASYNCHRONOUS", "SYNCHRONOUS")
         └ flow_controller_name [string] -->
     <xs:complexType name="publishModeQosPolicyType">
         <xs:all>
