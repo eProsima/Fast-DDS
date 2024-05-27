@@ -316,29 +316,28 @@ ReturnCode_t TypeObjectRegistry::get_type_information(
         TypeInformation& type_information,
         bool with_dependencies)
 {
-    if (TK_NONE == type_ids.type_identifier1()._d() ||
-            TK_NONE == type_ids.type_identifier2()._d())
+    if (TK_NONE == type_ids.type_identifier1()._d())
     {
         return RETCODE_PRECONDITION_NOT_MET;
     }
 
     if (!TypeObjectUtils::is_direct_hash_type_identifier(type_ids.type_identifier1()) ||
-            !TypeObjectUtils::is_direct_hash_type_identifier(type_ids.type_identifier2()))
+            (TK_NONE != type_ids.type_identifier2()._d() &&
+            !TypeObjectUtils::is_direct_hash_type_identifier(type_ids.type_identifier2())))
     {
         return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
     }
 
-    if (type_registry_entries_.end() == type_registry_entries_.find(type_ids.type_identifier1()) ||
-            type_registry_entries_.end() == type_registry_entries_.find(type_ids.type_identifier2()))
     {
-        return RETCODE_NO_DATA;
+        std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
+        if (type_registry_entries_.end() == type_registry_entries_.find(type_ids.type_identifier1()) ||
+                (TK_NONE != type_ids.type_identifier2()._d() &&
+                type_registry_entries_.end() == type_registry_entries_.find(type_ids.type_identifier2())))
+        {
+            return RETCODE_NO_DATA;
+        }
     }
 
-    if (!TypeObjectUtils::is_direct_hash_type_identifier(type_ids.type_identifier1()) ||
-            !TypeObjectUtils::is_direct_hash_type_identifier(type_ids.type_identifier2()))
-    {
-        return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
-    }
     if (EK_COMPLETE == type_ids.type_identifier1()._d())
     {
         type_information.complete().typeid_with_size().type_id(type_ids.type_identifier1());
@@ -362,19 +361,26 @@ ReturnCode_t TypeObjectRegistry::get_type_information(
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Error retrieving complete type dependenciest.");
             }
 
-            if (RETCODE_OK == get_type_dependencies_impl({type_ids.type_identifier2()},
-                    type_dependencies))
+            if (TK_NONE != type_ids.type_identifier2()._d())
             {
-                type_information.minimal().dependent_typeid_count(static_cast<int32_t>(type_dependencies.size()));
-                for (auto& dependency : type_dependencies)
+                if (RETCODE_OK == get_type_dependencies_impl({type_ids.type_identifier2()},
+                        type_dependencies))
                 {
-                    type_information.minimal().dependent_typeids().emplace_back(std::move(dependency));
+                    type_information.minimal().dependent_typeid_count(static_cast<int32_t>(type_dependencies.size()));
+                    for (auto& dependency : type_dependencies)
+                    {
+                        type_information.minimal().dependent_typeids().emplace_back(std::move(dependency));
+                    }
+                    type_dependencies.clear();
                 }
-                type_dependencies.clear();
+                else
+                {
+                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Error retrieving minimal type dependenciest.");
+                }
             }
             else
             {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Error retrieving minimal type dependenciest.");
+                type_information.minimal().dependent_typeid_count(NO_DEPENDENCIES);
             }
         }
         else
@@ -386,8 +392,11 @@ ReturnCode_t TypeObjectRegistry::get_type_information(
         std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
         type_information.complete().typeid_with_size().typeobject_serialized_size(type_registry_entries_.at(
                     type_ids.type_identifier1()).type_object_serialized_size_);
-        type_information.minimal().typeid_with_size().typeobject_serialized_size(type_registry_entries_.at(
-                    type_ids.type_identifier2()).type_object_serialized_size_);
+        if (TK_NONE != type_ids.type_identifier2()._d())
+        {
+            type_information.minimal().typeid_with_size().typeobject_serialized_size(type_registry_entries_.at(
+                        type_ids.type_identifier2()).type_object_serialized_size_);
+        }
     }
     else
     {
@@ -412,19 +421,26 @@ ReturnCode_t TypeObjectRegistry::get_type_information(
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Error retrieving minimal type dependenciest.");
             }
 
-            if (RETCODE_OK == get_type_dependencies_impl({type_ids.type_identifier2()},
-                    type_dependencies))
+            if (TK_NONE != type_ids.type_identifier2()._d())
             {
-                type_information.complete().dependent_typeid_count(static_cast<int32_t>(type_dependencies.size()));
-                for (auto& dependency : type_dependencies)
+                if (RETCODE_OK == get_type_dependencies_impl({type_ids.type_identifier2()},
+                        type_dependencies))
                 {
-                    type_information.complete().dependent_typeids().emplace_back(std::move(dependency));
+                    type_information.complete().dependent_typeid_count(static_cast<int32_t>(type_dependencies.size()));
+                    for (auto& dependency : type_dependencies)
+                    {
+                        type_information.complete().dependent_typeids().emplace_back(std::move(dependency));
+                    }
+                    type_dependencies.clear();
                 }
-                type_dependencies.clear();
+                else
+                {
+                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Error retrieving complete type dependenciest.");
+                }
             }
             else
             {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Error retrieving complete type dependenciest.");
+                type_information.minimal().dependent_typeid_count(NO_DEPENDENCIES);
             }
         }
         else
@@ -436,8 +452,11 @@ ReturnCode_t TypeObjectRegistry::get_type_information(
         std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
         type_information.minimal().typeid_with_size().typeobject_serialized_size(type_registry_entries_.at(
                     type_ids.type_identifier1()).type_object_serialized_size_);
-        type_information.complete().typeid_with_size().typeobject_serialized_size(type_registry_entries_.at(
-                    type_ids.type_identifier2()).type_object_serialized_size_);
+        if (TK_NONE != type_ids.type_identifier2()._d())
+        {
+            type_information.complete().typeid_with_size().typeobject_serialized_size(type_registry_entries_.at(
+                        type_ids.type_identifier2()).type_object_serialized_size_);
+        }
     }
     return RETCODE_OK;
 }
