@@ -234,6 +234,16 @@ protected:
             const size_t& msg_size,
             const asio::ip::tcp::socket::native_handle_type& socket_native_handle);
 
+    /**
+     * @brief Set descriptor options on a socket.
+     *
+     * @param socket Socket on which to set the options.
+     * @param options Descriptor with the options to set.
+     */
+    static void set_socket_options(
+            asio::basic_socket<asio::ip::tcp>& socket,
+            const TCPTransportDescriptor* options);
+
     TCPConnectionType tcp_connection_type_;
 
     friend class TCPTransportInterface;
