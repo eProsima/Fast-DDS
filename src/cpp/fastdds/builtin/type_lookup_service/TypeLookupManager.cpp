@@ -26,6 +26,7 @@
 #include <fastdds/rtps/attributes/HistoryAttributes.h>
 #include <fastdds/rtps/attributes/ReaderAttributes.h>
 #include <fastdds/rtps/attributes/WriterAttributes.h>
+#include <fastdds/rtps/builtin/data/BuiltinEndpoints.hpp>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
@@ -159,7 +160,7 @@ bool TypeLookupManager::assign_remote_endpoints(
 
     EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "for RTPSParticipant: " << pdata.m_guid);
 
-    auxendp &= BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REQUEST_DATA_WRITER;
+    auxendp &= rtps::BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REQUEST_DATA_WRITER;
 
     if (auxendp != 0 && builtin_request_reader_ != nullptr)
     {
@@ -170,7 +171,7 @@ bool TypeLookupManager::assign_remote_endpoints(
     }
 
     auxendp = endp;
-    auxendp &= BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REPLY_DATA_WRITER;
+    auxendp &= rtps::BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REPLY_DATA_WRITER;
 
     if (auxendp != 0 && builtin_reply_reader_ != nullptr)
     {
@@ -181,7 +182,7 @@ bool TypeLookupManager::assign_remote_endpoints(
     }
 
     auxendp = endp;
-    auxendp &= BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REQUEST_DATA_READER;
+    auxendp &= rtps::BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REQUEST_DATA_READER;
 
     if (auxendp != 0 && builtin_request_writer_ != nullptr)
     {
@@ -191,7 +192,7 @@ bool TypeLookupManager::assign_remote_endpoints(
     }
 
     auxendp = endp;
-    auxendp &= BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REPLY_DATA_READER;
+    auxendp &= rtps::BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REPLY_DATA_READER;
 
     if (auxendp != 0 && builtin_reply_writer_ != nullptr)
     {
@@ -213,8 +214,8 @@ void TypeLookupManager::remove_remote_endpoints(
     uint32_t endp = pdata->m_availableBuiltinEndpoints;
     uint32_t partdet = endp;
     uint32_t auxendp = endp;
-    partdet &= DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR; //Habria que quitar esta linea que comprueba si tiene PDP.
-    auxendp &= BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REQUEST_DATA_WRITER;
+    partdet &= rtps::DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR; //Habria que quitar esta linea que comprueba si tiene PDP.
+    auxendp &= rtps::BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REQUEST_DATA_WRITER;
 
     if ((auxendp != 0 || partdet != 0) && builtin_request_reader_ != nullptr)
     {
@@ -224,7 +225,7 @@ void TypeLookupManager::remove_remote_endpoints(
     }
 
     auxendp = endp;
-    auxendp &= BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REPLY_DATA_WRITER;
+    auxendp &= rtps::BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REPLY_DATA_WRITER;
 
     if ((auxendp != 0 || partdet != 0) && builtin_reply_reader_ != nullptr)
     {
@@ -234,7 +235,7 @@ void TypeLookupManager::remove_remote_endpoints(
     }
 
     auxendp = endp;
-    auxendp &= BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REQUEST_DATA_READER;
+    auxendp &= rtps::BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REQUEST_DATA_READER;
 
     if ((auxendp != 0 || partdet != 0) && builtin_request_writer_ != nullptr)
     {
@@ -244,7 +245,7 @@ void TypeLookupManager::remove_remote_endpoints(
     }
 
     auxendp = endp;
-    auxendp &= BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REPLY_DATA_READER;
+    auxendp &= rtps::BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REPLY_DATA_READER;
 
     if ((auxendp != 0 || partdet != 0) && builtin_reply_writer_ != nullptr)
     {

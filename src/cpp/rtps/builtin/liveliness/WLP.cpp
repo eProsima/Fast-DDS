@@ -23,6 +23,7 @@
 #include <mutex>
 
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/builtin/data/BuiltinEndpoints.hpp>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
@@ -35,8 +36,8 @@
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/reader/StatefulReader.hpp>
-#include <rtps/resources/TimedEvent.h>
 #include <rtps/resources/ResourceEvent.h>
+#include <rtps/resources/TimedEvent.h>
 #include <rtps/writer/LivelinessManager.hpp>
 #include <rtps/writer/StatefulWriter.hpp>
 #include <utils/TimeConversion.hpp>
@@ -503,7 +504,7 @@ bool WLP::assignRemoteEndpoints(
     temp_reader_proxy_data_.m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
     temp_reader_proxy_data_.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 
-    auxendp &= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_WRITER;
+    auxendp &= fastdds::rtps::BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_WRITER;
     if (auxendp != 0 && this->mp_builtinReader != nullptr)
     {
         EPROSIMA_LOG_INFO(RTPS_LIVELINESS, "Adding remote writer to my local Builtin Reader");
@@ -512,7 +513,7 @@ bool WLP::assignRemoteEndpoints(
         mp_builtinReader->matched_writer_add(temp_writer_proxy_data_);
     }
     auxendp = endp;
-    auxendp &= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_READER;
+    auxendp &= fastdds::rtps::BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_READER;
     if (auxendp != 0 && this->mp_builtinWriter != nullptr)
     {
         EPROSIMA_LOG_INFO(RTPS_LIVELINESS, "Adding remote reader to my local Builtin Writer");
@@ -522,7 +523,7 @@ bool WLP::assignRemoteEndpoints(
 
 #if HAVE_SECURITY
     auxendp = endp;
-    auxendp &= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_SECURE_DATA_WRITER;
+    auxendp &= fastdds::rtps::BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_SECURE_DATA_WRITER;
     if (auxendp != 0 && this->mp_builtinReaderSecure != nullptr && assign_secure_endpoints)
     {
         EPROSIMA_LOG_INFO(RTPS_LIVELINESS, "Adding remote writer to my local Builtin Secure Reader");
@@ -538,7 +539,7 @@ bool WLP::assignRemoteEndpoints(
         }
     }
     auxendp = endp;
-    auxendp &= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_SECURE_DATA_READER;
+    auxendp &= fastdds::rtps::BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_SECURE_DATA_READER;
     if (auxendp != 0 && this->mp_builtinWriterSecure != nullptr && assign_secure_endpoints)
     {
         EPROSIMA_LOG_INFO(RTPS_LIVELINESS, "Adding remote reader to my local Builtin Secure Writer");
@@ -568,8 +569,8 @@ void WLP::removeRemoteEndpoints(
     uint32_t endp = pdata->m_availableBuiltinEndpoints;
     uint32_t partdet = endp;
     uint32_t auxendp = endp;
-    partdet &= DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR; //Habria que quitar esta linea que comprueba si tiene PDP.
-    auxendp &= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_WRITER;
+    partdet &= fastdds::rtps::DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR; //Habria que quitar esta linea que comprueba si tiene PDP.
+    auxendp &= fastdds::rtps::BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_WRITER;
 
     if ((auxendp != 0 || partdet != 0) && this->mp_builtinReader != nullptr)
     {
@@ -578,7 +579,7 @@ void WLP::removeRemoteEndpoints(
         mp_builtinReader->matched_writer_remove(tmp_guid);
     }
     auxendp = endp;
-    auxendp &= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_READER;
+    auxendp &= fastdds::rtps::BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_READER;
     if ((auxendp != 0 || partdet != 0) && this->mp_builtinWriter != nullptr)
     {
         EPROSIMA_LOG_INFO(RTPS_LIVELINESS, "Removing remote reader from my local Builtin Writer");
@@ -588,7 +589,7 @@ void WLP::removeRemoteEndpoints(
 
 #if HAVE_SECURITY
     auxendp = endp;
-    auxendp &= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_SECURE_DATA_WRITER;
+    auxendp &= fastdds::rtps::BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_SECURE_DATA_WRITER;
     if ((auxendp != 0 || partdet != 0) && this->mp_builtinReaderSecure != nullptr)
     {
         EPROSIMA_LOG_INFO(RTPS_LIVELINESS, "Removing remote writer from my local Builtin Secure Reader");
@@ -600,7 +601,7 @@ void WLP::removeRemoteEndpoints(
         }
     }
     auxendp = endp;
-    auxendp &= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_SECURE_DATA_READER;
+    auxendp &= fastdds::rtps::BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_SECURE_DATA_READER;
     if ((auxendp != 0 || partdet != 0) && this->mp_builtinWriterSecure != nullptr)
     {
         EPROSIMA_LOG_INFO(RTPS_LIVELINESS, "Removing remote reader from my local Builtin Secure Writer");
