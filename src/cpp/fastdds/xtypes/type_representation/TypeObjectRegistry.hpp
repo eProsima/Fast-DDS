@@ -200,9 +200,9 @@ public:
             TypeObject& type_object) override;
 
     /**
-     * @brief Get the TypeInformation related to a specific type_name.
+     * @brief Build the TypeInformation related to the provided @ref TypeIdentifierPair.
      *
-     * @pre type_ids must not be empty.
+     * @pre type_ids must not be empty. At least @ref TypeIdentifierPair::type_identifier1 must be filled.
      *
      * @param[in] type_ids @ref TypeIdentifier which type information is queried.
      * @param[out] type_information Related TypeInformation for the given @ref TypeIdentifier.
