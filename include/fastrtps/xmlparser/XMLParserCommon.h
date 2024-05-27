@@ -60,14 +60,6 @@ extern const char* SEND_BUFFER_SIZE;
 extern const char* TTL;
 extern const char* NON_BLOCKING_SEND;
 extern const char* WHITE_LIST;
-<<<<<<< HEAD:include/fastrtps/xmlparser/XMLParserCommon.h
-=======
-extern const char* NETWORK_INTERFACE;
-extern const char* NETMASK_FILTER;
-extern const char* NETWORK_INTERFACES;
-extern const char* ALLOWLIST;
-extern const char* BLOCKLIST;
->>>>>>> 0919ff294 (Use absolute paths when loading XML files (#4751)):src/cpp/xmlparser/XMLParserCommon.h
 extern const char* MAX_MESSAGE_SIZE;
 extern const char* MAX_INITIAL_PEERS_RANGE;
 extern const char* KEEP_ALIVE_FREQUENCY;
