@@ -1016,6 +1016,7 @@ TEST_F(SHMTransportTests, port_lock_read_exclusive)
 // Regression test for redmine issue #20701
 TEST_F(SHMTransportTests, port_lock_read_shared_then_exclusive)
 {
+    const std::string domain_name("SHMTests");
     auto shared_mem_manager = SharedMemManager::create(domain_name);
 
     shared_mem_manager->remove_port(0);
@@ -1031,6 +1032,7 @@ TEST_F(SHMTransportTests, port_lock_read_shared_then_exclusive)
 // Regression test for redmine issue #20701
 TEST_F(SHMTransportTests, port_lock_read_exclusive_then_shared)
 {
+    const std::string domain_name("SHMTests");
     auto shared_mem_manager = SharedMemManager::create(domain_name);
 
     shared_mem_manager->remove_port(0);
