@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * @file StatefulReader.h
+ * @file StatefulReader.hpp
  */
 
-#ifndef _FASTDDS_RTPS_READER_STATEFULREADER_H_
-#define _FASTDDS_RTPS_READER_STATEFULREADER_H_
+#ifndef RTPS_READER__STATEFULREADER_HPP
+#define RTPS_READER__STATEFULREADER_HPP
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
@@ -380,4 +380,4 @@ private:
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#endif // _FASTDDS_RTPS_READER_STATEFULREADER_H_
+#endif // RTPS_READER__STATEFULREADER_HPP

@@ -32,7 +32,6 @@
 #include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/participant/RTPSParticipantListener.h>
-#include <fastdds/rtps/reader/StatefulReader.h>
 #include <fastdds/rtps/writer/ReaderProxy.h>
 #include <fastdds/rtps/writer/StatefulWriter.h>
 
@@ -46,6 +45,7 @@
 #include <rtps/builtin/discovery/participant/timedevent/DSClientEvent.h>
 #include <rtps/builtin/liveliness/WLP.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/reader/StatefulReader.hpp>
 #include <utils/shared_mutex.hpp>
 #include <utils/SystemInfo.hpp>
 #include <utils/TimeConversion.hpp>

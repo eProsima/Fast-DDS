@@ -12,8 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef _FASTDDS_RTPS_READER_STATEFULREADER_H_
-#define _FASTDDS_RTPS_READER_STATEFULREADER_H_
+/**
+ * @file StatefulReader.hpp
+ */
+
+#ifndef RTPS_READER__STATEFULREADER_HPP
+#define RTPS_READER__STATEFULREADER_HPP
 
 #include <fastdds/rtps/attributes/ReaderAttributes.h>
 #include <fastdds/rtps/common/Guid.h>
@@ -114,4 +118,4 @@ private:
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif // _FASTDDS_RTPS_READER_STATEFULREADER_H_
+#endif // RTPS_READER__STATEFULREADER_HPP

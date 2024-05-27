@@ -13,15 +13,15 @@
 // limitations under the License.
 
 /**
- * @file StatefulPersistentReader.h
+ * @file StatelessPersistentReader.hpp
  */
 
 
-#ifndef _FASTDDS_RTPS_STATEFULPERSISTENTREADER_H_
-#define _FASTDDS_RTPS_STATEFULPERSISTENTREADER_H_
+#ifndef RTPS_READER__STATELESSPERSISTENTREADER_HPP
+#define RTPS_READER__STATELESSPERSISTENTREADER_HPP
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <fastdds/rtps/reader/StatefulReader.h>
+#include <rtps/reader/StatelessReader.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -30,14 +30,14 @@ namespace rtps {
 class IPersistenceService;
 
 /**
- * Class StatefulPersistentReader, specialization of StatefulReader that manages sequence number persistence.
+ * Class StatelessPersistentReader, specialization of StatelessReader that manages sequence number persistence.
  * @ingroup READER_MODULE
  */
-class StatefulPersistentReader : public StatefulReader
+class StatelessPersistentReader : public StatelessReader
 {
     friend class RTPSParticipantImpl;
 
-    StatefulPersistentReader(
+    StatelessPersistentReader(
             RTPSParticipantImpl* pimpl,
             const GUID_t& guid,
             const ReaderAttributes& att,
@@ -45,7 +45,7 @@ class StatefulPersistentReader : public StatefulReader
             ReaderListener* listen,
             IPersistenceService* persistence);
 
-    StatefulPersistentReader(
+    StatelessPersistentReader(
             RTPSParticipantImpl* pimpl,
             const GUID_t& guid,
             const ReaderAttributes& att,
@@ -54,7 +54,7 @@ class StatefulPersistentReader : public StatefulReader
             ReaderListener* listen,
             IPersistenceService* persistence);
 
-    StatefulPersistentReader(
+    StatelessPersistentReader(
             RTPSParticipantImpl* pimpl,
             const GUID_t& guid,
             const ReaderAttributes& att,
@@ -66,7 +66,7 @@ class StatefulPersistentReader : public StatefulReader
 
 public:
 
-    virtual ~StatefulPersistentReader();
+    virtual ~StatelessPersistentReader();
 
 protected:
 
@@ -92,4 +92,4 @@ private:
 } // namespace eprosima
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#endif /* _FASTDDS_RTPS_STATEFULPERSISTENTREADER_H_ */
+#endif /* RTPS_READER__STATELESSPERSISTENTREADER_HPP */

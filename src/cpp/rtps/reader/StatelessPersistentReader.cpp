@@ -17,7 +17,7 @@
  *
  */
 
-#include <fastdds/rtps/reader/StatelessPersistentReader.h>
+#include <rtps/reader/StatelessPersistentReader.hpp>
 
 #include <fastdds/rtps/history/ReaderHistory.h>
 
