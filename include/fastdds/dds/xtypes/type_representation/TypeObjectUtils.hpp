@@ -1930,6 +1930,16 @@ public:
     FASTDDS_EXPORTED_API static void type_object_consistency(
             const TypeObject& type_object);
 
+    /**
+     * @brief If one of the @ref TypeIdentifier in @ref TypeIdentifierPair is minimal, returns its reference.
+     *
+     * @param[in] type_ids @ref TypeIdentifierPair used to retrieve the @ref TypeIdentifier.
+     * @param[out] bool Returns if there was an error.
+     * @return Reference to the minimal @TypeIdentifier.
+     */
+    FASTDDS_EXPORTED_API static const TypeIdentifier& retrieve_minimal_type_identifier(
+            const TypeIdentifierPair& type_ids,
+            bool& ec);
 
     /**
      * @brief If one of the @ref TypeIdentifier in @ref TypeIdentifierPair is complete, returns its reference.

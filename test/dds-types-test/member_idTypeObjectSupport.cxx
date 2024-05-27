@@ -81,50 +81,12 @@ void register_FixId_type_identifier(
             }
             StructMemberFlag member_flags_o = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_o;
             MemberId member_id_o = 0x00000064;
-            if (EK_COMPLETE == type_ids_o.type_identifier1()._d() || TK_NONE == type_ids_o.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_o.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_o.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_o.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_o.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_o.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_o.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_o.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_o.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_o.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_o.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_o.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_o.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_o.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_o.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_o_ec {false};
+            CommonStructMember common_o {TypeObjectUtils::build_common_struct_member(member_id_o, member_flags_o, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_o, common_o_ec))};
+            if (!common_o_ec)
             {
-                common_o = TypeObjectUtils::build_common_struct_member(member_id_o,
-                        member_flags_o, type_ids_o.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_o.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_o.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_o.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_o.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_o.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_o.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_o.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_o.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_o.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_o.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_o.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_o.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_o.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_o.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_o.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_o = TypeObjectUtils::build_common_struct_member(member_id_o,
-                        member_flags_o, type_ids_o.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure o member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure o member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_o = "o";
@@ -162,50 +124,12 @@ void register_FixId_type_identifier(
             }
             StructMemberFlag member_flags_s = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_s;
             MemberId member_id_s = 0x0000012c;
-            if (EK_COMPLETE == type_ids_s.type_identifier1()._d() || TK_NONE == type_ids_s.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_s.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_s.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_s.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_s.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_s.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_s.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_s.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_s.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_s.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_s.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_s.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_s.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_s.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_s.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_s_ec {false};
+            CommonStructMember common_s {TypeObjectUtils::build_common_struct_member(member_id_s, member_flags_s, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_s, common_s_ec))};
+            if (!common_s_ec)
             {
-                common_s = TypeObjectUtils::build_common_struct_member(member_id_s,
-                        member_flags_s, type_ids_s.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_s.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_s.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_s.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_s.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_s.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_s.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_s.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_s.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_s.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_s.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_s.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_s.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_s.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_s.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_s.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_s = TypeObjectUtils::build_common_struct_member(member_id_s,
-                        member_flags_s, type_ids_s.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure s member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure s member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_s = "s";
@@ -243,50 +167,12 @@ void register_FixId_type_identifier(
             }
             StructMemberFlag member_flags_l = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_l;
             MemberId member_id_l = 0x000001f4;
-            if (EK_COMPLETE == type_ids_l.type_identifier1()._d() || TK_NONE == type_ids_l.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_l.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_l.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_l.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_l.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_l.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_l.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_l.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_l.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_l.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_l.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_l.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_l.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_l.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_l.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_l_ec {false};
+            CommonStructMember common_l {TypeObjectUtils::build_common_struct_member(member_id_l, member_flags_l, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_l, common_l_ec))};
+            if (!common_l_ec)
             {
-                common_l = TypeObjectUtils::build_common_struct_member(member_id_l,
-                        member_flags_l, type_ids_l.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_l.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_l.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_l.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_l.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_l.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_l.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_l.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_l.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_l.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_l.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_l.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_l.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_l.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_l.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_l.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_l = TypeObjectUtils::build_common_struct_member(member_id_l,
-                        member_flags_l, type_ids_l.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure l member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure l member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_l = "l";
@@ -324,50 +210,12 @@ void register_FixId_type_identifier(
             }
             StructMemberFlag member_flags_ll = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_ll;
             MemberId member_id_ll = 0x000001f5;
-            if (EK_COMPLETE == type_ids_ll.type_identifier1()._d() || TK_NONE == type_ids_ll.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_ll.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_ll.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_ll.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_ll.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_ll.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_ll.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_ll.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_ll.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_ll.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_ll.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_ll_ec {false};
+            CommonStructMember common_ll {TypeObjectUtils::build_common_struct_member(member_id_ll, member_flags_ll, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_ll, common_ll_ec))};
+            if (!common_ll_ec)
             {
-                common_ll = TypeObjectUtils::build_common_struct_member(member_id_ll,
-                        member_flags_ll, type_ids_ll.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_ll.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_ll.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_ll.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_ll.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_ll.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_ll.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_ll.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_ll.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_ll.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_ll.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_ll.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_ll = TypeObjectUtils::build_common_struct_member(member_id_ll,
-                        member_flags_ll, type_ids_ll.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure ll member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure ll member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_ll = "ll";
@@ -429,50 +277,12 @@ void register_FixHexId_type_identifier(
             }
             StructMemberFlag member_flags_ho = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_ho;
             MemberId member_id_ho = 0x00000100;
-            if (EK_COMPLETE == type_ids_ho.type_identifier1()._d() || TK_NONE == type_ids_ho.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_ho.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_ho.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_ho.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_ho.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_ho.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_ho.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_ho.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_ho.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_ho.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_ho.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_ho.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_ho.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_ho.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_ho.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_ho_ec {false};
+            CommonStructMember common_ho {TypeObjectUtils::build_common_struct_member(member_id_ho, member_flags_ho, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_ho, common_ho_ec))};
+            if (!common_ho_ec)
             {
-                common_ho = TypeObjectUtils::build_common_struct_member(member_id_ho,
-                        member_flags_ho, type_ids_ho.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_ho.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_ho.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_ho.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_ho.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_ho.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_ho.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_ho.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_ho.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_ho.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_ho.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_ho.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_ho.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_ho.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_ho.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_ho.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_ho = TypeObjectUtils::build_common_struct_member(member_id_ho,
-                        member_flags_ho, type_ids_ho.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure ho member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure ho member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_ho = "ho";
@@ -510,50 +320,12 @@ void register_FixHexId_type_identifier(
             }
             StructMemberFlag member_flags_hs = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_hs;
             MemberId member_id_hs = 0x00000300;
-            if (EK_COMPLETE == type_ids_hs.type_identifier1()._d() || TK_NONE == type_ids_hs.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_hs.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_hs.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_hs.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_hs.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_hs.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_hs.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_hs.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_hs.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_hs.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_hs.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_hs.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_hs.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_hs.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_hs.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_hs_ec {false};
+            CommonStructMember common_hs {TypeObjectUtils::build_common_struct_member(member_id_hs, member_flags_hs, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_hs, common_hs_ec))};
+            if (!common_hs_ec)
             {
-                common_hs = TypeObjectUtils::build_common_struct_member(member_id_hs,
-                        member_flags_hs, type_ids_hs.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_hs.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_hs.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_hs.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_hs.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_hs.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_hs.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_hs.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_hs.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_hs.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_hs.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_hs.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_hs.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_hs.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_hs.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_hs.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_hs = TypeObjectUtils::build_common_struct_member(member_id_hs,
-                        member_flags_hs, type_ids_hs.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure hs member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure hs member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_hs = "hs";
@@ -591,50 +363,12 @@ void register_FixHexId_type_identifier(
             }
             StructMemberFlag member_flags_hl = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_hl;
             MemberId member_id_hl = 0x00000500;
-            if (EK_COMPLETE == type_ids_hl.type_identifier1()._d() || TK_NONE == type_ids_hl.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_hl.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_hl.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_hl.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_hl.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_hl.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_hl.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_hl.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_hl.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_hl.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_hl.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_hl.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_hl.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_hl.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_hl.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_hl_ec {false};
+            CommonStructMember common_hl {TypeObjectUtils::build_common_struct_member(member_id_hl, member_flags_hl, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_hl, common_hl_ec))};
+            if (!common_hl_ec)
             {
-                common_hl = TypeObjectUtils::build_common_struct_member(member_id_hl,
-                        member_flags_hl, type_ids_hl.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_hl.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_hl.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_hl.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_hl.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_hl.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_hl.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_hl.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_hl.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_hl.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_hl.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_hl.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_hl.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_hl.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_hl.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_hl.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_hl = TypeObjectUtils::build_common_struct_member(member_id_hl,
-                        member_flags_hl, type_ids_hl.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure hl member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure hl member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_hl = "hl";
@@ -672,50 +406,12 @@ void register_FixHexId_type_identifier(
             }
             StructMemberFlag member_flags_ll = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_ll;
             MemberId member_id_ll = 0x00000501;
-            if (EK_COMPLETE == type_ids_ll.type_identifier1()._d() || TK_NONE == type_ids_ll.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_ll.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_ll.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_ll.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_ll.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_ll.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_ll.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_ll.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_ll.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_ll.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_ll.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_ll_ec {false};
+            CommonStructMember common_ll {TypeObjectUtils::build_common_struct_member(member_id_ll, member_flags_ll, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_ll, common_ll_ec))};
+            if (!common_ll_ec)
             {
-                common_ll = TypeObjectUtils::build_common_struct_member(member_id_ll,
-                        member_flags_ll, type_ids_ll.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_ll.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_ll.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_ll.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_ll.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_ll.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_ll.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_ll.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_ll.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_ll.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_ll.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_ll.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_ll = TypeObjectUtils::build_common_struct_member(member_id_ll,
-                        member_flags_ll, type_ids_ll.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure ll member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure ll member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_ll = "ll";
@@ -777,50 +473,12 @@ void register_FixHashidDefault_type_identifier(
             }
             StructMemberFlag member_flags_o = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_o;
             MemberId member_id_o = 0x057956d9;
-            if (EK_COMPLETE == type_ids_o.type_identifier1()._d() || TK_NONE == type_ids_o.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_o.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_o.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_o.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_o.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_o.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_o.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_o.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_o.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_o.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_o.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_o.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_o.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_o.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_o.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_o_ec {false};
+            CommonStructMember common_o {TypeObjectUtils::build_common_struct_member(member_id_o, member_flags_o, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_o, common_o_ec))};
+            if (!common_o_ec)
             {
-                common_o = TypeObjectUtils::build_common_struct_member(member_id_o,
-                        member_flags_o, type_ids_o.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_o.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_o.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_o.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_o.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_o.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_o.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_o.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_o.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_o.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_o.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_o.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_o.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_o.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_o.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_o.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_o = TypeObjectUtils::build_common_struct_member(member_id_o,
-                        member_flags_o, type_ids_o.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure o member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure o member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_o = "o";
@@ -860,50 +518,12 @@ void register_FixHashidDefault_type_identifier(
             }
             StructMemberFlag member_flags_s = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_s;
             MemberId member_id_s = 0x0cc0c703;
-            if (EK_COMPLETE == type_ids_s.type_identifier1()._d() || TK_NONE == type_ids_s.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_s.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_s.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_s.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_s.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_s.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_s.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_s.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_s.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_s.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_s.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_s.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_s.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_s.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_s.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_s_ec {false};
+            CommonStructMember common_s {TypeObjectUtils::build_common_struct_member(member_id_s, member_flags_s, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_s, common_s_ec))};
+            if (!common_s_ec)
             {
-                common_s = TypeObjectUtils::build_common_struct_member(member_id_s,
-                        member_flags_s, type_ids_s.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_s.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_s.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_s.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_s.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_s.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_s.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_s.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_s.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_s.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_s.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_s.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_s.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_s.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_s.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_s.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_s = TypeObjectUtils::build_common_struct_member(member_id_s,
-                        member_flags_s, type_ids_s.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure s member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure s member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_s = "s";
@@ -943,50 +563,12 @@ void register_FixHashidDefault_type_identifier(
             }
             StructMemberFlag member_flags_l = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_l;
             MemberId member_id_l = 0x0e5eb92d;
-            if (EK_COMPLETE == type_ids_l.type_identifier1()._d() || TK_NONE == type_ids_l.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_l.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_l.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_l.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_l.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_l.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_l.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_l.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_l.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_l.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_l.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_l.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_l.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_l.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_l.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_l_ec {false};
+            CommonStructMember common_l {TypeObjectUtils::build_common_struct_member(member_id_l, member_flags_l, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_l, common_l_ec))};
+            if (!common_l_ec)
             {
-                common_l = TypeObjectUtils::build_common_struct_member(member_id_l,
-                        member_flags_l, type_ids_l.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_l.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_l.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_l.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_l.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_l.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_l.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_l.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_l.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_l.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_l.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_l.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_l.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_l.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_l.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_l.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_l = TypeObjectUtils::build_common_struct_member(member_id_l,
-                        member_flags_l, type_ids_l.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure l member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure l member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_l = "l";
@@ -1026,50 +608,12 @@ void register_FixHashidDefault_type_identifier(
             }
             StructMemberFlag member_flags_ll = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_ll;
             MemberId member_id_ll = 0x0e5eb92e;
-            if (EK_COMPLETE == type_ids_ll.type_identifier1()._d() || TK_NONE == type_ids_ll.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_ll.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_ll.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_ll.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_ll.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_ll.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_ll.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_ll.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_ll.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_ll.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_ll.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_ll_ec {false};
+            CommonStructMember common_ll {TypeObjectUtils::build_common_struct_member(member_id_ll, member_flags_ll, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_ll, common_ll_ec))};
+            if (!common_ll_ec)
             {
-                common_ll = TypeObjectUtils::build_common_struct_member(member_id_ll,
-                        member_flags_ll, type_ids_ll.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_ll.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_ll.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_ll.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_ll.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_ll.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_ll.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_ll.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_ll.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_ll.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_ll.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_ll.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_ll = TypeObjectUtils::build_common_struct_member(member_id_ll,
-                        member_flags_ll, type_ids_ll.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure ll member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure ll member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_ll = "ll";
@@ -1131,50 +675,12 @@ void register_FixHashid_type_identifier(
             }
             StructMemberFlag member_flags_o = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_o;
             MemberId member_id_o = 0x02b9e4e7;
-            if (EK_COMPLETE == type_ids_o.type_identifier1()._d() || TK_NONE == type_ids_o.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_o.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_o.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_o.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_o.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_o.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_o.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_o.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_o.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_o.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_o.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_o.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_o.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_o.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_o.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_o_ec {false};
+            CommonStructMember common_o {TypeObjectUtils::build_common_struct_member(member_id_o, member_flags_o, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_o, common_o_ec))};
+            if (!common_o_ec)
             {
-                common_o = TypeObjectUtils::build_common_struct_member(member_id_o,
-                        member_flags_o, type_ids_o.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_o.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_o.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_o.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_o.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_o.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_o.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_o.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_o.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_o.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_o.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_o.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_o.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_o.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_o.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_o.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_o = TypeObjectUtils::build_common_struct_member(member_id_o,
-                        member_flags_o, type_ids_o.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure o member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure o member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_o = "o";
@@ -1214,50 +720,12 @@ void register_FixHashid_type_identifier(
             }
             StructMemberFlag member_flags_s = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_s;
             MemberId member_id_s = 0x09da094f;
-            if (EK_COMPLETE == type_ids_s.type_identifier1()._d() || TK_NONE == type_ids_s.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_s.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_s.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_s.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_s.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_s.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_s.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_s.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_s.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_s.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_s.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_s.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_s.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_s.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_s.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_s_ec {false};
+            CommonStructMember common_s {TypeObjectUtils::build_common_struct_member(member_id_s, member_flags_s, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_s, common_s_ec))};
+            if (!common_s_ec)
             {
-                common_s = TypeObjectUtils::build_common_struct_member(member_id_s,
-                        member_flags_s, type_ids_s.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_s.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_s.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_s.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_s.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_s.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_s.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_s.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_s.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_s.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_s.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_s.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_s.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_s.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_s.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_s.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_s = TypeObjectUtils::build_common_struct_member(member_id_s,
-                        member_flags_s, type_ids_s.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure s member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure s member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_s = "s";
@@ -1297,50 +765,12 @@ void register_FixHashid_type_identifier(
             }
             StructMemberFlag member_flags_l = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_l;
             MemberId member_id_l = 0x0364520f;
-            if (EK_COMPLETE == type_ids_l.type_identifier1()._d() || TK_NONE == type_ids_l.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_l.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_l.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_l.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_l.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_l.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_l.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_l.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_l.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_l.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_l.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_l.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_l.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_l.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_l.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_l_ec {false};
+            CommonStructMember common_l {TypeObjectUtils::build_common_struct_member(member_id_l, member_flags_l, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_l, common_l_ec))};
+            if (!common_l_ec)
             {
-                common_l = TypeObjectUtils::build_common_struct_member(member_id_l,
-                        member_flags_l, type_ids_l.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_l.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_l.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_l.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_l.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_l.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_l.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_l.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_l.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_l.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_l.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_l.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_l.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_l.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_l.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_l.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_l = TypeObjectUtils::build_common_struct_member(member_id_l,
-                        member_flags_l, type_ids_l.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure l member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure l member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_l = "l";
@@ -1380,50 +810,12 @@ void register_FixHashid_type_identifier(
             }
             StructMemberFlag member_flags_ll = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_ll;
             MemberId member_id_ll = 0x03645210;
-            if (EK_COMPLETE == type_ids_ll.type_identifier1()._d() || TK_NONE == type_ids_ll.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_ll.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_ll.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_ll.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_ll.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_ll.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_ll.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_ll.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_ll.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_ll.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_ll.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_ll_ec {false};
+            CommonStructMember common_ll {TypeObjectUtils::build_common_struct_member(member_id_ll, member_flags_ll, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_ll, common_ll_ec))};
+            if (!common_ll_ec)
             {
-                common_ll = TypeObjectUtils::build_common_struct_member(member_id_ll,
-                        member_flags_ll, type_ids_ll.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_ll.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_ll.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_ll.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_ll.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_ll.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_ll.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_ll.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_ll.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_ll.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_ll.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_ll.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_ll = TypeObjectUtils::build_common_struct_member(member_id_ll,
-                        member_flags_ll, type_ids_ll.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure ll member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure ll member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_ll = "ll";
@@ -1485,50 +877,12 @@ void register_FixMix_type_identifier(
             }
             StructMemberFlag member_flags_o = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_o;
             MemberId member_id_o = 0x00000064;
-            if (EK_COMPLETE == type_ids_o.type_identifier1()._d() || TK_NONE == type_ids_o.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_o.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_o.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_o.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_o.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_o.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_o.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_o.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_o.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_o.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_o.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_o.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_o.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_o.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_o.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_o_ec {false};
+            CommonStructMember common_o {TypeObjectUtils::build_common_struct_member(member_id_o, member_flags_o, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_o, common_o_ec))};
+            if (!common_o_ec)
             {
-                common_o = TypeObjectUtils::build_common_struct_member(member_id_o,
-                        member_flags_o, type_ids_o.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_o.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_o.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_o.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_o.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_o.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_o.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_o.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_o.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_o.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_o.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_o.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_o.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_o.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_o.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_o.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_o = TypeObjectUtils::build_common_struct_member(member_id_o,
-                        member_flags_o, type_ids_o.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure o member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure o member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_o = "o";
@@ -1566,50 +920,12 @@ void register_FixMix_type_identifier(
             }
             StructMemberFlag member_flags_ho = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_ho;
             MemberId member_id_ho = 0x00000200;
-            if (EK_COMPLETE == type_ids_ho.type_identifier1()._d() || TK_NONE == type_ids_ho.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_ho.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_ho.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_ho.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_ho.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_ho.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_ho.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_ho.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_ho.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_ho.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_ho.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_ho.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_ho.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_ho.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_ho.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_ho_ec {false};
+            CommonStructMember common_ho {TypeObjectUtils::build_common_struct_member(member_id_ho, member_flags_ho, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_ho, common_ho_ec))};
+            if (!common_ho_ec)
             {
-                common_ho = TypeObjectUtils::build_common_struct_member(member_id_ho,
-                        member_flags_ho, type_ids_ho.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_ho.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_ho.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_ho.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_ho.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_ho.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_ho.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_ho.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_ho.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_ho.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_ho.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_ho.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_ho.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_ho.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_ho.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_ho.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_ho = TypeObjectUtils::build_common_struct_member(member_id_ho,
-                        member_flags_ho, type_ids_ho.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure ho member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure ho member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_ho = "ho";
@@ -1647,50 +963,12 @@ void register_FixMix_type_identifier(
             }
             StructMemberFlag member_flags_s = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_s;
             MemberId member_id_s = 0x0cc0c703;
-            if (EK_COMPLETE == type_ids_s.type_identifier1()._d() || TK_NONE == type_ids_s.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_s.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_s.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_s.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_s.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_s.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_s.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_s.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_s.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_s.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_s.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_s.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_s.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_s.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_s.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_s_ec {false};
+            CommonStructMember common_s {TypeObjectUtils::build_common_struct_member(member_id_s, member_flags_s, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_s, common_s_ec))};
+            if (!common_s_ec)
             {
-                common_s = TypeObjectUtils::build_common_struct_member(member_id_s,
-                        member_flags_s, type_ids_s.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_s.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_s.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_s.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_s.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_s.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_s.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_s.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_s.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_s.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_s.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_s.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_s.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_s.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_s.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_s.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_s = TypeObjectUtils::build_common_struct_member(member_id_s,
-                        member_flags_s, type_ids_s.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure s member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure s member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_s = "s";
@@ -1730,50 +1008,12 @@ void register_FixMix_type_identifier(
             }
             StructMemberFlag member_flags_l = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_l;
             MemberId member_id_l = 0x0364520f;
-            if (EK_COMPLETE == type_ids_l.type_identifier1()._d() || TK_NONE == type_ids_l.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_l.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_l.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_l.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_l.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_l.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_l.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_l.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_l.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_l.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_l.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_l.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_l.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_l.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_l.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_l_ec {false};
+            CommonStructMember common_l {TypeObjectUtils::build_common_struct_member(member_id_l, member_flags_l, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_l, common_l_ec))};
+            if (!common_l_ec)
             {
-                common_l = TypeObjectUtils::build_common_struct_member(member_id_l,
-                        member_flags_l, type_ids_l.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_l.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_l.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_l.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_l.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_l.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_l.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_l.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_l.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_l.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_l.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_l.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_l.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_l.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_l.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_l.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_l = TypeObjectUtils::build_common_struct_member(member_id_l,
-                        member_flags_l, type_ids_l.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure l member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure l member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_l = "l";
@@ -1813,50 +1053,12 @@ void register_FixMix_type_identifier(
             }
             StructMemberFlag member_flags_ll = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_ll;
             MemberId member_id_ll = 0x03645210;
-            if (EK_COMPLETE == type_ids_ll.type_identifier1()._d() || TK_NONE == type_ids_ll.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_ll.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_ll.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_ll.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_ll.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_ll.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_ll.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_ll.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_ll.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_ll.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_ll.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_ll_ec {false};
+            CommonStructMember common_ll {TypeObjectUtils::build_common_struct_member(member_id_ll, member_flags_ll, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_ll, common_ll_ec))};
+            if (!common_ll_ec)
             {
-                common_ll = TypeObjectUtils::build_common_struct_member(member_id_ll,
-                        member_flags_ll, type_ids_ll.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_ll.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_ll.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_ll.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_ll.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_ll.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_ll.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_ll.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_ll.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_ll.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_ll.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_ll.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_ll = TypeObjectUtils::build_common_struct_member(member_id_ll,
-                        member_flags_ll, type_ids_ll.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure ll member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure ll member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_ll = "ll";
@@ -1918,50 +1120,12 @@ void register_AutoidDefault_type_identifier(
             }
             StructMemberFlag member_flags_c = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_c;
             MemberId member_id_c = 0x00088a4a;
-            if (EK_COMPLETE == type_ids_c.type_identifier1()._d() || TK_NONE == type_ids_c.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_c.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_c.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_c.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_c.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_c.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_c.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_c.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_c.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_c.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_c.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_c.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_c.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_c.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_c.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_c_ec {false};
+            CommonStructMember common_c {TypeObjectUtils::build_common_struct_member(member_id_c, member_flags_c, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_c, common_c_ec))};
+            if (!common_c_ec)
             {
-                common_c = TypeObjectUtils::build_common_struct_member(member_id_c,
-                        member_flags_c, type_ids_c.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_c.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_c.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_c.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_c.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_c.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_c.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_c.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_c.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_c.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_c.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_c.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_c.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_c.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_c.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_c.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_c = TypeObjectUtils::build_common_struct_member(member_id_c,
-                        member_flags_c, type_ids_c.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure c member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure c member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_c = "c";
@@ -1986,50 +1150,12 @@ void register_AutoidDefault_type_identifier(
             }
             StructMemberFlag member_flags_o = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_o;
             MemberId member_id_o = 0x00000064;
-            if (EK_COMPLETE == type_ids_o.type_identifier1()._d() || TK_NONE == type_ids_o.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_o.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_o.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_o.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_o.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_o.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_o.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_o.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_o.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_o.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_o.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_o.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_o.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_o.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_o.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_o_ec {false};
+            CommonStructMember common_o {TypeObjectUtils::build_common_struct_member(member_id_o, member_flags_o, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_o, common_o_ec))};
+            if (!common_o_ec)
             {
-                common_o = TypeObjectUtils::build_common_struct_member(member_id_o,
-                        member_flags_o, type_ids_o.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_o.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_o.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_o.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_o.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_o.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_o.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_o.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_o.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_o.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_o.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_o.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_o.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_o.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_o.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_o.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_o = TypeObjectUtils::build_common_struct_member(member_id_o,
-                        member_flags_o, type_ids_o.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure o member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure o member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_o = "o";
@@ -2067,50 +1193,12 @@ void register_AutoidDefault_type_identifier(
             }
             StructMemberFlag member_flags_s = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_s;
             MemberId member_id_s = 0x0cc0c703;
-            if (EK_COMPLETE == type_ids_s.type_identifier1()._d() || TK_NONE == type_ids_s.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_s.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_s.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_s.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_s.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_s.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_s.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_s.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_s.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_s.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_s.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_s.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_s.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_s.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_s.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_s_ec {false};
+            CommonStructMember common_s {TypeObjectUtils::build_common_struct_member(member_id_s, member_flags_s, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_s, common_s_ec))};
+            if (!common_s_ec)
             {
-                common_s = TypeObjectUtils::build_common_struct_member(member_id_s,
-                        member_flags_s, type_ids_s.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_s.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_s.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_s.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_s.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_s.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_s.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_s.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_s.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_s.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_s.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_s.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_s.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_s.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_s.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_s.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_s = TypeObjectUtils::build_common_struct_member(member_id_s,
-                        member_flags_s, type_ids_s.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure s member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure s member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_s = "s";
@@ -2150,50 +1238,12 @@ void register_AutoidDefault_type_identifier(
             }
             StructMemberFlag member_flags_l = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_l;
             MemberId member_id_l = 0x0364520f;
-            if (EK_COMPLETE == type_ids_l.type_identifier1()._d() || TK_NONE == type_ids_l.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_l.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_l.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_l.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_l.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_l.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_l.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_l.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_l.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_l.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_l.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_l.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_l.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_l.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_l.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_l_ec {false};
+            CommonStructMember common_l {TypeObjectUtils::build_common_struct_member(member_id_l, member_flags_l, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_l, common_l_ec))};
+            if (!common_l_ec)
             {
-                common_l = TypeObjectUtils::build_common_struct_member(member_id_l,
-                        member_flags_l, type_ids_l.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_l.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_l.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_l.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_l.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_l.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_l.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_l.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_l.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_l.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_l.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_l.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_l.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_l.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_l.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_l.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_l = TypeObjectUtils::build_common_struct_member(member_id_l,
-                        member_flags_l, type_ids_l.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure l member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure l member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_l = "l";
@@ -2233,50 +1283,12 @@ void register_AutoidDefault_type_identifier(
             }
             StructMemberFlag member_flags_ll = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_ll;
             MemberId member_id_ll = 0x00c0545b;
-            if (EK_COMPLETE == type_ids_ll.type_identifier1()._d() || TK_NONE == type_ids_ll.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_ll.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_ll.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_ll.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_ll.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_ll.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_ll.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_ll.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_ll.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_ll.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_ll.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_ll_ec {false};
+            CommonStructMember common_ll {TypeObjectUtils::build_common_struct_member(member_id_ll, member_flags_ll, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_ll, common_ll_ec))};
+            if (!common_ll_ec)
             {
-                common_ll = TypeObjectUtils::build_common_struct_member(member_id_ll,
-                        member_flags_ll, type_ids_ll.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_ll.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_ll.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_ll.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_ll.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_ll.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_ll.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_ll.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_ll.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_ll.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_ll.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_ll.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_ll = TypeObjectUtils::build_common_struct_member(member_id_ll,
-                        member_flags_ll, type_ids_ll.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure ll member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure ll member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_ll = "ll";
@@ -2338,50 +1350,12 @@ void register_AutoidSequential_type_identifier(
             }
             StructMemberFlag member_flags_c = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_c;
             MemberId member_id_c = 0x00000000;
-            if (EK_COMPLETE == type_ids_c.type_identifier1()._d() || TK_NONE == type_ids_c.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_c.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_c.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_c.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_c.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_c.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_c.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_c.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_c.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_c.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_c.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_c.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_c.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_c.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_c.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_c_ec {false};
+            CommonStructMember common_c {TypeObjectUtils::build_common_struct_member(member_id_c, member_flags_c, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_c, common_c_ec))};
+            if (!common_c_ec)
             {
-                common_c = TypeObjectUtils::build_common_struct_member(member_id_c,
-                        member_flags_c, type_ids_c.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_c.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_c.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_c.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_c.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_c.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_c.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_c.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_c.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_c.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_c.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_c.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_c.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_c.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_c.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_c.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_c = TypeObjectUtils::build_common_struct_member(member_id_c,
-                        member_flags_c, type_ids_c.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure c member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure c member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_c = "c";
@@ -2406,50 +1380,12 @@ void register_AutoidSequential_type_identifier(
             }
             StructMemberFlag member_flags_o = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_o;
             MemberId member_id_o = 0x00000064;
-            if (EK_COMPLETE == type_ids_o.type_identifier1()._d() || TK_NONE == type_ids_o.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_o.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_o.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_o.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_o.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_o.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_o.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_o.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_o.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_o.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_o.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_o.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_o.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_o.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_o.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_o_ec {false};
+            CommonStructMember common_o {TypeObjectUtils::build_common_struct_member(member_id_o, member_flags_o, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_o, common_o_ec))};
+            if (!common_o_ec)
             {
-                common_o = TypeObjectUtils::build_common_struct_member(member_id_o,
-                        member_flags_o, type_ids_o.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_o.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_o.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_o.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_o.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_o.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_o.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_o.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_o.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_o.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_o.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_o.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_o.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_o.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_o.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_o.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_o = TypeObjectUtils::build_common_struct_member(member_id_o,
-                        member_flags_o, type_ids_o.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure o member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure o member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_o = "o";
@@ -2487,50 +1423,12 @@ void register_AutoidSequential_type_identifier(
             }
             StructMemberFlag member_flags_s = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_s;
             MemberId member_id_s = 0x0cc0c703;
-            if (EK_COMPLETE == type_ids_s.type_identifier1()._d() || TK_NONE == type_ids_s.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_s.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_s.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_s.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_s.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_s.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_s.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_s.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_s.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_s.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_s.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_s.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_s.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_s.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_s.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_s_ec {false};
+            CommonStructMember common_s {TypeObjectUtils::build_common_struct_member(member_id_s, member_flags_s, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_s, common_s_ec))};
+            if (!common_s_ec)
             {
-                common_s = TypeObjectUtils::build_common_struct_member(member_id_s,
-                        member_flags_s, type_ids_s.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_s.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_s.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_s.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_s.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_s.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_s.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_s.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_s.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_s.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_s.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_s.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_s.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_s.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_s.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_s.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_s = TypeObjectUtils::build_common_struct_member(member_id_s,
-                        member_flags_s, type_ids_s.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure s member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure s member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_s = "s";
@@ -2570,50 +1468,12 @@ void register_AutoidSequential_type_identifier(
             }
             StructMemberFlag member_flags_l = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_l;
             MemberId member_id_l = 0x0364520f;
-            if (EK_COMPLETE == type_ids_l.type_identifier1()._d() || TK_NONE == type_ids_l.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_l.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_l.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_l.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_l.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_l.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_l.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_l.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_l.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_l.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_l.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_l.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_l.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_l.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_l.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_l_ec {false};
+            CommonStructMember common_l {TypeObjectUtils::build_common_struct_member(member_id_l, member_flags_l, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_l, common_l_ec))};
+            if (!common_l_ec)
             {
-                common_l = TypeObjectUtils::build_common_struct_member(member_id_l,
-                        member_flags_l, type_ids_l.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_l.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_l.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_l.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_l.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_l.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_l.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_l.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_l.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_l.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_l.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_l.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_l.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_l.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_l.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_l.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_l = TypeObjectUtils::build_common_struct_member(member_id_l,
-                        member_flags_l, type_ids_l.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure l member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure l member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_l = "l";
@@ -2653,50 +1513,12 @@ void register_AutoidSequential_type_identifier(
             }
             StructMemberFlag member_flags_ll = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_ll;
             MemberId member_id_ll = 0x03645210;
-            if (EK_COMPLETE == type_ids_ll.type_identifier1()._d() || TK_NONE == type_ids_ll.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_ll.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_ll.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_ll.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_ll.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_ll.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_ll.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_ll.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_ll.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_ll.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_ll.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_ll_ec {false};
+            CommonStructMember common_ll {TypeObjectUtils::build_common_struct_member(member_id_ll, member_flags_ll, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_ll, common_ll_ec))};
+            if (!common_ll_ec)
             {
-                common_ll = TypeObjectUtils::build_common_struct_member(member_id_ll,
-                        member_flags_ll, type_ids_ll.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_ll.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_ll.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_ll.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_ll.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_ll.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_ll.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_ll.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_ll.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_ll.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_ll.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_ll.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_ll = TypeObjectUtils::build_common_struct_member(member_id_ll,
-                        member_flags_ll, type_ids_ll.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure ll member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure ll member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_ll = "ll";
@@ -2758,50 +1580,12 @@ void register_AutoidHash_type_identifier(
             }
             StructMemberFlag member_flags_c = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_c;
             MemberId member_id_c = 0x00088a4a;
-            if (EK_COMPLETE == type_ids_c.type_identifier1()._d() || TK_NONE == type_ids_c.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_c.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_c.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_c.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_c.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_c.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_c.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_c.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_c.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_c.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_c.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_c.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_c.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_c.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_c.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_c_ec {false};
+            CommonStructMember common_c {TypeObjectUtils::build_common_struct_member(member_id_c, member_flags_c, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_c, common_c_ec))};
+            if (!common_c_ec)
             {
-                common_c = TypeObjectUtils::build_common_struct_member(member_id_c,
-                        member_flags_c, type_ids_c.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_c.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_c.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_c.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_c.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_c.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_c.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_c.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_c.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_c.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_c.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_c.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_c.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_c.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_c.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_c.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_c = TypeObjectUtils::build_common_struct_member(member_id_c,
-                        member_flags_c, type_ids_c.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure c member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure c member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_c = "c";
@@ -2826,50 +1610,12 @@ void register_AutoidHash_type_identifier(
             }
             StructMemberFlag member_flags_o = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_o;
             MemberId member_id_o = 0x00000064;
-            if (EK_COMPLETE == type_ids_o.type_identifier1()._d() || TK_NONE == type_ids_o.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_o.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_o.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_o.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_o.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_o.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_o.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_o.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_o.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_o.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_o.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_o.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_o.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_o.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_o.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_o_ec {false};
+            CommonStructMember common_o {TypeObjectUtils::build_common_struct_member(member_id_o, member_flags_o, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_o, common_o_ec))};
+            if (!common_o_ec)
             {
-                common_o = TypeObjectUtils::build_common_struct_member(member_id_o,
-                        member_flags_o, type_ids_o.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_o.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_o.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_o.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_o.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_o.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_o.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_o.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_o.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_o.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_o.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_o.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_o.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_o.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_o.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_o.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_o = TypeObjectUtils::build_common_struct_member(member_id_o,
-                        member_flags_o, type_ids_o.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure o member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure o member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_o = "o";
@@ -2907,50 +1653,12 @@ void register_AutoidHash_type_identifier(
             }
             StructMemberFlag member_flags_s = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_s;
             MemberId member_id_s = 0x0cc0c703;
-            if (EK_COMPLETE == type_ids_s.type_identifier1()._d() || TK_NONE == type_ids_s.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_s.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_s.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_s.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_s.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_s.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_s.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_s.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_s.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_s.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_s.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_s.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_s.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_s.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_s.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_s_ec {false};
+            CommonStructMember common_s {TypeObjectUtils::build_common_struct_member(member_id_s, member_flags_s, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_s, common_s_ec))};
+            if (!common_s_ec)
             {
-                common_s = TypeObjectUtils::build_common_struct_member(member_id_s,
-                        member_flags_s, type_ids_s.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_s.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_s.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_s.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_s.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_s.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_s.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_s.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_s.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_s.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_s.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_s.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_s.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_s.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_s.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_s.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_s = TypeObjectUtils::build_common_struct_member(member_id_s,
-                        member_flags_s, type_ids_s.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure s member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure s member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_s = "s";
@@ -2990,50 +1698,12 @@ void register_AutoidHash_type_identifier(
             }
             StructMemberFlag member_flags_l = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_l;
             MemberId member_id_l = 0x0364520f;
-            if (EK_COMPLETE == type_ids_l.type_identifier1()._d() || TK_NONE == type_ids_l.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_l.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_l.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_l.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_l.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_l.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_l.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_l.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_l.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_l.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_l.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_l.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_l.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_l.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_l.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_l_ec {false};
+            CommonStructMember common_l {TypeObjectUtils::build_common_struct_member(member_id_l, member_flags_l, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_l, common_l_ec))};
+            if (!common_l_ec)
             {
-                common_l = TypeObjectUtils::build_common_struct_member(member_id_l,
-                        member_flags_l, type_ids_l.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_l.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_l.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_l.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_l.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_l.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_l.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_l.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_l.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_l.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_l.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_l.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_l.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_l.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_l.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_l.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_l = TypeObjectUtils::build_common_struct_member(member_id_l,
-                        member_flags_l, type_ids_l.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure l member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure l member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_l = "l";
@@ -3073,50 +1743,12 @@ void register_AutoidHash_type_identifier(
             }
             StructMemberFlag member_flags_ll = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_ll;
             MemberId member_id_ll = 0x00c0545b;
-            if (EK_COMPLETE == type_ids_ll.type_identifier1()._d() || TK_NONE == type_ids_ll.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_ll.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_ll.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_ll.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_ll.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_ll.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_ll.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_ll.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_ll.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_ll.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_ll.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_ll_ec {false};
+            CommonStructMember common_ll {TypeObjectUtils::build_common_struct_member(member_id_ll, member_flags_ll, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_ll, common_ll_ec))};
+            if (!common_ll_ec)
             {
-                common_ll = TypeObjectUtils::build_common_struct_member(member_id_ll,
-                        member_flags_ll, type_ids_ll.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_ll.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_ll.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_ll.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_ll.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_ll.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_ll.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_ll.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_ll.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_ll.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_ll.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_ll.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_ll.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_ll = TypeObjectUtils::build_common_struct_member(member_id_ll,
-                        member_flags_ll, type_ids_ll.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure ll member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure ll member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_ll = "ll";
@@ -3199,50 +1831,12 @@ void register_DerivedAutoidDefault_type_identifier(
             }
             StructMemberFlag member_flags_cd = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_cd;
             MemberId member_id_cd = 0x03ae6568;
-            if (EK_COMPLETE == type_ids_cd.type_identifier1()._d() || TK_NONE == type_ids_cd.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_cd.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_cd.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_cd.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_cd.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_cd.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_cd.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_cd.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_cd.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_cd.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_cd.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_cd.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_cd.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_cd.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_cd.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_cd_ec {false};
+            CommonStructMember common_cd {TypeObjectUtils::build_common_struct_member(member_id_cd, member_flags_cd, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_cd, common_cd_ec))};
+            if (!common_cd_ec)
             {
-                common_cd = TypeObjectUtils::build_common_struct_member(member_id_cd,
-                        member_flags_cd, type_ids_cd.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_cd.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_cd.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_cd.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_cd.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_cd.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_cd.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_cd.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_cd.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_cd.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_cd.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_cd.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_cd.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_cd.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_cd.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_cd.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_cd = TypeObjectUtils::build_common_struct_member(member_id_cd,
-                        member_flags_cd, type_ids_cd.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure cd member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure cd member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_cd = "cd";
@@ -3267,50 +1861,12 @@ void register_DerivedAutoidDefault_type_identifier(
             }
             StructMemberFlag member_flags_od = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_od;
             MemberId member_id_od = 0x00000065;
-            if (EK_COMPLETE == type_ids_od.type_identifier1()._d() || TK_NONE == type_ids_od.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_od.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_od.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_od.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_od.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_od.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_od.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_od.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_od.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_od.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_od.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_od.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_od.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_od.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_od.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_od_ec {false};
+            CommonStructMember common_od {TypeObjectUtils::build_common_struct_member(member_id_od, member_flags_od, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_od, common_od_ec))};
+            if (!common_od_ec)
             {
-                common_od = TypeObjectUtils::build_common_struct_member(member_id_od,
-                        member_flags_od, type_ids_od.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_od.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_od.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_od.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_od.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_od.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_od.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_od.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_od.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_od.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_od.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_od.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_od.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_od.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_od.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_od.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_od = TypeObjectUtils::build_common_struct_member(member_id_od,
-                        member_flags_od, type_ids_od.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure od member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure od member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_od = "od";
@@ -3348,50 +1904,12 @@ void register_DerivedAutoidDefault_type_identifier(
             }
             StructMemberFlag member_flags_sd = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_sd;
             MemberId member_id_sd = 0x0bf72662;
-            if (EK_COMPLETE == type_ids_sd.type_identifier1()._d() || TK_NONE == type_ids_sd.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_sd.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_sd.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_sd.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_sd.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_sd.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_sd.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_sd.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_sd.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_sd.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_sd.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_sd.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_sd.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_sd.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_sd.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_sd_ec {false};
+            CommonStructMember common_sd {TypeObjectUtils::build_common_struct_member(member_id_sd, member_flags_sd, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_sd, common_sd_ec))};
+            if (!common_sd_ec)
             {
-                common_sd = TypeObjectUtils::build_common_struct_member(member_id_sd,
-                        member_flags_sd, type_ids_sd.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_sd.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_sd.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_sd.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_sd.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_sd.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_sd.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_sd.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_sd.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_sd.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_sd.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_sd.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_sd.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_sd.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_sd.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_sd.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_sd = TypeObjectUtils::build_common_struct_member(member_id_sd,
-                        member_flags_sd, type_ids_sd.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure sd member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure sd member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_sd = "sd";
@@ -3431,50 +1949,12 @@ void register_DerivedAutoidDefault_type_identifier(
             }
             StructMemberFlag member_flags_ld = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_ld;
             MemberId member_id_ld = 0x07f89ae6;
-            if (EK_COMPLETE == type_ids_ld.type_identifier1()._d() || TK_NONE == type_ids_ld.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_ld.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_ld.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_ld.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_ld.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_ld.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_ld.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_ld.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_ld.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_ld.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_ld.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_ld.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_ld.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_ld.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_ld.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_ld_ec {false};
+            CommonStructMember common_ld {TypeObjectUtils::build_common_struct_member(member_id_ld, member_flags_ld, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_ld, common_ld_ec))};
+            if (!common_ld_ec)
             {
-                common_ld = TypeObjectUtils::build_common_struct_member(member_id_ld,
-                        member_flags_ld, type_ids_ld.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_ld.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_ld.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_ld.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_ld.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_ld.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_ld.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_ld.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_ld.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_ld.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_ld.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_ld.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_ld.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_ld.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_ld.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_ld.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_ld = TypeObjectUtils::build_common_struct_member(member_id_ld,
-                        member_flags_ld, type_ids_ld.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure ld member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure ld member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_ld = "ld";
@@ -3514,50 +1994,12 @@ void register_DerivedAutoidDefault_type_identifier(
             }
             StructMemberFlag member_flags_lld = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_lld;
             MemberId member_id_lld = 0x00e90b05;
-            if (EK_COMPLETE == type_ids_lld.type_identifier1()._d() || TK_NONE == type_ids_lld.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_lld.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_lld.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_lld.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_lld.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_lld.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_lld.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_lld.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_lld.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_lld.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_lld.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_lld.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_lld.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_lld.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_lld.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_lld_ec {false};
+            CommonStructMember common_lld {TypeObjectUtils::build_common_struct_member(member_id_lld, member_flags_lld, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_lld, common_lld_ec))};
+            if (!common_lld_ec)
             {
-                common_lld = TypeObjectUtils::build_common_struct_member(member_id_lld,
-                        member_flags_lld, type_ids_lld.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_lld.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_lld.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_lld.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_lld.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_lld.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_lld.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_lld.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_lld.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_lld.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_lld.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_lld.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_lld.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_lld.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_lld.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_lld.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_lld = TypeObjectUtils::build_common_struct_member(member_id_lld,
-                        member_flags_lld, type_ids_lld.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure lld member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure lld member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_lld = "lld";
@@ -3698,50 +2140,12 @@ void register_DerivedAutoidSequential_type_identifier(
             }
             StructMemberFlag member_flags_cd = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_cd;
             MemberId member_id_cd = 0x03645211;
-            if (EK_COMPLETE == type_ids_cd.type_identifier1()._d() || TK_NONE == type_ids_cd.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_cd.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_cd.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_cd.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_cd.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_cd.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_cd.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_cd.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_cd.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_cd.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_cd.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_cd.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_cd.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_cd.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_cd.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_cd_ec {false};
+            CommonStructMember common_cd {TypeObjectUtils::build_common_struct_member(member_id_cd, member_flags_cd, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_cd, common_cd_ec))};
+            if (!common_cd_ec)
             {
-                common_cd = TypeObjectUtils::build_common_struct_member(member_id_cd,
-                        member_flags_cd, type_ids_cd.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_cd.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_cd.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_cd.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_cd.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_cd.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_cd.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_cd.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_cd.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_cd.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_cd.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_cd.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_cd.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_cd.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_cd.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_cd.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_cd = TypeObjectUtils::build_common_struct_member(member_id_cd,
-                        member_flags_cd, type_ids_cd.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure cd member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure cd member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_cd = "cd";
@@ -3766,50 +2170,12 @@ void register_DerivedAutoidSequential_type_identifier(
             }
             StructMemberFlag member_flags_od = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_od;
             MemberId member_id_od = 0x00000065;
-            if (EK_COMPLETE == type_ids_od.type_identifier1()._d() || TK_NONE == type_ids_od.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_od.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_od.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_od.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_od.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_od.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_od.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_od.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_od.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_od.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_od.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_od.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_od.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_od.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_od.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_od_ec {false};
+            CommonStructMember common_od {TypeObjectUtils::build_common_struct_member(member_id_od, member_flags_od, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_od, common_od_ec))};
+            if (!common_od_ec)
             {
-                common_od = TypeObjectUtils::build_common_struct_member(member_id_od,
-                        member_flags_od, type_ids_od.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_od.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_od.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_od.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_od.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_od.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_od.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_od.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_od.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_od.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_od.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_od.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_od.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_od.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_od.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_od.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_od = TypeObjectUtils::build_common_struct_member(member_id_od,
-                        member_flags_od, type_ids_od.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure od member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure od member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_od = "od";
@@ -3847,50 +2213,12 @@ void register_DerivedAutoidSequential_type_identifier(
             }
             StructMemberFlag member_flags_sd = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_sd;
             MemberId member_id_sd = 0x0bf72662;
-            if (EK_COMPLETE == type_ids_sd.type_identifier1()._d() || TK_NONE == type_ids_sd.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_sd.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_sd.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_sd.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_sd.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_sd.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_sd.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_sd.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_sd.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_sd.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_sd.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_sd.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_sd.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_sd.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_sd.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_sd_ec {false};
+            CommonStructMember common_sd {TypeObjectUtils::build_common_struct_member(member_id_sd, member_flags_sd, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_sd, common_sd_ec))};
+            if (!common_sd_ec)
             {
-                common_sd = TypeObjectUtils::build_common_struct_member(member_id_sd,
-                        member_flags_sd, type_ids_sd.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_sd.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_sd.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_sd.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_sd.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_sd.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_sd.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_sd.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_sd.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_sd.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_sd.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_sd.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_sd.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_sd.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_sd.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_sd.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_sd = TypeObjectUtils::build_common_struct_member(member_id_sd,
-                        member_flags_sd, type_ids_sd.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure sd member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure sd member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_sd = "sd";
@@ -3930,50 +2258,12 @@ void register_DerivedAutoidSequential_type_identifier(
             }
             StructMemberFlag member_flags_ld = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_ld;
             MemberId member_id_ld = 0x07f89ae6;
-            if (EK_COMPLETE == type_ids_ld.type_identifier1()._d() || TK_NONE == type_ids_ld.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_ld.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_ld.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_ld.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_ld.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_ld.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_ld.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_ld.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_ld.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_ld.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_ld.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_ld.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_ld.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_ld.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_ld.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_ld_ec {false};
+            CommonStructMember common_ld {TypeObjectUtils::build_common_struct_member(member_id_ld, member_flags_ld, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_ld, common_ld_ec))};
+            if (!common_ld_ec)
             {
-                common_ld = TypeObjectUtils::build_common_struct_member(member_id_ld,
-                        member_flags_ld, type_ids_ld.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_ld.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_ld.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_ld.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_ld.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_ld.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_ld.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_ld.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_ld.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_ld.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_ld.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_ld.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_ld.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_ld.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_ld.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_ld.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_ld = TypeObjectUtils::build_common_struct_member(member_id_ld,
-                        member_flags_ld, type_ids_ld.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure ld member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure ld member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_ld = "ld";
@@ -4013,50 +2303,12 @@ void register_DerivedAutoidSequential_type_identifier(
             }
             StructMemberFlag member_flags_lld = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_lld;
             MemberId member_id_lld = 0x07f89ae7;
-            if (EK_COMPLETE == type_ids_lld.type_identifier1()._d() || TK_NONE == type_ids_lld.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_lld.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_lld.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_lld.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_lld.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_lld.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_lld.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_lld.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_lld.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_lld.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_lld.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_lld.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_lld.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_lld.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_lld.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_lld_ec {false};
+            CommonStructMember common_lld {TypeObjectUtils::build_common_struct_member(member_id_lld, member_flags_lld, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_lld, common_lld_ec))};
+            if (!common_lld_ec)
             {
-                common_lld = TypeObjectUtils::build_common_struct_member(member_id_lld,
-                        member_flags_lld, type_ids_lld.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_lld.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_lld.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_lld.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_lld.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_lld.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_lld.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_lld.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_lld.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_lld.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_lld.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_lld.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_lld.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_lld.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_lld.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_lld.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_lld = TypeObjectUtils::build_common_struct_member(member_id_lld,
-                        member_flags_lld, type_ids_lld.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure lld member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure lld member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_lld = "lld";
@@ -4139,50 +2391,12 @@ void register_DerivedAutoidHash_type_identifier(
             }
             StructMemberFlag member_flags_cd = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_cd;
             MemberId member_id_cd = 0x03ae6568;
-            if (EK_COMPLETE == type_ids_cd.type_identifier1()._d() || TK_NONE == type_ids_cd.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_cd.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_cd.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_cd.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_cd.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_cd.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_cd.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_cd.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_cd.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_cd.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_cd.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_cd.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_cd.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_cd.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_cd.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_cd_ec {false};
+            CommonStructMember common_cd {TypeObjectUtils::build_common_struct_member(member_id_cd, member_flags_cd, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_cd, common_cd_ec))};
+            if (!common_cd_ec)
             {
-                common_cd = TypeObjectUtils::build_common_struct_member(member_id_cd,
-                        member_flags_cd, type_ids_cd.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_cd.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_cd.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_cd.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_cd.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_cd.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_cd.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_cd.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_cd.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_cd.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_cd.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_cd.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_cd.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_cd.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_cd.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_cd.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_cd = TypeObjectUtils::build_common_struct_member(member_id_cd,
-                        member_flags_cd, type_ids_cd.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure cd member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure cd member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_cd = "cd";
@@ -4207,50 +2421,12 @@ void register_DerivedAutoidHash_type_identifier(
             }
             StructMemberFlag member_flags_od = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_od;
             MemberId member_id_od = 0x00000065;
-            if (EK_COMPLETE == type_ids_od.type_identifier1()._d() || TK_NONE == type_ids_od.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_od.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_od.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_od.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_od.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_od.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_od.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_od.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_od.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_od.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_od.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_od.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_od.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_od.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_od.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_od_ec {false};
+            CommonStructMember common_od {TypeObjectUtils::build_common_struct_member(member_id_od, member_flags_od, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_od, common_od_ec))};
+            if (!common_od_ec)
             {
-                common_od = TypeObjectUtils::build_common_struct_member(member_id_od,
-                        member_flags_od, type_ids_od.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_od.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_od.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_od.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_od.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_od.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_od.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_od.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_od.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_od.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_od.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_od.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_od.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_od.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_od.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_od.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_od = TypeObjectUtils::build_common_struct_member(member_id_od,
-                        member_flags_od, type_ids_od.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure od member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure od member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_od = "od";
@@ -4288,50 +2464,12 @@ void register_DerivedAutoidHash_type_identifier(
             }
             StructMemberFlag member_flags_sd = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_sd;
             MemberId member_id_sd = 0x0bf72662;
-            if (EK_COMPLETE == type_ids_sd.type_identifier1()._d() || TK_NONE == type_ids_sd.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_sd.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_sd.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_sd.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_sd.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_sd.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_sd.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_sd.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_sd.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_sd.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_sd.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_sd.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_sd.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_sd.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_sd.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_sd_ec {false};
+            CommonStructMember common_sd {TypeObjectUtils::build_common_struct_member(member_id_sd, member_flags_sd, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_sd, common_sd_ec))};
+            if (!common_sd_ec)
             {
-                common_sd = TypeObjectUtils::build_common_struct_member(member_id_sd,
-                        member_flags_sd, type_ids_sd.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_sd.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_sd.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_sd.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_sd.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_sd.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_sd.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_sd.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_sd.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_sd.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_sd.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_sd.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_sd.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_sd.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_sd.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_sd.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_sd = TypeObjectUtils::build_common_struct_member(member_id_sd,
-                        member_flags_sd, type_ids_sd.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure sd member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure sd member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_sd = "sd";
@@ -4371,50 +2509,12 @@ void register_DerivedAutoidHash_type_identifier(
             }
             StructMemberFlag member_flags_ld = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_ld;
             MemberId member_id_ld = 0x07f89ae6;
-            if (EK_COMPLETE == type_ids_ld.type_identifier1()._d() || TK_NONE == type_ids_ld.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_ld.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_ld.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_ld.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_ld.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_ld.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_ld.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_ld.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_ld.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_ld.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_ld.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_ld.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_ld.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_ld.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_ld.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_ld_ec {false};
+            CommonStructMember common_ld {TypeObjectUtils::build_common_struct_member(member_id_ld, member_flags_ld, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_ld, common_ld_ec))};
+            if (!common_ld_ec)
             {
-                common_ld = TypeObjectUtils::build_common_struct_member(member_id_ld,
-                        member_flags_ld, type_ids_ld.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_ld.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_ld.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_ld.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_ld.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_ld.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_ld.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_ld.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_ld.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_ld.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_ld.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_ld.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_ld.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_ld.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_ld.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_ld.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_ld = TypeObjectUtils::build_common_struct_member(member_id_ld,
-                        member_flags_ld, type_ids_ld.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure ld member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure ld member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_ld = "ld";
@@ -4454,50 +2554,12 @@ void register_DerivedAutoidHash_type_identifier(
             }
             StructMemberFlag member_flags_lld = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_lld;
             MemberId member_id_lld = 0x00e90b05;
-            if (EK_COMPLETE == type_ids_lld.type_identifier1()._d() || TK_NONE == type_ids_lld.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_lld.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_lld.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_lld.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_lld.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_lld.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_lld.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_lld.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_lld.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_lld.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_lld.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_lld.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_lld.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_lld.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_lld.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_lld_ec {false};
+            CommonStructMember common_lld {TypeObjectUtils::build_common_struct_member(member_id_lld, member_flags_lld, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_lld, common_lld_ec))};
+            if (!common_lld_ec)
             {
-                common_lld = TypeObjectUtils::build_common_struct_member(member_id_lld,
-                        member_flags_lld, type_ids_lld.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_lld.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_lld.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_lld.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_lld.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_lld.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_lld.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_lld.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_lld.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_lld.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_lld.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_lld.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_lld.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_lld.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_lld.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_lld.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_lld = TypeObjectUtils::build_common_struct_member(member_id_lld,
-                        member_flags_lld, type_ids_lld.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure lld member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure lld member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_lld = "lld";

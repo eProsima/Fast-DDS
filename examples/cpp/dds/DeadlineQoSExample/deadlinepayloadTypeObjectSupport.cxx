@@ -74,50 +74,12 @@ void register_HelloMsg_type_identifier(
             }
             StructMemberFlag member_flags_deadlinekey = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, true, false);
-            CommonStructMember common_deadlinekey;
             MemberId member_id_deadlinekey = 0x00000000;
-            if (EK_COMPLETE == type_ids_deadlinekey.type_identifier1()._d() || TK_NONE == type_ids_deadlinekey.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_deadlinekey.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_deadlinekey.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_deadlinekey.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_deadlinekey.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_deadlinekey.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_deadlinekey.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_deadlinekey.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_deadlinekey.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_deadlinekey.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_deadlinekey.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_deadlinekey.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_deadlinekey.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_deadlinekey.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_deadlinekey.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_deadlinekey_ec {false};
+            CommonStructMember common_deadlinekey {TypeObjectUtils::build_common_struct_member(member_id_deadlinekey, member_flags_deadlinekey, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_deadlinekey, common_deadlinekey_ec))};
+            if (!common_deadlinekey_ec)
             {
-                common_deadlinekey = TypeObjectUtils::build_common_struct_member(member_id_deadlinekey,
-                        member_flags_deadlinekey, type_ids_deadlinekey.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_deadlinekey.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_deadlinekey.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_deadlinekey.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_deadlinekey.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_deadlinekey.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_deadlinekey.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_deadlinekey.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_deadlinekey.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_deadlinekey.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_deadlinekey.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_deadlinekey.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_deadlinekey.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_deadlinekey.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_deadlinekey.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_deadlinekey.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_deadlinekey = TypeObjectUtils::build_common_struct_member(member_id_deadlinekey,
-                        member_flags_deadlinekey, type_ids_deadlinekey.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure deadlinekey member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure deadlinekey member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_deadlinekey = "deadlinekey";
@@ -163,50 +125,12 @@ void register_HelloMsg_type_identifier(
             }
             StructMemberFlag member_flags_payload = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_payload;
             MemberId member_id_payload = 0x00000001;
-            if (EK_COMPLETE == type_ids_payload.type_identifier1()._d() || TK_NONE == type_ids_payload.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_payload.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_payload.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_payload.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_payload.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_payload.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_payload.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_payload.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_payload.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_payload.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_payload.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_payload.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_payload.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_payload.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_payload.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_payload_ec {false};
+            CommonStructMember common_payload {TypeObjectUtils::build_common_struct_member(member_id_payload, member_flags_payload, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_payload, common_payload_ec))};
+            if (!common_payload_ec)
             {
-                common_payload = TypeObjectUtils::build_common_struct_member(member_id_payload,
-                        member_flags_payload, type_ids_payload.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_payload.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_payload.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_payload.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_payload.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_payload.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_payload.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_payload.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_payload.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_payload.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_payload.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_payload.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_payload.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_payload.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_payload.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_payload.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_payload = TypeObjectUtils::build_common_struct_member(member_id_payload,
-                        member_flags_payload, type_ids_payload.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure payload member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure payload member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_payload = "payload";

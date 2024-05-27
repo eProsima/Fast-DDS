@@ -43,52 +43,59 @@ namespace Test {
 void register_InnerEnumHelper_type_identifier(
         TypeIdentifierPair& type_ids_InnerEnumHelper)
 {
-    EnumTypeFlag enum_flags_InnerEnumHelper = 0;
-    BitBound bit_bound_InnerEnumHelper = 32;
-    CommonEnumeratedHeader common_InnerEnumHelper = TypeObjectUtils::build_common_enumerated_header(bit_bound_InnerEnumHelper);
-    QualifiedTypeName type_name_InnerEnumHelper = "Test::InnerEnumHelper";
-    eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_InnerEnumHelper;
-    eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_InnerEnumHelper;
-    CompleteTypeDetail detail_InnerEnumHelper = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_InnerEnumHelper, ann_custom_InnerEnumHelper, type_name_InnerEnumHelper.to_string());
-    CompleteEnumeratedHeader header_InnerEnumHelper = TypeObjectUtils::build_complete_enumerated_header(common_InnerEnumHelper, detail_InnerEnumHelper);
-    CompleteEnumeratedLiteralSeq literal_seq_InnerEnumHelper;
+    ReturnCode_t return_code_InnerEnumHelper {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_InnerEnumHelper =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "Test::InnerEnumHelper", type_ids_InnerEnumHelper);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_InnerEnumHelper)
     {
-        EnumeratedLiteralFlag flags_ENUM_VALUE_1 = TypeObjectUtils::build_enumerated_literal_flag(false);
-        CommonEnumeratedLiteral common_ENUM_VALUE_1 = TypeObjectUtils::build_common_enumerated_literal(0, flags_ENUM_VALUE_1);
-        eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_ENUM_VALUE_1;
-        ann_custom_InnerEnumHelper.reset();
-        MemberName name_ENUM_VALUE_1 = "ENUM_VALUE_1";
-        CompleteMemberDetail detail_ENUM_VALUE_1 = TypeObjectUtils::build_complete_member_detail(name_ENUM_VALUE_1, member_ann_builtin_ENUM_VALUE_1, ann_custom_InnerEnumHelper);
-        CompleteEnumeratedLiteral literal_ENUM_VALUE_1 = TypeObjectUtils::build_complete_enumerated_literal(common_ENUM_VALUE_1, detail_ENUM_VALUE_1);
-        TypeObjectUtils::add_complete_enumerated_literal(literal_seq_InnerEnumHelper, literal_ENUM_VALUE_1);
-    }
-    {
-        EnumeratedLiteralFlag flags_ENUM_VALUE_2 = TypeObjectUtils::build_enumerated_literal_flag(false);
-        CommonEnumeratedLiteral common_ENUM_VALUE_2 = TypeObjectUtils::build_common_enumerated_literal(1, flags_ENUM_VALUE_2);
-        eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_ENUM_VALUE_2;
-        ann_custom_InnerEnumHelper.reset();
-        MemberName name_ENUM_VALUE_2 = "ENUM_VALUE_2";
-        CompleteMemberDetail detail_ENUM_VALUE_2 = TypeObjectUtils::build_complete_member_detail(name_ENUM_VALUE_2, member_ann_builtin_ENUM_VALUE_2, ann_custom_InnerEnumHelper);
-        CompleteEnumeratedLiteral literal_ENUM_VALUE_2 = TypeObjectUtils::build_complete_enumerated_literal(common_ENUM_VALUE_2, detail_ENUM_VALUE_2);
-        TypeObjectUtils::add_complete_enumerated_literal(literal_seq_InnerEnumHelper, literal_ENUM_VALUE_2);
-    }
-    {
-        EnumeratedLiteralFlag flags_ENUM_VALUE_3 = TypeObjectUtils::build_enumerated_literal_flag(false);
-        CommonEnumeratedLiteral common_ENUM_VALUE_3 = TypeObjectUtils::build_common_enumerated_literal(2, flags_ENUM_VALUE_3);
-        eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_ENUM_VALUE_3;
-        ann_custom_InnerEnumHelper.reset();
-        MemberName name_ENUM_VALUE_3 = "ENUM_VALUE_3";
-        CompleteMemberDetail detail_ENUM_VALUE_3 = TypeObjectUtils::build_complete_member_detail(name_ENUM_VALUE_3, member_ann_builtin_ENUM_VALUE_3, ann_custom_InnerEnumHelper);
-        CompleteEnumeratedLiteral literal_ENUM_VALUE_3 = TypeObjectUtils::build_complete_enumerated_literal(common_ENUM_VALUE_3, detail_ENUM_VALUE_3);
-        TypeObjectUtils::add_complete_enumerated_literal(literal_seq_InnerEnumHelper, literal_ENUM_VALUE_3);
-    }
-    CompleteEnumeratedType enumerated_type_InnerEnumHelper = TypeObjectUtils::build_complete_enumerated_type(enum_flags_InnerEnumHelper, header_InnerEnumHelper,
-            literal_seq_InnerEnumHelper);
-    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-            TypeObjectUtils::build_and_register_enumerated_type_object(enumerated_type_InnerEnumHelper, type_name_InnerEnumHelper.to_string(), type_ids_InnerEnumHelper))
-    {
-        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-            "Test::InnerEnumHelper already registered in TypeObjectRegistry for a different type.");
+        EnumTypeFlag enum_flags_InnerEnumHelper = 0;
+        BitBound bit_bound_InnerEnumHelper = 32;
+        CommonEnumeratedHeader common_InnerEnumHelper = TypeObjectUtils::build_common_enumerated_header(bit_bound_InnerEnumHelper);
+        QualifiedTypeName type_name_InnerEnumHelper = "Test::InnerEnumHelper";
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_InnerEnumHelper;
+        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_InnerEnumHelper;
+        CompleteTypeDetail detail_InnerEnumHelper = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_InnerEnumHelper, ann_custom_InnerEnumHelper, type_name_InnerEnumHelper.to_string());
+        CompleteEnumeratedHeader header_InnerEnumHelper = TypeObjectUtils::build_complete_enumerated_header(common_InnerEnumHelper, detail_InnerEnumHelper);
+        CompleteEnumeratedLiteralSeq literal_seq_InnerEnumHelper;
+        {
+            EnumeratedLiteralFlag flags_ENUM_VALUE_1 = TypeObjectUtils::build_enumerated_literal_flag(false);
+            CommonEnumeratedLiteral common_ENUM_VALUE_1 = TypeObjectUtils::build_common_enumerated_literal(0, flags_ENUM_VALUE_1);
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_ENUM_VALUE_1;
+            ann_custom_InnerEnumHelper.reset();
+            MemberName name_ENUM_VALUE_1 = "ENUM_VALUE_1";
+            CompleteMemberDetail detail_ENUM_VALUE_1 = TypeObjectUtils::build_complete_member_detail(name_ENUM_VALUE_1, member_ann_builtin_ENUM_VALUE_1, ann_custom_InnerEnumHelper);
+            CompleteEnumeratedLiteral literal_ENUM_VALUE_1 = TypeObjectUtils::build_complete_enumerated_literal(common_ENUM_VALUE_1, detail_ENUM_VALUE_1);
+            TypeObjectUtils::add_complete_enumerated_literal(literal_seq_InnerEnumHelper, literal_ENUM_VALUE_1);
+        }
+        {
+            EnumeratedLiteralFlag flags_ENUM_VALUE_2 = TypeObjectUtils::build_enumerated_literal_flag(false);
+            CommonEnumeratedLiteral common_ENUM_VALUE_2 = TypeObjectUtils::build_common_enumerated_literal(1, flags_ENUM_VALUE_2);
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_ENUM_VALUE_2;
+            ann_custom_InnerEnumHelper.reset();
+            MemberName name_ENUM_VALUE_2 = "ENUM_VALUE_2";
+            CompleteMemberDetail detail_ENUM_VALUE_2 = TypeObjectUtils::build_complete_member_detail(name_ENUM_VALUE_2, member_ann_builtin_ENUM_VALUE_2, ann_custom_InnerEnumHelper);
+            CompleteEnumeratedLiteral literal_ENUM_VALUE_2 = TypeObjectUtils::build_complete_enumerated_literal(common_ENUM_VALUE_2, detail_ENUM_VALUE_2);
+            TypeObjectUtils::add_complete_enumerated_literal(literal_seq_InnerEnumHelper, literal_ENUM_VALUE_2);
+        }
+        {
+            EnumeratedLiteralFlag flags_ENUM_VALUE_3 = TypeObjectUtils::build_enumerated_literal_flag(false);
+            CommonEnumeratedLiteral common_ENUM_VALUE_3 = TypeObjectUtils::build_common_enumerated_literal(2, flags_ENUM_VALUE_3);
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_ENUM_VALUE_3;
+            ann_custom_InnerEnumHelper.reset();
+            MemberName name_ENUM_VALUE_3 = "ENUM_VALUE_3";
+            CompleteMemberDetail detail_ENUM_VALUE_3 = TypeObjectUtils::build_complete_member_detail(name_ENUM_VALUE_3, member_ann_builtin_ENUM_VALUE_3, ann_custom_InnerEnumHelper);
+            CompleteEnumeratedLiteral literal_ENUM_VALUE_3 = TypeObjectUtils::build_complete_enumerated_literal(common_ENUM_VALUE_3, detail_ENUM_VALUE_3);
+            TypeObjectUtils::add_complete_enumerated_literal(literal_seq_InnerEnumHelper, literal_ENUM_VALUE_3);
+        }
+        CompleteEnumeratedType enumerated_type_InnerEnumHelper = TypeObjectUtils::build_complete_enumerated_type(enum_flags_InnerEnumHelper, header_InnerEnumHelper,
+                literal_seq_InnerEnumHelper);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_enumerated_type_object(enumerated_type_InnerEnumHelper, type_name_InnerEnumHelper.to_string(), type_ids_InnerEnumHelper))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                "Test::InnerEnumHelper already registered in TypeObjectRegistry for a different type.");
+        }
     }
 }
 } // namespace Test
@@ -126,50 +133,12 @@ void register_EnumStructure_type_identifier(
             }
             StructMemberFlag member_flags_var_InnerEnumHelper = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_var_InnerEnumHelper;
             MemberId member_id_var_InnerEnumHelper = 0x00000000;
-            if (EK_COMPLETE == type_ids_var_InnerEnumHelper.type_identifier1()._d() || TK_NONE == type_ids_var_InnerEnumHelper.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_var_InnerEnumHelper.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_var_InnerEnumHelper.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_var_InnerEnumHelper.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_var_InnerEnumHelper.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_var_InnerEnumHelper.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_var_InnerEnumHelper.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_var_InnerEnumHelper.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_var_InnerEnumHelper.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_var_InnerEnumHelper.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_var_InnerEnumHelper.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_var_InnerEnumHelper.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_var_InnerEnumHelper.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_var_InnerEnumHelper.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_var_InnerEnumHelper.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_var_InnerEnumHelper_ec {false};
+            CommonStructMember common_var_InnerEnumHelper {TypeObjectUtils::build_common_struct_member(member_id_var_InnerEnumHelper, member_flags_var_InnerEnumHelper, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_InnerEnumHelper, common_var_InnerEnumHelper_ec))};
+            if (!common_var_InnerEnumHelper_ec)
             {
-                common_var_InnerEnumHelper = TypeObjectUtils::build_common_struct_member(member_id_var_InnerEnumHelper,
-                        member_flags_var_InnerEnumHelper, type_ids_var_InnerEnumHelper.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_var_InnerEnumHelper.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_var_InnerEnumHelper.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_var_InnerEnumHelper.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_var_InnerEnumHelper.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_var_InnerEnumHelper.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_var_InnerEnumHelper.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_var_InnerEnumHelper.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_var_InnerEnumHelper.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_var_InnerEnumHelper.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_var_InnerEnumHelper.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_var_InnerEnumHelper.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_var_InnerEnumHelper.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_var_InnerEnumHelper.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_var_InnerEnumHelper.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_var_InnerEnumHelper.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_var_InnerEnumHelper = TypeObjectUtils::build_common_struct_member(member_id_var_InnerEnumHelper,
-                        member_flags_var_InnerEnumHelper, type_ids_var_InnerEnumHelper.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure var_InnerEnumHelper member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure var_InnerEnumHelper member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_var_InnerEnumHelper = "var_InnerEnumHelper";
@@ -192,50 +161,12 @@ void register_EnumStructure_type_identifier(
             }
             StructMemberFlag member_flags_var_scoped_InnerEnumHelper = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_var_scoped_InnerEnumHelper;
             MemberId member_id_var_scoped_InnerEnumHelper = 0x00000001;
-            if (EK_COMPLETE == type_ids_var_scoped_InnerEnumHelper.type_identifier1()._d() || TK_NONE == type_ids_var_scoped_InnerEnumHelper.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_var_scoped_InnerEnumHelper.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_var_scoped_InnerEnumHelper.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_var_scoped_InnerEnumHelper.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_var_scoped_InnerEnumHelper.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_var_scoped_InnerEnumHelper.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_var_scoped_InnerEnumHelper.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_var_scoped_InnerEnumHelper.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_var_scoped_InnerEnumHelper.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_var_scoped_InnerEnumHelper.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_var_scoped_InnerEnumHelper.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_var_scoped_InnerEnumHelper.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_var_scoped_InnerEnumHelper.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_var_scoped_InnerEnumHelper.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_var_scoped_InnerEnumHelper.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_var_scoped_InnerEnumHelper_ec {false};
+            CommonStructMember common_var_scoped_InnerEnumHelper {TypeObjectUtils::build_common_struct_member(member_id_var_scoped_InnerEnumHelper, member_flags_var_scoped_InnerEnumHelper, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_scoped_InnerEnumHelper, common_var_scoped_InnerEnumHelper_ec))};
+            if (!common_var_scoped_InnerEnumHelper_ec)
             {
-                common_var_scoped_InnerEnumHelper = TypeObjectUtils::build_common_struct_member(member_id_var_scoped_InnerEnumHelper,
-                        member_flags_var_scoped_InnerEnumHelper, type_ids_var_scoped_InnerEnumHelper.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_var_scoped_InnerEnumHelper.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_var_scoped_InnerEnumHelper.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_var_scoped_InnerEnumHelper.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_var_scoped_InnerEnumHelper.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_var_scoped_InnerEnumHelper.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_var_scoped_InnerEnumHelper.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_var_scoped_InnerEnumHelper.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_var_scoped_InnerEnumHelper.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_var_scoped_InnerEnumHelper.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_var_scoped_InnerEnumHelper.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_var_scoped_InnerEnumHelper.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_var_scoped_InnerEnumHelper.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_var_scoped_InnerEnumHelper.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_var_scoped_InnerEnumHelper.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_var_scoped_InnerEnumHelper.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_var_scoped_InnerEnumHelper = TypeObjectUtils::build_common_struct_member(member_id_var_scoped_InnerEnumHelper,
-                        member_flags_var_scoped_InnerEnumHelper, type_ids_var_scoped_InnerEnumHelper.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure var_scoped_InnerEnumHelper member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure var_scoped_InnerEnumHelper member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_var_scoped_InnerEnumHelper = "var_scoped_InnerEnumHelper";
@@ -288,50 +219,12 @@ void register_BitMaskStructure_type_identifier(
             }
             StructMemberFlag member_flags_var_InnerBitMaskHelper = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_var_InnerBitMaskHelper;
             MemberId member_id_var_InnerBitMaskHelper = 0x00000000;
-            if (EK_COMPLETE == type_ids_var_InnerBitMaskHelper.type_identifier1()._d() || TK_NONE == type_ids_var_InnerBitMaskHelper.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_var_InnerBitMaskHelper.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_var_InnerBitMaskHelper.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_var_InnerBitMaskHelper.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_var_InnerBitMaskHelper.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_var_InnerBitMaskHelper.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_var_InnerBitMaskHelper.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_var_InnerBitMaskHelper.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_var_InnerBitMaskHelper.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_var_InnerBitMaskHelper.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_var_InnerBitMaskHelper.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_var_InnerBitMaskHelper.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_var_InnerBitMaskHelper.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_var_InnerBitMaskHelper.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_var_InnerBitMaskHelper.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_var_InnerBitMaskHelper_ec {false};
+            CommonStructMember common_var_InnerBitMaskHelper {TypeObjectUtils::build_common_struct_member(member_id_var_InnerBitMaskHelper, member_flags_var_InnerBitMaskHelper, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_InnerBitMaskHelper, common_var_InnerBitMaskHelper_ec))};
+            if (!common_var_InnerBitMaskHelper_ec)
             {
-                common_var_InnerBitMaskHelper = TypeObjectUtils::build_common_struct_member(member_id_var_InnerBitMaskHelper,
-                        member_flags_var_InnerBitMaskHelper, type_ids_var_InnerBitMaskHelper.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_var_InnerBitMaskHelper.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_var_InnerBitMaskHelper.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_var_InnerBitMaskHelper.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_var_InnerBitMaskHelper.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_var_InnerBitMaskHelper.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_var_InnerBitMaskHelper.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_var_InnerBitMaskHelper.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_var_InnerBitMaskHelper.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_var_InnerBitMaskHelper.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_var_InnerBitMaskHelper.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_var_InnerBitMaskHelper.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_var_InnerBitMaskHelper.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_var_InnerBitMaskHelper.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_var_InnerBitMaskHelper.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_var_InnerBitMaskHelper.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_var_InnerBitMaskHelper = TypeObjectUtils::build_common_struct_member(member_id_var_InnerBitMaskHelper,
-                        member_flags_var_InnerBitMaskHelper, type_ids_var_InnerBitMaskHelper.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure var_InnerBitMaskHelper member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure var_InnerBitMaskHelper member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_var_InnerBitMaskHelper = "var_InnerBitMaskHelper";
@@ -384,50 +277,12 @@ void register_BoundedBitMaskStructure_type_identifier(
             }
             StructMemberFlag member_flags_var_InnerBoundedBitMaskHelper = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_var_InnerBoundedBitMaskHelper;
             MemberId member_id_var_InnerBoundedBitMaskHelper = 0x00000000;
-            if (EK_COMPLETE == type_ids_var_InnerBoundedBitMaskHelper.type_identifier1()._d() || TK_NONE == type_ids_var_InnerBoundedBitMaskHelper.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_var_InnerBoundedBitMaskHelper.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_var_InnerBoundedBitMaskHelper.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_var_InnerBoundedBitMaskHelper.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_var_InnerBoundedBitMaskHelper.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_var_InnerBoundedBitMaskHelper.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_var_InnerBoundedBitMaskHelper.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_var_InnerBoundedBitMaskHelper.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_var_InnerBoundedBitMaskHelper.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_var_InnerBoundedBitMaskHelper.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_var_InnerBoundedBitMaskHelper.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_var_InnerBoundedBitMaskHelper.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_var_InnerBoundedBitMaskHelper.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_var_InnerBoundedBitMaskHelper.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_var_InnerBoundedBitMaskHelper.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_var_InnerBoundedBitMaskHelper_ec {false};
+            CommonStructMember common_var_InnerBoundedBitMaskHelper {TypeObjectUtils::build_common_struct_member(member_id_var_InnerBoundedBitMaskHelper, member_flags_var_InnerBoundedBitMaskHelper, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_InnerBoundedBitMaskHelper, common_var_InnerBoundedBitMaskHelper_ec))};
+            if (!common_var_InnerBoundedBitMaskHelper_ec)
             {
-                common_var_InnerBoundedBitMaskHelper = TypeObjectUtils::build_common_struct_member(member_id_var_InnerBoundedBitMaskHelper,
-                        member_flags_var_InnerBoundedBitMaskHelper, type_ids_var_InnerBoundedBitMaskHelper.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_var_InnerBoundedBitMaskHelper.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_var_InnerBoundedBitMaskHelper.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_var_InnerBoundedBitMaskHelper.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_var_InnerBoundedBitMaskHelper.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_var_InnerBoundedBitMaskHelper.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_var_InnerBoundedBitMaskHelper.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_var_InnerBoundedBitMaskHelper.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_var_InnerBoundedBitMaskHelper.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_var_InnerBoundedBitMaskHelper.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_var_InnerBoundedBitMaskHelper.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_var_InnerBoundedBitMaskHelper.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_var_InnerBoundedBitMaskHelper.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_var_InnerBoundedBitMaskHelper.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_var_InnerBoundedBitMaskHelper.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_var_InnerBoundedBitMaskHelper.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_var_InnerBoundedBitMaskHelper = TypeObjectUtils::build_common_struct_member(member_id_var_InnerBoundedBitMaskHelper,
-                        member_flags_var_InnerBoundedBitMaskHelper, type_ids_var_InnerBoundedBitMaskHelper.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure var_InnerBoundedBitMaskHelper member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure var_InnerBoundedBitMaskHelper member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_var_InnerBoundedBitMaskHelper = "var_InnerBoundedBitMaskHelper";

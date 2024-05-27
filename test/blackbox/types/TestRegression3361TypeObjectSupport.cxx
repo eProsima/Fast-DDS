@@ -73,50 +73,12 @@ void register_TestRegression3361_type_identifier(
             }
             StructMemberFlag member_flags_uuid = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_uuid;
             MemberId member_id_uuid = 0x00000000;
-            if (EK_COMPLETE == type_ids_uuid.type_identifier1()._d() || TK_NONE == type_ids_uuid.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_uuid.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_uuid.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_uuid.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_uuid.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_uuid.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_uuid.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_uuid.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_uuid.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_uuid.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_uuid.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_uuid.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_uuid.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_uuid.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_uuid.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_uuid_ec {false};
+            CommonStructMember common_uuid {TypeObjectUtils::build_common_struct_member(member_id_uuid, member_flags_uuid, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_uuid, common_uuid_ec))};
+            if (!common_uuid_ec)
             {
-                common_uuid = TypeObjectUtils::build_common_struct_member(member_id_uuid,
-                        member_flags_uuid, type_ids_uuid.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_uuid.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_uuid.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_uuid.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_uuid.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_uuid.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_uuid.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_uuid.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_uuid.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_uuid.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_uuid.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_uuid.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_uuid.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_uuid.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_uuid.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_uuid.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_uuid = TypeObjectUtils::build_common_struct_member(member_id_uuid,
-                        member_flags_uuid, type_ids_uuid.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure uuid member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure uuid member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_uuid = "uuid";

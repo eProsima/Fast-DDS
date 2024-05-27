@@ -44,131 +44,107 @@ namespace AnnotationTest {
     void register_InnerEnumHelper_type_identifier(
             TypeIdentifierPair& type_ids_InnerEnumHelper)
     {
-        EnumTypeFlag enum_flags_InnerEnumHelper = 0;
-        BitBound bit_bound_InnerEnumHelper = 32;
-        CommonEnumeratedHeader common_InnerEnumHelper = TypeObjectUtils::build_common_enumerated_header(bit_bound_InnerEnumHelper);
-        QualifiedTypeName type_name_InnerEnumHelper = "AnnotationTest::InnerEnumHelper";
-        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_InnerEnumHelper;
-        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_InnerEnumHelper;
-        CompleteTypeDetail detail_InnerEnumHelper = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_InnerEnumHelper, ann_custom_InnerEnumHelper, type_name_InnerEnumHelper.to_string());
-        CompleteEnumeratedHeader header_InnerEnumHelper = TypeObjectUtils::build_complete_enumerated_header(common_InnerEnumHelper, detail_InnerEnumHelper);
-        CompleteEnumeratedLiteralSeq literal_seq_InnerEnumHelper;
+        ReturnCode_t return_code_InnerEnumHelper {eprosima::fastdds::dds::RETCODE_OK};
+        return_code_InnerEnumHelper =
+            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+            "AnnotationTest::InnerEnumHelper", type_ids_InnerEnumHelper);
+        if (eprosima::fastdds::dds::RETCODE_OK != return_code_InnerEnumHelper)
         {
-            EnumeratedLiteralFlag flags_ONE = TypeObjectUtils::build_enumerated_literal_flag(false);
-            CommonEnumeratedLiteral common_ONE = TypeObjectUtils::build_common_enumerated_literal(0, flags_ONE);
-            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_ONE;
-            ann_custom_InnerEnumHelper.reset();
-            MemberName name_ONE = "ONE";
-            CompleteMemberDetail detail_ONE = TypeObjectUtils::build_complete_member_detail(name_ONE, member_ann_builtin_ONE, ann_custom_InnerEnumHelper);
-            CompleteEnumeratedLiteral literal_ONE = TypeObjectUtils::build_complete_enumerated_literal(common_ONE, detail_ONE);
-            TypeObjectUtils::add_complete_enumerated_literal(literal_seq_InnerEnumHelper, literal_ONE);
-        }
-        {
-            EnumeratedLiteralFlag flags_TWO = TypeObjectUtils::build_enumerated_literal_flag(false);
-            CommonEnumeratedLiteral common_TWO = TypeObjectUtils::build_common_enumerated_literal(1, flags_TWO);
-            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_TWO;
-            ann_custom_InnerEnumHelper.reset();
-            MemberName name_TWO = "TWO";
-            CompleteMemberDetail detail_TWO = TypeObjectUtils::build_complete_member_detail(name_TWO, member_ann_builtin_TWO, ann_custom_InnerEnumHelper);
-            CompleteEnumeratedLiteral literal_TWO = TypeObjectUtils::build_complete_enumerated_literal(common_TWO, detail_TWO);
-            TypeObjectUtils::add_complete_enumerated_literal(literal_seq_InnerEnumHelper, literal_TWO);
-        }
-        CompleteEnumeratedType enumerated_type_InnerEnumHelper = TypeObjectUtils::build_complete_enumerated_type(enum_flags_InnerEnumHelper, header_InnerEnumHelper,
-                literal_seq_InnerEnumHelper);
-        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_enumerated_type_object(enumerated_type_InnerEnumHelper, type_name_InnerEnumHelper.to_string(), type_ids_InnerEnumHelper))
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                "AnnotationTest::InnerEnumHelper already registered in TypeObjectRegistry for a different type.");
+            EnumTypeFlag enum_flags_InnerEnumHelper = 0;
+            BitBound bit_bound_InnerEnumHelper = 32;
+            CommonEnumeratedHeader common_InnerEnumHelper = TypeObjectUtils::build_common_enumerated_header(bit_bound_InnerEnumHelper);
+            QualifiedTypeName type_name_InnerEnumHelper = "AnnotationTest::InnerEnumHelper";
+            eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_InnerEnumHelper;
+            eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_InnerEnumHelper;
+            CompleteTypeDetail detail_InnerEnumHelper = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_InnerEnumHelper, ann_custom_InnerEnumHelper, type_name_InnerEnumHelper.to_string());
+            CompleteEnumeratedHeader header_InnerEnumHelper = TypeObjectUtils::build_complete_enumerated_header(common_InnerEnumHelper, detail_InnerEnumHelper);
+            CompleteEnumeratedLiteralSeq literal_seq_InnerEnumHelper;
+            {
+                EnumeratedLiteralFlag flags_ONE = TypeObjectUtils::build_enumerated_literal_flag(false);
+                CommonEnumeratedLiteral common_ONE = TypeObjectUtils::build_common_enumerated_literal(0, flags_ONE);
+                eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_ONE;
+                ann_custom_InnerEnumHelper.reset();
+                MemberName name_ONE = "ONE";
+                CompleteMemberDetail detail_ONE = TypeObjectUtils::build_complete_member_detail(name_ONE, member_ann_builtin_ONE, ann_custom_InnerEnumHelper);
+                CompleteEnumeratedLiteral literal_ONE = TypeObjectUtils::build_complete_enumerated_literal(common_ONE, detail_ONE);
+                TypeObjectUtils::add_complete_enumerated_literal(literal_seq_InnerEnumHelper, literal_ONE);
+            }
+            {
+                EnumeratedLiteralFlag flags_TWO = TypeObjectUtils::build_enumerated_literal_flag(false);
+                CommonEnumeratedLiteral common_TWO = TypeObjectUtils::build_common_enumerated_literal(1, flags_TWO);
+                eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_TWO;
+                ann_custom_InnerEnumHelper.reset();
+                MemberName name_TWO = "TWO";
+                CompleteMemberDetail detail_TWO = TypeObjectUtils::build_complete_member_detail(name_TWO, member_ann_builtin_TWO, ann_custom_InnerEnumHelper);
+                CompleteEnumeratedLiteral literal_TWO = TypeObjectUtils::build_complete_enumerated_literal(common_TWO, detail_TWO);
+                TypeObjectUtils::add_complete_enumerated_literal(literal_seq_InnerEnumHelper, literal_TWO);
+            }
+            CompleteEnumeratedType enumerated_type_InnerEnumHelper = TypeObjectUtils::build_complete_enumerated_type(enum_flags_InnerEnumHelper, header_InnerEnumHelper,
+                    literal_seq_InnerEnumHelper);
+            if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                    TypeObjectUtils::build_and_register_enumerated_type_object(enumerated_type_InnerEnumHelper, type_name_InnerEnumHelper.to_string(), type_ids_InnerEnumHelper))
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "AnnotationTest::InnerEnumHelper already registered in TypeObjectRegistry for a different type.");
+            }
         }
     }
 
     void register_Inner_alias_bounded_string_helper_type_identifier(
             TypeIdentifierPair& type_ids_Inner_alias_bounded_string_helper)
     {
-        ReturnCode_t return_code_Inner_alias_bounded_string_helper;
-        AliasTypeFlag alias_flags_Inner_alias_bounded_string_helper = 0;
-        QualifiedTypeName type_name_Inner_alias_bounded_string_helper = "AnnotationTest::Inner_alias_bounded_string_helper";
-        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_Inner_alias_bounded_string_helper;
-        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_Inner_alias_bounded_string_helper;
-        CompleteTypeDetail detail_Inner_alias_bounded_string_helper = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_Inner_alias_bounded_string_helper, ann_custom_Inner_alias_bounded_string_helper, type_name_Inner_alias_bounded_string_helper.to_string());
-        CompleteAliasHeader header_Inner_alias_bounded_string_helper = TypeObjectUtils::build_complete_alias_header(detail_Inner_alias_bounded_string_helper);
-        AliasMemberFlag related_flags_Inner_alias_bounded_string_helper = 0;
+        ReturnCode_t return_code_Inner_alias_bounded_string_helper {eprosima::fastdds::dds::RETCODE_OK};
         return_code_Inner_alias_bounded_string_helper =
             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-            "anonymous_string_1", type_ids_Inner_alias_bounded_string_helper);
-
+            "AnnotationTest::Inner_alias_bounded_string_helper", type_ids_Inner_alias_bounded_string_helper);
         if (eprosima::fastdds::dds::RETCODE_OK != return_code_Inner_alias_bounded_string_helper)
         {
+            AliasTypeFlag alias_flags_Inner_alias_bounded_string_helper = 0;
+            QualifiedTypeName type_name_Inner_alias_bounded_string_helper = "AnnotationTest::Inner_alias_bounded_string_helper";
+            eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_Inner_alias_bounded_string_helper;
+            eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_Inner_alias_bounded_string_helper;
+            CompleteTypeDetail detail_Inner_alias_bounded_string_helper = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_Inner_alias_bounded_string_helper, ann_custom_Inner_alias_bounded_string_helper, type_name_Inner_alias_bounded_string_helper.to_string());
+            CompleteAliasHeader header_Inner_alias_bounded_string_helper = TypeObjectUtils::build_complete_alias_header(detail_Inner_alias_bounded_string_helper);
+            AliasMemberFlag related_flags_Inner_alias_bounded_string_helper = 0;
+            return_code_Inner_alias_bounded_string_helper =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "anonymous_string_1", type_ids_Inner_alias_bounded_string_helper);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_Inner_alias_bounded_string_helper)
             {
-                SBound bound = static_cast<SBound>(1);
-                StringSTypeDefn string_sdefn = TypeObjectUtils::build_string_s_type_defn(bound);
-                if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                        TypeObjectUtils::build_and_register_s_string_type_identifier(string_sdefn,
-                        "anonymous_string_1", type_ids_Inner_alias_bounded_string_helper))
                 {
-                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "anonymous_string_1 already registered in TypeObjectRegistry for a different type.");
+                    SBound bound = static_cast<SBound>(1);
+                    StringSTypeDefn string_sdefn = TypeObjectUtils::build_string_s_type_defn(bound);
+                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                            TypeObjectUtils::build_and_register_s_string_type_identifier(string_sdefn,
+                            "anonymous_string_1", type_ids_Inner_alias_bounded_string_helper))
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                            "anonymous_string_1 already registered in TypeObjectRegistry for a different type.");
+                    }
                 }
             }
-        }
-        CommonAliasBody common_Inner_alias_bounded_string_helper;
-        if (EK_COMPLETE == type_ids_Inner_alias_bounded_string_helper.type_identifier1()._d() || TK_NONE == type_ids_Inner_alias_bounded_string_helper.type_identifier2()._d() ||
-                (TI_PLAIN_SEQUENCE_SMALL == type_ids_Inner_alias_bounded_string_helper.type_identifier1()._d() &&
-                EK_COMPLETE == type_ids_Inner_alias_bounded_string_helper.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                (TI_PLAIN_SEQUENCE_LARGE == type_ids_Inner_alias_bounded_string_helper.type_identifier1()._d() &&
-                EK_COMPLETE == type_ids_Inner_alias_bounded_string_helper.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                (TI_PLAIN_ARRAY_SMALL == type_ids_Inner_alias_bounded_string_helper.type_identifier1()._d() &&
-                EK_COMPLETE == type_ids_Inner_alias_bounded_string_helper.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                (TI_PLAIN_ARRAY_LARGE == type_ids_Inner_alias_bounded_string_helper.type_identifier1()._d() &&
-                EK_COMPLETE == type_ids_Inner_alias_bounded_string_helper.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                (TI_PLAIN_MAP_SMALL == type_ids_Inner_alias_bounded_string_helper.type_identifier1()._d() &&
-                (EK_COMPLETE == type_ids_Inner_alias_bounded_string_helper.type_identifier1().map_sdefn().header().equiv_kind() ||
-                EK_COMPLETE == type_ids_Inner_alias_bounded_string_helper.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                (TI_PLAIN_MAP_LARGE == type_ids_Inner_alias_bounded_string_helper.type_identifier1()._d() &&
-                (EK_COMPLETE == type_ids_Inner_alias_bounded_string_helper.type_identifier1().map_ldefn().header().equiv_kind() ||
-                EK_COMPLETE == type_ids_Inner_alias_bounded_string_helper.type_identifier1().map_ldefn().key_identifier()->_d())))
-        {
-            common_Inner_alias_bounded_string_helper = TypeObjectUtils::build_common_alias_body(related_flags_Inner_alias_bounded_string_helper,
-                    type_ids_Inner_alias_bounded_string_helper.type_identifier1());
-        }
-        else if (EK_COMPLETE == type_ids_Inner_alias_bounded_string_helper.type_identifier2()._d() ||
-                (TI_PLAIN_SEQUENCE_SMALL == type_ids_Inner_alias_bounded_string_helper.type_identifier2()._d() &&
-                EK_COMPLETE == type_ids_Inner_alias_bounded_string_helper.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                (TI_PLAIN_SEQUENCE_LARGE == type_ids_Inner_alias_bounded_string_helper.type_identifier2()._d() &&
-                EK_COMPLETE == type_ids_Inner_alias_bounded_string_helper.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                (TI_PLAIN_ARRAY_SMALL == type_ids_Inner_alias_bounded_string_helper.type_identifier2()._d() &&
-                EK_COMPLETE == type_ids_Inner_alias_bounded_string_helper.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                (TI_PLAIN_ARRAY_LARGE == type_ids_Inner_alias_bounded_string_helper.type_identifier2()._d() &&
-                EK_COMPLETE == type_ids_Inner_alias_bounded_string_helper.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                (TI_PLAIN_MAP_SMALL == type_ids_Inner_alias_bounded_string_helper.type_identifier2()._d() &&
-                (EK_COMPLETE == type_ids_Inner_alias_bounded_string_helper.type_identifier2().map_sdefn().header().equiv_kind() ||
-                EK_COMPLETE == type_ids_Inner_alias_bounded_string_helper.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                (TI_PLAIN_MAP_LARGE == type_ids_Inner_alias_bounded_string_helper.type_identifier2()._d() &&
-                (EK_COMPLETE == type_ids_Inner_alias_bounded_string_helper.type_identifier2().map_ldefn().header().equiv_kind() ||
-                EK_COMPLETE == type_ids_Inner_alias_bounded_string_helper.type_identifier2().map_ldefn().key_identifier()->_d())))
-        {
-            common_Inner_alias_bounded_string_helper = TypeObjectUtils::build_common_alias_body(related_flags_Inner_alias_bounded_string_helper,
-                    type_ids_Inner_alias_bounded_string_helper.type_identifier2());
-        }
-        else
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                    "AnnotationTest::Inner_alias_bounded_string_helper related TypeIdentifier inconsistent.");
-            return;
-        }
-        eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_Inner_alias_bounded_string_helper;
-        ann_custom_Inner_alias_bounded_string_helper.reset();
-        CompleteAliasBody body_Inner_alias_bounded_string_helper = TypeObjectUtils::build_complete_alias_body(common_Inner_alias_bounded_string_helper,
-                member_ann_builtin_Inner_alias_bounded_string_helper, ann_custom_Inner_alias_bounded_string_helper);
-        CompleteAliasType alias_type_Inner_alias_bounded_string_helper = TypeObjectUtils::build_complete_alias_type(alias_flags_Inner_alias_bounded_string_helper,
-                header_Inner_alias_bounded_string_helper, body_Inner_alias_bounded_string_helper);
-        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_alias_type_object(alias_type_Inner_alias_bounded_string_helper,
-                    type_name_Inner_alias_bounded_string_helper.to_string(), type_ids_Inner_alias_bounded_string_helper))
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                "AnnotationTest::Inner_alias_bounded_string_helper already registered in TypeObjectRegistry for a different type.");
+            bool common_Inner_alias_bounded_string_helper_ec {false};
+            CommonAliasBody common_Inner_alias_bounded_string_helper {TypeObjectUtils::build_common_alias_body(related_flags_Inner_alias_bounded_string_helper,
+                    TypeObjectUtils::retrieve_complete_type_identifier(type_ids_Inner_alias_bounded_string_helper, common_Inner_alias_bounded_string_helper_ec))};
+            if (!common_Inner_alias_bounded_string_helper_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "AnnotationTest::Inner_alias_bounded_string_helper related TypeIdentifier inconsistent.");
+                return;
+            }
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_Inner_alias_bounded_string_helper;
+            ann_custom_Inner_alias_bounded_string_helper.reset();
+            CompleteAliasBody body_Inner_alias_bounded_string_helper = TypeObjectUtils::build_complete_alias_body(common_Inner_alias_bounded_string_helper,
+                    member_ann_builtin_Inner_alias_bounded_string_helper, ann_custom_Inner_alias_bounded_string_helper);
+            CompleteAliasType alias_type_Inner_alias_bounded_string_helper = TypeObjectUtils::build_complete_alias_type(alias_flags_Inner_alias_bounded_string_helper,
+                    header_Inner_alias_bounded_string_helper, body_Inner_alias_bounded_string_helper);
+            if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                    TypeObjectUtils::build_and_register_alias_type_object(alias_type_Inner_alias_bounded_string_helper,
+                        type_name_Inner_alias_bounded_string_helper.to_string(), type_ids_Inner_alias_bounded_string_helper))
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "AnnotationTest::Inner_alias_bounded_string_helper already registered in TypeObjectRegistry for a different type.");
+            }
         }
     }
 
@@ -178,694 +154,701 @@ namespace AnnotationTest {
 } // namespace AnnotationTest
 
 void register_AnnotationTest_type_identifier(
-        TypeIdentifierPair& type_ids)
+        TypeIdentifierPair& type_ids_AnnotationTest)
 {
-    AnnotationTypeFlag annotation_flag_AnnotationTest = 0;
-    QualifiedTypeName annotation_name_AnnotationTest = "AnnotationTest";
-    CompleteAnnotationHeader header_AnnotationTest = TypeObjectUtils::build_complete_annotation_header(annotation_name_AnnotationTest);
-    CompleteAnnotationParameterSeq member_seq_AnnotationTest;
+    ReturnCode_t return_code_AnnotationTest {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_AnnotationTest =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "AnnotationTest", type_ids_AnnotationTest);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_AnnotationTest)
     {
-        ReturnCode_t return_code_var_short;
-        TypeIdentifierPair type_ids_var_short;
-        AnnotationParameterFlag member_flags_var_short = 0;
-        return_code_var_short =
-            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-            "_int16_t", type_ids_var_short);
+        AnnotationTypeFlag annotation_flag_AnnotationTest = 0;
+        QualifiedTypeName annotation_name_AnnotationTest = "AnnotationTest";
+        CompleteAnnotationHeader header_AnnotationTest = TypeObjectUtils::build_complete_annotation_header(annotation_name_AnnotationTest);
+        CompleteAnnotationParameterSeq member_seq_AnnotationTest;
+        {
+            ReturnCode_t return_code_var_short;
+            TypeIdentifierPair type_ids_var_short;
+            AnnotationParameterFlag member_flags_var_short = 0;
+            return_code_var_short =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_int16_t", type_ids_var_short);
 
-        if (return_code_var_short != eprosima::fastdds::dds::RETCODE_OK)
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                    "var_short annotation parameter TypeIdentifier unknown to TypeObjectRegistry.");
-            return;
-        }
-        CommonAnnotationParameter common_var_short;
-        if (EK_COMPLETE == type_ids_var_short.type_identifier1()._d() || TK_NONE == type_ids_var_short.type_identifier2()._d())
-        {
-            common_var_short = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_short, type_ids_var_short.type_identifier1());
-        }
-        else if (EK_COMPLETE == type_ids_var_short.type_identifier2()._d())
-        {
-            common_var_short = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_short, type_ids_var_short.type_identifier2());
-        }
-        else
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                    "var_short annotation parameter TypeIdentifier inconsistent.");
-            return;
-        }
-        MemberName name_var_short = "var_short";
-        AnnotationParameterValue param_value_var_short = TypeObjectUtils::build_annotation_parameter_value(static_cast<int16_t>(0));
-
-        CompleteAnnotationParameter param_var_short = TypeObjectUtils::build_complete_annotation_parameter(common_var_short, name_var_short, param_value_var_short);
-        TypeObjectUtils::add_complete_annotation_parameter(member_seq_AnnotationTest, param_var_short);
-    }
-    {
-        ReturnCode_t return_code_var_char16;
-        TypeIdentifierPair type_ids_var_char16;
-        AnnotationParameterFlag member_flags_var_char16 = 0;
-        return_code_var_char16 =
-            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-            "_wchar_t", type_ids_var_char16);
-
-        if (return_code_var_char16 != eprosima::fastdds::dds::RETCODE_OK)
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                    "var_char16 annotation parameter TypeIdentifier unknown to TypeObjectRegistry.");
-            return;
-        }
-        CommonAnnotationParameter common_var_char16;
-        if (EK_COMPLETE == type_ids_var_char16.type_identifier1()._d() || TK_NONE == type_ids_var_char16.type_identifier2()._d())
-        {
-            common_var_char16 = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_char16, type_ids_var_char16.type_identifier1());
-        }
-        else if (EK_COMPLETE == type_ids_var_char16.type_identifier2()._d())
-        {
-            common_var_char16 = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_char16, type_ids_var_char16.type_identifier2());
-        }
-        else
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                    "var_char16 annotation parameter TypeIdentifier inconsistent.");
-            return;
-        }
-        MemberName name_var_char16 = "var_char16";
-        AnnotationParameterValue param_value_var_char16 = TypeObjectUtils::build_annotation_parameter_value(static_cast<wchar_t>(0));
-
-        CompleteAnnotationParameter param_var_char16 = TypeObjectUtils::build_complete_annotation_parameter(common_var_char16, name_var_char16, param_value_var_char16);
-        TypeObjectUtils::add_complete_annotation_parameter(member_seq_AnnotationTest, param_var_char16);
-    }
-    {
-        ReturnCode_t return_code_enum_value;
-        TypeIdentifierPair type_ids_enum_value;
-        AnnotationParameterFlag member_flags_enum_value = 0;
-        return_code_enum_value =
-            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-            "AnnotationTest::InnerEnumHelper", type_ids_enum_value);
-
-        if (return_code_enum_value != eprosima::fastdds::dds::RETCODE_OK)
-        {
-            AnnotationTest::register_InnerEnumHelper_type_identifier(type_ids_enum_value);
-        }
-        CommonAnnotationParameter common_enum_value;
-        if (EK_COMPLETE == type_ids_enum_value.type_identifier1()._d() || TK_NONE == type_ids_enum_value.type_identifier2()._d())
-        {
-            common_enum_value = TypeObjectUtils::build_common_annotation_parameter(member_flags_enum_value, type_ids_enum_value.type_identifier1());
-        }
-        else if (EK_COMPLETE == type_ids_enum_value.type_identifier2()._d())
-        {
-            common_enum_value = TypeObjectUtils::build_common_annotation_parameter(member_flags_enum_value, type_ids_enum_value.type_identifier2());
-        }
-        else
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                    "enum_value annotation parameter TypeIdentifier inconsistent.");
-            return;
-        }
-        MemberName name_enum_value = "enum_value";
-        AnnotationParameterValue param_value_enum_value = TypeObjectUtils::build_annotation_parameter_value_enum(0);
-
-        CompleteAnnotationParameter param_enum_value = TypeObjectUtils::build_complete_annotation_parameter(common_enum_value, name_enum_value, param_value_enum_value);
-        TypeObjectUtils::add_complete_annotation_parameter(member_seq_AnnotationTest, param_enum_value);
-    }
-    {
-        ReturnCode_t return_code_var_long;
-        TypeIdentifierPair type_ids_var_long;
-        AnnotationParameterFlag member_flags_var_long = 0;
-        return_code_var_long =
-            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-            "_int32_t", type_ids_var_long);
-
-        if (return_code_var_long != eprosima::fastdds::dds::RETCODE_OK)
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                    "var_long annotation parameter TypeIdentifier unknown to TypeObjectRegistry.");
-            return;
-        }
-        CommonAnnotationParameter common_var_long;
-        if (EK_COMPLETE == type_ids_var_long.type_identifier1()._d() || TK_NONE == type_ids_var_long.type_identifier2()._d())
-        {
-            common_var_long = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_long, type_ids_var_long.type_identifier1());
-        }
-        else if (EK_COMPLETE == type_ids_var_long.type_identifier2()._d())
-        {
-            common_var_long = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_long, type_ids_var_long.type_identifier2());
-        }
-        else
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                    "var_long annotation parameter TypeIdentifier inconsistent.");
-            return;
-        }
-        MemberName name_var_long = "var_long";
-        AnnotationParameterValue param_value_var_long = TypeObjectUtils::build_annotation_parameter_value(static_cast<int32_t>(0));
-
-        CompleteAnnotationParameter param_var_long = TypeObjectUtils::build_complete_annotation_parameter(common_var_long, name_var_long, param_value_var_long);
-        TypeObjectUtils::add_complete_annotation_parameter(member_seq_AnnotationTest, param_var_long);
-    }
-    {
-        ReturnCode_t return_code_var_char8;
-        TypeIdentifierPair type_ids_var_char8;
-        AnnotationParameterFlag member_flags_var_char8 = 0;
-        return_code_var_char8 =
-            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-            "_char", type_ids_var_char8);
-
-        if (return_code_var_char8 != eprosima::fastdds::dds::RETCODE_OK)
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                    "var_char8 annotation parameter TypeIdentifier unknown to TypeObjectRegistry.");
-            return;
-        }
-        CommonAnnotationParameter common_var_char8;
-        if (EK_COMPLETE == type_ids_var_char8.type_identifier1()._d() || TK_NONE == type_ids_var_char8.type_identifier2()._d())
-        {
-            common_var_char8 = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_char8, type_ids_var_char8.type_identifier1());
-        }
-        else if (EK_COMPLETE == type_ids_var_char8.type_identifier2()._d())
-        {
-            common_var_char8 = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_char8, type_ids_var_char8.type_identifier2());
-        }
-        else
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                    "var_char8 annotation parameter TypeIdentifier inconsistent.");
-            return;
-        }
-        MemberName name_var_char8 = "var_char8";
-        AnnotationParameterValue param_value_var_char8 = TypeObjectUtils::build_annotation_parameter_value(static_cast<char>(0));
-
-        CompleteAnnotationParameter param_var_char8 = TypeObjectUtils::build_complete_annotation_parameter(common_var_char8, name_var_char8, param_value_var_char8);
-        TypeObjectUtils::add_complete_annotation_parameter(member_seq_AnnotationTest, param_var_char8);
-    }
-    {
-        ReturnCode_t return_code_var_ulonglong;
-        TypeIdentifierPair type_ids_var_ulonglong;
-        AnnotationParameterFlag member_flags_var_ulonglong = 0;
-        return_code_var_ulonglong =
-            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-            "_uint64_t", type_ids_var_ulonglong);
-
-        if (return_code_var_ulonglong != eprosima::fastdds::dds::RETCODE_OK)
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                    "var_ulonglong annotation parameter TypeIdentifier unknown to TypeObjectRegistry.");
-            return;
-        }
-        CommonAnnotationParameter common_var_ulonglong;
-        if (EK_COMPLETE == type_ids_var_ulonglong.type_identifier1()._d() || TK_NONE == type_ids_var_ulonglong.type_identifier2()._d())
-        {
-            common_var_ulonglong = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_ulonglong, type_ids_var_ulonglong.type_identifier1());
-        }
-        else if (EK_COMPLETE == type_ids_var_ulonglong.type_identifier2()._d())
-        {
-            common_var_ulonglong = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_ulonglong, type_ids_var_ulonglong.type_identifier2());
-        }
-        else
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                    "var_ulonglong annotation parameter TypeIdentifier inconsistent.");
-            return;
-        }
-        MemberName name_var_ulonglong = "var_ulonglong";
-        AnnotationParameterValue param_value_var_ulonglong = TypeObjectUtils::build_annotation_parameter_value(static_cast<uint64_t>(0));
-
-        CompleteAnnotationParameter param_var_ulonglong = TypeObjectUtils::build_complete_annotation_parameter(common_var_ulonglong, name_var_ulonglong, param_value_var_ulonglong);
-        TypeObjectUtils::add_complete_annotation_parameter(member_seq_AnnotationTest, param_var_ulonglong);
-    }
-    {
-        ReturnCode_t return_code_var_string_10;
-        TypeIdentifierPair type_ids_var_string_10;
-        AnnotationParameterFlag member_flags_var_string_10 = 0;
-        return_code_var_string_10 =
-            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-            "AnnotationTest::Inner_alias_bounded_string_helper", type_ids_var_string_10);
-
-        if (return_code_var_string_10 != eprosima::fastdds::dds::RETCODE_OK)
-        {
-            AnnotationTest::register_Inner_alias_bounded_string_helper_type_identifier(type_ids_var_string_10);
-        }
-        CommonAnnotationParameter common_var_string_10;
-        if (EK_COMPLETE == type_ids_var_string_10.type_identifier1()._d() || TK_NONE == type_ids_var_string_10.type_identifier2()._d())
-        {
-            common_var_string_10 = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_string_10, type_ids_var_string_10.type_identifier1());
-        }
-        else if (EK_COMPLETE == type_ids_var_string_10.type_identifier2()._d())
-        {
-            common_var_string_10 = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_string_10, type_ids_var_string_10.type_identifier2());
-        }
-        else
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                    "var_string_10 annotation parameter TypeIdentifier inconsistent.");
-            return;
-        }
-        MemberName name_var_string_10 = "var_string_10";
-        AnnotationParameterValue param_value_var_string_10 = TypeObjectUtils::build_annotation_parameter_value(eprosima::fastcdr::fixed_string<128>(""));
-
-
-        CompleteAnnotationParameter param_var_string_10 = TypeObjectUtils::build_complete_annotation_parameter(common_var_string_10, name_var_string_10, param_value_var_string_10);
-        TypeObjectUtils::add_complete_annotation_parameter(member_seq_AnnotationTest, param_var_string_10);
-    }
-    {
-        ReturnCode_t return_code_var_boolean;
-        TypeIdentifierPair type_ids_var_boolean;
-        AnnotationParameterFlag member_flags_var_boolean = 0;
-        return_code_var_boolean =
-            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-            "_bool", type_ids_var_boolean);
-
-        if (return_code_var_boolean != eprosima::fastdds::dds::RETCODE_OK)
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                    "var_boolean annotation parameter TypeIdentifier unknown to TypeObjectRegistry.");
-            return;
-        }
-        CommonAnnotationParameter common_var_boolean;
-        if (EK_COMPLETE == type_ids_var_boolean.type_identifier1()._d() || TK_NONE == type_ids_var_boolean.type_identifier2()._d())
-        {
-            common_var_boolean = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_boolean, type_ids_var_boolean.type_identifier1());
-        }
-        else if (EK_COMPLETE == type_ids_var_boolean.type_identifier2()._d())
-        {
-            common_var_boolean = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_boolean, type_ids_var_boolean.type_identifier2());
-        }
-        else
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                    "var_boolean annotation parameter TypeIdentifier inconsistent.");
-            return;
-        }
-        MemberName name_var_boolean = "var_boolean";
-        AnnotationParameterValue param_value_var_boolean = TypeObjectUtils::build_annotation_parameter_value(static_cast<bool>(false));
-
-        CompleteAnnotationParameter param_var_boolean = TypeObjectUtils::build_complete_annotation_parameter(common_var_boolean, name_var_boolean, param_value_var_boolean);
-        TypeObjectUtils::add_complete_annotation_parameter(member_seq_AnnotationTest, param_var_boolean);
-    }
-    {
-        ReturnCode_t return_code_var_wstring;
-        TypeIdentifierPair type_ids_var_wstring;
-        AnnotationParameterFlag member_flags_var_wstring = 0;
-        return_code_var_wstring =
-            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-            "anonymous_wstring_unbounded", type_ids_var_wstring);
-
-        if (return_code_var_wstring != eprosima::fastdds::dds::RETCODE_OK)
-        {
+            if (return_code_var_short != eprosima::fastdds::dds::RETCODE_OK)
             {
-                SBound bound = 0;
-                StringSTypeDefn string_sdefn = TypeObjectUtils::build_string_s_type_defn(bound);
-                if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                        TypeObjectUtils::build_and_register_s_string_type_identifier(string_sdefn,
-                        "anonymous_wstring_unbounded", type_ids_var_wstring, true))
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "var_short annotation parameter TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            CommonAnnotationParameter common_var_short;
+            if (EK_COMPLETE == type_ids_var_short.type_identifier1()._d() || TK_NONE == type_ids_var_short.type_identifier2()._d())
+            {
+                common_var_short = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_short, type_ids_var_short.type_identifier1());
+            }
+            else if (EK_COMPLETE == type_ids_var_short.type_identifier2()._d())
+            {
+                common_var_short = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_short, type_ids_var_short.type_identifier2());
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "var_short annotation parameter TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_var_short = "var_short";
+            AnnotationParameterValue param_value_var_short = TypeObjectUtils::build_annotation_parameter_value(static_cast<int16_t>(0));
+
+            CompleteAnnotationParameter param_var_short = TypeObjectUtils::build_complete_annotation_parameter(common_var_short, name_var_short, param_value_var_short);
+            TypeObjectUtils::add_complete_annotation_parameter(member_seq_AnnotationTest, param_var_short);
+        }
+        {
+            ReturnCode_t return_code_var_char16;
+            TypeIdentifierPair type_ids_var_char16;
+            AnnotationParameterFlag member_flags_var_char16 = 0;
+            return_code_var_char16 =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_wchar_t", type_ids_var_char16);
+
+            if (return_code_var_char16 != eprosima::fastdds::dds::RETCODE_OK)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "var_char16 annotation parameter TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            CommonAnnotationParameter common_var_char16;
+            if (EK_COMPLETE == type_ids_var_char16.type_identifier1()._d() || TK_NONE == type_ids_var_char16.type_identifier2()._d())
+            {
+                common_var_char16 = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_char16, type_ids_var_char16.type_identifier1());
+            }
+            else if (EK_COMPLETE == type_ids_var_char16.type_identifier2()._d())
+            {
+                common_var_char16 = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_char16, type_ids_var_char16.type_identifier2());
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "var_char16 annotation parameter TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_var_char16 = "var_char16";
+            AnnotationParameterValue param_value_var_char16 = TypeObjectUtils::build_annotation_parameter_value(static_cast<wchar_t>(0));
+
+            CompleteAnnotationParameter param_var_char16 = TypeObjectUtils::build_complete_annotation_parameter(common_var_char16, name_var_char16, param_value_var_char16);
+            TypeObjectUtils::add_complete_annotation_parameter(member_seq_AnnotationTest, param_var_char16);
+        }
+        {
+            ReturnCode_t return_code_enum_value;
+            TypeIdentifierPair type_ids_enum_value;
+            AnnotationParameterFlag member_flags_enum_value = 0;
+            return_code_enum_value =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "AnnotationTest::InnerEnumHelper", type_ids_enum_value);
+
+            if (return_code_enum_value != eprosima::fastdds::dds::RETCODE_OK)
+            {
+                AnnotationTest::register_InnerEnumHelper_type_identifier(type_ids_enum_value);
+            }
+            CommonAnnotationParameter common_enum_value;
+            if (EK_COMPLETE == type_ids_enum_value.type_identifier1()._d() || TK_NONE == type_ids_enum_value.type_identifier2()._d())
+            {
+                common_enum_value = TypeObjectUtils::build_common_annotation_parameter(member_flags_enum_value, type_ids_enum_value.type_identifier1());
+            }
+            else if (EK_COMPLETE == type_ids_enum_value.type_identifier2()._d())
+            {
+                common_enum_value = TypeObjectUtils::build_common_annotation_parameter(member_flags_enum_value, type_ids_enum_value.type_identifier2());
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "enum_value annotation parameter TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_enum_value = "enum_value";
+            AnnotationParameterValue param_value_enum_value = TypeObjectUtils::build_annotation_parameter_value_enum(0);
+
+            CompleteAnnotationParameter param_enum_value = TypeObjectUtils::build_complete_annotation_parameter(common_enum_value, name_enum_value, param_value_enum_value);
+            TypeObjectUtils::add_complete_annotation_parameter(member_seq_AnnotationTest, param_enum_value);
+        }
+        {
+            ReturnCode_t return_code_var_long;
+            TypeIdentifierPair type_ids_var_long;
+            AnnotationParameterFlag member_flags_var_long = 0;
+            return_code_var_long =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_int32_t", type_ids_var_long);
+
+            if (return_code_var_long != eprosima::fastdds::dds::RETCODE_OK)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "var_long annotation parameter TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            CommonAnnotationParameter common_var_long;
+            if (EK_COMPLETE == type_ids_var_long.type_identifier1()._d() || TK_NONE == type_ids_var_long.type_identifier2()._d())
+            {
+                common_var_long = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_long, type_ids_var_long.type_identifier1());
+            }
+            else if (EK_COMPLETE == type_ids_var_long.type_identifier2()._d())
+            {
+                common_var_long = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_long, type_ids_var_long.type_identifier2());
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "var_long annotation parameter TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_var_long = "var_long";
+            AnnotationParameterValue param_value_var_long = TypeObjectUtils::build_annotation_parameter_value(static_cast<int32_t>(0));
+
+            CompleteAnnotationParameter param_var_long = TypeObjectUtils::build_complete_annotation_parameter(common_var_long, name_var_long, param_value_var_long);
+            TypeObjectUtils::add_complete_annotation_parameter(member_seq_AnnotationTest, param_var_long);
+        }
+        {
+            ReturnCode_t return_code_var_char8;
+            TypeIdentifierPair type_ids_var_char8;
+            AnnotationParameterFlag member_flags_var_char8 = 0;
+            return_code_var_char8 =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_char", type_ids_var_char8);
+
+            if (return_code_var_char8 != eprosima::fastdds::dds::RETCODE_OK)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "var_char8 annotation parameter TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            CommonAnnotationParameter common_var_char8;
+            if (EK_COMPLETE == type_ids_var_char8.type_identifier1()._d() || TK_NONE == type_ids_var_char8.type_identifier2()._d())
+            {
+                common_var_char8 = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_char8, type_ids_var_char8.type_identifier1());
+            }
+            else if (EK_COMPLETE == type_ids_var_char8.type_identifier2()._d())
+            {
+                common_var_char8 = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_char8, type_ids_var_char8.type_identifier2());
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "var_char8 annotation parameter TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_var_char8 = "var_char8";
+            AnnotationParameterValue param_value_var_char8 = TypeObjectUtils::build_annotation_parameter_value(static_cast<char>(0));
+
+            CompleteAnnotationParameter param_var_char8 = TypeObjectUtils::build_complete_annotation_parameter(common_var_char8, name_var_char8, param_value_var_char8);
+            TypeObjectUtils::add_complete_annotation_parameter(member_seq_AnnotationTest, param_var_char8);
+        }
+        {
+            ReturnCode_t return_code_var_ulonglong;
+            TypeIdentifierPair type_ids_var_ulonglong;
+            AnnotationParameterFlag member_flags_var_ulonglong = 0;
+            return_code_var_ulonglong =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_uint64_t", type_ids_var_ulonglong);
+
+            if (return_code_var_ulonglong != eprosima::fastdds::dds::RETCODE_OK)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "var_ulonglong annotation parameter TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            CommonAnnotationParameter common_var_ulonglong;
+            if (EK_COMPLETE == type_ids_var_ulonglong.type_identifier1()._d() || TK_NONE == type_ids_var_ulonglong.type_identifier2()._d())
+            {
+                common_var_ulonglong = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_ulonglong, type_ids_var_ulonglong.type_identifier1());
+            }
+            else if (EK_COMPLETE == type_ids_var_ulonglong.type_identifier2()._d())
+            {
+                common_var_ulonglong = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_ulonglong, type_ids_var_ulonglong.type_identifier2());
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "var_ulonglong annotation parameter TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_var_ulonglong = "var_ulonglong";
+            AnnotationParameterValue param_value_var_ulonglong = TypeObjectUtils::build_annotation_parameter_value(static_cast<uint64_t>(0));
+
+            CompleteAnnotationParameter param_var_ulonglong = TypeObjectUtils::build_complete_annotation_parameter(common_var_ulonglong, name_var_ulonglong, param_value_var_ulonglong);
+            TypeObjectUtils::add_complete_annotation_parameter(member_seq_AnnotationTest, param_var_ulonglong);
+        }
+        {
+            ReturnCode_t return_code_var_string_10;
+            TypeIdentifierPair type_ids_var_string_10;
+            AnnotationParameterFlag member_flags_var_string_10 = 0;
+            return_code_var_string_10 =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "AnnotationTest::Inner_alias_bounded_string_helper", type_ids_var_string_10);
+
+            if (return_code_var_string_10 != eprosima::fastdds::dds::RETCODE_OK)
+            {
+                AnnotationTest::register_Inner_alias_bounded_string_helper_type_identifier(type_ids_var_string_10);
+            }
+            CommonAnnotationParameter common_var_string_10;
+            if (EK_COMPLETE == type_ids_var_string_10.type_identifier1()._d() || TK_NONE == type_ids_var_string_10.type_identifier2()._d())
+            {
+                common_var_string_10 = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_string_10, type_ids_var_string_10.type_identifier1());
+            }
+            else if (EK_COMPLETE == type_ids_var_string_10.type_identifier2()._d())
+            {
+                common_var_string_10 = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_string_10, type_ids_var_string_10.type_identifier2());
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "var_string_10 annotation parameter TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_var_string_10 = "var_string_10";
+            AnnotationParameterValue param_value_var_string_10 = TypeObjectUtils::build_annotation_parameter_value(eprosima::fastcdr::fixed_string<128>(""));
+
+
+            CompleteAnnotationParameter param_var_string_10 = TypeObjectUtils::build_complete_annotation_parameter(common_var_string_10, name_var_string_10, param_value_var_string_10);
+            TypeObjectUtils::add_complete_annotation_parameter(member_seq_AnnotationTest, param_var_string_10);
+        }
+        {
+            ReturnCode_t return_code_var_boolean;
+            TypeIdentifierPair type_ids_var_boolean;
+            AnnotationParameterFlag member_flags_var_boolean = 0;
+            return_code_var_boolean =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_bool", type_ids_var_boolean);
+
+            if (return_code_var_boolean != eprosima::fastdds::dds::RETCODE_OK)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "var_boolean annotation parameter TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            CommonAnnotationParameter common_var_boolean;
+            if (EK_COMPLETE == type_ids_var_boolean.type_identifier1()._d() || TK_NONE == type_ids_var_boolean.type_identifier2()._d())
+            {
+                common_var_boolean = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_boolean, type_ids_var_boolean.type_identifier1());
+            }
+            else if (EK_COMPLETE == type_ids_var_boolean.type_identifier2()._d())
+            {
+                common_var_boolean = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_boolean, type_ids_var_boolean.type_identifier2());
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "var_boolean annotation parameter TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_var_boolean = "var_boolean";
+            AnnotationParameterValue param_value_var_boolean = TypeObjectUtils::build_annotation_parameter_value(static_cast<bool>(false));
+
+            CompleteAnnotationParameter param_var_boolean = TypeObjectUtils::build_complete_annotation_parameter(common_var_boolean, name_var_boolean, param_value_var_boolean);
+            TypeObjectUtils::add_complete_annotation_parameter(member_seq_AnnotationTest, param_var_boolean);
+        }
+        {
+            ReturnCode_t return_code_var_wstring;
+            TypeIdentifierPair type_ids_var_wstring;
+            AnnotationParameterFlag member_flags_var_wstring = 0;
+            return_code_var_wstring =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "anonymous_wstring_unbounded", type_ids_var_wstring);
+
+            if (return_code_var_wstring != eprosima::fastdds::dds::RETCODE_OK)
+            {
                 {
-                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "anonymous_wstring_unbounded already registered in TypeObjectRegistry for a different type.");
+                    SBound bound = 0;
+                    StringSTypeDefn string_sdefn = TypeObjectUtils::build_string_s_type_defn(bound);
+                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                            TypeObjectUtils::build_and_register_s_string_type_identifier(string_sdefn,
+                            "anonymous_wstring_unbounded", type_ids_var_wstring, true))
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                            "anonymous_wstring_unbounded already registered in TypeObjectRegistry for a different type.");
+                    }
                 }
             }
-        }
-        CommonAnnotationParameter common_var_wstring;
-        if (EK_COMPLETE == type_ids_var_wstring.type_identifier1()._d() || TK_NONE == type_ids_var_wstring.type_identifier2()._d())
-        {
-            common_var_wstring = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_wstring, type_ids_var_wstring.type_identifier1());
-        }
-        else if (EK_COMPLETE == type_ids_var_wstring.type_identifier2()._d())
-        {
-            common_var_wstring = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_wstring, type_ids_var_wstring.type_identifier2());
-        }
-        else
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                    "var_wstring annotation parameter TypeIdentifier inconsistent.");
-            return;
-        }
-        MemberName name_var_wstring = "var_wstring";
-        AnnotationParameterValue param_value_var_wstring = TypeObjectUtils::build_annotation_parameter_value(static_cast<std::wstring>(L""));
-
-        CompleteAnnotationParameter param_var_wstring = TypeObjectUtils::build_complete_annotation_parameter(common_var_wstring, name_var_wstring, param_value_var_wstring);
-        TypeObjectUtils::add_complete_annotation_parameter(member_seq_AnnotationTest, param_var_wstring);
-    }
-    {
-        ReturnCode_t return_code_var_float;
-        TypeIdentifierPair type_ids_var_float;
-        AnnotationParameterFlag member_flags_var_float = 0;
-        return_code_var_float =
-            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-            "_float", type_ids_var_float);
-
-        if (return_code_var_float != eprosima::fastdds::dds::RETCODE_OK)
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                    "var_float annotation parameter TypeIdentifier unknown to TypeObjectRegistry.");
-            return;
-        }
-        CommonAnnotationParameter common_var_float;
-        if (EK_COMPLETE == type_ids_var_float.type_identifier1()._d() || TK_NONE == type_ids_var_float.type_identifier2()._d())
-        {
-            common_var_float = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_float, type_ids_var_float.type_identifier1());
-        }
-        else if (EK_COMPLETE == type_ids_var_float.type_identifier2()._d())
-        {
-            common_var_float = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_float, type_ids_var_float.type_identifier2());
-        }
-        else
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                    "var_float annotation parameter TypeIdentifier inconsistent.");
-            return;
-        }
-        MemberName name_var_float = "var_float";
-        AnnotationParameterValue param_value_var_float = TypeObjectUtils::build_annotation_parameter_value(static_cast<float>(0.0));
-
-        CompleteAnnotationParameter param_var_float = TypeObjectUtils::build_complete_annotation_parameter(common_var_float, name_var_float, param_value_var_float);
-        TypeObjectUtils::add_complete_annotation_parameter(member_seq_AnnotationTest, param_var_float);
-    }
-    {
-        ReturnCode_t return_code_var_ushort;
-        TypeIdentifierPair type_ids_var_ushort;
-        AnnotationParameterFlag member_flags_var_ushort = 0;
-        return_code_var_ushort =
-            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-            "_uint16_t", type_ids_var_ushort);
-
-        if (return_code_var_ushort != eprosima::fastdds::dds::RETCODE_OK)
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                    "var_ushort annotation parameter TypeIdentifier unknown to TypeObjectRegistry.");
-            return;
-        }
-        CommonAnnotationParameter common_var_ushort;
-        if (EK_COMPLETE == type_ids_var_ushort.type_identifier1()._d() || TK_NONE == type_ids_var_ushort.type_identifier2()._d())
-        {
-            common_var_ushort = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_ushort, type_ids_var_ushort.type_identifier1());
-        }
-        else if (EK_COMPLETE == type_ids_var_ushort.type_identifier2()._d())
-        {
-            common_var_ushort = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_ushort, type_ids_var_ushort.type_identifier2());
-        }
-        else
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                    "var_ushort annotation parameter TypeIdentifier inconsistent.");
-            return;
-        }
-        MemberName name_var_ushort = "var_ushort";
-        AnnotationParameterValue param_value_var_ushort = TypeObjectUtils::build_annotation_parameter_value(static_cast<uint16_t>(0));
-
-        CompleteAnnotationParameter param_var_ushort = TypeObjectUtils::build_complete_annotation_parameter(common_var_ushort, name_var_ushort, param_value_var_ushort);
-        TypeObjectUtils::add_complete_annotation_parameter(member_seq_AnnotationTest, param_var_ushort);
-    }
-    {
-        ReturnCode_t return_code_var_default_string_10;
-        TypeIdentifierPair type_ids_var_default_string_10;
-        AnnotationParameterFlag member_flags_var_default_string_10 = 0;
-        return_code_var_default_string_10 =
-            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-            "AnnotationTest::Inner_alias_bounded_string_helper", type_ids_var_default_string_10);
-
-        if (return_code_var_default_string_10 != eprosima::fastdds::dds::RETCODE_OK)
-        {
-            AnnotationTest::register_Inner_alias_bounded_string_helper_type_identifier(type_ids_var_default_string_10);
-        }
-        CommonAnnotationParameter common_var_default_string_10;
-        if (EK_COMPLETE == type_ids_var_default_string_10.type_identifier1()._d() || TK_NONE == type_ids_var_default_string_10.type_identifier2()._d())
-        {
-            common_var_default_string_10 = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_default_string_10, type_ids_var_default_string_10.type_identifier1());
-        }
-        else if (EK_COMPLETE == type_ids_var_default_string_10.type_identifier2()._d())
-        {
-            common_var_default_string_10 = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_default_string_10, type_ids_var_default_string_10.type_identifier2());
-        }
-        else
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                    "var_default_string_10 annotation parameter TypeIdentifier inconsistent.");
-            return;
-        }
-        MemberName name_var_default_string_10 = "var_default_string_10";
-        AnnotationParameterValue param_value_var_default_string_10 = TypeObjectUtils::build_annotation_parameter_value(eprosima::fastcdr::fixed_string<128>("Hello"));
-
-
-        CompleteAnnotationParameter param_var_default_string_10 = TypeObjectUtils::build_complete_annotation_parameter(common_var_default_string_10, name_var_default_string_10, param_value_var_default_string_10);
-        TypeObjectUtils::add_complete_annotation_parameter(member_seq_AnnotationTest, param_var_default_string_10);
-    }
-    {
-        ReturnCode_t return_code_var_wstring_alias;
-        TypeIdentifierPair type_ids_var_wstring_alias;
-        AnnotationParameterFlag member_flags_var_wstring_alias = 0;
-        return_code_var_wstring_alias =
-            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-            "Inner_alias_bounded_wstring_helper", type_ids_var_wstring_alias);
-
-        if (return_code_var_wstring_alias != eprosima::fastdds::dds::RETCODE_OK)
-        {
-    ::register_Inner_alias_bounded_wstring_helper_type_identifier(type_ids_var_wstring_alias);
-        }
-        CommonAnnotationParameter common_var_wstring_alias;
-        if (EK_COMPLETE == type_ids_var_wstring_alias.type_identifier1()._d() || TK_NONE == type_ids_var_wstring_alias.type_identifier2()._d())
-        {
-            common_var_wstring_alias = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_wstring_alias, type_ids_var_wstring_alias.type_identifier1());
-        }
-        else if (EK_COMPLETE == type_ids_var_wstring_alias.type_identifier2()._d())
-        {
-            common_var_wstring_alias = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_wstring_alias, type_ids_var_wstring_alias.type_identifier2());
-        }
-        else
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                    "var_wstring_alias annotation parameter TypeIdentifier inconsistent.");
-            return;
-        }
-        MemberName name_var_wstring_alias = "var_wstring_alias";
-        AnnotationParameterValue param_value_var_wstring_alias = TypeObjectUtils::build_annotation_parameter_value(static_cast<std::wstring>(L""));
-
-
-        CompleteAnnotationParameter param_var_wstring_alias = TypeObjectUtils::build_complete_annotation_parameter(common_var_wstring_alias, name_var_wstring_alias, param_value_var_wstring_alias);
-        TypeObjectUtils::add_complete_annotation_parameter(member_seq_AnnotationTest, param_var_wstring_alias);
-    }
-    {
-        ReturnCode_t return_code_var_longlong;
-        TypeIdentifierPair type_ids_var_longlong;
-        AnnotationParameterFlag member_flags_var_longlong = 0;
-        return_code_var_longlong =
-            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-            "_int64_t", type_ids_var_longlong);
-
-        if (return_code_var_longlong != eprosima::fastdds::dds::RETCODE_OK)
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                    "var_longlong annotation parameter TypeIdentifier unknown to TypeObjectRegistry.");
-            return;
-        }
-        CommonAnnotationParameter common_var_longlong;
-        if (EK_COMPLETE == type_ids_var_longlong.type_identifier1()._d() || TK_NONE == type_ids_var_longlong.type_identifier2()._d())
-        {
-            common_var_longlong = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_longlong, type_ids_var_longlong.type_identifier1());
-        }
-        else if (EK_COMPLETE == type_ids_var_longlong.type_identifier2()._d())
-        {
-            common_var_longlong = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_longlong, type_ids_var_longlong.type_identifier2());
-        }
-        else
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                    "var_longlong annotation parameter TypeIdentifier inconsistent.");
-            return;
-        }
-        MemberName name_var_longlong = "var_longlong";
-        AnnotationParameterValue param_value_var_longlong = TypeObjectUtils::build_annotation_parameter_value(static_cast<int64_t>(0));
-
-        CompleteAnnotationParameter param_var_longlong = TypeObjectUtils::build_complete_annotation_parameter(common_var_longlong, name_var_longlong, param_value_var_longlong);
-        TypeObjectUtils::add_complete_annotation_parameter(member_seq_AnnotationTest, param_var_longlong);
-    }
-    {
-        ReturnCode_t return_code_var_ulong;
-        TypeIdentifierPair type_ids_var_ulong;
-        AnnotationParameterFlag member_flags_var_ulong = 0;
-        return_code_var_ulong =
-            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-            "_uint32_t", type_ids_var_ulong);
-
-        if (return_code_var_ulong != eprosima::fastdds::dds::RETCODE_OK)
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                    "var_ulong annotation parameter TypeIdentifier unknown to TypeObjectRegistry.");
-            return;
-        }
-        CommonAnnotationParameter common_var_ulong;
-        if (EK_COMPLETE == type_ids_var_ulong.type_identifier1()._d() || TK_NONE == type_ids_var_ulong.type_identifier2()._d())
-        {
-            common_var_ulong = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_ulong, type_ids_var_ulong.type_identifier1());
-        }
-        else if (EK_COMPLETE == type_ids_var_ulong.type_identifier2()._d())
-        {
-            common_var_ulong = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_ulong, type_ids_var_ulong.type_identifier2());
-        }
-        else
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                    "var_ulong annotation parameter TypeIdentifier inconsistent.");
-            return;
-        }
-        MemberName name_var_ulong = "var_ulong";
-        AnnotationParameterValue param_value_var_ulong = TypeObjectUtils::build_annotation_parameter_value(static_cast<uint32_t>(0));
-
-        CompleteAnnotationParameter param_var_ulong = TypeObjectUtils::build_complete_annotation_parameter(common_var_ulong, name_var_ulong, param_value_var_ulong);
-        TypeObjectUtils::add_complete_annotation_parameter(member_seq_AnnotationTest, param_var_ulong);
-    }
-    {
-        ReturnCode_t return_code_var_string;
-        TypeIdentifierPair type_ids_var_string;
-        AnnotationParameterFlag member_flags_var_string = 0;
-        return_code_var_string =
-            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-            "anonymous_string_unbounded", type_ids_var_string);
-
-        if (return_code_var_string != eprosima::fastdds::dds::RETCODE_OK)
-        {
+            CommonAnnotationParameter common_var_wstring;
+            if (EK_COMPLETE == type_ids_var_wstring.type_identifier1()._d() || TK_NONE == type_ids_var_wstring.type_identifier2()._d())
             {
-                SBound bound = 0;
-                StringSTypeDefn string_sdefn = TypeObjectUtils::build_string_s_type_defn(bound);
-                if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                        TypeObjectUtils::build_and_register_s_string_type_identifier(string_sdefn,
-                        "anonymous_string_unbounded", type_ids_var_string))
+                common_var_wstring = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_wstring, type_ids_var_wstring.type_identifier1());
+            }
+            else if (EK_COMPLETE == type_ids_var_wstring.type_identifier2()._d())
+            {
+                common_var_wstring = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_wstring, type_ids_var_wstring.type_identifier2());
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "var_wstring annotation parameter TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_var_wstring = "var_wstring";
+            AnnotationParameterValue param_value_var_wstring = TypeObjectUtils::build_annotation_parameter_value(static_cast<std::wstring>(L""));
+
+            CompleteAnnotationParameter param_var_wstring = TypeObjectUtils::build_complete_annotation_parameter(common_var_wstring, name_var_wstring, param_value_var_wstring);
+            TypeObjectUtils::add_complete_annotation_parameter(member_seq_AnnotationTest, param_var_wstring);
+        }
+        {
+            ReturnCode_t return_code_var_float;
+            TypeIdentifierPair type_ids_var_float;
+            AnnotationParameterFlag member_flags_var_float = 0;
+            return_code_var_float =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_float", type_ids_var_float);
+
+            if (return_code_var_float != eprosima::fastdds::dds::RETCODE_OK)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "var_float annotation parameter TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            CommonAnnotationParameter common_var_float;
+            if (EK_COMPLETE == type_ids_var_float.type_identifier1()._d() || TK_NONE == type_ids_var_float.type_identifier2()._d())
+            {
+                common_var_float = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_float, type_ids_var_float.type_identifier1());
+            }
+            else if (EK_COMPLETE == type_ids_var_float.type_identifier2()._d())
+            {
+                common_var_float = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_float, type_ids_var_float.type_identifier2());
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "var_float annotation parameter TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_var_float = "var_float";
+            AnnotationParameterValue param_value_var_float = TypeObjectUtils::build_annotation_parameter_value(static_cast<float>(0.0));
+
+            CompleteAnnotationParameter param_var_float = TypeObjectUtils::build_complete_annotation_parameter(common_var_float, name_var_float, param_value_var_float);
+            TypeObjectUtils::add_complete_annotation_parameter(member_seq_AnnotationTest, param_var_float);
+        }
+        {
+            ReturnCode_t return_code_var_ushort;
+            TypeIdentifierPair type_ids_var_ushort;
+            AnnotationParameterFlag member_flags_var_ushort = 0;
+            return_code_var_ushort =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_uint16_t", type_ids_var_ushort);
+
+            if (return_code_var_ushort != eprosima::fastdds::dds::RETCODE_OK)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "var_ushort annotation parameter TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            CommonAnnotationParameter common_var_ushort;
+            if (EK_COMPLETE == type_ids_var_ushort.type_identifier1()._d() || TK_NONE == type_ids_var_ushort.type_identifier2()._d())
+            {
+                common_var_ushort = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_ushort, type_ids_var_ushort.type_identifier1());
+            }
+            else if (EK_COMPLETE == type_ids_var_ushort.type_identifier2()._d())
+            {
+                common_var_ushort = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_ushort, type_ids_var_ushort.type_identifier2());
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "var_ushort annotation parameter TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_var_ushort = "var_ushort";
+            AnnotationParameterValue param_value_var_ushort = TypeObjectUtils::build_annotation_parameter_value(static_cast<uint16_t>(0));
+
+            CompleteAnnotationParameter param_var_ushort = TypeObjectUtils::build_complete_annotation_parameter(common_var_ushort, name_var_ushort, param_value_var_ushort);
+            TypeObjectUtils::add_complete_annotation_parameter(member_seq_AnnotationTest, param_var_ushort);
+        }
+        {
+            ReturnCode_t return_code_var_default_string_10;
+            TypeIdentifierPair type_ids_var_default_string_10;
+            AnnotationParameterFlag member_flags_var_default_string_10 = 0;
+            return_code_var_default_string_10 =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "AnnotationTest::Inner_alias_bounded_string_helper", type_ids_var_default_string_10);
+
+            if (return_code_var_default_string_10 != eprosima::fastdds::dds::RETCODE_OK)
+            {
+                AnnotationTest::register_Inner_alias_bounded_string_helper_type_identifier(type_ids_var_default_string_10);
+            }
+            CommonAnnotationParameter common_var_default_string_10;
+            if (EK_COMPLETE == type_ids_var_default_string_10.type_identifier1()._d() || TK_NONE == type_ids_var_default_string_10.type_identifier2()._d())
+            {
+                common_var_default_string_10 = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_default_string_10, type_ids_var_default_string_10.type_identifier1());
+            }
+            else if (EK_COMPLETE == type_ids_var_default_string_10.type_identifier2()._d())
+            {
+                common_var_default_string_10 = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_default_string_10, type_ids_var_default_string_10.type_identifier2());
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "var_default_string_10 annotation parameter TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_var_default_string_10 = "var_default_string_10";
+            AnnotationParameterValue param_value_var_default_string_10 = TypeObjectUtils::build_annotation_parameter_value(eprosima::fastcdr::fixed_string<128>("Hello"));
+
+
+            CompleteAnnotationParameter param_var_default_string_10 = TypeObjectUtils::build_complete_annotation_parameter(common_var_default_string_10, name_var_default_string_10, param_value_var_default_string_10);
+            TypeObjectUtils::add_complete_annotation_parameter(member_seq_AnnotationTest, param_var_default_string_10);
+        }
+        {
+            ReturnCode_t return_code_var_wstring_alias;
+            TypeIdentifierPair type_ids_var_wstring_alias;
+            AnnotationParameterFlag member_flags_var_wstring_alias = 0;
+            return_code_var_wstring_alias =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "Inner_alias_bounded_wstring_helper", type_ids_var_wstring_alias);
+
+            if (return_code_var_wstring_alias != eprosima::fastdds::dds::RETCODE_OK)
+            {
+        ::register_Inner_alias_bounded_wstring_helper_type_identifier(type_ids_var_wstring_alias);
+            }
+            CommonAnnotationParameter common_var_wstring_alias;
+            if (EK_COMPLETE == type_ids_var_wstring_alias.type_identifier1()._d() || TK_NONE == type_ids_var_wstring_alias.type_identifier2()._d())
+            {
+                common_var_wstring_alias = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_wstring_alias, type_ids_var_wstring_alias.type_identifier1());
+            }
+            else if (EK_COMPLETE == type_ids_var_wstring_alias.type_identifier2()._d())
+            {
+                common_var_wstring_alias = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_wstring_alias, type_ids_var_wstring_alias.type_identifier2());
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "var_wstring_alias annotation parameter TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_var_wstring_alias = "var_wstring_alias";
+            AnnotationParameterValue param_value_var_wstring_alias = TypeObjectUtils::build_annotation_parameter_value(static_cast<std::wstring>(L""));
+
+
+            CompleteAnnotationParameter param_var_wstring_alias = TypeObjectUtils::build_complete_annotation_parameter(common_var_wstring_alias, name_var_wstring_alias, param_value_var_wstring_alias);
+            TypeObjectUtils::add_complete_annotation_parameter(member_seq_AnnotationTest, param_var_wstring_alias);
+        }
+        {
+            ReturnCode_t return_code_var_longlong;
+            TypeIdentifierPair type_ids_var_longlong;
+            AnnotationParameterFlag member_flags_var_longlong = 0;
+            return_code_var_longlong =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_int64_t", type_ids_var_longlong);
+
+            if (return_code_var_longlong != eprosima::fastdds::dds::RETCODE_OK)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "var_longlong annotation parameter TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            CommonAnnotationParameter common_var_longlong;
+            if (EK_COMPLETE == type_ids_var_longlong.type_identifier1()._d() || TK_NONE == type_ids_var_longlong.type_identifier2()._d())
+            {
+                common_var_longlong = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_longlong, type_ids_var_longlong.type_identifier1());
+            }
+            else if (EK_COMPLETE == type_ids_var_longlong.type_identifier2()._d())
+            {
+                common_var_longlong = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_longlong, type_ids_var_longlong.type_identifier2());
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "var_longlong annotation parameter TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_var_longlong = "var_longlong";
+            AnnotationParameterValue param_value_var_longlong = TypeObjectUtils::build_annotation_parameter_value(static_cast<int64_t>(0));
+
+            CompleteAnnotationParameter param_var_longlong = TypeObjectUtils::build_complete_annotation_parameter(common_var_longlong, name_var_longlong, param_value_var_longlong);
+            TypeObjectUtils::add_complete_annotation_parameter(member_seq_AnnotationTest, param_var_longlong);
+        }
+        {
+            ReturnCode_t return_code_var_ulong;
+            TypeIdentifierPair type_ids_var_ulong;
+            AnnotationParameterFlag member_flags_var_ulong = 0;
+            return_code_var_ulong =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_uint32_t", type_ids_var_ulong);
+
+            if (return_code_var_ulong != eprosima::fastdds::dds::RETCODE_OK)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "var_ulong annotation parameter TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            CommonAnnotationParameter common_var_ulong;
+            if (EK_COMPLETE == type_ids_var_ulong.type_identifier1()._d() || TK_NONE == type_ids_var_ulong.type_identifier2()._d())
+            {
+                common_var_ulong = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_ulong, type_ids_var_ulong.type_identifier1());
+            }
+            else if (EK_COMPLETE == type_ids_var_ulong.type_identifier2()._d())
+            {
+                common_var_ulong = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_ulong, type_ids_var_ulong.type_identifier2());
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "var_ulong annotation parameter TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_var_ulong = "var_ulong";
+            AnnotationParameterValue param_value_var_ulong = TypeObjectUtils::build_annotation_parameter_value(static_cast<uint32_t>(0));
+
+            CompleteAnnotationParameter param_var_ulong = TypeObjectUtils::build_complete_annotation_parameter(common_var_ulong, name_var_ulong, param_value_var_ulong);
+            TypeObjectUtils::add_complete_annotation_parameter(member_seq_AnnotationTest, param_var_ulong);
+        }
+        {
+            ReturnCode_t return_code_var_string;
+            TypeIdentifierPair type_ids_var_string;
+            AnnotationParameterFlag member_flags_var_string = 0;
+            return_code_var_string =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "anonymous_string_unbounded", type_ids_var_string);
+
+            if (return_code_var_string != eprosima::fastdds::dds::RETCODE_OK)
+            {
                 {
-                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "anonymous_string_unbounded already registered in TypeObjectRegistry for a different type.");
+                    SBound bound = 0;
+                    StringSTypeDefn string_sdefn = TypeObjectUtils::build_string_s_type_defn(bound);
+                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                            TypeObjectUtils::build_and_register_s_string_type_identifier(string_sdefn,
+                            "anonymous_string_unbounded", type_ids_var_string))
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                            "anonymous_string_unbounded already registered in TypeObjectRegistry for a different type.");
+                    }
                 }
             }
+            CommonAnnotationParameter common_var_string;
+            if (EK_COMPLETE == type_ids_var_string.type_identifier1()._d() || TK_NONE == type_ids_var_string.type_identifier2()._d())
+            {
+                common_var_string = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_string, type_ids_var_string.type_identifier1());
+            }
+            else if (EK_COMPLETE == type_ids_var_string.type_identifier2()._d())
+            {
+                common_var_string = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_string, type_ids_var_string.type_identifier2());
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "var_string annotation parameter TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_var_string = "var_string";
+            AnnotationParameterValue param_value_var_string = TypeObjectUtils::build_annotation_parameter_value(eprosima::fastcdr::fixed_string<128>(""));
+
+            CompleteAnnotationParameter param_var_string = TypeObjectUtils::build_complete_annotation_parameter(common_var_string, name_var_string, param_value_var_string);
+            TypeObjectUtils::add_complete_annotation_parameter(member_seq_AnnotationTest, param_var_string);
         }
-        CommonAnnotationParameter common_var_string;
-        if (EK_COMPLETE == type_ids_var_string.type_identifier1()._d() || TK_NONE == type_ids_var_string.type_identifier2()._d())
         {
-            common_var_string = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_string, type_ids_var_string.type_identifier1());
+            ReturnCode_t return_code_var_double;
+            TypeIdentifierPair type_ids_var_double;
+            AnnotationParameterFlag member_flags_var_double = 0;
+            return_code_var_double =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_double", type_ids_var_double);
+
+            if (return_code_var_double != eprosima::fastdds::dds::RETCODE_OK)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "var_double annotation parameter TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            CommonAnnotationParameter common_var_double;
+            if (EK_COMPLETE == type_ids_var_double.type_identifier1()._d() || TK_NONE == type_ids_var_double.type_identifier2()._d())
+            {
+                common_var_double = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_double, type_ids_var_double.type_identifier1());
+            }
+            else if (EK_COMPLETE == type_ids_var_double.type_identifier2()._d())
+            {
+                common_var_double = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_double, type_ids_var_double.type_identifier2());
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "var_double annotation parameter TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_var_double = "var_double";
+            AnnotationParameterValue param_value_var_double = TypeObjectUtils::build_annotation_parameter_value(static_cast<double>(0.0));
+
+            CompleteAnnotationParameter param_var_double = TypeObjectUtils::build_complete_annotation_parameter(common_var_double, name_var_double, param_value_var_double);
+            TypeObjectUtils::add_complete_annotation_parameter(member_seq_AnnotationTest, param_var_double);
         }
-        else if (EK_COMPLETE == type_ids_var_string.type_identifier2()._d())
         {
-            common_var_string = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_string, type_ids_var_string.type_identifier2());
+            ReturnCode_t return_code_enum_default_value;
+            TypeIdentifierPair type_ids_enum_default_value;
+            AnnotationParameterFlag member_flags_enum_default_value = 0;
+            return_code_enum_default_value =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "AnnotationTest::InnerEnumHelper", type_ids_enum_default_value);
+
+            if (return_code_enum_default_value != eprosima::fastdds::dds::RETCODE_OK)
+            {
+                AnnotationTest::register_InnerEnumHelper_type_identifier(type_ids_enum_default_value);
+            }
+            CommonAnnotationParameter common_enum_default_value;
+            if (EK_COMPLETE == type_ids_enum_default_value.type_identifier1()._d() || TK_NONE == type_ids_enum_default_value.type_identifier2()._d())
+            {
+                common_enum_default_value = TypeObjectUtils::build_common_annotation_parameter(member_flags_enum_default_value, type_ids_enum_default_value.type_identifier1());
+            }
+            else if (EK_COMPLETE == type_ids_enum_default_value.type_identifier2()._d())
+            {
+                common_enum_default_value = TypeObjectUtils::build_common_annotation_parameter(member_flags_enum_default_value, type_ids_enum_default_value.type_identifier2());
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "enum_default_value annotation parameter TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_enum_default_value = "enum_default_value";
+            AnnotationParameterValue param_value_enum_default_value = TypeObjectUtils::build_annotation_parameter_value_enum(1);
+
+            CompleteAnnotationParameter param_enum_default_value = TypeObjectUtils::build_complete_annotation_parameter(common_enum_default_value, name_enum_default_value, param_value_enum_default_value);
+            TypeObjectUtils::add_complete_annotation_parameter(member_seq_AnnotationTest, param_enum_default_value);
         }
-        else
+        {
+            ReturnCode_t return_code_var_octet;
+            TypeIdentifierPair type_ids_var_octet;
+            AnnotationParameterFlag member_flags_var_octet = 0;
+            return_code_var_octet =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_byte", type_ids_var_octet);
+
+            if (return_code_var_octet != eprosima::fastdds::dds::RETCODE_OK)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "var_octet annotation parameter TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            CommonAnnotationParameter common_var_octet;
+            if (EK_COMPLETE == type_ids_var_octet.type_identifier1()._d() || TK_NONE == type_ids_var_octet.type_identifier2()._d())
+            {
+                common_var_octet = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_octet, type_ids_var_octet.type_identifier1());
+            }
+            else if (EK_COMPLETE == type_ids_var_octet.type_identifier2()._d())
+            {
+                common_var_octet = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_octet, type_ids_var_octet.type_identifier2());
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "var_octet annotation parameter TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_var_octet = "var_octet";
+            AnnotationParameterValue param_value_var_octet = TypeObjectUtils::build_annotation_parameter_value_byte(0);
+
+            CompleteAnnotationParameter param_var_octet = TypeObjectUtils::build_complete_annotation_parameter(common_var_octet, name_var_octet, param_value_var_octet);
+            TypeObjectUtils::add_complete_annotation_parameter(member_seq_AnnotationTest, param_var_octet);
+        }
+        CompleteAnnotationType annotation_type_AnnotationTest = TypeObjectUtils::build_complete_annotation_type(annotation_flag_AnnotationTest, header_AnnotationTest,
+                member_seq_AnnotationTest);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_annotation_type_object(annotation_type_AnnotationTest,
+                    annotation_name_AnnotationTest.to_string(), type_ids_AnnotationTest))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                    "var_string annotation parameter TypeIdentifier inconsistent.");
-            return;
+                "AnnotationTest already registered in TypeObjectRegistry for a different type.");
         }
-        MemberName name_var_string = "var_string";
-        AnnotationParameterValue param_value_var_string = TypeObjectUtils::build_annotation_parameter_value(eprosima::fastcdr::fixed_string<128>(""));
-
-        CompleteAnnotationParameter param_var_string = TypeObjectUtils::build_complete_annotation_parameter(common_var_string, name_var_string, param_value_var_string);
-        TypeObjectUtils::add_complete_annotation_parameter(member_seq_AnnotationTest, param_var_string);
-    }
-    {
-        ReturnCode_t return_code_var_double;
-        TypeIdentifierPair type_ids_var_double;
-        AnnotationParameterFlag member_flags_var_double = 0;
-        return_code_var_double =
-            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-            "_double", type_ids_var_double);
-
-        if (return_code_var_double != eprosima::fastdds::dds::RETCODE_OK)
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                    "var_double annotation parameter TypeIdentifier unknown to TypeObjectRegistry.");
-            return;
-        }
-        CommonAnnotationParameter common_var_double;
-        if (EK_COMPLETE == type_ids_var_double.type_identifier1()._d() || TK_NONE == type_ids_var_double.type_identifier2()._d())
-        {
-            common_var_double = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_double, type_ids_var_double.type_identifier1());
-        }
-        else if (EK_COMPLETE == type_ids_var_double.type_identifier2()._d())
-        {
-            common_var_double = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_double, type_ids_var_double.type_identifier2());
-        }
-        else
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                    "var_double annotation parameter TypeIdentifier inconsistent.");
-            return;
-        }
-        MemberName name_var_double = "var_double";
-        AnnotationParameterValue param_value_var_double = TypeObjectUtils::build_annotation_parameter_value(static_cast<double>(0.0));
-
-        CompleteAnnotationParameter param_var_double = TypeObjectUtils::build_complete_annotation_parameter(common_var_double, name_var_double, param_value_var_double);
-        TypeObjectUtils::add_complete_annotation_parameter(member_seq_AnnotationTest, param_var_double);
-    }
-    {
-        ReturnCode_t return_code_enum_default_value;
-        TypeIdentifierPair type_ids_enum_default_value;
-        AnnotationParameterFlag member_flags_enum_default_value = 0;
-        return_code_enum_default_value =
-            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-            "AnnotationTest::InnerEnumHelper", type_ids_enum_default_value);
-
-        if (return_code_enum_default_value != eprosima::fastdds::dds::RETCODE_OK)
-        {
-            AnnotationTest::register_InnerEnumHelper_type_identifier(type_ids_enum_default_value);
-        }
-        CommonAnnotationParameter common_enum_default_value;
-        if (EK_COMPLETE == type_ids_enum_default_value.type_identifier1()._d() || TK_NONE == type_ids_enum_default_value.type_identifier2()._d())
-        {
-            common_enum_default_value = TypeObjectUtils::build_common_annotation_parameter(member_flags_enum_default_value, type_ids_enum_default_value.type_identifier1());
-        }
-        else if (EK_COMPLETE == type_ids_enum_default_value.type_identifier2()._d())
-        {
-            common_enum_default_value = TypeObjectUtils::build_common_annotation_parameter(member_flags_enum_default_value, type_ids_enum_default_value.type_identifier2());
-        }
-        else
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                    "enum_default_value annotation parameter TypeIdentifier inconsistent.");
-            return;
-        }
-        MemberName name_enum_default_value = "enum_default_value";
-        AnnotationParameterValue param_value_enum_default_value = TypeObjectUtils::build_annotation_parameter_value_enum(1);
-
-        CompleteAnnotationParameter param_enum_default_value = TypeObjectUtils::build_complete_annotation_parameter(common_enum_default_value, name_enum_default_value, param_value_enum_default_value);
-        TypeObjectUtils::add_complete_annotation_parameter(member_seq_AnnotationTest, param_enum_default_value);
-    }
-    {
-        ReturnCode_t return_code_var_octet;
-        TypeIdentifierPair type_ids_var_octet;
-        AnnotationParameterFlag member_flags_var_octet = 0;
-        return_code_var_octet =
-            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-            "_byte", type_ids_var_octet);
-
-        if (return_code_var_octet != eprosima::fastdds::dds::RETCODE_OK)
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                    "var_octet annotation parameter TypeIdentifier unknown to TypeObjectRegistry.");
-            return;
-        }
-        CommonAnnotationParameter common_var_octet;
-        if (EK_COMPLETE == type_ids_var_octet.type_identifier1()._d() || TK_NONE == type_ids_var_octet.type_identifier2()._d())
-        {
-            common_var_octet = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_octet, type_ids_var_octet.type_identifier1());
-        }
-        else if (EK_COMPLETE == type_ids_var_octet.type_identifier2()._d())
-        {
-            common_var_octet = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_octet, type_ids_var_octet.type_identifier2());
-        }
-        else
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                    "var_octet annotation parameter TypeIdentifier inconsistent.");
-            return;
-        }
-        MemberName name_var_octet = "var_octet";
-        AnnotationParameterValue param_value_var_octet = TypeObjectUtils::build_annotation_parameter_value_byte(0);
-
-        CompleteAnnotationParameter param_var_octet = TypeObjectUtils::build_complete_annotation_parameter(common_var_octet, name_var_octet, param_value_var_octet);
-        TypeObjectUtils::add_complete_annotation_parameter(member_seq_AnnotationTest, param_var_octet);
-    }
-    CompleteAnnotationType annotation_type_AnnotationTest = TypeObjectUtils::build_complete_annotation_type(annotation_flag_AnnotationTest, header_AnnotationTest,
-            member_seq_AnnotationTest);
-    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-            TypeObjectUtils::build_and_register_annotation_type_object(annotation_type_AnnotationTest,
-                annotation_name_AnnotationTest.to_string(), type_ids))
-    {
-        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-            "AnnotationTest already registered in TypeObjectRegistry for a different type.");
     }
 }
 
@@ -876,20 +859,27 @@ namespace EmptyAnnotationTest {
 } // namespace EmptyAnnotationTest
 
 void register_EmptyAnnotationTest_type_identifier(
-        TypeIdentifierPair& type_ids)
+        TypeIdentifierPair& type_ids_EmptyAnnotationTest)
 {
-    AnnotationTypeFlag annotation_flag_EmptyAnnotationTest = 0;
-    QualifiedTypeName annotation_name_EmptyAnnotationTest = "EmptyAnnotationTest";
-    CompleteAnnotationHeader header_EmptyAnnotationTest = TypeObjectUtils::build_complete_annotation_header(annotation_name_EmptyAnnotationTest);
-    CompleteAnnotationParameterSeq member_seq_EmptyAnnotationTest;
-    CompleteAnnotationType annotation_type_EmptyAnnotationTest = TypeObjectUtils::build_complete_annotation_type(annotation_flag_EmptyAnnotationTest, header_EmptyAnnotationTest,
-            member_seq_EmptyAnnotationTest);
-    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-            TypeObjectUtils::build_and_register_annotation_type_object(annotation_type_EmptyAnnotationTest,
-                annotation_name_EmptyAnnotationTest.to_string(), type_ids))
+    ReturnCode_t return_code_EmptyAnnotationTest {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_EmptyAnnotationTest =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "EmptyAnnotationTest", type_ids_EmptyAnnotationTest);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_EmptyAnnotationTest)
     {
-        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-            "EmptyAnnotationTest already registered in TypeObjectRegistry for a different type.");
+        AnnotationTypeFlag annotation_flag_EmptyAnnotationTest = 0;
+        QualifiedTypeName annotation_name_EmptyAnnotationTest = "EmptyAnnotationTest";
+        CompleteAnnotationHeader header_EmptyAnnotationTest = TypeObjectUtils::build_complete_annotation_header(annotation_name_EmptyAnnotationTest);
+        CompleteAnnotationParameterSeq member_seq_EmptyAnnotationTest;
+        CompleteAnnotationType annotation_type_EmptyAnnotationTest = TypeObjectUtils::build_complete_annotation_type(annotation_flag_EmptyAnnotationTest, header_EmptyAnnotationTest,
+                member_seq_EmptyAnnotationTest);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_annotation_type_object(annotation_type_EmptyAnnotationTest,
+                    annotation_name_EmptyAnnotationTest.to_string(), type_ids_EmptyAnnotationTest))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                "EmptyAnnotationTest already registered in TypeObjectRegistry for a different type.");
+        }
     }
 }
 // TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
@@ -1224,55 +1214,62 @@ namespace BasicAnnotationsTest {
 } // namespace BasicAnnotationsTest
 
 void register_BasicAnnotationsTest_type_identifier(
-        TypeIdentifierPair& type_ids)
+        TypeIdentifierPair& type_ids_BasicAnnotationsTest)
 {
-    AnnotationTypeFlag annotation_flag_BasicAnnotationsTest = 0;
-    QualifiedTypeName annotation_name_BasicAnnotationsTest = "BasicAnnotationsTest";
-    CompleteAnnotationHeader header_BasicAnnotationsTest = TypeObjectUtils::build_complete_annotation_header(annotation_name_BasicAnnotationsTest);
-    CompleteAnnotationParameterSeq member_seq_BasicAnnotationsTest;
+    ReturnCode_t return_code_BasicAnnotationsTest {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_BasicAnnotationsTest =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "BasicAnnotationsTest", type_ids_BasicAnnotationsTest);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_BasicAnnotationsTest)
     {
-        ReturnCode_t return_code_var_basic_short;
-        TypeIdentifierPair type_ids_var_basic_short;
-        AnnotationParameterFlag member_flags_var_basic_short = 0;
-        return_code_var_basic_short =
-            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-            "_int16_t", type_ids_var_basic_short);
+        AnnotationTypeFlag annotation_flag_BasicAnnotationsTest = 0;
+        QualifiedTypeName annotation_name_BasicAnnotationsTest = "BasicAnnotationsTest";
+        CompleteAnnotationHeader header_BasicAnnotationsTest = TypeObjectUtils::build_complete_annotation_header(annotation_name_BasicAnnotationsTest);
+        CompleteAnnotationParameterSeq member_seq_BasicAnnotationsTest;
+        {
+            ReturnCode_t return_code_var_basic_short;
+            TypeIdentifierPair type_ids_var_basic_short;
+            AnnotationParameterFlag member_flags_var_basic_short = 0;
+            return_code_var_basic_short =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_int16_t", type_ids_var_basic_short);
 
-        if (return_code_var_basic_short != eprosima::fastdds::dds::RETCODE_OK)
+            if (return_code_var_basic_short != eprosima::fastdds::dds::RETCODE_OK)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "var_basic_short annotation parameter TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            CommonAnnotationParameter common_var_basic_short;
+            if (EK_COMPLETE == type_ids_var_basic_short.type_identifier1()._d() || TK_NONE == type_ids_var_basic_short.type_identifier2()._d())
+            {
+                common_var_basic_short = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_basic_short, type_ids_var_basic_short.type_identifier1());
+            }
+            else if (EK_COMPLETE == type_ids_var_basic_short.type_identifier2()._d())
+            {
+                common_var_basic_short = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_basic_short, type_ids_var_basic_short.type_identifier2());
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "var_basic_short annotation parameter TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_var_basic_short = "var_basic_short";
+            AnnotationParameterValue param_value_var_basic_short = TypeObjectUtils::build_annotation_parameter_value(static_cast<int16_t>(0));
+
+            CompleteAnnotationParameter param_var_basic_short = TypeObjectUtils::build_complete_annotation_parameter(common_var_basic_short, name_var_basic_short, param_value_var_basic_short);
+            TypeObjectUtils::add_complete_annotation_parameter(member_seq_BasicAnnotationsTest, param_var_basic_short);
+        }
+        CompleteAnnotationType annotation_type_BasicAnnotationsTest = TypeObjectUtils::build_complete_annotation_type(annotation_flag_BasicAnnotationsTest, header_BasicAnnotationsTest,
+                member_seq_BasicAnnotationsTest);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_annotation_type_object(annotation_type_BasicAnnotationsTest,
+                    annotation_name_BasicAnnotationsTest.to_string(), type_ids_BasicAnnotationsTest))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                    "var_basic_short annotation parameter TypeIdentifier unknown to TypeObjectRegistry.");
-            return;
+                "BasicAnnotationsTest already registered in TypeObjectRegistry for a different type.");
         }
-        CommonAnnotationParameter common_var_basic_short;
-        if (EK_COMPLETE == type_ids_var_basic_short.type_identifier1()._d() || TK_NONE == type_ids_var_basic_short.type_identifier2()._d())
-        {
-            common_var_basic_short = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_basic_short, type_ids_var_basic_short.type_identifier1());
-        }
-        else if (EK_COMPLETE == type_ids_var_basic_short.type_identifier2()._d())
-        {
-            common_var_basic_short = TypeObjectUtils::build_common_annotation_parameter(member_flags_var_basic_short, type_ids_var_basic_short.type_identifier2());
-        }
-        else
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                    "var_basic_short annotation parameter TypeIdentifier inconsistent.");
-            return;
-        }
-        MemberName name_var_basic_short = "var_basic_short";
-        AnnotationParameterValue param_value_var_basic_short = TypeObjectUtils::build_annotation_parameter_value(static_cast<int16_t>(0));
-
-        CompleteAnnotationParameter param_var_basic_short = TypeObjectUtils::build_complete_annotation_parameter(common_var_basic_short, name_var_basic_short, param_value_var_basic_short);
-        TypeObjectUtils::add_complete_annotation_parameter(member_seq_BasicAnnotationsTest, param_var_basic_short);
-    }
-    CompleteAnnotationType annotation_type_BasicAnnotationsTest = TypeObjectUtils::build_complete_annotation_type(annotation_flag_BasicAnnotationsTest, header_BasicAnnotationsTest,
-            member_seq_BasicAnnotationsTest);
-    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-            TypeObjectUtils::build_and_register_annotation_type_object(annotation_type_BasicAnnotationsTest,
-                annotation_name_BasicAnnotationsTest.to_string(), type_ids))
-    {
-        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-            "BasicAnnotationsTest already registered in TypeObjectRegistry for a different type.");
     }
 }
 // TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
@@ -1365,50 +1362,12 @@ void register_BasicAnnotationsStruct_type_identifier(
             }
             StructMemberFlag member_flags_basic_annotations_member = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_basic_annotations_member;
             MemberId member_id_basic_annotations_member = 0x00000000;
-            if (EK_COMPLETE == type_ids_basic_annotations_member.type_identifier1()._d() || TK_NONE == type_ids_basic_annotations_member.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_basic_annotations_member.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_basic_annotations_member.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_basic_annotations_member.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_basic_annotations_member.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_basic_annotations_member.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_basic_annotations_member.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_basic_annotations_member.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_basic_annotations_member.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_basic_annotations_member.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_basic_annotations_member.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_basic_annotations_member.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_basic_annotations_member.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_basic_annotations_member.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_basic_annotations_member.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_basic_annotations_member_ec {false};
+            CommonStructMember common_basic_annotations_member {TypeObjectUtils::build_common_struct_member(member_id_basic_annotations_member, member_flags_basic_annotations_member, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_basic_annotations_member, common_basic_annotations_member_ec))};
+            if (!common_basic_annotations_member_ec)
             {
-                common_basic_annotations_member = TypeObjectUtils::build_common_struct_member(member_id_basic_annotations_member,
-                        member_flags_basic_annotations_member, type_ids_basic_annotations_member.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_basic_annotations_member.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_basic_annotations_member.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_basic_annotations_member.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_basic_annotations_member.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_basic_annotations_member.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_basic_annotations_member.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_basic_annotations_member.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_basic_annotations_member.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_basic_annotations_member.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_basic_annotations_member.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_basic_annotations_member.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_basic_annotations_member.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_basic_annotations_member.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_basic_annotations_member.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_basic_annotations_member.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_basic_annotations_member = TypeObjectUtils::build_common_struct_member(member_id_basic_annotations_member,
-                        member_flags_basic_annotations_member, type_ids_basic_annotations_member.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure basic_annotations_member member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure basic_annotations_member member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_basic_annotations_member = "basic_annotations_member";
