@@ -888,14 +888,12 @@ protected:
      * @brief Register DynamicType indirect-hash TypeIdentifier of a Sequence type.
      *
      * @param[in] dynamic_type Sequence DynamicType to be registered.
-     * @param[out] type_id Complete indirect hash TypeIdentifier corresponding to the Sequence DynamicType.
-     *                     TypeIdentifier is required to define dependencies within the parent TypeObject
-     *                     (if applicable).
+     * @param[out] type_ids TypeIdentifiers corresponding to the Alias DynamicType TypeObject.
      * @return ReturnCode_t RETCODE_OK always.
      */
     ReturnCode_t typeidentifier_w_sequence_dynamic_type(
             const traits<DynamicTypeImpl>::ref_type& dynamic_type,
-            TypeIdentifier& type_id);
+            TypeIdentifierPair& type_ids);
 
     /**
      * @brief Register DynamicType indirect-hash TypeIdentifier of a Array type.

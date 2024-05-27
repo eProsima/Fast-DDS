@@ -131,6 +131,9 @@ ReturnCode_t TypeObjectRegistry::register_type_identifier(
     }
 #endif // !defined(NDEBUG)
 
+    ExtendedTypeDefn reset_type_id;
+    type_identifier.type_identifier2().extended_defn(reset_type_id);
+
     switch (type_identifier.type_identifier1()._d())
     {
         case TI_PLAIN_SEQUENCE_SMALL:
@@ -185,7 +188,10 @@ ReturnCode_t TypeObjectRegistry::register_type_identifier(
             if (TypeObjectUtils::is_direct_hash_type_identifier(*type_identifier.type_identifier1().map_sdefn().
                             key_identifier()))
             {
-                type_identifier.type_identifier2(type_identifier.type_identifier1());
+                if (TK_NONE == type_identifier.type_identifier2()._d())
+                {
+                    type_identifier.type_identifier2(type_identifier.type_identifier1());
+                }
                 type_identifier.type_identifier1().map_sdefn().key_identifier(new TypeIdentifier(
                             get_complementary_type_identifier(
                                 *type_identifier.type_identifier2().map_sdefn().key_identifier())));
@@ -203,15 +209,16 @@ ReturnCode_t TypeObjectRegistry::register_type_identifier(
             if (TypeObjectUtils::is_direct_hash_type_identifier(*type_identifier.type_identifier1().map_ldefn().
                             key_identifier()))
             {
-                type_identifier.type_identifier2(type_identifier.type_identifier1());
+                if (TK_NONE == type_identifier.type_identifier2()._d())
+                {
+                    type_identifier.type_identifier2(type_identifier.type_identifier1());
+                }
                 type_identifier.type_identifier1().map_ldefn().key_identifier(new TypeIdentifier(
                             get_complementary_type_identifier(
                                 *type_identifier.type_identifier2().map_ldefn().key_identifier())));
             }
             break;
         default:
-            ExtendedTypeDefn reset_type_id;
-            type_identifier.type_identifier2().extended_defn(reset_type_id);
             break;
     }
 
@@ -1248,29 +1255,122 @@ void TypeObjectRegistry::register_primitive_type_identifiers()
 const TypeIdentifier TypeObjectRegistry::minimal_from_complete_type_identifier(
         const TypeIdentifier& type_id)
 {
-    if (EK_COMPLETE == type_id._d() ||
-            (TI_PLAIN_SEQUENCE_SMALL == type_id._d() && type_id.seq_sdefn().header().equiv_kind() == EK_COMPLETE) ||
-            (TI_PLAIN_SEQUENCE_LARGE == type_id._d() && type_id.seq_ldefn().header().equiv_kind() == EK_COMPLETE) ||
-            (TI_PLAIN_ARRAY_SMALL == type_id._d() && type_id.array_sdefn().header().equiv_kind() == EK_COMPLETE) ||
-            (TI_PLAIN_ARRAY_LARGE == type_id._d() && type_id.array_ldefn().header().equiv_kind() == EK_COMPLETE) ||
-            (TI_PLAIN_MAP_SMALL == type_id._d() && (type_id.map_sdefn().header().equiv_kind() == EK_COMPLETE ||
-            type_id.map_sdefn().key_identifier()->_d() == EK_COMPLETE)) ||
-            (TI_PLAIN_MAP_LARGE == type_id._d() && (type_id.map_ldefn().header().equiv_kind() == EK_COMPLETE ||
-            type_id.map_ldefn().key_identifier()->_d() == EK_COMPLETE)))
+    switch (type_id._d())
     {
-        std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
-        for (const auto& it : local_type_identifiers_)
+        case EK_COMPLETE:
         {
-            if (it.second.type_identifier1() == type_id)
+            std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
+            for (const auto& it : local_type_identifiers_)
             {
-                return it.second.type_identifier2();
-            }
-            else if (it.second.type_identifier2() == type_id)
-            {
-                return it.second.type_identifier1();
+                if (it.second.type_identifier1() == type_id)
+                {
+                    return it.second.type_identifier2();
+                }
+                else if (it.second.type_identifier2() == type_id)
+                {
+                    return it.second.type_identifier1();
+                }
             }
         }
+        break;
+        case TI_PLAIN_SEQUENCE_SMALL:
+            if (type_id.seq_sdefn().header().equiv_kind() == EK_COMPLETE)
+            {
+                TypeIdentifier ret_type_id;
+                ret_type_id = type_id;
+                ret_type_id.seq_sdefn().header().equiv_kind(EK_MINIMAL);
+                ret_type_id.seq_sdefn().element_identifier(new TypeIdentifier(
+                            get_complementary_type_identifier(
+                                *type_id.seq_sdefn().element_identifier())));
+                return ret_type_id;
+            }
+            break;
+        case TI_PLAIN_SEQUENCE_LARGE:
+            if (type_id.seq_ldefn().header().equiv_kind() == EK_COMPLETE)
+            {
+                TypeIdentifier ret_type_id;
+                ret_type_id = type_id;
+                ret_type_id.seq_ldefn().header().equiv_kind(EK_MINIMAL);
+                ret_type_id.seq_ldefn().element_identifier(new TypeIdentifier(
+                            get_complementary_type_identifier(
+                                *type_id.seq_ldefn().element_identifier())));
+                return ret_type_id;
+            }
+            break;
+        case TI_PLAIN_ARRAY_SMALL:
+            if (type_id.array_sdefn().header().equiv_kind() == EK_COMPLETE)
+            {
+                TypeIdentifier ret_type_id;
+                ret_type_id = type_id;
+                ret_type_id.array_sdefn().header().equiv_kind(EK_MINIMAL);
+                ret_type_id.array_sdefn().element_identifier(new TypeIdentifier(
+                            get_complementary_type_identifier(
+                                *type_id.array_sdefn().element_identifier())));
+                return ret_type_id;
+            }
+            break;
+        case TI_PLAIN_ARRAY_LARGE:
+            if (type_id.array_ldefn().header().equiv_kind() == EK_COMPLETE)
+            {
+                TypeIdentifier ret_type_id;
+                ret_type_id = type_id;
+                ret_type_id.array_ldefn().header().equiv_kind(EK_MINIMAL);
+                ret_type_id.array_ldefn().element_identifier(new TypeIdentifier(
+                            get_complementary_type_identifier(
+                                *type_id.array_ldefn().element_identifier())));
+                return ret_type_id;
+            }
+            break;
+        case TI_PLAIN_MAP_SMALL:
+            if (type_id.map_sdefn().header().equiv_kind() == EK_COMPLETE ||
+                    type_id.map_sdefn().key_identifier()->_d() == EK_COMPLETE)
+            {
+                TypeIdentifier ret_type_id;
+                ret_type_id = type_id;
+
+                if (type_id.map_sdefn().header().equiv_kind() == EK_COMPLETE)
+                {
+                    ret_type_id.map_sdefn().header().equiv_kind(EK_MINIMAL);
+                    ret_type_id.map_sdefn().element_identifier(new TypeIdentifier(
+                                get_complementary_type_identifier(
+                                    *type_id.map_sdefn().element_identifier())));
+                }
+                if (type_id.map_sdefn().key_identifier()->_d() == EK_COMPLETE)
+                {
+                    ret_type_id.map_sdefn().key_identifier(new TypeIdentifier(
+                                get_complementary_type_identifier(
+                                    *type_id.map_sdefn().key_identifier())));
+                }
+                return ret_type_id;
+            }
+            break;
+        case TI_PLAIN_MAP_LARGE:
+            if (type_id.map_ldefn().header().equiv_kind() == EK_COMPLETE ||
+                    type_id.map_ldefn().key_identifier()->_d() == EK_COMPLETE)
+            {
+                TypeIdentifier ret_type_id;
+                ret_type_id = type_id;
+
+                if (type_id.map_ldefn().header().equiv_kind() == EK_COMPLETE)
+                {
+                    ret_type_id.map_ldefn().header().equiv_kind(EK_MINIMAL);
+                    ret_type_id.map_ldefn().element_identifier(new TypeIdentifier(
+                                get_complementary_type_identifier(
+                                    *type_id.map_ldefn().element_identifier())));
+                }
+                if (type_id.map_ldefn().key_identifier()->_d() == EK_COMPLETE)
+                {
+                    ret_type_id.map_ldefn().key_identifier(new TypeIdentifier(
+                                get_complementary_type_identifier(
+                                    *type_id.map_ldefn().key_identifier())));
+                }
+                return ret_type_id;
+            }
+            break;
+        default:
+            break;
     }
+
     return type_id;
 }
 
@@ -1307,7 +1407,7 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_dynamic_type(
             if (0 == dynamic_type_impl->get_annotation_count() && 0 == dynamic_type_impl->get_verbatim_text_count() &&
                     0 == type_descriptor.element_type()->get_annotation_count())
             {
-                ret_code = typeidentifier_w_sequence_dynamic_type(dynamic_type_impl, type_ids.type_identifier1());
+                ret_code = typeidentifier_w_sequence_dynamic_type(dynamic_type_impl, type_ids);
             }
             else
             {
@@ -1900,7 +2000,7 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_bitmask_dynamic_type(
 
 ReturnCode_t TypeObjectRegistry::typeidentifier_w_sequence_dynamic_type(
         const traits<DynamicTypeImpl>::ref_type& dynamic_type,
-        TypeIdentifier& type_id)
+        TypeIdentifierPair& type_ids)
 {
     ReturnCode_t ret_code {RETCODE_OK};
 
@@ -1910,8 +2010,13 @@ ReturnCode_t TypeObjectRegistry::typeidentifier_w_sequence_dynamic_type(
     register_typeobject_w_dynamic_type(type_descriptor.element_type(), element_type_ids);
 
     bool ec {false};
-    const TypeIdentifier& element_type_id {TypeObjectUtils::retrieve_complete_type_identifier(element_type_ids, ec)};
+    const TypeIdentifier& element_type_id {
+        TK_NONE == element_type_ids.type_identifier2()._d() ?
+        element_type_ids.type_identifier1() :
+        TypeObjectUtils::retrieve_complete_type_identifier(element_type_ids, ec)};
     EquivalenceKind equiv_kind {equivalence_kind(element_type_id)};
+    assert((TK_NONE == element_type_ids.type_identifier2()._d() && EK_BOTH == equiv_kind) || EK_COMPLETE == equiv_kind);
+
     // CollectionElementFlags cannot be applied because element_type is a DynamicType and the applicable annotations are
     // contained in MemberDescriptor (accessible through DynamicTypeMember). XTypes inconsistency (!)
     PlainCollectionHeader header {TypeObjectUtils::build_plain_collection_header(equiv_kind, 0)};
@@ -1925,13 +2030,48 @@ ReturnCode_t TypeObjectRegistry::typeidentifier_w_sequence_dynamic_type(
                 0 : static_cast<SBound>(type_descriptor.bound().front());
         PlainSequenceSElemDefn seq_defn {TypeObjectUtils::build_plain_sequence_s_elem_defn(header, bound,
                                                  external_element_type_id)};
-        type_id.seq_sdefn(seq_defn);
+        type_ids.type_identifier1().seq_sdefn(seq_defn);
     }
     else
     {
         PlainSequenceLElemDefn seq_defn {TypeObjectUtils::build_plain_sequence_l_elem_defn(header,
                                                  type_descriptor.bound().front(), external_element_type_id)};
-        type_id.seq_ldefn(seq_defn);
+        type_ids.type_identifier1().seq_ldefn(seq_defn);
+    }
+
+    if (EK_BOTH != equiv_kind)
+    {
+        const TypeIdentifier& element_type_id_minimal {TypeObjectUtils::retrieve_minimal_type_identifier(
+                                                           element_type_ids, ec)};
+        EquivalenceKind equiv_kind_minimal {equivalence_kind(element_type_id_minimal)};
+
+        // CollectionElementFlags cannot be applied because element_type is a DynamicType and the applicable annotations are
+        // contained in MemberDescriptor (accessible through DynamicTypeMember). XTypes inconsistency (!)
+        PlainCollectionHeader header_minimal {TypeObjectUtils::build_plain_collection_header(equiv_kind_minimal, 0)};
+
+        eprosima::fastcdr::external<TypeIdentifier> external_element_type_id_minimal =
+                eprosima::fastcdr::external<TypeIdentifier>(new TypeIdentifier(element_type_id_minimal));
+        if ((static_cast<uint32_t>(LENGTH_UNLIMITED) == type_descriptor.bound().front()) ||
+                256 > type_descriptor.bound().front())
+        {
+            SBound bound = (static_cast<uint32_t>(LENGTH_UNLIMITED) == type_descriptor.bound().front()) ?
+                    0 : static_cast<SBound>(type_descriptor.bound().front());
+            PlainSequenceSElemDefn seq_defn {TypeObjectUtils::build_plain_sequence_s_elem_defn(header_minimal, bound,
+                                                     external_element_type_id_minimal)};
+            type_ids.type_identifier2().seq_sdefn(seq_defn);
+        }
+        else
+        {
+            PlainSequenceLElemDefn seq_defn {TypeObjectUtils::build_plain_sequence_l_elem_defn(header_minimal,
+                                                     type_descriptor.bound().front(),
+                                                     external_element_type_id_minimal)};
+            type_ids.type_identifier2().seq_ldefn(seq_defn);
+        }
+    }
+    else
+    {
+        ExtendedTypeDefn reset_type_id;
+        type_ids.type_identifier2().extended_defn(reset_type_id);
     }
 
     return ret_code;
@@ -2397,40 +2537,25 @@ EquivalenceKind TypeObjectRegistry::equivalence_kind(
     switch (element_type_id._d())
     {
         case TI_PLAIN_SEQUENCE_SMALL:
-            if (EK_BOTH != element_type_id.seq_sdefn().header().equiv_kind())
-            {
-                equiv_kind = EK_COMPLETE;
-            }
+            equiv_kind = element_type_id.seq_sdefn().header().equiv_kind();
             break;
         case TI_PLAIN_SEQUENCE_LARGE:
-            if (EK_BOTH != element_type_id.seq_ldefn().header().equiv_kind())
-            {
-                equiv_kind = EK_COMPLETE;
-            }
+            equiv_kind = element_type_id.seq_ldefn().header().equiv_kind();
             break;
         case TI_PLAIN_ARRAY_SMALL:
-            if (EK_BOTH != element_type_id.array_sdefn().header().equiv_kind())
-            {
-                equiv_kind = EK_COMPLETE;
-            }
+            equiv_kind = element_type_id.array_sdefn().header().equiv_kind();
             break;
         case TI_PLAIN_ARRAY_LARGE:
-            if (EK_BOTH != element_type_id.array_ldefn().header().equiv_kind())
-            {
-                equiv_kind = EK_COMPLETE;
-            }
+            equiv_kind = element_type_id.array_ldefn().header().equiv_kind();
             break;
         case TI_PLAIN_MAP_SMALL:
-            if (EK_BOTH != element_type_id.map_sdefn().header().equiv_kind())
-            {
-                equiv_kind = EK_COMPLETE;
-            }
+            equiv_kind = element_type_id.map_sdefn().header().equiv_kind();
             break;
         case TI_PLAIN_MAP_LARGE:
-            if (EK_BOTH != element_type_id.map_ldefn().header().equiv_kind())
-            {
-                equiv_kind = EK_COMPLETE;
-            }
+            equiv_kind = element_type_id.map_ldefn().header().equiv_kind();
+            break;
+        case EK_MINIMAL:
+            equiv_kind = EK_MINIMAL;
             break;
         case EK_COMPLETE:
             equiv_kind = EK_COMPLETE;

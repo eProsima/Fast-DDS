@@ -1923,6 +1923,54 @@ bool TypeObjectUtils::is_direct_hash_type_identifier(
     return direct_hash;
 }
 
+const TypeIdentifier& TypeObjectUtils::retrieve_minimal_type_identifier(
+        const TypeIdentifierPair& type_ids,
+        bool& ec)
+{
+    ec = true;
+
+    if (EK_MINIMAL == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
+            (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
+            EK_MINIMAL == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+            (TI_PLAIN_SEQUENCE_LARGE == type_ids.type_identifier1()._d() &&
+            EK_MINIMAL == type_ids.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+            (TI_PLAIN_ARRAY_SMALL == type_ids.type_identifier1()._d() &&
+            EK_MINIMAL == type_ids.type_identifier1().array_sdefn().header().equiv_kind()) ||
+            (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
+            EK_MINIMAL == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
+            (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
+            (EK_MINIMAL == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+            EK_MINIMAL == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+            (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
+            (EK_MINIMAL == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+            EK_MINIMAL == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
+    {
+        return type_ids.type_identifier1();
+    }
+    else if (EK_MINIMAL == type_ids.type_identifier2()._d() ||
+            (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier2()._d() &&
+            EK_MINIMAL == type_ids.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+            (TI_PLAIN_SEQUENCE_LARGE == type_ids.type_identifier2()._d() &&
+            EK_MINIMAL == type_ids.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+            (TI_PLAIN_ARRAY_SMALL == type_ids.type_identifier2()._d() &&
+            EK_MINIMAL == type_ids.type_identifier2().array_sdefn().header().equiv_kind()) ||
+            (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
+            EK_MINIMAL == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
+            (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
+            (EK_MINIMAL == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+            EK_MINIMAL == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+            (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
+            (EK_MINIMAL == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+            EK_MINIMAL == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
+    {
+        return type_ids.type_identifier2();
+    }
+
+    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Inconsistent key TypeIdentifier.");
+    ec = false;
+    return type_ids.type_identifier1();
+}
+
 const TypeIdentifier& TypeObjectUtils::retrieve_complete_type_identifier(
         const TypeIdentifierPair& type_ids,
         bool& ec)
