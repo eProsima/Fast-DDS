@@ -37,7 +37,7 @@ namespace eprosima {
 namespace fastrtps {
 
 #if HAVE_SECURITY
-namespace rtps{
+namespace rtps {
 namespace security {
 struct ParticipantSecurityAttributes;
 } /* namespace security */

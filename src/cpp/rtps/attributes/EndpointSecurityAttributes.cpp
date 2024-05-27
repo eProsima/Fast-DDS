@@ -87,9 +87,8 @@ bool EndpointSecurityAttributes::match(
         const PluginEndpointSecurityAttributesMask remotePluginMask) const
 {
     return security_mask_matches(mask(), remoteMask) &&
-            security_mask_matches(plugin_endpoint_attributes, remotePluginMask);
+           security_mask_matches(plugin_endpoint_attributes, remotePluginMask);
 }
-
 
 } // namespace security
 } // namespace rtps

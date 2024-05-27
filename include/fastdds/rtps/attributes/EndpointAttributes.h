@@ -162,7 +162,7 @@ private:
     int16_t m_entityID = -1;
 
 #if HAVE_SECURITY
-     //! Security attributes
+    //! Security attributes
     security::EndpointSecurityAttributes security_attributes_;
 #endif // HAVE_SECURITY
 
