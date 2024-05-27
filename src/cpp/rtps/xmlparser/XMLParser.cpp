@@ -51,9 +51,6 @@ namespace xmlparser {
 XMLP_ret XMLParser::loadDefaultXMLFile(
         up_base_node_t& root)
 {
-<<<<<<< HEAD:src/cpp/rtps/xmlparser/XMLParser.cpp
-    return loadXML(DEFAULT_FASTRTPS_PROFILES, root);
-=======
     // Use absolute path to ensure that the file is loaded only once
 #ifdef _WIN32
     char current_directory[MAX_PATH];
@@ -63,7 +60,7 @@ XMLP_ret XMLParser::loadDefaultXMLFile(
     }
     else
     {
-        strcat_s(current_directory, MAX_PATH, DEFAULT_FASTDDS_PROFILES);
+        strcat_s(current_directory, MAX_PATH, DEFAULT_FASTRTPS_PROFILES);
         return loadXML(current_directory, root, true);
     }
 #else
@@ -75,12 +72,11 @@ XMLP_ret XMLParser::loadDefaultXMLFile(
     else
     {
         strcat(current_directory, "/");
-        strcat(current_directory, DEFAULT_FASTDDS_PROFILES);
+        strcat(current_directory, DEFAULT_FASTRTPS_PROFILES);
         return loadXML(current_directory, root, true);
     }
 #endif // _WIN32
     return XMLP_ret::XML_ERROR;
->>>>>>> 0919ff294 (Use absolute paths when loading XML files (#4751)):src/cpp/xmlparser/XMLParser.cpp
 }
 
 XMLP_ret XMLParser::parseXML(
@@ -570,11 +566,7 @@ XMLP_ret XMLParser::parseXMLCommonTransportData(
                     p_aux1 != nullptr; p_aux1 = p_aux1->NextSiblingElement())
             {
                 address = p_aux1->Name();
-<<<<<<< HEAD:src/cpp/rtps/xmlparser/XMLParser.cpp
                 if (strcmp(address, ADDRESS) == 0)
-=======
-                if (strcmp(address, ADDRESS) == 0 || strcmp(address, NETWORK_INTERFACE) == 0)
->>>>>>> 0919ff294 (Use absolute paths when loading XML files (#4751)):src/cpp/xmlparser/XMLParser.cpp
                 {
                     const char* text = p_aux1->GetText();
                     if (nullptr != text)
@@ -603,72 +595,7 @@ XMLP_ret XMLParser::parseXMLCommonTransportData(
                 strcmp(name, HEALTHY_CHECK_TIMEOUT_MS) == 0 || strcmp(name, HEALTHY_CHECK_TIMEOUT_MS) == 0 ||
                 strcmp(name, RTPS_DUMP_FILE) == 0)
         {
-<<<<<<< HEAD:src/cpp/rtps/xmlparser/XMLParser.cpp
             // Parsed outside of this method
-=======
-            std::string netmask_filter_str;
-            if (XMLP_ret::XML_OK != getXMLString(p_aux0, &netmask_filter_str, 0))
-            {
-                EPROSIMA_LOG_ERROR(XMLPARSER, "Invalid element found into 'netmask_filter'.");
-                return XMLP_ret::XML_ERROR;
-            }
-
-            try
-            {
-                p_transport->netmask_filter = fastdds::rtps::network::netmask_filter::string_to_netmask_filter_kind(
-                    netmask_filter_str);
-            }
-            catch (const std::invalid_argument& e)
-            {
-                EPROSIMA_LOG_ERROR(XMLPARSER, "Invalid element found into 'netmask_filter' : " << e.what());
-                return XMLP_ret::XML_ERROR;
-            }
-        }
-        else if (strcmp(name, NETWORK_INTERFACES) == 0)
-        {
-            if (XMLP_ret::XML_OK != parseXMLInterfaces(p_aux0, p_transport))
-            {
-                EPROSIMA_LOG_ERROR(XMLPARSER, "Failed to parse 'interfaces' element.");
-                return XMLP_ret::XML_ERROR;
-            }
-        }
-    }
-    return XMLP_ret::XML_OK;
-}
-
-XMLP_ret XMLParser::parseXMLInterfaces(
-        tinyxml2::XMLElement* p_root,
-        std::shared_ptr<fastdds::rtps::SocketTransportDescriptor> p_transport)
-{
-    /*
-        <xs:complexType name="interfacesType">
-            <xs:all>
-                <xs:element name="allowlist" type="allowlistType" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="blocklist" type="blocklistType" minOccurs="0" maxOccurs="1"/>
-            </xs:all>
-        </xs:complexType>
-     */
-    tinyxml2::XMLElement* p_aux0 = nullptr;
-    const char* name = nullptr;
-    for (p_aux0 = p_root->FirstChildElement(); p_aux0 != nullptr; p_aux0 = p_aux0->NextSiblingElement())
-    {
-        name = p_aux0->Name();
-        if (strcmp(name, ALLOWLIST) == 0)
-        {
-            if (XMLP_ret::XML_OK != parseXMLAllowlist(p_aux0, p_transport))
-            {
-                EPROSIMA_LOG_ERROR(XMLPARSER, "Failed to parse 'allowlist'.");
-                return XMLP_ret::XML_ERROR;
-            }
-        }
-        else if (strcmp(name, BLOCKLIST) == 0)
-        {
-            if (XMLP_ret::XML_OK != parseXMLBlocklist(p_aux0, p_transport))
-            {
-                EPROSIMA_LOG_ERROR(XMLPARSER, "Failed to parse 'blocklist'.");
-                return XMLP_ret::XML_ERROR;
-            }
->>>>>>> 0919ff294 (Use absolute paths when loading XML files (#4751)):src/cpp/xmlparser/XMLParser.cpp
         }
         else
         {
@@ -1830,11 +1757,7 @@ XMLP_ret XMLParser::loadXML(
     tinyxml2::XMLDocument xmlDoc;
     if (tinyxml2::XMLError::XML_SUCCESS != xmlDoc.LoadFile(filename.c_str()))
     {
-<<<<<<< HEAD:src/cpp/rtps/xmlparser/XMLParser.cpp
-        if (filename != std::string(DEFAULT_FASTRTPS_PROFILES))
-=======
         if (!is_default)
->>>>>>> 0919ff294 (Use absolute paths when loading XML files (#4751)):src/cpp/xmlparser/XMLParser.cpp
         {
             logError(XMLPARSER, "Error opening '" << filename << "'");
         }
