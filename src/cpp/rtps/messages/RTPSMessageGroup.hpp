@@ -276,7 +276,6 @@ private:
             const GuidPrefix_t& destination_guid_prefix,
             bool is_big_submessage);
 
-
     /**
      * @brief Checks if there is enough space in the CDRMessage to accommodate the given length.
      *
@@ -287,7 +286,6 @@ private:
     bool check_space(
             CDRMessage_t* msg,
             const uint32_t length);
-
 
     /**
      * Appends a submessage to the RTPS Message so it can be sent.
@@ -358,14 +356,6 @@ private:
 
     // Bytes to send in the next list of buffers
     uint32_t buffers_bytes_ = 0;
-
-    /**
-     * List of CDRMessages containing the copied messages. This list can contain:
-     * - Submessage headers preceding each DATA/DATA_FRAG
-     * - Protected messages that require encryption
-     * - Heartbeats, gaps, acknacks, nackfrags...
-     */
-    std::list<CDRMessage_t> copied_messages_;
 
     // Size of the pending padding
     uint8_t pending_padding_ = 0;

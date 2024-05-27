@@ -106,46 +106,43 @@ static bool append_message(
 bool RTPSMessageGroup::append_submessage()
 {
     // Three possible cases:
-    // - If the RTPS message is protected, submessage_msg_ with payload is always appended to header_msg_
-    //   Final msg Struct: | header_msg_ |
-    // - If header_msg_ is reseted, submessage_msg_ is appended to header_msg_. The submessage might contain the payload or not
-    // - If header_msg_ is not reseted, put submessage_msg_ into a new buffer and add it to buffers_to_send_
-    //   Final msg Struct: | header_msg_ + submessage_msg_ | payload | padding | submessage_msg_ | payload | padding | ...
-    //
-#if HAVE_SECURITY
-    if (participant_->security_attributes().is_rtps_protected)
+    // - If the RTPS message is protected, append submessages and use 1 buffer --> buffers_to_send_ of size: 1
+    //      Final msg Struct: | header_msg_ |
+    // - If the submessage contains the payload --> buffers_to_send_ of size: (submessages_added)
+    //      Final msg Struct: | header_msg_[RTPS + submsg1] | header_msg_[submsg2] | header_msg_[submsg3] | ...
+    // - If the submessage does NOT contain the payload --> buffers_to_send_ of size: ((2 + PAD) * submessages_added)
+    //      Final msg Struct: | header_msg_[RTPS + submsg1] | payload | padding | header_msg_[submsg2] | payload | padding | ...
+    // Note that case 1 and 2 might be intercalated, combining submessages with payloads and without them
+
+    uint32_t pos_header = header_msg_->pos;
+    uint32_t length_submsg = submessage_msg_->length;
+    if (header_msg_->pos == RTPSMESSAGE_HEADER_SIZE && header_msg_->length == RTPSMESSAGE_HEADER_SIZE)
     {
-        // If the RTPS message is protected, the whole message will be encrypted at once
-        // so we need to keep the whole message in a single buffer
-        if (!append_message(participant_, header_msg_, submessage_msg_))
-        {
-            EPROSIMA_LOG_ERROR(RTPS_WRITER, "Cannot add RTPS submesage to the CDRMessage. Buffer too small");
-            return false;
-        }
+        // Include the RTPS header into the buffer that will be added to buffers_to_send_ vector
+        pos_header = 0;
+        length_submsg += RTPSMESSAGE_HEADER_SIZE;
+    }
+
+    // Copy the submessage to the header message.
+    // The submessage will contain the payload if copy_data is enabled, otherwise gather-send will be used and the
+    // submessage will only contain the header. The payload will be added with pending_buffer_, as an extra buffer
+    if (!append_message(participant_, header_msg_, submessage_msg_))
+    {
+        return false;
+    }
+
+#if HAVE_SECURITY
+    // If the RTPS message is protected, the whole message will be encrypted at once
+    // so we need to keep the whole message in a single buffer
+    if (participant_->security_attributes().is_rtps_protected && endpoint_->supports_rtps_protection())
+    {
         return true;
     }
 #endif // if HAVE_SECURITY
 
-    if (header_msg_->pos == RTPSMESSAGE_HEADER_SIZE && header_msg_->length == RTPSMESSAGE_HEADER_SIZE)
-    {
-        // header_msg_ is reseted. This is the first submessage
-        if (!append_message(participant_, header_msg_, submessage_msg_))
-        {
-            return false;
-        }
-    }
-    else
-    {
-        // header_msg_ is not reseted. This is not the first submessage
-        // Create new copy of submessage_header and add it to buffers_to_send_
-        // The submessage will contain the payload if copy_data is enabled, otherwise gather-send will be used and
-        // the submessage will only contain the header. The payload will be added with pending_buffer_
-        CDRMessage_t new_sub_msg = *submessage_msg_;
-        copied_messages_.push_back(new_sub_msg);
-
-        buffers_to_send_.emplace_back(copied_messages_.back().buffer, copied_messages_.back().length);
-        buffers_bytes_ += copied_messages_.back().length;
-    }
+    // Add into buffers_to_send_ the submessage added to header_msg_
+    buffers_to_send_->emplace_back(&header_msg_->buffer[pos_header], length_submsg);
+    buffers_bytes_ += length_submsg;
 
     if (nullptr != pending_buffer_.buffer)
     {
@@ -334,7 +331,6 @@ void RTPSMessageGroup::reset_to_header()
     header_msg_->length = RTPSMESSAGE_HEADER_SIZE;
 
     buffers_to_send_.clear();
-    copied_messages_.clear();
     buffers_bytes_ = 0;
 }
 
@@ -373,11 +369,10 @@ void RTPSMessageGroup::send()
                 }
 
                 msgToSend = encrypt_msg_;
+                buffers_to_send_.emplace_back(msgToSend->buffer, msgToSend->length);
+                buffers_bytes_ += msgToSend->length;
             }
 #endif // if HAVE_SECURITY
-
-            buffers_to_send_.push_front(NetworkBuffer(msgToSend->buffer, msgToSend->length));
-            buffers_bytes_ += msgToSend->length;
 
 #ifdef FASTDDS_STATISTICS
             add_stats_submsg();
