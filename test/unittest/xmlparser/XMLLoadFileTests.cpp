@@ -23,10 +23,9 @@
 
 #include <gtest/gtest.h>
 #include <fastdds/dds/log/Log.hpp>
-#include "../logging/mock/MockConsumer.h"
-
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <fastrtps/xmlparser/XMLParserCommon.h>
+#include "../logging/mock/MockConsumer.h"
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps;
@@ -94,14 +93,14 @@ TEST_F(XMLLoadFileTests, load_twice_default_xml)
     strcat_s(current_directory, MAX_PATH, "\\");
     strcat_s(current_directory, MAX_PATH, xmlparser::DEFAULT_FASTRTPS_PROFILES);
     // Set environment variable
-    _putenv_s("FASTDDS_DEFAULT_PROFILES_FILE", current_directory);
+    _putenv_s("FASTRTPS_DEFAULT_PROFILES_FILE", current_directory);
 #else
     char current_directory[PATH_MAX];
     ASSERT_NE(getcwd(current_directory, PATH_MAX), (void*)NULL);
     strcat(current_directory, "/");
     strcat(current_directory, xmlparser::DEFAULT_FASTRTPS_PROFILES);
     // Set environment variable
-    setenv("FASTDDS_DEFAULT_PROFILES_FILE", current_directory, 1);
+    setenv("FASTRTPS_DEFAULT_PROFILES_FILE", current_directory, 1);
 #endif // _WIN32
 
     // Write DEFAULT_FASTRTPS_PROFILES.xml
