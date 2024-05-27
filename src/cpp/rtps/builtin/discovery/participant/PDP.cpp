@@ -451,6 +451,20 @@ bool PDP::enable()
 
 void PDP::disable()
 {
+    // Extract all the participant proxies excluding first one (ourselves)
+    std::vector<ParticipantProxyData*> participants;
+    {
+        std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
+        participants.insert(participants.end(), participant_proxies_.begin() + 1, participant_proxies_.end());
+        participant_proxies_.erase(participant_proxies_.begin() + 1, participant_proxies_.end());
+    }
+
+    // Unmatch all remote participants
+    for (ParticipantProxyData* pdata : participants)
+    {
+        actions_on_remote_participant_removed(pdata, pdata->m_guid,
+                ParticipantDiscoveryInfo::DISCOVERY_STATUS::REMOVED_PARTICIPANT, nullptr);
+    }
 }
 
 void PDP::announceParticipantState(
