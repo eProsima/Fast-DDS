@@ -177,7 +177,7 @@ void XMLProfileManager::loadDefaultXMLFile()
         // Use absolute path to ensure the file is loaded only once
         if (GetFullPathName(file_path, MAX_PATH, absolute_path, filename) == 0)
         {
-            EPROSIMA_LOG_ERROR(XMLPARSER, "GetFullPathName failed " << GetLastError());
+            logError(XMLPARSER, "GetFullPathName failed " << GetLastError());
         }
         else
         {
@@ -195,7 +195,7 @@ void XMLProfileManager::loadDefaultXMLFile()
         // Try to load the default XML file.
         if (GetCurrentDirectory(MAX_PATH, current_directory) == 0)
         {
-            EPROSIMA_LOG_ERROR(XMLPARSER, "GetCurrentDirectory failed " << GetLastError());
+            logError(XMLPARSER, "GetCurrentDirectory failed " << GetLastError());
         }
         else
         {
@@ -216,7 +216,7 @@ void XMLProfileManager::loadDefaultXMLFile()
         }
         else
         {
-            EPROSIMA_LOG_ERROR(XMLPARSER, "realpath failed " << std::strerror(errno));
+            logError(XMLPARSER, "realpath failed " << std::strerror(errno));
         }
     }
 
@@ -227,7 +227,7 @@ void XMLProfileManager::loadDefaultXMLFile()
     {
         if (getcwd(absolute_path, PATH_MAX) == NULL)
         {
-            EPROSIMA_LOG_ERROR(XMLPARSER, "getcwd failed " << std::strerror(errno));
+            logError(XMLPARSER, "getcwd failed " << std::strerror(errno));
         }
         else
         {

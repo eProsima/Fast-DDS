@@ -16,13 +16,12 @@
 #include <fastrtps/xmlparser/XMLParserCommon.h>
 #include <fastrtps/xmlparser/XMLTree.h>
 
-<<<<<<< HEAD:src/cpp/rtps/xmlparser/XMLParser.cpp
 #include <fastrtps/transport/UDPv4TransportDescriptor.h>
 #include <fastrtps/transport/UDPv6TransportDescriptor.h>
 #include <fastrtps/transport/TCPv4TransportDescriptor.h>
 #include <fastrtps/transport/TCPv6TransportDescriptor.h>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
-=======
+
 #include <cstdlib>
 #include <iostream>
 #include <string>
@@ -32,7 +31,6 @@
 #else
 #include <unistd.h>
 #endif // _WIN32
->>>>>>> 0919ff294 (Use absolute paths when loading XML files (#4751)):src/cpp/xmlparser/XMLParser.cpp
 
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
@@ -56,7 +54,7 @@ XMLP_ret XMLParser::loadDefaultXMLFile(
     char current_directory[MAX_PATH];
     if (GetCurrentDirectory(MAX_PATH, current_directory) == 0)
     {
-        EPROSIMA_LOG_ERROR(XMLPARSER, "GetCurrentDirectory failed " << GetLastError());
+        logError(XMLPARSER, "GetCurrentDirectory failed " << GetLastError());
     }
     else
     {
@@ -67,7 +65,7 @@ XMLP_ret XMLParser::loadDefaultXMLFile(
     char current_directory[PATH_MAX];
     if (getcwd(current_directory, PATH_MAX) == NULL)
     {
-        EPROSIMA_LOG_ERROR(XMLPARSER, "getcwd failed " << std::strerror(errno));
+        logError(XMLPARSER, "getcwd failed " << std::strerror(errno));
     }
     else
     {
@@ -319,59 +317,7 @@ XMLP_ret XMLParser::parseXMLTransportData(
         {
             sType = p_aux0->GetText();
         }
-<<<<<<< HEAD:src/cpp/rtps/xmlparser/XMLParser.cpp
         else
-=======
-    }
-
-    XMLProfileManager::insertTransportById(sId, pDescriptor);
-    return ret;
-}
-
-XMLP_ret XMLParser::validateXMLTransportElements(
-        tinyxml2::XMLElement& p_root)
-{
-    XMLP_ret ret = XMLP_ret::XML_OK;
-    for (tinyxml2::XMLElement* p_aux0 = p_root.FirstChildElement(); p_aux0 != nullptr;
-            p_aux0 = p_aux0->NextSiblingElement())
-    {
-        const char* name = p_aux0->Name();
-        if (!(strcmp(name, TRANSPORT_ID) == 0 ||
-                strcmp(name, TYPE) == 0 ||
-                strcmp(name, SEND_BUFFER_SIZE) == 0 ||
-                strcmp(name, RECEIVE_BUFFER_SIZE) == 0 ||
-                strcmp(name, MAX_MESSAGE_SIZE) == 0 ||
-                strcmp(name, MAX_INITIAL_PEERS_RANGE) == 0 ||
-                strcmp(name, WHITE_LIST) == 0 ||
-                strcmp(name, NETMASK_FILTER) == 0 ||
-                strcmp(name, NETWORK_INTERFACES) == 0 ||
-                strcmp(name, TTL) == 0 ||
-                strcmp(name, NON_BLOCKING_SEND) == 0 ||
-                strcmp(name, UDP_OUTPUT_PORT) == 0 ||
-                strcmp(name, TCP_WAN_ADDR) == 0 ||
-                strcmp(name, KEEP_ALIVE_FREQUENCY) == 0 ||
-                strcmp(name, KEEP_ALIVE_TIMEOUT) == 0 ||
-                strcmp(name, MAX_LOGICAL_PORT) == 0 ||
-                strcmp(name, LOGICAL_PORT_RANGE) == 0 ||
-                strcmp(name, LOGICAL_PORT_INCREMENT) == 0 ||
-                strcmp(name, LISTENING_PORTS) == 0 ||
-                strcmp(name, CALCULATE_CRC) == 0 ||
-                strcmp(name, CHECK_CRC) == 0 ||
-                strcmp(name, KEEP_ALIVE_THREAD) == 0 ||
-                strcmp(name, ACCEPT_THREAD) == 0 ||
-                strcmp(name, ENABLE_TCP_NODELAY) == 0 ||
-                strcmp(name, TCP_NEGOTIATION_TIMEOUT) == 0 ||
-                strcmp(name, TLS) == 0 ||
-                strcmp(name, SEGMENT_SIZE) == 0 ||
-                strcmp(name, PORT_QUEUE_CAPACITY) == 0 ||
-                strcmp(name, HEALTHY_CHECK_TIMEOUT_MS) == 0 ||
-                strcmp(name, RTPS_DUMP_FILE) == 0 ||
-                strcmp(name, DEFAULT_RECEPTION_THREADS) == 0 ||
-                strcmp(name, RECEPTION_THREADS) == 0 ||
-                strcmp(name, DUMP_THREAD) == 0 ||
-                strcmp(name, PORT_OVERFLOW_POLICY) == 0 ||
-                strcmp(name, SEGMENT_OVERFLOW_POLICY) == 0))
->>>>>>> 0919ff294 (Use absolute paths when loading XML files (#4751)):src/cpp/xmlparser/XMLParser.cpp
         {
             logError(XMLPARSER, "'" << TYPE << "' attribute cannot be empty");
             return XMLP_ret::XML_ERROR;
