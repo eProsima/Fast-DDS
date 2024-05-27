@@ -402,17 +402,8 @@ target_link_libraries(XMLEndpointParserTests GTest::gtest
 if(QNX)
     target_link_libraries(XMLEndpointParserTests socket)
 endif()
-<<<<<<< HEAD
-add_gtest(XMLEndpointParserTests SOURCES XMLEndpointParserTests.cpp)
 
-if(ANDROID)
-    set_property(TARGET XMLEndpointParserTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-    set_property(TARGET XMLParserTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-    set_property(TARGET XMLProfileParserTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-    set_property(TARGET XMLTreeTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-endif()
-=======
-gtest_discover_tests(XMLEndpointParserTests)
+add_gtest(XMLEndpointParserTests SOURCES XMLEndpointParserTests.cpp)
 
 ######################################  XMLLoadFileTests  ######################################################
 set(XMLLOADFILE_SOURCE
@@ -440,6 +431,7 @@ set(XMLLOADFILE_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLParser.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLParserCommon.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLProfileManager.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp
 
     # locators
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
@@ -496,11 +488,18 @@ target_link_libraries(XMLLoadFileTests GTest::gtest
     $<$<BOOL:${WIN32}>:ws2_32>
     ${TINYXML2_LIBRARY}
     fastcdr
-    fastdds::log
-    fastdds::xtypes::dynamic-types::impl
     )
 if(QNX)
     target_link_libraries(XMLLoadFileTests socket)
 endif()
-gtest_discover_tests(XMLLoadFileTests)
->>>>>>> 0919ff294 (Use absolute paths when loading XML files (#4751))
+
+add_gtest(XMLLoadFileTests SOURCES XMLLoadFileTests.cpp)
+
+if(ANDROID)
+    set_property(TARGET XMLEndpointParserTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+    set_property(TARGET XMLParserTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+    set_property(TARGET XMLProfileParserTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+    set_property(TARGET XMLTreeTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+    set_property(TARGET XMLLoadFileTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+endif()
+
