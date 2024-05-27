@@ -33,9 +33,6 @@
 #include <fastdds/rtps/common/Token.h>
 #include <fastdds/rtps/common/VendorId_t.hpp>
 
-#define BUILTIN_PARTICIPANT_DATA_MAX_SIZE 100
-#define TYPELOOKUP_DATA_MAX_SIZE 5000
-
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {

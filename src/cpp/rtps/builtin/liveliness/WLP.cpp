@@ -899,7 +899,7 @@ bool WLP::send_liveliness_message(
     CacheChange_t* change = writer->new_change(
         []() -> uint32_t
         {
-            return BUILTIN_PARTICIPANT_DATA_MAX_SIZE;
+            return WLP::builtin_participant_data_max_size;
         },
         ALIVE,
         instance);

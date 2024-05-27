@@ -498,7 +498,7 @@ bool TypeLookupManager::create_endpoints()
     HistoryAttributes hatt;
     hatt.initialReservedCaches = 20;
     hatt.maximumReservedCaches = 1000;
-    hatt.payloadMaxSize = TYPELOOKUP_DATA_MAX_SIZE;
+    hatt.payloadMaxSize = TypeLookupManager::typelookup_data_max_size;
 
     WriterAttributes watt;
     watt.endpoint.unicastLocatorList = builtin_protocols_->m_metatrafficUnicastLocatorList;
