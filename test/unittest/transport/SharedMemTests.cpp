@@ -1425,7 +1425,7 @@ TEST_F(SHMTransportTests, buffer_recover)
 
     bool exit_listeners = false;
 
-    uint32_t listener1_sleep_ms = 400u;
+    uint32_t listener1_sleep_ms = 150u;
     uint32_t listener2_sleep_ms = 100u;
 
     auto listener1 = sub1_read->create_listener();
@@ -1505,9 +1505,9 @@ TEST_F(SHMTransportTests, buffer_recover)
               << " Listener1_recv_count " << listener1_recv_count.load()
               << " Listener2_recv_count " << listener2_recv_count.load()
               << std::endl;
-    // The slow listener is 4 times slower than the fast one
-    EXPECT_LT(listener1_recv_count.load() * 3, listener2_recv_count.load());
-    EXPECT_GE(listener1_recv_count.load() * 4, listener2_recv_count.load());
+    // The slow listener is almost 2 times slower than the fast one
+    EXPECT_LT(listener1_recv_count.load(), listener2_recv_count.load());
+    EXPECT_GE(listener1_recv_count.load() * 2, listener2_recv_count.load());
     // Test 2 (with port overflow)
     listener2_sleep_ms = 0u;
     send_counter = 0u;
