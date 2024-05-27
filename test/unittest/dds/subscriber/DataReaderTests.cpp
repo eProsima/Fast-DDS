@@ -3870,8 +3870,8 @@ TEST_F(DataReaderTests, data_type_is_plain_data_representation)
     /* Define XCDR1 only data representation QoS to force "is_plain" call */
     DataReaderQos qos_xcdr = DATAREADER_QOS_DEFAULT;
     qos_xcdr.endpoint().history_memory_policy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
-    qos_xcdr.type_consistency().representation.m_value.clear();
-    qos_xcdr.type_consistency().representation.m_value.push_back(DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
+    qos_xcdr.representation().m_value.clear();
+    qos_xcdr.representation().m_value.push_back(DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
 
     /* Expect the "is_plain" method called with default data representation (XCDR1) */
     EXPECT_CALL(*type, custom_is_plain()).Times(0);
@@ -3888,8 +3888,8 @@ TEST_F(DataReaderTests, data_type_is_plain_data_representation)
     /* Define XCDR2 data representation QoS to force "is_plain" call */
     DataReaderQos qos_xcdr2 = DATAREADER_QOS_DEFAULT;
     qos_xcdr2.endpoint().history_memory_policy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
-    qos_xcdr2.type_consistency().representation.m_value.clear();
-    qos_xcdr2.type_consistency().representation.m_value.push_back(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+    qos_xcdr2.representation().m_value.clear();
+    qos_xcdr2.representation().m_value.push_back(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
 
     /* Expect the "is_plain" method called with XCDR2 data representation */
     EXPECT_CALL(*type, custom_is_plain()).Times(0);
@@ -3904,7 +3904,7 @@ TEST_F(DataReaderTests, data_type_is_plain_data_representation)
     /* NOT Define data representation QoS to force "is_plain" call */
     DataReaderQos qos_no_xcdr = DATAREADER_QOS_DEFAULT;
     qos_no_xcdr.endpoint().history_memory_policy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
-    qos_no_xcdr.type_consistency().representation.m_value.clear();
+    qos_no_xcdr.representation().m_value.clear();
 
     /* Expect the "is_plain" method called with both data representation */
     EXPECT_CALL(*type, custom_is_plain()).Times(0);

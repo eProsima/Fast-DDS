@@ -1594,7 +1594,7 @@ public:
     PubSubReader& data_representation(
             const std::vector<eprosima::fastdds::dds::DataRepresentationId_t>& values)
     {
-        datareader_qos_.type_consistency().representation.m_value = values;
+        datareader_qos_.representation().m_value = values;
         return *this;
     }
 
