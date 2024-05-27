@@ -33,7 +33,8 @@ namespace rtps {
 constexpr uint32_t s_maximumMessageSize = 65500;
 //! Default maximum initial peers range
 constexpr uint32_t s_maximumInitialPeersRange = 4;
-//! Default minimum socket buffer
+// Default minimum socket buffer
+FASTDDS_DEPRECATED_UNTIL(3, s_minimumSocketBuffer, "Minimum socket buffer is now taken from the maximum msg size")
 constexpr uint32_t s_minimumSocketBuffer = 65536;
 //! Default IPv4 address
 static const std::string s_IPv4AddressAny = "0.0.0.0";

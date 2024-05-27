@@ -14,7 +14,21 @@
 
 #include <rtps/transport/TCPTransportInterface.h>
 
+<<<<<<< HEAD
 #include <set>
+=======
+#include <algorithm>
+#include <cassert>
+#include <chrono>
+#include <cstring>
+#include <limits>
+#include <map>
+#include <memory>
+#include <mutex>
+#include <set>
+#include <string>
+#include <thread>
+>>>>>>> 5d1c0138a (Handle errors when setting socket buffer sizes (#4760) (#4796) (#4812))
 #include <utility>
 #include <cstring>
 #include <algorithm>
@@ -25,6 +39,7 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/utils/System.h>
+<<<<<<< HEAD
 #include <rtps/transport/tcp/RTCPMessageManager.h>
 #include <rtps/transport/TCPSenderResource.hpp>
 #include <rtps/transport/TCPChannelResourceBasic.h>
@@ -33,6 +48,10 @@
 #include <rtps/transport/TCPChannelResourceSecure.h>
 #include <rtps/transport/TCPAcceptorSecure.h>
 #endif // if TLS_FOUND
+=======
+
+#include <rtps/transport/asio_helpers.hpp>
+>>>>>>> 5d1c0138a (Handle errors when setting socket buffer sizes (#4760) (#4796) (#4812))
 #include <statistics/rtps/messages/RTPSStatisticsMessages.hpp>
 #include <utils/SystemInfo.hpp>
 
@@ -366,6 +385,42 @@ bool TCPTransportInterface::DoInputLocatorsMatch(
 bool TCPTransportInterface::init(
         const fastrtps::rtps::PropertyPolicy* properties)
 {
+    uint32_t maximumMessageSize = s_maximumMessageSize;
+    uint32_t cfg_max_msg_size = configuration()->maxMessageSize;
+    uint32_t cfg_send_size = configuration()->sendBufferSize;
+    uint32_t cfg_recv_size = configuration()->receiveBufferSize;
+    uint32_t max_int_value = static_cast<uint32_t>(std::numeric_limits<int32_t>::max());
+
+    if (cfg_max_msg_size > maximumMessageSize)
+    {
+        EPROSIMA_LOG_ERROR(TRANSPORT_TCP, "maxMessageSize cannot be greater than " << maximumMessageSize);
+        return false;
+    }
+
+    if (cfg_send_size > max_int_value)
+    {
+        EPROSIMA_LOG_ERROR(TRANSPORT_TCP, "sendBufferSize cannot be greater than " << max_int_value);
+        return false;
+    }
+
+    if (cfg_recv_size > max_int_value)
+    {
+        EPROSIMA_LOG_ERROR(TRANSPORT_TCP, "receiveBufferSize cannot be greater than " << max_int_value);
+        return false;
+    }
+
+    if ((cfg_send_size > 0) && (cfg_max_msg_size > cfg_send_size))
+    {
+        EPROSIMA_LOG_ERROR(TRANSPORT_TCP, "maxMessageSize cannot be greater than sendBufferSize");
+        return false;
+    }
+
+    if ((cfg_recv_size > 0) && (cfg_max_msg_size > cfg_recv_size))
+    {
+        EPROSIMA_LOG_ERROR(TRANSPORT_TCP, "maxMessageSize cannot be greater than receiveBufferSize");
+        return false;
+    }
+
     if (!apply_tls_config())
     {
         // TODO decide wether the Transport initialization should keep working after this error
@@ -398,8 +453,12 @@ bool TCPTransportInterface::init(
     }
 
     // Check system buffer sizes.
-    if (configuration()->sendBufferSize == 0)
+    uint32_t send_size = 0;
+    uint32_t recv_size = 0;
+    if (!asio_helpers::configure_buffer_sizes(
+                *initial_peer_local_locator_socket_, *configuration(), send_size, recv_size))
     {
+<<<<<<< HEAD
         socket_base::send_buffer_size option;
         initial_peer_local_locator_socket_->get_option(option);
         set_send_buffer_size(option.value());
@@ -425,20 +484,36 @@ bool TCPTransportInterface::init(
     if (configuration()->maxMessageSize > s_maximumMessageSize)
     {
         logError(RTCP_MSG_OUT, "maxMessageSize cannot be greater than 65000");
+=======
+        EPROSIMA_LOG_ERROR(TRANSPORT_TCP, "Couldn't set buffer sizes to minimum value: " << cfg_max_msg_size);
+>>>>>>> 5d1c0138a (Handle errors when setting socket buffer sizes (#4760) (#4796) (#4812))
         return false;
     }
 
-    if (configuration()->maxMessageSize > configuration()->sendBufferSize)
+    if (cfg_send_size > 0 && send_size != cfg_send_size)
     {
+<<<<<<< HEAD
         logError(RTCP_MSG_OUT, "maxMessageSize cannot be greater than send_buffer_size");
         return false;
+=======
+        EPROSIMA_LOG_WARNING(TRANSPORT_TCP, "UDPTransport sendBufferSize could not be set to the desired value. "
+                << "Using " << send_size << " instead of " << cfg_send_size);
+>>>>>>> 5d1c0138a (Handle errors when setting socket buffer sizes (#4760) (#4796) (#4812))
     }
 
-    if (configuration()->maxMessageSize > configuration()->receiveBufferSize)
+    if (cfg_recv_size > 0 && recv_size != cfg_recv_size)
     {
+<<<<<<< HEAD
         logError(RTCP_MSG_OUT, "maxMessageSize cannot be greater than receive_buffer_size");
         return false;
+=======
+        EPROSIMA_LOG_WARNING(TRANSPORT_TCP, "UDPTransport receiveBufferSize could not be set to the desired value. "
+                << "Using " << recv_size << " instead of " << cfg_recv_size);
+>>>>>>> 5d1c0138a (Handle errors when setting socket buffer sizes (#4760) (#4796) (#4812))
     }
+
+    set_send_buffer_size(send_size);
+    set_receive_buffer_size(recv_size);
 
     if (!rtcp_message_manager_)
     {
