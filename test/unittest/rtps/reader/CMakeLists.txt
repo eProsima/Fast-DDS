@@ -64,6 +64,7 @@ set(WRITERPROXYACKNACKTESTS_SOURCE WriterProxyAcknackTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEventImpl.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/ThroughputControllerDescriptor.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
     )
 
 if(WIN32)
@@ -72,11 +73,14 @@ endif()
 
 add_executable(WriterProxyAcknackTests ${WRITERPROXYACKNACKTESTS_SOURCE})
 target_compile_definitions(WriterProxyAcknackTests PRIVATE
+    BOOST_ASIO_STANDALONE
+    ASIO_STANDALONE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     RETURN_VALID_PARTICIPANT
     )
 target_include_directories(WriterProxyAcknackTests PRIVATE
+    ${Asio_INCLUDE_DIR}
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/reader
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/Endpoint
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/ExternalLocatorsProcessor
@@ -93,5 +97,6 @@ target_include_directories(WriterProxyAcknackTests PRIVATE
     )
 target_link_libraries(WriterProxyAcknackTests foonathan_memory
     GTest::gmock
-    ${CMAKE_DL_LIBS})
+    ${CMAKE_DL_LIBS}
+    ${THIRDPARTY_BOOST_LINK_LIBS})
 add_gtest(WriterProxyAcknackTests SOURCES ${WRITERPROXYACKNACKTESTS_SOURCE})

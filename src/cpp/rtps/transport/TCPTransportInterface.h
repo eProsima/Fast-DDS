@@ -235,7 +235,7 @@ public:
             const Locator&) override;
 
     //! Resets the locator bound to the sender resource.
-    void CloseOutputChannel(
+    void SenderResourceHasBeenClosed(
             fastrtps::rtps::Locator_t& locator);
 
     //! Reports whether Locators correspond to the same port.
@@ -472,6 +472,18 @@ public:
      */
     void send_channel_pending_logical_ports(
             std::shared_ptr<TCPChannelResource>& channel);
+    /**
+     * Close the output channel associated to the given remote participant but if its locators belong to the
+     * given list of initial peers.
+     *
+     * @param send_resource_list List of send resources associated to the local participant.
+     * @param remote_participant_locators Set of locators associated to the remote participant.
+     * @param participant_initial_peers List of locators associated to the initial peers of the local participant.
+     */
+    void CloseOutputChannel(
+            SendResourceList& send_resource_list,
+            const LocatorList& remote_participant_locators,
+            const LocatorList& participant_initial_peers) const;
 };
 
 } // namespace rtps
