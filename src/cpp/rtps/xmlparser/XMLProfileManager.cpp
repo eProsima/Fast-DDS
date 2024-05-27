@@ -222,9 +222,6 @@ void XMLProfileManager::loadDefaultXMLFile()
     // Try to load the default XML file if variable does not exist or is not set to '1'
     if (!(getenv_s(&size, skip_xml, size, SKIP_DEFAULT_XML_FILE) == 0 && skip_xml[0] == '1'))
     {
-<<<<<<< HEAD:src/cpp/rtps/xmlparser/XMLProfileManager.cpp
-        loadXMLFile(DEFAULT_FASTRTPS_PROFILES);
-=======
         // Try to load the default XML file.
         if (GetCurrentDirectory(MAX_PATH, current_directory) == 0)
         {
@@ -233,10 +230,9 @@ void XMLProfileManager::loadDefaultXMLFile()
         else
         {
             strcat_s(current_directory, MAX_PATH, "\\");
-            strcat_s(current_directory, MAX_PATH, DEFAULT_FASTDDS_PROFILES);
+            strcat_s(current_directory, MAX_PATH, DEFAULT_FASTRTPS_PROFILES);
             loadXMLFile(current_directory, true);
         }
->>>>>>> 0919ff294 (Use absolute paths when loading XML files (#4751)):src/cpp/xmlparser/XMLProfileManager.cpp
     }
 #else
     char absolute_path[PATH_MAX];
@@ -259,9 +255,6 @@ void XMLProfileManager::loadDefaultXMLFile()
     // Try to load the default XML file if variable does not exist or is not set to '1'
     if (!(skip_xml != nullptr && skip_xml[0] == '1'))
     {
-<<<<<<< HEAD:src/cpp/rtps/xmlparser/XMLProfileManager.cpp
-        loadXMLFile(DEFAULT_FASTRTPS_PROFILES);
-=======
         if (getcwd(absolute_path, PATH_MAX) == NULL)
         {
             EPROSIMA_LOG_ERROR(XMLPARSER, "getcwd failed " << std::strerror(errno));
@@ -269,10 +262,9 @@ void XMLProfileManager::loadDefaultXMLFile()
         else
         {
             strcat(absolute_path, "/");
-            strcat(absolute_path, DEFAULT_FASTDDS_PROFILES);
+            strcat(absolute_path, DEFAULT_FASTRTPS_PROFILES);
             loadXMLFile(absolute_path, true);
         }
->>>>>>> 0919ff294 (Use absolute paths when loading XML files (#4751)):src/cpp/xmlparser/XMLProfileManager.cpp
     }
 
 #endif // ifdef _WIN32
@@ -383,11 +375,7 @@ XMLP_ret XMLProfileManager::loadXMLFile(
     XMLP_ret loaded_ret = XMLParser::loadXML(filename, root_node, is_default);
     if (!root_node || loaded_ret != XMLP_ret::XML_OK)
     {
-<<<<<<< HEAD:src/cpp/rtps/xmlparser/XMLProfileManager.cpp
-        if (filename != std::string(DEFAULT_FASTRTPS_PROFILES))
-=======
         if (!is_default)
->>>>>>> 0919ff294 (Use absolute paths when loading XML files (#4751)):src/cpp/xmlparser/XMLProfileManager.cpp
         {
             EPROSIMA_LOG_ERROR(XMLPARSER, "Error parsing '" << filename << "'");
         }

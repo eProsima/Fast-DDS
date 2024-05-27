@@ -23,10 +23,9 @@
 
 #include <gtest/gtest.h>
 #include <fastdds/dds/log/Log.hpp>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
+#include <fastrtps/xmlparser/XMLParserCommon.h>
 #include "../logging/mock/MockConsumer.h"
-
-#include <xmlparser/XMLProfileManager.h>
-#include <xmlparser/XMLParserCommon.h>
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps;
@@ -67,13 +66,13 @@ private:
 };
 
 /*
- * This test checks that the default XML file is loaded only once when there is a DEFAULT_FASTDDS_PROFILES.xml file
+ * This test checks that the default XML file is loaded only once when there is a DEFAULT_FASTRTPS_PROFILES.xml file
  * in the current directory and the environment variable FASTRTPS_DEFAULT_PROFILES_FILE is set pointing to the same
  * file.
  * 1. Initialize Mock Consumer to consume the LogInfo entry that the library generates when the file has been already
  * parsed. Set filters to consume only the desired entry.
- * 2. Get current path to set the environment variable to the DEFAULT_FASTDDS_PROFILES.xml file.
- * 3. Write the DEFAULT_FASTDDS_PROFILES.xml file in the current directory.
+ * 2. Get current path to set the environment variable to the DEFAULT_FASTRTPS_PROFILES.xml file.
+ * 3. Write the DEFAULT_FASTRTPS_PROFILES.xml file in the current directory.
  * 4. Load the default XML file.
  * 5. Wait for the log entry to be consumed.
  */
@@ -92,21 +91,21 @@ TEST_F(XMLLoadFileTests, load_twice_default_xml)
     uint32_t ret = GetCurrentDirectory(MAX_PATH, current_directory);
     ASSERT_NE(ret, 0u);
     strcat_s(current_directory, MAX_PATH, "\\");
-    strcat_s(current_directory, MAX_PATH, xmlparser::DEFAULT_FASTDDS_PROFILES);
+    strcat_s(current_directory, MAX_PATH, xmlparser::DEFAULT_FASTRTPS_PROFILES);
     // Set environment variable
-    _putenv_s("FASTDDS_DEFAULT_PROFILES_FILE", current_directory);
+    _putenv_s("FASTRTPS_DEFAULT_PROFILES_FILE", current_directory);
 #else
     char current_directory[PATH_MAX];
     ASSERT_NE(getcwd(current_directory, PATH_MAX), (void*)NULL);
     strcat(current_directory, "/");
-    strcat(current_directory, xmlparser::DEFAULT_FASTDDS_PROFILES);
+    strcat(current_directory, xmlparser::DEFAULT_FASTRTPS_PROFILES);
     // Set environment variable
-    setenv("FASTDDS_DEFAULT_PROFILES_FILE", current_directory, 1);
+    setenv("FASTRTPS_DEFAULT_PROFILES_FILE", current_directory, 1);
 #endif // _WIN32
 
-    // Write DEFAULT_FASTDDS_PROFILES.xml
+    // Write DEFAULT_FASTRTPS_PROFILES.xml
     std::ofstream xmlFile;
-    xmlFile.open("DEFAULT_FASTDDS_PROFILES.xml");
+    xmlFile.open("DEFAULT_FASTRTPS_PROFILES.xml");
     xmlFile << "<dds xmlns=\"http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles\">";
     xmlFile << "<profiles><participant profile_name=\"test_participant_profile\" is_default_profile=\"true\">";
     xmlFile << "<rtps><useBuiltinTransports>true</useBuiltinTransports><name>test_name</name></rtps></participant>";
@@ -124,7 +123,7 @@ TEST_F(XMLLoadFileTests, load_twice_default_xml)
     Log::Reset();
     Log::KillThread();
 
-    std::remove("DEFAULT_FASTDDS_PROFILES.xml");
+    std::remove("DEFAULT_FASTRTPS_PROFILES.xml");
 }
 
 int main(

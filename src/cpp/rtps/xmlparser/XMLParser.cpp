@@ -52,9 +52,6 @@ using namespace eprosima::fastdds::xml::detail;
 XMLP_ret XMLParser::loadDefaultXMLFile(
         up_base_node_t& root)
 {
-<<<<<<< HEAD:src/cpp/rtps/xmlparser/XMLParser.cpp
-    return loadXML(DEFAULT_FASTRTPS_PROFILES, root);
-=======
     // Use absolute path to ensure that the file is loaded only once
 #ifdef _WIN32
     char current_directory[MAX_PATH];
@@ -64,7 +61,7 @@ XMLP_ret XMLParser::loadDefaultXMLFile(
     }
     else
     {
-        strcat_s(current_directory, MAX_PATH, DEFAULT_FASTDDS_PROFILES);
+        strcat_s(current_directory, MAX_PATH, DEFAULT_FASTRTPS_PROFILES);
         return loadXML(current_directory, root, true);
     }
 #else
@@ -76,12 +73,11 @@ XMLP_ret XMLParser::loadDefaultXMLFile(
     else
     {
         strcat(current_directory, "/");
-        strcat(current_directory, DEFAULT_FASTDDS_PROFILES);
+        strcat(current_directory, DEFAULT_FASTRTPS_PROFILES);
         return loadXML(current_directory, root, true);
     }
 #endif // _WIN32
     return XMLP_ret::XML_ERROR;
->>>>>>> 0919ff294 (Use absolute paths when loading XML files (#4751)):src/cpp/xmlparser/XMLParser.cpp
 }
 
 XMLP_ret XMLParser::parseXML(
@@ -2107,11 +2103,7 @@ XMLP_ret XMLParser::loadXML(
     tinyxml2::XMLDocument xmlDoc;
     if (tinyxml2::XMLError::XML_SUCCESS != xmlDoc.LoadFile(filename.c_str()))
     {
-<<<<<<< HEAD:src/cpp/rtps/xmlparser/XMLParser.cpp
-        if (filename != std::string(DEFAULT_FASTRTPS_PROFILES))
-=======
         if (!is_default)
->>>>>>> 0919ff294 (Use absolute paths when loading XML files (#4751)):src/cpp/xmlparser/XMLParser.cpp
         {
             EPROSIMA_LOG_ERROR(XMLPARSER, "Error opening '" << filename << "'");
         }
