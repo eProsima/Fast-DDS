@@ -221,8 +221,7 @@ bool AllocTestTypePubSubType::getKey(
 
 void AllocTestTypePubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_AllocTestType_type_identifier(type_ids);
+    register_AllocTestType_type_identifier(type_identifiers_);
 }
 
 

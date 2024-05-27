@@ -224,8 +224,7 @@ namespace eprosima {
 
             void ConnectionPubSubType::register_type_object_representation()
             {
-                eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-                register_Connection_type_identifier(type_ids);
+                register_Connection_type_identifier(type_identifiers_);
             }
 
             QosPolicyCount_sPubSubType::QosPolicyCount_sPubSubType()
@@ -418,8 +417,7 @@ namespace eprosima {
 
             void QosPolicyCount_sPubSubType::register_type_object_representation()
             {
-                eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-                register_QosPolicyCount_s_type_identifier(type_ids);
+                register_QosPolicyCount_s_type_identifier(type_identifiers_);
             }
 
             BaseStatus_sPubSubType::BaseStatus_sPubSubType()
@@ -612,8 +610,7 @@ namespace eprosima {
 
             void BaseStatus_sPubSubType::register_type_object_representation()
             {
-                eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-                register_BaseStatus_s_type_identifier(type_ids);
+                register_BaseStatus_s_type_identifier(type_identifiers_);
             }
 
 
@@ -807,8 +804,7 @@ namespace eprosima {
 
             void IncompatibleQoSStatus_sPubSubType::register_type_object_representation()
             {
-                eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-                register_IncompatibleQoSStatus_s_type_identifier(type_ids);
+                register_IncompatibleQoSStatus_s_type_identifier(type_identifiers_);
             }
 
             LivelinessChangedStatus_sPubSubType::LivelinessChangedStatus_sPubSubType()
@@ -1001,8 +997,7 @@ namespace eprosima {
 
             void LivelinessChangedStatus_sPubSubType::register_type_object_representation()
             {
-                eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-                register_LivelinessChangedStatus_s_type_identifier(type_ids);
+                register_LivelinessChangedStatus_s_type_identifier(type_identifiers_);
             }
 
             DeadlineMissedStatus_sPubSubType::DeadlineMissedStatus_sPubSubType()
@@ -1195,8 +1190,7 @@ namespace eprosima {
 
             void DeadlineMissedStatus_sPubSubType::register_type_object_representation()
             {
-                eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-                register_DeadlineMissedStatus_s_type_identifier(type_ids);
+                register_DeadlineMissedStatus_s_type_identifier(type_identifiers_);
             }
 
 
@@ -1396,8 +1390,7 @@ namespace eprosima {
 
             void MonitorServiceStatusDataPubSubType::register_type_object_representation()
             {
-                eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-                register_MonitorServiceStatusData_type_identifier(type_ids);
+                register_MonitorServiceStatusData_type_identifier(type_identifiers_);
             }
 
         } // namespace statistics

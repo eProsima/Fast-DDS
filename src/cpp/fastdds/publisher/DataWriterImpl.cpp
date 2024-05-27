@@ -1650,12 +1650,14 @@ fastrtps::TopicAttributes DataWriterImpl::get_topic_attributes(
     topic_att.topicName = topic.get_name();
     topic_att.topicDataType = topic.get_type_name();
     topic_att.topicKind = type->m_isGetKeyDefined ? WITH_KEY : NO_KEY;
-    topic_att.auto_fill_type_information = type->auto_fill_type_information();
-    //TODO(richiware) review
-    if (0 < type->type_information().complete().typeid_with_size().typeobject_serialized_size() ||
-            0 < type->type_information().minimal().typeid_with_size().typeobject_serialized_size())
+    if (xtypes::TK_NONE != type->type_identifiers().type_identifier1()._d())
     {
-        topic_att.type_information = type->type_information();
+        if (RETCODE_OK ==
+                fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().get_type_information(
+                    type->type_identifiers(), topic_att.type_information.type_information))
+        {
+            topic_att.type_information.assigned(true);
+        }
     }
     return topic_att;
 }

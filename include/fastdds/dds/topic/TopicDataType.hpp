@@ -204,35 +204,13 @@ public:
     }
 
     /**
-     * Get the type information
+     * Get the type identifiers
      *
-     * @return @ref xtypes::TypeInformation
+     * @return @ref xtypes::TypeIdentifierPair
      */
-    FASTDDS_EXPORTED_API inline const xtypes::TypeInformation& type_information() const
+    FASTDDS_EXPORTED_API inline const xtypes::TypeIdentifierPair& type_identifiers() const
     {
-        return type_information_;
-    }
-
-    /**
-     * Set type information
-     *
-     * @param info @ref xtypes::TypeInformation
-     */
-    FASTDDS_EXPORTED_API inline void type_information(
-            const xtypes::TypeInformation& info)
-    {
-        type_information_ = info;
-    }
-
-    /**
-     * Set type information
-     *
-     * @param info @ref xtypes::TypeInformation
-     */
-    FASTDDS_EXPORTED_API inline void type_information(
-            xtypes::TypeInformation&& info)
-    {
-        type_information_ = std::move(info);
+        return type_identifiers_;
     }
 
     /**
@@ -290,7 +268,7 @@ public:
 
 protected:
 
-    xtypes::TypeInformation type_information_;
+    xtypes::TypeIdentifierPair type_identifiers_;
 
 private:
 

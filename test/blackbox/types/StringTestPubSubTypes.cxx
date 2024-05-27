@@ -221,8 +221,7 @@ bool StringTestPubSubType::getKey(
 
 void StringTestPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_StringTest_type_identifier(type_ids);
+    register_StringTest_type_identifier(type_identifiers_);
 }
 
 

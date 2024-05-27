@@ -222,8 +222,7 @@ namespace const_module1 {
 
     void ModuleConstsLiteralsStructPubSubType::register_type_object_representation()
     {
-        eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-        register_ModuleConstsLiteralsStruct_type_identifier(type_ids);
+        register_ModuleConstsLiteralsStruct_type_identifier(type_identifiers_);
     }
 
 } // namespace const_module1
@@ -419,8 +418,7 @@ namespace const_module2 {
 
     void Module2ConstsLiteralsStructPubSubType::register_type_object_representation()
     {
-        eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-        register_Module2ConstsLiteralsStruct_type_identifier(type_ids);
+        register_Module2ConstsLiteralsStruct_type_identifier(type_identifiers_);
     }
 
 } // namespace const_module2
@@ -615,8 +613,7 @@ bool ConstsLiteralsStructPubSubType::getKey(
 
 void ConstsLiteralsStructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_ConstsLiteralsStruct_type_identifier(type_ids);
+    register_ConstsLiteralsStruct_type_identifier(type_identifiers_);
 }
 
 

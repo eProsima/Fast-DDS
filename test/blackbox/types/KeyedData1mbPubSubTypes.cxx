@@ -221,8 +221,7 @@ bool KeyedData1mbPubSubType::getKey(
 
 void KeyedData1mbPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_KeyedData1mb_type_identifier(type_ids);
+    register_KeyedData1mb_type_identifier(type_identifiers_);
 }
 
 

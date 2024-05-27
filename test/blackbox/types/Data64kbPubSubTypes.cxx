@@ -221,8 +221,7 @@ bool Data64kbPubSubType::getKey(
 
 void Data64kbPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_Data64kb_type_identifier(type_ids);
+    register_Data64kb_type_identifier(type_identifiers_);
 }
 
 

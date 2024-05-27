@@ -221,8 +221,7 @@ bool StructTypePubSubType::getKey(
 
 void StructTypePubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_StructType_type_identifier(type_ids);
+    register_StructType_type_identifier(type_identifiers_);
 }
 
 
@@ -417,8 +416,7 @@ bool ContentFilterTestTypePubSubType::getKey(
 
 void ContentFilterTestTypePubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_ContentFilterTestType_type_identifier(type_ids);
+    register_ContentFilterTestType_type_identifier(type_identifiers_);
 }
 
 

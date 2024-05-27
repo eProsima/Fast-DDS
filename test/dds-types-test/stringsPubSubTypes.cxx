@@ -221,8 +221,7 @@ bool StringStructPubSubType::getKey(
 
 void StringStructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_StringStruct_type_identifier(type_ids);
+    register_StringStruct_type_identifier(type_identifiers_);
 }
 
 WStringStructPubSubType::WStringStructPubSubType()
@@ -415,8 +414,7 @@ bool WStringStructPubSubType::getKey(
 
 void WStringStructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_WStringStruct_type_identifier(type_ids);
+    register_WStringStruct_type_identifier(type_identifiers_);
 }
 
 SmallStringStructPubSubType::SmallStringStructPubSubType()
@@ -609,8 +607,7 @@ bool SmallStringStructPubSubType::getKey(
 
 void SmallStringStructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_SmallStringStruct_type_identifier(type_ids);
+    register_SmallStringStruct_type_identifier(type_identifiers_);
 }
 
 SmallWStringStructPubSubType::SmallWStringStructPubSubType()
@@ -803,8 +800,7 @@ bool SmallWStringStructPubSubType::getKey(
 
 void SmallWStringStructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_SmallWStringStruct_type_identifier(type_ids);
+    register_SmallWStringStruct_type_identifier(type_identifiers_);
 }
 
 LargeStringStructPubSubType::LargeStringStructPubSubType()
@@ -997,8 +993,7 @@ bool LargeStringStructPubSubType::getKey(
 
 void LargeStringStructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_LargeStringStruct_type_identifier(type_ids);
+    register_LargeStringStruct_type_identifier(type_identifiers_);
 }
 
 LargeWStringStructPubSubType::LargeWStringStructPubSubType()
@@ -1191,8 +1186,7 @@ bool LargeWStringStructPubSubType::getKey(
 
 void LargeWStringStructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_LargeWStringStruct_type_identifier(type_ids);
+    register_LargeWStringStruct_type_identifier(type_identifiers_);
 }
 
 

@@ -221,8 +221,7 @@ bool FixIdPubSubType::getKey(
 
 void FixIdPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_FixId_type_identifier(type_ids);
+    register_FixId_type_identifier(type_identifiers_);
 }
 
 FixHexIdPubSubType::FixHexIdPubSubType()
@@ -415,8 +414,7 @@ bool FixHexIdPubSubType::getKey(
 
 void FixHexIdPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_FixHexId_type_identifier(type_ids);
+    register_FixHexId_type_identifier(type_identifiers_);
 }
 
 FixHashidDefaultPubSubType::FixHashidDefaultPubSubType()
@@ -609,8 +607,7 @@ bool FixHashidDefaultPubSubType::getKey(
 
 void FixHashidDefaultPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_FixHashidDefault_type_identifier(type_ids);
+    register_FixHashidDefault_type_identifier(type_identifiers_);
 }
 
 FixHashidPubSubType::FixHashidPubSubType()
@@ -803,8 +800,7 @@ bool FixHashidPubSubType::getKey(
 
 void FixHashidPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_FixHashid_type_identifier(type_ids);
+    register_FixHashid_type_identifier(type_identifiers_);
 }
 
 FixMixPubSubType::FixMixPubSubType()
@@ -997,8 +993,7 @@ bool FixMixPubSubType::getKey(
 
 void FixMixPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_FixMix_type_identifier(type_ids);
+    register_FixMix_type_identifier(type_identifiers_);
 }
 
 AutoidDefaultPubSubType::AutoidDefaultPubSubType()
@@ -1191,8 +1186,7 @@ bool AutoidDefaultPubSubType::getKey(
 
 void AutoidDefaultPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_AutoidDefault_type_identifier(type_ids);
+    register_AutoidDefault_type_identifier(type_identifiers_);
 }
 
 AutoidSequentialPubSubType::AutoidSequentialPubSubType()
@@ -1385,8 +1379,7 @@ bool AutoidSequentialPubSubType::getKey(
 
 void AutoidSequentialPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_AutoidSequential_type_identifier(type_ids);
+    register_AutoidSequential_type_identifier(type_identifiers_);
 }
 
 AutoidHashPubSubType::AutoidHashPubSubType()
@@ -1579,8 +1572,7 @@ bool AutoidHashPubSubType::getKey(
 
 void AutoidHashPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_AutoidHash_type_identifier(type_ids);
+    register_AutoidHash_type_identifier(type_identifiers_);
 }
 
 DerivedAutoidDefaultPubSubType::DerivedAutoidDefaultPubSubType()
@@ -1773,8 +1765,7 @@ bool DerivedAutoidDefaultPubSubType::getKey(
 
 void DerivedAutoidDefaultPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_DerivedAutoidDefault_type_identifier(type_ids);
+    register_DerivedAutoidDefault_type_identifier(type_identifiers_);
 }
 
 DerivedEmptyAutoidSequentialPubSubType::DerivedEmptyAutoidSequentialPubSubType()
@@ -1967,8 +1958,7 @@ bool DerivedEmptyAutoidSequentialPubSubType::getKey(
 
 void DerivedEmptyAutoidSequentialPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_DerivedEmptyAutoidSequential_type_identifier(type_ids);
+    register_DerivedEmptyAutoidSequential_type_identifier(type_identifiers_);
 }
 
 DerivedAutoidSequentialPubSubType::DerivedAutoidSequentialPubSubType()
@@ -2161,8 +2151,7 @@ bool DerivedAutoidSequentialPubSubType::getKey(
 
 void DerivedAutoidSequentialPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_DerivedAutoidSequential_type_identifier(type_ids);
+    register_DerivedAutoidSequential_type_identifier(type_identifiers_);
 }
 
 DerivedAutoidHashPubSubType::DerivedAutoidHashPubSubType()
@@ -2355,8 +2344,7 @@ bool DerivedAutoidHashPubSubType::getKey(
 
 void DerivedAutoidHashPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_DerivedAutoidHash_type_identifier(type_ids);
+    register_DerivedAutoidHash_type_identifier(type_identifiers_);
 }
 
 

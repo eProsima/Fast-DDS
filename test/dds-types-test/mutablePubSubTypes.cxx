@@ -221,8 +221,7 @@ bool MutableShortStructPubSubType::getKey(
 
 void MutableShortStructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MutableShortStruct_type_identifier(type_ids);
+    register_MutableShortStruct_type_identifier(type_identifiers_);
 }
 
 MutableUShortStructPubSubType::MutableUShortStructPubSubType()
@@ -415,8 +414,7 @@ bool MutableUShortStructPubSubType::getKey(
 
 void MutableUShortStructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MutableUShortStruct_type_identifier(type_ids);
+    register_MutableUShortStruct_type_identifier(type_identifiers_);
 }
 
 MutableLongStructPubSubType::MutableLongStructPubSubType()
@@ -609,8 +607,7 @@ bool MutableLongStructPubSubType::getKey(
 
 void MutableLongStructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MutableLongStruct_type_identifier(type_ids);
+    register_MutableLongStruct_type_identifier(type_identifiers_);
 }
 
 MutableULongStructPubSubType::MutableULongStructPubSubType()
@@ -803,8 +800,7 @@ bool MutableULongStructPubSubType::getKey(
 
 void MutableULongStructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MutableULongStruct_type_identifier(type_ids);
+    register_MutableULongStruct_type_identifier(type_identifiers_);
 }
 
 MutableLongLongStructPubSubType::MutableLongLongStructPubSubType()
@@ -997,8 +993,7 @@ bool MutableLongLongStructPubSubType::getKey(
 
 void MutableLongLongStructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MutableLongLongStruct_type_identifier(type_ids);
+    register_MutableLongLongStruct_type_identifier(type_identifiers_);
 }
 
 MutableULongLongStructPubSubType::MutableULongLongStructPubSubType()
@@ -1191,8 +1186,7 @@ bool MutableULongLongStructPubSubType::getKey(
 
 void MutableULongLongStructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MutableULongLongStruct_type_identifier(type_ids);
+    register_MutableULongLongStruct_type_identifier(type_identifiers_);
 }
 
 MutableFloatStructPubSubType::MutableFloatStructPubSubType()
@@ -1385,8 +1379,7 @@ bool MutableFloatStructPubSubType::getKey(
 
 void MutableFloatStructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MutableFloatStruct_type_identifier(type_ids);
+    register_MutableFloatStruct_type_identifier(type_identifiers_);
 }
 
 MutableDoubleStructPubSubType::MutableDoubleStructPubSubType()
@@ -1579,8 +1572,7 @@ bool MutableDoubleStructPubSubType::getKey(
 
 void MutableDoubleStructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MutableDoubleStruct_type_identifier(type_ids);
+    register_MutableDoubleStruct_type_identifier(type_identifiers_);
 }
 
 MutableLongDoubleStructPubSubType::MutableLongDoubleStructPubSubType()
@@ -1773,8 +1765,7 @@ bool MutableLongDoubleStructPubSubType::getKey(
 
 void MutableLongDoubleStructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MutableLongDoubleStruct_type_identifier(type_ids);
+    register_MutableLongDoubleStruct_type_identifier(type_identifiers_);
 }
 
 MutableBooleanStructPubSubType::MutableBooleanStructPubSubType()
@@ -1967,8 +1958,7 @@ bool MutableBooleanStructPubSubType::getKey(
 
 void MutableBooleanStructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MutableBooleanStruct_type_identifier(type_ids);
+    register_MutableBooleanStruct_type_identifier(type_identifiers_);
 }
 
 MutableOctetStructPubSubType::MutableOctetStructPubSubType()
@@ -2161,8 +2151,7 @@ bool MutableOctetStructPubSubType::getKey(
 
 void MutableOctetStructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MutableOctetStruct_type_identifier(type_ids);
+    register_MutableOctetStruct_type_identifier(type_identifiers_);
 }
 
 MutableCharStructPubSubType::MutableCharStructPubSubType()
@@ -2355,8 +2344,7 @@ bool MutableCharStructPubSubType::getKey(
 
 void MutableCharStructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MutableCharStruct_type_identifier(type_ids);
+    register_MutableCharStruct_type_identifier(type_identifiers_);
 }
 
 MutableWCharStructPubSubType::MutableWCharStructPubSubType()
@@ -2549,8 +2537,7 @@ bool MutableWCharStructPubSubType::getKey(
 
 void MutableWCharStructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MutableWCharStruct_type_identifier(type_ids);
+    register_MutableWCharStruct_type_identifier(type_identifiers_);
 }
 
 MutableUnionStructPubSubType::MutableUnionStructPubSubType()
@@ -2743,8 +2730,7 @@ bool MutableUnionStructPubSubType::getKey(
 
 void MutableUnionStructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MutableUnionStruct_type_identifier(type_ids);
+    register_MutableUnionStruct_type_identifier(type_identifiers_);
 }
 
 MutableEmptyStructPubSubType::MutableEmptyStructPubSubType()
@@ -2937,8 +2923,7 @@ bool MutableEmptyStructPubSubType::getKey(
 
 void MutableEmptyStructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MutableEmptyStruct_type_identifier(type_ids);
+    register_MutableEmptyStruct_type_identifier(type_identifiers_);
 }
 
 MutableEmptyInheritanceStructPubSubType::MutableEmptyInheritanceStructPubSubType()
@@ -3131,8 +3116,7 @@ bool MutableEmptyInheritanceStructPubSubType::getKey(
 
 void MutableEmptyInheritanceStructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MutableEmptyInheritanceStruct_type_identifier(type_ids);
+    register_MutableEmptyInheritanceStruct_type_identifier(type_identifiers_);
 }
 
 MutableInheritanceStructPubSubType::MutableInheritanceStructPubSubType()
@@ -3325,8 +3309,7 @@ bool MutableInheritanceStructPubSubType::getKey(
 
 void MutableInheritanceStructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MutableInheritanceStruct_type_identifier(type_ids);
+    register_MutableInheritanceStruct_type_identifier(type_identifiers_);
 }
 
 MutableInheritanceEmptyStructPubSubType::MutableInheritanceEmptyStructPubSubType()
@@ -3519,8 +3502,7 @@ bool MutableInheritanceEmptyStructPubSubType::getKey(
 
 void MutableInheritanceEmptyStructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MutableInheritanceEmptyStruct_type_identifier(type_ids);
+    register_MutableInheritanceEmptyStruct_type_identifier(type_identifiers_);
 }
 
 MutableExtensibilityInheritancePubSubType::MutableExtensibilityInheritancePubSubType()
@@ -3713,8 +3695,7 @@ bool MutableExtensibilityInheritancePubSubType::getKey(
 
 void MutableExtensibilityInheritancePubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MutableExtensibilityInheritance_type_identifier(type_ids);
+    register_MutableExtensibilityInheritance_type_identifier(type_identifiers_);
 }
 
 

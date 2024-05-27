@@ -221,8 +221,7 @@ bool AliasInt16PubSubType::getKey(
 
 void AliasInt16PubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_AliasInt16_type_identifier(type_ids);
+    register_AliasInt16_type_identifier(type_identifiers_);
 }
 
 AliasUint16PubSubType::AliasUint16PubSubType()
@@ -415,8 +414,7 @@ bool AliasUint16PubSubType::getKey(
 
 void AliasUint16PubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_AliasUint16_type_identifier(type_ids);
+    register_AliasUint16_type_identifier(type_identifiers_);
 }
 
 AliasInt32PubSubType::AliasInt32PubSubType()
@@ -609,8 +607,7 @@ bool AliasInt32PubSubType::getKey(
 
 void AliasInt32PubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_AliasInt32_type_identifier(type_ids);
+    register_AliasInt32_type_identifier(type_identifiers_);
 }
 
 AliasUInt32PubSubType::AliasUInt32PubSubType()
@@ -803,8 +800,7 @@ bool AliasUInt32PubSubType::getKey(
 
 void AliasUInt32PubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_AliasUInt32_type_identifier(type_ids);
+    register_AliasUInt32_type_identifier(type_identifiers_);
 }
 
 AliasInt64PubSubType::AliasInt64PubSubType()
@@ -997,8 +993,7 @@ bool AliasInt64PubSubType::getKey(
 
 void AliasInt64PubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_AliasInt64_type_identifier(type_ids);
+    register_AliasInt64_type_identifier(type_identifiers_);
 }
 
 AliasUInt64PubSubType::AliasUInt64PubSubType()
@@ -1191,8 +1186,7 @@ bool AliasUInt64PubSubType::getKey(
 
 void AliasUInt64PubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_AliasUInt64_type_identifier(type_ids);
+    register_AliasUInt64_type_identifier(type_identifiers_);
 }
 
 AliasFloat32PubSubType::AliasFloat32PubSubType()
@@ -1385,8 +1379,7 @@ bool AliasFloat32PubSubType::getKey(
 
 void AliasFloat32PubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_AliasFloat32_type_identifier(type_ids);
+    register_AliasFloat32_type_identifier(type_identifiers_);
 }
 
 AliasFloat64PubSubType::AliasFloat64PubSubType()
@@ -1579,8 +1572,7 @@ bool AliasFloat64PubSubType::getKey(
 
 void AliasFloat64PubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_AliasFloat64_type_identifier(type_ids);
+    register_AliasFloat64_type_identifier(type_identifiers_);
 }
 
 AliasFloat128PubSubType::AliasFloat128PubSubType()
@@ -1773,8 +1765,7 @@ bool AliasFloat128PubSubType::getKey(
 
 void AliasFloat128PubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_AliasFloat128_type_identifier(type_ids);
+    register_AliasFloat128_type_identifier(type_identifiers_);
 }
 
 AliasBoolPubSubType::AliasBoolPubSubType()
@@ -1967,8 +1958,7 @@ bool AliasBoolPubSubType::getKey(
 
 void AliasBoolPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_AliasBool_type_identifier(type_ids);
+    register_AliasBool_type_identifier(type_identifiers_);
 }
 
 AliasOctetPubSubType::AliasOctetPubSubType()
@@ -2161,8 +2151,7 @@ bool AliasOctetPubSubType::getKey(
 
 void AliasOctetPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_AliasOctet_type_identifier(type_ids);
+    register_AliasOctet_type_identifier(type_identifiers_);
 }
 
 AliasChar8PubSubType::AliasChar8PubSubType()
@@ -2355,8 +2344,7 @@ bool AliasChar8PubSubType::getKey(
 
 void AliasChar8PubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_AliasChar8_type_identifier(type_ids);
+    register_AliasChar8_type_identifier(type_identifiers_);
 }
 
 AliasChar16PubSubType::AliasChar16PubSubType()
@@ -2549,8 +2537,7 @@ bool AliasChar16PubSubType::getKey(
 
 void AliasChar16PubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_AliasChar16_type_identifier(type_ids);
+    register_AliasChar16_type_identifier(type_identifiers_);
 }
 
 AliasString8PubSubType::AliasString8PubSubType()
@@ -2743,8 +2730,7 @@ bool AliasString8PubSubType::getKey(
 
 void AliasString8PubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_AliasString8_type_identifier(type_ids);
+    register_AliasString8_type_identifier(type_identifiers_);
 }
 
 AliasString16PubSubType::AliasString16PubSubType()
@@ -2937,8 +2923,7 @@ bool AliasString16PubSubType::getKey(
 
 void AliasString16PubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_AliasString16_type_identifier(type_ids);
+    register_AliasString16_type_identifier(type_identifiers_);
 }
 
 AliasEnumPubSubType::AliasEnumPubSubType()
@@ -3131,8 +3116,7 @@ bool AliasEnumPubSubType::getKey(
 
 void AliasEnumPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_AliasEnum_type_identifier(type_ids);
+    register_AliasEnum_type_identifier(type_identifiers_);
 }
 
 AliasBitmaskPubSubType::AliasBitmaskPubSubType()
@@ -3325,8 +3309,7 @@ bool AliasBitmaskPubSubType::getKey(
 
 void AliasBitmaskPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_AliasBitmask_type_identifier(type_ids);
+    register_AliasBitmask_type_identifier(type_identifiers_);
 }
 
 AliasAliasPubSubType::AliasAliasPubSubType()
@@ -3519,8 +3502,7 @@ bool AliasAliasPubSubType::getKey(
 
 void AliasAliasPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_AliasAlias_type_identifier(type_ids);
+    register_AliasAlias_type_identifier(type_identifiers_);
 }
 
 AliasArrayPubSubType::AliasArrayPubSubType()
@@ -3713,8 +3695,7 @@ bool AliasArrayPubSubType::getKey(
 
 void AliasArrayPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_AliasArray_type_identifier(type_ids);
+    register_AliasArray_type_identifier(type_identifiers_);
 }
 
 AliasMultiArrayPubSubType::AliasMultiArrayPubSubType()
@@ -3907,8 +3888,7 @@ bool AliasMultiArrayPubSubType::getKey(
 
 void AliasMultiArrayPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_AliasMultiArray_type_identifier(type_ids);
+    register_AliasMultiArray_type_identifier(type_identifiers_);
 }
 
 AliasSequencePubSubType::AliasSequencePubSubType()
@@ -4101,8 +4081,7 @@ bool AliasSequencePubSubType::getKey(
 
 void AliasSequencePubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_AliasSequence_type_identifier(type_ids);
+    register_AliasSequence_type_identifier(type_identifiers_);
 }
 
 AliasMapPubSubType::AliasMapPubSubType()
@@ -4295,8 +4274,7 @@ bool AliasMapPubSubType::getKey(
 
 void AliasMapPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_AliasMap_type_identifier(type_ids);
+    register_AliasMap_type_identifier(type_identifiers_);
 }
 
 AliasUnionPubSubType::AliasUnionPubSubType()
@@ -4489,8 +4467,7 @@ bool AliasUnionPubSubType::getKey(
 
 void AliasUnionPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_AliasUnion_type_identifier(type_ids);
+    register_AliasUnion_type_identifier(type_identifiers_);
 }
 
 AliasStructPubSubType::AliasStructPubSubType()
@@ -4683,8 +4660,7 @@ bool AliasStructPubSubType::getKey(
 
 void AliasStructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_AliasStruct_type_identifier(type_ids);
+    register_AliasStruct_type_identifier(type_identifiers_);
 }
 
 AliasBitsetPubSubType::AliasBitsetPubSubType()
@@ -4877,8 +4853,7 @@ bool AliasBitsetPubSubType::getKey(
 
 void AliasBitsetPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_AliasBitset_type_identifier(type_ids);
+    register_AliasBitset_type_identifier(type_identifiers_);
 }
 
 

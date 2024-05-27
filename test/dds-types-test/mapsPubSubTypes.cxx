@@ -221,8 +221,7 @@ bool MapShortShortPubSubType::getKey(
 
 void MapShortShortPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapShortShort_type_identifier(type_ids);
+    register_MapShortShort_type_identifier(type_identifiers_);
 }
 
 MapShortUShortPubSubType::MapShortUShortPubSubType()
@@ -415,8 +414,7 @@ bool MapShortUShortPubSubType::getKey(
 
 void MapShortUShortPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapShortUShort_type_identifier(type_ids);
+    register_MapShortUShort_type_identifier(type_identifiers_);
 }
 
 MapShortLongPubSubType::MapShortLongPubSubType()
@@ -609,8 +607,7 @@ bool MapShortLongPubSubType::getKey(
 
 void MapShortLongPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapShortLong_type_identifier(type_ids);
+    register_MapShortLong_type_identifier(type_identifiers_);
 }
 
 MapShortULongPubSubType::MapShortULongPubSubType()
@@ -803,8 +800,7 @@ bool MapShortULongPubSubType::getKey(
 
 void MapShortULongPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapShortULong_type_identifier(type_ids);
+    register_MapShortULong_type_identifier(type_identifiers_);
 }
 
 MapShortLongLongPubSubType::MapShortLongLongPubSubType()
@@ -997,8 +993,7 @@ bool MapShortLongLongPubSubType::getKey(
 
 void MapShortLongLongPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapShortLongLong_type_identifier(type_ids);
+    register_MapShortLongLong_type_identifier(type_identifiers_);
 }
 
 MapShortULongLongPubSubType::MapShortULongLongPubSubType()
@@ -1191,8 +1186,7 @@ bool MapShortULongLongPubSubType::getKey(
 
 void MapShortULongLongPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapShortULongLong_type_identifier(type_ids);
+    register_MapShortULongLong_type_identifier(type_identifiers_);
 }
 
 MapShortFloatPubSubType::MapShortFloatPubSubType()
@@ -1385,8 +1379,7 @@ bool MapShortFloatPubSubType::getKey(
 
 void MapShortFloatPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapShortFloat_type_identifier(type_ids);
+    register_MapShortFloat_type_identifier(type_identifiers_);
 }
 
 MapShortDoublePubSubType::MapShortDoublePubSubType()
@@ -1579,8 +1572,7 @@ bool MapShortDoublePubSubType::getKey(
 
 void MapShortDoublePubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapShortDouble_type_identifier(type_ids);
+    register_MapShortDouble_type_identifier(type_identifiers_);
 }
 
 MapShortLongDoublePubSubType::MapShortLongDoublePubSubType()
@@ -1773,8 +1765,7 @@ bool MapShortLongDoublePubSubType::getKey(
 
 void MapShortLongDoublePubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapShortLongDouble_type_identifier(type_ids);
+    register_MapShortLongDouble_type_identifier(type_identifiers_);
 }
 
 MapShortBooleanPubSubType::MapShortBooleanPubSubType()
@@ -1967,8 +1958,7 @@ bool MapShortBooleanPubSubType::getKey(
 
 void MapShortBooleanPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapShortBoolean_type_identifier(type_ids);
+    register_MapShortBoolean_type_identifier(type_identifiers_);
 }
 
 MapShortOctetPubSubType::MapShortOctetPubSubType()
@@ -2161,8 +2151,7 @@ bool MapShortOctetPubSubType::getKey(
 
 void MapShortOctetPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapShortOctet_type_identifier(type_ids);
+    register_MapShortOctet_type_identifier(type_identifiers_);
 }
 
 MapShortCharPubSubType::MapShortCharPubSubType()
@@ -2355,8 +2344,7 @@ bool MapShortCharPubSubType::getKey(
 
 void MapShortCharPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapShortChar_type_identifier(type_ids);
+    register_MapShortChar_type_identifier(type_identifiers_);
 }
 
 MapShortWCharPubSubType::MapShortWCharPubSubType()
@@ -2549,8 +2537,7 @@ bool MapShortWCharPubSubType::getKey(
 
 void MapShortWCharPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapShortWChar_type_identifier(type_ids);
+    register_MapShortWChar_type_identifier(type_identifiers_);
 }
 
 MapShortStringPubSubType::MapShortStringPubSubType()
@@ -2743,8 +2730,7 @@ bool MapShortStringPubSubType::getKey(
 
 void MapShortStringPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapShortString_type_identifier(type_ids);
+    register_MapShortString_type_identifier(type_identifiers_);
 }
 
 MapShortWStringPubSubType::MapShortWStringPubSubType()
@@ -2937,8 +2923,7 @@ bool MapShortWStringPubSubType::getKey(
 
 void MapShortWStringPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapShortWString_type_identifier(type_ids);
+    register_MapShortWString_type_identifier(type_identifiers_);
 }
 
 MapShortInnerAliasBoundedStringHelperPubSubType::MapShortInnerAliasBoundedStringHelperPubSubType()
@@ -3131,8 +3116,7 @@ bool MapShortInnerAliasBoundedStringHelperPubSubType::getKey(
 
 void MapShortInnerAliasBoundedStringHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapShortInnerAliasBoundedStringHelper_type_identifier(type_ids);
+    register_MapShortInnerAliasBoundedStringHelper_type_identifier(type_identifiers_);
 }
 
 MapShortInnerAliasBoundedWStringHelperPubSubType::MapShortInnerAliasBoundedWStringHelperPubSubType()
@@ -3325,8 +3309,7 @@ bool MapShortInnerAliasBoundedWStringHelperPubSubType::getKey(
 
 void MapShortInnerAliasBoundedWStringHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapShortInnerAliasBoundedWStringHelper_type_identifier(type_ids);
+    register_MapShortInnerAliasBoundedWStringHelper_type_identifier(type_identifiers_);
 }
 
 MapShortInnerEnumHelperPubSubType::MapShortInnerEnumHelperPubSubType()
@@ -3519,8 +3502,7 @@ bool MapShortInnerEnumHelperPubSubType::getKey(
 
 void MapShortInnerEnumHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapShortInnerEnumHelper_type_identifier(type_ids);
+    register_MapShortInnerEnumHelper_type_identifier(type_identifiers_);
 }
 
 MapShortInnerBitMaskHelperPubSubType::MapShortInnerBitMaskHelperPubSubType()
@@ -3713,8 +3695,7 @@ bool MapShortInnerBitMaskHelperPubSubType::getKey(
 
 void MapShortInnerBitMaskHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapShortInnerBitMaskHelper_type_identifier(type_ids);
+    register_MapShortInnerBitMaskHelper_type_identifier(type_identifiers_);
 }
 
 MapShortInnerAliasHelperPubSubType::MapShortInnerAliasHelperPubSubType()
@@ -3907,8 +3888,7 @@ bool MapShortInnerAliasHelperPubSubType::getKey(
 
 void MapShortInnerAliasHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapShortInnerAliasHelper_type_identifier(type_ids);
+    register_MapShortInnerAliasHelper_type_identifier(type_identifiers_);
 }
 
 MapShortInnerAliasArrayHelperPubSubType::MapShortInnerAliasArrayHelperPubSubType()
@@ -4101,8 +4081,7 @@ bool MapShortInnerAliasArrayHelperPubSubType::getKey(
 
 void MapShortInnerAliasArrayHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapShortInnerAliasArrayHelper_type_identifier(type_ids);
+    register_MapShortInnerAliasArrayHelper_type_identifier(type_identifiers_);
 }
 
 MapShortInnerAliasSequenceHelperPubSubType::MapShortInnerAliasSequenceHelperPubSubType()
@@ -4295,8 +4274,7 @@ bool MapShortInnerAliasSequenceHelperPubSubType::getKey(
 
 void MapShortInnerAliasSequenceHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapShortInnerAliasSequenceHelper_type_identifier(type_ids);
+    register_MapShortInnerAliasSequenceHelper_type_identifier(type_identifiers_);
 }
 
 MapShortInnerAliasMapHelperPubSubType::MapShortInnerAliasMapHelperPubSubType()
@@ -4489,8 +4467,7 @@ bool MapShortInnerAliasMapHelperPubSubType::getKey(
 
 void MapShortInnerAliasMapHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapShortInnerAliasMapHelper_type_identifier(type_ids);
+    register_MapShortInnerAliasMapHelper_type_identifier(type_identifiers_);
 }
 
 MapShortInnerUnionHelperPubSubType::MapShortInnerUnionHelperPubSubType()
@@ -4683,8 +4660,7 @@ bool MapShortInnerUnionHelperPubSubType::getKey(
 
 void MapShortInnerUnionHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapShortInnerUnionHelper_type_identifier(type_ids);
+    register_MapShortInnerUnionHelper_type_identifier(type_identifiers_);
 }
 
 MapShortInnerStructureHelperPubSubType::MapShortInnerStructureHelperPubSubType()
@@ -4877,8 +4853,7 @@ bool MapShortInnerStructureHelperPubSubType::getKey(
 
 void MapShortInnerStructureHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapShortInnerStructureHelper_type_identifier(type_ids);
+    register_MapShortInnerStructureHelper_type_identifier(type_identifiers_);
 }
 
 MapShortInnerBitsetHelperPubSubType::MapShortInnerBitsetHelperPubSubType()
@@ -5071,8 +5046,7 @@ bool MapShortInnerBitsetHelperPubSubType::getKey(
 
 void MapShortInnerBitsetHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapShortInnerBitsetHelper_type_identifier(type_ids);
+    register_MapShortInnerBitsetHelper_type_identifier(type_identifiers_);
 }
 
 MapUShortShortPubSubType::MapUShortShortPubSubType()
@@ -5265,8 +5239,7 @@ bool MapUShortShortPubSubType::getKey(
 
 void MapUShortShortPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapUShortShort_type_identifier(type_ids);
+    register_MapUShortShort_type_identifier(type_identifiers_);
 }
 
 MapUShortUShortPubSubType::MapUShortUShortPubSubType()
@@ -5459,8 +5432,7 @@ bool MapUShortUShortPubSubType::getKey(
 
 void MapUShortUShortPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapUShortUShort_type_identifier(type_ids);
+    register_MapUShortUShort_type_identifier(type_identifiers_);
 }
 
 MapUShortLongPubSubType::MapUShortLongPubSubType()
@@ -5653,8 +5625,7 @@ bool MapUShortLongPubSubType::getKey(
 
 void MapUShortLongPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapUShortLong_type_identifier(type_ids);
+    register_MapUShortLong_type_identifier(type_identifiers_);
 }
 
 MapUShortULongPubSubType::MapUShortULongPubSubType()
@@ -5847,8 +5818,7 @@ bool MapUShortULongPubSubType::getKey(
 
 void MapUShortULongPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapUShortULong_type_identifier(type_ids);
+    register_MapUShortULong_type_identifier(type_identifiers_);
 }
 
 MapUShortLongLongPubSubType::MapUShortLongLongPubSubType()
@@ -6041,8 +6011,7 @@ bool MapUShortLongLongPubSubType::getKey(
 
 void MapUShortLongLongPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapUShortLongLong_type_identifier(type_ids);
+    register_MapUShortLongLong_type_identifier(type_identifiers_);
 }
 
 MapUShortULongLongPubSubType::MapUShortULongLongPubSubType()
@@ -6235,8 +6204,7 @@ bool MapUShortULongLongPubSubType::getKey(
 
 void MapUShortULongLongPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapUShortULongLong_type_identifier(type_ids);
+    register_MapUShortULongLong_type_identifier(type_identifiers_);
 }
 
 MapUShortFloatPubSubType::MapUShortFloatPubSubType()
@@ -6429,8 +6397,7 @@ bool MapUShortFloatPubSubType::getKey(
 
 void MapUShortFloatPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapUShortFloat_type_identifier(type_ids);
+    register_MapUShortFloat_type_identifier(type_identifiers_);
 }
 
 MapUShortDoublePubSubType::MapUShortDoublePubSubType()
@@ -6623,8 +6590,7 @@ bool MapUShortDoublePubSubType::getKey(
 
 void MapUShortDoublePubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapUShortDouble_type_identifier(type_ids);
+    register_MapUShortDouble_type_identifier(type_identifiers_);
 }
 
 MapUShortLongDoublePubSubType::MapUShortLongDoublePubSubType()
@@ -6817,8 +6783,7 @@ bool MapUShortLongDoublePubSubType::getKey(
 
 void MapUShortLongDoublePubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapUShortLongDouble_type_identifier(type_ids);
+    register_MapUShortLongDouble_type_identifier(type_identifiers_);
 }
 
 MapUShortBooleanPubSubType::MapUShortBooleanPubSubType()
@@ -7011,8 +6976,7 @@ bool MapUShortBooleanPubSubType::getKey(
 
 void MapUShortBooleanPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapUShortBoolean_type_identifier(type_ids);
+    register_MapUShortBoolean_type_identifier(type_identifiers_);
 }
 
 MapUShortOctetPubSubType::MapUShortOctetPubSubType()
@@ -7205,8 +7169,7 @@ bool MapUShortOctetPubSubType::getKey(
 
 void MapUShortOctetPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapUShortOctet_type_identifier(type_ids);
+    register_MapUShortOctet_type_identifier(type_identifiers_);
 }
 
 MapUShortCharPubSubType::MapUShortCharPubSubType()
@@ -7399,8 +7362,7 @@ bool MapUShortCharPubSubType::getKey(
 
 void MapUShortCharPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapUShortChar_type_identifier(type_ids);
+    register_MapUShortChar_type_identifier(type_identifiers_);
 }
 
 MapUShortWCharPubSubType::MapUShortWCharPubSubType()
@@ -7593,8 +7555,7 @@ bool MapUShortWCharPubSubType::getKey(
 
 void MapUShortWCharPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapUShortWChar_type_identifier(type_ids);
+    register_MapUShortWChar_type_identifier(type_identifiers_);
 }
 
 MapUShortStringPubSubType::MapUShortStringPubSubType()
@@ -7787,8 +7748,7 @@ bool MapUShortStringPubSubType::getKey(
 
 void MapUShortStringPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapUShortString_type_identifier(type_ids);
+    register_MapUShortString_type_identifier(type_identifiers_);
 }
 
 MapUShortWStringPubSubType::MapUShortWStringPubSubType()
@@ -7981,8 +7941,7 @@ bool MapUShortWStringPubSubType::getKey(
 
 void MapUShortWStringPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapUShortWString_type_identifier(type_ids);
+    register_MapUShortWString_type_identifier(type_identifiers_);
 }
 
 MapUShortInnerAliasBoundedStringHelperPubSubType::MapUShortInnerAliasBoundedStringHelperPubSubType()
@@ -8175,8 +8134,7 @@ bool MapUShortInnerAliasBoundedStringHelperPubSubType::getKey(
 
 void MapUShortInnerAliasBoundedStringHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapUShortInnerAliasBoundedStringHelper_type_identifier(type_ids);
+    register_MapUShortInnerAliasBoundedStringHelper_type_identifier(type_identifiers_);
 }
 
 MapUShortInnerAliasBoundedWStringHelperPubSubType::MapUShortInnerAliasBoundedWStringHelperPubSubType()
@@ -8369,8 +8327,7 @@ bool MapUShortInnerAliasBoundedWStringHelperPubSubType::getKey(
 
 void MapUShortInnerAliasBoundedWStringHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapUShortInnerAliasBoundedWStringHelper_type_identifier(type_ids);
+    register_MapUShortInnerAliasBoundedWStringHelper_type_identifier(type_identifiers_);
 }
 
 MapUShortInnerEnumHelperPubSubType::MapUShortInnerEnumHelperPubSubType()
@@ -8563,8 +8520,7 @@ bool MapUShortInnerEnumHelperPubSubType::getKey(
 
 void MapUShortInnerEnumHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapUShortInnerEnumHelper_type_identifier(type_ids);
+    register_MapUShortInnerEnumHelper_type_identifier(type_identifiers_);
 }
 
 MapUShortInnerBitMaskHelperPubSubType::MapUShortInnerBitMaskHelperPubSubType()
@@ -8757,8 +8713,7 @@ bool MapUShortInnerBitMaskHelperPubSubType::getKey(
 
 void MapUShortInnerBitMaskHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapUShortInnerBitMaskHelper_type_identifier(type_ids);
+    register_MapUShortInnerBitMaskHelper_type_identifier(type_identifiers_);
 }
 
 MapUShortInnerAliasHelperPubSubType::MapUShortInnerAliasHelperPubSubType()
@@ -8951,8 +8906,7 @@ bool MapUShortInnerAliasHelperPubSubType::getKey(
 
 void MapUShortInnerAliasHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapUShortInnerAliasHelper_type_identifier(type_ids);
+    register_MapUShortInnerAliasHelper_type_identifier(type_identifiers_);
 }
 
 MapUShortInnerAliasArrayHelperPubSubType::MapUShortInnerAliasArrayHelperPubSubType()
@@ -9145,8 +9099,7 @@ bool MapUShortInnerAliasArrayHelperPubSubType::getKey(
 
 void MapUShortInnerAliasArrayHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapUShortInnerAliasArrayHelper_type_identifier(type_ids);
+    register_MapUShortInnerAliasArrayHelper_type_identifier(type_identifiers_);
 }
 
 MapUShortInnerAliasSequenceHelperPubSubType::MapUShortInnerAliasSequenceHelperPubSubType()
@@ -9339,8 +9292,7 @@ bool MapUShortInnerAliasSequenceHelperPubSubType::getKey(
 
 void MapUShortInnerAliasSequenceHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapUShortInnerAliasSequenceHelper_type_identifier(type_ids);
+    register_MapUShortInnerAliasSequenceHelper_type_identifier(type_identifiers_);
 }
 
 MapUShortInnerAliasMapHelperPubSubType::MapUShortInnerAliasMapHelperPubSubType()
@@ -9533,8 +9485,7 @@ bool MapUShortInnerAliasMapHelperPubSubType::getKey(
 
 void MapUShortInnerAliasMapHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapUShortInnerAliasMapHelper_type_identifier(type_ids);
+    register_MapUShortInnerAliasMapHelper_type_identifier(type_identifiers_);
 }
 
 MapUShortInnerUnionHelperPubSubType::MapUShortInnerUnionHelperPubSubType()
@@ -9727,8 +9678,7 @@ bool MapUShortInnerUnionHelperPubSubType::getKey(
 
 void MapUShortInnerUnionHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapUShortInnerUnionHelper_type_identifier(type_ids);
+    register_MapUShortInnerUnionHelper_type_identifier(type_identifiers_);
 }
 
 MapUShortInnerStructureHelperPubSubType::MapUShortInnerStructureHelperPubSubType()
@@ -9921,8 +9871,7 @@ bool MapUShortInnerStructureHelperPubSubType::getKey(
 
 void MapUShortInnerStructureHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapUShortInnerStructureHelper_type_identifier(type_ids);
+    register_MapUShortInnerStructureHelper_type_identifier(type_identifiers_);
 }
 
 MapUShortInnerBitsetHelperPubSubType::MapUShortInnerBitsetHelperPubSubType()
@@ -10115,8 +10064,7 @@ bool MapUShortInnerBitsetHelperPubSubType::getKey(
 
 void MapUShortInnerBitsetHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapUShortInnerBitsetHelper_type_identifier(type_ids);
+    register_MapUShortInnerBitsetHelper_type_identifier(type_identifiers_);
 }
 
 MapLongShortPubSubType::MapLongShortPubSubType()
@@ -10309,8 +10257,7 @@ bool MapLongShortPubSubType::getKey(
 
 void MapLongShortPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapLongShort_type_identifier(type_ids);
+    register_MapLongShort_type_identifier(type_identifiers_);
 }
 
 MapLongUShortPubSubType::MapLongUShortPubSubType()
@@ -10503,8 +10450,7 @@ bool MapLongUShortPubSubType::getKey(
 
 void MapLongUShortPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapLongUShort_type_identifier(type_ids);
+    register_MapLongUShort_type_identifier(type_identifiers_);
 }
 
 MapLongLongPubSubType::MapLongLongPubSubType()
@@ -10697,8 +10643,7 @@ bool MapLongLongPubSubType::getKey(
 
 void MapLongLongPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapLongLong_type_identifier(type_ids);
+    register_MapLongLong_type_identifier(type_identifiers_);
 }
 
 MapLongULongPubSubType::MapLongULongPubSubType()
@@ -10891,8 +10836,7 @@ bool MapLongULongPubSubType::getKey(
 
 void MapLongULongPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapLongULong_type_identifier(type_ids);
+    register_MapLongULong_type_identifier(type_identifiers_);
 }
 
 MapLongKeyLongLongValuePubSubType::MapLongKeyLongLongValuePubSubType()
@@ -11085,8 +11029,7 @@ bool MapLongKeyLongLongValuePubSubType::getKey(
 
 void MapLongKeyLongLongValuePubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapLongKeyLongLongValue_type_identifier(type_ids);
+    register_MapLongKeyLongLongValue_type_identifier(type_identifiers_);
 }
 
 MapLongULongLongPubSubType::MapLongULongLongPubSubType()
@@ -11279,8 +11222,7 @@ bool MapLongULongLongPubSubType::getKey(
 
 void MapLongULongLongPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapLongULongLong_type_identifier(type_ids);
+    register_MapLongULongLong_type_identifier(type_identifiers_);
 }
 
 MapLongFloatPubSubType::MapLongFloatPubSubType()
@@ -11473,8 +11415,7 @@ bool MapLongFloatPubSubType::getKey(
 
 void MapLongFloatPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapLongFloat_type_identifier(type_ids);
+    register_MapLongFloat_type_identifier(type_identifiers_);
 }
 
 MapLongDoublePubSubType::MapLongDoublePubSubType()
@@ -11667,8 +11608,7 @@ bool MapLongDoublePubSubType::getKey(
 
 void MapLongDoublePubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapLongDouble_type_identifier(type_ids);
+    register_MapLongDouble_type_identifier(type_identifiers_);
 }
 
 MapLongKeyLongDoubleValuePubSubType::MapLongKeyLongDoubleValuePubSubType()
@@ -11861,8 +11801,7 @@ bool MapLongKeyLongDoubleValuePubSubType::getKey(
 
 void MapLongKeyLongDoubleValuePubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapLongKeyLongDoubleValue_type_identifier(type_ids);
+    register_MapLongKeyLongDoubleValue_type_identifier(type_identifiers_);
 }
 
 MapLongBooleanPubSubType::MapLongBooleanPubSubType()
@@ -12055,8 +11994,7 @@ bool MapLongBooleanPubSubType::getKey(
 
 void MapLongBooleanPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapLongBoolean_type_identifier(type_ids);
+    register_MapLongBoolean_type_identifier(type_identifiers_);
 }
 
 MapLongOctetPubSubType::MapLongOctetPubSubType()
@@ -12249,8 +12187,7 @@ bool MapLongOctetPubSubType::getKey(
 
 void MapLongOctetPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapLongOctet_type_identifier(type_ids);
+    register_MapLongOctet_type_identifier(type_identifiers_);
 }
 
 MapLongCharPubSubType::MapLongCharPubSubType()
@@ -12443,8 +12380,7 @@ bool MapLongCharPubSubType::getKey(
 
 void MapLongCharPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapLongChar_type_identifier(type_ids);
+    register_MapLongChar_type_identifier(type_identifiers_);
 }
 
 MapLongWCharPubSubType::MapLongWCharPubSubType()
@@ -12637,8 +12573,7 @@ bool MapLongWCharPubSubType::getKey(
 
 void MapLongWCharPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapLongWChar_type_identifier(type_ids);
+    register_MapLongWChar_type_identifier(type_identifiers_);
 }
 
 MapLongStringPubSubType::MapLongStringPubSubType()
@@ -12831,8 +12766,7 @@ bool MapLongStringPubSubType::getKey(
 
 void MapLongStringPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapLongString_type_identifier(type_ids);
+    register_MapLongString_type_identifier(type_identifiers_);
 }
 
 MapLongWStringPubSubType::MapLongWStringPubSubType()
@@ -13025,8 +12959,7 @@ bool MapLongWStringPubSubType::getKey(
 
 void MapLongWStringPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapLongWString_type_identifier(type_ids);
+    register_MapLongWString_type_identifier(type_identifiers_);
 }
 
 MapLongInnerAliasBoundedStringHelperPubSubType::MapLongInnerAliasBoundedStringHelperPubSubType()
@@ -13219,8 +13152,7 @@ bool MapLongInnerAliasBoundedStringHelperPubSubType::getKey(
 
 void MapLongInnerAliasBoundedStringHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapLongInnerAliasBoundedStringHelper_type_identifier(type_ids);
+    register_MapLongInnerAliasBoundedStringHelper_type_identifier(type_identifiers_);
 }
 
 MapLongInnerAliasBoundedWStringHelperPubSubType::MapLongInnerAliasBoundedWStringHelperPubSubType()
@@ -13413,8 +13345,7 @@ bool MapLongInnerAliasBoundedWStringHelperPubSubType::getKey(
 
 void MapLongInnerAliasBoundedWStringHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapLongInnerAliasBoundedWStringHelper_type_identifier(type_ids);
+    register_MapLongInnerAliasBoundedWStringHelper_type_identifier(type_identifiers_);
 }
 
 MapLongInnerEnumHelperPubSubType::MapLongInnerEnumHelperPubSubType()
@@ -13607,8 +13538,7 @@ bool MapLongInnerEnumHelperPubSubType::getKey(
 
 void MapLongInnerEnumHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapLongInnerEnumHelper_type_identifier(type_ids);
+    register_MapLongInnerEnumHelper_type_identifier(type_identifiers_);
 }
 
 MapLongInnerBitMaskHelperPubSubType::MapLongInnerBitMaskHelperPubSubType()
@@ -13801,8 +13731,7 @@ bool MapLongInnerBitMaskHelperPubSubType::getKey(
 
 void MapLongInnerBitMaskHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapLongInnerBitMaskHelper_type_identifier(type_ids);
+    register_MapLongInnerBitMaskHelper_type_identifier(type_identifiers_);
 }
 
 MapLongInnerAliasHelperPubSubType::MapLongInnerAliasHelperPubSubType()
@@ -13995,8 +13924,7 @@ bool MapLongInnerAliasHelperPubSubType::getKey(
 
 void MapLongInnerAliasHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapLongInnerAliasHelper_type_identifier(type_ids);
+    register_MapLongInnerAliasHelper_type_identifier(type_identifiers_);
 }
 
 MapLongInnerAliasArrayHelperPubSubType::MapLongInnerAliasArrayHelperPubSubType()
@@ -14189,8 +14117,7 @@ bool MapLongInnerAliasArrayHelperPubSubType::getKey(
 
 void MapLongInnerAliasArrayHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapLongInnerAliasArrayHelper_type_identifier(type_ids);
+    register_MapLongInnerAliasArrayHelper_type_identifier(type_identifiers_);
 }
 
 MapLongInnerAliasSequenceHelperPubSubType::MapLongInnerAliasSequenceHelperPubSubType()
@@ -14383,8 +14310,7 @@ bool MapLongInnerAliasSequenceHelperPubSubType::getKey(
 
 void MapLongInnerAliasSequenceHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapLongInnerAliasSequenceHelper_type_identifier(type_ids);
+    register_MapLongInnerAliasSequenceHelper_type_identifier(type_identifiers_);
 }
 
 MapLongInnerAliasMapHelperPubSubType::MapLongInnerAliasMapHelperPubSubType()
@@ -14577,8 +14503,7 @@ bool MapLongInnerAliasMapHelperPubSubType::getKey(
 
 void MapLongInnerAliasMapHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapLongInnerAliasMapHelper_type_identifier(type_ids);
+    register_MapLongInnerAliasMapHelper_type_identifier(type_identifiers_);
 }
 
 MapLongInnerUnionHelperPubSubType::MapLongInnerUnionHelperPubSubType()
@@ -14771,8 +14696,7 @@ bool MapLongInnerUnionHelperPubSubType::getKey(
 
 void MapLongInnerUnionHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapLongInnerUnionHelper_type_identifier(type_ids);
+    register_MapLongInnerUnionHelper_type_identifier(type_identifiers_);
 }
 
 MapLongInnerStructureHelperPubSubType::MapLongInnerStructureHelperPubSubType()
@@ -14965,8 +14889,7 @@ bool MapLongInnerStructureHelperPubSubType::getKey(
 
 void MapLongInnerStructureHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapLongInnerStructureHelper_type_identifier(type_ids);
+    register_MapLongInnerStructureHelper_type_identifier(type_identifiers_);
 }
 
 MapLongInnerBitsetHelperPubSubType::MapLongInnerBitsetHelperPubSubType()
@@ -15159,8 +15082,7 @@ bool MapLongInnerBitsetHelperPubSubType::getKey(
 
 void MapLongInnerBitsetHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapLongInnerBitsetHelper_type_identifier(type_ids);
+    register_MapLongInnerBitsetHelper_type_identifier(type_identifiers_);
 }
 
 MapULongShortPubSubType::MapULongShortPubSubType()
@@ -15353,8 +15275,7 @@ bool MapULongShortPubSubType::getKey(
 
 void MapULongShortPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapULongShort_type_identifier(type_ids);
+    register_MapULongShort_type_identifier(type_identifiers_);
 }
 
 MapULongUShortPubSubType::MapULongUShortPubSubType()
@@ -15547,8 +15468,7 @@ bool MapULongUShortPubSubType::getKey(
 
 void MapULongUShortPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapULongUShort_type_identifier(type_ids);
+    register_MapULongUShort_type_identifier(type_identifiers_);
 }
 
 MapULongLongPubSubType::MapULongLongPubSubType()
@@ -15741,8 +15661,7 @@ bool MapULongLongPubSubType::getKey(
 
 void MapULongLongPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapULongLong_type_identifier(type_ids);
+    register_MapULongLong_type_identifier(type_identifiers_);
 }
 
 MapULongULongPubSubType::MapULongULongPubSubType()
@@ -15935,8 +15854,7 @@ bool MapULongULongPubSubType::getKey(
 
 void MapULongULongPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapULongULong_type_identifier(type_ids);
+    register_MapULongULong_type_identifier(type_identifiers_);
 }
 
 MapKeyULongValueLongLongPubSubType::MapKeyULongValueLongLongPubSubType()
@@ -16129,8 +16047,7 @@ bool MapKeyULongValueLongLongPubSubType::getKey(
 
 void MapKeyULongValueLongLongPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapKeyULongValueLongLong_type_identifier(type_ids);
+    register_MapKeyULongValueLongLong_type_identifier(type_identifiers_);
 }
 
 MapULongULongLongPubSubType::MapULongULongLongPubSubType()
@@ -16323,8 +16240,7 @@ bool MapULongULongLongPubSubType::getKey(
 
 void MapULongULongLongPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapULongULongLong_type_identifier(type_ids);
+    register_MapULongULongLong_type_identifier(type_identifiers_);
 }
 
 MapULongFloatPubSubType::MapULongFloatPubSubType()
@@ -16517,8 +16433,7 @@ bool MapULongFloatPubSubType::getKey(
 
 void MapULongFloatPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapULongFloat_type_identifier(type_ids);
+    register_MapULongFloat_type_identifier(type_identifiers_);
 }
 
 MapULongDoublePubSubType::MapULongDoublePubSubType()
@@ -16711,8 +16626,7 @@ bool MapULongDoublePubSubType::getKey(
 
 void MapULongDoublePubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapULongDouble_type_identifier(type_ids);
+    register_MapULongDouble_type_identifier(type_identifiers_);
 }
 
 MapKeyULongValueLongDoublePubSubType::MapKeyULongValueLongDoublePubSubType()
@@ -16905,8 +16819,7 @@ bool MapKeyULongValueLongDoublePubSubType::getKey(
 
 void MapKeyULongValueLongDoublePubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapKeyULongValueLongDouble_type_identifier(type_ids);
+    register_MapKeyULongValueLongDouble_type_identifier(type_identifiers_);
 }
 
 MapULongBooleanPubSubType::MapULongBooleanPubSubType()
@@ -17099,8 +17012,7 @@ bool MapULongBooleanPubSubType::getKey(
 
 void MapULongBooleanPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapULongBoolean_type_identifier(type_ids);
+    register_MapULongBoolean_type_identifier(type_identifiers_);
 }
 
 MapULongOctetPubSubType::MapULongOctetPubSubType()
@@ -17293,8 +17205,7 @@ bool MapULongOctetPubSubType::getKey(
 
 void MapULongOctetPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapULongOctet_type_identifier(type_ids);
+    register_MapULongOctet_type_identifier(type_identifiers_);
 }
 
 MapULongCharPubSubType::MapULongCharPubSubType()
@@ -17487,8 +17398,7 @@ bool MapULongCharPubSubType::getKey(
 
 void MapULongCharPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapULongChar_type_identifier(type_ids);
+    register_MapULongChar_type_identifier(type_identifiers_);
 }
 
 MapULongWCharPubSubType::MapULongWCharPubSubType()
@@ -17681,8 +17591,7 @@ bool MapULongWCharPubSubType::getKey(
 
 void MapULongWCharPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapULongWChar_type_identifier(type_ids);
+    register_MapULongWChar_type_identifier(type_identifiers_);
 }
 
 MapULongStringPubSubType::MapULongStringPubSubType()
@@ -17875,8 +17784,7 @@ bool MapULongStringPubSubType::getKey(
 
 void MapULongStringPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapULongString_type_identifier(type_ids);
+    register_MapULongString_type_identifier(type_identifiers_);
 }
 
 MapULongWStringPubSubType::MapULongWStringPubSubType()
@@ -18069,8 +17977,7 @@ bool MapULongWStringPubSubType::getKey(
 
 void MapULongWStringPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapULongWString_type_identifier(type_ids);
+    register_MapULongWString_type_identifier(type_identifiers_);
 }
 
 MapULongInnerAliasBoundedStringHelperPubSubType::MapULongInnerAliasBoundedStringHelperPubSubType()
@@ -18263,8 +18170,7 @@ bool MapULongInnerAliasBoundedStringHelperPubSubType::getKey(
 
 void MapULongInnerAliasBoundedStringHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapULongInnerAliasBoundedStringHelper_type_identifier(type_ids);
+    register_MapULongInnerAliasBoundedStringHelper_type_identifier(type_identifiers_);
 }
 
 MapULongInnerAliasBoundedWStringHelperPubSubType::MapULongInnerAliasBoundedWStringHelperPubSubType()
@@ -18457,8 +18363,7 @@ bool MapULongInnerAliasBoundedWStringHelperPubSubType::getKey(
 
 void MapULongInnerAliasBoundedWStringHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapULongInnerAliasBoundedWStringHelper_type_identifier(type_ids);
+    register_MapULongInnerAliasBoundedWStringHelper_type_identifier(type_identifiers_);
 }
 
 MapULongInnerEnumHelperPubSubType::MapULongInnerEnumHelperPubSubType()
@@ -18651,8 +18556,7 @@ bool MapULongInnerEnumHelperPubSubType::getKey(
 
 void MapULongInnerEnumHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapULongInnerEnumHelper_type_identifier(type_ids);
+    register_MapULongInnerEnumHelper_type_identifier(type_identifiers_);
 }
 
 MapULongInnerBitMaskHelperPubSubType::MapULongInnerBitMaskHelperPubSubType()
@@ -18845,8 +18749,7 @@ bool MapULongInnerBitMaskHelperPubSubType::getKey(
 
 void MapULongInnerBitMaskHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapULongInnerBitMaskHelper_type_identifier(type_ids);
+    register_MapULongInnerBitMaskHelper_type_identifier(type_identifiers_);
 }
 
 MapULongInnerAliasHelperPubSubType::MapULongInnerAliasHelperPubSubType()
@@ -19039,8 +18942,7 @@ bool MapULongInnerAliasHelperPubSubType::getKey(
 
 void MapULongInnerAliasHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapULongInnerAliasHelper_type_identifier(type_ids);
+    register_MapULongInnerAliasHelper_type_identifier(type_identifiers_);
 }
 
 MapULongInnerAliasArrayHelperPubSubType::MapULongInnerAliasArrayHelperPubSubType()
@@ -19233,8 +19135,7 @@ bool MapULongInnerAliasArrayHelperPubSubType::getKey(
 
 void MapULongInnerAliasArrayHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapULongInnerAliasArrayHelper_type_identifier(type_ids);
+    register_MapULongInnerAliasArrayHelper_type_identifier(type_identifiers_);
 }
 
 MapULongInnerAliasSequenceHelperPubSubType::MapULongInnerAliasSequenceHelperPubSubType()
@@ -19427,8 +19328,7 @@ bool MapULongInnerAliasSequenceHelperPubSubType::getKey(
 
 void MapULongInnerAliasSequenceHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapULongInnerAliasSequenceHelper_type_identifier(type_ids);
+    register_MapULongInnerAliasSequenceHelper_type_identifier(type_identifiers_);
 }
 
 MapULongInnerAliasMapHelperPubSubType::MapULongInnerAliasMapHelperPubSubType()
@@ -19621,8 +19521,7 @@ bool MapULongInnerAliasMapHelperPubSubType::getKey(
 
 void MapULongInnerAliasMapHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapULongInnerAliasMapHelper_type_identifier(type_ids);
+    register_MapULongInnerAliasMapHelper_type_identifier(type_identifiers_);
 }
 
 MapULongInnerUnionHelperPubSubType::MapULongInnerUnionHelperPubSubType()
@@ -19815,8 +19714,7 @@ bool MapULongInnerUnionHelperPubSubType::getKey(
 
 void MapULongInnerUnionHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapULongInnerUnionHelper_type_identifier(type_ids);
+    register_MapULongInnerUnionHelper_type_identifier(type_identifiers_);
 }
 
 MapULongInnerStructureHelperPubSubType::MapULongInnerStructureHelperPubSubType()
@@ -20009,8 +19907,7 @@ bool MapULongInnerStructureHelperPubSubType::getKey(
 
 void MapULongInnerStructureHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapULongInnerStructureHelper_type_identifier(type_ids);
+    register_MapULongInnerStructureHelper_type_identifier(type_identifiers_);
 }
 
 MapULongInnerBitsetHelperPubSubType::MapULongInnerBitsetHelperPubSubType()
@@ -20203,8 +20100,7 @@ bool MapULongInnerBitsetHelperPubSubType::getKey(
 
 void MapULongInnerBitsetHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapULongInnerBitsetHelper_type_identifier(type_ids);
+    register_MapULongInnerBitsetHelper_type_identifier(type_identifiers_);
 }
 
 MapLongLongShortPubSubType::MapLongLongShortPubSubType()
@@ -20397,8 +20293,7 @@ bool MapLongLongShortPubSubType::getKey(
 
 void MapLongLongShortPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapLongLongShort_type_identifier(type_ids);
+    register_MapLongLongShort_type_identifier(type_identifiers_);
 }
 
 MapLongLongUShortPubSubType::MapLongLongUShortPubSubType()
@@ -20591,8 +20486,7 @@ bool MapLongLongUShortPubSubType::getKey(
 
 void MapLongLongUShortPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapLongLongUShort_type_identifier(type_ids);
+    register_MapLongLongUShort_type_identifier(type_identifiers_);
 }
 
 MapLongLongKeyLongValuePubSubType::MapLongLongKeyLongValuePubSubType()
@@ -20785,8 +20679,7 @@ bool MapLongLongKeyLongValuePubSubType::getKey(
 
 void MapLongLongKeyLongValuePubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapLongLongKeyLongValue_type_identifier(type_ids);
+    register_MapLongLongKeyLongValue_type_identifier(type_identifiers_);
 }
 
 MapLongLongULongPubSubType::MapLongLongULongPubSubType()
@@ -20979,8 +20872,7 @@ bool MapLongLongULongPubSubType::getKey(
 
 void MapLongLongULongPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapLongLongULong_type_identifier(type_ids);
+    register_MapLongLongULong_type_identifier(type_identifiers_);
 }
 
 MapLongLongLongLongPubSubType::MapLongLongLongLongPubSubType()
@@ -21173,8 +21065,7 @@ bool MapLongLongLongLongPubSubType::getKey(
 
 void MapLongLongLongLongPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapLongLongLongLong_type_identifier(type_ids);
+    register_MapLongLongLongLong_type_identifier(type_identifiers_);
 }
 
 MapLongLongULongLongPubSubType::MapLongLongULongLongPubSubType()
@@ -21367,8 +21258,7 @@ bool MapLongLongULongLongPubSubType::getKey(
 
 void MapLongLongULongLongPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapLongLongULongLong_type_identifier(type_ids);
+    register_MapLongLongULongLong_type_identifier(type_identifiers_);
 }
 
 MapLongLongFloatPubSubType::MapLongLongFloatPubSubType()
@@ -21561,8 +21451,7 @@ bool MapLongLongFloatPubSubType::getKey(
 
 void MapLongLongFloatPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapLongLongFloat_type_identifier(type_ids);
+    register_MapLongLongFloat_type_identifier(type_identifiers_);
 }
 
 MapLongLongKeyDoubleValuePubSubType::MapLongLongKeyDoubleValuePubSubType()
@@ -21755,8 +21644,7 @@ bool MapLongLongKeyDoubleValuePubSubType::getKey(
 
 void MapLongLongKeyDoubleValuePubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapLongLongKeyDoubleValue_type_identifier(type_ids);
+    register_MapLongLongKeyDoubleValue_type_identifier(type_identifiers_);
 }
 
 MapLongLongLongDoublePubSubType::MapLongLongLongDoublePubSubType()
@@ -21949,8 +21837,7 @@ bool MapLongLongLongDoublePubSubType::getKey(
 
 void MapLongLongLongDoublePubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapLongLongLongDouble_type_identifier(type_ids);
+    register_MapLongLongLongDouble_type_identifier(type_identifiers_);
 }
 
 MapLongLongBooleanPubSubType::MapLongLongBooleanPubSubType()
@@ -22143,8 +22030,7 @@ bool MapLongLongBooleanPubSubType::getKey(
 
 void MapLongLongBooleanPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapLongLongBoolean_type_identifier(type_ids);
+    register_MapLongLongBoolean_type_identifier(type_identifiers_);
 }
 
 MapLongLongOctetPubSubType::MapLongLongOctetPubSubType()
@@ -22337,8 +22223,7 @@ bool MapLongLongOctetPubSubType::getKey(
 
 void MapLongLongOctetPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapLongLongOctet_type_identifier(type_ids);
+    register_MapLongLongOctet_type_identifier(type_identifiers_);
 }
 
 MapLongLongCharPubSubType::MapLongLongCharPubSubType()
@@ -22531,8 +22416,7 @@ bool MapLongLongCharPubSubType::getKey(
 
 void MapLongLongCharPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapLongLongChar_type_identifier(type_ids);
+    register_MapLongLongChar_type_identifier(type_identifiers_);
 }
 
 MapLongLongWCharPubSubType::MapLongLongWCharPubSubType()
@@ -22725,8 +22609,7 @@ bool MapLongLongWCharPubSubType::getKey(
 
 void MapLongLongWCharPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapLongLongWChar_type_identifier(type_ids);
+    register_MapLongLongWChar_type_identifier(type_identifiers_);
 }
 
 MapLongLongStringPubSubType::MapLongLongStringPubSubType()
@@ -22919,8 +22802,7 @@ bool MapLongLongStringPubSubType::getKey(
 
 void MapLongLongStringPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapLongLongString_type_identifier(type_ids);
+    register_MapLongLongString_type_identifier(type_identifiers_);
 }
 
 MapLongLongWStringPubSubType::MapLongLongWStringPubSubType()
@@ -23113,8 +22995,7 @@ bool MapLongLongWStringPubSubType::getKey(
 
 void MapLongLongWStringPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapLongLongWString_type_identifier(type_ids);
+    register_MapLongLongWString_type_identifier(type_identifiers_);
 }
 
 MapLongLongInnerAliasBoundedStringHelperPubSubType::MapLongLongInnerAliasBoundedStringHelperPubSubType()
@@ -23307,8 +23188,7 @@ bool MapLongLongInnerAliasBoundedStringHelperPubSubType::getKey(
 
 void MapLongLongInnerAliasBoundedStringHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapLongLongInnerAliasBoundedStringHelper_type_identifier(type_ids);
+    register_MapLongLongInnerAliasBoundedStringHelper_type_identifier(type_identifiers_);
 }
 
 MapLongLongInnerAliasBoundedWStringHelperPubSubType::MapLongLongInnerAliasBoundedWStringHelperPubSubType()
@@ -23501,8 +23381,7 @@ bool MapLongLongInnerAliasBoundedWStringHelperPubSubType::getKey(
 
 void MapLongLongInnerAliasBoundedWStringHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapLongLongInnerAliasBoundedWStringHelper_type_identifier(type_ids);
+    register_MapLongLongInnerAliasBoundedWStringHelper_type_identifier(type_identifiers_);
 }
 
 MapLongLongInnerEnumHelperPubSubType::MapLongLongInnerEnumHelperPubSubType()
@@ -23695,8 +23574,7 @@ bool MapLongLongInnerEnumHelperPubSubType::getKey(
 
 void MapLongLongInnerEnumHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapLongLongInnerEnumHelper_type_identifier(type_ids);
+    register_MapLongLongInnerEnumHelper_type_identifier(type_identifiers_);
 }
 
 MapLongLongInnerBitMaskHelperPubSubType::MapLongLongInnerBitMaskHelperPubSubType()
@@ -23889,8 +23767,7 @@ bool MapLongLongInnerBitMaskHelperPubSubType::getKey(
 
 void MapLongLongInnerBitMaskHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapLongLongInnerBitMaskHelper_type_identifier(type_ids);
+    register_MapLongLongInnerBitMaskHelper_type_identifier(type_identifiers_);
 }
 
 MapLongLongInnerAliasHelperPubSubType::MapLongLongInnerAliasHelperPubSubType()
@@ -24083,8 +23960,7 @@ bool MapLongLongInnerAliasHelperPubSubType::getKey(
 
 void MapLongLongInnerAliasHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapLongLongInnerAliasHelper_type_identifier(type_ids);
+    register_MapLongLongInnerAliasHelper_type_identifier(type_identifiers_);
 }
 
 MapLongLongInnerAliasArrayHelperPubSubType::MapLongLongInnerAliasArrayHelperPubSubType()
@@ -24277,8 +24153,7 @@ bool MapLongLongInnerAliasArrayHelperPubSubType::getKey(
 
 void MapLongLongInnerAliasArrayHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapLongLongInnerAliasArrayHelper_type_identifier(type_ids);
+    register_MapLongLongInnerAliasArrayHelper_type_identifier(type_identifiers_);
 }
 
 MapLongLongInnerAliasSequenceHelperPubSubType::MapLongLongInnerAliasSequenceHelperPubSubType()
@@ -24471,8 +24346,7 @@ bool MapLongLongInnerAliasSequenceHelperPubSubType::getKey(
 
 void MapLongLongInnerAliasSequenceHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapLongLongInnerAliasSequenceHelper_type_identifier(type_ids);
+    register_MapLongLongInnerAliasSequenceHelper_type_identifier(type_identifiers_);
 }
 
 MapLongLongInnerAliasMapHelperPubSubType::MapLongLongInnerAliasMapHelperPubSubType()
@@ -24665,8 +24539,7 @@ bool MapLongLongInnerAliasMapHelperPubSubType::getKey(
 
 void MapLongLongInnerAliasMapHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapLongLongInnerAliasMapHelper_type_identifier(type_ids);
+    register_MapLongLongInnerAliasMapHelper_type_identifier(type_identifiers_);
 }
 
 MapLongLongInnerUnionHelperPubSubType::MapLongLongInnerUnionHelperPubSubType()
@@ -24859,8 +24732,7 @@ bool MapLongLongInnerUnionHelperPubSubType::getKey(
 
 void MapLongLongInnerUnionHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapLongLongInnerUnionHelper_type_identifier(type_ids);
+    register_MapLongLongInnerUnionHelper_type_identifier(type_identifiers_);
 }
 
 MapLongLongInnerStructureHelperPubSubType::MapLongLongInnerStructureHelperPubSubType()
@@ -25053,8 +24925,7 @@ bool MapLongLongInnerStructureHelperPubSubType::getKey(
 
 void MapLongLongInnerStructureHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapLongLongInnerStructureHelper_type_identifier(type_ids);
+    register_MapLongLongInnerStructureHelper_type_identifier(type_identifiers_);
 }
 
 MapLongLongInnerBitsetHelperPubSubType::MapLongLongInnerBitsetHelperPubSubType()
@@ -25247,8 +25118,7 @@ bool MapLongLongInnerBitsetHelperPubSubType::getKey(
 
 void MapLongLongInnerBitsetHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapLongLongInnerBitsetHelper_type_identifier(type_ids);
+    register_MapLongLongInnerBitsetHelper_type_identifier(type_identifiers_);
 }
 
 MapULongLongShortPubSubType::MapULongLongShortPubSubType()
@@ -25441,8 +25311,7 @@ bool MapULongLongShortPubSubType::getKey(
 
 void MapULongLongShortPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapULongLongShort_type_identifier(type_ids);
+    register_MapULongLongShort_type_identifier(type_identifiers_);
 }
 
 MapULongLongUShortPubSubType::MapULongLongUShortPubSubType()
@@ -25635,8 +25504,7 @@ bool MapULongLongUShortPubSubType::getKey(
 
 void MapULongLongUShortPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapULongLongUShort_type_identifier(type_ids);
+    register_MapULongLongUShort_type_identifier(type_identifiers_);
 }
 
 MapULongLongLongPubSubType::MapULongLongLongPubSubType()
@@ -25829,8 +25697,7 @@ bool MapULongLongLongPubSubType::getKey(
 
 void MapULongLongLongPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapULongLongLong_type_identifier(type_ids);
+    register_MapULongLongLong_type_identifier(type_identifiers_);
 }
 
 MapULongLongULongPubSubType::MapULongLongULongPubSubType()
@@ -26023,8 +25890,7 @@ bool MapULongLongULongPubSubType::getKey(
 
 void MapULongLongULongPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapULongLongULong_type_identifier(type_ids);
+    register_MapULongLongULong_type_identifier(type_identifiers_);
 }
 
 MapULongLongLongLongPubSubType::MapULongLongLongLongPubSubType()
@@ -26217,8 +26083,7 @@ bool MapULongLongLongLongPubSubType::getKey(
 
 void MapULongLongLongLongPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapULongLongLongLong_type_identifier(type_ids);
+    register_MapULongLongLongLong_type_identifier(type_identifiers_);
 }
 
 MapULongLongULongLongPubSubType::MapULongLongULongLongPubSubType()
@@ -26411,8 +26276,7 @@ bool MapULongLongULongLongPubSubType::getKey(
 
 void MapULongLongULongLongPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapULongLongULongLong_type_identifier(type_ids);
+    register_MapULongLongULongLong_type_identifier(type_identifiers_);
 }
 
 MapULongLongFloatPubSubType::MapULongLongFloatPubSubType()
@@ -26605,8 +26469,7 @@ bool MapULongLongFloatPubSubType::getKey(
 
 void MapULongLongFloatPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapULongLongFloat_type_identifier(type_ids);
+    register_MapULongLongFloat_type_identifier(type_identifiers_);
 }
 
 MapKeyULongLongValueDoublePubSubType::MapKeyULongLongValueDoublePubSubType()
@@ -26799,8 +26662,7 @@ bool MapKeyULongLongValueDoublePubSubType::getKey(
 
 void MapKeyULongLongValueDoublePubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapKeyULongLongValueDouble_type_identifier(type_ids);
+    register_MapKeyULongLongValueDouble_type_identifier(type_identifiers_);
 }
 
 MapULongLongLongDoublePubSubType::MapULongLongLongDoublePubSubType()
@@ -26993,8 +26855,7 @@ bool MapULongLongLongDoublePubSubType::getKey(
 
 void MapULongLongLongDoublePubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapULongLongLongDouble_type_identifier(type_ids);
+    register_MapULongLongLongDouble_type_identifier(type_identifiers_);
 }
 
 MapULongLongBooleanPubSubType::MapULongLongBooleanPubSubType()
@@ -27187,8 +27048,7 @@ bool MapULongLongBooleanPubSubType::getKey(
 
 void MapULongLongBooleanPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapULongLongBoolean_type_identifier(type_ids);
+    register_MapULongLongBoolean_type_identifier(type_identifiers_);
 }
 
 MapULongLongOctetPubSubType::MapULongLongOctetPubSubType()
@@ -27381,8 +27241,7 @@ bool MapULongLongOctetPubSubType::getKey(
 
 void MapULongLongOctetPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapULongLongOctet_type_identifier(type_ids);
+    register_MapULongLongOctet_type_identifier(type_identifiers_);
 }
 
 MapULongLongCharPubSubType::MapULongLongCharPubSubType()
@@ -27575,8 +27434,7 @@ bool MapULongLongCharPubSubType::getKey(
 
 void MapULongLongCharPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapULongLongChar_type_identifier(type_ids);
+    register_MapULongLongChar_type_identifier(type_identifiers_);
 }
 
 MapULongLongWCharPubSubType::MapULongLongWCharPubSubType()
@@ -27769,8 +27627,7 @@ bool MapULongLongWCharPubSubType::getKey(
 
 void MapULongLongWCharPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapULongLongWChar_type_identifier(type_ids);
+    register_MapULongLongWChar_type_identifier(type_identifiers_);
 }
 
 MapULongLongStringPubSubType::MapULongLongStringPubSubType()
@@ -27963,8 +27820,7 @@ bool MapULongLongStringPubSubType::getKey(
 
 void MapULongLongStringPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapULongLongString_type_identifier(type_ids);
+    register_MapULongLongString_type_identifier(type_identifiers_);
 }
 
 MapULongLongWStringPubSubType::MapULongLongWStringPubSubType()
@@ -28157,8 +28013,7 @@ bool MapULongLongWStringPubSubType::getKey(
 
 void MapULongLongWStringPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapULongLongWString_type_identifier(type_ids);
+    register_MapULongLongWString_type_identifier(type_identifiers_);
 }
 
 MapULongLongInnerAliasBoundedStringHelperPubSubType::MapULongLongInnerAliasBoundedStringHelperPubSubType()
@@ -28351,8 +28206,7 @@ bool MapULongLongInnerAliasBoundedStringHelperPubSubType::getKey(
 
 void MapULongLongInnerAliasBoundedStringHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapULongLongInnerAliasBoundedStringHelper_type_identifier(type_ids);
+    register_MapULongLongInnerAliasBoundedStringHelper_type_identifier(type_identifiers_);
 }
 
 MapULongLongInnerAliasBoundedWStringHelperPubSubType::MapULongLongInnerAliasBoundedWStringHelperPubSubType()
@@ -28545,8 +28399,7 @@ bool MapULongLongInnerAliasBoundedWStringHelperPubSubType::getKey(
 
 void MapULongLongInnerAliasBoundedWStringHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapULongLongInnerAliasBoundedWStringHelper_type_identifier(type_ids);
+    register_MapULongLongInnerAliasBoundedWStringHelper_type_identifier(type_identifiers_);
 }
 
 MapULongLongInnerEnumHelperPubSubType::MapULongLongInnerEnumHelperPubSubType()
@@ -28739,8 +28592,7 @@ bool MapULongLongInnerEnumHelperPubSubType::getKey(
 
 void MapULongLongInnerEnumHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapULongLongInnerEnumHelper_type_identifier(type_ids);
+    register_MapULongLongInnerEnumHelper_type_identifier(type_identifiers_);
 }
 
 MapULongLongInnerBitMaskHelperPubSubType::MapULongLongInnerBitMaskHelperPubSubType()
@@ -28933,8 +28785,7 @@ bool MapULongLongInnerBitMaskHelperPubSubType::getKey(
 
 void MapULongLongInnerBitMaskHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapULongLongInnerBitMaskHelper_type_identifier(type_ids);
+    register_MapULongLongInnerBitMaskHelper_type_identifier(type_identifiers_);
 }
 
 MapULongLongInnerAliasHelperPubSubType::MapULongLongInnerAliasHelperPubSubType()
@@ -29127,8 +28978,7 @@ bool MapULongLongInnerAliasHelperPubSubType::getKey(
 
 void MapULongLongInnerAliasHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapULongLongInnerAliasHelper_type_identifier(type_ids);
+    register_MapULongLongInnerAliasHelper_type_identifier(type_identifiers_);
 }
 
 MapULongLongInnerAliasArrayHelperPubSubType::MapULongLongInnerAliasArrayHelperPubSubType()
@@ -29321,8 +29171,7 @@ bool MapULongLongInnerAliasArrayHelperPubSubType::getKey(
 
 void MapULongLongInnerAliasArrayHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapULongLongInnerAliasArrayHelper_type_identifier(type_ids);
+    register_MapULongLongInnerAliasArrayHelper_type_identifier(type_identifiers_);
 }
 
 MapULongLongInnerAliasSequenceHelperPubSubType::MapULongLongInnerAliasSequenceHelperPubSubType()
@@ -29515,8 +29364,7 @@ bool MapULongLongInnerAliasSequenceHelperPubSubType::getKey(
 
 void MapULongLongInnerAliasSequenceHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapULongLongInnerAliasSequenceHelper_type_identifier(type_ids);
+    register_MapULongLongInnerAliasSequenceHelper_type_identifier(type_identifiers_);
 }
 
 MapULongLongInnerAliasMapHelperPubSubType::MapULongLongInnerAliasMapHelperPubSubType()
@@ -29709,8 +29557,7 @@ bool MapULongLongInnerAliasMapHelperPubSubType::getKey(
 
 void MapULongLongInnerAliasMapHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapULongLongInnerAliasMapHelper_type_identifier(type_ids);
+    register_MapULongLongInnerAliasMapHelper_type_identifier(type_identifiers_);
 }
 
 MapULongLongInnerUnionHelperPubSubType::MapULongLongInnerUnionHelperPubSubType()
@@ -29903,8 +29750,7 @@ bool MapULongLongInnerUnionHelperPubSubType::getKey(
 
 void MapULongLongInnerUnionHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapULongLongInnerUnionHelper_type_identifier(type_ids);
+    register_MapULongLongInnerUnionHelper_type_identifier(type_identifiers_);
 }
 
 MapULongLongInnerStructureHelperPubSubType::MapULongLongInnerStructureHelperPubSubType()
@@ -30097,8 +29943,7 @@ bool MapULongLongInnerStructureHelperPubSubType::getKey(
 
 void MapULongLongInnerStructureHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapULongLongInnerStructureHelper_type_identifier(type_ids);
+    register_MapULongLongInnerStructureHelper_type_identifier(type_identifiers_);
 }
 
 MapULongLongInnerBitsetHelperPubSubType::MapULongLongInnerBitsetHelperPubSubType()
@@ -30291,8 +30136,7 @@ bool MapULongLongInnerBitsetHelperPubSubType::getKey(
 
 void MapULongLongInnerBitsetHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapULongLongInnerBitsetHelper_type_identifier(type_ids);
+    register_MapULongLongInnerBitsetHelper_type_identifier(type_identifiers_);
 }
 
 MapStringShortPubSubType::MapStringShortPubSubType()
@@ -30485,8 +30329,7 @@ bool MapStringShortPubSubType::getKey(
 
 void MapStringShortPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapStringShort_type_identifier(type_ids);
+    register_MapStringShort_type_identifier(type_identifiers_);
 }
 
 MapStringUShortPubSubType::MapStringUShortPubSubType()
@@ -30679,8 +30522,7 @@ bool MapStringUShortPubSubType::getKey(
 
 void MapStringUShortPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapStringUShort_type_identifier(type_ids);
+    register_MapStringUShort_type_identifier(type_identifiers_);
 }
 
 MapStringLongPubSubType::MapStringLongPubSubType()
@@ -30873,8 +30715,7 @@ bool MapStringLongPubSubType::getKey(
 
 void MapStringLongPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapStringLong_type_identifier(type_ids);
+    register_MapStringLong_type_identifier(type_identifiers_);
 }
 
 MapStringULongPubSubType::MapStringULongPubSubType()
@@ -31067,8 +30908,7 @@ bool MapStringULongPubSubType::getKey(
 
 void MapStringULongPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapStringULong_type_identifier(type_ids);
+    register_MapStringULong_type_identifier(type_identifiers_);
 }
 
 MapStringLongLongPubSubType::MapStringLongLongPubSubType()
@@ -31261,8 +31101,7 @@ bool MapStringLongLongPubSubType::getKey(
 
 void MapStringLongLongPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapStringLongLong_type_identifier(type_ids);
+    register_MapStringLongLong_type_identifier(type_identifiers_);
 }
 
 MapStringULongLongPubSubType::MapStringULongLongPubSubType()
@@ -31455,8 +31294,7 @@ bool MapStringULongLongPubSubType::getKey(
 
 void MapStringULongLongPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapStringULongLong_type_identifier(type_ids);
+    register_MapStringULongLong_type_identifier(type_identifiers_);
 }
 
 MapStringFloatPubSubType::MapStringFloatPubSubType()
@@ -31649,8 +31487,7 @@ bool MapStringFloatPubSubType::getKey(
 
 void MapStringFloatPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapStringFloat_type_identifier(type_ids);
+    register_MapStringFloat_type_identifier(type_identifiers_);
 }
 
 MapStringDoublePubSubType::MapStringDoublePubSubType()
@@ -31843,8 +31680,7 @@ bool MapStringDoublePubSubType::getKey(
 
 void MapStringDoublePubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapStringDouble_type_identifier(type_ids);
+    register_MapStringDouble_type_identifier(type_identifiers_);
 }
 
 MapStringLongDoublePubSubType::MapStringLongDoublePubSubType()
@@ -32037,8 +31873,7 @@ bool MapStringLongDoublePubSubType::getKey(
 
 void MapStringLongDoublePubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapStringLongDouble_type_identifier(type_ids);
+    register_MapStringLongDouble_type_identifier(type_identifiers_);
 }
 
 MapStringBooleanPubSubType::MapStringBooleanPubSubType()
@@ -32231,8 +32066,7 @@ bool MapStringBooleanPubSubType::getKey(
 
 void MapStringBooleanPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapStringBoolean_type_identifier(type_ids);
+    register_MapStringBoolean_type_identifier(type_identifiers_);
 }
 
 MapStringOctetPubSubType::MapStringOctetPubSubType()
@@ -32425,8 +32259,7 @@ bool MapStringOctetPubSubType::getKey(
 
 void MapStringOctetPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapStringOctet_type_identifier(type_ids);
+    register_MapStringOctet_type_identifier(type_identifiers_);
 }
 
 MapStringCharPubSubType::MapStringCharPubSubType()
@@ -32619,8 +32452,7 @@ bool MapStringCharPubSubType::getKey(
 
 void MapStringCharPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapStringChar_type_identifier(type_ids);
+    register_MapStringChar_type_identifier(type_identifiers_);
 }
 
 MapStringWCharPubSubType::MapStringWCharPubSubType()
@@ -32813,8 +32645,7 @@ bool MapStringWCharPubSubType::getKey(
 
 void MapStringWCharPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapStringWChar_type_identifier(type_ids);
+    register_MapStringWChar_type_identifier(type_identifiers_);
 }
 
 MapStringStringPubSubType::MapStringStringPubSubType()
@@ -33007,8 +32838,7 @@ bool MapStringStringPubSubType::getKey(
 
 void MapStringStringPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapStringString_type_identifier(type_ids);
+    register_MapStringString_type_identifier(type_identifiers_);
 }
 
 MapStringWStringPubSubType::MapStringWStringPubSubType()
@@ -33201,8 +33031,7 @@ bool MapStringWStringPubSubType::getKey(
 
 void MapStringWStringPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapStringWString_type_identifier(type_ids);
+    register_MapStringWString_type_identifier(type_identifiers_);
 }
 
 MapStringInnerAliasBoundedStringHelperPubSubType::MapStringInnerAliasBoundedStringHelperPubSubType()
@@ -33395,8 +33224,7 @@ bool MapStringInnerAliasBoundedStringHelperPubSubType::getKey(
 
 void MapStringInnerAliasBoundedStringHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapStringInnerAliasBoundedStringHelper_type_identifier(type_ids);
+    register_MapStringInnerAliasBoundedStringHelper_type_identifier(type_identifiers_);
 }
 
 MapStringInnerAliasBoundedWStringHelperPubSubType::MapStringInnerAliasBoundedWStringHelperPubSubType()
@@ -33589,8 +33417,7 @@ bool MapStringInnerAliasBoundedWStringHelperPubSubType::getKey(
 
 void MapStringInnerAliasBoundedWStringHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapStringInnerAliasBoundedWStringHelper_type_identifier(type_ids);
+    register_MapStringInnerAliasBoundedWStringHelper_type_identifier(type_identifiers_);
 }
 
 MapStringInnerEnumHelperPubSubType::MapStringInnerEnumHelperPubSubType()
@@ -33783,8 +33610,7 @@ bool MapStringInnerEnumHelperPubSubType::getKey(
 
 void MapStringInnerEnumHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapStringInnerEnumHelper_type_identifier(type_ids);
+    register_MapStringInnerEnumHelper_type_identifier(type_identifiers_);
 }
 
 MapStringInnerBitMaskHelperPubSubType::MapStringInnerBitMaskHelperPubSubType()
@@ -33977,8 +33803,7 @@ bool MapStringInnerBitMaskHelperPubSubType::getKey(
 
 void MapStringInnerBitMaskHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapStringInnerBitMaskHelper_type_identifier(type_ids);
+    register_MapStringInnerBitMaskHelper_type_identifier(type_identifiers_);
 }
 
 MapStringInnerAliasHelperPubSubType::MapStringInnerAliasHelperPubSubType()
@@ -34171,8 +33996,7 @@ bool MapStringInnerAliasHelperPubSubType::getKey(
 
 void MapStringInnerAliasHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapStringInnerAliasHelper_type_identifier(type_ids);
+    register_MapStringInnerAliasHelper_type_identifier(type_identifiers_);
 }
 
 MapStringInnerAliasArrayHelperPubSubType::MapStringInnerAliasArrayHelperPubSubType()
@@ -34365,8 +34189,7 @@ bool MapStringInnerAliasArrayHelperPubSubType::getKey(
 
 void MapStringInnerAliasArrayHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapStringInnerAliasArrayHelper_type_identifier(type_ids);
+    register_MapStringInnerAliasArrayHelper_type_identifier(type_identifiers_);
 }
 
 MapStringInnerAliasSequenceHelperPubSubType::MapStringInnerAliasSequenceHelperPubSubType()
@@ -34559,8 +34382,7 @@ bool MapStringInnerAliasSequenceHelperPubSubType::getKey(
 
 void MapStringInnerAliasSequenceHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapStringInnerAliasSequenceHelper_type_identifier(type_ids);
+    register_MapStringInnerAliasSequenceHelper_type_identifier(type_identifiers_);
 }
 
 MapStringInnerAliasMapHelperPubSubType::MapStringInnerAliasMapHelperPubSubType()
@@ -34753,8 +34575,7 @@ bool MapStringInnerAliasMapHelperPubSubType::getKey(
 
 void MapStringInnerAliasMapHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapStringInnerAliasMapHelper_type_identifier(type_ids);
+    register_MapStringInnerAliasMapHelper_type_identifier(type_identifiers_);
 }
 
 MapStringInnerUnionHelperPubSubType::MapStringInnerUnionHelperPubSubType()
@@ -34947,8 +34768,7 @@ bool MapStringInnerUnionHelperPubSubType::getKey(
 
 void MapStringInnerUnionHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapStringInnerUnionHelper_type_identifier(type_ids);
+    register_MapStringInnerUnionHelper_type_identifier(type_identifiers_);
 }
 
 MapStringInnerStructureHelperPubSubType::MapStringInnerStructureHelperPubSubType()
@@ -35141,8 +34961,7 @@ bool MapStringInnerStructureHelperPubSubType::getKey(
 
 void MapStringInnerStructureHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapStringInnerStructureHelper_type_identifier(type_ids);
+    register_MapStringInnerStructureHelper_type_identifier(type_identifiers_);
 }
 
 MapStringInnerBitsetHelperPubSubType::MapStringInnerBitsetHelperPubSubType()
@@ -35335,8 +35154,7 @@ bool MapStringInnerBitsetHelperPubSubType::getKey(
 
 void MapStringInnerBitsetHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapStringInnerBitsetHelper_type_identifier(type_ids);
+    register_MapStringInnerBitsetHelper_type_identifier(type_identifiers_);
 }
 
 MapWStringShortPubSubType::MapWStringShortPubSubType()
@@ -35529,8 +35347,7 @@ bool MapWStringShortPubSubType::getKey(
 
 void MapWStringShortPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapWStringShort_type_identifier(type_ids);
+    register_MapWStringShort_type_identifier(type_identifiers_);
 }
 
 MapWStringUShortPubSubType::MapWStringUShortPubSubType()
@@ -35723,8 +35540,7 @@ bool MapWStringUShortPubSubType::getKey(
 
 void MapWStringUShortPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapWStringUShort_type_identifier(type_ids);
+    register_MapWStringUShort_type_identifier(type_identifiers_);
 }
 
 MapWStringLongPubSubType::MapWStringLongPubSubType()
@@ -35917,8 +35733,7 @@ bool MapWStringLongPubSubType::getKey(
 
 void MapWStringLongPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapWStringLong_type_identifier(type_ids);
+    register_MapWStringLong_type_identifier(type_identifiers_);
 }
 
 MapWStringULongPubSubType::MapWStringULongPubSubType()
@@ -36111,8 +35926,7 @@ bool MapWStringULongPubSubType::getKey(
 
 void MapWStringULongPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapWStringULong_type_identifier(type_ids);
+    register_MapWStringULong_type_identifier(type_identifiers_);
 }
 
 MapWStringLongLongPubSubType::MapWStringLongLongPubSubType()
@@ -36305,8 +36119,7 @@ bool MapWStringLongLongPubSubType::getKey(
 
 void MapWStringLongLongPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapWStringLongLong_type_identifier(type_ids);
+    register_MapWStringLongLong_type_identifier(type_identifiers_);
 }
 
 MapWStringULongLongPubSubType::MapWStringULongLongPubSubType()
@@ -36499,8 +36312,7 @@ bool MapWStringULongLongPubSubType::getKey(
 
 void MapWStringULongLongPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapWStringULongLong_type_identifier(type_ids);
+    register_MapWStringULongLong_type_identifier(type_identifiers_);
 }
 
 MapWStringFloatPubSubType::MapWStringFloatPubSubType()
@@ -36693,8 +36505,7 @@ bool MapWStringFloatPubSubType::getKey(
 
 void MapWStringFloatPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapWStringFloat_type_identifier(type_ids);
+    register_MapWStringFloat_type_identifier(type_identifiers_);
 }
 
 MapWStringDoublePubSubType::MapWStringDoublePubSubType()
@@ -36887,8 +36698,7 @@ bool MapWStringDoublePubSubType::getKey(
 
 void MapWStringDoublePubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapWStringDouble_type_identifier(type_ids);
+    register_MapWStringDouble_type_identifier(type_identifiers_);
 }
 
 MapWStringLongDoublePubSubType::MapWStringLongDoublePubSubType()
@@ -37081,8 +36891,7 @@ bool MapWStringLongDoublePubSubType::getKey(
 
 void MapWStringLongDoublePubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapWStringLongDouble_type_identifier(type_ids);
+    register_MapWStringLongDouble_type_identifier(type_identifiers_);
 }
 
 MapWStringBooleanPubSubType::MapWStringBooleanPubSubType()
@@ -37275,8 +37084,7 @@ bool MapWStringBooleanPubSubType::getKey(
 
 void MapWStringBooleanPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapWStringBoolean_type_identifier(type_ids);
+    register_MapWStringBoolean_type_identifier(type_identifiers_);
 }
 
 MapWStringOctetPubSubType::MapWStringOctetPubSubType()
@@ -37469,8 +37277,7 @@ bool MapWStringOctetPubSubType::getKey(
 
 void MapWStringOctetPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapWStringOctet_type_identifier(type_ids);
+    register_MapWStringOctet_type_identifier(type_identifiers_);
 }
 
 MapWStringCharPubSubType::MapWStringCharPubSubType()
@@ -37663,8 +37470,7 @@ bool MapWStringCharPubSubType::getKey(
 
 void MapWStringCharPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapWStringChar_type_identifier(type_ids);
+    register_MapWStringChar_type_identifier(type_identifiers_);
 }
 
 MapWStringWCharPubSubType::MapWStringWCharPubSubType()
@@ -37857,8 +37663,7 @@ bool MapWStringWCharPubSubType::getKey(
 
 void MapWStringWCharPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapWStringWChar_type_identifier(type_ids);
+    register_MapWStringWChar_type_identifier(type_identifiers_);
 }
 
 MapWStringStringPubSubType::MapWStringStringPubSubType()
@@ -38051,8 +37856,7 @@ bool MapWStringStringPubSubType::getKey(
 
 void MapWStringStringPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapWStringString_type_identifier(type_ids);
+    register_MapWStringString_type_identifier(type_identifiers_);
 }
 
 MapWStringWStringPubSubType::MapWStringWStringPubSubType()
@@ -38245,8 +38049,7 @@ bool MapWStringWStringPubSubType::getKey(
 
 void MapWStringWStringPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapWStringWString_type_identifier(type_ids);
+    register_MapWStringWString_type_identifier(type_identifiers_);
 }
 
 MapWStringInnerAliasBoundedStringHelperPubSubType::MapWStringInnerAliasBoundedStringHelperPubSubType()
@@ -38439,8 +38242,7 @@ bool MapWStringInnerAliasBoundedStringHelperPubSubType::getKey(
 
 void MapWStringInnerAliasBoundedStringHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapWStringInnerAliasBoundedStringHelper_type_identifier(type_ids);
+    register_MapWStringInnerAliasBoundedStringHelper_type_identifier(type_identifiers_);
 }
 
 MapWStringInnerAliasBoundedWStringHelperPubSubType::MapWStringInnerAliasBoundedWStringHelperPubSubType()
@@ -38633,8 +38435,7 @@ bool MapWStringInnerAliasBoundedWStringHelperPubSubType::getKey(
 
 void MapWStringInnerAliasBoundedWStringHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapWStringInnerAliasBoundedWStringHelper_type_identifier(type_ids);
+    register_MapWStringInnerAliasBoundedWStringHelper_type_identifier(type_identifiers_);
 }
 
 MapWStringInnerEnumHelperPubSubType::MapWStringInnerEnumHelperPubSubType()
@@ -38827,8 +38628,7 @@ bool MapWStringInnerEnumHelperPubSubType::getKey(
 
 void MapWStringInnerEnumHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapWStringInnerEnumHelper_type_identifier(type_ids);
+    register_MapWStringInnerEnumHelper_type_identifier(type_identifiers_);
 }
 
 MapWStringInnerBitMaskHelperPubSubType::MapWStringInnerBitMaskHelperPubSubType()
@@ -39021,8 +38821,7 @@ bool MapWStringInnerBitMaskHelperPubSubType::getKey(
 
 void MapWStringInnerBitMaskHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapWStringInnerBitMaskHelper_type_identifier(type_ids);
+    register_MapWStringInnerBitMaskHelper_type_identifier(type_identifiers_);
 }
 
 MapWStringInnerAliasHelperPubSubType::MapWStringInnerAliasHelperPubSubType()
@@ -39215,8 +39014,7 @@ bool MapWStringInnerAliasHelperPubSubType::getKey(
 
 void MapWStringInnerAliasHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapWStringInnerAliasHelper_type_identifier(type_ids);
+    register_MapWStringInnerAliasHelper_type_identifier(type_identifiers_);
 }
 
 MapWStringInnerAliasArrayHelperPubSubType::MapWStringInnerAliasArrayHelperPubSubType()
@@ -39409,8 +39207,7 @@ bool MapWStringInnerAliasArrayHelperPubSubType::getKey(
 
 void MapWStringInnerAliasArrayHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapWStringInnerAliasArrayHelper_type_identifier(type_ids);
+    register_MapWStringInnerAliasArrayHelper_type_identifier(type_identifiers_);
 }
 
 MapWStringInnerAliasSequenceHelperPubSubType::MapWStringInnerAliasSequenceHelperPubSubType()
@@ -39603,8 +39400,7 @@ bool MapWStringInnerAliasSequenceHelperPubSubType::getKey(
 
 void MapWStringInnerAliasSequenceHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapWStringInnerAliasSequenceHelper_type_identifier(type_ids);
+    register_MapWStringInnerAliasSequenceHelper_type_identifier(type_identifiers_);
 }
 
 MapWStringInnerAliasMapHelperPubSubType::MapWStringInnerAliasMapHelperPubSubType()
@@ -39797,8 +39593,7 @@ bool MapWStringInnerAliasMapHelperPubSubType::getKey(
 
 void MapWStringInnerAliasMapHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapWStringInnerAliasMapHelper_type_identifier(type_ids);
+    register_MapWStringInnerAliasMapHelper_type_identifier(type_identifiers_);
 }
 
 MapWStringInnerUnionHelperPubSubType::MapWStringInnerUnionHelperPubSubType()
@@ -39991,8 +39786,7 @@ bool MapWStringInnerUnionHelperPubSubType::getKey(
 
 void MapWStringInnerUnionHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapWStringInnerUnionHelper_type_identifier(type_ids);
+    register_MapWStringInnerUnionHelper_type_identifier(type_identifiers_);
 }
 
 MapWStringInnerStructureHelperPubSubType::MapWStringInnerStructureHelperPubSubType()
@@ -40185,8 +39979,7 @@ bool MapWStringInnerStructureHelperPubSubType::getKey(
 
 void MapWStringInnerStructureHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapWStringInnerStructureHelper_type_identifier(type_ids);
+    register_MapWStringInnerStructureHelper_type_identifier(type_identifiers_);
 }
 
 MapWStringInnerBitsetHelperPubSubType::MapWStringInnerBitsetHelperPubSubType()
@@ -40379,8 +40172,7 @@ bool MapWStringInnerBitsetHelperPubSubType::getKey(
 
 void MapWStringInnerBitsetHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapWStringInnerBitsetHelper_type_identifier(type_ids);
+    register_MapWStringInnerBitsetHelper_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedStringHelperShortPubSubType::MapInnerAliasBoundedStringHelperShortPubSubType()
@@ -40573,8 +40365,7 @@ bool MapInnerAliasBoundedStringHelperShortPubSubType::getKey(
 
 void MapInnerAliasBoundedStringHelperShortPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapInnerAliasBoundedStringHelperShort_type_identifier(type_ids);
+    register_MapInnerAliasBoundedStringHelperShort_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedStringHelperUShortPubSubType::MapInnerAliasBoundedStringHelperUShortPubSubType()
@@ -40767,8 +40558,7 @@ bool MapInnerAliasBoundedStringHelperUShortPubSubType::getKey(
 
 void MapInnerAliasBoundedStringHelperUShortPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapInnerAliasBoundedStringHelperUShort_type_identifier(type_ids);
+    register_MapInnerAliasBoundedStringHelperUShort_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedStringHelperLongPubSubType::MapInnerAliasBoundedStringHelperLongPubSubType()
@@ -40961,8 +40751,7 @@ bool MapInnerAliasBoundedStringHelperLongPubSubType::getKey(
 
 void MapInnerAliasBoundedStringHelperLongPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapInnerAliasBoundedStringHelperLong_type_identifier(type_ids);
+    register_MapInnerAliasBoundedStringHelperLong_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedStringHelperULongPubSubType::MapInnerAliasBoundedStringHelperULongPubSubType()
@@ -41155,8 +40944,7 @@ bool MapInnerAliasBoundedStringHelperULongPubSubType::getKey(
 
 void MapInnerAliasBoundedStringHelperULongPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapInnerAliasBoundedStringHelperULong_type_identifier(type_ids);
+    register_MapInnerAliasBoundedStringHelperULong_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedStringHelperLongLongPubSubType::MapInnerAliasBoundedStringHelperLongLongPubSubType()
@@ -41349,8 +41137,7 @@ bool MapInnerAliasBoundedStringHelperLongLongPubSubType::getKey(
 
 void MapInnerAliasBoundedStringHelperLongLongPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapInnerAliasBoundedStringHelperLongLong_type_identifier(type_ids);
+    register_MapInnerAliasBoundedStringHelperLongLong_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedStringHelperULongLongPubSubType::MapInnerAliasBoundedStringHelperULongLongPubSubType()
@@ -41543,8 +41330,7 @@ bool MapInnerAliasBoundedStringHelperULongLongPubSubType::getKey(
 
 void MapInnerAliasBoundedStringHelperULongLongPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapInnerAliasBoundedStringHelperULongLong_type_identifier(type_ids);
+    register_MapInnerAliasBoundedStringHelperULongLong_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedStringHelperFloatPubSubType::MapInnerAliasBoundedStringHelperFloatPubSubType()
@@ -41737,8 +41523,7 @@ bool MapInnerAliasBoundedStringHelperFloatPubSubType::getKey(
 
 void MapInnerAliasBoundedStringHelperFloatPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapInnerAliasBoundedStringHelperFloat_type_identifier(type_ids);
+    register_MapInnerAliasBoundedStringHelperFloat_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedStringHelperDoublePubSubType::MapInnerAliasBoundedStringHelperDoublePubSubType()
@@ -41931,8 +41716,7 @@ bool MapInnerAliasBoundedStringHelperDoublePubSubType::getKey(
 
 void MapInnerAliasBoundedStringHelperDoublePubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapInnerAliasBoundedStringHelperDouble_type_identifier(type_ids);
+    register_MapInnerAliasBoundedStringHelperDouble_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedStringHelperLongDoublePubSubType::MapInnerAliasBoundedStringHelperLongDoublePubSubType()
@@ -42125,8 +41909,7 @@ bool MapInnerAliasBoundedStringHelperLongDoublePubSubType::getKey(
 
 void MapInnerAliasBoundedStringHelperLongDoublePubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapInnerAliasBoundedStringHelperLongDouble_type_identifier(type_ids);
+    register_MapInnerAliasBoundedStringHelperLongDouble_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedStringHelperBooleanPubSubType::MapInnerAliasBoundedStringHelperBooleanPubSubType()
@@ -42319,8 +42102,7 @@ bool MapInnerAliasBoundedStringHelperBooleanPubSubType::getKey(
 
 void MapInnerAliasBoundedStringHelperBooleanPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapInnerAliasBoundedStringHelperBoolean_type_identifier(type_ids);
+    register_MapInnerAliasBoundedStringHelperBoolean_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedStringHelperOctetPubSubType::MapInnerAliasBoundedStringHelperOctetPubSubType()
@@ -42513,8 +42295,7 @@ bool MapInnerAliasBoundedStringHelperOctetPubSubType::getKey(
 
 void MapInnerAliasBoundedStringHelperOctetPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapInnerAliasBoundedStringHelperOctet_type_identifier(type_ids);
+    register_MapInnerAliasBoundedStringHelperOctet_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedStringHelperCharPubSubType::MapInnerAliasBoundedStringHelperCharPubSubType()
@@ -42707,8 +42488,7 @@ bool MapInnerAliasBoundedStringHelperCharPubSubType::getKey(
 
 void MapInnerAliasBoundedStringHelperCharPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapInnerAliasBoundedStringHelperChar_type_identifier(type_ids);
+    register_MapInnerAliasBoundedStringHelperChar_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedStringHelperWCharPubSubType::MapInnerAliasBoundedStringHelperWCharPubSubType()
@@ -42901,8 +42681,7 @@ bool MapInnerAliasBoundedStringHelperWCharPubSubType::getKey(
 
 void MapInnerAliasBoundedStringHelperWCharPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapInnerAliasBoundedStringHelperWChar_type_identifier(type_ids);
+    register_MapInnerAliasBoundedStringHelperWChar_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedStringHelperStringPubSubType::MapInnerAliasBoundedStringHelperStringPubSubType()
@@ -43095,8 +42874,7 @@ bool MapInnerAliasBoundedStringHelperStringPubSubType::getKey(
 
 void MapInnerAliasBoundedStringHelperStringPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapInnerAliasBoundedStringHelperString_type_identifier(type_ids);
+    register_MapInnerAliasBoundedStringHelperString_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedStringHelperWStringPubSubType::MapInnerAliasBoundedStringHelperWStringPubSubType()
@@ -43289,8 +43067,7 @@ bool MapInnerAliasBoundedStringHelperWStringPubSubType::getKey(
 
 void MapInnerAliasBoundedStringHelperWStringPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapInnerAliasBoundedStringHelperWString_type_identifier(type_ids);
+    register_MapInnerAliasBoundedStringHelperWString_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedStringHelperInnerAliasBoundedStringHelperPubSubType::MapInnerAliasBoundedStringHelperInnerAliasBoundedStringHelperPubSubType()
@@ -43483,8 +43260,7 @@ bool MapInnerAliasBoundedStringHelperInnerAliasBoundedStringHelperPubSubType::ge
 
 void MapInnerAliasBoundedStringHelperInnerAliasBoundedStringHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapInnerAliasBoundedStringHelperInnerAliasBoundedStringHelper_type_identifier(type_ids);
+    register_MapInnerAliasBoundedStringHelperInnerAliasBoundedStringHelper_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedStringHelperInnerAliasBoundedWStringHelperPubSubType::MapInnerAliasBoundedStringHelperInnerAliasBoundedWStringHelperPubSubType()
@@ -43677,8 +43453,7 @@ bool MapInnerAliasBoundedStringHelperInnerAliasBoundedWStringHelperPubSubType::g
 
 void MapInnerAliasBoundedStringHelperInnerAliasBoundedWStringHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapInnerAliasBoundedStringHelperInnerAliasBoundedWStringHelper_type_identifier(type_ids);
+    register_MapInnerAliasBoundedStringHelperInnerAliasBoundedWStringHelper_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedStringHelperInnerEnumHelperPubSubType::MapInnerAliasBoundedStringHelperInnerEnumHelperPubSubType()
@@ -43871,8 +43646,7 @@ bool MapInnerAliasBoundedStringHelperInnerEnumHelperPubSubType::getKey(
 
 void MapInnerAliasBoundedStringHelperInnerEnumHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapInnerAliasBoundedStringHelperInnerEnumHelper_type_identifier(type_ids);
+    register_MapInnerAliasBoundedStringHelperInnerEnumHelper_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedStringHelperInnerBitMaskHelperPubSubType::MapInnerAliasBoundedStringHelperInnerBitMaskHelperPubSubType()
@@ -44065,8 +43839,7 @@ bool MapInnerAliasBoundedStringHelperInnerBitMaskHelperPubSubType::getKey(
 
 void MapInnerAliasBoundedStringHelperInnerBitMaskHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapInnerAliasBoundedStringHelperInnerBitMaskHelper_type_identifier(type_ids);
+    register_MapInnerAliasBoundedStringHelperInnerBitMaskHelper_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedStringHelperInnerAliasHelperPubSubType::MapInnerAliasBoundedStringHelperInnerAliasHelperPubSubType()
@@ -44259,8 +44032,7 @@ bool MapInnerAliasBoundedStringHelperInnerAliasHelperPubSubType::getKey(
 
 void MapInnerAliasBoundedStringHelperInnerAliasHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapInnerAliasBoundedStringHelperInnerAliasHelper_type_identifier(type_ids);
+    register_MapInnerAliasBoundedStringHelperInnerAliasHelper_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedStringHelperInnerAliasArrayHelperPubSubType::MapInnerAliasBoundedStringHelperInnerAliasArrayHelperPubSubType()
@@ -44453,8 +44225,7 @@ bool MapInnerAliasBoundedStringHelperInnerAliasArrayHelperPubSubType::getKey(
 
 void MapInnerAliasBoundedStringHelperInnerAliasArrayHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapInnerAliasBoundedStringHelperInnerAliasArrayHelper_type_identifier(type_ids);
+    register_MapInnerAliasBoundedStringHelperInnerAliasArrayHelper_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedStringHelperInnerAliasSequenceHelperPubSubType::MapInnerAliasBoundedStringHelperInnerAliasSequenceHelperPubSubType()
@@ -44647,8 +44418,7 @@ bool MapInnerAliasBoundedStringHelperInnerAliasSequenceHelperPubSubType::getKey(
 
 void MapInnerAliasBoundedStringHelperInnerAliasSequenceHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapInnerAliasBoundedStringHelperInnerAliasSequenceHelper_type_identifier(type_ids);
+    register_MapInnerAliasBoundedStringHelperInnerAliasSequenceHelper_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedStringHelperInnerAliasMapHelperPubSubType::MapInnerAliasBoundedStringHelperInnerAliasMapHelperPubSubType()
@@ -44841,8 +44611,7 @@ bool MapInnerAliasBoundedStringHelperInnerAliasMapHelperPubSubType::getKey(
 
 void MapInnerAliasBoundedStringHelperInnerAliasMapHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapInnerAliasBoundedStringHelperInnerAliasMapHelper_type_identifier(type_ids);
+    register_MapInnerAliasBoundedStringHelperInnerAliasMapHelper_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedStringHelperInnerUnionHelperPubSubType::MapInnerAliasBoundedStringHelperInnerUnionHelperPubSubType()
@@ -45035,8 +44804,7 @@ bool MapInnerAliasBoundedStringHelperInnerUnionHelperPubSubType::getKey(
 
 void MapInnerAliasBoundedStringHelperInnerUnionHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapInnerAliasBoundedStringHelperInnerUnionHelper_type_identifier(type_ids);
+    register_MapInnerAliasBoundedStringHelperInnerUnionHelper_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedStringHelperInnerStructureHelperPubSubType::MapInnerAliasBoundedStringHelperInnerStructureHelperPubSubType()
@@ -45229,8 +44997,7 @@ bool MapInnerAliasBoundedStringHelperInnerStructureHelperPubSubType::getKey(
 
 void MapInnerAliasBoundedStringHelperInnerStructureHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapInnerAliasBoundedStringHelperInnerStructureHelper_type_identifier(type_ids);
+    register_MapInnerAliasBoundedStringHelperInnerStructureHelper_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedStringHelperInnerBitsetHelperPubSubType::MapInnerAliasBoundedStringHelperInnerBitsetHelperPubSubType()
@@ -45423,8 +45190,7 @@ bool MapInnerAliasBoundedStringHelperInnerBitsetHelperPubSubType::getKey(
 
 void MapInnerAliasBoundedStringHelperInnerBitsetHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapInnerAliasBoundedStringHelperInnerBitsetHelper_type_identifier(type_ids);
+    register_MapInnerAliasBoundedStringHelperInnerBitsetHelper_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedWStringHelperShortPubSubType::MapInnerAliasBoundedWStringHelperShortPubSubType()
@@ -45617,8 +45383,7 @@ bool MapInnerAliasBoundedWStringHelperShortPubSubType::getKey(
 
 void MapInnerAliasBoundedWStringHelperShortPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapInnerAliasBoundedWStringHelperShort_type_identifier(type_ids);
+    register_MapInnerAliasBoundedWStringHelperShort_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedWStringHelperUShortPubSubType::MapInnerAliasBoundedWStringHelperUShortPubSubType()
@@ -45811,8 +45576,7 @@ bool MapInnerAliasBoundedWStringHelperUShortPubSubType::getKey(
 
 void MapInnerAliasBoundedWStringHelperUShortPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapInnerAliasBoundedWStringHelperUShort_type_identifier(type_ids);
+    register_MapInnerAliasBoundedWStringHelperUShort_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedWStringHelperLongPubSubType::MapInnerAliasBoundedWStringHelperLongPubSubType()
@@ -46005,8 +45769,7 @@ bool MapInnerAliasBoundedWStringHelperLongPubSubType::getKey(
 
 void MapInnerAliasBoundedWStringHelperLongPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapInnerAliasBoundedWStringHelperLong_type_identifier(type_ids);
+    register_MapInnerAliasBoundedWStringHelperLong_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedWStringHelperULongPubSubType::MapInnerAliasBoundedWStringHelperULongPubSubType()
@@ -46199,8 +45962,7 @@ bool MapInnerAliasBoundedWStringHelperULongPubSubType::getKey(
 
 void MapInnerAliasBoundedWStringHelperULongPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapInnerAliasBoundedWStringHelperULong_type_identifier(type_ids);
+    register_MapInnerAliasBoundedWStringHelperULong_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedWStringHelperLongLongPubSubType::MapInnerAliasBoundedWStringHelperLongLongPubSubType()
@@ -46393,8 +46155,7 @@ bool MapInnerAliasBoundedWStringHelperLongLongPubSubType::getKey(
 
 void MapInnerAliasBoundedWStringHelperLongLongPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapInnerAliasBoundedWStringHelperLongLong_type_identifier(type_ids);
+    register_MapInnerAliasBoundedWStringHelperLongLong_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedWStringHelperULongLongPubSubType::MapInnerAliasBoundedWStringHelperULongLongPubSubType()
@@ -46587,8 +46348,7 @@ bool MapInnerAliasBoundedWStringHelperULongLongPubSubType::getKey(
 
 void MapInnerAliasBoundedWStringHelperULongLongPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapInnerAliasBoundedWStringHelperULongLong_type_identifier(type_ids);
+    register_MapInnerAliasBoundedWStringHelperULongLong_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedWStringHelperFloatPubSubType::MapInnerAliasBoundedWStringHelperFloatPubSubType()
@@ -46781,8 +46541,7 @@ bool MapInnerAliasBoundedWStringHelperFloatPubSubType::getKey(
 
 void MapInnerAliasBoundedWStringHelperFloatPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapInnerAliasBoundedWStringHelperFloat_type_identifier(type_ids);
+    register_MapInnerAliasBoundedWStringHelperFloat_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedWStringHelperDoublePubSubType::MapInnerAliasBoundedWStringHelperDoublePubSubType()
@@ -46975,8 +46734,7 @@ bool MapInnerAliasBoundedWStringHelperDoublePubSubType::getKey(
 
 void MapInnerAliasBoundedWStringHelperDoublePubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapInnerAliasBoundedWStringHelperDouble_type_identifier(type_ids);
+    register_MapInnerAliasBoundedWStringHelperDouble_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedWStringHelperLongDoublePubSubType::MapInnerAliasBoundedWStringHelperLongDoublePubSubType()
@@ -47169,8 +46927,7 @@ bool MapInnerAliasBoundedWStringHelperLongDoublePubSubType::getKey(
 
 void MapInnerAliasBoundedWStringHelperLongDoublePubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapInnerAliasBoundedWStringHelperLongDouble_type_identifier(type_ids);
+    register_MapInnerAliasBoundedWStringHelperLongDouble_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedWStringHelperBooleanPubSubType::MapInnerAliasBoundedWStringHelperBooleanPubSubType()
@@ -47363,8 +47120,7 @@ bool MapInnerAliasBoundedWStringHelperBooleanPubSubType::getKey(
 
 void MapInnerAliasBoundedWStringHelperBooleanPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapInnerAliasBoundedWStringHelperBoolean_type_identifier(type_ids);
+    register_MapInnerAliasBoundedWStringHelperBoolean_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedWStringHelperOctetPubSubType::MapInnerAliasBoundedWStringHelperOctetPubSubType()
@@ -47557,8 +47313,7 @@ bool MapInnerAliasBoundedWStringHelperOctetPubSubType::getKey(
 
 void MapInnerAliasBoundedWStringHelperOctetPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapInnerAliasBoundedWStringHelperOctet_type_identifier(type_ids);
+    register_MapInnerAliasBoundedWStringHelperOctet_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedWStringHelperCharPubSubType::MapInnerAliasBoundedWStringHelperCharPubSubType()
@@ -47751,8 +47506,7 @@ bool MapInnerAliasBoundedWStringHelperCharPubSubType::getKey(
 
 void MapInnerAliasBoundedWStringHelperCharPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapInnerAliasBoundedWStringHelperChar_type_identifier(type_ids);
+    register_MapInnerAliasBoundedWStringHelperChar_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedWStringHelperWCharPubSubType::MapInnerAliasBoundedWStringHelperWCharPubSubType()
@@ -47945,8 +47699,7 @@ bool MapInnerAliasBoundedWStringHelperWCharPubSubType::getKey(
 
 void MapInnerAliasBoundedWStringHelperWCharPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapInnerAliasBoundedWStringHelperWChar_type_identifier(type_ids);
+    register_MapInnerAliasBoundedWStringHelperWChar_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedWStringHelperStringPubSubType::MapInnerAliasBoundedWStringHelperStringPubSubType()
@@ -48139,8 +47892,7 @@ bool MapInnerAliasBoundedWStringHelperStringPubSubType::getKey(
 
 void MapInnerAliasBoundedWStringHelperStringPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapInnerAliasBoundedWStringHelperString_type_identifier(type_ids);
+    register_MapInnerAliasBoundedWStringHelperString_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedWStringHelperWStringPubSubType::MapInnerAliasBoundedWStringHelperWStringPubSubType()
@@ -48333,8 +48085,7 @@ bool MapInnerAliasBoundedWStringHelperWStringPubSubType::getKey(
 
 void MapInnerAliasBoundedWStringHelperWStringPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapInnerAliasBoundedWStringHelperWString_type_identifier(type_ids);
+    register_MapInnerAliasBoundedWStringHelperWString_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedWStringHelperInnerAliasBoundedStringHelperPubSubType::MapInnerAliasBoundedWStringHelperInnerAliasBoundedStringHelperPubSubType()
@@ -48527,8 +48278,7 @@ bool MapInnerAliasBoundedWStringHelperInnerAliasBoundedStringHelperPubSubType::g
 
 void MapInnerAliasBoundedWStringHelperInnerAliasBoundedStringHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapInnerAliasBoundedWStringHelperInnerAliasBoundedStringHelper_type_identifier(type_ids);
+    register_MapInnerAliasBoundedWStringHelperInnerAliasBoundedStringHelper_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedWStringHelperInnerAliasBoundedWStringHelperPubSubType::MapInnerAliasBoundedWStringHelperInnerAliasBoundedWStringHelperPubSubType()
@@ -48721,8 +48471,7 @@ bool MapInnerAliasBoundedWStringHelperInnerAliasBoundedWStringHelperPubSubType::
 
 void MapInnerAliasBoundedWStringHelperInnerAliasBoundedWStringHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapInnerAliasBoundedWStringHelperInnerAliasBoundedWStringHelper_type_identifier(type_ids);
+    register_MapInnerAliasBoundedWStringHelperInnerAliasBoundedWStringHelper_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedWStringHelperInnerEnumHelperPubSubType::MapInnerAliasBoundedWStringHelperInnerEnumHelperPubSubType()
@@ -48915,8 +48664,7 @@ bool MapInnerAliasBoundedWStringHelperInnerEnumHelperPubSubType::getKey(
 
 void MapInnerAliasBoundedWStringHelperInnerEnumHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapInnerAliasBoundedWStringHelperInnerEnumHelper_type_identifier(type_ids);
+    register_MapInnerAliasBoundedWStringHelperInnerEnumHelper_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedWStringHelperInnerBitMaskHelperPubSubType::MapInnerAliasBoundedWStringHelperInnerBitMaskHelperPubSubType()
@@ -49109,8 +48857,7 @@ bool MapInnerAliasBoundedWStringHelperInnerBitMaskHelperPubSubType::getKey(
 
 void MapInnerAliasBoundedWStringHelperInnerBitMaskHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapInnerAliasBoundedWStringHelperInnerBitMaskHelper_type_identifier(type_ids);
+    register_MapInnerAliasBoundedWStringHelperInnerBitMaskHelper_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedWStringHelperInnerAliasHelperPubSubType::MapInnerAliasBoundedWStringHelperInnerAliasHelperPubSubType()
@@ -49303,8 +49050,7 @@ bool MapInnerAliasBoundedWStringHelperInnerAliasHelperPubSubType::getKey(
 
 void MapInnerAliasBoundedWStringHelperInnerAliasHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapInnerAliasBoundedWStringHelperInnerAliasHelper_type_identifier(type_ids);
+    register_MapInnerAliasBoundedWStringHelperInnerAliasHelper_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedWStringHelperInnerAliasArrayHelperPubSubType::MapInnerAliasBoundedWStringHelperInnerAliasArrayHelperPubSubType()
@@ -49497,8 +49243,7 @@ bool MapInnerAliasBoundedWStringHelperInnerAliasArrayHelperPubSubType::getKey(
 
 void MapInnerAliasBoundedWStringHelperInnerAliasArrayHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapInnerAliasBoundedWStringHelperInnerAliasArrayHelper_type_identifier(type_ids);
+    register_MapInnerAliasBoundedWStringHelperInnerAliasArrayHelper_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedWStringHelperInnerAliasSequenceHelperPubSubType::MapInnerAliasBoundedWStringHelperInnerAliasSequenceHelperPubSubType()
@@ -49691,8 +49436,7 @@ bool MapInnerAliasBoundedWStringHelperInnerAliasSequenceHelperPubSubType::getKey
 
 void MapInnerAliasBoundedWStringHelperInnerAliasSequenceHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapInnerAliasBoundedWStringHelperInnerAliasSequenceHelper_type_identifier(type_ids);
+    register_MapInnerAliasBoundedWStringHelperInnerAliasSequenceHelper_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedWStringHelperInnerAliasMapHelperPubSubType::MapInnerAliasBoundedWStringHelperInnerAliasMapHelperPubSubType()
@@ -49885,8 +49629,7 @@ bool MapInnerAliasBoundedWStringHelperInnerAliasMapHelperPubSubType::getKey(
 
 void MapInnerAliasBoundedWStringHelperInnerAliasMapHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapInnerAliasBoundedWStringHelperInnerAliasMapHelper_type_identifier(type_ids);
+    register_MapInnerAliasBoundedWStringHelperInnerAliasMapHelper_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedWStringHelperInnerUnionHelperPubSubType::MapInnerAliasBoundedWStringHelperInnerUnionHelperPubSubType()
@@ -50079,8 +49822,7 @@ bool MapInnerAliasBoundedWStringHelperInnerUnionHelperPubSubType::getKey(
 
 void MapInnerAliasBoundedWStringHelperInnerUnionHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapInnerAliasBoundedWStringHelperInnerUnionHelper_type_identifier(type_ids);
+    register_MapInnerAliasBoundedWStringHelperInnerUnionHelper_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedWStringHelperInnerStructureHelperPubSubType::MapInnerAliasBoundedWStringHelperInnerStructureHelperPubSubType()
@@ -50273,8 +50015,7 @@ bool MapInnerAliasBoundedWStringHelperInnerStructureHelperPubSubType::getKey(
 
 void MapInnerAliasBoundedWStringHelperInnerStructureHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapInnerAliasBoundedWStringHelperInnerStructureHelper_type_identifier(type_ids);
+    register_MapInnerAliasBoundedWStringHelperInnerStructureHelper_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedWStringHelperInnerBitsetHelperPubSubType::MapInnerAliasBoundedWStringHelperInnerBitsetHelperPubSubType()
@@ -50467,8 +50208,7 @@ bool MapInnerAliasBoundedWStringHelperInnerBitsetHelperPubSubType::getKey(
 
 void MapInnerAliasBoundedWStringHelperInnerBitsetHelperPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_MapInnerAliasBoundedWStringHelperInnerBitsetHelper_type_identifier(type_ids);
+    register_MapInnerAliasBoundedWStringHelperInnerBitsetHelper_type_identifier(type_identifiers_);
 }
 
 BoundedSmallMapPubSubType::BoundedSmallMapPubSubType()
@@ -50661,8 +50401,7 @@ bool BoundedSmallMapPubSubType::getKey(
 
 void BoundedSmallMapPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_BoundedSmallMap_type_identifier(type_ids);
+    register_BoundedSmallMap_type_identifier(type_identifiers_);
 }
 
 BoundedLargeMapPubSubType::BoundedLargeMapPubSubType()
@@ -50855,8 +50594,7 @@ bool BoundedLargeMapPubSubType::getKey(
 
 void BoundedLargeMapPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_BoundedLargeMap_type_identifier(type_ids);
+    register_BoundedLargeMap_type_identifier(type_identifiers_);
 }
 
 

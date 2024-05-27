@@ -221,8 +221,7 @@ bool AnnotatedStructPubSubType::getKey(
 
 void AnnotatedStructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_AnnotatedStruct_type_identifier(type_ids);
+    register_AnnotatedStruct_type_identifier(type_identifiers_);
 }
 
 EmptyAnnotatedStructPubSubType::EmptyAnnotatedStructPubSubType()
@@ -415,8 +414,7 @@ bool EmptyAnnotatedStructPubSubType::getKey(
 
 void EmptyAnnotatedStructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_EmptyAnnotatedStruct_type_identifier(type_ids);
+    register_EmptyAnnotatedStruct_type_identifier(type_identifiers_);
 }
 
 
@@ -610,8 +608,7 @@ bool BasicAnnotationsStructPubSubType::getKey(
 
 void BasicAnnotationsStructPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_BasicAnnotationsStruct_type_identifier(type_ids);
+    register_BasicAnnotationsStruct_type_identifier(type_identifiers_);
 }
 
 

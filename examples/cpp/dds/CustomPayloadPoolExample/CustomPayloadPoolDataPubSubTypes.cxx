@@ -221,8 +221,7 @@ bool CustomPayloadPoolDataPubSubType::getKey(
 
 void CustomPayloadPoolDataPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_CustomPayloadPoolData_type_identifier(type_ids);
+    register_CustomPayloadPoolData_type_identifier(type_identifiers_);
 }
 
 

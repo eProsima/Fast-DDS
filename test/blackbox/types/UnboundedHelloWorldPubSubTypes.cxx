@@ -221,8 +221,7 @@ bool UnboundedHelloWorldPubSubType::getKey(
 
 void UnboundedHelloWorldPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_UnboundedHelloWorld_type_identifier(type_ids);
+    register_UnboundedHelloWorld_type_identifier(type_identifiers_);
 }
 
 

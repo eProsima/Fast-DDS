@@ -224,8 +224,7 @@ bool EnumStructurePubSubType::getKey(
 
 void EnumStructurePubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_EnumStructure_type_identifier(type_ids);
+    register_EnumStructure_type_identifier(type_identifiers_);
 }
 
 BitMaskStructurePubSubType::BitMaskStructurePubSubType()
@@ -418,8 +417,7 @@ bool BitMaskStructurePubSubType::getKey(
 
 void BitMaskStructurePubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_BitMaskStructure_type_identifier(type_ids);
+    register_BitMaskStructure_type_identifier(type_identifiers_);
 }
 
 BoundedBitMaskStructurePubSubType::BoundedBitMaskStructurePubSubType()
@@ -612,8 +610,7 @@ bool BoundedBitMaskStructurePubSubType::getKey(
 
 void BoundedBitMaskStructurePubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_BoundedBitMaskStructure_type_identifier(type_ids);
+    register_BoundedBitMaskStructure_type_identifier(type_identifiers_);
 }
 
 
