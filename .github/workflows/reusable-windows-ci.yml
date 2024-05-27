@@ -38,7 +38,6 @@ jobs:
         cmake-config:
           - 'RelWithDebInfo'
         vs-toolset:
-          - 'v141'
           - 'v142'
     steps:
       - name: Add ci-pending label if PR
