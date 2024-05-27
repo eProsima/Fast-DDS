@@ -611,7 +611,7 @@ void PDP::notify_and_maybe_ignore_new_participant(
             << " DefLoc:" << pdata->default_locators);
 
     RTPSParticipantListener* listener = getRTPSParticipant()->getListener();
-    if (nullptr != listener)
+    if (listener)
     {
         {
             std::lock_guard<std::mutex> cb_lock(callback_mtx_);
@@ -1263,7 +1263,7 @@ void PDP::actions_on_remote_participant_removed(
 
     builtin_endpoints_->remove_from_pdp_reader_history(pdata->m_key);
 
-    if (nullptr != listener)
+    if (listener)
     {
         std::lock_guard<std::mutex> lock(callback_mtx_);
         ParticipantDiscoveryInfo info(*pdata);
