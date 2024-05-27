@@ -41,6 +41,7 @@
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 #include <fastrtps/transport/test_UDPv4TransportDescriptor.h>
 #include <fastrtps/types/TypesBase.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 #include "BlackboxTests.hpp"
 #include "mock/BlackboxMockConsumer.h"
@@ -66,15 +67,16 @@ using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
  */
 TEST(DDSBasic, WarningOnDelete)
 {
+    using namespace eprosima::fastrtps;
     namespace dds = eprosima::fastdds::dds;
     auto factory = dds::DomainParticipantFactory::get_instance();
 
     // Set intraprocess delivery to full
-    LibrarySettings library_settings;
+    LibrarySettingsAttributes library_settings;
+    library_settings = xmlparser::XMLProfileManager::library_settings();
     auto old_library_settings = library_settings;
-    factory->get_library_settings(library_settings);
     library_settings.intraprocess_delivery = INTRAPROCESS_FULL;
-    factory->set_library_settings(library_settings);
+    xmlparser::XMLProfileManager::library_settings(library_settings);
 
     // Create participants
     auto participant_1 = factory->create_participant(0, dds::PARTICIPANT_QOS_DEFAULT);
@@ -96,7 +98,7 @@ TEST(DDSBasic, WarningOnDelete)
     helper_consumer->clear_entries();
 
     // Restore library settings
-    factory->set_library_settings(old_library_settings);
+    xmlparser::XMLProfileManager::library_settings(old_library_settings);
 }
 
 /**
