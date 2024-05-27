@@ -60,7 +60,10 @@ BuiltinProtocols::~BuiltinProtocols()
     // Send participant is disposed
     if (nullptr != mp_PDP)
     {
+        // Send participant is disposed
         mp_PDP->announceParticipantState(true, true);
+        // Consider all discovered participants as disposed
+        mp_PDP->disable();
     }
 
     // TODO Auto-generated destructor stub

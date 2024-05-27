@@ -449,6 +449,10 @@ bool PDP::enable()
     return builtin_endpoints_->enable_pdp_readers(mp_RTPSParticipant);
 }
 
+void PDP::disable()
+{
+}
+
 void PDP::announceParticipantState(
         bool new_change,
         bool dispose /* = false */)
