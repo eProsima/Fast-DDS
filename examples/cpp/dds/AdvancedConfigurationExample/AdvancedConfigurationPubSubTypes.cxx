@@ -221,8 +221,7 @@ bool AdvancedConfigurationPubSubType::getKey(
 
 void AdvancedConfigurationPubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_AdvancedConfiguration_type_identifier(type_ids);
+    register_AdvancedConfiguration_type_identifier(type_identifiers_);
 }
 
 

@@ -221,8 +221,7 @@ bool FilteringExamplePubSubType::getKey(
 
 void FilteringExamplePubSubType::register_type_object_representation()
 {
-    eprosima::fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-    register_FilteringExample_type_identifier(type_ids);
+    register_FilteringExample_type_identifier(type_identifiers_);
 }
 
 

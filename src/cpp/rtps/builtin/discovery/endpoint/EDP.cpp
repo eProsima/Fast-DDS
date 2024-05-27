@@ -164,28 +164,6 @@ bool EDP::newLocalReaderProxyData(
                     rpd->plugin_security_attributes_ = 0UL;
                 }
 #endif // if HAVE_SECURITY
-                if (att.auto_fill_type_information)
-                {
-                    // TypeInformation
-                    if (!att.type_information.assigned())
-                    {
-                        // TODO(richiware) review
-                        fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-                        if (eprosima::fastdds::dds::RETCODE_OK ==
-                                eprosima::fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer()
-                                        .get_type_identifiers(rpd->typeName().c_str(), type_ids))
-                        {
-                            fastdds::dds::xtypes::TypeInformation type_info;
-                            if (eprosima::fastdds::dds::RETCODE_OK ==
-                                    eprosima::fastrtps::rtps::RTPSDomainImpl::get_instance()->
-                                            type_object_registry_observer()
-                                            .get_type_information(type_ids, type_info))
-                            {
-                                rpd->type_information() = type_info;
-                            }
-                        }
-                    }
-                }
 
                 return true;
             };
@@ -279,28 +257,6 @@ bool EDP::newLocalWriterProxyData(
                 }
 #endif // if HAVE_SECURITY
 
-                if (att.auto_fill_type_information)
-                {
-                    // TypeInformation
-                    if (!att.type_information.assigned())
-                    {
-                        fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-                        if (eprosima::fastdds::dds::RETCODE_OK ==
-                                eprosima::fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer()
-                                        .get_type_identifiers(wpd->typeName().c_str(), type_ids))
-                        {
-                            fastdds::dds::xtypes::TypeInformation type_info;
-                            if (eprosima::fastdds::dds::RETCODE_OK ==
-                                    eprosima::fastrtps::rtps::RTPSDomainImpl::get_instance()->
-                                            type_object_registry_observer()
-                                            .get_type_information(type_ids, type_info))
-                            {
-                                wpd->type_information() = type_info;
-                            }
-                        }
-                    }
-                }
-
                 return true;
             };
 
@@ -380,28 +336,6 @@ bool EDP::updatedLocalReader(
                 rdata->isAlive(true);
                 rdata->m_expectsInlineQos = reader->expects_inline_qos();
 
-                if (att.auto_fill_type_information)
-                {
-                    // TypeInformation
-                    if (!rdata->type_information().assigned())
-                    {
-                        fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-                        if (eprosima::fastdds::dds::RETCODE_OK ==
-                                eprosima::fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer()
-                                        .get_type_identifiers(rdata->typeName().c_str(), type_ids))
-                        {
-                            fastdds::dds::xtypes::TypeInformation type_info;
-                            if (eprosima::fastdds::dds::RETCODE_OK ==
-                                    eprosima::fastrtps::rtps::RTPSDomainImpl::get_instance()->
-                                            type_object_registry_observer()
-                                            .get_type_information(type_ids, type_info))
-                            {
-                                rdata->type_information() = type_info;
-                            }
-                        }
-                    }
-                }
-
                 return true;
             };
 
@@ -453,28 +387,6 @@ bool EDP::updatedLocalWriter(
                     wdata->set_announced_unicast_locators(writer->getAttributes().unicastLocatorList);
                 }
                 wdata->m_qos.setQos(wqos, false);
-
-                if (att.auto_fill_type_information)
-                {
-                    // TypeInformation
-                    if (!wdata->type_information().assigned())
-                    {
-                        fastdds::dds::xtypes::TypeIdentifierPair type_ids;
-                        if (eprosima::fastdds::dds::RETCODE_OK ==
-                                eprosima::fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer()
-                                        .get_type_identifiers(wdata->typeName().c_str(), type_ids))
-                        {
-                            fastdds::dds::xtypes::TypeInformation type_info;
-                            if (eprosima::fastdds::dds::RETCODE_OK ==
-                                    eprosima::fastrtps::rtps::RTPSDomainImpl::get_instance()->
-                                            type_object_registry_observer()
-                                            .get_type_information(type_ids, type_info))
-                            {
-                                wdata->type_information() = type_info;
-                            }
-                        }
-                    }
-                }
 
                 return true;
             };
