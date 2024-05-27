@@ -13,12 +13,12 @@
 // limitations under the License.
 
 /**
- * @file StatelessPersistentReader.h
+ * @file StatelessPersistentReader.hpp
  */
 
 
-#ifndef _FASTDDS_RTPS_STATELESSPERSISTENTREADER_H_
-#define _FASTDDS_RTPS_STATELESSPERSISTENTREADER_H_
+#ifndef RTPS_READER__STATELESSPERSISTENTREADER_HPP
+#define RTPS_READER__STATELESSPERSISTENTREADER_HPP
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <rtps/reader/StatelessReader.hpp>
@@ -92,4 +92,4 @@ private:
 } // namespace eprosima
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#endif /* _FASTDDS_RTPS_STATELESSPERSISTENTREADER_H_ */
+#endif /* RTPS_READER__STATELESSPERSISTENTREADER_HPP */

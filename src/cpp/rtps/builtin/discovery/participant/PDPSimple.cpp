@@ -43,8 +43,8 @@
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/reader/StatefulReader.hpp>
-#include <rtps/resources/TimedEvent.h>
 #include <rtps/reader/StatelessReader.hpp>
+#include <rtps/resources/TimedEvent.h>
 
 namespace eprosima {
 namespace fastrtps {

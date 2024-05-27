@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * @file StatelessReader.h
+ * @file StatelessReader.hpp
  */
 
-#ifndef _FASTDDS_RTPS_READER_STATELESSREADER_H_
-#define _FASTDDS_RTPS_READER_STATELESSREADER_H_
+#ifndef RTPS_READER__STATELESSREADER_HPP
+#define RTPS_READER__STATELESSREADER_HPP
 
 #include <fastdds/rtps/reader/RTPSReader.h>
 
@@ -52,4 +52,4 @@ public:
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif // _FASTDDS_RTPS_READER_STATELESSREADER_H_
+#endif // RTPS_READER__STATELESSREADER_HPP
