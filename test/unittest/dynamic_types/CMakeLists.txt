@@ -122,6 +122,7 @@ add_executable(DynamicTypesTests ${DYNAMIC_TYPES_TEST_SOURCE})
 target_compile_definitions(DynamicTypesTests PRIVATE
     BOOST_ASIO_STANDALONE
     ASIO_STANDALONE
+    $<$<BOOL:${MSVC}>:NOMINMAX> # avoid conflict with std::min & std::max in visual studio
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
