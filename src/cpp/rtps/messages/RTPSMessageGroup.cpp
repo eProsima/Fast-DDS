@@ -29,6 +29,7 @@
 #include <rtps/messages/RTPSGapBuilder.hpp>
 #include <rtps/messages/RTPSMessageGroup_t.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/reader/BaseReader.hpp>
 
 #include <statistics/rtps/messages/RTPSStatisticsMessages.hpp>
 

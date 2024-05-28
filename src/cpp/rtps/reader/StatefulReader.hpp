@@ -28,6 +28,8 @@
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>
 
+#include <rtps/reader/BaseReader.hpp>
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {

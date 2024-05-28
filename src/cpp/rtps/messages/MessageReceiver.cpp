@@ -31,6 +31,7 @@
 
 #include <rtps/messages/MessageReceiver.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/reader/BaseReader.hpp>
 #include <statistics/rtps/messages/RTPSStatisticsMessages.hpp>
 #include <statistics/rtps/StatisticsBase.hpp>
 #include <utils/shared_mutex.hpp>
