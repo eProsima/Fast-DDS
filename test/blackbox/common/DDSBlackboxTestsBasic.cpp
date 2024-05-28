@@ -68,8 +68,8 @@ TEST(DDSBasic, WarningOnDelete)
 
     // Set intraprocess delivery to full
     LibrarySettings library_settings;
-    auto old_library_settings = library_settings;
     factory->get_library_settings(library_settings);
+    auto old_library_settings = library_settings;
     library_settings.intraprocess_delivery = INTRAPROCESS_FULL;
     factory->set_library_settings(library_settings);
 
