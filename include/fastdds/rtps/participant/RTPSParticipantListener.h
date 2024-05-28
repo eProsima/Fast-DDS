@@ -52,21 +52,6 @@ public:
      *
      * @param[out] participant Pointer to the Participant which discovered the remote participant.
      * @param[out] info Remote participant information. User can take ownership of the object.
-     */
-    virtual void onParticipantDiscovery(
-            RTPSParticipant* participant,
-            ParticipantDiscoveryInfo&& info)
-    {
-        static_cast<void>(participant);
-        static_cast<void>(info);
-    }
-
-    /*!
-     * This method is called when a new Participant is discovered, or a previously discovered participant changes
-     * its QOS or is removed.
-     *
-     * @param[out] participant Pointer to the Participant which discovered the remote participant.
-     * @param[out] info Remote participant information. User can take ownership of the object.
      * @param[out] should_be_ignored Flag to indicate the library to automatically ignore the discovered Participant.
      */
     virtual void onParticipantDiscovery(
@@ -74,7 +59,9 @@ public:
             ParticipantDiscoveryInfo&& info,
             bool& should_be_ignored)
     {
-        onParticipantDiscovery(participant, std::move(info));
+        static_cast<void>(participant);
+        static_cast<void>(info);
+
         should_be_ignored = false;
     }
 

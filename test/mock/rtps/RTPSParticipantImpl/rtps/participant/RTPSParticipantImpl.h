@@ -70,15 +70,6 @@ public:
 
     void onParticipantDiscovery(
             RTPSParticipant* participant,
-            ParticipantDiscoveryInfo&& info) override
-    {
-        onParticipantDiscovery_mock(participant, info);
-    }
-
-    MOCK_METHOD2(onParticipantDiscovery_mock, void (RTPSParticipant*, const ParticipantDiscoveryInfo&));
-
-    void onParticipantDiscovery(
-            RTPSParticipant* participant,
             ParticipantDiscoveryInfo&& info,
             bool& should_be_ignored) override
     {
