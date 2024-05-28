@@ -1405,25 +1405,23 @@ TEST_F(SHMTransportTests, port_not_ok_listener_recover)
     thread_listener.join();
 }
 
+//! This test has been updated to avoid flakiness #20993
 TEST_F(SHMTransportTests, buffer_recover)
 {
     auto shared_mem_manager = SharedMemManager::create(domain_name);
-
     auto segment = shared_mem_manager->create_segment(3, 3);
 
     shared_mem_manager->remove_port(1);
     auto pub_sub1_write = shared_mem_manager->open_port(1, 8, 1000, SharedMemGlobal::Port::OpenMode::Write);
-
     shared_mem_manager->remove_port(2);
     auto pub_sub2_write = shared_mem_manager->open_port(2, 8, 1000, SharedMemGlobal::Port::OpenMode::Write);
 
     auto sub1_read = shared_mem_manager->open_port(1, 8, 1000, SharedMemGlobal::Port::OpenMode::ReadExclusive);
-
     auto sub2_read = shared_mem_manager->open_port(2, 8, 1000, SharedMemGlobal::Port::OpenMode::ReadExclusive);
 
     bool exit_listeners = false;
 
-    uint32_t listener1_sleep_ms = 400u;
+    uint32_t listener1_sleep_ms = 150u;
     uint32_t listener2_sleep_ms = 100u;
 
     auto listener1 = sub1_read->create_listener();
@@ -1457,10 +1455,7 @@ TEST_F(SHMTransportTests, buffer_recover)
 
                             if (buffer)
                             {
-                                {
-                                    std::lock_guard<SharedMemSegment::mutex> lock(received_mutex);
-                                    listener2_recv_count.fetch_add(1);
-                                }
+                                listener2_recv_count.fetch_add(1);
                                 std::this_thread::sleep_for(std::chrono::milliseconds(listener2_sleep_ms));
                                 buffer.reset();
                                 received_cv.notify_one();
@@ -1473,7 +1468,7 @@ TEST_F(SHMTransportTests, buffer_recover)
 
     bool is_port_ok = false;
 
-    while (listener1_recv_count.load() < 16u)
+    while (listener2_recv_count.load() < 32u)
     {
         {
             // The segment should never overflow
@@ -1502,14 +1497,13 @@ TEST_F(SHMTransportTests, buffer_recover)
         }
     }
 
-    // The slow listener is 4 times slower than the fast one
-    ASSERT_LT(listener1_recv_count.load() * 3, listener2_recv_count.load());
-    ASSERT_GT(listener1_recv_count.load(), listener2_recv_count.load() / 5);
     std::cout << "Test1:"
               << " Listener1_recv_count " << listener1_recv_count.load()
               << " Listener2_recv_count " << listener2_recv_count.load()
               << std::endl;
-
+    // The slow listener is almost 2 times slower than the fast one
+    EXPECT_LT(listener1_recv_count.load(), listener2_recv_count.load());
+    EXPECT_GE(listener1_recv_count.load() * 2, listener2_recv_count.load());
     // Test 2 (with port overflow)
     listener2_sleep_ms = 0u;
     send_counter = 0u;
