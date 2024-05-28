@@ -18,6 +18,11 @@
 #include <iostream>
 #include <string>
 #include <unordered_map>
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <unistd.h>
+#endif // _WIN32
 
 #include <tinyxml2.h>
 
@@ -45,7 +50,32 @@ using namespace eprosima::fastdds::xml::detail;
 XMLP_ret XMLParser::loadDefaultXMLFile(
         up_base_node_t& root)
 {
-    return loadXML(DEFAULT_FASTRTPS_PROFILES, root);
+    // Use absolute path to ensure that the file is loaded only once
+#ifdef _WIN32
+    char current_directory[MAX_PATH];
+    if (GetCurrentDirectory(MAX_PATH, current_directory) == 0)
+    {
+        EPROSIMA_LOG_ERROR(XMLPARSER, "GetCurrentDirectory failed " << GetLastError());
+    }
+    else
+    {
+        strcat_s(current_directory, MAX_PATH, DEFAULT_FASTRTPS_PROFILES);
+        return loadXML(current_directory, root, true);
+    }
+#else
+    char current_directory[PATH_MAX];
+    if (getcwd(current_directory, PATH_MAX) == NULL)
+    {
+        EPROSIMA_LOG_ERROR(XMLPARSER, "getcwd failed " << std::strerror(errno));
+    }
+    else
+    {
+        strcat(current_directory, "/");
+        strcat(current_directory, DEFAULT_FASTRTPS_PROFILES);
+        return loadXML(current_directory, root, true);
+    }
+#endif // _WIN32
+    return XMLP_ret::XML_ERROR;
 }
 
 XMLP_ret XMLParser::parseXML(
@@ -598,7 +628,7 @@ XMLP_ret XMLParser::parseXMLSocketTransportData(
                     p_aux1 != nullptr; p_aux1 = p_aux1->NextSiblingElement())
             {
                 address = p_aux1->Name();
-                if (strcmp(address, ADDRESS) == 0 || strcmp(address, INTERFACE) == 0)
+                if (strcmp(address, ADDRESS) == 0 || strcmp(address, NETWORK_INTERFACE) == 0)
                 {
                     std::string text = get_element_text(p_aux1);
                     if (!text.empty())
@@ -1840,6 +1870,14 @@ XMLP_ret XMLParser::loadXML(
         const std::string& filename,
         up_base_node_t& root)
 {
+    return loadXML(filename, root, false);
+}
+
+XMLP_ret XMLParser::loadXML(
+        const std::string& filename,
+        up_base_node_t& root,
+        bool is_default)
+{
     if (filename.empty())
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "Error loading XML file, filename empty");
@@ -1849,7 +1887,7 @@ XMLP_ret XMLParser::loadXML(
     tinyxml2::XMLDocument xmlDoc;
     if (tinyxml2::XMLError::XML_SUCCESS != xmlDoc.LoadFile(filename.c_str()))
     {
-        if (filename != std::string(DEFAULT_FASTRTPS_PROFILES))
+        if (!is_default)
         {
             EPROSIMA_LOG_ERROR(XMLPARSER, "Error opening '" << filename << "'");
         }
