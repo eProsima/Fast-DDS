@@ -33,7 +33,7 @@ defaults:
     shell: bash
 
 jobs:
-  fastdds-build:
+  fastdds_build:
     runs-on: ${{ inputs.os-image }}
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'skip-ci') }}
     strategy:
@@ -120,10 +120,10 @@ jobs:
         continue-on-error: false
         uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
         with:
-          colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/ci.meta
+          colcon_meta_file: ''
           colcon_build_args: ${{ inputs.colcon-args }}
           cmake_args: ${{ inputs.cmake-args }}
-          cmake_args_default: -DCMAKE_CXX_FLAGS="-Werror -Wall -Wextra -Wpedantic -Wunused-value -Woverloaded-virtual" -DFASTDDS_EXAMPLE_TESTS=ON
+          cmake_args_default: -DCMAKE_CXX_FLAGS="-Werror -Wall -Wextra -Wpedantic -Wunused-value -Woverloaded-virtual"
           cmake_build_type: ${{ matrix.cmake-build-type }}
           workspace: ${{ github.workspace }}
 
@@ -133,8 +133,8 @@ jobs:
           name: fastdds_build_${{ inputs.label }}
           path: ${{ github.workspace }}
 
-  fastdds-build-test:
-    needs: fastdds-build
+  fastdds_build_test:
+    needs: fastdds_build
     runs-on: ${{ inputs.os-image }}
     steps:
       - name: Download build artifacts
@@ -181,6 +181,17 @@ jobs:
           sudo echo "140.82.121.3 www.foo.com.test" | sudo tee -a /etc/hosts
           sudo echo "ff1e::ffff:efff:1 acme.org.test" | sudo tee -a /etc/hosts
 
+      - name: Colcon build
+        continue-on-error: false
+        uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
+        with:
+          colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/ci.meta
+          colcon_build_args: ${{ inputs.colcon-args }}
+          cmake_args: ${{ inputs.cmake-args }}
+          cmake_args_default: -DCMAKE_CXX_FLAGS="-Werror -Wall -Wextra -Wpedantic -Wunused-value -Woverloaded-virtual" -DFASTDDS_EXAMPLE_TESTS=ON
+          cmake_build_type: ${{ matrix.cmake-build-type }}
+          workspace: ${{ github.workspace }}
+
       - name: Colcon test
         id: test
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') }}
@@ -204,8 +215,8 @@ jobs:
           show_disabled: 'False'
           show_skipped: 'False'
 
-  fastdds-python-build:
-    needs: fastdds-build
+  fastdds_python_build:
+    needs: fastdds_build
     runs-on: ${{ inputs.os-image }}
     strategy:
       fail-fast: false
@@ -263,7 +274,7 @@ jobs:
         continue-on-error: false
         uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
         with:
-          colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/python_colcon.meta
+          colcon_meta_file: ''
           colcon_build_args: '${{ inputs.colcon-args }} --executor parallel --mixin ccache --packages-up-to fastdds_python'
           cmake_args: ${{ inputs.cmake-args }}
           cmake_args_default: ''
@@ -276,8 +287,8 @@ jobs:
           name: fastdds_python_build_${{ inputs.label }}
           path: ${{ github.workspace }}
 
-  fastdds-python-build-test:
-    needs: fastdds-python-build
+  fastdds_python_build_test:
+    needs: fastdds_python_build
     runs-on: ${{ inputs.os-image }}
     steps:
       - name: Download python build artifacts
@@ -312,6 +323,17 @@ jobs:
       - name: Setup CCache
         uses: eProsima/eProsima-CI/external/setup-ccache-action@v0
 
+      - name: Colcon build
+        continue-on-error: false
+        uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
+        with:
+          colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/python_colcon.meta
+          colcon_build_args: '${{ inputs.colcon-args }} --executor parallel --mixin ccache --packages-up-to fastdds_python'
+          cmake_args: ${{ inputs.cmake-args }}
+          cmake_args_default: ''
+          cmake_build_type: ${{ matrix.cmake-build-type }}
+          workspace: ${{ github.workspace }}
+
       - name: Colcon test
         id: python_test
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') }}
@@ -336,8 +358,8 @@ jobs:
           show_disabled: 'False'
           show_skipped: 'False'
 
-  fastdds-docs-build-test:
-    needs: fastdds-python-build
+  fastdds_docs_build_test:
+    needs: fastdds_python_build
     runs-on: ${{ inputs.os-image }}
     strategy:
       fail-fast: false
@@ -432,8 +454,8 @@ jobs:
           show_disabled: 'False'
           show_skipped: 'False'
 
-  fastdds-shapesdemo-build:
-    needs: fastdds-build
+  fastdds_shapesdemo_build:
+    needs: fastdds_build
     runs-on: ${{ inputs.os-image }}
     strategy:
       fail-fast: false
@@ -510,8 +532,8 @@ jobs:
           cmake_build_type: ${{ matrix.cmake-build-type }}
           workspace: ${{ github.workspace }}
 
-  fastdds-discovery-server-build-test:
-    needs: fastdds-build
+  fastdds_discovery_server_build_test:
+    needs: fastdds_build
     runs-on: ${{ inputs.os-image }}
     strategy:
       fail-fast: false
