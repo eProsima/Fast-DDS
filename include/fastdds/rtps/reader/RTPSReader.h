@@ -51,9 +51,7 @@ class IDataSharingListener;
  * Class RTPSReader, manages the reception of data from its matched writers.
  * @ingroup READER_MODULE
  */
-class RTPSReader
-    : public Endpoint
-    , public fastdds::statistics::StatisticsReaderImpl
+class RTPSReader : public Endpoint
 {
     friend class ReaderHistory;
     friend class RTPSParticipantImpl;
@@ -371,24 +369,24 @@ public:
      * @param listener
      * @return true if successfully added
      */
-    FASTDDS_EXPORTED_API bool add_statistics_listener(
-            std::shared_ptr<fastdds::statistics::IListener> listener);
+    FASTDDS_EXPORTED_API virtual bool add_statistics_listener(
+            std::shared_ptr<fastdds::statistics::IListener> listener) = 0;
 
     /**
      * Remove a listener from receiving statistics backend callbacks
      * @param listener
      * @return true if successfully removed
      */
-    FASTDDS_EXPORTED_API bool remove_statistics_listener(
-            std::shared_ptr<fastdds::statistics::IListener> listener);
+    FASTDDS_EXPORTED_API virtual bool remove_statistics_listener(
+            std::shared_ptr<fastdds::statistics::IListener> listener) = 0;
 
     /**
      * @brief Set the enabled statistics writers mask
      *
      * @param enabled_writers The new mask to set
      */
-    FASTDDS_EXPORTED_API void set_enabled_statistics_writers_mask(
-            uint32_t enabled_writers);
+    FASTDDS_EXPORTED_API virtual void set_enabled_statistics_writers_mask(
+            uint32_t enabled_writers) = 0;
 
     /**
      * @brief Get the connection list of this reader

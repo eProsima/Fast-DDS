@@ -20,12 +20,18 @@
 #define RTPS_READER__BASEREADER_HPP
 
 #include <fastdds/rtps/reader/RTPSReader.h>
+#include <fastdds/statistics/IListeners.hpp>
+#include <fastdds/statistics/rtps/StatisticsCommon.hpp>
+
+#include <statistics/rtps/StatisticsBase.hpp>
 
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-class BaseReader : public fastrtps::rtps::RTPSReader
+class BaseReader
+    : public fastrtps::rtps::RTPSReader
+    , public fastdds::statistics::StatisticsReaderImpl
 {
 protected:
 
@@ -63,6 +69,30 @@ protected:
     }
 
     virtual ~BaseReader() = default;
+
+public:
+
+#ifdef FASTDDS_STATISTICS
+
+    bool add_statistics_listener(
+            std::shared_ptr<fastdds::statistics::IListener> listener) override
+    {
+        return add_statistics_listener_impl(listener);
+    }
+
+    bool remove_statistics_listener(
+            std::shared_ptr<fastdds::statistics::IListener> listener) override
+    {
+        return remove_statistics_listener_impl(listener);
+    }
+
+    void set_enabled_statistics_writers_mask(
+            uint32_t enabled_writers) override
+    {
+        set_enabled_statistics_writers_mask_impl(enabled_writers);
+    }
+
+#endif // FASTDDS_STATISTICS
 
 };
 

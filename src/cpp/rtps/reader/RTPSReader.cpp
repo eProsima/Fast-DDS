@@ -428,28 +428,6 @@ bool RTPSReader::is_sample_valid(
     return true;
 }
 
-#ifdef FASTDDS_STATISTICS
-
-bool RTPSReader::add_statistics_listener(
-        std::shared_ptr<fastdds::statistics::IListener> listener)
-{
-    return add_statistics_listener_impl(listener);
-}
-
-bool RTPSReader::remove_statistics_listener(
-        std::shared_ptr<fastdds::statistics::IListener> listener)
-{
-    return remove_statistics_listener_impl(listener);
-}
-
-void RTPSReader::set_enabled_statistics_writers_mask(
-        uint32_t enabled_writers)
-{
-    set_enabled_statistics_writers_mask_impl(enabled_writers);
-}
-
-#endif // FASTDDS_STATISTICS
-
 } /* namespace rtps */
 } /* namespace fastrtps */
 } /* namespace eprosima */
