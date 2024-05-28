@@ -235,6 +235,15 @@ public:
 
 } // namespace rtps
 } // namespace fastrtps
+
+namespace fastdds {
+namespace rtps {
+
+using BaseReader = fastrtps::rtps::RTPSReader;
+
+}  // namespace rtps
+}  // namespace fastdds
+
 } // namespace eprosima
 
 #endif // _FASTDDS_RTPS_READER_RTPSREADER_H_
