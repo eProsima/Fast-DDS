@@ -46,19 +46,19 @@ StatisticsReaderAncillary* StatisticsReaderImpl::get_members() const
 RecursiveTimedMutex& StatisticsReaderImpl::get_statistics_mutex()
 {
     static_assert(
-        std::is_base_of<StatisticsReaderImpl, RTPSReader>::value,
+        std::is_base_of<StatisticsReaderImpl, fastdds::rtps::BaseReader>::value,
         "Must be call from a writer.");
 
-    return static_cast<RTPSReader*>(this)->getMutex();
+    return static_cast<fastdds::rtps::BaseReader*>(this)->getMutex();
 }
 
 const GUID_t& StatisticsReaderImpl::get_guid() const
 {
     static_assert(
-        std::is_base_of<StatisticsReaderImpl, RTPSReader>::value,
+        std::is_base_of<StatisticsReaderImpl, fastdds::rtps::BaseReader>::value,
         "This method should be called from an actual RTPSReader");
 
-    return static_cast<const RTPSReader*>(this)->getGuid();
+    return static_cast<const fastdds::rtps::BaseReader*>(this)->getGuid();
 }
 
 void StatisticsReaderImpl::on_data_notify(
