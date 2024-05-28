@@ -22,7 +22,7 @@
 #include <fastdds/rtps/attributes/ReaderAttributes.h>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
-#include <fastdds/rtps/resources/ResourceEvent.h>
+#include <rtps/resources/ResourceEvent.h>
 
 namespace eprosima {
 namespace fastrtps {

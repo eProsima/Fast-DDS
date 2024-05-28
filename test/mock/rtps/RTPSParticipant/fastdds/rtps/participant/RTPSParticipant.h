@@ -23,12 +23,13 @@
 
 #include <fastdds/dds/publisher/qos/WriterQos.hpp>
 #include <fastdds/dds/subscriber/qos/ReaderQos.hpp>
+#include <fastdds/fastdds_dll.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastdds/rtps/common/Guid.h>
-#include <fastdds/rtps/resources/ResourceEvent.h>
-#include <fastdds/fastdds_dll.hpp>
+
 #include <rtps/reader/StatefulReader.hpp>
+#include <rtps/resources/ResourceEvent.h>
 #include <statistics/rtps/monitor-service/Interfaces.hpp>
 
 namespace eprosima {

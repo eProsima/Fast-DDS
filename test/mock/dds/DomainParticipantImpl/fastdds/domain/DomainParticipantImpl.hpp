@@ -42,13 +42,13 @@
 #include <fastdds/rtps/common/Types.h>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/rtps/participant/RTPSParticipantListener.h>
-#include <fastdds/rtps/resources/ResourceEvent.h>
 #include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/subscriber/SubscriberImpl.hpp>
 #include <fastdds/topic/TopicImpl.hpp>
 #include <fastdds/topic/TopicProxy.hpp>
 
 #include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
+#include <rtps/resources/ResourceEvent.h>
 #include <xmlparser/XMLProfileManager.h>
 
 namespace eprosima {

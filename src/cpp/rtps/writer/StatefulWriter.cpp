@@ -29,11 +29,9 @@
 #include <rtps/messages/RTPSMessageCreator.hpp>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
-#include <fastdds/rtps/resources/ResourceEvent.h>
 #include <fastdds/rtps/writer/ReaderProxy.h>
 #include <fastdds/rtps/writer/StatefulWriter.h>
 #include <fastdds/rtps/writer/WriterListener.h>
-#include <utils/TimeConversion.hpp>
 
 #include <rtps/builtin/BuiltinProtocols.h>
 #include <rtps/builtin/liveliness/WLP.h>
@@ -47,7 +45,9 @@
 #include <rtps/network/utils/external_locators.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/resources/TimedEvent.h>
+#include <rtps/resources/ResourceEvent.h>
 #include <rtps/RTPSDomainImpl.hpp>
+#include <utils/TimeConversion.hpp>
 
 #ifdef FASTDDS_STATISTICS
 #include <statistics/types/monitorservice_types.hpp>

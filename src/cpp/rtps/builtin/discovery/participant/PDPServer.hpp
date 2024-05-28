@@ -30,13 +30,12 @@
 
 #include <fastdds/rtps/attributes/ServerAttributes.h>
 #include <fastdds/rtps/history/History.h>
-#include <fastdds/rtps/resources/ResourceEvent.h>
-
 #include <rtps/builtin/discovery/database/DiscoveryDataBase.hpp>
 #include <rtps/builtin/discovery/database/DiscoveryDataFilter.hpp>
 #include <rtps/builtin/discovery/participant/DS/DiscoveryServerPDPEndpointsSecure.hpp>
 #include <rtps/builtin/discovery/participant/timedevent/DServerEvent.hpp>
 #include <rtps/messages/RTPSMessageGroup.hpp>
+#include <rtps/resources/ResourceEvent.h>
 
 namespace eprosima {
 namespace fastdds {

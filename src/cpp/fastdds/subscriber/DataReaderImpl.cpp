@@ -38,7 +38,6 @@
 #include <fastdds/domain/DomainParticipantImpl.hpp>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
-#include <fastdds/rtps/resources/ResourceEvent.h>
 #include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/subscriber/DataReaderImpl.hpp>
 #include <fastdds/subscriber/DataReaderImpl/ReadTakeCommand.hpp>
@@ -50,6 +49,7 @@
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/resources/TimedEvent.h>
+#include <rtps/resources/ResourceEvent.h>
 #include <utils/TimeConversion.hpp>
 #ifdef FASTDDS_STATISTICS
 #include <statistics/fastdds/domain/DomainParticipantImpl.hpp>

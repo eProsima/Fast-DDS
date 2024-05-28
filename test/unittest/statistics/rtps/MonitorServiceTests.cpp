@@ -17,7 +17,7 @@
 #include <thread>
 
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/rtps/resources/ResourceEvent.h>
+#include <rtps/resources/ResourceEvent.h>
 
 #include <statistics/rtps/monitor-service/Interfaces.hpp>
 #include <statistics/rtps/monitor-service/MonitorService.hpp>

@@ -31,10 +31,10 @@
 #include <fastdds/rtps/history/IChangePool.h>
 #include <fastdds/rtps/participant/RTPSParticipantListener.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
-#include <fastdds/rtps/resources/ResourceEvent.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
 
 #include <rtps/network/NetworkFactory.h>
+#include <rtps/resources/ResourceEvent.h>
 #if HAVE_SECURITY
 #include <rtps/security/SecurityManager.h>
 #endif // if HAVE_SECURITY
