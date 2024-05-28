@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * @file StatefulWriter.h
+ * @file StatefulWriter.hpp
  */
 
-#ifndef _FASTDDS_RTPS_STATEFULWRITER_H_
-#define _FASTDDS_RTPS_STATEFULWRITER_H_
+#ifndef RTPS_WRITER__STATEFULWRITER_HPP
+#define RTPS_WRITER__STATEFULWRITER_HPP
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
@@ -550,4 +550,4 @@ private:
 } /* namespace eprosima */
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#endif /* _FASTDDS_RTPS_STATEFULWRITER_H_ */
+#endif /* RTPS_WRITER__STATEFULWRITER_HPP */

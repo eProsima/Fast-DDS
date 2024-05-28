@@ -32,7 +32,6 @@
 #include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/participant/RTPSParticipantListener.h>
-#include <fastdds/rtps/writer/StatefulWriter.h>
 #include <fastdds/rtps/writer/StatelessWriter.h>
 
 #include <rtps/builtin/discovery/endpoint/EDP.h>
@@ -48,6 +47,7 @@
 #include <rtps/security/accesscontrol/SecurityMaskUtilities.h>
 #include <rtps/security/authentication/Authentication.h>
 #include <rtps/security/exceptions/SecurityException.h>
+#include <rtps/writer/StatefulWriter.hpp>
 #include <security/OpenSSLInit.hpp>
 
 #define BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_SECURE_WRITER (1 << 20)

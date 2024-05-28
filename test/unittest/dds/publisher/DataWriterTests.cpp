@@ -36,13 +36,12 @@
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
-#include <fastdds/rtps/writer/RTPSWriter.h>
-#include <fastdds/rtps/writer/StatefulWriter.h>
-
 #include <fastdds/publisher/DataWriterImpl.hpp>
+#include <fastdds/rtps/writer/RTPSWriter.h>
 
 #include "../../common/CustomPayloadPool.hpp"
 #include "../../logging/mock/MockConsumer.h"
+#include <rtps/writer/StatefulWriter.hpp>
 
 namespace eprosima {
 namespace fastdds {

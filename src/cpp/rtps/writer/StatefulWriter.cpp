@@ -17,6 +17,8 @@
  *
  */
 
+#include "StatefulWriter.hpp"
+
 #include <mutex>
 #include <stdexcept>
 #include <vector>
@@ -30,7 +32,6 @@
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/writer/ReaderProxy.h>
-#include <fastdds/rtps/writer/StatefulWriter.h>
 #include <fastdds/rtps/writer/WriterListener.h>
 
 #include <rtps/builtin/BuiltinProtocols.h>

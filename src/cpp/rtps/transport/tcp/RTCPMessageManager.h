@@ -24,9 +24,10 @@
 #include <atomic>
 
 #include <fastdds/rtps/writer/StatelessWriter.h>
-#include <fastdds/rtps/writer/StatefulWriter.h>
+
 #include <rtps/transport/tcp/TCPControlMessage.h>
 #include <rtps/transport/tcp/RTCPHeader.h>
+#include <rtps/writer/StatefulWriter.hpp>
 
 namespace eprosima {
 namespace fastdds {

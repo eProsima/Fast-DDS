@@ -25,13 +25,14 @@
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/history/WriterHistory.h>
-#include <fastdds/rtps/writer/StatefulWriter.h>
 #include <fastdds/rtps/common/LocatorListComparisons.hpp>
-#include <rtps/participant/RTPSParticipantImpl.h>
+
+#include <rtps/DataSharing/DataSharingNotifier.hpp>
 #include <rtps/history/HistoryAttributesExtension.hpp>
 #include "rtps/messages/RTPSGapBuilder.hpp"
-#include <rtps/DataSharing/DataSharingNotifier.hpp>
+#include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/resources/TimedEvent.h>
+#include <rtps/writer/StatefulWriter.hpp>
 #include <utils/TimeConversion.hpp>
 
 

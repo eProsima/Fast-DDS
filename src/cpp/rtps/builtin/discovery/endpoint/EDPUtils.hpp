@@ -19,22 +19,23 @@
 #ifndef _RTPS_BUILTIN_DISCOVERY_ENDPOINT_EDPUTILS_HPP_
 #define _RTPS_BUILTIN_DISCOVERY_ENDPOINT_EDPUTILS_HPP_
 
+#include <memory>
+#include <string>
+
 #include <fastdds/rtps/attributes/HistoryAttributes.h>
 #include <fastdds/rtps/attributes/ReaderAttributes.h>
 #include <fastdds/rtps/attributes/WriterAttributes.h>
 #include <fastdds/rtps/common/EntityId_t.hpp>
 #include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/history/WriterHistory.h>
-#include <fastdds/rtps/writer/StatefulWriter.h>
 
 #include <rtps/history/ITopicPayloadPool.h>
 #include <rtps/history/PoolConfig.h>
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/reader/StatefulReader.hpp>
+#include <rtps/writer/StatefulWriter.hpp>
 
-#include <memory>
-#include <string>
 
 namespace eprosima {
 namespace fastrtps {

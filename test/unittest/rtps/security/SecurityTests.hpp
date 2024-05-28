@@ -20,7 +20,6 @@
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/history/WriterHistory.h>
-#include <fastdds/rtps/writer/StatefulWriter.h>
 #include <fastdds/rtps/writer/StatelessWriter.h>
 #include <rtps/builtin/discovery/participant/PDP.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
@@ -32,6 +31,7 @@
 #include <rtps/security/MockCryptographyPlugin.h>
 #include <rtps/security/SecurityManager.h>
 #include <rtps/security/SecurityPluginFactory.h>
+#include <rtps/writer/StatefulWriter.hpp>
 
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::rtps::security;
