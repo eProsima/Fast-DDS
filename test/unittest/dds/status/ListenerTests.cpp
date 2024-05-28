@@ -70,7 +70,7 @@ public:
     virtual ~RTPSParticipantMock() = default;
 };
 
-class RTPSReaderMock : public eprosima::fastrtps::rtps::RTPSReader
+class RTPSReaderMock : public eprosima::fastdds::rtps::BaseReader
 {
 public:
 
