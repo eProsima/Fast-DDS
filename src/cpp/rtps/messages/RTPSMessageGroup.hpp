@@ -30,6 +30,7 @@
 #include <fastdds/rtps/common/FragmentNumber.h>
 #include <fastdds/rtps/messages/RTPSMessageSenderInterface.hpp>
 #include <fastdds/rtps/network/NetworkBuffer.hpp>
+#include <fastdds/utils/collections/ResourceLimitedVector.hpp>
 
 #include <rtps/messages/RTPSMessageCreator.hpp>
 
@@ -352,7 +353,7 @@ private:
     eprosima::fastdds::rtps::NetworkBuffer pending_buffer_;
 
     // Vector of buffers that will be sent along the header
-    std::vector<eprosima::fastdds::rtps::NetworkBuffer> buffers_to_send_;
+    ResourceLimitedVector<eprosima::fastdds::rtps::NetworkBuffer>* buffers_to_send_ = nullptr;
 
     // Bytes to send in the next list of buffers
     uint32_t buffers_bytes_ = 0;
@@ -364,7 +365,7 @@ private:
     const octet padding_[3] = {0, 0, 0};
 };
 
-}        /* namespace rtps */
+} /* namespace rtps */
 } /* namespace fastrtps */
 } /* namespace eprosima */
 

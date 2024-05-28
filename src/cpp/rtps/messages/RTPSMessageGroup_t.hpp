@@ -22,8 +22,10 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <fastdds/rtps/common/CDRMessage_t.h>
-#include <rtps/messages/CDRMessage.hpp>
-#include <rtps/messages/RTPSMessageCreator.hpp>
+#include <fastdds/rtps/messages/CDRMessage.h>
+#include <fastdds/rtps/messages/RTPSMessageCreator.h>
+#include <fastdds/rtps/network/NetworkBuffer.hpp>
+#include <fastdds/utils/collections/ResourceLimitedVector.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -48,6 +50,7 @@ public:
 #if HAVE_SECURITY
         , rtpsmsg_encrypt_(0u)
 #endif // if HAVE_SECURITY
+        , buffers_(ResourceLimitedContainerConfig(16, std::numeric_limits<size_t>::max dummy_avoid_winmax (), 16))
     {
         rtpsmsg_fullmsg_.reserve(payload);
         rtpsmsg_submessage_.reserve(payload);
@@ -74,6 +77,7 @@ public:
 #if HAVE_SECURITY
         , rtpsmsg_encrypt_(0u)
 #endif // if HAVE_SECURITY
+        , buffers_(ResourceLimitedContainerConfig(16, std::numeric_limits<size_t>::max dummy_avoid_winmax (), 16))
     {
         rtpsmsg_fullmsg_.init(buffer_ptr, payload);
         buffer_ptr += payload;
@@ -104,6 +108,9 @@ public:
 #if HAVE_SECURITY
     CDRMessage_t rtpsmsg_encrypt_;
 #endif // if HAVE_SECURITY
+
+    //! Vector to store the NetworkBuffers that will be used to form the RTPS message.
+    eprosima::fastrtps::ResourceLimitedVector<eprosima::fastdds::rtps::NetworkBuffer> buffers_;
 };
 
 } // namespace rtps
