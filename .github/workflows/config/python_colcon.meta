@@ -1,0 +1,7 @@
+names:
+    fastdds:
+        cmake-args:
+            - "-DSECURITY=ON"
+    fastdds_python:
+        cmake-args:
+            - "-DBUILD_TESTING=ON"
