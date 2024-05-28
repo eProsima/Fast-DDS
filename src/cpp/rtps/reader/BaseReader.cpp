@@ -20,6 +20,7 @@
 
 #include <fastdds/rtps/reader/RTPSReader.h>
 
+#include <rtps/DataSharing/DataSharingListener.hpp>
 #include <statistics/rtps/StatisticsBase.hpp>
 
 namespace eprosima {
@@ -34,6 +35,7 @@ BaseReader::BaseReader(
         fastrtps::rtps::ReaderListener* listen)
     : fastrtps::rtps::RTPSReader(pimpl, guid, att, hist, listen)
 {
+    setup_datasharing(att);
 }
 
 BaseReader::BaseReader(
@@ -45,6 +47,7 @@ BaseReader::BaseReader(
         fastrtps::rtps::ReaderListener* listen)
     : fastrtps::rtps::RTPSReader(pimpl, guid, att, payload_pool, hist, listen)
 {
+    setup_datasharing(att);
 }
 
 BaseReader::BaseReader(
@@ -57,6 +60,7 @@ BaseReader::BaseReader(
         fastrtps::rtps::ReaderListener* listen)
     : fastrtps::rtps::RTPSReader(pimpl, guid, att, payload_pool, change_pool, hist, listen)
 {
+    setup_datasharing(att);
 }
 
 BaseReader::~BaseReader()
@@ -84,6 +88,35 @@ void BaseReader::set_enabled_statistics_writers_mask(
 }
 
 #endif // FASTDDS_STATISTICS
+
+void BaseReader::setup_datasharing(
+        const fastrtps::rtps::ReaderAttributes& att)
+{
+    using namespace fastrtps::rtps;
+
+    if (att.endpoint.data_sharing_configuration().kind() != fastdds::dds::DataSharingKind::OFF)
+    {
+        using std::placeholders::_1;
+        std::shared_ptr<DataSharingNotification> notification =
+            DataSharingNotification::create_notification(
+                getGuid(), att.endpoint.data_sharing_configuration().shm_directory());
+        if (notification)
+        {
+            is_datasharing_compatible_ = true;
+            datasharing_listener_.reset(new DataSharingListener(
+                notification,
+                att.endpoint.data_sharing_configuration().shm_directory(),
+                att.data_sharing_listener_thread,
+                att.matched_writers_allocation,
+                this));
+
+            // We can start the listener here, as no writer can be matched already,
+            // so no notification will occur until the non-virtual instance is constructed.
+            // But we need to stop the listener in the non-virtual instance destructor.
+            datasharing_listener_->start();
+        }
+    }
+}
 
 }  // namespace rtps
 }  // namespace fastdds

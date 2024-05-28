@@ -17,7 +17,8 @@
  */
 
 #include <rtps/DataSharing/DataSharingListener.hpp>
-#include <fastdds/rtps/reader/RTPSReader.h>
+
+#include <rtps/reader/BaseReader.hpp>
 #include <utils/thread.hpp>
 #include <utils/threading.hpp>
 
@@ -34,7 +35,7 @@ DataSharingListener::DataSharingListener(
         const std::string& datasharing_pools_directory,
         const fastdds::rtps::ThreadSettings& thr_config,
         ResourceLimitedContainerConfig limits,
-        RTPSReader* reader)
+        fastdds::rtps::BaseReader* reader)
     : notification_(notification)
     , is_running_(false)
     , reader_(reader)

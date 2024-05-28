@@ -522,8 +522,7 @@ private:
 
     void init(
             const std::shared_ptr<IPayloadPool>& payload_pool,
-            const std::shared_ptr<IChangePool>& change_pool,
-            const ReaderAttributes& att);
+            const std::shared_ptr<IChangePool>& change_pool);
 
 };
 

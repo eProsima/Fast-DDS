@@ -60,7 +60,7 @@ RTPSReader::RTPSReader(
     std::shared_ptr<IPayloadPool> payload_pool;
     payload_pool = BasicPayloadPool::get(cfg, change_pool);
 
-    init(payload_pool, change_pool, att);
+    init(payload_pool, change_pool);
 }
 
 RTPSReader::RTPSReader(
@@ -95,13 +95,12 @@ RTPSReader::RTPSReader(
     , liveliness_kind_(att.liveliness_kind_)
     , liveliness_lease_duration_(att.liveliness_lease_duration)
 {
-    init(payload_pool, change_pool, att);
+    init(payload_pool, change_pool);
 }
 
 void RTPSReader::init(
         const std::shared_ptr<IPayloadPool>& payload_pool,
-        const std::shared_ptr<IChangePool>& change_pool,
-        const ReaderAttributes& att)
+        const std::shared_ptr<IChangePool>& change_pool)
 {
     payload_pool_ = payload_pool;
     change_pool_ = change_pool;
@@ -109,29 +108,6 @@ void RTPSReader::init(
     if (mp_history->m_att.memoryPolicy == PREALLOCATED_MEMORY_MODE)
     {
         fixed_payload_size_ = mp_history->m_att.payloadMaxSize;
-    }
-
-    if (att.endpoint.data_sharing_configuration().kind() != OFF)
-    {
-        using std::placeholders::_1;
-        std::shared_ptr<DataSharingNotification> notification =
-                DataSharingNotification::create_notification(
-            getGuid(), att.endpoint.data_sharing_configuration().shm_directory());
-        if (notification)
-        {
-            is_datasharing_compatible_ = true;
-            datasharing_listener_.reset(new DataSharingListener(
-                        notification,
-                        att.endpoint.data_sharing_configuration().shm_directory(),
-                        att.data_sharing_listener_thread,
-                        att.matched_writers_allocation,
-                        this));
-
-            // We can start the listener here, as no writer can be matched already,
-            // so no notification will occur until the non-virtual instance is constructed.
-            // But we need to stop the listener in the non-virtual instance destructor.
-            datasharing_listener_->start();
-        }
     }
 
     mp_history->mp_reader = this;

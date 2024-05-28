@@ -19,6 +19,8 @@
 #ifndef RTPS_READER__BASEREADER_HPP
 #define RTPS_READER__BASEREADER_HPP
 
+#include <cstdint>
+
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/statistics/IListeners.hpp>
 #include <fastdds/statistics/rtps/StatisticsCommon.hpp>
@@ -73,6 +75,11 @@ public:
             uint32_t enabled_writers) override;
 
 #endif // FASTDDS_STATISTICS
+
+private:
+
+    void setup_datasharing(
+            const fastrtps::rtps::ReaderAttributes& att);
 
 };
 
