@@ -126,7 +126,7 @@ StatefulReader::StatefulReader(
         const ReaderAttributes& att,
         ReaderHistory* hist,
         ReaderListener* listen)
-    : RTPSReader(pimpl, guid, att, hist, listen)
+    : fastdds::rtps::BaseReader(pimpl, guid, att, hist, listen)
     , acknack_count_(0)
     , nackfrag_count_(0)
     , times_(att.times)
@@ -146,7 +146,7 @@ StatefulReader::StatefulReader(
         const std::shared_ptr<IPayloadPool>& payload_pool,
         ReaderHistory* hist,
         ReaderListener* listen)
-    : RTPSReader(pimpl, guid, att, payload_pool, hist, listen)
+    : fastdds::rtps::BaseReader(pimpl, guid, att, payload_pool, hist, listen)
     , acknack_count_(0)
     , nackfrag_count_(0)
     , times_(att.times)
@@ -167,7 +167,7 @@ StatefulReader::StatefulReader(
         const std::shared_ptr<IChangePool>& change_pool,
         ReaderHistory* hist,
         ReaderListener* listen)
-    : RTPSReader(pimpl, guid, att, payload_pool, change_pool, hist, listen)
+    : fastdds::rtps::BaseReader(pimpl, guid, att, payload_pool, change_pool, hist, listen)
     , acknack_count_(0)
     , nackfrag_count_(0)
     , times_(att.times)
@@ -801,7 +801,7 @@ bool StatefulReader::processDataFragMsg(
                     {
                         if (getListener())
                         {
-                            getListener()->on_sample_rejected((RTPSReader*)this, rejection_reason, work_change);
+                            getListener()->on_sample_rejected(this, rejection_reason, work_change);
                         }
 
                         /* Special case: rejected by REJECTED_BY_INSTANCES_LIMIT should never be received again.
@@ -866,7 +866,7 @@ bool StatefulReader::processHeartbeatMsg(
             {
                 if (getListener() != nullptr)
                 {
-                    getListener()->on_sample_lost((RTPSReader*)this, current_sample_lost);
+                    getListener()->on_sample_lost(this, current_sample_lost);
                 }
             }
 
@@ -1184,7 +1184,7 @@ bool StatefulReader::change_received(
         {
             if (getListener() && (a_change->is_fully_assembled() || (a_change->contains_first_fragment())))
             {
-                getListener()->on_sample_rejected((RTPSReader*)this, rejection_reason, a_change);
+                getListener()->on_sample_rejected(this, rejection_reason, a_change);
             }
 
             /* Special case: rejected by REJECTED_BY_INSTANCES_LIMIT should never be received again.

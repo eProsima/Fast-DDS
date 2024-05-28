@@ -34,7 +34,7 @@ class RTPSMessageSenderInterface;
 class RTPSParticipantImpl;
 struct CDRMessage_t;
 
-class StatefulReader : public RTPSReader
+class StatefulReader : public fastdds::rtps::BaseReader
 {
 public:
 
@@ -47,7 +47,7 @@ public:
     StatefulReader(
             ReaderHistory* history,
             RecursiveTimedMutex* mutex)
-        : RTPSReader(history, mutex)
+        : fastdds::rtps::BaseReader(history, mutex)
     {
     }
 
