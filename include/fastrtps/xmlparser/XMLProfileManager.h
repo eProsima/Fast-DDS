@@ -73,6 +73,18 @@ public:
             const std::string& filename);
 
     /**
+     * Load a profiles XML file.
+     * @param filename Name for the file to be loaded.
+     * @param is_default Flag to indicate if the file is a default profiles file.
+     * @return XMLP_ret::XML_OK if all profiles are correct, XMLP_ret::XML_NOK if some are and some are not,
+     *         XMLP_ret::XML_ERROR in other case.
+     */
+
+    static XMLP_ret loadXMLFile(
+            const std::string& filename,
+            bool is_default);
+
+    /**
      * Load a profiles XML string.
      * @param data Buffer containing the data.
      * @param length Length of data.
