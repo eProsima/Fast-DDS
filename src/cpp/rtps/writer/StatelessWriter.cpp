@@ -355,7 +355,8 @@ bool StatelessWriter::intraprocess_delivery(
         {
             change->write_params.sample_identity(change->write_params.related_sample_identity());
         }
-        return reader->processDataMsg(change);
+        assert(nullptr != dynamic_cast<fastdds::rtps::BaseReader*>(reader));
+        return static_cast<fastdds::rtps::BaseReader*>(reader)->processDataMsg(change);
     }
 
     return false;

@@ -477,7 +477,8 @@ bool StatefulWriter::intraprocess_delivery(
         {
             change->write_params.sample_identity(change->write_params.related_sample_identity());
         }
-        return reader->processDataMsg(change);
+        assert(nullptr != dynamic_cast<fastdds::rtps::BaseReader*>(reader));
+        return static_cast<fastdds::rtps::BaseReader*>(reader)->processDataMsg(change);
     }
     return false;
 }
@@ -490,7 +491,9 @@ bool StatefulWriter::intraprocess_gap(
     RTPSReader* reader = reader_proxy->local_reader();
     if (reader)
     {
-        return reader->processGapMsg(m_guid, first_seq, SequenceNumberSet_t(last_seq), c_VendorId_eProsima);
+        assert(nullptr != dynamic_cast<fastdds::rtps::BaseReader*>(reader));
+        return static_cast<fastdds::rtps::BaseReader*>(reader)->processGapMsg(
+            m_guid, first_seq, SequenceNumberSet_t(last_seq), c_VendorId_eProsima);
     }
 
     return false;
@@ -523,9 +526,9 @@ bool StatefulWriter::intraprocess_heartbeat(
                 (liveliness || reader_proxy->has_changes()))
         {
             incrementHBCount();
-            returned_value =
-                    reader->processHeartbeatMsg(m_guid, m_heartbeatCount, first_seq, last_seq, true, liveliness,
-                            c_VendorId_eProsima);
+            assert(nullptr != dynamic_cast<fastdds::rtps::BaseReader*>(reader));
+            returned_value = static_cast<fastdds::rtps::BaseReader*>(reader)->processHeartbeatMsg(
+                    m_guid, m_heartbeatCount, first_seq, last_seq, true, liveliness, c_VendorId_eProsima);
         }
     }
 
