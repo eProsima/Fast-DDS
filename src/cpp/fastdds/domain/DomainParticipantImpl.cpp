@@ -1558,27 +1558,37 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onParticipantAuthenticati
 
 void DomainParticipantImpl::MyRTPSParticipantListener::onReaderDiscovery(
         RTPSParticipant*,
-        ReaderDiscoveryInfo&& info)
+        ReaderDiscoveryInfo&& info,
+        bool& should_be_ignored)
 {
+    should_be_ignored = false;
+
     Sentry sentinel(this);
     if (sentinel)
     {
-        bool should_be_ignored = false;
-        participant_->listener_->on_data_reader_discovery(participant_->participant_, std::move(info),
-                should_be_ignored);
+        DomainParticipantListener* listener = participant_->listener_;
+        if (nullptr != listener)
+        {
+            listener->on_data_reader_discovery(participant_->participant_, std::move(info), should_be_ignored);
+        }
     }
 }
 
 void DomainParticipantImpl::MyRTPSParticipantListener::onWriterDiscovery(
         RTPSParticipant*,
-        WriterDiscoveryInfo&& info)
+        WriterDiscoveryInfo&& info,
+        bool& should_be_ignored)
 {
+    should_be_ignored = false;
+
     Sentry sentinel(this);
     if (sentinel)
     {
-        bool should_be_ignored = false;
-        participant_->listener_->on_data_writer_discovery(participant_->participant_, std::move(info),
-                should_be_ignored);
+        DomainParticipantListener* listener = participant_->listener_;
+        if (nullptr != listener)
+        {
+            listener->on_data_writer_discovery(participant_->participant_, std::move(info), should_be_ignored);
+        }
     }
 }
 

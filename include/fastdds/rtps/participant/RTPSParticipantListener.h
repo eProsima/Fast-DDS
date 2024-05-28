@@ -82,21 +82,6 @@ public:
      *
      * @param[out] participant Pointer to the Participant which discovered the remote reader.
      * @param[out] info Remote reader information. User can take ownership of the object.
-     */
-    virtual void onReaderDiscovery(
-            RTPSParticipant* participant,
-            ReaderDiscoveryInfo&& info)
-    {
-        static_cast<void>(participant);
-        static_cast<void>(info);
-    }
-
-    /*!
-     * This method is called when a new Reader is discovered, or a previously discovered reader changes
-     * its QOS or is removed.
-     *
-     * @param[out] participant Pointer to the Participant which discovered the remote reader.
-     * @param[out] info Remote reader information. User can take ownership of the object.
      * @param[out] should_be_ignored Flag to indicate the library to automatically ignore the discovered Reader.
      */
     virtual void onReaderDiscovery(
@@ -106,22 +91,7 @@ public:
     {
         static_cast<void>(participant);
         static_cast<void>(info);
-        static_cast<void>(should_be_ignored);
-    }
-
-    /*!
-     * This method is called when a new Writer is discovered, or a previously discovered writer changes
-     * its QOS or is removed.
-     *
-     * @param[out] participant Pointer to the Participant which discovered the remote writer.
-     * @param[out] info Remote writer information. User can take ownership of the object.
-     */
-    virtual void onWriterDiscovery(
-            RTPSParticipant* participant,
-            WriterDiscoveryInfo&& info)
-    {
-        static_cast<void>(participant);
-        static_cast<void>(info);
+        should_be_ignored = false;
     }
 
     /*!
@@ -139,7 +109,7 @@ public:
     {
         static_cast<void>(participant);
         static_cast<void>(info);
-        static_cast<void>(should_be_ignored);
+        should_be_ignored = false;
     }
 
 };

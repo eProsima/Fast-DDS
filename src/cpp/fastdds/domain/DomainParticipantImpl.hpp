@@ -624,9 +624,6 @@ protected:
             bool on_guard_;
         };
 
-        using fastrtps::rtps::RTPSParticipantListener::onReaderDiscovery;
-        using fastrtps::rtps::RTPSParticipantListener::onWriterDiscovery;
-
     public:
 
         MyRTPSParticipantListener(
@@ -653,11 +650,13 @@ protected:
 
         void onReaderDiscovery(
                 fastrtps::rtps::RTPSParticipant* participant,
-                fastrtps::rtps::ReaderDiscoveryInfo&& info) override;
+                fastrtps::rtps::ReaderDiscoveryInfo&& info,
+                bool& should_be_ignored) override;
 
         void onWriterDiscovery(
                 fastrtps::rtps::RTPSParticipant* participant,
-                fastrtps::rtps::WriterDiscoveryInfo&& info) override;
+                fastrtps::rtps::WriterDiscoveryInfo&& info,
+                bool& should_be_ignored) override;
 
         DomainParticipantImpl* participant_;
         int callback_counter_ = 0;
