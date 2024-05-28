@@ -220,7 +220,44 @@ jobs:
   fastdds-shapesdemo-build:
     needs: fastdds-build
     runs-on: ${{ inputs.os-image }}
+    strategy:
+      fail-fast: false
+      matrix:
+        cmake-build-type:
+          - 'RelWithDebInfo'
     steps:
+      - name: Download build artifacts
+        uses: eProsima/eProsima-CI/external/download-artifact@v0
+        with:
+          name: fastdds_build_${{ inputs.label }}
+          path: ${{ github.workspace }}
+
+      - name: Install Fix Python version
+        uses: eProsima/eProsima-CI/external/setup-python@v0
+        with:
+          python-version: '3.11'
+
+      - name: Get minimum supported version of CMake
+        uses: eProsima/eProsima-CI/external/get-cmake@v0
+        with:
+          cmakeVersion: '3.22.6'
+
+      - name: Install apt packages
+        uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
+        with:
+          packages: libasio-dev libtinyxml2-dev libssl-dev
+
+      - name: Install colcon
+        uses: eProsima/eProsima-CI/ubuntu/install_colcon@v0
+
+      - name: Install Python dependencies
+        uses: eProsima/eProsima-CI/ubuntu/install_python_packages@v0
+        with:
+          packages: xmlschema
+
+      - name: Setup CCache
+        uses: eProsima/eProsima-CI/external/setup-ccache-action@v0
+
       # Get Shapes Demo to make sure it keeps compiling
       - name: Get Shapes Demo branch
         id: get_shapes_demo_branch
@@ -246,6 +283,17 @@ jobs:
           dir: '${{ github.workspace }}/qt_installation/'
           modules: 'qtcharts'
           setup-python: 'false'
+
+      - name: Colcon build
+        continue-on-error: false
+        uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
+        with:
+          colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/ci.meta
+          colcon_build_args: '${{ inputs.colcon-args }} --packages-up-to ShapesDemo'
+          cmake_args: ${{ inputs.cmake-args }}
+          cmake_args_default: -DCMAKE_CXX_FLAGS="-Werror -Wall -Wextra -Wpedantic -Wunused-value -Woverloaded-virtual"
+          cmake_build_type: ${{ matrix.cmake-build-type }}
+          workspace: ${{ github.workspace }}
 
   fastdds-discovery-server-build:
     needs: fastdds-build
