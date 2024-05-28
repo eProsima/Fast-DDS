@@ -20,8 +20,9 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <fastdds/rtps/writer/StatelessWriter.h>
 #include <fastdds/rtps/writer/PersistentWriter.h>
+
+#include <rtps/writer/StatelessWriter.hpp>
 
 namespace eprosima {
 namespace fastrtps {

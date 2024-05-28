@@ -17,7 +17,7 @@
  *
  */
 
-#include <fastdds/rtps/writer/StatelessWriter.h>
+#include "StatelessWriter.hpp"
 
 #include <algorithm>
 #include <mutex>

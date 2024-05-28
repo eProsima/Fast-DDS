@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * @file StatelessWriter.h
+ * @file StatelessWriter.hpp
  */
 
-#ifndef _FASTDDS_RTPS_STATELESSWRITER_H_
-#define _FASTDDS_RTPS_STATELESSWRITER_H_
+#ifndef RTPS_WRITER__STATELESSWRITER_HPP
+#define RTPS_WRITER__STATELESSWRITER_HPP
 
 #include <fastdds/rtps/writer/RTPSWriter.h>
 
