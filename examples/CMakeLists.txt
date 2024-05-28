@@ -13,8 +13,9 @@
 # limitations under the License.
 
 set(fastdds_FOUND TRUE)
+
 add_subdirectory(cpp/configuration)
-add_subdirectory(cpp/content_filtering)
+add_subdirectory(cpp/content_filter)
 add_subdirectory(cpp/custom_payload_pool)
 add_subdirectory(cpp/dds)
 add_subdirectory(cpp/hello_world)
