@@ -41,7 +41,6 @@
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
 #include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
-#include <fastdds/rtps/writer/StatefulPersistentWriter.h>
 #include <fastdds/rtps/writer/StatefulWriter.h>
 #include <fastdds/rtps/writer/StatelessPersistentWriter.h>
 #include <fastdds/rtps/writer/StatelessWriter.h>
@@ -64,6 +63,7 @@
 #include <rtps/reader/StatefulReader.hpp>
 #include <rtps/reader/StatelessPersistentReader.hpp>
 #include <rtps/reader/StatelessReader.hpp>
+#include <rtps/writer/StatefulPersistentWriter.hpp>
 #include <statistics/rtps/GuidUtils.hpp>
 #include <utils/Semaphore.hpp>
 #include <utils/string_utilities.hpp>
