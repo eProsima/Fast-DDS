@@ -63,6 +63,64 @@ protected:
 
 public:
 
+    /**
+     * Processes a new DATA message. Previously the message must have been accepted by function acceptMsgDirectedTo.
+     *
+     * @param change Pointer to the CacheChange_t.
+     * @return true if the reader accepts messages from the.
+     */
+    virtual bool processDataMsg(
+            fastrtps::rtps::CacheChange_t* change) = 0;
+
+    /**
+     * Processes a new DATA FRAG message.
+     *
+     * @param change Pointer to the CacheChange_t.
+     * @param sampleSize Size of the complete, assembled message.
+     * @param fragmentStartingNum Starting number of this particular message.
+     * @param fragmentsInSubmessage Number of fragments on this particular message.
+     * @return true if the reader accepts message.
+     */
+    virtual bool processDataFragMsg(
+            fastrtps::rtps::CacheChange_t* change,
+            uint32_t sampleSize,
+            uint32_t fragmentStartingNum,
+            uint16_t fragmentsInSubmessage) = 0;
+
+    /**
+     * Processes a new HEARTBEAT message.
+     * @param writerGUID
+     * @param hbCount
+     * @param firstSN
+     * @param lastSN
+     * @param finalFlag
+     * @param livelinessFlag
+     * @param origin_vendor_id
+     * @return true if the reader accepts messages from the.
+     */
+    virtual bool processHeartbeatMsg(
+            const fastrtps::rtps::GUID_t& writerGUID,
+            uint32_t hbCount,
+            const fastrtps::rtps::SequenceNumber_t& firstSN,
+            const fastrtps::rtps::SequenceNumber_t& lastSN,
+            bool finalFlag,
+            bool livelinessFlag,
+            VendorId_t origin_vendor_id = c_VendorId_Unknown) = 0;
+
+    /**
+     * Processes a new GAP message.
+     * @param writerGUID
+     * @param gapStart
+     * @param gapList
+     * @param origin_vendor_id
+     * @return true if the reader accepts messages from the.
+     */
+    virtual bool processGapMsg(
+            const fastrtps::rtps::GUID_t& writerGUID,
+            const fastrtps::rtps::SequenceNumber_t& gapStart,
+            const fastrtps::rtps::SequenceNumberSet_t& gapList,
+            VendorId_t origin_vendor_id = c_VendorId_Unknown) = 0;
+
 #ifdef FASTDDS_STATISTICS
 
     bool add_statistics_listener(

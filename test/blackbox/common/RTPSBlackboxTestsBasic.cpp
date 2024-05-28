@@ -891,8 +891,9 @@ TEST(RTPS, RTPSCorrectGAPProcessing)
     SequenceNumberSet_t seq_set(SequenceNumber_t(0, 0));
 
     //! GAP Message check
-    RTPSReader& native_reader = reader.get_native_reader();
-    ASSERT_NO_FATAL_FAILURE(native_reader.processGapMsg(writer.guid(), {0, 0}, seq_set));
+    // TODO(MiguelCompany): Move this test to (new) RTPSReader unit tests
+    // RTPSReader& native_reader = reader.get_native_reader();
+    // ASSERT_NO_FATAL_FAILURE(native_reader.processGapMsg(writer.guid(), {0, 0}, seq_set));
 }
 
 class CustomReaderDataFilter : public eprosima::fastdds::rtps::IReaderDataFilter

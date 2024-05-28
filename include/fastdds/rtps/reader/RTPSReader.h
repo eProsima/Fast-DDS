@@ -116,64 +116,6 @@ public:
             const GUID_t& writer_guid) = 0;
 
     /**
-     * Processes a new DATA message. Previously the message must have been accepted by function acceptMsgDirectedTo.
-     *
-     * @param change Pointer to the CacheChange_t.
-     * @return true if the reader accepts messages from the.
-     */
-    FASTDDS_EXPORTED_API virtual bool processDataMsg(
-            CacheChange_t* change) = 0;
-
-    /**
-     * Processes a new DATA FRAG message.
-     *
-     * @param change Pointer to the CacheChange_t.
-     * @param sampleSize Size of the complete, assembled message.
-     * @param fragmentStartingNum Starting number of this particular message.
-     * @param fragmentsInSubmessage Number of fragments on this particular message.
-     * @return true if the reader accepts message.
-     */
-    FASTDDS_EXPORTED_API virtual bool processDataFragMsg(
-            CacheChange_t* change,
-            uint32_t sampleSize,
-            uint32_t fragmentStartingNum,
-            uint16_t fragmentsInSubmessage) = 0;
-
-    /**
-     * Processes a new HEARTBEAT message.
-     * @param writerGUID
-     * @param hbCount
-     * @param firstSN
-     * @param lastSN
-     * @param finalFlag
-     * @param livelinessFlag
-     * @param origin_vendor_id
-     * @return true if the reader accepts messages from the.
-     */
-    FASTDDS_EXPORTED_API virtual bool processHeartbeatMsg(
-            const GUID_t& writerGUID,
-            uint32_t hbCount,
-            const SequenceNumber_t& firstSN,
-            const SequenceNumber_t& lastSN,
-            bool finalFlag,
-            bool livelinessFlag,
-            fastdds::rtps::VendorId_t origin_vendor_id = c_VendorId_Unknown) = 0;
-
-    /**
-     * Processes a new GAP message.
-     * @param writerGUID
-     * @param gapStart
-     * @param gapList
-     * @param origin_vendor_id
-     * @return true if the reader accepts messages from the.
-     */
-    FASTDDS_EXPORTED_API virtual bool processGapMsg(
-            const GUID_t& writerGUID,
-            const SequenceNumber_t& gapStart,
-            const SequenceNumberSet_t& gapList,
-            fastdds::rtps::VendorId_t origin_vendor_id = c_VendorId_Unknown) = 0;
-
-    /**
      * Method to indicate the reader that some change has been removed due to HistoryQos requirements.
      * @param change Pointer to the CacheChange_t.
      * @param prox Pointer to the WriterProxy.
