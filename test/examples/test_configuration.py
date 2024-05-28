@@ -255,10 +255,10 @@ def test_content_filter(custom_filter):
         if sent != 0 and received != 0:
             for elem in data:
                 if (custom_filter):
-                    if not (elem < 3 and elem > 7):
+                    if not (elem < 4 and elem > 8):
                         ret = False
                 else:
-                    if not (elem >= 5 or elem <= 9):
+                    if not (elem >= 4 or elem <= 8):
                         ret = False
         else:
             print('ERROR: sent: ' + str(sent) + ', received: ' + str(received) +

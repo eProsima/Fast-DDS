@@ -94,8 +94,8 @@ SubscriberApp::SubscriberApp(
         // Custom filter does not use expression. However, an empty expression disables filtering, so some expression
         // must be set.
         expression = " ";
-        parameters.push_back("3");
-        parameters.push_back("7");
+        parameters.push_back(config.lower_bound);
+        parameters.push_back(config.upper_bound);
         filter_topic_ =
                 participant_->create_contentfilteredtopic("HelloWorldFilteredTopic1", topic_, expression, parameters,
                         "MY_CUSTOM_FILTER");
@@ -104,8 +104,8 @@ SubscriberApp::SubscriberApp(
     {
         // Default filter: accept samples meeting the given expression: index between the two given parameters
         expression = "index between %0 and %1";
-        parameters.push_back("5");
-        parameters.push_back("9");
+        parameters.push_back(config.lower_bound);
+        parameters.push_back(config.upper_bound);
         filter_topic_ =
                 participant_->create_contentfilteredtopic("HelloWorldFilteredTopic1", topic_, expression, parameters);
     }

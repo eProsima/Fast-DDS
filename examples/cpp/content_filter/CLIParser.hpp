@@ -54,6 +54,8 @@ public:
     struct subscriber_config
     {
         bool custom_filter = false;
+        std::string upper_bound = "9";
+        std::string lower_bound = "5";
     };
 
     //! Configuration structure for the application
@@ -74,21 +76,23 @@ public:
     static void print_help(
             uint8_t return_code)
     {
-        std::cout << "Usage: content_filter <entity> [options]"                                                  << std::endl;
-        std::cout << ""                                                                                       << std::endl;
-        std::cout << "Entities:"                                                                              << std::endl;
-        std::cout << " publisher                                         Run a publisher entity"              << std::endl;
-        std::cout << " subscriber                                        Run a subscriber entity"             << std::endl;
-        std::cout << ""                                                                                       << std::endl;
-        std::cout << "Common options:"                                                                        << std::endl;
-        std::cout << " -h, --help                                        Print this help message"             << std::endl;
-        std::cout << "Publisher options:"                                                                     << std::endl;
-        std::cout << " -s <num>, --samples <num>                         Number of samples to send"           << std::endl;
-        std::cout << "                                                   (Default: 0 [unlimited])"            << std::endl;
-        std::cout << " -i <num>, --interval <num>                        Time between samples in milliseconds"<< std::endl;
-        std::cout << "Subscriber options:"                                                                    << std::endl;
-        std::cout << " -f <default/custom>, --filter <default/custom>    Kind of Content Filter to use"       << std::endl;
-        std::cout << "                                                   (Default: DDS SQL default filter)"   << std::endl;
+        std::cout << "Usage: content_filter <entity> [options]"                                                   << std::endl;
+        std::cout << ""                                                                                           << std::endl;
+        std::cout << "Entities:"                                                                                  << std::endl;
+        std::cout << " publisher                                         Run a publisher entity"                  << std::endl;
+        std::cout << " subscriber                                        Run a subscriber entity"                 << std::endl;
+        std::cout << ""                                                                                           << std::endl;
+        std::cout << "Common options:"                                                                            << std::endl;
+        std::cout << " -h, --help                                        Print this help message"                 << std::endl;
+        std::cout << "Publisher options:"                                                                         << std::endl;
+        std::cout << " -s <num>, --samples <num>                         Number of samples to send"               << std::endl;
+        std::cout << "                                                   (Default: 0 [unlimited])"                << std::endl;
+        std::cout << " -i <num>, --interval <num>                        Time between samples in milliseconds"    << std::endl;
+        std::cout << "Subscriber options:"                                                                        << std::endl;
+        std::cout << " -f <default/custom>, --filter <default/custom>    Kind of Content Filter to use"           << std::endl;
+        std::cout << "                                                   (Default: DDS SQL default filter)"       << std::endl;
+        std::cout << " -lb <num>, --lower-bound <num>                    Lower bound of the data range to filter" << std::endl;
+        std::cout << " -up <num>, --upper-bound <num>                    Upper bound of the data range to filter" << std::endl;
         std::exit(return_code);
     }
 
@@ -238,6 +242,56 @@ public:
                     else if (config.entity == CLIParser::EntityKind::PUBLISHER)
                     {
                         EPROSIMA_LOG_ERROR(CLI_PARSER, "fliter option can only be used with the Subscriber");
+                        print_help(EXIT_FAILURE);
+                    }
+                    else
+                    {
+                        EPROSIMA_LOG_ERROR(CLI_PARSER, "entity not specified for --filter argument");
+                        print_help(EXIT_FAILURE);
+                    }
+                }
+                else
+                {
+                    EPROSIMA_LOG_ERROR(CLI_PARSER, "missing argument for " + arg);
+                    print_help(EXIT_FAILURE);
+                }
+            }
+            else if (arg == "-lb" || arg == "--lower-bound")
+            {
+                if (i + 1 < argc)
+                {
+                    if (config.entity == CLIParser::EntityKind::SUBSCRIBER)
+                    {
+                        config.sub_config.lower_bound = argv[++i];
+                    }
+                    else if (config.entity == CLIParser::EntityKind::PUBLISHER)
+                    {
+                        EPROSIMA_LOG_ERROR(CLI_PARSER, "lower-bound option can only be used with the Subscriber");
+                        print_help(EXIT_FAILURE);
+                    }
+                    else
+                    {
+                        EPROSIMA_LOG_ERROR(CLI_PARSER, "entity not specified for --filter argument");
+                        print_help(EXIT_FAILURE);
+                    }
+                }
+                else
+                {
+                    EPROSIMA_LOG_ERROR(CLI_PARSER, "missing argument for " + arg);
+                    print_help(EXIT_FAILURE);
+                }
+            }
+            else if (arg == "-ub" || arg == "--upper-bound")
+            {
+                if (i + 1 < argc)
+                {
+                    if (config.entity == CLIParser::EntityKind::SUBSCRIBER)
+                    {
+                        config.sub_config.upper_bound = argv[++i];
+                    }
+                    else if (config.entity == CLIParser::EntityKind::PUBLISHER)
+                    {
+                        EPROSIMA_LOG_ERROR(CLI_PARSER, "upper-bound option can only be used with the Subscriber");
                         print_help(EXIT_FAILURE);
                     }
                     else

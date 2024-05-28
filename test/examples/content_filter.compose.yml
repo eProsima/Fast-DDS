@@ -13,4 +13,4 @@ services:
       LD_LIBRARY_PATH: @PROJECT_BINARY_DIR@/src/cpp:@fastcdr_LIB_DIR@@TINYXML2_LIB_DIR_COMPOSE_LD_LIBRARY_PATH@
       EXAMPLE_DIR: @PROJECT_BINARY_DIR@/examples/cpp/content_filter@FILE_EXTENSION@
       SUBSCRIBER_ADDITIONAL_ARGUMENTS: ${SUB_ARGS}
-    command: @SHELL_EXECUTABLE@ -c "$${EXAMPLE_DIR}/content_filter@FILE_EXTENSION@ subscriber $${SUBSCRIBER_ADDITIONAL_ARGUMENTS} & $${EXAMPLE_DIR}/content_filter@FILE_EXTENSION@ publisher --samples 15 --interval 100"
+    command: @SHELL_EXECUTABLE@ -c "$${EXAMPLE_DIR}/content_filter@FILE_EXTENSION@ subscriber $${SUBSCRIBER_ADDITIONAL_ARGUMENTS} --lower-bound 4 --upper-bound 8 & $${EXAMPLE_DIR}/content_filter@FILE_EXTENSION@ publisher --samples 15 --interval 100"
