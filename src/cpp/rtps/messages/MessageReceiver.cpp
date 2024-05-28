@@ -122,7 +122,7 @@ void MessageReceiver::process_data_message_with_security(
         CacheChange_t& change,
         bool was_decoded)
 {
-    auto process_message = [was_decoded, &change, this](RTPSReader* reader)
+    auto process_message = [was_decoded, &change, this](fastdds::rtps::BaseReader* reader)
             {
                 if (!was_decoded && reader->getAttributes().security_attributes().is_submessage_protected)
                 {
@@ -174,7 +174,7 @@ void MessageReceiver::process_data_fragment_message_with_security(
         bool was_decoded)
 {
     auto process_message = [was_decoded, &change, sample_size, fragment_starting_num, fragments_in_submessage, this](
-        RTPSReader* reader)
+        fastdds::rtps::BaseReader* reader)
             {
                 if (!was_decoded && reader->getAttributes().security_attributes().is_submessage_protected)
                 {
@@ -215,7 +215,7 @@ void MessageReceiver::process_data_message_without_security(
         CacheChange_t& change,
         bool /*was_decoded*/)
 {
-    auto process_message = [&change](RTPSReader* reader)
+    auto process_message = [&change](fastdds::rtps::BaseReader* reader)
             {
                 reader->processDataMsg(&change);
             };
@@ -231,7 +231,8 @@ void MessageReceiver::process_data_fragment_message_without_security(
         uint16_t fragments_in_submessage,
         bool /*was_decoded*/)
 {
-    auto process_message = [&change, sample_size, fragment_starting_num, fragments_in_submessage](RTPSReader* reader)
+    auto process_message = [&change, sample_size, fragment_starting_num, fragments_in_submessage](
+        fastdds::rtps::BaseReader* reader)
             {
                 reader->processDataFragMsg(&change, sample_size, fragment_starting_num, fragments_in_submessage);
             };
@@ -258,13 +259,13 @@ void MessageReceiver::associateEndpoint(
     }
     else
     {
-        const auto reader = dynamic_cast<RTPSReader*>(to_add);
+        const auto reader = dynamic_cast<fastdds::rtps::BaseReader*>(to_add);
         const auto entityId = reader->getGuid().entityId;
         // search for set of readers by entity ID
         const auto readers = associated_readers_.find(entityId);
         if (readers == associated_readers_.end())
         {
-            auto vec = std::vector<RTPSReader*>();
+            auto vec = std::vector<fastdds::rtps::BaseReader*>();
             vec.push_back(reader);
             associated_readers_.emplace(entityId, vec);
         }
@@ -305,7 +306,7 @@ void MessageReceiver::removeEndpoint(
         auto readers = associated_readers_.find(to_remove->getGuid().entityId);
         if (readers != associated_readers_.end())
         {
-            auto* var = dynamic_cast<RTPSReader*>(to_remove);
+            auto* var = dynamic_cast<fastdds::rtps::BaseReader*>(to_remove);
             for (auto it = readers->second.begin(); it != readers->second.end(); ++it)
             {
                 if (*it == var)
@@ -668,7 +669,7 @@ bool MessageReceiver::readSubmessageHeader(
 
 bool MessageReceiver::willAReaderAcceptMsgDirectedTo(
         const EntityId_t& readerID,
-        RTPSReader*& first_reader) const
+        fastdds::rtps::BaseReader*& first_reader) const
 {
     first_reader = nullptr;
     if (associated_readers_.empty())
@@ -779,7 +780,7 @@ bool MessageReceiver::proc_Submsg_Data(
     valid &= CDRMessage::readInt16(msg, &octetsToInlineQos); //it should be 16 in this implementation
 
     //reader and writer ID
-    RTPSReader* first_reader = nullptr;
+    fastdds::rtps::BaseReader* first_reader = nullptr;
     EntityId_t readerID;
     valid &= CDRMessage::readEntityId(msg, &readerID);
 
@@ -906,7 +907,7 @@ bool MessageReceiver::proc_Submsg_Data(
         ch.sourceTimestamp = timestamp_;
     }
 
-    EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "from Writer " << ch.writerGUID << "; possible RTPSReader entities: " <<
+    EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "from Writer " << ch.writerGUID << "; possible Reader entities: " <<
             associated_readers_.size());
 
     //Look for the correct reader to add the change
@@ -963,7 +964,7 @@ bool MessageReceiver::proc_Submsg_DataFrag(
     valid &= CDRMessage::readInt16(msg, &octetsToInlineQos); //it should be 16 in this implementation
 
     //reader and writer ID
-    RTPSReader* first_reader = nullptr;
+    fastdds::rtps::BaseReader* first_reader = nullptr;
     EntityId_t readerID;
     valid &= CDRMessage::readEntityId(msg, &readerID);
 
@@ -1093,7 +1094,7 @@ bool MessageReceiver::proc_Submsg_DataFrag(
         ch.sourceTimestamp = timestamp_;
     }
 
-    EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "from Writer " << ch.writerGUID << "; possible RTPSReader entities: " <<
+    EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "from Writer " << ch.writerGUID << "; possible Reader entities: " <<
             associated_readers_.size());
     process_data_fragment_message_function_(readerID, ch, sampleSize, fragmentStartingNum, fragmentsInSubmessage,
             was_decoded);
@@ -1157,7 +1158,8 @@ bool MessageReceiver::proc_Submsg_Heartbeat(
 
     //Look for the correct reader and writers:
     findAllReaders(readerGUID.entityId,
-            [was_decoded, &writerGUID, &HBCount, &firstSN, &lastSN, finalFlag, livelinessFlag, this](RTPSReader* reader)
+            [was_decoded, &writerGUID, &HBCount, &firstSN, &lastSN, finalFlag, livelinessFlag, this](
+                fastdds::rtps::BaseReader* reader)
             {
                 // Only used when HAVE_SECURITY is defined
                 static_cast<void>(was_decoded);
@@ -1265,7 +1267,7 @@ bool MessageReceiver::proc_Submsg_Gap(
     }
 
     findAllReaders(readerGUID.entityId,
-            [was_decoded, &writerGUID, &gapStart, &gapList, this](RTPSReader* reader)
+            [was_decoded, &writerGUID, &gapStart, &gapList, this](fastdds::rtps::BaseReader* reader)
             {
                 // Only used when HAVE_SECURITY is defined
                 static_cast<void>(was_decoded);
@@ -1471,7 +1473,7 @@ bool MessageReceiver::proc_Submsg_HeartbeatFrag(
     //Look for the correct reader and writers:
     /* XXX TODO
        std::lock_guard<std::mutex> guard(mtx_);
-       for (std::vector<RTPSReader*>::iterator it = associated_readers_.begin();
+       for (std::vector<fastdds::rtps::BaseReader*>::iterator it = associated_readers_.begin();
             it != associated_readers_.end(); ++it)
        {
            if ((*it)->acceptMsgDirectedTo(readerGUID.entityId))

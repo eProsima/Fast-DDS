@@ -34,13 +34,29 @@
 #include <utils/shared_mutex.hpp>
 
 namespace eprosima {
+
+namespace fastrtps {
+namespace rtps {
+
+class RTPSReader;
+
+}  // namespace rtps
+}  // namespace fastrtps
+
+namespace fastdds {
+namespace rtps {
+
+using BaseReader = fastrtps::rtps::RTPSReader;
+
+}  // namespace rtps
+}  // namespace fastdds
+
 namespace fastrtps {
 namespace rtps {
 
 class RTPSParticipantImpl;
 class Endpoint;
 class RTPSWriter;
-class RTPSReader;
 struct SubmessageHeader_t;
 
 /**
@@ -82,7 +98,7 @@ private:
 
     mutable eprosima::shared_mutex mtx_;
     std::vector<RTPSWriter*> associated_writers_;
-    std::unordered_map<EntityId_t, std::vector<RTPSReader*>> associated_readers_;
+    std::unordered_map<EntityId_t, std::vector<fastdds::rtps::BaseReader*>> associated_readers_;
 
     RTPSParticipantImpl* participant_;
     //!Protocol version of the message
@@ -147,7 +163,7 @@ private:
      */
     bool willAReaderAcceptMsgDirectedTo(
             const EntityId_t& readerID,
-            RTPSReader*& first_reader) const;
+            fastdds::rtps::BaseReader*& first_reader) const;
 
     /**
      * Find all readers (in associated_readers_), with the given entity ID, and call the
