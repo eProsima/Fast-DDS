@@ -23,8 +23,6 @@
 #include <fastdds/statistics/IListeners.hpp>
 #include <fastdds/statistics/rtps/StatisticsCommon.hpp>
 
-#include <statistics/rtps/StatisticsBase.hpp>
-
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
@@ -40,10 +38,7 @@ protected:
             const fastrtps::rtps::GUID_t& guid,
             const fastrtps::rtps::ReaderAttributes& att,
             fastrtps::rtps::ReaderHistory* hist,
-            fastrtps::rtps::ReaderListener* listen)
-        : fastrtps::rtps::RTPSReader(pimpl, guid, att, hist, listen)
-    {
-    }
+            fastrtps::rtps::ReaderListener* listen);
 
     BaseReader(
             fastrtps::rtps::RTPSParticipantImpl* pimpl,
@@ -51,10 +46,7 @@ protected:
             const fastrtps::rtps::ReaderAttributes& att,
             const std::shared_ptr<fastrtps::rtps::IPayloadPool>& payload_pool,
             fastrtps::rtps::ReaderHistory* hist,
-            fastrtps::rtps::ReaderListener* listen)
-        : fastrtps::rtps::RTPSReader(pimpl, guid, att, payload_pool, hist, listen)
-    {
-    }
+            fastrtps::rtps::ReaderListener* listen);
 
     BaseReader(
             fastrtps::rtps::RTPSParticipantImpl* pimpl,
@@ -63,34 +55,22 @@ protected:
             const std::shared_ptr<fastrtps::rtps::IPayloadPool>& payload_pool,
             const std::shared_ptr<fastrtps::rtps::IChangePool>& change_pool,
             fastrtps::rtps::ReaderHistory* hist,
-            fastrtps::rtps::ReaderListener* listen)
-        : fastrtps::rtps::RTPSReader(pimpl, guid, att, payload_pool, change_pool, hist, listen)
-    {
-    }
+            fastrtps::rtps::ReaderListener* listen);
 
-    virtual ~BaseReader() = default;
+    virtual ~BaseReader();
 
 public:
 
 #ifdef FASTDDS_STATISTICS
 
     bool add_statistics_listener(
-            std::shared_ptr<fastdds::statistics::IListener> listener) override
-    {
-        return add_statistics_listener_impl(listener);
-    }
+            std::shared_ptr<fastdds::statistics::IListener> listener) override;
 
     bool remove_statistics_listener(
-            std::shared_ptr<fastdds::statistics::IListener> listener) override
-    {
-        return remove_statistics_listener_impl(listener);
-    }
+            std::shared_ptr<fastdds::statistics::IListener> listener) override;
 
     void set_enabled_statistics_writers_mask(
-            uint32_t enabled_writers) override
-    {
-        set_enabled_statistics_writers_mask_impl(enabled_writers);
-    }
+            uint32_t enabled_writers) override;
 
 #endif // FASTDDS_STATISTICS
 

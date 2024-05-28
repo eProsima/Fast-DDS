@@ -174,6 +174,7 @@ set(${PROJECT_NAME}_source_files
     rtps/participant/RTPSParticipant.cpp
     rtps/participant/RTPSParticipantImpl.cpp
     rtps/persistence/PersistenceFactory.cpp
+    rtps/reader/BaseReader.cpp
     rtps/reader/reader_utils.cpp
     rtps/reader/RTPSReader.cpp
     rtps/reader/StatefulPersistentReader.cpp
