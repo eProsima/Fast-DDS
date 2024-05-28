@@ -62,7 +62,7 @@ StatelessReader::StatelessReader(
         const ReaderAttributes& att,
         ReaderHistory* hist,
         ReaderListener* listen)
-    : RTPSReader(pimpl, guid, att, hist, listen)
+    : fastdds::rtps::BaseReader(pimpl, guid, att, hist, listen)
     , matched_writers_(att.matched_writers_allocation)
 {
 }
@@ -74,7 +74,7 @@ StatelessReader::StatelessReader(
         const std::shared_ptr<IPayloadPool>& payload_pool,
         ReaderHistory* hist,
         ReaderListener* listen)
-    : RTPSReader(pimpl, guid, att, payload_pool, hist, listen)
+    : fastdds::rtps::BaseReader(pimpl, guid, att, payload_pool, hist, listen)
     , matched_writers_(att.matched_writers_allocation)
 {
 }
@@ -87,7 +87,7 @@ StatelessReader::StatelessReader(
         const std::shared_ptr<IChangePool>& change_pool,
         ReaderHistory* hist,
         ReaderListener* listen)
-    : RTPSReader(pimpl, guid, att, payload_pool, change_pool, hist, listen)
+    : fastdds::rtps::BaseReader(pimpl, guid, att, payload_pool, change_pool, hist, listen)
     , matched_writers_(att.matched_writers_allocation)
 {
 }

@@ -37,7 +37,7 @@ namespace rtps {
  * Class StatelessReader, specialization of the RTPSReader for Best Effort Readers.
  * @ingroup READER_MODULE
  */
-class StatelessReader : public RTPSReader
+class StatelessReader : public fastdds::rtps::BaseReader
 {
     friend class RTPSParticipantImpl;
 

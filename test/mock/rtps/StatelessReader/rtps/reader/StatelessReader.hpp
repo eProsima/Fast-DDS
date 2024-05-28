@@ -25,7 +25,7 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-class StatelessReader : public RTPSReader
+class StatelessReader : public fastdds::rtps::BaseReader
 {
 public:
 
@@ -34,7 +34,7 @@ public:
     StatelessReader(
             ReaderHistory* history,
             RecursiveTimedMutex* mutex)
-        : RTPSReader(history, mutex)
+        : fastdds::rtps::BaseReader(history, mutex)
     {
     }
 
