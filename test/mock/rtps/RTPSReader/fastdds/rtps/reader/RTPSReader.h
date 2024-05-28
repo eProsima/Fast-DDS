@@ -239,7 +239,25 @@ public:
 namespace fastdds {
 namespace rtps {
 
-using BaseReader = fastrtps::rtps::RTPSReader;
+class BaseReader : public fastrtps::rtps::RTPSReader
+{
+public:
+
+    BaseReader()
+        : fastrtps::rtps::RTPSReader()
+    {
+    }
+
+    BaseReader(
+            fastrtps::rtps::ReaderHistory* history,
+            fastrtps::RecursiveTimedMutex* mutex)
+        : fastrtps::rtps::RTPSReader(history, mutex)
+    {
+    }
+
+    virtual ~BaseReader() = default;
+
+};
 
 }  // namespace rtps
 }  // namespace fastdds

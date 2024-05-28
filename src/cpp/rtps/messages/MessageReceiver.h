@@ -35,18 +35,10 @@
 
 namespace eprosima {
 
-namespace fastrtps {
-namespace rtps {
-
-class RTPSReader;
-
-}  // namespace rtps
-}  // namespace fastrtps
-
 namespace fastdds {
 namespace rtps {
 
-using BaseReader = fastrtps::rtps::RTPSReader;
+class BaseReader;
 
 }  // namespace rtps
 }  // namespace fastdds

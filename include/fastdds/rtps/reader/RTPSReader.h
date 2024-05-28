@@ -68,7 +68,7 @@ protected:
             const GUID_t& guid,
             const ReaderAttributes& att,
             ReaderHistory* hist,
-            ReaderListener* listen = nullptr);
+            ReaderListener* listen);
 
     RTPSReader(
             RTPSParticipantImpl* pimpl,
@@ -76,7 +76,7 @@ protected:
             const ReaderAttributes& att,
             const std::shared_ptr<IPayloadPool>& payload_pool,
             ReaderHistory* hist,
-            ReaderListener* listen = nullptr);
+            ReaderListener* listen);
 
     RTPSReader(
             RTPSParticipantImpl* pimpl,
@@ -85,7 +85,7 @@ protected:
             const std::shared_ptr<IPayloadPool>& payload_pool,
             const std::shared_ptr<IChangePool>& change_pool,
             ReaderHistory* hist,
-            ReaderListener* listen = nullptr);
+            ReaderListener* listen);
 
     virtual ~RTPSReader();
 
@@ -535,7 +535,46 @@ private:
 namespace fastdds {
 namespace rtps {
 
-using BaseReader = fastrtps::rtps::RTPSReader;
+class BaseReader : public fastrtps::rtps::RTPSReader
+{
+protected:
+
+    BaseReader(
+            fastrtps::rtps::RTPSParticipantImpl* pimpl,
+            const fastrtps::rtps::GUID_t& guid,
+            const fastrtps::rtps::ReaderAttributes& att,
+            fastrtps::rtps::ReaderHistory* hist,
+            fastrtps::rtps::ReaderListener* listen)
+        : fastrtps::rtps::RTPSReader(pimpl, guid, att, hist, listen)
+    {
+    }
+
+    BaseReader(
+            fastrtps::rtps::RTPSParticipantImpl* pimpl,
+            const fastrtps::rtps::GUID_t& guid,
+            const fastrtps::rtps::ReaderAttributes& att,
+            const std::shared_ptr<fastrtps::rtps::IPayloadPool>& payload_pool,
+            fastrtps::rtps::ReaderHistory* hist,
+            fastrtps::rtps::ReaderListener* listen)
+        : fastrtps::rtps::RTPSReader(pimpl, guid, att, payload_pool, hist, listen)
+    {
+    }
+
+    BaseReader(
+            fastrtps::rtps::RTPSParticipantImpl* pimpl,
+            const fastrtps::rtps::GUID_t& guid,
+            const fastrtps::rtps::ReaderAttributes& att,
+            const std::shared_ptr<fastrtps::rtps::IPayloadPool>& payload_pool,
+            const std::shared_ptr<fastrtps::rtps::IChangePool>& change_pool,
+            fastrtps::rtps::ReaderHistory* hist,
+            fastrtps::rtps::ReaderListener* listen)
+        : fastrtps::rtps::RTPSReader(pimpl, guid, att, payload_pool, change_pool, hist, listen)
+    {
+    }
+
+    virtual ~BaseReader() = default;
+
+};
 
 }  // namespace rtps
 }  // namespace fastdds
