@@ -108,11 +108,13 @@ bool RTPSMessageGroup::append_submessage()
     // Three possible cases:
     // - If the RTPS message is protected, append submessages and use 1 buffer --> buffers_to_send_ of size: 1
     //      Final msg Struct: | header_msg_ |
-    // - If the submessage contains the payload --> buffers_to_send_ of size: (submessages_added)
-    //      Final msg Struct: | header_msg_[RTPS + submsg1] | header_msg_[submsg2] | header_msg_[submsg3] | ...
-    // - If the submessage does NOT contain the payload --> buffers_to_send_ of size: ((2 + PAD) * submessages_added)
-    //      Final msg Struct: | header_msg_[RTPS + submsg1] | payload | padding | header_msg_[submsg2] | payload | padding | ...
-    // Note that case 1 and 2 might be intercalated, combining submessages with payloads and without them
+    // - Else:
+    //      a. If the submessage contains the payload --> buffers_to_send_ of size: (submessages_added)
+    //          Final msg Struct: | header_msg_[RTPS + submsg1] | header_msg_[submsg2] | header_msg_[submsg3] | ...
+    //      b. If the submessage does NOT contain the payload --> buffers_to_send_ of size: ((2 + PAD) * submessages_added)
+    //          Final msg Struct: | header_msg_[RTPS + submsg1] | payload | padding | header_msg_[submsg2] | payload | padding | ...
+    // Note that case 1 and 2 might be intercalated, combining submessages with and without payloads if the RTPSMessageGroup
+    // is shared between different writers
 
     uint32_t pos_header = header_msg_->pos;
     uint32_t length_submsg = submessage_msg_->length;
@@ -931,6 +933,7 @@ void RTPSMessageGroup::add_stats_submsg()
     header_msg_->pos = header_pos;
     header_msg_->length = header_length;
 }
+
 #endif // FASTDDS_STATISTICS
 
 bool RTPSMessageGroup::add_acknack(

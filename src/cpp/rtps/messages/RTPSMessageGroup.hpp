@@ -290,15 +290,17 @@ private:
 
     /**
      * Appends a submessage to the RTPS Message so it can be sent.
-     * The submessage is copied into the header_msg_ buffer if it is the first submessage
-     * of the RTPS message. Otherwise, it is copied into copied_msgs_ and added to buffers_to_send_.
-     * Then, if there is a data payload in pending_buffer_ it is added to buffers_to_send_.
+     * The submessage is copied into the header_msg_ buffer. The submessage might contain a data payload
+     * or not, in case it is possible to avoid the copy of the payload.
+     * The payload will be added later to buffers_to_send_ if it exists in pending_buffer_.
+     * The copied submessage in added to buffers_to_send_ through a pointer to its position in header_msg_ and
+     * its length.
      *
      * In gather-send operation, the submessage appended only contains the header and pending_buffer_
      * points to the data payload.
      *
      * If gather-send operation is not possible (i.e. Security), the submessage received will contain
-     * the header AND the data payload. The whole submessage will be copied into copied_msgs_.
+     * the header AND the data payload. The whole submessage will be copied into header_msg_.
      *
      * @return True if the submessage was successfully appended, false if the copy operation failed.
      */
