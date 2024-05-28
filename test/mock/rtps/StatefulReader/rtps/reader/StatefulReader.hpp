@@ -24,7 +24,7 @@
 #include <fastdds/rtps/attributes/ReaderAttributes.h>
 #include <fastdds/rtps/common/Guid.h>
 #include <rtps/reader/BaseReader.hpp>
-#include <fastdds/rtps/network/NetworkBuffer.hpp>
+#include <fastdds/rtps/transport/NetworkBuffer.hpp>
 #include <rtps/resources/ResourceEvent.h>
 
 namespace eprosima {

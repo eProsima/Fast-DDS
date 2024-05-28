@@ -22,7 +22,7 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
-#include <fastdds/rtps/network/NetworkBuffer.hpp>
+#include <fastdds/rtps/transport/NetworkBuffer.hpp>
 #include <fastdds/utils/IPFinder.h>
 #include <fastdds/utils/IPLocator.h>
 

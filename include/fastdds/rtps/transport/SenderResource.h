@@ -24,7 +24,7 @@
 
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/common/LocatorsIterator.hpp>
-#include <fastdds/rtps/network/NetworkBuffer.hpp>
+#include <fastdds/rtps/transport/NetworkBuffer.hpp>
 
 namespace eprosima {
 namespace fastrtps {

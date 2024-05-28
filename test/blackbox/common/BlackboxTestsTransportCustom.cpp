@@ -22,7 +22,7 @@
 #include <fastdds/rtps/transport/ChainingTransport.h>
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
-#include <fastdds/rtps/network/NetworkBuffer.hpp>
+#include <fastdds/rtps/transport/NetworkBuffer.hpp>
 
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"

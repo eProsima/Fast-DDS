@@ -23,7 +23,7 @@
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
-#include <fastdds/rtps/network/NetworkBuffer.hpp>
+#include <fastdds/rtps/transport/NetworkBuffer.hpp>
 #include <fastdds/utils/IPLocator.h>
 
 #include <rtps/network/NetworkFactory.h>

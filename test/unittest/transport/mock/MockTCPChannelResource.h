@@ -18,7 +18,7 @@
 #include <asio.hpp>
 #include <rtps/transport/TCPChannelResource.h>
 #include <rtps/transport/TCPTransportInterface.h>
-#include <fastdds/rtps/network/NetworkBuffer.hpp>
+#include <fastdds/rtps/transport/NetworkBuffer.hpp>
 
 namespace eprosima {
 namespace fastrtps {

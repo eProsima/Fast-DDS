@@ -21,7 +21,7 @@
 
 #include <fastdds/core/policy/ParameterSerializer.hpp>
 #include <fastdds/core/policy/ParameterList.hpp>
-#include <fastdds/rtps/network/NetworkBuffer.hpp>
+#include <fastdds/rtps/transport/NetworkBuffer.hpp>
 
 using NetworkBuffer = eprosima::fastdds::rtps::NetworkBuffer;
 

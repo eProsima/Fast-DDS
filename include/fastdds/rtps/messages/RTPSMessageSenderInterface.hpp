@@ -27,7 +27,7 @@
 #include <list>
 
 #include <fastdds/rtps/common/Guid.h>
-#include <fastdds/rtps/network/NetworkBuffer.hpp>
+#include <fastdds/rtps/transport/NetworkBuffer.hpp>
 
 namespace eprosima {
 namespace fastrtps {
