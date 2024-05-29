@@ -54,7 +54,6 @@ class IDataSharingListener;
 class RTPSReader : public Endpoint
 {
     friend class ReaderHistory;
-    friend class WLP;
 
 protected:
 

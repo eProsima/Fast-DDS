@@ -74,6 +74,18 @@ public:
         return m_acceptMessagesToUnknownReaders;
     }
 
+    //! @return The liveliness kind of this reader
+    fastdds::dds::LivelinessQosPolicyKind liveliness_kind() const
+    {
+        return liveliness_kind_;
+    }
+
+    //! @return The liveliness lease duration of this reader
+    fastrtps::Duration_t liveliness_lease_duration() const
+    {
+        return liveliness_lease_duration_;
+    }
+
     /**
      * Processes a new DATA message. Previously the message must have been accepted by function acceptMsgDirectedTo.
      *

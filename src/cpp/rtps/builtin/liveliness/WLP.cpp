@@ -35,6 +35,7 @@
 #include <rtps/builtin/liveliness/WLPListener.h>
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/reader/BaseReader.hpp>
 #include <rtps/reader/StatefulReader.hpp>
 #include <rtps/resources/ResourceEvent.h>
 #include <rtps/resources/TimedEvent.h>
@@ -829,6 +830,9 @@ bool WLP::add_local_reader(
         RTPSReader* reader,
         const fastdds::dds::ReaderQos& rqos)
 {
+    assert(nullptr != dynamic_cast<fastdds::rtps::BaseReader*>(reader));
+    auto base_reader = static_cast<fastdds::rtps::BaseReader*>(reader);
+
     std::lock_guard<std::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
 
     if (rqos.m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS)
@@ -836,7 +840,7 @@ bool WLP::add_local_reader(
         automatic_readers_ = true;
     }
 
-    readers_.push_back(reader);
+    readers_.push_back(base_reader);
 
     return true;
 }
@@ -844,12 +848,15 @@ bool WLP::add_local_reader(
 bool WLP::remove_local_reader(
         RTPSReader* reader)
 {
+    assert(nullptr != dynamic_cast<fastdds::rtps::BaseReader*>(reader));
+    auto base_reader = static_cast<fastdds::rtps::BaseReader*>(reader);
+
     std::lock_guard<std::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
 
     auto it = std::find(
         readers_.begin(),
         readers_.end(),
-        reader);
+        base_reader);
     if (it != readers_.end())
     {
         readers_.erase(it);
@@ -1074,10 +1081,10 @@ void WLP::sub_liveliness_changed(
 {
     // Writer with given guid lost liveliness, check which readers were matched and inform them
 
-    for (RTPSReader* reader : readers_)
+    for (fastdds::rtps::BaseReader* reader : readers_)
     {
-        if (reader->liveliness_kind_ == kind &&
-                reader->liveliness_lease_duration_ == lease_duration)
+        if (reader->liveliness_kind() == kind &&
+                reader->liveliness_lease_duration() == lease_duration)
         {
             if (reader->matched_writer_is_matched(writer))
             {
@@ -1093,7 +1100,7 @@ void WLP::sub_liveliness_changed(
 
 void WLP::update_liveliness_changed_status(
         GUID_t writer,
-        RTPSReader* reader,
+        fastdds::rtps::BaseReader* reader,
         int32_t alive_change,
         int32_t not_alive_change)
 {
