@@ -18,9 +18,12 @@
 
 #include <rtps/reader/BaseReader.hpp>
 
+#include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
 
 #include <rtps/DataSharing/DataSharingListener.hpp>
+#include <rtps/DataSharing/DataSharingNotification.hpp>
+#include <rtps/reader/ReaderHistoryState.hpp>
 #include <statistics/rtps/StatisticsBase.hpp>
 
 namespace eprosima {
@@ -88,6 +91,152 @@ void BaseReader::set_enabled_statistics_writers_mask(
 }
 
 #endif // FASTDDS_STATISTICS
+
+bool BaseReader::may_remove_history_record(
+        bool removed_by_lease)
+{
+    return !removed_by_lease;
+}
+
+void BaseReader::add_persistence_guid(
+        const fastrtps::rtps::GUID_t& guid,
+        const fastrtps::rtps::GUID_t& persistence_guid)
+{
+    if (fastrtps::rtps::c_Guid_Unknown == persistence_guid || persistence_guid == guid)
+    {
+        std::lock_guard<decltype(mp_mutex)> guard(mp_mutex);
+        history_state_->persistence_guid_map[guid] = guid;
+        history_state_->persistence_guid_count[guid]++;
+    }
+    else
+    {
+        std::lock_guard<decltype(mp_mutex)> guard(mp_mutex);
+        history_state_->persistence_guid_map[guid] = persistence_guid;
+        history_state_->persistence_guid_count[persistence_guid]++;
+
+        // Could happen that a value has already been stored in the record with the guid and not the persistence guid
+        // This is because received_change is called before Proxy is created
+        // In this case, we substitute the guid for the persistence (in case they are not equal)
+        auto spourious_record = history_state_->history_record.find(guid);
+        if (spourious_record != history_state_->history_record.end())
+        {
+            EPROSIMA_LOG_INFO(RTPS_READER, "Sporious record found, changing guid "
+                    << guid << " for persistence guid " << persistence_guid);
+            update_last_notified(guid, spourious_record->second);
+            history_state_->history_record.erase(spourious_record);
+        }
+    }
+}
+
+void BaseReader::remove_persistence_guid(
+        const fastrtps::rtps::GUID_t& guid,
+        const fastrtps::rtps::GUID_t& persistence_guid,
+        bool removed_by_lease)
+{
+    std::lock_guard<decltype(mp_mutex)> guard(mp_mutex);
+    auto persistence_guid_stored = (fastrtps::rtps::c_Guid_Unknown == persistence_guid) ? guid : persistence_guid;
+    history_state_->persistence_guid_map.erase(guid);
+    auto count = --history_state_->persistence_guid_count[persistence_guid_stored];
+    if (count <= 0 && may_remove_history_record(removed_by_lease))
+    {
+        history_state_->history_record.erase(persistence_guid_stored);
+        history_state_->persistence_guid_count.erase(persistence_guid_stored);
+    }
+}
+
+fastrtps::rtps::SequenceNumber_t BaseReader::get_last_notified(
+        const fastrtps::rtps::GUID_t& guid)
+{
+    fastrtps::rtps::SequenceNumber_t ret_val;
+    std::lock_guard<decltype(mp_mutex)> guard(mp_mutex);
+    fastrtps::rtps::GUID_t guid_to_look = guid;
+    auto p_guid = history_state_->persistence_guid_map.find(guid);
+    if (p_guid != history_state_->persistence_guid_map.end())
+    {
+        guid_to_look = p_guid->second;
+    }
+
+    auto p_seq = history_state_->history_record.find(guid_to_look);
+    if (p_seq != history_state_->history_record.end())
+    {
+        ret_val = p_seq->second;
+    }
+
+    return ret_val;
+}
+
+fastrtps::rtps::SequenceNumber_t BaseReader::update_last_notified(
+        const fastrtps::rtps::GUID_t& guid,
+        const fastrtps::rtps::SequenceNumber_t& seq)
+{
+    fastrtps::rtps::SequenceNumber_t ret_val;
+    std::lock_guard<decltype(mp_mutex)> guard(mp_mutex);
+    fastrtps::rtps::GUID_t guid_to_look = guid;
+    auto p_guid = history_state_->persistence_guid_map.find(guid);
+    if (p_guid != history_state_->persistence_guid_map.end())
+    {
+        guid_to_look = p_guid->second;
+    }
+
+    auto p_seq = history_state_->history_record.find(guid_to_look);
+    if (p_seq != history_state_->history_record.end())
+    {
+        ret_val = p_seq->second;
+    }
+
+    if (ret_val < seq)
+    {
+        set_last_notified(guid_to_look, seq);
+        new_notification_cv_.notify_all();
+    }
+
+    return ret_val;
+}
+
+void BaseReader::set_last_notified(
+        const fastrtps::rtps::GUID_t& peristence_guid,
+        const fastrtps::rtps::SequenceNumber_t& seq)
+{
+    history_state_->history_record[peristence_guid] = seq;
+}
+
+fastrtps::rtps::History::const_iterator BaseReader::findCacheInFragmentedProcess(
+        const fastrtps::rtps::SequenceNumber_t& sequence_number,
+        const fastrtps::rtps::GUID_t& writer_guid,
+        fastrtps::rtps::CacheChange_t** change,
+        fastrtps::rtps::History::const_iterator hint) const
+{
+    fastrtps::rtps::History::const_iterator ret_val = mp_history->get_change_nts(sequence_number, writer_guid, change, hint);
+
+    if (nullptr != *change && (*change)->is_fully_assembled())
+    {
+        *change = nullptr;
+    }
+
+    return ret_val;
+}
+
+bool BaseReader::is_datasharing_compatible_with(
+        const fastrtps::rtps::WriterProxyData& wdata)
+{
+    if (!is_datasharing_compatible_ ||
+            wdata.m_qos.data_sharing.kind() == fastdds::dds::OFF)
+    {
+        return false;
+    }
+
+    for (auto id : wdata.m_qos.data_sharing.domain_ids())
+    {
+        if (std::find(m_att.data_sharing_configuration().domain_ids().begin(),
+                m_att.data_sharing_configuration().domain_ids().end(), id)
+                != m_att.data_sharing_configuration().domain_ids().end())
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
 
 void BaseReader::setup_datasharing(
         const fastrtps::rtps::ReaderAttributes& att)

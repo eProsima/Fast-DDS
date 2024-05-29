@@ -80,7 +80,7 @@ protected:
             ReaderHistory* hist,
             ReaderListener* listen);
 
-    virtual ~RTPSReader();
+    ~RTPSReader();
 
 public:
 
@@ -337,88 +337,6 @@ public:
 #endif // FASTDDS_STATISTICS
 
 protected:
-
-    virtual bool may_remove_history_record(
-            bool removed_by_lease);
-
-    /*!
-     * @brief Add a remote writer to the persistence_guid map
-     * @param guid GUID of the remote writer
-     * @param persistence_guid Persistence GUID of the remote writer
-     */
-    void add_persistence_guid(
-            const GUID_t& guid,
-            const GUID_t& persistence_guid);
-
-    /*!
-     * @brief Remove a remote writer from the persistence_guid map
-     * @param guid GUID of the remote writer
-     * @param persistence_guid Persistence GUID of the remote writer
-     * @param removed_by_lease Whether the GUIDs are being removed due to a participant drop.
-     */
-    void remove_persistence_guid(
-            const GUID_t& guid,
-            const GUID_t& persistence_guid,
-            bool removed_by_lease);
-
-    /*!
-     * @brief Get the last notified sequence for a RTPS guid
-     * @param guid The RTPS guid to query
-     * @return Last notified sequence number for input guid
-     * @remarks Takes persistence_guid into consideration
-     */
-    SequenceNumber_t get_last_notified(
-            const GUID_t& guid);
-
-    /*!
-     * @brief Update the last notified sequence for a RTPS guid
-     * @param guid The RTPS guid of the writer
-     * @param seq Max sequence number available on writer
-     * @return Previous value of last notified sequence number for input guid
-     * @remarks Takes persistence_guid into consideration
-     */
-    SequenceNumber_t update_last_notified(
-            const GUID_t& guid,
-            const SequenceNumber_t& seq);
-
-    /*!
-     * @brief Set the last notified sequence for a persistence guid
-     * @param persistence_guid The persistence guid to update
-     * @param seq Sequence number to set for input guid
-     * @remarks Persistent readers will write to DB
-     */
-    virtual void set_last_notified(
-            const GUID_t& persistence_guid,
-            const SequenceNumber_t& seq);
-
-    /*!
-     * @brief Search if there is a CacheChange_t, giving SequenceNumber_t and writer GUID_t,
-     * waiting to be completed because it is fragmented.
-     * @param sequence_number SequenceNumber_t of the searched CacheChange_t.
-     * @param writer_guid writer GUID_t of the searched CacheChange_t.
-     * @param change If a CacheChange_t was found, this argument will fill with its pointer.
-     * In other case nullptr is returned.
-     * @param hint Iterator since the search will start.
-     * Used to improve the search.
-     * @return Iterator pointing to the position were CacheChange_t was found.
-     * It can be used to improve next search.
-     */
-    History::const_iterator findCacheInFragmentedProcess(
-            const SequenceNumber_t& sequence_number,
-            const GUID_t& writer_guid,
-            CacheChange_t** change,
-            History::const_iterator hint) const;
-
-    /**
-     * Creates the listener for the datasharing notifications
-     *
-     * @param limits Resource limits for the number of matched datasharing writers
-     */
-    void create_datasharing_listener(
-            ResourceLimitedContainerConfig limits);
-
-    bool is_datasharing_compatible_with(
-            const WriterProxyData& wdata);
 
     //!ReaderHistory
     ReaderHistory* mp_history;
