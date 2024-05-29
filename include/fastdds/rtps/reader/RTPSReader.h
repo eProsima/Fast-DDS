@@ -351,18 +351,6 @@ protected:
     //!Expects Inline Qos.
     bool m_expectsInlineQos;
 
-    //!ReaderHistoryState
-    ReaderHistoryState* history_state_;
-
-    uint64_t total_unread_ = 0;
-
-    TimedConditionVariable new_notification_cv_;
-
-    //! The liveliness kind of this reader
-    LivelinessQosPolicyKind liveliness_kind_;
-    //! The liveliness lease duration of this reader
-    Duration_t liveliness_lease_duration_;
-
     //! Whether the writer is datasharing compatible or not
     bool is_datasharing_compatible_ = false;
     //! The listener for the datasharing notifications

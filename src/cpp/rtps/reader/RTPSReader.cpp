@@ -51,9 +51,6 @@ RTPSReader::RTPSReader(
     , m_acceptMessagesToUnknownReaders(true)
     , m_acceptMessagesFromUnkownWriters(false)
     , m_expectsInlineQos(att.expectsInlineQos)
-    , history_state_(new ReaderHistoryState(att.matched_writers_allocation.initial))
-    , liveliness_kind_(att.liveliness_kind_)
-    , liveliness_lease_duration_(att.liveliness_lease_duration)
 {
     PoolConfig cfg = PoolConfig::from_history_attributes(hist->m_att);
     std::shared_ptr<IChangePool> change_pool;
@@ -91,9 +88,6 @@ RTPSReader::RTPSReader(
     , m_acceptMessagesToUnknownReaders(true)
     , m_acceptMessagesFromUnkownWriters(false)
     , m_expectsInlineQos(att.expectsInlineQos)
-    , history_state_(new ReaderHistoryState(att.matched_writers_allocation.initial))
-    , liveliness_kind_(att.liveliness_kind_)
-    , liveliness_lease_duration_(att.liveliness_lease_duration)
 {
     init(payload_pool, change_pool);
 }

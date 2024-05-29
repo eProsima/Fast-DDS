@@ -21,6 +21,7 @@
 
 #include <cstdint>
 
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/statistics/IListeners.hpp>
 #include <fastdds/statistics/rtps/StatisticsCommon.hpp>
@@ -175,6 +176,18 @@ public:
 #endif // FASTDDS_STATISTICS
 
 protected:
+
+    //!ReaderHistoryState
+    fastrtps::rtps::ReaderHistoryState* history_state_;
+
+    uint64_t total_unread_ = 0;
+
+    fastrtps::TimedConditionVariable new_notification_cv_;
+
+    //! The liveliness kind of this reader
+    fastdds::dds::LivelinessQosPolicyKind liveliness_kind_;
+    //! The liveliness lease duration of this reader
+    fastrtps::Duration_t liveliness_lease_duration_;
 
     /*!
      * @brief Whether a history record may be removed.

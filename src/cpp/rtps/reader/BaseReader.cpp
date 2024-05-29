@@ -38,6 +38,9 @@ BaseReader::BaseReader(
         fastrtps::rtps::ReaderHistory* hist,
         fastrtps::rtps::ReaderListener* listen)
     : fastrtps::rtps::RTPSReader(pimpl, guid, att, hist, listen)
+    , history_state_(new fastrtps::rtps::ReaderHistoryState(att.matched_writers_allocation.initial))
+    , liveliness_kind_(att.liveliness_kind_)
+    , liveliness_lease_duration_(att.liveliness_lease_duration)
 {
     setup_datasharing(att);
 }
@@ -50,6 +53,9 @@ BaseReader::BaseReader(
         fastrtps::rtps::ReaderHistory* hist,
         fastrtps::rtps::ReaderListener* listen)
     : fastrtps::rtps::RTPSReader(pimpl, guid, att, payload_pool, hist, listen)
+    , history_state_(new fastrtps::rtps::ReaderHistoryState(att.matched_writers_allocation.initial))
+    , liveliness_kind_(att.liveliness_kind_)
+    , liveliness_lease_duration_(att.liveliness_lease_duration)
 {
     setup_datasharing(att);
 }
@@ -63,6 +69,9 @@ BaseReader::BaseReader(
         fastrtps::rtps::ReaderHistory* hist,
         fastrtps::rtps::ReaderListener* listen)
     : fastrtps::rtps::RTPSReader(pimpl, guid, att, payload_pool, change_pool, hist, listen)
+    , history_state_(new fastrtps::rtps::ReaderHistoryState(att.matched_writers_allocation.initial))
+    , liveliness_kind_(att.liveliness_kind_)
+    , liveliness_lease_duration_(att.liveliness_lease_duration)
 {
     setup_datasharing(att);
 }
