@@ -32,6 +32,7 @@ namespace fastrtps {
 namespace rtps {
 
 class IDataSharingListener;
+struct ReaderHistoryState;
 class WriterProxyData;
 
 } // namespace rtps

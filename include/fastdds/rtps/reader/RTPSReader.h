@@ -39,11 +39,9 @@ namespace fastrtps {
 namespace rtps {
 
 // Forward declarations
-class LivelinessManager;
 class ReaderListener;
 class WriterProxy;
 struct CacheChange_t;
-struct ReaderHistoryState;
 class WriterProxyData;
 
 /**
