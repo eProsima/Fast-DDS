@@ -27,8 +27,7 @@
 #include <fastdds/rtps/common/Token.h>
 
 #if HAVE_SECURITY
-#include <fastdds/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
-#include <fastdds/rtps/security/accesscontrol/EndpointSecurityAttributes.h>
+#include <fastdds/rtps/attributes/EndpointSecurityAttributes.h>
 #endif // if HAVE_SECURITY
 
 #include <string>
@@ -36,6 +35,14 @@
 
 namespace eprosima {
 namespace fastrtps {
+
+#if HAVE_SECURITY
+namespace rtps {
+namespace security {
+struct ParticipantSecurityAttributes;
+} /* namespace security */
+} /* namespace rtps */
+#endif // if HAVE_SECURITY
 
 using ParameterId_t = fastdds::dds::ParameterId_t;
 using Parameter_t = fastdds::dds::Parameter_t;

@@ -18,7 +18,7 @@
 #ifndef _FASTDDS_RTPS_SECURITY_COMMON_SHAREDSECRETHANDLE_H_
 #define _FASTDDS_RTPS_SECURITY_COMMON_SHAREDSECRETHANDLE_H_
 
-#include <fastdds/rtps/security/common/Handle.h>
+#include <rtps/security/common/Handle.h>
 
 #include <vector>
 

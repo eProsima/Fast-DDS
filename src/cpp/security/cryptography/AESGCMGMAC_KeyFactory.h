@@ -19,9 +19,9 @@
 #ifndef _SECURITY_AUTHENTICATION_AESGCMGMAC_KEYFACTORY_H_
 #define _SECURITY_AUTHENTICATION_AESGCMGMAC_KEYFACTORY_H_
 
-#include <fastdds/rtps/security/cryptography/CryptoKeyFactory.h>
-#include <fastdds/rtps/attributes/PropertyPolicy.h>
 
+#include <fastdds/rtps/attributes/PropertyPolicy.h>
+#include <rtps/security/cryptography/CryptoKeyFactory.h>
 #include <security/cryptography/AESGCMGMAC_Types.h>
 
 #include <memory>

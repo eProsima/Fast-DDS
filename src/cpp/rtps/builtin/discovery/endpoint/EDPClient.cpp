@@ -30,6 +30,9 @@
 #include <fastdds/rtps/writer/StatefulWriter.h>
 
 #include <rtps/builtin/discovery/participant/PDP.h>
+#if HAVE_SECURITY
+#include <rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
+#endif // if HAVE_SECURITY
 
 namespace eprosima {
 namespace fastdds {

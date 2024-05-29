@@ -22,14 +22,14 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <fastdds/dds/subscriber/qos/ReaderQos.hpp>
+#if HAVE_SECURITY
+#include <fastdds/rtps/attributes/EndpointSecurityAttributes.h>
+#endif // if HAVE_SECURITY
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
 #include <fastdds/rtps/attributes/WriterAttributes.h>
 #include <fastdds/rtps/builtin/data/ContentFilterProperty.hpp>
 #include <fastdds/rtps/common/RemoteLocators.hpp>
 #include <fastdds/rtps/common/VendorId_t.hpp>
-#if HAVE_SECURITY
-#include <fastdds/rtps/security/accesscontrol/EndpointSecurityAttributes.h>
-#endif // if HAVE_SECURITY
 #include <fastdds/rtps/attributes/TopicAttributes.h>
 
 namespace eprosima {

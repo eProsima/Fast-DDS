@@ -19,12 +19,12 @@
 #ifndef _SECURITY_AUTHENTICATION_AESGCMGMAC_TYPES_H_
 #define _SECURITY_AUTHENTICATION_AESGCMGMAC_TYPES_H_
 
-#include <fastdds/rtps/security/cryptography/CryptoTypes.h>
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
-#include <fastdds/rtps/security/common/Handle.h>
-#include <fastdds/rtps/security/common/SharedSecretHandle.h>
-#include <fastdds/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
-#include <fastdds/rtps/security/accesscontrol/EndpointSecurityAttributes.h>
+#include <fastdds/rtps/attributes/EndpointSecurityAttributes.h>
+#include <rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
+#include <rtps/security/common/Handle.h>
+#include <rtps/security/common/SharedSecretHandle.h>
+#include <rtps/security/cryptography/CryptoTypes.h>
 
 #include <cassert>
 #include <functional>

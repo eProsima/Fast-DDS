@@ -25,7 +25,7 @@
 #include <openssl/err.h>
 #include <openssl/ssl.h>
 
-#include <fastdds/rtps/security/exceptions/SecurityException.h>
+#include <rtps/security/exceptions/SecurityException.h>
 
 
 namespace eprosima {

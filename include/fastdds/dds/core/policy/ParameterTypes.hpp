@@ -30,8 +30,7 @@
 #include <fastdds/rtps/common/Token.h>
 
 #if HAVE_SECURITY
-#include <fastdds/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
-#include <fastdds/rtps/security/accesscontrol/EndpointSecurityAttributes.h>
+#include <fastdds/rtps/attributes/EndpointSecurityAttributes.h>
 #endif // if HAVE_SECURITY
 
 namespace eprosima {
@@ -39,6 +38,15 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 struct CDRMessage_t;
+#if HAVE_SECURITY
+namespace security {
+struct ParticipantSecurityAttributes;
+typedef uint32_t PluginEndpointSecurityAttributesMask;
+typedef uint32_t EndpointSecurityAttributesMask;
+typedef uint32_t PluginParticipantSecurityAttributesMask;
+typedef uint32_t ParticipantSecurityAttributesMask;
+} // namespace security
+#endif  // HAVE_SECURITY
 } // namespace rtps
 } // namespace fastrtps
 

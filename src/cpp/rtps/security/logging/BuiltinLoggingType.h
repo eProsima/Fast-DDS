@@ -20,8 +20,8 @@
 
 #include <fastdds/rtps/common/Types.h>
 #include <fastdds/rtps/common/Time_t.h>
-#include <fastdds/rtps/security/logging/LoggingLevel.h>
-#include <fastdds/rtps/security/logging/NameValuePair.h>
+#include <rtps/security/logging/LoggingLevel.h>
+#include <rtps/security/logging/NameValuePair.h>
 
 #include <map>
 

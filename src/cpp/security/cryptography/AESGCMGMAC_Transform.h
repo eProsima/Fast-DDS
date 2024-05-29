@@ -19,9 +19,9 @@
 #ifndef _SECURITY_AUTHENTICATION_AESGCMGMAC_TRANSFORM_H_
 #define _SECURITY_AUTHENTICATION_AESGCMGMAC_TRANSFORM_H_
 
-#include <fastdds/rtps/security/cryptography/CryptoTransform.h>
-#include <fastdds/rtps/attributes/PropertyPolicy.h>
 #include <fastcdr/Cdr.h>
+#include <fastdds/rtps/attributes/PropertyPolicy.h>
+#include <rtps/security/cryptography/CryptoTransform.h>
 
 #include <map>
 #include <security/cryptography/AESGCMGMAC_Types.h>

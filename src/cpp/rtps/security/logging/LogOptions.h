@@ -20,7 +20,7 @@
 
 #include <string>
 
-#include <fastdds/rtps/security/logging/LoggingLevel.h>
+#include <rtps/security/logging/LoggingLevel.h>
 
 namespace eprosima {
 namespace fastrtps {

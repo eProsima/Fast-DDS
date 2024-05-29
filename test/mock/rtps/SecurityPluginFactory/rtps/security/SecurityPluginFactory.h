@@ -19,12 +19,11 @@
 #define _RTPS_SECURITY_SECURITYPLUGINFACTORY_H_
 
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
-#include <fastdds/rtps/security/accesscontrol/AccessControl.h>
-#include <fastdds/rtps/security/authentication/Authentication.h>
-#include <fastdds/rtps/security/cryptography/Cryptography.h>
-#include <fastdds/rtps/security/logging/Logging.h>
-
+#include <rtps/security/accesscontrol/AccessControl.h>
+#include <rtps/security/authentication/Authentication.h>
+#include <rtps/security/cryptography/Cryptography.h>
 #include <rtps/security/ISecurityPluginFactory.h>
+#include <rtps/security/logging/Logging.h>
 
 namespace eprosima {
 namespace fastrtps {

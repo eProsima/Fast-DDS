@@ -18,10 +18,10 @@
 #ifndef _SECURITY_AUTHENTICATION_PKIHANDSHAKEHANDLE_H_
 #define _SECURITY_AUTHENTICATION_PKIHANDSHAKEHANDLE_H_
 
-#include <security/authentication/PKIIdentityHandle.h>
-#include <fastdds/rtps/security/authentication/Handshake.h>
-#include <fastdds/rtps/security/common/SharedSecretHandle.h>
 #include <openssl/evp.h>
+#include <rtps/security/authentication/Handshake.h>
+#include <rtps/security/common/SharedSecretHandle.h>
+#include <security/authentication/PKIIdentityHandle.h>
 #include <string>
 
 namespace eprosima {

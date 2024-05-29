@@ -23,7 +23,7 @@
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 
-#include <fastdds/rtps/security/accesscontrol/AccessControl.h>
+#include <rtps/security/accesscontrol/AccessControl.h>
 #include <gmock/gmock.h>
 
 namespace eprosima {

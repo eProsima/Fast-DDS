@@ -62,7 +62,7 @@
 
 #if HAVE_SECURITY
 #include <fastdds/rtps/Endpoint.h>
-#include <fastdds/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
+#include <rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
 #include <rtps/security/SecurityManager.h>
 #include <rtps/security/SecurityPluginFactory.h>
 #endif // if HAVE_SECURITY

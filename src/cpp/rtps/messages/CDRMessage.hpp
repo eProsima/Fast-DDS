@@ -31,11 +31,14 @@
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/rtps/common/Locator.h>
 
-#include <fastdds/rtps/security/common/ParticipantGenericMessage.h>
+#include <rtps/security/common/ParticipantGenericMessage.h>
 
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
+namespace security {
+class ParticipantGenericMessage;
+} /* namespace security */
 
 /**
  * Namespace CDRMessage, contains inline methods to initialize CDRMessage_t and add or read different data types.

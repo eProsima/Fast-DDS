@@ -27,11 +27,10 @@
 #include <fastdds/core/policy/ParameterList.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
-#include <fastdds/rtps/security/logging/Logging.h>
 
+#include <rtps/security/logging/Logging.h>
 #include <rtps/messages/CDRMessage.hpp>
 #include <security/authentication/PKIIdentityHandle.h>
-
 
 #if OPENSSL_VERSION_NUMBER >= 0x10100000L
 #define IS_OPENSSL_1_1 1

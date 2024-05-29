@@ -18,10 +18,10 @@
 #ifndef _FASTDDS_RTPS_SECURITY_CRYPTOGRAPHY_CRYPTOGRAPHY_H_
 #define _FASTDDS_RTPS_SECURITY_CRYPTOGRAPHY_CRYPTOGRAPHY_H_
 
-#include <fastdds/rtps/security/cryptography/CryptoKeyExchange.h>
-#include <fastdds/rtps/security/cryptography/CryptoKeyFactory.h>
-#include <fastdds/rtps/security/cryptography/CryptoTransform.h>
-#include <fastdds/rtps/security/cryptography/CryptoTypes.h>
+#include <rtps/security/cryptography/CryptoKeyExchange.h>
+#include <rtps/security/cryptography/CryptoKeyFactory.h>
+#include <rtps/security/cryptography/CryptoTransform.h>
+#include <rtps/security/cryptography/CryptoTypes.h>
 
 namespace eprosima {
 namespace fastrtps {

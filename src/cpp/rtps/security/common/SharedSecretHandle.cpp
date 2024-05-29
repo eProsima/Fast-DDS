@@ -16,7 +16,7 @@
  * @file SharedSecretHandle.cpp
  */
 
-#include <fastdds/rtps/security/common/SharedSecretHandle.h>
+#include <rtps/security/common/SharedSecretHandle.h>
 
 using namespace eprosima::fastrtps::rtps::security;
 

@@ -30,9 +30,9 @@
 #include <fastdds/rtps/common/RemoteLocators.hpp>
 #include <fastdds/rtps/common/VendorId_t.hpp>
 #if HAVE_SECURITY
-#include <fastdds/rtps/security/accesscontrol/EndpointSecurityAttributes.h>
+#include <fastdds/rtps/attributes/EndpointSecurityAttributes.h>
 #endif // if HAVE_SECURITY
-#include <fastcdr/cdr/fixed_size_string.hpp>
+
 
 namespace eprosima {
 namespace fastrtps {
