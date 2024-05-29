@@ -31,6 +31,7 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
+class IDataSharingListener;
 class WriterProxyData;
 
 } // namespace rtps
@@ -79,9 +80,13 @@ public:
     uint64_t get_unread_count(
             bool mark_as_read) override;
 
-    virtual bool wait_for_unread_cache(
-            const eprosima::fastrtps::Duration_t& timeout) override;
+    bool wait_for_unread_cache(
+            const fastrtps::Duration_t& timeout) override;
 
+    bool is_sample_valid(
+            const void* data,
+            const fastrtps::rtps::GUID_t& writer,
+            const fastrtps::rtps::SequenceNumber_t& sn) const override;
     /**
      * Whether the reader accepts messages directed to unknown readers.
      *
@@ -102,6 +107,11 @@ public:
     fastrtps::Duration_t liveliness_lease_duration() const
     {
         return liveliness_lease_duration_;
+    }
+
+    const std::unique_ptr<fastrtps::rtps::IDataSharingListener>& datasharing_listener() const
+    {
+        return datasharing_listener_;
     }
 
     /**
@@ -188,6 +198,11 @@ protected:
     fastdds::dds::LivelinessQosPolicyKind liveliness_kind_;
     //! The liveliness lease duration of this reader
     fastrtps::Duration_t liveliness_lease_duration_;
+
+    //! Whether the writer is datasharing compatible or not
+    bool is_datasharing_compatible_ = false;
+    //! The listener for the datasharing notifications
+    std::unique_ptr<fastrtps::rtps::IDataSharingListener> datasharing_listener_;
 
     /*!
      * @brief Whether a history record may be removed.

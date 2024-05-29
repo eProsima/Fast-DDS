@@ -18,12 +18,20 @@
 
 #include <rtps/reader/BaseReader.hpp>
 
+#include <cassert>
+
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
+#include <fastdds/rtps/common/CacheChange.h>
+#include <fastdds/rtps/common/SequenceNumber.h>
+#include <fastdds/rtps/common/SerializedPayload.h>
+#include <fastdds/rtps/common/Time_t.h>
+#include <fastdds/rtps/common/Types.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
 
 #include <rtps/DataSharing/DataSharingListener.hpp>
 #include <rtps/DataSharing/DataSharingNotification.hpp>
+#include <rtps/DataSharing/DataSharingPayloadPool.hpp>
 #include <rtps/reader/ReaderHistoryState.hpp>
 #include <statistics/rtps/StatisticsBase.hpp>
 
@@ -142,6 +150,25 @@ bool BaseReader::wait_for_unread_cache(
     }
 
     return false;
+}
+
+bool BaseReader::is_sample_valid(
+        const void* data,
+        const fastrtps::rtps::GUID_t& writer,
+        const fastrtps::rtps::SequenceNumber_t& sn) const
+{
+    if (is_datasharing_compatible_ && datasharing_listener_->writer_is_matched(writer))
+    {
+        // Check if the payload is dirty
+        // Note the Payloads used in loans include a mandatory RTPS 2.3 extra header
+        if (!fastrtps::rtps::DataSharingPayloadPool::check_sequence_number(
+                    static_cast<const fastrtps::rtps::octet*>(data) - fastrtps::rtps::SerializedPayload_t::representation_header_size,
+                    sn))
+        {
+            return false;
+        }
+    }
+    return true;
 }
 
 #ifdef FASTDDS_STATISTICS

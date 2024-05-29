@@ -45,7 +45,6 @@ class WriterProxy;
 struct CacheChange_t;
 struct ReaderHistoryState;
 class WriterProxyData;
-class IDataSharingListener;
 
 /**
  * Class RTPSReader, manages the reception of data from its matched writers.
@@ -289,15 +288,10 @@ public:
      *
      * @return true if the sample is valid
      */
-    FASTDDS_EXPORTED_API bool is_sample_valid(
+    FASTDDS_EXPORTED_API virtual bool is_sample_valid(
             const void* data,
             const GUID_t& writer,
-            const SequenceNumber_t& sn) const;
-
-    const std::unique_ptr<IDataSharingListener>& datasharing_listener() const
-    {
-        return datasharing_listener_;
-    }
+            const SequenceNumber_t& sn) const = 0;
 
 #ifdef FASTDDS_STATISTICS
 
@@ -350,11 +344,6 @@ protected:
     EntityId_t m_trustedWriterEntityId;
     //!Expects Inline Qos.
     bool m_expectsInlineQos;
-
-    //! Whether the writer is datasharing compatible or not
-    bool is_datasharing_compatible_ = false;
-    //! The listener for the datasharing notifications
-    std::unique_ptr<IDataSharingListener> datasharing_listener_;
 
     eprosima::fastdds::rtps::IReaderDataFilter* data_filter_ = nullptr;
 

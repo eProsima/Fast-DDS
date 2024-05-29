@@ -169,25 +169,6 @@ bool RTPSReader::setListener(
     return true;
 }
 
-bool RTPSReader::is_sample_valid(
-        const void* data,
-        const GUID_t& writer,
-        const SequenceNumber_t& sn) const
-{
-    if (is_datasharing_compatible_ && datasharing_listener_->writer_is_matched(writer))
-    {
-        // Check if the payload is dirty
-        // Note the Payloads used in loans include a mandatory RTPS 2.3 extra header
-        if (!DataSharingPayloadPool::check_sequence_number(
-                    static_cast<const octet*>(data) - SerializedPayload_t::representation_header_size,
-                    sn))
-        {
-            return false;
-        }
-    }
-    return true;
-}
-
 } /* namespace rtps */
 } /* namespace fastrtps */
 } /* namespace eprosima */

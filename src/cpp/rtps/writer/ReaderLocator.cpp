@@ -25,6 +25,7 @@
 #include <fastdds/rtps/writer/RTPSWriter.h>
 
 #include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/reader/BaseReader.hpp>
 #include <rtps/DataSharing/DataSharingListener.hpp>
 #include <rtps/DataSharing/DataSharingNotifier.hpp>
 #include "rtps/RTPSDomainImpl.hpp"
@@ -227,7 +228,7 @@ void ReaderLocator::datasharing_notify()
 
     if (reader)
     {
-        reader->datasharing_listener()->notify(true);
+        static_cast<fastdds::rtps::BaseReader*>(reader)->datasharing_listener()->notify(true);
     }
     else
     {
