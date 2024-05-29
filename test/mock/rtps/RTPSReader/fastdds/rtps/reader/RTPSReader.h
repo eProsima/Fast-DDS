@@ -19,6 +19,9 @@
 #ifndef _FASTDDS_RTPS_READER_RTPSREADER_H_
 #define _FASTDDS_RTPS_READER_RTPSREADER_H_
 
+// Trick: this includes both RTPSReader and BaseReader
+#define RTPS_READER__BASEREADER_HPP
+
 #include <gmock/gmock.h>
 
 #include <fastdds/rtps/attributes/ReaderAttributes.h>

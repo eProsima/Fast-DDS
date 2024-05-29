@@ -1025,7 +1025,7 @@ public:
         // check if we are reentrying
         shared_lock<shared_mutex> _(endpoints_list_mutex);
 
-        for ( RTPSReader* pr : m_userReaderList)
+        for (fastdds::rtps::BaseReader* pr : m_userReaderList)
         {
             if (!f(*pr))
             {

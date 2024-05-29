@@ -39,6 +39,7 @@
 #include <rtps/builtin/discovery/participant/PDP.h>
 #include <rtps/network/utils/external_locators.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/reader/BaseReader.hpp>
 #include <rtps/RTPSDomainImpl.hpp>
 #if HAVE_SECURITY
 #include <rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
@@ -486,7 +487,7 @@ bool EDP::unpairWriterProxy(
 
     EPROSIMA_LOG_INFO(RTPS_EDP, writer_guid);
 
-    mp_RTPSParticipant->forEachUserReader([&, removed_by_lease](RTPSReader& r) -> bool
+    mp_RTPSParticipant->forEachUserReader([&, removed_by_lease](fastdds::rtps::BaseReader& r) -> bool
             {
                 if (r.matched_writer_remove(writer_guid, removed_by_lease))
                 {
@@ -1225,7 +1226,7 @@ bool EDP::pairing_writer_proxy_with_any_local_reader(
 
     EPROSIMA_LOG_INFO(RTPS_EDP, wdata->guid() << " in topic: \"" << wdata->topicName() << "\"");
 
-    mp_RTPSParticipant->forEachUserReader([&, wdata](RTPSReader& r) -> bool
+    mp_RTPSParticipant->forEachUserReader([&, wdata](fastdds::rtps::BaseReader& r) -> bool
             {
                 auto temp_reader_proxy_data = get_temporary_reader_proxies_pool().get();
                 GUID_t readerGUID = r.getGuid();
@@ -1312,7 +1313,7 @@ bool EDP::pairing_writer_proxy_with_local_reader(
 {
     EPROSIMA_LOG_INFO(RTPS_EDP, wdata.guid() << " in topic: \"" << wdata.topicName() << "\"");
 
-    mp_RTPSParticipant->forEachUserReader([&](RTPSReader& r) -> bool
+    mp_RTPSParticipant->forEachUserReader([&](fastdds::rtps::BaseReader& r) -> bool
             {
                 GUID_t readerGUID = r.getGuid();
 
@@ -1384,7 +1385,7 @@ bool EDP::pairing_remote_writer_with_local_reader_after_security(
     bool matched = false;
     bool found = false;
 
-    mp_RTPSParticipant->forEachUserReader([&](RTPSReader& r) -> bool
+    mp_RTPSParticipant->forEachUserReader([&](fastdds::rtps::BaseReader& r) -> bool
             {
                 GUID_t readerGUID = r.getGuid();
 
