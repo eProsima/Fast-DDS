@@ -118,14 +118,6 @@ void RTPSReader::init(
 
 RTPSReader::~RTPSReader()
 {
-    EPROSIMA_LOG_INFO(RTPS_READER, "Removing reader " << this->getGuid().entityId; );
-
-    for (auto it = mp_history->changesBegin(); it != mp_history->changesEnd(); ++it)
-    {
-        releaseCache(*it);
-    }
-
-    delete history_state_;
     mp_history->mp_reader = nullptr;
     mp_history->mp_mutex = nullptr;
 }

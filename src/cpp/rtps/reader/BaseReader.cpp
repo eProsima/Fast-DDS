@@ -18,6 +18,7 @@
 
 #include <rtps/reader/BaseReader.hpp>
 
+#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
 
@@ -68,6 +69,14 @@ BaseReader::BaseReader(
 
 BaseReader::~BaseReader()
 {
+    EPROSIMA_LOG_INFO(RTPS_READER, "Removing reader " << this->getGuid().entityId);
+
+    for (auto it = mp_history->changesBegin(); it != mp_history->changesEnd(); ++it)
+    {
+        releaseCache(*it);
+    }
+
+    delete history_state_;
 }
 
 uint64_t BaseReader::get_unread_count() const
