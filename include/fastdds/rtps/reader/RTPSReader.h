@@ -53,7 +53,6 @@ class IDataSharingListener;
  */
 class RTPSReader : public Endpoint
 {
-    friend class ReaderHistory;
 
 protected:
 
