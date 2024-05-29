@@ -26,13 +26,13 @@ namespace rtps {
 
 bool change_is_relevant_for_filter(
         const CacheChange& change,
-        const GUID& guid,
+        const GUID& reader_guid,
         const IReaderDataFilter* filter)
 {
     bool ret = true;
 
     // Only evaluate filter on ALIVE changes, as UNREGISTERED and DISPOSED are always relevant
-    if ((nullptr != filter) && (fastrtps::rtps::ALIVE == change.kind) && (!filter->is_relevant(change, guid)))
+    if ((nullptr != filter) && (fastrtps::rtps::ALIVE == change.kind) && (!filter->is_relevant(change, reader_guid)))
     {
         ret = false;
     }

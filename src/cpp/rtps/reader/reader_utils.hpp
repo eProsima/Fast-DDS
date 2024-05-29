@@ -35,14 +35,14 @@ using GUID = fastrtps::rtps::GUID_t;
  * @brief Check if a change is relevant for a reader.
  *
  * @param change The CacheChange_t to be evaluated.
- * @param reader_guid Remote reader GUID_t.
+ * @param reader_guid Reader's GUID_t.
  * @param filter The IReaderDataFilter to be used.
  *
  * @return true if relevant, false otherwise.
  */
 bool change_is_relevant_for_filter(
         const CacheChange& change,
-        const GUID& guid,
+        const GUID& reader_guid,
         const IReaderDataFilter* filter);
 
 } // namespace rtps
