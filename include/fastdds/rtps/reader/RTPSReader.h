@@ -173,13 +173,13 @@ public:
             CacheChange_t** change,
             WriterProxy** wp) = 0;
 
-    FASTDDS_EXPORTED_API bool wait_for_unread_cache(
-            const eprosima::fastrtps::Duration_t& timeout);
+    FASTDDS_EXPORTED_API virtual bool wait_for_unread_cache(
+            const eprosima::fastrtps::Duration_t& timeout) = 0;
 
-    FASTDDS_EXPORTED_API uint64_t get_unread_count() const;
+    FASTDDS_EXPORTED_API virtual uint64_t get_unread_count() const = 0;
 
-    FASTDDS_EXPORTED_API uint64_t get_unread_count(
-            bool mark_as_read);
+    FASTDDS_EXPORTED_API virtual uint64_t get_unread_count(
+            bool mark_as_read) = 0;
 
     /**
      * @return True if the reader expects Inline QOS.

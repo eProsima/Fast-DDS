@@ -73,6 +73,14 @@ public:
 
     virtual ~BaseReader();
 
+    uint64_t get_unread_count() const override;
+
+    uint64_t get_unread_count(
+            bool mark_as_read) override;
+
+    virtual bool wait_for_unread_cache(
+            const eprosima::fastrtps::Duration_t& timeout) override;
+
     /**
      * Whether the reader accepts messages directed to unknown readers.
      *

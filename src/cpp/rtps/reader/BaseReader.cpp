@@ -70,6 +70,62 @@ BaseReader::~BaseReader()
 {
 }
 
+uint64_t BaseReader::get_unread_count() const
+{
+    std::unique_lock<decltype(mp_mutex)> lock(mp_mutex);
+    return total_unread_;
+}
+
+uint64_t BaseReader::get_unread_count(
+        bool mark_as_read)
+{
+    std::unique_lock<decltype(mp_mutex)> lock(mp_mutex);
+    uint64_t ret_val = total_unread_;
+
+    if (mark_as_read)
+    {
+        for (auto it = mp_history->changesBegin(); 0 < total_unread_ && it != mp_history->changesEnd(); ++it)
+        {
+            fastrtps::rtps::CacheChange_t* change = *it;
+            if (!change->isRead && get_last_notified(change->writerGUID) >= change->sequenceNumber)
+            {
+                change->isRead = true;
+                assert(0 < total_unread_);
+                --total_unread_;
+            }
+        }
+        assert(0 == total_unread_);
+    }
+    return ret_val;
+}
+
+bool BaseReader::wait_for_unread_cache(
+        const eprosima::fastrtps::Duration_t& timeout)
+{
+    auto time_out = std::chrono::steady_clock::now() + std::chrono::seconds(timeout.seconds) +
+            std::chrono::nanoseconds(timeout.nanosec);
+
+#if HAVE_STRICT_REALTIME
+    std::unique_lock<decltype(mp_mutex)> lock(mp_mutex, std::defer_lock);
+    if (lock.try_lock_until(time_out))
+#else
+    std::unique_lock<decltype(mp_mutex)> lock(mp_mutex);
+#endif  // HAVE_STRICT_REALTIME
+    {
+        if (new_notification_cv_.wait_until(
+                    lock, time_out,
+                    [&]()
+                    {
+                        return total_unread_ > 0;
+                    }))
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 #ifdef FASTDDS_STATISTICS
 
 bool BaseReader::add_statistics_listener(
