@@ -64,6 +64,16 @@ protected:
 public:
 
     /**
+     * Whether the reader accepts messages directed to unknown readers.
+     *
+     * @return true if the reader accepts messages directed to unknown readers, false otherwise.
+     */
+    bool accept_messages_to_unknown_readers() const
+    {
+        return m_acceptMessagesToUnknownReaders;
+    }
+
+    /**
      * Processes a new DATA message. Previously the message must have been accepted by function acceptMsgDirectedTo.
      *
      * @param change Pointer to the CacheChange_t.

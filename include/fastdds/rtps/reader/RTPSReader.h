@@ -55,7 +55,6 @@ class RTPSReader : public Endpoint
 {
     friend class ReaderHistory;
     friend class RTPSParticipantImpl;
-    friend class MessageReceiver;
     friend class EDP;
     friend class WLP;
 
