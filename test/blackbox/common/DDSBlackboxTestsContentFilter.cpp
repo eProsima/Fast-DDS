@@ -640,31 +640,32 @@ TEST(DDSContentFilter, CorrectlyHandleAliasOtherHeader)
     EXPECT_NE(nullptr, filtered_topic);
 }
 
-/*
- * Regression test for https://eprosima.easyredmine.com/issues/20815
- * Check that the content filter is only applied to alive changes.
- * The test creates a reliable writer and a reader with a content filter that only accepts messages with a specific
- * string. After discovery, the writer sends 10 samples which pass the filer in 10 different instances, with the
- * particularity that after each write, the instance is unregistered.
- * The DATA(u) generated would not pass the filter if it was applied. To check that the filter is only applied to
- * ALIVE changes (not unregister or disposed), the test checks that the reader receives 10 valid samples (one per
- * sample sent) and 10 invalid samples (one per unregister). Furthermore, it also checks that no samples are lost.writer
+/**
+ * @brief TypeSupportBuilder for the PubSubReader and PubSubWriter
+ *
+ * This struct enables instantiation of a PubSubReader and PubSubWriter with a DynamicTypeSupport
+ * for a type equivalent to that of KeyedHelloWorld.idl.
+ * That and the fact that this builder sets the auto_fill_type_object flag to true allow for instance to create a
+ * PubSubReader with a content filter, which right now is not possible to do with the Fast DDS generated
+ * TypeSupport, as it does not contain the TypeObject code.
+ *
+ * To use it, do one of:
+ *   - PubSubReader<fastrtps::types::DynamicPubSubType, DynamicTypeSupportBuilder> reader;
+ *   - PubSubWriter<fastrtps::types::DynamicPubSubType, DynamicTypeSupportBuilder> writer;
+ *
+ * When using this builder, the PubSubWriter cannot be used directly to write data, as it is type aware and its
+ * methods receive a type_support::type&. This is a problem as, to call the native writer's API, they do
+ * (void*)&sample, and the DynamicTypeSupport::type is defined as DynamicDataPtr, so the previous cast results in
+ * a segmentation fault downstream. Instead, the native writer must be used directly, as follows:
+ *   1. DynamicData* data = static_cast<DynamicData*>(writer.get_type_support().create_data());
+ *   2. writer.get_native_writer().write(data, handle);
+ *   3. writer.get_type_support().delete_data(data);
  */
-TEST(DDSContentFilter, OnlyFilterAliveChanges)
+struct DynamicTypeSupportBuilder
 {
-    /* Create entity infrastructure */
-    // Create participant
-    auto dpf = DomainParticipantFactory::get_instance();
-    DomainId_t domain_id = static_cast<DomainId_t>(GET_PID() % 230);
-    auto participant = dpf->create_participant(domain_id, PARTICIPANT_QOS_DEFAULT);
-
-    /*
-     * Create a Dynamic type equivalent to that of KeyedHelloWorld.idl.
-     * We use a dynamic type because the Fast DDS generated TypeSupport does not contain the TypeObject code,
-     * which is necessary for the content filter to work; instead of regenerating all the types for a single
-     * test, we can leverage the DynamicType API to create the type and its TypeObject support.
+    /**
+     * Define the members ids of the struct for readability
      */
-    // Define the members ids of the struct for readability
     enum class KeyedHelloWorldMembers : fastrtps::types::MemberId
     {
         KEY = 0,
@@ -672,206 +673,175 @@ TEST(DDSContentFilter, OnlyFilterAliveChanges)
         MESSAGE = 2
     };
 
-    // Create the struct type builder
-    const std::string topic_type_name = "keyed_hello_world";
-    auto struct_builder(fastrtps::types::DynamicTypeBuilderFactory::get_instance()->create_struct_builder());
-    struct_builder->set_name(topic_type_name);
-
-    // Create the key member with the @key annotation
-    auto key_member_builder = fastrtps::types::DynamicTypeBuilderFactory::get_instance()->create_uint16_builder();
-    key_member_builder->apply_annotation(fastrtps::types::ANNOTATION_KEY_ID, "value", "true");
-    auto key_member = key_member_builder->build();
-
-    // Add members to the struct builder
-    struct_builder->add_member(static_cast<fastrtps::types::MemberId>(KeyedHelloWorldMembers::KEY), "key", key_member);
-    struct_builder->add_member(static_cast<fastrtps::types::MemberId>(KeyedHelloWorldMembers::INDEX), "index",
-            fastrtps::types::DynamicTypeBuilderFactory::get_instance()->create_uint16_type());
-    struct_builder->add_member(static_cast<fastrtps::types::MemberId>(KeyedHelloWorldMembers::MESSAGE), "message",
-            fastrtps::types::DynamicTypeBuilderFactory::get_instance()->create_string_type(128));
-
-    // Build the type
-    auto struct_type = struct_builder->build();
-
-    // Create type support
-    TypeSupport type(new fastrtps::types::DynamicPubSubType(struct_type));
-
-    // Set the autofill type object to true so that TypeObject is registered upon type registration
-    type->auto_fill_type_object(true);
-
-    // Register the type
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, type.register_type(participant));
-
-    // Create topic
-    auto topic = participant->create_topic("TestTopic", type->getName(), TOPIC_QOS_DEFAULT);
-    ASSERT_NE(nullptr, topic);
-
-    // Create content filtered topic
-    std::string expression = "index = 1";
-    auto filtered_topic = participant->create_contentfilteredtopic("FilteredTestTopic", topic, expression, {});
-    ASSERT_NE(nullptr, filtered_topic);
-
-    /* Discovery synchronization variable */
-    std::mutex discovery_mtx;
-    std::condition_variable discovery_cv;
-
-    /* Create reader */
-    // Custom DataReaderListener to count valid, invalid, and lost samples, and to monitor subscription matched status
-    class CustomReaderListener : public DataReaderListener
+    /**
+     * @brief Build the DynamicTypeSupport for the KeyedHelloWorld type
+     *
+     * @param[out] type_support The type support to be reset
+     */
+    static void build(
+            TypeSupport& type_support)
     {
-    public:
+        // Using statics here in combination with std::call_once to avoid rebuilding the type every time.
+        // As the DynamicTypes API is shared_ptr based, we don't need to delete these references manually.
+        static std::once_flag once_flag;
+        static DynamicTypeBuilder_ptr struct_builder;
+        static DynamicTypeBuilder_ptr key_member_builder;
+        static DynamicType_ptr key_member;
+        static DynamicType_ptr struct_type;
 
-        CustomReaderListener(
-                fastrtps::types::DynamicType_ptr type,
-                std::condition_variable& discovery_cv)
-            : valid_samples(0u)
-            , invalid_samples(0u)
-            , lost_samples(0u)
-            , matched(0u)
-            , type_(type)
-            , discovery_cv_(discovery_cv)
-        {
-        }
-
-        void on_data_available(
-                DataReader* reader) override
-        {
-            fastrtps::types::DynamicData* data;
-            data = fastrtps::types::DynamicDataFactory::get_instance()->create_data(type_);
-            SampleInfo info;
-
-            while (ReturnCode_t::RETCODE_OK == reader->take_next_sample(data, &info))
-            {
-                if (info.valid_data)
+        std::call_once(once_flag, [&]()
                 {
-                    ++valid_samples;
-                }
-                else
-                {
-                    ++invalid_samples;
-                }
-            }
-        }
+                    // Create the struct type builder
+                    const std::string topic_type_name = "keyed_hello_world";
+                    struct_builder = fastrtps::types::DynamicTypeBuilderFactory::get_instance()->create_struct_builder();
+                    struct_builder->set_name(topic_type_name);
 
-        void on_sample_lost(
-                DataReader*,
-                const SampleLostStatus& status) override
-        {
-            lost_samples = status.total_count;
-        }
+                    // Create the key member with the @key annotation
+                    key_member_builder = fastrtps::types::DynamicTypeBuilderFactory::get_instance()->create_uint16_builder();
+                    key_member_builder->apply_annotation(fastrtps::types::ANNOTATION_KEY_ID, "value", "true");
+                    key_member = key_member_builder->build();
 
-        void on_subscription_matched(
-                DataReader*,
-                const SubscriptionMatchedStatus& info) override
-        {
-            matched = info.current_count;
-            if (0 < matched)
-            {
-                discovery_cv_.notify_one();
-            }
-        }
+                    // Add members to the struct builder
+                    struct_builder->add_member(static_cast<fastrtps::types::MemberId>(KeyedHelloWorldMembers::KEY),
+                    "key", key_member);
+                    struct_builder->add_member(static_cast<fastrtps::types::MemberId>(KeyedHelloWorldMembers::INDEX),
+                    "index",
+                    fastrtps::types::DynamicTypeBuilderFactory::get_instance()->create_uint16_type());
+                    struct_builder->add_member(static_cast<fastrtps::types::MemberId>(KeyedHelloWorldMembers::MESSAGE),
+                    "message",
+                    fastrtps::types::DynamicTypeBuilderFactory::get_instance()->create_string_type(128));
 
-        uint8_t valid_samples;
-        uint8_t invalid_samples;
-        uint8_t lost_samples;
-        uint8_t matched;
-
-    private:
-
-        fastrtps::types::DynamicType_ptr type_;
-        std::condition_variable& discovery_cv_;
-    };
-
-    // Create subscriber
-    auto sub = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT, nullptr);
-    ASSERT_NE(nullptr, sub);
-
-    // Create DataReader
-    CustomReaderListener reader_listener(struct_type, discovery_cv);
-    DataReaderQos reader_qos;
-    reader_qos.history().depth = 2;                            // Each instance can hold a sample and the unregister
-    reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;  // Reliable for determinism
-
-    auto reader = sub->create_datareader(filtered_topic, reader_qos, &reader_listener);
-    ASSERT_NE(nullptr, reader);
-
-    /* Create writer */
-    // Custom DataWriterListener publication matched status
-    class CustomWriterListener : public DataWriterListener
-    {
-    public:
-
-        CustomWriterListener(
-                std::condition_variable& discovery_cv)
-            : matched(0u)
-            , discovery_cv_(discovery_cv)
-        {
-        }
-
-        void on_publication_matched(
-                DataWriter*,
-                const PublicationMatchedStatus& info) override
-        {
-            matched = info.current_count;
-            if (0 < matched)
-            {
-                discovery_cv_.notify_one();
-            }
-        }
-
-        uint8_t matched;
-
-    private:
-
-        std::condition_variable& discovery_cv_;
-    };
-
-    // Create publisher
-    auto pub = participant->create_publisher(PUBLISHER_QOS_DEFAULT, nullptr);
-    ASSERT_NE(nullptr, pub);
-
-    // Create DataWriter
-    CustomWriterListener writer_listener(discovery_cv);
-    DataWriterQos writer_qos;
-    writer_qos.history().depth = 2;                            // Each instance can hold a sample and the unregister
-    writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;  // Reliable for determinism
-
-    auto writer = pub->create_datawriter(topic, writer_qos, &writer_listener);
-    ASSERT_NE(nullptr, writer);
-
-    /* Wait for discovery */
-    {
-        std::unique_lock<std::mutex> lck(discovery_mtx);
-        discovery_cv.wait_for(lck, std::chrono::seconds(3), [&]()
-                {
-                    return (0 < writer_listener.matched) && (0 < reader_listener.matched);
+                    // Build the type
+                    struct_type = struct_builder->build();
                 });
 
-        ASSERT_GT(reader_listener.matched, 0);
-        ASSERT_GT(writer_listener.matched, 0);
+        // Create type support
+        type_support.reset(new fastrtps::types::DynamicPubSubType(struct_type));
+
+        // Set the autofill type object to true so that TypeObject is registered upon type registration
+        type_support->auto_fill_type_object(true);
     }
+
+};
+
+
+/**
+ * @brief PubSubReader specialization for using a DynamicPubSubType, to create a PubSubReader with content filtering,
+ * overriding postprocess_sample to count valid and invalid samples.
+ *
+ * @tparam TypeSupportBuilder TypeSupportBuilder to be used to create the TypeSupport.
+ */
+template<typename TypeSupportBuilder>
+class CFTDynamicPubSubReader : public PubSubReader<fastrtps::types::DynamicPubSubType, TypeSupportBuilder>
+{
+public:
+
+    /**
+     * @brief Construct a new CFTDynamicPubSubReader object
+     *
+     * @param topic_name Name of the topic to be used
+     * @param filter_expression Content filter expression
+     * @param expression_parameters Content filter expression parameters
+     */
+    CFTDynamicPubSubReader(
+            const std::string& topic_name,
+            const std::string& filter_expression,
+            const std::vector<std::string>& expression_parameters)
+        : PubSubReader<fastrtps::types::DynamicPubSubType, TypeSupportBuilder>(topic_name, filter_expression,
+                expression_parameters)
+    {
+    }
+
+    /**
+     * @brief Count of valid samples received
+     */
+    std::atomic<uint16_t> valid_samples{0};
+
+    /**
+     * @brief Count of invalid samples received
+     */
+    std::atomic<uint16_t> invalid_samples{0};
+
+private:
+
+    /**
+     * @brief Postprocess the received samples, counting valid and invalid ones
+     *
+     * @param sample Sample to be postprocessed
+     * @param info SampleInfo of the sample
+     */
+    void postprocess_sample(
+            const fastrtps::types::DynamicPubSubType::type& /* sample */,
+            const SampleInfo& info) override final
+    {
+        if (info.valid_data)
+        {
+            ++valid_samples;
+        }
+        else
+        {
+            ++invalid_samples;
+        }
+    }
+
+};
+
+/*
+ * Regression test for https://eprosima.easyredmine.com/issues/20815
+ * Check that the content filter is only applied to alive changes.
+ * The test creates a reliable writer and a reader with a content filter that only accepts messages with a specific
+ * string. After discovery, the writer sends 10 samples which pass the filter in 10 different instances, with the
+ * particularity that after each write, the instance is unregistered.
+ * The DATA(u) generated would not pass the filter if it was applied. To check that the filter is only applied to
+ * ALIVE changes (not unregister or disposed), the test checks that the reader receives 10 valid samples (one per
+ * sample sent) and 10 invalid samples (one per unregister). Furthermore, it also checks that no samples are lost.writer
+ */
+TEST(DDSContentFilter, OnlyFilterAliveChanges)
+{
+
+    /* Create reader with CFT */
+    std::string expression = "index = 1";
+    CFTDynamicPubSubReader<DynamicTypeSupportBuilder> reader("TestTopic", expression, {});
+    reader.reliability(RELIABLE_RELIABILITY_QOS).history_depth(2).init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    /* Create writer */
+    PubSubWriter<fastrtps::types::DynamicPubSubType, DynamicTypeSupportBuilder> writer("TestTopic");
+    writer.reliability(RELIABLE_RELIABILITY_QOS).history_depth(2).init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    /* Wait for discovery */
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     /* Send 10 samples, each on a different instance, unregistering instances after writing */
-    for (uint16_t i = 0; i < 10; ++i)
-    {
-        fastrtps::types::DynamicData* data;
-        data = fastrtps::types::DynamicDataFactory::get_instance()->create_data(struct_type);
-        data->set_uint16_value(i, static_cast<fastrtps::types::MemberId>(KeyedHelloWorldMembers::KEY));
-        data->set_uint16_value(1u, static_cast<fastrtps::types::MemberId>(KeyedHelloWorldMembers::INDEX));
+    const size_t num_samples = 10;
+    reader.startReception(num_samples);
 
-        InstanceHandle_t handle = writer->register_instance(data);
+    for (size_t i = 0; i < num_samples; ++i)
+    {
+        DynamicData* data = static_cast<DynamicData*>(writer.get_type_support().create_data());
+        data->set_uint16_value(i,
+                static_cast<fastrtps::types::MemberId>(DynamicTypeSupportBuilder::KeyedHelloWorldMembers::
+                        KEY));
+        data->set_uint16_value(1u,
+                static_cast<fastrtps::types::MemberId>(DynamicTypeSupportBuilder::KeyedHelloWorldMembers::
+                        INDEX));
+        std::cout << "Sent data" << std::endl;
+        InstanceHandle_t handle = writer.get_native_writer().register_instance(data);
         ASSERT_NE(HANDLE_NIL, handle);
-        ASSERT_EQ(ReturnCode_t::RETCODE_OK, writer->write(data, handle));
-        ASSERT_EQ(ReturnCode_t::RETCODE_OK, writer->unregister_instance(data, handle));
-        fastrtps::types::DynamicDataFactory::get_instance()->delete_data(data);
+        ASSERT_EQ(ReturnCode_t::RETCODE_OK, writer.get_native_writer().write(data, handle));
+        ASSERT_EQ(ReturnCode_t::RETCODE_OK, writer.get_native_writer().unregister_instance(data, handle));
+        writer.get_type_support().delete_data(data);
     }
 
-    // Wait until all samples are received
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, writer->wait_for_acknowledgments({3, 0}));
+    // Wait until all samples are acknowledged
+    writer.waitForAllAcked(std::chrono::seconds(3));
 
     /* Check that both samples and unregisters are received */
-    ASSERT_EQ(reader_listener.valid_samples, 10u);
-    ASSERT_EQ(reader_listener.invalid_samples, 10u);
-    ASSERT_EQ(reader_listener.lost_samples, 0u);
+    ASSERT_EQ(reader.valid_samples.load(), 10u);
+    ASSERT_EQ(reader.invalid_samples.load(), 10u);
+    ASSERT_EQ(reader.get_sample_lost_status().total_count, 0);
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P

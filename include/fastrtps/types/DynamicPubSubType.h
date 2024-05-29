@@ -45,6 +45,8 @@ protected:
 
 public:
 
+    using type = DynamicData_ptr;
+
     RTPS_DllAPI DynamicPubSubType();
 
     RTPS_DllAPI DynamicPubSubType(

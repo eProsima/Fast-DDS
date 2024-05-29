@@ -34,6 +34,7 @@
 #include <Windows.h>
 #endif // _MSC_VER
 
+#include <fastdds/dds/common/InstanceHandle.hpp>
 #include <fastdds/dds/core/condition/GuardCondition.hpp>
 #include <fastdds/dds/core/condition/StatusCondition.hpp>
 #include <fastdds/dds/core/condition/WaitSet.hpp>
@@ -48,11 +49,11 @@
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/rtps/flowcontrol/FlowControllerSchedulerPolicy.hpp>
+#include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
 #include <fastdds/rtps/transport/UDPTransportDescriptor.h>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
 #include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
-#include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
-#include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/xmlparser/XMLParser.h>
 #include <fastrtps/xmlparser/XMLTree.h>
@@ -63,7 +64,18 @@ using eprosima::fastdds::rtps::UDPTransportDescriptor;
 using eprosima::fastdds::rtps::UDPv4TransportDescriptor;
 using eprosima::fastdds::rtps::UDPv6TransportDescriptor;
 
-template<class TypeSupport>
+template<class T>
+struct PubSubWriterTypeSupportBuilder
+{
+    static void build(
+            eprosima::fastdds::dds::TypeSupport& typesupport)
+    {
+        return typesupport.reset(new T());
+    }
+
+};
+
+template<class TypeSupport, typename TypeSupportBuilder = PubSubWriterTypeSupportBuilder<TypeSupport>>
 class PubSubWriter
 {
     class ParticipantListener : public eprosima::fastdds::dds::DomainParticipantListener
@@ -384,7 +396,7 @@ public:
         {
             participant_guid_ = participant_->guid();
 
-            type_.reset(new type_support());
+            TypeSupportBuilder::build(type_);
 
             // Register type
             ASSERT_EQ(participant_->register_type(type_), ReturnCode_t::RETCODE_OK);
@@ -540,6 +552,14 @@ public:
     {
         default_send_print(msg);
         return datawriter_->write((void*)&msg);
+    }
+
+    ReturnCode_t send_sample(
+            type& msg,
+            const eprosima::fastdds::dds::InstanceHandle_t& instance_handle)
+    {
+        default_send_print(msg);
+        return datawriter_->write((void*)&msg, instance_handle);
     }
 
     void assert_liveliness()
