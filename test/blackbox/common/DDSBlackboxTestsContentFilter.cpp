@@ -13,18 +13,24 @@
 // limitations under the License.
 
 #include <atomic>
+#include <chrono>
+#include <cstdint>
+#include <string>
 #include <thread>
+#include <vector>
 
+#include <fastdds/dds/common/InstanceHandle.hpp>
 #include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
+#include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/common/CDRMessage_t.h>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
-#include <rtps/messages/CDRMessage.hpp>
 #include <gtest/gtest.h>
+#include <rtps/messages/CDRMessage.hpp>
 
 #include "../types/HelloWorldTypeObjectSupport.hpp"
 #include "../types/TestRegression3361PubSubTypes.h"
@@ -624,174 +630,77 @@ TEST(DDSContentFilter, CorrectlyHandleAliasOtherHeader)
  */
 TEST(DDSContentFilter, OnlyFilterAliveChanges)
 {
-    /* Create entity infrastructure */
-    // Create participant
-    auto dpf = DomainParticipantFactory::get_instance();
-    auto participant = dpf->create_participant(0, PARTICIPANT_QOS_DEFAULT);
-
-    // Create and register type
-    TypeSupport type(new KeyedHelloWorldPubSubType());
-    ASSERT_EQ(RETCODE_OK, type.register_type(participant));
-
-    // Create topic
-    auto topic = participant->create_topic("TestTopic", type->getName(), TOPIC_QOS_DEFAULT);
-    ASSERT_NE(nullptr, topic);
-
-    // Create content filtered topic
-    std::string expression = "index = 1";
-    auto filtered_topic = participant->create_contentfilteredtopic(
-        "FilteredTestTopic", topic, expression, {});
-    ASSERT_NE(nullptr, topic);
-
-    /* Discovery synchronization variable */
-    std::mutex discovery_mtx;
-    std::condition_variable discovery_cv;
-
-    /* Create reader */
-    // Custom DataReaderListener to count valid, invalid, and lost samples, and to monitor subscription matched status
-    class CustomReaderListener : public DataReaderListener
+    /* PuBSubReader class to check reception of UNREGISTER samples */
+    class CustomPubSubReader : public PubSubReader<KeyedHelloWorldPubSubType>
     {
     public:
 
-        CustomReaderListener(
-                std::condition_variable& discovery_cv)
-            : valid_samples(0u)
-            , invalid_samples(0u)
-            , lost_samples(0u)
-            , matched(0u)
-            , discovery_cv(discovery_cv)
+        CustomPubSubReader(
+                const std::string& topic_name,
+                const std::string& filter_expression,
+                const std::vector<std::string>& expression_parameters)
+            : PubSubReader(topic_name, filter_expression, expression_parameters)
         {
         }
 
-        void on_data_available(
-                DataReader* reader) override
-        {
-            KeyedHelloWorld data;
-            SampleInfo info;
+        std::atomic<uint16_t> valid_samples{0};
+        std::atomic<uint16_t> invalid_samples{0};
 
-            while (RETCODE_OK == reader->take_next_sample(&data, &info))
+    private:
+
+        void postprocess_sample(
+                const type& /* sample */,
+                const SampleInfo& info) override final
+        {
+            if (info.valid_data)
             {
-                if (info.valid_data)
-                {
-                    ++valid_samples;
-                }
-                else
-                {
-                    ++invalid_samples;
-                }
+                ++valid_samples;
+            }
+            else
+            {
+                ++invalid_samples;
             }
         }
 
-        void on_sample_lost(
-                DataReader*,
-                const SampleLostStatus& status) override
-        {
-            lost_samples = status.total_count;
-        }
-
-        void on_subscription_matched(
-                DataReader*,
-                const SubscriptionMatchedStatus& info) override
-        {
-            matched = info.current_count;
-            if (0 < matched)
-            {
-                discovery_cv.notify_one();
-            }
-        }
-
-        uint8_t valid_samples;
-        uint8_t invalid_samples;
-        uint8_t lost_samples;
-        uint8_t matched;
-        std::condition_variable& discovery_cv;
     };
 
-    // Create subscriber
-    auto sub = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT, nullptr);
-    ASSERT_NE(nullptr, sub);
-
-    // Create DataReader
-    CustomReaderListener reader_listener(discovery_cv);
-    DataReaderQos reader_qos;
-    reader_qos.history().depth = 2;                            // Each instance can hold a sample and the unregister
-    reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;  // Reliable for determinism
-
-    auto reader = sub->create_datareader(filtered_topic, reader_qos, &reader_listener);
-    ASSERT_NE(nullptr, reader);
+    /* Create reader with CFT */
+    std::string expression = "index = 1";
+    CustomPubSubReader reader("TestTopic", expression, {});
+    reader.reliability(RELIABLE_RELIABILITY_QOS).history_depth(2).init();
+    ASSERT_TRUE(reader.isInitialized());
 
     /* Create writer */
-    // Custom DataWriterListener publication matched status
-    class CustomWriterListener : public DataWriterListener
-    {
-    public:
-
-        CustomWriterListener(
-                std::condition_variable& discovery_cv)
-            : matched(0u)
-            , discovery_cv(discovery_cv)
-        {
-        }
-
-        void on_publication_matched(
-                DataWriter*,
-                const PublicationMatchedStatus& info) override
-        {
-            matched = info.current_count;
-            if (0 < matched)
-            {
-                discovery_cv.notify_one();
-            }
-        }
-
-        uint8_t matched;
-        std::condition_variable& discovery_cv;
-    };
-
-    // Create publisher
-    auto pub = participant->create_publisher(PUBLISHER_QOS_DEFAULT, nullptr);
-    ASSERT_NE(nullptr, pub);
-
-    // Create DataWriter
-    CustomWriterListener writer_listener(discovery_cv);
-    DataWriterQos writer_qos;
-    writer_qos.history().depth = 2;                            // Each instance can hold a sample and the unregister
-    writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;  // Reliable for determinism
-
-    auto writer = pub->create_datawriter(topic, writer_qos, &writer_listener);
-    ASSERT_NE(nullptr, writer);
+    PubSubWriter<KeyedHelloWorldPubSubType> writer("TestTopic");
+    writer.reliability(RELIABLE_RELIABILITY_QOS).history_depth(2).init();
+    ASSERT_TRUE(writer.isInitialized());
 
     /* Wait for discovery */
-    {
-        std::unique_lock<std::mutex> lck(discovery_mtx);
-        discovery_cv.wait_for(lck, std::chrono::seconds(3), [&]()
-                {
-                    return (0 < writer_listener.matched) && (0 < reader_listener.matched);
-                });
-
-        ASSERT_GT(reader_listener.matched, 0);
-        ASSERT_GT(writer_listener.matched, 0);
-    }
+    writer.wait_discovery();
+    reader.wait_discovery();
 
     /* Send 10 samples, each on a different instance, unregistering instances after writing */
-    for (uint16_t i = 0; i < 10; ++i)
+    const size_t num_samples = 10;
+    reader.startReception(num_samples);
+
+    for (size_t i = 0; i < num_samples; ++i)
     {
         KeyedHelloWorld data;
         data.key(i);
         data.index(1u);  // All samples pass the filter
-        InstanceHandle_t handle = writer->register_instance(&data);
+        InstanceHandle_t handle = writer.register_instance(data);
         ASSERT_NE(HANDLE_NIL, handle);
-        ASSERT_EQ(RETCODE_OK, writer->write(&data, handle));
-        ASSERT_EQ(RETCODE_OK, writer->unregister_instance(&data, handle));
+        ASSERT_EQ(RETCODE_OK, writer.send_sample(data, handle));
+        ASSERT_EQ(true, writer.unregister_instance(data, handle));
     }
 
-    // Wait until all samples are received
-    ASSERT_EQ(RETCODE_OK, writer->wait_for_acknowledgments({3, 0}));
+    // Wait until all samples are acknowledged
+    writer.waitForAllAcked(std::chrono::seconds(3));
 
     /* Check that both samples and unregisters are received */
-    ASSERT_EQ(reader_listener.valid_samples, 10);
-    ASSERT_EQ(reader_listener.invalid_samples, 10);
-    ASSERT_EQ(reader_listener.lost_samples, 0);
+    ASSERT_EQ(reader.valid_samples.load(), 10u);
+    ASSERT_EQ(reader.invalid_samples.load(), 10u);
+    ASSERT_EQ(reader.get_sample_lost_status().total_count, 0);
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P
