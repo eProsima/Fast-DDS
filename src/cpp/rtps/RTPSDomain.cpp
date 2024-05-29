@@ -778,7 +778,7 @@ RTPSParticipantImpl* RTPSDomainImpl::find_local_participant(
     return nullptr;
 }
 
-RTPSReader* RTPSDomainImpl::find_local_reader(
+fastdds::rtps::BaseReader* RTPSDomainImpl::find_local_reader(
         const GUID_t& reader_guid)
 {
     auto instance = get_instance();

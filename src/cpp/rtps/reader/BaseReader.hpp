@@ -59,9 +59,10 @@ protected:
             fastrtps::rtps::ReaderHistory* hist,
             fastrtps::rtps::ReaderListener* listen);
 
-    virtual ~BaseReader();
 
 public:
+
+    virtual ~BaseReader();
 
     /**
      * Whether the reader accepts messages directed to unknown readers.
