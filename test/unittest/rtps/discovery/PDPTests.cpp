@@ -37,6 +37,10 @@
 #include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
 #include <statistics/rtps/StatisticsBase.hpp>
 
+#if HAVE_SECURITY
+#include <rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
+#endif // if HAVE_SECURITY
+
 #if defined(__cplusplus_winrt)
 #define GET_PID GetCurrentProcessId
 #elif defined(_WIN32)

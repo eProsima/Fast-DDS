@@ -23,6 +23,10 @@
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
 
+#if HAVE_SECURITY
+#include <rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
+#endif // if HAVE_SECURITY
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
