@@ -26,6 +26,7 @@
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
@@ -40,8 +41,10 @@
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 #include <fastrtps/transport/test_UDPv4TransportDescriptor.h>
 #include <fastrtps/types/TypesBase.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 #include "BlackboxTests.hpp"
+#include "mock/BlackboxMockConsumer.h"
 #include "../api/dds-pim/CustomPayloadPool.hpp"
 #include "../api/dds-pim/PubSubReader.hpp"
 #include "../api/dds-pim/PubSubWriter.hpp"
@@ -55,6 +58,48 @@ namespace fastdds {
 namespace dds {
 
 using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
+
+/**
+ * This is a regression test for redmine issue #21060.
+ *
+ * It checks that when intraprocess delivery is set to full, there are no warnings in the desctructor of WriterProxy
+ * when deleting a participant.
+ */
+TEST(DDSBasic, WarningOnDelete)
+{
+    using namespace eprosima::fastrtps;
+    namespace dds = eprosima::fastdds::dds;
+    auto factory = dds::DomainParticipantFactory::get_instance();
+
+    // Set intraprocess delivery to full
+    LibrarySettingsAttributes library_settings;
+    library_settings = xmlparser::XMLProfileManager::library_settings();
+    auto old_library_settings = library_settings;
+    library_settings.intraprocess_delivery = INTRAPROCESS_FULL;
+    xmlparser::XMLProfileManager::library_settings(library_settings);
+
+    // Create participants
+    auto participant_1 = factory->create_participant(0, dds::PARTICIPANT_QOS_DEFAULT);
+    auto participant_2 = factory->create_participant(0, dds::PARTICIPANT_QOS_DEFAULT);
+
+    /* Set up log */
+    BlackboxMockConsumer* helper_consumer = new BlackboxMockConsumer();
+    Log::ClearConsumers();  // Remove default consumers
+    Log::RegisterConsumer(std::unique_ptr<LogConsumer>(helper_consumer)); // Registering a consumer transfer ownership
+    // Filter specific message
+    dds::Log::SetErrorStringFilter(std::regex(".*~WriterProxy.*"));
+    dds::Log::SetVerbosity(dds::Log::Warning);
+
+    factory->delete_participant(participant_1);
+    factory->delete_participant(participant_2);
+
+    dds::Log::Flush();
+    EXPECT_EQ(helper_consumer->ConsumedEntries().size(), 0u);
+    helper_consumer->clear_entries();
+
+    // Restore library settings
+    xmlparser::XMLProfileManager::library_settings(old_library_settings);
+}
 
 /**
  * This test checks whether it is safe to delete not enabled DDS entities *
