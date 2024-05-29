@@ -3,8 +3,6 @@ names:
         cmake-args:
             - "-DBUILD_SHARED_LIBS=ON"
             - "-DSECURITY=ON"
-            - "-DTHIRDPARTY_Asio=FORCE"
-            - "-DTHIRDPARTY_TinyXML2=FORCE"
             - "-DTHIRDPARTY_UPDATE=OFF"
     fastdds-docs:
         cmake-args:
