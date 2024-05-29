@@ -65,8 +65,15 @@ public:
             size_t size,
             asio::error_code& ec) override;
 
+    // Throwing asio calls
     asio::ip::tcp::endpoint remote_endpoint() const override;
     asio::ip::tcp::endpoint local_endpoint() const override;
+
+    // Non-throwing asio calls
+    asio::ip::tcp::endpoint remote_endpoint(
+            asio::error_code& ec) const override;
+    asio::ip::tcp::endpoint local_endpoint(
+            asio::error_code& ec) const override;
 
     void set_options(
             const TCPTransportDescriptor* options) override;
