@@ -13,13 +13,15 @@
 // limitations under the License.
 
 /**
- * @file PersistentWriter.h
+ * @file PersistentWriter.hpp
  */
-#ifndef _FASTDDS_RTPS_PERSISTENTWRITER_H_
-#define _FASTDDS_RTPS_PERSISTENTWRITER_H_
+
+#ifndef RTPS_WRITER__PERSISTENTWRITER_HPP
+#define RTPS_WRITER__PERSISTENTWRITER_HPP
+
+#include <string>
 
 #include <fastdds/rtps/writer/RTPSWriter.h>
-#include <string>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
@@ -77,4 +79,4 @@ private:
 } // namespace eprosima
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#endif /* _FASTDDS_RTPS_PERSISTENTWRITER_H_ */
+#endif /* RTPS_WRITER__PERSISTENTWRITER_HPP */

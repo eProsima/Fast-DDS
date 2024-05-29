@@ -23,7 +23,6 @@
 #include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
 
-
 #include <rtps/builtin/discovery/endpoint/EDPServer.hpp>
 #include <rtps/builtin/discovery/participant/PDPServer.hpp>
 #include <rtps/writer/StatefulWriter.hpp>
