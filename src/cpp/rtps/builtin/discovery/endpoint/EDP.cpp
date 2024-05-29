@@ -853,7 +853,7 @@ bool EDP::pairingReader(
             if (valid)
             {
 #if HAVE_SECURITY
-                if (!mp_RTPSParticipant->security_manager().discovered_writer(R->m_guid, (*pit)->m_guid,
+                if (!mp_RTPSParticipant->security_manager().discovered_writer(reader_guid, (*pit)->m_guid,
                         *wdatait, R->getAttributes().security_attributes()))
                 {
                     EPROSIMA_LOG_ERROR(RTPS_EDP, "Security manager returns an error for reader " << reader_guid);
@@ -862,7 +862,7 @@ bool EDP::pairingReader(
                 if (R->matched_writer_add(*wdatait))
                 {
                     EPROSIMA_LOG_INFO(RTPS_EDP_MATCH,
-                            "WP:" << wdatait->guid() << " match R:" << R->getGuid() << ". RLoc:" <<
+                            "WP:" << wdatait->guid() << " match R:" << reader_guid << ". RLoc:" <<
                             wdatait->remote_locators());
                     //MATCHED AND ADDED CORRECTLY:
                     if (R->getListener() != nullptr)
