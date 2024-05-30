@@ -799,9 +799,9 @@ bool StatefulReader::processDataFragMsg(
                     bool has_to_notify = false;
                     if (fastdds::dds::NOT_REJECTED != rejection_reason)
                     {
-                        if (getListener())
+                        if (get_listener())
                         {
-                            getListener()->on_sample_rejected(this, rejection_reason, work_change);
+                            get_listener()->on_sample_rejected(this, rejection_reason, work_change);
                         }
 
                         /* Special case: rejected by REJECTED_BY_INSTANCES_LIMIT should never be received again.
@@ -864,9 +864,9 @@ bool StatefulReader::processHeartbeatMsg(
 
             if (0 < current_sample_lost)
             {
-                if (getListener() != nullptr)
+                if (get_listener() != nullptr)
                 {
-                    getListener()->on_sample_lost(this, current_sample_lost);
+                    get_listener()->on_sample_lost(this, current_sample_lost);
                 }
             }
 
@@ -1102,7 +1102,7 @@ bool StatefulReader::change_received(
                         // initialized using this SequenceNumber_t. Note that on a SERVER the own DATA(p) may be in any
                         // position within the WriterHistory preventing effective data exchange.
                         update_last_notified(a_change->writerGUID, SequenceNumber_t(0, 1));
-                        auto listener = getListener();
+                        auto listener = get_listener();
                         if (listener != nullptr)
                         {
                             bool notify_single = false;
@@ -1182,9 +1182,9 @@ bool StatefulReader::change_received(
     {
         if (fastdds::dds::NOT_REJECTED != rejection_reason)
         {
-            if (getListener() && (a_change->is_fully_assembled() || (a_change->contains_first_fragment())))
+            if (get_listener() && (a_change->is_fully_assembled() || (a_change->contains_first_fragment())))
             {
-                getListener()->on_sample_rejected(this, rejection_reason, a_change);
+                get_listener()->on_sample_rejected(this, rejection_reason, a_change);
             }
 
             /* Special case: rejected by REJECTED_BY_INSTANCES_LIMIT should never be received again.
@@ -1236,7 +1236,7 @@ void StatefulReader::NotifyChanges(
     }
 
     // Notify listener if new data is available
-    auto listener = getListener();
+    auto listener = get_listener();
     if (new_data_available && (nullptr != listener))
     {
         bool notify_individual = false;
@@ -1301,7 +1301,7 @@ ResourceEvent& StatefulReader::getEventResource() const
     return mp_RTPSParticipant->getEventResource();
 }
 
-CacheChange_t* StatefulReader::nextUntakenCache()
+CacheChange_t* StatefulReader::next_untaken_cache()
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     if (!is_alive_)
@@ -1344,7 +1344,7 @@ CacheChange_t* StatefulReader::nextUntakenCache()
 }
 
 // TODO Porque elimina aqui y no cuando hay unpairing
-CacheChange_t* StatefulReader::nextUnreadCache()
+CacheChange_t* StatefulReader::next_unread_cache()
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     if (!is_alive_)
@@ -1411,7 +1411,7 @@ bool StatefulReader::updateTimes(
     return true;
 }
 
-bool StatefulReader::isInCleanState()
+bool StatefulReader::is_in_clean_state()
 {
     std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
 

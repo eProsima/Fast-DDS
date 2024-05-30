@@ -282,7 +282,7 @@ void TypeLookupReplyListener::onNewCacheChangeAdded(
     {
         // Log a warning and remove the change from the history
         EPROSIMA_LOG_WARNING(TL_REPLY_READER, "Received data from a bad endpoint.");
-        reader->getHistory()->remove_change(change);
+        reader->get_history()->remove_change(change);
         return;
     }
 
@@ -310,7 +310,7 @@ void TypeLookupReplyListener::onNewCacheChangeAdded(
     }
 
     // Remove the processed cache change from the history
-    reader->getHistory()->remove_change(change);
+    reader->get_history()->remove_change(change);
 }
 
 void TypeLookupReplyListener::onWriterChangeReceivedByAll(

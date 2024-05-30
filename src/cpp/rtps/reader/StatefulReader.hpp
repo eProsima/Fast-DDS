@@ -195,9 +195,9 @@ public:
      */
     ResourceEvent& getEventResource() const;
 
-    CacheChange_t* nextUnreadCache() override;
+    CacheChange_t* next_unread_cache() override;
 
-    CacheChange_t* nextUntakenCache() override;
+    CacheChange_t* next_untaken_cache() override;
 
     /**
      * Update the times parameters of the Reader.
@@ -231,7 +231,7 @@ public:
      * its WriterProxies are up to date.
      * @return There is a clean state with all Writers.
      */
-    bool isInCleanState() override;
+    bool is_in_clean_state() override;
 
     /**
      * Sends an acknack message from this reader.

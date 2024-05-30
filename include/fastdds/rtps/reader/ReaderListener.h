@@ -80,7 +80,7 @@ public:
      * @param change Pointer to the CacheChange_t. This is a const pointer to const data
      * to indicate that the user should not dispose of this data himself.
      * To remove the data call the remove_change method of the ReaderHistory.
-     * reader->getHistory()->remove_change((CacheChange_t*)change).
+     * reader->get_history()->remove_change((CacheChange_t*)change).
      */
     virtual void onNewCacheChangeAdded(
             RTPSReader* reader,

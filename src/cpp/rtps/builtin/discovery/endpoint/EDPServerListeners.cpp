@@ -67,7 +67,7 @@ void EDPServerPUBListener::onNewCacheChangeAdded(
     // Get BaseReader
     BaseReader* base_reader = BaseReader::downcast(reader);
     // Get EDP publications' reader history
-    ReaderHistory* reader_history = base_reader->getHistory();
+    ReaderHistory* reader_history = base_reader->get_history();
 
     // Related_sample_identity could be lost in message delivered, so we set as sample_identity
     // An empty related_sample_identity could lead into an empty sample_identity when resending this msg
@@ -216,7 +216,7 @@ void EDPServerSUBListener::onNewCacheChangeAdded(
     // Get BaseReader
     BaseReader* base_reader = BaseReader::downcast(reader);
     // Get EDP subscriptions' reader history
-    ReaderHistory* reader_history = base_reader->getHistory();
+    ReaderHistory* reader_history = base_reader->get_history();
 
     // DATA(r) case: new reader or updated information about an existing reader
     if (change->kind == ALIVE)

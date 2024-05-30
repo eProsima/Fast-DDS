@@ -120,7 +120,7 @@ public:
             ReaderListener* listen = nullptr)
     {
         reader_->setHistory(history);
-        reader_->setListener(listen);
+        reader_->set_listener(listen);
         return reader_;
     }
 
@@ -132,7 +132,7 @@ public:
             ReaderListener* listen = nullptr)
     {
         reader_->setHistory(history);
-        reader_->setListener(listen);
+        reader_->set_listener(listen);
         return reader_;
     }
 
@@ -145,7 +145,7 @@ public:
             ReaderListener* listen = nullptr)
     {
         reader_->setHistory(history);
-        reader_->setListener(listen);
+        reader_->set_listener(listen);
         return reader_;
     }
 

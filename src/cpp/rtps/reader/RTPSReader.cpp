@@ -114,12 +114,12 @@ RTPSReader::~RTPSReader()
     mp_history->mp_mutex = nullptr;
 }
 
-ReaderListener* RTPSReader::getListener() const
+ReaderListener* RTPSReader::get_listener() const
 {
     return mp_listener;
 }
 
-bool RTPSReader::setListener(
+bool RTPSReader::set_listener(
         ReaderListener* target)
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);

@@ -1926,7 +1926,7 @@ void SecurityManager::ParticipantStatelessMessageListener::onNewCacheChangeAdded
 {
     manager_.process_participant_stateless_message(change);
 
-    ReaderHistory* history = reader->getHistory();
+    ReaderHistory* history = reader->get_history();
     assert(history);
     history->remove_change(const_cast<CacheChange_t*>(change));
 }
@@ -1937,7 +1937,7 @@ void SecurityManager::ParticipantVolatileMessageListener::onNewCacheChangeAdded(
 {
     manager_.process_participant_volatile_message_secure(change);
 
-    ReaderHistory* history = reader->getHistory();
+    ReaderHistory* history = reader->get_history();
     assert(history);
     history->remove_change(const_cast<CacheChange_t*>(change));
 }

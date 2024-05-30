@@ -72,12 +72,12 @@ public:
         return m_guid;
     }
 
-    ReaderListener* getListener() const
+    ReaderListener* get_listener() const
     {
         return listener_;
     }
 
-    bool setListener(
+    bool set_listener(
             ReaderListener* listener)
     {
         listener_ = listener;
@@ -105,13 +105,13 @@ public:
     // *INDENT-OFF* Uncrustify makes a mess with MOCK_METHOD macros
     MOCK_METHOD1(change_removed_by_history, bool(CacheChange_t* change));
 
-    MOCK_METHOD0(getHistory_mock, ReaderHistory* ());
+    MOCK_METHOD0(get_history_mock, ReaderHistory* ());
 
     MOCK_METHOD2(reserveCache, bool (CacheChange_t** a_change, uint32_t dataCdrSerializedSize));
 
     MOCK_METHOD1(releaseCache, void (CacheChange_t* a_change));
 
-    MOCK_METHOD0(expectsInlineQos, bool());
+    MOCK_METHOD0(expects_inline_qos, bool());
 
     MOCK_METHOD1(wait_for_unread_cache, bool (const eprosima::fastrtps::Duration_t& timeout));
 
@@ -165,17 +165,17 @@ public:
         return true;
     }
 
-    virtual CacheChange_t* nextUnreadCache()
+    virtual CacheChange_t* next_unread_cache()
     {
         return nullptr;
     }
 
-    virtual CacheChange_t* nextUntakenCache()
+    virtual CacheChange_t* next_untaken_cache()
     {
         return nullptr;
     }
 
-    virtual bool isInCleanState()
+    virtual bool is_in_clean_state()
     {
         return true;
     }
@@ -188,9 +188,9 @@ public:
         history_ = history;
     }
 
-    ReaderHistory* getHistory()
+    ReaderHistory* get_history()
     {
-        getHistory_mock();
+        get_history_mock();
         return history_;
     }
 

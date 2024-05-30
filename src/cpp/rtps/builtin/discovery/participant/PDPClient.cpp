@@ -699,7 +699,7 @@ bool PDPClient::is_all_servers_PDPdata_updated()
     // Assess all server DATA has been received
     auto endpoints = static_cast<fastdds::rtps::DiscoveryServerPDPEndpoints*>(builtin_endpoints_.get());
     assert(endpoints->reader.reader_);
-    return endpoints->reader.reader_->isInCleanState();
+    return endpoints->reader.reader_->is_in_clean_state();
 }
 
 void PDPClient::announceParticipantState(

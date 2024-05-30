@@ -69,7 +69,7 @@ void WLPListener::onNewCacheChangeAdded(
         return;
     }
     //Check the serializedPayload:
-    auto history = reader->getHistory();
+    auto history = reader->get_history();
     for (auto ch = history->changesBegin(); ch != history->changesEnd(); ++ch)
     {
         if ((*ch)->instanceHandle == change->instanceHandle && (*ch)->sequenceNumber < change->sequenceNumber)

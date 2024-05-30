@@ -299,7 +299,7 @@ ReturnCode_t DataReaderImpl::enable()
     {
         EPROSIMA_LOG_ERROR(DATA_READER, "Could not register reader on discovery protocols");
 
-        reader_->setListener(nullptr);
+        reader_->set_listener(nullptr);
         stop();
 
         return RETCODE_ERROR;
@@ -313,7 +313,7 @@ void DataReaderImpl::disable()
     set_listener(nullptr);
     if (reader_ != nullptr)
     {
-        reader_->setListener(nullptr);
+        reader_->set_listener(nullptr);
     }
 }
 

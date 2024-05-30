@@ -364,7 +364,7 @@ bool StatelessReader::change_received(
 
             on_data_notify(guid, change->sourceTimestamp);
 
-            auto listener = getListener();
+            auto listener = get_listener();
             if (listener != nullptr)
             {
                 if (SequenceNumber_t{0, 0} != previous_seq)
@@ -429,7 +429,7 @@ void StatelessReader::remove_changes_from(
     }
 }
 
-CacheChange_t* StatelessReader::nextUntakenCache()
+CacheChange_t* StatelessReader::next_untaken_cache()
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     CacheChange_t* change = nullptr;
@@ -441,7 +441,7 @@ CacheChange_t* StatelessReader::nextUntakenCache()
     return nullptr;
 }
 
-CacheChange_t* StatelessReader::nextUnreadCache()
+CacheChange_t* StatelessReader::next_unread_cache()
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     bool found = false;
@@ -720,7 +720,7 @@ bool StatelessReader::processDataFragMsg(
                         previous_seq = update_last_notified(writer_guid, updated_seq);
 
                         // Notify lost samples
-                        auto listener = getListener();
+                        auto listener = get_listener();
                         if (listener != nullptr)
                         {
                             if (SequenceNumber_t{ 0, 0 } != previous_seq)

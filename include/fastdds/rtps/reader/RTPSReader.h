@@ -128,13 +128,13 @@ public:
      * its WriterProxies are up to date.
      * @return There is a clean state with all Writers.
      */
-    FASTDDS_EXPORTED_API virtual bool isInCleanState() = 0;
+    FASTDDS_EXPORTED_API virtual bool is_in_clean_state() = 0;
 
     /**
      * Get the associated listener, secondary attached Listener in case it is of compound type
      * @return Pointer to the associated reader listener.
      */
-    FASTDDS_EXPORTED_API ReaderListener* getListener() const;
+    FASTDDS_EXPORTED_API ReaderListener* get_listener() const;
 
     /**
      * Switch the ReaderListener kind for the Reader.
@@ -144,20 +144,20 @@ public:
      * @param target Pointed to ReaderLister to attach
      * @return True is correctly set.
      */
-    FASTDDS_EXPORTED_API bool setListener(
+    FASTDDS_EXPORTED_API bool set_listener(
             ReaderListener* target);
 
     /**
      * Read the next unread CacheChange_t from the history
      * @return A pointer to the first unread CacheChange_t from the history.
      */
-    FASTDDS_EXPORTED_API virtual CacheChange_t* nextUnreadCache() = 0;
+    FASTDDS_EXPORTED_API virtual CacheChange_t* next_unread_cache() = 0;
 
     /**
      * Get the next CacheChange_t from the history to take.
      * @return A pointer to the first CacheChange_t in the history.
      */
-    FASTDDS_EXPORTED_API virtual CacheChange_t* nextUntakenCache() = 0;
+    FASTDDS_EXPORTED_API virtual CacheChange_t* next_untaken_cache() = 0;
 
     FASTDDS_EXPORTED_API virtual bool wait_for_unread_cache(
             const eprosima::fastrtps::Duration_t& timeout) = 0;
@@ -170,13 +170,13 @@ public:
     /**
      * @return True if the reader expects Inline QOS.
      */
-    FASTDDS_EXPORTED_API inline bool expectsInlineQos()
+    FASTDDS_EXPORTED_API inline bool expects_inline_qos()
     {
         return m_expectsInlineQos;
     }
 
     //! Returns a pointer to the associated History.
-    FASTDDS_EXPORTED_API inline ReaderHistory* getHistory()
+    FASTDDS_EXPORTED_API inline ReaderHistory* get_history()
     {
         return mp_history;
     }

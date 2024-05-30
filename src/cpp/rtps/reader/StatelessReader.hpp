@@ -164,9 +164,9 @@ public:
     bool change_received(
             CacheChange_t* a_change);
 
-    CacheChange_t* nextUnreadCache() override;
+    CacheChange_t* next_unread_cache() override;
 
-    CacheChange_t* nextUntakenCache() override;
+    CacheChange_t* next_untaken_cache() override;
 
     /**
      * Get the number of matched writers
@@ -182,7 +182,7 @@ public:
      * StatelessReader allways return true;
      * @return true
      */
-    bool isInCleanState() override
+    bool is_in_clean_state() override
     {
         return true;
     }

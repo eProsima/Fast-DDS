@@ -93,6 +93,6 @@ void TestReaderSocket::MyListener::onNewCacheChangeAdded(
         const CacheChange_t* const change)
 {
     printf("Received: %s\n", change->serializedPayload.data);
-    reader->getHistory()->remove_change((CacheChange_t*)change);
+    reader->get_history()->remove_change((CacheChange_t*)change);
     m_received++;
 }

@@ -712,7 +712,7 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks)
                 EXPECT_TRUE(reader_->wait_for_unread_cache(Duration_t(5, 0)));
 
                 // receive the sample
-                CacheChange_t* reader_change = reader_->nextUntakenCache();
+                CacheChange_t* reader_change = reader_->next_untaken_cache();
                 ASSERT_NE(nullptr, reader_change);
 
                 // wait for acknowledgement
@@ -838,7 +838,7 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks_fragmented)
     EXPECT_TRUE(reader_->wait_for_unread_cache(Duration_t(10, 0)));
 
     // receive the sample
-    CacheChange_t* reader_change = reader_->nextUntakenCache();
+    CacheChange_t* reader_change = reader_->next_untaken_cache();
     ASSERT_NE(nullptr, reader_change);
 
     // wait for acknowledgement
@@ -990,7 +990,7 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks_no_enabled_writer
     EXPECT_TRUE(reader_->wait_for_unread_cache(Duration_t(5, 0)));
 
     // receive the sample
-    CacheChange_t* reader_change = reader_->nextUntakenCache();
+    CacheChange_t* reader_change = reader_->next_untaken_cache();
     ASSERT_NE(nullptr, reader_change);
 
     // wait for acknowledgement
@@ -1079,7 +1079,7 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_gap_callback)
     EXPECT_TRUE(reader_->wait_for_unread_cache(Duration_t(5, 0)));
 
     // receive the second sample
-    CacheChange_t* reader_change = reader_->nextUntakenCache();
+    CacheChange_t* reader_change = reader_->next_untaken_cache();
     ASSERT_NE(nullptr, reader_change);
 
     // wait for acknowledgement

@@ -601,7 +601,7 @@ private:
                 cv_.notify_one();
             }
 
-            eprosima::fastrtps::rtps::ReaderHistory* history = reader->getHistory();
+            eprosima::fastrtps::rtps::ReaderHistory* history = reader->get_history();
             EXPECT_EQ(history, history_);
 
             history->remove_change((eprosima::fastrtps::rtps::CacheChange_t*)change);
