@@ -160,6 +160,31 @@ public:
             fastrtps::rtps::WriterProxy* prox = nullptr) = 0;
 
     /**
+     * Called just before a change is going to be deserialized.
+     * @param [in]  change            Pointer to the change being accessed.
+     * @param [out] writer            Writer proxy the @c change belongs to.
+     * @param [out] is_future_change  Whether the change is in the future (i.e. there are
+     *                                earlier unreceived changes from the same writer).
+     *
+     * @return Whether the change is still valid or not.
+     */
+    virtual bool begin_sample_access_nts(
+            fastrtps::rtps::CacheChange_t* change,
+            fastrtps::rtps::WriterProxy*& writer,
+            bool& is_future_change) = 0;
+
+    /**
+     * Called after the change has been deserialized.
+     * @param [in] change        Pointer to the change being accessed.
+     * @param [in] writer        Writer proxy the @c change belongs to.
+     * @param [in] mark_as_read  Whether the @c change should be marked as read or not.
+     */
+    virtual void end_sample_access_nts(
+            fastrtps::rtps::CacheChange_t* change,
+            fastrtps::rtps::WriterProxy*& writer,
+            bool mark_as_read) = 0;
+
+    /**
      * @brief A method to update the liveliness changed status of the reader
      * @param writer The writer changing liveliness, specified by its guid
      * @param alive_change The change requested for alive count. Should be -1, 0 or +1

@@ -38,6 +38,7 @@
 #include <fastdds/rtps/common/CacheChange.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
 
+#include <rtps/reader/BaseReader.hpp>
 #include <rtps/reader/WriterProxy.h>
 #include <rtps/DataSharing/DataSharingPayloadPool.hpp>
 
@@ -119,7 +120,7 @@ struct ReadTakeCommand
                 WriterProxy* wp = nullptr;
                 bool is_future_change = false;
                 bool remove_change = false;
-                if (reader_->begin_sample_access_nts(change, wp, is_future_change))
+                if (rtps::BaseReader::downcast(reader_)->begin_sample_access_nts(change, wp, is_future_change))
                 {
                     //Check if the payload is dirty
                     remove_change = !check_datasharing_validity(change, data_values_.has_ownership());
@@ -146,7 +147,7 @@ struct ReadTakeCommand
                     ReturnCode_t previous_return_value = return_value_;
                     bool added = add_sample(*it, remove_change);
                     history_.change_was_processed_nts(change, added);
-                    reader_->end_sample_access_nts(change, wp, added);
+                    rtps::BaseReader::downcast(reader_)->end_sample_access_nts(change, wp, added);
 
                     // Check if the payload is dirty
                     if (added && !check_datasharing_validity(change, data_values_.has_ownership()))

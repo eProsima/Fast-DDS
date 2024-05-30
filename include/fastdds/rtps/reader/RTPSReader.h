@@ -40,7 +40,6 @@ namespace rtps {
 
 // Forward declarations
 class ReaderListener;
-class WriterProxy;
 struct CacheChange_t;
 class WriterProxyData;
 
@@ -194,42 +193,6 @@ public:
     {
         m_acceptMessagesFromUnkownWriters = enable;
     }
-
-    /**
-     * Called just before a change is going to be deserialized.
-     * @param [in]  change            Pointer to the change being accessed.
-     * @param [out] wp                Writer proxy the @c change belongs to.
-     * @param [out] is_future_change  Whether the change is in the future (i.e. there are
-     *                                earlier unreceived changes from the same writer).
-     *
-     * @return Whether the change is still valid or not.
-     */
-    virtual bool begin_sample_access_nts(
-            CacheChange_t* change,
-            WriterProxy*& wp,
-            bool& is_future_change) = 0;
-
-    /**
-     * Called after the change has been deserialized.
-     * @param [in] change        Pointer to the change being accessed.
-     * @param [in] wp            Writer proxy the @c change belongs to.
-     * @param [in] mark_as_read  Whether the @c change should be marked as read or not.
-     */
-    virtual void end_sample_access_nts(
-            CacheChange_t* change,
-            WriterProxy*& wp,
-            bool mark_as_read) = 0;
-
-    /**
-     * Called when the user has retrieved a change from the history.
-     * @param change Pointer to the change to ACK
-     * @param writer Writer proxy of the \c change.
-     * @param mark_as_read Whether the \c change should be marked as read or not
-     */
-    virtual void change_read_by_user(
-            CacheChange_t* change,
-            WriterProxy* writer,
-            bool mark_as_read = true) = 0;
 
     /**
      * Checks whether the sample is still valid or is corrupted.

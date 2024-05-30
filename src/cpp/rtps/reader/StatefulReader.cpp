@@ -1431,16 +1431,16 @@ bool StatefulReader::isInCleanState()
 
 bool StatefulReader::begin_sample_access_nts(
         CacheChange_t* change,
-        WriterProxy*& wp,
+        WriterProxy*& writer,
         bool& is_future_change)
 {
     const GUID_t& writer_guid = change->writerGUID;
     is_future_change = false;
 
-    if (matched_writer_lookup(writer_guid, &wp))
+    if (matched_writer_lookup(writer_guid, &writer))
     {
         SequenceNumber_t seq;
-        seq = wp->available_changes_max();
+        seq = writer->available_changes_max();
         if (seq < change->sequenceNumber)
         {
             is_future_change = true;
@@ -1452,15 +1452,7 @@ bool StatefulReader::begin_sample_access_nts(
 
 void StatefulReader::end_sample_access_nts(
         CacheChange_t* change,
-        WriterProxy*& wp,
-        bool mark_as_read)
-{
-    change_read_by_user(change, wp, mark_as_read);
-}
-
-void StatefulReader::change_read_by_user(
-        CacheChange_t* change,
-        WriterProxy* writer,
+        WriterProxy*& writer,
         bool mark_as_read)
 {
     assert(!writer || change->writerGUID == writer->guid());

@@ -280,7 +280,7 @@ public:
     /**
      * Called just before a change is going to be deserialized.
      * @param [in]  change            Pointer to the change being accessed.
-     * @param [out] wp                Writer proxy the @c change belongs to.
+     * @param [out] writer            Writer proxy the @c change belongs to.
      * @param [out] is_future_change  Whether the change is in the future (i.e. there are
      *                                earlier unreceived changes from the same writer).
      *
@@ -288,30 +288,19 @@ public:
      */
     bool begin_sample_access_nts(
             CacheChange_t* change,
-            WriterProxy*& wp,
+            WriterProxy*& writer,
             bool& is_future_change) override;
 
     /**
      * Called after the change has been deserialized.
      * @param [in] change        Pointer to the change being accessed.
-     * @param [in] wp            Writer proxy the @c change belongs to.
+     * @param [in] writer        Writer proxy the @c change belongs to.
      * @param [in] mark_as_read  Whether the @c change should be marked as read or not.
      */
     void end_sample_access_nts(
             CacheChange_t* change,
-            WriterProxy*& wp,
+            WriterProxy*& writer,
             bool mark_as_read) override;
-
-    /**
-     * Called when the user has retrieved a change from the history.
-     * @param change Pointer to the change to ACK
-     * @param writer Writer proxy of the \c change.
-     * @param mark_as_read Whether the \c change should be marked as read or not
-     */
-    void change_read_by_user(
-            CacheChange_t* change,
-            WriterProxy* writer,
-            bool mark_as_read = true) override;
 
 #ifdef FASTDDS_STATISTICS
     bool get_connections(

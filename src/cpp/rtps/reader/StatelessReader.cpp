@@ -484,7 +484,7 @@ bool StatelessReader::change_removed_by_history(
 
 bool StatelessReader::begin_sample_access_nts(
         CacheChange_t* /*change*/,
-        WriterProxy*& /*wp*/,
+        WriterProxy*& /*writer*/,
         bool& is_future_change)
 {
     is_future_change = false;
@@ -493,15 +493,7 @@ bool StatelessReader::begin_sample_access_nts(
 
 void StatelessReader::end_sample_access_nts(
         CacheChange_t* change,
-        WriterProxy*& wp,
-        bool mark_as_read)
-{
-    change_read_by_user(change, wp, mark_as_read);
-}
-
-void StatelessReader::change_read_by_user(
-        CacheChange_t* change,
-        WriterProxy* /*writer*/,
+        WriterProxy*& /*writer*/,
         bool mark_as_read)
 {
     // Mark change as read
@@ -513,7 +505,6 @@ void StatelessReader::change_read_by_user(
             --total_unread_;
         }
     }
-
 }
 
 #ifdef FASTDDS_STATISTICS
