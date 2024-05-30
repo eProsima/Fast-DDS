@@ -20,7 +20,7 @@
 #define _FASTDDS_RTPS_EDP_H_
 #include <gmock/gmock.h>
 
-#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <rtps/messages/CDRMessage.hpp>

@@ -13,10 +13,10 @@
 // limitations under the License.
 
 /**
- * @file ParticipantProxyData.h
+ * @file ParticipantProxyData.hpp
  */
-#ifndef _FASTDDS_RTPS_BUILTIN_DATA_PARTICIPANTPROXYDATA_H_
-#define _FASTDDS_RTPS_BUILTIN_DATA_PARTICIPANTPROXYDATA_H_
+#ifndef _FASTDDS_RTPS_BUILTIN_DATA_PARTICIPANTPROXYDATA_HPP_
+#define _FASTDDS_RTPS_BUILTIN_DATA_PARTICIPANTPROXYDATA_HPP_
 
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
 #include <fastdds/rtps/common/CDRMessage_t.h>
@@ -81,4 +81,4 @@ public:
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif // _FASTDDS_RTPS_BUILTIN_DATA_PARTICIPANTPROXYDATA_H_
+#endif // _FASTDDS_RTPS_BUILTIN_DATA_PARTICIPANTPROXYDATA_HPP_
