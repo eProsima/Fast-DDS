@@ -108,6 +108,13 @@ public:
             const GUID_t& writer_guid) = 0;
 
     /**
+     * Assert the liveliness of a matched writer.
+     * @param writer GUID of the writer to assert.
+     */
+    FASTDDS_EXPORTED_API virtual void assert_writer_liveliness(
+            const GUID_t& writer) = 0;
+
+    /**
      * Method to indicate the reader that some change has been removed due to HistoryQos requirements.
      * @param change Pointer to the CacheChange_t.
      * @param prox Pointer to the WriterProxy.
@@ -221,13 +228,6 @@ public:
      * @return There is a clean state with all Writers.
      */
     virtual bool isInCleanState() = 0;
-
-    /**
-     * Assert the liveliness of a matched writer.
-     * @param writer GUID of the writer to assert.
-     */
-    virtual void assert_writer_liveliness(
-            const GUID_t& writer) = 0;
 
     /**
      * Called just before a change is going to be deserialized.
