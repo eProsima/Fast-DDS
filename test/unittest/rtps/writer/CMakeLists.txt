@@ -38,6 +38,7 @@ add_executable(ReaderProxyTests ${WRITERPROXYTESTS_SOURCE})
 target_compile_definitions(ReaderProxyTests PRIVATE
     BOOST_ASIO_STANDALONE
     ASIO_STANDALONE
+    $<$<BOOL:${MSVC}>:NOMINMAX> # avoid conflict with std::min & std::max in visual studio
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
