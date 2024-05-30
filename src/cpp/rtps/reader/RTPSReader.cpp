@@ -46,10 +46,10 @@ RTPSReader::RTPSReader(
         ReaderHistory* hist,
         ReaderListener* rlisten)
     : Endpoint(pimpl, guid, att.endpoint)
-    , mp_history(hist)
-    , mp_listener(rlisten)
-    , m_acceptMessagesFromUnkownWriters(false)
-    , m_expectsInlineQos(att.expectsInlineQos)
+    , history_(hist)
+    , listener_(rlisten)
+    , accept_messages_from_unkown_writers_(false)
+    , expects_inline_qos_(att.expectsInlineQos)
 {
     PoolConfig cfg = PoolConfig::from_history_attributes(hist->m_att);
     std::shared_ptr<IChangePool> change_pool;
@@ -82,10 +82,10 @@ RTPSReader::RTPSReader(
         ReaderHistory* hist,
         ReaderListener* rlisten)
     : Endpoint(pimpl, guid, att.endpoint)
-    , mp_history(hist)
-    , mp_listener(rlisten)
-    , m_acceptMessagesFromUnkownWriters(false)
-    , m_expectsInlineQos(att.expectsInlineQos)
+    , history_(hist)
+    , listener_(rlisten)
+    , accept_messages_from_unkown_writers_(false)
+    , expects_inline_qos_(att.expectsInlineQos)
 {
     init(payload_pool, change_pool);
 }
@@ -97,33 +97,33 @@ void RTPSReader::init(
     payload_pool_ = payload_pool;
     change_pool_ = change_pool;
     fixed_payload_size_ = 0;
-    if (mp_history->m_att.memoryPolicy == PREALLOCATED_MEMORY_MODE)
+    if (history_->m_att.memoryPolicy == PREALLOCATED_MEMORY_MODE)
     {
-        fixed_payload_size_ = mp_history->m_att.payloadMaxSize;
+        fixed_payload_size_ = history_->m_att.payloadMaxSize;
     }
 
-    mp_history->mp_reader = this;
-    mp_history->mp_mutex = &mp_mutex;
+    history_->mp_reader = this;
+    history_->mp_mutex = &mp_mutex;
 
     EPROSIMA_LOG_INFO(RTPS_READER, "RTPSReader created correctly");
 }
 
 RTPSReader::~RTPSReader()
 {
-    mp_history->mp_reader = nullptr;
-    mp_history->mp_mutex = nullptr;
+    history_->mp_reader = nullptr;
+    history_->mp_mutex = nullptr;
 }
 
 ReaderListener* RTPSReader::get_listener() const
 {
-    return mp_listener;
+    return listener_;
 }
 
 bool RTPSReader::set_listener(
         ReaderListener* target)
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
-    mp_listener = target;
+    listener_ = target;
     return true;
 }
 

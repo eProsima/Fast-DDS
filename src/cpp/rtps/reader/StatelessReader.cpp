@@ -99,7 +99,7 @@ bool StatelessReader::matched_writer_add(
 
     {
         std::unique_lock<RecursiveTimedMutex> guard(mp_mutex);
-        listener = mp_listener;
+        listener = listener_;
 
         for (RemoteWriterInfo_t& writer : matched_writers_)
         {
@@ -110,7 +110,7 @@ bool StatelessReader::matched_writer_add(
                 if (EXCLUSIVE_OWNERSHIP_QOS == m_att.ownershipKind &&
                         writer.ownership_strength != wdata.m_qos.m_ownershipStrength.value)
                 {
-                    mp_history->writer_update_its_ownership_strength_nts(
+                    history_->writer_update_its_ownership_strength_nts(
                         writer.guid, wdata.m_qos.m_ownershipStrength.value);
                 }
                 writer.ownership_strength = wdata.m_qos.m_ownershipStrength.value;
@@ -150,7 +150,7 @@ bool StatelessReader::matched_writer_add(
         {
             if (datasharing_listener_->add_datasharing_writer(wdata.guid(),
                     m_att.durabilityKind == VOLATILE,
-                    mp_history->m_att.maximumReservedCaches))
+                    history_->m_att.maximumReservedCaches))
             {
                 EPROSIMA_LOG_INFO(RTPS_READER, "Writer Proxy " << wdata.guid() << " added to " << this->m_guid.entityId
                                                                << " with data sharing");
@@ -178,7 +178,7 @@ bool StatelessReader::matched_writer_add(
 
         add_persistence_guid(info.guid, info.persistence_guid);
 
-        m_acceptMessagesFromUnkownWriters = false;
+        accept_messages_from_unkown_writers_ = false;
 
         // Intraprocess manages durability itself
         if (is_datasharing && !is_same_process && m_att.durabilityKind != VOLATILE)
@@ -257,7 +257,7 @@ bool StatelessReader::matched_writer_remove(
         std::unique_lock<RecursiveTimedMutex> guard(mp_mutex);
 
         //Remove cachechanges belonging to the unmatched writer
-        mp_history->writer_unmatched(writer_guid, get_last_notified(writer_guid));
+        history_->writer_unmatched(writer_guid, get_last_notified(writer_guid));
 
         ResourceLimitedVector<RemoteWriterInfo_t>::iterator it;
         for (it = matched_writers_.begin(); it != matched_writers_.end(); ++it)
@@ -275,10 +275,10 @@ bool StatelessReader::matched_writer_remove(
 
                 remove_persistence_guid(it->guid, it->persistence_guid, removed_by_lease);
                 matched_writers_.erase(it);
-                if (nullptr != mp_listener)
+                if (nullptr != listener_)
                 {
                     // call the listener without lock
-                    ReaderListener* listener = mp_listener;
+                    ReaderListener* listener = listener_;
                     guard.unlock();
                     listener->on_writer_discovery(this, WriterDiscoveryInfo::REMOVED_WRITER, writer_guid, nullptr);
                 }
@@ -348,7 +348,7 @@ bool StatelessReader::change_received(
             change->reader_info.writer_ownership_strength = (std::numeric_limits<uint32_t>::max)();
         }
 
-        if (mp_history->received_change(change, 0))
+        if (history_->received_change(change, 0))
         {
             auto payload_length = change->serializedPayload.length;
             auto guid = change->writerGUID;
@@ -406,8 +406,8 @@ void StatelessReader::remove_changes_from(
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     std::vector<CacheChange_t*> toremove;
-    for (std::vector<CacheChange_t*>::iterator it = mp_history->changesBegin();
-            it != mp_history->changesEnd(); ++it)
+    for (std::vector<CacheChange_t*>::iterator it = history_->changesBegin();
+            it != history_->changesEnd(); ++it)
     {
         if ((*it)->writerGUID == writerGUID)
         {
@@ -425,7 +425,7 @@ void StatelessReader::remove_changes_from(
             (*it)->serializedPayload.data = nullptr;
             (*it)->payload_owner(nullptr);
         }
-        mp_history->remove_change(*it);
+        history_->remove_change(*it);
     }
 }
 
@@ -433,7 +433,7 @@ CacheChange_t* StatelessReader::next_untaken_cache()
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     CacheChange_t* change = nullptr;
-    if (mp_history->get_min_change(&change))
+    if (history_->get_min_change(&change))
     {
         return change;
     }
@@ -445,8 +445,8 @@ CacheChange_t* StatelessReader::next_unread_cache()
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     bool found = false;
-    std::vector<CacheChange_t*>::iterator it = mp_history->changesBegin();
-    while (it != mp_history->changesEnd())
+    std::vector<CacheChange_t*>::iterator it = history_->changesBegin();
+    while (it != history_->changesEnd())
     {
         if ((*it)->isRead)
         {
@@ -572,7 +572,7 @@ bool StatelessReader::processDataMsg(
         if (!thereIsUpperRecordOf(change->writerGUID, change->sequenceNumber))
         {
             bool will_never_be_accepted = false;
-            if (!mp_history->can_change_be_added_nts(change->writerGUID, change->serializedPayload.length, 0,
+            if (!history_->can_change_be_added_nts(change->writerGUID, change->serializedPayload.length, 0,
                     will_never_be_accepted))
             {
                 if (will_never_be_accepted)
@@ -699,7 +699,7 @@ bool StatelessReader::processDataFragMsg(
                 }
 
                 bool will_never_be_accepted = false;
-                if (!mp_history->can_change_be_added_nts(writer_guid, sampleSize, 0, will_never_be_accepted))
+                if (!history_->can_change_be_added_nts(writer_guid, sampleSize, 0, will_never_be_accepted))
                 {
                     if (will_never_be_accepted)
                     {
@@ -855,7 +855,7 @@ bool StatelessReader::acceptMsgFrom(
 {
     if (change_kind == ChangeKind_t::ALIVE)
     {
-        if (m_acceptMessagesFromUnkownWriters)
+        if (accept_messages_from_unkown_writers_)
         {
             return true;
         }

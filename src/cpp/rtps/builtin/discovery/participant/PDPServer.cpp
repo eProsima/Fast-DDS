@@ -1919,7 +1919,7 @@ bool PDPServer::process_backup_restore_queue(
     //                 else
     //                 {
     //                     ddb::from_json(json_change, *change_aux);
-    //                     mp_listener->onNewCacheChangeAdded(endpoints->reader.reader_, change_aux);
+    //                     listener_->onNewCacheChangeAdded(endpoints->reader.reader_, change_aux);
     //                 }
 
     //             }
@@ -1963,7 +1963,7 @@ bool PDPServer::process_backup_restore_queue(
     //                 else
     //                 {
     //                     ddb::from_json(json_change, *change_aux);
-    //                     mp_listener->onNewCacheChangeAdded(endpoints->reader.reader_, change_aux);
+    //                     listener_->onNewCacheChangeAdded(endpoints->reader.reader_, change_aux);
     //                 }
 
     //             }

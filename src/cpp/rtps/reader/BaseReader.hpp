@@ -115,7 +115,7 @@ public:
     void setTrustedWriter(
             const fastrtps::rtps::EntityId_t& writer)
     {
-        m_acceptMessagesFromUnkownWriters = false;
+        accept_messages_from_unkown_writers_ = false;
         m_trustedWriterEntityId = writer;
     }
 

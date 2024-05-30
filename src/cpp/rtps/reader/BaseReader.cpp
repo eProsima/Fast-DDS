@@ -90,7 +90,7 @@ BaseReader::~BaseReader()
 {
     EPROSIMA_LOG_INFO(RTPS_READER, "Removing reader " << this->getGuid().entityId);
 
-    for (auto it = mp_history->changesBegin(); it != mp_history->changesEnd(); ++it)
+    for (auto it = history_->changesBegin(); it != history_->changesEnd(); ++it)
     {
         releaseCache(*it);
     }
@@ -112,7 +112,7 @@ uint64_t BaseReader::get_unread_count(
 
     if (mark_as_read)
     {
-        for (auto it = mp_history->changesBegin(); 0 < total_unread_ && it != mp_history->changesEnd(); ++it)
+        for (auto it = history_->changesBegin(); 0 < total_unread_ && it != history_->changesEnd(); ++it)
         {
             fastrtps::rtps::CacheChange_t* change = *it;
             if (!change->isRead && get_last_notified(change->writerGUID) >= change->sequenceNumber)
@@ -240,9 +240,9 @@ void BaseReader::update_liveliness_changed_status(
     liveliness_changed_status_.not_alive_count_change += not_alive_change;
     liveliness_changed_status_.last_publication_handle = writer;
 
-    if (nullptr != mp_listener)
+    if (nullptr != listener_)
     {
-        mp_listener->on_liveliness_changed(this, liveliness_changed_status_);
+        listener_->on_liveliness_changed(this, liveliness_changed_status_);
 
         liveliness_changed_status_.alive_count_change = 0;
         liveliness_changed_status_.not_alive_count_change = 0;
@@ -385,7 +385,7 @@ fastrtps::rtps::History::const_iterator BaseReader::findCacheInFragmentedProcess
         fastrtps::rtps::CacheChange_t** change,
         fastrtps::rtps::History::const_iterator hint) const
 {
-    fastrtps::rtps::History::const_iterator ret_val = mp_history->get_change_nts(sequence_number, writer_guid, change, hint);
+    fastrtps::rtps::History::const_iterator ret_val = history_->get_change_nts(sequence_number, writer_guid, change, hint);
 
     if (nullptr != *change && (*change)->is_fully_assembled())
     {

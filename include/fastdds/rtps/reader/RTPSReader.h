@@ -172,13 +172,13 @@ public:
      */
     FASTDDS_EXPORTED_API inline bool expects_inline_qos()
     {
-        return m_expectsInlineQos;
+        return expects_inline_qos_;
     }
 
     //! Returns a pointer to the associated History.
     FASTDDS_EXPORTED_API inline ReaderHistory* get_history()
     {
-        return mp_history;
+        return history_;
     }
 
     //! @return The content filter associated to this reader.
@@ -200,7 +200,7 @@ public:
     FASTDDS_EXPORTED_API inline void enableMessagesFromUnkownWriters(
             bool enable)
     {
-        m_acceptMessagesFromUnkownWriters = enable;
+        accept_messages_from_unkown_writers_ = enable;
     }
 
     /**
@@ -259,13 +259,13 @@ public:
 protected:
 
     //!ReaderHistory
-    ReaderHistory* mp_history;
+    ReaderHistory* history_;
     //!Listener
-    ReaderListener* mp_listener;
+    ReaderListener* listener_;
     //!Accept msg from unknown writers (BE-true,RE-false)
-    bool m_acceptMessagesFromUnkownWriters;
+    bool accept_messages_from_unkown_writers_;
     //!Expects Inline Qos.
-    bool m_expectsInlineQos;
+    bool expects_inline_qos_;
 
     eprosima::fastdds::rtps::IReaderDataFilter* data_filter_ = nullptr;
 
