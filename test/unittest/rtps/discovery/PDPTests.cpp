@@ -64,7 +64,8 @@ class TesterPDPEndpoints : public fastdds::rtps::PDPEndpoints
 
     fastrtps::rtps::BuiltinEndpointSet_t builtin_endpoints() const override
     {
-        return fastdds::rtps::DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER | fastdds::rtps::DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR;
+        return fastdds::rtps::DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER |
+               fastdds::rtps::DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR;
     }
 
     const std::unique_ptr<fastrtps::rtps::ReaderListener>& main_listener() const override

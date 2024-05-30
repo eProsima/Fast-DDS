@@ -46,7 +46,7 @@ struct ParticipantDiscoveryInfo
         REMOVED_PARTICIPANT,
         DROPPED_PARTICIPANT,
         IGNORED_PARTICIPANT
-    };
+    }
 
     ParticipantDiscoveryInfo(
             const ParticipantProxyData& data)

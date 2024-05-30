@@ -119,22 +119,27 @@ void PDPSimple::initializeParticipantProxyData(
                         use_PublicationReaderANDSubscriptionWriter)
         {
             participant_data->m_availableBuiltinEndpoints |= fastdds::rtps::DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR;
-            participant_data->m_availableBuiltinEndpoints |= fastdds::rtps::DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;
+            participant_data->m_availableBuiltinEndpoints |=
+                    fastdds::rtps::DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;
         }
 
 #if HAVE_SECURITY
         if (getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP.
                         enable_builtin_secure_publications_writer_and_subscriptions_reader)
         {
-            participant_data->m_availableBuiltinEndpoints |= fastdds::rtps::DISC_BUILTIN_ENDPOINT_PUBLICATION_SECURE_ANNOUNCER;
-            participant_data->m_availableBuiltinEndpoints |= fastdds::rtps::DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_SECURE_DETECTOR;
+            participant_data->m_availableBuiltinEndpoints |=
+                    fastdds::rtps::DISC_BUILTIN_ENDPOINT_PUBLICATION_SECURE_ANNOUNCER;
+            participant_data->m_availableBuiltinEndpoints |=
+                    fastdds::rtps::DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_SECURE_DETECTOR;
         }
 
         if (getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP.
                         enable_builtin_secure_subscriptions_writer_and_publications_reader)
         {
-            participant_data->m_availableBuiltinEndpoints |= fastdds::rtps::DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_SECURE_ANNOUNCER;
-            participant_data->m_availableBuiltinEndpoints |= fastdds::rtps::DISC_BUILTIN_ENDPOINT_PUBLICATION_SECURE_DETECTOR;
+            participant_data->m_availableBuiltinEndpoints |=
+                    fastdds::rtps::DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_SECURE_ANNOUNCER;
+            participant_data->m_availableBuiltinEndpoints |=
+                    fastdds::rtps::DISC_BUILTIN_ENDPOINT_PUBLICATION_SECURE_DETECTOR;
         }
 #endif // if HAVE_SECURITY
     }

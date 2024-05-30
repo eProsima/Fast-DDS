@@ -242,22 +242,30 @@ void PDP::initializeParticipantProxyData(
 
     if (attributes.builtin.use_WriterLivelinessProtocol)
     {
-        participant_data->m_availableBuiltinEndpoints |= fastdds::rtps::BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_WRITER;
-        participant_data->m_availableBuiltinEndpoints |= fastdds::rtps::BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_READER;
+        participant_data->m_availableBuiltinEndpoints |=
+                fastdds::rtps::BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_WRITER;
+        participant_data->m_availableBuiltinEndpoints |=
+                fastdds::rtps::BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_READER;
 
 #if HAVE_SECURITY
         if (mp_RTPSParticipant->is_secure())
         {
-            participant_data->m_availableBuiltinEndpoints |= fastdds::rtps::BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_SECURE_DATA_WRITER;
-            participant_data->m_availableBuiltinEndpoints |= fastdds::rtps::BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_SECURE_DATA_READER;
+            participant_data->m_availableBuiltinEndpoints |=
+                    fastdds::rtps::BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_SECURE_DATA_WRITER;
+            participant_data->m_availableBuiltinEndpoints |=
+                    fastdds::rtps::BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_SECURE_DATA_READER;
         }
 #endif // if HAVE_SECURITY
     }
-    participant_data->m_availableBuiltinEndpoints |= fastdds::rtps::BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REQUEST_DATA_READER;
-    participant_data->m_availableBuiltinEndpoints |= fastdds::rtps::BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REPLY_DATA_WRITER;
+    participant_data->m_availableBuiltinEndpoints |=
+            fastdds::rtps::BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REQUEST_DATA_READER;
+    participant_data->m_availableBuiltinEndpoints |=
+            fastdds::rtps::BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REPLY_DATA_WRITER;
 
-    participant_data->m_availableBuiltinEndpoints |= fastdds::rtps::BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REQUEST_DATA_WRITER;
-    participant_data->m_availableBuiltinEndpoints |= fastdds::rtps::BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REPLY_DATA_READER;
+    participant_data->m_availableBuiltinEndpoints |=
+            fastdds::rtps::BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REQUEST_DATA_WRITER;
+    participant_data->m_availableBuiltinEndpoints |=
+            fastdds::rtps::BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REPLY_DATA_READER;
 
 #if HAVE_SECURITY
     if (mp_RTPSParticipant->is_secure())
