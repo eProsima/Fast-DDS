@@ -2018,7 +2018,7 @@ TEST(LivelinessTests, correct_liveliness_state_one_writer_multiple_readers)
     for (size_t i = 0; i < num_readers; i++)
     {
         // Create Subscribers and readers, one for each writer
-        reader.init_subscriber(i);
+        reader.init_subscriber(static_cast<unsigned int>(i));
     }
 
     // Create writers
