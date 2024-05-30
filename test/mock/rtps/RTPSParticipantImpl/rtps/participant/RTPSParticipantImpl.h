@@ -428,7 +428,7 @@ private:
 
     NetworkFactory network_factory_ {attr_};
 
-    ResourceEvent events_;
+    ::testing::NiceMock<ResourceEvent> events_;
 
     std::map<GUID_t, Endpoint*> endpoints_;
 

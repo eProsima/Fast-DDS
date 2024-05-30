@@ -207,6 +207,12 @@ void TypeLookupRequestListener::check_get_types_request(
     xtypes::TypeIdentifier complete_id;
     xtypes::TypeIdentifier minimal_id;
 
+    if (0 == request.type_ids().size())
+    {
+        EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE_REQUEST_LISTENER,
+                "Request no contains any type identifier.");
+    }
+
     // Iterate through requested type_ids
     for (const xtypes::TypeIdentifier& type_id : request.type_ids())
     {
@@ -316,6 +322,10 @@ void TypeLookupRequestListener::check_get_type_dependencies_request(
                 requests_with_continuation_.emplace(request.type_ids(), type_dependencies);
             }
         }
+    }
+    else
+    {
+        EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE_REQUEST_LISTENER, "Type dependencies request is empty.");
     }
 
     // Handle the result based on the type_dependencies_result

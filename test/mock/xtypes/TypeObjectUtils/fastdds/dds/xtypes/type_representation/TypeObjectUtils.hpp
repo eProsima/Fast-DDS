@@ -20,8 +20,6 @@
 #ifndef FASTDDS_DDS_XTYPES_TYPE_REPRESENTATION__TYPEOBJECTUTILS_HPP
 #define FASTDDS_DDS_XTYPES_TYPE_REPRESENTATION__TYPEOBJECTUTILS_HPP
 
-#include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
-
 namespace eprosima {
 namespace fastdds {
 namespace dds {
@@ -32,7 +30,7 @@ class TypeObjectUtils
 public:
 
     static void type_object_consistency(
-            const TypeObject&)
+            const TypeObject& /*type_object*/)
     {
     }
 

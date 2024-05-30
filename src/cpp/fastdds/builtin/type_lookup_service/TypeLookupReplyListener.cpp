@@ -106,15 +106,21 @@ void TypeLookupReplyListener::process_reply()
                 {
                     case TypeLookup_getTypes_HashId:
                     {
-                        check_get_types_reply(reply.header().relatedRequestId(),
-                                reply.return_value().getType().result(), reply.header().relatedRequestId());
+                        if (RETCODE_OK == reply.return_value().getType()._d())
+                        {
+                            check_get_types_reply(reply.header().relatedRequestId(),
+                                    reply.return_value().getType().result(), reply.header().relatedRequestId());
+                        }
                         break;
                     }
                     case TypeLookup_getDependencies_HashId:
                     {
-                        check_get_type_dependencies_reply(
-                            reply.header().relatedRequestId(), replies_queue_.front().type_server,
-                            reply.return_value().getTypeDependencies().result());
+                        if (RETCODE_OK == reply.return_value().getTypeDependencies()._d())
+                        {
+                            check_get_type_dependencies_reply(
+                                reply.header().relatedRequestId(), replies_queue_.front().type_server,
+                                reply.return_value().getTypeDependencies().result());
+                        }
                         break;
                     }
                     default:
@@ -140,56 +146,68 @@ void TypeLookupReplyListener::check_get_types_reply(
     if (requests_it != typelookup_manager_->async_get_type_requests_.end())
     {
         ReturnCode_t register_result = RETCODE_OK;
-        for (xtypes::TypeIdentifierTypeObjectPair pair : reply.types())
+
+        if (0 != reply.types().size())
         {
-            xtypes::TypeIdentifierPair type_ids;
-            type_ids.type_identifier1(pair.type_identifier());
-            if (RETCODE_OK != fastdds::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
-                            register_type_object(pair.type_object(), type_ids, false))
+            for (xtypes::TypeIdentifierTypeObjectPair pair : reply.types())
             {
-                // If any of the types is not registered, log error
-                EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE_REPLY_LISTENER,
-                        "Error registering remote type");
-                register_result = RETCODE_ERROR;
+                xtypes::TypeIdentifierPair type_ids;
+                type_ids.type_identifier1(pair.type_identifier());
+                if (RETCODE_OK != fastdds::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
+                                register_type_object(pair.type_object(), type_ids, false))
+                {
+                    // If any of the types is not registered, log error
+                    EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE_REPLY_LISTENER,
+                            "Error registering remote type.");
+                    register_result = RETCODE_ERROR;
+                }
+            }
+
+            if (RETCODE_OK == register_result)
+            {
+                // Check if the get_type_dependencies related to this reply required a continuation_point
+                std::unique_lock<std::mutex> guard(replies_with_continuation_mutex_);
+                auto it = std::find(replies_with_continuation_.begin(),
+                                replies_with_continuation_.end(), related_request);
+                if (it != replies_with_continuation_.end())
+                {
+                    // If it did, remove it from the list and continue
+                    replies_with_continuation_.erase(it);
+                }
+                else
+                {
+                    // If it did not, check that the type that originated the request is consistent
+                    // before notifying the callbacks associated with the request
+                    try
+                    {
+                        xtypes::TypeObject type_object;
+                        fastdds::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().get_type_object(
+                            requests_it->second.type_id(), type_object);
+                        xtypes::TypeObjectUtils::type_object_consistency(type_object);
+                        xtypes::TypeIdentifierPair type_ids;
+                        if (RETCODE_OK !=
+                                fastdds::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
+                                        register_type_object(type_object, type_ids, true))
+                        {
+                            EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE_REPLY_LISTENER,
+                                    "Cannot register minimal of remote type");
+                        }
+
+                        typelookup_manager_->notify_callbacks(requests_it->second);
+                    }
+                    catch (const std::exception& exception)
+                    {
+                        EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE_REPLY_LISTENER,
+                                "Error registering remote type: " << exception.what());
+                    }
+                }
             }
         }
-
-        if (RETCODE_OK == register_result)
+        else
         {
-            // Check if the get_type_dependencies related to this reply required a continuation_point
-            std::unique_lock<std::mutex> guard(replies_with_continuation_mutex_);
-            auto it = std::find(replies_with_continuation_.begin(), replies_with_continuation_.end(), related_request);
-            if (it != replies_with_continuation_.end())
-            {
-                // If it did, remove it from the list and continue
-                replies_with_continuation_.erase(it);
-            }
-            else
-            {
-                // If it did not, check that the type that originated the request is consistent
-                // before notifying the callbacks associated with the request
-                try
-                {
-                    xtypes::TypeObject type_object;
-                    fastdds::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().get_type_object(
-                        requests_it->second.type_id(), type_object);
-                    xtypes::TypeObjectUtils::type_object_consistency(type_object);
-                    xtypes::TypeIdentifierPair type_ids;
-                    if (RETCODE_OK != fastdds::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
-                                    register_type_object(type_object, type_ids, true))
-                    {
-                        EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE_REPLY_LISTENER,
-                                "Cannot register minimal of remote type");
-                    }
-
-                    typelookup_manager_->notify_callbacks(requests_it->second);
-                }
-                catch (const std::exception& exception)
-                {
-                    EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE_REPLY_LISTENER,
-                            "Error registering remote type: " << exception.what());
-                }
-            }
+            EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE_REPLY_LISTENER,
+                    "Reply no contains any type.");
+            register_result = RETCODE_ERROR;
         }
 
         // Remove the processed SampleIdentity from the outstanding requests

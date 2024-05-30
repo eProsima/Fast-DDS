@@ -35,6 +35,7 @@
 #include <rtps/builtin/data/ReaderProxyData.hpp>
 #include <rtps/builtin/data/WriterProxyData.hpp>
 
+#include <fastdds/utils/TypePropagation.hpp>
 #include <utils/ProxyPool.hpp>
 
 namespace std {
@@ -105,7 +106,7 @@ class WriterHistory;
 namespace dds {
 namespace builtin {
 
-extern const fastdds::rtps::SampleIdentity INVALID_SAMPLE_IDENTITY;
+const SampleIdentity INVALID_SAMPLE_IDENTITY;
 
 using AsyncGetTypeWriterCallback = std::function<
     void (eprosima::ProxyPool<eprosima::fastdds::rtps::WriterProxyData>::smart_ptr&)>;
@@ -184,6 +185,11 @@ public:
     MOCK_METHOD1(remove_builtin_reply_writer_history_change, void(
                 fastdds::rtps::CacheChange_t*));
     // *INDENT-ON*
+
+    xtypes::TypeKind get_type_kind_to_propagate() const
+    {
+        return xtypes::EK_COMPLETE;
+    }
 
     fastdds::rtps::RTPSParticipantImpl* participant_ = nullptr;
 
