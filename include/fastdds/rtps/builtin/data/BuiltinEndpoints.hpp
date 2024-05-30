@@ -16,10 +16,10 @@
  * @file BuiltinEndpoints.hpp
  */
 
-#include <cstdint>
-
 #ifndef FASTDDS_RTPS_BUILTIN_DATA__BUILTINENDPOINTS_HPP
 #define FASTDDS_RTPS_BUILTIN_DATA__BUILTINENDPOINTS_HPP
+
+#include <cstdint>
 
 namespace eprosima {
 namespace fastdds {

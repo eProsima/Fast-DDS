@@ -42,7 +42,7 @@
 #include <rtps/builtin/discovery/participant/DS/PDPSecurityInitiatorListener.hpp>
 #include <rtps/builtin/discovery/participant/PDPListener.h>
 #include <rtps/builtin/discovery/participant/timedevent/DSClientEvent.h>
-#include <rtps/builtin/liveliness/WLP.h>
+#include <rtps/builtin/liveliness/WLP.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/reader/StatefulReader.hpp>
 #include <rtps/writer/StatefulWriter.hpp>

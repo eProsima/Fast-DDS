@@ -43,7 +43,7 @@
 #include <rtps/builtin/discovery/endpoint/EDPStatic.h>
 #include <rtps/builtin/discovery/participant/PDPEndpoints.hpp>
 #include <rtps/builtin/discovery/participant/PDPListener.h>
-#include <rtps/builtin/liveliness/WLP.h>
+#include <rtps/builtin/liveliness/WLP.hpp>
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <rtps/network/utils/external_locators.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>

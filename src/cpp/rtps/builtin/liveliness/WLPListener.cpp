@@ -36,7 +36,7 @@
 
 #include <rtps/builtin/BuiltinProtocols.h>
 #include <rtps/builtin/discovery/participant/PDPSimple.h>
-#include <rtps/builtin/liveliness/WLP.h>
+#include <rtps/builtin/liveliness/WLP.hpp>
 #include <rtps/messages/CDRMessage.hpp>
 #include <rtps/writer/LivelinessManager.hpp>
 

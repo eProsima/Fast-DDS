@@ -40,7 +40,7 @@
 #include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
 
-#include <rtps/builtin/liveliness/WLP.h>
+#include <rtps/builtin/liveliness/WLP.hpp>
 #include <rtps/DataSharing/DataSharingPayloadPool.hpp>
 #include <rtps/history/CacheChangePool.h>
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>

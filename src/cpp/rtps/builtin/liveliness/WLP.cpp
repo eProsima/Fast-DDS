@@ -17,7 +17,7 @@
  *
  */
 
-#include <rtps/builtin/liveliness/WLP.h>
+#include <rtps/builtin/liveliness/WLP.hpp>
 
 #include <limits>
 #include <mutex>
@@ -569,7 +569,7 @@ void WLP::removeRemoteEndpoints(
     uint32_t endp = pdata->m_availableBuiltinEndpoints;
     uint32_t partdet = endp;
     uint32_t auxendp = endp;
-    partdet &= fastdds::rtps::DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR; //Habria que quitar esta linea que comprueba si tiene PDP.
+    partdet &= fastdds::rtps::DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR;
     auxendp &= fastdds::rtps::BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_WRITER;
 
     if ((auxendp != 0 || partdet != 0) && this->mp_builtinReader != nullptr)

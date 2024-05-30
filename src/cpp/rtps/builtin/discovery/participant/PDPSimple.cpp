@@ -39,7 +39,7 @@
 #include <rtps/builtin/discovery/participant/PDPListener.h>
 #include <rtps/builtin/discovery/participant/simple/SimplePDPEndpoints.hpp>
 #include <rtps/builtin/discovery/participant/simple/SimplePDPEndpointsSecure.hpp>
-#include <rtps/builtin/liveliness/WLP.h>
+#include <rtps/builtin/liveliness/WLP.hpp>
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/reader/StatefulReader.hpp>

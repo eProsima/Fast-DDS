@@ -13,12 +13,12 @@
 // limitations under the License.
 
 /**
- * @file WLP.h
+ * @file WLP.hpp
  *
  */
 
-#ifndef _FASTDDS_RTPS_WLP_H_
-#define _FASTDDS_RTPS_WLP_H_
+#ifndef _FASTDDS_RTPS_WLP_HPP_
+#define _FASTDDS_RTPS_WLP_HPP_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <cstdint>
@@ -313,4 +313,4 @@ private:
 } /* namespace eprosima */
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#endif /* _FASTDDS_RTPS_WLP_H_ */
+#endif /* _FASTDDS_RTPS_WLP_HPP_ */
