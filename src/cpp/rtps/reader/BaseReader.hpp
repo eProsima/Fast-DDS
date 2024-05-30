@@ -26,14 +26,17 @@
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/statistics/IListeners.hpp>
 #include <fastdds/statistics/rtps/StatisticsCommon.hpp>
+#include <fastdds/utils/TimedConditionVariable.hpp>
 
 namespace eprosima {
 
 namespace fastrtps {
 namespace rtps {
 
+struct CacheChange_t;
 class IDataSharingListener;
 struct ReaderHistoryState;
+class WriterProxy;
 class WriterProxyData;
 
 } // namespace rtps
@@ -129,6 +132,32 @@ public:
     {
         return datasharing_listener_;
     }
+
+    /**
+     * Reserve a CacheChange_t.
+     * @param change Pointer to pointer to the Cache.
+     * @param dataCdrSerializedSize Size of the Cache.
+     * @return True if correctly reserved.
+     */
+    bool reserveCache(
+            fastrtps::rtps::CacheChange_t** change,
+            uint32_t dataCdrSerializedSize);
+
+    /**
+     * Release a cacheChange.
+     */
+    void releaseCache(
+            fastrtps::rtps::CacheChange_t* change);
+
+    /**
+     * Method to indicate the reader that some change has been removed due to HistoryQos requirements.
+     * @param change Pointer to the CacheChange_t.
+     * @param prox Pointer to the WriterProxy.
+     * @return True if correctly removed.
+     */
+    virtual bool change_removed_by_history(
+            fastrtps::rtps::CacheChange_t* change,
+            fastrtps::rtps::WriterProxy* prox = nullptr) = 0;
 
     /**
      * @brief A method to update the liveliness changed status of the reader

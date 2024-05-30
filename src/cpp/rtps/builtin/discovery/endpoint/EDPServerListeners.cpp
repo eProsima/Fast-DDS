@@ -25,6 +25,7 @@
 
 #include <rtps/builtin/discovery/endpoint/EDPServer.hpp>
 #include <rtps/builtin/discovery/participant/PDPServer.hpp>
+#include <rtps/reader/BaseReader.hpp>
 #include <rtps/writer/StatefulWriter.hpp>
 
 namespace eprosima {
@@ -63,8 +64,10 @@ void EDPServerPUBListener::onNewCacheChangeAdded(
         EPROSIMA_LOG_WARNING(RTPS_EDP_LISTENER, "Received change with no Key");
     }
 
+    // Get BaseReader
+    BaseReader* base_reader = BaseReader::downcast(reader);
     // Get EDP publications' reader history
-    ReaderHistory* reader_history = reader->getHistory();
+    ReaderHistory* reader_history = base_reader->getHistory();
 
     // Related_sample_identity could be lost in message delivered, so we set as sample_identity
     // An empty related_sample_identity could lead into an empty sample_identity when resending this msg
@@ -82,11 +85,11 @@ void EDPServerPUBListener::onNewCacheChangeAdded(
     if (change->kind == ALIVE)
     {
         EndpointAddedCallback writer_added_callback =
-                std::bind(&EDPServerPUBListener::continue_with_writer, this, reader, change);
+                std::bind(&EDPServerPUBListener::continue_with_writer, this, base_reader, change);
 
         // Note: add_writer_from_change() removes the change from the EDP publications' reader history, but it does not
         // return it to the pool
-        add_writer_from_change(reader, reader_history, change, sedp_, false, writer_added_callback);
+        add_writer_from_change(base_reader, reader_history, change, sedp_, false, writer_added_callback);
 
         // DATA(w) case: Retrieve the topic after creating the WriterProxyData (in add_writer_from_change()). This way, not matter
         // whether the DATA(w) is a new one or an update, the WriterProxyData exists, and so the topic can be retrieved
@@ -109,7 +112,7 @@ void EDPServerPUBListener::onNewCacheChangeAdded(
         // Removing change from history, not returning the change to the pool, since the ownership will be yielded to the database
         reader_history->remove_change(reader_history->find_change(change), false);
 
-        notify_discoverydatabase(topic_name, reader, change);
+        notify_discoverydatabase(topic_name, base_reader, change);
     }
 }
 
@@ -131,7 +134,7 @@ std::string EDPServerPUBListener::get_writer_proxy_topic_name(
 
 void EDPServerPUBListener::notify_discoverydatabase(
         std::string topic_name,
-        RTPSReader* reader,
+        BaseReader* reader,
         CacheChange_t* change)
 {
     // Notify the DiscoveryDataBase if it is enabled already
@@ -161,7 +164,7 @@ void EDPServerPUBListener::notify_discoverydatabase(
 }
 
 void EDPServerPUBListener::continue_with_writer(
-        RTPSReader* reader,
+        BaseReader* reader,
         CacheChange_t* change)
 {
     std::string topic_name = get_writer_proxy_topic_name(iHandle2GUID(change->instanceHandle));
@@ -210,18 +213,20 @@ void EDPServerSUBListener::onNewCacheChangeAdded(
     change->writer_info.previous = nullptr;
     change->writer_info.num_sent_submessages = 0;
 
+    // Get BaseReader
+    BaseReader* base_reader = BaseReader::downcast(reader);
     // Get EDP subscriptions' reader history
-    ReaderHistory* reader_history = reader->getHistory();
+    ReaderHistory* reader_history = base_reader->getHistory();
 
     // DATA(r) case: new reader or updated information about an existing reader
     if (change->kind == ALIVE)
     {
         EndpointAddedCallback reader_added_callback =
-                std::bind(&EDPServerSUBListener::continue_with_reader, this, reader, change);
+                std::bind(&EDPServerSUBListener::continue_with_reader, this, base_reader, change);
 
         // Note: add_reader_from_change() removes the change from the EDP subscriptions' reader history, but it does not
         // return it to the pool
-        add_reader_from_change(reader, reader_history, change, sedp_, false, reader_added_callback);
+        add_reader_from_change(base_reader, reader_history, change, sedp_, false, reader_added_callback);
 
         // DATA(w) case: Retrieve the topic after creating the ReaderProxyData (in add_reader_from_change()). This way, not matter
         // whether the DATA(r) is a new one or an update, the ReaderProxyData exists, and so the topic can be retrieved
@@ -246,7 +251,7 @@ void EDPServerSUBListener::onNewCacheChangeAdded(
         // the database
         reader_history->remove_change(reader_history->find_change(change), false);
 
-        notify_discoverydatabase(topic_name, reader, change);
+        notify_discoverydatabase(topic_name, base_reader, change);
     }
 }
 
@@ -268,7 +273,7 @@ std::string EDPServerSUBListener::get_reader_proxy_topic_name(
 
 void EDPServerSUBListener::notify_discoverydatabase(
         std::string topic_name,
-        RTPSReader* reader,
+        BaseReader* reader,
         CacheChange_t* change)
 {
     // Notify the DiscoveryDataBase if it is enabled already
@@ -298,7 +303,7 @@ void EDPServerSUBListener::notify_discoverydatabase(
 }
 
 void EDPServerSUBListener::continue_with_reader(
-        RTPSReader* reader,
+        BaseReader* reader,
         CacheChange_t* change)
 {
     std::string topic_name = get_reader_proxy_topic_name(iHandle2GUID(change->instanceHandle));

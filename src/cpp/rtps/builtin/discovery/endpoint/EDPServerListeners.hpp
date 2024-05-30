@@ -38,6 +38,7 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
+class BaseReader;
 class PDPServer;
 class EDPServer;
 
@@ -79,11 +80,11 @@ private:
 
     void notify_discoverydatabase(
             std::string topic_name,
-            fastrtps::rtps::RTPSReader* reader,
+            BaseReader* reader,
             fastrtps::rtps::CacheChange_t* change);
 
     void continue_with_writer(
-            fastrtps::rtps::RTPSReader* reader,
+            BaseReader* reader,
             fastrtps::rtps::CacheChange_t* change);
 
     //!Pointer to the EDPServer
@@ -125,11 +126,11 @@ private:
 
     void notify_discoverydatabase(
             std::string topic_name,
-            fastrtps::rtps::RTPSReader* reader,
+            BaseReader* reader,
             fastrtps::rtps::CacheChange_t* change);
 
     void continue_with_reader(
-            fastrtps::rtps::RTPSReader* reader,
+            BaseReader* reader,
             fastrtps::rtps::CacheChange_t* change);
 
     //!Pointer to the EDPServer

@@ -187,6 +187,46 @@ BaseReader* BaseReader::downcast(
     return static_cast<BaseReader*>(endpoint);
 }
 
+bool BaseReader::reserveCache(
+        fastrtps::rtps::CacheChange_t** change,
+        uint32_t dataCdrSerializedSize)
+{
+    std::lock_guard<decltype(mp_mutex)> guard(mp_mutex);
+
+    *change = nullptr;
+
+    fastrtps::rtps::CacheChange_t* reserved_change = nullptr;
+    if (!change_pool_->reserve_cache(reserved_change))
+    {
+        EPROSIMA_LOG_WARNING(RTPS_READER, "Problem reserving cache from pool");
+        return false;
+    }
+
+    uint32_t payload_size = fixed_payload_size_ ? fixed_payload_size_ : dataCdrSerializedSize;
+    if (!payload_pool_->get_payload(payload_size, *reserved_change))
+    {
+        change_pool_->release_cache(reserved_change);
+        EPROSIMA_LOG_WARNING(RTPS_READER, "Problem reserving payload from pool");
+        return false;
+    }
+
+    *change = reserved_change;
+    return true;
+}
+
+void BaseReader::releaseCache(
+        fastrtps::rtps::CacheChange_t* change)
+{
+    std::lock_guard<decltype(mp_mutex)> guard(mp_mutex);
+
+    fastrtps::rtps::IPayloadPool* pool = change->payload_owner();
+    if (pool)
+    {
+        pool->release_payload(*change);
+    }
+    change_pool_->release_cache(change);
+}
+
 void BaseReader::update_liveliness_changed_status(
         fastrtps::rtps::GUID_t writer,
         int32_t alive_change,

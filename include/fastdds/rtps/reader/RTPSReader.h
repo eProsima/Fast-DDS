@@ -115,16 +115,6 @@ public:
             const GUID_t& writer) = 0;
 
     /**
-     * Method to indicate the reader that some change has been removed due to HistoryQos requirements.
-     * @param change Pointer to the CacheChange_t.
-     * @param prox Pointer to the WriterProxy.
-     * @return True if correctly removed.
-     */
-    FASTDDS_EXPORTED_API virtual bool change_removed_by_history(
-            CacheChange_t* change,
-            WriterProxy* prox = nullptr) = 0;
-
-    /**
      * Get the associated listener, secondary attached Listener in case it is of compound type
      * @return Pointer to the associated reader listener.
      */
@@ -140,22 +130,6 @@ public:
      */
     FASTDDS_EXPORTED_API bool setListener(
             ReaderListener* target);
-
-    /**
-     * Reserve a CacheChange_t.
-     * @param change Pointer to pointer to the Cache.
-     * @param dataCdrSerializedSize Size of the Cache.
-     * @return True if correctly reserved.
-     */
-    FASTDDS_EXPORTED_API bool reserveCache(
-            CacheChange_t** change,
-            uint32_t dataCdrSerializedSize);
-
-    /**
-     * Release a cacheChange.
-     */
-    FASTDDS_EXPORTED_API void releaseCache(
-            CacheChange_t* change);
 
     /**
      * Read the next unread CacheChange_t from the history
