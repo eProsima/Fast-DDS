@@ -938,12 +938,24 @@ XMLP_ret XMLParser::getXMLFlowControllerDescriptorList(
 
         tinyxml2::XMLElement* p_aux1;
         bool name_defined = false;
+        std::set<std::string> tags_present;
 
         auto flow_controller_descriptor = std::make_shared<FlowControllerDescriptor>();
 
         for (p_aux1 = p_aux0->FirstChildElement(); p_aux1 != NULL; p_aux1 = p_aux1->NextSiblingElement())
         {
             const char* name = p_aux1->Name();
+
+            if (tags_present.count(name) != 0)
+            {
+                EPROSIMA_LOG_ERROR(XMLPARSER,
+                        "Duplicated element found in 'flowControllerDescriptorType'. Name: " << name);
+                return XMLP_ret::XML_ERROR;
+            }
+            else
+            {
+                tags_present.emplace(name);
+            }
 
             if (strcmp(name, NAME) == 0)
             {

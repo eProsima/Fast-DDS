@@ -186,7 +186,6 @@
                         <scheduler>${XML_PROFILES_ENV_VAR_164}</scheduler>
                         <max_bytes_per_period>${XML_PROFILES_ENV_VAR_165}</max_bytes_per_period>
                         <period_ms>${XML_PROFILES_ENV_VAR_166}</period_ms>
-                        <scheduler>${XML_PROFILES_ENV_VAR_168}</scheduler>
                         <sender_thread>
                             <scheduling_policy>${XML_PROFILES_ENV_VAR_158}</scheduling_policy>
                             <priority>${XML_PROFILES_ENV_VAR_159}</priority>

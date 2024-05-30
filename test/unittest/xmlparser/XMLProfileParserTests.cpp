@@ -137,7 +137,7 @@ protected:
 
     std::string xml_filename_ = "test_xml_profile.xml";
 
-    const std::pair<std::string, std::string> c_environment_values_[168]
+    const std::pair<std::string, std::string> c_environment_values_[167]
     {
         {"XML_PROFILES_ENV_VAR_1",   "123"},
         {"XML_PROFILES_ENV_VAR_2",   "4"},
@@ -305,8 +305,7 @@ protected:
         {"XML_PROFILES_ENV_VAR_164", "HIGH_PRIORITY"},
         {"XML_PROFILES_ENV_VAR_165", "2048"},
         {"XML_PROFILES_ENV_VAR_166",  "45"},
-        {"XML_PROFILES_ENV_VAR_167",  "test_flow_controller"},
-        {"XML_PROFILES_ENV_VAR_168",  "FIFO"}
+        {"XML_PROFILES_ENV_VAR_167",  "test_flow_controller"}
     };
 
 };

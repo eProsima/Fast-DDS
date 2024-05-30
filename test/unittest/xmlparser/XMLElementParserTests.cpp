@@ -2113,7 +2113,18 @@ TEST_F(XMLParserTests, getXMLFlowControllerDescriptorList)
         {{"test_flow_controller", "HIGH_PRIORITY", "120", "50", \
             "12", "12", "12", "12", "<bad_element></bad_element>" }, XMLP_ret::XML_ERROR},   // Invalid tag
         {{"", "HIGH_PRIORITY", "120", "50", \
-            "12", "12", "12", "12", "<name></name>" }, XMLP_ret::XML_ERROR},   // empty name
+            "12", "12", "12", "12", "" }, XMLP_ret::XML_ERROR},   // empty name
+        {{"test_flow_controller", "HIGH_PRIORITY", "120", "50", \
+            "12", "12", "12", "12", "<name>another_name</name>" }, XMLP_ret::XML_ERROR},   // duplicated name tag
+        {{"test_flow_controller", "HIGH_PRIORITY", "120", "50", \
+            "12", "12", "12", "12", "<scheduler>FIFO</scheduler>" }, XMLP_ret::XML_ERROR},   // duplicated scheduler tag
+        {{"test_flow_controller", "HIGH_PRIORITY", "120", "50", \
+            "12", "12", "12", "12", "<max_bytes_per_period>96</max_bytes_per_period>" }, XMLP_ret::XML_ERROR},   // duplicated max_bytes_per_period tag
+        {{"test_flow_controller", "HIGH_PRIORITY", "120", "50", \
+            "12", "12", "12", "12", "<period_ms>96</period_ms>" }, XMLP_ret::XML_ERROR},   // duplicated period_ms tag
+        {{"test_flow_controller", "HIGH_PRIORITY", "120", "50", \
+            "12", "12", "12", "12", "<sender_thread><scheduling_policy>12</scheduling_policy></sender_thread>" },
+            XMLP_ret::XML_ERROR}, // duplicated sender_thread tag
         {{"", "HIGH_PRIORITY", "120", "50", \
             "12345", "12", "12", "a", "" }, XMLP_ret::XML_ERROR},   // invalid thread settings
     };
