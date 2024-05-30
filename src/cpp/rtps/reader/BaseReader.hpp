@@ -23,6 +23,17 @@
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/core/status/LivelinessChangedStatus.hpp>
+#include <fastdds/rtps/Endpoint.h>
+#include <fastdds/rtps/attributes/ReaderAttributes.h>
+#include <fastdds/rtps/common/EntityId_t.hpp>
+#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/SequenceNumber.h>
+#include <fastdds/rtps/common/Time_t.h>
+#include <fastdds/rtps/common/VendorId_t.hpp>
+#include <fastdds/rtps/history/History.h>
+#include <fastdds/rtps/history/IChangePool.h>
+#include <fastdds/rtps/history/IPayloadPool.h>
+#include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/statistics/IListeners.hpp>
 #include <fastdds/statistics/rtps/StatisticsCommon.hpp>
@@ -36,6 +47,8 @@ namespace rtps {
 struct CacheChange_t;
 class IDataSharingListener;
 struct ReaderHistoryState;
+class ReaderListener;
+class RTPSParticipantImpl;
 class WriterProxy;
 class WriterProxyData;
 
@@ -287,6 +300,11 @@ protected:
 
     //! The liveliness changed status struct as defined in the DDS
     fastdds::dds::LivelinessChangedStatus liveliness_changed_status_;
+
+    //! Accept msg to unknwon readers
+    bool m_acceptMessagesToUnknownReaders = true;
+    //! Trusted writer (for Builtin)
+    fastrtps::rtps::EntityId_t m_trustedWriterEntityId;
 
     /*!
      * @brief Whether a history record may be removed.

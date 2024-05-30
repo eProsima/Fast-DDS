@@ -48,7 +48,6 @@ RTPSReader::RTPSReader(
     : Endpoint(pimpl, guid, att.endpoint)
     , mp_history(hist)
     , mp_listener(rlisten)
-    , m_acceptMessagesToUnknownReaders(true)
     , m_acceptMessagesFromUnkownWriters(false)
     , m_expectsInlineQos(att.expectsInlineQos)
 {
@@ -85,7 +84,6 @@ RTPSReader::RTPSReader(
     : Endpoint(pimpl, guid, att.endpoint)
     , mp_history(hist)
     , mp_listener(rlisten)
-    , m_acceptMessagesToUnknownReaders(true)
     , m_acceptMessagesFromUnkownWriters(false)
     , m_expectsInlineQos(att.expectsInlineQos)
 {
