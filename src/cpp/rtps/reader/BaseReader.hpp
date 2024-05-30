@@ -90,6 +90,12 @@ public:
             const fastrtps::rtps::GUID_t& writer,
             const fastrtps::rtps::SequenceNumber_t& sn) const override;
 
+    static BaseReader* downcast(
+            fastrtps::rtps::RTPSReader* reader);
+
+    static BaseReader* downcast(
+            fastrtps::rtps::Endpoint* endpoint);
+
     void setTrustedWriter(
             const fastrtps::rtps::EntityId_t& writer)
     {

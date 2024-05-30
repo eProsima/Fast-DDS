@@ -830,8 +830,7 @@ bool WLP::add_local_reader(
         RTPSReader* reader,
         const fastdds::dds::ReaderQos& rqos)
 {
-    assert(nullptr != dynamic_cast<fastdds::rtps::BaseReader*>(reader));
-    auto base_reader = static_cast<fastdds::rtps::BaseReader*>(reader);
+    auto base_reader = fastdds::rtps::BaseReader::downcast(reader);
 
     std::lock_guard<std::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
 
@@ -848,9 +847,7 @@ bool WLP::add_local_reader(
 bool WLP::remove_local_reader(
         RTPSReader* reader)
 {
-    assert(nullptr != dynamic_cast<fastdds::rtps::BaseReader*>(reader));
-    auto base_reader = static_cast<fastdds::rtps::BaseReader*>(reader);
-
+    auto base_reader = fastdds::rtps::BaseReader::downcast(reader);
     std::lock_guard<std::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
 
     auto it = std::find(

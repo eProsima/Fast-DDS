@@ -260,7 +260,7 @@ void MessageReceiver::associateEndpoint(
     }
     else
     {
-        const auto reader = dynamic_cast<fastdds::rtps::BaseReader*>(to_add);
+        const auto reader = fastdds::rtps::BaseReader::downcast(to_add);
         const auto entityId = reader->getGuid().entityId;
         // search for set of readers by entity ID
         const auto readers = associated_readers_.find(entityId);
@@ -307,7 +307,7 @@ void MessageReceiver::removeEndpoint(
         auto readers = associated_readers_.find(to_remove->getGuid().entityId);
         if (readers != associated_readers_.end())
         {
-            auto* var = dynamic_cast<fastdds::rtps::BaseReader*>(to_remove);
+            auto* var = fastdds::rtps::BaseReader::downcast(to_remove);
             for (auto it = readers->second.begin(); it != readers->second.end(); ++it)
             {
                 if (*it == var)

@@ -260,6 +260,18 @@ public:
 
     virtual ~BaseReader() = default;
 
+    static BaseReader* downcast(
+            fastrtps::rtps::RTPSReader* reader)
+    {
+        return static_cast<BaseReader*>(reader);
+    }
+
+    static BaseReader* downcast(
+            fastrtps::rtps::Endpoint* endpoint)
+    {
+        return static_cast<BaseReader*>(endpoint);
+    }
+
 };
 
 }  // namespace rtps

@@ -228,7 +228,7 @@ void ReaderLocator::datasharing_notify()
 
     if (reader)
     {
-        static_cast<fastdds::rtps::BaseReader*>(reader)->datasharing_listener()->notify(true);
+        fastdds::rtps::BaseReader::downcast(reader)->datasharing_listener()->notify(true);
     }
     else
     {

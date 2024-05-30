@@ -22,6 +22,7 @@
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
+#include <fastdds/rtps/Endpoint.h>
 #include <fastdds/rtps/common/CacheChange.h>
 #include <fastdds/rtps/common/SequenceNumber.h>
 #include <fastdds/rtps/common/SerializedPayload.h>
@@ -170,6 +171,20 @@ bool BaseReader::is_sample_valid(
         }
     }
     return true;
+}
+
+BaseReader* BaseReader::downcast(
+        fastrtps::rtps::RTPSReader* reader)
+{
+    assert(nullptr != dynamic_cast<BaseReader*>(reader));
+    return static_cast<BaseReader*>(reader);
+}
+
+BaseReader* BaseReader::downcast(
+        fastrtps::rtps::Endpoint* endpoint)
+{
+    assert(nullptr != dynamic_cast<BaseReader*>(endpoint));
+    return static_cast<BaseReader*>(endpoint);
 }
 
 void BaseReader::update_liveliness_changed_status(
