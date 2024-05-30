@@ -114,6 +114,14 @@ public:
     FASTDDS_EXPORTED_API virtual void assert_writer_liveliness(
             const GUID_t& writer) = 0;
 
+    /*!
+     * @brief Returns there is a clean state with all Writers.
+     * It occurs when the Reader received all samples sent by Writers. In other words,
+     * its WriterProxies are up to date.
+     * @return There is a clean state with all Writers.
+     */
+    FASTDDS_EXPORTED_API virtual bool isInCleanState() = 0;
+
     /**
      * Get the associated listener, secondary attached Listener in case it is of compound type
      * @return Pointer to the associated reader listener.
@@ -194,14 +202,6 @@ public:
     {
         m_acceptMessagesFromUnkownWriters = enable;
     }
-
-    /*!
-     * @brief Returns there is a clean state with all Writers.
-     * It occurs when the Reader received all samples sent by Writers. In other words,
-     * its WriterProxies are up to date.
-     * @return There is a clean state with all Writers.
-     */
-    virtual bool isInCleanState() = 0;
 
     /**
      * Called just before a change is going to be deserialized.
