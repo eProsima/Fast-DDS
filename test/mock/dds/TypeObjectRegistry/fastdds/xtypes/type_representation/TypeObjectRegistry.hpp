@@ -51,7 +51,6 @@ public:
         return fastdds::dds::RETCODE_OK;
     }
 
-    //TODO(richiware) remove
     ReturnCode_t get_type_information(
             const TypeIdentifierPair&,
             TypeInformation&,
