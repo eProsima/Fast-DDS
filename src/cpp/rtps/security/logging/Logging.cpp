@@ -1,5 +1,7 @@
 #include <rtps/security/logging/Logging.h>
 
+#include <rtps/security/exceptions/SecurityException.h>
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {

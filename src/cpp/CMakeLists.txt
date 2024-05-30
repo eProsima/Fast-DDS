@@ -263,6 +263,7 @@ set(${PROJECT_NAME}_security_source_files
     rtps/security/exceptions/SecurityException.cpp
     rtps/security/common/SharedSecretHandle.cpp
     rtps/security/logging/Logging.cpp
+    rtps/security/logging/LoggingLevel.cpp
     rtps/security/SecurityManager.cpp
     rtps/security/SecurityPluginFactory.cpp
     rtps/builtin/discovery/participant/DS/PDPSecurityInitiatorListener.cpp

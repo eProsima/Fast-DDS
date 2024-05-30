@@ -23,9 +23,10 @@
 #include <memory>
 
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
+
+#include <rtps/security/exceptions/SecurityException.h>
 #include <rtps/security/logging/Logging.h>
 #include <rtps/security/logging/BuiltinLoggingType.h>
-
 #include <utils/collections/concurrent_queue.h>
 #include <utils/thread.hpp>
 

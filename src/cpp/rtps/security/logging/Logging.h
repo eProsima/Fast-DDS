@@ -32,6 +32,8 @@ namespace fastrtps {
 namespace rtps {
 namespace security {
 
+class SecurityException;
+
 /**
  * @brief The LoggerListener class
  */

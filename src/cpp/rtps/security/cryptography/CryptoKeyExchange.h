@@ -25,6 +25,8 @@ namespace fastrtps {
 namespace rtps {
 namespace security {
 
+class SecurityException;
+
 class CryptoKeyExchange
 {
 public:

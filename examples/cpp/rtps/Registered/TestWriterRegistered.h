@@ -20,8 +20,16 @@
 #ifndef TESTWRITERREGISTERED_H_
 #define TESTWRITERREGISTERED_H_
 
-#include <fastdds/rtps/rtps_fwd.h>
 #include <fastdds/rtps/writer/WriterListener.h>
+
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
+class RTPSParticipant;
+class WriterHistory;
+} // namespace rtps
+} // namespace fastrtps
+} // namespace eprosima
 
 class TestWriterRegistered
 {

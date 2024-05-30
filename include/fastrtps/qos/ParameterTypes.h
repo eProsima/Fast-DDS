@@ -23,7 +23,7 @@
 #include <fastcdr/cdr/fixed_size_string.hpp>
 
 #include <fastdds/dds/core/policy/ParameterTypes.hpp>
-#include <fastdds/rtps/common/all_common.h>
+#include <fastdds/rtps/common/CacheChange.h>
 #include <fastdds/rtps/common/Token.h>
 
 #if HAVE_SECURITY

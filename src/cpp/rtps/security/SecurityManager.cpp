@@ -47,6 +47,7 @@
 #include <rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
 #include <rtps/security/accesscontrol/SecurityMaskUtilities.h>
 #include <rtps/security/authentication/Authentication.h>
+#include <rtps/security/exceptions/SecurityException.h>
 #include <security/OpenSSLInit.hpp>
 
 #define BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_SECURE_WRITER (1 << 20)

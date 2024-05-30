@@ -44,6 +44,7 @@
 #include <fastdds/utils/IPFinder.h>
 #include <fastdds/utils/IPLocator.h>
 #include <fastdds/utils/TimedMutex.hpp>
+#include <gtest/gtest.h>
 
 using eprosima::fastrtps::rtps::IPLocator;
 

@@ -35,6 +35,7 @@ set(COMMON_SOURCES_LOGGING_PLUGIN_TEST_SOURCE
 
 add_executable(BuiltinLogging ${COMMON_SOURCES_LOGGING_PLUGIN_TEST_SOURCE}
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/security/logging/Logging.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/security/logging/LoggingLevel.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/security/logging/LogTopic.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/BuiltinLogTopicTests.cpp)
 
