@@ -1301,14 +1301,12 @@ ResourceEvent& StatefulReader::getEventResource() const
     return mp_RTPSParticipant->getEventResource();
 }
 
-bool StatefulReader::nextUntakenCache(
-        CacheChange_t** change,
-        WriterProxy** wpout)
+CacheChange_t* StatefulReader::nextUntakenCache()
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     if (!is_alive_)
     {
-        return false;
+        return nullptr;
     }
 
     bool takeok = false;
@@ -1338,30 +1336,20 @@ bool StatefulReader::nextUntakenCache(
 
         if (takeok)
         {
-
-            *change = *it;
-
-            if (wpout != nullptr)
-            {
-                *wpout = wp;
-            }
-
-            break;
+            return *it;
         }
     }
 
-    return takeok;
+    return nullptr;
 }
 
 // TODO Porque elimina aqui y no cuando hay unpairing
-bool StatefulReader::nextUnreadCache(
-        CacheChange_t** change,
-        WriterProxy** wpout)
+CacheChange_t* StatefulReader::nextUnreadCache()
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     if (!is_alive_)
     {
-        return false;
+        return nullptr;
     }
 
     std::vector<CacheChange_t*> toremove;
@@ -1398,19 +1386,11 @@ bool StatefulReader::nextUnreadCache(
 
         if (readok)
         {
-
-            *change = *it;
-
-            if (wpout != nullptr)
-            {
-                *wpout = wp;
-            }
-
-            break;
+            return *it;
         }
     }
 
-    return readok;
+    return nullptr;
 }
 
 bool StatefulReader::updateTimes(

@@ -141,23 +141,15 @@ public:
 
     /**
      * Read the next unread CacheChange_t from the history
-     * @param change Pointer to pointer of CacheChange_t
-     * @param wp Pointer to pointer to the WriterProxy
-     * @return True if read.
+     * @return A pointer to the first unread CacheChange_t from the history.
      */
-    FASTDDS_EXPORTED_API virtual bool nextUnreadCache(
-            CacheChange_t** change,
-            WriterProxy** wp) = 0;
+    FASTDDS_EXPORTED_API virtual CacheChange_t* nextUnreadCache() = 0;
 
     /**
      * Get the next CacheChange_t from the history to take.
-     * @param change Pointer to pointer of CacheChange_t.
-     * @param wp Pointer to pointer to the WriterProxy.
-     * @return True if read.
+     * @return A pointer to the first CacheChange_t in the history.
      */
-    FASTDDS_EXPORTED_API virtual bool nextUntakenCache(
-            CacheChange_t** change,
-            WriterProxy** wp) = 0;
+    FASTDDS_EXPORTED_API virtual CacheChange_t* nextUntakenCache() = 0;
 
     FASTDDS_EXPORTED_API virtual bool wait_for_unread_cache(
             const eprosima::fastrtps::Duration_t& timeout) = 0;

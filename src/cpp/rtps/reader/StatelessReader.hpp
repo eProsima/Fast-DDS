@@ -164,25 +164,9 @@ public:
     bool change_received(
             CacheChange_t* a_change);
 
-    /**
-     * Read the next unread CacheChange_t from the history
-     * @param change Pointer to pointer of CacheChange_t
-     * @param wpout Pointer to pointer of the matched writer proxy
-     * @return True if read.
-     */
-    bool nextUnreadCache(
-            CacheChange_t** change,
-            WriterProxy** wpout = nullptr) override;
+    CacheChange_t* nextUnreadCache() override;
 
-    /**
-     * Take the next CacheChange_t from the history;
-     * @param change Pointer to pointer of CacheChange_t
-     * @param wpout Pointer to pointer of the matched writer proxy
-     * @return True if read.
-     */
-    bool nextUntakenCache(
-            CacheChange_t** change,
-            WriterProxy** wpout = nullptr) override;
+    CacheChange_t* nextUntakenCache() override;
 
     /**
      * Get the number of matched writers

@@ -712,8 +712,8 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks)
                 EXPECT_TRUE(reader_->wait_for_unread_cache(Duration_t(5, 0)));
 
                 // receive the sample
-                CacheChange_t* reader_change = nullptr;
-                ASSERT_TRUE(reader_->nextUntakenCache(&reader_change, nullptr));
+                CacheChange_t* reader_change = reader_->nextUntakenCache();
+                ASSERT_NE(nullptr, reader_change);
 
                 // wait for acknowledgement
                 EXPECT_TRUE(writer_->wait_for_all_acked(Duration_t(5, 0)));
@@ -838,8 +838,8 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks_fragmented)
     EXPECT_TRUE(reader_->wait_for_unread_cache(Duration_t(10, 0)));
 
     // receive the sample
-    CacheChange_t* reader_change = nullptr;
-    ASSERT_TRUE(reader_->nextUntakenCache(&reader_change, nullptr));
+    CacheChange_t* reader_change = reader_->nextUntakenCache();
+    ASSERT_NE(nullptr, reader_change);
 
     // wait for acknowledgement
     EXPECT_TRUE(writer_->wait_for_all_acked(Duration_t(1, 0)));
@@ -990,8 +990,8 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks_no_enabled_writer
     EXPECT_TRUE(reader_->wait_for_unread_cache(Duration_t(5, 0)));
 
     // receive the sample
-    CacheChange_t* reader_change = nullptr;
-    ASSERT_TRUE(reader_->nextUntakenCache(&reader_change, nullptr));
+    CacheChange_t* reader_change = reader_->nextUntakenCache();
+    ASSERT_NE(nullptr, reader_change);
 
     // wait for acknowledgement
     EXPECT_TRUE(writer_->wait_for_all_acked(Duration_t(5, 0)));
@@ -1079,8 +1079,8 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_gap_callback)
     EXPECT_TRUE(reader_->wait_for_unread_cache(Duration_t(5, 0)));
 
     // receive the second sample
-    CacheChange_t* reader_change = nullptr;
-    ASSERT_TRUE(reader_->nextUntakenCache(&reader_change, nullptr));
+    CacheChange_t* reader_change = reader_->nextUntakenCache();
+    ASSERT_NE(nullptr, reader_change);
 
     // wait for acknowledgement
     EXPECT_TRUE(writer_->wait_for_all_acked(Duration_t(1, 0)));

@@ -429,17 +429,19 @@ void StatelessReader::remove_changes_from(
     }
 }
 
-bool StatelessReader::nextUntakenCache(
-        CacheChange_t** change,
-        WriterProxy** /*wpout*/)
+CacheChange_t* StatelessReader::nextUntakenCache()
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
-    return mp_history->get_min_change(change);
+    CacheChange_t* change = nullptr;
+    if (mp_history->get_min_change(&change))
+    {
+        return change;
+    }
+
+    return nullptr;
 }
 
-bool StatelessReader::nextUnreadCache(
-        CacheChange_t** change,
-        WriterProxy** /*wpout*/)
+CacheChange_t* StatelessReader::nextUnreadCache()
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     bool found = false;
@@ -458,14 +460,11 @@ bool StatelessReader::nextUnreadCache(
 
     if (found)
     {
-        *change = *it;
-    }
-    else
-    {
-        EPROSIMA_LOG_INFO(RTPS_READER, "No Unread elements left");
+        return *it;
     }
 
-    return found;
+    EPROSIMA_LOG_INFO(RTPS_READER, "No Unread elements left");
+    return nullptr;
 }
 
 bool StatelessReader::change_removed_by_history(

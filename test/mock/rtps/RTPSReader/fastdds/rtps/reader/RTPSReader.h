@@ -165,18 +165,14 @@ public:
         return true;
     }
 
-    virtual bool nextUnreadCache(
-            CacheChange_t**,
-            WriterProxy**)
+    virtual CacheChange_t* nextUnreadCache()
     {
-        return true;
+        return nullptr;
     }
 
-    virtual bool nextUntakenCache(
-            CacheChange_t**,
-            WriterProxy**)
+    virtual CacheChange_t* nextUntakenCache()
     {
-        return true;
+        return nullptr;
     }
 
     virtual bool isInCleanState()
