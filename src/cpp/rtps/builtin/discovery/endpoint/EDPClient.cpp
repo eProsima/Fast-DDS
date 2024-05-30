@@ -27,12 +27,12 @@
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
-#include <fastdds/rtps/writer/StatefulWriter.h>
 
 #include <rtps/builtin/discovery/participant/PDP.h>
 #if HAVE_SECURITY
 #include <rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
 #endif // if HAVE_SECURITY
+#include <rtps/writer/StatefulWriter.hpp>
 
 namespace eprosima {
 namespace fastdds {

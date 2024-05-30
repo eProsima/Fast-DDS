@@ -22,12 +22,13 @@
 #include <memory>
 
 #include <fastdds/rtps/builtin/data/BuiltinEndpoints.hpp>
-#include <fastdds/rtps/writer/StatelessWriter.h>
+
 #include <rtps/builtin/BuiltinReader.hpp>
 #include <rtps/builtin/BuiltinWriter.hpp>
 #include <rtps/builtin/discovery/participant/PDPEndpoints.hpp>
 #include <rtps/history/ITopicPayloadPool.h>
 #include <rtps/reader/StatelessReader.hpp>
+#include <rtps/writer/StatelessWriter.hpp>
 
 namespace eprosima {
 namespace fastdds {

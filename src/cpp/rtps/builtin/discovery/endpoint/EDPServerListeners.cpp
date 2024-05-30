@@ -17,15 +17,16 @@
  *
  */
 #include <rtps/builtin/discovery/endpoint/EDPServerListeners.hpp>
-#include <rtps/builtin/discovery/endpoint/EDPServer.hpp>
-#include <rtps/builtin/discovery/participant/PDPServer.hpp>
 
-#include <fastdds/rtps/writer/StatefulWriter.h>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
 
-#include <fastdds/dds/log/Log.hpp>
+#include <rtps/builtin/discovery/endpoint/EDPServer.hpp>
+#include <rtps/builtin/discovery/participant/PDPServer.hpp>
+#include <rtps/writer/StatefulWriter.hpp>
+
 namespace eprosima {
 namespace fastdds {
 namespace rtps {

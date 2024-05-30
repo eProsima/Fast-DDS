@@ -34,12 +34,12 @@
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
-#include <fastdds/rtps/writer/StatefulWriter.h>
 
 #include <rtps/builtin/BuiltinProtocols.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/reader/StatefulReader.hpp>
 #include <rtps/RTPSDomainImpl.hpp>
+#include <rtps/writer/StatefulWriter.hpp>
 
 namespace eprosima {
 

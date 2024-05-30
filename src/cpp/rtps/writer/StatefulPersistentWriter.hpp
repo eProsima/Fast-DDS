@@ -13,15 +13,15 @@
 // limitations under the License.
 
 /**
- * @file StatelessPersistentWriter.h
+ * @file StatefulPersistentWriter.hpp
  */
-#ifndef _FASTDDS_RTPS_STATELESSPERSISTENTWRITER_H_
-#define _FASTDDS_RTPS_STATELESSPERSISTENTWRITER_H_
+#ifndef RTPS_WRITER__STATEFULPERSISTENTWRITER_HPP
+#define RTPS_WRITER__STATEFULPERSISTENTWRITER_HPP
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <fastdds/rtps/writer/StatelessWriter.h>
-#include <fastdds/rtps/writer/PersistentWriter.h>
+#include <rtps/writer/PersistentWriter.hpp>
+#include <rtps/writer/StatefulWriter.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -30,14 +30,14 @@ namespace rtps {
 class IPersistenceService;
 
 /**
- * Class StatelessPersistentWriter, specialization of StatelessWriter that manages history persistence.
+ * Class StatefulPersistentWriter, specialization of StatefulWriter that manages history persistence.
  * @ingroup WRITER_MODULE
  */
-class StatelessPersistentWriter : public StatelessWriter, private PersistentWriter
+class StatefulPersistentWriter : public StatefulWriter, private PersistentWriter
 {
     friend class RTPSParticipantImpl;
 
-    StatelessPersistentWriter(
+    StatefulPersistentWriter(
             RTPSParticipantImpl*,
             const GUID_t& guid,
             const WriterAttributes& att,
@@ -46,7 +46,7 @@ class StatelessPersistentWriter : public StatelessWriter, private PersistentWrit
             WriterListener* listen = nullptr,
             IPersistenceService* persistence = nullptr);
 
-    StatelessPersistentWriter(
+    StatefulPersistentWriter(
             RTPSParticipantImpl*,
             const GUID_t& guid,
             const WriterAttributes& att,
@@ -56,7 +56,7 @@ class StatelessPersistentWriter : public StatelessWriter, private PersistentWrit
             WriterListener* listen = nullptr,
             IPersistenceService* persistence = nullptr);
 
-    StatelessPersistentWriter(
+    StatefulPersistentWriter(
             RTPSParticipantImpl*,
             const GUID_t& guid,
             const WriterAttributes& att,
@@ -67,9 +67,18 @@ class StatelessPersistentWriter : public StatelessWriter, private PersistentWrit
             WriterListener* listen = nullptr,
             IPersistenceService* persistence = nullptr);
 
+    void print_inconsistent_acknack(
+            const GUID_t& writer_guid,
+            const GUID_t& reader_guid,
+            const SequenceNumber_t& min_requested_sequence_number,
+            const SequenceNumber_t& max_requested_sequence_number,
+            const SequenceNumber_t& next_sequence_number) override;
+
+    bool log_error_printed_ = false;
+
 public:
 
-    virtual ~StatelessPersistentWriter();
+    virtual ~StatefulPersistentWriter();
 
     /**
      * Add a specific change to all ReaderLocators.
@@ -96,4 +105,4 @@ public:
 } // namespace eprosima
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#endif /* _FASTDDS_RTPS_STATELESSPERSISTENTWRITER_H_ */
+#endif /* RTPS_WRITER__STATEFULPERSISTENTWRITER_HPP */

@@ -24,9 +24,9 @@
 
 #include <fastdds/rtps/common/CDRMessage_t.h>
 #include <fastdds/rtps/common/Locator.h>
-#include <fastdds/rtps/writer/StatelessWriter.h>
-#include <fastdds/rtps/writer/StatefulWriter.h>
 
+#include <rtps/writer/StatefulWriter.hpp>
+#include <rtps/writer/StatelessWriter.hpp>
 
 namespace eprosima {
 namespace fastrtps {

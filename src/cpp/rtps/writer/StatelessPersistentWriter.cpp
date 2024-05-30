@@ -17,7 +17,7 @@
  *
  */
 
-#include <fastdds/rtps/writer/StatelessPersistentWriter.h>
+#include "StatelessPersistentWriter.hpp"
 
 #include <fastdds/rtps/history/WriterHistory.h>
 

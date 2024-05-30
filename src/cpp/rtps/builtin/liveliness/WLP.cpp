@@ -27,7 +27,6 @@
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/history/WriterHistory.h>
-#include <fastdds/rtps/writer/StatefulWriter.h>
 #include <fastdds/rtps/writer/WriterListener.h>
 
 #include <rtps/builtin/BuiltinProtocols.h>
@@ -39,6 +38,7 @@
 #include <rtps/resources/TimedEvent.h>
 #include <rtps/resources/ResourceEvent.h>
 #include <rtps/writer/LivelinessManager.hpp>
+#include <rtps/writer/StatefulWriter.hpp>
 #include <utils/TimeConversion.hpp>
 
 namespace eprosima {

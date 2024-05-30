@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * @file StatefulWriter.h
+ * @file StatefulWriter.hpp
  */
 
-#ifndef _FASTDDS_RTPS_STATEFULWRITER_H_
-#define _FASTDDS_RTPS_STATEFULWRITER_H_
+#ifndef RTPS_WRITER__STATEFULWRITER_HPP
+#define RTPS_WRITER__STATEFULWRITER_HPP
 
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
@@ -129,4 +129,4 @@ private:
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif // _FASTDDS_RTPS_STATEFULWRITER_H_
+#endif // RTPS_WRITER__STATEFULWRITER_HPP

@@ -13,12 +13,17 @@
 // limitations under the License.
 
 /**
- * @file StatelessWriter.h
+ * @file StatelessWriter.hpp
  */
-#ifndef _FASTDDS_RTPS_STATELESSWRITER_H_
-#define _FASTDDS_RTPS_STATELESSWRITER_H_
+#ifndef RTPS_WRITER__STATELESSWRITER_HPP
+#define RTPS_WRITER__STATELESSWRITER_HPP
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
+#include <condition_variable>
+#include <list>
+#include <memory>
+#include <mutex>
 
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/rtps/history/IChangePool.h>
@@ -28,11 +33,6 @@
 #include <fastdds/rtps/writer/ReaderLocator.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>
-
-#include <condition_variable>
-#include <list>
-#include <memory>
-#include <mutex>
 
 namespace eprosima {
 namespace fastrtps {
@@ -299,4 +299,4 @@ private:
 } /* namespace eprosima */
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#endif /* _FASTDDS_RTPS_STATELESSWRITER_H_ */
+#endif /* RTPS_WRITER__STATELESSWRITER_HPP */
