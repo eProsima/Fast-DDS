@@ -85,7 +85,7 @@ public:
      * @param [in] guid GUID of the writer
      * @param [in] kind Liveliness kind
      * @param [in] lease_duration Liveliness lease duration
-     * @param [in,out] writer_liveliness_status The liveliness status of the writer
+     * @param [out] writer_liveliness_status The liveliness status of the writer
      * @return True if the writer was successfully removed
      */
     bool remove_writer(
