@@ -526,7 +526,7 @@ bool StatefulWriter::intraprocess_heartbeat(
         {
             incrementHBCount();
             returned_value = fastdds::rtps::BaseReader::downcast(reader)->processHeartbeatMsg(
-                    m_guid, m_heartbeatCount, first_seq, last_seq, true, liveliness, c_VendorId_eProsima);
+                m_guid, m_heartbeatCount, first_seq, last_seq, true, liveliness, c_VendorId_eProsima);
         }
     }
 

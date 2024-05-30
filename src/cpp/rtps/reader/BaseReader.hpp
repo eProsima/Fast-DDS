@@ -88,7 +88,6 @@ protected:
             fastrtps::rtps::ReaderHistory* hist,
             fastrtps::rtps::ReaderListener* listen);
 
-
 public:
 
     virtual ~BaseReader();

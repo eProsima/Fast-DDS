@@ -163,9 +163,9 @@ bool BaseReader::is_sample_valid(
     {
         // Check if the payload is dirty
         // Note the Payloads used in loans include a mandatory RTPS 2.3 extra header
-        if (!fastrtps::rtps::DataSharingPayloadPool::check_sequence_number(
-                    static_cast<const fastrtps::rtps::octet*>(data) - fastrtps::rtps::SerializedPayload_t::representation_header_size,
-                    sn))
+        auto payload = static_cast<const fastrtps::rtps::octet*>(data);
+        payload -= fastrtps::rtps::SerializedPayload_t::representation_header_size;
+        if (!fastrtps::rtps::DataSharingPayloadPool::check_sequence_number(payload, sn))
         {
             return false;
         }
@@ -385,7 +385,7 @@ fastrtps::rtps::History::const_iterator BaseReader::findCacheInFragmentedProcess
         fastrtps::rtps::CacheChange_t** change,
         fastrtps::rtps::History::const_iterator hint) const
 {
-    fastrtps::rtps::History::const_iterator ret_val = history_->get_change_nts(sequence_number, writer_guid, change, hint);
+    auto ret_val = history_->get_change_nts(sequence_number, writer_guid, change, hint);
 
     if (nullptr != *change && (*change)->is_fully_assembled())
     {
@@ -399,7 +399,7 @@ bool BaseReader::is_datasharing_compatible_with(
         const fastrtps::rtps::WriterProxyData& wdata)
 {
     if (!is_datasharing_compatible_ ||
-            wdata.m_qos.data_sharing.kind() == fastdds::dds::OFF)
+            wdata.m_qos.data_sharing.kind() == fastdds::dds::DataSharingKind::OFF)
     {
         return false;
     }
@@ -425,18 +425,17 @@ void BaseReader::setup_datasharing(
     if (att.endpoint.data_sharing_configuration().kind() != fastdds::dds::DataSharingKind::OFF)
     {
         using std::placeholders::_1;
-        std::shared_ptr<DataSharingNotification> notification =
-            DataSharingNotification::create_notification(
-                getGuid(), att.endpoint.data_sharing_configuration().shm_directory());
+        std::shared_ptr<DataSharingNotification> notification = DataSharingNotification::create_notification(
+            getGuid(), att.endpoint.data_sharing_configuration().shm_directory());
         if (notification)
         {
             is_datasharing_compatible_ = true;
             datasharing_listener_.reset(new DataSharingListener(
-                notification,
-                att.endpoint.data_sharing_configuration().shm_directory(),
-                att.data_sharing_listener_thread,
-                att.matched_writers_allocation,
-                this));
+                        notification,
+                        att.endpoint.data_sharing_configuration().shm_directory(),
+                        att.data_sharing_listener_thread,
+                        att.matched_writers_allocation,
+                        this));
 
             // We can start the listener here, as no writer can be matched already,
             // so no notification will occur until the non-virtual instance is constructed.
