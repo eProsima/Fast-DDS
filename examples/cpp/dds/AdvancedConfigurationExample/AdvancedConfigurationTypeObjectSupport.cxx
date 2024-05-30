@@ -51,7 +51,6 @@ void register_AdvancedConfiguration_type_identifier(
     {
         StructTypeFlag struct_flags_AdvancedConfiguration = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
                 false, false);
-        static_cast<void>(return_code_AdvancedConfiguration);
         QualifiedTypeName type_name_AdvancedConfiguration = "AdvancedConfiguration";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_AdvancedConfiguration;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_AdvancedConfiguration;

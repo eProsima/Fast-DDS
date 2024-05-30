@@ -51,7 +51,6 @@ void register_Lifespan_type_identifier(
     {
         StructTypeFlag struct_flags_Lifespan = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
                 false, false);
-        static_cast<void>(return_code_Lifespan);
         QualifiedTypeName type_name_Lifespan = "Lifespan";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_Lifespan;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_Lifespan;

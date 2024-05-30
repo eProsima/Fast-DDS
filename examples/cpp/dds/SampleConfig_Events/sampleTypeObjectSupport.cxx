@@ -51,7 +51,6 @@ void register_sample_type_identifier(
     {
         StructTypeFlag struct_flags_sample = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
                 false, false);
-        static_cast<void>(return_code_sample);
         QualifiedTypeName type_name_sample = "sample";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_sample;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_sample;

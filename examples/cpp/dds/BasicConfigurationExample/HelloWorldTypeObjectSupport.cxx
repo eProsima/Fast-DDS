@@ -51,7 +51,6 @@ void register_HelloWorld_type_identifier(
     {
         StructTypeFlag struct_flags_HelloWorld = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
                 false, false);
-        static_cast<void>(return_code_HelloWorld);
         QualifiedTypeName type_name_HelloWorld = "HelloWorld";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_HelloWorld;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_HelloWorld;

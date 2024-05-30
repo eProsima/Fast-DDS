@@ -51,7 +51,6 @@ void register_ExampleMessage_type_identifier(
     {
         StructTypeFlag struct_flags_ExampleMessage = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
                 false, false);
-        static_cast<void>(return_code_ExampleMessage);
         QualifiedTypeName type_name_ExampleMessage = "ExampleMessage";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_ExampleMessage;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_ExampleMessage;
