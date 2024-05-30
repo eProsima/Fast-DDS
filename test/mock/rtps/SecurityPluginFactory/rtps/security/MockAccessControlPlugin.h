@@ -37,6 +37,7 @@ public:
 
     using AccessPermissionsHandle = HandleImpl<AccessPermissions, MockAccessControlPlugin>;
 
+    // *INDENT-OFF* Uncrustify makes a mess with MOCK_METHOD macros
     MOCK_METHOD(PermissionsHandle*, validate_local_permissions, (
                 Authentication & auth_plugin,
                 const IdentityHandle& identity,
@@ -127,6 +128,7 @@ public:
                 const std::vector<std::string>& partitions,
                 EndpointSecurityAttributes & attributes,
                 SecurityException & exception), (override));
+    // *INDENT-ON*
 
     PermissionsHandle* get_permissions_handle(
             SecurityException&) override
