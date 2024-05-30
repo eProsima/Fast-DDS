@@ -821,7 +821,7 @@ TEST(DDSContentFilter, OnlyFilterAliveChanges)
     for (size_t i = 0; i < num_samples; ++i)
     {
         DynamicData* data = static_cast<DynamicData*>(writer.get_type_support().create_data());
-        data->set_uint16_value(i,
+        data->set_uint16_value(static_cast<uint16_t>(i),
                 static_cast<fastrtps::types::MemberId>(DynamicTypeSupportBuilder::KeyedHelloWorldMembers::
                         KEY));
         data->set_uint16_value(1u,
