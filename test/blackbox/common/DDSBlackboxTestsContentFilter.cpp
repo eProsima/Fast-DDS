@@ -686,7 +686,7 @@ TEST(DDSContentFilter, OnlyFilterAliveChanges)
     for (size_t i = 0; i < num_samples; ++i)
     {
         KeyedHelloWorld data;
-        data.key(i);
+        data.key(static_cast<uint16_t>(i));
         data.index(1u);  // All samples pass the filter
         InstanceHandle_t handle = writer.register_instance(data);
         ASSERT_NE(HANDLE_NIL, handle);
