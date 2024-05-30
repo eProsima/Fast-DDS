@@ -21,7 +21,7 @@
 
 #include <functional>
 
-#include <fastdds/dds/core/status/LivelinessChangedStatus.hpp>
+#include <fastdds/fastdds_dll.hpp>
 #include <fastdds/rtps/attributes/ReaderAttributes.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/common/SequenceNumber.h>
@@ -215,9 +215,6 @@ public:
      * @return There is a clean state with all Writers.
      */
     virtual bool isInCleanState() = 0;
-
-    //! The liveliness changed status struct as defined in the DDS
-    fastdds::dds::LivelinessChangedStatus liveliness_changed_status_;
 
     inline void enableMessagesFromUnkownWriters(
             bool enable)

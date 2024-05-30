@@ -1104,21 +1104,7 @@ void WLP::update_liveliness_changed_status(
         int32_t alive_change,
         int32_t not_alive_change)
 {
-    std::lock_guard<RecursiveTimedMutex> lock(reader->getMutex());
-
-    reader->liveliness_changed_status_.alive_count += alive_change;
-    reader->liveliness_changed_status_.alive_count_change += alive_change;
-    reader->liveliness_changed_status_.not_alive_count += not_alive_change;
-    reader->liveliness_changed_status_.not_alive_count_change += not_alive_change;
-    reader->liveliness_changed_status_.last_publication_handle = writer;
-
-    if (reader->getListener() != nullptr)
-    {
-        reader->getListener()->on_liveliness_changed(reader, reader->liveliness_changed_status_);
-
-        reader->liveliness_changed_status_.alive_count_change = 0;
-        reader->liveliness_changed_status_.not_alive_count_change = 0;
-    }
+    reader->update_liveliness_changed_status(writer, alive_change, not_alive_change);
 }
 
 } /* namespace rtps */

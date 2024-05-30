@@ -22,6 +22,7 @@
 #include <cstdint>
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/dds/core/status/LivelinessChangedStatus.hpp>
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/statistics/IListeners.hpp>
 #include <fastdds/statistics/rtps/StatisticsCommon.hpp>
@@ -116,6 +117,17 @@ public:
     }
 
     /**
+     * @brief A method to update the liveliness changed status of the reader
+     * @param writer The writer changing liveliness, specified by its guid
+     * @param alive_change The change requested for alive count. Should be -1, 0 or +1
+     * @param not_alive_change The change requested for not alive count. Should be -1, 0 or +1
+     */
+    void update_liveliness_changed_status(
+            fastrtps::rtps::GUID_t writer,
+            int32_t alive_change,
+            int32_t not_alive_change);
+
+    /**
      * Processes a new DATA message. Previously the message must have been accepted by function acceptMsgDirectedTo.
      *
      * @param change Pointer to the CacheChange_t.
@@ -204,6 +216,9 @@ protected:
     bool is_datasharing_compatible_ = false;
     //! The listener for the datasharing notifications
     std::unique_ptr<fastrtps::rtps::IDataSharingListener> datasharing_listener_;
+
+    //! The liveliness changed status struct as defined in the DDS
+    fastdds::dds::LivelinessChangedStatus liveliness_changed_status_;
 
     /*!
      * @brief Whether a history record may be removed.

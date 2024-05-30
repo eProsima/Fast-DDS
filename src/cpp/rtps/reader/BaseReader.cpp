@@ -27,6 +27,7 @@
 #include <fastdds/rtps/common/SerializedPayload.h>
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/reader/ReaderListener.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
 
 #include <rtps/DataSharing/DataSharingListener.hpp>
@@ -169,6 +170,28 @@ bool BaseReader::is_sample_valid(
         }
     }
     return true;
+}
+
+void BaseReader::update_liveliness_changed_status(
+        fastrtps::rtps::GUID_t writer,
+        int32_t alive_change,
+        int32_t not_alive_change)
+{
+    std::unique_lock<decltype(mp_mutex)> lock(mp_mutex);
+
+    liveliness_changed_status_.alive_count += alive_change;
+    liveliness_changed_status_.alive_count_change += alive_change;
+    liveliness_changed_status_.not_alive_count += not_alive_change;
+    liveliness_changed_status_.not_alive_count_change += not_alive_change;
+    liveliness_changed_status_.last_publication_handle = writer;
+
+    if (nullptr != mp_listener)
+    {
+        mp_listener->on_liveliness_changed(this, liveliness_changed_status_);
+
+        liveliness_changed_status_.alive_count_change = 0;
+        liveliness_changed_status_.not_alive_count_change = 0;
+    }
 }
 
 #ifdef FASTDDS_STATISTICS
