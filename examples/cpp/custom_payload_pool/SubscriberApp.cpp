@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * @file CustomPayloadPoolDataSubscriber.cpp
+ * @file SubscriberApp.cpp
  *
  */
 
-#include "CustomPayloadPoolDataSubscriber.h"
+#include "SubscriberApp.hpp"
 
 #include <csignal>
 

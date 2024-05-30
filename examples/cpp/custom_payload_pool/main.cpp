@@ -19,6 +19,7 @@
 
 #include <limits>
 #include <sstream>
+#include <thread>
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/log/Log.hpp>
@@ -28,6 +29,7 @@
 #include "CustomPayloadPoolDataSubscriber.h"
 
 using eprosima::fastdds::dds::Log;
+using namespace eprosima::fastdds::examples::custom_payload_pool;
 
 namespace option = eprosima::option;
 

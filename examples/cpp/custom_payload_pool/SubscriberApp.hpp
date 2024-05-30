@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file CustomPayloadPoolDataSubscriber.h
+ * @file SubscriberApp.hpp
  *
  */
 

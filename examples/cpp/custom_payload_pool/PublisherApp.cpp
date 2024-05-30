@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * @file CustomPayloadPoolDataPublisher.cpp
+ * @file PublisherApp.cpp
  *
  */
 
-#include "CustomPayloadPoolDataPublisher.h"
+#include "PublisherApp.hpp"
 
 #include <csignal>
 #include <thread>

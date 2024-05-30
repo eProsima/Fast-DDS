@@ -13,7 +13,6 @@
 # limitations under the License.
 
 add_subdirectory(ContentFilteredTopicExample)
-add_subdirectory(CustomPayloadPoolExample)
 add_subdirectory(DiscoveryServerExample)
 add_subdirectory(DynamicHelloWorldExample)
 add_subdirectory(FlowControlExample)
