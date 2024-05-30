@@ -89,6 +89,14 @@ public:
             const void* data,
             const fastrtps::rtps::GUID_t& writer,
             const fastrtps::rtps::SequenceNumber_t& sn) const override;
+
+    void setTrustedWriter(
+            const fastrtps::rtps::EntityId_t& writer)
+    {
+        m_acceptMessagesFromUnkownWriters = false;
+        m_trustedWriterEntityId = writer;
+    }
+
     /**
      * Whether the reader accepts messages directed to unknown readers.
      *

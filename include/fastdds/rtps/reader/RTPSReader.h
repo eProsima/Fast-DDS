@@ -208,6 +208,12 @@ public:
         data_filter_ = filter;
     }
 
+    FASTDDS_EXPORTED_API inline void enableMessagesFromUnkownWriters(
+            bool enable)
+    {
+        m_acceptMessagesFromUnkownWriters = enable;
+    }
+
     /*!
      * @brief Returns there is a clean state with all Writers.
      * It occurs when the Reader received all samples sent by Writers. In other words,
@@ -215,19 +221,6 @@ public:
      * @return There is a clean state with all Writers.
      */
     virtual bool isInCleanState() = 0;
-
-    inline void enableMessagesFromUnkownWriters(
-            bool enable)
-    {
-        m_acceptMessagesFromUnkownWriters = enable;
-    }
-
-    void setTrustedWriter(
-            const EntityId_t& writer)
-    {
-        m_acceptMessagesFromUnkownWriters = false;
-        m_trustedWriterEntityId = writer;
-    }
 
     /**
      * Assert the liveliness of a matched writer.
