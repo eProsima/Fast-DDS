@@ -1,0 +1,7 @@
+@extensibility(APPENDABLE)
+struct Configuration
+{
+	unsigned long index;
+	char message[20];
+	sequence<octet> data;
+};
