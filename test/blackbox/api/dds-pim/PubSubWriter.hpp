@@ -58,24 +58,15 @@
 #include <fastrtps/xmlparser/XMLParser.h>
 #include <fastrtps/xmlparser/XMLTree.h>
 
+#include "PubSubTypeTraits.hpp"
+
 using DomainParticipantFactory = eprosima::fastdds::dds::DomainParticipantFactory;
 using eprosima::fastrtps::rtps::IPLocator;
 using eprosima::fastdds::rtps::UDPTransportDescriptor;
 using eprosima::fastdds::rtps::UDPv4TransportDescriptor;
 using eprosima::fastdds::rtps::UDPv6TransportDescriptor;
 
-template<class T>
-struct PubSubWriterTypeSupportBuilder
-{
-    static void build(
-            eprosima::fastdds::dds::TypeSupport& typesupport)
-    {
-        return typesupport.reset(new T());
-    }
-
-};
-
-template<class TypeSupport, typename TypeSupportBuilder = PubSubWriterTypeSupportBuilder<TypeSupport>>
+template<class TypeSupport, typename TypeTraits = PubSubTypeTraits<TypeSupport>>
 class PubSubWriter
 {
     class ParticipantListener : public eprosima::fastdds::dds::DomainParticipantListener
@@ -396,7 +387,7 @@ public:
         {
             participant_guid_ = participant_->guid();
 
-            TypeSupportBuilder::build(type_);
+            TypeTraits::build_type_support(type_);
 
             // Register type
             ASSERT_EQ(participant_->register_type(type_), ReturnCode_t::RETCODE_OK);
@@ -504,7 +495,7 @@ public:
     }
 
     void send(
-            std::list<type>& msgs,
+            std::list<typename TypeTraits::DataListType>& msgs,
             uint32_t milliseconds = 0)
     {
         auto it = msgs.begin();
@@ -513,7 +504,7 @@ public:
         {
             if (datawriter_->write((void*)&(*it)))
             {
-                default_send_print<type>(*it);
+                TypeTraits::print_sent_data(*it);
                 it = msgs.erase(it);
                 if (milliseconds > 0)
                 {
@@ -550,7 +541,7 @@ public:
     bool send_sample(
             type& msg)
     {
-        default_send_print(msg);
+        TypeTraits::print_sent_data(msg);
         return datawriter_->write((void*)&msg);
     }
 
@@ -558,7 +549,7 @@ public:
             type& msg,
             const eprosima::fastdds::dds::InstanceHandle_t& instance_handle)
     {
-        default_send_print(msg);
+        TypeTraits::print_sent_data(msg);
         return datawriter_->write((void*)&msg, instance_handle);
     }
 

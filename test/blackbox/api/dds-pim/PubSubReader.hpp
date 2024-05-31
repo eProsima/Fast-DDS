@@ -61,6 +61,8 @@
 #include <fastrtps/xmlparser/XMLParser.h>
 #include <fastrtps/xmlparser/XMLTree.h>
 
+#include "PubSubTypeTraits.hpp"
+
 using DomainParticipantFactory = eprosima::fastdds::dds::DomainParticipantFactory;
 using eprosima::fastrtps::rtps::IPLocator;
 using eprosima::fastdds::rtps::UDPTransportDescriptor;
@@ -70,18 +72,7 @@ using eprosima::fastdds::rtps::UDPv6TransportDescriptor;
 using SampleLostStatusFunctor = std::function<void (const eprosima::fastdds::dds::SampleLostStatus&)>;
 using SampleRejectedStatusFunctor = std::function<void (const eprosima::fastdds::dds::SampleRejectedStatus&)>;
 
-template<class T>
-struct PubSubReaderTypeSupportBuilder
-{
-    static void build(
-            eprosima::fastdds::dds::TypeSupport& typesupport)
-    {
-        return typesupport.reset(new T());
-    }
-
-};
-
-template<class TypeSupport, typename TypeSupportBuilder = PubSubReaderTypeSupportBuilder<TypeSupport>>
+template<class TypeSupport, typename TypeTraits = PubSubTypeTraits<TypeSupport>>
 class PubSubReader
 {
 public:
@@ -431,7 +422,7 @@ public:
         {
             participant_guid_ = participant_->guid();
 
-            TypeSupportBuilder::build(type_);
+            TypeTraits::build_type_support(type_);
 
             // Register type
             ASSERT_EQ(participant_->register_type(type_), ReturnCode_t::RETCODE_OK);
@@ -468,10 +459,9 @@ public:
             ASSERT_TRUE(subscriber_->is_enabled());
 
             using TopicDescriptionPtr = eprosima::fastdds::dds::TopicDescription*;
-            TopicDescriptionPtr topic_desc {(nullptr !=
-                                            cf_topic_) ? static_cast<TopicDescriptionPtr>(cf_topic_) : static_cast<
-                                                TopicDescriptionPtr>(
-                                                topic_)};
+            TopicDescriptionPtr topic_desc {(nullptr != cf_topic_) ?
+                                            static_cast<TopicDescriptionPtr>(cf_topic_) :
+                                            static_cast<TopicDescriptionPtr>(topic_)};
 
             if (!xml_file_.empty())
             {
@@ -536,14 +526,14 @@ public:
         initialized_ = false;
     }
 
-    std::list<type> data_not_received()
+    std::list<typename TypeTraits::DataListType> data_not_received()
     {
         std::unique_lock<std::mutex> lock(mutex_);
         return total_msgs_;
     }
 
     eprosima::fastrtps::rtps::SequenceNumber_t startReception(
-            const std::list<type>& msgs)
+            const std::list<typename TypeTraits::DataListType>& msgs)
     {
         mutex_.lock();
         total_msgs_ = msgs;
@@ -678,7 +668,11 @@ public:
             {
                 if (info_seq[n].valid_data)
                 {
-                    auto it = std::find(expected_messages.begin(), expected_messages.end(), data_seq[n]);
+                    auto it = std::find_if(expected_messages.begin(), expected_messages.end(),
+                                    [&](const typename TypeTraits::DataListType& elem)
+                                    {
+                                        return TypeTraits::compare_data(data_seq[n], elem);
+                                    });
                     ASSERT_NE(it, expected_messages.end());
                     expected_messages.erase(it);
                 }
@@ -1942,12 +1936,16 @@ protected:
             {
                 if (!total_msgs_.empty())
                 {
-                    auto it = std::find(total_msgs_.begin(), total_msgs_.end(), *data);
+                    auto it = std::find_if(total_msgs_.begin(), total_msgs_.end(),
+                                    [&](const typename TypeTraits::DataListType& elem)
+                                    {
+                                        return TypeTraits::compare_data(*data, elem);
+                                    });
                     ASSERT_NE(it, total_msgs_.end());
                     total_msgs_.erase(it);
                 }
                 ++current_processed_count_;
-                default_receive_print<type>(*data);
+                TypeTraits::print_received_data(*data);
                 cv_.notify_one();
             }
 
@@ -1962,7 +1960,7 @@ protected:
             eprosima::fastdds::dds::DataReader* datareader,
             bool& returnedValue)
     {
-        eprosima::fastdds::dds::LoanableSequence<type> datas;
+        auto datas = TypeTraits::build_loanable_sequence();
         eprosima::fastdds::dds::SampleInfoSeq infos;
         returnedValue = true;
 
@@ -2001,12 +1999,16 @@ protected:
                 {
                     if (!total_msgs_.empty())
                     {
-                        auto it = std::find(total_msgs_.begin(), total_msgs_.end(), data);
+                        auto it = std::find_if(total_msgs_.begin(), total_msgs_.end(),
+                                        [&data](const typename TypeTraits::DataListType& elem)
+                                        {
+                                            return TypeTraits::compare_data(data, elem);
+                                        });
                         ASSERT_NE(it, total_msgs_.end());
                         total_msgs_.erase(it);
                     }
                     ++current_processed_count_;
-                    default_receive_print<type>(data);
+                    TypeTraits::print_received_data(data);
                     cv_.notify_one();
                 }
 
@@ -2098,7 +2100,7 @@ protected:
     eprosima::fastrtps::rtps::GUID_t participant_guid_;
     eprosima::fastrtps::rtps::GUID_t datareader_guid_;
     bool initialized_;
-    std::list<type> total_msgs_;
+    std::list<typename TypeTraits::DataListType> total_msgs_;
     std::mutex mutex_;
     std::condition_variable cv_;
     std::mutex mutexDiscovery_;
