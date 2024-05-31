@@ -69,6 +69,9 @@
                 </resourceLimitsQos>
             </topic>
             <qos>
+                <data_sharing>
+                    <kind>OFF</kind>
+                </data_sharing>
                 <durability>
                     <kind>TRANSIENT_LOCAL</kind>
                 </durability>
@@ -96,6 +99,9 @@
                 </resourceLimitsQos>
             </topic>
             <qos>
+                <data_sharing>
+                    <kind>OFF</kind>
+                </data_sharing>
                 <durability>
                     <kind>TRANSIENT_LOCAL</kind>
                 </durability>
@@ -123,6 +129,9 @@
                 </resourceLimitsQos>
             </topic>
             <qos>
+                <data_sharing>
+                    <kind>OFF</kind>
+                </data_sharing>
                 <durability>
                     <kind>VOLATILE</kind>
                 </durability>
@@ -150,6 +159,9 @@
                 </resourceLimitsQos>
             </topic>
             <qos>
+                <data_sharing>
+                    <kind>OFF</kind>
+                </data_sharing>
                 <durability>
                     <kind>VOLATILE</kind>
                 </durability>
@@ -179,6 +191,9 @@
                 </resourceLimitsQos>
             </topic>
             <qos>
+                <data_sharing>
+                    <kind>OFF</kind>
+                </data_sharing>
                 <durability>
                     <kind>TRANSIENT_LOCAL</kind>
                 </durability>
@@ -206,6 +221,9 @@
                 </resourceLimitsQos>
             </topic>
             <qos>
+                <data_sharing>
+                    <kind>OFF</kind>
+                </data_sharing>
                 <durability>
                     <kind>TRANSIENT_LOCAL</kind>
                 </durability>
@@ -233,6 +251,9 @@
                 </resourceLimitsQos>
             </topic>
             <qos>
+                <data_sharing>
+                    <kind>OFF</kind>
+                </data_sharing>
                 <durability>
                     <kind>VOLATILE</kind>
                 </durability>
@@ -260,6 +281,9 @@
                 </resourceLimitsQos>
             </topic>
             <qos>
+                <data_sharing>
+                    <kind>OFF</kind>
+                </data_sharing>
                 <durability>
                     <kind>VOLATILE</kind>
                 </durability>

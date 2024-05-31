@@ -34,7 +34,7 @@
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
-#include "AllocTestType.h"
+#include "AllocTestType.hpp"
 
 class AllocTestPublisher : public eprosima::fastdds::dds::DataWriterListener
 {
