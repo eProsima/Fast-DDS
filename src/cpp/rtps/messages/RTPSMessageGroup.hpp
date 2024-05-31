@@ -245,7 +245,7 @@ public:
 
     inline uint32_t get_current_bytes_processed() const
     {
-        return current_sent_bytes_ + header_msg_->length + buffers_bytes_;
+        return current_sent_bytes_ + buffers_bytes_;
     }
 
 private:
