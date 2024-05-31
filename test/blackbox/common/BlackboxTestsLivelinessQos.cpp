@@ -1998,6 +1998,47 @@ TEST(LivelinessTests, Reader_Successfully_Asserts_Liveliness_on_a_Disconnected_W
     ASSERT_EQ(reader.sub_wait_liveliness_lost_for(1, std::chrono::seconds(4)), 1u);
 }
 
+// Regression test of Refs #21065, github issue #4610
+TEST(LivelinessTests, correct_liveliness_state_one_writer_multiple_readers)
+{
+    uint8_t num_readers = 2;
+
+    // Create one writer participant
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+
+    // Create a reader participant containing 2 readers
+    PubSubParticipant<HelloWorldPubSubType> reader(0, num_readers, 0, num_readers);
+
+    reader.init_participant();
+    // Define the reader's lease duration in 1.6 secs
+    reader.sub_liveliness_lease_duration(eprosima::fastrtps::Time_t(1, 600000000));
+    // Both readers on the same topic
+    reader.sub_topic_name(TEST_TOPIC_NAME);
+
+    for (size_t i = 0; i < num_readers; i++)
+    {
+        // Create Subscribers and readers, one for each writer
+        reader.init_subscriber(static_cast<unsigned int>(i));
+    }
+
+    // Create writers
+    writer.lease_duration(c_TimeInfinite, 1)
+            .liveliness_lease_duration(eprosima::fastrtps::Time_t(1, 0))
+            .liveliness_kind(eprosima::fastdds::dds::AUTOMATIC_LIVELINESS_QOS)
+            .liveliness_announcement_period(eprosima::fastrtps::Time_t(0, 500000000))
+            .init();
+
+    // Wait for discovery to occur. Liveliness should be recovered twice,
+    // one per matched reader.
+    reader.sub_wait_liveliness_recovered(2);
+
+    // Destroy the writer
+    writer.destroy();
+
+    // After 1.6 secs, we should receive a on_liveliness_changed(status lost) on the two readers
+    ASSERT_EQ(reader.sub_wait_liveliness_lost_for(2, std::chrono::seconds(4)), 2u);
+}
+
 #ifdef INSTANTIATE_TEST_SUITE_P
 #define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
 #else
