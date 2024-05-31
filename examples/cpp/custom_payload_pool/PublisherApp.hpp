@@ -17,66 +17,56 @@
  *
  */
 
-#ifndef CUSTOM_PAYLOAD_POOL_DATA_PUBLISHER_H_
-#define CUSTOM_PAYLOAD_POOL_DATA_PUBLISHER_H_
+#ifndef _FASTDDS_CUSTOM_PAYLOAD_POOL_DATA_PUBLISHER_HPP_
+#define _FASTDDS_CUSTOM_PAYLOAD_POOL_DATA_PUBLISHER_HPP_
 
 #include <condition_variable>
 #include <mutex>
-
-#include "CustomPayloadPool.hpp"
-#include "CustomPayloadPoolDataPubSubTypes.h"
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
-/**
- * Class used to group into a single working unit a Publisher with a DataWriter, its listener, and a TypeSupport member
- * corresponding to the HelloWorld datatype
- */
-class CustomPayloadPoolDataPublisher : private eprosima::fastdds::dds::DataWriterListener
+#include "Application.hpp"
+#include "CLIParser.hpp"
+#include "CustomPayloadPool.hpp"
+#include "CustomPayloadPoolDataPubSubTypes.h"
+
+using namespace eprosima::fastdds::dds;
+
+namespace eprosima {
+namespace fastdds {
+namespace examples {
+namespace custom_payload_pool {
+
+class PublisherApp : public Application, public DataWriterListener
 {
 public:
 
-    CustomPayloadPoolDataPublisher(
-            std::shared_ptr<CustomPayloadPool> payload_pool);
+    PublisherApp(
+            const CLIParser::publisher_config& config,
+            const std::string& topic_name);
 
-    virtual ~CustomPayloadPoolDataPublisher();
+    virtual ~PublisherApp();
 
-    //! Initialize the publisher
-    bool init();
+    //! Publisher matched method
+    void on_publication_matched(
+            DataWriter* writer,
+            const PublicationMatchedStatus& info) override;
 
     //! Run for number samples, publish every sleep seconds
-    bool run(
-            uint32_t number,
-            uint32_t sleep);
+    void run() override;
+
+    //! Stop publisher
+    void stop() override;
 
 private:
 
     //! Publish a sample
     bool publish();
 
-    //! Run thread for number samples, publish every sleep seconds
-    void run_thread(
-            uint32_t number,
-            uint32_t sleep);
-
     //! Return the current state of execution
-    static bool is_stopped();
-
-    //! Trigger the end of execution
-    static void stop();
-
-    //! Callback executed when a DataReader is matched or unmatched
-    void on_publication_matched(
-            eprosima::fastdds::dds::DataWriter* writer,
-            const eprosima::fastdds::dds::PublicationMatchedStatus& info) override;
-
-    //! Return true if there are at least 1 matched DataReaders
-    bool enough_matched();
-
-    //! Block the thread until enough DataReaders are matched
-    void wait();
+    bool is_stopped();
 
     //! Unblock the thread so publication of samples begins/resumes
     static void awake();
@@ -85,31 +75,32 @@ private:
 
     std::shared_ptr<CustomPayloadPool> payload_pool_;
 
-    eprosima::fastdds::dds::DomainParticipant* participant_;
+    DomainParticipant* participant_;
 
-    eprosima::fastdds::dds::Publisher* publisher_;
+    Publisher* publisher_;
 
-    eprosima::fastdds::dds::Topic* topic_;
+    Topic* topic_;
 
-    eprosima::fastdds::dds::DataWriter* writer_;
+    DataWriter* writer_;
 
-    eprosima::fastdds::dds::TypeSupport type_;
+    TypeSupport type_;
 
-    //! Number of DataReaders matched to the associated DataWriter
-    std::atomic<std::uint32_t> matched_;
+    int16_t matched_;
 
-    //! Member used for control flow purposes
-    std::atomic<bool> has_stopped_for_unexpected_error_;
+    uint16_t samples_;
 
-    //! Member used for control flow purposes
-    static std::atomic<bool> stop_;
+    std::mutex mutex_;
 
-    //! Protects wait_matched condition variable
-    static std::mutex wait_matched_cv_mtx_;
+    std::condition_variable cv_;
 
-    //! Waits until enough DataReaders are matched
-    static std::condition_variable wait_matched_cv_;
+    std::atomic<bool> stop_;
+
+    uint16_t period_ms_ = 100; // in ms
 };
 
+} // namespace custom_payload_pool
+} // namespace examples
+} // namespace fastdds
+} // namespace eprosima
 
-#endif /* CUSTOM_PAYLOAD_POOL_DATA_PUBLISHER_H_ */
+#endif /* _FASTDDS_CUSTOM_PAYLOAD_POOL_DATA_PUBLISHER_H_ */
