@@ -35,6 +35,8 @@ struct ParticipantDiscoveryInfo
 {
     //!Enum DISCOVERY_STATUS, four different status for discovered participants.
     //!@ingroup RTPS_MODULE
+    // *INDENT-OFF* eduponz: Does not understand the #if correctly and ends up removing the ;
+    //                       at the end of the enum, which does not build.
 #if defined(_WIN32)
     enum FASTDDS_EXPORTED_API DISCOVERY_STATUS
 #else
@@ -46,7 +48,8 @@ struct ParticipantDiscoveryInfo
         REMOVED_PARTICIPANT,
         DROPPED_PARTICIPANT,
         IGNORED_PARTICIPANT
-    }
+    };
+    // *INDENT-ON*
 
     ParticipantDiscoveryInfo(
             const ParticipantProxyData& data)
