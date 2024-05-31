@@ -82,15 +82,22 @@ public:
 
     /**
      * @brief Removes a writer
-     * @param guid GUID of the writer
-     * @param kind Liveliness kind
-     * @param lease_duration Liveliness lease duration
+     * @param [in] guid GUID of the writer
+     * @param [in] kind Liveliness kind
+     * @param [in] lease_duration Liveliness lease duration
+     * @param [out] writer_liveliness_status The liveliness status of the writer
      * @return True if the writer was successfully removed
      */
     bool remove_writer(
             GUID_t guid,
+<<<<<<< HEAD:include/fastdds/rtps/writer/LivelinessManager.h
             LivelinessQosPolicyKind kind,
             Duration_t lease_duration);
+=======
+            fastdds::dds::LivelinessQosPolicyKind kind,
+            Duration_t lease_duration,
+            LivelinessData::WriterStatus& writer_liveliness_status);
+>>>>>>> df909438f (Correctly call `on_liveliness_changed` when there are multiple readers on the same topic (#4822)):src/cpp/rtps/writer/LivelinessManager.hpp
 
     /**
      * @brief Asserts liveliness of a writer in the set

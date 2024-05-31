@@ -378,10 +378,22 @@ bool StatefulReader::matched_writer_remove(
         auto wlp = this->mp_RTPSParticipant->wlp();
         if ( wlp != nullptr)
         {
+            LivelinessData::WriterStatus writer_liveliness_status;
             wlp->sub_liveliness_manager_->remove_writer(
                 writer_guid,
                 liveliness_kind_,
-                liveliness_lease_duration_);
+                liveliness_lease_duration_,
+                writer_liveliness_status);
+
+            if (writer_liveliness_status == LivelinessData::WriterStatus::ALIVE)
+            {
+                wlp->update_liveliness_changed_status(writer_guid, this, -1, 0);
+            }
+            else if (writer_liveliness_status == LivelinessData::WriterStatus::NOT_ALIVE)
+            {
+                wlp->update_liveliness_changed_status(writer_guid, this, 0, -1);
+            }
+
         }
         else
         {
