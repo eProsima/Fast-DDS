@@ -144,7 +144,7 @@ protected:
         if (asynchronous)
         {
             writer.asynchronously(eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE).
-                    add_throughput_controller_descriptor_to_pparams(scheduler_policy_, 0, 0);
+                    add_flow_controller_descriptor_to_pparams(scheduler_policy_, 0, 0);
         }
 
         writer
@@ -374,7 +374,7 @@ TEST_P(PubSubFragmentsLimited, AsyncPubSubAsNonReliableData300kbWithFlowControl)
     writer.history_depth(10).
             reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS).
             asynchronously(eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE).
-            add_throughput_controller_descriptor_to_pparams(scheduler_policy_, bytesPerPeriod, periodInMs).init();
+            add_flow_controller_descriptor_to_pparams(scheduler_policy_, bytesPerPeriod, periodInMs).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -411,7 +411,7 @@ TEST_P(PubSubFragmentsLimited, AsyncPubSubAsReliableData300kbWithFlowControl)
 
     writer.history_depth(5).
             asynchronously(eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE).
-            add_throughput_controller_descriptor_to_pparams(scheduler_policy_, bytesPerPeriod, periodInMs).init();
+            add_flow_controller_descriptor_to_pparams(scheduler_policy_, bytesPerPeriod, periodInMs).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -446,7 +446,7 @@ TEST_P(PubSubFragmentsLimited, AsyncPubSubAsReliableData300kbInLossyConditions)
     // flow control not to overrun the receive buffer.
     uint32_t bytesPerPeriod = 300000;
     uint32_t periodInMs = 200;
-    writer.add_throughput_controller_descriptor_to_pparams(scheduler_policy_, bytesPerPeriod, periodInMs);
+    writer.add_flow_controller_descriptor_to_pparams(scheduler_policy_, bytesPerPeriod, periodInMs);
 
     // To simulate lossy conditions, we are going to remove the default
     // bultin transport, and instead use a lossy shim layer variant.
@@ -500,7 +500,7 @@ TEST_P(PubSubFragmentsLimited, AsyncPubSubAsReliableVolatileData300kbInLossyCond
     // flow control not to overrun the receive buffer.
     uint32_t bytesPerPeriod = 300000;
     uint32_t periodInMs = 200;
-    writer.add_throughput_controller_descriptor_to_pparams(scheduler_policy_, bytesPerPeriod, periodInMs);
+    writer.add_flow_controller_descriptor_to_pparams(scheduler_policy_, bytesPerPeriod, periodInMs);
 
     // To simulate lossy conditions, we are going to remove the default
     // bultin transport, and instead use a lossy shim layer variant.
@@ -555,7 +555,7 @@ TEST_P(PubSubFragmentsLimited, AsyncPubSubAsReliableData300kbInLossyConditionsSm
     // flow control not to overrun the receive buffer.
     uint32_t bytesPerPeriod = 300000;
     uint32_t periodInMs = 200;
-    writer.add_throughput_controller_descriptor_to_pparams(scheduler_policy_, bytesPerPeriod, periodInMs);
+    writer.add_flow_controller_descriptor_to_pparams(scheduler_policy_, bytesPerPeriod, periodInMs);
 
     // To simulate lossy conditions, we are going to remove the default
     // bultin transport, and instead use a lossy shim layer variant.
@@ -622,7 +622,7 @@ TEST_P(PubSubFragmentsLimited, AsyncPubSubAsReliableKeyedData300kbKeepLast1InLos
     // flow control not to overrun the receive buffer.
     uint32_t bytesPerPeriod = 153601;
     uint32_t periodInMs = 100;
-    writer.add_throughput_controller_descriptor_to_pparams(scheduler_policy_, bytesPerPeriod, periodInMs)
+    writer.add_flow_controller_descriptor_to_pparams(scheduler_policy_, bytesPerPeriod, periodInMs)
             .heartbeat_period_seconds(0)
             .heartbeat_period_nanosec(1000000)
             .history_depth(1)
@@ -681,7 +681,7 @@ TEST(PubSubFragmentsLimited,
     // flow control not to overrun the receive buffer.
     uint32_t bytesPerPeriod = 153601;
     uint32_t periodInMs = 100;
-    writer.add_throughput_controller_descriptor_to_pparams(
+    writer.add_flow_controller_descriptor_to_pparams(
         eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::HIGH_PRIORITY, bytesPerPeriod, periodInMs)
             .heartbeat_period_seconds(0)
             .heartbeat_period_nanosec(1000000)
@@ -726,7 +726,7 @@ TEST_P(PubSubFragmentsLimited, AsyncPubSubAsReliableVolatileData300kbInLossyCond
     // flow control not to overrun the receive buffer.
     uint32_t bytesPerPeriod = 300000;
     uint32_t periodInMs = 200;
-    writer.add_throughput_controller_descriptor_to_pparams(scheduler_policy_, bytesPerPeriod, periodInMs);
+    writer.add_flow_controller_descriptor_to_pparams(scheduler_policy_, bytesPerPeriod, periodInMs);
 
     // To simulate lossy conditions, we are going to remove the default
     // bultin transport, and instead use a lossy shim layer variant.
@@ -785,7 +785,7 @@ TEST_P(PubSubFragmentsLimited, AsyncFragmentSizeTest)
         // flow control not to overrun the receive buffer.
         uint32_t size = 32536;
         uint32_t periodInMs = 500;
-        writer.add_throughput_controller_descriptor_to_pparams(scheduler_policy_, size, periodInMs);
+        writer.add_flow_controller_descriptor_to_pparams(scheduler_policy_, size, periodInMs);
 
         auto testTransport = std::make_shared<UDPv4TransportDescriptor>();
         testTransport->maxMessageSize = 32000;
@@ -831,7 +831,7 @@ TEST_P(PubSubFragmentsLimited, AsyncFragmentSizeTest)
         // flow control not to overrun the receive buffer.
         uint32_t size = 32000;
         uint32_t periodInMs = 500;
-        writer.add_throughput_controller_descriptor_to_pparams(scheduler_policy_, size, periodInMs);
+        writer.add_flow_controller_descriptor_to_pparams(scheduler_policy_, size, periodInMs);
 
         auto testTransport = std::make_shared<UDPv4TransportDescriptor>();
         testTransport->maxMessageSize = 32536;

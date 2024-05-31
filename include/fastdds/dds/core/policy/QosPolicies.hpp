@@ -2047,7 +2047,7 @@ public:
      *
      * @since 2.4.0
      */
-    const char* flow_controller_name = fastdds::rtps::FASTDDS_FLOW_CONTROLLER_DEFAULT;
+    std::string flow_controller_name = fastdds::rtps::FASTDDS_FLOW_CONTROLLER_DEFAULT;
 
     inline void clear() override
     {
@@ -2059,7 +2059,7 @@ public:
             const PublishModeQosPolicy& b) const
     {
         return (this->kind == b.kind) &&
-               0 == strcmp(flow_controller_name, b.flow_controller_name) &&
+               flow_controller_name == b.flow_controller_name.c_str() &&
                QosPolicy::operator ==(b);
     }
 
@@ -2679,7 +2679,6 @@ public:
                (this->participant_id == b.participant_id) &&
                (this->builtin == b.builtin) &&
                (this->port == b.port) &&
-               (this->throughput_controller == b.throughput_controller) &&
                (this->default_unicast_locator_list == b.default_unicast_locator_list) &&
                (this->default_multicast_locator_list == b.default_multicast_locator_list) &&
                (this->default_external_unicast_locators == b.default_external_unicast_locators) &&
@@ -2704,13 +2703,6 @@ public:
 
     //! Port Parameters
     fastrtps::rtps::PortParameters port;
-
-    /**
-     * @brief Throughput controller parameters. Leave default for uncontrolled flow.
-     *
-     * @deprecated Use flow_controllers() on DomainParticipantQoS
-     */
-    fastrtps::rtps::ThroughputControllerDescriptor throughput_controller;
 
     /**
      * Default list of Unicast Locators to be used for any Endpoint defined inside this RTPSParticipant in the case

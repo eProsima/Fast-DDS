@@ -153,7 +153,7 @@ TEST_P(RTPS, AsyncRTPSAsNonReliableSocketWithWriterSpecificFlowControl)
     writer.reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::BEST_EFFORT).
             add_to_multicast_locator_list(ip, global_port).
             asynchronously(eprosima::fastrtps::rtps::RTPSWriterPublishMode::ASYNCHRONOUS_WRITER).
-            add_throughput_controller_descriptor_to_pparams(bytesPerPeriod, periodMillisecs).init();
+            add_flow_controller_descriptor_to_pparams(bytesPerPeriod, periodMillisecs).init();
 
     ASSERT_TRUE(writer.isInitialized());
 

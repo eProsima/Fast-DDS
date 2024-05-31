@@ -1138,7 +1138,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_rtps_data300kb)
     writer.history_depth(5).
             reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS).
             asynchronously(eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE).
-            add_throughput_controller_descriptor_to_pparams(
+            add_flow_controller_descriptor_to_pparams(
         eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, bytesPerPeriod, periodInMs).
             property_policy(pub_property_policy).init();
 
@@ -1208,7 +1208,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_rtps_data300kb)
 
     writer.history_depth(5).
             asynchronously(eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE).
-            add_throughput_controller_descriptor_to_pparams(
+            add_flow_controller_descriptor_to_pparams(
         eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, bytesPerPeriod, periodInMs).
             property_policy(pub_property_policy).init();
 
@@ -1584,7 +1584,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_submessage_data
     writer.history_depth(5).
             reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS).
             asynchronously(eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE).
-            add_throughput_controller_descriptor_to_pparams(
+            add_flow_controller_descriptor_to_pparams(
         eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, bytesPerPeriod, periodInMs).
             property_policy(pub_part_property_policy).
             entity_property_policy(pub_property_policy).init();
@@ -1657,7 +1657,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_submessage_data30
 
     writer.history_depth(5).
             asynchronously(eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE).
-            add_throughput_controller_descriptor_to_pparams(
+            add_flow_controller_descriptor_to_pparams(
         eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, bytesPerPeriod, periodInMs).
             property_policy(pub_part_property_policy).
             entity_property_policy(pub_property_policy).init();
@@ -2075,7 +2075,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_payload_data300
     writer.history_depth(5).
             reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS).
             asynchronously(eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE).
-            add_throughput_controller_descriptor_to_pparams(
+            add_flow_controller_descriptor_to_pparams(
         eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, bytesPerPeriod, periodInMs).
             property_policy(pub_part_property_policy).
             entity_property_policy(pub_property_policy).init();
@@ -2148,7 +2148,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_payload_data300kb
 
     writer.history_depth(5).
             asynchronously(eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE).
-            add_throughput_controller_descriptor_to_pparams(
+            add_flow_controller_descriptor_to_pparams(
         eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, bytesPerPeriod, periodInMs).
             property_policy(pub_part_property_policy).
             entity_property_policy(pub_property_policy).init();
@@ -2501,7 +2501,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_all_data300kb)
     writer.history_depth(5).
             reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS).
             asynchronously(eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE).
-            add_throughput_controller_descriptor_to_pparams(
+            add_flow_controller_descriptor_to_pparams(
         eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, bytesPerPeriod, periodInMs).
             property_policy(pub_part_property_policy).
             entity_property_policy(pub_property_policy).init();
@@ -2578,7 +2578,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_all_data300kb)
 
     writer.history_depth(5).
             asynchronously(eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE).
-            add_throughput_controller_descriptor_to_pparams(
+            add_flow_controller_descriptor_to_pparams(
         eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, bytesPerPeriod, periodInMs).
             property_policy(pub_part_property_policy).
             entity_property_policy(pub_property_policy).init();

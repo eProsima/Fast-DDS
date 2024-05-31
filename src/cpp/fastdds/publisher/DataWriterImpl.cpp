@@ -239,7 +239,6 @@ ReturnCode_t DataWriterImpl::enable()
     assert(writer_ == nullptr);
 
     WriterAttributes w_att;
-    w_att.throughputController = qos_.throughput_controller();
     w_att.endpoint.durabilityKind = qos_.durability().durabilityKind();
     w_att.endpoint.endpointKind = WRITER;
     w_att.endpoint.reliabilityKind = qos_.reliability().kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
@@ -1768,8 +1767,6 @@ void DataWriterImpl::set_qos(
         to.writer_resource_limits() = from.writer_resource_limits();
 
         to.data_sharing() = from.data_sharing();
-
-        to.throughput_controller() = from.throughput_controller();
     }
 
     if (!(to.deadline() == from.deadline()))

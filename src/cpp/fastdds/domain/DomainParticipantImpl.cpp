@@ -1718,7 +1718,6 @@ bool DomainParticipantImpl::can_qos_be_updated(
                 (!(to.wire_protocol().prefix == from.wire_protocol().prefix) ||
                 !(to.wire_protocol().participant_id == from.wire_protocol().participant_id) ||
                 !(to.wire_protocol().port == from.wire_protocol().port) ||
-                !(to.wire_protocol().throughput_controller == from.wire_protocol().throughput_controller) ||
                 !(to.wire_protocol().default_unicast_locator_list ==
                 from.wire_protocol().default_unicast_locator_list) ||
                 !(to.wire_protocol().default_multicast_locator_list ==

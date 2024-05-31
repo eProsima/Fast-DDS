@@ -54,7 +54,7 @@ TEST_P(PubSubFlowControllers, AsyncPubSubAsReliableData64kbWithParticipantFlowCo
 
     uint32_t bytesPerPeriod = 68000;
     uint32_t periodInMs = 500;
-    writer.add_throughput_controller_descriptor_to_pparams(scheduler_policy_, bytesPerPeriod, periodInMs);
+    writer.add_flow_controller_descriptor_to_pparams(scheduler_policy_, bytesPerPeriod, periodInMs);
 
     writer.history_depth(3).
             asynchronously(eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE).init();
@@ -90,7 +90,7 @@ TEST_P(PubSubFlowControllers, AsyncPubSubAsReliableData64kbWithParticipantFlowCo
 
     uint32_t bytesPerPeriod = 65000;
     uint32_t periodInMs = 500;
-    writer.add_throughput_controller_descriptor_to_pparams(scheduler_policy_, bytesPerPeriod, periodInMs);
+    writer.add_flow_controller_descriptor_to_pparams(scheduler_policy_, bytesPerPeriod, periodInMs);
 
     auto testTransport = std::make_shared<UDPv4TransportDescriptor>();
     writer.disable_builtin_transport();
@@ -132,7 +132,7 @@ TEST_P(PubSubFlowControllers, AsyncPubSubWithFlowController64kb)
 
     slowWriter.history_depth(2).
             asynchronously(eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE).
-            add_throughput_controller_descriptor_to_pparams(scheduler_policy_, sizeToClear, periodInMs).init();
+            add_flow_controller_descriptor_to_pparams(scheduler_policy_, sizeToClear, periodInMs).init();
     ASSERT_TRUE(slowWriter.isInitialized());
 
     slowWriter.wait_discovery();
@@ -153,7 +153,7 @@ TEST_P(PubSubFlowControllers, FlowControllerIfNotAsync)
 
     uint32_t size = 10000;
     uint32_t periodInMs = 1000;
-    writer.add_throughput_controller_descriptor_to_pparams(scheduler_policy_, size, periodInMs).init();
+    writer.add_flow_controller_descriptor_to_pparams(scheduler_policy_, size, periodInMs).init();
     ASSERT_FALSE(writer.isInitialized());
 }
 
@@ -169,7 +169,7 @@ TEST_P(PubSubFlowControllers, AsyncMultipleWritersFlowController64kb)
     // Writers configuration.
     uint32_t bytesPerPeriod = 68000;
     uint32_t periodInMs = 500;
-    entities.add_throughput_controller_descriptor_to_pparams(scheduler_policy_, bytesPerPeriod, periodInMs).
+    entities.add_flow_controller_descriptor_to_pparams(scheduler_policy_, bytesPerPeriod, periodInMs).
             pub_history_depth(3).
             pub_durability_kind(eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS).
             pub_reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).

@@ -101,11 +101,12 @@ public:
     void init()
     {
         //Create participant
-        eprosima::fastrtps::rtps::RTPSParticipantAttributes pattr;
-        pattr.builtin.discovery_config.discoveryProtocol = eprosima::fastrtps::rtps::DiscoveryProtocol::NONE;
-        pattr.builtin.use_WriterLivelinessProtocol = false;
-        pattr.participantID = 2;
-        participant_ = eprosima::fastrtps::rtps::RTPSDomain::createParticipant((uint32_t)GET_PID() % 230, pattr);
+        participant_attr_.builtin.discovery_config.discoveryProtocol =
+                eprosima::fastrtps::rtps::DiscoveryProtocol::NONE;
+        participant_attr_.builtin.use_WriterLivelinessProtocol = false;
+        participant_attr_.participantID = 2;
+        participant_ = eprosima::fastrtps::rtps::RTPSDomain::createParticipant(
+            (uint32_t)GET_PID() % 230, participant_attr_);
         ASSERT_NE(participant_, nullptr);
 
         //Create writerhistory
@@ -277,12 +278,16 @@ public:
         return *this;
     }
 
-    RTPSAsSocketWriter& add_throughput_controller_descriptor_to_pparams(
+    RTPSAsSocketWriter& add_flow_controller_descriptor_to_pparams(
             uint32_t bytesPerPeriod,
             uint32_t periodInMs)
     {
-        eprosima::fastrtps::rtps::ThroughputControllerDescriptor descriptor {bytesPerPeriod, periodInMs};
-        writer_attr_.throughputController = descriptor;
+        auto new_flow_controller = std::make_shared<eprosima::fastdds::rtps::FlowControllerDescriptor>();
+        new_flow_controller->name = "MyFlowController";
+        new_flow_controller->max_bytes_per_period = bytesPerPeriod;
+        new_flow_controller->period_ms = static_cast<uint64_t>(periodInMs);
+        participant_attr_.flow_controllers.push_back(new_flow_controller);
+        writer_attr_.flow_controller_name = new_flow_controller->name;
 
         return *this;
     }
@@ -327,6 +332,7 @@ private:
 
     eprosima::fastrtps::rtps::RTPSParticipant* participant_;
     eprosima::fastrtps::rtps::RTPSWriter* writer_;
+    eprosima::fastrtps::rtps::RTPSParticipantAttributes participant_attr_;
     eprosima::fastrtps::rtps::WriterAttributes writer_attr_;
     eprosima::fastrtps::rtps::WriterHistory* history_;
     eprosima::fastrtps::rtps::HistoryAttributes hattr_;

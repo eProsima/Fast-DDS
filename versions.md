@@ -35,6 +35,7 @@ Forthcoming
   * Hello world example with wait-sets and environment XML profiles.
   * Configuration example that condenses multiple QoS examples. Multiple configurations allowed through argument parsing.
 * Removed `TypeConsistencyQos` from DataReader, and included `TypeConsistencyEnforcementQosPolicy` and `DataRepresentationQosPolicy`
+* Added new `flow_controller_descriptor_list` XML configuration, remove `ThroughtputController`.
 
 Version 2.14.0
 --------------
