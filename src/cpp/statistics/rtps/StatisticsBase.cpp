@@ -100,7 +100,7 @@ StatisticsAncillary* StatisticsListenersImpl::get_aux_members() const
 }
 
 bool StatisticsListenersImpl::add_statistics_listener_impl(
-        std::shared_ptr<fastdds::statistics::IListener> listener)
+        std::shared_ptr<eprosima::fastdds::statistics::IListener> listener)
 {
     if (!listener)
     {
@@ -115,7 +115,7 @@ bool StatisticsListenersImpl::add_statistics_listener_impl(
 }
 
 bool StatisticsListenersImpl::remove_statistics_listener_impl(
-        std::shared_ptr<fastdds::statistics::IListener> listener)
+        std::shared_ptr<eprosima::fastdds::statistics::IListener> listener)
 {
     std::lock_guard<fastrtps::RecursiveTimedMutex> lock(get_statistics_mutex());
 
@@ -200,7 +200,7 @@ bool StatisticsParticipantImpl::are_readers_involved(
 }
 
 bool StatisticsParticipantImpl::add_statistics_listener(
-        std::shared_ptr<fastdds::statistics::IListener> listener,
+        std::shared_ptr<eprosima::fastdds::statistics::IListener> listener,
         uint32_t kind)
 {
     std::unique_lock<std::recursive_mutex> lock(get_statistics_mutex());
@@ -261,7 +261,7 @@ bool StatisticsParticipantImpl::add_statistics_listener(
 }
 
 bool StatisticsParticipantImpl::remove_statistics_listener(
-        std::shared_ptr<fastdds::statistics::IListener> listener,
+        std::shared_ptr<eprosima::fastdds::statistics::IListener> listener,
         uint32_t kind)
 {
     std::unique_lock<std::recursive_mutex> lock(get_statistics_mutex());
@@ -330,9 +330,9 @@ bool StatisticsParticipantImpl::remove_statistics_listener(
 }
 
 void StatisticsParticipantImpl::on_network_statistics(
-        const fastrtps::rtps::GuidPrefix_t& source_participant,
-        const fastrtps::rtps::Locator_t& source_locator,
-        const fastrtps::rtps::Locator_t& reception_locator,
+        const eprosima::fastrtps::rtps::GuidPrefix_t& source_participant,
+        const eprosima::fastrtps::rtps::Locator_t& source_locator,
+        const eprosima::fastrtps::rtps::Locator_t& reception_locator,
         const rtps::StatisticsSubmessageData& data,
         uint64_t datagram_size)
 {
@@ -343,8 +343,8 @@ void StatisticsParticipantImpl::on_network_statistics(
 }
 
 void StatisticsParticipantImpl::process_network_timestamp(
-        const fastrtps::rtps::GuidPrefix_t& source_participant,
-        const fastrtps::rtps::Locator_t& reception_locator,
+        const eprosima::fastrtps::rtps::GuidPrefix_t& source_participant,
+        const eprosima::fastrtps::rtps::Locator_t& reception_locator,
         const rtps::StatisticsSubmessageData::TimeStamp& ts)
 {
     using namespace eprosima::fastrtps::rtps;
@@ -377,8 +377,8 @@ void StatisticsParticipantImpl::process_network_timestamp(
 }
 
 void StatisticsParticipantImpl::process_network_sequence(
-        const fastrtps::rtps::GuidPrefix_t& source_participant,
-        const fastrtps::rtps::Locator_t& reception_locator,
+        const eprosima::fastrtps::rtps::GuidPrefix_t& source_participant,
+        const eprosima::fastrtps::rtps::Locator_t& reception_locator,
         const rtps::StatisticsSubmessageData::Sequence& seq,
         uint64_t datagram_size)
 {
@@ -445,7 +445,7 @@ void StatisticsParticipantImpl::process_network_sequence(
 }
 
 void StatisticsParticipantImpl::on_rtps_sent(
-        const fastrtps::rtps::Locator_t& loc,
+        const eprosima::fastrtps::rtps::Locator_t& loc,
         unsigned long payload_size)
 {
     using namespace std;
@@ -477,8 +477,8 @@ void StatisticsParticipantImpl::on_rtps_sent(
 }
 
 void StatisticsParticipantImpl::on_entity_discovery(
-        const fastrtps::rtps::GUID_t& id,
-        const fastdds::dds::ParameterPropertyList_t& properties)
+        const eprosima::fastrtps::rtps::GUID_t& id,
+        const eprosima::fastdds::dds::ParameterPropertyList_t& properties)
 {
     using namespace fastrtps;
 

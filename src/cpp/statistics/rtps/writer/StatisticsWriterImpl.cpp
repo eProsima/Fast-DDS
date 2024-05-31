@@ -61,7 +61,7 @@ const GUID_t& StatisticsWriterImpl::get_guid() const
 }
 
 void StatisticsWriterImpl::on_sample_datas(
-        const fastrtps::rtps::SampleIdentity& sample_identity,
+        const eprosima::fastrtps::rtps::SampleIdentity& sample_identity,
         size_t num_sent_submessages)
 {
     SampleIdentityCount notification;
