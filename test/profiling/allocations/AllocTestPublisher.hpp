@@ -36,7 +36,7 @@
 
 #include "AllocTestType.hpp"
 
-class AllocTestPublisher
+class AllocTestPublisher : public eprosima::fastdds::dds::DataWriterListener
 {
 public:
 
@@ -57,6 +57,10 @@ public:
     void run(
             uint32_t number,
             bool wait_unmatching);
+
+    void on_publication_matched(
+            eprosima::fastdds::dds::DataWriter* writer,
+            const eprosima::fastdds::dds::PublicationMatchedStatus& status) override;
 
 private:
 
@@ -82,30 +86,11 @@ private:
 
     std::string output_file_;
 
-    class PubListener : public eprosima::fastdds::dds::DataWriterListener
-    {
-    public:
+    std::atomic<uint16_t> matched_;
 
-        PubListener()
-            : matched_(0)
-        {
-        }
+    mutable std::mutex mtx_;
 
-        ~PubListener() override
-        {
-        }
-
-        void on_publication_matched(
-                eprosima::fastdds::dds::DataWriter* writer,
-                const eprosima::fastdds::dds::PublicationMatchedStatus& info) override;
-
-        std::atomic<uint16_t> matched_;
-
-        mutable std::mutex mtx_;
-
-        std::condition_variable cv_;
-    }
-    listener_;
+    std::condition_variable cv_;
 
 };
 
