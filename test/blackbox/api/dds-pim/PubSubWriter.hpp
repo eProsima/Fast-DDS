@@ -32,10 +32,12 @@
 #if _MSC_VER
 #include <Windows.h>
 #endif // _MSC_VER
+#include <fastdds/dds/common/InstanceHandle.hpp>
 #include <fastdds/dds/core/condition/GuardCondition.hpp>
 #include <fastdds/dds/core/condition/StatusCondition.hpp>
 #include <fastdds/dds/core/condition/WaitSet.hpp>
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
@@ -46,11 +48,11 @@
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/rtps/flowcontrol/FlowControllerSchedulerPolicy.hpp>
+#include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
 #include <fastdds/rtps/transport/UDPTransportDescriptor.h>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
 #include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
-#include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
-#include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
 #include <fastdds/utils/IPLocator.h>
 
 using eprosima::fastdds::dds::DomainParticipantFactory;
@@ -540,6 +542,14 @@ public:
     {
         default_send_print(msg);
         return datawriter_->write((void*)&msg);
+    }
+
+    eprosima::fastdds::dds::ReturnCode_t send_sample(
+            type& msg,
+            const eprosima::fastdds::dds::InstanceHandle_t& instance_handle)
+    {
+        default_send_print(msg);
+        return datawriter_->write((void*)&msg, instance_handle);
     }
 
     void assert_liveliness()

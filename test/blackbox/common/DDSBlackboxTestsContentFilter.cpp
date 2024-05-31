@@ -13,18 +13,24 @@
 // limitations under the License.
 
 #include <atomic>
+#include <chrono>
+#include <cstdint>
+#include <string>
 #include <thread>
+#include <vector>
 
+#include <fastdds/dds/common/InstanceHandle.hpp>
 #include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
+#include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/common/CDRMessage_t.h>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
-#include <rtps/messages/CDRMessage.hpp>
 #include <gtest/gtest.h>
+#include <rtps/messages/CDRMessage.hpp>
 
 #include "../types/HelloWorldTypeObjectSupport.hpp"
 #include "../types/TestRegression3361PubSubTypes.h"
@@ -610,6 +616,91 @@ TEST(DDSContentFilter, CorrectlyHandleAliasOtherHeader)
         "FilteredTestTopic", topic, expression, parameters);
 
     EXPECT_NE(nullptr, filtered_topic);
+}
+
+/*
+ * Regression test for https://eprosima.easyredmine.com/issues/20815
+ * Check that the content filter is only applied to alive changes.
+ * The test creates a reliable writer and a reader with a content filter that only accepts messages with a specific
+ * string. After discovery, the writer sends 10 samples which pass the filer in 10 different instances, with the
+ * particularity that after each write, the instance is unregistered.
+ * The DATA(u) generated would not pass the filter if it was applied. To check that the filter is only applied to
+ * ALIVE changes (not unregister or disposed), the test checks that the reader receives 10 valid samples (one per
+ * sample sent) and 10 invalid samples (one per unregister). Furthermore, it also checks that no samples are lost.writer
+ */
+TEST(DDSContentFilter, OnlyFilterAliveChanges)
+{
+    /* PuBSubReader class to check reception of UNREGISTER samples */
+    class CustomPubSubReader : public PubSubReader<KeyedHelloWorldPubSubType>
+    {
+    public:
+
+        CustomPubSubReader(
+                const std::string& topic_name,
+                const std::string& filter_expression,
+                const std::vector<std::string>& expression_parameters)
+            : PubSubReader(topic_name, filter_expression, expression_parameters)
+        {
+        }
+
+        std::atomic<uint16_t> valid_samples{0};
+        std::atomic<uint16_t> invalid_samples{0};
+
+    private:
+
+        void postprocess_sample(
+                const type& /* sample */,
+                const SampleInfo& info) override final
+        {
+            if (info.valid_data)
+            {
+                ++valid_samples;
+            }
+            else
+            {
+                ++invalid_samples;
+            }
+        }
+
+    };
+
+    /* Create reader with CFT */
+    std::string expression = "index = 1";
+    CustomPubSubReader reader("TestTopic", expression, {});
+    reader.reliability(RELIABLE_RELIABILITY_QOS).history_depth(2).init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    /* Create writer */
+    PubSubWriter<KeyedHelloWorldPubSubType> writer("TestTopic");
+    writer.reliability(RELIABLE_RELIABILITY_QOS).history_depth(2).init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    /* Wait for discovery */
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    /* Send 10 samples, each on a different instance, unregistering instances after writing */
+    const size_t num_samples = 10;
+    reader.startReception(num_samples);
+
+    for (size_t i = 0; i < num_samples; ++i)
+    {
+        KeyedHelloWorld data;
+        data.key(static_cast<uint16_t>(i));
+        data.index(1u);  // All samples pass the filter
+        InstanceHandle_t handle = writer.register_instance(data);
+        ASSERT_NE(HANDLE_NIL, handle);
+        ASSERT_EQ(RETCODE_OK, writer.send_sample(data, handle));
+        ASSERT_EQ(true, writer.unregister_instance(data, handle));
+    }
+
+    // Wait until all samples are acknowledged
+    writer.waitForAllAcked(std::chrono::seconds(3));
+
+    /* Check that both samples and unregisters are received */
+    ASSERT_EQ(reader.valid_samples.load(), 10u);
+    ASSERT_EQ(reader.invalid_samples.load(), 10u);
+    ASSERT_EQ(reader.get_sample_lost_status().total_count, 0);
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P
