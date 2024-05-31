@@ -289,11 +289,11 @@ bool EDP::newLocalWriterProxyData(
 
 bool EDP::updatedLocalReader(
         RTPSReader* reader,
-        const TopicAttributes& att,
+        const TopicAttributes&,
         const fastdds::dds::ReaderQos& rqos,
         const fastdds::rtps::ContentFilterProperty* content_filter)
 {
-    auto init_fun = [this, reader, &rqos, &att, content_filter](
+    auto init_fun = [this, reader, &rqos, content_filter](
         ReaderProxyData* rdata,
         bool updating,
         const ParticipantProxyData& participant_data)
@@ -363,10 +363,10 @@ bool EDP::updatedLocalReader(
 
 bool EDP::updatedLocalWriter(
         RTPSWriter* writer,
-        const TopicAttributes& att,
+        const TopicAttributes&,
         const fastdds::dds::WriterQos& wqos)
 {
-    auto init_fun = [this, writer, &wqos, &att](
+    auto init_fun = [this, writer, &wqos](
         WriterProxyData* wdata,
         bool updating,
         const ParticipantProxyData& participant_data)
