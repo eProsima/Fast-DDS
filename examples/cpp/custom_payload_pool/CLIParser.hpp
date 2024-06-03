@@ -72,7 +72,7 @@ public:
     static void print_help(
             uint8_t return_code)
     {
-        std::cout << "Usage: hello_world <entity> [options]"                                    << std::endl;
+        std::cout << "Usage: custom_payload_pool <entity> [options]"                                    << std::endl;
         std::cout << ""                                                                         << std::endl;
         std::cout << "Entities:"                                                                << std::endl;
         std::cout << "  publisher                       Run a publisher entity"                 << std::endl;
@@ -186,13 +186,34 @@ public:
             }
             else if (arg == "-i" || arg == "--interval")
             {
-                if (config.entity == CLIParser::EntityKind::PUBLISHER)
+                if (i + 1 < argc)
                 {
-                    config.pub_config.interval = true;
+                    try
+                    {
+                        if (config.entity == CLIParser::EntityKind::PUBLISHER)
+                        {
+                            config.pub_config.interval = std::stoi(argv[++i]);
+                        }
+                        else
+                        {
+                            EPROSIMA_LOG_ERROR(CLI_PARSER, "interval can only be used with the publisher entity");
+                            print_help(EXIT_FAILURE);
+                        }
+                    }
+                    catch (const std::invalid_argument& e)
+                    {
+                        EPROSIMA_LOG_ERROR(CLI_PARSER, "invalid interval argument for " + arg + ": " + e.what());
+                        print_help(EXIT_FAILURE);
+                    }
+                    catch (const std::out_of_range& e)
+                    {
+                        EPROSIMA_LOG_ERROR(CLI_PARSER, "interval argument out of range for " + arg + ": " + e.what());
+                        print_help(EXIT_FAILURE);
+                    }
                 }
                 else
                 {
-                    EPROSIMA_LOG_ERROR(CLI_PARSER, "interval can only be used with the publisher entity");
+                    EPROSIMA_LOG_ERROR(CLI_PARSER, "missing argument for " + arg);
                     print_help(EXIT_FAILURE);
                 }
             }

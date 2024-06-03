@@ -14,7 +14,7 @@
 
 cmake_minimum_required(VERSION 3.20)
 
-project(CustomPayloadPoolExample VERSION 1 LANGUAGES CXX)
+project(custom_payload_pool VERSION 1 LANGUAGES CXX)
 
 # Find requirements
 if(NOT fastcdr_FOUND)
@@ -38,11 +38,11 @@ message(STATUS "Configuring custom payload pool example...")
 file(GLOB CUSTOM_PAYLOAD_POOL_DATA_EXAMPLE_SOURCES_CXX "*.cxx")
 file(GLOB CUSTOM_PAYLOAD_POOL_DATA_EXAMPLE_SOURCES_CPP "*.cpp")
 
-add_executable(CustomPayloadPoolExample ${CUSTOM_PAYLOAD_POOL_DATA_EXAMPLE_SOURCES_CXX} ${CUSTOM_PAYLOAD_POOL_DATA_EXAMPLE_SOURCES_CPP})
-target_compile_definitions(CustomPayloadPoolExample PRIVATE
+add_executable(custom_payload_pool ${CUSTOM_PAYLOAD_POOL_DATA_EXAMPLE_SOURCES_CXX} ${CUSTOM_PAYLOAD_POOL_DATA_EXAMPLE_SOURCES_CPP})
+target_compile_definitions(custom_payload_pool PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
 )
-target_link_libraries(CustomPayloadPoolExample fastdds fastcdr fastdds::optionparser)
-install(TARGETS CustomPayloadPoolExample
-    RUNTIME DESTINATION examples/cpp/dds/CustomPayloadPoolExample/${BIN_INSTALL_DIR})
+target_link_libraries(custom_payload_pool fastdds fastcdr fastdds::optionparser)
+install(TARGETS custom_payload_pool
+    RUNTIME DESTINATION examples/cpp/dds/custom_payload_pool/${BIN_INSTALL_DIR})
