@@ -85,7 +85,11 @@ private:
     };
 
     PercentageData drop_data_messages_percentage_;
+    PercentageData drop_participant_builtin_data_messages_percentage_;
+    PercentageData drop_publication_builtin_data_messages_percentage_;
+    PercentageData drop_subscription_builtin_data_messages_percentage_;
     test_UDPv4TransportDescriptor::filter drop_data_messages_filter_;
+    test_UDPv4TransportDescriptor::filter drop_builtin_data_messages_filter_;
     bool drop_participant_builtin_topic_data_;
     bool drop_publication_builtin_topic_data_;
     bool drop_subscription_builtin_topic_data_;

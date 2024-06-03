@@ -47,8 +47,16 @@ struct test_UDPv4TransportDescriptor : public SocketTransportDescriptor
     //! Test shim parameters
     //! Percentage of data messages being dropped
     mutable std::atomic<uint8_t> dropDataMessagesPercentage;
+    //! Percentage of Data[P] messages being dropped
+    mutable std::atomic<uint8_t> dropParticipantBuiltinDataMessagesPercentage;
+    //! Percentage of Data[W] messages being dropped
+    mutable std::atomic<uint8_t> dropPublicationBuiltinDataMessagesPercentage;
+    //! Percentage of Data[R] messages being dropped
+    mutable std::atomic<uint8_t> dropSubscriptionBuiltinDataMessagesPercentage;
     //! Filtering function for dropping data messages
     filter drop_data_messages_filter_;
+    //! Filtering function for dropping builtin data messages
+    filter drop_builtin_data_messages_filter_;
     //! Flag to enable dropping of discovery Participant DATA(P) messages
     bool dropParticipantBuiltinTopicData;
     //! Flag to enable dropping of discovery Writer DATA(W) messages

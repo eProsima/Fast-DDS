@@ -45,7 +45,11 @@ test_UDPv4TransportDescriptor::DestinationLocatorFilter test_UDPv4Transport::loc
 test_UDPv4Transport::test_UDPv4Transport(
         const test_UDPv4TransportDescriptor& descriptor)
     : drop_data_messages_percentage_(descriptor.dropDataMessagesPercentage)
+    , drop_participant_builtin_data_messages_percentage_(descriptor.dropParticipantBuiltinDataMessagesPercentage)
+    , drop_publication_builtin_data_messages_percentage_(descriptor.dropPublicationBuiltinDataMessagesPercentage)
+    , drop_subscription_builtin_data_messages_percentage_(descriptor.dropSubscriptionBuiltinDataMessagesPercentage)
     , drop_data_messages_filter_(descriptor.drop_data_messages_filter_)
+    , drop_builtin_data_messages_filter_(descriptor.drop_builtin_data_messages_filter_)
     , drop_participant_builtin_topic_data_(descriptor.dropParticipantBuiltinTopicData)
     , drop_publication_builtin_topic_data_(descriptor.dropPublicationBuiltinTopicData)
     , drop_subscription_builtin_topic_data_(descriptor.dropSubscriptionBuiltinTopicData)
@@ -78,13 +82,17 @@ test_UDPv4Transport::test_UDPv4Transport(
 test_UDPv4TransportDescriptor::test_UDPv4TransportDescriptor()
     : SocketTransportDescriptor(s_maximumMessageSize, s_maximumInitialPeersRange)
     , dropDataMessagesPercentage(0)
+    , dropParticipantBuiltinDataMessagesPercentage(0)
+    , dropPublicationBuiltinDataMessagesPercentage(0)
+    , dropSubscriptionBuiltinDataMessagesPercentage(0)
     , drop_data_messages_filter_([](CDRMessage_t&)
             {
                 return false;
             })
-    , dropParticipantBuiltinTopicData(false)
-    , dropPublicationBuiltinTopicData(false)
-    , dropSubscriptionBuiltinTopicData(false)
+    , drop_builtin_data_messages_filter_([](CDRMessage_t&)
+            {
+                return false;
+            })
     , dropDataFragMessagesPercentage(0)
     , drop_data_frag_messages_filter_([](CDRMessage_t&)
             {
@@ -376,6 +384,14 @@ bool test_UDPv4Transport::packet_should_drop(
                     {
                         return true;
                     }
+                    else if (should_be_dropped(&drop_participant_builtin_data_messages_percentage_))
+                    {
+                        return true;
+                    }
+                    else if (drop_builtin_data_messages_filter_(cdrMessage))
+                    {
+                        return true;
+                    }
                 }
                 else if (writer_id == fastrtps::rtps::c_EntityId_SEDPPubWriter)
                 {
@@ -383,10 +399,26 @@ bool test_UDPv4Transport::packet_should_drop(
                     {
                         return true;
                     }
+                    else if (should_be_dropped(&drop_publication_builtin_data_messages_percentage_))
+                    {
+                        return true;
+                    }
+                    else if (drop_builtin_data_messages_filter_(cdrMessage))
+                    {
+                        return true;
+                    }
                 }
                 else if (writer_id == fastrtps::rtps::c_EntityId_SEDPSubWriter)
                 {
                     if (drop_subscription_builtin_topic_data_)
+                    {
+                        return true;
+                    }
+                    else if (should_be_dropped(&drop_subscription_builtin_data_messages_percentage_))
+                    {
+                        return true;
+                    }
+                    else if (drop_builtin_data_messages_filter_(cdrMessage))
                     {
                         return true;
                     }
