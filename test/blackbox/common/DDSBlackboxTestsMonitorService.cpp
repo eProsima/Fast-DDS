@@ -102,14 +102,15 @@ public:
 
     void setup(
             std::string profiles_file,
-            std::string profile)
+            std::string profile,
+            uint32_t domain_id)
     {
         //! Load XML profiles
         eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->load_XML_profiles_file(profiles_file);
 
         eprosima::fastdds::dds::DomainParticipant* participant =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->
-                        create_participant_with_profile((uint32_t)GET_PID() % 230, profile);
+                        create_participant_with_profile(domain_id, profile);
 
         setup(participant);
     }
@@ -1205,11 +1206,11 @@ TEST(DDSMonitorServiceTest, monitor_service_property)
     MonitorServiceParticipant MSP;
 
     //! Procedure
-    MSP.setup(xml_file, participant_profile_names.first);
+    MSP.setup(xml_file, participant_profile_names.first, 0);
     ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, MSP.disable_monitor_service());
 
     MSP.reset();
-    MSP.setup(xml_file, participant_profile_names.second);
+    MSP.setup(xml_file, participant_profile_names.second, 0);
 
     //! Assertions
     ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, MSP.disable_monitor_service());
@@ -1350,8 +1351,8 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_connection_list)
     std::pair<std::string, std::string> participant_profiles =
     {"monitor_service_connections_list_participant_1", "monitor_service_connections_list_participant_2"};
 
-    MSP1.setup(xml_profile, participant_profiles.first);
-    MSP2.setup(xml_profile, participant_profiles.second);
+    MSP1.setup(xml_profile, participant_profiles.first, 0);
+    MSP2.setup(xml_profile, participant_profiles.second, 0);
 
     MSP1.enable_monitor_service();
     MSP2.enable_monitor_service();
