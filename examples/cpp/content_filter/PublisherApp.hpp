@@ -87,7 +87,7 @@ private:
 
     std::atomic<bool> stop_;
 
-    const uint32_t period_ms_ = 100; // in ms
+    uint16_t period_ms_ = 100; // in ms
 };
 
 } // namespace content_filter

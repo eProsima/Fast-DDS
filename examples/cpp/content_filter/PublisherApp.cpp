@@ -49,6 +49,7 @@ PublisherApp::PublisherApp(
     , matched_(0)
     , samples_(config.samples)
     , stop_(false)
+    , period_ms_(config.interval)
 {
     // Initialize internal variables
     matched_ = 0;

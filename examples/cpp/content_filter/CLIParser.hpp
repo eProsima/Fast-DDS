@@ -47,7 +47,7 @@ public:
     struct publisher_config
     {
         uint16_t samples = 0;
-        uint16_t interval = 0;
+        uint16_t interval = 100;
     };
 
     //! Subscriber application configuration structure
@@ -241,7 +241,7 @@ public:
                     }
                     else if (config.entity == CLIParser::EntityKind::PUBLISHER)
                     {
-                        EPROSIMA_LOG_ERROR(CLI_PARSER, "fliter option can only be used with the Subscriber");
+                        EPROSIMA_LOG_ERROR(CLI_PARSER, "filter option can only be used with the Subscriber");
                         print_help(EXIT_FAILURE);
                     }
                     else
