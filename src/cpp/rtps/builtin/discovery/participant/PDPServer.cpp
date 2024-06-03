@@ -43,7 +43,7 @@
 #include <rtps/builtin/discovery/participant/PDPServer.hpp>
 #include <rtps/builtin/discovery/participant/PDPServerListener.hpp>
 #include <rtps/builtin/discovery/participant/timedevent/DServerEvent.hpp>
-#include <rtps/builtin/liveliness/WLP.h>
+#include <rtps/builtin/liveliness/WLP.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/reader/StatefulReader.hpp>
 #include <rtps/writer/StatefulWriter.hpp>

@@ -26,6 +26,7 @@
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
+#include <fastdds/rtps/builtin/data/BuiltinEndpoints.hpp>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/reader/ReaderListener.h>
@@ -63,7 +64,8 @@ class TesterPDPEndpoints : public fastdds::rtps::PDPEndpoints
 
     fastrtps::rtps::BuiltinEndpointSet_t builtin_endpoints() const override
     {
-        return DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER | DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR;
+        return fastdds::rtps::DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER |
+               fastdds::rtps::DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR;
     }
 
     const std::unique_ptr<fastrtps::rtps::ReaderListener>& main_listener() const override

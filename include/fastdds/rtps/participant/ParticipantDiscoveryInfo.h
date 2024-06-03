@@ -21,7 +21,7 @@
 #define _FASTDDS_RTPS_PARTICIPANT_PARTICIPANTDISCOVERYINFO_H__
 
 #include <fastdds/fastdds_dll.hpp>
-#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -35,6 +35,8 @@ struct ParticipantDiscoveryInfo
 {
     //!Enum DISCOVERY_STATUS, four different status for discovered participants.
     //!@ingroup RTPS_MODULE
+    // *INDENT-OFF* eduponz: Does not understand the #if correctly and ends up removing the ;
+    //                       at the end of the enum, which does not build.
 #if defined(_WIN32)
     enum FASTDDS_EXPORTED_API DISCOVERY_STATUS
 #else
@@ -47,6 +49,7 @@ struct ParticipantDiscoveryInfo
         DROPPED_PARTICIPANT,
         IGNORED_PARTICIPANT
     };
+    // *INDENT-ON*
 
     ParticipantDiscoveryInfo(
             const ParticipantProxyData& data)

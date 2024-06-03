@@ -36,6 +36,7 @@ Forthcoming
   * Configuration example that condenses multiple QoS examples. Multiple configurations allowed through argument parsing.
 * Removed `TypeConsistencyQos` from DataReader, and included `TypeConsistencyEnforcementQosPolicy` and `DataRepresentationQosPolicy`
 * Added new `flow_controller_descriptor_list` XML configuration, remove `ThroughtputController`.
+* Migrate `#define`s within `BuiltinEndpoints.hpp` to namespaced `constexpr` variables.
 
 Version 2.14.0
 --------------

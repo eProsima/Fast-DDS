@@ -22,7 +22,7 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <fastdds/rtps/reader/ReaderListener.h>
-#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
 
 #include <mutex>
 

@@ -30,7 +30,7 @@
 #include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/attributes/BuiltinTransports.hpp>
 #include <fastdds/rtps/attributes/ServerAttributes.h>
-#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
 #include <fastdds/rtps/common/EntityId_t.hpp>
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/history/WriterHistory.h>
@@ -49,7 +49,7 @@
 #include <rtps/builtin/discovery/participant/PDPClient.h>
 #include <rtps/builtin/discovery/participant/PDPServer.hpp>
 #include <rtps/builtin/discovery/participant/PDPSimple.h>
-#include <rtps/builtin/liveliness/WLP.h>
+#include <rtps/builtin/liveliness/WLP.hpp>
 #include <rtps/history/BasicPayloadPool.hpp>
 #include <rtps/messages/MessageReceiver.h>
 #include <rtps/network/utils/external_locators.hpp>

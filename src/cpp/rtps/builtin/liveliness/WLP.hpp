@@ -13,14 +13,15 @@
 // limitations under the License.
 
 /**
- * @file WLP.h
+ * @file WLP.hpp
  *
  */
 
-#ifndef _FASTDDS_RTPS_WLP_H_
-#define _FASTDDS_RTPS_WLP_H_
+#ifndef _FASTDDS_RTPS_WLP_HPP_
+#define _FASTDDS_RTPS_WLP_HPP_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
+#include <cstdint>
 #include <mutex>
 #include <vector>
 
@@ -303,6 +304,8 @@ private:
 #if HAVE_SECURITY
     std::shared_ptr<ITopicPayloadPool> secure_payload_pool_;
 #endif // if HAVE_SECURITY
+
+    static constexpr uint32_t builtin_participant_data_max_size = 100;
 };
 
 } /* namespace rtps */
@@ -310,4 +313,4 @@ private:
 } /* namespace eprosima */
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#endif /* _FASTDDS_RTPS_WLP_H_ */
+#endif /* _FASTDDS_RTPS_WLP_HPP_ */

@@ -30,7 +30,7 @@
 #include "reader_utils.hpp"
 #include "rtps/RTPSDomainImpl.hpp"
 #include <rtps/builtin/BuiltinProtocols.h>
-#include <rtps/builtin/liveliness/WLP.h>
+#include <rtps/builtin/liveliness/WLP.hpp>
 #include <rtps/DataSharing/DataSharingListener.hpp>
 #include <rtps/DataSharing/ReaderPool.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>

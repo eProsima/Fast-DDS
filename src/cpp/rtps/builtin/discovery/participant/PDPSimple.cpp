@@ -21,7 +21,8 @@
 #include <mutex>
 
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastdds/rtps/builtin/data/BuiltinEndpoints.hpp>
+#include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
@@ -38,7 +39,7 @@
 #include <rtps/builtin/discovery/participant/PDPListener.h>
 #include <rtps/builtin/discovery/participant/simple/SimplePDPEndpoints.hpp>
 #include <rtps/builtin/discovery/participant/simple/SimplePDPEndpointsSecure.hpp>
-#include <rtps/builtin/liveliness/WLP.h>
+#include <rtps/builtin/liveliness/WLP.hpp>
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/reader/StatefulReader.hpp>
@@ -110,30 +111,35 @@ void PDPSimple::initializeParticipantProxyData(
         if (getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP.
                         use_PublicationWriterANDSubscriptionReader)
         {
-            participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
-            participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR;
+            participant_data->m_availableBuiltinEndpoints |= fastdds::rtps::DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
+            participant_data->m_availableBuiltinEndpoints |= fastdds::rtps::DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR;
         }
 
         if (getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP.
                         use_PublicationReaderANDSubscriptionWriter)
         {
-            participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR;
-            participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;
+            participant_data->m_availableBuiltinEndpoints |= fastdds::rtps::DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR;
+            participant_data->m_availableBuiltinEndpoints |=
+                    fastdds::rtps::DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;
         }
 
 #if HAVE_SECURITY
         if (getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP.
                         enable_builtin_secure_publications_writer_and_subscriptions_reader)
         {
-            participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_SECURE_ANNOUNCER;
-            participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_SECURE_DETECTOR;
+            participant_data->m_availableBuiltinEndpoints |=
+                    fastdds::rtps::DISC_BUILTIN_ENDPOINT_PUBLICATION_SECURE_ANNOUNCER;
+            participant_data->m_availableBuiltinEndpoints |=
+                    fastdds::rtps::DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_SECURE_DETECTOR;
         }
 
         if (getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP.
                         enable_builtin_secure_subscriptions_writer_and_publications_reader)
         {
-            participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_SECURE_ANNOUNCER;
-            participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_SECURE_DETECTOR;
+            participant_data->m_availableBuiltinEndpoints |=
+                    fastdds::rtps::DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_SECURE_ANNOUNCER;
+            participant_data->m_availableBuiltinEndpoints |=
+                    fastdds::rtps::DISC_BUILTIN_ENDPOINT_PUBLICATION_SECURE_DETECTOR;
         }
 #endif // if HAVE_SECURITY
     }
@@ -627,8 +633,8 @@ void PDPSimple::match_pdp_remote_endpoints(
 
     // Default to values for non-secure endpoints
     auto reliability_kind = BEST_EFFORT_RELIABILITY_QOS;
-    uint32_t pdp_reader_mask = DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR;
-    uint32_t pdp_writer_mask = DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
+    uint32_t pdp_reader_mask = fastdds::rtps::DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR;
+    uint32_t pdp_writer_mask = fastdds::rtps::DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
     EntityId_t reader_entity_id = c_EntityId_SPDPReader;
     EntityId_t writer_entity_id = c_EntityId_SPDPWriter;
     RTPSReader* reader = endpoints->reader.reader_;
@@ -640,8 +646,8 @@ void PDPSimple::match_pdp_remote_endpoints(
     {
         auto secure_endpoints = static_cast<fastdds::rtps::SimplePDPEndpointsSecure*>(builtin_endpoints_.get());
         reliability_kind = RELIABLE_RELIABILITY_QOS;
-        pdp_reader_mask = DISC_BUILTIN_ENDPOINT_PARTICIPANT_SECURE_DETECTOR;
-        pdp_writer_mask = DISC_BUILTIN_ENDPOINT_PARTICIPANT_SECURE_ANNOUNCER;
+        pdp_reader_mask = fastdds::rtps::DISC_BUILTIN_ENDPOINT_PARTICIPANT_SECURE_DETECTOR;
+        pdp_writer_mask = fastdds::rtps::DISC_BUILTIN_ENDPOINT_PARTICIPANT_SECURE_ANNOUNCER;
         reader_entity_id = c_EntityId_spdp_reliable_participant_secure_reader;
         writer_entity_id = c_EntityId_spdp_reliable_participant_secure_writer;
         reader = secure_endpoints->secure_reader.reader_;

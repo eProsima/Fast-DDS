@@ -31,7 +31,7 @@
 
 #include "../flowcontrol/FlowController.hpp"
 #include <rtps/builtin/BuiltinProtocols.h>
-#include <rtps/builtin/liveliness/WLP.h>
+#include <rtps/builtin/liveliness/WLP.hpp>
 #include <rtps/DataSharing/DataSharingNotifier.hpp>
 #include <rtps/DataSharing/DataSharingPayloadPool.hpp>
 #include <rtps/DataSharing/WriterPool.hpp>

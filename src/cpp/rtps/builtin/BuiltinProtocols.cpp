@@ -22,7 +22,7 @@
 #include <algorithm>
 
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/utils/IPFinder.h>
 
@@ -32,7 +32,7 @@
 #include <rtps/builtin/discovery/participant/PDPClient.h>
 #include <rtps/builtin/discovery/participant/PDPServer.hpp>
 #include <rtps/builtin/discovery/participant/PDPSimple.h>
-#include <rtps/builtin/liveliness/WLP.h>
+#include <rtps/builtin/liveliness/WLP.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 
 using namespace eprosima::fastrtps;

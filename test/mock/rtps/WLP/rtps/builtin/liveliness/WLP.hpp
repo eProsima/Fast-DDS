@@ -13,12 +13,12 @@
 // limitations under the License.
 
 /**
- * @file WLP.h
+ * @file WLP.hpp
  *
  */
 
-#ifndef _FASTDDS_RTPS_WLP_H_
-#define _FASTDDS_RTPS_WLP_H_
+#ifndef _FASTDDS_RTPS_WLP_HPP_
+#define _FASTDDS_RTPS_WLP_HPP_
 
 #include <mutex>
 #include <vector>
@@ -70,4 +70,4 @@ public:
 } /* namespace fastrtps */
 } /* namespace eprosima */
 
-#endif /* _FASTDDS_RTPS_WLP_H_ */
+#endif /* _FASTDDS_RTPS_WLP_HPP_ */

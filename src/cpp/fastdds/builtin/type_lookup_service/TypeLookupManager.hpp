@@ -20,6 +20,7 @@
 #ifndef _FASTDDS_BUILTIN_TYPE_LOOKUP_SERVICE_TYPE_LOOKUP_MANAGER_HPP_
 #define _FASTDDS_BUILTIN_TYPE_LOOKUP_SERVICE_TYPE_LOOKUP_MANAGER_HPP_
 
+#include <cstdint>
 #include <mutex>
 #include <unordered_map>
 #include <vector>
@@ -436,6 +437,9 @@ protected:
 
     //! Collection of all SampleIdentity and the TypeIdentfierWithSize it originated from, hashed by its SampleIdentity.
     std::unordered_map<SampleIdentity, xtypes::TypeIdentfierWithSize> async_get_type_requests_;
+
+    //! Max size of TypeLookup messages.
+    static constexpr uint32_t typelookup_data_max_size = 5000;
 };
 
 } /* namespace builtin */

@@ -33,7 +33,7 @@
 #include <openssl/obj_mac.h>
 
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
-#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 

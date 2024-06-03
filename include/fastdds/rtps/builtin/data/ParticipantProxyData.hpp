@@ -13,12 +13,12 @@
 // limitations under the License.
 
 /**
- * @file ParticipantProxyData.h
+ * @file ParticipantProxyData.hpp
  *
  */
 
-#ifndef _FASTDDS_RTPS_BUILTIN_DATA_PARTICIPANTPROXYDATA_H_
-#define _FASTDDS_RTPS_BUILTIN_DATA_PARTICIPANTPROXYDATA_H_
+#ifndef _FASTDDS_RTPS_BUILTIN_DATA_PARTICIPANTPROXYDATA_HPP_
+#define _FASTDDS_RTPS_BUILTIN_DATA_PARTICIPANTPROXYDATA_HPP_
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
@@ -32,9 +32,6 @@
 #include <fastdds/rtps/common/RemoteLocators.hpp>
 #include <fastdds/rtps/common/Token.h>
 #include <fastdds/rtps/common/VendorId_t.hpp>
-
-#define BUILTIN_PARTICIPANT_DATA_MAX_SIZE 100
-#define TYPELOOKUP_DATA_MAX_SIZE 5000
 
 namespace eprosima {
 namespace fastrtps {
@@ -237,4 +234,4 @@ private:
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#endif // _FASTDDS_RTPS_BUILTIN_DATA_PARTICIPANTPROXYDATA_H_
+#endif // _FASTDDS_RTPS_BUILTIN_DATA_PARTICIPANTPROXYDATA_HPP_
