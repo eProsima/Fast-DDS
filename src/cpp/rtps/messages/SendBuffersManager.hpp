@@ -47,10 +47,14 @@ public:
      * Construct a SendBuffersManager.
      * @param reserved_size Initial size for the pool.
      * @param allow_growing Whether we allow creation of more than reserved_size elements.
+     * @param num_network_buffers Number of network buffers to allocate for each send buffer.
+     * @param inc_network_buffers Number of network buffers to dynamically allocate when growing the vector.
      */
     SendBuffersManager(
             size_t reserved_size,
-            bool allow_growing);
+            bool allow_growing,
+            size_t num_network_buffers,
+            size_t inc_network_buffers);
 
     ~SendBuffersManager()
     {
@@ -99,6 +103,10 @@ private:
     bool allow_growing_ = true;
     //!To wait for a buffer to be returned to the pool.
     TimedConditionVariable available_cv_;
+    //!Number of network buffers to allocate for each send buffer.
+    size_t num_network_buffers_ = 16;
+    //!Number of network buffers to dynamically allocate when growing the vector.
+    size_t inc_network_buffers_ = 16;
 };
 
 } /* namespace rtps */

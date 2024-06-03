@@ -71,13 +71,14 @@ public:
             bool has_security,
 #endif // if HAVE_SECURITY
             uint32_t payload,
-            const GuidPrefix_t& participant_guid)
+            const GuidPrefix_t& participant_guid,
+            ResourceLimitedContainerConfig nb_config)
         : rtpsmsg_submessage_(0u)
         , rtpsmsg_fullmsg_(0u)
 #if HAVE_SECURITY
         , rtpsmsg_encrypt_(0u)
 #endif // if HAVE_SECURITY
-        , buffers_(ResourceLimitedContainerConfig(16, std::numeric_limits<size_t>::max dummy_avoid_winmax (), 16))
+        , buffers_(nb_config)
     {
         rtpsmsg_fullmsg_.init(buffer_ptr, payload);
         buffer_ptr += payload;

@@ -67,7 +67,9 @@ struct SendBuffersAllocationAttributes
             const SendBuffersAllocationAttributes& b) const
     {
         return (this->preallocated_number == b.preallocated_number) &&
-               (this->dynamic == b.dynamic);
+               (this->dynamic == b.dynamic) &&
+               (this->preallocated_network_buffers == b.preallocated_network_buffers) &&
+               (this->allocation_inc_network_buffers == b.allocation_inc_network_buffers);
     }
 
     /** Initial number of send buffers to allocate.
@@ -86,6 +88,22 @@ struct SendBuffersAllocationAttributes
      * buffer to be returned. This is a trade-off between latency and dynamic allocations.
      */
     bool dynamic = false;
+
+    /** Initial number of network buffers to allocate for each send buffer.
+     *
+     * This attribute controls the initial number of network buffers to be allocated for
+     * each send buffer. If the value is 0 (default), the initial number of preallocated
+     * network buffers will be 16.
+     */
+    size_t preallocated_network_buffers = 0u;
+
+    /** Number of network buffers to allocate when growing the vector.
+     *
+     * This attribute controls the number of network buffers to be allocated when growing
+     * the vector of send buffers if it runs out of capacity. If the value is 0 (default),
+     * the number of network buffers to be dynamically allocated will be 16.
+     */
+    size_t allocation_inc_network_buffers = 0u;
 };
 
 /**

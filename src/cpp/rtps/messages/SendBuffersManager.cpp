@@ -27,8 +27,12 @@ namespace rtps {
 
 SendBuffersManager::SendBuffersManager(
         size_t reserved_size,
-        bool allow_growing)
+        bool allow_growing,
+        size_t num_network_buffers,
+        size_t inc_network_buffers)
     : allow_growing_(allow_growing)
+    , num_network_buffers_(num_network_buffers)
+    , inc_network_buffers_(inc_network_buffers)
 {
     pool_.reserve(reserved_size);
 }
@@ -59,6 +63,9 @@ void SendBuffersManager::init(
         size_t data_size = advance * (pool_.capacity() - n_created_);
         common_buffer_.assign(data_size, 0);
 
+        // Network buffer configuration
+        ResourceLimitedContainerConfig nb_config(num_network_buffers_, std::numeric_limits<size_t>::max dummy_avoid_winmax (), inc_network_buffers_);
+
         octet* raw_buffer = common_buffer_.data();
         while (n_created_ < pool_.capacity())
         {
@@ -67,7 +74,7 @@ void SendBuffersManager::init(
 #if HAVE_SECURITY
                         secure,
 #endif // if HAVE_SECURITY
-                        payload_size, guid_prefix
+                        payload_size, guid_prefix, nb_config
                         ));
             raw_buffer += advance;
             ++n_created_;
