@@ -41,6 +41,7 @@ Forthcoming
 * Refactor examples:
   * Hello world example with wait-sets and environment XML profiles.
   * Configuration example that condenses multiple QoS examples. Multiple configurations allowed through argument parsing.
+  * Custom payload pool example.
 * Removed `TypeConsistencyQos` from DataReader, and included `TypeConsistencyEnforcementQosPolicy` and `DataRepresentationQosPolicy`
 * Added new `flow_controller_descriptor_list` XML configuration, remove `ThroughtputController`.
 * Migrate `#define`s within `BuiltinEndpoints.hpp` to namespaced `constexpr` variables.
