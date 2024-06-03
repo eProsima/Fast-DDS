@@ -30,8 +30,8 @@
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
-#include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantExtendedQos.hpp>
+#include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 #include <fastdds/dds/domain/qos/ReplierQos.hpp>
 #include <fastdds/dds/domain/qos/RequesterQos.hpp>
 #include <fastdds/dds/log/Log.hpp>
@@ -42,8 +42,8 @@
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
-#include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicPubSubType.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilder.hpp>
@@ -467,6 +467,9 @@ TEST(ParticipantTests, CreateDomainParticipant)
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == RETCODE_OK);
 }
 
+/**
+ *  This test checks the creation and deletion of DomainParticipant instances using Extended QoS default profile.
+ */
 TEST(ParticipantTests, CreateDomainParticipantWithExtendedQos)
 {
     DomainParticipantExtendedQos extended_qos;
@@ -605,6 +608,9 @@ TEST(ParticipantTests, CreateDomainParticipantWithProfile)
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == RETCODE_OK);
 }
 
+/**
+ *  This test checks the creation and deletion of DomainParticipant instances using Extended QoS from XML profiles.
+ */
 TEST(ParticipantTests, CreateDomainParticipantWithExtendedQosFromProfile)
 {
     DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profile.xml");

@@ -89,10 +89,12 @@ public:
 
 private:
 
-    //! DomainId to be used by the associated RTPSParticipant (default: 0)
+    //! DomainId to be used by the associated DomainParticipant (default: 0)
     uint32_t domainId_ = 0;
 
 };
+
+FASTDDS_EXPORTED_API extern const DomainParticipantExtendedQos PARTICIPANT_EXTENDED_QOS_DEFAULT;
 
 
 } /* namespace dds */
