@@ -46,7 +46,7 @@ public:
     {
     }
 
-    DomainParticipantExtendedQos& operator=(
+    DomainParticipantExtendedQos& operator =(
             const DomainParticipantQos& qos)
     {
         static_cast<DomainParticipantQos&>(*this) = qos;
@@ -58,13 +58,13 @@ public:
             const DomainParticipantExtendedQos& b) const
     {
         return (this->domainId_ == b.domainId()) &&
-               (DomainParticipantQos::operator==(b));
+               (DomainParticipantQos::operator ==(b));
     }
 
     bool operator ==(
             const DomainParticipantQos& b) const override
     {
-        return (DomainParticipantQos::operator==(b));
+        return (DomainParticipantQos::operator ==(b));
     }
 
     /**
