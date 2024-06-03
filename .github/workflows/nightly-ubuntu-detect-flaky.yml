@@ -115,7 +115,9 @@ jobs:
           workflow: nightly-ubuntu-detect-flaky.yml
           name: test-results-all
           workflow_conclusion: completed
-
+          check_artifacts: true
+          search_artifacts: true
+          
       - name: Flaky test analysis on [window-size] runs history
         id: flaky_analysis
         run: |
