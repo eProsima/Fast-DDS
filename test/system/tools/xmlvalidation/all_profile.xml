@@ -372,6 +372,8 @@
                     <send_buffers>
                         <preallocated_number>113</preallocated_number>
                         <dynamic>false</dynamic>
+                        <preallocated_network_buffers>16</preallocated_network_buffers>
+                        <allocation_inc_network_buffers>16</allocation_inc_network_buffers>
                     </send_buffers>
                 </allocation>
             </rtps>

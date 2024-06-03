@@ -876,6 +876,8 @@
                     <xs:all>
                         <xs:element name="preallocated_number" type="uint32" minOccurs="0" maxOccurs="1"/>
                         <xs:element name="dynamic" type="boolean" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="preallocated_network_buffers" type="uint32" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="allocation_inc_network_buffers" type="uint32" minOccurs="0" maxOccurs="1"/>
                     </xs:all>
                 </xs:complexType>
             </xs:element>

@@ -46,6 +46,8 @@
                     <send_buffers>
                         <preallocated_number>127</preallocated_number>
                         <dynamic>true</dynamic>
+                        <preallocated_network_buffers>127</preallocated_network_buffers>
+                        <allocation_inc_network_buffers>127</allocation_inc_network_buffers>
                     </send_buffers>
                 </allocation>
                 <defaultUnicastLocatorList>

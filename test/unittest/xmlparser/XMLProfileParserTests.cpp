@@ -504,6 +504,8 @@ TEST_P(XMLProfileParserTests, XMLParserParticipant)
     EXPECT_EQ(rtps_atts.allocation.writers.increment, 2u);
     EXPECT_EQ(rtps_atts.allocation.send_buffers.preallocated_number, 127u);
     EXPECT_EQ(rtps_atts.allocation.send_buffers.dynamic, true);
+    EXPECT_EQ(rtps_atts.allocation.send_buffers.preallocated_network_buffers, 127u);
+    EXPECT_EQ(rtps_atts.allocation.send_buffers.allocation_inc_network_buffers, 127u);
 
     IPLocator::setIPv4(locator, 192, 168, 1, 2);
     locator.port = 2019;

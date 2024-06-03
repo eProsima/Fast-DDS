@@ -27,6 +27,8 @@
                     <send_buffers>
                         <preallocated_number>${XML_PROFILES_ENV_VAR_13}</preallocated_number>
                         <dynamic>${XML_PROFILES_ENV_VAR_14}</dynamic>
+                        <preallocated_network_buffers>${XML_PROFILES_ENV_VAR_13}</preallocated_network_buffers>
+                        <allocation_inc_network_buffers>${XML_PROFILES_ENV_VAR_13}</allocation_inc_network_buffers>
                     </send_buffers>
                 </allocation>
                 <defaultUnicastLocatorList>

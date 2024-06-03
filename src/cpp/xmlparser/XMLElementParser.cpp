@@ -376,6 +376,24 @@ XMLP_ret XMLParser::getXMLSendBuffersAllocationAttributes(
             }
             allocation.dynamic = tmp_bool;
         }
+        else if (strcmp(name, PREALLOCATED_NETWORK_BUFFERS) == 0)
+        {
+            // preallocated_network_buffers - uint32Type
+            if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &tmp, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+            allocation.preallocated_network_buffers = tmp;
+        }
+        else if (strcmp(name, ALLOCATION_INC_NETWORK_BUFFERS) == 0)
+        {
+            // allocation_inc_network_buffers - uint32Type
+            if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &tmp, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+            allocation.allocation_inc_network_buffers = tmp;
+        }
         else
         {
             EPROSIMA_LOG_ERROR(XMLPARSER,
