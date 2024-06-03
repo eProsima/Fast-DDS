@@ -81,6 +81,19 @@ protected:
             std::unique_lock<std::recursive_mutex>& lock);
 
     /**
+     * Checks discovery conditions of an incoming DATA(p).
+     * This method is called from PDPListener::onNewCacheChangeAdded() just right after
+     * having deserialized the DATA(p) message.
+     *
+     * @param [in]      pdata      ParticipantProxyData from the DATA(p) message.
+     * @param [in, out] extra_data Additional data that may be needed to check the discovery conditions.
+     * @remarks Whether discovery routine should continue or discard the participant.
+     */
+    virtual bool check_discovery_conditions(
+            ParticipantProxyData& participant_data,
+            void* extra_data);
+
+    /**
      * Get the key of a CacheChange_t
      * @param change Pointer to the CacheChange_t
      * @return True on success

@@ -131,6 +131,7 @@ set(${PROJECT_NAME}_source_files
     rtps/builtin/discovery/participant/DirectMessageSender.cpp
     rtps/builtin/discovery/participant/PDP.cpp
     rtps/builtin/discovery/participant/PDPClient.cpp
+    rtps/builtin/discovery/participant/PDPClientListener.cpp
     rtps/builtin/discovery/participant/PDPListener.cpp
     rtps/builtin/discovery/participant/PDPServer.cpp
     rtps/builtin/discovery/participant/PDPServerListener.cpp

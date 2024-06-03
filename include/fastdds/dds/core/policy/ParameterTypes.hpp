@@ -528,6 +528,43 @@ public:
 /**
  * @ingroup PARAMETER_MODULE
  */
+class ParameterDomainId_t : public Parameter_t
+{
+public:
+
+    //!Domain ID. <br> By default, 0.
+    uint32_t domain_id;
+
+    /**
+     * @brief Constructor without parameters
+     */
+    ParameterDomainId_t()
+        : domain_id(0)
+    {
+    }
+
+    /**
+     * Constructor using a parameter PID and the parameter length
+     *
+     * @param pid Pid of the parameter
+     * @param in_length Its associated length
+     */
+    ParameterDomainId_t(
+            ParameterId_t pid,
+            uint16_t in_length)
+        : Parameter_t(pid, in_length)
+        , domain_id(0)
+    {
+        domain_id = 0;
+    }
+
+};
+
+#define PARAMETER_DOMAINID_LENGTH 4
+
+/**
+ * @ingroup PARAMETER_MODULE
+ */
 class ParameterProtocolVersion_t : public Parameter_t
 {
 public:

@@ -25,6 +25,7 @@
 #include <chrono>
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/dds/core/Types.hpp>
 #include <fastdds/rtps/attributes/ReaderAttributes.h>
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
 #include <fastdds/rtps/attributes/WriterAttributes.h>
@@ -77,6 +78,8 @@ public:
     GUID_t m_guid;
     //!Vendor ID
     fastdds::rtps::VendorId_t m_VendorId;
+    //!Domain ID
+    fastdds::dds::DomainId_t m_domain_id;
     //!Expects Inline QOS.
     bool m_expectsInlineQos;
     //!Available builtin endpoints

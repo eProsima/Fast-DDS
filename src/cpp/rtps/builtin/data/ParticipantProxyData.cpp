@@ -52,6 +52,7 @@ ParticipantProxyData::ParticipantProxyData(
         const RTPSParticipantAllocationAttributes& allocation)
     : m_protocolVersion(c_ProtocolVersion)
     , m_VendorId(c_VendorId_Unknown)
+    , m_domain_id(fastdds::dds::c_DomainId_t_Unknown)
     , m_expectsInlineQos(false)
     , m_availableBuiltinEndpoints(0)
     , m_networkConfiguration(0)
@@ -78,6 +79,7 @@ ParticipantProxyData::ParticipantProxyData(
     : m_protocolVersion(pdata.m_protocolVersion)
     , m_guid(pdata.m_guid)
     , m_VendorId(pdata.m_VendorId)
+    , m_domain_id(pdata.m_domain_id)
     , m_expectsInlineQos(pdata.m_expectsInlineQos)
     , m_availableBuiltinEndpoints(pdata.m_availableBuiltinEndpoints)
     , m_networkConfiguration(pdata.m_networkConfiguration)
@@ -149,6 +151,9 @@ uint32_t ParticipantProxyData::get_serialized_size(
     ret_val += 4 + 4;
 
     // PID_VENDORID
+    ret_val += 4 + 4;
+
+    // PID_DOMAIN_ID
     ret_val += 4 + 4;
 
     if (m_expectsInlineQos)
@@ -248,6 +253,14 @@ bool ParticipantProxyData::writeToCDRMessage(
         p.vendorId[0] = this->m_VendorId[0];
         p.vendorId[1] = this->m_VendorId[1];
         if (!fastdds::dds::ParameterSerializer<ParameterVendorId_t>::add_to_cdr_message(p, msg))
+        {
+            return false;
+        }
+    }
+    {
+        ParameterDomainId_t p(fastdds::dds::PID_DOMAIN_ID, 4);
+        p.domain_id = this->m_domain_id;
+        if (!fastdds::dds::ParameterSerializer<ParameterDomainId_t>::add_to_cdr_message(p, msg))
         {
             return false;
         }
@@ -441,6 +454,18 @@ bool ParticipantProxyData::readFromCDRMessage(
                         m_VendorId[0] = p.vendorId[0];
                         m_VendorId[1] = p.vendorId[1];
                         is_shm_transport_available &= (m_VendorId == c_VendorId_eProsima);
+                        break;
+                    }
+                    case fastdds::dds::PID_DOMAIN_ID:
+                    {
+                        ParameterDomainId_t p(pid, plength);
+                        if (!fastdds::dds::ParameterSerializer<ParameterDomainId_t>::read_from_cdr_message(p, msg,
+                                plength))
+                        {
+                            return false;
+                        }
+
+                        m_domain_id = p.domain_id;
                         break;
                     }
                     case fastdds::dds::PID_EXPECTS_INLINE_QOS:
@@ -740,6 +765,7 @@ void ParticipantProxyData::clear()
     m_guid = GUID_t();
     //set_VendorId_Unknown(m_VendorId);
     m_VendorId = c_VendorId_Unknown;
+    m_domain_id = fastdds::dds::c_DomainId_t_Unknown;
     m_expectsInlineQos = false;
     m_availableBuiltinEndpoints = 0;
     m_networkConfiguration = 0;
@@ -771,6 +797,7 @@ void ParticipantProxyData::copy(
     m_guid = pdata.m_guid;
     m_VendorId[0] = pdata.m_VendorId[0];
     m_VendorId[1] = pdata.m_VendorId[1];
+    m_domain_id = pdata.m_domain_id;
     m_availableBuiltinEndpoints = pdata.m_availableBuiltinEndpoints;
     m_networkConfiguration = pdata.m_networkConfiguration;
     metatraffic_locators = pdata.metatraffic_locators;

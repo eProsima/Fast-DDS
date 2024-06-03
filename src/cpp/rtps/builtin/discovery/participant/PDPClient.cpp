@@ -18,6 +18,7 @@
  */
 
 #include <rtps/builtin/discovery/participant/PDPClient.h>
+#include <rtps/builtin/discovery/participant/PDPClientListener.hpp>
 
 #include <algorithm>
 #include <forward_list>
@@ -357,7 +358,7 @@ bool PDPClient::create_ds_pdp_reliable_endpoints(
     }
 #endif // HAVE_SECURITY
 
-    endpoints.reader.listener_.reset(new PDPListener(this));
+    endpoints.reader.listener_.reset(new PDPClientListener(this));
 
     RTPSReader* reader = nullptr;
 #if HAVE_SECURITY

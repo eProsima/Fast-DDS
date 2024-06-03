@@ -232,6 +232,7 @@ void PDP::initializeParticipantProxyData(
     RTPSParticipantAttributes& attributes = mp_RTPSParticipant->getAttributes();
     bool announce_locators = !mp_RTPSParticipant->is_intraprocess_only();
 
+    participant_data->m_domain_id = mp_RTPSParticipant->get_domain_id();
     participant_data->m_leaseDuration = attributes.builtin.discovery_config.leaseDuration;
     //set_VendorId_eProsima(participant_data->m_VendorId);
     participant_data->m_VendorId = c_VendorId_eProsima;
