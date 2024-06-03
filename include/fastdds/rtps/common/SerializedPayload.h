@@ -27,6 +27,7 @@
 
 #include <fastdds/fastdds_dll.hpp>
 #include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/history/IPayloadPool.h>
 
 /*!
  * @brief Maximum payload is maximum of UDP packet size minus 536bytes (RTPSMESSAGE_COMMON_RTPS_PAYLOAD_SIZE)
@@ -68,6 +69,8 @@ struct FASTDDS_EXPORTED_API SerializedPayload_t
     uint32_t max_size;
     //!Position when reading
     uint32_t pos;
+    //!Pool that created the payload
+    IPayloadPool* payload_owner_ = nullptr;
 
     //!Default constructor
     SerializedPayload_t()
@@ -189,6 +192,22 @@ struct FASTDDS_EXPORTED_API SerializedPayload_t
             memset(data + max_size, 0, (new_size - max_size) * sizeof(octet));
         }
         max_size = new_size;
+    }
+
+    IPayloadPool const* payload_owner() const
+    {
+        return payload_owner_;
+    }
+
+    IPayloadPool* payload_owner()
+    {
+        return payload_owner_;
+    }
+
+    void payload_owner(
+            IPayloadPool* owner)
+    {
+        payload_owner_ = owner;
     }
 
 };

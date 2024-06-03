@@ -181,11 +181,11 @@ struct FASTDDS_EXPORTED_API CacheChange_t
 
     virtual ~CacheChange_t()
     {
-        if (payload_owner_ != nullptr)
+        if (serializedPayload.payload_owner_ != nullptr)
         {
-            payload_owner_->release_payload(*this);
+            serializedPayload.payload_owner_->release_payload(*this);
         }
-        assert(payload_owner_ == nullptr);
+        assert(serializedPayload.payload_owner_ == nullptr);
     }
 
     /*!
@@ -328,18 +328,18 @@ struct FASTDDS_EXPORTED_API CacheChange_t
 
     IPayloadPool const* payload_owner() const
     {
-        return payload_owner_;
+        return serializedPayload.payload_owner();
     }
 
     IPayloadPool* payload_owner()
     {
-        return payload_owner_;
+        return serializedPayload.payload_owner();
     }
 
     void payload_owner(
             IPayloadPool* owner)
     {
-        payload_owner_ = owner;
+        serializedPayload.payload_owner(owner);
     }
 
 private:
@@ -352,9 +352,6 @@ private:
 
     // First fragment in missing list
     uint32_t first_missing_fragment_ = 0;
-
-    // Pool that created the payload of this cache change
-    IPayloadPool* payload_owner_ = nullptr;
 
     uint32_t get_next_missing_fragment(
             uint32_t fragment_index)

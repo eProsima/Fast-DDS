@@ -65,14 +65,14 @@ struct PayloadInfo_t
         assert(change.serializedPayload.data == nullptr);
         assert(change.serializedPayload.length == 0);
 
-        change.payload_owner(payload_owner);
-        payload_owner = nullptr;
-
         change.serializedPayload = payload;
         payload.data = nullptr;
         payload.length = 0;
         payload.pos = 0;
         payload.max_size = 0;
+
+        change.payload_owner(payload_owner);
+        payload_owner = nullptr;
     }
 
 };
