@@ -13,9 +13,8 @@ import xml.etree.ElementTree as ET
 EWM_ALPHA = 1
 EWM_ADJUST = False
 HEATMAP_FIGSIZE = (100, 50)
-test_counts = {}
 
-def parse_input_files(junit_files: str, test_history_csv: str):
+def parse_input_files(junit_files: str):
     df = parse_junit_to_df(Path(junit_files))
     return df.sort_index()
 
@@ -52,7 +51,7 @@ def calc_fliprate(testruns: pd.Series) -> pd.DataFrame:
 
 def non_overlapping_window_fliprate(testruns: pd.Series, window_size: int) -> pd.Series:
     """Calculate flip rate for non-overlapping run windows"""
-    # Apply calc_fliprate directly to the selected rows
+    # Apply calc_fliprate directly to the last <window_size> selected rows
     testruns_last = testruns.iloc[-window_size:]
     fliprate_groups = calc_fliprate(testruns_last)
 
@@ -91,7 +90,7 @@ def calculate_n_runs_fliprate_table(testrun_table: pd.DataFrame, window_size: in
 
     # Rename the columns in fliprate_table
     fliprate_table = fliprate_table.rename(columns={"flip_rate": "flip_rate", "consecutive_failures": "consecutive_failures"})
-    print("fliprate table final:")
+    print("Fliprate table of all the tests:")
     print(fliprate_table)
 
     # Calculate the EWMA of flip rates for each test identifier
@@ -142,9 +141,6 @@ def parse_junit_suite_to_df(suite: TestSuite) -> list:
 
     for testcase in suite.findall('.//testcase'):
         test_identifier = testcase.attrib.get('classname') + "::" + testcase.attrib.get('name')
-
-        # Update test count
-        test_counts[test_identifier] = test_counts.get(test_identifier, 0) + 1
 
         status = testcase.attrib.get('status')
 
@@ -255,7 +251,7 @@ def main():
     else :
         top_n = 0
 
-    df = parse_input_files(args.junit_files, args.test_history_csv)
+    df = parse_input_files(args.junit_files)
 
     fliprate_table = calculate_n_runs_fliprate_table(df, args.window_size)
 
@@ -268,14 +264,17 @@ def main():
     logging.info(
         f"\nTop {top_n} flaky tests based on latest window fliprate score",
     )
+
     for test_id, (flip_rate_ewm, consecutive_failures) in top_flip_rates.items():
         logging.info(f"{test_id} --- flip_rate_ewm: {flip_rate_ewm} --- consecutive failures: {consecutive_failures}")
 
     print('::set-output name=top_flip_rates::{}'.format(', '.join(top_flip_rates)))
+    # Create a .txt report file
     with open('flaky_tests_report.txt', 'w') as f:
         for test in top_flip_rates:
             f.write('%s\n' % test)
 
+    # Create the summary in Github
     summary = create_md_summary(top_flip_rates)
 
     if args.output_file != '':
