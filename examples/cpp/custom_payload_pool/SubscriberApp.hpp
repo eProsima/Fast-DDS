@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef CUSTOM_PAYLOAD_POOL_DATA_SUBSCRIBER_H_
-#define CUSTOM_PAYLOAD_POOL_DATA_SUBSCRIBER_H_
+#ifndef _FASTDDS_CUSTOM_PAYLOAD_POOL_DATA_SUBSCRIBER_HPP_
+#define _FASTDDS_CUSTOM_PAYLOAD_POOL_DATA_SUBSCRIBER_HPP_
 
 #include <condition_variable>
 #include <mutex>
@@ -28,68 +28,77 @@
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 
+#include "Application.hpp"
+#include "CLIParser.hpp"
 #include "CustomPayloadPool.hpp"
 #include "CustomPayloadPoolDataPubSubTypes.h"
 
-class CustomPayloadPoolDataSubscriber : private eprosima::fastdds::dds::DataReaderListener
+using namespace eprosima::fastdds::dds;
+namespace eprosima {
+namespace fastdds {
+namespace examples {
+namespace custom_payload_pool {
+class SubscriberApp : public Application,  public DataReaderListener
 {
 public:
 
-    CustomPayloadPoolDataSubscriber(
-            std::shared_ptr<CustomPayloadPool> payload_pool);
+    SubscriberApp(
+            const CLIParser::subscriber_config& config,
+            const std::string& topic_name);
 
-    virtual ~CustomPayloadPoolDataSubscriber();
+    virtual ~SubscriberApp();
 
-    //!Initialize the subscriber
-    bool init();
+    //! Subscription callback
+    void on_data_available(
+            DataReader* reader) override;
+
+    //! Subscriber matched method
+    void on_subscription_matched(
+            DataReader* reader,
+            const SubscriptionMatchedStatus& info) override;
 
     //!Run the subscriber until all samples have been received.
-    bool run(
-            uint32_t samples);
+    void run() override;
+
+    //! Trigger the end of execution
+    void stop() override;
 
 private:
 
-    void on_data_available(
-            eprosima::fastdds::dds::DataReader* reader) override;
-
-    void on_subscription_matched(
-            eprosima::fastdds::dds::DataReader* reader,
-            const eprosima::fastdds::dds::SubscriptionMatchedStatus& info) override;
-
     //! Return the current state of execution
-    static bool is_stopped();
-
-    //! Trigger the end of execution
-    static void stop();
+    bool is_stopped();
 
     CustomPayloadPoolData hello_;
 
     std::shared_ptr<CustomPayloadPool> payload_pool_;
 
-    eprosima::fastdds::dds::DomainParticipant* participant_;
+    DomainParticipant* participant_;
 
-    eprosima::fastdds::dds::Subscriber* subscriber_;
+    Subscriber* subscriber_;
 
-    eprosima::fastdds::dds::Topic* topic_;
+    Topic* topic_;
 
-    eprosima::fastdds::dds::DataReader* reader_;
+    DataReader* reader_;
 
-    eprosima::fastdds::dds::TypeSupport type_;
+    TypeSupport type_;
 
-    int32_t matched_;
+    uint16_t samples_;
 
-    uint32_t samples_;
-
-    uint32_t max_samples_;
+    uint16_t received_samples_;
 
     //! Member used for control flow purposes
-    static std::atomic<bool> stop_;
+    std::atomic<bool> stop_;
 
     //! Protects terminate condition variable
-    static std::mutex terminate_cv_mtx_;
+    mutable std::mutex terminate_cv_mtx_;
 
     //! Waits during execution until SIGINT or max_messages_ samples are received
-    static std::condition_variable terminate_cv_;
+    std::condition_variable terminate_cv_;
 };
 
-#endif /* CUSTOM_PAYLOAD_POOL_DATA_SUBSCRIBER_H_ */
+} // namespace custom_payload_pool
+} // namespace examples
+} // namespace fastdds
+} // namespace eprosima
+
+#endif /* _FASTDDS_CUSTOM_PAYLOAD_POOL_DATA_SUBSCRIBER_HPP_ */
