@@ -57,6 +57,9 @@ struct SubmessageHeader_t;
  */
 class MessageReceiver
 {
+
+    using BaseReader = fastdds::rtps::BaseReader;
+
 public:
 
     /**
@@ -90,7 +93,7 @@ private:
 
     mutable eprosima::shared_mutex mtx_;
     std::vector<RTPSWriter*> associated_writers_;
-    std::unordered_map<EntityId_t, std::vector<fastdds::rtps::BaseReader*>> associated_readers_;
+    std::unordered_map<EntityId_t, std::vector<BaseReader*>> associated_readers_;
 
     RTPSParticipantImpl* participant_;
     //!Protocol version of the message
@@ -155,7 +158,7 @@ private:
      */
     bool willAReaderAcceptMsgDirectedTo(
             const EntityId_t& readerID,
-            fastdds::rtps::BaseReader*& first_reader) const;
+            BaseReader*& first_reader) const;
 
     /**
      * Find all readers (in associated_readers_), with the given entity ID, and call the
