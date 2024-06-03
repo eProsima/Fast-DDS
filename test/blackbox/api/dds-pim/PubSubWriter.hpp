@@ -291,6 +291,7 @@ public:
         , datawriter_(nullptr)
         , status_mask_(eprosima::fastdds::dds::StatusMask::all())
         , initialized_(false)
+        , use_domain_id_from_profile_(false)
         , matched_(0)
         , participant_matched_(0)
         , discovery_result_(false)
@@ -364,11 +365,22 @@ public:
             DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_file_);
             if (!participant_profile_.empty())
             {
-                participant_ = DomainParticipantFactory::get_instance()->create_participant_with_profile(
-                    (uint32_t)GET_PID() % 230,
-                    participant_profile_,
-                    &participant_listener_,
-                    eprosima::fastdds::dds::StatusMask::none());
+                if (use_domain_id_from_profile_)
+                {
+                    participant_ = DomainParticipantFactory::get_instance()->create_participant_with_profile(
+                        participant_profile_,
+                        &participant_listener_,
+                        eprosima::fastdds::dds::StatusMask::none());
+                }
+                else
+                {
+                    participant_ = DomainParticipantFactory::get_instance()->create_participant_with_profile(
+                        (uint32_t)GET_PID() % 230,
+                        participant_profile_,
+                        &participant_listener_,
+                        eprosima::fastdds::dds::StatusMask::none());
+                }
+
                 ASSERT_NE(participant_, nullptr);
                 ASSERT_TRUE(participant_->is_enabled());
             }
@@ -1672,6 +1684,14 @@ public:
         participant_profile_ = profile;
     }
 
+    void set_participant_profile(
+            const std::string& profile,
+            bool use_domain_id_from_profile)
+    {
+        set_participant_profile(profile);
+        use_domain_id_from_profile_ = use_domain_id_from_profile;
+    }
+
     void set_datawriter_profile(
             const std::string& profile)
     {
@@ -1978,6 +1998,7 @@ protected:
     eprosima::fastrtps::rtps::GUID_t participant_guid_;
     eprosima::fastrtps::rtps::GUID_t datawriter_guid_;
     bool initialized_;
+    bool use_domain_id_from_profile_;
     std::mutex mutexDiscovery_;
     std::condition_variable cv_;
     std::atomic<unsigned int> matched_;

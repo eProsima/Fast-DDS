@@ -1925,3 +1925,182 @@ TEST(DDSDiscovery, DataracePDP)
     settings.intraprocess_delivery = prev_intraprocess_delivery;
     DomainParticipantFactory::get_instance()->set_library_settings(settings);
 }
+
+/*!
+ * @test: Test for validating correct behavior of PID_DOMAIN_ID
+ *
+ * This test checks that two PDP Simple participants with the same PID_DOMAIN_ID
+ * are able to discover each other.
+ * It also checks that the PID_DOMAIN_ID is sent and received.
+ *
+ */
+TEST(DDSDiscovery, pdp_simple_participants_exchange_same_pid_domain_id_and_discover)
+{
+    using namespace eprosima::fastdds::dds;
+    using namespace eprosima::fastdds::rtps;
+    using namespace eprosima::fastrtps::rtps;
+
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+
+    auto reader_test_transport = std::make_shared<test_UDPv4TransportDescriptor>();
+    auto writer_test_transport = std::make_shared<test_UDPv4TransportDescriptor>();
+
+    bool reader_received_pid_domin_id = true;
+    bool writer_sends_pid_domin_id = true;
+
+    auto find_pid_domain_id = [](CDRMessage_t& msg, bool& pid_was_found)
+            {
+                uint32_t qos_size = 0;
+                uint32_t original_pos = msg.pos;
+                bool is_sentinel = false;
+
+                while (!is_sentinel)
+                {
+                    msg.pos = original_pos + qos_size;
+
+                    ParameterId_t pid{eprosima::fastdds::dds::PID_SENTINEL};
+                    uint16_t plength = 0;
+                    bool valid = true;
+
+                    valid &= eprosima::fastrtps::rtps::CDRMessage::readUInt16(&msg, (uint16_t*)&pid);
+                    valid &= eprosima::fastrtps::rtps::CDRMessage::readUInt16(&msg, &plength);
+
+                    if (pid == eprosima::fastdds::dds::PID_SENTINEL)
+                    {
+                        // PID_SENTINEL is always considered of length 0
+                        plength = 0;
+                        is_sentinel = true;
+                    }
+
+                    qos_size += (4 + plength);
+
+                    // Align to 4 byte boundary and prepare for next iteration
+                    qos_size = (qos_size + 3) & ~3;
+
+                    if (!valid || ((msg.pos + plength) > msg.length))
+                    {
+                        return false;
+                    }
+                    else if (!is_sentinel)
+                    {
+                        if (pid == eprosima::fastdds::dds::PID_DOMAIN_ID)
+                        {
+                            uint32_t domain_id = 0;
+                            eprosima::fastrtps::rtps::CDRMessage::readUInt32(&msg, &domain_id);
+                            if (domain_id == (uint32_t)GET_PID() % 230)
+                            {
+                                pid_was_found = true;
+                            }
+                            break;
+                        }
+                    }
+                }
+
+                // Do not drop the packet in any case
+                return false;
+            };
+
+    reader_test_transport->drop_builtin_data_messages_filter_ = [&](CDRMessage_t& msg)
+            {
+                return find_pid_domain_id(msg, reader_received_pid_domin_id);
+            };
+
+    writer_test_transport->drop_builtin_data_messages_filter_ = [&](CDRMessage_t& msg)
+            {
+                return find_pid_domain_id(msg, writer_sends_pid_domin_id);
+            };
+
+    reader.disable_builtin_transport().add_user_transport_to_pparams(reader_test_transport);
+    writer.disable_builtin_transport().add_user_transport_to_pparams(writer_test_transport);
+
+    reader.init();
+    writer.init();
+
+    ASSERT_TRUE(reader.isInitialized());
+    ASSERT_TRUE(writer.isInitialized());
+
+    reader.wait_discovery();
+    writer.wait_discovery();
+
+    ASSERT_TRUE(writer_sends_pid_domin_id);
+    ASSERT_TRUE(reader_received_pid_domin_id);
+}
+
+/*!
+ * @test: Test for validating correct behavior of PID_DOMAIN_ID
+ *
+ * This test checks that two PDP Simple participants in different domains
+ * do not discover each other despite the first one is initial peer of the second.
+ *
+ */
+
+TEST(DDSDiscovery, pdp_simple_initial_peer_participants_with_different_domain_ids_do_not_discover)
+{
+    PubSubWriter<HelloWorldPubSubType> writer_domain_1(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader_domain_2(TEST_TOPIC_NAME);
+
+    writer_domain_1.set_xml_filename("discovery_participants_initial_peers_profile.xml");
+    writer_domain_1.set_participant_profile("participant_from_domain_1", true);
+    writer_domain_1.init();
+    EXPECT_TRUE(writer_domain_1.isInitialized());
+
+    reader_domain_2.set_xml_filename("discovery_participants_initial_peers_profile.xml");
+    reader_domain_2.set_participant_profile("participant_from_domain_2", true);
+    reader_domain_2.init();
+    EXPECT_TRUE(reader_domain_2.isInitialized());
+
+    writer_domain_1.wait_discovery(std::chrono::seconds(2));
+    reader_domain_2.wait_discovery(std::chrono::seconds(2));
+
+    ASSERT_FALSE(writer_domain_1.is_matched());
+    ASSERT_FALSE(reader_domain_2.is_matched());
+}
+
+/*!
+ * @test: Test for validating correct behavior of PID_DOMAIN_ID
+ *
+ * This test checks that a Discovery Server and a Client in different domains,
+ * discover each other.
+ *
+ */
+
+TEST(DDSDiscovery, client_server_participants_with_different_domain_ids_discover)
+{
+    PubSubReader<HelloWorldPubSubType> server_domain_1(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> client_domain_2(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> client_domain_3(TEST_TOPIC_NAME);
+
+    server_domain_1.set_xml_filename("discovery_participants_client_server_profile.xml");
+    server_domain_1.set_participant_profile("ds_server", true);
+    server_domain_1.init();
+    EXPECT_TRUE(server_domain_1.isInitialized());
+
+    client_domain_2.set_xml_filename("discovery_participants_client_server_profile.xml");
+    client_domain_2.set_participant_profile("ds_client_pub", true);
+    client_domain_2.init();
+    EXPECT_TRUE(client_domain_2.isInitialized());
+
+    client_domain_3.set_xml_filename("discovery_participants_client_server_profile.xml");
+    client_domain_3.set_participant_profile("ds_client_sub", true);
+    client_domain_3.init();
+    EXPECT_TRUE(client_domain_3.isInitialized());
+
+    server_domain_1.wait_discovery(std::chrono::seconds(2));
+    client_domain_2.wait_discovery(std::chrono::seconds(2));
+    client_domain_3.wait_discovery(std::chrono::seconds(2));
+
+    ASSERT_TRUE(client_domain_2.is_matched());
+    ASSERT_TRUE(client_domain_3.is_matched());
+
+    auto data = default_helloworld_data_generator();
+    size_t data_size = data.size();
+
+    client_domain_3.startReception(data);
+
+    client_domain_2.send(data);
+    EXPECT_TRUE(data.empty());
+
+    // All data received
+    EXPECT_EQ(client_domain_3.block_for_all(std::chrono::seconds(3)), data_size);
+}
