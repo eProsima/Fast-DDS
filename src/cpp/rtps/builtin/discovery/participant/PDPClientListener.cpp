@@ -48,8 +48,8 @@ PDPClientListener::PDPClientListener(
 }
 
 bool PDPClientListener::check_discovery_conditions(
-    ParticipantProxyData& /* participant_data */,
-    void* /* extra data*/)
+        ParticipantProxyData& /* participant_data */,
+        void* /* extra data*/)
 {
     /* Do not check PID_VENDOR_ID */
     // In Discovery Server we don't impose
