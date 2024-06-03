@@ -1951,9 +1951,10 @@ protected:
 
             postprocess_sample(*data, info);
 
-            // Delete the free-storage allocated data sample
-            type_.delete_data(data);
         }
+
+        // Delete the free-storage allocated data sample
+        type_.delete_data(data);
     }
 
     void receive_samples(
