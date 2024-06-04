@@ -177,7 +177,7 @@ ReturnCode_t DataReaderImpl::enable()
     att.endpoint.setUserDefinedID(qos_.endpoint().user_defined_id);
     att.times = qos_.reliable_reader_qos().times;
     att.liveliness_lease_duration = qos_.liveliness().lease_duration;
-    att.liveliness_kind_ = qos_.liveliness().kind;
+    att.liveliness_kind = qos_.liveliness().kind;
     att.matched_writers_allocation = qos_.reader_resource_limits().matched_publisher_allocation;
     att.expects_inline_qos = qos_.expects_inline_qos();
     att.disable_positive_acks = qos_.reliable_reader_qos().disable_positive_ACKs.enabled;

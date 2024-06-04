@@ -70,7 +70,7 @@ class ReaderAttributes
 public:
 
     ReaderAttributes()
-        : liveliness_kind_(fastdds::dds::LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS)
+        : liveliness_kind(fastdds::dds::LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS)
         , liveliness_lease_duration(TIME_T_INFINITE_SECONDS, TIME_T_INFINITE_NANOSECONDS)
         , expects_inline_qos(false)
         , disable_positive_acks(false)
@@ -91,7 +91,7 @@ public:
     ReaderTimes times;
 
     //! Liveliness kind
-    fastdds::dds::LivelinessQosPolicyKind liveliness_kind_;
+    fastdds::dds::LivelinessQosPolicyKind liveliness_kind;
 
     //! Liveliness lease duration
     Duration_t liveliness_lease_duration;
