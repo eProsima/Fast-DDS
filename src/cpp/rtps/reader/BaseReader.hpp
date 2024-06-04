@@ -64,35 +64,8 @@ class BaseReader
     : public fastrtps::rtps::RTPSReader
     , public fastdds::statistics::StatisticsReaderImpl
 {
-protected:
-
-    BaseReader(
-            fastrtps::rtps::RTPSParticipantImpl* pimpl,
-            const fastrtps::rtps::GUID_t& guid,
-            const fastrtps::rtps::ReaderAttributes& att,
-            fastrtps::rtps::ReaderHistory* hist,
-            fastrtps::rtps::ReaderListener* listen);
-
-    BaseReader(
-            fastrtps::rtps::RTPSParticipantImpl* pimpl,
-            const fastrtps::rtps::GUID_t& guid,
-            const fastrtps::rtps::ReaderAttributes& att,
-            const std::shared_ptr<fastrtps::rtps::IPayloadPool>& payload_pool,
-            fastrtps::rtps::ReaderHistory* hist,
-            fastrtps::rtps::ReaderListener* listen);
-
-    BaseReader(
-            fastrtps::rtps::RTPSParticipantImpl* pimpl,
-            const fastrtps::rtps::GUID_t& guid,
-            const fastrtps::rtps::ReaderAttributes& att,
-            const std::shared_ptr<fastrtps::rtps::IPayloadPool>& payload_pool,
-            const std::shared_ptr<fastrtps::rtps::IChangePool>& change_pool,
-            fastrtps::rtps::ReaderHistory* hist,
-            fastrtps::rtps::ReaderListener* listen);
 
 public:
-
-    virtual ~BaseReader();
 
     /**
      * Get the associated listener, secondary attached Listener in case it is of compound type
@@ -313,41 +286,33 @@ public:
 
 #endif // FASTDDS_STATISTICS
 
+    virtual ~BaseReader();
+
 protected:
 
-    //! Listener
-    fastrtps::rtps::ReaderListener* listener_;
-    //! Accept msg from unknown writers (BE-true,RE-false)
-    bool accept_messages_from_unkown_writers_;
-    //! Expects Inline Qos.
-    bool expects_inline_qos_;
+    BaseReader(
+            fastrtps::rtps::RTPSParticipantImpl* pimpl,
+            const fastrtps::rtps::GUID_t& guid,
+            const fastrtps::rtps::ReaderAttributes& att,
+            fastrtps::rtps::ReaderHistory* hist,
+            fastrtps::rtps::ReaderListener* listen);
 
-    IReaderDataFilter* data_filter_ = nullptr;
+    BaseReader(
+            fastrtps::rtps::RTPSParticipantImpl* pimpl,
+            const fastrtps::rtps::GUID_t& guid,
+            const fastrtps::rtps::ReaderAttributes& att,
+            const std::shared_ptr<fastrtps::rtps::IPayloadPool>& payload_pool,
+            fastrtps::rtps::ReaderHistory* hist,
+            fastrtps::rtps::ReaderListener* listen);
 
-    //!ReaderHistoryState
-    fastrtps::rtps::ReaderHistoryState* history_state_;
-
-    uint64_t total_unread_ = 0;
-
-    fastrtps::TimedConditionVariable new_notification_cv_;
-
-    //! The liveliness kind of this reader
-    fastdds::dds::LivelinessQosPolicyKind liveliness_kind_;
-    //! The liveliness lease duration of this reader
-    fastrtps::Duration_t liveliness_lease_duration_;
-
-    //! Whether the writer is datasharing compatible or not
-    bool is_datasharing_compatible_ = false;
-    //! The listener for the datasharing notifications
-    std::unique_ptr<fastrtps::rtps::IDataSharingListener> datasharing_listener_;
-
-    //! The liveliness changed status struct as defined in the DDS
-    fastdds::dds::LivelinessChangedStatus liveliness_changed_status_;
-
-    //! Accept msg to unknwon readers
-    bool accept_messages_to_unknown_readers_ = true;
-    //! Trusted writer (for Builtin)
-    fastrtps::rtps::EntityId_t trusted_writer_entity_id_;
+    BaseReader(
+            fastrtps::rtps::RTPSParticipantImpl* pimpl,
+            const fastrtps::rtps::GUID_t& guid,
+            const fastrtps::rtps::ReaderAttributes& att,
+            const std::shared_ptr<fastrtps::rtps::IPayloadPool>& payload_pool,
+            const std::shared_ptr<fastrtps::rtps::IChangePool>& change_pool,
+            fastrtps::rtps::ReaderHistory* hist,
+            fastrtps::rtps::ReaderListener* listen);
 
     /*!
      * @brief Whether a history record may be removed.
@@ -409,6 +374,40 @@ protected:
 
     bool is_datasharing_compatible_with(
             const fastrtps::rtps::WriterProxyData& wdata);
+
+    //! Listener
+    fastrtps::rtps::ReaderListener* listener_;
+    //! Accept msg from unknown writers (BE-true,RE-false)
+    bool accept_messages_from_unkown_writers_;
+    //! Expects Inline Qos.
+    bool expects_inline_qos_;
+
+    IReaderDataFilter* data_filter_ = nullptr;
+
+    //!ReaderHistoryState
+    fastrtps::rtps::ReaderHistoryState* history_state_;
+
+    uint64_t total_unread_ = 0;
+
+    fastrtps::TimedConditionVariable new_notification_cv_;
+
+    //! The liveliness kind of this reader
+    fastdds::dds::LivelinessQosPolicyKind liveliness_kind_;
+    //! The liveliness lease duration of this reader
+    fastrtps::Duration_t liveliness_lease_duration_;
+
+    //! Whether the writer is datasharing compatible or not
+    bool is_datasharing_compatible_ = false;
+    //! The listener for the datasharing notifications
+    std::unique_ptr<fastrtps::rtps::IDataSharingListener> datasharing_listener_;
+
+    //! The liveliness changed status struct as defined in the DDS
+    fastdds::dds::LivelinessChangedStatus liveliness_changed_status_;
+
+    //! Accept msg to unknwon readers
+    bool accept_messages_to_unknown_readers_ = true;
+    //! Trusted writer (for Builtin)
+    fastrtps::rtps::EntityId_t trusted_writer_entity_id_;
 
 private:
 
