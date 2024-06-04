@@ -645,7 +645,8 @@ bool StatefulReader::process_data_msg(
                 }
                 datasharing_pool->get_datasharing_change(change->serializedPayload, payload_owner, *change_to_add);
             }
-            else if (payload_pool_->get_payload(change->serializedPayload, payload_owner, change_to_add->serializedPayload))
+            else if (payload_pool_->get_payload(change->serializedPayload, payload_owner,
+                    change_to_add->serializedPayload))
             {
                 change->payload_owner(payload_owner);
             }

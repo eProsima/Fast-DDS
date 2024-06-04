@@ -66,7 +66,6 @@ public:
         return false;
     }
 
-
     /**
      * Prepares and fills the change in the datasharing protocol.
      *
