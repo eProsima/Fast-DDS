@@ -37,6 +37,8 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
+using BaseReader = fastdds::rtps::BaseReader;
+
 /**
  * An InlineQosWriter that puts the inline_qos of a CacheChange_t into a CDRMessage_t.
  */
@@ -867,7 +869,7 @@ bool RTPSMessageGroup::add_acknack(
 #endif // if HAVE_SECURITY
 
     // Notify the statistics module, note that only readers add acknacks
-    fastdds::rtps::BaseReader::downcast(endpoint_)->on_acknack(count);
+    BaseReader::downcast(endpoint_)->on_acknack(count);
 
     return insert_submessage(false);
 }
@@ -922,7 +924,7 @@ bool RTPSMessageGroup::add_nackfrag(
 #endif // if HAVE_SECURITY
 
     // Notify the statistics module, note that only readers add NACKFRAGs
-    fastdds::rtps::BaseReader::downcast(endpoint_)->on_nackfrag(count);
+    BaseReader::downcast(endpoint_)->on_nackfrag(count);
 
     return insert_submessage(false);
 }

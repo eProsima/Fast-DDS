@@ -43,6 +43,7 @@
 #define IDSTRING "(ID:" << std::this_thread::get_id() << ") " <<
 
 using namespace eprosima::fastrtps::rtps;
+using BaseReader = eprosima::fastdds::rtps::BaseReader;
 
 StatelessReader::~StatelessReader()
 {
@@ -62,7 +63,7 @@ StatelessReader::StatelessReader(
         const ReaderAttributes& att,
         ReaderHistory* hist,
         ReaderListener* listen)
-    : fastdds::rtps::BaseReader(pimpl, guid, att, hist, listen)
+    : BaseReader(pimpl, guid, att, hist, listen)
     , matched_writers_(att.matched_writers_allocation)
 {
 }
@@ -74,7 +75,7 @@ StatelessReader::StatelessReader(
         const std::shared_ptr<IPayloadPool>& payload_pool,
         ReaderHistory* hist,
         ReaderListener* listen)
-    : fastdds::rtps::BaseReader(pimpl, guid, att, payload_pool, hist, listen)
+    : BaseReader(pimpl, guid, att, payload_pool, hist, listen)
     , matched_writers_(att.matched_writers_allocation)
 {
 }
@@ -87,7 +88,7 @@ StatelessReader::StatelessReader(
         const std::shared_ptr<IChangePool>& change_pool,
         ReaderHistory* hist,
         ReaderListener* listen)
-    : fastdds::rtps::BaseReader(pimpl, guid, att, payload_pool, change_pool, hist, listen)
+    : BaseReader(pimpl, guid, att, payload_pool, change_pool, hist, listen)
     , matched_writers_(att.matched_writers_allocation)
 {
 }

@@ -34,6 +34,8 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
+using BaseReader = fastdds::rtps::BaseReader;
+
 ReaderLocator::ReaderLocator(
         RTPSWriter* owner,
         size_t max_unicast_locators,
@@ -228,7 +230,7 @@ void ReaderLocator::datasharing_notify()
 
     if (reader)
     {
-        fastdds::rtps::BaseReader::downcast(reader)->datasharing_listener()->notify(true);
+        BaseReader::downcast(reader)->datasharing_listener()->notify(true);
     }
     else
     {

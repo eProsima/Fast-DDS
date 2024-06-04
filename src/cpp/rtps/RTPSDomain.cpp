@@ -53,6 +53,8 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
+using BaseReader = fastdds::rtps::BaseReader;
+
 static void guid_prefix_create(
         uint32_t ID,
         GuidPrefix_t& guidP)
@@ -778,7 +780,7 @@ RTPSParticipantImpl* RTPSDomainImpl::find_local_participant(
     return nullptr;
 }
 
-fastdds::rtps::BaseReader* RTPSDomainImpl::find_local_reader(
+BaseReader* RTPSDomainImpl::find_local_reader(
         const GUID_t& reader_guid)
 {
     auto instance = get_instance();

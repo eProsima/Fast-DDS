@@ -48,6 +48,7 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
+using BaseReader = fastdds::rtps::BaseReader;
 
 /**
  * Loops over all the readers in the vector, applying the given routine.
@@ -356,7 +357,7 @@ bool StatelessWriter::intraprocess_delivery(
         {
             change->write_params.sample_identity(change->write_params.related_sample_identity());
         }
-        return fastdds::rtps::BaseReader::downcast(reader)->processDataMsg(change);
+        return BaseReader::downcast(reader)->processDataMsg(change);
     }
 
     return false;

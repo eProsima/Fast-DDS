@@ -86,6 +86,7 @@ using UDPv4TransportDescriptor = fastdds::rtps::UDPv4TransportDescriptor;
 using TCPTransportDescriptor = fastdds::rtps::TCPTransportDescriptor;
 using SharedMemTransportDescriptor = fastdds::rtps::SharedMemTransportDescriptor;
 using BuiltinTransports = fastdds::rtps::BuiltinTransports;
+using BaseReader = fastdds::rtps::BaseReader;
 
 /**
  * Parse the environment variable specifying the transports to instantiate and optional configuration options
@@ -740,7 +741,7 @@ const std::vector<RTPSWriter*>& RTPSParticipantImpl::getAllWriters() const
     return m_allWriterList;
 }
 
-const std::vector<fastdds::rtps::BaseReader*>& RTPSParticipantImpl::getAllReaders() const
+const std::vector<BaseReader*>& RTPSParticipantImpl::getAllReaders() const
 {
     return m_allReaderList;
 }
@@ -1061,7 +1062,7 @@ bool RTPSParticipantImpl::create_reader(
 
     normalize_endpoint_locators(param.endpoint);
 
-    fastdds::rtps::BaseReader* SReader = nullptr;
+    BaseReader* SReader = nullptr;
     GUID_t guid(m_guid.guidPrefix, entId);
     SReader = callback(guid, param, persistence, param.endpoint.reliabilityKind == RELIABLE);
 
@@ -1309,7 +1310,7 @@ bool RTPSParticipantImpl::createReader(
 {
     auto callback = [hist, listen, this]
                 (const GUID_t& guid, ReaderAttributes& param, IPersistenceService* persistence,
-                    bool is_reliable) -> fastdds::rtps::BaseReader*
+                    bool is_reliable) -> BaseReader*
             {
                 if (is_reliable)
                 {
@@ -1355,7 +1356,7 @@ bool RTPSParticipantImpl::createReader(
 
     auto callback = [hist, listen, &payload_pool, this]
                 (const GUID_t& guid, ReaderAttributes& param, IPersistenceService* persistence,
-                    bool is_reliable) -> fastdds::rtps::BaseReader*
+                    bool is_reliable) -> BaseReader*
             {
                 if (is_reliable)
                 {
@@ -1384,7 +1385,7 @@ bool RTPSParticipantImpl::createReader(
     return create_reader(ReaderOut, param, entityId, isBuiltin, enable, callback);
 }
 
-fastdds::rtps::BaseReader* RTPSParticipantImpl::find_local_reader(
+BaseReader* RTPSParticipantImpl::find_local_reader(
         const GUID_t& reader_guid)
 {
     shared_lock<shared_mutex> _(endpoints_list_mutex);
@@ -2166,7 +2167,7 @@ void RTPSParticipantImpl::deleteAllUserEndpoints()
                 back_inserter(writers));
         swap(writers, m_allWriterList);
 
-        vector<fastdds::rtps::BaseReader*> readers;
+        vector<BaseReader*> readers;
         set_difference(m_allReaderList.begin(), m_allReaderList.end(),
                 m_userReaderList.begin(), m_userReaderList.end(),
                 back_inserter(readers));
@@ -2920,7 +2921,7 @@ bool RTPSParticipantImpl::register_in_reader(
     }
     else if (!fastdds::statistics::is_statistics_builtin(reader_guid.entityId))
     {
-        fastdds::rtps::BaseReader* reader = find_local_reader(reader_guid);
+        BaseReader* reader = find_local_reader(reader_guid);
         res = reader->add_statistics_listener(listener);
     }
 

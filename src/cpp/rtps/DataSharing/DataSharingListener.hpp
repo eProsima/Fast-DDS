@@ -49,6 +49,9 @@ namespace rtps {
 class DataSharingListener : public IDataSharingListener
 {
 
+    using BaseReader = fastdds::rtps::BaseReader;
+    using ThreadSettings = fastdds::rtps::ThreadSettings;
+
 public:
 
     typedef DataSharingNotification::Notification Notification;
@@ -57,9 +60,9 @@ public:
     DataSharingListener(
             std::shared_ptr<DataSharingNotification> notification,
             const std::string& datasharing_pools_directory,
-            const fastdds::rtps::ThreadSettings& thr_config,
+            const ThreadSettings& thr_config,
             ResourceLimitedContainerConfig limits,
-            fastdds::rtps::BaseReader* reader);
+            BaseReader* reader);
 
     virtual ~DataSharingListener();
 
@@ -122,12 +125,12 @@ protected:
 
     std::shared_ptr<DataSharingNotification> notification_;
     std::atomic<bool> is_running_;
-    fastdds::rtps::BaseReader* reader_;
+    BaseReader* reader_;
     eprosima::thread listening_thread_;
     ResourceLimitedVector<WriterInfo> writer_pools_;
     std::atomic<bool> writer_pools_changed_;
     std::string datasharing_pools_directory_;
-    fastdds::rtps::ThreadSettings thread_config_;
+    ThreadSettings thread_config_;
     mutable std::mutex mutex_;
 
 };

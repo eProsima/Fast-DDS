@@ -29,13 +29,15 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
+using BaseReader = fastdds::rtps::BaseReader;
+using ThreadSettings = fastdds::rtps::ThreadSettings;
 
 DataSharingListener::DataSharingListener(
         std::shared_ptr<DataSharingNotification> notification,
         const std::string& datasharing_pools_directory,
-        const fastdds::rtps::ThreadSettings& thr_config,
+        const ThreadSettings& thr_config,
         ResourceLimitedContainerConfig limits,
-        fastdds::rtps::BaseReader* reader)
+        BaseReader* reader)
     : notification_(notification)
     , is_running_(false)
     , reader_(reader)

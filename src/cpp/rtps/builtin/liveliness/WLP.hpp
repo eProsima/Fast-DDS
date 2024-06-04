@@ -71,6 +71,8 @@ class WLP
     friend class StatefulReader;
     friend class StatelessReader;
 
+    using BaseReader = fastdds::rtps::BaseReader;
+
 public:
 
     /**
@@ -215,7 +217,7 @@ private:
     std::vector<RTPSWriter*> manual_by_topic_writers_;
 
     //! List of readers
-    std::vector<fastdds::rtps::BaseReader*> readers_;
+    std::vector<BaseReader*> readers_;
     //! A boolean indicating that there is at least one reader requesting automatic liveliness
     bool automatic_readers_;
 
@@ -266,7 +268,7 @@ private:
      */
     void update_liveliness_changed_status(
             GUID_t writer,
-            fastdds::rtps::BaseReader* reader,
+            BaseReader* reader,
             int32_t alive_change,
             int32_t not_alive_change);
 

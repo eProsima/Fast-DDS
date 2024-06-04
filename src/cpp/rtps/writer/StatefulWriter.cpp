@@ -63,6 +63,8 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
+using BaseReader = fastdds::rtps::BaseReader;
+
 /**
  * Loops over all the readers in the vector, applying the given routine.
  * The loop continues until the result of the routine is true for any reader
@@ -478,7 +480,7 @@ bool StatefulWriter::intraprocess_delivery(
         {
             change->write_params.sample_identity(change->write_params.related_sample_identity());
         }
-        return fastdds::rtps::BaseReader::downcast(reader)->processDataMsg(change);
+        return BaseReader::downcast(reader)->processDataMsg(change);
     }
     return false;
 }
@@ -491,7 +493,7 @@ bool StatefulWriter::intraprocess_gap(
     RTPSReader* reader = reader_proxy->local_reader();
     if (reader)
     {
-        return fastdds::rtps::BaseReader::downcast(reader)->processGapMsg(
+        return BaseReader::downcast(reader)->processGapMsg(
             m_guid, first_seq, SequenceNumberSet_t(last_seq), c_VendorId_eProsima);
     }
 
@@ -525,7 +527,7 @@ bool StatefulWriter::intraprocess_heartbeat(
                 (liveliness || reader_proxy->has_changes()))
         {
             incrementHBCount();
-            returned_value = fastdds::rtps::BaseReader::downcast(reader)->processHeartbeatMsg(
+            returned_value = BaseReader::downcast(reader)->processHeartbeatMsg(
                 m_guid, m_heartbeatCount, first_seq, last_seq, true, liveliness, c_VendorId_eProsima);
         }
     }

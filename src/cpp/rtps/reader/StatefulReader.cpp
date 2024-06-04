@@ -46,6 +46,7 @@
 #define IDSTRING "(ID:" << std::this_thread::get_id() << ") " <<
 
 using namespace eprosima::fastrtps::rtps;
+using BaseReader = eprosima::fastdds::rtps::BaseReader;
 
 static void send_datasharing_ack(
         StatefulReader* reader,
@@ -126,7 +127,7 @@ StatefulReader::StatefulReader(
         const ReaderAttributes& att,
         ReaderHistory* hist,
         ReaderListener* listen)
-    : fastdds::rtps::BaseReader(pimpl, guid, att, hist, listen)
+    : BaseReader(pimpl, guid, att, hist, listen)
     , acknack_count_(0)
     , nackfrag_count_(0)
     , times_(att.times)
@@ -146,7 +147,7 @@ StatefulReader::StatefulReader(
         const std::shared_ptr<IPayloadPool>& payload_pool,
         ReaderHistory* hist,
         ReaderListener* listen)
-    : fastdds::rtps::BaseReader(pimpl, guid, att, payload_pool, hist, listen)
+    : BaseReader(pimpl, guid, att, payload_pool, hist, listen)
     , acknack_count_(0)
     , nackfrag_count_(0)
     , times_(att.times)
@@ -167,7 +168,7 @@ StatefulReader::StatefulReader(
         const std::shared_ptr<IChangePool>& change_pool,
         ReaderHistory* hist,
         ReaderListener* listen)
-    : fastdds::rtps::BaseReader(pimpl, guid, att, payload_pool, change_pool, hist, listen)
+    : BaseReader(pimpl, guid, att, payload_pool, change_pool, hist, listen)
     , acknack_count_(0)
     , nackfrag_count_(0)
     , times_(att.times)

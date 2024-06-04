@@ -47,6 +47,8 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
+using BaseReader = fastdds::rtps::BaseReader;
+
 static void set_builtin_reader_history_attributes(
         HistoryAttributes& hatt,
         const ResourceLimitedContainerConfig& allocation,
@@ -830,7 +832,7 @@ bool WLP::add_local_reader(
         RTPSReader* reader,
         const fastdds::dds::ReaderQos& rqos)
 {
-    auto base_reader = fastdds::rtps::BaseReader::downcast(reader);
+    auto base_reader = BaseReader::downcast(reader);
 
     std::lock_guard<std::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
 
@@ -847,7 +849,7 @@ bool WLP::add_local_reader(
 bool WLP::remove_local_reader(
         RTPSReader* reader)
 {
-    auto base_reader = fastdds::rtps::BaseReader::downcast(reader);
+    auto base_reader = BaseReader::downcast(reader);
     std::lock_guard<std::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
 
     auto it = std::find(
@@ -1078,7 +1080,7 @@ void WLP::sub_liveliness_changed(
 {
     // Writer with given guid lost liveliness, check which readers were matched and inform them
 
-    for (fastdds::rtps::BaseReader* reader : readers_)
+    for (BaseReader* reader : readers_)
     {
         if (reader->liveliness_kind() == kind &&
                 reader->liveliness_lease_duration() == lease_duration)
@@ -1097,7 +1099,7 @@ void WLP::sub_liveliness_changed(
 
 void WLP::update_liveliness_changed_status(
         GUID_t writer,
-        fastdds::rtps::BaseReader* reader,
+        BaseReader* reader,
         int32_t alive_change,
         int32_t not_alive_change)
 {

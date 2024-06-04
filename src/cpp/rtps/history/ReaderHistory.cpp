@@ -34,6 +34,8 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
+using BaseReader = fastdds::rtps::BaseReader;
+
 ReaderHistory::ReaderHistory(
         const HistoryAttributes& att)
     : History(att)
@@ -149,7 +151,7 @@ History::iterator ReaderHistory::remove_change_nts(
     auto ret_val = m_changes.erase(removal);
     m_isHistoryFull = false;
 
-    auto base_reader = fastdds::rtps::BaseReader::downcast(mp_reader);
+    auto base_reader = BaseReader::downcast(mp_reader);
     base_reader->change_removed_by_history(change);
     if (release)
     {
@@ -258,13 +260,13 @@ bool ReaderHistory::do_reserve_cache(
         CacheChange_t** change,
         uint32_t size)
 {
-    return fastdds::rtps::BaseReader::downcast(mp_reader)->reserveCache(change, size);
+    return BaseReader::downcast(mp_reader)->reserveCache(change, size);
 }
 
 void ReaderHistory::do_release_cache(
         CacheChange_t* ch)
 {
-    fastdds::rtps::BaseReader::downcast(mp_reader)->releaseCache(ch);
+    BaseReader::downcast(mp_reader)->releaseCache(ch);
 }
 
 } /* namespace rtps */

@@ -45,6 +45,9 @@ namespace rtps {
  */
 class RTPSDomainImpl
 {
+
+    using BaseReader = fastdds::rtps::BaseReader;
+
 public:
 
     typedef std::pair<RTPSParticipant*, RTPSParticipantImpl*> t_p_RTPSParticipant;
@@ -175,7 +178,7 @@ public:
      *
      * @returns A pointer to a local reader given its endpoint guid, or nullptr if not found.
      */
-    static fastdds::rtps::BaseReader* find_local_reader(
+    static BaseReader* find_local_reader(
             const GUID_t& reader_guid);
 
     /**
