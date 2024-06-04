@@ -389,22 +389,6 @@ void BaseReader::set_last_notified(
     history_state_->history_record[peristence_guid] = seq;
 }
 
-fastrtps::rtps::History::const_iterator BaseReader::find_cache_in_fragmented_process(
-        const fastrtps::rtps::SequenceNumber_t& sequence_number,
-        const fastrtps::rtps::GUID_t& writer_guid,
-        fastrtps::rtps::CacheChange_t** change,
-        fastrtps::rtps::History::const_iterator hint) const
-{
-    auto ret_val = history_->get_change_nts(sequence_number, writer_guid, change, hint);
-
-    if (nullptr != *change && (*change)->is_fully_assembled())
-    {
-        *change = nullptr;
-    }
-
-    return ret_val;
-}
-
 bool BaseReader::is_datasharing_compatible_with(
         const fastrtps::rtps::WriterProxyData& wdata)
 {

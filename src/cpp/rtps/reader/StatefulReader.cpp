@@ -1000,6 +1000,22 @@ bool StatefulReader::acceptMsgFrom(
     return false;
 }
 
+History::const_iterator StatefulReader::find_cache_in_fragmented_process(
+        const SequenceNumber_t& sequence_number,
+        const GUID_t& writer_guid,
+        CacheChange_t** change,
+        History::const_iterator hint) const
+{
+    auto ret_val = history_->get_change_nts(sequence_number, writer_guid, change, hint);
+
+    if (nullptr != *change && (*change)->is_fully_assembled())
+    {
+        *change = nullptr;
+    }
+
+    return ret_val;
+}
+
 bool StatefulReader::change_removed_by_history(
         CacheChange_t* a_change,
         WriterProxy* wp)
