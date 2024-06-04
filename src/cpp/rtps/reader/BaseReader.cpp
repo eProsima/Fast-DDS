@@ -34,12 +34,16 @@
 #include <rtps/DataSharing/DataSharingListener.hpp>
 #include <rtps/DataSharing/DataSharingNotification.hpp>
 #include <rtps/DataSharing/DataSharingPayloadPool.hpp>
+#include <rtps/history/BasicPayloadPool.hpp>
+#include <rtps/history/CacheChangePool.h>
 #include <rtps/reader/ReaderHistoryState.hpp>
 #include <statistics/rtps/StatisticsBase.hpp>
 
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
+
+using namespace fastrtps::rtps;
 
 BaseReader::BaseReader(
         fastrtps::rtps::RTPSParticipantImpl* pimpl,
@@ -52,6 +56,12 @@ BaseReader::BaseReader(
     , liveliness_kind_(att.liveliness_kind)
     , liveliness_lease_duration_(att.liveliness_lease_duration)
 {
+    PoolConfig cfg = PoolConfig::from_history_attributes(hist->m_att);
+    std::shared_ptr<IChangePool> change_pool;
+    std::shared_ptr<IPayloadPool> payload_pool;
+    payload_pool = BasicPayloadPool::get(cfg, change_pool);
+
+    init(payload_pool, change_pool);
     setup_datasharing(att);
 }
 
@@ -62,12 +72,11 @@ BaseReader::BaseReader(
         const std::shared_ptr<fastrtps::rtps::IPayloadPool>& payload_pool,
         fastrtps::rtps::ReaderHistory* hist,
         fastrtps::rtps::ReaderListener* listen)
-    : fastrtps::rtps::RTPSReader(pimpl, guid, att, payload_pool, hist, listen)
-    , history_state_(new fastrtps::rtps::ReaderHistoryState(att.matched_writers_allocation.initial))
-    , liveliness_kind_(att.liveliness_kind)
-    , liveliness_lease_duration_(att.liveliness_lease_duration)
+    : BaseReader(
+        pimpl, guid, att, payload_pool,
+        std::make_shared<CacheChangePool>(PoolConfig::from_history_attributes(hist->m_att)),
+        hist, listen)
 {
-    setup_datasharing(att);
 }
 
 BaseReader::BaseReader(
@@ -78,11 +87,12 @@ BaseReader::BaseReader(
         const std::shared_ptr<fastrtps::rtps::IChangePool>& change_pool,
         fastrtps::rtps::ReaderHistory* hist,
         fastrtps::rtps::ReaderListener* listen)
-    : fastrtps::rtps::RTPSReader(pimpl, guid, att, payload_pool, change_pool, hist, listen)
+    : fastrtps::rtps::RTPSReader(pimpl, guid, att, hist, listen)
     , history_state_(new fastrtps::rtps::ReaderHistoryState(att.matched_writers_allocation.initial))
     , liveliness_kind_(att.liveliness_kind)
     , liveliness_lease_duration_(att.liveliness_lease_duration)
 {
+    init(payload_pool, change_pool);
     setup_datasharing(att);
 }
 
@@ -415,6 +425,21 @@ bool BaseReader::is_datasharing_compatible_with(
     }
 
     return false;
+}
+
+void BaseReader::init(
+        const std::shared_ptr<IPayloadPool>& payload_pool,
+        const std::shared_ptr<IChangePool>& change_pool)
+{
+    payload_pool_ = payload_pool;
+    change_pool_ = change_pool;
+    fixed_payload_size_ = 0;
+    if (history_->m_att.memoryPolicy == PREALLOCATED_MEMORY_MODE)
+    {
+        fixed_payload_size_ = history_->m_att.payloadMaxSize;
+    }
+
+    EPROSIMA_LOG_INFO(RTPS_READER, "RTPSReader created correctly");
 }
 
 void BaseReader::setup_datasharing(

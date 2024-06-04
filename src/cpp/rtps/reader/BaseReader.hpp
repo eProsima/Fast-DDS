@@ -20,6 +20,7 @@
 #define RTPS_READER__BASEREADER_HPP
 
 #include <cstdint>
+#include <memory>
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/core/status/LivelinessChangedStatus.hpp>
@@ -385,6 +386,10 @@ protected:
             const fastrtps::rtps::WriterProxyData& wdata);
 
 private:
+
+    void init(
+            const std::shared_ptr<fastrtps::rtps::IPayloadPool>& payload_pool,
+            const std::shared_ptr<fastrtps::rtps::IChangePool>& change_pool);
 
     void setup_datasharing(
             const fastrtps::rtps::ReaderAttributes& att);

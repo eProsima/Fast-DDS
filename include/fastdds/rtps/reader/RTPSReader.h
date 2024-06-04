@@ -32,8 +32,6 @@
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/rtps/common/VendorId_t.hpp>
 #include <fastdds/rtps/Endpoint.h>
-#include <fastdds/rtps/history/IChangePool.h>
-#include <fastdds/rtps/history/IPayloadPool.h>
 #include <fastdds/rtps/history/History.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
@@ -65,23 +63,6 @@ protected:
             RTPSParticipantImpl* pimpl,
             const GUID_t& guid,
             const ReaderAttributes& att,
-            ReaderHistory* hist,
-            ReaderListener* listen);
-
-    RTPSReader(
-            RTPSParticipantImpl* pimpl,
-            const GUID_t& guid,
-            const ReaderAttributes& att,
-            const std::shared_ptr<IPayloadPool>& payload_pool,
-            ReaderHistory* hist,
-            ReaderListener* listen);
-
-    RTPSReader(
-            RTPSParticipantImpl* pimpl,
-            const GUID_t& guid,
-            const ReaderAttributes& att,
-            const std::shared_ptr<IPayloadPool>& payload_pool,
-            const std::shared_ptr<IChangePool>& change_pool,
             ReaderHistory* hist,
             ReaderListener* listen);
 
@@ -267,10 +248,6 @@ private:
 
     RTPSReader& operator =(
             const RTPSReader&) = delete;
-
-    void init(
-            const std::shared_ptr<IPayloadPool>& payload_pool,
-            const std::shared_ptr<IChangePool>& change_pool);
 
 };
 
