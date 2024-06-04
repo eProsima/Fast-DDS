@@ -544,7 +544,8 @@ void check_participant_extended_qos_from_profile(
     extended_qos.domainId() = participant->get_domain_id();
 
     DomainParticipantExtendedQos profile_extended_qos;
-    EXPECT_EQ(DomainParticipantFactory::get_instance()->get_participant_extended_qos_from_profile(profile_name, profile_extended_qos),
+    EXPECT_EQ(DomainParticipantFactory::get_instance()->get_participant_extended_qos_from_profile(profile_name,
+            profile_extended_qos),
             RETCODE_OK);
     check_equivalent_extended_qos(extended_qos, profile_extended_qos);
 }
