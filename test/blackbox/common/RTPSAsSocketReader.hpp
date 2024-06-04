@@ -152,7 +152,10 @@ public:
         ASSERT_NE(history_, nullptr);
 
         //Create reader
-        reader_ = eprosima::fastrtps::rtps::RTPSDomain::createRTPSReader(participant_, reader_attr_, history_,
+        auto attr = reader_attr_;
+        attr.accept_messages_from_unkown_writers =
+            eprosima::fastrtps::rtps::RELIABLE != reader_attr_.endpoint.reliabilityKind;
+        reader_ = eprosima::fastrtps::rtps::RTPSDomain::createRTPSReader(participant_, attr, history_,
                         &listener_);
         ASSERT_NE(reader_, nullptr);
 
@@ -319,10 +322,6 @@ public:
             wattr.guid().entityId.value[2] = 2;
             wattr.guid().entityId.value[3] = 3;
             reader_->matched_writer_add(wattr);
-        }
-        else
-        {
-            reader_->enableMessagesFromUnkownWriters(true);
         }
     }
 

@@ -48,7 +48,7 @@ RTPSReader::RTPSReader(
     : Endpoint(pimpl, guid, att.endpoint)
     , history_(hist)
     , listener_(rlisten)
-    , accept_messages_from_unkown_writers_(false)
+    , accept_messages_from_unkown_writers_(att.accept_messages_from_unkown_writers)
     , expects_inline_qos_(att.expects_inline_qos)
 {
     PoolConfig cfg = PoolConfig::from_history_attributes(hist->m_att);
@@ -84,7 +84,7 @@ RTPSReader::RTPSReader(
     : Endpoint(pimpl, guid, att.endpoint)
     , history_(hist)
     , listener_(rlisten)
-    , accept_messages_from_unkown_writers_(false)
+    , accept_messages_from_unkown_writers_(att.accept_messages_from_unkown_writers)
     , expects_inline_qos_(att.expects_inline_qos)
 {
     init(payload_pool, change_pool);

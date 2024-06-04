@@ -85,6 +85,9 @@ public:
     //! Disable positive ACKs
     bool disable_positive_acks = false;
 
+    //! Enable or disable the reception of messages from unknown writers.
+    bool accept_messages_from_unkown_writers = false;
+
     //! Define the allocation behaviour for matched-writer-dependent collections.
     ResourceLimitedContainerConfig matched_writers_allocation {};
 

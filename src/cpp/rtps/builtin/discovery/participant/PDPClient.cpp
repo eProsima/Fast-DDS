@@ -348,6 +348,7 @@ bool PDPClient::create_ds_pdp_reliable_endpoints(
     ratt.endpoint.reliabilityKind = RELIABLE;
     ratt.times.heartbeatResponseDelay = pdp_heartbeat_response_delay;
 #if HAVE_SECURITY
+    ratt.accept_messages_from_unkown_writers = !is_discovery_protected && mp_RTPSParticipant->is_secure();
     if (is_discovery_protected)
     {
         ratt.endpoint.security_attributes().is_submessage_protected = true;
@@ -458,10 +459,6 @@ bool PDPClient::create_ds_pdp_reliable_endpoints(
             {
                 match_pdp_writer_nts_(it);
                 match_pdp_reader_nts_(it);
-            }
-            else if (!is_discovery_protected)
-            {
-                endpoints.reader.reader_->enableMessagesFromUnkownWriters(true);
             }
 #else
             if (!is_discovery_protected)

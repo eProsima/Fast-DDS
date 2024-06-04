@@ -197,12 +197,6 @@ public:
         data_filter_ = filter;
     }
 
-    FASTDDS_EXPORTED_API inline void enableMessagesFromUnkownWriters(
-            bool enable)
-    {
-        accept_messages_from_unkown_writers_ = enable;
-    }
-
     /**
      * Checks whether the sample is still valid or is corrupted.
      *

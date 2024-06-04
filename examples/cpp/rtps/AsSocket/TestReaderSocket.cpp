@@ -71,8 +71,8 @@ bool TestReaderSocket::init(
     IPLocator::setIPv4(loc, ip);
     loc.port = static_cast<uint16_t>(port);
     ratt.endpoint.multicastLocatorList.push_back(loc);
+    ratt.accept_messages_from_unkown_writers = true;
     mp_reader = RTPSDomain::createRTPSReader(mp_participant, ratt, mp_history, &m_listener);
-    mp_reader->enableMessagesFromUnkownWriters(true);
     if (mp_reader == nullptr)
     {
         return false;
