@@ -626,12 +626,10 @@ TEST(ParticipantTests, CreateDomainParticipantWithExtendedQosFromProfile)
                 default_participant) == RETCODE_OK);
 
     // Test create_participant_with_profile using "test_participant_profile"
-    uint32_t did = 123u;          // This is the domain ID set in the "test_participant_profile"
-
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant_with_profile("test_participant_profile");
     ASSERT_NE(participant, nullptr);
-    ASSERT_EQ(participant->get_domain_id(), did); //Keep the DID given to the method, not the one on the profile
+    ASSERT_EQ(participant->get_domain_id(), domain_id); //Keep the DID given to the method, not the one on the profile
     check_participant_extended_qos_from_profile(participant, "test_participant_profile");
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == RETCODE_OK);
 
