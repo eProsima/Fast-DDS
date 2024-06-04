@@ -20,25 +20,19 @@
 #define _FASTDDS_RTPS_READER_RTPSREADER_H_
 
 #include <cstdint>
-#include <functional>
 #include <memory>
-#include <mutex>
 
 #include <fastdds/fastdds_dll.hpp>
 #include <fastdds/rtps/attributes/ReaderAttributes.h>
-#include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/common/SequenceNumber.h>
 #include <fastdds/rtps/common/Time_t.h>
-#include <fastdds/rtps/common/VendorId_t.hpp>
 #include <fastdds/rtps/Endpoint.h>
-#include <fastdds/rtps/history/History.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
 #include <fastdds/statistics/IListeners.hpp>
 #include <fastdds/statistics/rtps/monitor_service/connections_fwd.hpp>
 #include <fastdds/statistics/rtps/StatisticsCommon.hpp>
-#include <fastdds/utils/TimedMutex.hpp>
 
 namespace eprosima {
 namespace fastrtps {

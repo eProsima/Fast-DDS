@@ -18,21 +18,12 @@
  */
 #include <fastdds/rtps/reader/RTPSReader.h>
 
-#include <typeinfo>
-#include <algorithm>
-#include <chrono>
-
-#include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/Endpoint.h>
+#include <fastdds/rtps/attributes/ReaderAttributes.h>
+#include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
-#include <fastdds/rtps/reader/ReaderListener.h>
-#include <foonathan/memory/namespace_alias.hpp>
-#include <rtps/resources/ResourceEvent.h>
-#include <rtps/history/BasicPayloadPool.hpp>
-#include <rtps/history/CacheChangePool.h>
-#include <rtps/DataSharing/DataSharingListener.hpp>
+
 #include <rtps/participant/RTPSParticipantImpl.h>
-#include <rtps/reader/ReaderHistoryState.hpp>
-#include <statistics/rtps/StatisticsBase.hpp>
 
 
 namespace eprosima {
