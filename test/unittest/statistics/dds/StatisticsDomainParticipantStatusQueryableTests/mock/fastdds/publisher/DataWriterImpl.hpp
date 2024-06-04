@@ -228,7 +228,7 @@ public:
     {
         static uint16_t entitiy_id_counter;
         entitiy_id_counter += 1;
-        guid_.entityId.value[2] = (fastrtps::rtps::octet)entitiy_id_counter;
+        guid_.entityId.value[2] = (octet)entitiy_id_counter;
         guid_.entityId.value[3] = 0x2;
     }
 

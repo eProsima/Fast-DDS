@@ -82,7 +82,7 @@ public:
         {
             // Read encapsulation
             msg.pos += 1;
-            fastrtps::rtps::octet encapsulation = 0;
+            octet encapsulation = 0;
             fastrtps::rtps::CDRMessage::readOctet(&msg, &encapsulation);
             if (encapsulation == PL_CDR_BE)
             {

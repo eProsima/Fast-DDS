@@ -102,7 +102,7 @@ public:
 
     static bool add_parameter_status(
             fastrtps::rtps::CDRMessage_t* cdr_message,
-            fastrtps::rtps::octet status)
+            octet status)
     {
         if (cdr_message->pos + 8 >= cdr_message->max_size)
         {
@@ -460,7 +460,7 @@ inline bool ParameterSerializer<ParameterBool_t>::add_content_to_cdr_message(
         const ParameterBool_t& parameter,
         fastrtps::rtps::CDRMessage_t* cdr_message)
 {
-    fastrtps::rtps::octet val = parameter.value ? 1 : 0;
+    octet val = parameter.value ? 1 : 0;
     bool valid = fastrtps::rtps::CDRMessage::addOctet(cdr_message, val);
     valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message, 0);
     valid &= fastrtps::rtps::CDRMessage::addUInt16(cdr_message, 0);
@@ -479,7 +479,7 @@ inline bool ParameterSerializer<ParameterBool_t>::read_content_from_cdr_message(
     }
 
     parameter.length = parameter_length;
-    bool valid = fastrtps::rtps::CDRMessage::readOctet(cdr_message, (fastrtps::rtps::octet*)&parameter.value);
+    bool valid = fastrtps::rtps::CDRMessage::readOctet(cdr_message, (octet*)&parameter.value);
     cdr_message->pos += 3; //padding
     return valid;
 }
@@ -507,7 +507,7 @@ inline bool ParameterSerializer<ParameterStatusInfo_t>::read_content_from_cdr_me
     }
     parameter.length = parameter_length;
     //octet status = msg.buffer[msg.pos + 3];
-    fastrtps::rtps::octet tmp;
+    octet tmp;
     //Remove the front three octets, take the fourth
     bool valid = fastrtps::rtps::CDRMessage::readOctet(cdr_message, &tmp);
     valid &= fastrtps::rtps::CDRMessage::readOctet(cdr_message, &tmp);

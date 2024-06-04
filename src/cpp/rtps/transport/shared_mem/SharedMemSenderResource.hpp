@@ -39,7 +39,7 @@ public:
                 };
 
         send_lambda_ = [&transport](
-            const fastrtps::rtps::octet* data,
+            const octet* data,
             uint32_t dataSize,
             fastrtps::rtps::LocatorsIterator* destination_locators_begin,
             fastrtps::rtps::LocatorsIterator* destination_locators_end,

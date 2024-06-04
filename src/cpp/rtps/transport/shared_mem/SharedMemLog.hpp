@@ -94,7 +94,7 @@ public:
             const std::string& timestamp,
             const Locator& from,
             const Locator& to,
-            const fastrtps::rtps::octet* buf,
+            const octet* buf,
             const uint32_t len)
     {
         try

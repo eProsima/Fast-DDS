@@ -45,7 +45,7 @@ public:
      * @param remote_locator Locator identifying the remote endpoint.
      */
     void OnDataReceived(
-            const fastrtps::rtps::octet* data,
+            const octet* data,
             const uint32_t size,
             const fastrtps::rtps::Locator_t& local_locator,
             const fastrtps::rtps::Locator_t& remote_locator) override

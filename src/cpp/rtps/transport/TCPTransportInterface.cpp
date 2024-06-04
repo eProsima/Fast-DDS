@@ -76,7 +76,6 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-using octet = fastrtps::rtps::octet;
 using IPLocator = fastrtps::rtps::IPLocator;
 using SenderResource = fastrtps::rtps::SenderResource;
 using CDRMessage_t = fastrtps::rtps::CDRMessage_t;

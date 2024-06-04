@@ -517,7 +517,7 @@ public:
 #endif // if HAVE_SQLITE3
 
     RTPSWithRegistrationReader& user_data(
-            const std::vector<eprosima::fastrtps::rtps::octet>& user_data)
+            const std::vector<eprosima::fastdds::rtps::octet>& user_data)
     {
         reader_qos_.m_userData = user_data;
         return *this;

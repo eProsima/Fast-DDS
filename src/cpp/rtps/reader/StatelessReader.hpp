@@ -145,13 +145,13 @@ public:
             const SequenceNumber_t& lastSN,
             bool finalFlag,
             bool livelinessFlag,
-            fastdds::rtps::VendorId_t origin_vendor_id = c_VendorId_Unknown) override;
+            fastdds::rtps::VendorId_t origin_vendor_id = fastdds::rtps::c_VendorId_Unknown) override;
 
     bool processGapMsg(
             const GUID_t& writerGUID,
             const SequenceNumber_t& gapStart,
             const SequenceNumberSet_t& gapList,
-            fastdds::rtps::VendorId_t origin_vendor_id = c_VendorId_Unknown) override;
+            fastdds::rtps::VendorId_t origin_vendor_id = fastdds::rtps::c_VendorId_Unknown) override;
 
     /**
      * This method is called when a new change is received. This method calls the received_change of the History

@@ -154,7 +154,7 @@ public:
      * @param timeout Maximum time this function will block
      */
     virtual bool send(
-            const fastrtps::rtps::octet* send_buffer,
+            const octet* send_buffer,
             uint32_t send_buffer_size,
             fastrtps::rtps::LocatorsIterator* destination_locators_begin,
             fastrtps::rtps::LocatorsIterator* destination_locators_end,
@@ -248,7 +248,7 @@ protected:
 private:
 
     std::shared_ptr<SharedMemManager::Buffer> copy_to_shared_buffer(
-            const fastrtps::rtps::octet* send_buffer,
+            const octet* send_buffer,
             uint32_t send_buffer_size,
             const std::chrono::steady_clock::time_point& max_blocking_time_point);
 

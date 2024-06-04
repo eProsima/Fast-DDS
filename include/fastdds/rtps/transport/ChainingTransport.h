@@ -328,7 +328,7 @@ public:
      */
     FASTDDS_EXPORTED_API virtual bool send(
             fastrtps::rtps::SenderResource* low_sender_resource,
-            const fastrtps::rtps::octet* send_buffer,
+            const octet* send_buffer,
             uint32_t send_buffer_size,
             fastrtps::rtps::LocatorsIterator* destination_locators_begin,
             fastrtps::rtps::LocatorsIterator* destination_locators_end,
@@ -351,7 +351,7 @@ public:
      */
     FASTDDS_EXPORTED_API virtual void receive(
             TransportReceiverInterface* next_receiver,
-            const fastrtps::rtps::octet* receive_buffer,
+            const octet* receive_buffer,
             uint32_t receive_buffer_size,
             const fastrtps::rtps::Locator_t& local_locator,
             const fastrtps::rtps::Locator_t& remote_locator) = 0;

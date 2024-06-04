@@ -164,7 +164,7 @@ TEST_P(BasicPoolsTest, change_reset_on_release)
     ASSERT_FALSE(ch->isRead);
     ASSERT_EQ(ch->sourceTimestamp.seconds(), 0);
     ASSERT_EQ(ch->sourceTimestamp.fraction(), 0U);
-    ASSERT_EQ(ch->vendor_id, c_VendorId_Unknown);
+    ASSERT_EQ(ch->vendor_id, eprosima::fastdds::rtps::c_VendorId_Unknown);
 
     // Modify cache change
     ch->kind = NOT_ALIVE_DISPOSED;
@@ -202,7 +202,7 @@ TEST_P(BasicPoolsTest, change_reset_on_release)
         ASSERT_FALSE(ch->isRead);
         ASSERT_EQ(ch->sourceTimestamp.seconds(), 0);
         ASSERT_EQ(ch->sourceTimestamp.fraction(), 0U);
-        ASSERT_EQ(ch->vendor_id, c_VendorId_Unknown);
+        ASSERT_EQ(ch->vendor_id, eprosima::fastdds::rtps::c_VendorId_Unknown);
     }
 }
 

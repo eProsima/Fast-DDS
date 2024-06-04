@@ -238,7 +238,7 @@ public:
 /**
  * Enum DurabilityQosPolicyKind_t, different kinds of durability for DurabilityQosPolicy.
  */
-typedef enum DurabilityQosPolicyKind : fastrtps::rtps::octet
+typedef enum DurabilityQosPolicyKind : fastdds::rtps::octet
 {
     /**
      * The Service does not need to keep any samples of data-instances on behalf of any DataReader that is not
@@ -452,7 +452,7 @@ public:
 /**
  * Enum LivelinessQosPolicyKind, different kinds of liveliness for LivelinessQosPolicy
  */
-typedef enum LivelinessQosPolicyKind : fastrtps::rtps::octet
+typedef enum LivelinessQosPolicyKind : fastdds::rtps::octet
 {
     /**
      * The infrastructure will automatically signal liveliness for the DataWriters at least as often as required by the lease_duration.
@@ -542,7 +542,7 @@ public:
 /**
  * Enum ReliabilityQosPolicyKind, different kinds of reliability for ReliabilityQosPolicy.
  */
-typedef enum ReliabilityQosPolicyKind : fastrtps::rtps::octet
+typedef enum ReliabilityQosPolicyKind : fastdds::rtps::octet
 {
     /**
      * Indicates that it is acceptable to not retry propagation of any samples. Presumably new values for the samples
@@ -625,7 +625,7 @@ public:
 /**
  * Enum OwnershipQosPolicyKind, different kinds of ownership for OwnershipQosPolicy.
  */
-enum OwnershipQosPolicyKind : fastrtps::rtps::octet
+enum OwnershipQosPolicyKind : fastdds::rtps::octet
 {
     /**
      * Indicates shared ownership for each instance. Multiple writers are allowed to update the same instance and all the
@@ -688,7 +688,7 @@ public:
 /**
  * Enum DestinationOrderQosPolicyKind, different kinds of destination order for DestinationOrderQosPolicy.
  */
-enum DestinationOrderQosPolicyKind : fastrtps::rtps::octet
+enum DestinationOrderQosPolicyKind : fastdds::rtps::octet
 {
     /**
      * Indicates that data is ordered based on the reception time at each Subscriber. Since each subscriber may receive
@@ -757,9 +757,9 @@ public:
  * Class GenericDataQosPolicy, base class to transmit user data during the discovery phase.
  */
 class GenericDataQosPolicy : public Parameter_t, public QosPolicy,
-    public fastrtps::ResourceLimitedVector<fastrtps::rtps::octet>
+    public fastrtps::ResourceLimitedVector<fastdds::rtps::octet>
 {
-    using ResourceLimitedOctetVector = fastrtps::ResourceLimitedVector<fastrtps::rtps::octet>;
+    using ResourceLimitedfastdds::rtps::octetVector = fastrtps::ResourceLimitedVector<fastdds::rtps::octet>;
 
 public:
 
@@ -767,7 +767,7 @@ public:
             ParameterId_t pid)
         : Parameter_t(pid, 0)
         , QosPolicy(false)
-        , ResourceLimitedOctetVector()
+        , ResourceLimitedfastdds::rtps::octetVector()
     {
     }
 
@@ -776,7 +776,7 @@ public:
             uint16_t in_length)
         : Parameter_t(pid, in_length)
         , QosPolicy(false)
-        , ResourceLimitedOctetVector()
+        , ResourceLimitedfastdds::rtps::octetVector()
     {
     }
 
@@ -792,7 +792,7 @@ public:
             const GenericDataQosPolicy& data)
         : Parameter_t(data.Pid, data.length)
         , QosPolicy(false)
-        , ResourceLimitedOctetVector(data)
+        , ResourceLimitedfastdds::rtps::octetVector(data)
     {
     }
 
@@ -810,7 +810,7 @@ public:
             const collection_type& data)
         : Parameter_t(pid, 0)
         , QosPolicy(false)
-        , ResourceLimitedOctetVector()
+        , ResourceLimitedfastdds::rtps::octetVector()
     {
         assign(data.begin(), data.end());
         length = static_cast<uint16_t>((size() + 7u) & ~3u);
@@ -912,14 +912,14 @@ public:
 
     inline void clear() override
     {
-        ResourceLimitedOctetVector::clear();
+        ResourceLimitedfastdds::rtps::octetVector::clear();
         hasChanged = false;
     }
 
     /**
      * Returns raw data vector.
      *
-     * @return raw data as vector of octets.
+     * @return raw data as vector of fastdds::rtps::octets.
      * */
     FASTDDS_EXPORTED_API inline const collection_type& data_vec() const
     {
@@ -929,7 +929,7 @@ public:
     /**
      * Returns raw data vector.
      *
-     * @return raw data as vector of octets.
+     * @return raw data as vector of fastdds::rtps::octets.
      * */
     FASTDDS_EXPORTED_API inline collection_type& data_vec()
     {
@@ -955,7 +955,7 @@ public:
     /**
      * Returns raw data vector.
      *
-     * @return raw data as vector of octets.
+     * @return raw data as vector of fastdds::rtps::octets.
      * */
     FASTDDS_EXPORTED_API inline const collection_type& getValue() const
     {
@@ -1140,7 +1140,7 @@ public:
 /**
  * Enum PresentationQosPolicyAccessScopeKind, different kinds of Presentation Policy order for PresentationQosPolicy.
  */
-enum PresentationQosPolicyAccessScopeKind : fastrtps::rtps::octet
+enum PresentationQosPolicyAccessScopeKind : fastdds::rtps::octet
 {
     /**
      * Scope spans only a single instance. Indicates that changes to one instance need not be coherent nor ordered with
@@ -1323,7 +1323,7 @@ public:
          * @param ptr Pointer to be set
          */
         const_iterator(
-                const fastrtps::rtps::octet* ptr)
+                const fastdds::rtps::octet* ptr)
             : ptr_(ptr)
             , value_ (ptr_)
         {
@@ -1381,7 +1381,7 @@ public:
     private:
 
         //!Pointer
-        const fastrtps::rtps::octet* ptr_;
+        const fastdds::rtps::octet* ptr_;
         //!Partition
         Partition_t value_;
 
@@ -1545,7 +1545,7 @@ public:
 
         partitions_.reserve(partitions_.length + size + alignment + 4);
 
-        fastrtps::rtps::octet* o = (fastrtps::rtps::octet*)&size;
+        fastdds::rtps::octet* o = (fastdds::rtps::octet*)&size;
         memcpy(partitions_.data + partitions_.length, o, 4);
         partitions_.length += 4;
 
@@ -1637,7 +1637,7 @@ private:
 /**
  * Enum HistoryQosPolicyKind, different kinds of History Qos for HistoryQosPolicy.
  */
-enum HistoryQosPolicyKind : fastrtps::rtps::octet
+enum HistoryQosPolicyKind : fastdds::rtps::octet
 {
     /**
      * On the publishing side, the Service will only attempt to keep the most recent “depth” samples of each instance
@@ -2027,7 +2027,7 @@ public:
 /**
  * Enum PublishModeQosPolicyKind, different kinds of publication synchronism
  */
-typedef enum PublishModeQosPolicyKind : fastrtps::rtps::octet
+typedef enum PublishModeQosPolicyKind : fastdds::rtps::octet
 {
     SYNCHRONOUS_PUBLISH_MODE,    //!< Synchronous publication mode (default for writers).
     ASYNCHRONOUS_PUBLISH_MODE    //!< Asynchronous publication mode.
@@ -2884,7 +2884,7 @@ public:
 /**
  * Data sharing configuration kinds
  */
-enum DataSharingKind : fastrtps::rtps::octet
+enum DataSharingKind : fastdds::rtps::octet
 {
     /**
      * Automatic configuration.

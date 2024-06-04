@@ -62,17 +62,17 @@ bool readEntityId(
 
 bool readData(
         CDRMessage_t* msg,
-        octet* o,
+        fastdds::rtps::octet* o,
         uint32_t length);
 
 bool read_array_with_max_size(
         CDRMessage_t* msg,
-        octet* arr,
+        fastdds::rtps::octet* arr,
         size_t max_size);
 
 bool readDataReversed(
         CDRMessage_t* msg,
-        octet* o,
+        fastdds::rtps::octet* o,
         uint32_t length);
 
 bool readInt32(
@@ -107,9 +107,9 @@ bool readLocator(
         CDRMessage_t* msg,
         Locator_t* loc);
 
-bool readOctet(
+bool readfastdds::rtps::octet(
         CDRMessage_t* msg,
-        octet* o);
+        fastdds::rtps::octet* o);
 
 SequenceNumberSet_t readSequenceNumberSet(
         CDRMessage_t* msg);
@@ -130,9 +130,9 @@ bool readString(
         CDRMessage_t* msg,
         fastcdr::string_255* stri);
 
-bool readOctetVector(
+bool readfastdds::rtps::octetVector(
         CDRMessage_t* msg,
-        std::vector<octet>* ocvec);
+        std::vector<fastdds::rtps::octet>* ocvec);
 
 bool readProperty(
         CDRMessage_t* msg,
@@ -183,7 +183,7 @@ bool initCDRMsg(
 
 bool wrapVector(
         CDRMessage_t* msg,
-        std::vector<octet>& vectorToWrap);
+        std::vector<fastdds::rtps::octet>& vectorToWrap);
 
 /**
  * Append given CDRMessage to existing CDR Message. Joins two messages into the first one if it has space.
@@ -218,22 +218,22 @@ bool hasSpace(
 
 void copyToBuffer(
         CDRMessage_t* msg,
-        const octet* data,
+        const fastdds::rtps::octet* data,
         const uint32_t length,
         bool reverse = false);
 
 bool addData(
         CDRMessage_t*,
-        const octet*,
+        const fastdds::rtps::octet*,
         const uint32_t number_bytes);
 bool addDataReversed(
         CDRMessage_t*,
-        const octet*,
+        const fastdds::rtps::octet*,
         const uint32_t byte_number);
 
-bool addOctet(
+bool addfastdds::rtps::octet(
         CDRMessage_t* msg,
-        octet o);
+        fastdds::rtps::octet o);
 
 bool addUInt16(
         CDRMessage_t* msg,
@@ -287,9 +287,9 @@ bool add_string(
         CDRMessage_t* msg,
         const fastcdr::string_255& in_str);
 
-bool addOctetVector(
+bool addfastdds::rtps::octetVector(
         CDRMessage_t* msg,
-        const std::vector<octet>* ocvec,
+        const std::vector<fastdds::rtps::octet>* ocvec,
         bool add_final_padding = true);
 
 bool addProperty(

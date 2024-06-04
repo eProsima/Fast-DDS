@@ -39,7 +39,6 @@ using IPLocator = fastrtps::rtps::IPLocator;
 using LocatorSelectorEntry = fastrtps::rtps::LocatorSelectorEntry;
 using LocatorSelector = fastrtps::rtps::LocatorSelector;
 using IPFinder = fastrtps::rtps::IPFinder;
-using octet = fastrtps::rtps::octet;
 using PortParameters = fastrtps::rtps::PortParameters;
 using SenderResource = fastrtps::rtps::SenderResource;
 using Log = fastdds::dds::Log;

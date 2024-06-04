@@ -533,7 +533,7 @@ TEST(DDSBasic, IgnoreParticipant)
             if (info.status == info.DISCOVERED_PARTICIPANT)
             {
                 std::cout << "Discovered participant" << std::endl;
-                if (info.info.m_userData == std::vector<eprosima::fastrtps::rtps::octet>({ 'i', 'g', 'n' }))
+                if (info.info.m_userData == std::vector<octet>({ 'i', 'g', 'n' }))
                 {
                     std::cout << "Ignoring participant" << std::endl;
                     should_be_ignored = true;

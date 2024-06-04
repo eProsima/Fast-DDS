@@ -624,7 +624,7 @@ bool WriterProxyData::readFromCDRMessage(
     auto param_process = [this, &network, &is_shm_transport_available, &should_filter_locators, source_vendor_id](
         CDRMessage_t* msg, const ParameterId_t& pid, uint16_t plength)
             {
-                VendorId_t vendor_id = c_VendorId_Unknown;
+                VendorId_t vendor_id = fastdds::rtps::c_VendorId_Unknown;
 
                 switch (pid)
                 {
@@ -835,9 +835,9 @@ bool WriterProxyData::readFromCDRMessage(
                     case fastdds::dds::PID_PERSISTENCE_GUID:
                     {
                         VendorId_t local_vendor_id = source_vendor_id;
-                        if (c_VendorId_Unknown == local_vendor_id)
+                        if (fastdds::rtps::c_VendorId_Unknown == local_vendor_id)
                         {
-                            local_vendor_id = ((c_VendorId_Unknown == vendor_id) ? c_VendorId_eProsima : vendor_id);
+                            local_vendor_id = ((fastdds::rtps::c_VendorId_Unknown == vendor_id) ? c_VendorId_eProsima : vendor_id);
                         }
 
                         // Ignore custom PID when coming from other vendors except RTI Connext
@@ -861,9 +861,9 @@ bool WriterProxyData::readFromCDRMessage(
                     case fastdds::dds::PID_NETWORK_CONFIGURATION_SET:
                     {
                         VendorId_t local_vendor_id = source_vendor_id;
-                        if (c_VendorId_Unknown == local_vendor_id)
+                        if (fastdds::rtps::c_VendorId_Unknown == local_vendor_id)
                         {
-                            local_vendor_id = ((c_VendorId_Unknown == vendor_id) ? c_VendorId_eProsima : vendor_id);
+                            local_vendor_id = ((fastdds::rtps::c_VendorId_Unknown == vendor_id) ? c_VendorId_eProsima : vendor_id);
                         }
 
                         // Ignore custom PID when coming from other vendors
@@ -976,9 +976,9 @@ bool WriterProxyData::readFromCDRMessage(
                     case fastdds::dds::PID_DISABLE_POSITIVE_ACKS:
                     {
                         VendorId_t local_vendor_id = source_vendor_id;
-                        if (c_VendorId_Unknown == local_vendor_id)
+                        if (fastdds::rtps::c_VendorId_Unknown == local_vendor_id)
                         {
-                            local_vendor_id = ((c_VendorId_Unknown == vendor_id) ? c_VendorId_eProsima : vendor_id);
+                            local_vendor_id = ((fastdds::rtps::c_VendorId_Unknown == vendor_id) ? c_VendorId_eProsima : vendor_id);
                         }
 
                         // Ignore custom PID when coming from other vendors except RTI Connext
@@ -1041,9 +1041,9 @@ bool WriterProxyData::readFromCDRMessage(
                     case fastdds::dds::PID_DATASHARING:
                     {
                         VendorId_t local_vendor_id = source_vendor_id;
-                        if (c_VendorId_Unknown == local_vendor_id)
+                        if (fastdds::rtps::c_VendorId_Unknown == local_vendor_id)
                         {
-                            local_vendor_id = ((c_VendorId_Unknown == vendor_id) ? c_VendorId_eProsima : vendor_id);
+                            local_vendor_id = ((fastdds::rtps::c_VendorId_Unknown == vendor_id) ? c_VendorId_eProsima : vendor_id);
                         }
 
                         // Ignore custom PID when coming from other vendors

@@ -590,7 +590,7 @@ protected:
 
     static XMLP_ret getXMLOctetVector(
             tinyxml2::XMLElement* elem,
-            std::vector<rtps::octet>& octet_vector,
+            std::vector<fastdds::rtps::octet>& octet_vector,
             uint8_t ident);
 
     static XMLP_ret getXMLInt(

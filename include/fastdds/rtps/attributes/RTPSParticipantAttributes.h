@@ -509,7 +509,7 @@ public:
     PortParameters port;
 
     //! User Data of the participant
-    std::vector<octet> userData;
+    std::vector<eprosima::fastdds::rtps::octet> userData;
 
     //! Participant ID
     int32_t participantID = -1;

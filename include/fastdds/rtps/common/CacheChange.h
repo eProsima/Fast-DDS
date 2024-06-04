@@ -91,7 +91,7 @@ struct FASTDDS_EXPORTED_API CacheChange_t
     //!Source TimeStamp
     Time_t sourceTimestamp{};
     //! Vendor Id of the writer that generated this change.
-    fastdds::rtps::VendorId_t vendor_id = c_VendorId_Unknown;
+    fastdds::rtps::VendorId_t vendor_id = fastdds::rtps::c_VendorId_Unknown;
 
     union
     {

@@ -40,7 +40,7 @@ inline eprosima::fastrtps::rtps::GuidPrefix_t get_discovery_server_guid_from_id(
     // Get default DS guid and modify the one value expected to be changed
     std::istringstream(eprosima::fastdds::rtps::DEFAULT_ROS2_SERVER_GUIDPREFIX) >> result;
     result.value[2] =
-            static_cast<eprosima::fastrtps::rtps::octet>(id); // This is done like this in Fast
+            static_cast<octet>(id); // This is done like this in Fast
 
     return result;
 }

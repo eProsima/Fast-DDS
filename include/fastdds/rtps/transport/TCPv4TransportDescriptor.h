@@ -40,14 +40,14 @@ struct TCPv4TransportDescriptor : public TCPTransportDescriptor
     virtual TransportInterface* create_transport() const override;
 
     //! Public IP address
-    fastrtps::rtps::octet wan_addr[4];
+    octet wan_addr[4];
 
     //! Set the public IP address
     void set_WAN_address(
-            fastrtps::rtps::octet o1,
-            fastrtps::rtps::octet o2,
-            fastrtps::rtps::octet o3,
-            fastrtps::rtps::octet o4)
+            octet o1,
+            octet o2,
+            octet o3,
+            octet o4)
     {
         wan_addr[0] = o1;
         wan_addr[1] = o2;
@@ -63,10 +63,10 @@ struct TCPv4TransportDescriptor : public TCPTransportDescriptor
         int a, b, c, d; //to store the 4 ints
         char ch; //to temporarily store the '.'
         ss >> a >> ch >> b >> ch >> c >> ch >> d;
-        wan_addr[0] = (fastrtps::rtps::octet)a;
-        wan_addr[1] = (fastrtps::rtps::octet)b;
-        wan_addr[2] = (fastrtps::rtps::octet)c;
-        wan_addr[3] = (fastrtps::rtps::octet)d;
+        wan_addr[0] = (octet)a;
+        wan_addr[1] = (octet)b;
+        wan_addr[2] = (octet)c;
+        wan_addr[3] = (octet)d;
     }
 
     //! Get the public IP address

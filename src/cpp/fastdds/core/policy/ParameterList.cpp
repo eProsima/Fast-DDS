@@ -34,7 +34,7 @@ bool ParameterList::writeEncapsulationToCDRMsg(
         fastrtps::rtps::CDRMessage_t* msg)
 {
     bool valid = fastrtps::rtps::CDRMessage::addOctet(msg, 0);
-    valid &= fastrtps::rtps::CDRMessage::addOctet(msg, static_cast<fastrtps::rtps::octet>(PL_CDR_LE - msg->msg_endian));
+    valid &= fastrtps::rtps::CDRMessage::addOctet(msg, static_cast<octet>(PL_CDR_LE - msg->msg_endian));
     valid &= fastrtps::rtps::CDRMessage::addUInt16(msg, 0);
     return valid;
 }
@@ -179,7 +179,7 @@ bool ParameterList::readInstanceHandleFromCDRMsg(
 
     // Read encapsulation
     msg.pos += 1;
-    fastrtps::rtps::octet encapsulation = 0;
+    octet encapsulation = 0;
     fastrtps::rtps::CDRMessage::readOctet(&msg, &encapsulation);
     if (encapsulation == PL_CDR_BE)
     {

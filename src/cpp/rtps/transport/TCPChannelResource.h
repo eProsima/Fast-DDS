@@ -133,14 +133,14 @@ public:
     virtual void disconnect() = 0;
 
     virtual uint32_t read(
-            fastrtps::rtps::octet* buffer,
+            octet* buffer,
             std::size_t size,
             asio::error_code& ec) = 0;
 
     virtual size_t send(
-            const fastrtps::rtps::octet* header,
+            const octet* header,
             size_t header_size,
-            const fastrtps::rtps::octet* buffer,
+            const octet* buffer,
             size_t size,
             asio::error_code& ec) = 0;
 

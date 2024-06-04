@@ -133,7 +133,7 @@ public:
     virtual inline void clear() = 0;
 
     static uint32_t get_cdr_serialized_size(
-            const std::vector<fastrtps::rtps::octet>& data)
+            const std::vector<octet>& data)
     {
         // Size of data
         uint32_t data_size = static_cast<uint32_t>(data.size());
@@ -151,7 +151,7 @@ protected:
 /**
  * Enum DurabilityQosPolicyKind_t, different kinds of durability for DurabilityQosPolicy.
  */
-typedef enum DurabilityQosPolicyKind : fastrtps::rtps::octet
+typedef enum DurabilityQosPolicyKind : octet
 {
     VOLATILE_DURABILITY_QOS,        //!< Volatile Durability (default for Subscribers).
     TRANSIENT_LOCAL_DURABILITY_QOS, //!< Transient Local Durability (default for Publishers).
@@ -289,7 +289,7 @@ public:
 /**
  * Enum LivelinessQosPolicyKind, different kinds of liveliness for LivelinessQosPolicy
  */
-typedef enum LivelinessQosPolicyKind : fastrtps::rtps::octet
+typedef enum LivelinessQosPolicyKind : octet
 {
     AUTOMATIC_LIVELINESS_QOS,             //!< Automatic Liveliness, default value.
     MANUAL_BY_PARTICIPANT_LIVELINESS_QOS, //!< MANUAL_BY_PARTICIPANT_LIVELINESS_QOS
@@ -339,7 +339,7 @@ public:
 /**
  * Enum ReliabilityQosPolicyKind, different kinds of reliability for ReliabilityQosPolicy.
  */
-typedef enum ReliabilityQosPolicyKind : fastrtps::rtps::octet
+typedef enum ReliabilityQosPolicyKind : octet
 {
     BEST_EFFORT_RELIABILITY_QOS = 0x01, //!< Best Effort reliability (default for Subscribers).
     RELIABLE_RELIABILITY_QOS = 0x02 //!< Reliable reliability (default for Publishers).
@@ -385,7 +385,7 @@ public:
 /**
  * Enum OwnershipQosPolicyKind, different kinds of ownership for OwnershipQosPolicy.
  */
-enum OwnershipQosPolicyKind : fastrtps::rtps::octet
+enum OwnershipQosPolicyKind : octet
 {
     SHARED_OWNERSHIP_QOS, //!< Shared Ownership, default value.
     EXCLUSIVE_OWNERSHIP_QOS //!< Exclusive ownership
@@ -424,7 +424,7 @@ public:
 /**
  * Enum OwnershipQosPolicyKind, different kinds of destination order for DestinationOrderQosPolicy.
  */
-enum DestinationOrderQosPolicyKind : fastrtps::rtps::octet
+enum DestinationOrderQosPolicyKind : octet
 {
     BY_RECEPTION_TIMESTAMP_DESTINATIONORDER_QOS, //!< By Reception Timestamp, default value.
     BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS //!< By Source Timestamp.
@@ -467,9 +467,9 @@ public:
  * Class GenericDataQosPolicy, base class to transmit user data during the discovery phase.
  */
 class GenericDataQosPolicy : public Parameter_t, public QosPolicy,
-    public fastrtps::ResourceLimitedVector<fastrtps::rtps::octet>
+    public fastrtps::ResourceLimitedVector<octet>
 {
-    using ResourceLimitedOctetVector = fastrtps::ResourceLimitedVector<fastrtps::rtps::octet>;
+    using ResourceLimitedOctetVector = fastrtps::ResourceLimitedVector<octet>;
 
 public:
 
@@ -759,7 +759,7 @@ public:
 /**
  * Enum PresentationQosPolicyAccessScopeKind, different kinds of Presentation Policy order for PresentationQosPolicy.
  */
-enum PresentationQosPolicyAccessScopeKind : fastrtps::rtps::octet
+enum PresentationQosPolicyAccessScopeKind : octet
 {
     INSTANCE_PRESENTATION_QOS, //!< Instance Presentation, default value.
     TOPIC_PRESENTATION_QOS, //!< Topic Presentation.
@@ -910,7 +910,7 @@ private:
 /**
  * Enum HistoryQosPolicyKind, different kinds of History Qos for HistoryQosPolicy.
  */
-enum HistoryQosPolicyKind : fastrtps::rtps::octet
+enum HistoryQosPolicyKind : octet
 {
     KEEP_LAST_HISTORY_QOS, //!< Keep only a number of samples, default value.
     KEEP_ALL_HISTORY_QOS //!< Keep all samples until the ResourceLimitsQosPolicy are exhausted.
@@ -1132,7 +1132,7 @@ public:
 /**
  * Enum PublishModeQosPolicyKind, different kinds of publication synchronism
  */
-typedef enum PublishModeQosPolicyKind : fastrtps::rtps::octet
+typedef enum PublishModeQosPolicyKind : octet
 {
     SYNCHRONOUS_PUBLISH_MODE,   //!< Synchronous publication mode (default for writers).
     ASYNCHRONOUS_PUBLISH_MODE   //!< Asynchronous publication mode.

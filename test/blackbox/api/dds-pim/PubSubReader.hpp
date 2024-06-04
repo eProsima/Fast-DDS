@@ -1448,7 +1448,7 @@ public:
     }
 
     PubSubReader& userData(
-            std::vector<eprosima::fastrtps::rtps::octet> user_data)
+            std::vector<eprosima::fastdds::rtps::octet> user_data)
     {
         participant_qos_.user_data() = user_data;
         return *this;

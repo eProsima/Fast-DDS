@@ -2582,7 +2582,7 @@ TEST(ParticipantTests, CheckDomainParticipantQos)
 
     // Change the user data
     qos.user_data().set_max_size(5);
-    std::vector<eprosima::fastrtps::rtps::octet> my_data {0, 1, 2, 3, 4};
+    std::vector<octet> my_data {0, 1, 2, 3, 4};
     qos.user_data().setValue(my_data);
     ASSERT_TRUE(participant->set_qos(qos) == RETCODE_OK);
 

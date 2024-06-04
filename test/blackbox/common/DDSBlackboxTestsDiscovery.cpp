@@ -118,7 +118,7 @@ TEST(DDSDiscovery, AddDiscoveryServerToListUDP)
     GuidPrefix_t server_1_prefix;
     for (auto i = 0; i < 12; i++)
     {
-        server_1_prefix.value[i] = eprosima::fastrtps::rtps::octet(rand() % 254);
+        server_1_prefix.value[i] = eprosima::fastdds::rtps::octet(rand() % 254);
     }
     server_1_qos.prefix = server_1_prefix;
     // Generate server's listening locator
@@ -219,7 +219,7 @@ TEST(DDSDiscovery, AddDiscoveryServerToListTCP)
     GuidPrefix_t server_1_prefix;
     for (auto i = 0; i < 12; i++)
     {
-        server_1_prefix.value[i] = eprosima::fastrtps::rtps::octet(rand() % 254);
+        server_1_prefix.value[i] = octet(rand() % 254);
     }
     server_1_qos.prefix = server_1_prefix;
     // Generate server's listening locator

@@ -48,14 +48,14 @@ struct TCPHeader
         rtcp[3] = 'P';
     }
 
-    const fastrtps::rtps::octet* address() const
+    const octet* address() const
     {
-        return reinterpret_cast<const fastrtps::rtps::octet*>(this);
+        return reinterpret_cast<const octet*>(this);
     }
 
-    fastrtps::rtps::octet* address()
+    octet* address()
     {
-        return (fastrtps::rtps::octet*)this;
+        return (octet*)this;
     }
 
     /*!
@@ -85,7 +85,7 @@ struct TCPHeader
 union TCPTransactionId
 {
     uint32_t ints[3];
-    fastrtps::rtps::octet octets[12];
+    octet octets[12];
 
     TCPTransactionId()
     {
@@ -140,16 +140,16 @@ union TCPTransactionId
     }
 
     TCPTransactionId& operator =(
-            const fastrtps::rtps::octet* id)
+            const octet* id)
     {
-        memcpy(octets, id, 12 * sizeof(fastrtps::rtps::octet));
+        memcpy(octets, id, 12 * sizeof(octet));
         return *this;
     }
 
     TCPTransactionId& operator =(
             const char* id)
     {
-        memcpy(octets, id, 12 * sizeof(fastrtps::rtps::octet));
+        memcpy(octets, id, 12 * sizeof(octet));
         return *this;
     }
 
@@ -207,7 +207,7 @@ inline std::ostream& operator <<(
     return output;
 }
 
-enum TCPCPMKind : fastrtps::rtps::octet
+enum TCPCPMKind : octet
 {
     BIND_CONNECTION_REQUEST =           0xD1,
     BIND_CONNECTION_RESPONSE =          0xE1,
@@ -224,7 +224,7 @@ enum TCPCPMKind : fastrtps::rtps::octet
 class TCPControlMsgHeader
 {
     TCPCPMKind kind_; // 1 byte
-    fastrtps::rtps::octet flags_; // 1 byte
+    octet flags_; // 1 byte
     uint16_t length_; // 2 bytes
     TCPTransactionId transaction_id_; // 12 bytes
 
@@ -233,7 +233,7 @@ public:
     TCPControlMsgHeader()
     {
         kind_ = static_cast<TCPCPMKind>(0x00);
-        flags_ = static_cast<fastrtps::rtps::octet>(0x00);
+        flags_ = static_cast<octet>(0x00);
         length_ = 0;
     }
 
@@ -291,9 +291,9 @@ public:
             bool requires_response)
     {
         //TODO: Optimize receiving a Endianness_t
-        fastrtps::rtps::octet e = (endianess) ? BIT(1) : 0x00;
-        fastrtps::rtps::octet p = (payload) ? BIT(2) : 0x00;
-        fastrtps::rtps::octet r = (requires_response) ? BIT(3) : 0x00;
+        octet e = (endianess) ? BIT(1) : 0x00;
+        octet p = (payload) ? BIT(2) : 0x00;
+        octet r = (requires_response) ? BIT(3) : 0x00;
         flags_ = e | p | r;
     }
 

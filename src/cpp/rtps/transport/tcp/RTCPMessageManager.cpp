@@ -41,7 +41,6 @@ namespace rtps {
 
 using IPLocator = fastrtps::rtps::IPLocator;
 using SerializedPayload_t = fastrtps::rtps::SerializedPayload_t;
-using octet = fastrtps::rtps::octet;
 using CDRMessage_t = fastrtps::rtps::CDRMessage_t;
 using RTPSMessageCreator = fastrtps::rtps::RTPSMessageCreator;
 using ProtocolVersion_t = fastrtps::rtps::ProtocolVersion_t;

@@ -42,7 +42,7 @@ public:
         : m_availableBuiltinEndpoints(0)
         , metatraffic_locators(allocation.locators.max_unicast_locators, allocation.locators.max_multicast_locators)
         , default_locators(allocation.locators.max_unicast_locators, allocation.locators.max_multicast_locators)
-        , m_VendorId(c_VendorId_Unknown)
+        , m_VendorId(fastdds::rtps::c_VendorId_Unknown)
     {
     }
 

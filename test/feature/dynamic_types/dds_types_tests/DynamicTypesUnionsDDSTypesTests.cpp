@@ -750,8 +750,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionOctet)
     DynamicData::_ref_type union_data = data->loan_value(data->get_member_id_by_name(var_union_byte_name));
     ASSERT_TRUE(union_data);
 
-    eprosima::fastrtps::rtps::octet value = 15;
-    eprosima::fastrtps::rtps::octet test_value = 134;
+    octet value = 15;
+    octet test_value = 134;
     EXPECT_EQ(union_data->set_byte_value(union_data->get_member_id_by_name(var_union_member_k), value), RETCODE_OK);
     EXPECT_EQ(union_data->get_byte_value(test_value, union_data->get_member_id_by_name(var_union_member_k)),
             RETCODE_OK);
@@ -1624,8 +1624,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionInnerBitsetHelper)
     DynamicData::_ref_type union_data = data->loan_value(data->get_member_id_by_name(var_union_bitset_name));
     ASSERT_TRUE(union_data);
 
-    eprosima::fastrtps::rtps::octet octet_value = 5;
-    eprosima::fastrtps::rtps::octet test_octet_value = 0;
+    octet octet_value = 5;
+    octet test_octet_value = 0;
     bool bool_value = true;
     bool test_bool_value = false;
     uint16_t ushort_value = 1000;
@@ -2395,8 +2395,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorEnum)
 
     int32_t long_value = 14241;
     int32_t test_long_value = 0;
-    eprosima::fastrtps::rtps::octet byte_value = 234;
-    eprosima::fastrtps::rtps::octet test_byte_value = 12;
+    octet byte_value = 234;
+    octet test_byte_value = 12;
     int64_t long_long_value = 3221624;
     int64_t test_long_long_value = 0;
     EXPECT_EQ(union_data->set_int32_value(union_data->get_member_id_by_name(

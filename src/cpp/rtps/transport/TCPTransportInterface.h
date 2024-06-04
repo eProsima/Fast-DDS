@@ -138,17 +138,17 @@ protected:
     //! Methods to manage the TCP headers and their CRC values.
     bool check_crc(
             const TCPHeader& header,
-            const fastrtps::rtps::octet* data,
+            const octet* data,
             uint32_t size) const;
 
     void calculate_crc(
             TCPHeader& header,
-            const fastrtps::rtps::octet* data,
+            const octet* data,
             uint32_t size) const;
 
     void fill_rtcp_header(
             TCPHeader& header,
-            const fastrtps::rtps::octet* send_buffer,
+            const octet* send_buffer,
             uint32_t send_buffer_size,
             uint16_t logical_port) const;
 
@@ -174,7 +174,7 @@ protected:
             std::weak_ptr<RTCPMessageManager> rtcp_manager);
 
     bool read_body(
-            fastrtps::rtps::octet* receive_buffer,
+            octet* receive_buffer,
             uint32_t receive_buffer_capacity,
             uint32_t* bytes_received,
             std::shared_ptr<TCPChannelResource>& channel,
@@ -225,7 +225,7 @@ protected:
      * There must exist a channel bound to the locator, otherwise the send will be skipped.
      */
     bool send(
-            const fastrtps::rtps::octet* send_buffer,
+            const octet* send_buffer,
             uint32_t send_buffer_size,
             const eprosima::fastrtps::rtps::Locator_t& locator,
             const Locator& remote_locator);
@@ -382,7 +382,7 @@ public:
     bool Receive(
             std::weak_ptr<RTCPMessageManager>& rtcp_manager,
             std::shared_ptr<TCPChannelResource>& channel,
-            fastrtps::rtps::octet* receive_buffer,
+            octet* receive_buffer,
             uint32_t receive_buffer_capacity,
             uint32_t& receive_buffer_size,
             fastrtps::rtps::Endianness_t msg_endian,
@@ -400,7 +400,7 @@ public:
      * so should not be reuse.
      */
     bool send(
-            const fastrtps::rtps::octet* send_buffer,
+            const octet* send_buffer,
             uint32_t send_buffer_size,
             const fastrtps::rtps::Locator_t& locator,
             fastrtps::rtps::LocatorsIterator* destination_locators_begin,

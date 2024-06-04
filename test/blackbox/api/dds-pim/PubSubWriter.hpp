@@ -1389,14 +1389,14 @@ public:
     }
 
     PubSubWriter& userData(
-            std::vector<eprosima::fastrtps::rtps::octet> user_data)
+            std::vector<eprosima::fastdds::rtps::octet> user_data)
     {
         participant_qos_.user_data() = user_data;
         return *this;
     }
 
     PubSubWriter& endpoint_userData(
-            std::vector<eprosima::fastrtps::rtps::octet> user_data)
+            std::vector<eprosima::fastdds::rtps::octet> user_data)
     {
         datawriter_qos_.user_data() = user_data;
         return *this;

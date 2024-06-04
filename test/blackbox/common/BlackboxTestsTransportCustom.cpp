@@ -82,7 +82,7 @@ public:
 
     bool send(
             eprosima::fastrtps::rtps::SenderResource* low_sender_resource,
-            const eprosima::fastrtps::rtps::octet* send_buffer,
+            const eprosima::fastdds::rtps::octet* send_buffer,
             uint32_t send_buffer_size,
             eprosima::fastrtps::rtps::LocatorsIterator* destination_locators_begin,
             eprosima::fastrtps::rtps::LocatorsIterator* destination_locators_end,
@@ -97,7 +97,7 @@ public:
 
     void receive(
             eprosima::fastdds::rtps::TransportReceiverInterface* next_receiver,
-            const eprosima::fastrtps::rtps::octet* receive_buffer,
+            const eprosima::fastdds::rtps::octet* receive_buffer,
             uint32_t receive_buffer_size,
             const eprosima::fastrtps::rtps::Locator_t& local_locator,
             const eprosima::fastrtps::rtps::Locator_t& remote_locator) override

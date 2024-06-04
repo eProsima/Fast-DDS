@@ -70,7 +70,7 @@ public:
      */
     inline void set_statistics_message_data(
             const eprosima::fastrtps::rtps::Locator_t& locator,
-            const eprosima::fastrtps::rtps::octet* send_buffer,
+            const eprosima::fastdds::rtps::octet* send_buffer,
             uint32_t send_buffer_size)
     {
         static_cast<void>(locator);

@@ -50,7 +50,7 @@ MessageReceiver::MessageReceiver(
         uint32_t rec_buffer_size)
     : participant_(participant)
     , source_version_(c_ProtocolVersion)
-    , source_vendor_id_(c_VendorId_Unknown)
+    , source_vendor_id_(fastdds::rtps::c_VendorId_Unknown)
     , source_guid_prefix_(c_GuidPrefix_Unknown)
     , dest_guid_prefix_(c_GuidPrefix_Unknown)
     , have_timestamp_(false)
@@ -325,7 +325,7 @@ void MessageReceiver::removeEndpoint(
 void MessageReceiver::reset()
 {
     source_version_ = c_ProtocolVersion;
-    source_vendor_id_ = c_VendorId_Unknown;
+    source_vendor_id_ = fastdds::rtps::c_VendorId_Unknown;
     source_guid_prefix_ = c_GuidPrefix_Unknown;
     dest_guid_prefix_ = c_GuidPrefix_Unknown;
     have_timestamp_ = false;

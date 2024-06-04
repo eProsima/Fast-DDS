@@ -421,7 +421,7 @@ public:
             const SequenceNumberSet_t& sn_set,
             bool final_flag,
             bool& result,
-            fastdds::rtps::VendorId_t origin_vendor_id = c_VendorId_Unknown)
+            fastdds::rtps::VendorId_t origin_vendor_id = fastdds::rtps::c_VendorId_Unknown)
     {
         static_cast<void>(reader_guid);
         static_cast<void>(ack_count);
@@ -452,7 +452,7 @@ public:
             const SequenceNumber_t& seq_num,
             const FragmentNumberSet_t fragments_state,
             bool& result,
-            fastdds::rtps::VendorId_t origin_vendor_id = c_VendorId_Unknown)
+            fastdds::rtps::VendorId_t origin_vendor_id = fastdds::rtps::c_VendorId_Unknown)
     {
         static_cast<void>(reader_guid);
         static_cast<void>(ack_count);

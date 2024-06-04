@@ -77,10 +77,10 @@ bool IPLocator::setIPv4(
 
 bool IPLocator::setIPv4(
         Locator_t& locator,
-        octet o1,
-        octet o2,
-        octet o3,
-        octet o4)
+        fastdds::rtps::octet o1,
+        fastdds::rtps::octet o2,
+        fastdds::rtps::octet o3,
+        fastdds::rtps::octet o4)
 {
     if (locator.kind != LOCATOR_KIND_TCPv4 && locator.kind != LOCATOR_KIND_UDPv4)
     {
@@ -119,10 +119,10 @@ bool IPLocator::setIPv4(
         {
             return false;
         }
-        locator.address[12] = (octet)a;
-        locator.address[13] = (octet)b;
-        locator.address[14] = (octet)c;
-        locator.address[15] = (octet)d;
+        locator.address[12] = (fastdds::rtps::octet)a;
+        locator.address[13] = (fastdds::rtps::octet)b;
+        locator.address[14] = (fastdds::rtps::octet)c;
+        locator.address[15] = (fastdds::rtps::octet)d;
 
         // If there are more info to read, it fails
         return ss.rdbuf()->in_avail() == 0;
@@ -143,10 +143,10 @@ bool IPLocator::setIPv4(
     return setIPv4(destlocator, getIPv4(origlocator));
 }
 
-const octet* IPLocator::getIPv4(
+const fastdds::rtps::octet* IPLocator::getIPv4(
         const Locator_t& locator)
 {
-    return static_cast<const octet*>(&locator.address[12]);
+    return static_cast<const fastdds::rtps::octet*>(&locator.address[12]);
 }
 
 bool IPLocator::hasIPv4(
@@ -208,22 +208,22 @@ bool IPLocator::setIPv6(
         EPROSIMA_LOG_WARNING(IP_LOCATOR, "Trying to set an IPv6 in a non IPv6 Locator");
         return false;
     }
-    locator.address[0] = (octet)(group0 >> 8);
-    locator.address[1] = (octet)group0;
-    locator.address[2] = (octet)(group1 >> 8);
-    locator.address[3] = (octet)group1;
-    locator.address[4] = (octet)(group2 >> 8);
-    locator.address[5] = (octet)group2;
-    locator.address[6] = (octet)(group3 >> 8);
-    locator.address[7] = (octet)group3;
-    locator.address[8] = (octet)(group4 >> 8);
-    locator.address[9] = (octet)group4;
-    locator.address[10] = (octet)(group5 >> 8);
-    locator.address[11] = (octet)group5;
-    locator.address[12] = (octet)(group6 >> 8);
-    locator.address[13] = (octet)group6;
-    locator.address[14] = (octet)(group7 >> 8);
-    locator.address[15] = (octet)group7;
+    locator.address[0] = (fastdds::rtps::octet)(group0 >> 8);
+    locator.address[1] = (fastdds::rtps::octet)group0;
+    locator.address[2] = (fastdds::rtps::octet)(group1 >> 8);
+    locator.address[3] = (fastdds::rtps::octet)group1;
+    locator.address[4] = (fastdds::rtps::octet)(group2 >> 8);
+    locator.address[5] = (fastdds::rtps::octet)group2;
+    locator.address[6] = (fastdds::rtps::octet)(group3 >> 8);
+    locator.address[7] = (fastdds::rtps::octet)group3;
+    locator.address[8] = (fastdds::rtps::octet)(group4 >> 8);
+    locator.address[9] = (fastdds::rtps::octet)group4;
+    locator.address[10] = (fastdds::rtps::octet)(group5 >> 8);
+    locator.address[11] = (fastdds::rtps::octet)group5;
+    locator.address[12] = (fastdds::rtps::octet)(group6 >> 8);
+    locator.address[13] = (fastdds::rtps::octet)group6;
+    locator.address[14] = (fastdds::rtps::octet)(group7 >> 8);
+    locator.address[15] = (fastdds::rtps::octet)group7;
     return true;
 }
 
@@ -346,8 +346,8 @@ bool IPLocator::setIPv6(
                 EPROSIMA_LOG_WARNING(IP_LOCATOR, "IPv6 " << ipv6 << " has values higher than expected (65536)");
                 return false;
             }
-            locator.address[i++] = octet(input_aux >> 8);
-            locator.address[i++] = octet(input_aux & 0xFF);
+            locator.address[i++] = fastdds::rtps::octet(input_aux >> 8);
+            locator.address[i++] = fastdds::rtps::octet(input_aux & 0xFF);
         }
 
         // In the case of empty ip it would be still a ':' without parsing
@@ -367,8 +367,8 @@ bool IPLocator::setIPv6(
                 EPROSIMA_LOG_WARNING(IP_LOCATOR, "IPv6 " << ipv6 << " has values higher than expected (65536)");
                 return false;
             }
-            locator.address[i++] = octet(input_aux >> 8);
-            locator.address[i++] = octet(input_aux & 0xFF);
+            locator.address[i++] = fastdds::rtps::octet(input_aux >> 8);
+            locator.address[i++] = fastdds::rtps::octet(input_aux & 0xFF);
         }
 
         ss >> punct;
@@ -389,8 +389,8 @@ bool IPLocator::setIPv6(
                 EPROSIMA_LOG_WARNING(IP_LOCATOR, "IPv6 " << ipv6 << " has values higher than expected (65536)");
                 return false;
             }
-            locator.address[i++] = octet(input_aux >> 8);
-            locator.address[i++] = octet(input_aux & 0xFF);
+            locator.address[i++] = fastdds::rtps::octet(input_aux >> 8);
+            locator.address[i++] = fastdds::rtps::octet(input_aux & 0xFF);
         }
 
         for (; i < position_zeros + number_zeros;)
@@ -406,16 +406,16 @@ bool IPLocator::setIPv6(
                 EPROSIMA_LOG_WARNING(IP_LOCATOR, "IPv6 " << ipv6 << " has values higher than expected (65536)");
                 return false;
             }
-            locator.address[i++] = octet(input_aux >> 8);
-            locator.address[i++] = octet(input_aux & 0xFF);
+            locator.address[i++] = fastdds::rtps::octet(input_aux >> 8);
+            locator.address[i++] = fastdds::rtps::octet(input_aux & 0xFF);
         }
     }
     else
     {
         // No zero block
         ss >> input_aux;
-        locator.address[0] = octet(input_aux >> 8);
-        locator.address[1] = octet(input_aux & 0xFF);
+        locator.address[0] = fastdds::rtps::octet(input_aux >> 8);
+        locator.address[1] = fastdds::rtps::octet(input_aux & 0xFF);
         for (i = 2; i < 16;)
         {
             ss >> punct >> input_aux;
@@ -424,8 +424,8 @@ bool IPLocator::setIPv6(
                 EPROSIMA_LOG_WARNING(IP_LOCATOR, "IPv6 " << ipv6 << " has values higher than expected (65536)");
                 return false;
             }
-            locator.address[i++] = octet(input_aux >> 8);
-            locator.address[i++] = octet(input_aux & 0xFF);
+            locator.address[i++] = fastdds::rtps::octet(input_aux >> 8);
+            locator.address[i++] = fastdds::rtps::octet(input_aux & 0xFF);
         }
     }
 
@@ -444,7 +444,7 @@ bool IPLocator::setIPv6(
     return setIPv6(destlocator, getIPv6(origlocator));
 }
 
-const octet* IPLocator::getIPv6(
+const fastdds::rtps::octet* IPLocator::getIPv6(
         const Locator_t& locator)
 {
     return locator.address;
@@ -655,10 +655,10 @@ uint16_t IPLocator::getPhysicalPort(
 // TCPv4
 bool IPLocator::setWan(
         Locator_t& locator,
-        octet o1,
-        octet o2,
-        octet o3,
-        octet o4)
+        fastdds::rtps::octet o1,
+        fastdds::rtps::octet o2,
+        fastdds::rtps::octet o3,
+        fastdds::rtps::octet o4)
 {
     locator.address[8] = o1;
     locator.address[9] = o2;
@@ -677,19 +677,19 @@ bool IPLocator::setWan(
 
     if ( ss >> a >> ch >> b >> ch >> c >> ch >> d)
     {
-        locator.address[8]  = (octet)a;
-        locator.address[9]  = (octet)b;
-        locator.address[10] = (octet)c;
-        locator.address[11] = (octet)d;
+        locator.address[8]  = (fastdds::rtps::octet)a;
+        locator.address[9]  = (fastdds::rtps::octet)b;
+        locator.address[10] = (fastdds::rtps::octet)c;
+        locator.address[11] = (fastdds::rtps::octet)d;
         return true;
     }
     return false;
 }
 
-const octet* IPLocator::getWan(
+const fastdds::rtps::octet* IPLocator::getWan(
         const Locator_t& locator)
 {
-    return static_cast<const octet*>(&locator.address[8]);
+    return static_cast<const fastdds::rtps::octet*>(&locator.address[8]);
 }
 
 bool IPLocator::hasWan(
@@ -718,8 +718,8 @@ Locator_t IPLocator::WanToLanLocator(
 {
     Locator_t out(locator);
 
-    std::memcpy(out.address + 12, out.address + 8, 4 * sizeof(octet));
-    std::memset(out.address + 8, 0, 4 * sizeof(octet));
+    std::memcpy(out.address + 12, out.address + 8, 4 * sizeof(fastdds::rtps::octet));
+    std::memset(out.address + 8, 0, 4 * sizeof(fastdds::rtps::octet));
 
     return out;
 }
@@ -736,14 +736,14 @@ bool IPLocator::setLanID(
 
         if ( ss >> a >> ch >> b >> ch >> c >> ch >> d >> ch >> e >> ch >> f >> ch >> g >> ch >> h)
         {
-            locator.address[0] = (octet)a;
-            locator.address[1] = (octet)b;
-            locator.address[2] = (octet)c;
-            locator.address[3] = (octet)d;
-            locator.address[4] = (octet)e;
-            locator.address[5] = (octet)f;
-            locator.address[6] = (octet)g;
-            locator.address[7] = (octet)h;
+            locator.address[0] = (fastdds::rtps::octet)a;
+            locator.address[1] = (fastdds::rtps::octet)b;
+            locator.address[2] = (fastdds::rtps::octet)c;
+            locator.address[3] = (fastdds::rtps::octet)d;
+            locator.address[4] = (fastdds::rtps::octet)e;
+            locator.address[5] = (fastdds::rtps::octet)f;
+            locator.address[6] = (fastdds::rtps::octet)g;
+            locator.address[7] = (fastdds::rtps::octet)h;
 
             return true;
         }
@@ -752,10 +752,10 @@ bool IPLocator::setLanID(
     return false;
 }
 
-const octet* IPLocator::getLanID(
+const fastdds::rtps::octet* IPLocator::getLanID(
         const Locator_t& locator)
 {
-    return static_cast<const octet*>(&locator.address[0]);
+    return static_cast<const fastdds::rtps::octet*>(&locator.address[0]);
 }
 
 std::string IPLocator::toLanIDstring(

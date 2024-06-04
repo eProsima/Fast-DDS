@@ -146,7 +146,7 @@ inline void read_statistics_submessage(
 
 #ifdef FASTDDS_STATISTICS
 inline uint32_t get_statistics_message_pos(
-        const eprosima::fastrtps::rtps::octet* send_buffer,
+        const eprosima::fastdds::rtps::octet* send_buffer,
         uint32_t send_buffer_size)
 {
     // zero can be use as an error value because the minimum valid value
@@ -172,7 +172,7 @@ inline uint32_t get_statistics_message_pos(
 
 inline void set_statistics_submessage_from_transport(
         const eprosima::fastrtps::rtps::Locator_t& destination,
-        const eprosima::fastrtps::rtps::octet* send_buffer,
+        const eprosima::fastdds::rtps::octet* send_buffer,
         uint32_t send_buffer_size,
         StatisticsSubmessageData::Sequence& sequence)
 {
@@ -220,7 +220,7 @@ inline void set_statistics_submessage_from_transport(
 }
 
 inline void remove_statistics_submessage(
-        const eprosima::fastrtps::rtps::octet* send_buffer,
+        const eprosima::fastdds::rtps::octet* send_buffer,
         uint32_t& send_buffer_size)
 {
     static_cast<void>(send_buffer);

@@ -41,7 +41,7 @@ public:
             const test_UDPv4TransportDescriptor& descriptor);
 
     virtual bool send(
-            const fastrtps::rtps::octet* send_buffer,
+            const octet* send_buffer,
             uint32_t send_buffer_size,
             eProsimaUDPSocket& socket,
             fastrtps::rtps::LocatorsIterator* destination_locators_begin,
@@ -55,7 +55,7 @@ public:
 
     FASTDDS_EXPORTED_API static std::atomic<bool> test_UDPv4Transport_ShutdownAllNetwork;
     // Handle to a persistent log of dropped packets. Defaults to length 0 (no logging) to prevent wasted resources.
-    FASTDDS_EXPORTED_API static std::vector<std::vector<fastrtps::rtps::octet>> test_UDPv4Transport_DropLog;
+    FASTDDS_EXPORTED_API static std::vector<std::vector<octet>> test_UDPv4Transport_DropLog;
     FASTDDS_EXPORTED_API static std::atomic<uint32_t> test_UDPv4Transport_DropLogLength;
     FASTDDS_EXPORTED_API static std::atomic<bool> always_drop_participant_builtin_topic_data;
     FASTDDS_EXPORTED_API static std::atomic<bool> simulate_no_interfaces;
@@ -107,17 +107,17 @@ private:
             const Locator& remote_locator);
 
     bool log_drop(
-            const fastrtps::rtps::octet* buffer,
+            const octet* buffer,
             uint32_t size);
     bool packet_should_drop(
-            const fastrtps::rtps::octet* send_buffer,
+            const octet* send_buffer,
             uint32_t send_buffer_size);
     bool random_chance_drop();
     bool should_be_dropped(
             PercentageData* percentage);
 
     bool send(
-            const fastrtps::rtps::octet* send_buffer,
+            const octet* send_buffer,
             uint32_t send_buffer_size,
             eProsimaUDPSocket& socket,
             const Locator& remote_locator,

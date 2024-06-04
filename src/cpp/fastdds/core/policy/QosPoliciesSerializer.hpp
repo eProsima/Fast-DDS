@@ -103,7 +103,7 @@ inline bool QosPoliciesSerializer<DurabilityQosPolicy>::read_content_from_cdr_me
     }
     qos_policy.length = parameter_length;
     bool valid = fastrtps::rtps::CDRMessage::readOctet(cdr_message,
-                    (fastrtps::rtps::octet*)&qos_policy.kind);
+                    (octet*)&qos_policy.kind);
     cdr_message->pos += 3; //padding
     return valid;
 }
@@ -196,7 +196,7 @@ inline bool QosPoliciesSerializer<LivelinessQosPolicy>::read_content_from_cdr_me
     }
     qos_policy.length = parameter_length;
     bool valid = fastrtps::rtps::CDRMessage::readOctet(cdr_message,
-                    (fastrtps::rtps::octet*)&qos_policy.kind);
+                    (octet*)&qos_policy.kind);
     cdr_message->pos += 3; //padding
     valid &= fastrtps::rtps::CDRMessage::readInt32(cdr_message,
                     &qos_policy.lease_duration.seconds);
@@ -235,7 +235,7 @@ inline bool QosPoliciesSerializer<ReliabilityQosPolicy>::read_content_from_cdr_m
     }
     qos_policy.length = parameter_length;
     bool valid = fastrtps::rtps::CDRMessage::readOctet(cdr_message,
-                    (fastrtps::rtps::octet*)&qos_policy.kind);
+                    (octet*)&qos_policy.kind);
     cdr_message->pos += 3; //padding
     valid &= fastrtps::rtps::CDRMessage::readInt32(cdr_message,
                     &qos_policy.max_blocking_time.seconds);
@@ -269,7 +269,7 @@ inline bool QosPoliciesSerializer<OwnershipQosPolicy>::read_content_from_cdr_mes
     }
     qos_policy.length = parameter_length;
     bool valid = fastrtps::rtps::CDRMessage::readOctet(cdr_message,
-                    (fastrtps::rtps::octet*)&qos_policy.kind);
+                    (octet*)&qos_policy.kind);
     cdr_message->pos += 3; //padding
     return valid;
 }
@@ -298,7 +298,7 @@ inline bool QosPoliciesSerializer<DestinationOrderQosPolicy>::read_content_from_
     }
     qos_policy.length = parameter_length;
     bool valid = fastrtps::rtps::CDRMessage::readOctet(cdr_message,
-                    (fastrtps::rtps::octet*)&qos_policy.kind);
+                    (octet*)&qos_policy.kind);
     cdr_message->pos += 3; //padding
     return valid;
 }
@@ -382,9 +382,9 @@ inline bool QosPoliciesSerializer<PresentationQosPolicy>::add_content_to_cdr_mes
     valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message, 0);
 
     valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message,
-                    (fastrtps::rtps::octet)qos_policy.coherent_access);
+                    (octet)qos_policy.coherent_access);
     valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message,
-                    (fastrtps::rtps::octet)qos_policy.ordered_access);
+                    (octet)qos_policy.ordered_access);
     valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message, 0);
     valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message, 0);
 
@@ -403,12 +403,12 @@ inline bool QosPoliciesSerializer<PresentationQosPolicy>::read_content_from_cdr_
     }
     qos_policy.length = parameter_length;
     bool valid = fastrtps::rtps::CDRMessage::readOctet(cdr_message,
-                    (fastrtps::rtps::octet*)&qos_policy.access_scope);
+                    (octet*)&qos_policy.access_scope);
     cdr_message->pos += 3; //padding
     valid &= fastrtps::rtps::CDRMessage::readOctet(cdr_message,
-                    (fastrtps::rtps::octet*)&qos_policy.coherent_access);
+                    (octet*)&qos_policy.coherent_access);
     valid &= fastrtps::rtps::CDRMessage::readOctet(cdr_message,
-                    (fastrtps::rtps::octet*)&qos_policy.ordered_access);
+                    (octet*)&qos_policy.ordered_access);
     cdr_message->pos += 2; //padding
     return valid;
 }
@@ -521,7 +521,7 @@ inline bool QosPoliciesSerializer<HistoryQosPolicy>::read_content_from_cdr_messa
         return false;
     }
     qos_policy.length = parameter_length;
-    bool valid = fastrtps::rtps::CDRMessage::readOctet(cdr_message, (fastrtps::rtps::octet*)&qos_policy.kind);
+    bool valid = fastrtps::rtps::CDRMessage::readOctet(cdr_message, (octet*)&qos_policy.kind);
     cdr_message->pos += 3; //padding
     valid &= fastrtps::rtps::CDRMessage::readInt32(cdr_message, &qos_policy.depth);
     return valid;
@@ -563,7 +563,7 @@ inline bool QosPoliciesSerializer<DurabilityServiceQosPolicy>::read_content_from
     uint32_t frac(0);
     valid &= fastrtps::rtps::CDRMessage::readUInt32(cdr_message, &frac);
     qos_policy.service_cleanup_delay.fraction(frac);
-    valid &= fastrtps::rtps::CDRMessage::readOctet(cdr_message, (fastrtps::rtps::octet*)&qos_policy.history_kind);
+    valid &= fastrtps::rtps::CDRMessage::readOctet(cdr_message, (octet*)&qos_policy.history_kind);
     cdr_message->pos += 3; //padding
     valid &= fastrtps::rtps::CDRMessage::readInt32(cdr_message, &qos_policy.history_depth);
     valid &= fastrtps::rtps::CDRMessage::readInt32(cdr_message, &qos_policy.max_samples);
@@ -710,20 +710,20 @@ inline bool QosPoliciesSerializer<TypeConsistencyEnforcementQosPolicy>::add_cont
     bool valid = fastrtps::rtps::CDRMessage::addUInt16(cdr_message, qos_policy.m_kind);
     valid &=
             fastrtps::rtps::CDRMessage::addOctet(cdr_message,
-                    static_cast<fastrtps::rtps::octet>(qos_policy.m_ignore_sequence_bounds));
+                    static_cast<octet>(qos_policy.m_ignore_sequence_bounds));
     valid &=
             fastrtps::rtps::CDRMessage::addOctet(cdr_message,
-                    static_cast<fastrtps::rtps::octet>(qos_policy.m_ignore_string_bounds));
+                    static_cast<octet>(qos_policy.m_ignore_string_bounds));
     valid &=
             fastrtps::rtps::CDRMessage::addOctet(cdr_message,
-                    static_cast<fastrtps::rtps::octet>(qos_policy.m_ignore_member_names));
+                    static_cast<octet>(qos_policy.m_ignore_member_names));
     valid &=
             fastrtps::rtps::CDRMessage::addOctet(cdr_message,
-                    static_cast<fastrtps::rtps::octet>(qos_policy.m_prevent_type_widening));
+                    static_cast<octet>(qos_policy.m_prevent_type_widening));
     valid &=
             fastrtps::rtps::CDRMessage::addOctet(cdr_message,
-                    static_cast<fastrtps::rtps::octet>(qos_policy.m_force_type_validation));
-    valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message, fastrtps::rtps::octet(0x00)); // 8th byte
+                    static_cast<octet>(qos_policy.m_force_type_validation));
+    valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message, octet(0x00)); // 8th byte
     return valid;
 }
 
@@ -739,7 +739,7 @@ inline bool QosPoliciesSerializer<TypeConsistencyEnforcementQosPolicy>::read_con
     }
 
     uint16_t uKind(0);
-    fastrtps::rtps::octet temp(0);
+    octet temp(0);
     qos_policy.m_ignore_sequence_bounds = false;
     qos_policy.m_ignore_string_bounds = false;
     qos_policy.m_ignore_member_names = false;
@@ -787,10 +787,10 @@ inline bool QosPoliciesSerializer<DisablePositiveACKsQosPolicy>::add_content_to_
         const DisablePositiveACKsQosPolicy&,
         fastrtps::rtps::CDRMessage_t* cdr_message)
 {
-    bool valid = fastrtps::rtps::CDRMessage::addOctet(cdr_message, (fastrtps::rtps::octet)0x01);
-    valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message, (fastrtps::rtps::octet)0x00);
-    valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message, (fastrtps::rtps::octet)0x00);
-    valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message, (fastrtps::rtps::octet)0x00);
+    bool valid = fastrtps::rtps::CDRMessage::addOctet(cdr_message, (octet)0x01);
+    valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message, (octet)0x00);
+    valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message, (octet)0x00);
+    valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message, (octet)0x00);
     return valid;
 }
 
@@ -805,7 +805,7 @@ inline bool QosPoliciesSerializer<DisablePositiveACKsQosPolicy>::read_content_fr
         return false;
     }
     qos_policy.length = parameter_length;
-    fastrtps::rtps::octet value(0);
+    octet value(0);
     bool valid = fastrtps::rtps::CDRMessage::readOctet(cdr_message, &value);
     qos_policy.enabled = (value == 0) ? false : true;
     cdr_message->pos += 3; //padding

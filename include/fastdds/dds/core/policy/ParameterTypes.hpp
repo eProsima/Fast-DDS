@@ -605,7 +605,7 @@ class ParameterIP4Address_t : public Parameter_t
 public:
 
     //!Address <br> By default [0,0,0,0].
-    fastrtps::rtps::octet address[4];
+    fastdds::rtps::octet address[4];
 
     /**
      * @brief Constructor without parameters
@@ -638,10 +638,10 @@ public:
      * @param o4 Fourth octet
      */
     void setIP4Address(
-            fastrtps::rtps::octet o1,
-            fastrtps::rtps::octet o2,
-            fastrtps::rtps::octet o3,
-            fastrtps::rtps::octet o4)
+            fastdds::rtps::octet o1,
+            fastdds::rtps::octet o2,
+            fastdds::rtps::octet o3,
+            fastdds::rtps::octet o4)
     {
         address[0] = o1;
         address[1] = o2;
@@ -946,7 +946,7 @@ class ParameterProperty_t
 private:
 
     //!Data <br> By default, nullptr.
-    fastrtps::rtps::octet* data;
+    fastdds::rtps::octet* data;
 
 public:
 
@@ -966,7 +966,7 @@ public:
     explicit ParameterProperty_t(
             void* ptr)
     {
-        data = (fastrtps::rtps::octet*)ptr;
+        data = (fastdds::rtps::octet*)ptr;
     }
 
     /**
@@ -1016,7 +1016,7 @@ public:
             return false;
         }
 
-        fastrtps::rtps::octet* current = data;
+        fastdds::rtps::octet* current = data;
         memcpy(current, &first_size, 4);
         memcpy(current + 4, new_value.first.c_str(), first_size);
         memset(current + 4 + first_size, 0, first_alignment);
@@ -1076,7 +1076,7 @@ private:
      * @return Size of the pointer data
      */
     static uint32_t element_size(
-            const fastrtps::rtps::octet* ptr)
+            const fastdds::rtps::octet* ptr)
     {
         //Size of the element (with alignment)
         uint32_t size = *(uint32_t*)ptr;
@@ -1174,7 +1174,7 @@ public:
          * @param ptr Octet pointer to be set
          */
         iterator(
-                fastrtps::rtps::octet* ptr)
+                fastdds::rtps::octet* ptr)
             : ptr_(ptr)
             , value_(ptr)
         {
@@ -1232,7 +1232,7 @@ public:
          *
          * @return the pointer
          */
-        fastrtps::rtps::octet* address() const
+        fastdds::rtps::octet* address() const
         {
             return ptr_;
         }
@@ -1240,7 +1240,7 @@ public:
     private:
 
         //!Pointer
-        fastrtps::rtps::octet* ptr_;
+        fastdds::rtps::octet* ptr_;
         //!Parameter Property
         ParameterProperty_t value_;
     };
@@ -1262,9 +1262,9 @@ public:
          * @param ptr Pointer to be set
          */
         const_iterator(
-                const fastrtps::rtps::octet* ptr)
+                const fastdds::rtps::octet* ptr)
             : ptr_(ptr)
-            , value_(const_cast<fastrtps::rtps::octet*>(ptr))
+            , value_(const_cast<fastdds::rtps::octet*>(ptr))
         {
         }
 
@@ -1312,7 +1312,7 @@ public:
         void advance()
         {
             ptr_ += value_.size();
-            value_ = ParameterProperty_t(const_cast<fastrtps::rtps::octet*>(ptr_));
+            value_ = ParameterProperty_t(const_cast<fastdds::rtps::octet*>(ptr_));
         }
 
         /**
@@ -1320,7 +1320,7 @@ public:
          *
          * @return the pointer
          */
-        const fastrtps::rtps::octet* address() const
+        const fastdds::rtps::octet* address() const
         {
             return ptr_;
         }
@@ -1328,7 +1328,7 @@ public:
     private:
 
         //!Pointer
-        const fastrtps::rtps::octet* ptr_;
+        const fastdds::rtps::octet* ptr_;
         //!Parameter Property
         ParameterProperty_t value_;
     };
@@ -1506,8 +1506,8 @@ public:
                 str1_size + alignment1 + 4 +
                 str2_size + alignment2 + 4);
 
-        push_back_helper((fastrtps::rtps::octet*)str1, str1_size, alignment1);
-        push_back_helper((fastrtps::rtps::octet*)str2, str2_size, alignment2);
+        push_back_helper((fastdds::rtps::octet*)str1, str1_size, alignment1);
+        push_back_helper((fastdds::rtps::octet*)str2, str2_size, alignment2);
         ++Nproperties_;
         return true;
     }
@@ -1568,11 +1568,11 @@ public:
 protected:
 
     void push_back_helper (
-            const fastrtps::rtps::octet* data,
+            const fastdds::rtps::octet* data,
             uint32_t size,
             uint32_t alignment)
     {
-        fastrtps::rtps::octet* o = (fastrtps::rtps::octet*)&size;
+        fastdds::rtps::octet* o = (fastdds::rtps::octet*)&size;
         memcpy(properties_.data + properties_.length, o, 4);
         properties_.length += 4;
 

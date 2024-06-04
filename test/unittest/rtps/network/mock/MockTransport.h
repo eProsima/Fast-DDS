@@ -212,7 +212,7 @@ public:
     {
         Locator_t destination;
         Locator_t origin;
-        std::vector<fastrtps::rtps::octet> data;
+        std::vector<octet> data;
     } MockMessage;
 
     std::vector<MockMessage> mockMessagesToReceive;

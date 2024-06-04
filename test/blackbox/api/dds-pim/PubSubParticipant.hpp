@@ -652,14 +652,14 @@ public:
     }
 
     PubSubParticipant& user_data(
-            const std::vector<eprosima::fastrtps::rtps::octet>& user_data)
+            const std::vector<eprosima::fastdds::rtps::octet>& user_data)
     {
         participant_qos_.user_data().data_vec(user_data);
         return *this;
     }
 
     bool update_user_data(
-            const std::vector<eprosima::fastrtps::rtps::octet>& user_data)
+            const std::vector<eprosima::fastdds::rtps::octet>& user_data)
     {
         // Update QoS before updating user data as statistics properties might have changed internally
         participant_qos_ = participant_->get_qos();

@@ -27,7 +27,7 @@ namespace rtps {
 
 using Locator_t = fastrtps::rtps::Locator_t;
 using IPLocator = fastrtps::rtps::IPLocator;
-using octet = fastrtps::rtps::octet;
+using octet = octet;
 using Log = fastdds::dds::Log;
 
 using namespace asio;

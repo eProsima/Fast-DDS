@@ -515,7 +515,7 @@ public:
     }
 
     RTPSWithRegistrationWriter& user_data(
-            const std::vector<eprosima::fastrtps::rtps::octet>& user_data)
+            const std::vector<octet>& user_data)
     {
         writer_qos_.m_userData = user_data;
         return *this;

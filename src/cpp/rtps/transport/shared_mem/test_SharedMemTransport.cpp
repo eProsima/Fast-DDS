@@ -49,7 +49,7 @@ TransportInterface* test_SharedMemTransportDescriptor::create_transport() const
 }
 
 bool test_SharedMemTransport::send(
-        const fastrtps::rtps::octet* send_buffer,
+        const octet* send_buffer,
         uint32_t send_buffer_size,
         fastrtps::rtps::LocatorsIterator* destination_locators_begin,
         fastrtps::rtps::LocatorsIterator* destination_locators_end,

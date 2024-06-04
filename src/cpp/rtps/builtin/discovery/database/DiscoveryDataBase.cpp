@@ -1555,7 +1555,7 @@ bool DiscoveryDataBase::is_writer(
     //    - For writers: NO_KEY = 0x03, WITH_KEY = 0x02
     //    - For built-in writers: NO_KEY = 0xc3, WITH_KEY = 0xc2
     // Furthermore, the Fast DDS Statistics Module defines an Entity ID for Statistics DataWriters
-    const eprosima::fastrtps::rtps::octet identifier = guid.entityId.value[3];
+    const octet identifier = guid.entityId.value[3];
     return ((identifier == 0x02) ||
            (identifier == 0xc2) ||
            (identifier == 0x03) ||
@@ -1569,7 +1569,7 @@ bool DiscoveryDataBase::is_reader(
     // RTPS Specification v2.3
     // For readers: NO_KEY = 0x04, WITH_KEY = 0x07
     // For built-in readers: NO_KEY = 0xc4, WITH_KEY = 0xc7
-    const eprosima::fastrtps::rtps::octet identifier = guid.entityId.value[3];
+    const octet identifier = guid.entityId.value[3];
     return ((identifier == 0x04) ||
            (identifier == 0xc4) ||
            (identifier == 0x07) ||
