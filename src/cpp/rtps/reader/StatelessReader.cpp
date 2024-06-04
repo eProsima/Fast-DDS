@@ -385,7 +385,7 @@ bool StatelessReader::change_received(
                 listener->on_data_available(this, guid, seq, seq, notify_single);
                 if (notify_single)
                 {
-                    listener->onNewCacheChangeAdded(this, change);
+                    listener->on_new_cache_change_added(this, change);
                 }
             }
 

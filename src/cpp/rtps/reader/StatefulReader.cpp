@@ -1128,7 +1128,7 @@ bool StatefulReader::change_received(
                             listener->on_data_available(this, guid, seq, seq, notify_single);
                             if (notify_single)
                             {
-                                listener->onNewCacheChangeAdded(this, a_change);
+                                listener->on_new_cache_change_added(this, a_change);
                             }
                         }
 
@@ -1269,7 +1269,7 @@ void StatefulReader::NotifyChanges(
             {
                 aux_ch = *it;
                 next_seq = aux_ch->sequenceNumber + 1;
-                listener->onNewCacheChangeAdded(this, aux_ch);
+                listener->on_new_cache_change_added(this, aux_ch);
 
                 // Reset the iterator to the beginning, since it may be invalidated inside the callback
                 it = history_->changesBegin();

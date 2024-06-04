@@ -97,7 +97,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_not_remote_participa
     EXPECT_CALL(*stateless_reader_->history_, remove_change_mock(change)).Times(1).
             WillOnce(Return(true));
 
-    stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
+    stateless_reader_->listener_->on_new_cache_change_added(stateless_reader_, change);
 }
 
 TEST_F(SecurityTest, discovered_participant_process_message_bad_message_class_id)
@@ -140,7 +140,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_bad_message_class_id
     EXPECT_CALL(*stateless_reader_->history_, remove_change_mock(change)).Times(1).
             WillOnce(Return(true));
 
-    stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
+    stateless_reader_->listener_->on_new_cache_change_added(stateless_reader_, change);
 
     return_handle(remote_identity_handle);
 }
@@ -197,7 +197,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_not_expecting_reques
     EXPECT_CALL(*stateless_reader_->history_, remove_change_mock(change)).Times(1).
             WillOnce(Return(true));
 
-    stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
+    stateless_reader_->listener_->on_new_cache_change_added(stateless_reader_, change);
 
     return_handle(remote_identity_handle);
 }
@@ -256,7 +256,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_fail_begin_handshake
     EXPECT_CALL(participant_, pdp()).Times(1).WillOnce(Return(&pdp_));
     EXPECT_CALL(pdp_, get_participant_proxy_data_serialized(BIGEND)).Times(1);
 
-    stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
+    stateless_reader_->listener_->on_new_cache_change_added(stateless_reader_, change);
 
     return_handle(remote_identity_handle);
 }
@@ -341,7 +341,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_ok_begin_handshake_r
     CacheChange_t* kx_change_to_remove = new CacheChange_t(500);
     expect_kx_exchange(kx_change_to_add, kx_change_to_remove);
 
-    stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
+    stateless_reader_->listener_->on_new_cache_change_added(stateless_reader_, change);
 
     volatile_writer_->listener_->onWriterChangeReceivedByAll(volatile_writer_, kx_change_to_remove);
 
@@ -407,7 +407,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_new_change_fail)
     EXPECT_CALL(participant_, pdp()).Times(1).WillOnce(Return(&pdp_));
     EXPECT_CALL(pdp_, get_participant_proxy_data_serialized(BIGEND)).Times(1);
 
-    stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
+    stateless_reader_->listener_->on_new_cache_change_added(stateless_reader_, change);
 
     return_handle(remote_identity_handle);
     return_handle(handshake_handle);
@@ -474,7 +474,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_add_change_fail)
     EXPECT_CALL(participant_, pdp()).Times(1).WillOnce(Return(&pdp_));
     EXPECT_CALL(pdp_, get_participant_proxy_data_serialized(BIGEND)).Times(1);
 
-    stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
+    stateless_reader_->listener_->on_new_cache_change_added(stateless_reader_, change);
 
     destroy_manager_and_change(change2, false);
 
@@ -606,7 +606,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_pending_handshake_re
     info.guid = participant_data.m_guid;
     EXPECT_CALL(*participant_.getListener(), onParticipantAuthentication(_, info)).Times(1);
 
-    stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
+    stateless_reader_->listener_->on_new_cache_change_added(stateless_reader_, change);
 
     destroy_manager_and_change(change2);
 
@@ -662,7 +662,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_fail_process_handsha
     info.guid = remote_participant_key;
     EXPECT_CALL(*participant_.getListener(), onParticipantAuthentication(_, info)).Times(1);
 
-    stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
+    stateless_reader_->listener_->on_new_cache_change_added(stateless_reader_, change);
 }
 
 TEST_F(SecurityTest, discovered_participant_process_message_ok_process_handshake_reply)
@@ -738,7 +738,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_ok_process_handshake
     CacheChange_t* kx_change_to_remove = new CacheChange_t(500);
     expect_kx_exchange(kx_change_to_add, kx_change_to_remove);
 
-    stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
+    stateless_reader_->listener_->on_new_cache_change_added(stateless_reader_, change);
 
     volatile_writer_->listener_->onWriterChangeReceivedByAll(volatile_writer_, kx_change_to_remove);
 }
@@ -794,7 +794,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_process_handshake_re
     EXPECT_CALL(*stateless_reader_->history_, remove_change_mock(change)).Times(1).
             WillOnce(Return(true));
 
-    stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
+    stateless_reader_->listener_->on_new_cache_change_added(stateless_reader_, change);
 }
 
 TEST_F(SecurityTest, discovered_participant_process_message_process_handshake_reply_add_change_fail)
@@ -851,7 +851,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_process_handshake_re
     EXPECT_CALL(*stateless_reader_->history_, remove_change_mock(change)).Times(1).
             WillOnce(Return(true));
 
-    stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
+    stateless_reader_->listener_->on_new_cache_change_added(stateless_reader_, change);
 
     destroy_manager_and_change(change2, false);
 }
@@ -918,7 +918,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_process_handshake_re
     EXPECT_CALL(*stateless_reader_->history_, remove_change_mock(change)).Times(1).
             WillOnce(Return(true));
 
-    stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
+    stateless_reader_->listener_->on_new_cache_change_added(stateless_reader_, change);
 
     destroy_manager_and_change(final_message_change);
 }
@@ -966,7 +966,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_bad_related_guid)
     EXPECT_CALL(*stateless_reader_->history_, remove_change_mock(change)).Times(1).
             WillOnce(Return(true));
 
-    stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
+    stateless_reader_->listener_->on_new_cache_change_added(stateless_reader_, change);
 }
 
 TEST_F(SecurityTest, discovered_participant_process_message_bad_related_sequence_number)
@@ -1011,7 +1011,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_bad_related_sequence
     EXPECT_CALL(*stateless_reader_->history_, remove_change_mock(change)).Times(1).
             WillOnce(Return(true));
 
-    stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
+    stateless_reader_->listener_->on_new_cache_change_added(stateless_reader_, change);
 }
 
 TEST_F(SecurityTest, discovered_participant_process_message_fail_process_handshake_final)
@@ -1062,7 +1062,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_fail_process_handsha
     info.guid = remote_participant_key;
     EXPECT_CALL(*participant_.getListener(), onParticipantAuthentication(_, info)).Times(1);
 
-    stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
+    stateless_reader_->listener_->on_new_cache_change_added(stateless_reader_, change);
 }
 
 TEST_F(SecurityTest, discovered_participant_process_message_ok_process_handshake_final)
@@ -1138,7 +1138,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_ok_process_handshake
     CacheChange_t* kx_change_to_remove = new CacheChange_t(500);
     expect_kx_exchange(kx_change_to_add, kx_change_to_remove);
 
-    stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
+    stateless_reader_->listener_->on_new_cache_change_added(stateless_reader_, change);
 
     volatile_writer_->listener_->onWriterChangeReceivedByAll(volatile_writer_, kx_change_to_remove);
 }

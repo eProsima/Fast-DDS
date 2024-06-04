@@ -55,7 +55,7 @@ public:
      * @param reader
      * @param change
      */
-    void onNewCacheChangeAdded(
+    void on_new_cache_change_added(
             RTPSReader* reader,
             const CacheChange_t* const change) override;
 
@@ -63,7 +63,7 @@ protected:
 
     /**
      * Process an incoming DATA(p).
-     * This method is called from PDPListener::onNewCacheChangeAdded() when an alive DATA(p) is received.
+     * This method is called from PDPListener::on_new_cache_change_added() when an alive DATA(p) is received.
      * Both the reader lock and the PDP lock are held when this method is called.
      *
      * @param  old_data     Pointer to the ParticipantProxyData currently stored in the database. May be nullptr, for a

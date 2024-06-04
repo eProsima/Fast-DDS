@@ -271,7 +271,7 @@ void TypeLookupReplyListener::check_get_type_dependencies_reply(
     typelookup_manager_->remove_async_get_type_request(request_id);
 }
 
-void TypeLookupReplyListener::onNewCacheChangeAdded(
+void TypeLookupReplyListener::on_new_cache_change_added(
         RTPSReader* reader,
         const CacheChange_t* const change_in)
 {

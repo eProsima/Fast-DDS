@@ -69,7 +69,7 @@ public:
      * @param reader
      * @param change
      */
-    void onNewCacheChangeAdded(
+    void on_new_cache_change_added(
             fastrtps::rtps::RTPSReader* reader,
             const fastrtps::rtps::CacheChange_t* const change) override;
 
@@ -115,7 +115,7 @@ public:
      * @param reader
      * @param change
      */
-    void onNewCacheChangeAdded(
+    void on_new_cache_change_added(
             fastrtps::rtps::RTPSReader* reader,
             const fastrtps::rtps::CacheChange_t* const change) override;
 

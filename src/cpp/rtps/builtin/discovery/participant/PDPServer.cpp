@@ -1781,7 +1781,7 @@ bool PDPServer::process_backup_discovery_database_restore(
             {
                 change_aux->writerGUID = change_aux->write_params.sample_identity().writer_guid();
                 change_aux->sequenceNumber = change_aux->write_params.sample_identity().sequence_number();
-                builtin_endpoints_->main_listener()->onNewCacheChangeAdded(endpoints->reader.reader_, change_aux);
+                builtin_endpoints_->main_listener()->on_new_cache_change_added(endpoints->reader.reader_, change_aux);
             }
         }
 
@@ -1821,7 +1821,7 @@ bool PDPServer::process_backup_discovery_database_restore(
                     && change_aux->kind == fastrtps::rtps::ALIVE
                     && it.value()["topic"] != discovery_db().virtual_topic())
             {
-                edp_pub_listener->onNewCacheChangeAdded(edp->publications_reader_.first, change_aux);
+                edp_pub_listener->on_new_cache_change_added(edp->publications_reader_.first, change_aux);
             }
         }
 
@@ -1857,7 +1857,7 @@ bool PDPServer::process_backup_discovery_database_restore(
                     && change_aux->kind == fastrtps::rtps::ALIVE
                     && it.value()["topic"] != discovery_db().virtual_topic())
             {
-                edp_sub_listener->onNewCacheChangeAdded(edp->subscriptions_reader_.first, change_aux);
+                edp_sub_listener->on_new_cache_change_added(edp->subscriptions_reader_.first, change_aux);
             }
         }
 
@@ -1918,7 +1918,7 @@ bool PDPServer::process_backup_restore_queue(
     //                 else
     //                 {
     //                     ddb::from_json(json_change, *change_aux);
-    //                     listener_->onNewCacheChangeAdded(endpoints->reader.reader_, change_aux);
+    //                     listener_->on_new_cache_change_added(endpoints->reader.reader_, change_aux);
     //                 }
 
     //             }
@@ -1932,7 +1932,7 @@ bool PDPServer::process_backup_restore_queue(
     //                 else
     //                 {
     //                     ddb::from_json(json_change, *change_aux);
-    //                     edp_pub_listener->onNewCacheChangeAdded(edp->publications_reader_.first, change_aux);
+    //                     edp_pub_listener->on_new_cache_change_added(edp->publications_reader_.first, change_aux);
     //                 }
     //             }
     //             else if (discovery_db_.is_reader(iHandle2GUID(instance_handle_aux)))
@@ -1945,7 +1945,7 @@ bool PDPServer::process_backup_restore_queue(
     //                 else
     //                 {
     //                     ddb::from_json(json_change, *change_aux);
-    //                     edp_sub_listener->onNewCacheChangeAdded(edp->subscriptions_reader_.first, change_aux);
+    //                     edp_sub_listener->on_new_cache_change_added(edp->subscriptions_reader_.first, change_aux);
     //                 }
     //             }
     //         }
@@ -1962,7 +1962,7 @@ bool PDPServer::process_backup_restore_queue(
     //                 else
     //                 {
     //                     ddb::from_json(json_change, *change_aux);
-    //                     listener_->onNewCacheChangeAdded(endpoints->reader.reader_, change_aux);
+    //                     listener_->on_new_cache_change_added(endpoints->reader.reader_, change_aux);
     //                 }
 
     //             }
@@ -1976,7 +1976,7 @@ bool PDPServer::process_backup_restore_queue(
     //                 else
     //                 {
     //                     ddb::from_json(json_change, *change_aux);
-    //                     edp_pub_listener->onNewCacheChangeAdded(edp->publications_reader_.first, change_aux);
+    //                     edp_pub_listener->on_new_cache_change_added(edp->publications_reader_.first, change_aux);
     //                 }
     //             }
     //             else if (discovery_db_.is_reader(iHandle2GUID(instance_handle_aux)))
@@ -1989,7 +1989,7 @@ bool PDPServer::process_backup_restore_queue(
     //                 else
     //                 {
     //                     ddb::from_json(json_change, *change_aux);
-    //                     edp_sub_listener->onNewCacheChangeAdded(edp->subscriptions_reader_.first, change_aux);
+    //                     edp_sub_listener->on_new_cache_change_added(edp->subscriptions_reader_.first, change_aux);
     //                 }
     //             }
     //         }

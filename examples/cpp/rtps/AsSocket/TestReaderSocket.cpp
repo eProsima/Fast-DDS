@@ -88,7 +88,7 @@ void TestReaderSocket::run()
     std::cin >> aux;
 }
 
-void TestReaderSocket::MyListener::onNewCacheChangeAdded(
+void TestReaderSocket::MyListener::on_new_cache_change_added(
         RTPSReader* reader,
         const CacheChange_t* const change)
 {

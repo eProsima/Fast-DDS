@@ -134,7 +134,7 @@ public:
      * @param reader
      * @param change
      */
-    void onNewCacheChangeAdded(
+    void on_new_cache_change_added(
             RTPSReader* reader,
             const CacheChange_t* const change) override;
 
@@ -179,7 +179,7 @@ public:
      * @param reader
      * @param change
      */
-    void onNewCacheChangeAdded(
+    void on_new_cache_change_added(
             RTPSReader* reader,
             const CacheChange_t* const change) override;
 

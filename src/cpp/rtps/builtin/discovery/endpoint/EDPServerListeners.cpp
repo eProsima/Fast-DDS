@@ -45,7 +45,7 @@ EDPServerPUBListener::EDPServerPUBListener(
 {
 }
 
-void EDPServerPUBListener::onNewCacheChangeAdded(
+void EDPServerPUBListener::on_new_cache_change_added(
         RTPSReader* reader,
         const CacheChange_t* const change_in)
 {
@@ -182,7 +182,7 @@ EDPServerSUBListener::EDPServerSUBListener(
 {
 }
 
-void EDPServerSUBListener::onNewCacheChangeAdded(
+void EDPServerSUBListener::on_new_cache_change_added(
         RTPSReader* reader,
         const CacheChange_t* const change_in)
 {

@@ -416,7 +416,7 @@ void TypeLookupRequestListener::answer_request(
     typelookup_manager_->reply_type_.deleteData(reply);
 }
 
-void TypeLookupRequestListener::onNewCacheChangeAdded(
+void TypeLookupRequestListener::on_new_cache_change_added(
         RTPSReader* reader,
         const CacheChange_t* const changeIN)
 {

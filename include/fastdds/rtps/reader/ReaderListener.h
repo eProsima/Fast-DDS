@@ -69,7 +69,7 @@ public:
      * To remove the data call the remove_change method of the ReaderHistory.
      * reader->get_history()->remove_change((CacheChange_t*)change).
      */
-    virtual void onNewCacheChangeAdded(
+    virtual void on_new_cache_change_added(
             RTPSReader* reader,
             const CacheChange_t* const change)
     {
@@ -168,7 +168,7 @@ public:
      * @param [in]  last_sequence                     Sequence number of the last change made available.
      *                                                It will always be greater or equal than @c first_sequence.
      * @param [out] should_notify_individual_changes  Whether the individual changes should be notified by means of
-     *                                                @c onNewCacheChangeAdded.
+     *                                                @c on_new_cache_change_added.
      */
     virtual void on_data_available(
             RTPSReader* reader,

@@ -65,7 +65,7 @@ public:
         {
         }
 
-        void onNewCacheChangeAdded(
+        void on_new_cache_change_added(
                 eprosima::fastrtps::rtps::RTPSReader* reader,
                 const eprosima::fastrtps::rtps::CacheChange_t* const change) override;
         uint32_t m_received;
