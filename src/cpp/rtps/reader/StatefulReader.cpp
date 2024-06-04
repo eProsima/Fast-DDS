@@ -1581,7 +1581,7 @@ void StatefulReader::send_acknack(
     }
 
     // ACKNACK for datasharing writers is done for changes with status READ, not on reception
-    // This is handled in change_read_by_user
+    // This is handled in end_sample_access_nts
     if (writer->is_datasharing_writer())
     {
         return;
