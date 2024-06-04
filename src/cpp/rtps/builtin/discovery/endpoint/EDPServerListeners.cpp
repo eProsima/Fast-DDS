@@ -153,7 +153,7 @@ void EDPServerPUBListener::notify_discoverydatabase(
         else
         {
             // If the database doesn't take the ownership, then return the CacheChante_t to the pool.
-            reader->releaseCache(change);
+            reader->release_cache(change);
         }
     }
 
@@ -292,7 +292,7 @@ void EDPServerSUBListener::notify_discoverydatabase(
         else
         {
             // If the database doesn't take the ownership, then return the CacheChante_t to the pool.
-            reader->releaseCache(change);
+            reader->release_cache(change);
         }
     }
 

@@ -155,7 +155,7 @@ History::iterator ReaderHistory::remove_change_nts(
     base_reader->change_removed_by_history(change);
     if (release)
     {
-        base_reader->releaseCache(change);
+        base_reader->release_cache(change);
     }
 
     return ret_val;
@@ -260,13 +260,13 @@ bool ReaderHistory::do_reserve_cache(
         CacheChange_t** change,
         uint32_t size)
 {
-    return BaseReader::downcast(mp_reader)->reserveCache(change, size);
+    return BaseReader::downcast(mp_reader)->reserve_cache(change, size);
 }
 
 void ReaderHistory::do_release_cache(
         CacheChange_t* ch)
 {
-    BaseReader::downcast(mp_reader)->releaseCache(ch);
+    BaseReader::downcast(mp_reader)->release_cache(ch);
 }
 
 } /* namespace rtps */

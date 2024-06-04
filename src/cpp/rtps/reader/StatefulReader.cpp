@@ -731,11 +731,11 @@ bool StatefulReader::processDataFragMsg(
             if (!history_->get_change(change_to_add->sequenceNumber, change_to_add->writerGUID, &work_change))
             {
                 // A new change should be reserved
-                if (reserveCache(&work_change, sampleSize))
+                if (reserve_cache(&work_change, sampleSize))
                 {
                     if (work_change->serializedPayload.max_size < sampleSize)
                     {
-                        releaseCache(work_change);
+                        release_cache(work_change);
                         work_change = nullptr;
                     }
                     else
@@ -769,7 +769,7 @@ bool StatefulReader::processDataFragMsg(
                     EPROSIMA_LOG_INFO(RTPS_MSG_IN,
                             IDSTRING "MessageReceiver not add change " << change_created->sequenceNumber.to64long());
 
-                    releaseCache(change_created);
+                    release_cache(change_created);
                     work_change = nullptr;
                 }
             }

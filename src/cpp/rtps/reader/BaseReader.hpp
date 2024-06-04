@@ -152,14 +152,14 @@ public:
      * @param dataCdrSerializedSize Size of the Cache.
      * @return True if correctly reserved.
      */
-    bool reserveCache(
+    bool reserve_cache(
             fastrtps::rtps::CacheChange_t** change,
             uint32_t dataCdrSerializedSize);
 
     /**
      * Release a cacheChange.
      */
-    void releaseCache(
+    void release_cache(
             fastrtps::rtps::CacheChange_t* change);
 
     /**

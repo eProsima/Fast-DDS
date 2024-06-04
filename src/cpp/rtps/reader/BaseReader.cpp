@@ -102,7 +102,7 @@ BaseReader::~BaseReader()
 
     for (auto it = history_->changesBegin(); it != history_->changesEnd(); ++it)
     {
-        releaseCache(*it);
+        release_cache(*it);
     }
 
     delete history_state_;
@@ -197,7 +197,7 @@ BaseReader* BaseReader::downcast(
     return static_cast<BaseReader*>(endpoint);
 }
 
-bool BaseReader::reserveCache(
+bool BaseReader::reserve_cache(
         fastrtps::rtps::CacheChange_t** change,
         uint32_t dataCdrSerializedSize)
 {
@@ -224,7 +224,7 @@ bool BaseReader::reserveCache(
     return true;
 }
 
-void BaseReader::releaseCache(
+void BaseReader::release_cache(
         fastrtps::rtps::CacheChange_t* change)
 {
     std::lock_guard<decltype(mp_mutex)> guard(mp_mutex);

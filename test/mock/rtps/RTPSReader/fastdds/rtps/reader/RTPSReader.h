@@ -107,9 +107,9 @@ public:
 
     MOCK_METHOD0(get_history_mock, ReaderHistory* ());
 
-    MOCK_METHOD2(reserveCache, bool (CacheChange_t** a_change, uint32_t dataCdrSerializedSize));
+    MOCK_METHOD2(reserve_cache, bool (CacheChange_t** a_change, uint32_t dataCdrSerializedSize));
 
-    MOCK_METHOD1(releaseCache, void (CacheChange_t* a_change));
+    MOCK_METHOD1(release_cache, void (CacheChange_t* a_change));
 
     MOCK_METHOD0(expects_inline_qos, bool());
 

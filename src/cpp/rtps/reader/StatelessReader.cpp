@@ -748,7 +748,7 @@ bool StatelessReader::processDataFragMsg(
                         else
                         {
                             // Release change, and let it be reserved later
-                            releaseCache(work_change);
+                            release_cache(work_change);
                             work_change = nullptr;
                         }
                     }
@@ -757,11 +757,11 @@ bool StatelessReader::processDataFragMsg(
                 // Check if a new change should be reserved
                 if (work_change == nullptr)
                 {
-                    if (reserveCache(&work_change, sampleSize))
+                    if (reserve_cache(&work_change, sampleSize))
                     {
                         if (work_change->serializedPayload.max_size < sampleSize)
                         {
-                            releaseCache(work_change);
+                            release_cache(work_change);
                             work_change = nullptr;
                         }
                         else
@@ -806,7 +806,7 @@ bool StatelessReader::processDataFragMsg(
                     if (filtered_out)
                     {
                         update_last_notified(change_completed->writerGUID, change_completed->sequenceNumber);
-                        releaseCache(change_completed);
+                        release_cache(change_completed);
                     }
                     else if (!change_received(change_completed))
                     {
@@ -815,7 +815,7 @@ bool StatelessReader::processDataFragMsg(
                                 change_completed->sequenceNumber.to64long());
 
                         // Release CacheChange_t.
-                        releaseCache(change_completed);
+                        release_cache(change_completed);
                     }
                 }
             }

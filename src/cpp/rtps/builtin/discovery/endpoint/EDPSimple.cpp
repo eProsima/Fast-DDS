@@ -267,7 +267,7 @@ void EDPSimple::processPersistentData(
 
                 CacheChange_t* change_to_add = nullptr;
 
-                if (!reader.first->reserveCache(&change_to_add, change->serializedPayload.length)) //Reserve a new cache from the corresponding cache pool
+                if (!reader.first->reserve_cache(&change_to_add, change->serializedPayload.length)) //Reserve a new cache from the corresponding cache pool
                 {
                     EPROSIMA_LOG_ERROR(RTPS_EDP, "Problem reserving CacheChange in EDPServer reader");
                     return;
@@ -279,7 +279,7 @@ void EDPSimple::processPersistentData(
                         << change->serializedPayload.length << " bytes and max size in EDPServer reader"
                         << " is " << change_to_add->serializedPayload.max_size);
 
-                    reader.first->releaseCache(change_to_add);
+                    reader.first->release_cache(change_to_add);
                     return;
                 }
 
@@ -287,7 +287,7 @@ void EDPSimple::processPersistentData(
                 {
                     EPROSIMA_LOG_INFO(RTPS_EDP, "EDPServer couldn't process database data not add change "
                         << change_to_add->sequenceNumber);
-                    reader.first->releaseCache(change_to_add);
+                    reader.first->release_cache(change_to_add);
                 }
 
                 // change_to_add would be released within change_received
