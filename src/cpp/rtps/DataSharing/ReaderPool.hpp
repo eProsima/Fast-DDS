@@ -66,7 +66,18 @@ public:
         return false;
     }
 
-    bool get_datasharing_change(
+
+    /**
+     * Prepares and fills the change in the datasharing protocol.
+     *
+     * If the payload is not owned by @c data_owner, it is assumed to be an intraprocess writer and the
+     * change is direclty read from the shared history.
+     *
+     * @param data The serialized payload data to be used.
+     * @param data_owner A pointer to the data owner.
+     * @param cache_change The cache change to be prepared.
+     */
+    void get_datasharing_change(
             SerializedPayload_t& data,
             IPayloadPool*& data_owner,
             CacheChange_t& cache_change)
@@ -80,7 +91,6 @@ public:
             // No need to check validity, on intraprocess there is no override of payloads
             read_from_shared_history(cache_change, payload);
         }
-        return true;
     }
 
     bool release_payload(

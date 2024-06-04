@@ -47,18 +47,14 @@ public:
      * In both cases, the received @c size will be for the whole serialized payload.
      *
      * @param [in]     size          Number of bytes required for the serialized payload.
-     * @param [in,out] cache_change  Cache change to assign the payload to
+     * @param [in,out] payload       Payload of the cache change used in the operation
      *
      * @returns whether the operation succeeded or not
      *
-     * @pre Fields @c writerGUID and @c sequenceNumber of @c cache_change are either:
-     *     @li Both equal to @c unknown (meaning a writer is creating a new change)
-     *     @li Both different from @c unknown (meaning a reader has received the first fragment of a cache change)
-     *
      * @post
-     *     @li Field @c cache_change.payload_owner equals this
-     *     @li Field @c serializedPayload.data points to a buffer of at least @c size bytes
-     *     @li Field @c serializedPayload.max_size is greater than or equal to @c size
+     *     @li Field @c payload.payload_owner equals this
+     *     @li Field @c payload.data points to a buffer of at least @c size bytes
+     *     @li Field @c payload.max_size is greater than or equal to @c size
      */
     virtual bool get_payload(
             uint32_t size,
@@ -71,7 +67,7 @@ public:
      *
      * @param [in,out] data          Serialized payload received
      * @param [in,out] data_owner    Payload pool owning incoming data
-     * @param [in,out] cache_change  Cache change to assign the payload to
+     * @param [in,out] payload  Cache change to assign the payload to
      *
      * @returns whether the operation succeeded or not
      *
@@ -88,16 +84,12 @@ public:
      * @warning @c data fields can only be changed when @c data_owner is @c nullptr. If a value different from
      * @c nullptr is received all fields in @c data should be left unchanged.
      *
-     * @pre
-     *     @li Field @c cache_change.writerGUID is not @c unknown
-     *     @li Field @c cache_change.sequenceNumber is not @c unknown
-     *
      * @post
-     *     @li Field @c cache_change.payload_owner equals this
-     *     @li Field @c cache_change.serializedPayload.data points to a buffer of at least @c data.length bytes
-     *     @li Field @c cache_change.serializedPayload.length is equal to @c data.length
-     *     @li Field @c cache_change.serializedPayload.max_size is greater than or equal to @c data.length
-     *     @li Content of @c cache_change.serializedPayload.data is the same as @c data.data
+     *     @li Field @c payload.payload_owner equals this
+     *     @li Field @c payload.data points to a buffer of at least @c data.length bytes
+     *     @li Field @c payload.length is equal to @c data.length
+     *     @li Field @c payload.max_size is greater than or equal to @c data.length
+     *     @li Content of @c payload.data is the same as @c data.data
      */
     virtual bool get_payload(
             SerializedPayload_t& data,
@@ -109,13 +101,13 @@ public:
      *
      * This method will be called when a cache change is removed from a history.
      *
-     * @param [in,out] cache_change  Cache change to assign the payload to
+     * @param [in,out] payload  Cache change to assign the payload to
      *
      * @returns whether the operation succeeded or not
      *
-     * @pre @li Field @c payload_owner of @c cache_change equals this
+     * @pre @li Field @c payload_owner of @c payload equals this
      *
-     * @post @li Field @c payload_owner of @c cache_change is @c nullptr
+     * @post @li Field @c payload_owner of @c payload is @c nullptr
      */
     virtual bool release_payload(
             SerializedPayload_t& payload) = 0;
