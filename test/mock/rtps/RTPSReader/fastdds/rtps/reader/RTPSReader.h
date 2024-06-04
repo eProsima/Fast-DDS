@@ -19,9 +19,6 @@
 #ifndef _FASTDDS_RTPS_READER_RTPSREADER_H_
 #define _FASTDDS_RTPS_READER_RTPSREADER_H_
 
-// Trick: this includes both RTPSReader and BaseReader
-#define RTPS_READER__BASEREADER_HPP
-
 #include <gmock/gmock.h>
 
 #include <fastdds/rtps/attributes/ReaderAttributes.h>
@@ -67,20 +64,37 @@ public:
     virtual bool matched_writer_is_matched(
             const GUID_t& wguid) = 0;
 
-    const GUID_t& getGuid()
+    virtual void assert_writer_liveliness(
+            const GUID_t& wguid) = 0;
+
+    virtual bool is_in_clean_state() = 0;
+
+    virtual ReaderListener* get_listener() const = 0;
+
+    virtual bool set_listener(
+            ReaderListener* listener) = 0;
+
+    ReaderHistory* get_history()
     {
-        return m_guid;
+        get_history_mock();
+        return history_;
     }
 
-    ReaderListener* get_listener() const
+    virtual CacheChange_t* next_unread_cache()
     {
-        return listener_;
+        return nullptr;
     }
 
-    bool set_listener(
-            ReaderListener* listener)
+    virtual CacheChange_t* next_untaken_cache()
     {
-        listener_ = listener;
+        return nullptr;
+    }
+
+    virtual bool is_sample_valid(
+            const void* /*data*/,
+            const GUID_t& /*writer*/,
+            const SequenceNumber_t& /*sn*/) const
+    {
         return true;
     }
 
@@ -100,87 +114,39 @@ public:
         return true;
     }
 
+    virtual void set_enabled_statistics_writers_mask(
+            uint32_t /*enabled_writers*/)
+    {
+    }
+
+    template<typename T>
+    bool get_connections(
+            T& /*connection_list*/)
+    {
+        return true;
+    }
+
 #endif // FASTDDS_STATISTICS
 
     // *INDENT-OFF* Uncrustify makes a mess with MOCK_METHOD macros
-    MOCK_METHOD1(change_removed_by_history, bool(CacheChange_t* change));
+    MOCK_METHOD0(expects_inline_qos, bool());
 
     MOCK_METHOD0(get_history_mock, ReaderHistory* ());
 
-    MOCK_METHOD2(reserve_cache, bool (CacheChange_t** a_change, uint32_t dataCdrSerializedSize));
+    MOCK_CONST_METHOD0(get_content_filter, eprosima::fastdds::rtps::IReaderDataFilter* ());
 
-    MOCK_METHOD1(release_cache, void (CacheChange_t* a_change));
-
-    MOCK_METHOD0(expects_inline_qos, bool());
+    MOCK_METHOD1(set_content_filter, void (eprosima::fastdds::rtps::IReaderDataFilter* filter));
 
     MOCK_METHOD1(wait_for_unread_cache, bool (const eprosima::fastrtps::Duration_t& timeout));
 
-    MOCK_METHOD0(get_unread_count, uint64_t());
+    MOCK_CONST_METHOD0(get_unread_count, uint64_t());
 
     MOCK_METHOD1(get_unread_count, uint64_t(bool));
-
-    MOCK_METHOD1(set_content_filter, void (eprosima::fastdds::rtps::IReaderDataFilter* filter));
 
     // *INDENT-ON*
 
 
-    virtual bool process_data_msg(
-            CacheChange_t*)
-    {
-        return true;
-    }
-
-    virtual bool process_data_frag_msg(
-            CacheChange_t*,
-            uint32_t,
-            uint32_t,
-            uint16_t)
-    {
-        return true;
-    }
-
-    virtual bool process_heartbeat_msg(
-            const GUID_t&,
-            uint32_t,
-            const SequenceNumber_t&,
-            const SequenceNumber_t&,
-            bool,
-            bool)
-    {
-        return true;
-    }
-
-    virtual bool process_gap_msg(
-            const GUID_t&,
-            const SequenceNumber_t&,
-            const SequenceNumberSet_t&)
-    {
-        return true;
-    }
-
-    virtual bool change_removed_by_history(
-            CacheChange_t*,
-            WriterProxy*)
-    {
-        return true;
-    }
-
-    virtual CacheChange_t* next_unread_cache()
-    {
-        return nullptr;
-    }
-
-    virtual CacheChange_t* next_untaken_cache()
-    {
-        return nullptr;
-    }
-
-    virtual bool is_in_clean_state()
-    {
-        return true;
-    }
-
-    void setHistory(
+    void set_history(
             ReaderHistory* history)
     {
         history->mp_reader = this;
@@ -188,83 +154,11 @@ public:
         history_ = history;
     }
 
-    ReaderHistory* get_history()
-    {
-        get_history_mock();
-        return history_;
-    }
-
-    bool is_sample_valid(
-            const void* /*data*/,
-            const GUID_t& /*writer*/,
-            const SequenceNumber_t& /*sn*/) const
-    {
-        return true;
-    }
-
-    virtual bool begin_sample_access_nts(
-            CacheChange_t* /*change*/,
-            WriterProxy*& /*wp*/,
-            bool& /*is_future_change*/)
-    {
-        return true;
-    }
-
-    virtual void end_sample_access_nts(
-            CacheChange_t* /*change*/,
-            WriterProxy*& /*wp*/,
-            bool /*mark_as_read*/)
-    {
-    }
-
     ReaderHistory* history_;
-
-    ReaderListener* listener_;
-
-    GUID_t m_guid;
 };
 
 } // namespace rtps
 } // namespace fastrtps
-
-namespace fastdds {
-namespace rtps {
-
-class BaseReader : public fastrtps::rtps::RTPSReader
-{
-public:
-
-    BaseReader()
-        : fastrtps::rtps::RTPSReader()
-    {
-    }
-
-    BaseReader(
-            fastrtps::rtps::ReaderHistory* history,
-            fastrtps::RecursiveTimedMutex* mutex)
-        : fastrtps::rtps::RTPSReader(history, mutex)
-    {
-    }
-
-    virtual ~BaseReader() = default;
-
-    static BaseReader* downcast(
-            fastrtps::rtps::RTPSReader* reader)
-    {
-        return static_cast<BaseReader*>(reader);
-    }
-
-    static BaseReader* downcast(
-            fastrtps::rtps::Endpoint* endpoint)
-    {
-        return static_cast<BaseReader*>(endpoint);
-    }
-
-};
-
-}  // namespace rtps
-}  // namespace fastdds
-
 } // namespace eprosima
 
 #endif // _FASTDDS_RTPS_READER_RTPSREADER_H_

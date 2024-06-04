@@ -80,25 +80,34 @@ public:
 
     virtual ~RTPSReaderMock() = default;
 
-    virtual bool matched_writer_add(
-            const eprosima::fastrtps::rtps::WriterProxyData&)
+    bool matched_writer_add(
+            const eprosima::fastrtps::rtps::WriterProxyData&) override
     {
         return true;
     }
 
-    virtual bool matched_writer_remove(
+    bool matched_writer_remove(
             const eprosima::fastrtps::rtps::GUID_t&,
-            bool)
+            bool) override
     {
         return true;
     }
 
-    virtual bool matched_writer_is_matched(
-            const eprosima::fastrtps::rtps::GUID_t&)
+    bool matched_writer_is_matched(
+            const eprosima::fastrtps::rtps::GUID_t&) override
     {
         return true;
     }
 
+    void assert_writer_liveliness(
+            const eprosima::fastrtps::rtps::GUID_t&) override
+    {
+    }
+
+    bool is_in_clean_state() override
+    {
+        return true;
+    }
 };
 
 class RTPSWriterMock : public eprosima::fastrtps::rtps::RTPSWriter
@@ -968,7 +977,7 @@ void verify_expectations_on_subscription_matched (
 {
     fastrtps::rtps::MatchingInfo status;
 
-    RTPSDomain::reader_->listener_->on_reader_matched(nullptr, status);
+    RTPSDomain::reader_->get_listener()->on_reader_matched(nullptr, status);
     Mock::VerifyAndClearExpectations(&datareader_listener_);
     Mock::VerifyAndClearExpectations(&subscriber_listener_);
     Mock::VerifyAndClearExpectations(&participant_listener_);
@@ -1088,7 +1097,7 @@ void verify_expectations_on_liveliness_changed (
 {
     LivelinessChangedStatus status;
 
-    RTPSDomain::reader_->listener_->on_liveliness_changed(nullptr, status);
+    RTPSDomain::reader_->get_listener()->on_liveliness_changed(nullptr, status);
     Mock::VerifyAndClearExpectations(&datareader_listener_);
     Mock::VerifyAndClearExpectations(&subscriber_listener_);
     Mock::VerifyAndClearExpectations(&participant_listener_);
@@ -1208,7 +1217,7 @@ void verify_expectations_on_requested_incompatible_qos (
 {
     PolicyMask status;
 
-    RTPSDomain::reader_->listener_->on_requested_incompatible_qos(nullptr, status);
+    RTPSDomain::reader_->get_listener()->on_requested_incompatible_qos(nullptr, status);
     Mock::VerifyAndClearExpectations(&datareader_listener_);
     Mock::VerifyAndClearExpectations(&subscriber_listener_);
     Mock::VerifyAndClearExpectations(&participant_listener_);
@@ -1335,7 +1344,7 @@ void verify_expectations_on_data_available (
     EXPECT_CALL(*RTPSDomain::reader_->history_, get_change(_, _, _))
             .WillRepeatedly(testing::DoAll(testing::SetArgPointee<2>(&change), testing::Return(true)));
 
-    RTPSDomain::reader_->listener_->on_data_available(nullptr, change.writerGUID, seq, seq, notify_individual);
+    RTPSDomain::reader_->get_listener()->on_data_available(nullptr, change.writerGUID, seq, seq, notify_individual);
 
     Mock::VerifyAndClearExpectations(&datareader_listener_);
     Mock::VerifyAndClearExpectations(&subscriber_listener_);

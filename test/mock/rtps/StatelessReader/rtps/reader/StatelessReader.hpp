@@ -19,7 +19,7 @@
 #ifndef RTPS_READER__STATELESSREADER_HPP
 #define RTPS_READER__STATELESSREADER_HPP
 
-#include <fastdds/rtps/reader/RTPSReader.h>
+#include <rtps/reader/BaseReader.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -46,6 +46,9 @@ public:
 
     MOCK_METHOD1 (matched_writer_is_matched, bool(const GUID_t& writer_guid));
 
+    MOCK_METHOD1(assert_writer_liveliness, void(const GUID_t& writer_guid));
+
+    MOCK_METHOD0(is_in_clean_state, bool());
 };
 
 } // namespace rtps
