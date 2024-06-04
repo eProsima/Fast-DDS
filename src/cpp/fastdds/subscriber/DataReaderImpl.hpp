@@ -417,7 +417,7 @@ protected:
 
         void onReaderMatched(
                 fastrtps::rtps::RTPSReader* reader,
-                const SubscriptionMatchedStatus& info) override;
+                const fastrtps::rtps::MatchingInfo& info) override;
 
         void on_data_available(
                 fastrtps::rtps::RTPSReader* reader,
@@ -450,9 +450,6 @@ protected:
 
         DataReaderImpl* data_reader_;
 
-    private:
-
-        using fastrtps::rtps::ReaderListener::onReaderMatched;
     }
     reader_listener_;
 
@@ -575,7 +572,7 @@ protected:
             bool trigger_value);
 
     void update_subscription_matched_status(
-            const SubscriptionMatchedStatus& status);
+            const fastrtps::rtps::MatchingInfo& status);
 
     bool on_data_available(
             const fastrtps::rtps::GUID_t& writer_guid,

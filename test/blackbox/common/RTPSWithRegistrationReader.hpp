@@ -90,7 +90,7 @@ private:
 
         void onReaderMatched(
                 eprosima::fastrtps::rtps::RTPSReader* /*reader*/,
-                eprosima::fastrtps::rtps::MatchingInfo& info) override
+                const eprosima::fastrtps::rtps::MatchingInfo& info) override
         {
             if (info.status == eprosima::fastrtps::rtps::MATCHED_MATCHING)
             {
@@ -112,8 +112,6 @@ private:
         }
 
     private:
-
-        using eprosima::fastrtps::rtps::ReaderListener::onReaderMatched;
 
         Listener& operator =(
                 const Listener&) = delete;

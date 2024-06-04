@@ -941,7 +941,7 @@ void DataReaderImpl::InnerDataReaderListener::on_data_available(
 
 void DataReaderImpl::InnerDataReaderListener::onReaderMatched(
         RTPSReader* /*reader*/,
-        const SubscriptionMatchedStatus& info)
+        const MatchingInfo& info)
 {
     data_reader_->update_subscription_matched_status(info);
 
@@ -1158,9 +1158,9 @@ bool DataReaderImpl::on_new_cache_change_added(
 }
 
 void DataReaderImpl::update_subscription_matched_status(
-        const SubscriptionMatchedStatus& status)
+        const MatchingInfo& status)
 {
-    auto count_change = status.current_count_change;
+    auto count_change = status.status == MATCHED_MATCHING ? 1 : -1;
     subscription_matched_status_.current_count += count_change;
     subscription_matched_status_.current_count_change += count_change;
     if (count_change > 0)
@@ -1168,11 +1168,11 @@ void DataReaderImpl::update_subscription_matched_status(
         subscription_matched_status_.total_count += count_change;
         subscription_matched_status_.total_count_change += count_change;
     }
-    subscription_matched_status_.last_publication_handle = status.last_publication_handle;
+    subscription_matched_status_.last_publication_handle = status.remoteEndpointGuid;
 
     if (count_change < 0)
     {
-        history_.writer_not_alive(iHandle2GUID(status.last_publication_handle));
+        history_.writer_not_alive(status.remoteEndpointGuid);
         try_notify_read_conditions();
     }
 }

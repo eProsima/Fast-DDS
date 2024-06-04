@@ -345,11 +345,6 @@ public:
     }
 
 #endif // if HAVE_SECURITY
-    const fastdds::dds::SubscriptionMatchedStatus& update_subscription_matched_status(
-            const GUID_t& reader_guid,
-            const GUID_t& writer_guid,
-            int change);
-
     const fastdds::dds::PublicationMatchedStatus& update_publication_matched_status(
             const GUID_t& reader_guid,
             const GUID_t& writer_guid,
@@ -404,10 +399,8 @@ private:
     using pool_allocator_t =
             foonathan::memory::memory_pool<foonathan::memory::node_pool, foonathan::memory::heap_allocator>;
 
-    pool_allocator_t reader_status_allocator_;
     pool_allocator_t writer_status_allocator_;
 
-    foonathan::memory::map<GUID_t, fastdds::dds::SubscriptionMatchedStatus, pool_allocator_t> reader_status_;
     foonathan::memory::map<GUID_t, fastdds::dds::PublicationMatchedStatus, pool_allocator_t> writer_status_;
 };
 

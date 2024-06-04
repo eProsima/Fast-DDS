@@ -966,7 +966,7 @@ void verify_expectations_on_subscription_matched (
         StrictMock<CustomSubscriberListener>& subscriber_listener_,
         StrictMock<CustomDataReaderListener>& datareader_listener_)
 {
-    SubscriptionMatchedStatus status;
+    fastrtps::rtps::MatchingInfo status;
 
     RTPSDomain::reader_->listener_->onReaderMatched(nullptr, status);
     Mock::VerifyAndClearExpectations(&datareader_listener_);

@@ -55,20 +55,7 @@ public:
      */
     virtual void onReaderMatched(
             RTPSReader* reader,
-            MatchingInfo& info)
-    {
-        static_cast<void>(reader);
-        static_cast<void>(info);
-    }
-
-    /**
-     * This method is invoked when a new reader matches
-     * @param reader Matching reader
-     * @param info Subscription matching information
-     */
-    virtual void onReaderMatched(
-            RTPSReader* reader,
-            const fastdds::dds::SubscriptionMatchedStatus& info)
+            const MatchingInfo& info)
     {
         static_cast<void>(reader);
         static_cast<void>(info);

@@ -63,7 +63,7 @@ public:
                 const eprosima::fastrtps::rtps::CacheChange_t* const change) override;
         void onReaderMatched(
                 eprosima::fastrtps::rtps::RTPSReader*,
-                eprosima::fastrtps::rtps::MatchingInfo& info) override
+                const eprosima::fastrtps::rtps::MatchingInfo& info) override
         {
             if (info.status == eprosima::fastrtps::rtps::MATCHED_MATCHING)
             {
@@ -74,9 +74,6 @@ public:
         uint32_t n_received;
         uint32_t n_matched;
 
-    private:
-
-        using eprosima::fastrtps::rtps::ReaderListener::onReaderMatched;
     }
     m_listener;
 };
