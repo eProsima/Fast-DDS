@@ -60,7 +60,6 @@ public:
 
     bool get_payload(
             SerializedPayload_t& data,
-            IPayloadPool*& data_owner,
             SerializedPayload_t& payload) override;
 
     bool release_payload(

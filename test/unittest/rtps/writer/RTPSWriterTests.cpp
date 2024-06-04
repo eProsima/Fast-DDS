@@ -51,10 +51,9 @@ public:
 
     bool get_payload(
             SerializedPayload_t& data,
-            IPayloadPool*& data_owner,
             SerializedPayload_t& payload) override
     {
-        bool result = get_payload_delegate(data, data_owner, payload);
+        bool result = get_payload_delegate(data, payload);
         if (result)
         {
             payload.payload_owner(this);
@@ -62,8 +61,8 @@ public:
         return result;
     }
 
-    MOCK_METHOD3(get_payload_delegate,
-            bool(SerializedPayload_t & data, IPayloadPool * &data_owner, SerializedPayload_t & payload));
+    MOCK_METHOD2(get_payload_delegate,
+            bool(SerializedPayload_t & data, SerializedPayload_t & payload));
 
     bool release_payload (
             SerializedPayload_t& payload) override

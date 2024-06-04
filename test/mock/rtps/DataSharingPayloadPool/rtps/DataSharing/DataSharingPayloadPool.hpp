@@ -49,16 +49,15 @@ public:
 
     bool get_payload(
             SerializedPayload_t& data,
-            IPayloadPool*& data_owner,
             SerializedPayload_t& payload) override
     {
         payload.data = data.data;
         payload.max_size = data.max_size;
         payload.length = data.length;
         payload.payload_owner(this);
-        if (data_owner == nullptr)
+        if (data.payload_owner() == nullptr)
         {
-            data_owner = this;
+            data.payload_owner(this);
         }
         return true;
     }

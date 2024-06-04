@@ -52,10 +52,9 @@ public:
 
     bool get_payload(
             SerializedPayload_t& data,
-            IPayloadPool*& data_owner,
             SerializedPayload_t& payload) override
     {
-        if (data_owner == this)
+        if (data.payload_owner() == this)
         {
             payload.data = data.data;
             payload.length = data.length;
@@ -73,18 +72,16 @@ public:
      * change is direclty read from the shared history.
      *
      * @param data The serialized payload data to be used.
-     * @param data_owner A pointer to the data owner.
      * @param cache_change The cache change to be prepared.
      */
     void get_datasharing_change(
             SerializedPayload_t& data,
-            IPayloadPool*& data_owner,
             CacheChange_t& cache_change)
     {
-        if (!get_payload(data, data_owner, cache_change.serializedPayload))
+        if (!get_payload(data, cache_change.serializedPayload))
         {
             // If owner is not this, then it must be an intraprocess datasharing writer
-            assert(nullptr != dynamic_cast<DataSharingPayloadPool*>(data_owner));
+            assert(nullptr != dynamic_cast<DataSharingPayloadPool*>(data.payload_owner()));
             PayloadNode* payload = PayloadNode::get_from_data(data.data);
 
             // No need to check validity, on intraprocess there is no override of payloads

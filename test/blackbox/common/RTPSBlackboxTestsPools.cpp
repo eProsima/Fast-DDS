@@ -105,14 +105,13 @@ public:
 
     bool get_payload(
             SerializedPayload_t& data,
-            IPayloadPool*& data_owner,
             SerializedPayload_t& payload) override
     {
         std::lock_guard<std::mutex> lock(mutex_);
 
         octet* payload_buff = data.data;
 
-        if (data_owner == this)
+        if (data.payload_owner() == this)
         {
             uint32_t& refs = all_payloads_[payload_buff];
             EXPECT_LT(0u, refs);
@@ -135,14 +134,14 @@ public:
         ++num_copies_;
         payload.copy(&data, true);
 
-        if (data_owner == nullptr)
+        if (data.payload_owner() == nullptr)
         {
             payload_buff = payload.data;
             uint32_t& refs = all_payloads_[payload_buff];
             ++refs;
             ++num_reserves_;
 
-            data_owner = this;
+            data.payload_owner(this);
             data.data = payload_buff;
             data.max_size = payload.max_size;
         }

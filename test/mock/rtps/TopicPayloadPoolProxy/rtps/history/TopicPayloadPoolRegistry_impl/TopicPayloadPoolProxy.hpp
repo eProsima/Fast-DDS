@@ -94,10 +94,9 @@ public:
 
     bool get_payload(
             SerializedPayload_t& data,
-            IPayloadPool*& data_owner,
             SerializedPayload_t& payload) override
     {
-        return inner_pool_->get_payload(data, data_owner, payload);
+        return inner_pool_->get_payload(data, payload);
     }
 
     bool release_payload(

@@ -39,7 +39,6 @@ public:
 
     bool get_payload(
             SerializedPayload_t& data,
-            IPayloadPool*& /* data_owner */,
             SerializedPayload_t& payload) override
     {
         payload.reserve(payload_size_);

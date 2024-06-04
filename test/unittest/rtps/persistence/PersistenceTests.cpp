@@ -40,7 +40,6 @@ class NoOpPayloadPool : public IPayloadPool
 
     virtual bool get_payload(
             SerializedPayload_t&,
-            IPayloadPool*&,
             SerializedPayload_t&) override
     {
         return true;

@@ -131,8 +131,7 @@ struct SampleLoanManager
         // Increment references of input payload
         CacheChange_t tmp;
         tmp.copy_not_memcpy(change);
-        item->owner = change->payload_owner();
-        change->payload_owner()->get_payload(change->serializedPayload, item->owner, tmp.serializedPayload);
+        change->payload_owner()->get_payload(change->serializedPayload, tmp.serializedPayload);
         item->owner = tmp.payload_owner();
         item->payload = tmp.serializedPayload;
         tmp.payload_owner(nullptr);
