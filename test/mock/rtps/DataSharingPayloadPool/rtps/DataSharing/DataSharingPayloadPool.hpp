@@ -38,24 +38,24 @@ public:
 
     bool get_payload(
             uint32_t size,
-            CacheChange_t& cache_change) override
+            SerializedPayload_t& payload) override
     {
-        cache_change.serializedPayload.data = new octet[size];
-        cache_change.serializedPayload.max_size = size;
-        cache_change.serializedPayload.length = size;
-        cache_change.payload_owner(this);
+        payload.data = new octet[size];
+        payload.max_size = size;
+        payload.length = size;
+        payload.payload_owner(this);
         return true;
     }
 
     bool get_payload(
             SerializedPayload_t& data,
             IPayloadPool*& data_owner,
-            CacheChange_t& cache_change) override
+            SerializedPayload_t& payload) override
     {
-        cache_change.serializedPayload.data = data.data;
-        cache_change.serializedPayload.max_size = data.max_size;
-        cache_change.serializedPayload.length = data.length;
-        cache_change.payload_owner(this);
+        payload.data = data.data;
+        payload.max_size = data.max_size;
+        payload.length = data.length;
+        payload.payload_owner(this);
         if (data_owner == nullptr)
         {
             data_owner = this;
@@ -64,12 +64,12 @@ public:
     }
 
     bool release_payload(
-            CacheChange_t& cache_change) override
+            SerializedPayload_t& payload) override
     {
-        delete[] cache_change.serializedPayload.data;
-        cache_change.serializedPayload.max_size = 0;
-        cache_change.serializedPayload.length = 0;
-        cache_change.payload_owner(nullptr);
+        delete[] payload.data;
+        payload.max_size = 0;
+        payload.length = 0;
+        payload.payload_owner(nullptr);
         return true;
     }
 
@@ -117,7 +117,7 @@ public:
     bool get_next_unread_payload(
             CacheChange_t& cache_change)
     {
-        return get_payload(1, cache_change);
+        return get_payload(1, cache_change.serializedPayload);
     }
 
     uint32_t advance(

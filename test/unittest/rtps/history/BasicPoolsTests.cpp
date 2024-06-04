@@ -68,7 +68,7 @@ protected:
             return false;
         }
 
-        if (!payload_pool_->get_payload(data_size, *change))
+        if (!payload_pool_->get_payload(data_size, change->serializedPayload))
         {
             change_pool_->release_cache(change);
             return false;
@@ -80,7 +80,7 @@ protected:
     void release_cache(
             CacheChange_t*& change)
     {
-        payload_pool_->release_payload(*change);
+        payload_pool_->release_payload(change->serializedPayload);
         change_pool_->release_cache(change);
     }
 

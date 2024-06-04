@@ -154,7 +154,7 @@ protected:
             CacheChange_t* ch = new CacheChange_t();
             cache_changes.push_back(ch);
 
-            ASSERT_TRUE(pool->get_payload(data_size, *ch));
+            ASSERT_TRUE(pool->get_payload(data_size, ch->serializedPayload));
             ASSERT_NE(ch->serializedPayload.data, nullptr);
 
             switch (memory_policy)
@@ -180,13 +180,13 @@ protected:
             CacheChange_t* ch = new CacheChange_t();
             cache_changes.push_back(ch);
 
-            ASSERT_TRUE(pool->get_payload(payload_size, *ch));
+            ASSERT_TRUE(pool->get_payload(payload_size, ch->serializedPayload));
         }
         else
         {
             CacheChange_t* ch = new CacheChange_t();
 
-            ASSERT_FALSE(pool->get_payload(payload_size, *ch));
+            ASSERT_FALSE(pool->get_payload(payload_size, ch->serializedPayload));
             delete ch;
         }
 
@@ -200,7 +200,7 @@ protected:
             ch->writerGUID = GUID_t(GuidPrefix_t(), 1);
             ch->sequenceNumber = SequenceNumber_t(0, i);
             IPayloadPool* owner = cache_changes[i]->payload_owner();
-            ASSERT_TRUE(pool->get_payload(cache_changes[i]->serializedPayload, owner, *ch));
+            ASSERT_TRUE(pool->get_payload(cache_changes[i]->serializedPayload, owner, ch->serializedPayload));
             ASSERT_NE(ch->serializedPayload.data, nullptr);
             ASSERT_EQ(ch->serializedPayload.data, cache_changes[i]->serializedPayload.data);
             ASSERT_EQ(ch->payload_owner(), owner);
@@ -208,7 +208,7 @@ protected:
 
         for (CacheChange_t* ch : cache_changes)
         {
-            ASSERT_TRUE(pool->release_payload(*ch));
+            ASSERT_TRUE(pool->release_payload(ch->serializedPayload));
             delete ch;
         }
         cache_changes.clear();
@@ -351,34 +351,34 @@ void do_dynamic_topic_payload_pool_zero_size_test(
     //! get the payload of size 0.
     //! Allocate it on the pool
     //! Set change_to_add owner
-    ASSERT_TRUE(pool->get_payload(change->serializedPayload, payload_owner, *change_to_add));
+    ASSERT_TRUE(pool->get_payload(change->serializedPayload, payload_owner, change_to_add->serializedPayload));
 
     //! Now set the payload ownership on the source change
     change->payload_owner(payload_owner);
 
     //! Release the payload from the source change
-    pool->release_payload(*change);
+    pool->release_payload(change->serializedPayload);
 
     //! Temporal CacheChange whose payload is owned by the pool
     CacheChange_t* another_change = new CacheChange_t();
 
     //! Max size was reached, should fail
-    ASSERT_FALSE(pool->get_payload(0, *another_change));
+    ASSERT_FALSE(pool->get_payload(0, another_change->serializedPayload));
 
     //! Release the second payload owner
-    pool->release_payload(*change_to_add);
+    pool->release_payload(change_to_add->serializedPayload);
 
     //! Now a free cache is avaiable
-    ASSERT_TRUE(pool->get_payload(0, *another_change));
+    ASSERT_TRUE(pool->get_payload(0, another_change->serializedPayload));
 
     //! Retrieve owner (the created pool)
     payload_owner = another_change->payload_owner();
 
-    ASSERT_TRUE(pool->get_payload(another_change->serializedPayload, payload_owner, *change_to_add));
+    ASSERT_TRUE(pool->get_payload(another_change->serializedPayload, payload_owner, change_to_add->serializedPayload));
 
     //! Release
-    pool->release_payload(*another_change);
-    pool->release_payload(*change_to_add);
+    pool->release_payload(another_change->serializedPayload);
+    pool->release_payload(change_to_add->serializedPayload);
 
     //! Release history
     pool->release_history(config, false);

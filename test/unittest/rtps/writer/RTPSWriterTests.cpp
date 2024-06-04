@@ -35,49 +35,49 @@ public:
 
     bool get_payload(
             uint32_t size,
-            CacheChange_t& cache_change) override
+            SerializedPayload_t& payload) override
     {
-        bool result = get_payload_delegate(size, cache_change);
+        bool result = get_payload_delegate(size, payload);
         if (result)
         {
-            cache_change.payload_owner(this);
+            payload.payload_owner(this);
         }
         return result;
     }
 
     MOCK_METHOD2(get_payload_delegate,
-            bool(uint32_t size, CacheChange_t & cache_change));
+            bool(uint32_t size, SerializedPayload_t & payload));
 
 
     bool get_payload(
             SerializedPayload_t& data,
             IPayloadPool*& data_owner,
-            CacheChange_t& cache_change) override
+            SerializedPayload_t& payload) override
     {
-        bool result = get_payload_delegate(data, data_owner, cache_change);
+        bool result = get_payload_delegate(data, data_owner, payload);
         if (result)
         {
-            cache_change.payload_owner(this);
+            payload.payload_owner(this);
         }
         return result;
     }
 
     MOCK_METHOD3(get_payload_delegate,
-            bool(SerializedPayload_t & data, IPayloadPool * &data_owner, CacheChange_t & cache_change));
+            bool(SerializedPayload_t & data, IPayloadPool * &data_owner, SerializedPayload_t & payload));
 
     bool release_payload (
-            CacheChange_t& cache_change) override
+            SerializedPayload_t& payload) override
     {
-        bool result = release_payload_delegate(cache_change);
+        bool result = release_payload_delegate(payload);
         if (result)
         {
-            cache_change.payload_owner(nullptr);
+            payload.payload_owner(nullptr);
         }
         return result;
     }
 
     MOCK_METHOD1(release_payload_delegate,
-            bool(CacheChange_t & cache_change));
+            bool(SerializedPayload_t & payload));
 };
 
 class TestDataType

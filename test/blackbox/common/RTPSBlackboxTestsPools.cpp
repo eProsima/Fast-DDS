@@ -97,81 +97,81 @@ public:
 
     bool get_payload(
             uint32_t size,
-            CacheChange_t& cache_change) override
+            SerializedPayload_t& payload) override
     {
         std::lock_guard<std::mutex> lock(mutex_);
-        return do_get_payload(size, cache_change);
+        return do_get_payload(size, payload);
     }
 
     bool get_payload(
             SerializedPayload_t& data,
             IPayloadPool*& data_owner,
-            CacheChange_t& cache_change) override
+            SerializedPayload_t& payload) override
     {
         std::lock_guard<std::mutex> lock(mutex_);
 
-        octet* payload = data.data;
+        octet* payload_buff = data.data;
 
         if (data_owner == this)
         {
-            uint32_t& refs = all_payloads_[payload];
+            uint32_t& refs = all_payloads_[payload_buff];
             EXPECT_LT(0u, refs);
             ++refs;
             ++num_reserves_;
             ++num_references_;
 
-            cache_change.serializedPayload.data = payload;
-            cache_change.serializedPayload.length = data.length;
-            cache_change.serializedPayload.max_size = data.max_size;
-            cache_change.payload_owner(this);
+            payload.data = payload_buff;
+            payload.length = data.length;
+            payload.max_size = data.max_size;
+            payload.payload_owner(this);
             return true;
         }
 
-        if (!do_get_payload(data.max_size, cache_change))
+        if (!do_get_payload(data.max_size, payload))
         {
             return false;
         }
 
         ++num_copies_;
-        cache_change.serializedPayload.copy(&data, true);
+        payload.copy(&data, true);
 
         if (data_owner == nullptr)
         {
-            payload = cache_change.serializedPayload.data;
-            uint32_t& refs = all_payloads_[payload];
+            payload_buff = payload.data;
+            uint32_t& refs = all_payloads_[payload_buff];
             ++refs;
             ++num_reserves_;
 
             data_owner = this;
-            data.data = payload;
-            data.max_size = cache_change.serializedPayload.max_size;
+            data.data = payload_buff;
+            data.max_size = payload.max_size;
         }
 
         return true;
     }
 
     bool release_payload(
-            CacheChange_t& cache_change) override
+            SerializedPayload_t& payload) override
     {
         std::lock_guard<std::mutex> lock(mutex_);
 
-        EXPECT_EQ(this, cache_change.payload_owner());
+        EXPECT_EQ(this, payload.payload_owner());
 
-        octet* payload = cache_change.serializedPayload.data;
-        uint32_t& refs = all_payloads_[payload];
+        octet* payload_buff = payload.data;
+        uint32_t& refs = all_payloads_[payload_buff];
 
         EXPECT_GT(refs, 0u);
 
         ++num_releases_;
         if (0 == --refs)
         {
-            free_payloads_.push_back(payload);
+            free_payloads_.push_back(payload_buff);
         }
 
-        cache_change.serializedPayload.data = nullptr;
-        cache_change.serializedPayload.max_size = 0;
-        cache_change.serializedPayload.length = 0;
-        cache_change.payload_owner(nullptr);
+        payload.data = nullptr;
+        payload.max_size = 0;
+        payload.length = 0;
+        payload.payload_owner(nullptr);
 
         return true;
     }
@@ -200,7 +200,7 @@ private:
 
     bool do_get_payload(
             uint32_t size,
-            CacheChange_t& cache_change)
+            SerializedPayload_t& payload)
     {
         if (free_payloads_.empty())
         {
@@ -209,19 +209,19 @@ private:
 
         EXPECT_LE(size, payload_size_);
 
-        octet* payload = free_payloads_.back();
-        uint32_t& refs = all_payloads_[payload];
+        octet* payload_buff = free_payloads_.back();
+        uint32_t& refs = all_payloads_[payload_buff];
         EXPECT_EQ(0u, refs);
 
         free_payloads_.pop_back();
         ++refs;
         ++num_reserves_;
 
-        cache_change.serializedPayload.data = payload;
-        cache_change.serializedPayload.max_size = payload_size_;
-        cache_change.serializedPayload.length = 0;
-        cache_change.serializedPayload.pos = 0;
-        cache_change.payload_owner(this);
+        payload.data = payload_buff;
+        payload.max_size = payload_size_;
+        payload.length = 0;
+        payload.pos = 0;
+        payload.payload_owner(this);
 
         return true;
     }
