@@ -22,6 +22,7 @@
 #include <cstring>
 #include <new>
 #include <stdexcept>
+#include <cassert>
 #include <stdint.h>
 #include <stdlib.h>
 
@@ -94,6 +95,12 @@ struct FASTDDS_EXPORTED_API SerializedPayload_t
 
     ~SerializedPayload_t()
     {
+        if (payload_owner_ != nullptr)
+        {
+            payload_owner_->release_payload(*this);
+        }
+        assert(payload_owner_ == nullptr);
+
         this->empty();
     }
 

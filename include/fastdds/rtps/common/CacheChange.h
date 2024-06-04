@@ -181,14 +181,7 @@ struct FASTDDS_EXPORTED_API CacheChange_t
         setFragmentSize(ch_ptr->fragment_size_, false);
     }
 
-    virtual ~CacheChange_t()
-    {
-        if (serializedPayload.payload_owner_ != nullptr)
-        {
-            serializedPayload.payload_owner_->release_payload(serializedPayload);
-        }
-        assert(serializedPayload.payload_owner_ == nullptr);
-    }
+    virtual ~CacheChange_t() = default;
 
     /*!
      * Get the number of fragments this change is split into.
