@@ -101,7 +101,7 @@ public:
 
     bool getKey(
             void*,
-            eprosima::fastrtps::rtps::InstanceHandle_t*,
+            eprosima::fastdds::rtps::InstanceHandle_t*,
             bool)
     {
         return false;

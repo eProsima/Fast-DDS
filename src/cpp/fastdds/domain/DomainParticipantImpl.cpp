@@ -484,7 +484,7 @@ Topic* DomainParticipantImpl::find_topic(
 
     Topic* ret_val = topics_[topic_name]->create_topic()->get_topic();
 
-    InstanceHandle_t topic_handle;
+    rtps::InstanceHandle_t topic_handle;
     create_instance_handle(topic_handle);
     ret_val->set_instance_handle(topic_handle);
     topics_by_handle_[topic_handle] = ret_val;
@@ -524,7 +524,7 @@ ReturnCode_t DomainParticipantImpl::delete_topic(
     {
         auto it = topics_.find(topic->get_name());
         assert(it != topics_.end() && "Topic found by handle but factory not found");
-        InstanceHandle_t handle = topic->get_instance_handle();
+        rtps::InstanceHandle_t handle = topic->get_instance_handle();
 
         TopicProxy* proxy = dynamic_cast<TopicProxy*>(topic->get_impl());
         assert(nullptr != proxy);
@@ -752,9 +752,9 @@ IContentFilterFactory* DomainParticipantImpl::find_content_filter_factory(
     return &dds_sql_filter_factory_;
 }
 
-const InstanceHandle_t& DomainParticipantImpl::get_instance_handle() const
+const rtps::InstanceHandle_t& DomainParticipantImpl::get_instance_handle() const
 {
-    return static_cast<const InstanceHandle_t&>(guid_);
+    return static_cast<const rtps::InstanceHandle_t&>(guid_);
 }
 
 const fastrtps::rtps::GUID_t& DomainParticipantImpl::guid() const
@@ -792,7 +792,7 @@ Publisher* DomainParticipantImpl::create_publisher(
     bool enabled = get_rtps_participant() != nullptr;
 
     // Create InstanceHandle for the new publisher
-    InstanceHandle_t pub_handle;
+    rtps::InstanceHandle_t pub_handle;
     create_instance_handle(pub_handle);
     pubimpl->handle_ = pub_handle;
 
@@ -850,7 +850,7 @@ PublisherImpl* DomainParticipantImpl::create_publisher_impl(
  */
 
 ReturnCode_t DomainParticipantImpl::ignore_participant(
-        const InstanceHandle_t& handle)
+        const rtps::InstanceHandle_t& handle)
 {
     return (nullptr == rtps_participant_) ? RETCODE_NOT_ENABLED :
            rtps_participant_->ignore_participant(iHandle2GUID(handle).guidPrefix) ? RETCODE_OK :
@@ -859,7 +859,7 @@ ReturnCode_t DomainParticipantImpl::ignore_participant(
 
 /* TODO
    bool DomainParticipantImpl::ignore_topic(
-        const InstanceHandle_t& handle)
+        const rtps::InstanceHandle_t& handle)
    {
     (void)handle;
     EPROSIMA_LOG_ERROR(PARTICIPANT, "Not implemented.");
@@ -868,7 +868,7 @@ ReturnCode_t DomainParticipantImpl::ignore_participant(
  */
 
 bool DomainParticipantImpl::ignore_publication(
-        const InstanceHandle_t& handle)
+        const rtps::InstanceHandle_t& handle)
 {
     static_cast<void>(handle);
     EPROSIMA_LOG_ERROR(PARTICIPANT, "Not implemented.");
@@ -876,7 +876,7 @@ bool DomainParticipantImpl::ignore_publication(
 }
 
 bool DomainParticipantImpl::ignore_subscription(
-        const InstanceHandle_t& handle)
+        const rtps::InstanceHandle_t& handle)
 {
     static_cast<void>(handle);
     EPROSIMA_LOG_ERROR(PARTICIPANT, "Not implemented.");
@@ -1166,7 +1166,7 @@ ReturnCode_t DomainParticipantImpl::get_requester_qos_from_profile(
 
 /* TODO
    bool DomainParticipantImpl::get_discovered_participants(
-        std::vector<InstanceHandle_t>& participant_handles) const
+        std::vector<rtps::InstanceHandle_t>& participant_handles) const
    {
     (void)participant_handles;
     EPROSIMA_LOG_ERROR(PARTICIPANT, "Not implemented.");
@@ -1176,7 +1176,7 @@ ReturnCode_t DomainParticipantImpl::get_requester_qos_from_profile(
 
 /* TODO
    bool DomainParticipantImpl::get_discovered_topics(
-        std::vector<InstanceHandle_t>& topic_handles) const
+        std::vector<rtps::InstanceHandle_t>& topic_handles) const
    {
     (void)topic_handles;
     EPROSIMA_LOG_ERROR(PARTICIPANT, "Not implemented.");
@@ -1185,7 +1185,7 @@ ReturnCode_t DomainParticipantImpl::get_requester_qos_from_profile(
  */
 
 bool DomainParticipantImpl::contains_entity(
-        const InstanceHandle_t& handle,
+        const rtps::InstanceHandle_t& handle,
         bool recursive) const
 {
     // Look for publishers
@@ -1289,7 +1289,7 @@ Subscriber* DomainParticipantImpl::create_subscriber(
     subimpl->rtps_participant_ = get_rtps_participant();
 
     // Create InstanceHandle for the new subscriber
-    InstanceHandle_t sub_handle;
+    rtps::InstanceHandle_t sub_handle;
     bool enabled = get_rtps_participant() != nullptr;
 
     // Create InstanceHandle for the new subscriber
@@ -1369,7 +1369,7 @@ Topic* DomainParticipantImpl::create_topic(
         return nullptr;
     }
 
-    InstanceHandle_t topic_handle;
+    rtps::InstanceHandle_t topic_handle;
     create_instance_handle(topic_handle);
 
     TopicProxyFactory* factory = new TopicProxyFactory(this, topic_name, type_name, mask, type_support, qos, listener);
@@ -1856,7 +1856,7 @@ bool DomainParticipantImpl::can_qos_be_updated(
 }
 
 void DomainParticipantImpl::create_instance_handle(
-        InstanceHandle_t& handle)
+        rtps::InstanceHandle_t& handle)
 {
     uint32_t id = ++next_instance_id_;
     handle = guid_;

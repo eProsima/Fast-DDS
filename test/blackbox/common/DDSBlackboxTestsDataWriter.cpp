@@ -157,9 +157,9 @@ TEST_P(DDSDataWriter, GetKeyValue)
 
     // Test variables
     KeyedHelloWorld data;
-    eprosima::fastrtps::rtps::InstanceHandle_t wrong_handle;
+    eprosima::fastdds::rtps::InstanceHandle_t wrong_handle;
     wrong_handle.value[0] = 0xee;
-    eprosima::fastrtps::rtps::InstanceHandle_t valid_handle;
+    eprosima::fastdds::rtps::InstanceHandle_t valid_handle;
     KeyedHelloWorld valid_data;
     valid_data.key(27);
     valid_data.index(1);

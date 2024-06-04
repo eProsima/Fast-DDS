@@ -144,7 +144,7 @@ public:
 
     bool getKey(
             void* /*data*/,
-            fastrtps::rtps::InstanceHandle_t* /*ihandle*/,
+            fastdds::rtps::InstanceHandle_t* /*ihandle*/,
             bool /*force_md5*/) override
     {
         return true;
@@ -252,7 +252,7 @@ public:
 
     bool getKey(
             void* /*data*/,
-            fastrtps::rtps::InstanceHandle_t* ihandle,
+            fastdds::rtps::InstanceHandle_t* ihandle,
             bool /*force_md5*/) override
     {
         ihandle->value[0] = 1;
@@ -321,7 +321,7 @@ public:
 
     bool getKey(
             void* /*data*/,
-            fastrtps::rtps::InstanceHandle_t* /*ihandle*/,
+            fastdds::rtps::InstanceHandle_t* /*ihandle*/,
             bool /*force_md5*/) override
     {
         return true;
@@ -1033,7 +1033,7 @@ TEST(DataWriterTests, RegisterInstanceWithTimestamp)
 TEST(DataWriterTests, UnregisterInstance)
 {
     // Test parameters
-    InstanceHandle_t handle;
+    fastdds::rtps::InstanceHandle_t handle;
     InstanceFooType data;
     data.message("HelloWorld");
 
@@ -1083,7 +1083,7 @@ TEST(DataWriterTests, UnregisterInstance)
 TEST(DataWriterTests, UnregisterInstanceWithTimestamp)
 {
     // Test parameters
-    InstanceHandle_t handle;
+    fastdds::rtps::InstanceHandle_t handle;
     InstanceFooType data;
     data.message("HelloWorld");
 
@@ -1147,7 +1147,7 @@ TEST(DataWriterTests, UnregisterInstanceWithTimestamp)
 TEST(DataWriterTests, Dispose)
 {
     // Test parameters
-    InstanceHandle_t handle;
+    fastdds::rtps::InstanceHandle_t handle;
     InstanceFooType data;
     data.message("HelloWorld");
 
@@ -1197,7 +1197,7 @@ TEST(DataWriterTests, Dispose)
 TEST(DataWriterTests, DisposeWithTimestamp)
 {
     // Test parameters
-    InstanceHandle_t handle;
+    fastdds::rtps::InstanceHandle_t handle;
     InstanceFooType data;
     data.message("HelloWorld");
 
@@ -1257,9 +1257,9 @@ TEST(DataWriterTests, GetKeyValue)
 {
     // Test parameters
     InstanceFooType data;
-    InstanceHandle_t wrong_handle;
+    fastdds::rtps::InstanceHandle_t wrong_handle;
     wrong_handle.value[0] = 0xee;
-    InstanceHandle_t valid_handle;
+    fastdds::rtps::InstanceHandle_t valid_handle;
     InstanceFooType valid_data;
     valid_data.message("HelloWorld");
 
@@ -1381,7 +1381,7 @@ public:
 
     bool getKey(
             void* /*data*/,
-            fastrtps::rtps::InstanceHandle_t* /*ihandle*/,
+            fastdds::rtps::InstanceHandle_t* /*ihandle*/,
             bool /*force_md5*/) override
     {
         return true;
@@ -1472,7 +1472,7 @@ TEST(DataWriterTests, LoanPositiveTests)
 
     // Write samples, both loaned and not
     LoanableType data;
-    fastrtps::rtps::InstanceHandle_t handle;
+    fastdds::rtps::InstanceHandle_t handle;
     EXPECT_EQ(RETCODE_OK, datawriter->loan_sample(sample));
     EXPECT_NE(nullptr, sample);
     EXPECT_EQ(RETCODE_OK, datawriter->loan_sample(sample_2));
@@ -1773,7 +1773,7 @@ TEST_F(DataWriterUnsupportedTests, UnsupportedDataWriterMethods)
     ASSERT_NE(publisher, nullptr);
 
     builtin::SubscriptionBuiltinTopicData subscription_data;
-    fastrtps::rtps::InstanceHandle_t subscription_handle;
+    fastdds::rtps::InstanceHandle_t subscription_handle;
     EXPECT_EQ(
         RETCODE_UNSUPPORTED,
         data_writer->get_matched_subscription_data(subscription_data, subscription_handle));

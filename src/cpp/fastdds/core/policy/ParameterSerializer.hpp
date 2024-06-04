@@ -119,7 +119,7 @@ public:
 
     static bool add_parameter_key(
             fastrtps::rtps::CDRMessage_t* cdr_message,
-            const fastrtps::rtps::InstanceHandle_t& iHandle)
+            const fastdds::rtps::InstanceHandle_t& iHandle)
     {
         if (cdr_message->pos + 20 >= cdr_message->max_size)
         {

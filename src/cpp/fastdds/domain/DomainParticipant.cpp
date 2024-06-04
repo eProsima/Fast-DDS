@@ -269,27 +269,27 @@ const Subscriber* DomainParticipant::get_builtin_subscriber() const
 }
 
 ReturnCode_t DomainParticipant::ignore_participant(
-        const InstanceHandle_t& handle)
+        const eprosima::fastdds::rtps::InstanceHandle_t& handle)
 {
     return impl_->ignore_participant(handle);
 }
 
 ReturnCode_t DomainParticipant::ignore_topic(
-        const InstanceHandle_t& handle)
+        const eprosima::fastdds::rtps::InstanceHandle_t& handle)
 {
     static_cast<void> (handle);
     return RETCODE_UNSUPPORTED;
 }
 
 ReturnCode_t DomainParticipant::ignore_publication(
-        const InstanceHandle_t& handle)
+        const eprosima::fastdds::rtps::InstanceHandle_t& handle)
 {
     static_cast<void> (handle);
     return RETCODE_UNSUPPORTED;
 }
 
 ReturnCode_t DomainParticipant::ignore_subscription(
-        const InstanceHandle_t& handle)
+        const eprosima::fastdds::rtps::InstanceHandle_t& handle)
 {
     static_cast<void> (handle);
     return RETCODE_UNSUPPORTED;
@@ -400,7 +400,7 @@ ReturnCode_t DomainParticipant::get_requester_qos_from_profile(
 }
 
 ReturnCode_t DomainParticipant::get_discovered_participants(
-        std::vector<InstanceHandle_t>& participant_handles) const
+        std::vector<eprosima::fastdds::rtps::InstanceHandle_t>& participant_handles) const
 {
     static_cast<void> (participant_handles);
     return RETCODE_UNSUPPORTED;
@@ -408,7 +408,7 @@ ReturnCode_t DomainParticipant::get_discovered_participants(
 
 ReturnCode_t DomainParticipant::get_discovered_participant_data(
         builtin::ParticipantBuiltinTopicData& participant_data,
-        const InstanceHandle_t& participant_handle) const
+        const eprosima::fastdds::rtps::InstanceHandle_t& participant_handle) const
 {
     static_cast<void> (participant_data);
     static_cast<void> (participant_handle);
@@ -416,7 +416,7 @@ ReturnCode_t DomainParticipant::get_discovered_participant_data(
 }
 
 ReturnCode_t DomainParticipant::get_discovered_topics(
-        std::vector<InstanceHandle_t>& topic_handles) const
+        std::vector<eprosima::fastdds::rtps::InstanceHandle_t>& topic_handles) const
 {
     static_cast<void> (topic_handles);
     return RETCODE_UNSUPPORTED;
@@ -424,7 +424,7 @@ ReturnCode_t DomainParticipant::get_discovered_topics(
 
 ReturnCode_t DomainParticipant::get_discovered_topic_data(
         builtin::TopicBuiltinTopicData& topic_data,
-        const InstanceHandle_t& topic_handle) const
+        const eprosima::fastdds::rtps::InstanceHandle_t& topic_handle) const
 {
     static_cast<void> (topic_data);
     static_cast<void> (topic_handle);
@@ -432,7 +432,7 @@ ReturnCode_t DomainParticipant::get_discovered_topic_data(
 }
 
 bool DomainParticipant::contains_entity(
-        const InstanceHandle_t& a_handle,
+        const eprosima::fastdds::rtps::InstanceHandle_t& a_handle,
         bool recursive /* = true */) const
 {
     return impl_->contains_entity(a_handle, recursive);
@@ -469,7 +469,7 @@ TypeSupport DomainParticipant::find_type(
     return impl_->find_type(type_name);
 }
 
-const InstanceHandle_t& DomainParticipant::get_instance_handle() const
+const eprosima::fastdds::rtps::InstanceHandle_t& DomainParticipant::get_instance_handle() const
 {
     return impl_->get_instance_handle();
 }

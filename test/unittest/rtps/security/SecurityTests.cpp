@@ -268,7 +268,7 @@ void SecurityTest::expect_kx_exchange(
         CacheChange_t* kx_change_to_remove)
 {
     EXPECT_CALL(*volatile_writer_, new_change(_, _, _)).Times(1).WillOnce(
-        DoAll(Invoke([&kx_change_to_add](const std::function<uint32_t()>& f, ChangeKind_t, InstanceHandle_t)
+        DoAll(Invoke([&kx_change_to_add](const std::function<uint32_t()>& f, ChangeKind_t, eprosima::fastdds::rtps::InstanceHandle_t)
         {
             kx_change_to_add.serializedPayload.reserve(f());
         }),

@@ -229,7 +229,7 @@ const DomainParticipant* Subscriber::get_participant() const
     return impl_->get_participant();
 }
 
-const fastrtps::rtps::InstanceHandle_t& Subscriber::get_instance_handle() const
+const fastdds::rtps::InstanceHandle_t& Subscriber::get_instance_handle() const
 {
     return impl_->get_instance_handle();
 }

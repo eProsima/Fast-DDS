@@ -19,7 +19,7 @@
 #include <thread>
 #include <vector>
 
-#include <fastdds/dds/common/InstanceHandle.hpp>
+#include <fastdds/rtps/common/InstanceHandle.hpp>
 #include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>

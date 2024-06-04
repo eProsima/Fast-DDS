@@ -621,7 +621,7 @@ void DiscoveryDataBase::create_virtual_endpoints_(
     virtual_writer_change->kind = fastrtps::rtps::ChangeKind_t::ALIVE;
     virtual_writer_change->writerGUID.guidPrefix = participant_prefix;
     virtual_writer_change->writerGUID.entityId = fastrtps::rtps::ds_server_virtual_writer;
-    virtual_writer_change->instanceHandle = fastrtps::rtps::InstanceHandle_t(virtual_writer_guid);
+    virtual_writer_change->instanceHandle = fastdds::rtps::InstanceHandle_t(virtual_writer_guid);
     // Populate sample identity
     fastrtps::rtps::SampleIdentity virtual_writer_sample_id;
     virtual_writer_sample_id.writer_guid(virtual_writer_guid);
@@ -647,7 +647,7 @@ void DiscoveryDataBase::create_virtual_endpoints_(
     virtual_reader_change->kind = fastrtps::rtps::ChangeKind_t::ALIVE;
     virtual_reader_change->writerGUID.guidPrefix = participant_prefix;
     virtual_reader_change->writerGUID.entityId = fastrtps::rtps::ds_server_virtual_reader;
-    virtual_reader_change->instanceHandle = fastrtps::rtps::InstanceHandle_t(virtual_reader_guid);
+    virtual_reader_change->instanceHandle = fastdds::rtps::InstanceHandle_t(virtual_reader_guid);
     // Populate sample identity
     fastrtps::rtps::SampleIdentity virtual_reader_sample_id;
     virtual_reader_sample_id.writer_guid(virtual_reader_guid);
@@ -2416,7 +2416,7 @@ void DiscoveryDataBase::to_json(
 
 bool DiscoveryDataBase::from_json(
         nlohmann::json& j,
-        std::map<eprosima::fastrtps::rtps::InstanceHandle_t, fastrtps::rtps::CacheChange_t*>& changes_map)
+        std::map<fastdds::rtps::InstanceHandle_t, fastrtps::rtps::CacheChange_t*>& changes_map)
 {
     // This function will parse each attribute in json backup, casting it to istringstream
     // std::istringstream(j[""]) >> obj;
@@ -2424,7 +2424,7 @@ bool DiscoveryDataBase::from_json(
     // Changes are taken from changes_map, with already created changes
 
     // Auxiliar variables to deserialize and create new objects of the ddb
-    fastrtps::rtps::InstanceHandle_t instance_handle_aux;
+    fastdds::rtps::InstanceHandle_t instance_handle_aux;
     fastrtps::rtps::GuidPrefix_t prefix_aux;
     fastrtps::rtps::GuidPrefix_t prefix_aux_ack;
     fastrtps::rtps::GUID_t guid_aux;

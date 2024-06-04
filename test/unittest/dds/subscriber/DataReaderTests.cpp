@@ -257,7 +257,7 @@ protected:
      * @param max_samples       The value to pass as `max_samples` on calls to `read/take_instance`
      */
     void check_correct_instance_methods(
-            const InstanceHandle_t& handle,
+            const eprosima::fastdds::rtps::InstanceHandle_t& handle,
             const ReturnCode_t& instance_ok_code,
             const ReturnCode_t& loan_return_code,
             DataReader* data_reader,
@@ -292,7 +292,7 @@ protected:
      * @param max_samples       The value to pass as `max_samples` on calls to `read/take_instance`
      */
     void check_wrong_instance_methods(
-            const InstanceHandle_t& handle,
+            const eprosima::fastdds::rtps::InstanceHandle_t& handle,
             const ReturnCode_t& instance_bad_code,
             const ReturnCode_t& wrong_loan_code,
             DataReader* data_reader,
@@ -580,8 +580,8 @@ protected:
 
     std::string topic_name;
 
-    InstanceHandle_t handle_ok_ = HANDLE_NIL;
-    InstanceHandle_t handle_wrong_ = HANDLE_NIL;
+    eprosima::fastdds::rtps::InstanceHandle_t handle_ok_ = HANDLE_NIL;
+    eprosima::fastdds::rtps::InstanceHandle_t handle_wrong_ = HANDLE_NIL;
 
 };
 
@@ -1683,7 +1683,7 @@ void lookup_instance_test(
         DataType& data,
         DataWriter* writer,
         DataReader* reader,
-        const InstanceHandle_t& handle_ok)
+        const eprosima::fastdds::rtps::InstanceHandle_t& handle_ok)
 {
     // Send sample with key value 0
     data.index(0);
@@ -1892,7 +1892,7 @@ TEST_F(DataReaderTests, sample_info)
         DataWriterQos writer_qos_;
         DataWriter* writers_[2] = { nullptr, nullptr };
 
-        InstanceHandle_t handles_[2];
+        eprosima::fastdds::rtps::InstanceHandle_t handles_[2];
         FooType data_[2];
 
         void close_writer(
@@ -2075,7 +2075,7 @@ struct oarraystream : virtual arraybuf, std::ostream
 TEST_F(DataReaderTests, check_read_take_iteration)
 {
     const std::size_t max_handles = 100;
-    std::array<InstanceHandle_t, max_handles> handles;
+    std::array<eprosima::fastdds::rtps::InstanceHandle_t, max_handles> handles;
     auto loop_timeout = std::chrono::seconds(5);
 
     // Allocate resources
@@ -2162,7 +2162,7 @@ TEST_F(DataReaderTests, check_read_take_iteration)
 
     // Iterate over available instances with data and check all are retrieved
     auto pending = received;
-    InstanceHandle_t handle = HANDLE_NIL;
+    eprosima::fastdds::rtps::InstanceHandle_t handle = HANDLE_NIL;
     ReturnCode_t ret;
 
     do
@@ -2638,7 +2638,7 @@ TEST_F(DataReaderUnsupportedTests, UnsupportedDataReaderMethods)
     ASSERT_NE(data_reader, nullptr);
 
     builtin::PublicationBuiltinTopicData publication_data;
-    InstanceHandle_t publication_handle;
+    eprosima::fastdds::rtps::InstanceHandle_t publication_handle;
     EXPECT_EQ(
         RETCODE_UNSUPPORTED,
         data_reader->get_matched_publication_data(publication_data, publication_handle));
@@ -2659,10 +2659,10 @@ TEST_F(DataReaderUnsupportedTests, UnsupportedDataReaderMethods)
                 query_parameters));
     }
 
-    std::vector<InstanceHandle_t> publication_handles;
+    std::vector<eprosima::fastdds::rtps::InstanceHandle_t> publication_handles;
     EXPECT_EQ(RETCODE_UNSUPPORTED, data_reader->get_matched_publications(publication_handles));
 
-    InstanceHandle_t key_handle;
+    eprosima::fastdds::rtps::InstanceHandle_t key_handle;
     EXPECT_EQ(RETCODE_UNSUPPORTED, data_reader->get_key_value(nullptr, key_handle));
 
     EXPECT_EQ(RETCODE_UNSUPPORTED, data_reader->wait_for_historical_data({0, 1}));
@@ -3209,7 +3209,7 @@ TEST_F(DataReaderTests, read_conditions_wait_on_InstanceStateMask)
 
     // Check data is bad because the sample for instance 1 was unregistered
     ASSERT_FALSE(infos[0].valid_data);
-    InstanceHandle_t prev_handle = infos[0].instance_handle;
+    eprosima::fastdds::rtps::InstanceHandle_t prev_handle = infos[0].instance_handle;
     EXPECT_EQ(data_reader.return_loan(datas, infos), RETCODE_OK);
 
     // new instance
@@ -3822,7 +3822,7 @@ public:
 
     bool getKey(
             void* /*data*/,
-            eprosima::fastrtps::rtps::InstanceHandle_t* /*ihandle*/,
+            eprosima::fastdds::rtps::InstanceHandle_t* /*ihandle*/,
             bool /*force_md5*/) override
     {
         return true;

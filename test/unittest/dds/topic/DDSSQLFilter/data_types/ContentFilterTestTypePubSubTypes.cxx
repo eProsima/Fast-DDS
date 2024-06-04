@@ -28,7 +28,6 @@
 #include "ContentFilterTestTypeTypeObjectSupport.hpp"
 
 using SerializedPayload_t = eprosima::fastrtps::rtps::SerializedPayload_t;
-using InstanceHandle_t = eprosima::fastrtps::rtps::InstanceHandle_t;
 using DataRepresentationId_t = eprosima::fastdds::dds::DataRepresentationId_t;
 
 StructTypePubSubType::StructTypePubSubType()
@@ -174,7 +173,7 @@ void StructTypePubSubType::deleteData(
 
 bool StructTypePubSubType::getKey(
         void* data,
-        InstanceHandle_t* handle,
+        eprosima::fastdds::rtps::InstanceHandle_t* handle,
         bool force_md5)
 {
     if (!m_isGetKeyDefined)

@@ -23,7 +23,7 @@
 #include <functional>
 #include <memory>
 
-#include <fastdds/dds/common/InstanceHandle.hpp>
+#include <fastdds/rtps/common/InstanceHandle.hpp>
 #include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicPubSubType.hpp>

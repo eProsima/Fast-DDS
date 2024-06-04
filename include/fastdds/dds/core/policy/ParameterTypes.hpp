@@ -27,7 +27,7 @@
 
 #include <fastcdr/cdr/fixed_size_string.hpp>
 
-#include <fastdds/rtps/common/InstanceHandle.h>
+#include <fastdds/rtps/common/InstanceHandle.hpp>
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/common/SampleIdentity.h>
 #include <fastdds/rtps/common/SerializedPayload.h>
@@ -236,7 +236,7 @@ class ParameterKey_t : public Parameter_t
 public:
 
     //!Instance Handle. <br> By default, c_InstanceHandle_Unknown.
-    fastrtps::rtps::InstanceHandle_t key;
+    rtps::InstanceHandle_t key;
     /**
      * @brief Constructor without parameters
      */
@@ -267,7 +267,7 @@ public:
     ParameterKey_t(
             ParameterId_t pid,
             uint16_t in_length,
-            const fastrtps::rtps::InstanceHandle_t& ke)
+            const rtps::InstanceHandle_t& ke)
         : Parameter_t(pid, in_length)
         , key(ke)
     {
@@ -515,7 +515,7 @@ public:
     ParameterGuid_t(
             ParameterId_t pid,
             uint16_t in_length,
-            const fastrtps::rtps::InstanceHandle_t& iH)
+            const rtps::InstanceHandle_t& iH)
         : Parameter_t(pid, in_length)
     {
         fastrtps::rtps::iHandle2GUID(guid, iH);

@@ -58,7 +58,7 @@ struct BuiltinReader
     }
 
     void remove_from_history(
-            const fastrtps::rtps::InstanceHandle_t& key)
+            const fastdds::rtps::InstanceHandle_t& key)
     {
         history_->getMutex()->lock();
         for (auto it = history_->changesBegin(); it != history_->changesEnd(); ++it)

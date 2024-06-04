@@ -213,7 +213,7 @@ ReturnCode_t Publisher::copy_from_topic_qos(
     return PublisherImpl::copy_from_topic_qos(writer_qos, topic_qos);
 }
 
-const fastrtps::rtps::InstanceHandle_t& Publisher::get_instance_handle() const
+const fastdds::rtps::InstanceHandle_t& Publisher::get_instance_handle() const
 {
     return impl_->get_instance_handle();
 }

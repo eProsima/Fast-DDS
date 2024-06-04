@@ -50,7 +50,7 @@ struct DeadlineMissedStatus
     uint32_t total_count_change;
 
     //! @brief Handle to the last instance missing the deadline
-    InstanceHandle_t last_instance_handle;
+    rtps::InstanceHandle_t last_instance_handle;
 };
 
 //! Typedef of DeadlineMissedStatus

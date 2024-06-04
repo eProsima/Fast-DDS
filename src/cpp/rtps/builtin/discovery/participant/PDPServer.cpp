@@ -1746,7 +1746,7 @@ bool PDPServer::process_backup_discovery_database_restore(
     std::unique_lock<fastrtps::RecursiveTimedMutex> lock_edps(edp->subscriptions_reader_.first->getMutex());
 
     // Auxiliar variables to load info from json
-    std::map<eprosima::fastrtps::rtps::InstanceHandle_t, fastrtps::rtps::CacheChange_t*> changes_map;
+    std::map<eprosima::fastdds::rtps::InstanceHandle_t, fastrtps::rtps::CacheChange_t*> changes_map;
     fastrtps::rtps::SampleIdentity sample_identity_aux;
     uint32_t length = 0;
     fastrtps::rtps::CacheChange_t* change_aux;
@@ -1878,7 +1878,7 @@ bool PDPServer::process_backup_restore_queue(
         std::vector<nlohmann::json>& /* new_changes */)
 {
     // fastrtps::rtps::SampleIdentity sample_identity_aux;
-    // fastrtps::rtps::InstanceHandle_t instance_handle_aux;
+    // fastdds::rtps::InstanceHandle_t instance_handle_aux;
     // uint32_t length;
 
     // EDPServer* edp = static_cast<EDPServer*>(mp_EDP);

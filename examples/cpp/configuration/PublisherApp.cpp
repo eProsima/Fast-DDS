@@ -221,7 +221,7 @@ void PublisherApp::on_liveliness_lost(
 
 void PublisherApp::on_unacknowledged_sample_removed(
         DataWriter* /*writer*/,
-        const InstanceHandle_t& /*instance*/)
+        const rtps::InstanceHandle_t& /*instance*/)
 {
     std::cout << "Unacknowledged sample was removed!" << std::endl;
 }

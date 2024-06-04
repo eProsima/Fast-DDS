@@ -92,7 +92,7 @@ protected:
         : history_(atts_,
                 500,
                 fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE,
-                [](const InstanceHandle_t&)
+                [](const rtps::InstanceHandle_t&)
                 {
                 })
     {
@@ -109,7 +109,7 @@ protected:
         : history_(atts_,
                 500,
                 fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE,
-                [](const InstanceHandle_t&)
+                [](const rtps::InstanceHandle_t&)
                 {
                 })
     {
@@ -128,7 +128,7 @@ protected:
         : history_(atts_,
                 500,
                 fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE,
-                [](const InstanceHandle_t&)
+                [](const rtps::InstanceHandle_t&)
                 {
                 })
     {
@@ -181,35 +181,35 @@ public:
 
     ReturnCode_t write(
             void*,
-            const InstanceHandle_t& )
+            const rtps::InstanceHandle_t& )
     {
         return RETCODE_OK;
     }
 
     ReturnCode_t write_w_timestamp(
             void*,
-            const InstanceHandle_t&,
+            const rtps::InstanceHandle_t&,
             const fastrtps::Time_t& )
     {
         return RETCODE_OK;
     }
 
-    InstanceHandle_t register_instance(
+    rtps::InstanceHandle_t register_instance(
             void* )
     {
-        return InstanceHandle_t();
+        return rtps::InstanceHandle_t();
     }
 
-    InstanceHandle_t register_instance_w_timestamp(
+    rtps::InstanceHandle_t register_instance_w_timestamp(
             void*,
             const fastrtps::Time_t& )
     {
-        return InstanceHandle_t();
+        return rtps::InstanceHandle_t();
     }
 
     ReturnCode_t unregister_instance(
             void*,
-            const InstanceHandle_t&,
+            const rtps::InstanceHandle_t&,
             bool = false)
     {
         return RETCODE_OK;
@@ -217,7 +217,7 @@ public:
 
     ReturnCode_t unregister_instance_w_timestamp(
             void*,
-            const InstanceHandle_t&,
+            const rtps::InstanceHandle_t&,
             const fastrtps::Time_t&,
             bool  = false)
     {
@@ -238,9 +238,9 @@ public:
         return guid_;
     }
 
-    InstanceHandle_t get_instance_handle() const
+    rtps::InstanceHandle_t get_instance_handle() const
     {
-        return fastrtps::rtps::InstanceHandle_t();
+        return rtps::InstanceHandle_t();
     }
 
     TypeSupport get_type() const
@@ -256,7 +256,7 @@ public:
 
     ReturnCode_t wait_for_acknowledgments(
             void*,
-            const InstanceHandle_t&,
+            const rtps::InstanceHandle_t&,
             const fastrtps::Duration_t& )
     {
         return RETCODE_OK;
@@ -311,7 +311,7 @@ public:
 
     ReturnCode_t get_key_value(
             void*,
-            const InstanceHandle_t& )
+            const rtps::InstanceHandle_t& )
     {
         return RETCODE_OK;
     }

@@ -159,7 +159,7 @@ public:
      */
     FASTDDS_EXPORTED_API ReturnCode_t write(
             void* data,
-            const InstanceHandle_t& handle);
+            const rtps::InstanceHandle_t& handle);
 
     /**
      * @brief This operation performs the same function as write except that it also provides the value for the
@@ -179,7 +179,7 @@ public:
      */
     FASTDDS_EXPORTED_API ReturnCode_t write_w_timestamp(
             void* data,
-            const InstanceHandle_t& handle,
+            const rtps::InstanceHandle_t& handle,
             const fastrtps::Time_t& timestamp);
 
     /*!
@@ -191,7 +191,7 @@ public:
      * This handle could be used in successive `write` or `dispose` operations.
      * In case of error, HANDLE_NIL will be returned.
      */
-    FASTDDS_EXPORTED_API InstanceHandle_t register_instance(
+    FASTDDS_EXPORTED_API rtps::InstanceHandle_t register_instance(
             void* instance);
 
     /**
@@ -212,7 +212,7 @@ public:
      * @param timestamp Time_t used to set the source_timestamp.
      * @return Handle containing the instance's key.
      */
-    FASTDDS_EXPORTED_API InstanceHandle_t register_instance_w_timestamp(
+    FASTDDS_EXPORTED_API rtps::InstanceHandle_t register_instance_w_timestamp(
             void* instance,
             const fastrtps::Time_t& timestamp);
 
@@ -229,7 +229,7 @@ public:
      */
     FASTDDS_EXPORTED_API ReturnCode_t unregister_instance(
             void* instance,
-            const InstanceHandle_t& handle);
+            const rtps::InstanceHandle_t& handle);
 
     /**
      * @brief This operation performs the same function as @ref unregister_instance and can be used instead of
@@ -252,7 +252,7 @@ public:
      */
     FASTDDS_EXPORTED_API ReturnCode_t unregister_instance_w_timestamp(
             void* instance,
-            const InstanceHandle_t& handle,
+            const rtps::InstanceHandle_t& handle,
             const fastrtps::Time_t& timestamp);
 
     /**
@@ -271,7 +271,7 @@ public:
      */
     FASTDDS_EXPORTED_API ReturnCode_t get_key_value(
             void* key_holder,
-            const InstanceHandle_t& handle);
+            const rtps::InstanceHandle_t& handle);
 
     /**
      * NOT YET IMPLEMENTED
@@ -284,7 +284,7 @@ public:
      *
      * @return handle of the given instance
      */
-    FASTDDS_EXPORTED_API InstanceHandle_t lookup_instance(
+    FASTDDS_EXPORTED_API rtps::InstanceHandle_t lookup_instance(
             const void* instance) const;
 
     /**
@@ -299,7 +299,7 @@ public:
      *
      * @return Copy of the DataWriter InstanceHandle
      */
-    FASTDDS_EXPORTED_API InstanceHandle_t get_instance_handle() const;
+    FASTDDS_EXPORTED_API rtps::InstanceHandle_t get_instance_handle() const;
 
     /**
      * Get data type associated to the DataWriter
@@ -421,7 +421,7 @@ public:
      */
     FASTDDS_EXPORTED_API ReturnCode_t dispose(
             void* data,
-            const InstanceHandle_t& handle);
+            const rtps::InstanceHandle_t& handle);
 
     /**
      * @brief This operation performs the same functions as @ref dispose except that the application provides the value
@@ -445,7 +445,7 @@ public:
      */
     FASTDDS_EXPORTED_API ReturnCode_t dispose_w_timestamp(
             void* instance,
-            const InstanceHandle_t& handle,
+            const rtps::InstanceHandle_t& handle,
             const fastrtps::Time_t& timestamp);
     /**
      * @brief Returns the liveliness lost status
@@ -488,7 +488,7 @@ public:
      */
     FASTDDS_EXPORTED_API ReturnCode_t get_matched_subscription_data(
             builtin::SubscriptionBuiltinTopicData& subscription_data,
-            const InstanceHandle_t& subscription_handle) const;
+            const rtps::InstanceHandle_t& subscription_handle) const;
 
     /**
      * @brief Fills the given vector with the InstanceHandle_t of matched DataReaders
@@ -499,7 +499,7 @@ public:
      * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
     FASTDDS_EXPORTED_API ReturnCode_t get_matched_subscriptions(
-            std::vector<InstanceHandle_t>& subscription_handles) const;
+            std::vector<rtps::InstanceHandle_t>& subscription_handles) const;
 
     /**
      * @brief Clears the DataWriter history
@@ -583,7 +583,7 @@ public:
      */
     FASTDDS_EXPORTED_API ReturnCode_t wait_for_acknowledgments(
             void* instance,
-            const InstanceHandle_t& handle,
+            const rtps::InstanceHandle_t& handle,
             const fastrtps::Duration_t& max_wait);
 
 protected:

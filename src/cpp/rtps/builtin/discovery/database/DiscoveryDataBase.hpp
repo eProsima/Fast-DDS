@@ -304,7 +304,7 @@ public:
 
     bool from_json(
             nlohmann::json& j,
-            std::map<eprosima::fastrtps::rtps::InstanceHandle_t, fastrtps::rtps::CacheChange_t*>& changes_map);
+            std::map<eprosima::fastdds::rtps::InstanceHandle_t, fastrtps::rtps::CacheChange_t*>& changes_map);
 
     // This function erase the last backup and all the changes that has arrived since then and create
     // a new backup that shows the actual state of the database

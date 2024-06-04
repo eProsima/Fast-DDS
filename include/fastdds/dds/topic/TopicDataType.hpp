@@ -26,7 +26,7 @@
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/fastdds_dll.hpp>
 #include <fastdds/rtps/common/CdrSerialization.hpp>
-#include <fastdds/rtps/common/InstanceHandle.h>
+#include <fastdds/rtps/common/InstanceHandle.hpp>
 #include <fastdds/rtps/common/SerializedPayload.h>
 #include <fastdds/utils/md5.h>
 
@@ -157,7 +157,7 @@ public:
      */
     FASTDDS_EXPORTED_API virtual bool getKey(
             void* data,
-            fastrtps::rtps::InstanceHandle_t* ihandle,
+            fastdds::rtps::InstanceHandle_t* ihandle,
             bool force_md5 = false) = 0;
 
     /**

@@ -24,7 +24,7 @@
 #include <fastdds/rtps/attributes/TopicAttributes.h>
 #include <fastdds/rtps/common/CacheChange.h>
 #include <fastdds/rtps/common/ChangeKind_t.hpp>
-#include <fastdds/rtps/common/InstanceHandle.h>
+#include <fastdds/rtps/common/InstanceHandle.hpp>
 #include <fastdds/rtps/common/SequenceNumber.h>
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/rtps/common/Types.h>
@@ -72,7 +72,7 @@ public:
             const TopicAttributes& topic_att,
             uint32_t payloadMaxSize,
             MemoryManagementPolicy_t mempolicy,
-            std::function<void (const fastrtps::rtps::InstanceHandle_t&)> unack_sample_remove_functor)
+            std::function<void (const fastdds::rtps::InstanceHandle_t&)> unack_sample_remove_functor)
         : WriterHistory(to_history_attributes(topic_att, payloadMaxSize, mempolicy))
         , history_qos_(topic_att.historyQos)
         , resource_limited_qos_(topic_att.resourceLimitsQos)
@@ -156,7 +156,7 @@ public:
     }
 
     fastrtps::rtps::SerializedPayload_t* get_key_value(
-            const fastrtps::rtps::InstanceHandle_t& handle)
+            const fastdds::rtps::InstanceHandle_t& handle)
     {
         t_m_Inst_Caches::iterator vit = keyed_changes_.find(handle);
         if (vit != keyed_changes_.end() && vit->second.is_registered())
@@ -305,7 +305,7 @@ private:
     TopicAttributes topic_att_;
 
     //! Unacknowledged sample removed functor
-    std::function<void (const fastrtps::rtps::InstanceHandle_t&)> unacknowledged_sample_removed_functor_;
+    std::function<void (const fastdds::rtps::InstanceHandle_t&)> unacknowledged_sample_removed_functor_;
 
     bool find_or_add_key(
             const InstanceHandle_t& instance_handle,

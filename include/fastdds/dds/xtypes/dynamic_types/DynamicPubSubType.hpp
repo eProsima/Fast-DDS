@@ -85,13 +85,13 @@ public:
     /*
      * Calculate the key associated to a given object
      * @param data object whose key is calculated
-     * @param ihandle @ref eprosima::fastrtps::rtps::InstanceHandle_t to fill in
+     * @param ihandle @ref eprosima::fastdds::rtps::InstanceHandle_t to fill in
      * @param force_md5 use always md5 even if key payload footprint is smaller than the hash
      * @return bool specifying success
      */
     FASTDDS_EXPORTED_API bool getKey(
             void* data,
-            eprosima::fastrtps::rtps::InstanceHandle_t* ihandle,
+            rtps::InstanceHandle_t* ihandle,
             bool force_md5 = false) override;
 
     /*

@@ -47,7 +47,7 @@ namespace dds {
 
 using fastrtps::xmlparser::XMLProfileManager;
 using fastrtps::xmlparser::XMLP_ret;
-using fastrtps::rtps::InstanceHandle_t;
+using fastdds::rtps::InstanceHandle_t;
 using fastrtps::rtps::Property;
 using fastrtps::Duration_t;
 
@@ -405,7 +405,7 @@ DataReaderQos& SubscriberImpl::get_default_datareader_qos()
 }
 
 bool SubscriberImpl::contains_entity(
-        const fastrtps::rtps::InstanceHandle_t& handle) const
+        const fastdds::rtps::InstanceHandle_t& handle) const
 {
     std::lock_guard<std::mutex> lock(mtx_readers_);
     for (auto vit : readers_)

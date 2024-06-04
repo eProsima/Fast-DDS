@@ -89,7 +89,7 @@ class DDSFindTopicTest : public testing::Test
 
         bool getKey(
                 void*,
-                fastrtps::rtps::InstanceHandle_t*,
+                fastdds::rtps::InstanceHandle_t*,
                 bool) override
         {
             return false;

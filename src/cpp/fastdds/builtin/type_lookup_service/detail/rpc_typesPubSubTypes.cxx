@@ -26,7 +26,6 @@
 
 #include "rpc_typesCdrAux.hpp"
 using SerializedPayload_t = eprosima::fastrtps::rtps::SerializedPayload_t;
-using InstanceHandle_t = eprosima::fastrtps::rtps::InstanceHandle_t;
 using DataRepresentationId_t = eprosima::fastdds::dds::DataRepresentationId_t;
 
 namespace eprosima {
@@ -179,7 +178,7 @@ void EntityId_tPubSubType::deleteData(
 
 bool EntityId_tPubSubType::getKey(
         void* data,
-        InstanceHandle_t* handle,
+        rtps::InstanceHandle_t* handle,
         bool force_md5)
 {
     if (!m_isGetKeyDefined)
@@ -373,7 +372,7 @@ void GUID_tPubSubType::deleteData(
 
 bool GUID_tPubSubType::getKey(
         void* data,
-        InstanceHandle_t* handle,
+        rtps::InstanceHandle_t* handle,
         bool force_md5)
 {
     if (!m_isGetKeyDefined)
@@ -567,7 +566,7 @@ void SequenceNumber_tPubSubType::deleteData(
 
 bool SequenceNumber_tPubSubType::getKey(
         void* data,
-        InstanceHandle_t* handle,
+        rtps::InstanceHandle_t* handle,
         bool force_md5)
 {
     if (!m_isGetKeyDefined)
@@ -761,7 +760,7 @@ void SampleIdentityPubSubType::deleteData(
 
 bool SampleIdentityPubSubType::getKey(
         void* data,
-        InstanceHandle_t* handle,
+        rtps::InstanceHandle_t* handle,
         bool force_md5)
 {
     if (!m_isGetKeyDefined)
@@ -956,7 +955,7 @@ namespace rpc {
 
     bool RequestHeaderPubSubType::getKey(
             void* data,
-            InstanceHandle_t* handle,
+            rtps::InstanceHandle_t* handle,
             bool force_md5)
     {
         if (!m_isGetKeyDefined)
@@ -1150,7 +1149,7 @@ namespace rpc {
 
     bool ReplyHeaderPubSubType::getKey(
             void* data,
-            InstanceHandle_t* handle,
+            rtps::InstanceHandle_t* handle,
             bool force_md5)
     {
         if (!m_isGetKeyDefined)

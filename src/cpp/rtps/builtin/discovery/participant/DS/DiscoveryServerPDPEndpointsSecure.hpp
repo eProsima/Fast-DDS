@@ -66,7 +66,7 @@ struct DiscoveryServerPDPEndpointsSecure : public DiscoveryServerPDPEndpoints
     }
 
     void remove_from_pdp_reader_history(
-            const fastrtps::rtps::InstanceHandle_t& remote_participant) override
+            const fastdds::rtps::InstanceHandle_t& remote_participant) override
     {
         stateless_reader.remove_from_history(remote_participant);
         DiscoveryServerPDPEndpoints::remove_from_pdp_reader_history(remote_participant);

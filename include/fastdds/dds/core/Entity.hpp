@@ -20,10 +20,10 @@
 #ifndef _FASTDDS_ENTITY_HPP_
 #define _FASTDDS_ENTITY_HPP_
 
-#include <fastdds/dds/common/InstanceHandle.hpp>
 #include <fastdds/dds/core/condition/StatusCondition.hpp>
 #include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
+#include <fastdds/rtps/common/InstanceHandle.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -101,7 +101,7 @@ public:
      *
      * @return Reference to the InstanceHandle
      */
-    const InstanceHandle_t& get_instance_handle() const
+    const rtps::InstanceHandle_t& get_instance_handle() const
     {
         return instance_handle_;
     }
@@ -140,7 +140,7 @@ protected:
      * @param handle Instance Handle
      */
     FASTDDS_EXPORTED_API void set_instance_handle(
-            const InstanceHandle_t& handle)
+            const rtps::InstanceHandle_t& handle)
     {
         instance_handle_ = handle;
     }
@@ -152,7 +152,7 @@ protected:
     StatusCondition status_condition_;
 
     //! InstanceHandle associated to the Entity
-    InstanceHandle_t instance_handle_;
+    rtps::InstanceHandle_t instance_handle_;
 
     //! Boolean that states if the Entity is enabled or disabled
     bool enable_;

@@ -93,26 +93,26 @@ bool DataWriter::write(
 
 ReturnCode_t DataWriter::write(
         void* data,
-        const InstanceHandle_t& handle)
+        const rtps::InstanceHandle_t& handle)
 {
     return impl_->write(data, handle);
 }
 
 ReturnCode_t DataWriter::write_w_timestamp(
         void* data,
-        const InstanceHandle_t& handle,
+        const rtps::InstanceHandle_t& handle,
         const fastrtps::Time_t& timestamp)
 {
     return impl_->write_w_timestamp(data, handle, timestamp);
 }
 
-InstanceHandle_t DataWriter::register_instance(
+rtps::InstanceHandle_t DataWriter::register_instance(
         void* instance)
 {
     return impl_->register_instance(instance);
 }
 
-InstanceHandle_t DataWriter::register_instance_w_timestamp(
+rtps::InstanceHandle_t DataWriter::register_instance_w_timestamp(
         void* instance,
         const fastrtps::Time_t& timestamp)
 {
@@ -121,14 +121,14 @@ InstanceHandle_t DataWriter::register_instance_w_timestamp(
 
 ReturnCode_t DataWriter::unregister_instance(
         void* instance,
-        const InstanceHandle_t& handle)
+        const rtps::InstanceHandle_t& handle)
 {
     return impl_->unregister_instance(instance, handle);
 }
 
 ReturnCode_t DataWriter::unregister_instance_w_timestamp(
         void* instance,
-        const InstanceHandle_t& handle,
+        const rtps::InstanceHandle_t& handle,
         const fastrtps::Time_t& timestamp)
 {
     return impl_->unregister_instance_w_timestamp(instance, handle, timestamp);
@@ -136,12 +136,12 @@ ReturnCode_t DataWriter::unregister_instance_w_timestamp(
 
 ReturnCode_t DataWriter::get_key_value(
         void* key_holder,
-        const InstanceHandle_t& handle)
+        const rtps::InstanceHandle_t& handle)
 {
     return impl_->get_key_value(key_holder, handle);
 }
 
-InstanceHandle_t DataWriter::lookup_instance(
+rtps::InstanceHandle_t DataWriter::lookup_instance(
         const void* instance) const
 {
     static_cast<void> (instance);
@@ -151,14 +151,14 @@ InstanceHandle_t DataWriter::lookup_instance(
 
 ReturnCode_t DataWriter::dispose(
         void* data,
-        const InstanceHandle_t& handle)
+        const rtps::InstanceHandle_t& handle)
 {
     return impl_->unregister_instance(data, handle, true);
 }
 
 ReturnCode_t DataWriter::dispose_w_timestamp(
         void* instance,
-        const InstanceHandle_t& handle,
+        const rtps::InstanceHandle_t& handle,
         const fastrtps::Time_t& timestamp)
 {
     return impl_->unregister_instance_w_timestamp(instance, handle, timestamp, true);
@@ -169,7 +169,7 @@ const fastrtps::rtps::GUID_t& DataWriter::guid() const
     return impl_->guid();
 }
 
-InstanceHandle_t DataWriter::get_instance_handle() const
+rtps::InstanceHandle_t DataWriter::get_instance_handle() const
 {
     return impl_->get_instance_handle();
 }
@@ -268,7 +268,7 @@ ReturnCode_t DataWriter::assert_liveliness()
 
 ReturnCode_t DataWriter::get_matched_subscription_data(
         builtin::SubscriptionBuiltinTopicData& subscription_data,
-        const InstanceHandle_t& subscription_handle) const
+        const rtps::InstanceHandle_t& subscription_handle) const
 {
     static_cast<void> (subscription_data);
     static_cast<void> (subscription_handle);
@@ -279,7 +279,7 @@ ReturnCode_t DataWriter::get_matched_subscription_data(
 }
 
 ReturnCode_t DataWriter::get_matched_subscriptions(
-        std::vector<InstanceHandle_t>& subscription_handles) const
+        std::vector<rtps::InstanceHandle_t>& subscription_handles) const
 {
     static_cast<void> (subscription_handles);
     return RETCODE_UNSUPPORTED;
@@ -302,7 +302,7 @@ ReturnCode_t DataWriter::get_sending_locators(
 
 ReturnCode_t DataWriter::wait_for_acknowledgments(
         void* instance,
-        const InstanceHandle_t& handle,
+        const rtps::InstanceHandle_t& handle,
         const fastrtps::Duration_t& max_wait)
 {
     return impl_->wait_for_acknowledgments(instance, handle, max_wait);

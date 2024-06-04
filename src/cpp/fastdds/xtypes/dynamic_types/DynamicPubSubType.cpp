@@ -20,7 +20,7 @@
 #include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicTypeMember.hpp>
-#include <fastdds/rtps/common/InstanceHandle.h>
+#include <fastdds/rtps/common/InstanceHandle.hpp>
 #include <fastdds/rtps/common/SerializedPayload.h>
 
 #include "common.hpp"
@@ -104,7 +104,7 @@ traits<DynamicType>::ref_type DynamicPubSubType::get_dynamic_type() const noexce
 
 bool DynamicPubSubType::getKey(
         void* data,
-        eprosima::fastrtps::rtps::InstanceHandle_t* handle,
+        rtps::InstanceHandle_t* handle,
         bool force_md5)
 {
     if (!dynamic_type_ || !m_isGetKeyDefined)

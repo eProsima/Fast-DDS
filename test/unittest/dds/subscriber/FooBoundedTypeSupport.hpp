@@ -155,7 +155,7 @@ public:
 
     bool getKey(
             void* /*data*/,
-            fastrtps::rtps::InstanceHandle_t* /*handle*/,
+            fastdds::rtps::InstanceHandle_t* /*handle*/,
             bool /*force_md5*/) override
     {
         return false;

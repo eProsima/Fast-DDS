@@ -235,7 +235,7 @@ struct ReadTakeCommand
         info.source_timestamp = item->sourceTimestamp;
         info.reception_timestamp = item->reader_info.receptionTimestamp;
         info.instance_handle = item->instanceHandle;
-        info.publication_handle = InstanceHandle_t(item->writerGUID);
+        info.publication_handle = rtps::InstanceHandle_t(item->writerGUID);
 
         /*
          * TODO(eduponz): The sample identity should be taken from the sample identity parameter.
@@ -275,7 +275,7 @@ private:
     int32_t remaining_samples_;
     StateFilter states_;
     history_type::instance_info instance_;
-    InstanceHandle_t handle_;
+    rtps::InstanceHandle_t handle_;
     bool single_instance_;
     bool loop_for_data_;
 

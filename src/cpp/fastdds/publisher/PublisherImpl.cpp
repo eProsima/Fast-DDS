@@ -47,7 +47,7 @@ namespace dds {
 
 using fastrtps::xmlparser::XMLProfileManager;
 using fastrtps::xmlparser::XMLP_ret;
-using fastrtps::rtps::InstanceHandle_t;
+using fastdds::rtps::InstanceHandle_t;
 using fastrtps::Duration_t;
 
 PublisherImpl::PublisherImpl(
@@ -378,7 +378,7 @@ bool PublisherImpl::has_datawriters() const
 }
 
 bool PublisherImpl::contains_entity(
-        const fastrtps::rtps::InstanceHandle_t& handle) const
+        const fastdds::rtps::InstanceHandle_t& handle) const
 {
     std::lock_guard<std::mutex> lock(mtx_writers_);
     for (auto vit : writers_)

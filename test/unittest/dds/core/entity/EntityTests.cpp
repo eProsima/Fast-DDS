@@ -117,11 +117,11 @@ TEST_F(EntityTests, entity_get_instance_handle)
 {
     // Default instance handle
     Entity entity;
-    ASSERT_EQ(entity.get_instance_handle(), InstanceHandle_t());
+    ASSERT_EQ(entity.get_instance_handle(), eprosima::fastdds::rtps::InstanceHandle_t());
 
     // Set non default instance handle
     MockEntity entity2;
-    InstanceHandle_t handle;
+    eprosima::fastdds::rtps::InstanceHandle_t handle;
     handle.value[0] = 13;
     entity2.mock_set_instance_handle(handle);
     ASSERT_EQ(entity2.get_instance_handle(), handle);
@@ -145,7 +145,7 @@ TEST_F(EntityTests, entity_equal_operator)
     ASSERT_TRUE(entity1 == entity3);
 
     // Check entities with different InstanceHandle are different
-    InstanceHandle_t handle;
+    eprosima::fastdds::rtps::InstanceHandle_t handle;
     handle.value[0] = 13;
     MockEntity entity4;
     entity4.mock_set_instance_handle(handle);

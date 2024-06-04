@@ -28,7 +28,7 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-const InstanceHandle_t HANDLE_NIL;
+const rtps::InstanceHandle_t HANDLE_NIL;
 
 ReturnCode_t TypeSupport::register_type(
         DomainParticipant* participant,

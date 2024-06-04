@@ -141,7 +141,7 @@ public:
             LoanableCollection& data_values,
             SampleInfoSeq& sample_infos,
             int32_t max_samples = LENGTH_UNLIMITED,
-            const InstanceHandle_t& a_handle = HANDLE_NIL,
+            const rtps::InstanceHandle_t& a_handle = rtps::HANDLE_NIL,
             SampleStateMask sample_states = ANY_SAMPLE_STATE,
             ViewStateMask view_states = ANY_VIEW_STATE,
             InstanceStateMask instance_states = ANY_INSTANCE_STATE);
@@ -150,7 +150,7 @@ public:
             LoanableCollection& data_values,
             SampleInfoSeq& sample_infos,
             int32_t max_samples = LENGTH_UNLIMITED,
-            const InstanceHandle_t& previous_handle = HANDLE_NIL,
+            const rtps::InstanceHandle_t& previous_handle = rtps::HANDLE_NIL,
             SampleStateMask sample_states = ANY_SAMPLE_STATE,
             ViewStateMask view_states = ANY_VIEW_STATE,
             InstanceStateMask instance_states = ANY_INSTANCE_STATE);
@@ -171,7 +171,7 @@ public:
             LoanableCollection& data_values,
             SampleInfoSeq& sample_infos,
             int32_t max_samples = LENGTH_UNLIMITED,
-            const InstanceHandle_t& a_handle = HANDLE_NIL,
+            const rtps::InstanceHandle_t& a_handle = rtps::HANDLE_NIL,
             SampleStateMask sample_states = ANY_SAMPLE_STATE,
             ViewStateMask view_states = ANY_VIEW_STATE,
             InstanceStateMask instance_states = ANY_INSTANCE_STATE);
@@ -180,7 +180,7 @@ public:
             LoanableCollection& data_values,
             SampleInfoSeq& sample_infos,
             int32_t max_samples = LENGTH_UNLIMITED,
-            const InstanceHandle_t& previous_handle = HANDLE_NIL,
+            const rtps::InstanceHandle_t& previous_handle = rtps::HANDLE_NIL,
             SampleStateMask sample_states = ANY_SAMPLE_STATE,
             ViewStateMask view_states = ANY_VIEW_STATE,
             InstanceStateMask instance_states = ANY_INSTANCE_STATE);
@@ -220,7 +220,7 @@ public:
      */
     const fastrtps::rtps::GUID_t& guid() const;
 
-    fastrtps::rtps::InstanceHandle_t get_instance_handle() const;
+    rtps::InstanceHandle_t get_instance_handle() const;
 
     /**
      * Get topic data type
@@ -253,7 +253,7 @@ public:
     /* TODO
        bool get_key_value(
             void* data,
-            const fastrtps::rtps::InstanceHandle_t& handle);
+            const fastdds::rtps::InstanceHandle_t& handle);
      */
 
     ReturnCode_t get_liveliness_changed_status(
@@ -360,7 +360,7 @@ public:
 
     void filter_has_been_updated();
 
-    InstanceHandle_t lookup_instance(
+    rtps::InstanceHandle_t lookup_instance(
             const void* instance) const;
 
     ReadCondition* create_readcondition(
@@ -463,7 +463,7 @@ protected:
     std::chrono::duration<double, std::ratio<1, 1000000>> deadline_duration_us_;
 
     //! The current timer owner, i.e. the instance which started the deadline timer
-    fastrtps::rtps::InstanceHandle_t timer_owner_;
+    rtps::InstanceHandle_t timer_owner_;
 
     //! Subscription matched status
     SubscriptionMatchedStatus subscription_matched_status_;
@@ -558,7 +558,7 @@ protected:
             LoanableCollection& data_values,
             SampleInfoSeq& sample_infos,
             int32_t max_samples,
-            const InstanceHandle_t& handle,
+            const rtps::InstanceHandle_t& handle,
             SampleStateMask sample_states,
             ViewStateMask view_states,
             InstanceStateMask instance_states,

@@ -26,7 +26,7 @@
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/topic/TopicDataType.hpp>
-#include <fastdds/rtps/common/InstanceHandle.h>
+#include <fastdds/rtps/common/InstanceHandle.hpp>
 #include <fastdds/rtps/common/SerializedPayload.h>
 
 #define MAX_TYPE_SIZE 10 * 1024 * 1024
@@ -132,7 +132,7 @@ public:
             void* data) override;
     bool getKey(
             void* /*data*/,
-            eprosima::fastrtps::rtps::InstanceHandle_t* /*ihandle*/,
+            eprosima::fastdds::rtps::InstanceHandle_t* /*ihandle*/,
             bool force_md5 = false) override
     {
         (void)force_md5;
@@ -236,7 +236,7 @@ public:
             void* data) override;
     bool getKey(
             void* /*data*/,
-            eprosima::fastrtps::rtps::InstanceHandle_t* /*ihandle*/,
+            eprosima::fastdds::rtps::InstanceHandle_t* /*ihandle*/,
             bool force_md5 = false) override
     {
         (void)force_md5;

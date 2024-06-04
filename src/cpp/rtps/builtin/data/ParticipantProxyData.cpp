@@ -51,7 +51,7 @@ using ::operator <<;
 ParticipantProxyData::ParticipantProxyData(
         const RTPSParticipantAllocationAttributes& allocation)
     : m_protocolVersion(c_ProtocolVersion)
-    , m_VendorId(c_VendorId_Unknown)
+    , m_VendorId(fastdds::rtps::c_VendorId_Unknown)
     , m_expectsInlineQos(false)
     , m_availableBuiltinEndpoints(0)
     , m_networkConfiguration(0)
@@ -469,9 +469,9 @@ bool ParticipantProxyData::readFromCDRMessage(
                     case fastdds::dds::PID_NETWORK_CONFIGURATION_SET:
                     {
                         VendorId_t local_vendor_id = source_vendor_id;
-                        if (c_VendorId_Unknown == local_vendor_id)
+                        if (fastdds::rtps::c_VendorId_Unknown == local_vendor_id)
                         {
-                            local_vendor_id = ((c_VendorId_Unknown == m_VendorId) ? c_VendorId_eProsima : m_VendorId);
+                            local_vendor_id = ((fastdds::rtps::c_VendorId_Unknown == m_VendorId) ? c_VendorId_eProsima : m_VendorId);
                         }
 
                         // Ignore custom PID when coming from other vendors
@@ -739,7 +739,7 @@ void ParticipantProxyData::clear()
     m_protocolVersion = ProtocolVersion_t();
     m_guid = GUID_t();
     //set_VendorId_Unknown(m_VendorId);
-    m_VendorId = c_VendorId_Unknown;
+    m_VendorId = fastdds::rtps::c_VendorId_Unknown;
     m_expectsInlineQos = false;
     m_availableBuiltinEndpoints = 0;
     m_networkConfiguration = 0;

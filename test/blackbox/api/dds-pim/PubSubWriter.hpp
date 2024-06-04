@@ -32,7 +32,7 @@
 #if _MSC_VER
 #include <Windows.h>
 #endif // _MSC_VER
-#include <fastdds/dds/common/InstanceHandle.hpp>
+#include <fastdds/rtps/common/InstanceHandle.hpp>
 #include <fastdds/dds/core/condition/GuardCondition.hpp>
 #include <fastdds/dds/core/condition/StatusCondition.hpp>
 #include <fastdds/dds/core/condition/WaitSet.hpp>
@@ -517,7 +517,7 @@ public:
         }
     }
 
-    eprosima::fastrtps::rtps::InstanceHandle_t register_instance(
+    eprosima::fastdds::rtps::InstanceHandle_t register_instance(
             type& msg)
     {
         return datawriter_->register_instance((void*)&msg);
@@ -525,14 +525,14 @@ public:
 
     bool unregister_instance(
             type& msg,
-            const eprosima::fastrtps::rtps::InstanceHandle_t& instance_handle)
+            const eprosima::fastdds::rtps::InstanceHandle_t& instance_handle)
     {
         return eprosima::fastdds::dds::RETCODE_OK == datawriter_->unregister_instance((void*)&msg, instance_handle);
     }
 
     bool dispose(
             type& msg,
-            const eprosima::fastrtps::rtps::InstanceHandle_t& instance_handle)
+            const eprosima::fastdds::rtps::InstanceHandle_t& instance_handle)
     {
         return eprosima::fastdds::dds::RETCODE_OK == datawriter_->dispose((void*)&msg, instance_handle);
     }
@@ -777,7 +777,7 @@ public:
             >
     bool waitForInstanceAcked(
             void* data,
-            const eprosima::fastrtps::rtps::InstanceHandle_t& instance_handle,
+            const eprosima::fastdds::rtps::InstanceHandle_t& instance_handle,
             const std::chrono::duration<_Rep, _Period>& max_wait)
     {
         auto nsecs = std::chrono::duration_cast<std::chrono::nanoseconds>(max_wait);
@@ -1571,9 +1571,9 @@ public:
         return datawriter_guid_;
     }
 
-    eprosima::fastrtps::rtps::InstanceHandle_t datawriter_ihandle()
+    eprosima::fastdds::rtps::InstanceHandle_t datawriter_ihandle()
     {
-        return eprosima::fastrtps::rtps::InstanceHandle_t(datawriter_guid());
+        return eprosima::fastdds::rtps::InstanceHandle_t(datawriter_guid());
     }
 
     bool update_partition(

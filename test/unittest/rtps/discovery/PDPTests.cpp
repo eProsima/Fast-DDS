@@ -92,7 +92,7 @@ class TesterPDPEndpoints : public fastdds::rtps::PDPEndpoints
     }
 
     void remove_from_pdp_reader_history(
-            const fastrtps::rtps::InstanceHandle_t&) override
+            const fastdds::rtps::InstanceHandle_t&) override
     {
 
     }

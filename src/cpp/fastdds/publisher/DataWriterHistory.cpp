@@ -21,7 +21,7 @@
 #include <limits>
 #include <mutex>
 
-#include <fastdds/dds/common/InstanceHandle.hpp>
+#include <fastdds/rtps/common/InstanceHandle.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
@@ -60,7 +60,7 @@ DataWriterHistory::DataWriterHistory(
         const TopicAttributes& topic_att,
         uint32_t payloadMaxSize,
         MemoryManagementPolicy_t mempolicy,
-        std::function<void (const fastrtps::rtps::InstanceHandle_t&)> unack_sample_remove_functor)
+        std::function<void (const rtps::InstanceHandle_t&)> unack_sample_remove_functor)
     : WriterHistory(to_history_attributes(topic_att, payloadMaxSize, mempolicy))
     , history_qos_(topic_att.historyQos)
     , resource_limited_qos_(topic_att.resourceLimitsQos)
@@ -103,7 +103,7 @@ void DataWriterHistory::rebuild_instances()
 }
 
 bool DataWriterHistory::register_instance(
-        const InstanceHandle_t& instance_handle,
+        const rtps::InstanceHandle_t& instance_handle,
         std::unique_lock<RecursiveTimedMutex>&,
         const std::chrono::time_point<std::chrono::steady_clock>&,
         SerializedPayload_t*& payload)
@@ -126,7 +126,7 @@ bool DataWriterHistory::register_instance(
 }
 
 fastrtps::rtps::SerializedPayload_t* DataWriterHistory::get_key_value(
-        const fastrtps::rtps::InstanceHandle_t& handle)
+        const rtps::rtps::InstanceHandle_t& handle)
 {
     t_m_Inst_Caches::iterator vit = keyed_changes_.find(handle);
     if (vit != keyed_changes_.end() && vit->second.is_registered())
@@ -145,7 +145,7 @@ bool DataWriterHistory::prepare_change(
     {
         bool ret = false;
         bool is_acked = change_is_acked_or_fully_delivered(m_changes.front());
-        InstanceHandle_t instance = topic_att_.getTopicKind() == NO_KEY ?
+        rtps::InstanceHandle_t instance = topic_att_.getTopicKind() == NO_KEY ?
                 HANDLE_NIL : m_changes.front()->instanceHandle;
 
         if (history_qos_.kind == KEEP_ALL_HISTORY_QOS)
@@ -198,7 +198,7 @@ bool DataWriterHistory::prepare_change(
                 else
                 {
                     bool is_acked = change_is_acked_or_fully_delivered(vit->second.cache_changes.front());
-                    InstanceHandle_t instance = change->instanceHandle;
+                    rtps::InstanceHandle_t instance = change->instanceHandle;
                     add = remove_change_pub(vit->second.cache_changes.front());
                     // Notify if removed unacknowledged
                     if (add && !is_acked)
@@ -280,7 +280,7 @@ bool DataWriterHistory::add_pub_change(
 }
 
 bool DataWriterHistory::find_or_add_key(
-        const InstanceHandle_t& instance_handle,
+        const rtps::InstanceHandle_t& instance_handle,
         const SerializedPayload_t& payload,
         t_m_Inst_Caches::iterator* vit_out)
 {
@@ -427,7 +427,7 @@ bool DataWriterHistory::remove_change_g(
 }
 
 bool DataWriterHistory::remove_instance_changes(
-        const InstanceHandle_t& handle,
+        const rtps::InstanceHandle_t& handle,
         const SequenceNumber_t& seq_up_to)
 {
     if (mp_writer == nullptr || mp_mutex == nullptr)
@@ -471,7 +471,7 @@ bool DataWriterHistory::remove_instance_changes(
 }
 
 bool DataWriterHistory::set_next_deadline(
-        const InstanceHandle_t& handle,
+        const rtps::InstanceHandle_t& handle,
         const std::chrono::steady_clock::time_point& next_deadline_us)
 {
     if (mp_writer == nullptr || mp_mutex == nullptr)
@@ -501,7 +501,7 @@ bool DataWriterHistory::set_next_deadline(
 }
 
 bool DataWriterHistory::get_next_deadline(
-        InstanceHandle_t& handle,
+        rtps::InstanceHandle_t& handle,
         std::chrono::steady_clock::time_point& next_deadline_us)
 {
     if (mp_writer == nullptr || mp_mutex == nullptr)
@@ -537,7 +537,7 @@ bool DataWriterHistory::get_next_deadline(
 }
 
 bool DataWriterHistory::is_key_registered(
-        const InstanceHandle_t& handle)
+        const rtps::InstanceHandle_t& handle)
 {
     if (mp_writer == nullptr || mp_mutex == nullptr)
     {
@@ -551,7 +551,7 @@ bool DataWriterHistory::is_key_registered(
 }
 
 bool DataWriterHistory::wait_for_acknowledgement_last_change(
-        const InstanceHandle_t& handle,
+        const rtps::InstanceHandle_t& handle,
         std::unique_lock<RecursiveTimedMutex>& lock,
         const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
 {

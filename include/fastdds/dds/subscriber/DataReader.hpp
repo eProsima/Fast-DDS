@@ -378,7 +378,7 @@ public:
             LoanableCollection& data_values,
             SampleInfoSeq& sample_infos,
             int32_t max_samples = LENGTH_UNLIMITED,
-            const InstanceHandle_t& a_handle = HANDLE_NIL,
+            const rtps::InstanceHandle_t& a_handle = HANDLE_NIL,
             SampleStateMask sample_states = ANY_SAMPLE_STATE,
             ViewStateMask view_states = ANY_VIEW_STATE,
             InstanceStateMask instance_states = ANY_INSTANCE_STATE);
@@ -443,7 +443,7 @@ public:
             LoanableCollection& data_values,
             SampleInfoSeq& sample_infos,
             int32_t max_samples = LENGTH_UNLIMITED,
-            const InstanceHandle_t& previous_handle = HANDLE_NIL,
+            const rtps::InstanceHandle_t& previous_handle = HANDLE_NIL,
             SampleStateMask sample_states = ANY_SAMPLE_STATE,
             ViewStateMask view_states = ANY_VIEW_STATE,
             InstanceStateMask instance_states = ANY_INSTANCE_STATE);
@@ -481,7 +481,7 @@ public:
             LoanableCollection& data_values,
             SampleInfoSeq& sample_infos,
             int32_t max_samples,
-            const InstanceHandle_t& previous_handle,
+            const rtps::InstanceHandle_t& previous_handle,
             ReadCondition* a_condition);
 
     /**
@@ -605,7 +605,7 @@ public:
             LoanableCollection& data_values,
             SampleInfoSeq& sample_infos,
             int32_t max_samples = LENGTH_UNLIMITED,
-            const InstanceHandle_t& a_handle = HANDLE_NIL,
+            const rtps::InstanceHandle_t& a_handle = HANDLE_NIL,
             SampleStateMask sample_states = ANY_SAMPLE_STATE,
             ViewStateMask view_states = ANY_VIEW_STATE,
             InstanceStateMask instance_states = ANY_INSTANCE_STATE);
@@ -644,7 +644,7 @@ public:
             LoanableCollection& data_values,
             SampleInfoSeq& sample_infos,
             int32_t max_samples = LENGTH_UNLIMITED,
-            const InstanceHandle_t& previous_handle = HANDLE_NIL,
+            const rtps::InstanceHandle_t& previous_handle = HANDLE_NIL,
             SampleStateMask sample_states = ANY_SAMPLE_STATE,
             ViewStateMask view_states = ANY_VIEW_STATE,
             InstanceStateMask instance_states = ANY_INSTANCE_STATE);
@@ -681,7 +681,7 @@ public:
             LoanableCollection& data_values,
             SampleInfoSeq& sample_infos,
             int32_t max_samples,
-            const InstanceHandle_t& previous_handle,
+            const rtps::InstanceHandle_t& previous_handle,
             ReadCondition* a_condition);
 
     /**
@@ -767,7 +767,7 @@ public:
      */
     FASTDDS_EXPORTED_API ReturnCode_t get_key_value(
             void* key_holder,
-            const InstanceHandle_t& handle);
+            const rtps::InstanceHandle_t& handle);
 
     /**
      * Takes as a parameter an instance and returns a handle that can be used in subsequent operations that accept an
@@ -780,7 +780,7 @@ public:
      * @return HANDLE_NIL if @c instance is nullptr.
      * @return HANDLE_NIL if there is no instance on the DataReader's history with the same key as @c instance.
      */
-    FASTDDS_EXPORTED_API InstanceHandle_t lookup_instance(
+    FASTDDS_EXPORTED_API rtps::InstanceHandle_t lookup_instance(
             const void* instance) const;
 
     /**
@@ -833,7 +833,7 @@ public:
      *
      * @return Copy of the InstanceHandle
      */
-    FASTDDS_EXPORTED_API InstanceHandle_t get_instance_handle() const;
+    FASTDDS_EXPORTED_API rtps::InstanceHandle_t get_instance_handle() const;
 
     /**
      * Getter for the data type.
@@ -980,7 +980,7 @@ public:
      */
     FASTDDS_EXPORTED_API ReturnCode_t get_matched_publication_data(
             builtin::PublicationBuiltinTopicData& publication_data,
-            const fastrtps::rtps::InstanceHandle_t& publication_handle) const;
+            const fastdds::rtps::InstanceHandle_t& publication_handle) const;
 
     /**
      * @brief Fills the given vector with the InstanceHandle_t of matched DataReaders
@@ -991,7 +991,7 @@ public:
      * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
     FASTDDS_EXPORTED_API ReturnCode_t get_matched_publications(
-            std::vector<InstanceHandle_t>& publication_handles) const;
+            std::vector<rtps::InstanceHandle_t>& publication_handles) const;
 
     /**
      * @brief This operation creates a ReadCondition. The returned ReadCondition will be attached and belong to the

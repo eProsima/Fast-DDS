@@ -183,7 +183,7 @@ protected:
             GUID_t writer_GUID;
 
             // Instance handel for the change
-            InstanceHandle_t instance_handle;
+            fastdds::rtps::InstanceHandle_t instance_handle;
 
             // Related sample identity for the change
             fastrtps::rtps::SampleIdentity related_sample_identity;
@@ -288,13 +288,13 @@ protected:
             metadata_.source_timestamp = timestamp;
         }
 
-        InstanceHandle_t instance_handle() const
+        fastdds::rtps::InstanceHandle_t instance_handle() const
         {
             return metadata_.instance_handle;
         }
 
         void instance_handle(
-                InstanceHandle_t handle)
+                fastdds::rtps::InstanceHandle_t handle)
         {
             metadata_.instance_handle = handle;
         }

@@ -124,7 +124,7 @@ public:
             const std::string& topic_name) const;
 
     bool contains_entity(
-            const fastrtps::rtps::InstanceHandle_t& handle) const;
+            const fastdds::rtps::InstanceHandle_t& handle) const;
 
     bool get_datawriters(
             std::vector<DataWriter*>& writers) const;
@@ -182,7 +182,7 @@ public:
 
     const Publisher* get_publisher() const;
 
-    const fastrtps::rtps::InstanceHandle_t& get_instance_handle() const;
+    const fastdds::rtps::InstanceHandle_t& get_instance_handle() const;
 
     //! Remove all listeners in the hierarchy to allow a quiet destruction
     void disable();
@@ -257,7 +257,7 @@ protected:
 
     DataWriterQos default_datawriter_qos_;
 
-    fastrtps::rtps::InstanceHandle_t handle_;
+    fastdds::rtps::InstanceHandle_t handle_;
 
     virtual DataWriterImpl* create_datawriter_impl(
             const TypeSupport& type,

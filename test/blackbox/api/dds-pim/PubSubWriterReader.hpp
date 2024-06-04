@@ -1018,8 +1018,8 @@ private:
     std::condition_variable cv_;
     std::mutex mutexDiscovery_;
     std::condition_variable cvDiscovery_;
-    std::set<eprosima::fastrtps::rtps::InstanceHandle_t> matched_writers_;
-    std::set<eprosima::fastrtps::rtps::InstanceHandle_t> matched_readers_;
+    std::set<eprosima::fastdds::rtps::InstanceHandle_t> matched_writers_;
+    std::set<eprosima::fastdds::rtps::InstanceHandle_t> matched_readers_;
     std::atomic<bool> receiving_;
     eprosima::fastdds::dds::TypeSupport type_;
     eprosima::fastrtps::rtps::SequenceNumber_t last_seq;

@@ -113,7 +113,7 @@ public:
             const std::string& topic_name) const;
 
     bool contains_entity(
-            const fastrtps::rtps::InstanceHandle_t& handle) const;
+            const fastdds::rtps::InstanceHandle_t& handle) const;
     /* TODO
        bool begin_access();
      */
@@ -175,7 +175,7 @@ public:
         return user_subscriber_;
     }
 
-    const fastrtps::rtps::InstanceHandle_t& get_instance_handle() const;
+    const fastdds::rtps::InstanceHandle_t& get_instance_handle() const;
 
     //! Remove all listeners in the hierarchy to allow a quiet destruction
     void disable();
@@ -297,7 +297,7 @@ protected:
 
     DataReaderQos default_datareader_qos_;
 
-    fastrtps::rtps::InstanceHandle_t handle_;
+    fastdds::rtps::InstanceHandle_t handle_;
 
     virtual DataReaderImpl* create_datareader_impl(
             const TypeSupport& type,

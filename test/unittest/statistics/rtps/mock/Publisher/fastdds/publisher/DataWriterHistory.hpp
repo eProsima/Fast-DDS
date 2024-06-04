@@ -65,7 +65,7 @@ public:
             const fastrtps::TopicAttributes& topic_att,
             uint32_t payloadMaxSize,
             fastrtps::rtps::MemoryManagementPolicy_t mempolicy,
-            std::function<void (const fastrtps::rtps::InstanceHandle_t&)>)
+            std::function<void (const rtps::InstanceHandle_t&)>)
         : WriterHistory(to_history_attributes(topic_att, payloadMaxSize, mempolicy))
     {
     }

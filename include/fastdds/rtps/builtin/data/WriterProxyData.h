@@ -174,45 +174,45 @@ public:
             bool use_multicast_locators);
 
     FASTDDS_EXPORTED_API void key(
-            const InstanceHandle_t& key)
+            const fastdds::rtps::InstanceHandle_t& key)
     {
         m_key = key;
     }
 
     FASTDDS_EXPORTED_API void key(
-            InstanceHandle_t&& key)
+            fastdds::rtps::InstanceHandle_t&& key)
     {
         m_key = std::move(key);
     }
 
-    FASTDDS_EXPORTED_API InstanceHandle_t key() const
+    FASTDDS_EXPORTED_API fastdds::rtps::InstanceHandle_t key() const
     {
         return m_key;
     }
 
-    FASTDDS_EXPORTED_API InstanceHandle_t& key()
+    FASTDDS_EXPORTED_API fastdds::rtps::InstanceHandle_t& key()
     {
         return m_key;
     }
 
     FASTDDS_EXPORTED_API void RTPSParticipantKey(
-            const InstanceHandle_t& RTPSParticipantKey)
+            const fastdds::rtps::InstanceHandle_t& RTPSParticipantKey)
     {
         m_RTPSParticipantKey = RTPSParticipantKey;
     }
 
     FASTDDS_EXPORTED_API void RTPSParticipantKey(
-            InstanceHandle_t&& RTPSParticipantKey)
+            fastdds::rtps::InstanceHandle_t&& RTPSParticipantKey)
     {
         m_RTPSParticipantKey = std::move(RTPSParticipantKey);
     }
 
-    FASTDDS_EXPORTED_API InstanceHandle_t RTPSParticipantKey() const
+    FASTDDS_EXPORTED_API fastdds::rtps::InstanceHandle_t RTPSParticipantKey() const
     {
         return m_RTPSParticipantKey;
     }
 
-    FASTDDS_EXPORTED_API InstanceHandle_t& RTPSParticipantKey()
+    FASTDDS_EXPORTED_API fastdds::rtps::InstanceHandle_t& RTPSParticipantKey()
     {
         return m_RTPSParticipantKey;
     }
@@ -458,7 +458,7 @@ public:
             const NetworkFactory& network,
             bool is_shm_transport_possible,
             bool should_filter_locators,
-            fastdds::rtps::VendorId_t source_vendor_id = c_VendorId_eProsima);
+            fastdds::rtps::VendorId_t source_vendor_id = fastdds::rtps::c_VendorId_eProsima);
 
 private:
 
@@ -472,10 +472,10 @@ private:
     RemoteLocatorList remote_locators_;
 
     //!GUID_t of the Writer converted to InstanceHandle_t
-    InstanceHandle_t m_key;
+    fastdds::rtps::InstanceHandle_t m_key;
 
     //!GUID_t of the participant converted to InstanceHandle
-    InstanceHandle_t m_RTPSParticipantKey;
+    fastdds::rtps::InstanceHandle_t m_RTPSParticipantKey;
 
     //!Type name
     fastcdr::string_255 m_typeName;

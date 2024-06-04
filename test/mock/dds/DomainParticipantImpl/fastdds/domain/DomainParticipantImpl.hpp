@@ -38,7 +38,7 @@
 #include <fastdds/publisher/PublisherImpl.hpp>
 #include <fastdds/rtps/attributes/TopicAttributes.h>
 #include <fastdds/rtps/common/Guid.h>
-#include <fastdds/rtps/common/InstanceHandle.h>
+#include <fastdds/rtps/common/InstanceHandle.hpp>
 #include <fastdds/rtps/common/Types.h>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/rtps/participant/RTPSParticipantListener.h>
@@ -379,7 +379,7 @@ public:
                 const char* filter_class_name));
 
     MOCK_METHOD1(ignore_participant, bool (
-                const fastrtps::rtps::InstanceHandle_t& handle));
+                const fastdds::rtps::InstanceHandle_t& handle));
 
 
     TopicDescription* lookup_topicdescription(

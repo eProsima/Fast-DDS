@@ -1835,9 +1835,9 @@ public:
         return datareader_guid_;
     }
 
-    eprosima::fastrtps::rtps::InstanceHandle_t datareader_ihandle()
+    eprosima::fastdds::rtps::InstanceHandle_t datareader_ihandle()
     {
-        return eprosima::fastrtps::rtps::InstanceHandle_t(datareader_guid());
+        return eprosima::fastdds::rtps::InstanceHandle_t(datareader_guid());
     }
 
     void set_sample_lost_status(
@@ -2093,7 +2093,7 @@ protected:
     unsigned int participant_matched_;
     std::atomic<bool> receiving_;
     eprosima::fastdds::dds::TypeSupport type_;
-    using LastSeqInfo = std::pair<eprosima::fastrtps::rtps::InstanceHandle_t, eprosima::fastrtps::rtps::GUID_t>;
+    using LastSeqInfo = std::pair<eprosima::fastdds::rtps::InstanceHandle_t, eprosima::fastrtps::rtps::GUID_t>;
     std::map<LastSeqInfo, eprosima::fastrtps::rtps::SequenceNumber_t> last_seq;
     std::atomic<size_t> current_processed_count_;
     std::atomic<size_t> number_samples_expected_;

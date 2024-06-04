@@ -101,9 +101,9 @@ DataReaderHistory::DataReaderHistory(
         key_changes_allocation_.initial = resource_limited_qos_.allocated_samples;
         key_changes_allocation_.maximum = resource_limited_qos_.max_samples;
 
-        instances_.emplace(c_InstanceHandle_Unknown,
+        instances_.emplace(rtps::c_InstanceHandle_Unknown,
                 std::make_shared<DataReaderInstance>(key_changes_allocation_, key_writers_allocation_));
-        data_available_instances_[c_InstanceHandle_Unknown] = instances_[c_InstanceHandle_Unknown];
+        data_available_instances_[rtps::c_InstanceHandle_Unknown] = instances_[rtps::c_InstanceHandle_Unknown];
     }
 
     using std::placeholders::_1;
@@ -123,7 +123,7 @@ DataReaderHistory::DataReaderHistory(
     {
         compute_key_for_change_fn_ = [](CacheChange_t* change)
                 {
-                    change->instanceHandle = c_InstanceHandle_Unknown;
+                    change->instanceHandle = rtps::c_InstanceHandle_Unknown;
                     return true;
                 };
     }
@@ -379,7 +379,7 @@ bool DataReaderHistory::get_first_untaken_info(
 }
 
 bool DataReaderHistory::find_key(
-        const InstanceHandle_t& handle,
+        const rtps::InstanceHandle_t& handle,
         InstanceCollection::iterator& vit_out)
 {
     InstanceCollection::iterator vit;
@@ -529,7 +529,7 @@ bool DataReaderHistory::remove_change_sub(
 }
 
 bool DataReaderHistory::set_next_deadline(
-        const InstanceHandle_t& handle,
+        const rtps::InstanceHandle_t& handle,
         const std::chrono::steady_clock::time_point& next_deadline_us,
         bool deadline_missed)
 {
@@ -554,7 +554,7 @@ bool DataReaderHistory::set_next_deadline(
 }
 
 bool DataReaderHistory::get_next_deadline(
-        InstanceHandle_t& handle,
+        rtps::InstanceHandle_t& handle,
         std::chrono::steady_clock::time_point& next_deadline_us)
 {
     if (mp_reader == nullptr || mp_mutex == nullptr)
@@ -591,13 +591,13 @@ uint64_t DataReaderHistory::get_unread_count(
 }
 
 bool DataReaderHistory::is_instance_present(
-        const InstanceHandle_t& handle) const
+        const rtps::InstanceHandle_t& handle) const
 {
     return has_keys_ && instances_.find(handle) != instances_.end();
 }
 
 std::pair<bool, DataReaderHistory::instance_info> DataReaderHistory::lookup_available_instance(
-        const InstanceHandle_t& handle,
+        const rtps::InstanceHandle_t& handle,
         bool exact)
 {
     InstanceCollection::iterator it = data_available_instances_.end();
@@ -632,7 +632,7 @@ std::pair<bool, DataReaderHistory::instance_info> DataReaderHistory::lookup_avai
             else
             {
                 // Looking for an instance with a handle greater than the one on the input
-                auto comp = [](const InstanceHandle_t& h, const InstanceCollection::value_type& it)
+                auto comp = [](const rtps::InstanceHandle_t& h, const InstanceCollection::value_type& it)
                         {
                             return h < it.first;
                         };
@@ -645,7 +645,7 @@ std::pair<bool, DataReaderHistory::instance_info> DataReaderHistory::lookup_avai
 }
 
 std::pair<bool, DataReaderHistory::instance_info> DataReaderHistory::next_available_instance_nts(
-        const InstanceHandle_t& handle,
+        const rtps::InstanceHandle_t& handle,
         const DataReaderHistory::instance_info& current_info)
 {
     if (current_info == data_available_instances_.end())

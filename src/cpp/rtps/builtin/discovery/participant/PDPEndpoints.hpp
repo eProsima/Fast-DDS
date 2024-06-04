@@ -54,7 +54,7 @@ public:
     virtual void delete_pdp_endpoints(
             fastrtps::rtps::RTPSParticipantImpl* participant) = 0;
     virtual void remove_from_pdp_reader_history(
-            const fastrtps::rtps::InstanceHandle_t& remote_participant) = 0;
+            const fastdds::rtps::InstanceHandle_t& remote_participant) = 0;
     virtual void remove_from_pdp_reader_history(
             fastrtps::rtps::CacheChange_t* change) = 0;
 

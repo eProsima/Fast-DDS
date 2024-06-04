@@ -148,7 +148,7 @@ public:
 
     bool getKey(
             void* /*data*/,
-            fastrtps::rtps::InstanceHandle_t* /*ihandle*/,
+            rtps::InstanceHandle_t* /*ihandle*/,
             bool /*force_md5*/) override
     {
         return true;
@@ -238,7 +238,7 @@ public:
 
     bool getKey(
             void* /*data*/,
-            fastrtps::rtps::InstanceHandle_t* /*ihandle*/,
+            rtps::InstanceHandle_t* /*ihandle*/,
             bool /*force_md5*/) override
     {
         return true;
@@ -2582,7 +2582,7 @@ TEST(ParticipantTests, CheckDomainParticipantQos)
 
     // Change the user data
     qos.user_data().set_max_size(5);
-    std::vector<octet> my_data {0, 1, 2, 3, 4};
+    std::vector<eprosima::fastrtps::rtps::octet> my_data {0, 1, 2, 3, 4};
     qos.user_data().setValue(my_data);
     ASSERT_TRUE(participant->set_qos(qos) == RETCODE_OK);
 
@@ -2931,35 +2931,35 @@ TEST(ParticipantTests, ContainsEntity)
     // Create the topic
     Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
     ASSERT_NE(topic, nullptr);
-    eprosima::fastrtps::rtps::InstanceHandle_t topic_ihandle = topic->get_instance_handle();
+    rtps::InstanceHandle_t topic_ihandle = topic->get_instance_handle();
     // Check that the participant contains an already created topic in this participant
     ASSERT_TRUE(participant->contains_entity(topic_ihandle, false));
 
     // Create the publisher
     Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
     ASSERT_NE(publisher, nullptr);
-    eprosima::fastrtps::rtps::InstanceHandle_t pub_ihandle = publisher->get_instance_handle();
+    rtps::InstanceHandle_t pub_ihandle = publisher->get_instance_handle();
     // Check that the participant contains an already created publisher in this participant
     ASSERT_TRUE(participant->contains_entity(pub_ihandle, false));
 
     // Create the subscriber
     Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
     ASSERT_NE(subscriber, nullptr);
-    eprosima::fastrtps::rtps::InstanceHandle_t sub_ihandle = subscriber->get_instance_handle();
+    rtps::InstanceHandle_t sub_ihandle = subscriber->get_instance_handle();
     // Check that the participant contains an already created subscriber in this participant
     ASSERT_TRUE(participant->contains_entity(sub_ihandle, false));
 
     // Create the data_writer
     DataWriter* data_writer = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT);
     ASSERT_NE(data_writer, nullptr);
-    eprosima::fastrtps::rtps::InstanceHandle_t data_writer_ihandle = data_writer->get_instance_handle();
+    rtps::InstanceHandle_t data_writer_ihandle = data_writer->get_instance_handle();
     // Check that the participant contains an already created data_writer in this participant
     ASSERT_TRUE(participant->contains_entity(data_writer_ihandle, true));
 
     // Create the data_reader
     DataReader* data_reader = subscriber->create_datareader(topic, DATAREADER_QOS_DEFAULT);
     ASSERT_NE(data_reader, nullptr);
-    eprosima::fastrtps::rtps::InstanceHandle_t data_reader_ihandle = data_reader->get_instance_handle();
+    rtps::InstanceHandle_t data_reader_ihandle = data_reader->get_instance_handle();
     // Check that the participant contains an already created data_reader in this participant
     ASSERT_TRUE(participant->contains_entity(data_reader_ihandle, true));
 
@@ -3224,12 +3224,12 @@ TEST(ParticipantTests, DeleteContainedEntities)
     Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
     ASSERT_NE(subscriber, nullptr);
 
-    InstanceHandle_t subscriber_handle = subscriber->get_instance_handle();
+    rtps::InstanceHandle_t subscriber_handle = subscriber->get_instance_handle();
 
     Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
     ASSERT_NE(subscriber, nullptr);
 
-    InstanceHandle_t publisher_handle = publisher->get_instance_handle();
+    rtps::InstanceHandle_t publisher_handle = publisher->get_instance_handle();
 
     Topic* topic_bar = participant->create_topic("bartopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
     ASSERT_NE(topic_bar, nullptr);
@@ -3244,7 +3244,7 @@ TEST(ParticipantTests, DeleteContainedEntities)
     DataWriter* data_writer_bar = publisher->create_datawriter(topic_bar, DATAWRITER_QOS_DEFAULT);
     ASSERT_NE(data_writer_bar, nullptr);
 
-    InstanceHandle_t handle_nil = HANDLE_NIL;
+    rtps::InstanceHandle_t handle_nil = HANDLE_NIL;
     BarType data;
     data.index(1);
     type.get_key(&data, &handle_nil);
@@ -3255,8 +3255,8 @@ TEST(ParticipantTests, DeleteContainedEntities)
     Topic* topic_foo = participant->create_topic("footopic", loanable_type.get_type_name(), TOPIC_QOS_DEFAULT);
     ASSERT_NE(topic_foo, nullptr);
 
-    InstanceHandle_t topic_foo_handle = topic_foo->get_instance_handle();
-    InstanceHandle_t topic_bar_handle = topic_bar->get_instance_handle();
+    rtps::InstanceHandle_t topic_foo_handle = topic_foo->get_instance_handle();
+    rtps::InstanceHandle_t topic_bar_handle = topic_bar->get_instance_handle();
 
     DataWriter* data_writer_foo = publisher->create_datawriter(topic_foo, DATAWRITER_QOS_DEFAULT);
     ASSERT_NE(data_writer_foo, nullptr);
@@ -3625,22 +3625,22 @@ TEST(ParticipantTests, UnsupportedMethods)
 
     ASSERT_EQ(participant->get_builtin_subscriber(), nullptr);
 
-    ASSERT_EQ(participant->ignore_topic(InstanceHandle_t()), RETCODE_UNSUPPORTED);
-    ASSERT_EQ(participant->ignore_publication(InstanceHandle_t()), RETCODE_UNSUPPORTED);
-    ASSERT_EQ(participant->ignore_subscription(InstanceHandle_t()), RETCODE_UNSUPPORTED);
+    ASSERT_EQ(participant->ignore_topic(rtps::InstanceHandle_t()), RETCODE_UNSUPPORTED);
+    ASSERT_EQ(participant->ignore_publication(rtps::InstanceHandle_t()), RETCODE_UNSUPPORTED);
+    ASSERT_EQ(participant->ignore_subscription(rtps::InstanceHandle_t()), RETCODE_UNSUPPORTED);
 
     // Discovery methods
-    std::vector<InstanceHandle_t> handle_vector({InstanceHandle_t()});
+    std::vector<rtps::InstanceHandle_t> handle_vector({rtps::InstanceHandle_t()});
     builtin::ParticipantBuiltinTopicData pbtd;
     builtin::TopicBuiltinTopicData tbtd;
 
     ASSERT_EQ(participant->get_discovered_participants(handle_vector), RETCODE_UNSUPPORTED);
     ASSERT_EQ(
-        participant->get_discovered_participant_data(pbtd, InstanceHandle_t()), RETCODE_UNSUPPORTED);
+        participant->get_discovered_participant_data(pbtd, rtps::InstanceHandle_t()), RETCODE_UNSUPPORTED);
 
     ASSERT_EQ(participant->get_discovered_topics(handle_vector), RETCODE_UNSUPPORTED);
     ASSERT_EQ(
-        participant->get_discovered_topic_data(tbtd, InstanceHandle_t()), RETCODE_UNSUPPORTED);
+        participant->get_discovered_topic_data(tbtd, rtps::InstanceHandle_t()), RETCODE_UNSUPPORTED);
 
     ASSERT_EQ(participant->delete_topic(topic), RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);

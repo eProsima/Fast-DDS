@@ -81,7 +81,7 @@ TEST(KeyedTopic, UnregistrationFail)
 
     ASSERT_TRUE(writer.isInitialized());
 
-    eprosima::fastrtps::rtps::InstanceHandle_t handle;
+    eprosima::fastdds::rtps::InstanceHandle_t handle;
     handle.value[0] = 1;
 
     auto data = default_keyedhelloworld_data_generator(1);
@@ -99,7 +99,7 @@ TEST(KeyedTopic, DisposeFail)
 
     ASSERT_TRUE(writer.isInitialized());
 
-    eprosima::fastrtps::rtps::InstanceHandle_t handle;
+    eprosima::fastdds::rtps::InstanceHandle_t handle;
     handle.value[0] = 1;
 
     auto data = default_keyedhelloworld_data_generator(1);

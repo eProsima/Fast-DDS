@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * @file InstanceHandle.h
+ * @file InstanceHandle.hpp
  */
 
-#ifndef _FASTDDS_RTPS_INSTANCEHANDLE_H_
-#define _FASTDDS_RTPS_INSTANCEHANDLE_H_
+#ifndef _FASTDDS_RTPS_INSTANCEHANDLE_HPP_
+#define _FASTDDS_RTPS_INSTANCEHANDLE_HPP_
 
 #include <array>
 
@@ -26,7 +26,7 @@
 #include <fastdds/rtps/common/Guid.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 using KeyHash_t = std::array<octet, 16>;
@@ -358,8 +358,10 @@ inline std::istream& operator >>(
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
+extern FASTDDS_EXPORTED_API const InstanceHandle_t HANDLE_NIL;
+
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
-#endif /* _FASTDDS_RTPS_INSTANCEHANDLE_H_ */
+#endif /* _FASTDDS_RTPS_INSTANCEHANDLE_HPP_ */

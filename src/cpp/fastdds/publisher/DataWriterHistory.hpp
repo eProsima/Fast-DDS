@@ -24,7 +24,7 @@
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/rtps/attributes/TopicAttributes.h>
-#include <fastdds/rtps/common/InstanceHandle.h>
+#include <fastdds/rtps/common/InstanceHandle.hpp>
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/resources/ResourceManagement.h>
@@ -55,7 +55,7 @@ public:
             const fastrtps::TopicAttributes& topic_att,
             uint32_t payloadMax,
             fastrtps::rtps::MemoryManagementPolicy_t mempolicy,
-            std::function<void (const fastrtps::rtps::InstanceHandle_t&)> unack_sample_remove_functor);
+            std::function<void (const fastdds::rtps::InstanceHandle_t&)> unack_sample_remove_functor);
 
     virtual ~DataWriterHistory();
 
@@ -76,7 +76,7 @@ public:
      * @return True if resources were reserved successfully.
      */
     bool register_instance(
-            const fastrtps::rtps::InstanceHandle_t& instance_handle,
+            const fastdds::rtps::InstanceHandle_t& instance_handle,
             std::unique_lock<fastrtps::RecursiveTimedMutex>& lock,
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time,
             fastrtps::rtps::SerializedPayload_t*& payload);
@@ -93,7 +93,7 @@ public:
      * @return Pointer to the serialized payload of the sample with which the instance was registered.
      */
     fastrtps::rtps::SerializedPayload_t* get_key_value(
-            const fastrtps::rtps::InstanceHandle_t& handle);
+            const fastdds::rtps::InstanceHandle_t& handle);
 
     /**
      * Add a change comming from the DataWriter.
@@ -192,7 +192,7 @@ public:
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time) override;
 
     bool remove_instance_changes(
-            const fastrtps::rtps::InstanceHandle_t& handle,
+            const fastdds::rtps::InstanceHandle_t& handle,
             const fastrtps::rtps::SequenceNumber_t& seq_up_to);
 
     /**
@@ -202,7 +202,7 @@ public:
      * @return True if deadline was set successfully
      */
     bool set_next_deadline(
-            const fastrtps::rtps::InstanceHandle_t& handle,
+            const fastdds::rtps::InstanceHandle_t& handle,
             const std::chrono::steady_clock::time_point& next_deadline_us);
 
     /**
@@ -212,7 +212,7 @@ public:
      * @return True if deadline could be retrieved for the given instance
      */
     bool get_next_deadline(
-            fastrtps::rtps::InstanceHandle_t& handle,
+            fastdds::rtps::InstanceHandle_t& handle,
             std::chrono::steady_clock::time_point& next_deadline_us);
 
     /*!
@@ -221,7 +221,7 @@ public:
      * return `true` if instance's key is registered in the history.
      */
     bool is_key_registered(
-            const fastrtps::rtps::InstanceHandle_t& handle);
+            const fastdds::rtps::InstanceHandle_t& handle);
 
     /**
      * Waits till the last change in the instance history has been acknowledged.
@@ -231,13 +231,13 @@ public:
      * @return true when the last change of the instance history is acknowleged, false when timeout is reached.
      */
     bool wait_for_acknowledgement_last_change(
-            const fastrtps::rtps::InstanceHandle_t& handle,
+            const fastdds::rtps::InstanceHandle_t& handle,
             std::unique_lock<fastrtps::RecursiveTimedMutex>& lock,
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time);
 
 private:
 
-    typedef std::map<fastrtps::rtps::InstanceHandle_t, detail::DataWriterInstance> t_m_Inst_Caches;
+    typedef std::map<fastdds::rtps::InstanceHandle_t, detail::DataWriterInstance> t_m_Inst_Caches;
 
     //!Map where keys are instance handles and values are vectors of cache changes associated
     t_m_Inst_Caches keyed_changes_;
@@ -251,7 +251,7 @@ private:
     fastrtps::TopicAttributes topic_att_;
 
     //! Unacknowledged sample removed functor
-    std::function<void (const fastrtps::rtps::InstanceHandle_t&)> unacknowledged_sample_removed_functor_;
+    std::function<void (const fastdds::rtps::InstanceHandle_t&)> unacknowledged_sample_removed_functor_;
 
     /**
      * @brief Method that finds a key in the DataWriterHistory or tries to add it if not found
@@ -261,7 +261,7 @@ private:
      * @return True if the key was found or could be added to the map
      */
     bool find_or_add_key(
-            const fastrtps::rtps::InstanceHandle_t& instance_handle,
+            const fastdds::rtps::InstanceHandle_t& instance_handle,
             const fastrtps::rtps::SerializedPayload_t& payload,
             t_m_Inst_Caches::iterator* map_it);
 

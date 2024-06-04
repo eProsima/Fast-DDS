@@ -37,7 +37,7 @@
 
 #include <fastdds/rtps/common/CacheChange.h>
 #include <fastdds/rtps/common/Guid.h>
-#include <fastdds/rtps/common/InstanceHandle.h>
+#include <fastdds/rtps/common/InstanceHandle.hpp>
 #include <fastdds/rtps/common/SequenceNumber.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/resources/ResourceManagement.h>
@@ -62,12 +62,11 @@ class DataReaderHistory : public eprosima::fastrtps::rtps::ReaderHistory
 public:
 
     using MemoryManagementPolicy_t = eprosima::fastrtps::rtps::MemoryManagementPolicy_t;
-    using InstanceHandle_t = eprosima::fastrtps::rtps::InstanceHandle_t;
     using CacheChange_t = eprosima::fastrtps::rtps::CacheChange_t;
     using GUID_t = eprosima::fastrtps::rtps::GUID_t;
     using SequenceNumber_t = eprosima::fastrtps::rtps::SequenceNumber_t;
 
-    using InstanceCollection = std::map<InstanceHandle_t, std::shared_ptr<DataReaderInstance>>;
+    using InstanceCollection = std::map<rtps::InstanceHandle_t, std::shared_ptr<DataReaderInstance>>;
     using instance_info = InstanceCollection::iterator;
 
     /**
@@ -250,7 +249,7 @@ public:
      * @return True if the deadline was set correctly
      */
     bool set_next_deadline(
-            const InstanceHandle_t& handle,
+            const rtps::InstanceHandle_t& handle,
             const std::chrono::steady_clock::time_point& next_deadline_us,
             bool deadline_missed = false);
 
@@ -263,7 +262,7 @@ public:
      * @return True if the deadline was retrieved successfully
      */
     bool get_next_deadline(
-            InstanceHandle_t& handle,
+            rtps::InstanceHandle_t& handle,
             std::chrono::steady_clock::time_point& next_deadline_us);
 
     /**
@@ -285,7 +284,7 @@ public:
      * @return false otherwise.
      */
     bool is_instance_present(
-            const InstanceHandle_t& handle) const;
+            const rtps::InstanceHandle_t& handle) const;
 
     /**
      * @brief Get an iterator to an instance with available data.
@@ -302,7 +301,7 @@ public:
      *          `handle = HANDLE_NIL` and `exact = false`.
      */
     std::pair<bool, instance_info> lookup_available_instance(
-            const InstanceHandle_t& handle,
+            const rtps::InstanceHandle_t& handle,
             bool exact);
 
     /**
@@ -317,7 +316,7 @@ public:
      *         - @c second is an iterator pointing to the next instance with available data
      */
     std::pair<bool, instance_info> next_available_instance_nts(
-            const InstanceHandle_t& handle,
+            const rtps::InstanceHandle_t& handle,
             const instance_info& current_info);
 
     /**
@@ -410,7 +409,7 @@ private:
      * @return True if it was found or could be added to the map
      */
     bool find_key(
-            const InstanceHandle_t& handle,
+            const rtps::InstanceHandle_t& handle,
             InstanceCollection::iterator& map_it);
 
     /**

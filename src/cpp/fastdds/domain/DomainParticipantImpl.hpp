@@ -335,11 +335,11 @@ public:
      *
      */
     ReturnCode_t ignore_participant(
-            const InstanceHandle_t& handle);
+            const rtps::InstanceHandle_t& handle);
 
     /* TODO
        bool ignore_topic(
-            const InstanceHandle_t& handle);
+            const rtps::InstanceHandle_t& handle);
      */
 
     /**
@@ -349,7 +349,7 @@ public:
      * @return true if correctly ignored. False otherwise.
      */
     bool ignore_publication(
-            const InstanceHandle_t& handle);
+            const rtps::InstanceHandle_t& handle);
 
     /**
      * @brief Locally ignore a remote datareader.
@@ -358,7 +358,7 @@ public:
      * @return true if correctly ignored. False otherwise.
      */
     bool ignore_subscription(
-            const InstanceHandle_t& handle);
+            const rtps::InstanceHandle_t& handle);
 
     DomainId_t get_domain_id() const;
 
@@ -409,28 +409,28 @@ public:
 
     /* TODO
        bool get_discovered_participants(
-            std::vector<InstanceHandle_t>& participant_handles) const;
+            std::vector<rtps::InstanceHandle_t>& participant_handles) const;
      */
 
     /* TODO
        bool get_discovered_participant_data(
             ParticipantBuiltinTopicData& participant_data,
-            const InstanceHandle_t& participant_handle) const;
+            const rtps::InstanceHandle_t& participant_handle) const;
      */
 
     /* TODO
        bool get_discovered_topics(
-            std::vector<InstanceHandle_t>& topic_handles) const;
+            std::vector<rtps::InstanceHandle_t>& topic_handles) const;
      */
 
     /* TODO
        bool get_discovered_topic_data(
             TopicBuiltinTopicData& topic_data,
-            const InstanceHandle_t& topic_handle) const;
+            const rtps::InstanceHandle_t& topic_handle) const;
      */
 
     bool contains_entity(
-            const InstanceHandle_t& handle,
+            const rtps::InstanceHandle_t& handle,
             bool recursive = true) const;
 
     ReturnCode_t get_current_time(
@@ -463,7 +463,7 @@ public:
     const TypeSupport find_type(
             const std::string& type_name) const;
 
-    const InstanceHandle_t& get_instance_handle() const;
+    const rtps::InstanceHandle_t& get_instance_handle() const;
 
     // From here legacy RTPS methods.
 
@@ -544,14 +544,14 @@ protected:
 
     //!Publisher maps
     std::map<Publisher*, PublisherImpl*> publishers_;
-    std::map<InstanceHandle_t, Publisher*> publishers_by_handle_;
+    std::map<rtps::InstanceHandle_t, Publisher*> publishers_by_handle_;
     mutable std::mutex mtx_pubs_;
 
     PublisherQos default_pub_qos_;
 
     //!Subscriber maps
     std::map<Subscriber*, SubscriberImpl*> subscribers_;
-    std::map<InstanceHandle_t, Subscriber*> subscribers_by_handle_;
+    std::map<rtps::InstanceHandle_t, Subscriber*> subscribers_by_handle_;
     mutable std::mutex mtx_subs_;
 
     SubscriberQos default_sub_qos_;
@@ -562,7 +562,7 @@ protected:
 
     //!Topic map
     std::map<std::string, TopicProxyFactory*> topics_;
-    std::map<InstanceHandle_t, Topic*> topics_by_handle_;
+    std::map<rtps::InstanceHandle_t, Topic*> topics_by_handle_;
     std::map<std::string, std::unique_ptr<ContentFilteredTopic>> filtered_topics_;
     std::map<std::string, IContentFilterFactory*> filter_factories_;
     DDSSQLFilter::DDSFilterFactory dds_sql_filter_factory_;
@@ -665,7 +665,7 @@ protected:
     rtps_listener_;
 
     void create_instance_handle(
-            InstanceHandle_t& handle);
+            rtps::InstanceHandle_t& handle);
 
     ReturnCode_t register_dynamic_type(
             DynamicType::_ref_type dyn_type);

@@ -393,7 +393,7 @@ ReturnCode_t DataReader::get_subscription_matched_status(
 
 ReturnCode_t DataReader::get_matched_publication_data(
         builtin::PublicationBuiltinTopicData& publication_data,
-        const fastrtps::rtps::InstanceHandle_t& publication_handle) const
+        const fastdds::rtps::InstanceHandle_t& publication_handle) const
 {
     static_cast<void> (publication_data);
     static_cast<void> (publication_handle);

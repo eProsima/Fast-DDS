@@ -43,7 +43,7 @@ public:
 
     MOCK_METHOD3(getKey, bool(
                 void* data,
-                eprosima::fastdds::dds::InstanceHandle_t* ihandle,
+                eprosima::fastdds::rtps::InstanceHandle_t* ihandle,
                 bool));
 };
 
@@ -142,9 +142,9 @@ TEST(DataReaderHistory, exclusive_ownership_keyed_sample_reception)
     eprosima::fastrtps::RecursiveTimedMutex mutex;
     eprosima::fastrtps::rtps::StatelessReader reader(&history, &mutex);
 
-    const InstanceHandle_t instance_1 = eprosima::fastrtps::rtps::GUID_t{{}, 1};
-    const InstanceHandle_t instance_2 = eprosima::fastrtps::rtps::GUID_t{{}, 2};
-    const InstanceHandle_t instance_3 = eprosima::fastrtps::rtps::GUID_t{{}, 3};
+    const eprosima::fastdds::rtps::InstanceHandle_t instance_1 = eprosima::fastrtps::rtps::GUID_t{{}, 1};
+    const eprosima::fastdds::rtps::InstanceHandle_t instance_2 = eprosima::fastrtps::rtps::GUID_t{{}, 2};
+    const eprosima::fastdds::rtps::InstanceHandle_t instance_3 = eprosima::fastrtps::rtps::GUID_t{{}, 3};
     eprosima::fastrtps::rtps::CacheChange_t dw1_change;
     dw1_change.writerGUID = {{}, 1};
     dw1_change.reader_info.writer_ownership_strength = 1;
