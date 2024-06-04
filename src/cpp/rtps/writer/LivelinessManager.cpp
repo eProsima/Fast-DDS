@@ -91,14 +91,9 @@ bool LivelinessManager::add_writer(
 
 bool LivelinessManager::remove_writer(
         GUID_t guid,
-<<<<<<< HEAD
-        LivelinessQosPolicyKind kind,
-        Duration_t lease_duration)
-=======
         fastdds::dds::LivelinessQosPolicyKind kind,
         Duration_t lease_duration,
         LivelinessData::WriterStatus& writer_status)
->>>>>>> df909438f (Correctly call `on_liveliness_changed` when there are multiple readers on the same topic (#4822))
 {
     bool removed = false;
 
