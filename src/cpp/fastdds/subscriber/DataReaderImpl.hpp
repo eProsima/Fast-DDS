@@ -415,7 +415,7 @@ protected:
         {
         }
 
-        void onReaderMatched(
+        void on_reader_matched(
                 fastrtps::rtps::RTPSReader* reader,
                 const fastrtps::rtps::MatchingInfo& info) override;
 

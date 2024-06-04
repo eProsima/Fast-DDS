@@ -53,7 +53,7 @@ public:
      * @param reader Matching reader
      * @param info Matching information of the reader
      */
-    virtual void onReaderMatched(
+    virtual void on_reader_matched(
             RTPSReader* reader,
             const MatchingInfo& info)
     {

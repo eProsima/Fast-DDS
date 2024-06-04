@@ -939,7 +939,7 @@ void DataReaderImpl::InnerDataReaderListener::on_data_available(
     }
 }
 
-void DataReaderImpl::InnerDataReaderListener::onReaderMatched(
+void DataReaderImpl::InnerDataReaderListener::on_reader_matched(
         RTPSReader* /*reader*/,
         const MatchingInfo& info)
 {

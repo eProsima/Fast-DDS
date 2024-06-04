@@ -88,7 +88,7 @@ private:
             reader_.receive_one(reader, change);
         }
 
-        void onReaderMatched(
+        void on_reader_matched(
                 eprosima::fastrtps::rtps::RTPSReader* /*reader*/,
                 const eprosima::fastrtps::rtps::MatchingInfo& info) override
         {
