@@ -931,7 +931,7 @@ bool StatefulReader::process_gap_msg(
             if (pWP->irrelevant_change_set(auxSN))
             {
                 CacheChange_t* to_remove = nullptr;
-                auto ret_iterator = findCacheInFragmentedProcess(auxSN, pWP->guid(), &to_remove, history_iterator);
+                auto ret_iterator = find_cache_in_fragmented_process(auxSN, pWP->guid(), &to_remove, history_iterator);
                 if (to_remove != nullptr)
                 {
                     // we called the History version to avoid callbacks
@@ -951,7 +951,7 @@ bool StatefulReader::process_gap_msg(
                 {
                     CacheChange_t* to_remove = nullptr;
                     auto ret_iterator =
-                    findCacheInFragmentedProcess(auxSN, pWP->guid(), &to_remove, history_iterator);
+                    find_cache_in_fragmented_process(auxSN, pWP->guid(), &to_remove, history_iterator);
                     if (to_remove != nullptr)
                     {
                         // we called the History version to avoid callbacks
@@ -1587,7 +1587,7 @@ void StatefulReader::send_acknack(
                 {
                     // Check if the CacheChange_t is uncompleted.
                     CacheChange_t* uncomplete_change = nullptr;
-                    auto ret_iterator = findCacheInFragmentedProcess(seq, guid, &uncomplete_change, history_iterator);
+                    auto ret_iterator = find_cache_in_fragmented_process(seq, guid, &uncomplete_change, history_iterator);
                     if (ret_iterator != history_->changesEnd())
                     {
                         history_iterator = ret_iterator;

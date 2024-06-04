@@ -389,7 +389,7 @@ void BaseReader::set_last_notified(
     history_state_->history_record[peristence_guid] = seq;
 }
 
-fastrtps::rtps::History::const_iterator BaseReader::findCacheInFragmentedProcess(
+fastrtps::rtps::History::const_iterator BaseReader::find_cache_in_fragmented_process(
         const fastrtps::rtps::SequenceNumber_t& sequence_number,
         const fastrtps::rtps::GUID_t& writer_guid,
         fastrtps::rtps::CacheChange_t** change,

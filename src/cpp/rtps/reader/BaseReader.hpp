@@ -376,7 +376,7 @@ protected:
      * @return Iterator pointing to the position were CacheChange_t was found.
      * It can be used to improve next search.
      */
-    fastrtps::rtps::History::const_iterator findCacheInFragmentedProcess(
+    fastrtps::rtps::History::const_iterator find_cache_in_fragmented_process(
             const fastrtps::rtps::SequenceNumber_t& sequence_number,
             const fastrtps::rtps::GUID_t& writer_guid,
             fastrtps::rtps::CacheChange_t** change,
