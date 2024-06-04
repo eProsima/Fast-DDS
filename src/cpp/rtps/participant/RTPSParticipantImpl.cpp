@@ -1108,7 +1108,7 @@ bool RTPSParticipantImpl::create_reader(
 
     if (is_builtin)
     {
-        SReader->setTrustedWriter(TrustedWriter(SReader->getGuid().entityId));
+        SReader->set_trusted_writer(TrustedWriter(SReader->getGuid().entityId));
     }
 
     if (enable)

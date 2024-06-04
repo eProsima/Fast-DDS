@@ -112,7 +112,7 @@ public:
     static BaseReader* downcast(
             fastrtps::rtps::Endpoint* endpoint);
 
-    void setTrustedWriter(
+    void set_trusted_writer(
             const fastrtps::rtps::EntityId_t& writer)
     {
         accept_messages_from_unkown_writers_ = false;
