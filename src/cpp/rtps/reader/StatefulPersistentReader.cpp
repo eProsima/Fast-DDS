@@ -90,7 +90,7 @@ StatefulPersistentReader::~StatefulPersistentReader()
     delete persistence_;
 }
 
-void StatefulPersistentReader::set_last_notified(
+void StatefulPersistentReader::persist_last_notified_nts(
         const GUID_t& writer_guid,
         const SequenceNumber_t& seq)
 {

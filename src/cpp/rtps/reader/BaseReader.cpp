@@ -424,18 +424,21 @@ fastrtps::rtps::SequenceNumber_t BaseReader::update_last_notified(
 
     if (ret_val < seq)
     {
-        set_last_notified(guid_to_look, seq);
+        history_state_->history_record[guid_to_look] = seq;
+        persist_last_notified_nts(guid_to_look, seq);
         new_notification_cv_.notify_all();
     }
 
     return ret_val;
 }
 
-void BaseReader::set_last_notified(
+void BaseReader::persist_last_notified_nts(
         const fastrtps::rtps::GUID_t& peristence_guid,
         const fastrtps::rtps::SequenceNumber_t& seq)
 {
-    history_state_->history_record[peristence_guid] = seq;
+    // Empty base implementation since base behavior it to not persist data
+    static_cast<void>(peristence_guid);
+    static_cast<void>(seq);
 }
 
 bool BaseReader::is_datasharing_compatible_with(

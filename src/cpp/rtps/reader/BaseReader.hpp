@@ -363,12 +363,14 @@ protected:
             const fastrtps::rtps::SequenceNumber_t& seq);
 
     /*!
-     * @brief Set the last notified sequence for a persistence guid
+     * @brief Persist the last notified sequence for a persistence guid
+     * This method is called inside update_last_notified just after updating the last notified sequence for a writer
+     * and gives persistent readers the opportunity to write the new sequence number to the database.
+     *
      * @param persistence_guid The persistence guid to update
      * @param seq Sequence number to set for input guid
-     * @remarks Persistent readers will write to DB
      */
-    virtual void set_last_notified(
+    virtual void persist_last_notified_nts(
             const fastrtps::rtps::GUID_t& persistence_guid,
             const fastrtps::rtps::SequenceNumber_t& seq);
 
