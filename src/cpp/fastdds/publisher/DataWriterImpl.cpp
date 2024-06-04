@@ -1654,7 +1654,7 @@ fastrtps::TopicAttributes DataWriterImpl::get_topic_attributes(
     topic_att.topicName = topic.get_name();
     topic_att.topicDataType = topic.get_type_name();
     topic_att.topicKind = type->m_isGetKeyDefined ? WITH_KEY : NO_KEY;
-    if (xtypes::TK_NONE != type->type_identifiers().type_identifier1()._d())
+    if (type->auto_fill_type_information() && xtypes::TK_NONE != type->type_identifiers().type_identifier1()._d())
     {
         if (RETCODE_OK ==
                 fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().get_type_information(

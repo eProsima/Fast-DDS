@@ -81,7 +81,7 @@ public:
      * @param[in] type_object Related TypeObject being registered.
      * @param[inout] type_ids Returns the registered @ref TypeIdentifier.
      * @ref TypeIdentifierPair::type_identifier1 might be TK_NONE.
-     * In other case this function will check it is consistence with the provided @TypeObject.
+     * In other case this function will check it is consistence with the provided @ref TypeObject.
      * @return ReturnCode_t RETCODE_OK if correctly registered.
      *                      RETCODE_PRECONDITION_NOT_MET if the discriminators differ.
      *                      RETCODE_PRECONDITION_NOT_MET if the TypeIdentifier is not consistent with the given

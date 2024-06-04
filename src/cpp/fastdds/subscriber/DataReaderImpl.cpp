@@ -1773,7 +1773,7 @@ fastrtps::TopicAttributes DataReaderImpl::topic_attributes() const
     topic_att.topicDataType = topic_->get_type_name();
     topic_att.historyQos = qos_.history();
     topic_att.resourceLimitsQos = qos_.resource_limits();
-    if (xtypes::TK_NONE != type_->type_identifiers().type_identifier1()._d())
+    if (type_->auto_fill_type_information() && xtypes::TK_NONE != type_->type_identifiers().type_identifier1()._d())
     {
         if (RETCODE_OK ==
                 fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().get_type_information(
