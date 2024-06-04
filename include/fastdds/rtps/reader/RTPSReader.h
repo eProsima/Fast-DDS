@@ -52,21 +52,11 @@ class WriterProxyData;
 
 /**
  * Class RTPSReader, manages the reception of data from its matched writers.
+ * Needs to be constructed using the createRTPSReader method from the RTPSDomain.
  * @ingroup READER_MODULE
  */
 class RTPSReader : public Endpoint
 {
-
-protected:
-
-    RTPSReader(
-            RTPSParticipantImpl* pimpl,
-            const GUID_t& guid,
-            const ReaderAttributes& att,
-            ReaderHistory* hist,
-            ReaderListener* listen);
-
-    ~RTPSReader();
 
 public:
 
@@ -233,13 +223,22 @@ public:
 
 protected:
 
-    //!ReaderHistory
+    RTPSReader(
+            RTPSParticipantImpl* pimpl,
+            const GUID_t& guid,
+            const ReaderAttributes& att,
+            ReaderHistory* hist,
+            ReaderListener* listen);
+
+    ~RTPSReader();
+
+    //! ReaderHistory
     ReaderHistory* history_;
-    //!Listener
+    //! Listener
     ReaderListener* listener_;
-    //!Accept msg from unknown writers (BE-true,RE-false)
+    //! Accept msg from unknown writers (BE-true,RE-false)
     bool accept_messages_from_unkown_writers_;
-    //!Expects Inline Qos.
+    //! Expects Inline Qos.
     bool expects_inline_qos_;
 
     eprosima::fastdds::rtps::IReaderDataFilter* data_filter_ = nullptr;

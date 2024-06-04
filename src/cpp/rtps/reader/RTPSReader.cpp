@@ -63,6 +63,7 @@ RTPSReader::~RTPSReader()
 
 ReaderListener* RTPSReader::get_listener() const
 {
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     return listener_;
 }
 
