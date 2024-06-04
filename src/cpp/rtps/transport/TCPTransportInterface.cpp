@@ -660,7 +660,7 @@ bool TCPTransportInterface::transform_remote_locator(
 }
 
 void TCPTransportInterface::SenderResourceHasBeenClosed(
-        fastrtps::rtps::Locator_t& locator)
+        Locator_t& locator)
 {
     // The TCPSendResource associated channel cannot be removed from the channel_resources_ map. On transport's destruction
     // this map is consulted to send the unbind requests. If not sending it, the other participant wouldn't disconnect the
@@ -1422,7 +1422,7 @@ bool TCPTransportInterface::Receive(
 bool TCPTransportInterface::send(
         const octet* send_buffer,
         uint32_t send_buffer_size,
-        const fastrtps::rtps::Locator_t& locator,
+        const Locator_t& locator,
         fastrtps::rtps::LocatorsIterator* destination_locators_begin,
         fastrtps::rtps::LocatorsIterator* destination_locators_end)
 {
@@ -1446,7 +1446,7 @@ bool TCPTransportInterface::send(
 bool TCPTransportInterface::send(
         const octet* send_buffer,
         uint32_t send_buffer_size,
-        const fastrtps::rtps::Locator_t& locator,
+        const Locator_t& locator,
         const Locator& remote_locator)
 {
     using namespace eprosima::fastdds::statistics::rtps;

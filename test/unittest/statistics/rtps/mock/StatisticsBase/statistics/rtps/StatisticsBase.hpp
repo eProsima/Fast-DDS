@@ -36,15 +36,15 @@ namespace statistics {
 
 // auxiliary conversion functions
 detail::Locator_s to_statistics_type(
-        fastrtps::rtps::Locator_t locator)
+        fastdds::rtps::Locator_t locator)
 {
     return *reinterpret_cast<detail::Locator_s*>(&locator);
 }
 
-fastrtps::rtps::Locator_t to_fastdds_type(
+fastdds::rtps::Locator_t to_fastdds_type(
         detail::Locator_s locator)
 {
-    return *reinterpret_cast<fastrtps::rtps::Locator_t*>(&locator);
+    return *reinterpret_cast<fastdds::rtps::Locator_t*>(&locator);
 }
 
 detail::GUID_s to_statistics_type(

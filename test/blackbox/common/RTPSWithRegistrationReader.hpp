@@ -467,7 +467,7 @@ public:
             const std::string& ip,
             uint32_t port)
     {
-        eprosima::fastrtps::rtps::Locator_t loc;
+        eprosima::fastdds::rtps::Locator_t loc;
         IPLocator::setIPv4(loc, ip);
         loc.port = static_cast<uint16_t>(port);
         reader_attr_.endpoint.multicastLocatorList.push_back(loc);

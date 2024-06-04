@@ -86,14 +86,14 @@ public:
             TransportReceiverInterface* next_receiver,
             const octet* receive_buffer,
             uint32_t receive_buffer_size,
-            const eprosima::fastrtps::rtps::Locator_t& local_locator,
-            const eprosima::fastrtps::rtps::Locator_t& remote_locator) override
+            const Locator_t& local_locator,
+            const Locator_t& remote_locator) override
     {
         next_receiver->OnDataReceived(receive_buffer, receive_buffer_size, local_locator, remote_locator);
     }
 
     bool OpenInputChannel(
-            const eprosima::fastrtps::rtps::Locator_t& loc,
+            const Locator_t& loc,
             TransportReceiverInterface* receiver_interface,
             uint32_t max_message_size) override
     {

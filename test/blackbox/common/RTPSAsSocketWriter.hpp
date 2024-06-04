@@ -214,7 +214,7 @@ public:
         ip_ = ip;
         port_ = port;
 
-        eprosima::fastrtps::rtps::Locator_t loc;
+        eprosima::fastdds::rtps::Locator_t loc;
         IPLocator::setIPv4(loc, ip);
         loc.port = static_cast<uint16_t>(port);
         writer_attr_.endpoint.multicastLocatorList.push_back(loc);
@@ -233,7 +233,7 @@ public:
         eprosima::fastrtps::rtps::GUID_t guid = participant_->getGuid();
 
         eprosima::fastrtps::rtps::ReaderProxyData rattr(4u, 1u);
-        eprosima::fastrtps::rtps::Locator_t loc;
+        eprosima::fastdds::rtps::Locator_t loc;
         IPLocator::setIPv4(loc, ip_);
         loc.port = static_cast<uint16_t>(port_);
         rattr.add_unicast_locator(loc);

@@ -32,7 +32,7 @@ public:
 
     TCPSenderResource(
             TCPTransportInterface& transport,
-            eprosima::fastrtps::rtps::Locator_t& locator)
+            Locator_t& locator)
         : fastrtps::rtps::SenderResource(transport.kind())
         , locator_(locator)
     {
@@ -62,7 +62,7 @@ public:
         }
     }
 
-    fastrtps::rtps::Locator_t& locator()
+    fastdds::rtps::Locator_t& locator()
     {
         return locator_;
     }
@@ -102,7 +102,7 @@ private:
     TCPSenderResource& operator =(
             const SenderResource&) = delete;
 
-    fastrtps::rtps::Locator_t locator_;
+    fastdds::rtps::Locator_t locator_;
 };
 
 } // namespace rtps

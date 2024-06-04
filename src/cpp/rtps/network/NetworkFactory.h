@@ -82,7 +82,7 @@ public:
      */
     bool build_send_resources(
             fastdds::rtps::SendResourceList&,
-            const Locator_t& locator);
+            const fastdds::rtps::Locator_t& locator);
 
     /**
      * Walk over the list of transports, opening every possible channel that can send through
@@ -102,7 +102,7 @@ public:
      * @param receiver_max_message_size Max message size allowed by the message receiver.
      */
     bool BuildReceiverResources(
-            Locator_t& local,
+            fastdds::rtps::Locator_t& local,
             std::vector<std::shared_ptr<ReceiverResource>>& returned_resources_list,
             uint32_t receiver_max_message_size);
 
@@ -123,8 +123,8 @@ public:
      *         true otherwise.
      */
     bool transform_remote_locator(
-            const Locator_t& remote_locator,
-            Locator_t& result_locator,
+            const fastdds::rtps::Locator_t& remote_locator,
+            fastdds::rtps::Locator_t& result_locator,
             const NetworkConfigSet_t& remote_network_config) const;
 
     /**
@@ -143,8 +143,8 @@ public:
      *         true otherwise.
      */
     bool transform_remote_locator(
-            const Locator_t& remote_locator,
-            Locator_t& result_locator,
+            const fastdds::rtps::Locator_t& remote_locator,
+            fastdds::rtps::Locator_t& result_locator,
             const NetworkConfigSet_t& remote_network_config,
             bool is_fastdds_local) const;
 
@@ -157,7 +157,7 @@ public:
      *         true otherwise.
      */
     bool is_locator_supported(
-            const Locator_t& locator) const;
+            const fastdds::rtps::Locator_t& locator) const;
 
     /**
      * Must report whether the given locator is allowed by at least one of the registered transports.
@@ -168,7 +168,7 @@ public:
      *         true otherwise.
      */
     bool is_locator_allowed(
-            const Locator_t& locator) const;
+            const fastdds::rtps::Locator_t& locator) const;
 
     /**
      * Must report whether the given locator is remote, or allowed by at least one of the registered transports.
@@ -179,7 +179,7 @@ public:
      *         true otherwise.
      */
     bool is_locator_remote_or_allowed(
-            const Locator_t& locator) const;
+            const fastdds::rtps::Locator_t& locator) const;
 
     /**
      * Must report whether the given locator is remote, or allowed by at least one of the registered transports.
@@ -192,7 +192,7 @@ public:
      *         true otherwise.
      */
     bool is_locator_remote_or_allowed(
-            const Locator_t& locator,
+            const fastdds::rtps::Locator_t& locator,
             bool is_fastdds_local) const;
 
     /**
@@ -208,7 +208,7 @@ public:
             LocatorSelector& selector) const;
 
     bool is_local_locator(
-            const Locator_t& locator) const;
+            const fastdds::rtps::Locator_t& locator) const;
 
     size_t numberOfRegisteredTransports() const;
 
@@ -261,14 +261,14 @@ public:
      * Fill the locator with the metatraffic multicast configuration.
      * */
     bool fillMetatrafficMulticastLocator(
-            Locator_t& locator,
+            fastdds::rtps::Locator_t& locator,
             uint32_t metatraffic_multicast_port) const;
 
     /**
      * Fill the locator with the metatraffic unicast configuration.
      * */
     bool fillMetatrafficUnicastLocator(
-            Locator_t& locator,
+            fastdds::rtps::Locator_t& locator,
             uint32_t metatraffic_unicast_port) const;
 
     /**
@@ -276,7 +276,7 @@ public:
      * */
     bool configureInitialPeerLocator(
             uint32_t domain_id,
-            Locator_t& locator,
+            fastdds::rtps::Locator_t& locator,
             RTPSParticipantAttributes& m_att) const;
 
     /**
@@ -290,7 +290,7 @@ public:
      * Fill the locator with the default unicast configuration.
      * */
     bool fill_default_locator_port(
-            Locator_t& locator,
+            fastdds::rtps::Locator_t& locator,
             uint32_t port) const;
 
     /**

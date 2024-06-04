@@ -25,7 +25,6 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-using Locator_t = fastrtps::rtps::Locator_t;
 using IPLocator = fastrtps::rtps::IPLocator;
 using octet = octet;
 using Log = fastdds::dds::Log;

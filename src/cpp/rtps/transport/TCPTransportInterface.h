@@ -227,7 +227,7 @@ protected:
     bool send(
             const octet* send_buffer,
             uint32_t send_buffer_size,
-            const eprosima::fastrtps::rtps::Locator_t& locator,
+            const Locator_t& locator,
             const Locator& remote_locator);
 
     void create_listening_thread(
@@ -249,7 +249,7 @@ public:
 
     //! Resets the locator bound to the sender resource.
     void SenderResourceHasBeenClosed(
-            fastrtps::rtps::Locator_t& locator);
+            Locator_t& locator);
 
     //! Reports whether Locators correspond to the same port.
     bool DoInputLocatorsMatch(
@@ -402,7 +402,7 @@ public:
     bool send(
             const octet* send_buffer,
             uint32_t send_buffer_size,
-            const fastrtps::rtps::Locator_t& locator,
+            const Locator_t& locator,
             fastrtps::rtps::LocatorsIterator* destination_locators_begin,
             fastrtps::rtps::LocatorsIterator* destination_locators_end);
 

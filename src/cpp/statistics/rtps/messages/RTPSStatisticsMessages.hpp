@@ -78,7 +78,7 @@ struct StatisticsSubmessageData
 
     };
 
-    eprosima::fastrtps::rtps::Locator_t destination;
+    eprosima::fastdds::rtps::Locator_t destination;
     TimeStamp ts{};
     Sequence seq{};
 };
@@ -171,7 +171,7 @@ inline uint32_t get_statistics_message_pos(
 #endif // FASTDDS_STATISTICS
 
 inline void set_statistics_submessage_from_transport(
-        const eprosima::fastrtps::rtps::Locator_t& destination,
+        const eprosima::fastdds::rtps::Locator_t& destination,
         const eprosima::fastdds::rtps::octet* send_buffer,
         uint32_t send_buffer_size,
         StatisticsSubmessageData::Sequence& sequence)

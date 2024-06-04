@@ -48,7 +48,7 @@ public:
      * @param locator The locator for which sequencing information should be kept.
      */
     inline void add_entry(
-            const eprosima::fastrtps::rtps::Locator_t& locator)
+            const eprosima::fastdds::rtps::Locator_t& locator)
     {
         static_cast<void>(locator);
 
@@ -69,7 +69,7 @@ public:
      *
      */
     inline void set_statistics_message_data(
-            const eprosima::fastrtps::rtps::Locator_t& locator,
+            const eprosima::fastdds::rtps::Locator_t& locator,
             const eprosima::fastdds::rtps::octet* send_buffer,
             uint32_t send_buffer_size)
     {
@@ -92,7 +92,7 @@ public:
 
 private:
 
-    using key_type = eprosima::fastrtps::rtps::Locator_t;
+    using key_type = eprosima::fastdds::rtps::Locator_t;
     using value_type = StatisticsSubmessageData::Sequence;
     using entry_type = std::pair<key_type, value_type>;
 

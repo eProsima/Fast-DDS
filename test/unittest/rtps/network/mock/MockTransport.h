@@ -27,7 +27,6 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-using Locator_t = eprosima::fastrtps::rtps::Locator_t;
 using LocatorList_t = eprosima::fastrtps::rtps::LocatorList_t;
 using SenderResource = eprosima::fastrtps::rtps::SenderResource;
 
@@ -192,15 +191,15 @@ public:
     }
 
     bool transform_remote_locator(
-            const fastrtps::rtps::Locator_t&,
-            fastrtps::rtps::Locator_t&) const override
+            const Locator_tt&,
+            Locator_tt&) const override
     {
         return true;
     }
 
     bool transform_remote_locator(
-            const fastrtps::rtps::Locator_t&,
-            fastrtps::rtps::Locator_t&,
+            const Locator_tt&,
+            Locator_tt&,
             bool,
             bool) const override
     {

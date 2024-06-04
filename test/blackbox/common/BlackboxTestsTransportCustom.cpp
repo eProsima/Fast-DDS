@@ -99,8 +99,8 @@ public:
             eprosima::fastdds::rtps::TransportReceiverInterface* next_receiver,
             const eprosima::fastdds::rtps::octet* receive_buffer,
             uint32_t receive_buffer_size,
-            const eprosima::fastrtps::rtps::Locator_t& local_locator,
-            const eprosima::fastrtps::rtps::Locator_t& remote_locator) override
+            const eprosima::fastdds::rtps::Locator_t& local_locator,
+            const eprosima::fastdds::rtps::Locator_t& remote_locator) override
     {
         descriptor_.receive_function_called();
 
@@ -413,7 +413,7 @@ TEST(ChainingTransportTests, tcp_client_server_with_wan_correct_sender_resources
     reader_tcp_transport->listening_ports.push_back(port);
 
     eprosima::fastrtps::rtps::LocatorList_t reader_locators;
-    eprosima::fastrtps::rtps::Locator_t reader_loc;
+    eprosima::fastdds::rtps::Locator_t reader_loc;
     reader_loc.port = port;
     IPLocator::setIPv4(reader_loc, "127.0.0.1");
     reader_loc.kind = LOCATOR_KIND_TCPv4;

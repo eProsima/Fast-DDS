@@ -56,7 +56,7 @@ int fastdds_discovery_server(
         char* argv[])
 {
     // Convenience aliases
-    using Locator = fastrtps::rtps::Locator_t;
+    using Locator = rtps::Locator_t;
     using DiscoveryProtocol = fastrtps::rtps::DiscoveryProtocol_t;
     using IPLocator = fastrtps::rtps::IPLocator;
 

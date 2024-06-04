@@ -70,15 +70,15 @@ static void sub_bytes(
 }
 
 detail::Locator_s to_statistics_type(
-        fastrtps::rtps::Locator_t locator)
+        fastdds::rtps::Locator_t locator)
 {
     return *reinterpret_cast<detail::Locator_s*>(&locator);
 }
 
-fastrtps::rtps::Locator_t to_fastdds_type(
+fastdds::rtps::Locator_t to_fastdds_type(
         detail::Locator_s locator)
 {
-    return *reinterpret_cast<fastrtps::rtps::Locator_t*>(&locator);
+    return *reinterpret_cast<fastdds::rtps::Locator_t*>(&locator);
 }
 
 detail::GUID_s to_statistics_type(
@@ -376,8 +376,8 @@ uint32_t StatisticsParticipantImpl::get_enabled_statistics_writers_mask()
 
 void StatisticsParticipantImpl::on_network_statistics(
         const fastrtps::rtps::GuidPrefix_t& source_participant,
-        const fastrtps::rtps::Locator_t& source_locator,
-        const fastrtps::rtps::Locator_t& reception_locator,
+        const fastdds::rtps::Locator_t& source_locator,
+        const fastdds::rtps::Locator_t& reception_locator,
         const rtps::StatisticsSubmessageData& data,
         uint64_t datagram_size)
 {
@@ -389,7 +389,7 @@ void StatisticsParticipantImpl::on_network_statistics(
 
 void StatisticsParticipantImpl::process_network_timestamp(
         const fastrtps::rtps::GuidPrefix_t& source_participant,
-        const fastrtps::rtps::Locator_t& reception_locator,
+        const fastdds::rtps::Locator_t& reception_locator,
         const rtps::StatisticsSubmessageData::TimeStamp& ts)
 {
     using namespace eprosima::fastrtps::rtps;
@@ -428,7 +428,7 @@ void StatisticsParticipantImpl::process_network_timestamp(
 
 void StatisticsParticipantImpl::process_network_sequence(
         const fastrtps::rtps::GuidPrefix_t& source_participant,
-        const fastrtps::rtps::Locator_t& reception_locator,
+        const fastdds::rtps::Locator_t& reception_locator,
         const rtps::StatisticsSubmessageData::Sequence& seq,
         uint64_t datagram_size)
 {
@@ -500,7 +500,7 @@ void StatisticsParticipantImpl::process_network_sequence(
 }
 
 void StatisticsParticipantImpl::on_rtps_sent(
-        const fastrtps::rtps::Locator_t& loc,
+        const fastdds::rtps::Locator_t& loc,
         unsigned long payload_size)
 {
     using namespace std;

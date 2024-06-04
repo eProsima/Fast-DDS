@@ -115,10 +115,10 @@ private:
         unsigned long long byte_count = {};
     };
 
-    std::map<fastrtps::rtps::Locator_t, rtps_sent_data> traffic_;
+    std::map<fastdds::rtps::Locator_t, rtps_sent_data> traffic_;
 
     // RTPS_LOST ancillary
-    using lost_traffic_key = std::pair<fastrtps::rtps::GuidPrefix_t, fastrtps::rtps::Locator_t>;
+    using lost_traffic_key = std::pair<fastrtps::rtps::GuidPrefix_t, fastdds::rtps::Locator_t>;
     struct lost_traffic_value
     {
         uint64_t first_sequence = 0;
@@ -283,8 +283,8 @@ protected:
      */
     void on_network_statistics(
             const fastrtps::rtps::GuidPrefix_t& source_participant,
-            const fastrtps::rtps::Locator_t& source_locator,
-            const fastrtps::rtps::Locator_t& reception_locator,
+            const fastdds::rtps::Locator_t& source_locator,
+            const fastdds::rtps::Locator_t& reception_locator,
             const rtps::StatisticsSubmessageData& data,
             uint64_t datagram_size);
 
@@ -296,7 +296,7 @@ protected:
      */
     void process_network_timestamp(
             const fastrtps::rtps::GuidPrefix_t& source_participant,
-            const fastrtps::rtps::Locator_t& reception_locator,
+            const fastdds::rtps::Locator_t& reception_locator,
             const rtps::StatisticsSubmessageData::TimeStamp& ts);
 
     /*
@@ -308,7 +308,7 @@ protected:
      */
     void process_network_sequence(
             const fastrtps::rtps::GuidPrefix_t& source_participant,
-            const fastrtps::rtps::Locator_t& reception_locator,
+            const fastdds::rtps::Locator_t& reception_locator,
             const rtps::StatisticsSubmessageData::Sequence& seq,
             uint64_t datagram_size);
 
@@ -318,7 +318,7 @@ protected:
      * @param payload_size size of the current message
      */
     void on_rtps_sent(
-            const fastrtps::rtps::Locator_t& loc,
+            const fastdds::rtps::Locator_t& loc,
             unsigned long payload_size);
 
     /*
@@ -461,8 +461,8 @@ public:
 
 // auxiliary conversion functions
 // TODO(jlbueno): private headers shall not export API
-FASTDDS_EXPORTED_API detail::Locator_s to_statistics_type(fastrtps::rtps::Locator_t);
-FASTDDS_EXPORTED_API fastrtps::rtps::Locator_t to_fastdds_type(
+FASTDDS_EXPORTED_API detail::Locator_s to_statistics_type(fastdds::rtps::Locator_t);
+FASTDDS_EXPORTED_API fastdds::rtps::Locator_t to_fastdds_type(
         detail::Locator_s);
 FASTDDS_EXPORTED_API detail::GUID_s to_statistics_type(fastrtps::rtps::GUID_t);
 FASTDDS_EXPORTED_API fastrtps::rtps::GUID_t to_fastdds_type(
@@ -491,8 +491,8 @@ protected:
      */
     inline void on_network_statistics(
             const fastrtps::rtps::GuidPrefix_t&,
-            const fastrtps::rtps::Locator_t&,
-            const fastrtps::rtps::Locator_t&,
+            const fastdds::rtps::Locator_t&,
+            const fastdds::rtps::Locator_t&,
             const rtps::StatisticsSubmessageData&,
             uint64_t)
     {

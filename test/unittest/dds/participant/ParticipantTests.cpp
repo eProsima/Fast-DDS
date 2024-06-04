@@ -810,7 +810,7 @@ void expected_remote_server_list_output(
         rtps::RemoteServerList_t& output)
 {
     rtps::RemoteServerAttributes server;
-    fastrtps::rtps::Locator_t locator;
+    rtps::Locator_t locator;
     fastrtps::rtps::IPLocator::setIPv4(locator, "84.22.253.128");
     locator.port = 8888;
     server.metatrafficUnicastLocatorList.push_back(locator);
@@ -836,7 +836,7 @@ void set_participant_qos(
         rtps::RemoteServerList_t& output)
 {
     rtps::RemoteServerAttributes server;
-    fastrtps::rtps::Locator_t locator;
+    rtps::Locator_t locator;
     server.ReadguidPrefix("44.53.00.5f.45.50.52.4f.53.49.4d.00");
     fastrtps::rtps::IPLocator::setIPv4(locator, "192.168.1.133");
     locator.port = 64863;
@@ -849,7 +849,7 @@ void set_server_qos(
         DomainParticipantQos& qos)
 {
     rtps::RemoteServerAttributes server;
-    fastrtps::rtps::Locator_t locator;
+    rtps::Locator_t locator;
     server.ReadguidPrefix(rtps::DEFAULT_ROS2_SERVER_GUIDPREFIX);
     fastrtps::rtps::IPLocator::setIPv4(locator, "172.17.0.5");
     locator.port = 4321;
@@ -902,7 +902,7 @@ void set_and_check_with_environment_file(
 
     rtps::RemoteServerList_t output;
     rtps::RemoteServerAttributes server;
-    fastrtps::rtps::Locator_t locator;
+    rtps::Locator_t locator;
     int id = 0;
 
     std::ofstream file(filename);
@@ -1098,7 +1098,7 @@ TEST(ParticipantTests, SimpleParticipantRemoteServerListConfigurationDNS)
 
     // fill in expected result
     rtps::RemoteServerAttributes server;
-    fastrtps::rtps::Locator_t locator4(11811), locator6(LOCATOR_KIND_UDPv6, 11811);
+    rtps::Locator_t locator4(11811), locator6(LOCATOR_KIND_UDPv6, 11811);
     fastrtps::rtps::IPLocator::setIPv4(locator4, "216.58.215.164");
     fastrtps::rtps::IPLocator::setIPv6(locator6, "2a00:1450:400e:803::2004");
     server.metatrafficUnicastLocatorList.push_back(locator4);
@@ -1174,7 +1174,7 @@ TEST(ParticipantTests, SimpleParticipantDynamicAdditionRemoteServers)
     get_rtps_attributes(participant, attributes);
 
     rtps::RemoteServerAttributes server;
-    fastrtps::rtps::Locator_t locator;
+    rtps::Locator_t locator;
     fastrtps::rtps::IPLocator::setIPv4(locator, "192.168.1.133");
     locator.port = 64863;
     server.metatrafficUnicastLocatorList.push_back(locator);
@@ -1225,7 +1225,7 @@ TEST(ParticipantTests, ServerParticipantEnvironmentConfiguration)
     DomainParticipantQos server_qos;
     server_qos.wire_protocol().builtin.discovery_config.discoveryProtocol = fastrtps::rtps::DiscoveryProtocol::SERVER;
     // Listening locator: requirement for SERVERs
-    fastrtps::rtps::Locator_t locator;
+    rtps::Locator_t locator;
     fastrtps::rtps::IPLocator::setIPv4(locator, "127.0.0.1");
     locator.port = 5432;
     server_qos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(locator);
@@ -1252,7 +1252,7 @@ TEST(ParticipantTests, ServerParticipantRemoteServerListConfiguration)
 
     DomainParticipantQos qos;
     rtps::RemoteServerList_t qos_output;
-    fastrtps::rtps::Locator_t locator;
+    rtps::Locator_t locator;
     set_participant_qos(qos, qos_output);
     qos.wire_protocol().builtin.discovery_config.discoveryProtocol = fastrtps::rtps::DiscoveryProtocol::SERVER;
     fastrtps::rtps::IPLocator::setIPv4(locator, "127.0.0.1");
@@ -1292,7 +1292,7 @@ TEST(ParticipantTests, ServerParticipantInconsistentRemoteServerListConfiguratio
 
     DomainParticipantQos qos;
     rtps::RemoteServerList_t qos_output;
-    fastrtps::rtps::Locator_t locator;
+    rtps::Locator_t locator;
     set_participant_qos(qos, qos_output);
     qos.wire_protocol().builtin.discovery_config.discoveryProtocol = fastrtps::rtps::DiscoveryProtocol::SERVER;
     fastrtps::rtps::IPLocator::setIPv4(locator, "127.0.0.1");
@@ -1342,7 +1342,7 @@ TEST(ParticipantTests, ServerParticipantInconsistentLocatorsRemoteServerListConf
 
     rtps::RemoteServerList_t output;
     rtps::RemoteServerAttributes server;
-    fastrtps::rtps::Locator_t locator;
+    rtps::Locator_t locator;
     server.clear();
     fastrtps::rtps::IPLocator::setIPv4(locator, "172.17.0.5");
     locator.port = 4321;
@@ -1419,7 +1419,7 @@ TEST(ParticipantTests, ServerParticipantCorrectRemoteServerListConfiguration)
 
     rtps::RemoteServerList_t output;
     rtps::RemoteServerAttributes server;
-    fastrtps::rtps::Locator_t locator;
+    rtps::Locator_t locator;
     fastrtps::rtps::IPLocator::setIPv4(locator, "172.17.0.5");
     locator.port = 4321;
     server.metatrafficUnicastLocatorList.push_back(locator);
@@ -1512,7 +1512,7 @@ TEST(ParticipantTests, ChangeWireProtocolQos)
     // Check that just adding two servers is OK
     rtps::RemoteServerAttributes server;
     server.ReadguidPrefix("44.53.00.5f.45.50.52.4f.53.49.4d.41");
-    fastrtps::rtps::Locator_t locator;
+    rtps::Locator_t locator;
     fastrtps::rtps::IPLocator::setIPv4(locator, 192, 168, 1, 133);
     locator.port = 64863;
     server.metatrafficUnicastLocatorList.push_back(locator);
@@ -1520,7 +1520,7 @@ TEST(ParticipantTests, ChangeWireProtocolQos)
 
     rtps::RemoteServerAttributes server_2;
     server_2.ReadguidPrefix("44.53.00.5f.45.50.52.4f.53.49.4d.42");
-    fastrtps::rtps::Locator_t locator_2;
+    rtps::Locator_t locator_2;
     fastrtps::rtps::IPLocator::setIPv4(locator_2, 192, 168, 1, 134);
     locator_2.port = 64862;
     server_2.metatrafficUnicastLocatorList.push_back(locator_2);
@@ -1560,7 +1560,7 @@ TEST(ParticipantTests, ChangeWireProtocolQos)
 
     // Check changing wire_protocol().default_unicast_locator_list is NOT OK
     participant->get_qos(qos);
-    fastrtps::rtps::Locator_t loc;
+    rtps::Locator_t loc;
     fastrtps::rtps::IPLocator::setIPv4(loc, "192.0.0.0");
     loc.port = static_cast<uint16_t>(12);
     qos.wire_protocol().default_unicast_locator_list.push_back(loc);

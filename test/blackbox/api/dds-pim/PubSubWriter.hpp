@@ -1018,8 +1018,8 @@ public:
         }
 
         /* Locators */
-        eprosima::fastrtps::rtps::Locator_t pdp_locator;
-        eprosima::fastrtps::rtps::Locator_t tcp_locator;
+        eprosima::fastdds::rtps::Locator_t pdp_locator;
+        eprosima::fastdds::rtps::Locator_t tcp_locator;
         if (v6)
         {
             // Define locator for PDP over multicast
