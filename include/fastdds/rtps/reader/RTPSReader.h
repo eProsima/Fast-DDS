@@ -170,13 +170,13 @@ public:
     /**
      * @return True if the reader expects Inline QOS.
      */
-    FASTDDS_EXPORTED_API inline bool expects_inline_qos()
+    FASTDDS_EXPORTED_API inline bool expects_inline_qos() const
     {
         return expects_inline_qos_;
     }
 
     //! Returns a pointer to the associated History.
-    FASTDDS_EXPORTED_API inline ReaderHistory* get_history()
+    FASTDDS_EXPORTED_API inline ReaderHistory* get_history() const
     {
         return history_;
     }
