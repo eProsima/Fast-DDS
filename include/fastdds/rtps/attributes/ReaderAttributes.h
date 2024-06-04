@@ -38,27 +38,17 @@ class ReaderTimes
 {
 public:
 
-    ReaderTimes()
-    {
-        initialAcknackDelay.nanosec = 70 * 1000 * 1000;
-        heartbeatResponseDelay.nanosec = 5 * 1000 * 1000;
-    }
-
-    virtual ~ReaderTimes()
-    {
-    }
-
     bool operator ==(
             const ReaderTimes& b) const
     {
-        return (this->initialAcknackDelay == b.initialAcknackDelay)  &&
-               (this->heartbeatResponseDelay == b.heartbeatResponseDelay);
+        return (initialAcknackDelay == b.initialAcknackDelay)  &&
+               (heartbeatResponseDelay == b.heartbeatResponseDelay);
     }
 
-    //!Initial AckNack delay. Default value 70ms.
-    Duration_t initialAcknackDelay;
-    //!Delay to be applied when a HEARTBEAT message is received, default value 5ms.
-    Duration_t heartbeatResponseDelay;
+    //! Initial AckNack delay. Default value 70ms.
+    Duration_t initialAcknackDelay {0, 70 * 1000 * 1000};
+    //! Delay to be applied when a HEARTBEAT message is received, default value 5ms.
+    Duration_t heartbeatResponseDelay {0,  5 * 1000 * 1000};
 };
 
 /**
@@ -70,43 +60,36 @@ class ReaderAttributes
 public:
 
     ReaderAttributes()
-        : liveliness_kind(fastdds::dds::LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS)
-        , liveliness_lease_duration(TIME_T_INFINITE_SECONDS, TIME_T_INFINITE_NANOSECONDS)
-        , expects_inline_qos(false)
-        , disable_positive_acks(false)
     {
         endpoint.endpointKind = READER;
         endpoint.durabilityKind = VOLATILE;
         endpoint.reliabilityKind = BEST_EFFORT;
     }
 
-    virtual ~ReaderAttributes()
-    {
-    }
+    //! Attributes of the associated endpoint.
+    EndpointAttributes endpoint {};
 
-    //!Attributes of the associated endpoint.
-    EndpointAttributes endpoint;
-
-    //!Times associated with this reader (only for stateful readers)
-    ReaderTimes times;
+    //! Times associated with this reader (only for stateful readers)
+    ReaderTimes times {};
 
     //! Liveliness kind
-    fastdds::dds::LivelinessQosPolicyKind liveliness_kind;
+    fastdds::dds::LivelinessQosPolicyKind liveliness_kind =
+            fastdds::dds::LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS;
 
     //! Liveliness lease duration
-    Duration_t liveliness_lease_duration;
+    Duration_t liveliness_lease_duration {TIME_T_INFINITE_SECONDS, TIME_T_INFINITE_NANOSECONDS};
 
-    //!Indicates if the reader expects Inline qos, default value 0.
-    bool expects_inline_qos;
+    //! Indicates if the reader expects Inline qos, default value false.
+    bool expects_inline_qos = false;
 
     //! Disable positive ACKs
-    bool disable_positive_acks;
+    bool disable_positive_acks = false;
 
     //! Define the allocation behaviour for matched-writer-dependent collections.
-    ResourceLimitedContainerConfig matched_writers_allocation;
+    ResourceLimitedContainerConfig matched_writers_allocation {};
 
     //! Thread settings for the data-sharing listener thread
-    fastdds::rtps::ThreadSettings data_sharing_listener_thread;
+    fastdds::rtps::ThreadSettings data_sharing_listener_thread {};
 };
 
 } /* namespace rtps */
