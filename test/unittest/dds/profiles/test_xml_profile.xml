@@ -614,7 +614,7 @@
                     </udpv4>
                 </locator>
             </multicastLocatorList>
-            <expectsInlineQos>false</expectsInlineQos>
+            <expects_inline_qos>false</expects_inline_qos>
             <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
             <userDefinedID>40</userDefinedID>
             <entityID>40</entityID>
@@ -709,7 +709,7 @@
                     </udpv4>
                 </locator>
             </multicastLocatorList>
-            <expectsInlineQos>true</expectsInlineQos>
+            <expects_inline_qos>true</expects_inline_qos>
             <historyMemoryPolicy>PREALLOCATED_WITH_REALLOC</historyMemoryPolicy>
             <userDefinedID>13</userDefinedID>
             <entityID>31</entityID>

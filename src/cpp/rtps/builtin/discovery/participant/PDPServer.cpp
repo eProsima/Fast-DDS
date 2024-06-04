@@ -277,7 +277,7 @@ bool PDPServer::create_ds_pdp_best_effort_reader(
     endpoints.stateless_reader.history_.reset(new ReaderHistory(hatt));
 
     ReaderAttributes ratt;
-    ratt.expectsInlineQos = false;
+    ratt.expects_inline_qos = false;
     ratt.endpoint.endpointKind = READER;
     ratt.endpoint.multicastLocatorList = mp_builtin->m_metatrafficMulticastLocatorList;
     ratt.endpoint.unicastLocatorList = mp_builtin->m_metatrafficUnicastLocatorList;
@@ -365,7 +365,7 @@ bool PDPServer::create_ds_pdp_reliable_endpoints(
 
     // PDP Reader Attributes
     ReaderAttributes ratt;
-    ratt.expectsInlineQos = false;
+    ratt.expects_inline_qos = false;
     ratt.endpoint.endpointKind = READER;
     ratt.endpoint.multicastLocatorList = mp_builtin->m_metatrafficMulticastLocatorList;
     ratt.endpoint.unicastLocatorList = mp_builtin->m_metatrafficUnicastLocatorList;

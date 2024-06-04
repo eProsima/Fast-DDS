@@ -124,7 +124,7 @@ TEST_F(XMLEndpointParserTests, loadXMLNode)
                         <reader>\
                             <userId>3</userId>\
                             <entityID>4</entityID>\
-                            <expectsInlineQos>true</expectsInlineQos>\
+                            <expects_inline_qos>true</expects_inline_qos>\
                             <topicName>HelloWorldTopic</topicName>\
                             <topicDataType>HelloWorld</topicDataType>\
                             <topicKind>WITH_KEY</topicKind>\
@@ -207,7 +207,7 @@ TEST_F(XMLEndpointParserTests, loadXMLParticipantEndpoint)
                     <reader>\
                         <userId>3</userId>\
                         <entityID>4</entityID>\
-                        <expectsInlineQos>true</expectsInlineQos>\
+                        <expects_inline_qos>true</expects_inline_qos>\
                         <topicName>HelloWorldTopic</topicName>\
                         <topicDataType>HelloWorld</topicDataType>\
                         <topicKind>WITH_KEY</topicKind>\
@@ -299,7 +299,7 @@ TEST_F(XMLEndpointParserTests, loadXMLReaderEndpoint)
                 <reader>\
                     <userId>3</userId>\
                     <entityID>4</entityID>\
-                    <expectsInlineQos>true</expectsInlineQos>\
+                    <expects_inline_qos>true</expects_inline_qos>\
                     <topicName>HelloWorldTopic</topicName>\
                     <topicDataType>HelloWorld</topicDataType>\
                     <topicKind>WITH_KEY</topicKind>\
@@ -467,7 +467,7 @@ TEST_F(XMLEndpointParserTests, loadXMLReaderEndpoint)
         {
             "userId",
             "entityID",
-            "expectsInlineQos",
+            "expects_inline_qos",
             "topicName",
             "topicDataType",
             "topicKind",
@@ -545,7 +545,7 @@ TEST_F(XMLEndpointParserTests, loadXMLWriterEndpoint)
                 <writer>\
                     <userId>3</userId>\
                     <entityID>4</entityID>\
-                    <expectsInlineQos>true</expectsInlineQos>\
+                    <expects_inline_qos>true</expects_inline_qos>\
                     <topicName>HelloWorldTopic</topicName>\
                     <topicDataType>HelloWorld</topicDataType>\
                     <topicKind>NO_KEY</topicKind>\
@@ -717,7 +717,7 @@ TEST_F(XMLEndpointParserTests, loadXMLWriterEndpoint)
         {
             "userId",
             "entityID",
-            "expectsInlineQos",
+            "expects_inline_qos",
             "topicName",
             "topicDataType",
             "topicKind",

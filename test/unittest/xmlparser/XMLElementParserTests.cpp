@@ -1075,7 +1075,7 @@ TEST_F(XMLParserTests, getXMLSubscriberAttributes_NegativeClauses)
         "<unicastLocatorList><bad_element></bad_element></unicastLocatorList>",
         "<multicastLocatorList><bad_element></bad_element></multicastLocatorList>",
         "<remoteLocatorList><bad_element></bad_element></remoteLocatorList>",
-        "<expectsInlineQos><bad_element></bad_element></expectsInlineQos>",
+        "<expects_inline_qos><bad_element></bad_element></expects_inline_qos>",
         "<historyMemoryPolicy><bad_element></bad_element></historyMemoryPolicy>",
         "<propertiesPolicy><bad_element></bad_element></propertiesPolicy>",
         "<userDefinedID><bad_element></bad_element></userDefinedID>",

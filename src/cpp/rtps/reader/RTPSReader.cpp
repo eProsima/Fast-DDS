@@ -49,7 +49,7 @@ RTPSReader::RTPSReader(
     , history_(hist)
     , listener_(rlisten)
     , accept_messages_from_unkown_writers_(false)
-    , expects_inline_qos_(att.expectsInlineQos)
+    , expects_inline_qos_(att.expects_inline_qos)
 {
     PoolConfig cfg = PoolConfig::from_history_attributes(hist->m_att);
     std::shared_ptr<IChangePool> change_pool;
@@ -85,7 +85,7 @@ RTPSReader::RTPSReader(
     , history_(hist)
     , listener_(rlisten)
     , accept_messages_from_unkown_writers_(false)
-    , expects_inline_qos_(att.expectsInlineQos)
+    , expects_inline_qos_(att.expects_inline_qos)
 {
     init(payload_pool, change_pool);
 }

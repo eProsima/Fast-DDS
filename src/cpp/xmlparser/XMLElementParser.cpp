@@ -4400,7 +4400,7 @@ XMLP_ret XMLParser::getXMLSubscriberAttributes(
                 <xs:element name="ignore_non_matching_locators" type="boolType" minOccurs="0"/>
                 <xs:element name="unicastLocatorList" type="locatorListType" minOccurs="0"/>
                 <xs:element name="multicastLocatorList" type="locatorListType" minOccurs="0"/>
-                <xs:element name="expectsInlineQos" type="boolType" minOccurs="0"/>
+                <xs:element name="expects_inline_qos" type="boolType" minOccurs="0"/>
                 <xs:element name="historyMemoryPolicy" type="historyMemoryPolicyType" minOccurs="0"/>
                 <xs:element name="propertiesPolicy" type="propertyPolicyType" minOccurs="0"/>
                 <xs:element name="userDefinedID" type="int16Type" minOccurs="0"/>
@@ -4491,8 +4491,8 @@ XMLP_ret XMLParser::getXMLSubscriberAttributes(
         }
         else if (strcmp(name, EXP_INLINE_QOS) == 0)
         {
-            // expectsInlineQos - boolType
-            if (XMLP_ret::XML_OK != getXMLBool(p_aux0, &subscriber.expectsInlineQos, ident))
+            // expects_inline_qos - boolType
+            if (XMLP_ret::XML_OK != getXMLBool(p_aux0, &subscriber.expects_inline_qos, ident))
             {
                 return XMLP_ret::XML_ERROR;
             }

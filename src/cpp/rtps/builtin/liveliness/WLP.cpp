@@ -297,7 +297,7 @@ bool WLP::createEndpoints()
     ratt.endpoint.topicKind = WITH_KEY;
     ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
     ratt.endpoint.reliabilityKind = RELIABLE;
-    ratt.expectsInlineQos = true;
+    ratt.expects_inline_qos = true;
     ratt.endpoint.unicastLocatorList =  mp_builtinProtocols->m_metatrafficUnicastLocatorList;
     ratt.endpoint.multicastLocatorList = mp_builtinProtocols->m_metatrafficMulticastLocatorList;
     ratt.endpoint.external_unicast_locators = mp_builtinProtocols->m_att.metatraffic_external_unicast_locators;
@@ -404,7 +404,7 @@ bool WLP::createSecureEndpoints()
     ratt.endpoint.topicKind = WITH_KEY;
     ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
     ratt.endpoint.reliabilityKind = RELIABLE;
-    ratt.expectsInlineQos = true;
+    ratt.expects_inline_qos = true;
     ratt.endpoint.unicastLocatorList = mp_builtinProtocols->m_metatrafficUnicastLocatorList;
     ratt.endpoint.multicastLocatorList = mp_builtinProtocols->m_metatrafficMulticastLocatorList;
     ratt.endpoint.external_unicast_locators = mp_builtinProtocols->m_att.metatraffic_external_unicast_locators;

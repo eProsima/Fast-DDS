@@ -4,7 +4,7 @@
         <writer>
             <userId>1</userId>
             <entityID>2</entityID>
-            <expectsInlineQos>true</expectsInlineQos>
+            <expects_inline_qos>true</expects_inline_qos>
             <topicName>HelloWorldTopic</topicName>
             <topicDataType>HelloWorld</topicDataType>
             <topicKind>NO_KEY</topicKind>
@@ -20,7 +20,7 @@
         <reader>
             <userId>1</userId>
             <entityID>2</entityID>
-            <expectsInlineQos>false</expectsInlineQos>
+            <expects_inline_qos>false</expects_inline_qos>
             <topicName>HelloWorldTopic</topicName>
             <topicDataType>HelloWorld</topicDataType>
             <topicKind>WITH_KEY</topicKind>

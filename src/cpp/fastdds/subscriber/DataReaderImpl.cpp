@@ -179,7 +179,7 @@ ReturnCode_t DataReaderImpl::enable()
     att.liveliness_lease_duration = qos_.liveliness().lease_duration;
     att.liveliness_kind_ = qos_.liveliness().kind;
     att.matched_writers_allocation = qos_.reader_resource_limits().matched_publisher_allocation;
-    att.expectsInlineQos = qos_.expects_inline_qos();
+    att.expects_inline_qos = qos_.expects_inline_qos();
     att.disable_positive_acks = qos_.reliable_reader_qos().disable_positive_ACKs.enabled;
     att.data_sharing_listener_thread = qos_.data_sharing().data_sharing_listener_thread();
 

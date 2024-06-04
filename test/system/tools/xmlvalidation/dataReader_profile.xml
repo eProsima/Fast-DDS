@@ -219,7 +219,7 @@
 
             <ignore_non_matching_locators>true</ignore_non_matching_locators>
 
-            <expectsInlineQos>false</expectsInlineQos>
+            <expects_inline_qos>false</expects_inline_qos>
 
             <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
 

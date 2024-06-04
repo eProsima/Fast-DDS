@@ -282,7 +282,7 @@
         ├ multicastLocatorList         [0~1],
         ├ external_unicast_locators    [0~1],
         ├ ignore_non_matching_locators [bool],
-        ├ expectsInlineQos             [bool],
+        ├ expects_inline_qos           [bool],
         ├ historyMemoryPolicy          [0~1],
         ├ propertiesPolicy             [0~1],
         ├ userDefinedID                [int16],
@@ -297,7 +297,7 @@
             <xs:element name="multicastLocatorList" type="locatorListType" minOccurs="0"/>
             <xs:element name="external_unicast_locators" type="externalLocatorListType" minOccurs="0"/>
             <xs:element name="ignore_non_matching_locators" type="boolean" minOccurs="0"/>
-            <xs:element name="expectsInlineQos" type="boolean" minOccurs="0"/>
+            <xs:element name="expects_inline_qos" type="boolean" minOccurs="0"/>
             <xs:element name="historyMemoryPolicy" type="historyMemoryPolicyType" minOccurs="0"/>
             <xs:element name="propertiesPolicy" type="propertyPolicyType" minOccurs="0"/>
             <xs:element name="userDefinedID" type="int16" minOccurs="0"/>
@@ -317,7 +317,7 @@
         ├ multicastLocatorList         [0~1],
         ├ external_unicast_locators    [0~1],
         ├ ignore_non_matching_locators [bool],
-        ├ expectsInlineQos             [bool],
+        ├ expects_inline_qos           [bool],
         ├ historyMemoryPolicy          [0~1],
         ├ propertiesPolicy             [0~1],
         ├ userDefinedID                [int16],

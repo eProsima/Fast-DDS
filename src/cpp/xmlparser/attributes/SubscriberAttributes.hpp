@@ -64,7 +64,7 @@ public:
     bool ignore_non_matching_locators = false;
 
     //! Expects Inline QOS
-    bool expectsInlineQos = false;
+    bool expects_inline_qos = false;
 
     //! Underlying History memory policy
     fastrtps::rtps::MemoryManagementPolicy_t historyMemoryPolicy =

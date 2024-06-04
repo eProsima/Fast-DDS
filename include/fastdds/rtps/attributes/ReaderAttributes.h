@@ -72,7 +72,7 @@ public:
     ReaderAttributes()
         : liveliness_kind_(fastdds::dds::LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS)
         , liveliness_lease_duration(TIME_T_INFINITE_SECONDS, TIME_T_INFINITE_NANOSECONDS)
-        , expectsInlineQos(false)
+        , expects_inline_qos(false)
         , disable_positive_acks(false)
     {
         endpoint.endpointKind = READER;
@@ -97,7 +97,7 @@ public:
     Duration_t liveliness_lease_duration;
 
     //!Indicates if the reader expects Inline qos, default value 0.
-    bool expectsInlineQos;
+    bool expects_inline_qos;
 
     //! Disable positive ACKs
     bool disable_positive_acks;
