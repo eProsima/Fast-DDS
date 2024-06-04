@@ -24,7 +24,7 @@
 #include <string.h>
 
 #include <fastdds/rtps/history/IPayloadPool.h>
-#include <fastdds/rtps/common/CacheChange.h>
+#include <fastdds/rtps/common/SerializedPayload.h>
 
 class CustomPayloadPool : public eprosima::fastrtps::rtps::IPayloadPool
 {
@@ -39,12 +39,12 @@ public:
         // Reserve new memory for the payload buffer
         unsigned char* payload_buff = new unsigned char[size];
 
-        // Assign the payload buffer to the CacheChange and update sizes
+        // Assign the payload buffer to the SerializedPayload and update sizes
         payload.data = payload_buff;
         payload.length = size;
         payload.max_size = size;
 
-        // Tell the CacheChange who needs to release its payload
+        // Tell the SerializedPayload who needs to release its payload
         payload.payload_owner(this);
 
         return true;
@@ -61,10 +61,10 @@ public:
         // Copy the data
         memcpy(payload_buff, data.data, data.length);
 
-        // Tell the CacheChange who needs to release its payload
+        // Tell the SerializedPayload who needs to release its payload
         payload.payload_owner(this);
 
-        // Assign the payload buffer to the CacheChange and update sizes
+        // Assign the payload buffer to the SerializedPayload and update sizes
         payload.data = payload_buff;
         payload.length = data.length;
         payload.max_size = data.length;

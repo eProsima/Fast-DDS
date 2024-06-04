@@ -26,8 +26,7 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-struct CacheChange_t;
-class SerializedPayload_t;
+struct SerializedPayload_t;
 
 /**
  * An interface for classes responsible of serialized payload management.

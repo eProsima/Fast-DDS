@@ -36,6 +36,8 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
+struct CacheChange_t;
+
 /*!
  * Specific information for a writer.
  */

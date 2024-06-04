@@ -19,7 +19,7 @@
 #ifndef RTPS_HISTORY_TOPICPAYLOADPOOL_HPP
 #define RTPS_HISTORY_TOPICPAYLOADPOOL_HPP
 
-#include <fastdds/rtps/common/CacheChange.h>
+#include <fastdds/rtps/common/SerializedPayload.h>
 #include <fastdds/rtps/history/IPayloadPool.h>
 #include <fastdds/rtps/resources/ResourceManagement.h>
 #include <fastdds/dds/log/Log.hpp>
@@ -31,6 +31,7 @@
 #include <memory>
 #include <mutex>
 #include <vector>
+#include <cassert>
 
 namespace eprosima {
 namespace fastrtps {
