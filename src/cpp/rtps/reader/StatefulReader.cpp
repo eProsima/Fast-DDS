@@ -1603,7 +1603,8 @@ void StatefulReader::send_acknack(
                 {
                     // Check if the CacheChange_t is uncompleted.
                     CacheChange_t* uncomplete_change = nullptr;
-                    auto ret_iterator = find_cache_in_fragmented_process(seq, guid, &uncomplete_change, history_iterator);
+                    auto ret_iterator = find_cache_in_fragmented_process(
+                        seq, guid, &uncomplete_change, history_iterator);
                     if (ret_iterator != history_->changesEnd())
                     {
                         history_iterator = ret_iterator;

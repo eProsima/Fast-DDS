@@ -154,7 +154,7 @@ public:
         //Create reader
         auto attr = reader_attr_;
         attr.accept_messages_from_unkown_writers =
-            eprosima::fastrtps::rtps::RELIABLE != reader_attr_.endpoint.reliabilityKind;
+                eprosima::fastrtps::rtps::RELIABLE != reader_attr_.endpoint.reliabilityKind;
         reader_ = eprosima::fastrtps::rtps::RTPSDomain::createRTPSReader(participant_, attr, history_,
                         &listener_);
         ASSERT_NE(reader_, nullptr);
