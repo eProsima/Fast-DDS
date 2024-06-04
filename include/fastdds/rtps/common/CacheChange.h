@@ -183,7 +183,7 @@ struct FASTDDS_EXPORTED_API CacheChange_t
     {
         if (serializedPayload.payload_owner_ != nullptr)
         {
-            serializedPayload.payload_owner_->release_payload(*this);
+            serializedPayload.payload_owner_->release_payload(serializedPayload);
         }
         assert(serializedPayload.payload_owner_ == nullptr);
     }

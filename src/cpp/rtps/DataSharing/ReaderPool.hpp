@@ -44,7 +44,7 @@ public:
 
     bool get_payload(
             uint32_t /*size*/,
-            CacheChange_t& /*cache_change*/) override
+            SerializedPayload_t& /*payload*/) override
     {
         // Only WriterPool can return new payloads
         return false;
@@ -53,32 +53,42 @@ public:
     bool get_payload(
             SerializedPayload_t& data,
             IPayloadPool*& data_owner,
-            CacheChange_t& cache_change) override
+            SerializedPayload_t& payload) override
     {
         if (data_owner == this)
         {
-            cache_change.serializedPayload.data = data.data;
-            cache_change.serializedPayload.length = data.length;
-            cache_change.serializedPayload.max_size = data.length;
-            cache_change.payload_owner(this);
+            payload.data = data.data;
+            payload.length = data.length;
+            payload.max_size = data.length;
+            payload.payload_owner(this);
             return true;
         }
+        return false;
+    }
 
-        // If owner is not this, then it must be an intraprocess datasharing writer
-        assert(nullptr != dynamic_cast<DataSharingPayloadPool*>(data_owner));
-        PayloadNode* payload = PayloadNode::get_from_data(data.data);
+    bool get_datasharing_change(
+            SerializedPayload_t& data,
+            IPayloadPool*& data_owner,
+            CacheChange_t& cache_change)
+    {
+        if (!get_payload(data, data_owner, cache_change.serializedPayload))
+        {
+            // If owner is not this, then it must be an intraprocess datasharing writer
+            assert(nullptr != dynamic_cast<DataSharingPayloadPool*>(data_owner));
+            PayloadNode* payload = PayloadNode::get_from_data(data.data);
 
-        // No need to check validity, on intraprocess there is no override of payloads
-        read_from_shared_history(cache_change, payload);
+            // No need to check validity, on intraprocess there is no override of payloads
+            read_from_shared_history(cache_change, payload);
+        }
         return true;
     }
 
     bool release_payload(
-            CacheChange_t& cache_change) override
+            SerializedPayload_t& payload) override
     {
-        assert(cache_change.payload_owner() == this);
+        assert(payload.payload_owner() == this);
 
-        return DataSharingPayloadPool::release_payload(cache_change);
+        return DataSharingPayloadPool::release_payload(payload);
     }
 
     template <typename T>

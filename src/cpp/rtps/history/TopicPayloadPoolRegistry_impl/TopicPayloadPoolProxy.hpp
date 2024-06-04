@@ -57,23 +57,23 @@ public:
 
     bool get_payload(
             uint32_t size,
-            CacheChange_t& cache_change) override
+            SerializedPayload_t& payload) override
     {
-        return inner_pool_->get_payload(size, cache_change);
+        return inner_pool_->get_payload(size, payload);
     }
 
     bool get_payload(
             SerializedPayload_t& data,
             IPayloadPool*& data_owner,
-            CacheChange_t& cache_change) override
+            SerializedPayload_t& payload) override
     {
-        return inner_pool_->get_payload(data, data_owner, cache_change);
+        return inner_pool_->get_payload(data, data_owner, payload);
     }
 
     bool release_payload(
-            CacheChange_t& cache_change) override
+            SerializedPayload_t& payload) override
     {
-        return inner_pool_->release_payload(cache_change);
+        return inner_pool_->release_payload(payload);
     }
 
     bool reserve_history(

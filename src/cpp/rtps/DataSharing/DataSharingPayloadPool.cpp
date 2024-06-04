@@ -28,13 +28,13 @@ namespace fastrtps {
 namespace rtps {
 
 bool DataSharingPayloadPool::release_payload(
-        CacheChange_t& cache_change)
+        SerializedPayload_t& payload)
 {
-    cache_change.serializedPayload.length = 0;
-    cache_change.serializedPayload.pos = 0;
-    cache_change.serializedPayload.max_size = 0;
-    cache_change.serializedPayload.data = nullptr;
-    cache_change.payload_owner(nullptr);
+    payload.length = 0;
+    payload.pos = 0;
+    payload.max_size = 0;
+    payload.data = nullptr;
+    payload.payload_owner(nullptr);
     return true;
 }
 

@@ -157,7 +157,7 @@ void MessageReceiver::process_data_message_with_security(
                 IPayloadPool* payload_pool = change.payload_owner();
                 if (payload_pool)
                 {
-                    payload_pool->release_payload(change);
+                    payload_pool->release_payload(change.serializedPayload);
                     change.serializedPayload = original_payload;
                 }
                 original_payload.data = nullptr;
@@ -913,7 +913,7 @@ bool MessageReceiver::proc_Submsg_Data(
     IPayloadPool* payload_pool = ch.payload_owner();
     if (payload_pool)
     {
-        payload_pool->release_payload(ch);
+        payload_pool->release_payload(ch.serializedPayload);
     }
 
     //TODO(Ricardo) If an exception is thrown (ex, by fastcdr), these lines are not executed -> segmentation fault

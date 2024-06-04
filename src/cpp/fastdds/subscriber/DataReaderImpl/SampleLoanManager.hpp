@@ -132,7 +132,7 @@ struct SampleLoanManager
         CacheChange_t tmp;
         tmp.copy_not_memcpy(change);
         item->owner = change->payload_owner();
-        change->payload_owner()->get_payload(change->serializedPayload, item->owner, tmp);
+        change->payload_owner()->get_payload(change->serializedPayload, item->owner, tmp.serializedPayload);
         item->owner = tmp.payload_owner();
         item->payload = tmp.serializedPayload;
         tmp.payload_owner(nullptr);
@@ -165,9 +165,9 @@ struct SampleLoanManager
         if (item->num_refs == 0)
         {
             CacheChange_t tmp;
-            tmp.payload_owner(item->owner);
             tmp.serializedPayload = item->payload;
-            item->owner->release_payload(tmp);
+            tmp.payload_owner(item->owner);
+            item->owner->release_payload(tmp.serializedPayload);
             item->payload.data = nullptr;
             item->owner = nullptr;
 

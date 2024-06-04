@@ -61,21 +61,21 @@ public:
 
     bool get_payload(
             uint32_t /*size*/,
-            CacheChange_t& cache_change) override
+            SerializedPayload_t& payload) override
     {
         if (free_payloads_.empty())
         {
             return false;
         }
 
-        PayloadNode* payload = free_payloads_.front();
+        PayloadNode* payload_node = free_payloads_.front();
         free_payloads_.pop_front();
         // Reset all the metadata to signal the reader that the payload is dirty
-        payload->reset();
+        payload_node->reset();
 
-        cache_change.serializedPayload.data = payload->data();
-        cache_change.serializedPayload.max_size = max_data_size_;
-        cache_change.payload_owner(this);
+        payload.data = payload_node->data();
+        payload.max_size = max_data_size_;
+        payload.payload_owner(this);
 
         return true;
     }
@@ -83,33 +83,30 @@ public:
     bool get_payload(
             SerializedPayload_t& data,
             IPayloadPool*& data_owner,
-            CacheChange_t& cache_change) override
+            SerializedPayload_t& payload) override
     {
-        assert(cache_change.writerGUID != GUID_t::unknown());
-        assert(cache_change.sequenceNumber != SequenceNumber_t::unknown());
-
         if (data_owner == this)
         {
-            cache_change.serializedPayload.data = data.data;
-            cache_change.serializedPayload.length = data.length;
-            cache_change.serializedPayload.max_size = data.length;
-            cache_change.payload_owner(this);
+            payload.data = data.data;
+            payload.length = data.length;
+            payload.max_size = data.length;
+            payload.payload_owner(this);
             return true;
         }
         else
         {
-            if (get_payload(data.length, cache_change))
+            if (get_payload(data.length, payload))
             {
-                if (!cache_change.serializedPayload.copy(&data, true))
+                if (!payload.copy(&data, true))
                 {
-                    release_payload(cache_change);
+                    release_payload(payload);
                     return false;
                 }
 
                 if (data_owner == nullptr)
                 {
                     data_owner = this;
-                    data.data = cache_change.serializedPayload.data;
+                    data.data = payload.data;
                 }
 
                 return true;
@@ -120,23 +117,23 @@ public:
     }
 
     bool release_payload(
-            CacheChange_t& cache_change) override
+            SerializedPayload_t& payload) override
     {
-        assert(cache_change.payload_owner() == this);
+        assert(payload.payload_owner() == this);
 
         // Payloads are reset on the `get` operation, the `release` leaves the data to give more chances to the reader
-        PayloadNode* payload = PayloadNode::get_from_data(cache_change.serializedPayload.data);
-        if (payload->has_been_removed())
+        PayloadNode* payload_node = PayloadNode::get_from_data(payload.data);
+        if (payload_node->has_been_removed())
         {
             advance_till_first_non_removed();
         }
         else
         {
-            free_payloads_.push_back(payload);
+            free_payloads_.push_back(payload_node);
         }
-        EPROSIMA_LOG_INFO(DATASHARING_PAYLOADPOOL, "Change released with SN " << cache_change.sequenceNumber);
+        EPROSIMA_LOG_INFO(DATASHARING_PAYLOADPOOL, "Serialized payload released.");
 
-        return DataSharingPayloadPool::release_payload(cache_change);
+        return DataSharingPayloadPool::release_payload(payload);
     }
 
     template <typename T>

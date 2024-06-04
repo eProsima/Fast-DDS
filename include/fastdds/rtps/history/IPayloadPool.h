@@ -63,7 +63,7 @@ public:
      */
     virtual bool get_payload(
             uint32_t size,
-            CacheChange_t& cache_change) = 0;
+            SerializedPayload_t& payload) = 0;
 
     /**
      * @brief Assign a serialized payload to a new sample.
@@ -103,7 +103,7 @@ public:
     virtual bool get_payload(
             SerializedPayload_t& data,
             IPayloadPool*& data_owner,
-            CacheChange_t& cache_change) = 0;
+            SerializedPayload_t& payload) = 0;
 
     /**
      * @brief Release a serialized payload from a sample.
@@ -119,7 +119,7 @@ public:
      * @post @li Field @c payload_owner of @c cache_change is @c nullptr
      */
     virtual bool release_payload(
-            CacheChange_t& cache_change) = 0;
+            SerializedPayload_t& payload) = 0;
 };
 
 } /* namespace rtps */

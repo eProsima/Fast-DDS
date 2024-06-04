@@ -53,7 +53,7 @@ public:
     ~DataSharingPayloadPool() = default;
 
     virtual bool release_payload(
-            CacheChange_t& cache_change) override;
+            SerializedPayload_t& payload) override;
 
     static std::shared_ptr<DataSharingPayloadPool> get_reader_pool(
             bool is_reader_volatile);

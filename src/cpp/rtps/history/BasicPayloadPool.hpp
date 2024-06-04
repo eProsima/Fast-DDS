@@ -59,9 +59,9 @@ public:
                                 [&payload_pool, &config](
                                     CacheChange_t* change)
                                 {
-                                    if (payload_pool->get_payload(config.payload_initial_size, *change))
+                                    if (payload_pool->get_payload(config.payload_initial_size, change->serializedPayload))
                                     {
-                                        payload_pool->release_payload(*change);
+                                        payload_pool->release_payload(change->serializedPayload);
                                     }
                                 });
             }

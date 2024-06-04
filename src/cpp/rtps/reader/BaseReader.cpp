@@ -268,7 +268,7 @@ bool BaseReader::reserve_cache(
     }
 
     uint32_t payload_size = fixed_payload_size_ ? fixed_payload_size_ : cdr_payload_size;
-    if (!payload_pool_->get_payload(payload_size, *reserved_change))
+    if (!payload_pool_->get_payload(payload_size, reserved_change->serializedPayload))
     {
         change_pool_->release_cache(reserved_change);
         EPROSIMA_LOG_WARNING(RTPS_READER, "Problem reserving payload from pool");
@@ -287,7 +287,7 @@ void BaseReader::release_cache(
     fastrtps::rtps::IPayloadPool* pool = change->payload_owner();
     if (pool)
     {
-        pool->release_payload(*change);
+        pool->release_payload(change->serializedPayload);
     }
     change_pool_->release_cache(change);
 }

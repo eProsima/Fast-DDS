@@ -626,10 +626,9 @@ bool StatelessReader::process_data_msg(
                     change_pool_->release_cache(change_to_add);
                     return false;
                 }
-
-                datasharing_pool->get_payload(change->serializedPayload, payload_owner, *change_to_add);
+                datasharing_pool->get_datasharing_change(change->serializedPayload, payload_owner, *change_to_add);
             }
-            else if (payload_pool_->get_payload(change->serializedPayload, payload_owner, *change_to_add))
+            else if (payload_pool_->get_payload(change->serializedPayload, payload_owner, change_to_add->serializedPayload))
             {
                 change->payload_owner(payload_owner);
             }
@@ -648,7 +647,7 @@ bool StatelessReader::process_data_msg(
             {
                 EPROSIMA_LOG_INFO(RTPS_MSG_IN,
                         IDSTRING "MessageReceiver not add change " << change_to_add->sequenceNumber);
-                change_to_add->payload_owner()->release_payload(*change_to_add);
+                change_to_add->payload_owner()->release_payload(change_to_add->serializedPayload);
                 change_pool_->release_cache(change_to_add);
                 return false;
             }

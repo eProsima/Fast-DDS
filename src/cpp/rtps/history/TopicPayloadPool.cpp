@@ -32,59 +32,59 @@ namespace rtps {
 
 bool TopicPayloadPool::get_payload(
         uint32_t size,
-        CacheChange_t& cache_change)
+        SerializedPayload_t& payload)
 {
-    return do_get_payload(size, cache_change, false);
+    return do_get_payload(size, payload, false);
 }
 
 bool TopicPayloadPool::do_get_payload(
         uint32_t size,
-        CacheChange_t& cache_change,
+        SerializedPayload_t& payload,
         bool resizeable)
 {
-    PayloadNode* payload = nullptr;
+    PayloadNode* payload_node = nullptr;
 
     std::unique_lock<std::mutex> lock(mutex_);
     if (free_payloads_.empty())
     {
-        payload = allocate(size); //Allocates a single payload
-        if (payload == nullptr)
+        payload_node = allocate(size); //Allocates a single payload
+        if (payload_node == nullptr)
         {
             lock.unlock();
-            cache_change.serializedPayload.data = nullptr;
-            cache_change.serializedPayload.max_size = 0;
-            cache_change.payload_owner(nullptr);
+            payload.data = nullptr;
+            payload.max_size = 0;
+            payload.payload_owner(nullptr);
             return false;
         }
     }
     else
     {
-        payload = free_payloads_.back();
+        payload_node = free_payloads_.back();
         free_payloads_.pop_back();
     }
 
     // Resize if needed
-    if (resizeable && size > payload->data_size())
+    if (resizeable && size > payload_node->data_size())
     {
-        if (!payload->resize(size))
+        if (!payload_node->resize(size))
         {
             // Failed to resize, but we can still keep it for later.
-            free_payloads_.push_back(payload);
+            free_payloads_.push_back(payload_node);
             lock.unlock();
             EPROSIMA_LOG_ERROR(RTPS_HISTORY, "Failed to resize the payload");
 
-            cache_change.serializedPayload.data = nullptr;
-            cache_change.serializedPayload.max_size = 0;
-            cache_change.payload_owner(nullptr);
+            payload.data = nullptr;
+            payload.max_size = 0;
+            payload.payload_owner(nullptr);
             return false;
         }
     }
 
     lock.unlock();
-    payload->reference();
-    cache_change.serializedPayload.data = payload->data();
-    cache_change.serializedPayload.max_size = payload->data_size();
-    cache_change.payload_owner(this);
+    payload_node->reference();
+    payload.data = payload_node->data();
+    payload.max_size = payload_node->data_size();
+    payload.payload_owner(this);
 
     return true;
 }
@@ -92,35 +92,32 @@ bool TopicPayloadPool::do_get_payload(
 bool TopicPayloadPool::get_payload(
         SerializedPayload_t& data,
         IPayloadPool*& data_owner,
-        CacheChange_t& cache_change)
+        SerializedPayload_t& payload)
 {
-    assert(cache_change.writerGUID != GUID_t::unknown());
-    assert(cache_change.sequenceNumber != SequenceNumber_t::unknown());
-
     if (data_owner == this)
     {
         PayloadNode::reference(data.data);
 
-        cache_change.serializedPayload.data = data.data;
-        cache_change.serializedPayload.length = data.length;
-        cache_change.serializedPayload.max_size = PayloadNode::data_size(data.data);
-        cache_change.payload_owner(this);
+        payload.data = data.data;
+        payload.length = data.length;
+        payload.max_size = PayloadNode::data_size(data.data);
+        payload.payload_owner(this);
         return true;
     }
     else
     {
-        if (get_payload(data.length, cache_change))
+        if (get_payload(data.length, payload))
         {
-            if (!cache_change.serializedPayload.copy(&data, true))
+            if (!payload.copy(&data, true))
             {
-                release_payload(cache_change);
+                release_payload(payload);
                 return false;
             }
 
             if (data_owner == nullptr)
             {
                 data_owner = this;
-                data.data = cache_change.serializedPayload.data;
+                data.data = payload.data;
                 PayloadNode::reference(data.data);
             }
 
@@ -132,22 +129,22 @@ bool TopicPayloadPool::get_payload(
 }
 
 bool TopicPayloadPool::release_payload(
-        CacheChange_t& cache_change)
+        SerializedPayload_t& payload)
 {
-    assert(cache_change.payload_owner() == this);
+    assert(payload.payload_owner() == this);
 
-    if (PayloadNode::dereference(cache_change.serializedPayload.data))
+    if (PayloadNode::dereference(payload.data))
     {
         std::lock_guard<std::mutex> lock(mutex_);
-        PayloadNode* payload = all_payloads_.at(PayloadNode::data_index(cache_change.serializedPayload.data));
-        free_payloads_.push_back(payload);
+        PayloadNode* payload_node = all_payloads_.at(PayloadNode::data_index(payload.data));
+        free_payloads_.push_back(payload_node);
     }
 
-    cache_change.serializedPayload.length = 0;
-    cache_change.serializedPayload.pos = 0;
-    cache_change.serializedPayload.max_size = 0;
-    cache_change.serializedPayload.data = nullptr;
-    cache_change.payload_owner(nullptr);
+    payload.length = 0;
+    payload.pos = 0;
+    payload.max_size = 0;
+    payload.data = nullptr;
+    payload.payload_owner(nullptr);
     return true;
 }
 

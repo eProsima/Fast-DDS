@@ -678,7 +678,7 @@ protected:
         }
 
         uint32_t size = fixed_payload_size_ ? fixed_payload_size_ : size_getter();
-        if (!payload_pool_->get_payload(size, change))
+        if (!payload_pool_->get_payload(size, change.serializedPayload))
         {
             return false;
         }
@@ -692,7 +692,7 @@ protected:
     {
         CacheChange_t change;
         payload.move_into_change(change);
-        payload_pool_->release_payload(change);
+        payload_pool_->release_payload(change.serializedPayload);
     }
 
     bool add_loan(

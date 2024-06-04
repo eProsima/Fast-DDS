@@ -55,15 +55,15 @@ public:
 
     bool get_payload(
             uint32_t size,
-            CacheChange_t& cache_change) override;
+            SerializedPayload_t& payload) override;
 
     bool get_payload(
             SerializedPayload_t& data,
             IPayloadPool*& data_owner,
-            CacheChange_t& cache_change) override;
+            SerializedPayload_t& payload) override;
 
     bool release_payload(
-            CacheChange_t& cache_change) override;
+            SerializedPayload_t& payload) override;
 
     /**
      * @brief Ensures the pool has capacity to fullfill the requirements of a new history.
@@ -346,7 +346,7 @@ protected:
      */
     virtual bool do_get_payload(
             uint32_t size,
-            CacheChange_t& cache_change,
+            SerializedPayload_t& payload,
             bool resizeable);
 
     virtual MemoryManagementPolicy_t memory_policy() const = 0;
