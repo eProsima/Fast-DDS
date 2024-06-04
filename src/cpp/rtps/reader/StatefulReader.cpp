@@ -991,7 +991,7 @@ bool StatefulReader::acceptMsgFrom(
     // Check if it's a framework's one. In this case, accept_messages_from_unkown_writers_
     // is an enabler for the trusted entity comparison
     if (accept_messages_from_unkown_writers_
-            && (writerId.entityId == m_trustedWriterEntityId))
+            && (writerId.entityId == trusted_writer_entity_id_))
     {
         *wp = nullptr;
         return true;
@@ -1093,7 +1093,7 @@ bool StatefulReader::change_received(
         if (!findWriterProxy(a_change->writerGUID, &prox))
         {
             // discard non framework messages from unknown writer
-            if (a_change->writerGUID.entityId != m_trustedWriterEntityId)
+            if (a_change->writerGUID.entityId != trusted_writer_entity_id_)
             {
                 EPROSIMA_LOG_INFO(RTPS_READER,
                         "Writer Proxy " << a_change->writerGUID << " not matched to this Reader " << m_guid.entityId);

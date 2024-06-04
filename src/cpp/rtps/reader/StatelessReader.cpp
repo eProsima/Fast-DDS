@@ -327,7 +327,7 @@ bool StatelessReader::change_received(
 
         decltype(matched_writers_)::iterator writer = matched_writers_.end();
         if ((EXCLUSIVE_OWNERSHIP_QOS == m_att.ownershipKind) ||
-                (m_trustedWriterEntityId == change->writerGUID.entityId))
+                (trusted_writer_entity_id_ == change->writerGUID.entityId))
         {
             writer = std::find_if(matched_writers_.begin(), matched_writers_.end(),
                             [change](const RemoteWriterInfo_t& item)
@@ -860,7 +860,7 @@ bool StatelessReader::acceptMsgFrom(
         {
             return true;
         }
-        else if (writerId.entityId == m_trustedWriterEntityId)
+        else if (writerId.entityId == trusted_writer_entity_id_)
         {
             return true;
         }

@@ -116,7 +116,7 @@ public:
             const fastrtps::rtps::EntityId_t& writer)
     {
         accept_messages_from_unkown_writers_ = false;
-        m_trustedWriterEntityId = writer;
+        trusted_writer_entity_id_ = writer;
     }
 
     /**
@@ -126,7 +126,7 @@ public:
      */
     bool accept_messages_to_unknown_readers() const
     {
-        return m_acceptMessagesToUnknownReaders;
+        return accept_messages_to_unknown_readers_;
     }
 
     //! @return The liveliness kind of this reader
@@ -302,9 +302,9 @@ protected:
     fastdds::dds::LivelinessChangedStatus liveliness_changed_status_;
 
     //! Accept msg to unknwon readers
-    bool m_acceptMessagesToUnknownReaders = true;
+    bool accept_messages_to_unknown_readers_ = true;
     //! Trusted writer (for Builtin)
-    fastrtps::rtps::EntityId_t m_trustedWriterEntityId;
+    fastrtps::rtps::EntityId_t trusted_writer_entity_id_;
 
     /*!
      * @brief Whether a history record may be removed.
