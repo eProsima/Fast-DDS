@@ -57,7 +57,6 @@ set(${PROJECT_NAME}_source_files
     fastdds/domain/DomainParticipant.cpp
     fastdds/domain/DomainParticipantFactory.cpp
     fastdds/domain/DomainParticipantImpl.cpp
-    fastdds/domain/qos/DomainParticipantExtendedQos.cpp
     fastdds/domain/qos/DomainParticipantFactoryQos.cpp
     fastdds/domain/qos/DomainParticipantQos.cpp
     fastdds/log/FileConsumer.cpp
