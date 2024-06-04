@@ -35,6 +35,7 @@
 #include <fastdds/rtps/history/IChangePool.h>
 #include <fastdds/rtps/history/IPayloadPool.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
+#include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/statistics/IListeners.hpp>
 #include <fastdds/statistics/rtps/StatisticsCommon.hpp>
@@ -92,6 +93,39 @@ protected:
 public:
 
     virtual ~BaseReader();
+
+    /**
+     * Get the associated listener, secondary attached Listener in case it is of compound type
+     * @return Pointer to the associated reader listener.
+     */
+    fastrtps::rtps::ReaderListener* get_listener() const override;
+
+    /**
+     * Switch the ReaderListener kind for the Reader.
+     * If the RTPSReader does not belong to the built-in protocols it switches out the old one.
+     * If it belongs to the built-in protocols, it sets the new ReaderListener callbacks to be called after the
+     * built-in ReaderListener ones.
+     * @param target Pointed to ReaderLister to attach
+     * @return True is correctly set.
+     */
+    bool set_listener(
+            fastrtps::rtps::ReaderListener* target) override;
+
+    /**
+     * @return True if the reader expects Inline QOS.
+     */
+    bool expects_inline_qos() const override;
+
+    //! Returns a pointer to the associated History.
+    fastrtps::rtps::ReaderHistory* get_history() const override;
+
+    //! @return The content filter associated to this reader.
+    IReaderDataFilter* get_content_filter() const override;
+
+    //! Set the content filter associated to this reader.
+    //! @param filter Pointer to the content filter to associate to this reader.
+    void set_content_filter(
+            IReaderDataFilter* filter) override;
 
     uint64_t get_unread_count() const override;
 
@@ -280,6 +314,15 @@ public:
 #endif // FASTDDS_STATISTICS
 
 protected:
+
+    //! Listener
+    fastrtps::rtps::ReaderListener* listener_;
+    //! Accept msg from unknown writers (BE-true,RE-false)
+    bool accept_messages_from_unkown_writers_;
+    //! Expects Inline Qos.
+    bool expects_inline_qos_;
+
+    IReaderDataFilter* data_filter_ = nullptr;
 
     //!ReaderHistoryState
     fastrtps::rtps::ReaderHistoryState* history_state_;

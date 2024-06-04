@@ -19,6 +19,8 @@
 #include <rtps/reader/BaseReader.hpp>
 
 #include <cassert>
+#include <cstdint>
+#include <mutex>
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
@@ -28,6 +30,7 @@
 #include <fastdds/rtps/common/SerializedPayload.h>
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
 #include <fastdds/rtps/reader/ReaderListener.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
 
@@ -51,7 +54,10 @@ BaseReader::BaseReader(
         const fastrtps::rtps::ReaderAttributes& att,
         fastrtps::rtps::ReaderHistory* hist,
         fastrtps::rtps::ReaderListener* listen)
-    : fastrtps::rtps::RTPSReader(pimpl, guid, att, hist, listen)
+    : fastrtps::rtps::RTPSReader(pimpl, guid, att, hist)
+    , listener_(listen)
+    , accept_messages_from_unkown_writers_(att.accept_messages_from_unkown_writers)
+    , expects_inline_qos_(att.expects_inline_qos)
     , history_state_(new fastrtps::rtps::ReaderHistoryState(att.matched_writers_allocation.initial))
     , liveliness_kind_(att.liveliness_kind)
     , liveliness_lease_duration_(att.liveliness_lease_duration)
@@ -87,7 +93,10 @@ BaseReader::BaseReader(
         const std::shared_ptr<fastrtps::rtps::IChangePool>& change_pool,
         fastrtps::rtps::ReaderHistory* hist,
         fastrtps::rtps::ReaderListener* listen)
-    : fastrtps::rtps::RTPSReader(pimpl, guid, att, hist, listen)
+    : fastrtps::rtps::RTPSReader(pimpl, guid, att, hist)
+    , listener_(listen)
+    , accept_messages_from_unkown_writers_(att.accept_messages_from_unkown_writers)
+    , expects_inline_qos_(att.expects_inline_qos)
     , history_state_(new fastrtps::rtps::ReaderHistoryState(att.matched_writers_allocation.initial))
     , liveliness_kind_(att.liveliness_kind)
     , liveliness_lease_duration_(att.liveliness_lease_duration)
@@ -108,16 +117,56 @@ BaseReader::~BaseReader()
     delete history_state_;
 }
 
+ReaderListener* BaseReader::get_listener() const
+{
+    std::lock_guard<decltype(mp_mutex)> lock(mp_mutex);
+    return listener_;
+}
+
+bool BaseReader::set_listener(
+        ReaderListener* target)
+{
+    std::lock_guard<decltype(mp_mutex)> lock(mp_mutex);
+    listener_ = target;
+    return true;
+}
+
+bool BaseReader::expects_inline_qos() const
+{
+    return expects_inline_qos_;
+}
+
+ReaderHistory* BaseReader::get_history() const
+{
+    return history_;
+}
+
+//! @return The content filter associated to this reader.
+IReaderDataFilter* BaseReader::get_content_filter() const
+{
+    std::lock_guard<decltype(mp_mutex)> lock(mp_mutex);
+    return data_filter_;
+}
+
+//! Set the content filter associated to this reader.
+//! @param filter Pointer to the content filter to associate to this reader.
+void BaseReader::set_content_filter(
+        IReaderDataFilter* filter)
+{
+    std::lock_guard<decltype(mp_mutex)> lock(mp_mutex);
+    data_filter_ = filter;
+}
+
 uint64_t BaseReader::get_unread_count() const
 {
-    std::unique_lock<decltype(mp_mutex)> lock(mp_mutex);
+    std::lock_guard<decltype(mp_mutex)> lock(mp_mutex);
     return total_unread_;
 }
 
 uint64_t BaseReader::get_unread_count(
         bool mark_as_read)
 {
-    std::unique_lock<decltype(mp_mutex)> lock(mp_mutex);
+    std::lock_guard<decltype(mp_mutex)> lock(mp_mutex);
     uint64_t ret_val = total_unread_;
 
     if (mark_as_read)
@@ -242,7 +291,7 @@ void BaseReader::update_liveliness_changed_status(
         int32_t alive_change,
         int32_t not_alive_change)
 {
-    std::unique_lock<decltype(mp_mutex)> lock(mp_mutex);
+    std::lock_guard<decltype(mp_mutex)> lock(mp_mutex);
 
     liveliness_changed_status_.alive_count += alive_change;
     liveliness_changed_status_.alive_count_change += alive_change;

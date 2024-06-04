@@ -43,13 +43,9 @@ RTPSReader::RTPSReader(
         RTPSParticipantImpl* pimpl,
         const GUID_t& guid,
         const ReaderAttributes& att,
-        ReaderHistory* hist,
-        ReaderListener* rlisten)
+        ReaderHistory* hist)
     : Endpoint(pimpl, guid, att.endpoint)
     , history_(hist)
-    , listener_(rlisten)
-    , accept_messages_from_unkown_writers_(att.accept_messages_from_unkown_writers)
-    , expects_inline_qos_(att.expects_inline_qos)
 {
     history_->mp_reader = this;
     history_->mp_mutex = &mp_mutex;
@@ -59,20 +55,6 @@ RTPSReader::~RTPSReader()
 {
     history_->mp_reader = nullptr;
     history_->mp_mutex = nullptr;
-}
-
-ReaderListener* RTPSReader::get_listener() const
-{
-    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
-    return listener_;
-}
-
-bool RTPSReader::set_listener(
-        ReaderListener* target)
-{
-    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
-    listener_ = target;
-    return true;
 }
 
 } /* namespace rtps */

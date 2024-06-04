@@ -105,7 +105,7 @@ public:
      * Get the associated listener, secondary attached Listener in case it is of compound type
      * @return Pointer to the associated reader listener.
      */
-    FASTDDS_EXPORTED_API ReaderListener* get_listener() const;
+    FASTDDS_EXPORTED_API virtual ReaderListener* get_listener() const = 0;
 
     /**
      * Switch the ReaderListener kind for the Reader.
@@ -115,8 +115,24 @@ public:
      * @param target Pointed to ReaderLister to attach
      * @return True is correctly set.
      */
-    FASTDDS_EXPORTED_API bool set_listener(
-            ReaderListener* target);
+    FASTDDS_EXPORTED_API virtual bool set_listener(
+            ReaderListener* target) = 0;
+
+    /**
+     * @return True if the reader expects Inline QOS.
+     */
+    FASTDDS_EXPORTED_API virtual bool expects_inline_qos() const = 0;
+
+    //! Returns a pointer to the associated History.
+    FASTDDS_EXPORTED_API virtual ReaderHistory* get_history() const = 0;
+
+    //! @return The content filter associated to this reader.
+    FASTDDS_EXPORTED_API virtual eprosima::fastdds::rtps::IReaderDataFilter* get_content_filter() const = 0;
+
+    //! Set the content filter associated to this reader.
+    //! @param filter Pointer to the content filter to associate to this reader.
+    FASTDDS_EXPORTED_API virtual void set_content_filter(
+            eprosima::fastdds::rtps::IReaderDataFilter* filter) = 0;
 
     /**
      * Read the next unread CacheChange_t from the history
@@ -137,36 +153,6 @@ public:
 
     FASTDDS_EXPORTED_API virtual uint64_t get_unread_count(
             bool mark_as_read) = 0;
-
-    /**
-     * @return True if the reader expects Inline QOS.
-     */
-    FASTDDS_EXPORTED_API inline bool expects_inline_qos() const
-    {
-        return expects_inline_qos_;
-    }
-
-    //! Returns a pointer to the associated History.
-    FASTDDS_EXPORTED_API inline ReaderHistory* get_history() const
-    {
-        return history_;
-    }
-
-    //! @return The content filter associated to this reader.
-    FASTDDS_EXPORTED_API eprosima::fastdds::rtps::IReaderDataFilter* get_content_filter() const
-    {
-        std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
-        return data_filter_;
-    }
-
-    //! Set the content filter associated to this reader.
-    //! @param filter Pointer to the content filter to associate to this reader.
-    FASTDDS_EXPORTED_API void set_content_filter(
-            eprosima::fastdds::rtps::IReaderDataFilter* filter)
-    {
-        std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
-        data_filter_ = filter;
-    }
 
     /**
      * Checks whether the sample is still valid or is corrupted.
@@ -227,21 +213,12 @@ protected:
             RTPSParticipantImpl* pimpl,
             const GUID_t& guid,
             const ReaderAttributes& att,
-            ReaderHistory* hist,
-            ReaderListener* listen);
+            ReaderHistory* hist);
 
     ~RTPSReader();
 
     //! ReaderHistory
     ReaderHistory* history_;
-    //! Listener
-    ReaderListener* listener_;
-    //! Accept msg from unknown writers (BE-true,RE-false)
-    bool accept_messages_from_unkown_writers_;
-    //! Expects Inline Qos.
-    bool expects_inline_qos_;
-
-    eprosima::fastdds::rtps::IReaderDataFilter* data_filter_ = nullptr;
 
 private:
 
