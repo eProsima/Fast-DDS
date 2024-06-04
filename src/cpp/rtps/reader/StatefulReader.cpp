@@ -557,7 +557,7 @@ void StatefulReader::assert_writer_liveliness(
     }
 }
 
-bool StatefulReader::processDataMsg(
+bool StatefulReader::process_data_msg(
         CacheChange_t* change)
 {
     WriterProxy* pWP = nullptr;
@@ -676,7 +676,7 @@ bool StatefulReader::processDataMsg(
     return false;
 }
 
-bool StatefulReader::processDataFragMsg(
+bool StatefulReader::process_data_frag_msg(
         CacheChange_t* incomingChange,
         uint32_t sampleSize,
         uint32_t fragmentStartingNum,
@@ -836,7 +836,7 @@ bool StatefulReader::processDataFragMsg(
     return true;
 }
 
-bool StatefulReader::processHeartbeatMsg(
+bool StatefulReader::process_heartbeat_msg(
         const GUID_t& writerGUID,
         uint32_t hbCount,
         const SequenceNumber_t& firstSN,
@@ -906,7 +906,7 @@ bool StatefulReader::processHeartbeatMsg(
     return false;
 }
 
-bool StatefulReader::processGapMsg(
+bool StatefulReader::process_gap_msg(
         const GUID_t& writerGUID,
         const SequenceNumber_t& gapStart,
         const SequenceNumberSet_t& gapList,

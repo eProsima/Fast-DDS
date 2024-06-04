@@ -124,13 +124,13 @@ public:
     // *INDENT-ON*
 
 
-    virtual bool processDataMsg(
+    virtual bool process_data_msg(
             CacheChange_t*)
     {
         return true;
     }
 
-    virtual bool processDataFragMsg(
+    virtual bool process_data_frag_msg(
             CacheChange_t*,
             uint32_t,
             uint32_t,
@@ -139,7 +139,7 @@ public:
         return true;
     }
 
-    virtual bool processHeartbeatMsg(
+    virtual bool process_heartbeat_msg(
             const GUID_t&,
             uint32_t,
             const SequenceNumber_t&,
@@ -150,7 +150,7 @@ public:
         return true;
     }
 
-    virtual bool processGapMsg(
+    virtual bool process_gap_msg(
             const GUID_t&,
             const SequenceNumber_t&,
             const SequenceNumberSet_t&)

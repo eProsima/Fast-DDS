@@ -117,7 +117,7 @@ public:
      * @param change Pointer to the CacheChange_t.
      * @return true if the reader accepts messages from the.
      */
-    bool processDataMsg(
+    bool process_data_msg(
             CacheChange_t* change) override;
 
     /**
@@ -129,7 +129,7 @@ public:
      * @param fragmentsInSubmessage Number of fragments on this particular message.
      * @return true if the reader accepts message.
      */
-    bool processDataFragMsg(
+    bool process_data_frag_msg(
             CacheChange_t* change,
             uint32_t sampleSize,
             uint32_t fragmentStartingNum,
@@ -140,7 +140,7 @@ public:
      *
      * @return true if the reader accepts messages from the.
      */
-    bool processHeartbeatMsg(
+    bool process_heartbeat_msg(
             const GUID_t& writerGUID,
             uint32_t hbCount,
             const SequenceNumber_t& firstSN,
@@ -149,7 +149,7 @@ public:
             bool livelinessFlag,
             fastdds::rtps::VendorId_t origin_vendor_id = c_VendorId_Unknown) override;
 
-    bool processGapMsg(
+    bool process_gap_msg(
             const GUID_t& writerGUID,
             const SequenceNumber_t& gapStart,
             const SequenceNumberSet_t& gapList,

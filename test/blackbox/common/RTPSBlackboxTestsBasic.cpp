@@ -893,7 +893,7 @@ TEST(RTPS, RTPSCorrectGAPProcessing)
     //! GAP Message check
     // TODO(MiguelCompany): Move this test to (new) RTPSReader unit tests
     // RTPSReader& native_reader = reader.get_native_reader();
-    // ASSERT_NO_FATAL_FAILURE(native_reader.processGapMsg(writer.guid(), {0, 0}, seq_set));
+    // ASSERT_NO_FATAL_FAILURE(native_reader.process_gap_msg(writer.guid(), {0, 0}, seq_set));
 }
 
 class CustomReaderDataFilter : public eprosima::fastdds::rtps::IReaderDataFilter

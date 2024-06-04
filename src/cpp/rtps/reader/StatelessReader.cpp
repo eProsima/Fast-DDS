@@ -549,7 +549,7 @@ bool StatelessReader::get_connections(
 
 #endif // ifdef FASTDDS_STATISTICS
 
-bool StatelessReader::processDataMsg(
+bool StatelessReader::process_data_msg(
         CacheChange_t* change)
 {
     assert(change);
@@ -659,7 +659,7 @@ bool StatelessReader::processDataMsg(
     return true;
 }
 
-bool StatelessReader::processDataFragMsg(
+bool StatelessReader::process_data_frag_msg(
         CacheChange_t* incomingChange,
         uint32_t sampleSize,
         uint32_t fragmentStartingNum,
@@ -829,7 +829,7 @@ bool StatelessReader::processDataFragMsg(
     return true;
 }
 
-bool StatelessReader::processHeartbeatMsg(
+bool StatelessReader::process_heartbeat_msg(
         const GUID_t& /*writerGUID*/,
         uint32_t /*hbCount*/,
         const SequenceNumber_t& /*firstSN*/,
@@ -841,7 +841,7 @@ bool StatelessReader::processHeartbeatMsg(
     return true;
 }
 
-bool StatelessReader::processGapMsg(
+bool StatelessReader::process_gap_msg(
         const GUID_t& /*writerGUID*/,
         const SequenceNumber_t& /*gapStart*/,
         const SequenceNumberSet_t& /*gapList*/,

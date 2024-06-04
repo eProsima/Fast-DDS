@@ -480,7 +480,7 @@ bool StatefulWriter::intraprocess_delivery(
         {
             change->write_params.sample_identity(change->write_params.related_sample_identity());
         }
-        return BaseReader::downcast(reader)->processDataMsg(change);
+        return BaseReader::downcast(reader)->process_data_msg(change);
     }
     return false;
 }
@@ -493,7 +493,7 @@ bool StatefulWriter::intraprocess_gap(
     RTPSReader* reader = reader_proxy->local_reader();
     if (reader)
     {
-        return BaseReader::downcast(reader)->processGapMsg(
+        return BaseReader::downcast(reader)->process_gap_msg(
             m_guid, first_seq, SequenceNumberSet_t(last_seq), c_VendorId_eProsima);
     }
 
@@ -527,7 +527,7 @@ bool StatefulWriter::intraprocess_heartbeat(
                 (liveliness || reader_proxy->has_changes()))
         {
             incrementHBCount();
-            returned_value = BaseReader::downcast(reader)->processHeartbeatMsg(
+            returned_value = BaseReader::downcast(reader)->process_heartbeat_msg(
                 m_guid, m_heartbeatCount, first_seq, last_seq, true, liveliness, c_VendorId_eProsima);
         }
     }

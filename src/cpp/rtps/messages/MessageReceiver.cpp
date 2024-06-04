@@ -134,7 +134,7 @@ void MessageReceiver::process_data_message_with_security(
 
                 if (!reader->getAttributes().security_attributes().is_payload_protected)
                 {
-                    reader->processDataMsg(&change);
+                    reader->process_data_msg(&change);
                     return;
                 }
 
@@ -153,7 +153,7 @@ void MessageReceiver::process_data_message_with_security(
                 std::swap(change.serializedPayload.length, crypto_payload_.length);
 
                 SerializedPayload_t original_payload = change.serializedPayload;
-                reader->processDataMsg(&change);
+                reader->process_data_msg(&change);
                 IPayloadPool* payload_pool = change.payload_owner();
                 if (payload_pool)
                 {
@@ -186,7 +186,7 @@ void MessageReceiver::process_data_fragment_message_with_security(
 
                 if (!reader->getAttributes().security_attributes().is_payload_protected)
                 {
-                    reader->processDataFragMsg(&change, sample_size, fragment_starting_num, fragments_in_submessage);
+                    reader->process_data_frag_msg(&change, sample_size, fragment_starting_num, fragments_in_submessage);
                     return;
                 }
 
@@ -203,7 +203,7 @@ void MessageReceiver::process_data_fragment_message_with_security(
 
                 std::swap(change.serializedPayload.data, crypto_payload_.data);
                 std::swap(change.serializedPayload.length, crypto_payload_.length);
-                reader->processDataFragMsg(&change, sample_size, fragment_starting_num, fragments_in_submessage);
+                reader->process_data_frag_msg(&change, sample_size, fragment_starting_num, fragments_in_submessage);
                 std::swap(change.serializedPayload.data, crypto_payload_.data);
                 std::swap(change.serializedPayload.length, crypto_payload_.length);
             };
@@ -220,7 +220,7 @@ void MessageReceiver::process_data_message_without_security(
 {
     auto process_message = [&change](BaseReader* reader)
             {
-                reader->processDataMsg(&change);
+                reader->process_data_msg(&change);
             };
 
     findAllReaders(reader_id, process_message);
@@ -237,7 +237,7 @@ void MessageReceiver::process_data_fragment_message_without_security(
     auto process_message = [&change, sample_size, fragment_starting_num, fragments_in_submessage](
         BaseReader* reader)
             {
-                reader->processDataFragMsg(&change, sample_size, fragment_starting_num, fragments_in_submessage);
+                reader->process_data_frag_msg(&change, sample_size, fragment_starting_num, fragments_in_submessage);
             };
 
     findAllReaders(reader_id, process_message);
@@ -1170,7 +1170,7 @@ bool MessageReceiver::proc_Submsg_Heartbeat(
                 if (was_decoded || !reader->getAttributes().security_attributes().is_submessage_protected)
 #endif  // HAVE_SECURITY
                 {
-                    reader->processHeartbeatMsg(writerGUID, HBCount, firstSN, lastSN, finalFlag, livelinessFlag,
+                    reader->process_heartbeat_msg(writerGUID, HBCount, firstSN, lastSN, finalFlag, livelinessFlag,
                     source_vendor_id_);
                 }
             });
@@ -1278,7 +1278,7 @@ bool MessageReceiver::proc_Submsg_Gap(
                 if (was_decoded || !reader->getAttributes().security_attributes().is_submessage_protected)
 #endif  // HAVE_SECURITY
                 {
-                    reader->processGapMsg(writerGUID, gapStart, gapList, source_vendor_id_);
+                    reader->process_gap_msg(writerGUID, gapStart, gapList, source_vendor_id_);
                 }
             });
 

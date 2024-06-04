@@ -214,7 +214,7 @@ public:
      * @param change Pointer to the CacheChange_t.
      * @return true if the reader accepts messages from the.
      */
-    virtual bool processDataMsg(
+    virtual bool process_data_msg(
             fastrtps::rtps::CacheChange_t* change) = 0;
 
     /**
@@ -226,7 +226,7 @@ public:
      * @param fragmentsInSubmessage Number of fragments on this particular message.
      * @return true if the reader accepts message.
      */
-    virtual bool processDataFragMsg(
+    virtual bool process_data_frag_msg(
             fastrtps::rtps::CacheChange_t* change,
             uint32_t sampleSize,
             uint32_t fragmentStartingNum,
@@ -243,7 +243,7 @@ public:
      * @param origin_vendor_id
      * @return true if the reader accepts messages from the.
      */
-    virtual bool processHeartbeatMsg(
+    virtual bool process_heartbeat_msg(
             const fastrtps::rtps::GUID_t& writerGUID,
             uint32_t hbCount,
             const fastrtps::rtps::SequenceNumber_t& firstSN,
@@ -260,7 +260,7 @@ public:
      * @param origin_vendor_id
      * @return true if the reader accepts messages from the.
      */
-    virtual bool processGapMsg(
+    virtual bool process_gap_msg(
             const fastrtps::rtps::GUID_t& writerGUID,
             const fastrtps::rtps::SequenceNumber_t& gapStart,
             const fastrtps::rtps::SequenceNumberSet_t& gapList,

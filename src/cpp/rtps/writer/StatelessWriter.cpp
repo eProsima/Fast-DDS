@@ -357,7 +357,7 @@ bool StatelessWriter::intraprocess_delivery(
         {
             change->write_params.sample_identity(change->write_params.related_sample_identity());
         }
-        return BaseReader::downcast(reader)->processDataMsg(change);
+        return BaseReader::downcast(reader)->process_data_msg(change);
     }
 
     return false;
