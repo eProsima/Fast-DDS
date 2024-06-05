@@ -31,12 +31,12 @@
 
 #include <fastdds/rtps/common/CacheChange.h>
 #include <fastdds/rtps/history/WriterHistory.h>
-#include <fastdds/rtps/writer/ReaderProxy.h>
 
 #include <rtps/builtin/discovery/database/DiscoveryDataFilter.hpp>
 #include <rtps/builtin/discovery/database/DiscoveryDataQueueInfo.hpp>
 #include <rtps/builtin/discovery/database/DiscoveryEndpointInfo.hpp>
 #include <rtps/builtin/discovery/database/DiscoveryParticipantInfo.hpp>
+#include <rtps/writer/ReaderProxy.h>
 #include <utils/DBQueue.hpp>
 
 namespace eprosima {

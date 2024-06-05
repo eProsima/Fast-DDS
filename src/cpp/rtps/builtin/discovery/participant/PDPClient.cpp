@@ -32,9 +32,8 @@
 #include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/participant/RTPSParticipantListener.h>
-#include <fastdds/rtps/writer/ReaderProxy.h>
-
 #include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
+
 #include <rtps/builtin/BuiltinProtocols.h>
 #include <rtps/builtin/discovery/endpoint/EDPClient.h>
 #include <rtps/builtin/discovery/participant/DirectMessageSender.hpp>
@@ -45,6 +44,7 @@
 #include <rtps/builtin/liveliness/WLP.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/reader/StatefulReader.hpp>
+#include <rtps/writer/ReaderProxy.h>
 #include <rtps/writer/StatefulWriter.hpp>
 #include <utils/shared_mutex.hpp>
 #include <utils/SystemInfo.hpp>
