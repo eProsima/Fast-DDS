@@ -35,7 +35,10 @@ defaults:
 jobs:
   fastdds_build:
     runs-on: ${{ inputs.os-image }}
-    if: ${{ !contains(github.event.pull_request.labels.*.name, 'skip-ci') }}
+    if: ${{ (
+          !contains(github.event.pull_request.labels.*.name, 'skip-ci') &&
+          !contains(github.event.pull_request.labels.*.name, 'conflicts')
+        ) }}
     strategy:
       fail-fast: false
       matrix:
@@ -133,6 +136,11 @@ jobs:
 
   fastdds_build_test:
     needs: fastdds_build
+    if: ${{ (
+          !contains(github.event.pull_request.labels.*.name, 'skip-ci') &&
+          !contains(github.event.pull_request.labels.*.name, 'no-test') &&
+          !contains(github.event.pull_request.labels.*.name, 'conflicts')
+        ) }}
     runs-on: ${{ inputs.os-image }}
     steps:
       - name: Download build artifacts
@@ -215,6 +223,10 @@ jobs:
 
   fastdds_python_build:
     needs: fastdds_build
+    if: ${{ (
+          !contains(github.event.pull_request.labels.*.name, 'skip-ci') &&
+          !contains(github.event.pull_request.labels.*.name, 'conflicts')
+        ) }}
     runs-on: ${{ inputs.os-image }}
     strategy:
       fail-fast: false
@@ -287,6 +299,11 @@ jobs:
 
   fastdds_python_build_test:
     needs: fastdds_python_build
+    if: ${{ (
+          !contains(github.event.pull_request.labels.*.name, 'skip-ci') &&
+          !contains(github.event.pull_request.labels.*.name, 'no-test') &&
+          !contains(github.event.pull_request.labels.*.name, 'conflicts')
+        ) }}
     runs-on: ${{ inputs.os-image }}
     steps:
       - name: Download python build artifacts
@@ -358,6 +375,10 @@ jobs:
 
   fastdds_docs_build_test:
     needs: fastdds_python_build
+    if: ${{ (
+          !contains(github.event.pull_request.labels.*.name, 'skip-ci') &&
+          !contains(github.event.pull_request.labels.*.name, 'conflicts')
+        ) }}
     runs-on: ${{ inputs.os-image }}
     strategy:
       fail-fast: false
@@ -454,6 +475,10 @@ jobs:
 
   fastdds_shapesdemo_build:
     needs: fastdds_build
+    if: ${{ (
+          !contains(github.event.pull_request.labels.*.name, 'skip-ci') &&
+          !contains(github.event.pull_request.labels.*.name, 'conflicts')
+        ) }}
     runs-on: ${{ inputs.os-image }}
     strategy:
       fail-fast: false
@@ -532,6 +557,11 @@ jobs:
 
   fastdds_discovery_server_build_test:
     needs: fastdds_build
+
+    if: ${{ (
+          !contains(github.event.pull_request.labels.*.name, 'skip-ci') &&
+          !contains(github.event.pull_request.labels.*.name, 'conflicts')
+        ) }}
     runs-on: ${{ inputs.os-image }}
     strategy:
       fail-fast: false

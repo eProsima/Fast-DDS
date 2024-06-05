@@ -38,10 +38,6 @@ concurrency:
 
 jobs:
   mac-ci:
-    if: ${{ (
-              !contains(github.event.pull_request.labels.*.name, 'skip-ci') &&
-              !contains(github.event.pull_request.labels.*.name, 'conflicts')
-            ) }}
     uses: ./.github/workflows/reusable-mac-ci.yml
     with:
       label: ${{ inputs.label || 'mac-ci' }}
