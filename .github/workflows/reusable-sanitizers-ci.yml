@@ -136,6 +136,12 @@ jobs:
 
   asan_fastdds_test:
     needs: asan_fastdds_build
+    if: ${{ (
+          !contains(github.event.pull_request.labels.*.name, 'skip-ci') &&
+          !contains(github.event.pull_request.labels.*.name, 'no-test') &&
+          !contains(github.event.pull_request.labels.*.name, 'conflicts') &&
+          (inputs.run_asan_fastdds == true)
+        ) }}
     runs-on: ubuntu-22.04
     steps:
       - name: Download build artifacts
