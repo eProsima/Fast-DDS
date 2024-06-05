@@ -1,4 +1,4 @@
-# Copyright 2022 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+# Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -25,12 +25,12 @@ if(NOT fastdds_FOUND)
     find_package(fastdds 3 REQUIRED)
 endif()
 
-message(STATUS "Configuring content filtering example...")
+message(STATUS "Configuring content filter example...")
 
-file(GLOB HELLO_WORLD_SOURCES_CXX "*.cxx")
-file(GLOB HELLO_WORLD_SOURCES_CPP "*.cpp")
+file(GLOB CONTENT_FILTER_SOURCES_CXX "*.cxx")
+file(GLOB CONTENT_FILTER_SOURCES_CPP "*.cpp")
 
-add_executable(content_filter ${HELLO_WORLD_SOURCES_CXX} ${HELLO_WORLD_SOURCES_CPP})
+add_executable(content_filter ${CONTENT_FILTER_SOURCES_CXX} ${CONTENT_FILTER_SOURCES_CPP})
 target_compile_definitions(content_filter PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
