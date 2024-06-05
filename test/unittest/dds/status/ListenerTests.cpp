@@ -54,9 +54,7 @@ RTPSReader* RTPSDomain::reader_ = nullptr;
 RTPSWriter* RTPSDomain::writer_ = nullptr;
 RTPSParticipant* RTPSDomain::participant_ = nullptr;
 } //namespace rtps
-} //namespace fastdds
 
-namespace fastdds {
 namespace dds {
 
 class RTPSParticipantMock : public eprosima::fastdds::rtps::RTPSParticipant

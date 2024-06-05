@@ -29,7 +29,6 @@
 #include <xmlparser/XMLTree.h>
 
 using namespace eprosima::fastdds;
-using namespace eprosima::fastdds;
 using namespace ::xmlparser;
 
 LibrarySettings XMLProfileManager::library_settings_;

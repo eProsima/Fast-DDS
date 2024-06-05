@@ -44,10 +44,10 @@ class DiscoveryEndpointInfo : public DiscoverySharedInfo
 public:
 
     DiscoveryEndpointInfo(
-            eprosima::fastdds::rtps::CacheChange_t* change,
+            CacheChange_t* change,
             std::string topic,
             bool is_virtual,
-            const eprosima::fastdds::rtps::GuidPrefix_t& known_participant)
+            const GuidPrefix_t& known_participant)
         : DiscoverySharedInfo(change, known_participant)
         , topic_(topic)
         , is_virtual_(is_virtual)

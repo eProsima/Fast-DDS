@@ -33,11 +33,6 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 class ParticipantProxyData;
-} // fastrtps
-} // rtps
-
-namespace fastdds {
-namespace rtps {
 
 /**
  * Class RemoteServerAttributes, to define the attributes of the Discovery Server Protocol.
@@ -221,13 +216,6 @@ FASTDDS_EXPORTED_API bool get_server_client_default_guidPrefix(
         int id,
         fastdds::rtps::GuidPrefix_t& guid);
 
-} // namespace rtps
-} // namespace fastdds
-
-// keep former namespace references available
-namespace fastdds {
-namespace rtps {
-
 using fastdds::rtps::RemoteServerAttributes;
 using fastdds::rtps::RemoteServerList_t;
 using fastdds::rtps::DEFAULT_ROS2_SERVER_PORT;
@@ -239,8 +227,8 @@ using fastdds::rtps::ros_discovery_server_env;
 using fastdds::rtps::get_server_client_default_guidPrefix;
 using fastdds::rtps::ros_super_client_env;
 
-} // fastrtps
 } // rtps
+} // fastdds
 
 } // namespace eprosima
 

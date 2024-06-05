@@ -64,9 +64,7 @@ class RTPSReader;
 struct CacheChange_t;
 
 } // namespace rtps
-} // namespace fastdds
 
-namespace fastdds {
 namespace dds {
 namespace builtin {
 

@@ -27,10 +27,6 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-using Locator_t = eprosima::fastdds::rtps::Locator_t;
-using LocatorList_t = eprosima::fastdds::rtps::LocatorList_t;
-using SenderResource = eprosima::fastdds::rtps::SenderResource;
-
 class MockTransportDescriptor;
 
 class MockSenderResource : public SenderResource

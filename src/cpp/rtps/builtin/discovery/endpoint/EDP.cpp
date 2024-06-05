@@ -50,8 +50,6 @@
 #include <statistics/rtps/monitor-service/interfaces/IProxyObserver.hpp>
 #endif //FASTDDS_STATISTICS
 
-using namespace eprosima::fastdds::rtps;
-using namespace eprosima::fastdds;
 using eprosima::fastdds::dds::PublicationMatchedStatus;
 using eprosima::fastdds::dds::SubscriptionMatchedStatus;
 using ParameterList = eprosima::fastdds::dds::ParameterList;

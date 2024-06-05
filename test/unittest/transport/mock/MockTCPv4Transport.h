@@ -25,14 +25,12 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-using Locator_t = eprosima::fastdds::rtps::Locator_t;
-
 class MockTCPv4Transport : public TCPv4Transport
 {
 public:
 
     MockTCPv4Transport(
-            const eprosima::fastdds::rtps::TCPv4TransportDescriptor& descriptor)
+            const TCPv4TransportDescriptor& descriptor)
         : TCPv4Transport(descriptor)
     {
     }

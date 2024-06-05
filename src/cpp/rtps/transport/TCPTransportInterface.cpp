@@ -76,13 +76,6 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-using octet = fastdds::rtps::octet;
-using IPLocator = fastdds::rtps::IPLocator;
-using SenderResource = fastdds::rtps::SenderResource;
-using CDRMessage_t = fastdds::rtps::CDRMessage_t;
-using LocatorSelector = fastdds::rtps::LocatorSelector;
-using LocatorSelectorEntry = fastdds::rtps::LocatorSelectorEntry;
-using PortParameters = fastdds::rtps::PortParameters;
 using Log = fastdds::dds::Log;
 
 static const int s_default_keep_alive_frequency = 5000; // 5 SECONDS

@@ -32,7 +32,7 @@ bool GuidPrefix_t::is_on_same_host_as(
 
 bool GuidPrefix_t::is_from_this_host() const
 {
-    return is_on_same_host_as(fastdds::rtps::GuidUtils::instance().prefix());
+    return is_on_same_host_as(GuidUtils::instance().prefix());
 }
 
 bool GuidPrefix_t::is_on_same_process_as(
@@ -43,7 +43,7 @@ bool GuidPrefix_t::is_on_same_process_as(
 
 bool GuidPrefix_t::is_from_this_process() const
 {
-    return is_on_same_process_as(fastdds::rtps::GuidUtils::instance().prefix());
+    return is_on_same_process_as(GuidUtils::instance().prefix());
 }
 
 } // namsepace rtps

@@ -31,8 +31,6 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-using namespace fastdds::rtps;
-
 class StatefulWriter;
 class StatefulReader;
 

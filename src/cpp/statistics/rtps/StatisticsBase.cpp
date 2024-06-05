@@ -208,8 +208,6 @@ void StatisticsParticipantImpl::ListenerProxy::mask(
 bool StatisticsParticipantImpl::are_writers_involved(
         const uint32_t mask) const
 {
-    using namespace fastdds::statistics;
-
     constexpr uint32_t writers_maks = EventKind::PUBLICATION_THROUGHPUT \
             | EventKind::RESENT_DATAS \
             | EventKind::HEARTBEAT_COUNT \
@@ -223,8 +221,6 @@ bool StatisticsParticipantImpl::are_writers_involved(
 bool StatisticsParticipantImpl::are_readers_involved(
         const uint32_t mask) const
 {
-    using namespace fastdds::statistics;
-
     constexpr uint32_t readers_maks = EventKind::HISTORY2HISTORY_LATENCY \
             | EventKind::SUBSCRIPTION_THROUGHPUT \
             | EventKind::ACKNACK_COUNT \

@@ -30,16 +30,16 @@ namespace rtps {
 /**
  * An RTPS writer simulator used to send messages with a \ref DirectMessageSender.
  */
-class FakeWriter : public fastdds::rtps::Endpoint
+class FakeWriter : public Endpoint
 {
 public:
 
     FakeWriter(
-            fastdds::rtps::RTPSParticipantImpl* participant,
-            const fastdds::rtps::EntityId_t& entity_id)
-        : fastdds::rtps::Endpoint(participant, { participant->getGuid().guidPrefix, entity_id }, {})
+            RTPSParticipantImpl* participant,
+            const EntityId_t& entity_id)
+        : Endpoint(participant, { participant->getGuid().guidPrefix, entity_id }, {})
     {
-        m_att.endpointKind = fastdds::rtps::EndpointKind_t::WRITER;
+        m_att.endpointKind = EndpointKind_t::WRITER;
 #if HAVE_SECURITY
         participant->set_endpoint_rtps_protection_supports(this, false);
 #endif // HAVE_SECURITY

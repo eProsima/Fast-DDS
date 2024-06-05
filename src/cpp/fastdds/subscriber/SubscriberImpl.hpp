@@ -43,9 +43,6 @@ class RTPSParticipant;
 
 class TopicAttributes;
 
-} // namespace fastdds
-
-namespace fastdds {
 namespace dds {
 
 class SubscriberListener;

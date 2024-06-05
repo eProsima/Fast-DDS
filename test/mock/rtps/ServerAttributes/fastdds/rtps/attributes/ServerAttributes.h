@@ -75,12 +75,6 @@ std::basic_ostream<charT>& operator <<(
     return output;
 }
 
-} // namespace rtps
-} // namespace fastdds
-
-namespace fastdds {
-namespace rtps {
-
 using fastdds::rtps::RemoteServerList_t;
 using fastdds::rtps::ros_super_client_env;
 

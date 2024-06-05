@@ -26,7 +26,6 @@
 
 namespace eprosima {
 
-using namespace fastdds;
 using namespace fastdds::rtps;
 
 namespace fastdds {

@@ -45,9 +45,9 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-using fastdds::xmlparser::XMLProfileManager;
-using fastdds::xmlparser::XMLP_ret;
-using fastdds::rtps::InstanceHandle_t;
+using xmlparser::XMLProfileManager;
+using xmlparser::XMLP_ret;
+using rtps::InstanceHandle_t;
 using fastdds::Duration_t;
 
 PublisherImpl::PublisherImpl(

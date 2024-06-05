@@ -17,7 +17,7 @@
 using namespace eprosima::fastdds::rtps;
 
 MockEvent::MockEvent(
-        eprosima::fastdds::rtps::ResourceEvent& service,
+        ResourceEvent& service,
         double milliseconds,
         bool autorestart,
         std::function<void()> inner_callback)

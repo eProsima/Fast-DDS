@@ -45,12 +45,6 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-using octet = fastdds::rtps::octet;
-using SenderResource = fastdds::rtps::SenderResource;
-using LocatorSelectorEntry = fastdds::rtps::LocatorSelectorEntry;
-using LocatorSelector = fastdds::rtps::LocatorSelector;
-using PortParameters = fastdds::rtps::PortParameters;
-
 TransportInterface* SharedMemTransportDescriptor::create_transport() const
 {
     return new SharedMemTransport(*this);

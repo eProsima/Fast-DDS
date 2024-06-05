@@ -41,52 +41,52 @@ struct DiscoveryServerPDPEndpoints : public PDPEndpoints
 {
     ~DiscoveryServerPDPEndpoints() override = default;
 
-    fastdds::rtps::BuiltinEndpointSet_t builtin_endpoints() const override
+    BuiltinEndpointSet_t builtin_endpoints() const override
     {
         return DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER | DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR;
     }
 
-    const std::unique_ptr<fastdds::rtps::ReaderListener>& main_listener() const override
+    const std::unique_ptr<ReaderListener>& main_listener() const override
     {
         return reader.listener_;
     }
 
     bool enable_pdp_readers(
-            fastdds::rtps::RTPSParticipantImpl* participant) override
+            RTPSParticipantImpl* participant) override
     {
         return participant->enableReader(reader.reader_);
     }
 
     void disable_pdp_readers(
-            fastdds::rtps::RTPSParticipantImpl* participant) override
+            RTPSParticipantImpl* participant) override
     {
         participant->disableReader(reader.reader_);
     }
 
     void delete_pdp_endpoints(
-            fastdds::rtps::RTPSParticipantImpl* participant) override
+            RTPSParticipantImpl* participant) override
     {
         participant->deleteUserEndpoint(writer.writer_->getGuid());
         participant->deleteUserEndpoint(reader.reader_->getGuid());
     }
 
     void remove_from_pdp_reader_history(
-            const fastdds::rtps::InstanceHandle_t& remote_participant) override
+            const InstanceHandle_t& remote_participant) override
     {
         reader.remove_from_history(remote_participant);
     }
 
     void remove_from_pdp_reader_history(
-            fastdds::rtps::CacheChange_t* change) override
+            CacheChange_t* change) override
     {
         reader.history_->remove_change(change);
     }
 
     //! Builtin Simple PDP reader
-    BuiltinReader<fastdds::rtps::StatefulReader> reader;
+    BuiltinReader<StatefulReader> reader;
 
     //! Builtin Simple PDP writer
-    BuiltinWriter<fastdds::rtps::StatefulWriter> writer;
+    BuiltinWriter<StatefulWriter> writer;
 };
 
 } // namespace rtps

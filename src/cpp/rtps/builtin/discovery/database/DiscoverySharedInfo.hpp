@@ -43,19 +43,19 @@ class DiscoverySharedInfo
 public:
 
     DiscoverySharedInfo(
-            eprosima::fastdds::rtps::CacheChange_t* change,
-            const eprosima::fastdds::rtps::GuidPrefix_t& known_participant);
+            CacheChange_t* change,
+            const GuidPrefix_t& known_participant);
 
     ~DiscoverySharedInfo() = default;
 
-    virtual eprosima::fastdds::rtps::CacheChange_t* update_and_unmatch(
-            eprosima::fastdds::rtps::CacheChange_t* change);
+    virtual CacheChange_t* update_and_unmatch(
+            CacheChange_t* change);
 
-    virtual eprosima::fastdds::rtps::CacheChange_t* update(
-            eprosima::fastdds::rtps::CacheChange_t* change);
+    virtual CacheChange_t* update(
+            CacheChange_t* change);
 
     void add_or_update_ack_participant(
-            const eprosima::fastdds::rtps::GuidPrefix_t& guid_p,
+            const GuidPrefix_t& guid_p,
             bool status = false)
     {
         EPROSIMA_LOG_INFO(
@@ -67,29 +67,29 @@ public:
     }
 
     void remove_participant(
-            const eprosima::fastdds::rtps::GuidPrefix_t& guid_p)
+            const GuidPrefix_t& guid_p)
     {
         relevant_participants_builtin_ack_status_.remove_participant(guid_p);
     }
 
     bool is_matched(
-            const eprosima::fastdds::rtps::GuidPrefix_t& guid_p) const
+            const GuidPrefix_t& guid_p) const
     {
         return relevant_participants_builtin_ack_status_.is_matched(guid_p);
     }
 
     bool is_relevant_participant(
-            const eprosima::fastdds::rtps::GuidPrefix_t& guid_p) const
+            const GuidPrefix_t& guid_p) const
     {
         return relevant_participants_builtin_ack_status_.is_relevant_participant(guid_p);
     }
 
-    eprosima::fastdds::rtps::CacheChange_t* change() const
+    CacheChange_t* change() const
     {
         return change_;
     }
 
-    std::vector<eprosima::fastdds::rtps::GuidPrefix_t> relevant_participants() const
+    std::vector<GuidPrefix_t> relevant_participants() const
     {
         return relevant_participants_builtin_ack_status_.relevant_participants();
     }
@@ -104,10 +104,10 @@ public:
 
 protected:
 
-    eprosima::fastdds::rtps::CacheChange_t* change_;
+    CacheChange_t* change_;
 
     // new class is used in order to could change it in the future for a more efficient implementation
-    eprosima::fastdds::rtps::ddb::DiscoveryParticipantsAckStatus
+    ddb::DiscoveryParticipantsAckStatus
             relevant_participants_builtin_ack_status_;
 
 };

@@ -38,13 +38,7 @@
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
-
-using IPLocator = fastdds::rtps::IPLocator;
-using SerializedPayload_t = fastdds::rtps::SerializedPayload_t;
-using octet = fastdds::rtps::octet;
-using CDRMessage_t = fastdds::rtps::CDRMessage_t;
-using RTPSMessageCreator = fastdds::rtps::RTPSMessageCreator;
-using ProtocolVersion_t = fastdds::rtps::ProtocolVersion_t;
+    
 using Log = fastdds::dds::Log;
 
 static void endpoint_to_locator(

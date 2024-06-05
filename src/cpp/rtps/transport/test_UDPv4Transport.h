@@ -44,8 +44,8 @@ public:
             const std::vector<NetworkBuffer>& send_buffer,
             uint32_t total_bytes,
             eProsimaUDPSocket& socket,
-            fastdds::rtps::LocatorsIterator* destination_locators_begin,
-            fastdds::rtps::LocatorsIterator* destination_locators_end,
+            LocatorsIterator* destination_locators_begin,
+            LocatorsIterator* destination_locators_end,
             bool only_multicast_purpose,
             bool whitelisted,
             const std::chrono::steady_clock::time_point& max_blocking_time_point) override;

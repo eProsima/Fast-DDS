@@ -36,8 +36,6 @@
 
 using namespace eprosima::fastdds;
 using namespace eprosima::fastdds::rtps;
-using namespace eprosima::fastdds;
-using namespace eprosima::fastdds::rtps;
 
 #if defined(_WIN32)
 #define GET_PID _getpid

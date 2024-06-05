@@ -39,7 +39,6 @@
 
 using namespace eprosima::fastdds;
 using namespace eprosima::fastdds::rtps;
-using test_UDPv4Transport = eprosima::fastdds::rtps::test_UDPv4Transport;
 
 enum communication_type
 {

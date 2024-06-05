@@ -34,9 +34,7 @@ namespace fastdds {
 namespace rtps {
 class EDP;
 } // namespace rtps
-} // namespace fastdds
 
-namespace fastdds {
 namespace dds {
 
 /**

@@ -52,13 +52,9 @@
 #include <utils/SystemInfo.hpp>
 #include <utils/TimeConversion.hpp>
 
-using namespace eprosima::fastdds;
-
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
-
-using namespace fastdds::rtps;
 
 static void direct_send(
         RTPSParticipantImpl* participant,

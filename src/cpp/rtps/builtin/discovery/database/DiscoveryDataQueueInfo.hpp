@@ -33,7 +33,7 @@ class DiscoveryDataQueueInfo
 public:
 
     DiscoveryDataQueueInfo(
-            eprosima::fastdds::rtps::CacheChange_t* change)
+            CacheChange_t* change)
         : change_(change)
     {
     }
@@ -42,14 +42,14 @@ public:
     {
     }
 
-    eprosima::fastdds::rtps::CacheChange_t* change()
+    CacheChange_t* change()
     {
         return change_;
     }
 
 protected:
 
-    eprosima::fastdds::rtps::CacheChange_t* change_;
+    CacheChange_t* change_;
 
 };
 
@@ -58,7 +58,7 @@ class DiscoveryPDPDataQueueInfo : public DiscoveryDataQueueInfo
 public:
 
     DiscoveryPDPDataQueueInfo(
-            eprosima::fastdds::rtps::CacheChange_t* change,
+            CacheChange_t* change,
             const DiscoveryParticipantChangeData& participant_change_data)
         : DiscoveryDataQueueInfo(change)
         , participant_change_data_(participant_change_data)
@@ -85,7 +85,7 @@ class DiscoveryEDPDataQueueInfo : public DiscoveryDataQueueInfo
 public:
 
     DiscoveryEDPDataQueueInfo(
-            eprosima::fastdds::rtps::CacheChange_t* change,
+            CacheChange_t* change,
             const eprosima::fastcdr::string_255& topic)
         : DiscoveryDataQueueInfo(change)
         , topic_(topic)

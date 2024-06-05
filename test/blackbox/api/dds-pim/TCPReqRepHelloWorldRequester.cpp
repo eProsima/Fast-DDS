@@ -36,7 +36,6 @@
 #include <gtest/gtest.h>
 
 using namespace eprosima::fastdds::rtps;
-using namespace eprosima::fastdds::rtps;
 using namespace eprosima::fastdds::dds;
 
 TCPReqRepHelloWorldRequester::TCPReqRepHelloWorldRequester()

@@ -21,8 +21,6 @@
 #include <fastdds/rtps/transport/SenderResource.h>
 #include <fastdds/rtps/transport/TransportReceiverInterface.h>
 
-using SenderResource = eprosima::fastdds::rtps::SenderResource;
-
 namespace eprosima {
 namespace fastdds {
 namespace rtps {

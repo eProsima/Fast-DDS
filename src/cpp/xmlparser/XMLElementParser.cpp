@@ -136,7 +136,6 @@ namespace eprosima {
 namespace fastdds {
 namespace xmlparser {
 
-using namespace eprosima::fastdds::rtps;
 using namespace eprosima::fastdds::xml::detail;
 using namespace eprosima::fastdds::rtps;
 

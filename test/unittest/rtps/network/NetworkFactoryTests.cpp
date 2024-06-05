@@ -29,7 +29,6 @@
 
 using namespace eprosima::fastdds;
 using namespace eprosima::fastdds::rtps;
-using namespace eprosima::fastdds::rtps;
 
 class NetworkTests : public ::testing::Test
 {

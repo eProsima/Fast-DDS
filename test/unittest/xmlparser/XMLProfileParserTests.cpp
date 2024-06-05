@@ -43,7 +43,6 @@
 #include "../common/env_var_utils.hpp"
 
 using namespace eprosima::fastdds;
-using namespace eprosima::fastdds;
 using namespace eprosima::fastdds::rtps;
 using namespace eprosima::testing;
 using namespace ::testing;

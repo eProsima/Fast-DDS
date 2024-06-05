@@ -24,10 +24,6 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-using TCPv6Transport = eprosima::fastdds::rtps::TCPv6Transport;
-using TCPChannelResource = eprosima::fastdds::rtps::TCPChannelResource;
-using TCPChannelResourceBasic = eprosima::fastdds::rtps::TCPChannelResourceBasic;
-
 class MockTCPv6Transport : public TCPv6Transport
 {
 public:

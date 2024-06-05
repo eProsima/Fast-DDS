@@ -54,9 +54,7 @@ typedef uint32_t ParticipantSecurityAttributesMask;
 } // namespace security
 #endif  // HAVE_SECURITY
 } // namespace rtps
-} // namespace fastdds
 
-namespace fastdds {
 namespace dds {
 
 /**

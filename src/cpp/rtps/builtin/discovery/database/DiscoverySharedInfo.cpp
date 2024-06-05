@@ -31,25 +31,25 @@ namespace rtps {
 namespace ddb {
 
 DiscoverySharedInfo::DiscoverySharedInfo(
-        eprosima::fastdds::rtps::CacheChange_t* change,
-        const eprosima::fastdds::rtps::GuidPrefix_t& known_participant)
+        CacheChange_t* change,
+        const GuidPrefix_t& known_participant)
     : change_(change)
 {
     // the server already knows every message
     add_or_update_ack_participant(known_participant, true);
 }
 
-eprosima::fastdds::rtps::CacheChange_t* DiscoverySharedInfo::update_and_unmatch(
-        eprosima::fastdds::rtps::CacheChange_t* change)
+CacheChange_t* DiscoverySharedInfo::update_and_unmatch(
+        CacheChange_t* change)
 {
     relevant_participants_builtin_ack_status_.unmatch_all();
     return update(change);
 }
 
-eprosima::fastdds::rtps::CacheChange_t* DiscoverySharedInfo::update(
-        eprosima::fastdds::rtps::CacheChange_t* change)
+CacheChange_t* DiscoverySharedInfo::update(
+        CacheChange_t* change)
 {
-    eprosima::fastdds::rtps::CacheChange_t* old_change = change_;
+    CacheChange_t* old_change = change_;
     change_ = change;
     return old_change;
 }

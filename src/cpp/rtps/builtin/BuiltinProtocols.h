@@ -42,9 +42,6 @@ class TypeLookupManager;
 class ReaderQos;
 class WriterQos;
 } // namespace dds
-} // namespace fastdds
-
-namespace fastdds {
 
 class TopicAttributes;
 

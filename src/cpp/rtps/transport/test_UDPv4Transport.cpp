@@ -26,12 +26,6 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-using octet = fastdds::rtps::octet;
-using CDRMessage_t = fastdds::rtps::CDRMessage_t;
-using SubmessageHeader_t = fastdds::rtps::SubmessageHeader_t;
-using SequenceNumber_t = fastdds::rtps::SequenceNumber_t;
-using EntityId_t = fastdds::rtps::EntityId_t;
-
 std::vector<std::vector<octet>> test_UDPv4Transport::test_UDPv4Transport_DropLog;
 std::atomic<uint32_t> test_UDPv4Transport::test_UDPv4Transport_DropLogLength(0);
 std::atomic<bool> test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork(false);

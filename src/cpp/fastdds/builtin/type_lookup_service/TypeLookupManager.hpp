@@ -96,9 +96,7 @@ class ParticipantProxyData;
 class WriterHistory;
 
 } // namespace rtps
-} // namespace fastdds
 
-namespace fastdds {
 namespace dds {
 namespace builtin {
 

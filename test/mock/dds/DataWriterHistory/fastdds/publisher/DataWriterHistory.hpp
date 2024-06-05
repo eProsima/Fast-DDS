@@ -38,7 +38,6 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-using namespace eprosima::fastdds;
 using namespace eprosima::fastdds::rtps;
 
 static HistoryAttributes to_history_attributes(

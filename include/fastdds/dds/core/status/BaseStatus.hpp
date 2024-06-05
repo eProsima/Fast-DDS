@@ -43,14 +43,10 @@ using LivelinessLostStatus = BaseStatus;
 using InconsistentTopicStatus = BaseStatus;
 
 } //namespace dds
-} //namespace fastdds
-
-namespace fastdds {
 
 using LivelinessLostStatus = fastdds::dds::BaseStatus;
 
-}
-
+} //namespace fastdds
 } //namespace eprosima
 
 #endif // _FASTDDS_BASE_STATUS_HPP_

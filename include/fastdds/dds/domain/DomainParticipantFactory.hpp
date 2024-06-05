@@ -43,9 +43,7 @@ namespace detail {
 class TopicPayloadPoolRegistry;
 }  // namespace detail
 }  // namespace rtps
-}  // namespace fastdds
 
-namespace fastdds {
 namespace dds {
 
 class DomainParticipantListener;

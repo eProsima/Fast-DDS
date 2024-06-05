@@ -35,8 +35,6 @@
 #include <rtps/builtin/liveliness/WLP.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 
-using namespace eprosima::fastdds;
-
 namespace eprosima {
 namespace fastdds {
 namespace rtps {

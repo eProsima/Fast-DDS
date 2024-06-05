@@ -9,11 +9,6 @@ namespace fastdds {
 namespace rtps {
 class RTPSWriter;
 struct CacheChange_t;
-} // namespace rtps
-} // namespace fastdds
-
-namespace fastdds {
-namespace rtps {
 
 /*!
  * Interface used by writers to control the usage of network bandwidth.

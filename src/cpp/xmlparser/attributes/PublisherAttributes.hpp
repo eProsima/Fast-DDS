@@ -66,16 +66,16 @@ public:
     dds::WriterQos qos;
 
     //! Writer Attributes
-    fastdds::rtps::WriterTimes times;
+    rtps::WriterTimes times;
 
     //! Unicast locator list
-    fastdds::rtps::LocatorList_t unicastLocatorList;
+    rtps::LocatorList_t unicastLocatorList;
 
     //! Multicast locator list
-    fastdds::rtps::LocatorList_t multicastLocatorList;
+    rtps::LocatorList_t multicastLocatorList;
 
     //! Remote locator list
-    fastdds::rtps::LocatorList_t remoteLocatorList;
+    rtps::LocatorList_t remoteLocatorList;
 
     //! The collection of external locators to use for communication.
     rtps::ExternalLocators external_unicast_locators;
@@ -84,11 +84,11 @@ public:
     bool ignore_non_matching_locators = false;
 
     //! Underlying History memory policy
-    fastdds::rtps::MemoryManagementPolicy_t historyMemoryPolicy =
-            fastdds::rtps::MemoryManagementPolicy_t::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+    rtps::MemoryManagementPolicy_t historyMemoryPolicy =
+            rtps::MemoryManagementPolicy_t::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 
     //! Properties
-    fastdds::rtps::PropertyPolicy properties;
+    rtps::PropertyPolicy properties;
 
     //! Allocation limits on the matched subscribers collections
     fastdds::ResourceLimitedContainerConfig matched_subscriber_allocation;

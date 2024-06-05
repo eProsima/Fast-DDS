@@ -23,7 +23,6 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/common/VendorId_t.hpp>
 
-using namespace eprosima::fastdds;
 using ParameterList = eprosima::fastdds::dds::ParameterList;
 
 namespace eprosima {

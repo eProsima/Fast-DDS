@@ -13,12 +13,6 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 class RTPSParticipantImpl;
-} // namespace rtps
-} // namespace fastdds
-
-namespace fastdds {
-namespace rtps {
-
 class FlowController;
 
 const char* const pure_sync_flow_controller_name = "PureSyncFlowController";

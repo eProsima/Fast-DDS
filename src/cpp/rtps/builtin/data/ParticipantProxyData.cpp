@@ -39,7 +39,6 @@
 #include "ProxyDataFilters.hpp"
 #include "ProxyHashTables.hpp"
 
-using namespace eprosima::fastdds;
 using ParameterList = eprosima::fastdds::dds::ParameterList;
 
 namespace eprosima {

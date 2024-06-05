@@ -26,8 +26,8 @@ namespace fastdds {
 namespace rtps {
 
 inline bool history_order_cmp(
-        const eprosima::fastdds::rtps::CacheChange_t* lhs,
-        const eprosima::fastdds::rtps::CacheChange_t* rhs)
+        const CacheChange_t* lhs,
+        const CacheChange_t* rhs)
 {
     return lhs->writerGUID == rhs->writerGUID ?
            lhs->sequenceNumber < rhs->sequenceNumber :

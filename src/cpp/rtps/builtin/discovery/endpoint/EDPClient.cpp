@@ -38,8 +38,6 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-using namespace fastdds::rtps;
-
 bool EDPClient::processLocalReaderProxyData(
         RTPSReader* local_reader,
         ReaderProxyData* rdata)

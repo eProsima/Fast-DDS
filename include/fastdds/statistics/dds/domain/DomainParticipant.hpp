@@ -34,8 +34,7 @@ namespace rtps {
 class ReaderProxyData;
 class WriterProxyData;
 } // namespace rtps
-} // namespace fastdds
-namespace fastdds {
+
 namespace statistics {
 
 class MonitorServiceStatusData;

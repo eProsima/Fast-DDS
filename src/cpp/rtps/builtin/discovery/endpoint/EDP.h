@@ -46,9 +46,6 @@ class TypeIdentifier;
 
 } // namespace xtypes
 } // namespace dds
-} // namespace fastdds
-
-namespace fastdds {
 
 class TopicAttributes;
 

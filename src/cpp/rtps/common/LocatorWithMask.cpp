@@ -68,7 +68,7 @@ LocatorWithMask& LocatorWithMask::operator =(
 {
     kind = loc.kind;
     port = loc.port;
-    std::memcpy(address, loc.address, 16 * sizeof(fastdds::rtps::octet));
+    std::memcpy(address, loc.address, 16 * sizeof(octet));
     return *this;
 }
 

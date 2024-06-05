@@ -28,10 +28,6 @@ namespace fastdds {
 namespace rtps {
 
 struct CDRMessage_t;
-} //rtps
-} //fastrtps
-namespace fastdds {
-namespace rtps {
 
 /**
  * UDP v4 Test Transport configuration

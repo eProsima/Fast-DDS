@@ -63,12 +63,6 @@ struct LocatorsIterator
     virtual const Locator& operator *() const = 0;
 };
 
-} // namespace rtps
-} // namespace fastdds
-
-namespace fastdds {
-namespace rtps {
-
 using LocatorsIterator = eprosima::fastdds::rtps::LocatorsIterator;
 
 } // namespace rtps

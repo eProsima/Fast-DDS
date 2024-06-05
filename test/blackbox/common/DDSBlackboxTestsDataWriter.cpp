@@ -39,8 +39,6 @@
 #include "PubSubWriter.hpp"
 
 using namespace eprosima::fastdds;
-using test_UDPv4Transport = eprosima::fastdds::rtps::test_UDPv4Transport;
-using test_UDPv4TransportDescriptor = eprosima::fastdds::rtps::test_UDPv4TransportDescriptor;
 
 enum communication_type
 {
@@ -99,7 +97,7 @@ TEST_P(DDSDataWriter, WaitForAcknowledgmentInstance)
     PubSubWriter<KeyedHelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     PubSubReader<KeyedHelloWorldPubSubType> reader(TEST_TOPIC_NAME);
 
-    auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
+    auto testTransport = std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
 
     writer.disable_builtin_transport().add_user_transport_to_pparams(testTransport).init();
     ASSERT_TRUE(writer.isInitialized());
@@ -111,7 +109,7 @@ TEST_P(DDSDataWriter, WaitForAcknowledgmentInstance)
     reader.wait_discovery();
 
     // Disable communication to prevent reception of ACKs
-    test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = true;
+    eprosima::fastdds::rtps::test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = true;
 
     auto data = default_keyedhelloworld_data_generator(2);
 
@@ -141,7 +139,7 @@ TEST_P(DDSDataWriter, WaitForAcknowledgmentInstance)
     }
 
     // Enable communication and wait for acknowledgment
-    test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = false;
+    eprosima::fastdds::rtps::test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = false;
 
     EXPECT_TRUE(writer.waitForInstanceAcked(&sample_1, instance_handle_1, std::chrono::seconds(1)));
     EXPECT_TRUE(writer.waitForInstanceAcked(&sample_2, rtps::c_InstanceHandle_Unknown, std::chrono::seconds(1)));

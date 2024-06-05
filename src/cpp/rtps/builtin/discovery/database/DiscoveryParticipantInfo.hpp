@@ -45,8 +45,8 @@ class DiscoveryParticipantInfo : public DiscoverySharedInfo
 public:
 
     DiscoveryParticipantInfo(
-            eprosima::fastdds::rtps::CacheChange_t* change,
-            const eprosima::fastdds::rtps::GuidPrefix_t& known_participant,
+            CacheChange_t* change,
+            const GuidPrefix_t& known_participant,
             DiscoveryParticipantChangeData participant_change_data)
         : DiscoverySharedInfo(change, known_participant)
         , participant_change_data_(participant_change_data)
@@ -57,38 +57,38 @@ public:
     {
     }
 
-    eprosima::fastdds::rtps::CacheChange_t* update(
-            eprosima::fastdds::rtps::CacheChange_t* change,
+    CacheChange_t* update(
+            CacheChange_t* change,
             DiscoveryParticipantChangeData participant_change_data);
 
-    eprosima::fastdds::rtps::CacheChange_t* update(
-            eprosima::fastdds::rtps::CacheChange_t* change)
+    CacheChange_t* update(
+            CacheChange_t* change)
     {
         return DiscoverySharedInfo::update(change);
     }
 
-    eprosima::fastdds::rtps::CacheChange_t* update_and_unmatch(
-            eprosima::fastdds::rtps::CacheChange_t* change,
+    CacheChange_t* update_and_unmatch(
+            CacheChange_t* change,
             DiscoveryParticipantChangeData participant_change_data);
 
-    eprosima::fastdds::rtps::CacheChange_t* update_and_unmatch(
-            eprosima::fastdds::rtps::CacheChange_t* change)
+    CacheChange_t* update_and_unmatch(
+            CacheChange_t* change)
     {
         return DiscoverySharedInfo::update_and_unmatch(change);
     }
 
     // populate functions
     void add_reader(
-            const eprosima::fastdds::rtps::GUID_t& guid);
+            const GUID_t& guid);
 
     void remove_reader(
-            const eprosima::fastdds::rtps::GUID_t& guid);
+            const GUID_t& guid);
 
     void add_writer(
-            const eprosima::fastdds::rtps::GUID_t& guid);
+            const GUID_t& guid);
 
     void remove_writer(
-            const eprosima::fastdds::rtps::GUID_t& guid);
+            const GUID_t& guid);
 
     bool is_client() const
     {
@@ -116,12 +116,12 @@ public:
         return participant_change_data_.metatraffic_locators();
     }
 
-    std::vector<eprosima::fastdds::rtps::GUID_t> readers()
+    std::vector<GUID_t> readers()
     {
         return readers_;
     }
 
-    std::vector<eprosima::fastdds::rtps::GUID_t> writers()
+    std::vector<GUID_t> writers()
     {
         return writers_;
     }
@@ -131,9 +131,9 @@ public:
 
 private:
 
-    std::vector<eprosima::fastdds::rtps::GUID_t> readers_;
+    std::vector<GUID_t> readers_;
 
-    std::vector<eprosima::fastdds::rtps::GUID_t> writers_;
+    std::vector<GUID_t> writers_;
 
     DiscoveryParticipantChangeData participant_change_data_;
 

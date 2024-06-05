@@ -60,7 +60,7 @@ public:
         alive_.store(false);
     }
 
-    inline fastdds::rtps::CDRMessage_t& message_buffer()
+    inline CDRMessage_t& message_buffer()
     {
         return message_buffer_;
     }
@@ -68,7 +68,7 @@ public:
 protected:
 
     //!Received message
-    fastdds::rtps::CDRMessage_t message_buffer_;
+    CDRMessage_t message_buffer_;
 
     std::atomic<bool> alive_;
     eprosima::thread thread_;

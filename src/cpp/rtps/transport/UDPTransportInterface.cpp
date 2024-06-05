@@ -35,13 +35,6 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-using IPLocator = fastdds::rtps::IPLocator;
-using LocatorSelectorEntry = fastdds::rtps::LocatorSelectorEntry;
-using LocatorSelector = fastdds::rtps::LocatorSelector;
-using IPFinder = fastdds::rtps::IPFinder;
-using octet = fastdds::rtps::octet;
-using PortParameters = fastdds::rtps::PortParameters;
-using SenderResource = fastdds::rtps::SenderResource;
 using Log = fastdds::dds::Log;
 
 UDPTransportDescriptor::UDPTransportDescriptor()

@@ -41,7 +41,7 @@ class EDPServerSUBListener;
  * Inherits from EDPSimple class.
  *@ingroup DISCOVERY_MODULE
  */
-class EDPServer : public fastdds::rtps::EDPSimple
+class EDPServer : public EDPSimple
 {
     friend class EDPServerPUBListener;
     friend class EDPServerSUBListener;
@@ -54,9 +54,9 @@ public:
      * @param part Pointer to the RTPSParticipantImpl
      */
     EDPServer(
-            fastdds::rtps::PDP* p,
-            fastdds::rtps::RTPSParticipantImpl* part,
-            fastdds::rtps::DurabilityKind_t durability_kind)
+            PDP* p,
+            RTPSParticipantImpl* part,
+            DurabilityKind_t durability_kind)
         : EDPSimple(p, part)
         , durability_(durability_kind)
     {
@@ -79,8 +79,8 @@ public:
      * @return true if correct.
      */
     bool processLocalReaderProxyData(
-            fastdds::rtps::RTPSReader* reader,
-            fastdds::rtps::ReaderProxyData* rdata) override;
+            RTPSReader* reader,
+            ReaderProxyData* rdata) override;
     /**
      * This method generates the corresponding change in the publciations writer and send it to all known remote endpoints.
      * @param writer Pointer to the Writer object.
@@ -88,22 +88,22 @@ public:
      * @return true if correct.
      */
     bool processLocalWriterProxyData(
-            fastdds::rtps::RTPSWriter* writer,
-            fastdds::rtps::WriterProxyData* wdata) override;
+            RTPSWriter* writer,
+            WriterProxyData* wdata) override;
     /**
      * This methods generates the change disposing of the local Reader and calls the unpairing and removal methods of the base class.
      * @param R Pointer to the RTPSReader object.
      * @return True if correct.
      */
     bool removeLocalReader(
-            fastdds::rtps::RTPSReader* R) override;
+            RTPSReader* R) override;
     /**
      * This methods generates the change disposing of the local Writer and calls the unpairing and removal methods of the base class.
      * @param W Pointer to the RTPSWriter object.
      * @return True if correct.
      */
     bool removeLocalWriter(
-            fastdds::rtps::RTPSWriter* W) override;
+            RTPSWriter* W) override;
 
     /**
      * This method removes all changes from the correct data writer history with the same identity as the one in the disposal_change
@@ -114,9 +114,9 @@ public:
      * @return True if successful.
      */
     bool process_disposal(
-            fastdds::rtps::CacheChange_t* disposal_change,
-            fastdds::rtps::ddb::DiscoveryDataBase& discovery_db,
-            fastdds::rtps::GuidPrefix_t& change_guid_prefix,
+            CacheChange_t* disposal_change,
+            ddb::DiscoveryDataBase& discovery_db,
+            GuidPrefix_t& change_guid_prefix,
             bool should_publish_disposal);
 
     /**
@@ -127,7 +127,7 @@ public:
      * @return True if successful.
      */
     bool process_and_release_change(
-            fastdds::rtps::CacheChange_t* change,
+            CacheChange_t* change,
             bool release_from_reader);
 
 private:
@@ -139,7 +139,7 @@ private:
     virtual bool createSEDPEndpoints() override;
 
     //! TRANSIENT or TRANSIENT_LOCAL durability;
-    fastdds::rtps::DurabilityKind_t durability_;
+    DurabilityKind_t durability_;
 
 };
 

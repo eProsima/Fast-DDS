@@ -19,7 +19,6 @@
 #include <rtps/writer/ReaderProxy.hpp>
 #include <rtps/writer/StatefulWriter.hpp>
 
-//using namespace eprosima::fastdds::rtps;
 namespace eprosima {
 namespace fastdds {
 namespace rtps {

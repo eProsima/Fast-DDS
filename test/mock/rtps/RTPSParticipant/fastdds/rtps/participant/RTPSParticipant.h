@@ -53,9 +53,6 @@ class TypeLookupManager;
 
 } // namespace builtin
 } // namespace dds
-} // namespace fastdds
-
-namespace fastdds {
 
 class TopicAttributes;
 

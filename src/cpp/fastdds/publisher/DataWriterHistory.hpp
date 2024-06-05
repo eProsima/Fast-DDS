@@ -40,7 +40,7 @@ namespace dds {
  * This class is created by the PublisherImpl and should not be used by the user directly.
  * @ingroup FASTDDS_MODULE
  */
-class DataWriterHistory : public fastdds::rtps::WriterHistory
+class DataWriterHistory : public rtps::WriterHistory
 {
 public:
 
@@ -52,10 +52,10 @@ public:
      * @param unack_sample_remove_functor Functor to call DDS listener callback on_unacknowledged_sample_removed
      */
     DataWriterHistory(
-            const fastdds::TopicAttributes& topic_att,
+            const TopicAttributes& topic_att,
             uint32_t payloadMax,
-            fastdds::rtps::MemoryManagementPolicy_t mempolicy,
-            std::function<void (const fastdds::rtps::InstanceHandle_t&)> unack_sample_remove_functor);
+            rtps::MemoryManagementPolicy_t mempolicy,
+            std::function<void (const rtps::InstanceHandle_t&)> unack_sample_remove_functor);
 
     virtual ~DataWriterHistory();
 
@@ -76,14 +76,14 @@ public:
      * @return True if resources were reserved successfully.
      */
     bool register_instance(
-            const fastdds::rtps::InstanceHandle_t& instance_handle,
-            std::unique_lock<fastdds::RecursiveTimedMutex>& lock,
+            const rtps::InstanceHandle_t& instance_handle,
+            std::unique_lock<RecursiveTimedMutex>& lock,
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time,
-            fastdds::rtps::SerializedPayload_t*& payload);
+            rtps::SerializedPayload_t*& payload);
 
     /**
      * This operation can be used to retrieve the serialized payload of the instance key that corresponds to an
-     * @ref eprosima::fastdds::dds::Entity::instance_handle_ "instance_handle".
+     * @ref eprosima::dds::Entity::instance_handle_ "instance_handle".
      *
      * This operation will return @c nullptr if the InstanceHandle_t handle does not correspond to an existing
      * data-object known to the DataWriterHistory.
@@ -92,8 +92,8 @@ public:
      *
      * @return Pointer to the serialized payload of the sample with which the instance was registered.
      */
-    fastdds::rtps::SerializedPayload_t* get_key_value(
-            const fastdds::rtps::InstanceHandle_t& handle);
+    rtps::SerializedPayload_t* get_key_value(
+            const rtps::InstanceHandle_t& handle);
 
     /**
      * Add a change comming from the DataWriter.
@@ -104,9 +104,9 @@ public:
      * @return True if added.
      */
     bool add_pub_change(
-            fastdds::rtps::CacheChange_t* change,
-            fastdds::rtps::WriteParams& wparams,
-            std::unique_lock<fastdds::RecursiveTimedMutex>& lock,
+            rtps::CacheChange_t* change,
+            rtps::WriteParams& wparams,
+            std::unique_lock<RecursiveTimedMutex>& lock,
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time);
 
     /**
@@ -123,10 +123,10 @@ public:
      */
     template<typename PreCommitHook>
     bool add_pub_change_with_commit_hook(
-            fastdds::rtps::CacheChange_t* change,
-            fastdds::rtps::WriteParams& wparams,
+            rtps::CacheChange_t* change,
+            rtps::WriteParams& wparams,
             PreCommitHook pre_commit,
-            std::unique_lock<fastdds::RecursiveTimedMutex>& lock,
+            std::unique_lock<RecursiveTimedMutex>& lock,
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
     {
         bool returnedValue = false;
@@ -172,7 +172,7 @@ public:
      * @return True if removed.
      */
     bool remove_change_pub(
-            fastdds::rtps::CacheChange_t* change);
+            rtps::CacheChange_t* change);
 
     /**
      * Remove a change by the publisher History.
@@ -181,19 +181,19 @@ public:
      * @return True if removed.
      */
     bool remove_change_pub(
-            fastdds::rtps::CacheChange_t* change,
+            rtps::CacheChange_t* change,
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time);
 
     bool remove_change_g(
-            fastdds::rtps::CacheChange_t* a_change) override;
+            rtps::CacheChange_t* a_change) override;
 
     bool remove_change_g(
-            fastdds::rtps::CacheChange_t* a_change,
+            rtps::CacheChange_t* a_change,
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time) override;
 
     bool remove_instance_changes(
-            const fastdds::rtps::InstanceHandle_t& handle,
-            const fastdds::rtps::SequenceNumber_t& seq_up_to);
+            const rtps::InstanceHandle_t& handle,
+            const rtps::SequenceNumber_t& seq_up_to);
 
     /**
      * @brief Sets the next deadline for the given instance
@@ -202,7 +202,7 @@ public:
      * @return True if deadline was set successfully
      */
     bool set_next_deadline(
-            const fastdds::rtps::InstanceHandle_t& handle,
+            const rtps::InstanceHandle_t& handle,
             const std::chrono::steady_clock::time_point& next_deadline_us);
 
     /**
@@ -212,7 +212,7 @@ public:
      * @return True if deadline could be retrieved for the given instance
      */
     bool get_next_deadline(
-            fastdds::rtps::InstanceHandle_t& handle,
+            rtps::InstanceHandle_t& handle,
             std::chrono::steady_clock::time_point& next_deadline_us);
 
     /*!
@@ -221,7 +221,7 @@ public:
      * return `true` if instance's key is registered in the history.
      */
     bool is_key_registered(
-            const fastdds::rtps::InstanceHandle_t& handle);
+            const rtps::InstanceHandle_t& handle);
 
     /**
      * Waits till the last change in the instance history has been acknowledged.
@@ -231,13 +231,13 @@ public:
      * @return true when the last change of the instance history is acknowleged, false when timeout is reached.
      */
     bool wait_for_acknowledgement_last_change(
-            const fastdds::rtps::InstanceHandle_t& handle,
-            std::unique_lock<fastdds::RecursiveTimedMutex>& lock,
+            const rtps::InstanceHandle_t& handle,
+            std::unique_lock<RecursiveTimedMutex>& lock,
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time);
 
 private:
 
-    typedef std::map<fastdds::rtps::InstanceHandle_t, detail::DataWriterInstance> t_m_Inst_Caches;
+    typedef std::map<rtps::InstanceHandle_t, detail::DataWriterInstance> t_m_Inst_Caches;
 
     //!Map where keys are instance handles and values are vectors of cache changes associated
     t_m_Inst_Caches keyed_changes_;
@@ -248,10 +248,10 @@ private:
     //!ResourceLimitsQosPolicy values.
     ResourceLimitsQosPolicy resource_limited_qos_;
     //!Topic Attributes
-    fastdds::TopicAttributes topic_att_;
+    TopicAttributes topic_att_;
 
     //! Unacknowledged sample removed functor
-    std::function<void (const fastdds::rtps::InstanceHandle_t&)> unacknowledged_sample_removed_functor_;
+    std::function<void (const rtps::InstanceHandle_t&)> unacknowledged_sample_removed_functor_;
 
     /**
      * @brief Method that finds a key in the DataWriterHistory or tries to add it if not found
@@ -261,8 +261,8 @@ private:
      * @return True if the key was found or could be added to the map
      */
     bool find_or_add_key(
-            const fastdds::rtps::InstanceHandle_t& instance_handle,
-            const fastdds::rtps::SerializedPayload_t& payload,
+            const rtps::InstanceHandle_t& instance_handle,
+            const rtps::SerializedPayload_t& payload,
             t_m_Inst_Caches::iterator* map_it);
 
     /**
@@ -273,8 +273,8 @@ private:
      * @return True if added.
      */
     bool prepare_change(
-            fastdds::rtps::CacheChange_t* change,
-            std::unique_lock<fastdds::RecursiveTimedMutex>& lock,
+            rtps::CacheChange_t* change,
+            std::unique_lock<RecursiveTimedMutex>& lock,
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time);
 
     /**
@@ -285,7 +285,7 @@ private:
      * @return true if acknowledged or fully delivered. False otherwise.
      */
     bool change_is_acked_or_fully_delivered(
-            const fastdds::rtps::CacheChange_t* change);
+            const rtps::CacheChange_t* change);
 
 };
 

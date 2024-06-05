@@ -41,7 +41,6 @@
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;
 using namespace eprosima::fastdds;
-using namespace eprosima::fastdds::rtps;
 using namespace eprosima::testing;
 
 using eprosima::fastdds::xmlparser::BaseNode;

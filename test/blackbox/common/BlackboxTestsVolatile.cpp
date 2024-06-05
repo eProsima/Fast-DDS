@@ -27,8 +27,6 @@
 #include "ReqRepAsReliableHelloWorldRequester.hpp"
 
 using namespace eprosima::fastdds;
-using test_UDPv4Transport = eprosima::fastdds::rtps::test_UDPv4Transport;
-using test_UDPv4TransportDescriptor = eprosima::fastdds::rtps::test_UDPv4TransportDescriptor;
 
 enum communication_type
 {
@@ -449,7 +447,7 @@ TEST_P(Volatile, VolatileLateJoinerSubGapLost)
 
     // To simulate lossy conditions
     int gaps_to_drop = 2;
-    auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
+    auto testTransport = std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
     testTransport->drop_gap_messages_filter_ = [&gaps_to_drop](rtps::CDRMessage_t& )
             {
                 if (gaps_to_drop > 0)
@@ -522,7 +520,7 @@ TEST_P(Volatile, VolatileWithLostAcks)
 
     // To simulate lossy conditions
     size_t acks_to_drop = 0;
-    auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
+    auto testTransport = std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
     testTransport->drop_ack_nack_messages_filter_ = [&acks_to_drop](rtps::CDRMessage_t&)
             {
                 if (acks_to_drop > 0)

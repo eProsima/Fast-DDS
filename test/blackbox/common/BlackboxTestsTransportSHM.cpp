@@ -31,11 +31,6 @@
 
 using namespace eprosima::fastdds;
 
-using SharedMemTransportDescriptor = eprosima::fastdds::rtps::SharedMemTransportDescriptor;
-using test_SharedMemTransportDescriptor = eprosima::fastdds::rtps::test_SharedMemTransportDescriptor;
-using Locator = eprosima::fastdds::rtps::Locator;
-using LocatorList = eprosima::fastdds::rtps::LocatorList;
-
 TEST(SHM, TransportPubSub)
 {
     PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
@@ -44,7 +39,7 @@ TEST(SHM, TransportPubSub)
     // Number of samples written by writer
     uint32_t writer_samples = 15;
 
-    auto testTransport = std::make_shared<SharedMemTransportDescriptor>();
+    auto testTransport = std::make_shared<eprosima::fastdds::rtps::SharedMemTransportDescriptor>();
 
     writer.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
     writer.disable_builtin_transport().
@@ -88,12 +83,12 @@ TEST(SHM, SamePortUnicastMulticast)
 {
     PubSubReader<HelloWorldPubSubType> participant(TEST_TOPIC_NAME);
 
-    Locator locator;
+    eprosima::fastdds::rtps::Locator locator;
     locator.kind = LOCATOR_KIND_SHM;
     locator.port = global_port;
 
-    LocatorList unicast_list;
-    LocatorList multicast_list;
+    eprosima::fastdds::rtps::LocatorList unicast_list;
+    eprosima::fastdds::rtps::LocatorList multicast_list;
 
     // Note: this is using knowledge of the SHM locator address format since
     // SHMLocator is not exposed to the user.
@@ -106,7 +101,7 @@ TEST(SHM, SamePortUnicastMulticast)
     multicast_list.push_back(locator);
 
     // Create the reader with the custom transport and locators
-    auto testTransport = std::make_shared<SharedMemTransportDescriptor>();
+    auto testTransport = std::make_shared<eprosima::fastdds::rtps::SharedMemTransportDescriptor>();
     participant
             .disable_builtin_transport()
             .add_user_transport_to_pparams(testTransport)
@@ -117,7 +112,7 @@ TEST(SHM, SamePortUnicastMulticast)
     ASSERT_TRUE(participant.isInitialized());
 
     // Retrieve the listening locators and check that one port is different
-    LocatorList reader_locators;
+    eprosima::fastdds::rtps::LocatorList reader_locators;
     participant.get_native_reader().get_listening_locators(reader_locators);
 
     ASSERT_LE(reader_locators.size(), 2u);
@@ -156,7 +151,7 @@ TEST(SHM, IgnoreNonExistentSegment)
             .durability_kind(eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS)
             .history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
             .disable_builtin_transport()
-            .add_user_transport_to_pparams(std::make_shared<SharedMemTransportDescriptor>())
+            .add_user_transport_to_pparams(std::make_shared<eprosima::fastdds::rtps::SharedMemTransportDescriptor>())
             .init();
     ASSERT_TRUE(writer.isInitialized());
 
@@ -165,7 +160,7 @@ TEST(SHM, IgnoreNonExistentSegment)
             .durability_kind(eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS)
             .history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
             .disable_builtin_transport()
-            .add_user_transport_to_pparams(std::make_shared<SharedMemTransportDescriptor>())
+            .add_user_transport_to_pparams(std::make_shared<eprosima::fastdds::rtps::SharedMemTransportDescriptor>())
             .init();
 
     ASSERT_TRUE(reader.isInitialized());
@@ -195,7 +190,7 @@ TEST(SHM, IgnoreNonExistentSegment)
                                 .asynchronously(eprosima::fastdds::dds::SYNCHRONOUS_PUBLISH_MODE)
                                 .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
                                 .disable_builtin_transport()
-                                .add_user_transport_to_pparams(std::make_shared<SharedMemTransportDescriptor>())
+                                .add_user_transport_to_pparams(std::make_shared<eprosima::fastdds::rtps::SharedMemTransportDescriptor>())
                                 .init();
                         ASSERT_TRUE(late_writer.isInitialized());
                     }
@@ -228,7 +223,7 @@ TEST(SHM, Test300KFragmentation)
     auto data = default_data300kb_data_generator(1);
     auto data_size = data.front().data().size();
 
-    auto shm_transport = std::make_shared<test_SharedMemTransportDescriptor>();
+    auto shm_transport = std::make_shared<eprosima::fastdds::rtps::test_SharedMemTransportDescriptor>();
     const uint32_t segment_size = static_cast<uint32_t>(data_size * 3 / 4);
     shm_transport->segment_size(segment_size);
     shm_transport->max_message_size(segment_size);
@@ -280,7 +275,7 @@ TEST(SHM, Test300KNoFragmentation)
     auto data = default_data300kb_data_generator(1);
     auto data_size = data.front().data().size();
 
-    auto shm_transport = std::make_shared<test_SharedMemTransportDescriptor>();
+    auto shm_transport = std::make_shared<eprosima::fastdds::rtps::test_SharedMemTransportDescriptor>();
     const uint32_t segment_size = 1024 * 1024;
     shm_transport->segment_size(segment_size);
     shm_transport->max_message_size(segment_size);
@@ -338,7 +333,7 @@ TEST(SHM, SHM_UDP_300KFragmentation)
     // Number of samples written by writer
     uint32_t writer_samples = 1;
 
-    auto shm_transport = std::make_shared<test_SharedMemTransportDescriptor>();
+    auto shm_transport = std::make_shared<eprosima::fastdds::rtps::test_SharedMemTransportDescriptor>();
     const uint32_t segment_size = 1024 * 1024;
     shm_transport->segment_size(segment_size);
     shm_transport->max_message_size(segment_size);
@@ -402,7 +397,7 @@ TEST(SHM, UDPvsSHM_UDP)
     // Number of samples written by writer
     uint32_t writer_samples = 1;
 
-    auto shm_transport = std::make_shared<test_SharedMemTransportDescriptor>();
+    auto shm_transport = std::make_shared<eprosima::fastdds::rtps::test_SharedMemTransportDescriptor>();
     const uint32_t segment_size = 1024 * 1024;
     shm_transport->segment_size(segment_size);
     shm_transport->max_message_size(segment_size);
@@ -464,7 +459,7 @@ TEST(SHM, SHM_UDPvsUDP)
     // Number of samples written by writer
     uint32_t writer_samples = 1;
 
-    auto shm_transport = std::make_shared<test_SharedMemTransportDescriptor>();
+    auto shm_transport = std::make_shared<eprosima::fastdds::rtps::test_SharedMemTransportDescriptor>();
     const uint32_t segment_size = 1024 * 1024;
     shm_transport->segment_size(segment_size);
     shm_transport->max_message_size(segment_size);
@@ -513,8 +508,8 @@ TEST(SHM, SHM_UDPvsUDP)
 TEST(BlackBox, SHM_equal_operator)
 {
     // SharedMemTransportDescriptor
-    SharedMemTransportDescriptor shm_transport_1;
-    SharedMemTransportDescriptor shm_transport_2;
+    eprosima::fastdds::rtps::SharedMemTransportDescriptor shm_transport_1;
+    eprosima::fastdds::rtps::SharedMemTransportDescriptor shm_transport_2;
 
     // Compare equal in defult values
     ASSERT_EQ(shm_transport_1, shm_transport_2);
@@ -539,18 +534,18 @@ TEST(BlackBox, SHM_equal_operator)
 // Test copy constructor and copy assignment
 TEST(SHM, SHM_copy)
 {
-    SharedMemTransportDescriptor shm_transport;
+    eprosima::fastdds::rtps::SharedMemTransportDescriptor shm_transport;
     shm_transport.segment_size(shm_transport.segment_size() * 10u); // change default value
     shm_transport.max_message_size(shm_transport.max_message_size() + 20u); // change default value
     shm_transport.healthy_check_timeout_ms(shm_transport.healthy_check_timeout_ms() - 30u); // change default value
     shm_transport.rtps_dump_file("test"); // change default value
 
     // Copy constructor
-    SharedMemTransportDescriptor shm_transport_copy_constructor(shm_transport);
+    eprosima::fastdds::rtps::SharedMemTransportDescriptor shm_transport_copy_constructor(shm_transport);
     EXPECT_EQ(shm_transport_copy_constructor, shm_transport);
 
     // Copy assignment
-    SharedMemTransportDescriptor shm_transport_copy = shm_transport;
+    eprosima::fastdds::rtps::SharedMemTransportDescriptor shm_transport_copy = shm_transport;
     EXPECT_EQ(shm_transport_copy, shm_transport);
 }
 

@@ -52,7 +52,7 @@ bool TestReaderSocket::init(
 {
     //CREATE PARTICIPANT
     RTPSParticipantAttributes PParam;
-    PParam.builtin.discovery_config.discoveryProtocol = eprosima::fastdds::rtps::DiscoveryProtocol_t::NONE;
+    PParam.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::NONE;
     PParam.builtin.use_WriterLivelinessProtocol = false;
     mp_participant = RTPSDomain::createParticipant(0, PParam);
     if (mp_participant == nullptr)

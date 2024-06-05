@@ -38,45 +38,45 @@ struct DiscoveryServerPDPEndpointsSecure : public DiscoveryServerPDPEndpoints
 {
     ~DiscoveryServerPDPEndpointsSecure() override = default;
 
-    fastdds::rtps::BuiltinEndpointSet_t builtin_endpoints() const override
+    BuiltinEndpointSet_t builtin_endpoints() const override
     {
         return DiscoveryServerPDPEndpoints::builtin_endpoints() |
                DISC_BUILTIN_ENDPOINT_PARTICIPANT_SECURE_ANNOUNCER | DISC_BUILTIN_ENDPOINT_PARTICIPANT_SECURE_DETECTOR;
     }
 
     bool enable_pdp_readers(
-            fastdds::rtps::RTPSParticipantImpl* participant) override
+            RTPSParticipantImpl* participant) override
     {
         return DiscoveryServerPDPEndpoints::enable_pdp_readers(participant) &&
                participant->enableReader(stateless_reader.reader_);
     }
 
     void disable_pdp_readers(
-            fastdds::rtps::RTPSParticipantImpl* participant) override
+            RTPSParticipantImpl* participant) override
     {
         participant->disableReader(stateless_reader.reader_);
         DiscoveryServerPDPEndpoints::disable_pdp_readers(participant);
     }
 
     void delete_pdp_endpoints(
-            fastdds::rtps::RTPSParticipantImpl* participant) override
+            RTPSParticipantImpl* participant) override
     {
         participant->deleteUserEndpoint(stateless_reader.reader_->getGuid());
         DiscoveryServerPDPEndpoints::delete_pdp_endpoints(participant);
     }
 
     void remove_from_pdp_reader_history(
-            const fastdds::rtps::InstanceHandle_t& remote_participant) override
+            const InstanceHandle_t& remote_participant) override
     {
         stateless_reader.remove_from_history(remote_participant);
         DiscoveryServerPDPEndpoints::remove_from_pdp_reader_history(remote_participant);
     }
 
     void remove_from_pdp_reader_history(
-            fastdds::rtps::CacheChange_t* change) override
+            CacheChange_t* change) override
     {
         assert(nullptr != change);
-        if (change->writerGUID.entityId == fastdds::rtps::c_EntityId_SPDPWriter)
+        if (change->writerGUID.entityId == c_EntityId_SPDPWriter)
         {
             stateless_reader.history_->remove_change(change);
         }
@@ -87,7 +87,7 @@ struct DiscoveryServerPDPEndpointsSecure : public DiscoveryServerPDPEndpoints
     }
 
     //! Builtin Simple PDP reader
-    BuiltinReader<fastdds::rtps::StatelessReader> stateless_reader;
+    BuiltinReader<StatelessReader> stateless_reader;
 };
 
 } // namespace rtps

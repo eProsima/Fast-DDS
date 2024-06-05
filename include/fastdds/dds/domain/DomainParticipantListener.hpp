@@ -69,7 +69,7 @@ public:
      */
     virtual void on_participant_discovery(
             DomainParticipant* participant,
-            fastdds::rtps::ParticipantDiscoveryInfo&& info,
+            rtps::ParticipantDiscoveryInfo&& info,
             bool& should_be_ignored)
     {
         static_cast<void>(participant);
@@ -86,7 +86,7 @@ public:
      */
     virtual void onParticipantAuthentication(
             DomainParticipant* participant,
-            fastdds::rtps::ParticipantAuthenticationInfo&& info)
+            rtps::ParticipantAuthenticationInfo&& info)
     {
         static_cast<void>(participant);
         static_cast<void>(info);
@@ -104,7 +104,7 @@ public:
      */
     virtual void on_data_reader_discovery(
             DomainParticipant* participant,
-            fastdds::rtps::ReaderDiscoveryInfo&& info,
+            rtps::ReaderDiscoveryInfo&& info,
             bool& should_be_ignored)
     {
         static_cast<void>(participant);
@@ -122,7 +122,7 @@ public:
      */
     virtual void on_data_writer_discovery(
             DomainParticipant* participant,
-            fastdds::rtps::WriterDiscoveryInfo&& info,
+            rtps::WriterDiscoveryInfo&& info,
             bool& should_be_ignored)
     {
         static_cast<void>(participant);

@@ -56,9 +56,7 @@ namespace fastdds {
 namespace rtps {
 struct GUID_t;
 } // namespace rtps
-} // namespace fastdds
 
-namespace fastdds {
 namespace dds {
 
 class Subscriber;

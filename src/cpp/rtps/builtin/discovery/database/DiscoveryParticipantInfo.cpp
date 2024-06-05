@@ -31,16 +31,16 @@ namespace fastdds {
 namespace rtps {
 namespace ddb {
 
-eprosima::fastdds::rtps::CacheChange_t* DiscoveryParticipantInfo::update(
-        eprosima::fastdds::rtps::CacheChange_t* change,
+CacheChange_t* DiscoveryParticipantInfo::update(
+        CacheChange_t* change,
         DiscoveryParticipantChangeData participant_change_data)
 {
     participant_change_data_ = participant_change_data;
     return update(change);
 }
 
-eprosima::fastdds::rtps::CacheChange_t* DiscoveryParticipantInfo::update_and_unmatch(
-        eprosima::fastdds::rtps::CacheChange_t* change,
+CacheChange_t* DiscoveryParticipantInfo::update_and_unmatch(
+        CacheChange_t* change,
         DiscoveryParticipantChangeData participant_change_data)
 {
     participant_change_data_ = participant_change_data;
@@ -48,7 +48,7 @@ eprosima::fastdds::rtps::CacheChange_t* DiscoveryParticipantInfo::update_and_unm
 }
 
 void DiscoveryParticipantInfo::add_reader(
-        const eprosima::fastdds::rtps::GUID_t& guid)
+        const GUID_t& guid)
 {
     if (std::find(readers_.begin(), readers_.end(), guid) == readers_.end())
     {
@@ -57,7 +57,7 @@ void DiscoveryParticipantInfo::add_reader(
 }
 
 void DiscoveryParticipantInfo::remove_reader(
-        const eprosima::fastdds::rtps::GUID_t& guid)
+        const GUID_t& guid)
 {
     // erase it from the back to accelerate participant removal
     auto rit = std::find(readers_.rbegin(), readers_.rend(), guid);
@@ -69,7 +69,7 @@ void DiscoveryParticipantInfo::remove_reader(
 }
 
 void DiscoveryParticipantInfo::add_writer(
-        const eprosima::fastdds::rtps::GUID_t& guid)
+        const GUID_t& guid)
 {
     if (std::find(writers_.begin(), writers_.end(), guid) == writers_.end())
     {
@@ -78,7 +78,7 @@ void DiscoveryParticipantInfo::add_writer(
 }
 
 void DiscoveryParticipantInfo::remove_writer(
-        const eprosima::fastdds::rtps::GUID_t& guid)
+        const GUID_t& guid)
 {
     // erase it from the back to accelerate participant removal
     auto rit = std::find(writers_.rbegin(), writers_.rend(), guid);

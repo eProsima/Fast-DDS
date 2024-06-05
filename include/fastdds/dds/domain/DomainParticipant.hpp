@@ -53,9 +53,7 @@ namespace fastdds {
 namespace rtps {
 class ResourceEvent;
 } // namespace rtps
-} //namespace fastdds
 
-namespace fastdds {
 namespace dds {
 
 class DomainParticipantImpl;

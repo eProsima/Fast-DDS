@@ -37,8 +37,6 @@ namespace rtps {
  */
 class GuidUtils
 {
-    using GuidPrefix_t = eprosima::fastdds::rtps::GuidPrefix_t;
-    using octet = eprosima::fastdds::rtps::octet;
 
 public:
 

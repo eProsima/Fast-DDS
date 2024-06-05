@@ -64,7 +64,7 @@ public:
     virtual const UDPTransportDescriptor* configuration() const = 0;
 
     bool init(
-            const fastdds::rtps::PropertyPolicy* properties = nullptr,
+            const PropertyPolicy* properties = nullptr,
             const uint32_t& max_msg_size_no_frag = 0) override;
 
     //! Checks whether there are open and bound sockets for the given port.
@@ -129,8 +129,8 @@ public:
             const std::vector<NetworkBuffer>& buffers,
             uint32_t total_bytes,
             eProsimaUDPSocket& socket,
-            fastdds::rtps::LocatorsIterator* destination_locators_begin,
-            fastdds::rtps::LocatorsIterator* destination_locators_end,
+            LocatorsIterator* destination_locators_begin,
+            LocatorsIterator* destination_locators_end,
             bool only_multicast_purpose,
             bool whitelisted,
             const std::chrono::steady_clock::time_point& max_blocking_time_point);
@@ -149,7 +149,7 @@ public:
      * @param [in, out] selector Locator selector.
      */
     void select_locators(
-            fastdds::rtps::LocatorSelector& selector) const override;
+            LocatorSelector& selector) const override;
 
     bool fillMetatrafficMulticastLocator(
             Locator& locator,
@@ -161,7 +161,7 @@ public:
 
     bool configureInitialPeerLocator(
             Locator& locator,
-            const fastdds::rtps::PortParameters& port_params,
+            const PortParameters& port_params,
             uint32_t domainId,
             LocatorList& list) const override;
 

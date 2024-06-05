@@ -35,10 +35,7 @@ namespace rtps {
 class WriteParams;
 
 } // namespace rtps
-} // namespace fastdds
 
-
-namespace fastdds {
 namespace dds {
 
 class DomainParticipant;

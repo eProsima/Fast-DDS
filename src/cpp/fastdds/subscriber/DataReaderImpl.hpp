@@ -56,9 +56,7 @@ class RTPSReader;
 class TimedEvent;
 
 } // namespace rtps
-} // namespace fastdds
 
-namespace fastdds {
 namespace dds {
 
 class ContentFilteredTopicImpl;

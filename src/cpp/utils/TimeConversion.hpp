@@ -27,10 +27,7 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-
 namespace TimeConv {
-
-using namespace eprosima::fastdds::rtps;
 
 /**
  * Convert Time_t to seconds as a double

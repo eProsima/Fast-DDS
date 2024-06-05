@@ -21,7 +21,6 @@
 
 using namespace eprosima::fastdds::rtps;
 using namespace eprosima::fastdds::rtps::network;
-using namespace eprosima::fastdds::rtps;
 
 // -------------------- Auxiliary methods to compare locator lists --------------------
 

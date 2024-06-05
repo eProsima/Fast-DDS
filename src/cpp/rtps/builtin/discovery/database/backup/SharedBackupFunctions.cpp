@@ -31,7 +31,7 @@ using json = nlohmann::json;
 
 void to_json(
         json& j,
-        const eprosima::fastdds::rtps::CacheChange_t& change)
+        const CacheChange_t& change)
 {
     j["kind"] = change.kind;
     j["writer_GUID"] = object_to_string(change.writerGUID);
@@ -51,7 +51,7 @@ void to_json(
 
 void from_json(
         const json& j,
-        eprosima::fastdds::rtps::CacheChange_t& change)
+        CacheChange_t& change)
 {
     change.kind = static_cast<fastdds::rtps::ChangeKind_t>(j["kind"].get<uint8_t>());
     std::istringstream(j["writer_GUID"].get<std::string>()) >> change.writerGUID;

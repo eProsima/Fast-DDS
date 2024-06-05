@@ -62,9 +62,7 @@ struct ParticipantType
 };
 
 }  // namespace rtps
-}  // namespace fastdds
 
-namespace fastdds {
 namespace rtps {
 
 //! PDP subclass choice

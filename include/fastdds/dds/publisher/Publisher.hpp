@@ -40,9 +40,6 @@ namespace fastdds {
 
 class TopicAttributes;
 
-} // namespace fastdds
-
-namespace fastdds {
 namespace dds {
 
 class DomainParticipant;

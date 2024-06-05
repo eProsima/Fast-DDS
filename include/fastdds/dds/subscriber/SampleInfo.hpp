@@ -65,10 +65,10 @@ struct SampleInfo
     int32_t absolute_generation_rank;
 
     //! time provided by the DataWriter when the sample was written
-    fastdds::rtps::Time_t source_timestamp;
+    rtps::Time_t source_timestamp;
 
     //! time provided by the DataReader when the sample was added to its history
-    fastdds::rtps::Time_t reception_timestamp;
+    rtps::Time_t reception_timestamp;
 
     //! identifies locally the corresponding instance
     InstanceHandle_t instance_handle;
@@ -82,10 +82,10 @@ struct SampleInfo
     bool valid_data;
 
     //!Sample Identity (Extension for RPC)
-    fastdds::rtps::SampleIdentity sample_identity;
+    rtps::SampleIdentity sample_identity;
 
     //!Related Sample Identity (Extension for RPC)
-    fastdds::rtps::SampleIdentity related_sample_identity;
+    rtps::SampleIdentity related_sample_identity;
 
 };
 

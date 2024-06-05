@@ -55,10 +55,6 @@ class TimedEvent;
 
 } // namespace rtps
 
-} // namespace fastdds
-
-namespace fastdds {
-
 #ifdef FASTDDS_STATISTICS
 namespace statistics {
 namespace dds {

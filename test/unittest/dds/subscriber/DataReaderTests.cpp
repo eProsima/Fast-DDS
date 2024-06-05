@@ -76,7 +76,6 @@
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;
-using namespace eprosima::fastdds::rtps;
 
 static constexpr LoanableCollection::size_type num_test_elements = 10;
 

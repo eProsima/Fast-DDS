@@ -20,8 +20,6 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-using LocatorSelectorEntry = fastdds::rtps::LocatorSelectorEntry;
-
 bool TransportInterface::OpenOutputChannels(
         SendResourceList& send_resource_list,
         const LocatorSelectorEntry& locator_selector_entry)
@@ -42,7 +40,7 @@ bool TransportInterface::OpenOutputChannels(
 
 void TransportInterface::CloseOutputChannels(
         SendResourceList& sender_resource_list,
-        const fastdds::rtps::LocatorSelectorEntry& locator_selector_entry)
+        const LocatorSelectorEntry& locator_selector_entry)
 {
     static_cast<void>(sender_resource_list);
     static_cast<void>(locator_selector_entry);

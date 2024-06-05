@@ -57,9 +57,6 @@ class ReaderProxyData;
 class PublisherAttributes;
 class SubscriberAttributes;
 
-} // namespace fastdds
-
-namespace fastdds {
 namespace dds {
 
 class DomainParticipant;

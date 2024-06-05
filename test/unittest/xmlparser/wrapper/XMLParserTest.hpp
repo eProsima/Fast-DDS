@@ -21,7 +21,6 @@
 
 using namespace eprosima::fastdds;
 using namespace eprosima::fastdds::dds;
-using namespace eprosima::fastdds;
 using namespace eprosima::fastdds::rtps;
 
 using eprosima::fastdds::xmlparser::XMLP_ret;

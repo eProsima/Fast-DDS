@@ -81,13 +81,6 @@
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
-
-using UDPv4TransportDescriptor = fastdds::rtps::UDPv4TransportDescriptor;
-using TCPTransportDescriptor = fastdds::rtps::TCPTransportDescriptor;
-using SharedMemTransportDescriptor = fastdds::rtps::SharedMemTransportDescriptor;
-using BuiltinTransports = fastdds::rtps::BuiltinTransports;
-using BaseReader = fastdds::rtps::BaseReader;
-
 /**
  * Parse the environment variable specifying the transports to instantiate and optional configuration options
  * if the transport selected is LARGE_DATA.

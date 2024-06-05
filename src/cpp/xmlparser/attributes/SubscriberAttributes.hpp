@@ -46,19 +46,19 @@ public:
     dds::ReaderQos qos;
 
     //! Times for a RELIABLE Reader
-    fastdds::rtps::ReaderTimes times;
+    rtps::ReaderTimes times;
 
     //! Unicast locator list
-    fastdds::rtps::LocatorList_t unicastLocatorList;
+    rtps::LocatorList_t unicastLocatorList;
 
     //! Multicast locator list
-    fastdds::rtps::LocatorList_t multicastLocatorList;
+    rtps::LocatorList_t multicastLocatorList;
 
     //! Remote locator list
-    fastdds::rtps::LocatorList_t remoteLocatorList;
+    rtps::LocatorList_t remoteLocatorList;
 
     //! The collection of external locators to use for communication.
-    fastdds::rtps::ExternalLocators external_unicast_locators;
+    rtps::ExternalLocators external_unicast_locators;
 
     //! Whether locators that don't match with the announced locators should be kept.
     bool ignore_non_matching_locators = false;
@@ -67,11 +67,11 @@ public:
     bool expects_inline_qos = false;
 
     //! Underlying History memory policy
-    fastdds::rtps::MemoryManagementPolicy_t historyMemoryPolicy =
-            fastdds::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+    rtps::MemoryManagementPolicy_t historyMemoryPolicy =
+            rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 
     //! Properties
-    fastdds::rtps::PropertyPolicy properties;
+    rtps::PropertyPolicy properties;
 
     //! Matched publishers allocation limits
     fastdds::ResourceLimitedContainerConfig matched_publisher_allocation;
