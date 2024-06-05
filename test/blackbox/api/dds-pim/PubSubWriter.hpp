@@ -281,6 +281,7 @@ public:
 
     typedef TypeSupport type_support;
     typedef typename type_support::type type;
+    typedef typename TypeTraits::DataListType datalist_type;
 
     PubSubWriter(
             const std::string& topic_name)
@@ -495,7 +496,7 @@ public:
     }
 
     void send(
-            std::list<typename TypeTraits::DataListType>& msgs,
+            std::list<datalist_type>& msgs,
             uint32_t milliseconds = 0)
     {
         auto it = msgs.begin();

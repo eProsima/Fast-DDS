@@ -306,6 +306,7 @@ public:
 
     typedef TypeSupport type_support;
     typedef typename type_support::type type;
+    typedef typename TypeTraits::DataListType datalist_type;
 
     PubSubWriterReader(
             const std::string& topic_name)
@@ -540,7 +541,7 @@ public:
     }
 
     void send(
-            std::list<typename TypeTraits::DataListType>& msgs)
+            std::list<datalist_type>& msgs)
     {
         auto it = msgs.begin();
 
@@ -564,14 +565,14 @@ public:
         }
     }
 
-    std::list<typename TypeTraits::DataListType> data_not_received()
+    std::list<datalist_type> data_not_received()
     {
         std::unique_lock<std::mutex> lock(mutex_);
         return total_msgs_;
     }
 
     void startReception(
-            std::list<typename TypeTraits::DataListType>& msgs)
+            std::list<datalist_type>& msgs)
     {
         mutex_.lock();
         total_msgs_ = msgs;
@@ -928,7 +929,7 @@ private:
                 if (info.instance_state == eprosima::fastdds::dds::ALIVE_INSTANCE_STATE)
                 {
                     auto it = std::find_if(total_msgs_.begin(), total_msgs_.end(),
-                                    [&](const typename TypeTraits::DataListType& elem)
+                                    [&](const datalist_type& elem)
                                     {
                                         return TypeTraits::compare_data(elem, *data);
                                     });
@@ -1020,7 +1021,7 @@ private:
 
     std::string topic_name_;
     bool initialized_;
-    std::list<typename TypeTraits::DataListType> total_msgs_;
+    std::list<datalist_type> total_msgs_;
     std::mutex mutex_;
     std::condition_variable cv_;
     std::mutex mutexDiscovery_;

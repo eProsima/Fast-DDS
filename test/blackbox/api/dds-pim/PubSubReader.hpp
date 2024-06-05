@@ -82,6 +82,7 @@ public:
 
     typedef TypeSupport type_support;
     typedef typename type_support::type type;
+    typedef typename TypeTraits::DataListType datalist_type;
 
 protected:
 
@@ -529,14 +530,14 @@ public:
         initialized_ = false;
     }
 
-    std::list<typename TypeTraits::DataListType> data_not_received()
+    std::list<datalist_type> data_not_received()
     {
         std::unique_lock<std::mutex> lock(mutex_);
         return total_msgs_;
     }
 
     eprosima::fastrtps::rtps::SequenceNumber_t startReception(
-            const std::list<typename TypeTraits::DataListType>& msgs)
+            const std::list<datalist_type>& msgs)
     {
         mutex_.lock();
         total_msgs_ = msgs;
@@ -672,7 +673,7 @@ public:
                 if (info_seq[n].valid_data)
                 {
                     auto it = std::find_if(expected_messages.begin(), expected_messages.end(),
-                                    [&](const typename TypeTraits::DataListType& elem)
+                                    [&](const datalist_type& elem)
                                     {
                                         return TypeTraits::compare_data(data_seq[n], elem);
                                     });
@@ -1940,7 +1941,7 @@ protected:
                 if (!total_msgs_.empty())
                 {
                     auto it = std::find_if(total_msgs_.begin(), total_msgs_.end(),
-                                    [&](const typename TypeTraits::DataListType& elem)
+                                    [&](const datalist_type& elem)
                                     {
                                         return TypeTraits::compare_data(*data, elem);
                                     });
@@ -2004,7 +2005,7 @@ protected:
                     if (!total_msgs_.empty())
                     {
                         auto it = std::find_if(total_msgs_.begin(), total_msgs_.end(),
-                                        [&data](const typename TypeTraits::DataListType& elem)
+                                        [&data](const datalist_type& elem)
                                         {
                                             return TypeTraits::compare_data(data, elem);
                                         });
@@ -2104,7 +2105,7 @@ protected:
     eprosima::fastrtps::rtps::GUID_t participant_guid_;
     eprosima::fastrtps::rtps::GUID_t datareader_guid_;
     bool initialized_;
-    std::list<typename TypeTraits::DataListType> total_msgs_;
+    std::list<datalist_type> total_msgs_;
     std::mutex mutex_;
     std::condition_variable cv_;
     std::mutex mutexDiscovery_;
