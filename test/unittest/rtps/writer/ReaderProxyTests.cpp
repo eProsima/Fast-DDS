@@ -15,9 +15,8 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include <fastdds/rtps/writer/ReaderProxy.h>
-
 #include <rtps/messages/RTPSGapBuilder.hpp>
+#include <rtps/writer/ReaderProxy.h>
 #include <rtps/writer/StatefulWriter.hpp>
 
 //using namespace eprosima::fastrtps::rtps;
