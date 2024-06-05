@@ -89,42 +89,13 @@ public:
         release();
     }
 
-    /**
-     * @brief Copy constructor for LoanableSequence.
-     *
-     * @param[in] other The other LoanableSequence to copy from.
-     */
+    /// Deleted copy constructor for LoanableSequence.
     LoanableSequence(
-            const LoanableSequence& other)
-    {
-        *this = other;
-    }
+            const LoanableSequence& other) = delete;
 
-    /**
-     * @brief Copy assignment operator for LoanableSequence.
-     *
-     * @param[in] other The other LoanableSequence to assign from.
-     *
-     * @return A reference to this LoanableSequence.
-     */
+    /// Deleted copy assignment operator for LoanableSequence.
     LoanableSequence& operator =(
-            const LoanableSequence& other)
-    {
-        if (!has_ownership_)
-        {
-            release();
-        }
-
-        LoanableCollection::length(other.length());
-        const element_type* other_buf = other.buffer();
-        for (size_type n = 0; n < length_; ++n)
-        {
-            *static_cast<fastrtps::types::DynamicData*>(elements_[n]) =
-                    *static_cast<const fastrtps::types::DynamicData*>(other_buf[n]);
-        }
-
-        return *this;
-    }
+            const LoanableSequence& other) = delete;
 
     /**
      * @brief Move constructor for LoanableSequence.
