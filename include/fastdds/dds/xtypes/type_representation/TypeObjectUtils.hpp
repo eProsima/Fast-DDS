@@ -249,7 +249,7 @@ public:
      *
      * @tparam array Either a SBoundSeq or LBoundSeq.
      * @tparam element Either a SBound or LBound.
-     * @param[in out] array_bound_seq Sequence with the array bounds.
+     * @param[in,out] array_bound_seq Sequence with the array bounds.
      * @param[in] dimension_bound Dimension bound to be added into the sequence.
      */
     template<typename element>
@@ -716,7 +716,7 @@ public:
     /**
      * @brief Add AppliedAnnotationParameter to the sequence.
      *
-     * @param[in out] param_seq AppliedAnnotationParameter sequence to be modified.
+     * @param[in,out] param_seq AppliedAnnotationParameter sequence to be modified.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the parameter being added has
      *            already been included in the sequence.
      * @param[in] param AppliedAnnotationParameter to be added.
@@ -745,7 +745,7 @@ public:
     /**
      * @brief Add AppliedAnnotation to the sequence.
      *
-     * @param[in out] ann_custom_seq AppliedAnnotation sequence to be modified.
+     * @param[in,out] ann_custom_seq AppliedAnnotation sequence to be modified.
      * @param[in] ann_custom AppliedAnnotation to be added.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if:
      *              1. Given AppliedAnnotation is not consistent (only in Debug build mode).
@@ -837,7 +837,7 @@ public:
     /**
      * @brief Add CompleteStructMember to the sequence.
      *
-     * @param[in out] member_seq CompleteStructMember sequence to be modified.
+     * @param[in,out] member_seq CompleteStructMember sequence to be modified.
      * @param[in] member CompleteStructMember to be added.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if:
      *              1. Given CompleteStructMember is not consistent (only in Debug build mode).
@@ -928,7 +928,7 @@ public:
     /**
      * @brief Add label to the union case label sequence.
      *
-     * @param[in out] label_seq Sequence to be modified.
+     * @param[in,out] label_seq Sequence to be modified.
      * @param[in] label Label to be added.
      */
     FASTDDS_EXPORTED_API static void add_union_case_label(
@@ -970,7 +970,7 @@ public:
     /**
      * @brief Add CompleteUnionMember to sequence.
      *
-     * @param[in out] complete_union_member_seq Sequence to be modified.
+     * @param[in,out] complete_union_member_seq Sequence to be modified.
      * @param[in] member Complete union member to be added.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if:
      *              1. Given CompleteUnionMember is not consistent (only in Debug build mode).
@@ -1105,7 +1105,7 @@ public:
     /**
      * @brief Add CompleteAnnotationParameter to sequence.
      *
-     * @param[in out] sequence Sequence to be modified.
+     * @param[in,out] sequence Sequence to be modified.
      * @param[in] param Complete annotation parameter to be added.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if:
      *              1. Given CompleteAnnotationParameter is not consistent (only in Debug build mode).
@@ -1438,7 +1438,7 @@ public:
      * @brief Add CompleteEnumeratedLiteral to sequence.
      *
      * @param[in] sequence Sequence to be modified.
-     * @param[in out] enum_literal CompleteEnumeratedLiteral to be added.
+     * @param[in,out] enum_literal CompleteEnumeratedLiteral to be added.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if:
      *              1. Given CommonEnumeratedLiteral is not consistent (only in Debug build mode).
      *              2. There is already another literal in the sequence with the same value or the same member name
@@ -1545,7 +1545,7 @@ public:
     /**
      * @brief Add complete bitflag to the sequence.
      *
-     * @param[in out] sequence Sequence to be modified.
+     * @param[in,out] sequence Sequence to be modified.
      * @param[in] bitflag CompleteBitflag to be added.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if:
      *              1. Given bitflag is inconsistent (only in Debug build mode).
@@ -1626,7 +1626,7 @@ public:
     /**
      * @brief Add complete bitfield to the sequence.
      *
-     * @param[in out] sequence Sequence to be modified.
+     * @param[in,out] sequence Sequence to be modified.
      * @param[in] bitfield CompleteBitfield to be added.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if:
      *              1. Given bitfield is inconsistent (only in Debug build mode).
@@ -1898,7 +1898,7 @@ protected:
     /**
      * @brief Set the try construct behavior in a given MemberFlag
      *
-     * @param[in out] member_flag Bitmask to be set.
+     * @param[in,out] member_flag Bitmask to be set.
      * @param[in] try_construct_kind TryConstructKind.
      */
     static void set_try_construct_behavior(
@@ -1908,7 +1908,7 @@ protected:
     /**
      * @brief Set the TypeFlag object.
      *
-     * @param[in out] type_flag Bitmask to be set.
+     * @param[in,out] type_flag Bitmask to be set.
      * @param[in] extensibility_kind ExtensibilityKind
      * @param[in] nested nested annotation value.
      * @param[in] autoid_hash autoid annotation has HASH value.
@@ -1922,7 +1922,7 @@ protected:
     /**
      * @brief Set the extensibility kind in a given TypeFlag.
      *
-     * @param[in out] type_flag Bitmask to be set.
+     * @param[in,out] type_flag Bitmask to be set.
      * @param[in] extensibility_kind ExtensibilityKind.
      */
     static void set_extensibility_kind(
