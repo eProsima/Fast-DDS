@@ -2458,10 +2458,12 @@ XMLP_ret XMLParser::fillDataNode(
         else if (strcmp(name, FLOW_CONTROLLER_DESCRIPTOR_LIST) == 0)
         {
             // flow_controller_descriptors
-             if (XMLP_ret::XML_OK != getXMLFlowControllerDescriptorList(p_aux0, participant_node.get()->rtps.flow_controllers, ident))
-             {
+            if (XMLP_ret::XML_OK !=
+                    getXMLFlowControllerDescriptorList(p_aux0,
+                    participant_node.get()->rtps.flow_controllers, ident))
+            {
                 return XMLP_ret::XML_ERROR;
-             }
+            }
         }
         else if (strcmp(name, USER_TRANS) == 0)
         {

@@ -1076,7 +1076,8 @@ XMLP_ret XMLParser::getXMLFlowControllerDescriptorList(
                         FIFO, fastdds::rtps::FlowControllerSchedulerPolicy::FIFO,
                         HIGH_PRIORITY, fastdds::rtps::FlowControllerSchedulerPolicy::HIGH_PRIORITY,
                         ROUND_ROBIN, fastdds::rtps::FlowControllerSchedulerPolicy::ROUND_ROBIN,
-                        PRIORITY_WITH_RESERVATION, fastdds::rtps::FlowControllerSchedulerPolicy::PRIORITY_WITH_RESERVATION))
+                        PRIORITY_WITH_RESERVATION,
+                        fastdds::rtps::FlowControllerSchedulerPolicy::PRIORITY_WITH_RESERVATION))
                 {
                     EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << SCHEDULER << "' with bad content");
                     return XMLP_ret::XML_ERROR;
