@@ -1934,8 +1934,8 @@ public:
      * @brief If one of the @ref TypeIdentifier in @ref TypeIdentifierPair is minimal, returns its reference.
      *
      * @param[in] type_ids @ref TypeIdentifierPair used to retrieve the @ref TypeIdentifier.
-     * @param[out] bool Returns if there was an error.
-     * @return Reference to the minimal @TypeIdentifier.
+     * @param[out] ec Returns if there was an error.
+     * @return Reference to the minimal @ref TypeIdentifier.
      */
     FASTDDS_EXPORTED_API static const TypeIdentifier& retrieve_minimal_type_identifier(
             const TypeIdentifierPair& type_ids,
@@ -1945,8 +1945,8 @@ public:
      * @brief If one of the @ref TypeIdentifier in @ref TypeIdentifierPair is complete, returns its reference.
      *
      * @param[in] type_ids @ref TypeIdentifierPair used to retrieve the @ref TypeIdentifier.
-     * @param[out] bool Returns if there was an error.
-     * @return Reference to the complete @TypeIdentifier.
+     * @param[out] ec Returns if there was an error.
+     * @return Reference to the complete @ref TypeIdentifier.
      */
     FASTDDS_EXPORTED_API static const TypeIdentifier& retrieve_complete_type_identifier(
             const TypeIdentifierPair& type_ids,
