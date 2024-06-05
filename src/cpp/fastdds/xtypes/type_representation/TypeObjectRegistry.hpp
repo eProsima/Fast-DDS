@@ -193,7 +193,7 @@ public:
      * @brief Get the type dependencies of the given direct hash type identifiers.
      *
      * @param[in] type_identifiers Sequence with the queried direct hash TypeIdentifiers.
-     * @param[in out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
+     * @param[in,out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
      * @return ReturnCode_t RETCODE_OK if the operation is successful.
      *                      RETCODE_NO_DATA if any given TypeIdentifier is unknown to the registry.
      *                      RETCODE_BAD_PARAMETER if any given TypeIdentifier is not a direct hash.
@@ -281,7 +281,7 @@ public:
      * @brief Get the type dependencies of the given TypeObject.
      *
      * @param[in] type_object TypeObject queried for its dependencies.
-     * @param[in out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
+     * @param[in,out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
      * @return ReturnCode_t RETCODE_OK if the operation is successful.
      *                      RETCODE_NO_DATA if any dependent TypeIdentifier is unknown to the registry.
      *                      RETCODE_BAD_PARAMETER if any given TypeIdentifier is not a direct hash.
@@ -313,7 +313,7 @@ protected:
      * @brief Get the type dependencies of the given type identifiers.
      *
      * @param[in] type_identifiers Sequence with the queried TypeIdentifiers.
-     * @param[in out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
+     * @param[in,out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
      * @return ReturnCode_t RETCODE_OK if the operation is successful.
      *                      RETCODE_NO_DATA if any given TypeIdentifier is unknown to the registry.
      *                      RETCODE_BAD_PARAMETER if any given TypeIdentifier is fully descriptive.
@@ -326,7 +326,7 @@ protected:
      * @brief Add type dependency to the sequence.
      *
      * @param[in] type_id TypeIdentifier to be added.
-     * @param[in out] type_dependencies TypeIdentfierWithSize sequence.
+     * @param[in,out] type_dependencies TypeIdentfierWithSize sequence.
      */
     void add_dependency(
             const TypeIdentifier& type_id,
@@ -336,7 +336,7 @@ protected:
      * @brief Get the type dependencies of custom annotations.
      *
      * @param[in] custom_annotation_seq Sequence of custom annotations.
-     * @param[in out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
+     * @param[in,out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
      * @return ReturnCode_t RETCODE_OK if the operation is successful.
      *                      RETCODE_NO_DATA if any dependent TypeIdentifier is unknown to the registry.
      */
@@ -349,7 +349,7 @@ protected:
      *
      * @tparam T Either PlainSequenceSElemDefn, PlainSequenceLElemDefn, PlainArraySElemDefn or PlainArrayLElemDefn.
      * @param[in] collection_type Plain collection Type.
-     * @param[in out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
+     * @param[in,out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
      * @return ReturnCode_t RETCODE_OK if the operation is successful.
      *                      RETCODE_NO_DATA if any dependent TypeIdentifier is unknown to the registry.
      *                      RETCODE_BAD_PARAMETER if the collection type is fully descriptive.
@@ -384,7 +384,7 @@ protected:
      *
      * @tparam T Either PlainMapSTypeDefn or PlainMapLTypeDefn.
      * @param[in] map_type Plain map Type.
-     * @param[in out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
+     * @param[in,out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
      * @return ReturnCode_t RETCODE_OK if the operation is successful.
      *                      RETCODE_NO_DATA if any dependent TypeIdentifier is unknown to the registry.
      *                      RETCODE_BAD_PARAMETER if both the key and the elements types are fully descriptive.
@@ -425,7 +425,7 @@ protected:
      *
      * @tparam T Either a CompleteAliasType or MinimalAliasType.
      * @param[in] alias_type Alias Type.
-     * @param[in out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
+     * @param[in,out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
      * @return ReturnCode_t RETCODE_OK if the operation is successful.
      *                      RETCODE_NO_DATA if any dependent TypeIdentifier is unknown to the registry.
      */
@@ -459,7 +459,7 @@ protected:
      *
      * @tparam T Either a CompleteAnnotationType or MinimalAnnotationType.
      * @param[in] annotation_type Annotation Type.
-     * @param[in out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
+     * @param[in,out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
      * @return ReturnCode_t RETCODE_OK if the operation is successful.
      *                      RETCODE_NO_DATA if any dependent TypeIdentifier is unknown to the registry.
      */
@@ -492,7 +492,7 @@ protected:
      *
      * @tparam T Either a CompleteStructType or MinimalStructType.
      * @param[in] struct_type Structure Type.
-     * @param[in out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
+     * @param[in,out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
      * @return ReturnCode_t RETCODE_OK if the operation is successful.
      *                      RETCODE_NO_DATA if any dependent TypeIdentifier is unknown to the registry.
      */
@@ -533,7 +533,7 @@ protected:
      *
      * @tparam T Either a CompleteUnionType or MinimalUnionType.
      * @param[in] union_type Union Type.
-     * @param[in out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
+     * @param[in,out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
      * @return ReturnCode_t RETCODE_OK if the operation is successful.
      *                      RETCODE_NO_DATA if any dependent TypeIdentifier is unknown to the registry.
      */
@@ -576,7 +576,7 @@ protected:
      *
      * @tparam T Either a CompleteSequenceType/MinimalSequenceType/CompleteArrayType/MinimalArrayType.
      * @param[in] collection_type Sequence or Array Type.
-     * @param[in out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
+     * @param[in,out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
      * @return ReturnCode_t RETCODE_OK if the operation is successful.
      *                      RETCODE_NO_DATA if any dependent TypeIdentifier is unknown to the registry.
      */
@@ -610,7 +610,7 @@ protected:
      *
      * @tparam T Either a CompleteMapType or MinimalmapType.
      * @param[in] map_type Map Type.
-     * @param[in out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
+     * @param[in,out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
      * @return ReturnCode_t RETCODE_OK if the operation is successful.
      *                      RETCODE_NO_DATA if any dependent TypeIdentifier is unknown to the registry.
      */
