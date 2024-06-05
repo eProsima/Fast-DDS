@@ -30,10 +30,13 @@
 #include <vector>
 
 #include <asio.hpp>
+
 #include <gtest/gtest.h>
+
 #if _MSC_VER
 #include <Windows.h>
 #endif // _MSC_VER
+
 #include <fastdds/dds/core/condition/GuardCondition.hpp>
 #include <fastdds/dds/core/condition/StatusCondition.hpp>
 #include <fastdds/dds/core/condition/WaitSet.hpp>
