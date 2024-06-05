@@ -20,26 +20,23 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <fastdds/rtps/attributes/WriterAttributes.h>
-#include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
-
-#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
-
-#include <fastdds/rtps/common/Types.h>
-#include <fastdds/rtps/common/Locator.h>
-#include <fastdds/rtps/common/SequenceNumber.h>
-#include <fastdds/rtps/common/CacheChange.h>
-#include <fastdds/rtps/common/FragmentNumber.h>
-
-#include <fastdds/rtps/writer/ChangeForReader.h>
-#include <fastdds/rtps/writer/ReaderLocator.h>
-
-#include <fastdds/utils/collections/ResourceLimitedVector.hpp>
-
 #include <algorithm>
+#include <atomic>
 #include <mutex>
 #include <set>
-#include <atomic>
+
+#include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
+#include <fastdds/rtps/attributes/WriterAttributes.h>
+#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
+#include <fastdds/rtps/common/CacheChange.h>
+#include <fastdds/rtps/common/FragmentNumber.h>
+#include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/SequenceNumber.h>
+#include <fastdds/rtps/common/Types.h>
+#include <fastdds/utils/collections/ResourceLimitedVector.hpp>
+
+#include <rtps/writer/ChangeForReader.h>
+#include <rtps/writer/ReaderLocator.h>
 
 namespace eprosima {
 namespace fastrtps {
