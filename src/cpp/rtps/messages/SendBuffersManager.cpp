@@ -64,7 +64,8 @@ void SendBuffersManager::init(
         common_buffer_.assign(data_size, 0);
 
         // Network buffer configuration
-        ResourceLimitedContainerConfig nb_config(num_network_buffers_, std::numeric_limits<size_t>::max dummy_avoid_winmax (), inc_network_buffers_);
+        ResourceLimitedContainerConfig nb_config(num_network_buffers_,
+                std::numeric_limits<size_t>::max dummy_avoid_winmax (), inc_network_buffers_);
 
         octet* raw_buffer = common_buffer_.data();
         while (n_created_ < pool_.capacity())

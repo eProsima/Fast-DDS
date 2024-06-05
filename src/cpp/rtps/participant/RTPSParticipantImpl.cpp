@@ -707,7 +707,8 @@ void RTPSParticipantImpl::setup_output_traffic()
     }
 
     // Create buffer pool
-    send_buffers_.reset(new SendBuffersManager(num_send_buffers, allow_growing_buffers, num_network_buffers, inc_network_buffers));
+    send_buffers_.reset(new SendBuffersManager(num_send_buffers, allow_growing_buffers, num_network_buffers,
+            inc_network_buffers));
     send_buffers_->init(this);
 
     // Initialize flow controller factory.

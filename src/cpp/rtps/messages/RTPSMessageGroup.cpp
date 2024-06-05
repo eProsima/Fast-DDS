@@ -934,12 +934,12 @@ bool RTPSMessageGroup::create_gap_submessage(
 }
 
 void RTPSMessageGroup::get_payload(
-            CacheChange_t& change)
-    {
-        payloads_to_send_->emplace_back();
-        // Get payload to avoid returning it to the pool before sending
-        change.serializedPayload.payload_owner_->get_payload(change.serializedPayload, payloads_to_send_->back());
-    }
+        CacheChange_t& change)
+{
+    payloads_to_send_->emplace_back();
+    // Get payload to avoid returning it to the pool before sending
+    change.serializedPayload.payload_owner_->get_payload(change.serializedPayload, payloads_to_send_->back());
+}
 
 #ifdef FASTDDS_STATISTICS
 void RTPSMessageGroup::add_stats_submsg()
