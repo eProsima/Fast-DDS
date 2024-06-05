@@ -133,7 +133,7 @@ public:
     virtual void disconnect() = 0;
 
     virtual uint32_t read(
-            fastrtps::rtps::octet* buffer,
+            fastdds::rtps::octet* buffer,
             std::size_t size,
             asio::error_code& ec) = 0;
 
@@ -149,9 +149,9 @@ public:
      * @return The number of bytes actually sent.
      */
     size_t send(
-            const fastrtps::rtps::octet* header,
+            const fastdds::rtps::octet* header,
             size_t header_size,
-            const fastrtps::rtps::octet* data,
+            const fastdds::rtps::octet* data,
             uint32_t data_size,
             asio::error_code& ec)
     {
@@ -173,7 +173,7 @@ public:
      * @return The number of bytes actually sent.
      */
     virtual size_t send(
-            const fastrtps::rtps::octet* header,
+            const fastdds::rtps::octet* header,
             size_t header_size,
             const std::vector<NetworkBuffer>& buffers,
             uint32_t total_bytes,

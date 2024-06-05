@@ -40,22 +40,22 @@ class SubscriberAttributes
 public:
 
     //! Topic Attributes
-    fastrtps::TopicAttributes topic;
+    fastdds::TopicAttributes topic;
 
     //! Reader QOs.
     dds::ReaderQos qos;
 
     //! Times for a RELIABLE Reader
-    fastrtps::rtps::ReaderTimes times;
+    fastdds::rtps::ReaderTimes times;
 
     //! Unicast locator list
-    fastrtps::rtps::LocatorList_t unicastLocatorList;
+    fastdds::rtps::LocatorList_t unicastLocatorList;
 
     //! Multicast locator list
-    fastrtps::rtps::LocatorList_t multicastLocatorList;
+    fastdds::rtps::LocatorList_t multicastLocatorList;
 
     //! Remote locator list
-    fastrtps::rtps::LocatorList_t remoteLocatorList;
+    fastdds::rtps::LocatorList_t remoteLocatorList;
 
     //! The collection of external locators to use for communication.
     fastdds::rtps::ExternalLocators external_unicast_locators;
@@ -67,14 +67,14 @@ public:
     bool expects_inline_qos = false;
 
     //! Underlying History memory policy
-    fastrtps::rtps::MemoryManagementPolicy_t historyMemoryPolicy =
-            fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+    fastdds::rtps::MemoryManagementPolicy_t historyMemoryPolicy =
+            fastdds::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 
     //! Properties
-    fastrtps::rtps::PropertyPolicy properties;
+    fastdds::rtps::PropertyPolicy properties;
 
     //! Matched publishers allocation limits
-    fastrtps::ResourceLimitedContainerConfig matched_publisher_allocation;
+    fastdds::ResourceLimitedContainerConfig matched_publisher_allocation;
 
     SubscriberAttributes() = default;
 

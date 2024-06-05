@@ -38,7 +38,7 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-using namespace fastrtps::rtps;
+using namespace fastdds::rtps;
 
 bool EDPClient::processLocalReaderProxyData(
         RTPSReader* local_reader,
@@ -133,7 +133,7 @@ bool EDPClient::removeLocalWriter(
         if (change != nullptr)
         {
             {
-                std::lock_guard<fastrtps::RecursiveTimedMutex> guard(*writer->second->getMutex());
+                std::lock_guard<fastdds::RecursiveTimedMutex> guard(*writer->second->getMutex());
                 for (auto ch = writer->second->changesBegin(); ch != writer->second->changesEnd(); ++ch)
                 {
                     if ((*ch)->instanceHandle == change->instanceHandle)
@@ -186,7 +186,7 @@ bool EDPClient::removeLocalReader(
         if (change != nullptr)
         {
             {
-                std::lock_guard<fastrtps::RecursiveTimedMutex> guard(*writer->second->getMutex());
+                std::lock_guard<fastdds::RecursiveTimedMutex> guard(*writer->second->getMutex());
                 for (auto ch = writer->second->changesBegin(); ch != writer->second->changesEnd(); ++ch)
                 {
                     if ((*ch)->instanceHandle == change->instanceHandle)

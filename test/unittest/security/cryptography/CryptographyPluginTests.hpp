@@ -34,18 +34,18 @@ class CryptographyPluginTest : public ::testing::Test
 protected:
 
     // Mock the handles to avoid cast issues
-    using SharedSecretHandle = eprosima::fastrtps::rtps::security::MockAuthenticationPlugin::SharedSecretHandle;
-    using PKIIdentityHandle = eprosima::fastrtps::rtps::security::MockAuthenticationPlugin::PKIIdentityHandle;
+    using SharedSecretHandle = eprosima::fastdds::rtps::security::MockAuthenticationPlugin::SharedSecretHandle;
+    using PKIIdentityHandle = eprosima::fastdds::rtps::security::MockAuthenticationPlugin::PKIIdentityHandle;
     using AccessPermissionsHandle =
-            eprosima::fastrtps::rtps::security::MockAccessControlPlugin::AccessPermissionsHandle;
+            eprosima::fastdds::rtps::security::MockAccessControlPlugin::AccessPermissionsHandle;
 
     virtual void SetUp()
     {
-        using namespace eprosima::fastrtps::rtps::security;
+        using namespace eprosima::fastdds::rtps::security;
 
-        eprosima::fastrtps::rtps::PropertyPolicy m_propertypolicy;
+        eprosima::fastdds::rtps::PropertyPolicy m_propertypolicy;
 
-        CryptoPlugin = new eprosima::fastrtps::rtps::security::AESGCMGMAC();
+        CryptoPlugin = new eprosima::fastdds::rtps::security::AESGCMGMAC();
 
         // Delegate SharedSecret creation to an actual implementation
         ON_CALL(auth_plugin, get_shared_secret)
@@ -94,14 +94,14 @@ public:
     {
     }
 
-    eprosima::fastrtps::rtps::security::AESGCMGMAC* CryptoPlugin;
-    ::testing::NiceMock<eprosima::fastrtps::rtps::security::MockAuthenticationPlugin> auth_plugin;
-    ::testing::NiceMock<eprosima::fastrtps::rtps::security::MockAccessControlPlugin> access_plugin;
+    eprosima::fastdds::rtps::security::AESGCMGMAC* CryptoPlugin;
+    ::testing::NiceMock<eprosima::fastdds::rtps::security::MockAuthenticationPlugin> auth_plugin;
+    ::testing::NiceMock<eprosima::fastdds::rtps::security::MockAccessControlPlugin> access_plugin;
 };
 
 TEST_F(CryptographyPluginTest, factory_CreateLocalParticipantHandle)
 {
-    using namespace eprosima::fastrtps::rtps::security;
+    using namespace eprosima::fastdds::rtps::security;
 
     SecurityException exception;
 
@@ -111,7 +111,7 @@ TEST_F(CryptographyPluginTest, factory_CreateLocalParticipantHandle)
     AccessPermissionsHandle& perm_handle =
             AccessPermissionsHandle::narrow(*access_plugin.get_permissions_handle(exception));
 
-    eprosima::fastrtps::rtps::PropertySeq prop_handle;
+    eprosima::fastdds::rtps::PropertySeq prop_handle;
     ParticipantSecurityAttributes part_sec_attr;
 
     part_sec_attr.is_rtps_protected = true;
@@ -195,7 +195,7 @@ TEST_F(CryptographyPluginTest, factory_CreateLocalParticipantHandle)
 
 TEST_F(CryptographyPluginTest, factory_RegisterRemoteParticipant)
 {
-    using namespace eprosima::fastrtps::rtps::security;
+    using namespace eprosima::fastdds::rtps::security;
 
     SecurityException exception;
 
@@ -205,7 +205,7 @@ TEST_F(CryptographyPluginTest, factory_RegisterRemoteParticipant)
     AccessPermissionsHandle& perm_handle =
             AccessPermissionsHandle::narrow(*access_plugin.get_permissions_handle(exception));
 
-    eprosima::fastrtps::rtps::PropertySeq prop_handle;
+    eprosima::fastdds::rtps::PropertySeq prop_handle;
     ParticipantSecurityAttributes part_sec_attr;
 
     std::shared_ptr<SecretHandle> secret =
@@ -289,7 +289,7 @@ TEST_F(CryptographyPluginTest, factory_RegisterRemoteParticipant)
 
 TEST_F(CryptographyPluginTest, exchange_CDRSerializenDeserialize){
 
-    using namespace eprosima::fastrtps::rtps::security;
+    using namespace eprosima::fastdds::rtps::security;
 
     SecurityException exception;
 
@@ -299,7 +299,7 @@ TEST_F(CryptographyPluginTest, exchange_CDRSerializenDeserialize){
     AccessPermissionsHandle& perm_handle =
             AccessPermissionsHandle::narrow(*access_plugin.get_permissions_handle(exception));
 
-    eprosima::fastrtps::rtps::PropertySeq prop_handle;
+    eprosima::fastdds::rtps::PropertySeq prop_handle;
     ParticipantSecurityAttributes part_sec_attr;
 
     part_sec_attr.is_rtps_protected = true;
@@ -335,7 +335,7 @@ TEST_F(CryptographyPluginTest, exchange_CDRSerializenDeserialize){
 
 TEST_F(CryptographyPluginTest, exchange_ParticipantCryptoTokens)
 {
-    using namespace eprosima::fastrtps::rtps::security;
+    using namespace eprosima::fastdds::rtps::security;
 
     SecurityException exception;
 
@@ -345,7 +345,7 @@ TEST_F(CryptographyPluginTest, exchange_ParticipantCryptoTokens)
     AccessPermissionsHandle& perm_handle =
             AccessPermissionsHandle::narrow(*access_plugin.get_permissions_handle(exception));
 
-    eprosima::fastrtps::rtps::PropertySeq prop_handle;
+    eprosima::fastdds::rtps::PropertySeq prop_handle;
     ParticipantSecurityAttributes part_sec_attr;
 
     std::shared_ptr<SecretHandle> secret =
@@ -446,7 +446,7 @@ TEST_F(CryptographyPluginTest, exchange_ParticipantCryptoTokens)
 
 TEST_F(CryptographyPluginTest, transform_RTPSMessage)
 {
-    using namespace eprosima::fastrtps::rtps::security;
+    using namespace eprosima::fastdds::rtps::security;
 
     SecurityException exception;
 
@@ -456,7 +456,7 @@ TEST_F(CryptographyPluginTest, transform_RTPSMessage)
     AccessPermissionsHandle& perm_handle =
             AccessPermissionsHandle::narrow(*access_plugin.get_permissions_handle(exception));
 
-    eprosima::fastrtps::rtps::PropertySeq prop_handle;
+    eprosima::fastdds::rtps::PropertySeq prop_handle;
     ParticipantSecurityAttributes part_sec_attr;
 
     std::shared_ptr<SecretHandle> secret =
@@ -523,9 +523,9 @@ TEST_F(CryptographyPluginTest, transform_RTPSMessage)
             ParticipantA_CryptoTokens, exception);
 
     //Perform sample message exchange
-    eprosima::fastrtps::rtps::CDRMessage_t plain_rtps_message(RTPSMESSAGE_DEFAULT_SIZE);
-    eprosima::fastrtps::rtps::CDRMessage_t encoded_rtps_message(RTPSMESSAGE_DEFAULT_SIZE);
-    eprosima::fastrtps::rtps::CDRMessage_t decoded_rtps_message(RTPSMESSAGE_DEFAULT_SIZE);
+    eprosima::fastdds::rtps::CDRMessage_t plain_rtps_message(RTPSMESSAGE_DEFAULT_SIZE);
+    eprosima::fastdds::rtps::CDRMessage_t encoded_rtps_message(RTPSMESSAGE_DEFAULT_SIZE);
+    eprosima::fastdds::rtps::CDRMessage_t decoded_rtps_message(RTPSMESSAGE_DEFAULT_SIZE);
 
     char message[] = "RPTSMessage"; //Length 11
     memcpy(plain_rtps_message.buffer, message, 11);
@@ -578,11 +578,11 @@ TEST_F(CryptographyPluginTest, transform_RTPSMessage)
 
     //Now lets do the same with 128GCM
     //Fill prop_handle with info about the new mode we want
-    eprosima::fastrtps::rtps::Property prop1;
+    eprosima::fastdds::rtps::Property prop1;
     prop1.name("dds.sec.crypto.keysize");
     prop1.value("128");
     prop_handle.push_back(prop1);
-    eprosima::fastrtps::rtps::Property prop2;
+    eprosima::fastdds::rtps::Property prop2;
     prop2.name("dds.sec.crypto.maxblockspersession");
     prop2.value("16");
     prop_handle.push_back(prop2);
@@ -644,7 +644,7 @@ TEST_F(CryptographyPluginTest, transform_RTPSMessage)
 
 TEST_F(CryptographyPluginTest, factory_CreateLocalWriterHandle)
 {
-    using namespace eprosima::fastrtps::rtps::security;
+    using namespace eprosima::fastdds::rtps::security;
 
     SecurityException exception;
 
@@ -654,7 +654,7 @@ TEST_F(CryptographyPluginTest, factory_CreateLocalWriterHandle)
     AccessPermissionsHandle& perm_handle =
             AccessPermissionsHandle::narrow(*access_plugin.get_permissions_handle(exception));
 
-    eprosima::fastrtps::rtps::PropertySeq prop_handle;
+    eprosima::fastdds::rtps::PropertySeq prop_handle;
     ParticipantSecurityAttributes part_sec_attr;
 
     EndpointSecurityAttributes sec_attrs;
@@ -722,7 +722,7 @@ TEST_F(CryptographyPluginTest, factory_CreateLocalWriterHandle)
 
 TEST_F(CryptographyPluginTest, factory_CreateLocalReaderHandle)
 {
-    using namespace eprosima::fastrtps::rtps::security;
+    using namespace eprosima::fastdds::rtps::security;
 
     SecurityException exception;
 
@@ -732,7 +732,7 @@ TEST_F(CryptographyPluginTest, factory_CreateLocalReaderHandle)
     AccessPermissionsHandle& perm_handle =
             AccessPermissionsHandle::narrow(*access_plugin.get_permissions_handle(exception));
 
-    eprosima::fastrtps::rtps::PropertySeq prop_handle;
+    eprosima::fastdds::rtps::PropertySeq prop_handle;
     ParticipantSecurityAttributes part_sec_attr;
 
     EndpointSecurityAttributes sec_attrs;
@@ -800,7 +800,7 @@ TEST_F(CryptographyPluginTest, factory_CreateLocalReaderHandle)
 
 TEST_F(CryptographyPluginTest, factory_RegisterRemoteReaderWriter)
 {
-    using namespace eprosima::fastrtps::rtps::security;
+    using namespace eprosima::fastdds::rtps::security;
 
     SecurityException exception;
 
@@ -810,7 +810,7 @@ TEST_F(CryptographyPluginTest, factory_RegisterRemoteReaderWriter)
     AccessPermissionsHandle& perm_handle =
             AccessPermissionsHandle::narrow(*access_plugin.get_permissions_handle(exception));
 
-    eprosima::fastrtps::rtps::PropertySeq prop_handle;
+    eprosima::fastdds::rtps::PropertySeq prop_handle;
     ParticipantSecurityAttributes part_sec_attr;
 
     EndpointSecurityAttributes sec_attrs;
@@ -903,7 +903,7 @@ TEST_F(CryptographyPluginTest, factory_RegisterRemoteReaderWriter)
 
 TEST_F(CryptographyPluginTest, exchange_ReaderWriterCryptoTokens)
 {
-    using namespace eprosima::fastrtps::rtps::security;
+    using namespace eprosima::fastdds::rtps::security;
 
     // Participant A owns Writer
     // Participant B owns Reader
@@ -916,7 +916,7 @@ TEST_F(CryptographyPluginTest, exchange_ReaderWriterCryptoTokens)
     AccessPermissionsHandle& perm_handle =
             AccessPermissionsHandle::narrow(*access_plugin.get_permissions_handle(exception));
 
-    eprosima::fastrtps::rtps::PropertySeq prop_handle;
+    eprosima::fastdds::rtps::PropertySeq prop_handle;
     ParticipantSecurityAttributes part_sec_attr;
 
     EndpointSecurityAttributes sec_attrs;
@@ -1054,7 +1054,7 @@ TEST_F(CryptographyPluginTest, exchange_ReaderWriterCryptoTokens)
 
 TEST_F(CryptographyPluginTest, transform_SerializedPayload)
 {
-    using namespace eprosima::fastrtps::rtps::security;
+    using namespace eprosima::fastdds::rtps::security;
 
     // Participant A owns Writer
     // Participant B owns Reader
@@ -1067,7 +1067,7 @@ TEST_F(CryptographyPluginTest, transform_SerializedPayload)
     AccessPermissionsHandle& perm_handle =
             AccessPermissionsHandle::narrow(*access_plugin.get_permissions_handle(exception));
 
-    eprosima::fastrtps::rtps::PropertySeq prop_handle;
+    eprosima::fastdds::rtps::PropertySeq prop_handle;
     ParticipantSecurityAttributes part_sec_attr;
 
     EndpointSecurityAttributes sec_attrs;
@@ -1169,10 +1169,10 @@ TEST_F(CryptographyPluginTest, transform_SerializedPayload)
             exception);
 
     //Perform sample message exchange
-    eprosima::fastrtps::rtps::SerializedPayload_t plain_payload(18); // Message will have 18 length.
-    eprosima::fastrtps::rtps::SerializedPayload_t encoded_payload(100);
+    eprosima::fastdds::rtps::SerializedPayload_t plain_payload(18); // Message will have 18 length.
+    eprosima::fastdds::rtps::SerializedPayload_t encoded_payload(100);
     // Message will have 18 length + cipher block size.
-    eprosima::fastrtps::rtps::SerializedPayload_t decoded_payload(18 + 32);
+    eprosima::fastdds::rtps::SerializedPayload_t decoded_payload(18 + 32);
 
     char message[] = "My goose is cooked"; //Length 18
     memcpy(plain_payload.data, message, 18);
@@ -1205,11 +1205,11 @@ TEST_F(CryptographyPluginTest, transform_SerializedPayload)
     CryptoPlugin->keyfactory()->unregister_participant(ParticipantB_remote, exception);
 
     //Lets do it with the 128 version
-    eprosima::fastrtps::rtps::Property prop1;
+    eprosima::fastdds::rtps::Property prop1;
     prop1.name("dds.sec.crypto.keysize");
     prop1.value("128");
     prop_handle.push_back(prop1);
-    eprosima::fastrtps::rtps::Property prop2;
+    eprosima::fastdds::rtps::Property prop2;
     prop2.name("dds.sec.crypto.maxblockspersession");
     prop2.value("16");
     prop_handle.push_back(prop2);
@@ -1286,7 +1286,7 @@ TEST_F(CryptographyPluginTest, transform_SerializedPayload)
 
 TEST_F(CryptographyPluginTest, transform_Writer_Submesage)
 {
-    using namespace eprosima::fastrtps::rtps::security;
+    using namespace eprosima::fastdds::rtps::security;
 
     SecurityException exception;
 
@@ -1296,7 +1296,7 @@ TEST_F(CryptographyPluginTest, transform_Writer_Submesage)
     AccessPermissionsHandle& perm_handle =
             AccessPermissionsHandle::narrow(*access_plugin.get_permissions_handle(exception));
 
-    eprosima::fastrtps::rtps::PropertySeq prop_handle;
+    eprosima::fastdds::rtps::PropertySeq prop_handle;
     ParticipantSecurityAttributes part_sec_attr;
 
     EndpointSecurityAttributes sec_attrs;
@@ -1431,11 +1431,11 @@ TEST_F(CryptographyPluginTest, transform_Writer_Submesage)
     CryptoPlugin->keyfactory()->unregister_participant(ParticipantB_remote, exception);
 
     //Test the GCM128 version
-    eprosima::fastrtps::rtps::Property prop1;
+    eprosima::fastdds::rtps::Property prop1;
     prop1.name("dds.sec.crypto.keysize");
     prop1.value("128");
     prop_handle.push_back(prop1);
-    eprosima::fastrtps::rtps::Property prop2;
+    eprosima::fastdds::rtps::Property prop2;
     prop2.name("dds.sec.crypto.maxblockspersession");
     prop2.value("16");
     prop_handle.push_back(prop2);
@@ -1519,7 +1519,7 @@ TEST_F(CryptographyPluginTest, transform_Writer_Submesage)
 
 TEST_F(CryptographyPluginTest, transform_Reader_Submessage)
 {
-    using namespace eprosima::fastrtps::rtps::security;
+    using namespace eprosima::fastdds::rtps::security;
 
     SecurityException exception;
 
@@ -1529,7 +1529,7 @@ TEST_F(CryptographyPluginTest, transform_Reader_Submessage)
     AccessPermissionsHandle& perm_handle =
             AccessPermissionsHandle::narrow(*access_plugin.get_permissions_handle(exception));
 
-    eprosima::fastrtps::rtps::PropertySeq prop_handle;
+    eprosima::fastdds::rtps::PropertySeq prop_handle;
     ParticipantSecurityAttributes part_sec_attr;
 
     EndpointSecurityAttributes sec_attrs;
@@ -1663,11 +1663,11 @@ TEST_F(CryptographyPluginTest, transform_Reader_Submessage)
     CryptoPlugin->keyfactory()->unregister_participant(ParticipantB_remote, exception);
 
     //Test the GCM128 version
-    eprosima::fastrtps::rtps::Property prop1;
+    eprosima::fastdds::rtps::Property prop1;
     prop1.name("dds.sec.crypto.keysize");
     prop1.value("128");
     prop_handle.push_back(prop1);
-    eprosima::fastrtps::rtps::Property prop2;
+    eprosima::fastdds::rtps::Property prop2;
     prop2.name("dds.sec.crypto.maxblockspersession");
     prop2.value("16");
     prop_handle.push_back(prop2);
@@ -1752,7 +1752,7 @@ TEST_F(CryptographyPluginTest, transform_Reader_Submessage)
 
 TEST_F(CryptographyPluginTest, transform_preprocess_secure_submessage)
 {
-    using namespace eprosima::fastrtps::rtps::security;
+    using namespace eprosima::fastdds::rtps::security;
 
     SecurityException exception;
 
@@ -1762,7 +1762,7 @@ TEST_F(CryptographyPluginTest, transform_preprocess_secure_submessage)
     AccessPermissionsHandle& perm_handle =
             AccessPermissionsHandle::narrow(*access_plugin.get_permissions_handle(exception));
 
-    eprosima::fastrtps::rtps::PropertySeq prop_handle;
+    eprosima::fastdds::rtps::PropertySeq prop_handle;
     ParticipantSecurityAttributes part_sec_attr;
 
     EndpointSecurityAttributes sec_attrs;
@@ -1880,9 +1880,9 @@ TEST_F(CryptographyPluginTest, transform_preprocess_secure_submessage)
     ASSERT_TRUE( P_B->Readers.size() == 1);
 
     //Perform sample message exchange
-    eprosima::fastrtps::rtps::CDRMessage_t plain_payload(RTPSMESSAGE_DEFAULT_SIZE);
-    eprosima::fastrtps::rtps::CDRMessage_t encoded_datareader_payload(RTPSMESSAGE_DEFAULT_SIZE);
-    eprosima::fastrtps::rtps::CDRMessage_t encoded_datawriter_payload(RTPSMESSAGE_DEFAULT_SIZE);
+    eprosima::fastdds::rtps::CDRMessage_t plain_payload(RTPSMESSAGE_DEFAULT_SIZE);
+    eprosima::fastdds::rtps::CDRMessage_t encoded_datareader_payload(RTPSMESSAGE_DEFAULT_SIZE);
+    eprosima::fastdds::rtps::CDRMessage_t encoded_datawriter_payload(RTPSMESSAGE_DEFAULT_SIZE);
 
     char message[] = "My goose is cooked"; //Length 18
     memcpy(plain_payload.buffer, message, 18);

@@ -40,9 +40,9 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-using ProtocolVersion_t = fastrtps::rtps::ProtocolVersion_t;
+using ProtocolVersion_t = fastdds::rtps::ProtocolVersion_t;
 using VendorId_t = fastdds::rtps::VendorId_t;
-using SerializedPayload_t = fastrtps::rtps::SerializedPayload_t;
+using SerializedPayload_t = fastdds::rtps::SerializedPayload_t;
 
 static void operator <<(
         eprosima::fastcdr::Cdr& scdr,
@@ -101,7 +101,7 @@ static void operator >>(
 }
 
 ConnectionRequest_t::ConnectionRequest_t()
-    : m_vendorId(fastrtps::rtps::c_VendorId_eProsima)
+    : m_vendorId(fastdds::rtps::c_VendorId_eProsima)
 {
 }
 

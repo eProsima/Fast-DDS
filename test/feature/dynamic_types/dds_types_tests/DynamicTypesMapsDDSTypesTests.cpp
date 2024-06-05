@@ -1250,13 +1250,13 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortOctet)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    const std::unordered_map<int16_t, fastrtps::rtps::octet> value {
-        {std::int16_t(100), fastrtps::rtps::octet(1)},
-        {std::int16_t(-100), fastrtps::rtps::octet(2)},
-        {std::int16_t(50), fastrtps::rtps::octet(100)},
-        {std::int16_t(-50), fastrtps::rtps::octet(200)}
+    const std::unordered_map<int16_t, fastdds::rtps::octet> value {
+        {std::int16_t(100), fastdds::rtps::octet(1)},
+        {std::int16_t(-100), fastdds::rtps::octet(2)},
+        {std::int16_t(50), fastdds::rtps::octet(100)},
+        {std::int16_t(-50), fastdds::rtps::octet(200)}
     };
-    fastrtps::rtps::octet test_value;
+    fastdds::rtps::octet test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_short_octet_map));
     ASSERT_TRUE(map_data);
     // Set values
@@ -2349,12 +2349,12 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerBitsetHelper)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    const std::unordered_map<int16_t, std::tuple<eprosima::fastrtps::rtps::octet, bool, uint16_t, int16_t>> value {
-        {std::int16_t(-100), {eprosima::fastrtps::rtps::octet(5), true, std::uint16_t(1000), std::int16_t(2000)}},
-        {std::int16_t(50), {eprosima::fastrtps::rtps::octet(7), false, std::uint16_t(555), std::int16_t(20)}},
-        {std::int16_t(600), {eprosima::fastrtps::rtps::octet(0), true, std::uint16_t(0), std::int16_t(0)}}
+    const std::unordered_map<int16_t, std::tuple<eprosima::fastdds::rtps::octet, bool, uint16_t, int16_t>> value {
+        {std::int16_t(-100), {eprosima::fastdds::rtps::octet(5), true, std::uint16_t(1000), std::int16_t(2000)}},
+        {std::int16_t(50), {eprosima::fastdds::rtps::octet(7), false, std::uint16_t(555), std::int16_t(20)}},
+        {std::int16_t(600), {eprosima::fastdds::rtps::octet(0), true, std::uint16_t(0), std::int16_t(0)}}
     };
-    eprosima::fastrtps::rtps::octet test_value1;
+    eprosima::fastdds::rtps::octet test_value1;
     bool test_value2;
     uint16_t test_value3;
     int16_t test_value4;
@@ -3144,13 +3144,13 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortOctet)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    const std::unordered_map<uint16_t, fastrtps::rtps::octet> value {
-        {std::uint16_t(100), fastrtps::rtps::octet(1)},
-        {std::uint16_t(200), fastrtps::rtps::octet(2)},
-        {std::uint16_t(50), fastrtps::rtps::octet(100)},
-        {std::uint16_t(70), fastrtps::rtps::octet(200)}
+    const std::unordered_map<uint16_t, fastdds::rtps::octet> value {
+        {std::uint16_t(100), fastdds::rtps::octet(1)},
+        {std::uint16_t(200), fastdds::rtps::octet(2)},
+        {std::uint16_t(50), fastdds::rtps::octet(100)},
+        {std::uint16_t(70), fastdds::rtps::octet(200)}
     };
-    fastrtps::rtps::octet test_value;
+    fastdds::rtps::octet test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_ushort_octet_map));
     ASSERT_TRUE(map_data);
     // Set values
@@ -4244,12 +4244,12 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerBitsetHelper)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    const std::unordered_map<uint16_t, std::tuple<eprosima::fastrtps::rtps::octet, bool, uint16_t, int16_t>> value {
-        {std::uint16_t(100), {eprosima::fastrtps::rtps::octet(5), true, std::uint16_t(1000), std::int16_t(2000)}},
-        {std::uint16_t(50), {eprosima::fastrtps::rtps::octet(7), false, std::uint16_t(555), std::int16_t(20)}},
-        {std::uint16_t(600), {eprosima::fastrtps::rtps::octet(0), true, std::uint16_t(0), std::int16_t(0)}}
+    const std::unordered_map<uint16_t, std::tuple<eprosima::fastdds::rtps::octet, bool, uint16_t, int16_t>> value {
+        {std::uint16_t(100), {eprosima::fastdds::rtps::octet(5), true, std::uint16_t(1000), std::int16_t(2000)}},
+        {std::uint16_t(50), {eprosima::fastdds::rtps::octet(7), false, std::uint16_t(555), std::int16_t(20)}},
+        {std::uint16_t(600), {eprosima::fastdds::rtps::octet(0), true, std::uint16_t(0), std::int16_t(0)}}
     };
-    eprosima::fastrtps::rtps::octet test_value1;
+    eprosima::fastdds::rtps::octet test_value1;
     bool test_value2;
     uint16_t test_value3;
     int16_t test_value4;
@@ -5039,13 +5039,13 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongOctet)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    const std::unordered_map<int32_t, fastrtps::rtps::octet> value {
-        {-100, fastrtps::rtps::octet(1)},
-        {200, fastrtps::rtps::octet(2)},
-        {-50, fastrtps::rtps::octet(100)},
-        {70, fastrtps::rtps::octet(200)}
+    const std::unordered_map<int32_t, fastdds::rtps::octet> value {
+        {-100, fastdds::rtps::octet(1)},
+        {200, fastdds::rtps::octet(2)},
+        {-50, fastdds::rtps::octet(100)},
+        {70, fastdds::rtps::octet(200)}
     };
-    fastrtps::rtps::octet test_value;
+    fastdds::rtps::octet test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_long_octet_map));
     ASSERT_TRUE(map_data);
     // Set values
@@ -6138,12 +6138,12 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerBitsetHelper)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    const std::unordered_map<int32_t, std::tuple<eprosima::fastrtps::rtps::octet, bool, uint16_t, int16_t>> value {
-        {-100, {eprosima::fastrtps::rtps::octet(5), true, std::uint16_t(1000), std::int16_t(2000)}},
-        {50, {eprosima::fastrtps::rtps::octet(7), false, std::uint16_t(555), std::int16_t(20)}},
-        {600, {eprosima::fastrtps::rtps::octet(0), true, std::uint16_t(0), std::int16_t(0)}}
+    const std::unordered_map<int32_t, std::tuple<eprosima::fastdds::rtps::octet, bool, uint16_t, int16_t>> value {
+        {-100, {eprosima::fastdds::rtps::octet(5), true, std::uint16_t(1000), std::int16_t(2000)}},
+        {50, {eprosima::fastdds::rtps::octet(7), false, std::uint16_t(555), std::int16_t(20)}},
+        {600, {eprosima::fastdds::rtps::octet(0), true, std::uint16_t(0), std::int16_t(0)}}
     };
-    eprosima::fastrtps::rtps::octet test_value1;
+    eprosima::fastdds::rtps::octet test_value1;
     bool test_value2;
     uint16_t test_value3;
     int16_t test_value4;
@@ -6933,13 +6933,13 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongOctet)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    const std::unordered_map<uint32_t, fastrtps::rtps::octet> value {
-        {100u, fastrtps::rtps::octet(1)},
-        {200u, fastrtps::rtps::octet(2)},
-        {50u, fastrtps::rtps::octet(100)},
-        {70u, fastrtps::rtps::octet(200)}
+    const std::unordered_map<uint32_t, fastdds::rtps::octet> value {
+        {100u, fastdds::rtps::octet(1)},
+        {200u, fastdds::rtps::octet(2)},
+        {50u, fastdds::rtps::octet(100)},
+        {70u, fastdds::rtps::octet(200)}
     };
-    fastrtps::rtps::octet test_value;
+    fastdds::rtps::octet test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_ulong_octet_map));
     ASSERT_TRUE(map_data);
     // Set values
@@ -8032,12 +8032,12 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerBitsetHelper)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    const std::unordered_map<uint32_t, std::tuple<eprosima::fastrtps::rtps::octet, bool, uint16_t, int16_t>> value {
-        {100u, {eprosima::fastrtps::rtps::octet(5), true, std::uint16_t(1000), std::int16_t(2000)}},
-        {50u, {eprosima::fastrtps::rtps::octet(7), false, std::uint16_t(555), std::int16_t(20)}},
-        {600u, {eprosima::fastrtps::rtps::octet(0), true, std::uint16_t(0), std::int16_t(0)}}
+    const std::unordered_map<uint32_t, std::tuple<eprosima::fastdds::rtps::octet, bool, uint16_t, int16_t>> value {
+        {100u, {eprosima::fastdds::rtps::octet(5), true, std::uint16_t(1000), std::int16_t(2000)}},
+        {50u, {eprosima::fastdds::rtps::octet(7), false, std::uint16_t(555), std::int16_t(20)}},
+        {600u, {eprosima::fastdds::rtps::octet(0), true, std::uint16_t(0), std::int16_t(0)}}
     };
-    eprosima::fastrtps::rtps::octet test_value1;
+    eprosima::fastdds::rtps::octet test_value1;
     bool test_value2;
     uint16_t test_value3;
     int16_t test_value4;
@@ -8827,13 +8827,13 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongOctet)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    const std::unordered_map<int64_t, fastrtps::rtps::octet> value {
-        {-100, fastrtps::rtps::octet(1)},
-        {200, fastrtps::rtps::octet(2)},
-        {-50, fastrtps::rtps::octet(100)},
-        {70, fastrtps::rtps::octet(200)}
+    const std::unordered_map<int64_t, fastdds::rtps::octet> value {
+        {-100, fastdds::rtps::octet(1)},
+        {200, fastdds::rtps::octet(2)},
+        {-50, fastdds::rtps::octet(100)},
+        {70, fastdds::rtps::octet(200)}
     };
-    fastrtps::rtps::octet test_value;
+    fastdds::rtps::octet test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_longlong_octet_map));
     ASSERT_TRUE(map_data);
     // Set values
@@ -9926,12 +9926,12 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerBitsetHelper)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    const std::unordered_map<int64_t, std::tuple<eprosima::fastrtps::rtps::octet, bool, uint16_t, int16_t>> value {
-        {-100, {eprosima::fastrtps::rtps::octet(5), true, std::uint16_t(1000), std::int16_t(2000)}},
-        {50, {eprosima::fastrtps::rtps::octet(7), false, std::uint16_t(555), std::int16_t(20)}},
-        {600, {eprosima::fastrtps::rtps::octet(0), true, std::uint16_t(0), std::int16_t(0)}}
+    const std::unordered_map<int64_t, std::tuple<eprosima::fastdds::rtps::octet, bool, uint16_t, int16_t>> value {
+        {-100, {eprosima::fastdds::rtps::octet(5), true, std::uint16_t(1000), std::int16_t(2000)}},
+        {50, {eprosima::fastdds::rtps::octet(7), false, std::uint16_t(555), std::int16_t(20)}},
+        {600, {eprosima::fastdds::rtps::octet(0), true, std::uint16_t(0), std::int16_t(0)}}
     };
-    eprosima::fastrtps::rtps::octet test_value1;
+    eprosima::fastdds::rtps::octet test_value1;
     bool test_value2;
     uint16_t test_value3;
     int16_t test_value4;
@@ -10721,13 +10721,13 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongOctet)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    const std::unordered_map<uint64_t, fastrtps::rtps::octet> value {
-        {100u, fastrtps::rtps::octet(1)},
-        {200u, fastrtps::rtps::octet(2)},
-        {50u, fastrtps::rtps::octet(100)},
-        {70u, fastrtps::rtps::octet(200)}
+    const std::unordered_map<uint64_t, fastdds::rtps::octet> value {
+        {100u, fastdds::rtps::octet(1)},
+        {200u, fastdds::rtps::octet(2)},
+        {50u, fastdds::rtps::octet(100)},
+        {70u, fastdds::rtps::octet(200)}
     };
-    fastrtps::rtps::octet test_value;
+    fastdds::rtps::octet test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_ulonglong_octet_map));
     ASSERT_TRUE(map_data);
     // Set values
@@ -11820,12 +11820,12 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerBitsetHelper)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    const std::unordered_map<uint64_t, std::tuple<eprosima::fastrtps::rtps::octet, bool, uint16_t, int16_t>> value {
-        {100u, {eprosima::fastrtps::rtps::octet(5), true, std::uint16_t(1000), std::int16_t(2000)}},
-        {50u, {eprosima::fastrtps::rtps::octet(7), false, std::uint16_t(555), std::int16_t(20)}},
-        {600u, {eprosima::fastrtps::rtps::octet(0), true, std::uint16_t(0), std::int16_t(0)}}
+    const std::unordered_map<uint64_t, std::tuple<eprosima::fastdds::rtps::octet, bool, uint16_t, int16_t>> value {
+        {100u, {eprosima::fastdds::rtps::octet(5), true, std::uint16_t(1000), std::int16_t(2000)}},
+        {50u, {eprosima::fastdds::rtps::octet(7), false, std::uint16_t(555), std::int16_t(20)}},
+        {600u, {eprosima::fastdds::rtps::octet(0), true, std::uint16_t(0), std::int16_t(0)}}
     };
-    eprosima::fastrtps::rtps::octet test_value1;
+    eprosima::fastdds::rtps::octet test_value1;
     bool test_value2;
     uint16_t test_value3;
     int16_t test_value4;
@@ -12616,13 +12616,13 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringOctet)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    const std::unordered_map<std::string, fastrtps::rtps::octet> value {
-        {"we", fastrtps::rtps::octet(1)},
-        {"are", fastrtps::rtps::octet(2)},
-        {"testing", fastrtps::rtps::octet(100)},
-        {"things", fastrtps::rtps::octet(200)}
+    const std::unordered_map<std::string, fastdds::rtps::octet> value {
+        {"we", fastdds::rtps::octet(1)},
+        {"are", fastdds::rtps::octet(2)},
+        {"testing", fastdds::rtps::octet(100)},
+        {"things", fastdds::rtps::octet(200)}
     };
-    fastrtps::rtps::octet test_value;
+    fastdds::rtps::octet test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_string_octet_map));
     ASSERT_TRUE(map_data);
     // Set values
@@ -13718,12 +13718,12 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerBitsetHelper)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    const std::unordered_map<std::string, std::tuple<eprosima::fastrtps::rtps::octet, bool, uint16_t, int16_t>> value {
-        {"we", {eprosima::fastrtps::rtps::octet(5), true, std::uint16_t(1000), std::int16_t(2000)}},
-        {"are", {eprosima::fastrtps::rtps::octet(7), false, std::uint16_t(555), std::int16_t(20)}},
-        {"testing", {eprosima::fastrtps::rtps::octet(0), true, std::uint16_t(0), std::int16_t(0)}}
+    const std::unordered_map<std::string, std::tuple<eprosima::fastdds::rtps::octet, bool, uint16_t, int16_t>> value {
+        {"we", {eprosima::fastdds::rtps::octet(5), true, std::uint16_t(1000), std::int16_t(2000)}},
+        {"are", {eprosima::fastdds::rtps::octet(7), false, std::uint16_t(555), std::int16_t(20)}},
+        {"testing", {eprosima::fastdds::rtps::octet(0), true, std::uint16_t(0), std::int16_t(0)}}
     };
-    eprosima::fastrtps::rtps::octet test_value1;
+    eprosima::fastdds::rtps::octet test_value1;
     bool test_value2;
     uint16_t test_value3;
     int16_t test_value4;
@@ -14505,13 +14505,13 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperOc
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    const std::unordered_map<std::string, fastrtps::rtps::octet> value {
-        {"we", fastrtps::rtps::octet(1)},
-        {"are", fastrtps::rtps::octet(2)},
-        {"testing", fastrtps::rtps::octet(100)},
-        {"things", fastrtps::rtps::octet(200)}
+    const std::unordered_map<std::string, fastdds::rtps::octet> value {
+        {"we", fastdds::rtps::octet(1)},
+        {"are", fastdds::rtps::octet(2)},
+        {"testing", fastdds::rtps::octet(100)},
+        {"things", fastdds::rtps::octet(200)}
     };
-    fastrtps::rtps::octet test_value;
+    fastdds::rtps::octet test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_inneraliasboundedstringhelper_octet_map));
     ASSERT_TRUE(map_data);
     // Set values
@@ -15614,12 +15614,12 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    const std::unordered_map<std::string, std::tuple<eprosima::fastrtps::rtps::octet, bool, uint16_t, int16_t>> value {
-        {"we", {eprosima::fastrtps::rtps::octet(5), true, std::uint16_t(1000), std::int16_t(2000)}},
-        {"are", {eprosima::fastrtps::rtps::octet(7), false, std::uint16_t(555), std::int16_t(20)}},
-        {"testing", {eprosima::fastrtps::rtps::octet(0), true, std::uint16_t(0), std::int16_t(0)}}
+    const std::unordered_map<std::string, std::tuple<eprosima::fastdds::rtps::octet, bool, uint16_t, int16_t>> value {
+        {"we", {eprosima::fastdds::rtps::octet(5), true, std::uint16_t(1000), std::int16_t(2000)}},
+        {"are", {eprosima::fastdds::rtps::octet(7), false, std::uint16_t(555), std::int16_t(20)}},
+        {"testing", {eprosima::fastdds::rtps::octet(0), true, std::uint16_t(0), std::int16_t(0)}}
     };
-    eprosima::fastrtps::rtps::octet test_value1;
+    eprosima::fastdds::rtps::octet test_value1;
     bool test_value2;
     uint16_t test_value3;
     int16_t test_value4;

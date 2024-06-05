@@ -37,7 +37,7 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds::rtps;
 
 PDPServerListener::PDPServerListener(
         PDPServer* in_PDP)

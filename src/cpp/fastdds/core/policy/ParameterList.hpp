@@ -47,7 +47,7 @@ public:
      * @return True if correct.
      */
     static bool writeEncapsulationToCDRMsg(
-            fastrtps::rtps::CDRMessage_t* msg);
+            fastdds::rtps::CDRMessage_t* msg);
 
     /**
      * Update the information of a cache change parsing the inline qos from a CDRMessage
@@ -57,8 +57,8 @@ public:
      * @return true if parsing was correct, false otherwise.
      */
     static bool updateCacheChangeFromInlineQos(
-            fastrtps::rtps::CacheChange_t& change,
-            fastrtps::rtps::CDRMessage_t* msg,
+            fastdds::rtps::CacheChange_t& change,
+            fastdds::rtps::CDRMessage_t* msg,
             uint32_t& qos_size);
 
     /**
@@ -71,7 +71,7 @@ public:
      */
     template<typename Pred>
     static bool readParameterListfromCDRMsg(
-            fastrtps::rtps::CDRMessage_t& msg,
+            fastdds::rtps::CDRMessage_t& msg,
             Pred processor,
             bool use_encapsulation,
             uint32_t& qos_size)
@@ -82,15 +82,15 @@ public:
         {
             // Read encapsulation
             msg.pos += 1;
-            fastrtps::rtps::octet encapsulation = 0;
-            fastrtps::rtps::CDRMessage::readOctet(&msg, &encapsulation);
+            fastdds::rtps::octet encapsulation = 0;
+            fastdds::rtps::CDRMessage::readOctet(&msg, &encapsulation);
             if (encapsulation == PL_CDR_BE)
             {
-                msg.msg_endian = fastrtps::rtps::Endianness_t::BIGEND;
+                msg.msg_endian = fastdds::rtps::Endianness_t::BIGEND;
             }
             else if (encapsulation == PL_CDR_LE)
             {
-                msg.msg_endian = fastrtps::rtps::Endianness_t::LITTLEEND;
+                msg.msg_endian = fastdds::rtps::Endianness_t::LITTLEEND;
             }
             else
             {
@@ -109,8 +109,8 @@ public:
             ParameterId_t pid{PID_SENTINEL};
             uint16_t plength = 0;
             bool valid = true;
-            valid &= fastrtps::rtps::CDRMessage::readUInt16(&msg, (uint16_t*)&pid);
-            valid &= fastrtps::rtps::CDRMessage::readUInt16(&msg, &plength);
+            valid &= fastdds::rtps::CDRMessage::readUInt16(&msg, (uint16_t*)&pid);
+            valid &= fastdds::rtps::CDRMessage::readUInt16(&msg, &plength);
 
             if (pid == PID_SENTINEL)
             {
@@ -147,9 +147,9 @@ public:
      * @return true if a guid is returned, false otherwise.
      */
     static bool read_guid_from_cdr_msg(
-            fastrtps::rtps::CDRMessage_t& msg,
+            fastdds::rtps::CDRMessage_t& msg,
             uint16_t search_pid,
-            fastrtps::rtps::GUID_t& guid);
+            fastdds::rtps::GUID_t& guid);
 
     /**
      * Read change instanceHandle from the KEY_HASH or another specific PID parameter of a CDRMessage
@@ -158,7 +158,7 @@ public:
      * @return True when instanceHandle is updated.
      */
     static bool readInstanceHandleFromCDRMsg(
-            fastrtps::rtps::CacheChange_t* change,
+            fastdds::rtps::CacheChange_t* change,
             const uint16_t search_pid);
 };
 

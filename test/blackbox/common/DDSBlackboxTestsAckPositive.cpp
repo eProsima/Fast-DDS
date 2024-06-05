@@ -51,8 +51,8 @@
 #include "../types/FixedSizedPubSubTypes.h"
 #include "../types/HelloWorldPubSubTypes.h"
 
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds;
+using namespace eprosima::fastdds::rtps;
 using test_UDPv4Transport = eprosima::fastdds::rtps::test_UDPv4Transport;
 using test_UDPv4TransportDescriptor = eprosima::fastdds::rtps::test_UDPv4TransportDescriptor;
 
@@ -84,7 +84,7 @@ TEST(AcknackQos, DDSEnableUpdatabilityOfPositiveAcksPeriodDDSLayer)
     // Check correct initialitation
     eprosima::fastdds::dds::DataWriterQos get_att = writer.get_qos();
     EXPECT_TRUE(get_att.reliable_writer_qos().disable_positive_acks.enabled);
-    EXPECT_EQ(get_att.reliable_writer_qos().disable_positive_acks.duration, eprosima::fastrtps::Duration_t({1, 0}));
+    EXPECT_EQ(get_att.reliable_writer_qos().disable_positive_acks.duration, eprosima::fastdds::Duration_t({1, 0}));
 
     // Wait for discovery.
     writer.wait_discovery();
@@ -115,14 +115,14 @@ TEST(AcknackQos, DDSEnableUpdatabilityOfPositiveAcksPeriodDDSLayer)
     // Update attributes on DDS layer
     eprosima::fastdds::dds::DataWriterQos w_att = writer.get_qos();
     w_att.reliable_writer_qos().disable_positive_acks.enabled = true;
-    w_att.reliable_writer_qos().disable_positive_acks.duration = eprosima::fastrtps::Duration_t({2, 0});
+    w_att.reliable_writer_qos().disable_positive_acks.duration = eprosima::fastdds::Duration_t({2, 0});
 
     EXPECT_TRUE(writer.set_qos(w_att));
 
     // Check that period has been changed in DataWriterQos
     get_att = writer.get_qos();
     EXPECT_TRUE(get_att.reliable_writer_qos().disable_positive_acks.enabled);
-    EXPECT_EQ(get_att.reliable_writer_qos().disable_positive_acks.duration, eprosima::fastrtps::Duration_t({2, 0}));
+    EXPECT_EQ(get_att.reliable_writer_qos().disable_positive_acks.duration, eprosima::fastdds::Duration_t({2, 0}));
 
     data = default_helloworld_data_generator();
 

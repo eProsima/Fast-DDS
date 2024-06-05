@@ -38,7 +38,7 @@
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
 
-using namespace eprosima::fastrtps;
+using namespace eprosima::fastdds;
 using test_UDPv4Transport = eprosima::fastdds::rtps::test_UDPv4Transport;
 using test_UDPv4TransportDescriptor = eprosima::fastdds::rtps::test_UDPv4TransportDescriptor;
 
@@ -157,9 +157,9 @@ TEST_P(DDSDataWriter, GetKeyValue)
 
     // Test variables
     KeyedHelloWorld data;
-    eprosima::fastrtps::rtps::InstanceHandle_t wrong_handle;
+    eprosima::fastdds::rtps::InstanceHandle_t wrong_handle;
     wrong_handle.value[0] = 0xee;
-    eprosima::fastrtps::rtps::InstanceHandle_t valid_handle;
+    eprosima::fastdds::rtps::InstanceHandle_t valid_handle;
     KeyedHelloWorld valid_data;
     valid_data.key(27);
     valid_data.index(1);
@@ -217,7 +217,7 @@ TEST_P(DDSDataWriter, WithTimestampOperations)
     using namespace eprosima::fastdds::dds;
 
     // Test variables
-    eprosima::fastrtps::Time_t ts;
+    eprosima::fastdds::Time_t ts;
 
     KeyedHelloWorld valid_data;
     valid_data.key(27);

@@ -4,7 +4,7 @@
 #include <cstdint>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 enum class DeliveryRetCode : uint32_t
@@ -15,7 +15,7 @@ enum class DeliveryRetCode : uint32_t
 };
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 #endif // _FASTDDS_RTPS_WRITER_DELIVERYRETCODE_HPP_

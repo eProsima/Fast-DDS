@@ -98,12 +98,12 @@ private:
     {
         // Compute the host id
         fastdds::rtps::LocatorList loc;
-        fastrtps::rtps::IPFinder::getIP4Address(&loc);
+        fastdds::rtps::IPFinder::getIP4Address(&loc);
         id_ = compute_id(loc);
 
         // Compute the MAC id
-        std::vector<fastrtps::rtps::IPFinder::info_MAC> macs;
-        if (fastrtps::rtps::IPFinder::getAllMACAddress(&macs) &&
+        std::vector<fastdds::rtps::IPFinder::info_MAC> macs;
+        if (fastdds::rtps::IPFinder::getAllMACAddress(&macs) &&
                 macs.size() > 0)
         {
             MD5 md5;

@@ -31,7 +31,7 @@
 #include <map>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class WriterHistory;
@@ -137,7 +137,7 @@ public:
 
 
 } /* namespace rtps */
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */
 
 #endif /* PERSISTENCESERVICE_H_ */

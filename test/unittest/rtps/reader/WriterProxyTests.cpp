@@ -32,7 +32,7 @@
 #include "../../common/operators.hpp"
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 TEST(WriterProxyTests, MissingChangesUpdate)
@@ -687,7 +687,7 @@ TEST(WriterProxyTests, IrrelevantChangeSet)
 }
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 int main(

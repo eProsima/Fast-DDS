@@ -29,7 +29,7 @@
 #include <memory>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class RTPSWriter;
@@ -150,7 +150,7 @@ protected:
         public:
 
             PayloadNodeMetaData()
-                : status(fastrtps::rtps::ChangeKind_t::ALIVE)
+                : status(fastdds::rtps::ChangeKind_t::ALIVE)
                 , has_been_removed(0)
                 , data_length(0)
                 , sequence_number(c_SequenceNumber_Unknown)
@@ -186,7 +186,7 @@ protected:
             InstanceHandle_t instance_handle;
 
             // Related sample identity for the change
-            fastrtps::rtps::SampleIdentity related_sample_identity;
+            fastdds::rtps::SampleIdentity related_sample_identity;
 
             // Mutex for shared read / exclusive write access to the payload
             sharable_mutex mutex;
@@ -207,12 +207,12 @@ protected:
         {
             // Reset the sequence number first, it signals the data is not valid anymore
             metadata_.sequence_number.store(c_SequenceNumber_Unknown, std::memory_order_relaxed);
-            metadata_.status = fastrtps::rtps::ChangeKind_t::ALIVE;
+            metadata_.status = fastdds::rtps::ChangeKind_t::ALIVE;
             metadata_.has_been_removed = 0;
             metadata_.data_length = 0;
             metadata_.writer_GUID = c_Guid_Unknown;
             metadata_.instance_handle = c_InstanceHandle_Unknown;
-            metadata_.related_sample_identity = fastrtps::rtps::SampleIdentity();
+            metadata_.related_sample_identity = fastdds::rtps::SampleIdentity();
         }
 
         static const PayloadNode* get_from_data(
@@ -321,13 +321,13 @@ protected:
             metadata_.has_been_removed = removed ? 1 : 0;
         }
 
-        fastrtps::rtps::SampleIdentity related_sample_identity() const
+        fastdds::rtps::SampleIdentity related_sample_identity() const
         {
             return metadata_.related_sample_identity;
         }
 
         void related_sample_identity(
-                fastrtps::rtps::SampleIdentity identity)
+                fastdds::rtps::SampleIdentity identity)
         {
             metadata_.related_sample_identity = identity;
         }
@@ -380,7 +380,7 @@ protected:
 
 
 }  // namespace rtps
-}  // namespace fastrtps
+}  // namespace fastdds
 }  // namespace eprosima
 
 #endif  // RTPS_DATASHARING_DATASHARINGPAYLOADPOOL_HPP

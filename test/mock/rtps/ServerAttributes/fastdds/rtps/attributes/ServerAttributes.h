@@ -78,14 +78,14 @@ std::basic_ostream<charT>& operator <<(
 } // namespace rtps
 } // namespace fastdds
 
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 using fastdds::rtps::RemoteServerList_t;
 using fastdds::rtps::ros_super_client_env;
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 #endif /* _FASTDDS_SERVERATTRIBUTES_H_ */

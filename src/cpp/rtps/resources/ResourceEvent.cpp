@@ -27,7 +27,7 @@
 #include <utils/threading.hpp>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 static bool event_compare(
@@ -328,5 +328,5 @@ void ResourceEvent::init_thread(
 }
 
 } /* namespace rtps */
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */

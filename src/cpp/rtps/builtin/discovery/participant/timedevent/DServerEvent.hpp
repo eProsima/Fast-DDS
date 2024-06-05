@@ -34,7 +34,7 @@ class PDPServer;
  * Class DServerRoutineEvent, TimedEvent used to synchronize discover-server servers
  *@ingroup DISCOVERY_MODULE
  */
-class DServerRoutineEvent : public fastrtps::rtps::TimedEvent
+class DServerRoutineEvent : public fastdds::rtps::TimedEvent
 {
 public:
 
@@ -60,7 +60,7 @@ public:
     double server_routine_period_;
 };
 
-class DServerPingEvent : public fastrtps::rtps::TimedEvent
+class DServerPingEvent : public fastdds::rtps::TimedEvent
 {
 public:
 

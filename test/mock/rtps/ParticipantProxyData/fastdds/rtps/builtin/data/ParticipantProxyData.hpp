@@ -30,7 +30,7 @@
 #endif // if HAVE_SECURITY
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class ParticipantProxyData
@@ -78,7 +78,7 @@ public:
 };
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 #endif // _FASTDDS_RTPS_BUILTIN_DATA_PARTICIPANTPROXYDATA_HPP_

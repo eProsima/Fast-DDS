@@ -28,7 +28,7 @@
 #include <rtps/network/ReceiverResource.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class RTPSParticipantAttributes;
@@ -72,7 +72,7 @@ public:
      */
     bool RegisterTransport(
             const fastdds::rtps::TransportDescriptorInterface* descriptor,
-            const fastrtps::rtps::PropertyPolicy* properties = nullptr,
+            const fastdds::rtps::PropertyPolicy* properties = nullptr,
             const uint32_t& max_msg_size_no_frag = 0);
 
     /**
@@ -347,7 +347,7 @@ private:
 };
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 #endif /* _RTPS_NETWORK_NETWORKFACTORY_H_ */

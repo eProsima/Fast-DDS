@@ -22,9 +22,9 @@
 #include "../logging/mock/MockConsumer.h"
 
 using namespace eprosima::fastdds;
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
-using namespace eprosima::fastrtps::xmlparser;
+using namespace eprosima::fastdds;
+using namespace eprosima::fastdds::rtps;
+using namespace eprosima::fastdds::xmlparser;
 
 using namespace ::testing;
 

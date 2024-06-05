@@ -23,7 +23,7 @@
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 
-using eprosima::fastrtps::Duration_t;
+using eprosima::fastdds::Duration_t;
 
 namespace eprosima {
 namespace fastdds {

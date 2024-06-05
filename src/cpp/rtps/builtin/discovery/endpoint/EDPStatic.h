@@ -25,7 +25,7 @@
 
 namespace eprosima {
 
-namespace fastrtps {
+namespace fastdds {
 namespace xmlparser {
 class XMLEndpointParser;
 } // namespace xmlparser

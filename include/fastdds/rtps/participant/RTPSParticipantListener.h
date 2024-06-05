@@ -25,7 +25,7 @@
 #include <fastdds/rtps/writer/WriterDiscoveryInfo.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class RTPSParticipant;
@@ -115,7 +115,7 @@ public:
 };
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 #endif //_FASTDDS_RTPS_PARTICIPANT_RTPSPARTICIPANTLISTENER_H__

@@ -35,13 +35,13 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-using IPLocator = fastrtps::rtps::IPLocator;
-using LocatorSelectorEntry = fastrtps::rtps::LocatorSelectorEntry;
-using LocatorSelector = fastrtps::rtps::LocatorSelector;
-using IPFinder = fastrtps::rtps::IPFinder;
-using octet = fastrtps::rtps::octet;
-using PortParameters = fastrtps::rtps::PortParameters;
-using SenderResource = fastrtps::rtps::SenderResource;
+using IPLocator = fastdds::rtps::IPLocator;
+using LocatorSelectorEntry = fastdds::rtps::LocatorSelectorEntry;
+using LocatorSelector = fastdds::rtps::LocatorSelector;
+using IPFinder = fastdds::rtps::IPFinder;
+using octet = fastdds::rtps::octet;
+using PortParameters = fastdds::rtps::PortParameters;
+using SenderResource = fastdds::rtps::SenderResource;
 using Log = fastdds::dds::Log;
 
 UDPTransportDescriptor::UDPTransportDescriptor()
@@ -120,7 +120,7 @@ bool UDPTransportInterface::DoInputLocatorsMatch(
 }
 
 bool UDPTransportInterface::init(
-        const fastrtps::rtps::PropertyPolicy*,
+        const fastdds::rtps::PropertyPolicy*,
         const uint32_t& max_msg_size_no_frag)
 {
     uint32_t maximumMessageSize = max_msg_size_no_frag == 0 ? s_maximumMessageSize : max_msg_size_no_frag;
@@ -496,13 +496,13 @@ bool UDPTransportInterface::send(
         const std::vector<NetworkBuffer>& buffers,
         uint32_t total_bytes,
         eProsimaUDPSocket& socket,
-        fastrtps::rtps::LocatorsIterator* destination_locators_begin,
-        fastrtps::rtps::LocatorsIterator* destination_locators_end,
+        fastdds::rtps::LocatorsIterator* destination_locators_begin,
+        fastdds::rtps::LocatorsIterator* destination_locators_end,
         bool only_multicast_purpose,
         bool whitelisted,
         const std::chrono::steady_clock::time_point& max_blocking_time_point)
 {
-    fastrtps::rtps::LocatorsIterator& it = *destination_locators_begin;
+    fastdds::rtps::LocatorsIterator& it = *destination_locators_begin;
 
     bool ret = true;
 
@@ -619,7 +619,7 @@ bool UDPTransportInterface::send(
  * @return true when at least one entry was invalidated, false otherwise
  */
 static bool check_and_invalidate(
-        fastrtps::ResourceLimitedVector<LocatorSelectorEntry*>& entries,
+        fastdds::ResourceLimitedVector<LocatorSelectorEntry*>& entries,
         size_t index,
         const Locator& locator)
 {
@@ -647,7 +647,7 @@ static bool check_and_invalidate(
 void UDPTransportInterface::select_locators(
         LocatorSelector& selector) const
 {
-    fastrtps::ResourceLimitedVector<LocatorSelectorEntry*>& entries = selector.transport_starts();
+    fastdds::ResourceLimitedVector<LocatorSelectorEntry*>& entries = selector.transport_starts();
 
     for (size_t i = 0; i < entries.size(); ++i)
     {

@@ -29,7 +29,7 @@
 #include <fastdds/rtps/common/Guid.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class BuiltinProtocols;
@@ -67,7 +67,7 @@ public:
 };
 
 } /* namespace rtps */
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */
 
 #endif /* _FASTDDS_RTPS_WLP_HPP_ */

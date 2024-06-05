@@ -42,7 +42,7 @@
 #include <utils/shared_mutex.hpp>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class RTPSParticipantImpl;
@@ -559,7 +559,7 @@ private:
 
     };
 
-    class ParticipantStatelessMessageListener : public eprosima::fastrtps::rtps::ReaderListener
+    class ParticipantStatelessMessageListener : public eprosima::fastdds::rtps::ReaderListener
     {
     public:
 
@@ -586,7 +586,7 @@ private:
     }
     participant_stateless_message_listener_;
 
-    class ParticipantVolatileMessageListener : public eprosima::fastrtps::rtps::ReaderListener
+    class ParticipantVolatileMessageListener : public eprosima::fastdds::rtps::ReaderListener
     {
     public:
 
@@ -946,7 +946,7 @@ private:
 
 } //namespace security
 } //namespace rtps
-} //namespace fastrtps
+} //namespace fastdds
 } //namespace eprosima
 
 #endif // _RTPS_SECURITY_SECURITYMANAGER_H_

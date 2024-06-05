@@ -51,8 +51,8 @@ bool MemoryTestSubscriber::init(
         bool reliable,
         uint32_t pid,
         bool hostname,
-        const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
-        const eprosima::fastrtps::rtps::PropertyPolicy& property_policy,
+        const eprosima::fastdds::rtps::PropertyPolicy& part_property_policy,
+        const eprosima::fastdds::rtps::PropertyPolicy& property_policy,
         const std::string& sXMLConfigFile,
         uint32_t data_size,
         bool dynamic_types)

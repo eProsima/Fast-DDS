@@ -29,8 +29,8 @@
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/RTPSDomain.h>
 
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds;
+using namespace eprosima::fastdds::rtps;
 
 TestReaderRegistered::TestReaderRegistered()
     : mp_participant(nullptr)
@@ -51,7 +51,7 @@ bool TestReaderRegistered::init()
 {
     //CREATE PARTICIPANT
     RTPSParticipantAttributes PParam;
-    PParam.builtin.discovery_config.discoveryProtocol = eprosima::fastrtps::rtps::DiscoveryProtocol::SIMPLE;
+    PParam.builtin.discovery_config.discoveryProtocol = eprosima::fastdds::rtps::DiscoveryProtocol::SIMPLE;
     PParam.builtin.use_WriterLivelinessProtocol = true;
     mp_participant = RTPSDomain::createParticipant(0, PParam);
     if (mp_participant == nullptr)

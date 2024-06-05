@@ -14,7 +14,7 @@
 
 #include "SecurityException.h"
 
-using namespace eprosima::fastrtps::rtps::security;
+using namespace eprosima::fastdds::rtps::security;
 
 SecurityException::SecurityException(
         const SecurityException& ex)

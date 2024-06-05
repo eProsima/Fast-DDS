@@ -44,7 +44,7 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 
 using std::uint32_t;
 
@@ -615,7 +615,7 @@ private:
 
 };
 
-}   // namespace fastrtps
+}   // namespace fastdds
 }   // namespace eprosima
 
 #endif   // DOXYGEN_SHOULD_SKIP_THIS_PUBLIC

@@ -26,7 +26,7 @@
 #include <cstdint>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 /**
@@ -124,7 +124,7 @@ public:
 };
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 #endif /* _FASTDDS_HISTORYATTRIBUTES_H_ */

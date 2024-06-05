@@ -26,7 +26,7 @@ namespace rtps {
 
 /**
  * TCPv4 Transport configuration.
- * The kind value for TCPv4TransportDescriptor is given by \c eprosima::fastrtps::rtps::LOCATOR_KIND_TCPv4.
+ * The kind value for TCPv4TransportDescriptor is given by \c eprosima::fastdds::rtps::LOCATOR_KIND_TCPv4.
  *
  * - \c wan_addr: Public IP address. Peers on a different LAN will use this IP for communications with this host.
  *
@@ -40,14 +40,14 @@ struct TCPv4TransportDescriptor : public TCPTransportDescriptor
     virtual TransportInterface* create_transport() const override;
 
     //! Public IP address
-    fastrtps::rtps::octet wan_addr[4];
+    fastdds::rtps::octet wan_addr[4];
 
     //! Set the public IP address
     void set_WAN_address(
-            fastrtps::rtps::octet o1,
-            fastrtps::rtps::octet o2,
-            fastrtps::rtps::octet o3,
-            fastrtps::rtps::octet o4)
+            fastdds::rtps::octet o1,
+            fastdds::rtps::octet o2,
+            fastdds::rtps::octet o3,
+            fastdds::rtps::octet o4)
     {
         wan_addr[0] = o1;
         wan_addr[1] = o2;
@@ -63,10 +63,10 @@ struct TCPv4TransportDescriptor : public TCPTransportDescriptor
         int a, b, c, d; //to store the 4 ints
         char ch; //to temporarily store the '.'
         ss >> a >> ch >> b >> ch >> c >> ch >> d;
-        wan_addr[0] = (fastrtps::rtps::octet)a;
-        wan_addr[1] = (fastrtps::rtps::octet)b;
-        wan_addr[2] = (fastrtps::rtps::octet)c;
-        wan_addr[3] = (fastrtps::rtps::octet)d;
+        wan_addr[0] = (fastdds::rtps::octet)a;
+        wan_addr[1] = (fastdds::rtps::octet)b;
+        wan_addr[2] = (fastdds::rtps::octet)c;
+        wan_addr[3] = (fastdds::rtps::octet)d;
     }
 
     //! Get the public IP address

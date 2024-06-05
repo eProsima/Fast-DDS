@@ -86,7 +86,7 @@ bool DataWriter::write(
 
 bool DataWriter::write(
         void* data,
-        fastrtps::rtps::WriteParams& params)
+        fastdds::rtps::WriteParams& params)
 {
     return impl_->write(data, params);
 }
@@ -101,7 +101,7 @@ ReturnCode_t DataWriter::write(
 ReturnCode_t DataWriter::write_w_timestamp(
         void* data,
         const InstanceHandle_t& handle,
-        const fastrtps::Time_t& timestamp)
+        const fastdds::Time_t& timestamp)
 {
     return impl_->write_w_timestamp(data, handle, timestamp);
 }
@@ -114,7 +114,7 @@ InstanceHandle_t DataWriter::register_instance(
 
 InstanceHandle_t DataWriter::register_instance_w_timestamp(
         void* instance,
-        const fastrtps::Time_t& timestamp)
+        const fastdds::Time_t& timestamp)
 {
     return impl_->register_instance_w_timestamp(instance, timestamp);
 }
@@ -129,7 +129,7 @@ ReturnCode_t DataWriter::unregister_instance(
 ReturnCode_t DataWriter::unregister_instance_w_timestamp(
         void* instance,
         const InstanceHandle_t& handle,
-        const fastrtps::Time_t& timestamp)
+        const fastdds::Time_t& timestamp)
 {
     return impl_->unregister_instance_w_timestamp(instance, handle, timestamp);
 }
@@ -159,12 +159,12 @@ ReturnCode_t DataWriter::dispose(
 ReturnCode_t DataWriter::dispose_w_timestamp(
         void* instance,
         const InstanceHandle_t& handle,
-        const fastrtps::Time_t& timestamp)
+        const fastdds::Time_t& timestamp)
 {
     return impl_->unregister_instance_w_timestamp(instance, handle, timestamp, true);
 }
 
-const fastrtps::rtps::GUID_t& DataWriter::guid() const
+const fastdds::rtps::GUID_t& DataWriter::guid() const
 {
     return impl_->guid();
 }
@@ -232,7 +232,7 @@ const Publisher* DataWriter::get_publisher() const
 }
 
 ReturnCode_t DataWriter::wait_for_acknowledgments(
-        const fastrtps::Duration_t& max_wait)
+        const fastdds::Duration_t& max_wait)
 {
     return impl_->wait_for_acknowledgments(max_wait);
 }
@@ -303,7 +303,7 @@ ReturnCode_t DataWriter::get_sending_locators(
 ReturnCode_t DataWriter::wait_for_acknowledgments(
         void* instance,
         const InstanceHandle_t& handle,
-        const fastrtps::Duration_t& max_wait)
+        const fastdds::Duration_t& max_wait)
 {
     return impl_->wait_for_acknowledgments(instance, handle, max_wait);
 }

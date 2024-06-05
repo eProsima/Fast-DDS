@@ -63,7 +63,7 @@ struct ParticipantType
 }  // namespace rtps
 }  // namespace fastdds
 
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 //! PDP subclass choice
@@ -575,7 +575,7 @@ private:
 };
 
 }  // namespace rtps
-}  // namespace fastrtps
+}  // namespace fastdds
 }  // namespace eprosima
 
 #endif  // _FASTDDS_RTPSPARTICIPANTPARAMETERS_H_

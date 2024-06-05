@@ -38,8 +38,8 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-using IPFinder = fastrtps::rtps::IPFinder;
-using IPLocator = fastrtps::rtps::IPLocator;
+using IPFinder = fastdds::rtps::IPFinder;
+using IPLocator = fastdds::rtps::IPLocator;
 using Log = fastdds::dds::Log;
 
 static bool get_ipv4s(

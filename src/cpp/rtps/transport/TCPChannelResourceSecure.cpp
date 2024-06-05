@@ -25,9 +25,9 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-using Locator_t = fastrtps::rtps::Locator_t;
-using IPLocator = fastrtps::rtps::IPLocator;
-using octet = fastrtps::rtps::octet;
+using Locator_t = fastdds::rtps::Locator_t;
+using IPLocator = fastdds::rtps::IPLocator;
+using octet = fastdds::rtps::octet;
 using Log = fastdds::dds::Log;
 
 using namespace asio;

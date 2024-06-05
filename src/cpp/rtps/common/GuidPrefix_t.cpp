@@ -21,7 +21,7 @@
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 bool GuidPrefix_t::is_on_same_host_as(
@@ -47,5 +47,5 @@ bool GuidPrefix_t::is_from_this_process() const
 }
 
 } // namsepace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima

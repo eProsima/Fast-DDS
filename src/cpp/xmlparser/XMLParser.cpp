@@ -46,7 +46,7 @@
 #include <xmlparser/XMLTree.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace xmlparser {
 
 using namespace eprosima::fastdds::xml::detail;
@@ -2832,5 +2832,5 @@ XMLP_ret XMLParser::fillDataNode(
 }
 
 } // namespace xmlparser
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima

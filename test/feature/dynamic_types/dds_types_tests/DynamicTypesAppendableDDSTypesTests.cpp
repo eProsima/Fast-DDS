@@ -475,8 +475,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AppendableOctetStruct)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    eprosima::fastrtps::rtps::octet value = 255;
-    eprosima::fastrtps::rtps::octet test_value = 0;
+    eprosima::fastdds::rtps::octet value = 255;
+    eprosima::fastdds::rtps::octet test_value = 0;
     EXPECT_EQ(data->set_byte_value(data->get_member_id_by_name(var_byte_name), value), RETCODE_OK);
     EXPECT_EQ(data->get_byte_value(test_value, data->get_member_id_by_name(var_byte_name)), RETCODE_OK);
     EXPECT_EQ(value, test_value);

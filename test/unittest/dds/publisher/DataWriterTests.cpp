@@ -45,7 +45,7 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds::rtps;
 using ::testing::_;
 
 class FooType
@@ -96,21 +96,21 @@ public:
 
     bool serialize(
             void* data,
-            eprosima::fastrtps::rtps::SerializedPayload_t* payload) override
+            eprosima::fastdds::rtps::SerializedPayload_t* payload) override
     {
         return serialize(data, payload, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
     }
 
     bool serialize(
             void* /*data*/,
-            fastrtps::rtps::SerializedPayload_t* /*payload*/,
+            fastdds::rtps::SerializedPayload_t* /*payload*/,
             DataRepresentationId_t /*data_representation*/) override
     {
         return true;
     }
 
     bool deserialize(
-            fastrtps::rtps::SerializedPayload_t* /*payload*/,
+            fastdds::rtps::SerializedPayload_t* /*payload*/,
             void* /*data*/) override
     {
         return true;
@@ -144,7 +144,7 @@ public:
 
     bool getKey(
             void* /*data*/,
-            fastrtps::rtps::InstanceHandle_t* /*ihandle*/,
+            fastdds::rtps::InstanceHandle_t* /*ihandle*/,
             bool /*force_md5*/) override
     {
         return true;
@@ -201,21 +201,21 @@ public:
 
     bool serialize(
             void* /*data*/,
-            fastrtps::rtps::SerializedPayload_t* /*payload*/) override
+            fastdds::rtps::SerializedPayload_t* /*payload*/) override
     {
         return true;
     }
 
     bool serialize(
             void* /*data*/,
-            fastrtps::rtps::SerializedPayload_t* /*payload*/,
+            fastdds::rtps::SerializedPayload_t* /*payload*/,
             DataRepresentationId_t /*data_representation*/) override
     {
         return true;
     }
 
     bool deserialize(
-            fastrtps::rtps::SerializedPayload_t* /*payload*/,
+            fastdds::rtps::SerializedPayload_t* /*payload*/,
             void* /*data*/) override
     {
         return true;
@@ -252,7 +252,7 @@ public:
 
     bool getKey(
             void* /*data*/,
-            fastrtps::rtps::InstanceHandle_t* ihandle,
+            fastdds::rtps::InstanceHandle_t* ihandle,
             bool /*force_md5*/) override
     {
         ihandle->value[0] = 1;
@@ -276,21 +276,21 @@ public:
 
     bool serialize(
             void* /*data*/,
-            fastrtps::rtps::SerializedPayload_t* /*payload*/) override
+            fastdds::rtps::SerializedPayload_t* /*payload*/) override
     {
         return true;
     }
 
     bool serialize(
             void* /*data*/,
-            fastrtps::rtps::SerializedPayload_t* /*payload*/,
+            fastdds::rtps::SerializedPayload_t* /*payload*/,
             DataRepresentationId_t /*data_representation*/) override
     {
         return true;
     }
 
     bool deserialize(
-            fastrtps::rtps::SerializedPayload_t* /*payload*/,
+            fastdds::rtps::SerializedPayload_t* /*payload*/,
             void* /*data*/) override
     {
         return true;
@@ -321,7 +321,7 @@ public:
 
     bool getKey(
             void* /*data*/,
-            fastrtps::rtps::InstanceHandle_t* /*ihandle*/,
+            fastdds::rtps::InstanceHandle_t* /*ihandle*/,
             bool /*force_md5*/) override
     {
         return true;
@@ -371,18 +371,18 @@ TEST(DataWriterTests, get_guid)
 
         void on_data_writer_discovery(
                 DomainParticipant*,
-                fastrtps::rtps::WriterDiscoveryInfo&& info,
+                fastdds::rtps::WriterDiscoveryInfo&& info,
                 bool& /*should_be_ignored*/) override
         {
             std::unique_lock<std::mutex> lock(mutex);
-            if (fastrtps::rtps::WriterDiscoveryInfo::DISCOVERED_WRITER == info.status)
+            if (fastdds::rtps::WriterDiscoveryInfo::DISCOVERED_WRITER == info.status)
             {
                 guid = info.info.guid();
                 cv.notify_one();
             }
         }
 
-        fastrtps::rtps::GUID_t guid;
+        fastdds::rtps::GUID_t guid;
         std::mutex mutex;
         std::condition_variable cv;
 
@@ -394,9 +394,9 @@ TEST(DataWriterTests, get_guid)
 
     DomainParticipantQos participant_qos = PARTICIPANT_QOS_DEFAULT;
     participant_qos.wire_protocol().builtin.discovery_config.ignoreParticipantFlags =
-            static_cast<eprosima::fastrtps::rtps::ParticipantFilteringFlags_t>(
-        eprosima::fastrtps::rtps::ParticipantFilteringFlags_t::FILTER_DIFFERENT_HOST |
-        eprosima::fastrtps::rtps::ParticipantFilteringFlags_t::FILTER_DIFFERENT_PROCESS);
+            static_cast<eprosima::fastdds::rtps::ParticipantFilteringFlags_t>(
+        eprosima::fastdds::rtps::ParticipantFilteringFlags_t::FILTER_DIFFERENT_HOST |
+        eprosima::fastdds::rtps::ParticipantFilteringFlags_t::FILTER_DIFFERENT_PROCESS);
 
     DomainParticipant* listener_participant =
             DomainParticipantFactory::get_instance()->create_participant(0, participant_qos,
@@ -423,7 +423,7 @@ TEST(DataWriterTests, get_guid)
     DataWriter* datawriter = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT);
     ASSERT_NE(datawriter, nullptr);
 
-    fastrtps::rtps::GUID_t guid = datawriter->guid();
+    fastdds::rtps::GUID_t guid = datawriter->guid();
 
     participant->enable();
 
@@ -434,7 +434,7 @@ TEST(DataWriterTests, get_guid)
         std::unique_lock<std::mutex> lock(discovery_listener.mutex);
         discovery_listener.cv.wait(lock, [&]()
                 {
-                    return fastrtps::rtps::GUID_t::unknown() != discovery_listener.guid;
+                    return fastdds::rtps::GUID_t::unknown() != discovery_listener.guid;
                 });
     }
     ASSERT_EQ(guid, discovery_listener.guid);
@@ -564,7 +564,7 @@ TEST(DataWriterTests, ForcedDataSharing)
 
     // DataSharing automatic, unbounded topic data type
     qos = DATAWRITER_QOS_DEFAULT;
-    qos.endpoint().history_memory_policy = fastrtps::rtps::PREALLOCATED_MEMORY_MODE;
+    qos.endpoint().history_memory_policy = fastdds::rtps::PREALLOCATED_MEMORY_MODE;
     datawriter = publisher->create_datawriter(topic, qos);
     ASSERT_NE(datawriter, nullptr);
     ASSERT_EQ(publisher->delete_datawriter(datawriter), RETCODE_OK);
@@ -576,7 +576,7 @@ TEST(DataWriterTests, ForcedDataSharing)
 
     // DataSharing enabled, unbounded topic data type
     qos = DATAWRITER_QOS_DEFAULT;
-    qos.endpoint().history_memory_policy = fastrtps::rtps::PREALLOCATED_MEMORY_MODE;
+    qos.endpoint().history_memory_policy = fastdds::rtps::PREALLOCATED_MEMORY_MODE;
     qos.data_sharing().on(".");
     datawriter = publisher->create_datawriter(topic, qos);
     ASSERT_EQ(datawriter, nullptr);
@@ -589,7 +589,7 @@ TEST(DataWriterTests, ForcedDataSharing)
     // DataSharing enabled, bounded topic data type, Dynamic memory policy
     qos = DATAWRITER_QOS_DEFAULT;
     qos.data_sharing().on(".");
-    qos.endpoint().history_memory_policy = fastrtps::rtps::DYNAMIC_RESERVE_MEMORY_MODE;
+    qos.endpoint().history_memory_policy = fastdds::rtps::DYNAMIC_RESERVE_MEMORY_MODE;
     datawriter = publisher->create_datawriter(bounded_topic, qos);
     ASSERT_EQ(datawriter, nullptr);
 
@@ -608,17 +608,17 @@ TEST(DataWriterTests, ForcedDataSharing)
     }
 
 #ifdef HAS_SECURITY
-    fastrtps::rtps::PropertyPolicy security_property;
-    security_property.properties().emplace_back(fastrtps::rtps::Property("dds.sec.auth.plugin",
+    fastdds::rtps::PropertyPolicy security_property;
+    security_property.properties().emplace_back(fastdds::rtps::Property("dds.sec.auth.plugin",
             "builtin.PKI-DH"));
-    security_property.properties().emplace_back(fastrtps::rtps::Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+    security_property.properties().emplace_back(fastdds::rtps::Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
             "file://" + std::string(certs_path) + "/maincacert.pem"));
-    security_property.properties().emplace_back(fastrtps::rtps::Property(
+    security_property.properties().emplace_back(fastdds::rtps::Property(
                 "dds.sec.auth.builtin.PKI-DH.identity_certificate",
                 "file://" + std::string(certs_path) + "/mainsubcert.pem"));
-    security_property.properties().emplace_back(fastrtps::rtps::Property("dds.sec.auth.builtin.PKI-DH.private_key",
+    security_property.properties().emplace_back(fastdds::rtps::Property("dds.sec.auth.builtin.PKI-DH.private_key",
             "file://" + std::string(certs_path) + "/mainsubkey.pem"));
-    security_property.properties().emplace_back(fastrtps::rtps::Property("dds.sec.crypto.plugin",
+    security_property.properties().emplace_back(fastdds::rtps::Property("dds.sec.crypto.plugin",
             "builtin.AES-GCM-GMAC"));
     security_property.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
 
@@ -639,7 +639,7 @@ TEST(DataWriterTests, ForcedDataSharing)
 
     qos = DATAWRITER_QOS_DEFAULT;
     qos.data_sharing().on(".");
-    qos.endpoint().history_memory_policy = fastrtps::rtps::PREALLOCATED_MEMORY_MODE;
+    qos.endpoint().history_memory_policy = fastdds::rtps::PREALLOCATED_MEMORY_MODE;
 
 
     datawriter = publisher->create_datawriter(bounded_topic, qos);
@@ -695,7 +695,7 @@ TEST(DataWriterTests, InvalidQos)
     EXPECT_EQ(inconsistent_code, datawriter->set_qos(qos));
 
     qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    qos.reliable_writer_qos().times.heartbeatPeriod = eprosima::fastrtps::c_TimeInfinite;
+    qos.reliable_writer_qos().times.heartbeatPeriod = eprosima::fastdds::c_TimeInfinite;
     EXPECT_EQ(inconsistent_code, datawriter->set_qos(qos));
 
     qos = DATAWRITER_QOS_DEFAULT;
@@ -709,16 +709,16 @@ TEST(DataWriterTests, InvalidQos)
 
     qos = DATAWRITER_QOS_DEFAULT;
     qos.data_sharing().on("/tmp");
-    qos.endpoint().history_memory_policy = eprosima::fastrtps::rtps::DYNAMIC_RESERVE_MEMORY_MODE;
+    qos.endpoint().history_memory_policy = eprosima::fastdds::rtps::DYNAMIC_RESERVE_MEMORY_MODE;
     EXPECT_EQ(inconsistent_code, datawriter->set_qos(qos));
 
-    qos.endpoint().history_memory_policy = eprosima::fastrtps::rtps::DYNAMIC_REUSABLE_MEMORY_MODE;
+    qos.endpoint().history_memory_policy = eprosima::fastdds::rtps::DYNAMIC_REUSABLE_MEMORY_MODE;
     EXPECT_EQ(inconsistent_code, datawriter->set_qos(qos));
 
-    qos.endpoint().history_memory_policy = eprosima::fastrtps::rtps::PREALLOCATED_MEMORY_MODE;
+    qos.endpoint().history_memory_policy = eprosima::fastdds::rtps::PREALLOCATED_MEMORY_MODE;
     EXPECT_EQ(RETCODE_OK, datawriter->set_qos(qos));
 
-    qos.endpoint().history_memory_policy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+    qos.endpoint().history_memory_policy = eprosima::fastdds::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
     EXPECT_EQ(RETCODE_OK, datawriter->set_qos(qos));
 
     qos = DATAWRITER_QOS_DEFAULT;
@@ -807,7 +807,7 @@ TEST(DataWriterTests, WriteWithTimestamp)
     DataWriter* datawriter = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT);
     ASSERT_NE(datawriter, nullptr);
 
-    eprosima::fastrtps::Time_t ts{ 0, 1 };
+    eprosima::fastdds::Time_t ts{ 0, 1 };
 
     FooType data;
     data.message("HelloWorld");
@@ -816,9 +816,9 @@ TEST(DataWriterTests, WriteWithTimestamp)
     ASSERT_EQ(RETCODE_BAD_PARAMETER, datawriter->write_w_timestamp(nullptr, HANDLE_NIL, ts));
     // 2. Calling write with an invalid timestamps returns RETCODE_BAD_PARAMETER
     EXPECT_EQ(RETCODE_BAD_PARAMETER,
-            datawriter->write_w_timestamp(&data, HANDLE_NIL, fastrtps::c_TimeInfinite));
+            datawriter->write_w_timestamp(&data, HANDLE_NIL, fastdds::c_TimeInfinite));
     EXPECT_EQ(RETCODE_BAD_PARAMETER,
-            datawriter->write_w_timestamp(&data, HANDLE_NIL, fastrtps::c_TimeInvalid));
+            datawriter->write_w_timestamp(&data, HANDLE_NIL, fastdds::c_TimeInvalid));
     // 3. Calling write with a wrong instance handle returns RETCODE_PRECONDITION_NOT_MET
     ASSERT_EQ(RETCODE_PRECONDITION_NOT_MET,
             datawriter->write_w_timestamp(&data, participant->get_instance_handle(), ts));
@@ -1005,7 +1005,7 @@ TEST(DataWriterTests, RegisterInstanceWithTimestamp)
     DataWriter* instance_datawriter;
     create_writers_for_instance_test(datawriter, instance_datawriter);
 
-    eprosima::fastrtps::Time_t ts{ 0, 1 };
+    eprosima::fastdds::Time_t ts{ 0, 1 };
 
     // 1. Calling register_instance_w_timestamp in a disable writer returns HANDLE_NIL
     EXPECT_EQ(HANDLE_NIL, datawriter->register_instance_w_timestamp(&data, ts));
@@ -1020,8 +1020,8 @@ TEST(DataWriterTests, RegisterInstanceWithTimestamp)
     EXPECT_EQ(HANDLE_NIL, instance_datawriter->register_instance_w_timestamp(nullptr, ts));
 
     // 4. Calling register_instance with an invalid timestamps returns HANDLE_NIL
-    EXPECT_EQ(HANDLE_NIL, instance_datawriter->register_instance_w_timestamp(&data, fastrtps::c_TimeInfinite));
-    EXPECT_EQ(HANDLE_NIL, instance_datawriter->register_instance_w_timestamp(&data, fastrtps::c_TimeInvalid));
+    EXPECT_EQ(HANDLE_NIL, instance_datawriter->register_instance_w_timestamp(&data, fastdds::c_TimeInfinite));
+    EXPECT_EQ(HANDLE_NIL, instance_datawriter->register_instance_w_timestamp(&data, fastdds::c_TimeInvalid));
 
     // 5. Calling register_instance with a valid key returns a valid handle
     EXPECT_NE(HANDLE_NIL, instance_datawriter->register_instance_w_timestamp(&data, ts));
@@ -1093,7 +1093,7 @@ TEST(DataWriterTests, UnregisterInstanceWithTimestamp)
     DataWriter* instance_datawriter;
     create_writers_for_instance_test(datawriter, instance_datawriter, &instance_type);
 
-    eprosima::fastrtps::Time_t ts{ 0, 1 };
+    eprosima::fastdds::Time_t ts{ 0, 1 };
 
     // 1. Calling unregister_instance in a disable writer returns RETCODE_NOT_ENABLED
     EXPECT_EQ(RETCODE_NOT_ENABLED, datawriter->unregister_instance_w_timestamp(&data, handle, ts));
@@ -1130,10 +1130,10 @@ TEST(DataWriterTests, UnregisterInstanceWithTimestamp)
 
     // 8. Check invalid timestamps
     ASSERT_EQ(RETCODE_OK, instance_datawriter->write_w_timestamp(&data, HANDLE_NIL, ts));
-    ts = eprosima::fastrtps::c_TimeInfinite;
+    ts = eprosima::fastdds::c_TimeInfinite;
     EXPECT_EQ(RETCODE_BAD_PARAMETER,
             instance_datawriter->unregister_instance_w_timestamp(&data, handle, ts));
-    ts = eprosima::fastrtps::c_TimeInvalid;
+    ts = eprosima::fastdds::c_TimeInvalid;
     EXPECT_EQ(RETCODE_BAD_PARAMETER,
             instance_datawriter->unregister_instance_w_timestamp(&data, handle, ts));
 
@@ -1207,7 +1207,7 @@ TEST(DataWriterTests, DisposeWithTimestamp)
     DataWriter* instance_datawriter;
     create_writers_for_instance_test(datawriter, instance_datawriter, &instance_type);
 
-    eprosima::fastrtps::Time_t ts{ 0, 1 };
+    eprosima::fastdds::Time_t ts{ 0, 1 };
 
     // 1. Calling dispose in a disable writer returns RETCODE_NOT_ENABLED
     EXPECT_EQ(RETCODE_NOT_ENABLED, datawriter->dispose_w_timestamp(&data, handle, ts));
@@ -1241,9 +1241,9 @@ TEST(DataWriterTests, DisposeWithTimestamp)
 
     // 8. Check invalid timestamps
     ASSERT_EQ(RETCODE_OK, instance_datawriter->write_w_timestamp(&data, HANDLE_NIL, ts));
-    ts = eprosima::fastrtps::c_TimeInfinite;
+    ts = eprosima::fastdds::c_TimeInfinite;
     EXPECT_EQ(RETCODE_BAD_PARAMETER, instance_datawriter->dispose_w_timestamp(&data, handle, ts));
-    ts = eprosima::fastrtps::c_TimeInvalid;
+    ts = eprosima::fastdds::c_TimeInvalid;
     EXPECT_EQ(RETCODE_BAD_PARAMETER, instance_datawriter->dispose_w_timestamp(&data, handle, ts));
 
     // TODO(jlbueno) There are other possible errors sending the dispose message: RETCODE_OUT_OF_RESOURCES,
@@ -1330,21 +1330,21 @@ public:
 
     bool serialize(
             void* /*data*/,
-            fastrtps::rtps::SerializedPayload_t* /*payload*/) override
+            fastdds::rtps::SerializedPayload_t* /*payload*/) override
     {
         return true;
     }
 
     bool serialize(
             void* /*data*/,
-            fastrtps::rtps::SerializedPayload_t* /*payload*/,
+            fastdds::rtps::SerializedPayload_t* /*payload*/,
             DataRepresentationId_t /*data_representation*/) override
     {
         return true;
     }
 
     bool deserialize(
-            fastrtps::rtps::SerializedPayload_t* /*payload*/,
+            fastdds::rtps::SerializedPayload_t* /*payload*/,
             void* /*data*/) override
     {
         return true;
@@ -1381,7 +1381,7 @@ public:
 
     bool getKey(
             void* /*data*/,
-            fastrtps::rtps::InstanceHandle_t* /*ihandle*/,
+            fastdds::rtps::InstanceHandle_t* /*ihandle*/,
             bool /*force_md5*/) override
     {
         return true;
@@ -1472,7 +1472,7 @@ TEST(DataWriterTests, LoanPositiveTests)
 
     // Write samples, both loaned and not
     LoanableType data;
-    fastrtps::rtps::InstanceHandle_t handle;
+    fastdds::rtps::InstanceHandle_t handle;
     EXPECT_EQ(RETCODE_OK, datawriter->loan_sample(sample));
     EXPECT_NE(nullptr, sample);
     EXPECT_EQ(RETCODE_OK, datawriter->loan_sample(sample_2));
@@ -1773,7 +1773,7 @@ TEST_F(DataWriterUnsupportedTests, UnsupportedDataWriterMethods)
     ASSERT_NE(publisher, nullptr);
 
     builtin::SubscriptionBuiltinTopicData subscription_data;
-    fastrtps::rtps::InstanceHandle_t subscription_handle;
+    fastdds::rtps::InstanceHandle_t subscription_handle;
     EXPECT_EQ(
         RETCODE_UNSUPPORTED,
         data_writer->get_matched_subscription_data(subscription_data, subscription_handle));

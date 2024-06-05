@@ -42,11 +42,11 @@ using ::testing::NiceMock;
 using ::testing::Mock;
 using ::testing::_;
 
-using eprosima::fastrtps::rtps::RTPSDomain;
+using eprosima::fastdds::rtps::RTPSDomain;
 
 namespace eprosima {
 
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 class RTPSDomain;
 
@@ -54,12 +54,12 @@ RTPSReader* RTPSDomain::reader_ = nullptr;
 RTPSWriter* RTPSDomain::writer_ = nullptr;
 RTPSParticipant* RTPSDomain::participant_ = nullptr;
 } //namespace rtps
-} //namespace fastrtps
+} //namespace fastdds
 
 namespace fastdds {
 namespace dds {
 
-class RTPSParticipantMock : public eprosima::fastrtps::rtps::RTPSParticipant
+class RTPSParticipantMock : public eprosima::fastdds::rtps::RTPSParticipant
 {
 public:
 
@@ -81,26 +81,26 @@ public:
     virtual ~RTPSReaderMock() = default;
 
     bool matched_writer_add(
-            const eprosima::fastrtps::rtps::WriterProxyData&) override
+            const eprosima::fastdds::rtps::WriterProxyData&) override
     {
         return true;
     }
 
     bool matched_writer_remove(
-            const eprosima::fastrtps::rtps::GUID_t&,
+            const eprosima::fastdds::rtps::GUID_t&,
             bool) override
     {
         return true;
     }
 
     bool matched_writer_is_matched(
-            const eprosima::fastrtps::rtps::GUID_t&) override
+            const eprosima::fastdds::rtps::GUID_t&) override
     {
         return true;
     }
 
     void assert_writer_liveliness(
-            const eprosima::fastrtps::rtps::GUID_t&) override
+            const eprosima::fastdds::rtps::GUID_t&) override
     {
     }
 
@@ -111,7 +111,7 @@ public:
 
 };
 
-class RTPSWriterMock : public eprosima::fastrtps::rtps::RTPSWriter
+class RTPSWriterMock : public eprosima::fastdds::rtps::RTPSWriter
 {
 public:
 
@@ -122,19 +122,19 @@ public:
     virtual ~RTPSWriterMock() = default;
 
     virtual bool matched_reader_add(
-            const eprosima::fastrtps::rtps::ReaderProxyData&)
+            const eprosima::fastdds::rtps::ReaderProxyData&)
     {
         return true;
     }
 
     virtual bool matched_reader_remove(
-            const eprosima::fastrtps::rtps::GUID_t&)
+            const eprosima::fastdds::rtps::GUID_t&)
     {
         return true;
     }
 
     virtual bool matched_reader_is_matched(
-            const eprosima::fastrtps::rtps::GUID_t&)
+            const eprosima::fastdds::rtps::GUID_t&)
     {
         return true;
     }
@@ -499,13 +499,13 @@ public:
 
     bool serialize(
             void* /*data*/,
-            fastrtps::rtps::SerializedPayload_t* /*payload*/) override
+            fastdds::rtps::SerializedPayload_t* /*payload*/) override
     {
         return true;
     }
 
     bool deserialize(
-            fastrtps::rtps::SerializedPayload_t* /*payload*/,
+            fastdds::rtps::SerializedPayload_t* /*payload*/,
             void* /*data*/) override
     {
         return true;
@@ -532,7 +532,7 @@ public:
 
     bool getKey(
             void* /*data*/,
-            fastrtps::rtps::InstanceHandle_t* /*ihandle*/,
+            fastdds::rtps::InstanceHandle_t* /*ihandle*/,
             bool /*force_md5*/) override
     {
         return true;
@@ -976,7 +976,7 @@ void verify_expectations_on_subscription_matched (
         StrictMock<CustomSubscriberListener>& subscriber_listener_,
         StrictMock<CustomDataReaderListener>& datareader_listener_)
 {
-    fastrtps::rtps::MatchingInfo status;
+    fastdds::rtps::MatchingInfo status;
 
     RTPSDomain::reader_->get_listener()->on_reader_matched(nullptr, status);
     Mock::VerifyAndClearExpectations(&datareader_listener_);
@@ -1337,7 +1337,7 @@ void verify_expectations_on_data_available (
         StrictMock<CustomSubscriberListener>& subscriber_listener_,
         StrictMock<CustomDataReaderListener>& datareader_listener_)
 {
-    fastrtps::rtps::CacheChange_t change;
+    fastdds::rtps::CacheChange_t change;
 
     auto seq = change.sequenceNumber;
     bool notify_individual = false;
@@ -1355,7 +1355,7 @@ void verify_expectations_on_data_available (
 
 TEST_F(UserListeners, data_available)
 {
-    fastrtps::rtps::CacheChange_t change;
+    fastdds::rtps::CacheChange_t change;
 
     //data_on_readers has priority
     ////////////////////////////////////////////////////////////////////

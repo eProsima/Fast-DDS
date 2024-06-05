@@ -24,7 +24,7 @@
 #include <fastdds/rtps/common/Time_t.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 /**
@@ -116,7 +116,7 @@ struct LivelinessData
 };
 
 } /* namespace rtps */
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */
 
 #endif /* _FASTDDS_RTPS_LIVELINESS_DATA_H_ */

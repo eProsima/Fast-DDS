@@ -35,8 +35,8 @@
 #include <utils/Semaphore.hpp>
 
 using namespace eprosima::fastdds;
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds;
+using namespace eprosima::fastdds::rtps;
 using MockTCPv4Transport = eprosima::fastdds::rtps::MockTCPv4Transport;
 using SendResourceList = eprosima::fastdds::rtps::SendResourceList;
 using TCPChannelResourceBasic = eprosima::fastdds::rtps::TCPChannelResourceBasic;

@@ -22,7 +22,7 @@
 #include <fastdds/rtps/common/Time_t.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 /*!
@@ -207,7 +207,7 @@ private:
 };
 
 }  // namespace rtps
-}  // namespace fastrtps
+}  // namespace fastdds
 }  // namespace eprosima
 
 #endif //_FASTDDS_RTPS_COMMON_WRITEPARAMS_H_

@@ -22,7 +22,7 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-class ChainingSenderResource : public fastrtps::rtps::SenderResource
+class ChainingSenderResource : public fastdds::rtps::SenderResource
 {
 public:
 
@@ -42,8 +42,8 @@ public:
         send_buffers_lambda_ = [this, &transport](
             const std::vector<NetworkBuffer>& buffers,
             uint32_t total_bytes,
-            fastrtps::rtps::LocatorsIterator* destination_locators_begin,
-            fastrtps::rtps::LocatorsIterator* destination_locators_end,
+            fastdds::rtps::LocatorsIterator* destination_locators_begin,
+            fastdds::rtps::LocatorsIterator* destination_locators_end,
             const std::chrono::steady_clock::time_point& timeout) -> bool
                 {
                     if (low_sender_resource_)
@@ -56,13 +56,13 @@ public:
                 };
     }
 
-    fastrtps::rtps::SenderResource* lower_sender_cast()
+    fastdds::rtps::SenderResource* lower_sender_cast()
     {
-        fastrtps::rtps::SenderResource* lower_sender_cast = nullptr;
+        fastdds::rtps::SenderResource* lower_sender_cast = nullptr;
 
         if (low_sender_resource_)
         {
-            lower_sender_cast = static_cast<fastrtps::rtps::SenderResource*>(low_sender_resource_.get());
+            lower_sender_cast = static_cast<fastdds::rtps::SenderResource*>(low_sender_resource_.get());
         }
 
         return lower_sender_cast;
@@ -90,7 +90,7 @@ private:
 };
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 #endif // _RTPS_TRANSPORT_CHAININGSENDERRESOURCE_HPP_

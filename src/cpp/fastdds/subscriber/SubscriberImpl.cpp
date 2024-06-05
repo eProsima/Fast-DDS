@@ -45,11 +45,11 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-using fastrtps::xmlparser::XMLProfileManager;
-using fastrtps::xmlparser::XMLP_ret;
-using fastrtps::rtps::InstanceHandle_t;
-using fastrtps::rtps::Property;
-using fastrtps::Duration_t;
+using fastdds::xmlparser::XMLProfileManager;
+using fastdds::xmlparser::XMLP_ret;
+using fastdds::rtps::InstanceHandle_t;
+using fastdds::rtps::Property;
+using fastdds::Duration_t;
 
 SubscriberImpl::SubscriberImpl(
         DomainParticipantImpl* p,
@@ -177,7 +177,7 @@ DataReaderImpl* SubscriberImpl::create_datareader_impl(
         TopicDescription* topic,
         const DataReaderQos& qos,
         DataReaderListener* listener,
-        std::shared_ptr<fastrtps::rtps::IPayloadPool> payload_pool)
+        std::shared_ptr<fastdds::rtps::IPayloadPool> payload_pool)
 {
     return new DataReaderImpl(this, type, topic, qos, listener, payload_pool);
 }
@@ -187,7 +187,7 @@ DataReader* SubscriberImpl::create_datareader(
         const DataReaderQos& qos,
         DataReaderListener* listener,
         const StatusMask& mask,
-        std::shared_ptr<fastrtps::rtps::IPayloadPool> payload_pool)
+        std::shared_ptr<fastdds::rtps::IPayloadPool> payload_pool)
 {
     EPROSIMA_LOG_INFO(SUBSCRIBER, "CREATING SUBSCRIBER IN TOPIC: " << topic->get_name());
     //Look for the correct type registration
@@ -252,7 +252,7 @@ DataReader* SubscriberImpl::create_datareader_with_profile(
         const std::string& profile_name,
         DataReaderListener* listener,
         const StatusMask& mask,
-        std::shared_ptr<fastrtps::rtps::IPayloadPool> payload_pool)
+        std::shared_ptr<fastdds::rtps::IPayloadPool> payload_pool)
 {
     // TODO (ILG): Change when we have full XML support for DDS QoS profiles
     SubscriberAttributes attr;
@@ -405,7 +405,7 @@ DataReaderQos& SubscriberImpl::get_default_datareader_qos()
 }
 
 bool SubscriberImpl::contains_entity(
-        const fastrtps::rtps::InstanceHandle_t& handle) const
+        const fastdds::rtps::InstanceHandle_t& handle) const
 {
     std::lock_guard<std::mutex> lock(mtx_readers_);
     for (auto vit : readers_)
@@ -691,7 +691,7 @@ bool SubscriberImpl::can_be_deleted() const
 #ifdef FASTDDS_STATISTICS
 bool SubscriberImpl::get_monitoring_status(
         statistics::MonitorServiceData& status,
-        const fastrtps::rtps::GUID_t& entity_guid)
+        const fastdds::rtps::GUID_t& entity_guid)
 {
     bool ret = false;
     std::vector<DataReader*> readers;

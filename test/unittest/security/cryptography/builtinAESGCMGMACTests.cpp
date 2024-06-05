@@ -18,7 +18,7 @@
 #include "security/OpenSSLInit.hpp"
 
 TEST_F(CryptographyPluginTest, mocktest){
-    static eprosima::fastrtps::rtps::security::OpenSSLInit openssl_init;
+    static eprosima::fastdds::rtps::security::OpenSSLInit openssl_init;
     uint8_t mock = 7;
 
     ASSERT_TRUE(mock == 7);

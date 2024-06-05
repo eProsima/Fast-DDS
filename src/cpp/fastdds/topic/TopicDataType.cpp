@@ -44,7 +44,7 @@ TopicDataType::~TopicDataType()
 
 bool TopicDataType::serialize(
         void* data,
-        fastrtps::rtps::SerializedPayload_t* payload,
+        fastdds::rtps::SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
 

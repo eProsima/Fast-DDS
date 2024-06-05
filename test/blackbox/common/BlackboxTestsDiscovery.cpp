@@ -39,8 +39,8 @@
 #include "PubSubWriter.hpp"
 #include "PubSubWriterReader.hpp"
 
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds;
+using namespace eprosima::fastdds::rtps;
 using test_UDPv4Transport = eprosima::fastdds::rtps::test_UDPv4Transport;
 using test_UDPv4TransportDescriptor = eprosima::fastdds::rtps::test_UDPv4TransportDescriptor;
 
@@ -1308,9 +1308,9 @@ TEST_P(Discovery, AsymmeticIgnoreParticipantFlags)
     // When the announcements of this participant arrive to p2, a single DATA(p) should be sent back.
     // No other traffic is expected, since it will take place through intraprocess.
     PubSubReader<HelloWorldPubSubType> p1(TEST_TOPIC_NAME);
-    p1.ignore_participant_flags(static_cast<eprosima::fastrtps::rtps::ParticipantFilteringFlags_t>(
-                eprosima::fastrtps::rtps::ParticipantFilteringFlags_t::FILTER_DIFFERENT_HOST |
-                eprosima::fastrtps::rtps::ParticipantFilteringFlags_t::FILTER_DIFFERENT_PROCESS));
+    p1.ignore_participant_flags(static_cast<eprosima::fastdds::rtps::ParticipantFilteringFlags_t>(
+                eprosima::fastdds::rtps::ParticipantFilteringFlags_t::FILTER_DIFFERENT_HOST |
+                eprosima::fastdds::rtps::ParticipantFilteringFlags_t::FILTER_DIFFERENT_PROCESS));
     p1.init();
     EXPECT_TRUE(p1.isInitialized());
 
@@ -1970,11 +1970,11 @@ TEST(Discovery, RemoteBuiltinEndpointHonoring)
             {
                 auto old_pos = msg.pos;
                 msg.pos += 4;
-                eprosima::fastrtps::rtps::EntityId_t writer_entity_id;
-                eprosima::fastrtps::rtps::CDRMessage::readEntityId(&msg, &writer_entity_id);
+                eprosima::fastdds::rtps::EntityId_t writer_entity_id;
+                eprosima::fastdds::rtps::CDRMessage::readEntityId(&msg, &writer_entity_id);
                 msg.pos = old_pos;
 
-                if (eprosima::fastrtps::rtps::c_EntityId_WriterLiveliness == writer_entity_id)
+                if (eprosima::fastdds::rtps::c_EntityId_WriterLiveliness == writer_entity_id)
                 {
                     num_wlp_reader_heartbeat++;
                 }
@@ -1985,11 +1985,11 @@ TEST(Discovery, RemoteBuiltinEndpointHonoring)
             {
                 auto old_pos = msg.pos;
                 msg.pos += 4;
-                eprosima::fastrtps::rtps::EntityId_t writer_entity_id;
-                eprosima::fastrtps::rtps::CDRMessage::readEntityId(&msg, &writer_entity_id);
+                eprosima::fastdds::rtps::EntityId_t writer_entity_id;
+                eprosima::fastdds::rtps::CDRMessage::readEntityId(&msg, &writer_entity_id);
                 msg.pos = old_pos;
 
-                if (eprosima::fastrtps::rtps::c_EntityId_WriterLiveliness == writer_entity_id)
+                if (eprosima::fastdds::rtps::c_EntityId_WriterLiveliness == writer_entity_id)
                 {
                     num_wlp_reader_acknack++;
                 }
@@ -2005,11 +2005,11 @@ TEST(Discovery, RemoteBuiltinEndpointHonoring)
             {
                 auto old_pos = msg.pos;
                 msg.pos += 4;
-                eprosima::fastrtps::rtps::EntityId_t writer_entity_id;
-                eprosima::fastrtps::rtps::CDRMessage::readEntityId(&msg, &writer_entity_id);
+                eprosima::fastdds::rtps::EntityId_t writer_entity_id;
+                eprosima::fastdds::rtps::CDRMessage::readEntityId(&msg, &writer_entity_id);
                 msg.pos = old_pos;
 
-                if (eprosima::fastrtps::rtps::c_EntityId_WriterLiveliness == writer_entity_id)
+                if (eprosima::fastdds::rtps::c_EntityId_WriterLiveliness == writer_entity_id)
                 {
                     num_wlp_writer_heartbeat++;
                 }
@@ -2020,11 +2020,11 @@ TEST(Discovery, RemoteBuiltinEndpointHonoring)
             {
                 auto old_pos = msg.pos;
                 msg.pos += 4;
-                eprosima::fastrtps::rtps::EntityId_t writer_entity_id;
-                eprosima::fastrtps::rtps::CDRMessage::readEntityId(&msg, &writer_entity_id);
+                eprosima::fastdds::rtps::EntityId_t writer_entity_id;
+                eprosima::fastdds::rtps::CDRMessage::readEntityId(&msg, &writer_entity_id);
                 msg.pos = old_pos;
 
-                if (eprosima::fastrtps::rtps::c_EntityId_WriterLiveliness == writer_entity_id)
+                if (eprosima::fastdds::rtps::c_EntityId_WriterLiveliness == writer_entity_id)
                 {
                     num_wlp_writer_acknack++;
                 }
@@ -2145,7 +2145,7 @@ TEST(Discovery, MultipleXMLProfileLoad)
 TEST(Discovery, discovery_cyclone_participant_with_custom_pid)
 {
     using namespace eprosima::fastdds::dds;
-    using namespace eprosima::fastrtps::rtps;
+    using namespace eprosima::fastdds::rtps;
 
     /* Custom participant listener to count number of discovered participants */
     class DiscoveryListener : public DomainParticipantListener

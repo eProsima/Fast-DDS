@@ -23,7 +23,7 @@
 #include <fastdds/rtps/common/BinaryProperty.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class DataHolder
@@ -190,7 +190,7 @@ private:
 };
 
 } //namespace rtps
-} //namespace fastrtps
+} //namespace fastdds
 } //namespace eprosima
 
 #endif // _FASTDDS_RTPS_COMMON_TOKEN_H_

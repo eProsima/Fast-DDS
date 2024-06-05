@@ -35,14 +35,14 @@
 #include <utils/threading.hpp>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class RTPSReader;
 struct CacheChange_t;
 
 } // namespace rtps
-} // namespace fastrtp
+} // namespace fastdds
 
 namespace fastdds {
 namespace dds {
@@ -53,14 +53,14 @@ class TypeLookupManager;
 struct ReplyWithServerGUID
 {
     TypeLookup_Reply reply;
-    fastrtps::rtps::GUID_t type_server;
+    fastdds::rtps::GUID_t type_server;
 };
 
 /**
  * Class TypeLookupReplyListener that receives the typelookup request messages of remote endpoints.
  * @ingroup TYPES_MODULE
  */
-class TypeLookupReplyListener : public fastrtps::rtps::ReaderListener, public fastrtps::rtps::WriterListener
+class TypeLookupReplyListener : public fastdds::rtps::ReaderListener, public fastdds::rtps::WriterListener
 {
 public:
 
@@ -116,7 +116,7 @@ protected:
      */
     void check_get_type_dependencies_reply(
             const SampleIdentity& request_id,
-            const fastrtps::rtps::GUID_t type_server,
+            const fastdds::rtps::GUID_t type_server,
             const TypeLookup_getTypeDependencies_Out& reply);
 
     /**
@@ -125,12 +125,12 @@ protected:
      * @param change The cache change.
      */
     void on_new_cache_change_added(
-            fastrtps::rtps::RTPSReader* reader,
-            const fastrtps::rtps::CacheChange_t* const change) override;
+            fastdds::rtps::RTPSReader* reader,
+            const fastdds::rtps::CacheChange_t* const change) override;
 
     void onWriterChangeReceivedByAll(
-            fastrtps::rtps::RTPSWriter*,
-            fastrtps::rtps::CacheChange_t* change) override;
+            fastdds::rtps::RTPSWriter*,
+            fastdds::rtps::CacheChange_t* change) override;
 
     //! A pointer to the typelookup manager.
     TypeLookupManager* typelookup_manager_;

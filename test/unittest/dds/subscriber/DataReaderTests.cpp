@@ -76,7 +76,7 @@
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds::rtps;
 
 static constexpr LoanableCollection::size_type num_test_elements = 10;
 
@@ -3771,21 +3771,21 @@ public:
 
     bool serialize(
             void* /*data*/,
-            eprosima::fastrtps::rtps::SerializedPayload_t* /*payload*/) override
+            eprosima::fastdds::rtps::SerializedPayload_t* /*payload*/) override
     {
         return true;
     }
 
     bool serialize(
             void* /*data*/,
-            eprosima::fastrtps::rtps::SerializedPayload_t* /*payload*/,
+            eprosima::fastdds::rtps::SerializedPayload_t* /*payload*/,
             DataRepresentationId_t /*data_representation*/) override
     {
         return true;
     }
 
     bool deserialize(
-            eprosima::fastrtps::rtps::SerializedPayload_t* /*payload*/,
+            eprosima::fastdds::rtps::SerializedPayload_t* /*payload*/,
             void* /*data*/) override
     {
         return true;
@@ -3822,7 +3822,7 @@ public:
 
     bool getKey(
             void* /*data*/,
-            eprosima::fastrtps::rtps::InstanceHandle_t* /*ihandle*/,
+            eprosima::fastdds::rtps::InstanceHandle_t* /*ihandle*/,
             bool /*force_md5*/) override
     {
         return true;

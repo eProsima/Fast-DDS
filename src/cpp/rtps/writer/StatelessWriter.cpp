@@ -45,7 +45,7 @@
 #include <rtps/RTPSDomainImpl.hpp>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 using BaseReader = fastdds::rtps::BaseReader;
@@ -998,5 +998,5 @@ bool StatelessWriter::get_connections(
 #endif // ifdef FASTDDS_STATISTICS
 
 } /* namespace rtps */
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */

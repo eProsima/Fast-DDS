@@ -24,7 +24,7 @@
 #include <fastdds/utils/collections/ResourceLimitedContainerConfig.hpp>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 /**
@@ -189,7 +189,7 @@ const RTPSParticipantAllocationAttributes c_default_RTPSParticipantAllocationAtt
     = RTPSParticipantAllocationAttributes();
 
 } /* namespace rtps */
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */
 
 #endif /* _FASTDDS_RTPS_RTPSPARTICIPANTALLOCATIONATTRIBUTES_HPP_ */

@@ -14,10 +14,10 @@
 
 #include "MockEvent.h"
 
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds::rtps;
 
 MockEvent::MockEvent(
-        eprosima::fastrtps::rtps::ResourceEvent& service,
+        eprosima::fastdds::rtps::ResourceEvent& service,
         double milliseconds,
         bool autorestart,
         std::function<void()> inner_callback)

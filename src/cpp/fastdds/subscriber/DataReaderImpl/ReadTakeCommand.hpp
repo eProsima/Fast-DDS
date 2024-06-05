@@ -51,11 +51,11 @@ namespace detail {
 struct ReadTakeCommand
 {
     using history_type = eprosima::fastdds::dds::detail::DataReaderHistory;
-    using CacheChange_t = eprosima::fastrtps::rtps::CacheChange_t;
-    using RTPSReader = eprosima::fastrtps::rtps::RTPSReader;
-    using WriterProxy = eprosima::fastrtps::rtps::WriterProxy;
+    using CacheChange_t = eprosima::fastdds::rtps::CacheChange_t;
+    using RTPSReader = eprosima::fastdds::rtps::RTPSReader;
+    using WriterProxy = eprosima::fastdds::rtps::WriterProxy;
     using SampleInfoSeq = LoanableTypedCollection<SampleInfo>;
-    using DataSharingPayloadPool = eprosima::fastrtps::rtps::DataSharingPayloadPool;
+    using DataSharingPayloadPool = eprosima::fastdds::rtps::DataSharingPayloadPool;
 
     ReadTakeCommand(
             DataReaderImpl& reader,
@@ -252,12 +252,12 @@ struct ReadTakeCommand
 
         switch (item->kind)
         {
-            case eprosima::fastrtps::rtps::NOT_ALIVE_DISPOSED:
-            case eprosima::fastrtps::rtps::NOT_ALIVE_DISPOSED_UNREGISTERED:
-            case eprosima::fastrtps::rtps::NOT_ALIVE_UNREGISTERED:
+            case eprosima::fastdds::rtps::NOT_ALIVE_DISPOSED:
+            case eprosima::fastdds::rtps::NOT_ALIVE_DISPOSED_UNREGISTERED:
+            case eprosima::fastdds::rtps::NOT_ALIVE_UNREGISTERED:
                 info.valid_data = false;
                 break;
-            case eprosima::fastrtps::rtps::ALIVE:
+            case eprosima::fastdds::rtps::ALIVE:
             default:
                 break;
         }

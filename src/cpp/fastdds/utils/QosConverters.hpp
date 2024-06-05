@@ -39,7 +39,7 @@ namespace fastdds {
 namespace dds {
 namespace utils {
 
-using fastrtps::TopicAttributes;
+using fastdds::TopicAttributes;
 
 /**
  * Obtains the DataWriterQos from the PublisherAttributes provided.
@@ -77,7 +77,7 @@ void set_qos_from_attributes(
  */
 void set_qos_from_attributes(
         DomainParticipantQos& qos,
-        const eprosima::fastrtps::rtps::RTPSParticipantAttributes& attr);
+        const eprosima::fastdds::rtps::RTPSParticipantAttributes& attr);
 
 /**
  * Obtains the RTPSParticipantAttributes from the DomainParticipantQos provided.
@@ -86,7 +86,7 @@ void set_qos_from_attributes(
  * @param[in] qos Pointer to the QoS to write on
  */
 void set_attributes_from_qos(
-        fastrtps::rtps::RTPSParticipantAttributes& attr,
+        fastdds::rtps::RTPSParticipantAttributes& attr,
         const DomainParticipantQos& qos);
 
 /**

@@ -37,8 +37,8 @@ public:
     {
         service_.init_thread();
 
-        writer_losing_liveliness = eprosima::fastrtps::rtps::GUID_t();
-        writer_recovering_liveliness = eprosima::fastrtps::rtps::GUID_t();
+        writer_losing_liveliness = eprosima::fastdds::rtps::GUID_t();
+        writer_recovering_liveliness = eprosima::fastdds::rtps::GUID_t();
         num_writers_lost = 0;
         num_writers_recovered = 0;
     }
@@ -51,14 +51,14 @@ public:
     {
     }
 
-    eprosima::fastrtps::rtps::ResourceEvent service_;
+    eprosima::fastdds::rtps::ResourceEvent service_;
 
     // Callback to test the liveliness manager
 
     void liveliness_changed(
-            eprosima::fastrtps::rtps::GUID_t guid,
+            eprosima::fastdds::rtps::GUID_t guid,
             const eprosima::fastdds::dds::LivelinessQosPolicyKind&,
-            const eprosima::fastrtps::Duration_t&,
+            const eprosima::fastdds::Duration_t&,
             int alive_change,
             int not_alive_change)
     {
@@ -98,8 +98,8 @@ public:
                 });
     }
 
-    eprosima::fastrtps::rtps::GUID_t writer_losing_liveliness;
-    eprosima::fastrtps::rtps::GUID_t writer_recovering_liveliness;
+    eprosima::fastdds::rtps::GUID_t writer_losing_liveliness;
+    eprosima::fastdds::rtps::GUID_t writer_recovering_liveliness;
     unsigned int num_writers_lost;
     unsigned int num_writers_recovered;
 
@@ -110,12 +110,12 @@ public:
 };
 
 namespace  eprosima {
-namespace fastrtps {
+namespace fastdds {
 
-using eprosima::fastrtps::rtps::LivelinessData;
-using eprosima::fastrtps::rtps::LivelinessManager;
-using eprosima::fastrtps::rtps::GuidPrefix_t;
-using eprosima::fastrtps::rtps::GUID_t;
+using eprosima::fastdds::rtps::LivelinessData;
+using eprosima::fastdds::rtps::LivelinessManager;
+using eprosima::fastdds::rtps::GuidPrefix_t;
+using eprosima::fastdds::rtps::GUID_t;
 
 TEST_F(LivelinessManagerTests, WriterCanAlwaysBeAdded)
 {
@@ -513,7 +513,7 @@ TEST_F(LivelinessManagerTests, TimerOwnerRemoved)
     EXPECT_EQ(num_writers_lost, 1u);
 }
 
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 int main(

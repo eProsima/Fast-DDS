@@ -52,13 +52,13 @@ void b64decode(
 // Writes the info from a change into a json object
 void to_json(
         json& j,
-        const eprosima::fastrtps::rtps::CacheChange_t& change);
+        const eprosima::fastdds::rtps::CacheChange_t& change);
 
 // Deserialize a cacheChange from a json object. The change must have been
 // already created from a pool and reserved the payload length
 void from_json(
         const json& j,
-        eprosima::fastrtps::rtps::CacheChange_t& change);
+        eprosima::fastdds::rtps::CacheChange_t& change);
 
 // INFO TO STORE IN DDB
 /*

@@ -29,7 +29,7 @@
 #include <fastdds/rtps/common/VendorId_t.hpp>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 /*!
@@ -163,13 +163,13 @@ const ProtocolVersion_t c_ProtocolVersion_2_3{2, 3};
 const ProtocolVersion_t c_ProtocolVersion;
 
 //!@brief Structure VendorId_t, specifying the vendor Id of the implementation.
-// FASTDDS_TODO_BEFORE(3, 0, "Remove eprosima::fastrtps::rtps::VendorId_t usings");
+// FASTDDS_TODO_BEFORE(3, 0, "Remove eprosima::fastdds::rtps::VendorId_t usings");
 using VendorId_t = eprosima::fastdds::rtps::VendorId_t;
 using eprosima::fastdds::rtps::c_VendorId_Unknown;
 using eprosima::fastdds::rtps::c_VendorId_eProsima;
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 #endif /* _FASTDDS_RTPS_COMMON_TYPES_H_ */

@@ -133,12 +133,12 @@ std::string get_element_text(
 
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace xmlparser {
 
 using namespace eprosima::fastdds::rtps;
 using namespace eprosima::fastdds::xml::detail;
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds::rtps;
 
 static XMLP_ret parseXMLOctetVector(
         tinyxml2::XMLElement* elem,
@@ -4953,5 +4953,5 @@ XMLP_ret XMLParser::getXMLBuiltinTransports(
 }
 
 }  // namespace xmlparser
-}  // namespace fastrtps
+}  // namespace fastdds
 }  // namespace eprosima

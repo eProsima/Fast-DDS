@@ -26,7 +26,7 @@
 #include <utils/shared_mutex.hpp>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 using LivelinessCallback = std::function<void (
@@ -176,7 +176,7 @@ private:
 };
 
 } /* namespace rtps */
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */
 
 #endif /* _FASTDDS_RTPS_LIVELINESS_MANAGER_H_ */

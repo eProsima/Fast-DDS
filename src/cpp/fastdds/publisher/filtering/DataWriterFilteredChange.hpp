@@ -31,7 +31,7 @@ namespace dds {
 /**
  * A cache change that holds writer-side filtering information.
  */
-struct DataWriterFilteredChange final : public fastrtps::rtps::CacheChange_t
+struct DataWriterFilteredChange final : public fastdds::rtps::CacheChange_t
 {
     /**
      * Construct a DataWriterFilteredChange.
@@ -39,8 +39,8 @@ struct DataWriterFilteredChange final : public fastrtps::rtps::CacheChange_t
      * @param filter_allocation  Allocation configuration for the collection of filtered out readers.
      */
     explicit DataWriterFilteredChange(
-            const fastrtps::ResourceLimitedContainerConfig& filter_allocation)
-        : fastrtps::rtps::CacheChange_t()
+            const fastdds::ResourceLimitedContainerConfig& filter_allocation)
+        : fastdds::rtps::CacheChange_t()
         , filtered_out_readers(filter_allocation)
     {
     }
@@ -55,9 +55,9 @@ struct DataWriterFilteredChange final : public fastrtps::rtps::CacheChange_t
      * @return whether this change is relevant for the specified reader.
      */
     inline bool is_relevant_for(
-            const fastrtps::rtps::GUID_t& reader_guid) const
+            const fastdds::rtps::GUID_t& reader_guid) const
     {
-        for (const fastrtps::rtps::GUID_t& guid : filtered_out_readers)
+        for (const fastdds::rtps::GUID_t& guid : filtered_out_readers)
         {
             if (guid == reader_guid)
             {
@@ -69,7 +69,7 @@ struct DataWriterFilteredChange final : public fastrtps::rtps::CacheChange_t
     }
 
     /// Collection with the GUIDs of the readers for which this change is not relevant.
-    fastrtps::ResourceLimitedVector<fastrtps::rtps::GUID_t> filtered_out_readers;
+    fastdds::ResourceLimitedVector<fastdds::rtps::GUID_t> filtered_out_readers;
 };
 
 }  // namespace dds

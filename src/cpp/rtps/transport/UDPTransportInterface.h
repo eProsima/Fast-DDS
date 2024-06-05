@@ -64,7 +64,7 @@ public:
     virtual const UDPTransportDescriptor* configuration() const = 0;
 
     bool init(
-            const fastrtps::rtps::PropertyPolicy* properties = nullptr,
+            const fastdds::rtps::PropertyPolicy* properties = nullptr,
             const uint32_t& max_msg_size_no_frag = 0) override;
 
     //! Checks whether there are open and bound sockets for the given port.
@@ -129,8 +129,8 @@ public:
             const std::vector<NetworkBuffer>& buffers,
             uint32_t total_bytes,
             eProsimaUDPSocket& socket,
-            fastrtps::rtps::LocatorsIterator* destination_locators_begin,
-            fastrtps::rtps::LocatorsIterator* destination_locators_end,
+            fastdds::rtps::LocatorsIterator* destination_locators_begin,
+            fastdds::rtps::LocatorsIterator* destination_locators_end,
             bool only_multicast_purpose,
             bool whitelisted,
             const std::chrono::steady_clock::time_point& max_blocking_time_point);
@@ -149,7 +149,7 @@ public:
      * @param [in, out] selector Locator selector.
      */
     void select_locators(
-            fastrtps::rtps::LocatorSelector& selector) const override;
+            fastdds::rtps::LocatorSelector& selector) const override;
 
     bool fillMetatrafficMulticastLocator(
             Locator& locator,
@@ -161,7 +161,7 @@ public:
 
     bool configureInitialPeerLocator(
             Locator& locator,
-            const fastrtps::rtps::PortParameters& port_params,
+            const fastdds::rtps::PortParameters& port_params,
             uint32_t domainId,
             LocatorList& list) const override;
 
@@ -231,7 +231,7 @@ protected:
             uint16_t port) = 0;
     virtual asio::ip::udp generate_protocol() const = 0;
     virtual bool get_ips(
-            std::vector<fastrtps::rtps::IPFinder::info_IP>& locNames,
+            std::vector<fastdds::rtps::IPFinder::info_IP>& locNames,
             bool return_loopback,
             bool force_lookup) const = 0;
     virtual const std::string& localhost_name() = 0;
@@ -301,7 +301,7 @@ protected:
      */
     void get_unknown_network_interfaces(
             const SendResourceList& sender_resource_list,
-            std::vector<fastrtps::rtps::IPFinder::info_IP>& locNames,
+            std::vector<fastdds::rtps::IPFinder::info_IP>& locNames,
             bool return_loopback = false);
 
     std::atomic_bool rescan_interfaces_ = {true};

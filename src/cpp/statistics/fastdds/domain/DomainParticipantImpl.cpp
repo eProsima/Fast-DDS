@@ -56,9 +56,9 @@ namespace fastdds {
 namespace statistics {
 namespace dds {
 
-using fastrtps::xmlparser::XMLProfileManager;
-using fastrtps::xmlparser::XMLP_ret;
-using fastrtps::xmlparser::DEFAULT_STATISTICS_DATAWRITER_PROFILE;
+using fastdds::xmlparser::XMLProfileManager;
+using fastdds::xmlparser::XMLP_ret;
+using fastdds::xmlparser::DEFAULT_STATISTICS_DATAWRITER_PROFILE;
 
 constexpr const char* HISTORY_LATENCY_TOPIC_ALIAS = "HISTORY_LATENCY_TOPIC";
 constexpr const char* NETWORK_LATENCY_TOPIC_ALIAS = "NETWORK_LATENCY_TOPIC";
@@ -135,7 +135,7 @@ ReturnCode_t DomainParticipantImpl::enable_statistics_datawriter(
         // Check if the statistics DataWriter already exists and create statistics DataWriter if it does not.
         if (nullptr == builtin_publisher_->lookup_datawriter(use_topic_name))
         {
-            fastrtps::rtps::EntityId_t entity_id;
+            fastdds::rtps::EntityId_t entity_id;
             set_statistics_entity_id(event_kind, entity_id);
             efd::TypeSupport type = participant_->find_type(topic->get_type_name());
             auto writer_impl = builtin_publisher_impl_->create_datawriter_impl(type, topic, dwqos, entity_id);
@@ -260,7 +260,7 @@ ReturnCode_t DomainParticipantImpl::enable()
 
         if (!rtps_participant_->is_monitor_service_created())
         {
-            auto enable_ms_property_value = fastrtps::rtps::PropertyPolicyHelper::find_property(
+            auto enable_ms_property_value = fastdds::rtps::PropertyPolicyHelper::find_property(
                 qos_.properties(), fastdds::dds::parameter_enable_monitor_service);
 
             if (nullptr != enable_ms_property_value && *enable_ms_property_value == "true")
@@ -323,7 +323,7 @@ ReturnCode_t DomainParticipantImpl::disable_monitor_service()
 }
 
 ReturnCode_t DomainParticipantImpl::fill_discovery_data_from_cdr_message(
-        fastrtps::rtps::ParticipantProxyData& data,
+        fastdds::rtps::ParticipantProxyData& data,
         fastdds::statistics::MonitorServiceStatusData& msg)
 {
     ReturnCode_t ret{efd::RETCODE_OK};
@@ -337,7 +337,7 @@ ReturnCode_t DomainParticipantImpl::fill_discovery_data_from_cdr_message(
 }
 
 ReturnCode_t DomainParticipantImpl::fill_discovery_data_from_cdr_message(
-        fastrtps::rtps::WriterProxyData& data,
+        fastdds::rtps::WriterProxyData& data,
         fastdds::statistics::MonitorServiceStatusData& msg)
 {
     ReturnCode_t ret{efd::RETCODE_OK};
@@ -351,7 +351,7 @@ ReturnCode_t DomainParticipantImpl::fill_discovery_data_from_cdr_message(
 }
 
 ReturnCode_t DomainParticipantImpl::fill_discovery_data_from_cdr_message(
-        fastrtps::rtps::ReaderProxyData& data,
+        fastdds::rtps::ReaderProxyData& data,
         fastdds::statistics::MonitorServiceStatusData& msg)
 {
     ReturnCode_t ret{efd::RETCODE_OK};
@@ -390,7 +390,7 @@ void DomainParticipantImpl::create_statistics_builtin_entities()
 
     // Enable statistics datawriters
     // 1. Find fastdds_statistics PropertyPolicyQos
-    const std::string* property_topic_list = eprosima::fastrtps::rtps::PropertyPolicyHelper::find_property(
+    const std::string* property_topic_list = eprosima::fastdds::rtps::PropertyPolicyHelper::find_property(
         get_qos().properties(), "fastdds.statistics");
 
     if (nullptr != property_topic_list)
@@ -624,7 +624,7 @@ bool DomainParticipantImpl::delete_topic_and_type(
 }
 
 bool DomainParticipantImpl::get_monitoring_status(
-        const fastrtps::rtps::GUID_t& entity_guid,
+        const fastdds::rtps::GUID_t& entity_guid,
         eprosima::fastdds::statistics::MonitorServiceData& status)
 {
     ReturnCode_t ret = efd::RETCODE_ERROR;

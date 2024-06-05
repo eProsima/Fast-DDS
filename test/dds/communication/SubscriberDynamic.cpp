@@ -43,7 +43,7 @@
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::dds::xtypes;
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds::rtps;
 
 class ParListener : public DomainParticipantListener
 {

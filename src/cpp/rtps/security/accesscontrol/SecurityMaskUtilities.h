@@ -19,7 +19,7 @@
 #define _FASTDDS_RTPS_SECURITY_ACCESSCONTROL_SECURITYMASKUTILITIES_H_
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 namespace security {
 
@@ -37,7 +37,7 @@ inline bool security_mask_matches(
 
 } // namespace security
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 #endif // _FASTDDS_RTPS_SECURITY_ACCESSCONTROL_SECURITYMASKUTILITIES_H_

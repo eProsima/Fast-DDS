@@ -45,7 +45,7 @@ struct IStatusQueryable
      * @return Whether the operation succeeded or not
      */
     virtual bool get_monitoring_status(
-            const fastrtps::rtps::GUID_t& guid,
+            const fastdds::rtps::GUID_t& guid,
             MonitorServiceData& status) = 0;
 
 };

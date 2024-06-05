@@ -23,7 +23,7 @@
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>
 #include <fastdds/utils/IPLocator.h>
 
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds::rtps;
 
 // Checks whether the address of two locators are equal byte to byte
 static bool address_match(
@@ -1602,7 +1602,7 @@ TEST(LocatorTests, LocatorList_deserialization)
  */
 TEST(RemoteLocatorsTests, add_unicast_locator_repetead)
 {
-    eprosima::fastrtps::rtps::RemoteLocatorList rll;
+    eprosima::fastdds::rtps::RemoteLocatorList rll;
     Locator_t locator_1;
     Locator_t locator_2;
     Locator_t locator_3;
@@ -1626,7 +1626,7 @@ TEST(RemoteLocatorsTests, add_unicast_locator_repetead)
  */
 TEST(RemoteLocatorsTests, add_multicast_locator_repetead)
 {
-    eprosima::fastrtps::rtps::RemoteLocatorList rll;
+    eprosima::fastdds::rtps::RemoteLocatorList rll;
     Locator_t locator_1, locator_2, locator_3;
     ASSERT_EQ(rll.multicast.size(), 0u);
 
@@ -1648,7 +1648,7 @@ TEST(RemoteLocatorsTests, add_multicast_locator_repetead)
  */
 TEST(RemoteLocatorsTests, RemoteLocator_serialization)
 {
-    eprosima::fastrtps::rtps::RemoteLocatorList rll;
+    eprosima::fastdds::rtps::RemoteLocatorList rll;
     Locator_t locator;
     std::string serialized;
     std::stringstream serialized_ss;
@@ -1684,7 +1684,7 @@ TEST(RemoteLocatorsTests, RemoteLocator_serialization)
     ASSERT_EQ(serialized_ss.str(), str_result);
 
     // Check unicast List
-    eprosima::fastrtps::rtps::RemoteLocatorList rll_2;
+    eprosima::fastdds::rtps::RemoteLocatorList rll_2;
     IPLocator::createLocator(LOCATOR_KIND_UDPv4, "1.2.3.4", 3, locator);
     rll_2.add_unicast_locator(locator);
     IPLocator::createLocator(LOCATOR_KIND_UDPv4, "04.03.02.01", 4, locator);
@@ -1698,7 +1698,7 @@ TEST(RemoteLocatorsTests, RemoteLocator_serialization)
  */
 TEST(RemoteLocatorsTests, RemoteLocator_deserialization)
 {
-    eprosima::fastrtps::rtps::RemoteLocatorList rll;
+    eprosima::fastdds::rtps::RemoteLocatorList rll;
     Locator_t locator;
     std::string serialized;
     std::stringstream serialized_ss;
@@ -1743,8 +1743,8 @@ TEST(RemoteLocatorsTests, RemoteLocator_deserialization)
 TEST(LocatorListComparisonTests, locatorList_comparison)
 {
     Locator_t locator;
-    eprosima::fastrtps::ResourceLimitedVector<Locator_t> locator_list_1;
-    eprosima::fastrtps::ResourceLimitedVector<Locator_t> locator_list_2;
+    eprosima::fastdds::ResourceLimitedVector<Locator_t> locator_list_1;
+    eprosima::fastdds::ResourceLimitedVector<Locator_t> locator_list_2;
 
     IPLocator::createLocator(LOCATOR_KIND_TCPv4, "1.2.3.4", 1, locator);
     locator_list_1.push_back(locator);

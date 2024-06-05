@@ -52,11 +52,11 @@ class DataReader;
 } // namespace dds
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 struct GUID_t;
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 
 namespace fastdds {
 namespace dds {
@@ -124,7 +124,7 @@ public:
      * @return true if there is new unread message, false if timeout
      */
     FASTDDS_EXPORTED_API bool wait_for_unread_message(
-            const fastrtps::Duration_t& timeout);
+            const fastdds::Duration_t& timeout);
 
     /**
      * NOT YET IMPLEMENTED
@@ -137,7 +137,7 @@ public:
      * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
     FASTDDS_EXPORTED_API ReturnCode_t wait_for_historical_data(
-            const fastrtps::Duration_t& max_wait) const;
+            const fastdds::Duration_t& max_wait) const;
 
 
     /** @name Read or take data methods.
@@ -819,14 +819,14 @@ public:
      *
      * @return Associated GUID
      */
-    FASTDDS_EXPORTED_API const fastrtps::rtps::GUID_t& guid();
+    FASTDDS_EXPORTED_API const fastdds::rtps::GUID_t& guid();
 
     /**
      * Get associated GUID.
      *
      * @return Associated GUID
      */
-    FASTDDS_EXPORTED_API const fastrtps::rtps::GUID_t& guid() const;
+    FASTDDS_EXPORTED_API const fastdds::rtps::GUID_t& guid() const;
 
     /**
      * @brief Getter for the associated InstanceHandle.
@@ -980,7 +980,7 @@ public:
      */
     FASTDDS_EXPORTED_API ReturnCode_t get_matched_publication_data(
             builtin::PublicationBuiltinTopicData& publication_data,
-            const fastrtps::rtps::InstanceHandle_t& publication_handle) const;
+            const fastdds::rtps::InstanceHandle_t& publication_handle) const;
 
     /**
      * @brief Fills the given vector with the InstanceHandle_t of matched DataReaders

@@ -59,13 +59,13 @@ public:
 
     void on_participant_discovery(
             DomainParticipant* /*participant*/,
-            fastrtps::rtps::ParticipantDiscoveryInfo&& info,
+            fastdds::rtps::ParticipantDiscoveryInfo&& info,
             bool& should_be_ignored) override;
 
 #if HAVE_SECURITY
     void onParticipantAuthentication(
             DomainParticipant* /*participant*/,
-            fastrtps::rtps::ParticipantAuthenticationInfo&& info) override;
+            fastdds::rtps::ParticipantAuthenticationInfo&& info) override;
 #endif // if HAVE_SECURITY
 
     void on_subscription_matched(
@@ -98,7 +98,7 @@ private:
     std::condition_variable cv_;
     const uint32_t publishers_ = 0;
     const uint32_t max_number_samples_ = 0;
-    std::map<eprosima::fastrtps::rtps::GUID_t, uint32_t> number_samples_;
+    std::map<eprosima::fastdds::rtps::GUID_t, uint32_t> number_samples_;
     bool fixed_type_ = false;
     bool zero_copy_ = false;
     bool run_ = true;

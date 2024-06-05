@@ -38,7 +38,7 @@
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
 
 using namespace eprosima::fastdds::dds;
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds::rtps;
 
 LatencyTestSubscriber::LatencyTestSubscriber()
     : latency_command_type_(new TestCommandDataType())
@@ -756,7 +756,7 @@ bool LatencyTestSubscriber::test(
     }
 
     // prevent the LatencyTestSubscriber from been destroyed while LatencyTestPublisher is waitin for the END command.
-    if ( RETCODE_OK != command_writer_->wait_for_acknowledgments(eprosima::fastrtps::c_TimeInfinite))
+    if ( RETCODE_OK != command_writer_->wait_for_acknowledgments(eprosima::fastdds::c_TimeInfinite))
     {
         EPROSIMA_LOG_ERROR(LatencyTest, "Subscriber fail to acknowledge the END command");
         return false;

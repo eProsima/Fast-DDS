@@ -27,7 +27,7 @@
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 /**
@@ -138,7 +138,7 @@ struct LocatorSelectorEntry
 };
 
 } /* namespace rtps */
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */
 
 #endif /* DOXYGEN_SHOULD_SKIP_THIS_PUBLIC */

@@ -39,7 +39,7 @@
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
 
 using namespace eprosima::fastdds::dds;
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds::rtps;
 
 // *******************************************************************************************
 // ************************************ DATA SUB LISTENER ************************************
@@ -273,8 +273,8 @@ bool ThroughputSubscriber::init(
         bool reliable,
         uint32_t pid,
         bool hostname,
-        const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
-        const eprosima::fastrtps::rtps::PropertyPolicy& property_policy,
+        const eprosima::fastdds::rtps::PropertyPolicy& part_property_policy,
+        const eprosima::fastdds::rtps::PropertyPolicy& property_policy,
         const std::string& xml_config_file,
         bool dynamic_types,
         Arg::EnablerValue data_sharing,

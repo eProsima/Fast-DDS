@@ -45,7 +45,7 @@
 
 #define IDSTRING "(ID:" << std::this_thread::get_id() << ") " <<
 
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds::rtps;
 using BaseReader = eprosima::fastdds::rtps::BaseReader;
 
 static void send_datasharing_ack(
@@ -1089,7 +1089,7 @@ bool StatefulReader::change_received(
                         "Writer Proxy " << a_change->writerGUID << " not matched to this Reader " << m_guid.entityId);
                 return false;
             }
-            else if (a_change->kind != eprosima::fastrtps::rtps::ChangeKind_t::ALIVE)
+            else if (a_change->kind != eprosima::fastdds::rtps::ChangeKind_t::ALIVE)
             {
                 EPROSIMA_LOG_INFO(RTPS_READER, "Not alive change " << a_change->writerGUID << " has not WriterProxy");
                 return false;

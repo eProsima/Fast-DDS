@@ -29,7 +29,7 @@
 #include <fastdds/rtps/attributes/EndpointSecurityAttributes.h>
 #endif // if HAVE_SECURITY
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 /**
@@ -171,7 +171,7 @@ private:
 };
 
 } /* namespace rtps */
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */
 
 #endif /* _FASTDDS_ENDPOINTATTRIBUTES_H_ */

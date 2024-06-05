@@ -30,7 +30,7 @@ namespace rtps {
 
 namespace TimeConv {
 
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds::rtps;
 
 /**
  * Convert Time_t to seconds as a double
@@ -54,7 +54,7 @@ inline int64_t Time_t2MicroSecondsInt64(
  * Convert Duration_t to seconds as an int64
  */
 inline int64_t Duration_t2MicroSecondsInt64(
-        const fastrtps::Duration_t& t)
+        const fastdds::Duration_t& t)
 {
     return (int64_t)(t.nanosec / 1000.0) + t.seconds * (int64_t)pow(10.0, 6);
 }
@@ -90,7 +90,7 @@ inline double Time_t2MilliSecondsDouble(
  * Convert Duration_t to milliseconds as a double
  */
 inline double Duration_t2MilliSecondsDouble(
-        const fastrtps::Duration_t& t)
+        const fastdds::Duration_t& t)
 {
     return ((double)t.nanosec / 1000000.0) + (double)t.seconds * pow(10.0, 3);
 }

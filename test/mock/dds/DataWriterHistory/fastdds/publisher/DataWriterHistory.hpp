@@ -38,8 +38,8 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds;
+using namespace eprosima::fastdds::rtps;
 
 static HistoryAttributes to_history_attributes(
         const TopicAttributes& topic_att,
@@ -72,7 +72,7 @@ public:
             const TopicAttributes& topic_att,
             uint32_t payloadMaxSize,
             MemoryManagementPolicy_t mempolicy,
-            std::function<void (const fastrtps::rtps::InstanceHandle_t&)> unack_sample_remove_functor)
+            std::function<void (const fastdds::rtps::InstanceHandle_t&)> unack_sample_remove_functor)
         : WriterHistory(to_history_attributes(topic_att, payloadMaxSize, mempolicy))
         , history_qos_(topic_att.historyQos)
         , resource_limited_qos_(topic_att.resourceLimitsQos)
@@ -155,8 +155,8 @@ public:
                );
     }
 
-    fastrtps::rtps::SerializedPayload_t* get_key_value(
-            const fastrtps::rtps::InstanceHandle_t& handle)
+    fastdds::rtps::SerializedPayload_t* get_key_value(
+            const fastdds::rtps::InstanceHandle_t& handle)
     {
         t_m_Inst_Caches::iterator vit = keyed_changes_.find(handle);
         if (vit != keyed_changes_.end() && vit->second.is_registered())
@@ -207,10 +207,10 @@ public:
 
     template<typename PreCommitHook>
     bool add_pub_change_with_commit_hook(
-            fastrtps::rtps::CacheChange_t* change,
-            fastrtps::rtps::WriteParams& wparams,
+            fastdds::rtps::CacheChange_t* change,
+            fastdds::rtps::WriteParams& wparams,
             PreCommitHook /*pre_commit*/,
-            std::unique_lock<fastrtps::RecursiveTimedMutex>& lock,
+            std::unique_lock<fastdds::RecursiveTimedMutex>& lock,
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
     {
         return add_pub_change(change, wparams, lock, max_blocking_time);
@@ -305,7 +305,7 @@ private:
     TopicAttributes topic_att_;
 
     //! Unacknowledged sample removed functor
-    std::function<void (const fastrtps::rtps::InstanceHandle_t&)> unacknowledged_sample_removed_functor_;
+    std::function<void (const fastdds::rtps::InstanceHandle_t&)> unacknowledged_sample_removed_functor_;
 
     bool find_or_add_key(
             const InstanceHandle_t& instance_handle,

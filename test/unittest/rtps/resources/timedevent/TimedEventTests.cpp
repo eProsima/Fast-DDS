@@ -27,7 +27,7 @@ public:
 
     void SetUp()
     {
-        service_ = new eprosima::fastrtps::rtps::ResourceEvent();
+        service_ = new eprosima::fastdds::rtps::ResourceEvent();
         service_->init_thread();
     }
 
@@ -36,7 +36,7 @@ public:
         delete service_;
     }
 
-    eprosima::fastrtps::rtps::ResourceEvent* service_;
+    eprosima::fastdds::rtps::ResourceEvent* service_;
 };
 
 TimedEventEnvironment* const env =
@@ -375,7 +375,7 @@ TEST(TimedEventMultithread, Event_FourAutoRestart)
 
 TEST(TimedEventMultithread, PendingRaceCheck)
 {
-    using TimedEvent = eprosima::fastrtps::rtps::TimedEvent;
+    using TimedEvent = eprosima::fastdds::rtps::TimedEvent;
     using TimeClock = std::chrono::high_resolution_clock;
     using TimePoint = std::chrono::time_point<TimeClock>;
 
@@ -454,7 +454,7 @@ TEST(TimedEventMultithread, PendingRaceCheck)
  */
 TEST(TimedEvent, Event_UnregisterEventWithinCallbackOfAnotherEvent)
 {
-    using TimedEvent = eprosima::fastrtps::rtps::TimedEvent;
+    using TimedEvent = eprosima::fastdds::rtps::TimedEvent;
 
     constexpr auto expiration_ms = std::chrono::milliseconds(100);
     std::atomic_bool success(false);

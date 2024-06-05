@@ -32,8 +32,8 @@
 #define IS_OPENSSL_1_1 0
 #endif // if OPENSSL_VERSION_NUMBER >= 0x10100000L
 
-using namespace eprosima::fastrtps::rtps;
-using namespace eprosima::fastrtps::rtps::security;
+using namespace eprosima::fastdds::rtps;
+using namespace eprosima::fastdds::rtps::security;
 
 static const char* certs_path = nullptr;
 

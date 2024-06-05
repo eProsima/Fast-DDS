@@ -51,7 +51,7 @@ static const char* ProtectionKindEncrypt_str = "ENCRYPT";
 static const char* ProtectionKindSignAuth_str = "SIGN_WITH_ORIGIN_AUTHENTICATION";
 static const char* ProtectionKindEncryptAuth_str = "ENCRYPT_WITH_ORIGIN_AUTHENTICATION";
 
-using namespace eprosima::fastrtps::rtps::security;
+using namespace eprosima::fastdds::rtps::security;
 
 void GovernanceParser::swap(
         DomainAccessRules& rules)

@@ -22,8 +22,8 @@
 #include <security/cryptography/AESGCMGMAC.h>
 #include <security/logging/LogTopic.h>
 
-using namespace eprosima::fastrtps::rtps;
-using namespace eprosima::fastrtps::rtps::security;
+using namespace eprosima::fastdds::rtps;
+using namespace eprosima::fastdds::rtps::security;
 
 Authentication* SecurityPluginFactory::create_authentication_plugin(
         const PropertyPolicy& property_policy)

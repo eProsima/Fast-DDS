@@ -34,8 +34,8 @@
 #include <MockReceiverResource.h>
 #include <SharedMemGlobalMock.hpp>
 
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds;
+using namespace eprosima::fastdds::rtps;
 using namespace eprosima::fastdds;
 using namespace eprosima::fastdds::rtps;
 

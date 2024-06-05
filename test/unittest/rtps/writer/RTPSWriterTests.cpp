@@ -23,7 +23,7 @@
 
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 using namespace testing;
@@ -174,7 +174,7 @@ TEST(RTPSWriterTests, WriterWithCustomPayloadPool_DoesNotInitializePool_WhenDyna
 }
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 namespace eprosima {
@@ -182,10 +182,10 @@ namespace fastcdr {
 template<>
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator&,
-        const eprosima::fastrtps::rtps::TestDataType&,
+        const eprosima::fastdds::rtps::TestDataType&,
         size_t& current_alignment)
 {
-    size_t calculated_size {eprosima::fastrtps::rtps::TestDataType::data_size};
+    size_t calculated_size {eprosima::fastdds::rtps::TestDataType::data_size};
     current_alignment += calculated_size;
     return calculated_size;
 }

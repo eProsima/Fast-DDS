@@ -31,7 +31,7 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-using fastrtps::rtps::PropertyPolicyHelper;
+using fastdds::rtps::PropertyPolicyHelper;
 
 class TopicDataTypeMock : public TopicDataType
 {
@@ -46,21 +46,21 @@ public:
 
     bool serialize(
             void* data,
-            eprosima::fastrtps::rtps::SerializedPayload_t* payload) override
+            eprosima::fastdds::rtps::SerializedPayload_t* payload) override
     {
         return serialize(data, payload, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
     }
 
     bool serialize(
             void* /*data*/,
-            fastrtps::rtps::SerializedPayload_t* /*payload*/,
+            fastdds::rtps::SerializedPayload_t* /*payload*/,
             DataRepresentationId_t /*data_representation*/) override
     {
         return true;
     }
 
     bool deserialize(
-            fastrtps::rtps::SerializedPayload_t* /*payload*/,
+            fastdds::rtps::SerializedPayload_t* /*payload*/,
             void* /*data*/) override
     {
         return true;
@@ -94,7 +94,7 @@ public:
 
     bool getKey(
             void* /*data*/,
-            fastrtps::rtps::InstanceHandle_t* /*ihandle*/,
+            fastdds::rtps::InstanceHandle_t* /*ihandle*/,
             bool /*force_md5*/) override
     {
         return true;
@@ -115,21 +115,21 @@ public:
 
     bool serialize(
             void* data,
-            eprosima::fastrtps::rtps::SerializedPayload_t* payload) override
+            eprosima::fastdds::rtps::SerializedPayload_t* payload) override
     {
         return serialize(data, payload, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
     }
 
     bool serialize(
             void* /*data*/,
-            fastrtps::rtps::SerializedPayload_t* /*payload*/,
+            fastdds::rtps::SerializedPayload_t* /*payload*/,
             DataRepresentationId_t /*data_representation*/) override
     {
         return true;
     }
 
     bool deserialize(
-            fastrtps::rtps::SerializedPayload_t* /*payload*/,
+            fastdds::rtps::SerializedPayload_t* /*payload*/,
             void* /*data*/) override
     {
         return true;
@@ -176,7 +176,7 @@ public:
 
     bool getKey(
             void* /*data*/,
-            fastrtps::rtps::InstanceHandle_t* /*ihandle*/,
+            fastdds::rtps::InstanceHandle_t* /*ihandle*/,
             bool /*force_md5*/) override
     {
         return true;
@@ -237,7 +237,7 @@ TEST(PublisherTests, ChangeDefaultDataWriterQos)
     // .reliability
     qos.reliability().kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
     qos.reliability().max_blocking_time.seconds = 100;
-    qos.reliability().max_blocking_time.nanosec = eprosima::fastrtps::Time_t::INFINITE_NANOSECONDS;
+    qos.reliability().max_blocking_time.nanosec = eprosima::fastdds::Time_t::INFINITE_NANOSECONDS;
     // .destination_order
     qos.destination_order().kind = eprosima::fastdds::dds::BY_RECEPTION_TIMESTAMP_DESTINATIONORDER_QOS;
     // .history
@@ -270,7 +270,7 @@ TEST(PublisherTests, ChangeDefaultDataWriterQos)
     qos.publish_mode().flow_controller_name = "Prueba";
 
     // .properties
-    eprosima::fastrtps::rtps::Property property;
+    eprosima::fastdds::rtps::Property property;
     property.name("Property1");
     property.value("Value1");
     qos.properties().properties().push_back(property);
@@ -293,7 +293,7 @@ TEST(PublisherTests, ChangeDefaultDataWriterQos)
     // .endpoint
     qos.endpoint().user_defined_id = 1;
     qos.endpoint().entity_id = 2;
-    qos.endpoint().history_memory_policy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+    qos.endpoint().history_memory_policy = eprosima::fastdds::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
     // . writer_resource_limits
     qos.writer_resource_limits().matched_subscriber_allocation.initial = 30;
     qos.writer_resource_limits().matched_subscriber_allocation.maximum = 300;
@@ -328,7 +328,7 @@ TEST(PublisherTests, ChangeDefaultDataWriterQos)
     // .reliability
     EXPECT_EQ(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS, wqos.reliability().kind);
     EXPECT_EQ(100, wqos.reliability().max_blocking_time.seconds);
-    EXPECT_EQ(eprosima::fastrtps::Time_t::INFINITE_NANOSECONDS, wqos.reliability().max_blocking_time.nanosec);
+    EXPECT_EQ(eprosima::fastdds::Time_t::INFINITE_NANOSECONDS, wqos.reliability().max_blocking_time.nanosec);
     // .destination_order
     EXPECT_EQ(eprosima::fastdds::dds::BY_RECEPTION_TIMESTAMP_DESTINATIONORDER_QOS, wqos.destination_order().kind);
     // .history
@@ -411,7 +411,7 @@ TEST(PublisherTests, ChangeDefaultDataWriterQos)
     // .endpoint
     EXPECT_EQ(1, wqos.endpoint().user_defined_id);
     EXPECT_EQ(2, wqos.endpoint().entity_id);
-    EXPECT_EQ(eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE, wqos.endpoint().history_memory_policy);
+    EXPECT_EQ(eprosima::fastdds::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE, wqos.endpoint().history_memory_policy);
     // . writer_resource_limits
     EXPECT_EQ(30, wqos.writer_resource_limits().matched_subscriber_allocation.initial);
     EXPECT_EQ(300, wqos.writer_resource_limits().matched_subscriber_allocation.maximum);
@@ -801,7 +801,7 @@ TEST(PublisherTests, datawriter_copy_from_topic_qos)
     control_qos.user_data().push_back(0);
     control_qos.endpoint().entity_id = 1;
     control_qos.writer_resource_limits().matched_subscriber_allocation =
-            eprosima::fastrtps::ResourceLimitedContainerConfig::fixed_size_configuration(1u);
+            eprosima::fastdds::ResourceLimitedContainerConfig::fixed_size_configuration(1u);
     control_qos.data_sharing().off();
 
     // Copy control Qos to test Qos. At this point, test_qos has non-default values for the non-common Qos,

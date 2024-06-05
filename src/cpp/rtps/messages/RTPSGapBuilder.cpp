@@ -20,7 +20,7 @@
 #include "RTPSGapBuilder.hpp"
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 RTPSGapBuilder::~RTPSGapBuilder()
@@ -82,5 +82,5 @@ bool RTPSGapBuilder::flush()
 }
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima

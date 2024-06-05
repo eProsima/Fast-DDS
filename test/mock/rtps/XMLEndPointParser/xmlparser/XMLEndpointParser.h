@@ -24,7 +24,7 @@
 #include <xmlparser/XMLParserCommon.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace xmlparser {
 
 /**

@@ -113,7 +113,7 @@ fastdds::dds::ReturnCode_t DomainParticipant::disable_monitor_service()
 }
 
 fastdds::dds::ReturnCode_t DomainParticipant::fill_discovery_data_from_cdr_message(
-        fastrtps::rtps::ParticipantProxyData& data,
+        fastdds::rtps::ParticipantProxyData& data,
         fastdds::statistics::MonitorServiceStatusData& msg)
 {
 #ifdef FASTDDS_STATISTICS
@@ -126,7 +126,7 @@ fastdds::dds::ReturnCode_t DomainParticipant::fill_discovery_data_from_cdr_messa
 }
 
 fastdds::dds::ReturnCode_t DomainParticipant::fill_discovery_data_from_cdr_message(
-        fastrtps::rtps::WriterProxyData& data,
+        fastdds::rtps::WriterProxyData& data,
         fastdds::statistics::MonitorServiceStatusData& msg)
 {
 #ifdef FASTDDS_STATISTICS
@@ -139,7 +139,7 @@ fastdds::dds::ReturnCode_t DomainParticipant::fill_discovery_data_from_cdr_messa
 }
 
 fastdds::dds::ReturnCode_t DomainParticipant::fill_discovery_data_from_cdr_message(
-        fastrtps::rtps::ReaderProxyData& data,
+        fastdds::rtps::ReaderProxyData& data,
         fastdds::statistics::MonitorServiceStatusData& msg)
 {
 #ifdef FASTDDS_STATISTICS

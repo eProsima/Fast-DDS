@@ -66,13 +66,13 @@ struct LocatorsIterator
 } // namespace rtps
 } // namespace fastdds
 
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 using LocatorsIterator = eprosima::fastdds::rtps::LocatorsIterator;
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 #endif /* _FASTDDS_RTPS_COMMON_LOCATORSITERATOR_HPP_ */

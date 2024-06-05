@@ -42,7 +42,7 @@ class BaseReader;
 } // namespace rtps
 } // namespace fastdds
 
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class BuiltinProtocols;
@@ -320,7 +320,7 @@ private:
 };
 
 } /* namespace rtps */
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC

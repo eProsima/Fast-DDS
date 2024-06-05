@@ -57,7 +57,7 @@ struct ContentFilterInfoCounter
         , transport(std::make_shared<rtps::test_UDPv4TransportDescriptor>())
     {
         transport->interfaceWhiteList.push_back("127.0.0.1");
-        transport->drop_data_messages_filter_ = [this](fastrtps::rtps::CDRMessage_t& msg) -> bool
+        transport->drop_data_messages_filter_ = [this](fastdds::rtps::CDRMessage_t& msg) -> bool
                 {
                     // Check if it has inline_qos
                     uint8_t flags = msg.buffer[msg.pos - 3];
@@ -66,13 +66,13 @@ struct ContentFilterInfoCounter
                     // Skip extraFlags, read octetsToInlineQos, and calculate inline qos position.
                     msg.pos += 2;
                     uint16_t to_inline_qos = 0;
-                    fastrtps::rtps::CDRMessage::readUInt16(&msg, &to_inline_qos);
+                    fastdds::rtps::CDRMessage::readUInt16(&msg, &to_inline_qos);
                     uint32_t inline_qos_pos = msg.pos + to_inline_qos;
 
                     // Read writerId, and skip if built-in.
                     msg.pos += 4;
-                    fastrtps::rtps::GUID_t writer_guid;
-                    fastrtps::rtps::CDRMessage::readEntityId(&msg, &writer_guid.entityId);
+                    fastdds::rtps::GUID_t writer_guid;
+                    fastdds::rtps::CDRMessage::readEntityId(&msg, &writer_guid.entityId);
                     msg.pos = old_pos;
 
                     if (writer_guid.is_builtin())
@@ -90,8 +90,8 @@ struct ContentFilterInfoCounter
                             uint16_t pid = 0;
                             uint16_t plen = 0;
 
-                            fastrtps::rtps::CDRMessage::readUInt16(&msg, &pid);
-                            fastrtps::rtps::CDRMessage::readUInt16(&msg, &plen);
+                            fastdds::rtps::CDRMessage::readUInt16(&msg, &pid);
+                            fastdds::rtps::CDRMessage::readUInt16(&msg, &plen);
                             uint32_t next_pos = msg.pos + plen;
 
                             if (pid == PID_CONTENT_FILTER_INFO)
@@ -103,12 +103,12 @@ struct ContentFilterInfoCounter
                                 {
                                     // Read numBitmaps and skip bitmaps
                                     uint32_t num_bitmaps = 0;
-                                    fastrtps::rtps::CDRMessage::readUInt32(&msg, &num_bitmaps);
+                                    fastdds::rtps::CDRMessage::readUInt32(&msg, &num_bitmaps);
                                     msg.pos += 4 * num_bitmaps;
 
                                     // Read numSignatures and keep maximum
                                     uint32_t num_signatures = 0;
-                                    fastrtps::rtps::CDRMessage::readUInt32(&msg, &num_signatures);
+                                    fastdds::rtps::CDRMessage::readUInt32(&msg, &num_signatures);
                                     if (max_filter_signature_number < num_signatures)
                                     {
                                         max_filter_signature_number = num_signatures;
@@ -146,7 +146,7 @@ public:
 
     void SetUp() override
     {
-        using namespace eprosima::fastrtps;
+        using namespace eprosima::fastdds;
 
         enable_datasharing = false;
 
@@ -170,7 +170,7 @@ public:
 
     void TearDown() override
     {
-        using namespace eprosima::fastrtps;
+        using namespace eprosima::fastdds;
 
         eprosima::fastdds::LibrarySettings library_settings;
         switch (GetParam())
@@ -222,7 +222,7 @@ protected:
         void init(
                 bool writer_side_filtering,
                 const std::shared_ptr<rtps::TransportDescriptorInterface>& transport,
-                fastrtps::ResourceLimitedContainerConfig filter_limits)
+                fastdds::ResourceLimitedContainerConfig filter_limits)
         {
             writer_side_filter_ = writer_side_filtering && filter_limits.maximum > 0;
 
@@ -232,7 +232,7 @@ protected:
             ASSERT_TRUE(writer.isInitialized());
 
             // Ensure the direct reader always receives DATA messages using the test transport
-            fastrtps::rtps::GuidPrefix_t custom_prefix;
+            fastdds::rtps::GuidPrefix_t custom_prefix;
             memset(custom_prefix.value, 0xee, custom_prefix.size);
             direct_reader.datasharing_off().guid_prefix(custom_prefix);
             direct_reader.disable_builtin_transport().add_user_transport_to_pparams(transport);
@@ -423,7 +423,7 @@ protected:
 
     DataReader* prepare_test(
             TestState& state,
-            fastrtps::ResourceLimitedContainerConfig filter_limits,
+            fastdds::ResourceLimitedContainerConfig filter_limits,
             uint32_t nb_of_additional_filter_readers)
     {
         state.init(using_transport_communication_, filter_counter.transport, filter_limits);
@@ -517,7 +517,7 @@ TEST_P(DDSContentFilter, WithLimitsSeveralReaders)
 
     TestState state;
 
-    auto reader = prepare_test(state, fastrtps::ResourceLimitedContainerConfig::fixed_size_configuration(2u), 3u);
+    auto reader = prepare_test(state, fastdds::ResourceLimitedContainerConfig::fixed_size_configuration(2u), 3u);
     ASSERT_NE(nullptr, reader);
 
     test_run(reader, state, 2u);
@@ -534,7 +534,7 @@ TEST_P(DDSContentFilter, WithLimitsDynamicReaders)
     TestState state;
 
     // Only one filtered reader created
-    auto reader = prepare_test(state, fastrtps::ResourceLimitedContainerConfig::fixed_size_configuration(2u), 0u);
+    auto reader = prepare_test(state, fastdds::ResourceLimitedContainerConfig::fixed_size_configuration(2u), 0u);
     ASSERT_NE(nullptr, reader);
 
     // We want a single filter to be applied, and check only for reader discovery changes

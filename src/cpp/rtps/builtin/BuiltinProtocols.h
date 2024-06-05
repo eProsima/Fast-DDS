@@ -44,7 +44,7 @@ class WriterQos;
 } // namespace dds
 } // namespace fastdds
 
-namespace fastrtps {
+namespace fastdds {
 
 class TopicAttributes;
 

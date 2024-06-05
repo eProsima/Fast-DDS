@@ -26,7 +26,7 @@
 #include <fastdds/rtps/common/Guid.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 using KeyHash_t = std::array<octet, 16>;
@@ -359,7 +359,7 @@ inline std::istream& operator >>(
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 #endif /* _FASTDDS_RTPS_INSTANCEHANDLE_H_ */

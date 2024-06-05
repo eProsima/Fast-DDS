@@ -192,9 +192,9 @@ void test_discovery_topic_physical_data(
 
     // Avoid discovery of participants external to the test
     pqos.wire_protocol().builtin.discovery_config.ignoreParticipantFlags =
-            static_cast<eprosima::fastrtps::rtps::ParticipantFilteringFlags_t>(
-        eprosima::fastrtps::rtps::ParticipantFilteringFlags_t::FILTER_DIFFERENT_HOST |
-        eprosima::fastrtps::rtps::ParticipantFilteringFlags_t::FILTER_DIFFERENT_PROCESS);
+            static_cast<eprosima::fastdds::rtps::ParticipantFilteringFlags_t>(
+        eprosima::fastdds::rtps::ParticipantFilteringFlags_t::FILTER_DIFFERENT_HOST |
+        eprosima::fastdds::rtps::ParticipantFilteringFlags_t::FILTER_DIFFERENT_PROCESS);
 
     // Configure physical properties according to test case
     switch (test_kind)
@@ -244,11 +244,11 @@ void test_discovery_topic_physical_data(
     EXPECT_NE(nullptr, discovery_data_reader);
 
     // Get the second participant's physical properties
-    const std::string* p2_host = eprosima::fastrtps::rtps::PropertyPolicyHelper::find_property(
+    const std::string* p2_host = eprosima::fastdds::rtps::PropertyPolicyHelper::find_property(
         p2->get_qos().properties(), parameter_policy_physical_data_host);
-    const std::string* p2_user = eprosima::fastrtps::rtps::PropertyPolicyHelper::find_property(
+    const std::string* p2_user = eprosima::fastdds::rtps::PropertyPolicyHelper::find_property(
         p2->get_qos().properties(), parameter_policy_physical_data_user);
-    const std::string* p2_process = eprosima::fastrtps::rtps::PropertyPolicyHelper::find_property(
+    const std::string* p2_process = eprosima::fastdds::rtps::PropertyPolicyHelper::find_property(
         p2->get_qos().properties(), parameter_policy_physical_data_process);
 
     // Verify that the second participant's physical properties are set according to specification
@@ -304,11 +304,11 @@ void test_discovery_topic_physical_data(
     waitset.attach_condition(condition);
 
     ConditionSeq triggered_conditions;
-    waitset.wait(triggered_conditions, eprosima::fastrtps::c_TimeInfinite);
+    waitset.wait(triggered_conditions, eprosima::fastdds::c_TimeInfinite);
 
     auto to_guid_prefix = [](const statistics::detail::GuidPrefix_s& prefix)
             {
-                eprosima::fastrtps::rtps::GuidPrefix_t guid_prefix;
+                eprosima::fastdds::rtps::GuidPrefix_t guid_prefix;
                 for (size_t i = 0; i < prefix.value().size(); i++)
                 {
                     guid_prefix.value[i] = prefix.value()[i];
@@ -318,7 +318,7 @@ void test_discovery_topic_physical_data(
 
     auto to_entity_id = [](const statistics::detail::EntityId_s& id)
             {
-                eprosima::fastrtps::rtps::EntityId_t entity_id;
+                eprosima::fastdds::rtps::EntityId_t entity_id;
                 for (size_t i = 0; i < id.value().size(); i++)
                 {
                     entity_id.value[i] = id.value()[i];
@@ -336,11 +336,11 @@ void test_discovery_topic_physical_data(
             if (info_seq[n].valid_data)
             {
                 /* Get discovery information from the sample */
-                eprosima::fastrtps::rtps::GuidPrefix_t local_prefix = to_guid_prefix(
+                eprosima::fastdds::rtps::GuidPrefix_t local_prefix = to_guid_prefix(
                     discovery_time_seq[n].local_participant_guid().guidPrefix());
-                eprosima::fastrtps::rtps::GuidPrefix_t remote_prefix = to_guid_prefix(
+                eprosima::fastdds::rtps::GuidPrefix_t remote_prefix = to_guid_prefix(
                     discovery_time_seq[n].remote_entity_guid().guidPrefix());
-                eprosima::fastrtps::rtps::EntityId_t remote_entity_id = to_entity_id(
+                eprosima::fastdds::rtps::EntityId_t remote_entity_id = to_entity_id(
                     discovery_time_seq[n].remote_entity_guid().entityId());
 
                 /* Validate discovery sample */
@@ -414,9 +414,9 @@ TEST(DDSStatistics, simple_statistics_datareaders)
     auto depth = static_cast<int32_t>(num_samples);
 
     // Reader should be reliable so ACKNACK messages are generated (and accounted)
-    data_reader.reliability(RELIABLE_RELIABILITY_QOS).history_depth(depth).init();
+    data_reader.reliability(eprosima::fastdds::RELIABLE_RELIABILITY_QOS).history_depth(depth).init();
     // Enforce synchronous writer to force RTPS_SENT to have at least num_samples
-    data_writer.asynchronously(SYNCHRONOUS_PUBLISH_MODE).history_depth(depth).init();
+    data_writer.asynchronously(eprosima::fastdds::SYNCHRONOUS_PUBLISH_MODE).history_depth(depth).init();
 
     // Ensure discovery traffic is not included on statistics
     data_reader.wait_discovery();

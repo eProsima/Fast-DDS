@@ -76,12 +76,12 @@
  */
 
 /** @defgroup TYPES_MODULE Contains the builtin generated types
- * @namespace eprosima::fastrtps::types
+ * @namespace eprosima::fastdds::types
  * @ingroup FASTRTPS_MODULE
  */
 
 /** @defgroup XMLPARSER_MODULE Contains all the modules related with the XMLParser
- * @namespace eprosima::fastrtps::xmlparser
+ * @namespace eprosima::fastdds::xmlparser
  * @ingroup FASTRTPS_MODULE
  */
 
@@ -137,7 +137,7 @@
  */
 
 /**
- * @namespace eprosima::fastrtps::rtps::TimeConv Auxiliary methods to convert to Time_t to more manageable types.
+ * @namespace eprosima::fastdds::rtps::TimeConv Auxiliary methods to convert to Time_t to more manageable types.
  *  @ingroup UTILITIES_MODULE
  */
 

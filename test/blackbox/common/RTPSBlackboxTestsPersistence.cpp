@@ -27,8 +27,8 @@
 #include "RTPSWithRegistrationReader.hpp"
 #include "RTPSWithRegistrationWriter.hpp"
 
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds;
+using namespace eprosima::fastdds::rtps;
 
 enum communication_type
 {
@@ -120,7 +120,7 @@ protected:
         {
             case INTRAPROCESS:
                 library_settings.intraprocess_delivery = eprosima::fastdds::IntraprocessDeliveryType::INTRAPROCESS_FULL;
-                eprosima::fastrtps::rtps::RTPSDomain::set_library_settings(att);
+                eprosima::fastdds::rtps::RTPSDomain::set_library_settings(att);
                 break;
             case TRANSPORT:
             default:
@@ -168,7 +168,7 @@ protected:
         {
             case INTRAPROCESS:
                 library_settings.intraprocess_delivery = eprosima::fastdds::IntraprocessDeliveryType::INTRAPROCESS_OFF;
-                eprosima::fastrtps::rtps::RTPSDomain::set_library_settings(att);
+                eprosima::fastdds::rtps::RTPSDomain::set_library_settings(att);
                 break;
             case TRANSPORT:
             default:

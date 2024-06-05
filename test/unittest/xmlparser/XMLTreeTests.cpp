@@ -19,7 +19,7 @@
 
 #include <gtest/gtest.h>
 
-using namespace eprosima::fastrtps::xmlparser;
+using namespace eprosima::fastdds::xmlparser;
 
 using namespace ::testing;
 

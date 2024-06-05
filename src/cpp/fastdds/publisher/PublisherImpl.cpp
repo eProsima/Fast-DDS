@@ -45,10 +45,10 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-using fastrtps::xmlparser::XMLProfileManager;
-using fastrtps::xmlparser::XMLP_ret;
-using fastrtps::rtps::InstanceHandle_t;
-using fastrtps::Duration_t;
+using fastdds::xmlparser::XMLProfileManager;
+using fastdds::xmlparser::XMLP_ret;
+using fastdds::rtps::InstanceHandle_t;
+using fastdds::Duration_t;
 
 PublisherImpl::PublisherImpl(
         DomainParticipantImpl* p,
@@ -207,7 +207,7 @@ DataWriterImpl* PublisherImpl::create_datawriter_impl(
         Topic* topic,
         const DataWriterQos& qos,
         DataWriterListener* listener,
-        std::shared_ptr<fastrtps::rtps::IPayloadPool> payload_pool)
+        std::shared_ptr<fastdds::rtps::IPayloadPool> payload_pool)
 {
     return new DataWriterImpl(this, type, topic, qos, listener, payload_pool);
 }
@@ -217,7 +217,7 @@ DataWriter* PublisherImpl::create_datawriter(
         const DataWriterQos& qos,
         DataWriterListener* listener,
         const StatusMask& mask,
-        std::shared_ptr<fastrtps::rtps::IPayloadPool> payload_pool)
+        std::shared_ptr<fastdds::rtps::IPayloadPool> payload_pool)
 {
     EPROSIMA_LOG_INFO(PUBLISHER, "CREATING WRITER IN TOPIC: " << topic->get_name());
     //Look for the correct type registration
@@ -290,7 +290,7 @@ DataWriter* PublisherImpl::create_datawriter_with_profile(
         const std::string& profile_name,
         DataWriterListener* listener,
         const StatusMask& mask,
-        std::shared_ptr<fastrtps::rtps::IPayloadPool> payload_pool)
+        std::shared_ptr<fastdds::rtps::IPayloadPool> payload_pool)
 {
     // TODO (ILG): Change when we have full XML support for DDS QoS profiles
     PublisherAttributes attr;
@@ -378,7 +378,7 @@ bool PublisherImpl::has_datawriters() const
 }
 
 bool PublisherImpl::contains_entity(
-        const fastrtps::rtps::InstanceHandle_t& handle) const
+        const fastdds::rtps::InstanceHandle_t& handle) const
 {
     std::lock_guard<std::mutex> lock(mtx_writers_);
     for (auto vit : writers_)
@@ -513,7 +513,7 @@ ReturnCode_t PublisherImpl::wait_for_acknowledgments(
             // Check ellapsed time and decrement
             participant_->get_current_time(end);
             current = current - (end - begin);
-            if (current < fastrtps::c_TimeZero)
+            if (current < fastdds::c_TimeZero)
             {
                 return RETCODE_TIMEOUT;
             }
@@ -675,7 +675,7 @@ PublisherListener* PublisherImpl::get_listener_for(
 #ifdef FASTDDS_STATISTICS
 bool PublisherImpl::get_monitoring_status(
         statistics::MonitorServiceData& status,
-        const fastrtps::rtps::GUID_t& entity_guid)
+        const fastdds::rtps::GUID_t& entity_guid)
 {
     bool ret = false;
     std::vector<DataWriter*> writers;

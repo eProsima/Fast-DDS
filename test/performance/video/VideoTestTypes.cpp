@@ -19,12 +19,12 @@
 
 #include "VideoTestTypes.hpp"
 
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds;
+using namespace eprosima::fastdds::rtps;
 
 bool VideoDataType::serialize(
         void* data,
-        eprosima::fastrtps::rtps::SerializedPayload_t* payload)
+        eprosima::fastdds::rtps::SerializedPayload_t* payload)
 {
     VideoType* lt = (VideoType*)data;
 
@@ -40,7 +40,7 @@ bool VideoDataType::serialize(
 }
 
 bool VideoDataType::deserialize(
-        eprosima::fastrtps::rtps::SerializedPayload_t* payload,
+        eprosima::fastdds::rtps::SerializedPayload_t* payload,
         void* data)
 {
     VideoType* lt = (VideoType*)data;

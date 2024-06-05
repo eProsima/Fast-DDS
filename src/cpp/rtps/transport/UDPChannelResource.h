@@ -236,7 +236,7 @@ protected:
      * @param[out] remote_locator Locator describing the remote restination we received a packet from.
      */
     bool Receive(
-            fastrtps::rtps::octet* receive_buffer,
+            fastdds::rtps::octet* receive_buffer,
             uint32_t receive_buffer_capacity,
             uint32_t& receive_buffer_size,
             Locator& remote_locator);

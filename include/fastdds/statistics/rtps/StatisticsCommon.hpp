@@ -31,7 +31,7 @@
 
 namespace eprosima {
 
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class RTPSMessageGroup;
@@ -122,13 +122,13 @@ protected:
      * Retrieve endpoint mutexes from derived class
      * @return defaults to the endpoint mutex
      */
-    virtual fastrtps::RecursiveTimedMutex& get_statistics_mutex() = 0;
+    virtual fastdds::RecursiveTimedMutex& get_statistics_mutex() = 0;
 
     /**
      * Retrieve the GUID_t from derived class
      * @return endpoint GUID_t
      */
-    virtual const fastrtps::rtps::GUID_t& get_guid() const = 0;
+    virtual const fastdds::rtps::GUID_t& get_guid() const = 0;
 };
 
 // Members are private details
@@ -148,13 +148,13 @@ class StatisticsWriterImpl
      * Retrieve endpoint mutexes from derived class
      * @return defaults to the endpoint mutex
      */
-    fastrtps::RecursiveTimedMutex& get_statistics_mutex() final;
+    fastdds::RecursiveTimedMutex& get_statistics_mutex() final;
 
     /**
      * Retrieve the GUID_t from derived class
      * @return endpoint GUID_t
      */
-    const fastrtps::rtps::GUID_t& get_guid() const final;
+    const fastdds::rtps::GUID_t& get_guid() const final;
 
 protected:
 
@@ -171,7 +171,7 @@ protected:
      * @param num_sent_submessages Current total number of submessages sent for the affected sample.
      */
     void on_sample_datas(
-            const fastrtps::rtps::SampleIdentity& sample_identity,
+            const fastdds::rtps::SampleIdentity& sample_identity,
             size_t num_sent_submessages);
 
     /**
@@ -215,7 +215,7 @@ struct StatisticsReaderAncillary;
 class StatisticsReaderImpl
     : protected StatisticsListenersImpl
 {
-    friend class fastrtps::rtps::RTPSMessageGroup;
+    friend class fastdds::rtps::RTPSMessageGroup;
 
     /**
      * Create the auxiliary structure
@@ -227,13 +227,13 @@ class StatisticsReaderImpl
      * Retrieve endpoint mutexes from derived class
      * @return defaults to the endpoint mutex
      */
-    fastrtps::RecursiveTimedMutex& get_statistics_mutex() final;
+    fastdds::RecursiveTimedMutex& get_statistics_mutex() final;
 
     /**
      * Retrieve the GUID_t from derived class
      * @return endpoint GUID_t
      */
-    const fastrtps::rtps::GUID_t& get_guid() const final;
+    const fastdds::rtps::GUID_t& get_guid() const final;
 
 protected:
 
@@ -250,8 +250,8 @@ protected:
      * @param source_timestamp Source timestamp received from the writer for the sample being notified.
      */
     void on_data_notify(
-            const fastrtps::rtps::GUID_t& writer_guid,
-            const fastrtps::rtps::Time_t& source_timestamp);
+            const fastdds::rtps::GUID_t& writer_guid,
+            const fastdds::rtps::Time_t& source_timestamp);
 
     /**
      * @brief Report that an ACKNACK message is sent
@@ -289,7 +289,7 @@ protected:
      * Parameter: Current total number of submessages sent for the affected sample.
      */
     inline void on_sample_datas(
-            const fastrtps::rtps::SampleIdentity&,
+            const fastdds::rtps::SampleIdentity&,
             size_t)
     {
     }
@@ -344,7 +344,7 @@ protected:
 
 class StatisticsReaderImpl
 {
-    friend class fastrtps::rtps::RTPSMessageGroup;
+    friend class fastdds::rtps::RTPSMessageGroup;
 
 protected:
 
@@ -356,8 +356,8 @@ protected:
      * Parameter: Source timestamp received from the writer for the sample being notified.
      */
     inline void on_data_notify(
-            const fastrtps::rtps::GUID_t&,
-            const fastrtps::rtps::Time_t&)
+            const fastdds::rtps::GUID_t&,
+            const fastdds::rtps::Time_t&)
     {
     }
 

@@ -28,8 +28,8 @@
 #include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/utils/IPLocator.h>
 
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds;
+using namespace eprosima::fastdds::rtps;
 
 TestReaderSocket::TestReaderSocket()
     : mp_participant(nullptr)
@@ -52,7 +52,7 @@ bool TestReaderSocket::init(
 {
     //CREATE PARTICIPANT
     RTPSParticipantAttributes PParam;
-    PParam.builtin.discovery_config.discoveryProtocol = eprosima::fastrtps::rtps::DiscoveryProtocol_t::NONE;
+    PParam.builtin.discovery_config.discoveryProtocol = eprosima::fastdds::rtps::DiscoveryProtocol_t::NONE;
     PParam.builtin.use_WriterLivelinessProtocol = false;
     mp_participant = RTPSDomain::createParticipant(0, PParam);
     if (mp_participant == nullptr)

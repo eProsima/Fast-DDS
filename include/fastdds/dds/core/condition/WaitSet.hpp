@@ -86,7 +86,7 @@ public:
      */
     FASTDDS_EXPORTED_API ReturnCode_t wait(
             ConditionSeq& active_conditions,
-            const fastrtps::Duration_t timeout) const;
+            const fastdds::Duration_t timeout) const;
 
     /**
      * @brief Retrieves the list of attached conditions

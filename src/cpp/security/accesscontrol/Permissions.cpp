@@ -54,9 +54,9 @@
 #define _SecurityException_(str) SecurityException(std::string(str) + LOCATION)
 
 using namespace eprosima::fastdds::rtps;
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
-using namespace eprosima::fastrtps::rtps::security;
+using namespace eprosima::fastdds;
+using namespace eprosima::fastdds::rtps;
+using namespace eprosima::fastdds::rtps::security;
 
 static bool is_domain_in_set(
         const uint32_t domain_id,

@@ -29,7 +29,7 @@
 #include <xmlparser/XMLParserCommon.h>
 
 using namespace eprosima::fastdds::dds;
-using namespace eprosima::fastrtps;
+using namespace eprosima::fastdds;
 using namespace ::testing;
 
 class XMLLoadFileTests : public ::testing::Test

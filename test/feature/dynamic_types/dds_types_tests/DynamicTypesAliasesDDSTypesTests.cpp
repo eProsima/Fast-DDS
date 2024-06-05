@@ -551,8 +551,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasOctet)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    eprosima::fastrtps::rtps::octet value = 255;
-    eprosima::fastrtps::rtps::octet test_value = 0;
+    eprosima::fastdds::rtps::octet value = 255;
+    eprosima::fastdds::rtps::octet test_value = 0;
     EXPECT_EQ(data->set_byte_value(data->get_member_id_by_name(struct_member_name), value), RETCODE_OK);
     EXPECT_EQ(data->get_byte_value(test_value, data->get_member_id_by_name(struct_member_name)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
@@ -1234,8 +1234,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasBitset)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    eprosima::fastrtps::rtps::octet octet_value = 5;
-    eprosima::fastrtps::rtps::octet test_octet_value = 0;
+    eprosima::fastdds::rtps::octet octet_value = 5;
+    eprosima::fastdds::rtps::octet test_octet_value = 0;
     bool bool_value = true;
     bool test_bool_value = false;
     uint16_t ushort_value = 1000;

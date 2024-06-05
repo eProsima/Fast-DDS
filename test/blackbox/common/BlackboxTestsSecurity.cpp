@@ -37,8 +37,8 @@
 #include "PubSubWriterReader.hpp"
 #include "UDPMessageSender.hpp"
 
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds;
+using namespace eprosima::fastdds::rtps;
 using test_UDPv4Transport = eprosima::fastdds::rtps::test_UDPv4Transport;
 using test_UDPv4TransportDescriptor = eprosima::fastdds::rtps::test_UDPv4TransportDescriptor;
 
@@ -515,7 +515,7 @@ TEST(Security, BuiltinAuthenticationPlugin_second_participant_creation_loop)
     // Prepare transport to check that the authentication message is sent
     auto transport = std::make_shared<test_UDPv4TransportDescriptor>();
     AuthMessageSendStatus auth_message_send_status;
-    transport->drop_data_messages_filter_ = [&auth_message_send_status](eprosima::fastrtps::rtps::CDRMessage_t& msg)
+    transport->drop_data_messages_filter_ = [&auth_message_send_status](eprosima::fastdds::rtps::CDRMessage_t& msg)
             -> bool
             {
                 auto old_pos = msg.pos;
@@ -524,11 +524,11 @@ TEST(Security, BuiltinAuthenticationPlugin_second_participant_creation_loop)
                 msg.pos += 2 + 2 + 4;
 
                 // Read writer entity id
-                eprosima::fastrtps::rtps::GUID_t writer_guid;
-                eprosima::fastrtps::rtps::CDRMessage::readEntityId(&msg, &writer_guid.entityId);
+                eprosima::fastdds::rtps::GUID_t writer_guid;
+                eprosima::fastdds::rtps::CDRMessage::readEntityId(&msg, &writer_guid.entityId);
                 msg.pos = old_pos;
 
-                if (writer_guid.entityId == eprosima::fastrtps::rtps::participant_stateless_message_writer_entity_id)
+                if (writer_guid.entityId == eprosima::fastdds::rtps::participant_stateless_message_writer_entity_id)
                 {
                     auth_message_send_status.notify();
                 }
@@ -629,7 +629,7 @@ TEST_P(Security, BuiltinAuthenticationPlugin_ensure_same_guid_reconnection)
     main_participant.property_policy(property_policy).init();
     EXPECT_TRUE(main_participant.isInitialized());
 
-    eprosima::fastrtps::rtps::GuidPrefix_t guid_prefix;
+    eprosima::fastdds::rtps::GuidPrefix_t guid_prefix;
     memset(guid_prefix.value, 0xBB, sizeof(guid_prefix.value));
 
     // Perform a loop in which we create another participant, and destroy it just after it has been discovered.
@@ -3300,13 +3300,13 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_valid
 
     // Initialize one reader on each partition
     reader_p_1.partition("Partition1").
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            reliability(eprosima::fastdds::RELIABLE_RELIABILITY_QOS).
             property_policy(sub_property_policy).
             init();
     ASSERT_TRUE(reader_p_1.isInitialized());
 
     reader_p_2.partition("Partition2").
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+            reliability(eprosima::fastdds::RELIABLE_RELIABILITY_QOS).
             property_policy(sub_property_policy).
             init();
     ASSERT_TRUE(reader_p_2.isInitialized());

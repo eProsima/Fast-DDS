@@ -24,7 +24,7 @@
 #include <limits>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 
 #define dummy_avoid_winmax
 
@@ -87,7 +87,7 @@ inline bool operator == (
         lhs.increment == rhs.increment;
 }
 
-}  // namespace fastrtps
+}  // namespace fastdds
 }  // namespace eprosima
 
 #endif /* FASTRTPS_UTILS_COLLECTIONS_RESOURCELIMITEDCONTAINERCONFIG_HPP_ */

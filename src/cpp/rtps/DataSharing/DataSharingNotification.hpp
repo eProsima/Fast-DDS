@@ -31,7 +31,7 @@
 #include <atomic>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class DataSharingNotification
@@ -231,7 +231,7 @@ protected:
 };
 
 }  // namespace rtps
-}  // namespace fastrtps
+}  // namespace fastdds
 }  // namespace eprosima
 
 #endif  // RTPS_DATASHARING_DATASHARINGNOTIFICATION_HPP

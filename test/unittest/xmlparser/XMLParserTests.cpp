@@ -44,15 +44,15 @@
 #include "../logging/mock/MockConsumer.h"
 #include "wrapper/XMLParserTest.hpp"
 
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds;
+using namespace eprosima::fastdds::rtps;
 using namespace ::testing;
 
-using eprosima::fastrtps::xmlparser::BaseNode;
-using eprosima::fastrtps::xmlparser::DataNode;
-using eprosima::fastrtps::xmlparser::NodeType;
-using eprosima::fastrtps::xmlparser::XMLP_ret;
-using eprosima::fastrtps::xmlparser::XMLParser;
+using eprosima::fastdds::xmlparser::BaseNode;
+using eprosima::fastdds::xmlparser::DataNode;
+using eprosima::fastdds::xmlparser::NodeType;
+using eprosima::fastdds::xmlparser::XMLP_ret;
+using eprosima::fastdds::xmlparser::XMLParser;
 
 using eprosima::fastdds::dds::Log;
 using eprosima::fastdds::dds::LogConsumer;
@@ -496,7 +496,7 @@ TEST_F(XMLParserTests, Data)
     locator.port = 1979;
     EXPECT_EQ(rtps_atts.sendSocketBufferSize, 32u);
     EXPECT_EQ(rtps_atts.listenSocketBufferSize, 1000u);
-    EXPECT_EQ(builtin.discovery_config.discoveryProtocol, eprosima::fastrtps::rtps::DiscoveryProtocol::SIMPLE);
+    EXPECT_EQ(builtin.discovery_config.discoveryProtocol, eprosima::fastdds::rtps::DiscoveryProtocol::SIMPLE);
     EXPECT_EQ(builtin.use_WriterLivelinessProtocol, false);
     EXPECT_EQ(builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol, true);
     EXPECT_EQ(builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol, false);
@@ -590,7 +590,7 @@ TEST_F(XMLParserTests, DataDeprecated)
     locator.port = 1979;
     EXPECT_EQ(rtps_atts.sendSocketBufferSize, 32u);
     EXPECT_EQ(rtps_atts.listenSocketBufferSize, 1000u);
-    EXPECT_EQ(builtin.discovery_config.discoveryProtocol, eprosima::fastrtps::rtps::DiscoveryProtocol::SIMPLE);
+    EXPECT_EQ(builtin.discovery_config.discoveryProtocol, eprosima::fastdds::rtps::DiscoveryProtocol::SIMPLE);
     EXPECT_EQ(builtin.use_WriterLivelinessProtocol, false);
     EXPECT_EQ(builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol, true);
     EXPECT_EQ(builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol, false);
@@ -684,7 +684,7 @@ TEST_F(XMLParserTests, DataBuffer)
     locator.port = 1979;
     EXPECT_EQ(rtps_atts.sendSocketBufferSize, 32u);
     EXPECT_EQ(rtps_atts.listenSocketBufferSize, 1000u);
-    EXPECT_EQ(builtin.discovery_config.discoveryProtocol, eprosima::fastrtps::rtps::DiscoveryProtocol::SIMPLE);
+    EXPECT_EQ(builtin.discovery_config.discoveryProtocol, eprosima::fastdds::rtps::DiscoveryProtocol::SIMPLE);
     EXPECT_EQ(builtin.use_WriterLivelinessProtocol, false);
     EXPECT_EQ(builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol, true);
     EXPECT_EQ(builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol, false);
@@ -778,7 +778,7 @@ TEST_F(XMLParserTests, DataBufferDeprecated)
     locator.port = 1979;
     EXPECT_EQ(rtps_atts.sendSocketBufferSize, 32u);
     EXPECT_EQ(rtps_atts.listenSocketBufferSize, 1000u);
-    EXPECT_EQ(builtin.discovery_config.discoveryProtocol, eprosima::fastrtps::rtps::DiscoveryProtocol::SIMPLE);
+    EXPECT_EQ(builtin.discovery_config.discoveryProtocol, eprosima::fastdds::rtps::DiscoveryProtocol::SIMPLE);
     EXPECT_EQ(builtin.use_WriterLivelinessProtocol, false);
     EXPECT_EQ(builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol, true);
     EXPECT_EQ(builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol, false);

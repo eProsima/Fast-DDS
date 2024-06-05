@@ -23,7 +23,7 @@
 #include <fastdds/rtps/attributes/EndpointAttributes.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class RTPSParticipantImpl;
@@ -61,7 +61,7 @@ public:
 };
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 #endif // _FASTDDS_RTPS_ENDPOINT_H_

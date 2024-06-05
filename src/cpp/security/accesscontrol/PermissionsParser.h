@@ -20,7 +20,7 @@
 #include <tinyxml2.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 namespace security {
 

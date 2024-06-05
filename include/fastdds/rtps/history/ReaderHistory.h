@@ -25,7 +25,7 @@
 #include <fastdds/dds/core/status/SampleRejectedStatus.hpp>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class WriterProxy;
@@ -268,7 +268,7 @@ protected:
 };
 
 }  // namespace rtps
-}  // namespace fastrtps
+}  // namespace fastdds
 }  // namespace eprosima
 
 #endif /* _FASTDDS_RTPS_READERHISTORY_H_ */

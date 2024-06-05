@@ -63,8 +63,8 @@ bool MemoryTestPublisher::init(
         bool hostname,
         bool export_csv,
         const std::string& export_prefix,
-        const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
-        const eprosima::fastrtps::rtps::PropertyPolicy& property_policy,
+        const eprosima::fastdds::rtps::PropertyPolicy& part_property_policy,
+        const eprosima::fastdds::rtps::PropertyPolicy& property_policy,
         const std::string& sXMLConfigFile,
         uint32_t data_size,
         bool dynamic_types)
@@ -176,7 +176,7 @@ bool MemoryTestPublisher::init(
     if (m_data_size > 60000)
     {
         writer_qos.endpoint().history_memory_policy =
-                eprosima::fastrtps::rtps::MemoryManagementPolicy::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+                eprosima::fastdds::rtps::MemoryManagementPolicy::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
         writer_qos.publish_mode().kind = ASYNCHRONOUS_PUBLISH_MODE;
     }
 

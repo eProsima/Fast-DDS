@@ -535,7 +535,7 @@ const TypeIdentifier TypeObjectRegistry::calculate_type_identifier(
     TypeIdentifier type_id;
     eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
     size_t current_alignment {0};
-    eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
+    eprosima::fastdds::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
                 calculator.calculate_serialized_size(type_object, current_alignment)));
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,

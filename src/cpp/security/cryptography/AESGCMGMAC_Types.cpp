@@ -19,7 +19,7 @@
 
 #include <security/cryptography/AESGCMGMAC_Types.h>
 
-using namespace eprosima::fastrtps::rtps::security;
+using namespace eprosima::fastdds::rtps::security;
 
 
 const char* const ParticipantKeyHandle::class_id_ = "ParticipantCryptohandle";

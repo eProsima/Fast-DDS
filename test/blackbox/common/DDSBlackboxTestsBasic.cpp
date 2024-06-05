@@ -333,14 +333,14 @@ TEST(DDSBasic, MultithreadedReaderCreationDoesNotDeadlock)
  * @return true if parsing was correct, false otherwise.
  */
 bool check_related_sample_identity_field(
-        fastrtps::rtps::CDRMessage_t& msg,
+        fastdds::rtps::CDRMessage_t& msg,
         bool& exists_pid_related_sample_identity,
         bool& exists_pid_custom_related_sample_identity)
 {
     uint32_t qos_size = 0;
 
     auto parameter_process = [&](
-        fastrtps::rtps::CDRMessage_t* msg,
+        fastdds::rtps::CDRMessage_t* msg,
         ParameterId_t& pid,
         uint16_t plength,
         uint32_t& pid_pos)
@@ -395,8 +395,8 @@ bool check_related_sample_identity_field(
         uint16_t plength = 0;
         bool valid = true;
         auto msg_pid_pos = msg.pos;
-        valid &= fastrtps::rtps::CDRMessage::readUInt16(&msg, (uint16_t*)&pid);
-        valid &= fastrtps::rtps::CDRMessage::readUInt16(&msg, &plength);
+        valid &= fastdds::rtps::CDRMessage::readUInt16(&msg, (uint16_t*)&pid);
+        valid &= fastdds::rtps::CDRMessage::readUInt16(&msg, &plength);
 
         if (pid == PID_SENTINEL)
         {
@@ -445,7 +445,7 @@ TEST(DDSBasic, PidRelatedSampleIdentity)
 
     test_transport->drop_data_messages_filter_ =
             [&exists_pid_related_sample_identity, &exists_pid_custom_related_sample_identity]
-                (eprosima::fastrtps::rtps::CDRMessage_t& msg)-> bool
+                (eprosima::fastdds::rtps::CDRMessage_t& msg)-> bool
             {
                 // Inside this filter, the two flags passed in register whether both PIDs are included in the msg to be sent.
                 // The legacy value is overwritten in order to send a msg with only the standard PID_RELATED_SAMPLE_IDENTITY as valid parameter,
@@ -475,11 +475,11 @@ TEST(DDSBasic, PidRelatedSampleIdentity)
 
     HelloWorld data;
     // Send reply associating it with the client request.
-    eprosima::fastrtps::rtps::WriteParams write_params;
-    eprosima::fastrtps::rtps::SampleIdentity related_sample_identity_;
-    eprosima::fastrtps::rtps::GUID_t unknown_guid;
+    eprosima::fastdds::rtps::WriteParams write_params;
+    eprosima::fastdds::rtps::SampleIdentity related_sample_identity_;
+    eprosima::fastdds::rtps::GUID_t unknown_guid;
     related_sample_identity_.writer_guid(unknown_guid);
-    eprosima::fastrtps::rtps::SequenceNumber_t seq(51, 24);
+    eprosima::fastdds::rtps::SequenceNumber_t seq(51, 24);
     related_sample_identity_.sequence_number(seq);
     write_params.related_sample_identity() = related_sample_identity_;
 
@@ -491,7 +491,7 @@ TEST(DDSBasic, PidRelatedSampleIdentity)
 
     HelloWorld read_data;
     eprosima::fastdds::dds::SampleInfo info;
-    eprosima::fastrtps::Duration_t timeout;
+    eprosima::fastdds::Duration_t timeout;
     timeout.seconds = 2;
     while (!native_reader.wait_for_unread_message(timeout))
     {
@@ -526,14 +526,14 @@ TEST(DDSBasic, IgnoreParticipant)
 
         void on_participant_discovery(
                 DomainParticipant* /*participant*/,
-                eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info,
+                eprosima::fastdds::rtps::ParticipantDiscoveryInfo&& info,
                 bool& should_be_ignored) override
         {
             std::cout << "Using custom listener" << std::endl;
             if (info.status == info.DISCOVERED_PARTICIPANT)
             {
                 std::cout << "Discovered participant" << std::endl;
-                if (info.info.m_userData == std::vector<eprosima::fastrtps::rtps::octet>({ 'i', 'g', 'n' }))
+                if (info.info.m_userData == std::vector<eprosima::fastdds::rtps::octet>({ 'i', 'g', 'n' }))
                 {
                     std::cout << "Ignoring participant" << std::endl;
                     should_be_ignored = true;
@@ -665,7 +665,7 @@ TEST(DDSBasic, participant_ignore_local_endpoints)
 
         // Create the DomainParticipant with the appropriate value for the property
         PubSubWriterReader<HelloWorldPubSubType> writer_reader(TEST_TOPIC_NAME);
-        eprosima::fastrtps::rtps::PropertyPolicy property_policy;
+        eprosima::fastdds::rtps::PropertyPolicy property_policy;
         property_policy.properties().emplace_back("fastdds.ignore_local_endpoints", test_config.property_value);
         writer_reader.property_policy(property_policy);
 
@@ -712,7 +712,7 @@ TEST(DDSBasic, participant_ignore_local_endpoints_two_participants)
     /* Set up */
 
     // Create the DomainParticipants with the appropriate value for the property
-    eprosima::fastrtps::rtps::PropertyPolicy property_policy;
+    eprosima::fastdds::rtps::PropertyPolicy property_policy;
     property_policy.properties().emplace_back("fastdds.ignore_local_endpoints", "true");
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
@@ -822,7 +822,7 @@ TEST(DDSBasic, max_output_message_size_participant)
     auto testTransport =  std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
     const uint32_t segment_size = 1470;
     std::string segment_size_str = std::to_string(segment_size);
-    testTransport->messages_filter_ = [segment_size](eprosima::fastrtps::rtps::CDRMessage_t& datagram)
+    testTransport->messages_filter_ = [segment_size](eprosima::fastdds::rtps::CDRMessage_t& datagram)
             {
                 EXPECT_LE(datagram.length, segment_size);
                 // Never drop samples
@@ -830,7 +830,7 @@ TEST(DDSBasic, max_output_message_size_participant)
             };
 
     // Create the DomainParticipants with the appropriate value for the property
-    eprosima::fastrtps::rtps::PropertyPolicy property_policy;
+    eprosima::fastdds::rtps::PropertyPolicy property_policy;
     property_policy.properties().emplace_back("fastdds.max_message_size", segment_size_str);
     PubSubWriter<Data1mbPubSubType> writer(TEST_TOPIC_NAME);
     writer.property_policy(property_policy).disable_builtin_transport()
@@ -863,7 +863,7 @@ TEST(DDSBasic, max_output_message_size_writer)
     std::string segment_size_str = std::to_string(segment_size);
 
     auto testTransport = std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
-    testTransport->messages_filter_ = [segment_size](eprosima::fastrtps::rtps::CDRMessage_t& datagram)
+    testTransport->messages_filter_ = [segment_size](eprosima::fastdds::rtps::CDRMessage_t& datagram)
             {
                 EXPECT_LE(datagram.length, segment_size);
                 // Never drop samples
@@ -871,7 +871,7 @@ TEST(DDSBasic, max_output_message_size_writer)
             };
 
     // Create the DataWriter with the appropriate value for the property
-    eprosima::fastrtps::rtps::PropertyPolicy property_policy;
+    eprosima::fastdds::rtps::PropertyPolicy property_policy;
     property_policy.properties().emplace_back("fastdds.max_message_size", segment_size_str);
     PubSubWriter<Data1mbPubSubType> writer(TEST_TOPIC_NAME);
     writer.entity_property_policy(property_policy).disable_builtin_transport()

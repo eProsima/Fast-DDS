@@ -50,7 +50,7 @@
 #include <xmlparser/XMLProfileManager.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 using BaseReader = fastdds::rtps::BaseReader;
@@ -191,7 +191,7 @@ RTPSParticipant* RTPSDomainImpl::createParticipant(
     if (!PParam.builtin.metatraffic_external_unicast_locators.empty())
     {
         fastdds::rtps::LocatorList locators;
-        fastrtps::rtps::IPFinder::getIP4Address(&locators);
+        fastdds::rtps::IPFinder::getIP4Address(&locators);
         fastdds::rtps::network::external_locators::add_external_locators(locators,
                 PParam.builtin.metatraffic_external_unicast_locators);
         uint16_t host_id = Host::compute_id(locators);
@@ -940,5 +940,5 @@ fastdds::dds::xtypes::TypeObjectRegistry& RTPSDomainImpl::type_object_registry_o
 }
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima

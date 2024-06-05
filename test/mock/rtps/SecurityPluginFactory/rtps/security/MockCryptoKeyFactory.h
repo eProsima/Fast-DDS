@@ -29,7 +29,7 @@
 #pragma warning(disable : 4373)
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 namespace security {
 
@@ -118,7 +118,7 @@ public:
 
 } //namespace security
 } //namespace rtps
-} //namespace fastrtps
+} //namespace fastdds
 } //namespace eprosima
 
 #pragma warning(pop)

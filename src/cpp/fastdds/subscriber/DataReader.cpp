@@ -26,8 +26,8 @@
 
 namespace eprosima {
 
-using namespace fastrtps;
-using namespace fastrtps::rtps;
+using namespace fastdds;
+using namespace fastdds::rtps;
 
 namespace fastdds {
 namespace dds {
@@ -73,7 +73,7 @@ ReturnCode_t DataReader::enable()
 }
 
 bool DataReader::wait_for_unread_message(
-        const fastrtps::Duration_t& timeout)
+        const fastdds::Duration_t& timeout)
 {
     return impl_->wait_for_unread_message(timeout);
 }
@@ -393,7 +393,7 @@ ReturnCode_t DataReader::get_subscription_matched_status(
 
 ReturnCode_t DataReader::get_matched_publication_data(
         builtin::PublicationBuiltinTopicData& publication_data,
-        const fastrtps::rtps::InstanceHandle_t& publication_handle) const
+        const fastdds::rtps::InstanceHandle_t& publication_handle) const
 {
     static_cast<void> (publication_data);
     static_cast<void> (publication_handle);

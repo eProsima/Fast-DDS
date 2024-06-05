@@ -21,17 +21,17 @@
 
 using namespace eprosima::fastdds;
 using namespace eprosima::fastdds::dds;
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds;
+using namespace eprosima::fastdds::rtps;
 
-using eprosima::fastrtps::xmlparser::XMLP_ret;
-using eprosima::fastrtps::xmlparser::XMLParser;
-using eprosima::fastrtps::xmlparser::DataNode;
-using eprosima::fastrtps::xmlparser::BaseNode;
-using eprosima::fastrtps::xmlparser::sp_transport_t;
-using eprosima::fastrtps::xmlparser::up_participant_t;
-using eprosima::fastrtps::xmlparser::up_node_participant_t;
-using eprosima::fastrtps::xmlparser::node_participant_t;
+using eprosima::fastdds::xmlparser::XMLP_ret;
+using eprosima::fastdds::xmlparser::XMLParser;
+using eprosima::fastdds::xmlparser::DataNode;
+using eprosima::fastdds::xmlparser::BaseNode;
+using eprosima::fastdds::xmlparser::sp_transport_t;
+using eprosima::fastdds::xmlparser::up_participant_t;
+using eprosima::fastdds::xmlparser::up_node_participant_t;
+using eprosima::fastdds::xmlparser::node_participant_t;
 
 // Class to test protected methods
 class XMLParserTest : public XMLParser
@@ -466,7 +466,7 @@ public:
 
     static XMLP_ret parseXMLCommonTCPTransportData_wrapper(
             tinyxml2::XMLElement* p_root,
-            eprosima::fastrtps::xmlparser::sp_transport_t p_transport)
+            eprosima::fastdds::xmlparser::sp_transport_t p_transport)
     {
         return parseXMLCommonTCPTransportData(p_root, p_transport);
     }
@@ -491,7 +491,7 @@ public:
 
     static XMLP_ret parseXML_wrapper(
             tinyxml2::XMLDocument& xmlDoc,
-            eprosima::fastrtps::xmlparser::up_base_node_t& root)
+            eprosima::fastdds::xmlparser::up_base_node_t& root)
     {
         return parseXML(xmlDoc, root);
     }
@@ -505,7 +505,7 @@ public:
 
     static XMLP_ret parse_tls_config_wrapper(
             tinyxml2::XMLElement* p_root,
-            eprosima::fastrtps::xmlparser::sp_transport_t tcp_transport)
+            eprosima::fastdds::xmlparser::sp_transport_t tcp_transport)
     {
         return parse_tls_config(p_root, tcp_transport);
     }

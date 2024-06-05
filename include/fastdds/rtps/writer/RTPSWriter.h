@@ -54,7 +54,7 @@ class DataWriterImpl;
 } // namespace dds
 } // namespace fastdds
 
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class WriterListener;
@@ -616,7 +616,7 @@ private:
 };
 
 } /* namespace rtps */
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */
 
 #endif /* _FASTDDS_RTPS_RTPSWRITER_H_ */

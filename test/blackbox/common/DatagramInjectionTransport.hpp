@@ -21,7 +21,7 @@
 #include <fastdds/rtps/transport/SenderResource.h>
 #include <fastdds/rtps/transport/TransportReceiverInterface.h>
 
-using SenderResource = eprosima::fastrtps::rtps::SenderResource;
+using SenderResource = eprosima::fastdds::rtps::SenderResource;
 
 namespace eprosima {
 namespace fastdds {
@@ -71,11 +71,11 @@ public:
     }
 
     bool send(
-            eprosima::fastrtps::rtps::SenderResource* low_sender_resource,
+            eprosima::fastdds::rtps::SenderResource* low_sender_resource,
             const std::vector<NetworkBuffer>& buffers,
             uint32_t total_bytes,
-            eprosima::fastrtps::rtps::LocatorsIterator* destination_locators_begin,
-            eprosima::fastrtps::rtps::LocatorsIterator* destination_locators_end,
+            eprosima::fastdds::rtps::LocatorsIterator* destination_locators_begin,
+            eprosima::fastdds::rtps::LocatorsIterator* destination_locators_end,
             const std::chrono::steady_clock::time_point& timeout) override
     {
         return low_sender_resource->send(buffers, total_bytes, destination_locators_begin,
@@ -84,16 +84,16 @@ public:
 
     void receive(
             TransportReceiverInterface* next_receiver,
-            const eprosima::fastrtps::rtps::octet* receive_buffer,
+            const eprosima::fastdds::rtps::octet* receive_buffer,
             uint32_t receive_buffer_size,
-            const eprosima::fastrtps::rtps::Locator_t& local_locator,
-            const eprosima::fastrtps::rtps::Locator_t& remote_locator) override
+            const eprosima::fastdds::rtps::Locator_t& local_locator,
+            const eprosima::fastdds::rtps::Locator_t& remote_locator) override
     {
         next_receiver->OnDataReceived(receive_buffer, receive_buffer_size, local_locator, remote_locator);
     }
 
     bool OpenInputChannel(
-            const eprosima::fastrtps::rtps::Locator_t& loc,
+            const eprosima::fastdds::rtps::Locator_t& loc,
             TransportReceiverInterface* receiver_interface,
             uint32_t max_message_size) override
     {

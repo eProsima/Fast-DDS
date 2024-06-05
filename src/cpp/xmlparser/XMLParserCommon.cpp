@@ -15,7 +15,7 @@
 #include <xmlparser/XMLParserCommon.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace xmlparser {
 
 const char* DEFAULT_FASTDDS_ENV_VARIABLE = "FASTDDS_DEFAULT_PROFILES_FILE";

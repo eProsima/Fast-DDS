@@ -45,7 +45,7 @@ public:
             uint32_t port,
             Type type)
     {
-        using namespace fastrtps::rtps;
+        using namespace fastdds::rtps;
 
         Locator_t locator(LOCATOR_KIND_SHM, port);
 
@@ -66,7 +66,7 @@ public:
     static bool is_shm_and_from_this_host(
             const Locator& locator)
     {
-        using namespace fastrtps::rtps;
+        using namespace fastdds::rtps;
 
         if (locator.kind == LOCATOR_KIND_SHM)
         {

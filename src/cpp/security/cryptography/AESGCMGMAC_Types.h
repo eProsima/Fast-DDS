@@ -54,7 +54,7 @@
 #define CRYPTO_TRANSFORMATION_KIND_AES256_GCM       { {0, 0, 0, 4} }
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 namespace security {
 
@@ -210,7 +210,7 @@ typedef HandleImpl<ParticipantKeyHandle, AESGCMGMAC_KeyFactory> AESGCMGMAC_Parti
 
 } //namespaces security
 } //namespace rtps
-} //namespace fastrtps
+} //namespace fastdds
 } //namespace eprosima
 
 #endif // _SECURITY_AUTHENTICATION_AESGCMGMAC_TYPES_H_

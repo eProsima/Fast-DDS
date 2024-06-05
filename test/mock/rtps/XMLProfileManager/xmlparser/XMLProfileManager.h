@@ -18,7 +18,7 @@
 #include <xmlparser/XMLParser.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace xmlparser {
 
 class XMLProfileManager
@@ -34,7 +34,7 @@ public:
 };
 
 } // namespace xmlparser
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 #endif // XML_PROFILE_MANAGER_H_

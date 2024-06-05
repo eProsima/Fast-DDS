@@ -26,7 +26,7 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-using octet = fastrtps::rtps::octet;
+using octet = fastdds::rtps::octet;
 using Log = fastdds::dds::Log;
 
 UDPChannelResource::UDPChannelResource(

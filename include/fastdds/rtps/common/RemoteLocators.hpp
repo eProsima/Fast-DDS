@@ -24,7 +24,7 @@
 #include <fastdds/dds/log/Log.hpp>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 /**
@@ -234,7 +234,7 @@ inline std::istream& operator >>(
 }
 
 } /* namespace rtps */
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */
 
 #endif /* _FASTDDS_RTPS_COMMON_REMOTELOCATORS_HPP_ */

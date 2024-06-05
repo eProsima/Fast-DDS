@@ -79,7 +79,7 @@
 #endif  // HAVE_SECURITY
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 using UDPv4TransportDescriptor = fastdds::rtps::UDPv4TransportDescriptor;
@@ -2224,7 +2224,7 @@ void RTPSParticipantImpl::deleteAllUserEndpoints()
             };
 
 #if HAVE_SECURITY
-    bool (eprosima::fastrtps::rtps::security::SecurityManager::* unregister_endpoint[2])(
+    bool (eprosima::fastdds::rtps::security::SecurityManager::* unregister_endpoint[2])(
             const GUID_t& writer_guid);
     unregister_endpoint[WRITER] = &security::SecurityManager::unregister_local_writer;
     unregister_endpoint[READER] = &security::SecurityManager::unregister_local_reader;
@@ -3022,7 +3022,7 @@ const fastdds::statistics::rtps::IStatusObserver* RTPSParticipantImpl::create_mo
                     return this->createWriter(WriterOut, param, payload_pool, hist, listen, entityId, isBuiltin);
                 },
                 [&](RTPSWriter* w,
-                const fastrtps::TopicAttributes& topicAtt,
+                const fastdds::TopicAttributes& topicAtt,
                 const fastdds::dds::WriterQos& wqos) -> bool
                 {
                     return this->registerWriter(w, topicAtt, wqos);
@@ -3086,7 +3086,7 @@ bool RTPSParticipantImpl::disable_monitor_service() const
 }
 
 bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
-        fastrtps::rtps::ParticipantProxyData& data,
+        fastdds::rtps::ParticipantProxyData& data,
         fastdds::statistics::MonitorServiceStatusData& msg)
 {
     bool ret = true;
@@ -3108,7 +3108,7 @@ bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
 }
 
 bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
-        fastrtps::rtps::WriterProxyData& data,
+        fastdds::rtps::WriterProxyData& data,
         fastdds::statistics::MonitorServiceStatusData& msg)
 {
     bool ret = true;
@@ -3129,7 +3129,7 @@ bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
 }
 
 bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
-        fastrtps::rtps::ReaderProxyData& data,
+        fastdds::rtps::ReaderProxyData& data,
         fastdds::statistics::MonitorServiceStatusData& msg)
 {
     bool ret = true;
@@ -3275,5 +3275,5 @@ void RTPSParticipantImpl::update_removed_participant(
 }
 
 } /* namespace rtps */
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */

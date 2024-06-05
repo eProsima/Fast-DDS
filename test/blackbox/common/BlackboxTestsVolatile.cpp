@@ -26,7 +26,7 @@
 #include "ReqRepAsReliableHelloWorldReplier.hpp"
 #include "ReqRepAsReliableHelloWorldRequester.hpp"
 
-using namespace eprosima::fastrtps;
+using namespace eprosima::fastdds;
 using test_UDPv4Transport = eprosima::fastdds::rtps::test_UDPv4Transport;
 using test_UDPv4TransportDescriptor = eprosima::fastdds::rtps::test_UDPv4TransportDescriptor;
 

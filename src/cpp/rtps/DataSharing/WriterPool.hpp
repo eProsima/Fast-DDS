@@ -29,7 +29,7 @@
 #include <memory>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class WriterPool : public DataSharingPayloadPool
@@ -361,7 +361,7 @@ private:
 
 
 }  // namespace rtps
-}  // namespace fastrtps
+}  // namespace fastdds
 }  // namespace eprosima
 
 #endif  // RTPS_DATASHARING_WRITERPOOL_HPP

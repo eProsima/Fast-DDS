@@ -48,14 +48,14 @@ struct TCPHeader
         rtcp[3] = 'P';
     }
 
-    const fastrtps::rtps::octet* address() const
+    const fastdds::rtps::octet* address() const
     {
-        return reinterpret_cast<const fastrtps::rtps::octet*>(this);
+        return reinterpret_cast<const fastdds::rtps::octet*>(this);
     }
 
-    fastrtps::rtps::octet* address()
+    fastdds::rtps::octet* address()
     {
-        return (fastrtps::rtps::octet*)this;
+        return (fastdds::rtps::octet*)this;
     }
 
     /*!
@@ -69,9 +69,9 @@ struct TCPHeader
     }
 
     inline void valid_endianness(
-            fastrtps::rtps::Endianness_t msg_endian)
+            fastdds::rtps::Endianness_t msg_endian)
     {
-        if (msg_endian != eprosima::fastrtps::rtps::DEFAULT_ENDIAN)
+        if (msg_endian != eprosima::fastdds::rtps::DEFAULT_ENDIAN)
         {
             length = ((length >> 24) & 0xff) | ((length << 8) & 0xff0000) | ((length >> 8) & 0xff00) |
                     ((length << 24) & 0xff000000);
@@ -85,7 +85,7 @@ struct TCPHeader
 union TCPTransactionId
 {
     uint32_t ints[3];
-    fastrtps::rtps::octet octets[12];
+    fastdds::rtps::octet octets[12];
 
     TCPTransactionId()
     {
@@ -140,16 +140,16 @@ union TCPTransactionId
     }
 
     TCPTransactionId& operator =(
-            const fastrtps::rtps::octet* id)
+            const fastdds::rtps::octet* id)
     {
-        memcpy(octets, id, 12 * sizeof(fastrtps::rtps::octet));
+        memcpy(octets, id, 12 * sizeof(fastdds::rtps::octet));
         return *this;
     }
 
     TCPTransactionId& operator =(
             const char* id)
     {
-        memcpy(octets, id, 12 * sizeof(fastrtps::rtps::octet));
+        memcpy(octets, id, 12 * sizeof(fastdds::rtps::octet));
         return *this;
     }
 
@@ -207,7 +207,7 @@ inline std::ostream& operator <<(
     return output;
 }
 
-enum TCPCPMKind : fastrtps::rtps::octet
+enum TCPCPMKind : fastdds::rtps::octet
 {
     BIND_CONNECTION_REQUEST =           0xD1,
     BIND_CONNECTION_RESPONSE =          0xE1,
@@ -224,7 +224,7 @@ enum TCPCPMKind : fastrtps::rtps::octet
 class TCPControlMsgHeader
 {
     TCPCPMKind kind_; // 1 byte
-    fastrtps::rtps::octet flags_; // 1 byte
+    fastdds::rtps::octet flags_; // 1 byte
     uint16_t length_; // 2 bytes
     TCPTransactionId transaction_id_; // 12 bytes
 
@@ -233,7 +233,7 @@ public:
     TCPControlMsgHeader()
     {
         kind_ = static_cast<TCPCPMKind>(0x00);
-        flags_ = static_cast<fastrtps::rtps::octet>(0x00);
+        flags_ = static_cast<fastdds::rtps::octet>(0x00);
         length_ = 0;
     }
 
@@ -291,17 +291,17 @@ public:
             bool requires_response)
     {
         //TODO: Optimize receiving a Endianness_t
-        fastrtps::rtps::octet e = (endianess) ? BIT(1) : 0x00;
-        fastrtps::rtps::octet p = (payload) ? BIT(2) : 0x00;
-        fastrtps::rtps::octet r = (requires_response) ? BIT(3) : 0x00;
+        fastdds::rtps::octet e = (endianess) ? BIT(1) : 0x00;
+        fastdds::rtps::octet p = (payload) ? BIT(2) : 0x00;
+        fastdds::rtps::octet r = (requires_response) ? BIT(3) : 0x00;
         flags_ = e | p | r;
     }
 
     void endianess(
-            fastrtps::rtps::Endianness_t endianess)
+            fastdds::rtps::Endianness_t endianess)
     {
         // Endianess flag has inverse logic than Endianness_t :-/
-        if (endianess == fastrtps::rtps::Endianness_t::BIGEND)
+        if (endianess == fastdds::rtps::Endianness_t::BIGEND)
         {
             flags_ &= 0xFE;
         }
@@ -358,17 +358,17 @@ public:
     }
 
     inline void valid_endianness(
-            fastrtps::rtps::Endianness_t msg_endian)
+            fastdds::rtps::Endianness_t msg_endian)
     {
-        fastrtps::rtps::Endianness_t internal_endian = endianess() ? fastrtps::rtps::Endianness_t::LITTLEEND :
-                fastrtps::rtps::Endianness_t::BIGEND;
+        fastdds::rtps::Endianness_t internal_endian = endianess() ? fastdds::rtps::Endianness_t::LITTLEEND :
+                fastdds::rtps::Endianness_t::BIGEND;
         if (internal_endian != msg_endian)
         {
             logWarning(RTCP_MSG, "endianness of rtcp header is not consistent with CDRMsg");
             return;
         }
 
-        if (msg_endian != eprosima::fastrtps::rtps::DEFAULT_ENDIAN)
+        if (msg_endian != eprosima::fastdds::rtps::DEFAULT_ENDIAN)
         {
             length_ = ((length_ >> 8) & 0xff) | ((length_ << 8) & 0xff00);
 

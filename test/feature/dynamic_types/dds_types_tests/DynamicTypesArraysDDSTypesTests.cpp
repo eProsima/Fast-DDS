@@ -1403,9 +1403,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayBitset)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    eprosima::fastrtps::rtps::octet first_octet_value = 5;
-    eprosima::fastrtps::rtps::octet second_octet_value = 7;
-    eprosima::fastrtps::rtps::octet test_octet_value = 0;
+    eprosima::fastdds::rtps::octet first_octet_value = 5;
+    eprosima::fastdds::rtps::octet second_octet_value = 7;
+    eprosima::fastdds::rtps::octet test_octet_value = 0;
     bool first_bool_value = true;
     bool second_bool_value = false;
     bool test_bool_value = false;
@@ -3200,10 +3200,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionBitset)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    eprosima::fastrtps::rtps::octet first_octet_value = 5;
-    eprosima::fastrtps::rtps::octet second_octet_value = 7;
-    eprosima::fastrtps::rtps::octet third_octet_value = 1;
-    eprosima::fastrtps::rtps::octet test_octet_value = 0;
+    eprosima::fastdds::rtps::octet first_octet_value = 5;
+    eprosima::fastdds::rtps::octet second_octet_value = 7;
+    eprosima::fastdds::rtps::octet third_octet_value = 1;
+    eprosima::fastdds::rtps::octet test_octet_value = 0;
     bool first_bool_value = true;
     bool second_bool_value = false;
     bool third_bool_value = true;

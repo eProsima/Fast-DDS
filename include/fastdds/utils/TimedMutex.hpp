@@ -40,7 +40,7 @@ extern int clock_gettime(
 #endif // if defined(_WIN32)
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 
 #if defined(_WIN32)
 
@@ -338,7 +338,7 @@ private:
 
 #endif //_WIN32
 
-} //namespace fastrtps
+} //namespace fastdds
 } //namespace eprosima
 
 #endif // _UTILS_TIMEDMUTEX_HPP_

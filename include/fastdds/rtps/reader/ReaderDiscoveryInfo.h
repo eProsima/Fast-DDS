@@ -24,7 +24,7 @@
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 /**
@@ -68,7 +68,7 @@ public:
 };
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 #endif // _FASTDDS_RTPS_READER_READERDISCOVERYINFO_H__

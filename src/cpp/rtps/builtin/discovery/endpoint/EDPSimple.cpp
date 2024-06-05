@@ -51,7 +51,7 @@
 using ParameterList = eprosima::fastdds::dds::ParameterList;
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 // Default configuration values for EDP entities.
@@ -1081,5 +1081,5 @@ bool EDPSimple::pairing_remote_reader_with_local_builtin_writer_after_security(
 #endif // if HAVE_SECURITY
 
 } /* namespace rtps */
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */

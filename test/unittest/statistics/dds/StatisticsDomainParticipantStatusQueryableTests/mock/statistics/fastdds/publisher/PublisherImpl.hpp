@@ -66,7 +66,7 @@ public:
             const efd::TypeSupport& type,
             efd::Topic* topic,
             const efd::DataWriterQos& qos,
-            const eprosima::fastrtps::rtps::EntityId_t& entity_id)
+            const eprosima::fastdds::rtps::EntityId_t& entity_id)
     {
         return new DataWriterImpl(this, type, topic, qos, entity_id);
     }
@@ -76,7 +76,7 @@ public:
             efd::Topic* topic,
             const efd::DataWriterQos& qos,
             efd::DataWriterListener* listener,
-            std::shared_ptr<fastrtps::rtps::IPayloadPool> payload_pool) override
+            std::shared_ptr<fastdds::rtps::IPayloadPool> payload_pool) override
     {
         return new DataWriterImpl(this, type, topic, qos, listener, payload_pool, statistics_listener_);
     }
@@ -94,7 +94,7 @@ public:
     }
 
     bool insert_policy_violation(
-            const fastrtps::rtps::GUID_t& guid,
+            const fastdds::rtps::GUID_t& guid,
             const fastdds::dds::QosPolicyId_t& policy_id)
     {
         bool retcode = false;

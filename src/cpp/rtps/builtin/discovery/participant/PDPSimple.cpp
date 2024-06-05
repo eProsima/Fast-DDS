@@ -48,7 +48,7 @@
 #include <rtps/writer/StatelessWriter.hpp>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 static HistoryAttributes pdp_reader_history_attributes(
@@ -789,5 +789,5 @@ bool PDPSimple::newRemoteEndpointStaticallyDiscovered(
 }
 
 } /* namespace rtps */
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */

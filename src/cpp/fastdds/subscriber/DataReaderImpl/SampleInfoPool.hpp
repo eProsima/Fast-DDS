@@ -94,7 +94,7 @@ struct SampleInfoPool
 
 private:
 
-    using collection_type = eprosima::fastrtps::ResourceLimitedVector<SampleInfo*>;
+    using collection_type = eprosima::fastdds::ResourceLimitedVector<SampleInfo*>;
 
     collection_type free_items_;
     collection_type used_items_;

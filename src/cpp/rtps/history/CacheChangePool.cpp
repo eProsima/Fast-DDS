@@ -28,7 +28,7 @@
 #include <limits>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 CacheChangePool::~CacheChangePool()
@@ -259,5 +259,5 @@ bool CacheChangePool::release_cache(
 }
 
 } /* namespace rtps */
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */

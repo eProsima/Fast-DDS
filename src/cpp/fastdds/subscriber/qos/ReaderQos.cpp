@@ -20,7 +20,7 @@
 #include <fastdds/dds/subscriber/qos/ReaderQos.hpp>
 #include <fastdds/dds/log/Log.hpp>
 
-using namespace eprosima::fastrtps;
+using namespace eprosima::fastdds;
 
 namespace eprosima {
 namespace fastdds {

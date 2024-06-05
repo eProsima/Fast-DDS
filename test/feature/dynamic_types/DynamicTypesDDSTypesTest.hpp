@@ -115,7 +115,7 @@ public:
                 data_representation)());
 
         // Dynamic Serialization <-> Dynamic Deserialization
-        eprosima::fastrtps::rtps::SerializedPayload_t dyn_payload(dyn_payloadSize);
+        eprosima::fastdds::rtps::SerializedPayload_t dyn_payload(dyn_payloadSize);
         ASSERT_TRUE(dyn_pubsubType.serialize(&data, &dyn_payload, data_representation));
         DynamicData::_ref_type data1 {DynamicDataFactory::get_instance()->create_data(type)};
         ASSERT_TRUE(dyn_pubsubType.deserialize(&dyn_payload, &data1));
@@ -128,7 +128,7 @@ public:
         uint32_t static_payloadSize = static_cast<uint32_t>(static_pubsubType.get_serialized_size_provider(&data_static,
                 data_representation)());
         EXPECT_EQ(static_payloadSize, dyn_payloadSize);
-        eprosima::fastrtps::rtps::SerializedPayload_t static_payload(static_payloadSize);
+        eprosima::fastdds::rtps::SerializedPayload_t static_payload(static_payloadSize);
         ASSERT_TRUE(static_pubsubType.serialize(&data_static, &static_payload, data_representation));
         EXPECT_EQ(static_payload.length, static_payloadSize);
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(type)};

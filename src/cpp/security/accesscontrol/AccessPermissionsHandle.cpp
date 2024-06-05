@@ -18,6 +18,6 @@
 
 #include <security/accesscontrol/AccessPermissionsHandle.h>
 
-using namespace eprosima::fastrtps::rtps::security;
+using namespace eprosima::fastdds::rtps::security;
 
 const char* const AccessPermissions::class_id_ = "AccessPermissionsHandle";

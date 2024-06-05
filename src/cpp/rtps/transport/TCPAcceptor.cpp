@@ -21,7 +21,7 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-using IPLocator = fastrtps::rtps::IPLocator;
+using IPLocator = fastdds::rtps::IPLocator;
 
 TCPAcceptor::TCPAcceptor(
         asio::io_service& io_service,

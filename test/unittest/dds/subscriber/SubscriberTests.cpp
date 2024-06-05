@@ -34,7 +34,7 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-using fastrtps::rtps::PropertyPolicyHelper;
+using fastdds::rtps::PropertyPolicyHelper;
 
 class FooType
 {
@@ -155,21 +155,21 @@ public:
 
     bool serialize(
             void* data,
-            eprosima::fastrtps::rtps::SerializedPayload_t* payload) override
+            eprosima::fastdds::rtps::SerializedPayload_t* payload) override
     {
         return serialize(data, payload, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
     }
 
     bool serialize(
             void* /*data*/,
-            fastrtps::rtps::SerializedPayload_t* /*payload*/,
+            fastdds::rtps::SerializedPayload_t* /*payload*/,
             DataRepresentationId_t /*data_representation*/) override
     {
         return true;
     }
 
     bool deserialize(
-            fastrtps::rtps::SerializedPayload_t* /*payload*/,
+            fastdds::rtps::SerializedPayload_t* /*payload*/,
             void* /*data*/) override
     {
         return true;
@@ -203,7 +203,7 @@ public:
 
     bool getKey(
             void* /*data*/,
-            fastrtps::rtps::InstanceHandle_t* /*ihandle*/,
+            fastdds::rtps::InstanceHandle_t* /*ihandle*/,
             bool /*force_md5*/) override
     {
         return true;
@@ -285,8 +285,8 @@ TEST(SubscriberTests, ChangeDefaultDataReaderQos)
     // .ownership
     qos.ownership().kind = eprosima::fastdds::dds::EXCLUSIVE_OWNERSHIP_QOS;
     // .time_based_filter
-    qos.time_based_filter().minimum_separation.seconds = eprosima::fastrtps::Time_t::INFINITE_SECONDS;
-    qos.time_based_filter().minimum_separation.nanosec = eprosima::fastrtps::Time_t::INFINITE_NANOSECONDS;
+    qos.time_based_filter().minimum_separation.seconds = eprosima::fastdds::Time_t::INFINITE_SECONDS;
+    qos.time_based_filter().minimum_separation.nanosec = eprosima::fastdds::Time_t::INFINITE_NANOSECONDS;
     // .reader_data_lifecycle
     qos.reader_data_lifecycle().autopurge_disposed_samples_delay.seconds = 100;
     qos.reader_data_lifecycle().autopurge_disposed_samples_delay.nanosec = 30000u;
@@ -320,7 +320,7 @@ TEST(SubscriberTests, ChangeDefaultDataReaderQos)
     // .expects_inline_qos
     qos.expects_inline_qos(true);
     // .properties
-    eprosima::fastrtps::rtps::Property property;
+    eprosima::fastdds::rtps::Property property;
     property.name("Property1");
     property.value("Value1");
     qos.properties().properties().push_back(property);
@@ -331,7 +331,7 @@ TEST(SubscriberTests, ChangeDefaultDataReaderQos)
     // .endpoint
     qos.endpoint().user_defined_id = 1;
     qos.endpoint().entity_id = 2;
-    qos.endpoint().history_memory_policy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+    qos.endpoint().history_memory_policy = eprosima::fastdds::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 
     // .reader_resource_limits
     qos.reader_resource_limits().matched_publisher_allocation.initial = 30;
@@ -407,8 +407,8 @@ TEST(SubscriberTests, ChangeDefaultDataReaderQos)
     // .ownership
     EXPECT_EQ(eprosima::fastdds::dds::EXCLUSIVE_OWNERSHIP_QOS, rqos.ownership().kind);
     // .time_based_filter
-    EXPECT_EQ(eprosima::fastrtps::Time_t::INFINITE_SECONDS, rqos.time_based_filter().minimum_separation.seconds);
-    EXPECT_EQ(eprosima::fastrtps::Time_t::INFINITE_NANOSECONDS, rqos.time_based_filter().minimum_separation.nanosec);
+    EXPECT_EQ(eprosima::fastdds::Time_t::INFINITE_SECONDS, rqos.time_based_filter().minimum_separation.seconds);
+    EXPECT_EQ(eprosima::fastdds::Time_t::INFINITE_NANOSECONDS, rqos.time_based_filter().minimum_separation.nanosec);
     // .reader_data_lifecycle
     EXPECT_EQ(100, rqos.reader_data_lifecycle().autopurge_disposed_samples_delay.seconds);
     EXPECT_EQ(30000u, rqos.reader_data_lifecycle().autopurge_disposed_samples_delay.nanosec);
@@ -463,7 +463,7 @@ TEST(SubscriberTests, ChangeDefaultDataReaderQos)
     // .endpoint
     EXPECT_EQ(1, rqos.endpoint().user_defined_id);
     EXPECT_EQ(2, rqos.endpoint().entity_id);
-    EXPECT_EQ(eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE, rqos.endpoint().history_memory_policy);
+    EXPECT_EQ(eprosima::fastdds::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE, rqos.endpoint().history_memory_policy);
     // .reader_resource_limits
     EXPECT_EQ(30u, rqos.reader_resource_limits().matched_publisher_allocation.initial);
     EXPECT_EQ(300u, rqos.reader_resource_limits().matched_publisher_allocation.maximum);
@@ -954,7 +954,7 @@ TEST(SubscriberTests, datareader_copy_from_topic_qos)
     control_qos.user_data().push_back(0);
     control_qos.endpoint().entity_id = 1;
     control_qos.reader_resource_limits().matched_publisher_allocation =
-            eprosima::fastrtps::ResourceLimitedContainerConfig::fixed_size_configuration(1u);
+            eprosima::fastdds::ResourceLimitedContainerConfig::fixed_size_configuration(1u);
     control_qos.data_sharing().off();
 
     // Copy control Qos to test Qos. At this point, test_qos has non-default values for the non-common Qos,

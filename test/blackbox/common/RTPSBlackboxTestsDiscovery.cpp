@@ -21,8 +21,8 @@
 #include "RTPSWithRegistrationReader.hpp"
 #include "RTPSWithRegistrationWriter.hpp"
 
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds;
+using namespace eprosima::fastdds::rtps;
 
 enum communication_type
 {
@@ -41,7 +41,7 @@ public:
         {
             case INTRAPROCESS:
                 library_settings.intraprocess_delivery = eprosima::fastdds::IntraprocessDeliveryType::INTRAPROCESS_FULL;
-                eprosima::fastrtps::rtps::RTPSDomain::set_library_settings(library_settings);
+                eprosima::fastdds::rtps::RTPSDomain::set_library_settings(library_settings);
                 break;
             case TRANSPORT:
             default:
@@ -56,7 +56,7 @@ public:
         {
             case INTRAPROCESS:
                 library_settings.intraprocess_delivery = eprosima::fastdds::IntraprocessDeliveryType::INTRAPROCESS_OFF;
-                eprosima::fastrtps::rtps::RTPSDomain::set_library_settings(library_settings);
+                eprosima::fastdds::rtps::RTPSDomain::set_library_settings(library_settings);
                 break;
             case TRANSPORT:
             default:
@@ -83,7 +83,7 @@ TEST_P(RTPSDiscovery, ReaderListenerOnWriterDiscovery)
         WITH_ERROR
     }
     iteration = NONE;
-    eprosima::fastrtps::rtps::GUID_t writer_guid;
+    eprosima::fastdds::rtps::GUID_t writer_guid;
     std::vector<octet> user_data;
 
     RTPSWithRegistrationReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
@@ -182,7 +182,7 @@ TEST_P(RTPSDiscovery, WriterListenerOnReaderDiscovery)
         WITH_ERROR
     }
     iteration = NONE;
-    eprosima::fastrtps::rtps::GUID_t reader_guid;
+    eprosima::fastdds::rtps::GUID_t reader_guid;
     std::vector<octet> user_data;
 
     RTPSWithRegistrationWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
@@ -280,7 +280,7 @@ TEST_P(RTPSDiscovery, ReaderListenerOnWriterDiscoveryIncompatibleQoS)
         WITH_ERROR
     }
     iteration = NONE;
-    eprosima::fastrtps::rtps::GUID_t writer_guid;
+    eprosima::fastdds::rtps::GUID_t writer_guid;
 
     RTPSWithRegistrationReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
     RTPSWithRegistrationWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
@@ -365,7 +365,7 @@ TEST_P(RTPSDiscovery, WriterListenerOnReaderDiscoveryIncompatibleQoS)
         WITH_ERROR
     }
     iteration = NONE;
-    eprosima::fastrtps::rtps::GUID_t reader_guid;
+    eprosima::fastdds::rtps::GUID_t reader_guid;
 
     RTPSWithRegistrationWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     RTPSWithRegistrationReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);

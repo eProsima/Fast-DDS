@@ -27,8 +27,8 @@
 #include "RTPSWithRegistrationReader.hpp"
 #include "RTPSWithRegistrationWriter.hpp"
 
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds;
+using namespace eprosima::fastdds::rtps;
 
 enum communication_type
 {
@@ -47,7 +47,7 @@ protected:
         {
             case INTRAPROCESS:
                 library_settings.intraprocess_delivery = eprosima::fastdds::IntraprocessDeliveryType::INTRAPROCESS_FULL;
-                eprosima::fastrtps::rtps::RTPSDomain::set_library_settings(att);
+                eprosima::fastdds::rtps::RTPSDomain::set_library_settings(att);
                 break;
             case TRANSPORT:
             default:
@@ -62,7 +62,7 @@ protected:
         {
             case INTRAPROCESS:
                 library_settings.intraprocess_delivery = eprosima::fastdds::IntraprocessDeliveryType::INTRAPROCESS_OFF;
-                eprosima::fastrtps::rtps::RTPSDomain::set_library_settings(att);
+                eprosima::fastdds::rtps::RTPSDomain::set_library_settings(att);
                 break;
             case TRANSPORT:
             default:
@@ -201,13 +201,13 @@ TEST_P(PersistenceGuid, CheckPrevalenceBetweenManualAndPropertyConfiguration)
     std::string guidprefix_4 = persistence_lastfour_guidprefix();
     std::stringstream guid;
     // Create the persistence guid to set manually
-    eprosima::fastrtps::rtps::GuidPrefix_t guidPrefix;
+    eprosima::fastdds::rtps::GuidPrefix_t guidPrefix;
     int32_t pid = static_cast<int32_t>(GET_PID());
     guidPrefix.value[8] = reinterpret_cast<uint8_t*>(&pid)[0];
     guidPrefix.value[9] = reinterpret_cast<uint8_t*>(&pid)[1];
     guidPrefix.value[10] = reinterpret_cast<uint8_t*>(&pid)[2];
     guidPrefix.value[11] = reinterpret_cast<uint8_t*>(&pid)[3];
-    eprosima::fastrtps::rtps::EntityId_t entityId;
+    eprosima::fastdds::rtps::EntityId_t entityId;
     entityId.value[3] = 1;
 
     // Create RTPSWriter that use the already created attributes

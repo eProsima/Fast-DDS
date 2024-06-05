@@ -78,7 +78,7 @@ struct StatisticsSubmessageData
 
     };
 
-    eprosima::fastrtps::rtps::Locator_t destination;
+    eprosima::fastdds::rtps::Locator_t destination;
     TimeStamp ts{};
     Sequence seq{};
 };
@@ -94,14 +94,14 @@ constexpr uint16_t statistics_submessage_length =
  * @pre There should be room in the message for the statistics submessage.
  */
 inline void add_statistics_submessage(
-        eprosima::fastrtps::rtps::CDRMessage_t* msg)
+        eprosima::fastdds::rtps::CDRMessage_t* msg)
 {
     static_cast<void>(msg);
 
 #ifdef FASTDDS_STATISTICS
     assert(msg->max_size >= msg->length + statistics_submessage_length);
 
-    using namespace eprosima::fastrtps::rtps;
+    using namespace eprosima::fastdds::rtps;
     RTPSMessageCreator::addSubmessageHeader(
         msg, FASTDDS_STATISTICS_NETWORK_SUBMESSAGE, 0x00, statistics_submessage_data_length);
     memset(msg->buffer + msg->pos, 0, statistics_submessage_data_length);
@@ -119,7 +119,7 @@ inline void add_statistics_submessage(
  *       submessage will be consumed, and it won't be available anymore)
  */
 inline void read_statistics_submessage(
-        eprosima::fastrtps::rtps::CDRMessage_t* msg,
+        eprosima::fastdds::rtps::CDRMessage_t* msg,
         StatisticsSubmessageData& data)
 {
     static_cast<void>(msg);
@@ -130,7 +130,7 @@ inline void read_statistics_submessage(
     assert(msg->pos + statistics_submessage_data_length == msg->length);
 
     // Read all fields
-    using namespace eprosima::fastrtps::rtps;
+    using namespace eprosima::fastdds::rtps;
     CDRMessage::readLocator(msg, &data.destination);
     CDRMessage::readInt32(msg, &data.ts.seconds);
     CDRMessage::readUInt32(msg, &data.ts.fraction);
@@ -146,7 +146,7 @@ inline void read_statistics_submessage(
 
 #ifdef FASTDDS_STATISTICS
 inline uint32_t get_statistics_message_pos(
-        const eprosima::fastrtps::rtps::octet* send_buffer,
+        const eprosima::fastdds::rtps::octet* send_buffer,
         uint32_t send_buffer_size)
 {
     // zero can be use as an error value because the minimum valid value
@@ -173,13 +173,13 @@ inline bool is_statistics_buffer(
 {
     return statistics_submessage_length == stat_buffer.size &&
            FASTDDS_STATISTICS_NETWORK_SUBMESSAGE ==
-           static_cast<const eprosima::fastrtps::rtps::octet*>(stat_buffer.buffer)[0];
+           static_cast<const eprosima::fastdds::rtps::octet*>(stat_buffer.buffer)[0];
 }
 
 #endif // FASTDDS_STATISTICS
 
 inline void set_statistics_submessage_from_transport(
-        const eprosima::fastrtps::rtps::Locator_t& destination,
+        const eprosima::fastdds::rtps::Locator_t& destination,
         const eprosima::fastdds::rtps::NetworkBuffer& send_buffer,
         const uint32_t& total_bytes,
         StatisticsSubmessageData::Sequence& sequence)
@@ -190,7 +190,7 @@ inline void set_statistics_submessage_from_transport(
     static_cast<void>(sequence);
 
 #ifdef FASTDDS_STATISTICS
-    using namespace eprosima::fastrtps::rtps;
+    using namespace eprosima::fastdds::rtps;
 
     if (is_statistics_buffer(send_buffer))
     {

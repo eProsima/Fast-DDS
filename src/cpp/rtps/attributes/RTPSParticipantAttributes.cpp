@@ -32,7 +32,7 @@
 #include <xmlparser/XMLProfileManager.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 static bool is_intraprocess_only(

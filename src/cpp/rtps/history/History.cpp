@@ -29,7 +29,7 @@
 #include <mutex>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 History::History(
@@ -269,7 +269,7 @@ History::iterator History::remove_iterator_constness(
 }
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 
@@ -277,7 +277,7 @@ History::iterator History::remove_iterator_constness(
 #include <sstream>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 void History::print_changes_seqNum2()

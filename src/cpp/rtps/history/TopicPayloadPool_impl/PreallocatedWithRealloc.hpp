@@ -22,7 +22,7 @@
 #include <rtps/history/TopicPayloadPool.hpp>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class PreallocatedReallocTopicPayloadPool : public TopicPayloadPool
@@ -87,7 +87,7 @@ private:
 };
 
 }  // namespace rtps
-}  // namespace fastrtps
+}  // namespace fastdds
 }  // namespace eprosima
 
 #endif  // RTPS_HISTORY_TOPICPAYLOADPOOLIMPL_PREALLOCATED_REALLOC_HPP

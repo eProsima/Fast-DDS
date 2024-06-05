@@ -30,7 +30,7 @@
 using ParameterList = eprosima::fastdds::dds::ParameterList;
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 using ::operator <<;
@@ -1306,5 +1306,5 @@ void WriterProxyData::set_remote_locators(
 }
 
 } /* namespace rtps */
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */

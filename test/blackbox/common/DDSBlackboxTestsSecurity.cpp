@@ -34,8 +34,8 @@
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
 
 namespace fastdds = ::eprosima::fastdds::dds;
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds;
+using namespace eprosima::fastdds::rtps;
 
 void set_authentication_config(
         rtps::PropertySeq& props)

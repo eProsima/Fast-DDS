@@ -26,7 +26,7 @@
 #include <cassert>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 /**
@@ -206,7 +206,7 @@ struct ChangeForReaderCmp
 };
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 #endif // RTPS_WRITER__CHANGEFORREADER_HPP

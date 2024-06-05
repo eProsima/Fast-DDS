@@ -38,7 +38,7 @@
 
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class EDPUtils
@@ -139,7 +139,7 @@ public:
 };
 
 } /* namespace rtps */
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */
 
 #endif // _RTPS_BUILTIN_DISCOVERY_ENDPOINT_EDPUTILS_HPP_

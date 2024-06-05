@@ -48,9 +48,9 @@ bool HelloWorldPublisher::init(
 
     //CREATE THE PARTICIPANT
     DomainParticipantQos pqos;
-    pqos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastrtps::c_TimeInfinite;
+    pqos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastdds::c_TimeInfinite;
     pqos.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod =
-            eprosima::fastrtps::Duration_t(5, 0);
+            eprosima::fastdds::Duration_t(5, 0);
     pqos.name("Participant_pub");
 
     pqos.transport().use_builtin_transports = false;

@@ -251,7 +251,7 @@ ReturnCode_t DomainParticipant::unregister_content_filter_factory(
 
 Topic* DomainParticipant::find_topic(
         const std::string& topic_name,
-        const fastrtps::Duration_t& timeout)
+        const fastdds::Duration_t& timeout)
 {
     return impl_->find_topic(topic_name, timeout);
 }
@@ -439,7 +439,7 @@ bool DomainParticipant::contains_entity(
 }
 
 ReturnCode_t DomainParticipant::get_current_time(
-        fastrtps::Time_t& current_time) const
+        fastdds::Time_t& current_time) const
 {
     return impl_->get_current_time(current_time);
 }
@@ -474,7 +474,7 @@ const InstanceHandle_t& DomainParticipant::get_instance_handle() const
     return impl_->get_instance_handle();
 }
 
-const fastrtps::rtps::GUID_t& DomainParticipant::guid() const
+const fastdds::rtps::GUID_t& DomainParticipant::guid() const
 {
     return impl_->guid();
 }
@@ -485,9 +485,9 @@ std::vector<std::string> DomainParticipant::get_participant_names() const
 }
 
 bool DomainParticipant::new_remote_endpoint_discovered(
-        const fastrtps::rtps::GUID_t& partguid,
+        const fastdds::rtps::GUID_t& partguid,
         uint16_t userId,
-        fastrtps::rtps::EndpointKind_t kind)
+        fastdds::rtps::EndpointKind_t kind)
 {
     return impl_->new_remote_endpoint_discovered(partguid, userId, kind);
 }

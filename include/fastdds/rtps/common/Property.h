@@ -24,7 +24,7 @@
 #include <vector>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class Property
@@ -339,7 +339,7 @@ private:
 };
 
 } //namespace eprosima
-} //namespace fastrtps
+} //namespace fastdds
 } //namespace rtps
 
 #endif // _FASTDDS_RTPS_COMMON_PROPERTYQOS_H_

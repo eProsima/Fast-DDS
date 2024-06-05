@@ -85,7 +85,7 @@ bool HelloWorldPublisher::init(
 
     // Create DS SERVER locator
     eprosima::fastdds::rtps::Locator server_locator;
-    eprosima::fastrtps::rtps::IPLocator::setPhysicalPort(server_locator, server_port);
+    eprosima::fastdds::rtps::IPLocator::setPhysicalPort(server_locator, server_port);
 
     std::shared_ptr<eprosima::fastdds::rtps::TransportDescriptorInterface> descriptor;
 
@@ -103,7 +103,7 @@ bool HelloWorldPublisher::init(
             descriptor = descriptor_tmp;
 
             server_locator.kind = LOCATOR_KIND_UDPv4;
-            eprosima::fastrtps::rtps::IPLocator::setIPv4(server_locator, ip_server_address);
+            eprosima::fastdds::rtps::IPLocator::setIPv4(server_locator, ip_server_address);
             break;
         }
 
@@ -114,7 +114,7 @@ bool HelloWorldPublisher::init(
             descriptor = descriptor_tmp;
 
             server_locator.kind = LOCATOR_KIND_UDPv6;
-            eprosima::fastrtps::rtps::IPLocator::setIPv6(server_locator, ip_server_address);
+            eprosima::fastdds::rtps::IPLocator::setIPv6(server_locator, ip_server_address);
             break;
         }
 
@@ -127,8 +127,8 @@ bool HelloWorldPublisher::init(
             descriptor = descriptor_tmp;
 
             server_locator.kind = LOCATOR_KIND_TCPv4;
-            eprosima::fastrtps::rtps::IPLocator::setLogicalPort(server_locator, server_port);
-            eprosima::fastrtps::rtps::IPLocator::setIPv4(server_locator, ip_server_address);
+            eprosima::fastdds::rtps::IPLocator::setLogicalPort(server_locator, server_port);
+            eprosima::fastdds::rtps::IPLocator::setIPv4(server_locator, ip_server_address);
             break;
         }
 
@@ -141,8 +141,8 @@ bool HelloWorldPublisher::init(
             descriptor = descriptor_tmp;
 
             server_locator.kind = LOCATOR_KIND_TCPv6;
-            eprosima::fastrtps::rtps::IPLocator::setLogicalPort(server_locator, server_port);
-            eprosima::fastrtps::rtps::IPLocator::setIPv6(server_locator, ip_server_address);
+            eprosima::fastdds::rtps::IPLocator::setLogicalPort(server_locator, server_port);
+            eprosima::fastdds::rtps::IPLocator::setIPv6(server_locator, ip_server_address);
             break;
         }
 
@@ -152,7 +152,7 @@ bool HelloWorldPublisher::init(
 
     // Set participant as DS CLIENT
     pqos.wire_protocol().builtin.discovery_config.discoveryProtocol =
-            eprosima::fastrtps::rtps::DiscoveryProtocol_t::CLIENT;
+            eprosima::fastdds::rtps::DiscoveryProtocol_t::CLIENT;
 
     // Set SERVER's GUID prefix
     RemoteServerAttributes remote_server_att;
@@ -255,16 +255,16 @@ void HelloWorldPublisher::PubListener::on_publication_matched(
 
 void HelloWorldPublisher::PubListener::on_participant_discovery(
         eprosima::fastdds::dds::DomainParticipant* /*participant*/,
-        eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info,
+        eprosima::fastdds::rtps::ParticipantDiscoveryInfo&& info,
         bool& should_be_ignored)
 {
     static_cast<void>(should_be_ignored);
-    if (info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
+    if (info.status == eprosima::fastdds::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
     {
         std::cout << "Discovered Participant with GUID " << info.info.m_guid << std::endl;
     }
-    else if (info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT ||
-            info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT)
+    else if (info.status == eprosima::fastdds::rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT ||
+            info.status == eprosima::fastdds::rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT)
     {
         std::cout << "Dropped Participant with GUID " << info.info.m_guid << std::endl;
     }

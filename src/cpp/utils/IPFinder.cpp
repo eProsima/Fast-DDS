@@ -70,7 +70,7 @@
 #include <cstring>
 #include <algorithm>
 
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds::rtps;
 
 IPFinder::IPFinder()
 {

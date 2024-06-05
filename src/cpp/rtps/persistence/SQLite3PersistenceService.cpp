@@ -27,7 +27,7 @@
 #include <sstream>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 /**
@@ -571,5 +571,5 @@ int64_t SQLite3PersistenceServiceSchemaV3::now()
 }
 
 } /* namespace rtps */
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */

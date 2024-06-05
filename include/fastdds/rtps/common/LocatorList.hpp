@@ -459,14 +459,14 @@ inline std::istream& operator >>(
 } // namespace rtps
 } // namespace fastdds
 
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 using Locators = eprosima::fastdds::rtps::Locators;
 using LocatorList_t = eprosima::fastdds::rtps::LocatorList;
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 #endif /* _FASTDDS_RTPS_COMMON_LOCATORLIST_HPP_ */

@@ -102,8 +102,8 @@ static bool create_kx_key(
     return true;
 }
 
-using namespace eprosima::fastrtps::rtps;
-using namespace eprosima::fastrtps::rtps::security;
+using namespace eprosima::fastdds::rtps;
+using namespace eprosima::fastdds::rtps::security;
 
 ParticipantCryptoHandleDeleter::ParticipantCryptoHandleDeleter(
         AESGCMGMAC_KeyFactory& factory)

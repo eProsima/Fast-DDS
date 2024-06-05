@@ -27,7 +27,7 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-using namespace fastrtps::rtps;
+using namespace fastdds::rtps;
 
 /**
  * Class EDPClient, extends the EDPSimple functionality to accommodate client side needs

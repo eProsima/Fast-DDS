@@ -27,7 +27,7 @@
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds::rtps;
 
 HelloWorldPublisher::HelloWorldPublisher()
     : participant_(nullptr)
@@ -50,7 +50,7 @@ bool HelloWorldPublisher::init()
     pqos.wire_protocol().builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol = true;
     pqos.wire_protocol().builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
     pqos.wire_protocol().builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
-    pqos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastrtps::c_TimeInfinite;
+    pqos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastdds::c_TimeInfinite;
     pqos.name("Participant_pub");
 
     // Explicit configuration of SharedMem transport

@@ -28,7 +28,7 @@
 #include <rtps/history/PoolConfig.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 using namespace testing;
@@ -38,7 +38,7 @@ using namespace testing;
 TEST(SHMSegmentTests, Writer)
 {
     RTPSParticipantAttributes p_attr;
-    p_attr.builtin.discovery_config.discoveryProtocol = eprosima::fastrtps::rtps::DiscoveryProtocol::SIMPLE;
+    p_attr.builtin.discovery_config.discoveryProtocol = eprosima::fastdds::rtps::DiscoveryProtocol::SIMPLE;
     p_attr.builtin.use_WriterLivelinessProtocol = true;
     RTPSParticipant* participant = RTPSDomain::createParticipant(
         0, p_attr);
@@ -68,7 +68,7 @@ TEST(SHMSegmentTests, Writer)
 }
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 int main(

@@ -27,7 +27,7 @@
 #include <fastdds/rtps/transport/NetworkBuffer.hpp>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class RTPSParticipantImpl;
@@ -125,7 +125,7 @@ private:
 };
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 #endif /* _FASTDDS_RTPS_TRANSPORT_SENDERRESOURCE_H_ */

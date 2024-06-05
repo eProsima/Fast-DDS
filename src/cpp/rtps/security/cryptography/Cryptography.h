@@ -24,7 +24,7 @@
 #include <rtps/security/cryptography/CryptoTypes.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 namespace security {
 
@@ -64,7 +64,7 @@ private:
 
 } //namespace security
 } //namespace rtps
-} //namespace fastrtps
+} //namespace fastdds
 } //namespace eprosima
 
 #endif //_FASTDDS_RTPS_SECURITY_CRYPTOGRAPHY_CRYPTOGRAPHY_H_

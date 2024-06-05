@@ -28,7 +28,7 @@
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
 
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds::rtps;
 using namespace eprosima::fastdds::dds;
 
 enum communication_type

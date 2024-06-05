@@ -15,7 +15,7 @@
 #include <utils/collections/FixedSizeQueue.hpp>
 #include <gtest/gtest.h>
 
-using namespace eprosima::fastrtps;
+using namespace eprosima::fastdds;
 
 constexpr size_t CAPACITY = 32;
 

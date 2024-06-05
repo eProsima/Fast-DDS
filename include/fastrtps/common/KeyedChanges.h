@@ -24,7 +24,7 @@
 #include <chrono>
 
 namespace eprosima{
-namespace fastrtps{
+namespace fastdds{
 
 /**
  * @brief A struct storing a vector of cache changes and the next deadline in the group

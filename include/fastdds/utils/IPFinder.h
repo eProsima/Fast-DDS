@@ -28,7 +28,7 @@
 #include <fastdds/rtps/common/LocatorWithMask.hpp>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 /**
  * Class IPFinder, to determine the IP of the NICs.
@@ -130,7 +130,7 @@ public:
 };
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } /* namespace eprosima */
 
 #endif /* IPFINDER_H_ */

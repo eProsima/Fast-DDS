@@ -41,11 +41,11 @@ namespace detail {
 
 struct SampleLoanManager
 {
-    using CacheChange_t = eprosima::fastrtps::rtps::CacheChange_t;
-    using IPayloadPool = eprosima::fastrtps::rtps::IPayloadPool;
-    using PoolConfig = eprosima::fastrtps::rtps::PoolConfig;
-    using SampleIdentity = eprosima::fastrtps::rtps::SampleIdentity;
-    using SerializedPayload_t = eprosima::fastrtps::rtps::SerializedPayload_t;
+    using CacheChange_t = eprosima::fastdds::rtps::CacheChange_t;
+    using IPayloadPool = eprosima::fastdds::rtps::IPayloadPool;
+    using PoolConfig = eprosima::fastdds::rtps::PoolConfig;
+    using SampleIdentity = eprosima::fastdds::rtps::SampleIdentity;
+    using SerializedPayload_t = eprosima::fastdds::rtps::SerializedPayload_t;
 
     SampleLoanManager(
             const PoolConfig& pool_config,
@@ -201,10 +201,10 @@ private:
 
     };
 
-    using collection_type = eprosima::fastrtps::ResourceLimitedVector<OutstandingLoanItem>;
+    using collection_type = eprosima::fastdds::ResourceLimitedVector<OutstandingLoanItem>;
 
     bool is_plain_;
-    eprosima::fastrtps::ResourceLimitedContainerConfig limits_;
+    eprosima::fastdds::ResourceLimitedContainerConfig limits_;
     collection_type free_loans_;
     collection_type used_loans_;
     TypeSupport type_;

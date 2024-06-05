@@ -33,14 +33,14 @@
 #include <fastdds/fastdds_dll.hpp>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class WriteParams;
 struct GUID_t;
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 
 namespace fastdds {
 namespace dds {
@@ -144,7 +144,7 @@ public:
      */
     FASTDDS_EXPORTED_API bool write(
             void* data,
-            fastrtps::rtps::WriteParams& params);
+            fastdds::rtps::WriteParams& params);
 
     /**
      * Write data with handle.
@@ -180,7 +180,7 @@ public:
     FASTDDS_EXPORTED_API ReturnCode_t write_w_timestamp(
             void* data,
             const InstanceHandle_t& handle,
-            const fastrtps::Time_t& timestamp);
+            const fastdds::Time_t& timestamp);
 
     /*!
      * @brief Informs that the application will be modifying a particular instance.
@@ -214,7 +214,7 @@ public:
      */
     FASTDDS_EXPORTED_API InstanceHandle_t register_instance_w_timestamp(
             void* instance,
-            const fastrtps::Time_t& timestamp);
+            const fastdds::Time_t& timestamp);
 
     /*!
      * @brief This operation reverses the action of `register_instance`.
@@ -253,7 +253,7 @@ public:
     FASTDDS_EXPORTED_API ReturnCode_t unregister_instance_w_timestamp(
             void* instance,
             const InstanceHandle_t& handle,
-            const fastrtps::Time_t& timestamp);
+            const fastdds::Time_t& timestamp);
 
     /**
      * This operation can be used to retrieve the instance key that corresponds to an
@@ -292,7 +292,7 @@ public:
      *
      * @return Reference to the DataWriter GUID
      */
-    FASTDDS_EXPORTED_API const fastrtps::rtps::GUID_t& guid() const;
+    FASTDDS_EXPORTED_API const fastdds::rtps::GUID_t& guid() const;
 
     /**
      * Returns the DataWriter's InstanceHandle
@@ -315,7 +315,7 @@ public:
      * @return RETCODE_OK if the DataWriter receive the acknowledgments before the time expires and RETCODE_ERROR otherwise
      */
     FASTDDS_EXPORTED_API ReturnCode_t wait_for_acknowledgments(
-            const fastrtps::Duration_t& max_wait);
+            const fastdds::Duration_t& max_wait);
 
     /**
      * @brief Returns the offered deadline missed status
@@ -446,7 +446,7 @@ public:
     FASTDDS_EXPORTED_API ReturnCode_t dispose_w_timestamp(
             void* instance,
             const InstanceHandle_t& handle,
-            const fastrtps::Time_t& timestamp);
+            const fastdds::Time_t& timestamp);
     /**
      * @brief Returns the liveliness lost status
      *
@@ -584,7 +584,7 @@ public:
     FASTDDS_EXPORTED_API ReturnCode_t wait_for_acknowledgments(
             void* instance,
             const InstanceHandle_t& handle,
-            const fastrtps::Duration_t& max_wait);
+            const fastdds::Duration_t& max_wait);
 
 protected:
 

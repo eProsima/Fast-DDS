@@ -126,7 +126,7 @@ TEST(StatisticsQosTests, StatisticsDataWriterQosTest)
 {
     EXPECT_EQ(STATISTICS_DATAWRITER_QOS.reliability().kind, eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
     EXPECT_EQ(STATISTICS_DATAWRITER_QOS.durability().kind, eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS);
-    const std::string* pushMode_property = eprosima::fastrtps::rtps::PropertyPolicyHelper::find_property(
+    const std::string* pushMode_property = eprosima::fastdds::rtps::PropertyPolicyHelper::find_property(
         STATISTICS_DATAWRITER_QOS.properties(), "fastdds.push_mode");
     ASSERT_NE(pushMode_property, nullptr);
     EXPECT_EQ(pushMode_property->compare("false"), 0);
@@ -344,7 +344,7 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
     // Expected QoS construction for Subscription_Throughput topic:
     efd::DataWriterQos qos4;
     qos4.reliability().kind = eprosima::fastdds::dds::ReliabilityQosPolicyKind::BEST_EFFORT_RELIABILITY_QOS;
-    eprosima::fastrtps::rtps::Property property;
+    eprosima::fastdds::rtps::Property property;
     property.name("partitions");
     std::string partitions = "part1;part2";
     property.value(std::move(partitions));

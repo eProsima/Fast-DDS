@@ -21,7 +21,7 @@
 #define LIBRARYSETTINGS_ATTRIBUTES_H_
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 
 enum IntraprocessDeliveryType
 {
@@ -60,7 +60,7 @@ public:
 #endif // if HAVE_STRICT_REALTIME
 };
 
-}  // namespace fastrtps
+}  // namespace fastdds
 }  // namespace eprosima
 
 #endif /* LIBRARYSETTINGS_ATTRIBUTES_H_ */

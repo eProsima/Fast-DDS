@@ -34,7 +34,7 @@ class MonitorService;
 #ifdef FASTDDS_STATISTICS
 
 class MonitorServiceListener :
-    public fastrtps::rtps::WriterListener,
+    public fastdds::rtps::WriterListener,
     public IStatusObserver,
     public IConnectionsObserver,
     public IProxyObserver
@@ -46,23 +46,23 @@ public:
             MonitorService* ms);
 
     bool on_local_entity_status_change(
-            const fastrtps::rtps::GUID_t& guid,
+            const fastdds::rtps::GUID_t& guid,
             const uint32_t& id) const override;
 
     bool on_local_entity_change(
-            const fastrtps::rtps::GUID_t& guid,
+            const fastdds::rtps::GUID_t& guid,
             bool is_alive) const override;
 
     bool on_local_entity_connections_change(
-            const fastrtps::rtps::GUID_t& guid) const override;
+            const fastdds::rtps::GUID_t& guid) const override;
 
     void onWriterMatched(
-            fastrtps::rtps::RTPSWriter* writer,
-            fastrtps::rtps::MatchingInfo& info) override;
+            fastdds::rtps::RTPSWriter* writer,
+            fastdds::rtps::MatchingInfo& info) override;
 
     void onWriterChangeReceivedByAll(
-            fastrtps::rtps::RTPSWriter* writer,
-            fastrtps::rtps::CacheChange_t* change) override;
+            fastdds::rtps::RTPSWriter* writer,
+            fastdds::rtps::CacheChange_t* change) override;
 
 protected:
 
@@ -70,7 +70,7 @@ protected:
 
 private:
 
-    using fastrtps::rtps::WriterListener::onWriterMatched;
+    using fastdds::rtps::WriterListener::onWriterMatched;
 
 };
 

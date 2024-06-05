@@ -31,7 +31,7 @@
 
 using namespace eprosima;
 using namespace eprosima::fastdds::dds;
-using namespace eprosima::fastrtps;
+using namespace eprosima::fastdds;
 
 using std::cout;
 using std::endl;
@@ -122,8 +122,8 @@ void VideoTestSubscriber::init(
         bool reliable,
         uint32_t pid,
         bool hostname,
-        const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
-        const eprosima::fastrtps::rtps::PropertyPolicy& property_policy,
+        const eprosima::fastdds::rtps::PropertyPolicy& part_property_policy,
+        const eprosima::fastdds::rtps::PropertyPolicy& property_policy,
         bool large_data,
         const std::string& sXMLConfigFile,
         bool export_csv,
@@ -232,7 +232,7 @@ void VideoTestSubscriber::init(
     if (large_data)
     {
         datareader_qos_data.endpoint().history_memory_policy =
-                eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+                eprosima::fastdds::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
     }
 
     mp_data_dr = mp_datasub->create_datareader(mp_video_topic, datareader_qos_data, &this->m_datasublistener);

@@ -22,7 +22,7 @@
 #include <rtps/security/common/Handle.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class RTPSParticipantAttributes;
@@ -178,7 +178,7 @@ private:
 
 } //namespace security
 } //namespace rtps
-} //namespace fastrtps
+} //namespace fastdds
 } //namespace eprosima
 
 #endif // _FASTDDS_RTPS_SECURITY_ACCESSCONTROL_ACCESSCONTROL_H_

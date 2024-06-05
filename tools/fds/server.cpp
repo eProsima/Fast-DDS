@@ -56,9 +56,9 @@ int fastdds_discovery_server(
         char* argv[])
 {
     // Convenience aliases
-    using Locator = fastrtps::rtps::Locator_t;
-    using DiscoveryProtocol = fastrtps::rtps::DiscoveryProtocol_t;
-    using IPLocator = fastrtps::rtps::IPLocator;
+    using Locator = fastdds::rtps::Locator_t;
+    using DiscoveryProtocol = fastdds::rtps::DiscoveryProtocol_t;
+    using IPLocator = fastdds::rtps::IPLocator;
 
     // Skip program name argv[0] if present
     argc -= (argc > 0);
@@ -172,7 +172,7 @@ int fastdds_discovery_server(
 
     if (nullptr == pOp)
     {
-        fastrtps::rtps::GuidPrefix_t prefix_cero;
+        fastdds::rtps::GuidPrefix_t prefix_cero;
         if (participantQos.wire_protocol().prefix == prefix_cero)
         {
             std::cout << "Server id is mandatory if not defined in the XML file: use -i or --server-id option." <<
@@ -180,9 +180,9 @@ int fastdds_discovery_server(
             return 1;
         }
         else if (!(participantQos.wire_protocol().builtin.discovery_config.discoveryProtocol ==
-                eprosima::fastrtps::rtps::DiscoveryProtocol::SERVER ||
+                eprosima::fastdds::rtps::DiscoveryProtocol::SERVER ||
                 participantQos.wire_protocol().builtin.discovery_config.discoveryProtocol ==
-                eprosima::fastrtps::rtps::DiscoveryProtocol::BACKUP))
+                eprosima::fastdds::rtps::DiscoveryProtocol::BACKUP))
         {
             std::cout << "The provided configuration is not valid. Participant must be either SERVER or BACKUP. " <<
                 std::endl;
@@ -542,7 +542,7 @@ int fastdds_discovery_server(
         }
     }
 
-    fastrtps::rtps::GuidPrefix_t guid_prefix = participantQos.wire_protocol().prefix;
+    fastdds::rtps::GuidPrefix_t guid_prefix = participantQos.wire_protocol().prefix;
 
     // Create the server
     int return_value = 0;

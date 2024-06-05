@@ -20,7 +20,7 @@
 
 #include <gtest/gtest.h>
 
-using GUID_t = eprosima::fastrtps::rtps::GUID_t;
+using GUID_t = eprosima::fastdds::rtps::GUID_t;
 using GuidUtils = eprosima::fastdds::rtps::GuidUtils;
 
 /*!

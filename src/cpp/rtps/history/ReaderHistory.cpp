@@ -31,7 +31,7 @@
 #include <mutex>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 using BaseReader = fastdds::rtps::BaseReader;
@@ -270,5 +270,5 @@ void ReaderHistory::do_release_cache(
 }
 
 } /* namespace rtps */
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */

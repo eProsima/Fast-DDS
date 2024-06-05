@@ -18,7 +18,7 @@
 
 #include <fastdds/rtps/common/Token.h>
 
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds::rtps;
 
 std::string* DataHolderHelper::find_property_value(DataHolder& data_holder, const std::string& name)
 {

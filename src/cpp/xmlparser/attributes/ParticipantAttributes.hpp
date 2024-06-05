@@ -39,7 +39,7 @@ public:
     uint32_t domainId = 0;
 
     //!Attributes of the associated RTPSParticipant.
-    fastrtps::rtps::RTPSParticipantAttributes rtps;
+    fastdds::rtps::RTPSParticipantAttributes rtps;
 
     ParticipantAttributes()
     {

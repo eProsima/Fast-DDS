@@ -55,7 +55,7 @@ class TypeLookupManager;
 } // namespace dds
 } // namespace fastdds
 
-namespace fastrtps {
+namespace fastdds {
 
 class TopicAttributes;
 
@@ -125,21 +125,21 @@ public:
     }
 
     bool fill_discovery_data_from_cdr_message(
-            fastrtps::rtps::ParticipantProxyData& /*data*/,
+            fastdds::rtps::ParticipantProxyData& /*data*/,
             fastdds::statistics::MonitorServiceStatusData& /*msg*/)
     {
         return true;
     }
 
     bool fill_discovery_data_from_cdr_message(
-            fastrtps::rtps::WriterProxyData& /*data*/,
+            fastdds::rtps::WriterProxyData& /*data*/,
             fastdds::statistics::MonitorServiceStatusData& /*msg*/)
     {
         return true;
     }
 
     bool fill_discovery_data_from_cdr_message(
-            fastrtps::rtps::ReaderProxyData& /*data*/,
+            fastdds::rtps::ReaderProxyData& /*data*/,
             fastdds::statistics::MonitorServiceStatusData& /*msg*/)
     {
         return true;
@@ -256,7 +256,7 @@ public:
 };
 
 } /* namespace rtps */
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */
 
 #endif /* _FASTDDS_RTPS_RTPSParticipant_H_ */

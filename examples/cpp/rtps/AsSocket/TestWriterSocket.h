@@ -25,13 +25,13 @@
 #include <string>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 class RTPSParticipant;
 class WriterHistory;
 class RTPSWriter;
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 class TestWriterSocket
@@ -43,11 +43,11 @@ public:
 
     virtual ~TestWriterSocket();
 
-    eprosima::fastrtps::rtps::RTPSParticipant* mp_participant;
+    eprosima::fastdds::rtps::RTPSParticipant* mp_participant;
 
-    eprosima::fastrtps::rtps::RTPSWriter* mp_writer;
+    eprosima::fastdds::rtps::RTPSWriter* mp_writer;
 
-    eprosima::fastrtps::rtps::WriterHistory* mp_history;
+    eprosima::fastdds::rtps::WriterHistory* mp_history;
 
     bool init(
             std::string ip,

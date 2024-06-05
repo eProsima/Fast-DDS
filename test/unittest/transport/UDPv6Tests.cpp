@@ -29,8 +29,8 @@
 #include <MockReceiverResource.h>
 
 using namespace eprosima::fastdds;
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds;
+using namespace eprosima::fastdds::rtps;
 using UDPv6Transport = eprosima::fastdds::rtps::UDPv6Transport;
 using UDPv6TransportDescriptor = eprosima::fastdds::rtps::UDPv6TransportDescriptor;
 using SendResourceList = eprosima::fastdds::rtps::SendResourceList;

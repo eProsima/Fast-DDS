@@ -14,7 +14,7 @@
 
 #include "Exception.h"
 
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds::rtps;
 
 Exception::Exception(
         const char* const& message)

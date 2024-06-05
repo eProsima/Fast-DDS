@@ -23,7 +23,7 @@
 #include <fastdds/rtps/common/SequenceNumber.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 /*!
@@ -244,7 +244,7 @@ inline std::ostream& operator <<(
 #endif // DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 } //namespace rtps
-} //namespace fastrtps
+} //namespace fastdds
 } //namespace eprosima
 
 #endif // _FASTDDS_RTPS_COMMON_SAMPLEIDENTITY_H_

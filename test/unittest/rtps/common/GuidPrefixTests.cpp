@@ -16,7 +16,7 @@
 
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
 
-using GuidPrefix = eprosima::fastrtps::rtps::GuidPrefix_t;
+using GuidPrefix = eprosima::fastdds::rtps::GuidPrefix_t;
 
 namespace test {
 

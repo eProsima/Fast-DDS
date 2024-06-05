@@ -60,22 +60,22 @@ public:
     }
 
     //! Topic Attributes for the Publisher
-    fastrtps::TopicAttributes topic;
+    fastdds::TopicAttributes topic;
 
     //! QOS for the Publisher
     dds::WriterQos qos;
 
     //! Writer Attributes
-    fastrtps::rtps::WriterTimes times;
+    fastdds::rtps::WriterTimes times;
 
     //! Unicast locator list
-    fastrtps::rtps::LocatorList_t unicastLocatorList;
+    fastdds::rtps::LocatorList_t unicastLocatorList;
 
     //! Multicast locator list
-    fastrtps::rtps::LocatorList_t multicastLocatorList;
+    fastdds::rtps::LocatorList_t multicastLocatorList;
 
     //! Remote locator list
-    fastrtps::rtps::LocatorList_t remoteLocatorList;
+    fastdds::rtps::LocatorList_t remoteLocatorList;
 
     //! The collection of external locators to use for communication.
     rtps::ExternalLocators external_unicast_locators;
@@ -84,14 +84,14 @@ public:
     bool ignore_non_matching_locators = false;
 
     //! Underlying History memory policy
-    fastrtps::rtps::MemoryManagementPolicy_t historyMemoryPolicy =
-            fastrtps::rtps::MemoryManagementPolicy_t::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+    fastdds::rtps::MemoryManagementPolicy_t historyMemoryPolicy =
+            fastdds::rtps::MemoryManagementPolicy_t::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 
     //! Properties
-    fastrtps::rtps::PropertyPolicy properties;
+    fastdds::rtps::PropertyPolicy properties;
 
     //! Allocation limits on the matched subscribers collections
-    fastrtps::ResourceLimitedContainerConfig matched_subscriber_allocation;
+    fastdds::ResourceLimitedContainerConfig matched_subscriber_allocation;
 
     /**
      * Get the user defined ID

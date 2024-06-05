@@ -29,7 +29,7 @@
 #include <fastdds/utils/collections/ResourceLimitedContainerConfig.hpp>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 typedef enum RTPSWriterPublishMode : octet
@@ -139,7 +139,7 @@ public:
 };
 
 } /* namespace rtps */
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */
 
 #endif /* _FASTDDS_WRITERATTRIBUTES_H_ */

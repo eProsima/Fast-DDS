@@ -44,7 +44,7 @@ class XMLDocument;
 } // namespace tinyxml2
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace xmlparser {
 
 class BaseNode;
@@ -702,7 +702,7 @@ protected:
 };
 
 } // namespace xmlparser
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 #endif // ifndef XML_PARSER_H_

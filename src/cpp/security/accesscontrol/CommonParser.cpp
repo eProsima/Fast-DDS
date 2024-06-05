@@ -31,10 +31,10 @@ static const char* DomainIdRange_str = "id_range";
 static const char* Min_str = "min";
 static const char* Max_str = "max";
 
-using namespace eprosima::fastrtps;
+using namespace eprosima::fastdds;
 using namespace ::rtps::security;
 
-bool eprosima::fastrtps::rtps::security::parse_domain_id_set(
+bool eprosima::fastdds::rtps::security::parse_domain_id_set(
         tinyxml2::XMLElement* root,
         Domains& domains)
 {

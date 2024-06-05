@@ -41,9 +41,9 @@
 #include "../fastdds/xtypes/dynamic_types/TypeDescriptorImpl.hpp"
 
 using namespace eprosima::fastdds::dds;
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
-using namespace eprosima::fastrtps::xmlparser;
+using namespace eprosima::fastdds;
+using namespace eprosima::fastdds::rtps;
+using namespace eprosima::fastdds::xmlparser;
 
 //{{{ Auxiliary constexpr function to get the length of a const char* in C++11.
 constexpr size_t constexpr_strlen_rec(

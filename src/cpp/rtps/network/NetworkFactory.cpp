@@ -30,7 +30,7 @@ using namespace std;
 using namespace eprosima::fastdds::rtps;
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 using SendResourceList = fastdds::rtps::SendResourceList;
@@ -132,7 +132,7 @@ bool NetworkFactory::BuildReceiverResources(
 
 bool NetworkFactory::RegisterTransport(
         const TransportDescriptorInterface* descriptor,
-        const fastrtps::rtps::PropertyPolicy* properties,
+        const fastdds::rtps::PropertyPolicy* properties,
         const uint32_t& max_msg_size_no_frag)
 {
     bool wasRegistered = false;
@@ -558,5 +558,5 @@ std::vector<TransportNetmaskFilterInfo> NetworkFactory::netmask_filter_info() co
 }
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima

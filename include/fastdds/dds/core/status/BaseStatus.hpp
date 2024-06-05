@@ -45,7 +45,7 @@ using InconsistentTopicStatus = BaseStatus;
 } //namespace dds
 } //namespace fastdds
 
-namespace fastrtps {
+namespace fastdds {
 
 using LivelinessLostStatus = fastdds::dds::BaseStatus;
 

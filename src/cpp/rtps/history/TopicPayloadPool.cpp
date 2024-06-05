@@ -27,7 +27,7 @@
 #include <memory>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 bool TopicPayloadPool::get_payload(
@@ -298,5 +298,5 @@ std::unique_ptr<ITopicPayloadPool> TopicPayloadPool::get(
 }
 
 }  // namespace rtps
-}  // namespace fastrtps
+}  // namespace fastdds
 }  // namespace eprosima

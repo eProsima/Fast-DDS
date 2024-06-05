@@ -18,6 +18,6 @@
 
 #include <security/authentication/PKIIdentityHandle.h>
 
-using namespace eprosima::fastrtps::rtps::security;
+using namespace eprosima::fastdds::rtps::security;
 
 const char* const PKIIdentity::class_id_ = "PKIIdentityHandle";

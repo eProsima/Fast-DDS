@@ -26,8 +26,8 @@
 #include <statistics/rtps/StatisticsBase.hpp>
 #include <utils/TimeConversion.hpp>
 
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds;
+using namespace eprosima::fastdds::rtps;
 
 namespace eprosima {
 namespace fastdds {
@@ -35,7 +35,7 @@ namespace statistics {
 namespace rtps {
 
 MonitorService::MonitorService(
-        const fastrtps::rtps::GUID_t& guid,
+        const fastdds::rtps::GUID_t& guid,
         IProxyQueryable* proxy_q,
         IConnectionsQueryable* conns_q,
         IStatusQueryable& status_q,
@@ -152,7 +152,7 @@ bool MonitorService::disable_monitor_service()
 }
 
 bool MonitorService::remove_local_entity(
-        const fastrtps::rtps::EntityId_t& entity_id)
+        const fastdds::rtps::EntityId_t& entity_id)
 {
     {
         std::lock_guard<std::mutex> lock (mtx_);
@@ -198,7 +198,7 @@ bool MonitorService::initialize_entity(
 }
 
 bool MonitorService::push_entity_update(
-        const fastrtps::rtps::EntityId_t& entity_id,
+        const fastdds::rtps::EntityId_t& entity_id,
         const uint32_t& status_id)
 {
     bool ret = false;
@@ -247,7 +247,7 @@ bool MonitorService::push_entity_update(
 }
 
 bool MonitorService::write_status(
-        const fastrtps::rtps::EntityId_t& entity_id,
+        const fastdds::rtps::EntityId_t& entity_id,
         const std::bitset<StatusKind::STATUSES_SIZE>& changed_statuses,
         const bool& entity_disposed)
 {
@@ -377,7 +377,7 @@ bool MonitorService::add_change(
 
     CacheChange_t* change = status_writer_->new_change(
         type_.getSerializedSizeProvider(&status_data),
-        (disposed ? fastrtps::rtps::NOT_ALIVE_DISPOSED_UNREGISTERED : fastrtps::rtps::ALIVE),
+        (disposed ? fastdds::rtps::NOT_ALIVE_DISPOSED_UNREGISTERED : fastdds::rtps::ALIVE),
         handle);
 
     if (nullptr != change)
@@ -420,7 +420,7 @@ bool MonitorService::create_endpoint()
     RTPSWriter* tmp_writer = nullptr;
 
     WriterAttributes watts;
-    watts.endpoint.endpointKind = fastrtps::rtps::WRITER;
+    watts.endpoint.endpointKind = fastdds::rtps::WRITER;
     watts.endpoint.durabilityKind = TRANSIENT_LOCAL;
     watts.endpoint.reliabilityKind = RELIABLE;
     watts.endpoint.topicKind = WITH_KEY;

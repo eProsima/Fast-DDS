@@ -25,7 +25,7 @@
 struct sqlite3;
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 
@@ -248,7 +248,7 @@ public:
 };
 
 } /* namespace rtps */
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */
 
 #endif /* SQLITE3PERSISTENCESERVICESTATEMENTS_H_ */

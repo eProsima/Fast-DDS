@@ -32,7 +32,7 @@
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds::rtps;
 
 ParticipantModule::ParticipantModule(
         const std::string& discovery_protocol,

@@ -31,7 +31,7 @@
 #include <fastdds/dds/xtypes/dynamic_types/TypeDescriptor.hpp>
 #include <ScopedLogs.hpp>
 
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds::rtps;
 using namespace eprosima::fastdds::dds;
 
 std::array<DataRepresentationId_t, 2> encodings {{XCDR_DATA_REPRESENTATION, XCDR2_DATA_REPRESENTATION}};
@@ -12715,7 +12715,7 @@ TEST_F(DynamicTypesTests, DynamicType_KeyHash_standard_example_1)
     EXPECT_EQ(RETCODE_OK, data->set_int32_value(1, 20));
 
     TypeSupport pubsubType {new DynamicPubSubType(struct_type)};
-    eprosima::fastrtps::rtps::InstanceHandle_t instance_handle;
+    eprosima::fastdds::rtps::InstanceHandle_t instance_handle;
     ASSERT_TRUE(pubsubType.get_key(&data, &instance_handle));
 
     const uint8_t expected_key_hash[] {
@@ -12785,7 +12785,7 @@ TEST_F(DynamicTypesTests, DynamicType_KeyHash_standard_example_2)
     EXPECT_EQ(RETCODE_OK, data->set_int32_value(3, 20));
 
     TypeSupport pubsubType {new DynamicPubSubType(struct_type)};
-    eprosima::fastrtps::rtps::InstanceHandle_t instance_handle;
+    eprosima::fastdds::rtps::InstanceHandle_t instance_handle;
     ASSERT_TRUE(pubsubType.get_key(&data, &instance_handle));
 
     const uint8_t expected_key_hash[] {
@@ -12892,7 +12892,7 @@ TEST_F(DynamicTypesTests, DynamicType_KeyHash_standard_example_3)
     EXPECT_EQ(RETCODE_OK, data->set_int32_value(10, 200));
 
     TypeSupport pubsubType {new DynamicPubSubType(struct_type)};
-    eprosima::fastrtps::rtps::InstanceHandle_t instance_handle;
+    eprosima::fastdds::rtps::InstanceHandle_t instance_handle;
     ASSERT_TRUE(pubsubType.get_key(&data, &instance_handle));
 
     const uint8_t expected_key_hash[] {

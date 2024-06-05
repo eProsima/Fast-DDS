@@ -41,7 +41,7 @@
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
 
 using namespace eprosima::fastdds::dds;
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds::rtps;
 
 // *******************************************************************************************
 // ********************************* DATA WRITER LISTENER ************************************
@@ -120,8 +120,8 @@ bool ThroughputPublisher::init(
         uint32_t pid,
         bool hostname,
         const std::string& export_csv,
-        const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
-        const eprosima::fastrtps::rtps::PropertyPolicy& property_policy,
+        const eprosima::fastdds::rtps::PropertyPolicy& part_property_policy,
+        const eprosima::fastdds::rtps::PropertyPolicy& property_policy,
         const std::string& xml_config_file,
         const std::string& demands_file,
         const std::string& recoveries_file,

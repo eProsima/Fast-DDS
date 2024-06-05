@@ -21,7 +21,7 @@
 #include "BlackboxTests.hpp"
 #include "PubSubParticipant.hpp"
 
-using namespace eprosima::fastrtps;
+using namespace eprosima::fastdds;
 
 enum communication_type
 {

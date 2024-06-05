@@ -51,14 +51,14 @@
 #endif //FASTDDS_STATISTICS
 
 using namespace eprosima::fastdds::rtps;
-using namespace eprosima::fastrtps;
+using namespace eprosima::fastdds;
 using eprosima::fastdds::dds::PublicationMatchedStatus;
 using eprosima::fastdds::dds::SubscriptionMatchedStatus;
 using ParameterList = eprosima::fastdds::dds::ParameterList;
 using BaseReader = eprosima::fastdds::rtps::BaseReader;
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 using reader_map_helper = utilities::collections::map_size_helper<GUID_t, SubscriptionMatchedStatus>;
@@ -1368,5 +1368,5 @@ const fastdds::dds::PublicationMatchedStatus& EDP::update_publication_matched_st
 
 } // namespace rtps
 
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima

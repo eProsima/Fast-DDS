@@ -19,7 +19,7 @@
 
 #include <fastdds/rtps/common/CacheChange.h>
 
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds::rtps;
 
 struct FragmentTestStep
 {

@@ -33,8 +33,8 @@
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
 
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds;
+using namespace eprosima::fastdds::rtps;
 using test_UDPv4Transport = eprosima::fastdds::rtps::test_UDPv4Transport;
 
 enum communication_type
@@ -192,7 +192,7 @@ static bool has_shm_locators(
 }
 
 static void check_shm_locators(
-        const eprosima::fastrtps::rtps::ParticipantDiscoveryInfo& info,
+        const eprosima::fastdds::rtps::ParticipantDiscoveryInfo& info,
         bool unicast,
         bool multicast)
 {
@@ -209,7 +209,7 @@ static void shm_metatraffic_test(
     PubSubWriter<HelloWorldPubSubType> writer(topic_name + "/" + value);
     PubSubReader<HelloWorldPubSubType> reader(topic_name + "/" + value);
 
-    auto discovery_checker = [unicast, multicast](const eprosima::fastrtps::rtps::ParticipantDiscoveryInfo& info)
+    auto discovery_checker = [unicast, multicast](const eprosima::fastdds::rtps::ParticipantDiscoveryInfo& info)
             {
                 check_shm_locators(info, unicast, multicast);
                 return true;

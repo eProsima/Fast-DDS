@@ -60,7 +60,7 @@
 #include "../flowcontrol/FlowController.hpp"
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 using BaseReader = fastdds::rtps::BaseReader;
@@ -2320,5 +2320,5 @@ void StatefulWriter::add_gaps_for_holes_in_history_(
 }
 
 }  // namespace rtps
-}  // namespace fastrtps
+}  // namespace fastdds
 }  // namespace eprosima

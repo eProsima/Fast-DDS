@@ -23,7 +23,7 @@
 #include <fastdds/rtps/common/Guid.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 /**
@@ -79,7 +79,7 @@ public:
     GUID_t remoteEndpointGuid;
 };
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 #endif /* _FASTDDS_RTPS_MATCHINGINFO_H_ */

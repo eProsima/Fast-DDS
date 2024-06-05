@@ -21,7 +21,7 @@
 #include <rtps/network/ReceiverResource.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class MockMessageReceiver;
@@ -67,7 +67,7 @@ public:
 };
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 #endif //MOCK_RECEIVER_STUFF_H

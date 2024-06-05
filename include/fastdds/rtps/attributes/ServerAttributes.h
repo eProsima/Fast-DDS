@@ -30,7 +30,7 @@
 
 namespace eprosima {
 
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 class ParticipantProxyData;
 } // fastrtps
@@ -58,16 +58,16 @@ public:
 
     FASTDDS_EXPORTED_API void clear()
     {
-        guidPrefix = fastrtps::rtps::GuidPrefix_t::unknown();
+        guidPrefix = fastdds::rtps::GuidPrefix_t::unknown();
         metatrafficUnicastLocatorList.clear();
         metatrafficMulticastLocatorList.clear();
         is_connected = false;
     }
 
-    FASTDDS_EXPORTED_API fastrtps::rtps::GUID_t GetParticipant() const;
+    FASTDDS_EXPORTED_API fastdds::rtps::GUID_t GetParticipant() const;
 
-    FASTDDS_EXPORTED_API fastrtps::rtps::GUID_t GetPDPReader() const;
-    FASTDDS_EXPORTED_API fastrtps::rtps::GUID_t GetPDPWriter() const;
+    FASTDDS_EXPORTED_API fastdds::rtps::GUID_t GetPDPReader() const;
+    FASTDDS_EXPORTED_API fastdds::rtps::GUID_t GetPDPWriter() const;
 
     FASTDDS_EXPORTED_API inline bool ReadguidPrefix(
             const char* pfx)
@@ -81,7 +81,7 @@ public:
     LocatorList metatrafficMulticastLocatorList;
 
     //!Guid prefix
-    fastrtps::rtps::GuidPrefix_t guidPrefix;
+    fastdds::rtps::GuidPrefix_t guidPrefix;
 
     // Whether connection has been established
     bool is_connected = false;
@@ -219,13 +219,13 @@ FASTDDS_EXPORTED_API bool ros_super_client_env();
  */
 FASTDDS_EXPORTED_API bool get_server_client_default_guidPrefix(
         int id,
-        fastrtps::rtps::GuidPrefix_t& guid);
+        fastdds::rtps::GuidPrefix_t& guid);
 
 } // namespace rtps
 } // namespace fastdds
 
 // keep former namespace references available
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 using fastdds::rtps::RemoteServerAttributes;

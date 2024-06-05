@@ -26,7 +26,7 @@
 
 namespace eprosima {
 
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class BuiltinProtocols;
@@ -38,13 +38,13 @@ class ParticipantProxyData;
 class WriterHistory;
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 
 namespace fastdds {
 namespace dds {
 namespace builtin {
 
-extern const fastrtps::rtps::SampleIdentity INVALID_SAMPLE_IDENTITY;
+extern const fastdds::rtps::SampleIdentity INVALID_SAMPLE_IDENTITY;
 
 /**
  * Class TypeLookupManager that implements the TypeLookup Service described in the DDS-XTYPES 1.2 specification.
@@ -66,14 +66,14 @@ public:
     {
     }
 
-    MOCK_CONST_METHOD1(get_type_dependencies, fastrtps::rtps::SampleIdentity(
+    MOCK_CONST_METHOD1(get_type_dependencies, fastdds::rtps::SampleIdentity(
                 const fastdds::dds::xtypes::TypeIdentifierSeq&));
 
-    MOCK_CONST_METHOD1(get_types, fastrtps::rtps::SampleIdentity(
+    MOCK_CONST_METHOD1(get_types, fastdds::rtps::SampleIdentity(
                 const fastdds::dds::xtypes::TypeIdentifierSeq&));
 
     void remove_remote_endpoints(
-            fastrtps::rtps::ParticipantProxyData* pdata)
+            fastdds::rtps::ParticipantProxyData* pdata)
     {
         static_cast<void>(pdata);
     }

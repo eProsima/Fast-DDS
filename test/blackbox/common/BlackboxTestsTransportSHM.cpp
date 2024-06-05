@@ -29,7 +29,7 @@
 #include <rtps/transport/shared_mem/test_SharedMemTransportDescriptor.h>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
 
-using namespace eprosima::fastrtps;
+using namespace eprosima::fastdds;
 
 using SharedMemTransportDescriptor = eprosima::fastdds::rtps::SharedMemTransportDescriptor;
 using test_SharedMemTransportDescriptor = eprosima::fastdds::rtps::test_SharedMemTransportDescriptor;

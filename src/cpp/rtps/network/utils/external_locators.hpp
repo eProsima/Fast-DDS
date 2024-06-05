@@ -32,10 +32,10 @@ namespace rtps {
 namespace network {
 namespace external_locators {
 
-using eprosima::fastrtps::rtps::LocatorSelectorEntry;
-using eprosima::fastrtps::rtps::ParticipantProxyData;
-using eprosima::fastrtps::rtps::ReaderProxyData;
-using eprosima::fastrtps::rtps::WriterProxyData;
+using eprosima::fastdds::rtps::LocatorSelectorEntry;
+using eprosima::fastdds::rtps::ParticipantProxyData;
+using eprosima::fastdds::rtps::ReaderProxyData;
+using eprosima::fastdds::rtps::WriterProxyData;
 
 /**
  * Sets the external locators entry for externality index 0 to a list of listening locators.

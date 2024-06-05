@@ -83,7 +83,7 @@ private:
         //! Callback executed when a DomainParticipant is discovered, dropped or removed
         void on_participant_discovery(
                 eprosima::fastdds::dds::DomainParticipant* /*participant*/,
-                eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info,
+                eprosima::fastdds::rtps::ParticipantDiscoveryInfo&& info,
                 bool& should_be_ignored) override;
 
     private:

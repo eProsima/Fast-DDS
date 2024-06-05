@@ -24,7 +24,7 @@
 #include <utils/TimeConversion.hpp>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 TimedEventImpl::TimedEventImpl(
@@ -111,7 +111,7 @@ void TimedEventImpl::trigger(
 }
 
 bool TimedEventImpl::update_interval(
-        const eprosima::fastrtps::Duration_t& interval)
+        const eprosima::fastdds::Duration_t& interval)
 {
     interval_microsec_ = std::chrono::microseconds(fastdds::rtps::TimeConv::Duration_t2MicroSecondsInt64(interval));
     return true;
@@ -125,5 +125,5 @@ bool TimedEventImpl::update_interval_millisec(
 }
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima

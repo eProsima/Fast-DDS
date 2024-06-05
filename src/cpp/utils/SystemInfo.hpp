@@ -253,7 +253,7 @@ public:
      * @return true if successful, false otherwise
      */
     static bool get_ips(
-            std::vector<fastrtps::rtps::IPFinder::info_IP>& vec_name,
+            std::vector<fastdds::rtps::IPFinder::info_IP>& vec_name,
             bool return_loopback,
             bool force_lookup);
 
@@ -264,7 +264,7 @@ private:
     static std::string environment_file_;
 
     static bool cached_interfaces_;
-    static std::vector<fastrtps::rtps::IPFinder::info_IP> interfaces_;
+    static std::vector<fastdds::rtps::IPFinder::info_IP> interfaces_;
     static std::mutex interfaces_mtx_;
 };
 

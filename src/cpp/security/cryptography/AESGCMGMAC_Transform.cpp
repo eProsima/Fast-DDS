@@ -47,8 +47,8 @@
 #define set_state setState
 #endif // FASTCDR_VERSION_MAJOR == 1
 
-using namespace eprosima::fastrtps::rtps;
-using namespace eprosima::fastrtps::rtps::security;
+using namespace eprosima::fastdds::rtps;
+using namespace eprosima::fastdds::rtps::security;
 
 constexpr int initialization_vector_suffix_length = 8;
 

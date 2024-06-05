@@ -27,9 +27,9 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-using Locator_t = eprosima::fastrtps::rtps::Locator_t;
-using LocatorList_t = eprosima::fastrtps::rtps::LocatorList_t;
-using SenderResource = eprosima::fastrtps::rtps::SenderResource;
+using Locator_t = eprosima::fastdds::rtps::Locator_t;
+using LocatorList_t = eprosima::fastdds::rtps::LocatorList_t;
+using SenderResource = eprosima::fastdds::rtps::SenderResource;
 
 class MockTransportDescriptor;
 
@@ -66,7 +66,7 @@ public:
     ~MockTransport();
 
     bool init(
-            const fastrtps::rtps::PropertyPolicy* properties = nullptr,
+            const fastdds::rtps::PropertyPolicy* properties = nullptr,
             const uint32_t& max_msg_size_no_frag = 0) override;
 
     //API implementation
@@ -112,7 +112,7 @@ public:
      * @param [in, out] selector Locator selector.
      */
     void select_locators(
-            fastrtps::rtps::LocatorSelector& selector) const override;
+            fastdds::rtps::LocatorSelector& selector) const override;
 
     bool is_local_locator(
             const Locator_t&) const override
@@ -172,7 +172,7 @@ public:
 
     bool configureInitialPeerLocator(
             Locator_t&,
-            const fastrtps::rtps::PortParameters&,
+            const fastdds::rtps::PortParameters&,
             uint32_t,
             LocatorList_t& ) const override
     {
@@ -192,15 +192,15 @@ public:
     }
 
     bool transform_remote_locator(
-            const fastrtps::rtps::Locator_t&,
-            fastrtps::rtps::Locator_t&) const override
+            const fastdds::rtps::Locator_t&,
+            fastdds::rtps::Locator_t&) const override
     {
         return true;
     }
 
     bool transform_remote_locator(
-            const fastrtps::rtps::Locator_t&,
-            fastrtps::rtps::Locator_t&,
+            const fastdds::rtps::Locator_t&,
+            fastdds::rtps::Locator_t&,
             bool,
             bool) const override
     {
@@ -212,7 +212,7 @@ public:
     {
         Locator_t destination;
         Locator_t origin;
-        std::vector<fastrtps::rtps::octet> data;
+        std::vector<fastdds::rtps::octet> data;
     } MockMessage;
 
     std::vector<MockMessage> mockMessagesToReceive;

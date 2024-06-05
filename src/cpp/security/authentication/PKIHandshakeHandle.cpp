@@ -18,6 +18,6 @@
 
 #include <security/authentication/PKIHandshakeHandle.h>
 
-using namespace eprosima::fastrtps::rtps::security;
+using namespace eprosima::fastdds::rtps::security;
 
 const char* const PKIHandshake::class_id_ = "PKIHandshakeHandle";

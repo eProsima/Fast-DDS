@@ -33,7 +33,7 @@
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 
 using namespace eprosima::fastdds::dds;
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds::rtps;
 
 SubscriberModule::~SubscriberModule()
 {

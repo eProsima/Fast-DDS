@@ -33,7 +33,7 @@ void DomainParticipantQos::setup_transports(
         rtps::BuiltinTransports transports,
         const rtps::BuiltinTransportsOptions& options)
 {
-    fastrtps::rtps::RTPSParticipantAttributes attr;
+    fastdds::rtps::RTPSParticipantAttributes attr;
     utils::set_attributes_from_qos(attr, *this);
 
     attr.setup_transports(transports, options);

@@ -42,7 +42,7 @@
 
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class Endpoint;
@@ -150,7 +150,7 @@ public:
     MOCK_METHOD1(check_type, bool(std::string));
 
     MOCK_METHOD2(on_entity_discovery,
-            void(const fastrtps::rtps::GUID_t&, const fastdds::dds::ParameterPropertyList_t&));
+            void(const fastdds::rtps::GUID_t&, const fastdds::dds::ParameterPropertyList_t&));
 
     // *INDENT-OFF* Uncrustify makes a mess with MOCK_METHOD macros
     MOCK_METHOD6(createWriter_mock,
@@ -440,7 +440,7 @@ private:
 };
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 #endif // _RTPS_PARTICIPANT_RTPSPARTICIPANTIMPL_H_

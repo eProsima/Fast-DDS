@@ -38,13 +38,13 @@ typedef struct TCPv4TransportDescriptor : public TCPTransportDescriptor
         return nullptr;
     }
 
-    eprosima::fastrtps::rtps::octet wan_addr[4];
+    eprosima::fastdds::rtps::octet wan_addr[4];
 
     void set_WAN_address(
-            eprosima::fastrtps::rtps::octet o1,
-            eprosima::fastrtps::rtps::octet o2,
-            eprosima::fastrtps::rtps::octet o3,
-            eprosima::fastrtps::rtps::octet o4)
+            eprosima::fastdds::rtps::octet o1,
+            eprosima::fastdds::rtps::octet o2,
+            eprosima::fastdds::rtps::octet o3,
+            eprosima::fastdds::rtps::octet o4)
     {
         wan_addr[0] = o1;
         wan_addr[1] = o2;
@@ -59,10 +59,10 @@ typedef struct TCPv4TransportDescriptor : public TCPTransportDescriptor
         int a, b, c, d; //to store the 4 ints
         char ch; //to temporarily store the '.'
         ss >> a >> ch >> b >> ch >> c >> ch >> d;
-        wan_addr[0] = (eprosima::fastrtps::rtps::octet)a;
-        wan_addr[1] = (eprosima::fastrtps::rtps::octet)b;
-        wan_addr[2] = (eprosima::fastrtps::rtps::octet)c;
-        wan_addr[3] = (eprosima::fastrtps::rtps::octet)d;
+        wan_addr[0] = (eprosima::fastdds::rtps::octet)a;
+        wan_addr[1] = (eprosima::fastdds::rtps::octet)b;
+        wan_addr[2] = (eprosima::fastdds::rtps::octet)c;
+        wan_addr[3] = (eprosima::fastdds::rtps::octet)d;
     }
 
     FASTDDS_EXPORTED_API TCPv4TransportDescriptor()

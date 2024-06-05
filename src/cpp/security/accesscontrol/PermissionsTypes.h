@@ -24,7 +24,7 @@
 #include <ctime>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 namespace security {
 

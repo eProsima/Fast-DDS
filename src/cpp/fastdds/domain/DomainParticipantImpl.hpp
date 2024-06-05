@@ -44,7 +44,7 @@
 #include <rtps/reader/StatefulReader.hpp>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 
 namespace rtps {
 
@@ -57,7 +57,7 @@ class ReaderProxyData;
 class PublisherAttributes;
 class SubscriberAttributes;
 
-} // namespace fastrtps
+} // namespace fastdds
 
 namespace fastdds {
 namespace dds {
@@ -251,7 +251,7 @@ public:
      */
     Topic* find_topic(
             const std::string& topic_name,
-            const fastrtps::Duration_t& timeout);
+            const fastdds::Duration_t& timeout);
 
     /**
      * Implementation of Topic::set_listener that propagates the listener and mask to all the TopicProxy
@@ -434,7 +434,7 @@ public:
             bool recursive = true) const;
 
     ReturnCode_t get_current_time(
-            fastrtps::Time_t& current_time) const;
+            fastdds::Time_t& current_time) const;
 
     const DomainParticipant* get_participant() const
     {
@@ -448,13 +448,13 @@ public:
         return participant_;
     }
 
-    const fastrtps::rtps::RTPSParticipant* get_rtps_participant() const
+    const fastdds::rtps::RTPSParticipant* get_rtps_participant() const
     {
         std::lock_guard<std::mutex> _(mtx_gs_);
         return rtps_participant_;
     }
 
-    fastrtps::rtps::RTPSParticipant* get_rtps_participant()
+    fastdds::rtps::RTPSParticipant* get_rtps_participant()
     {
         std::lock_guard<std::mutex> _(mtx_gs_);
         return rtps_participant_;
@@ -467,7 +467,7 @@ public:
 
     // From here legacy RTPS methods.
 
-    const fastrtps::rtps::GUID_t& guid() const;
+    const fastdds::rtps::GUID_t& guid() const;
 
     std::vector<std::string> get_participant_names() const;
 
@@ -482,11 +482,11 @@ public:
      * @return True if correctly found and activated.
      */
     bool new_remote_endpoint_discovered(
-            const fastrtps::rtps::GUID_t& partguid,
+            const fastdds::rtps::GUID_t& partguid,
             uint16_t userId,
-            fastrtps::rtps::EndpointKind_t kind);
+            fastdds::rtps::EndpointKind_t kind);
 
-    fastrtps::rtps::ResourceEvent& get_resource_event() const;
+    fastdds::rtps::ResourceEvent& get_resource_event() const;
 
     //! Remove all listeners in the hierarchy to allow a quiet destruction
     virtual void disable();
@@ -519,7 +519,7 @@ protected:
     int32_t participant_id_ = -1;
 
     //!Pre-calculated guid
-    fastrtps::rtps::GUID_t guid_;
+    fastdds::rtps::GUID_t guid_;
 
     //!For instance handle creation
     std::atomic<uint32_t> next_instance_id_;
@@ -528,7 +528,7 @@ protected:
     DomainParticipantQos qos_;
 
     //!RTPSParticipant
-    fastrtps::rtps::RTPSParticipant* rtps_participant_;
+    fastdds::rtps::RTPSParticipant* rtps_participant_;
 
     //!Participant*
     DomainParticipant* participant_;
@@ -573,7 +573,7 @@ protected:
 
     std::atomic<uint32_t> id_counter_;
 
-    class MyRTPSParticipantListener : public fastrtps::rtps::RTPSParticipantListener
+    class MyRTPSParticipantListener : public fastdds::rtps::RTPSParticipantListener
     {
         struct Sentry
         {
@@ -638,24 +638,24 @@ protected:
         }
 
         void onParticipantDiscovery(
-                fastrtps::rtps::RTPSParticipant* participant,
-                fastrtps::rtps::ParticipantDiscoveryInfo&& info,
+                fastdds::rtps::RTPSParticipant* participant,
+                fastdds::rtps::ParticipantDiscoveryInfo&& info,
                 bool& should_be_ignored) override;
 
 #if HAVE_SECURITY
         void onParticipantAuthentication(
-                fastrtps::rtps::RTPSParticipant* participant,
-                fastrtps::rtps::ParticipantAuthenticationInfo&& info) override;
+                fastdds::rtps::RTPSParticipant* participant,
+                fastdds::rtps::ParticipantAuthenticationInfo&& info) override;
 #endif // if HAVE_SECURITY
 
         void onReaderDiscovery(
-                fastrtps::rtps::RTPSParticipant* participant,
-                fastrtps::rtps::ReaderDiscoveryInfo&& info,
+                fastdds::rtps::RTPSParticipant* participant,
+                fastdds::rtps::ReaderDiscoveryInfo&& info,
                 bool& should_be_ignored) override;
 
         void onWriterDiscovery(
-                fastrtps::rtps::RTPSParticipant* participant,
-                fastrtps::rtps::WriterDiscoveryInfo&& info,
+                fastdds::rtps::RTPSParticipant* participant,
+                fastdds::rtps::WriterDiscoveryInfo&& info,
                 bool& should_be_ignored) override;
 
         DomainParticipantImpl* participant_;

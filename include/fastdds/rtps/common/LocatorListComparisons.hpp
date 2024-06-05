@@ -24,7 +24,7 @@
 #include <algorithm>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 /**
@@ -56,7 +56,7 @@ static inline bool operator == (
 }
 
 } /* namespace rtps */
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */
 
 #endif /* _FASTDDS_RTPS_COMMON_LOCATORLISTCOMPARISONS_HPP_ */

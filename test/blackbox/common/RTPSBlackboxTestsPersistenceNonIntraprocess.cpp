@@ -26,7 +26,7 @@
 #include <gtest/gtest.h>
 
 using namespace eprosima::fastdds::dds;
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds::rtps;
 
 class PersistenceNonIntraprocess : public ::testing::Test
 {

@@ -26,7 +26,7 @@
 #include <fastdds/utils/TimedMutex.hpp>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 
 class TopicAttributes;
 
@@ -35,7 +35,7 @@ namespace rtps {
 class WriteParams;
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 
 
 namespace fastdds {
@@ -48,32 +48,32 @@ class DataWriterListener;
 class Topic;
 
 
-static fastrtps::rtps::HistoryAttributes to_history_attributes(
-        const fastrtps::TopicAttributes&,
+static fastdds::rtps::HistoryAttributes to_history_attributes(
+        const fastdds::TopicAttributes&,
         uint32_t,
-        fastrtps::rtps::MemoryManagementPolicy_t)
+        fastdds::rtps::MemoryManagementPolicy_t)
 {
 
-    return fastrtps::rtps::HistoryAttributes();
+    return fastdds::rtps::HistoryAttributes();
 }
 
-class DataWriterHistory : public fastrtps::rtps::WriterHistory
+class DataWriterHistory : public fastdds::rtps::WriterHistory
 {
 public:
 
     DataWriterHistory(
-            const fastrtps::TopicAttributes& topic_att,
+            const fastdds::TopicAttributes& topic_att,
             uint32_t payloadMaxSize,
-            fastrtps::rtps::MemoryManagementPolicy_t mempolicy,
-            std::function<void (const fastrtps::rtps::InstanceHandle_t&)>)
+            fastdds::rtps::MemoryManagementPolicy_t mempolicy,
+            std::function<void (const fastdds::rtps::InstanceHandle_t&)>)
         : WriterHistory(to_history_attributes(topic_att, payloadMaxSize, mempolicy))
     {
     }
 
     MOCK_METHOD4(add_pub_change, bool(
-                fastrtps::rtps::CacheChange_t*,
-                fastrtps::rtps::WriteParams&,
-                std::unique_lock<fastrtps::RecursiveTimedMutex>&,
+                fastdds::rtps::CacheChange_t*,
+                fastdds::rtps::WriteParams&,
+                std::unique_lock<fastdds::RecursiveTimedMutex>&,
                 const std::chrono::time_point<std::chrono::steady_clock>&));
 
 };

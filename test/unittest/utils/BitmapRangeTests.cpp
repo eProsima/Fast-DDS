@@ -22,7 +22,7 @@
 
 using namespace std;
 using ValueType = uint32_t;
-using TestType = eprosima::fastrtps::BitmapRange<ValueType>;
+using TestType = eprosima::fastdds::BitmapRange<ValueType>;
 
 template<class T>
 struct BitmapRangeExposer : T

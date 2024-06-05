@@ -44,8 +44,8 @@ struct IProxyQueryable
      * @return Whether the operation succeeds or not
      */
     virtual bool get_serialized_proxy(
-            const fastrtps::rtps::GUID_t& guid,
-            fastrtps::rtps::CDRMessage_t* msg) = 0;
+            const fastdds::rtps::GUID_t& guid,
+            fastdds::rtps::CDRMessage_t* msg) = 0;
 
     /**
      * @brief Interface for retrieving all the guids of the
@@ -55,7 +55,7 @@ struct IProxyQueryable
      * @param[out] guids The collections of GUID_t of the local entities
      */
     virtual bool get_all_local_proxies(
-            std::vector<fastrtps::rtps::GUID_t>& guids) = 0;
+            std::vector<fastdds::rtps::GUID_t>& guids) = 0;
 };
 
 } // rtps

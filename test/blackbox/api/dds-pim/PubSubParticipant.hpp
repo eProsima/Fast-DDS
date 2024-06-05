@@ -162,12 +162,12 @@ private:
 
         void on_participant_discovery(
                 eprosima::fastdds::dds::DomainParticipant*,
-                eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info,
+                eprosima::fastdds::rtps::ParticipantDiscoveryInfo&& info,
                 bool& should_be_ignored)
         {
             static_cast<void>(should_be_ignored);
             bool expected = false;
-            if (info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
+            if (info.status == eprosima::fastdds::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
             {
                 ++participant_->matched_;
                 if (nullptr !=  participant_->on_discovery_)
@@ -178,14 +178,14 @@ private:
                 participant_->cv_discovery_.notify_one();
             }
             else if (participant_->on_participant_qos_update_ != nullptr &&
-                    info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT)
+                    info.status == eprosima::fastdds::rtps::ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT)
             {
                 participant_->participant_qos_updated_.compare_exchange_strong(expected,
                         participant_->on_participant_qos_update_(info));
                 participant_->cv_discovery_.notify_one();
             }
-            else if (info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT ||
-                    info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
+            else if (info.status == eprosima::fastdds::rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT ||
+                    info.status == eprosima::fastdds::rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
             {
                 --participant_->matched_;
                 participant_->cv_discovery_.notify_one();
@@ -252,7 +252,7 @@ public:
         datawriter_qos_.historyMemoryPolicy = rtps::DYNAMIC_RESERVE_MEMORY_MODE;
 #else
         datawriter_qos_.endpoint().history_memory_policy =
-                eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+                eprosima::fastdds::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 #endif // if defined(PREALLOCATED_WITH_REALLOC_MEMORY_MODE_TEST)
 
         // By default, heartbeat period and nack response delay are 100 milliseconds.
@@ -632,7 +632,7 @@ public:
     }
 
     PubSubParticipant& property_policy(
-            const eprosima::fastrtps::rtps::PropertyPolicy property_policy)
+            const eprosima::fastdds::rtps::PropertyPolicy property_policy)
     {
         participant_qos_.properties() = property_policy;
         return *this;
@@ -652,14 +652,14 @@ public:
     }
 
     PubSubParticipant& user_data(
-            const std::vector<eprosima::fastrtps::rtps::octet>& user_data)
+            const std::vector<eprosima::fastdds::rtps::octet>& user_data)
     {
         participant_qos_.user_data().data_vec(user_data);
         return *this;
     }
 
     bool update_user_data(
-            const std::vector<eprosima::fastrtps::rtps::octet>& user_data)
+            const std::vector<eprosima::fastdds::rtps::octet>& user_data)
     {
         // Update QoS before updating user data as statistics properties might have changed internally
         participant_qos_ = participant_->get_qos();
@@ -688,14 +688,14 @@ public:
     }
 
     PubSubParticipant& pub_property_policy(
-            const eprosima::fastrtps::rtps::PropertyPolicy property_policy)
+            const eprosima::fastdds::rtps::PropertyPolicy property_policy)
     {
         datawriter_qos_.properties() = property_policy;
         return *this;
     }
 
     PubSubParticipant& sub_property_policy(
-            const eprosima::fastrtps::rtps::PropertyPolicy property_policy)
+            const eprosima::fastdds::rtps::PropertyPolicy property_policy)
     {
         datareader_qos_.properties() = property_policy;
         return *this;
@@ -873,13 +873,13 @@ public:
     }
 
     void set_on_discovery_function(
-            std::function<bool(const eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&)> f)
+            std::function<bool(const eprosima::fastdds::rtps::ParticipantDiscoveryInfo&)> f)
     {
         on_discovery_ = f;
     }
 
     void set_on_participant_qos_update_function(
-            std::function<bool(const eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&)> f)
+            std::function<bool(const eprosima::fastdds::rtps::ParticipantDiscoveryInfo&)> f)
     {
         on_participant_qos_update_ = f;
     }
@@ -975,8 +975,8 @@ private:
     std::mutex mutex_discovery_;
     std::condition_variable cv_discovery_;
     std::atomic<unsigned int> matched_;
-    std::function<bool(const eprosima::fastrtps::rtps::ParticipantDiscoveryInfo& info)> on_discovery_;
-    std::function<bool(const eprosima::fastrtps::rtps::ParticipantDiscoveryInfo& info)> on_participant_qos_update_;
+    std::function<bool(const eprosima::fastdds::rtps::ParticipantDiscoveryInfo& info)> on_discovery_;
+    std::function<bool(const eprosima::fastdds::rtps::ParticipantDiscoveryInfo& info)> on_participant_qos_update_;
     std::atomic_bool discovery_result_;
     std::atomic_bool participant_qos_updated_;
 

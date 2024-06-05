@@ -23,7 +23,7 @@
 
 #include <security/cryptography/AESGCMGMAC.h>
 
-using namespace eprosima::fastrtps::rtps::security;
+using namespace eprosima::fastdds::rtps::security;
 
 AESGCMGMAC::AESGCMGMAC()
 {

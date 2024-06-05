@@ -16,7 +16,7 @@
 
 #include <fastdds/rtps/common/EntityId_t.hpp>
 
-using EntityId = eprosima::fastrtps::rtps::EntityId_t;
+using EntityId = eprosima::fastdds::rtps::EntityId_t;
 
 namespace test {
 

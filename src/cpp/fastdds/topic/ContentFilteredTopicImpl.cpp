@@ -36,8 +36,8 @@ namespace fastdds {
 namespace dds {
 
 bool ContentFilteredTopicImpl::is_relevant(
-        const fastrtps::rtps::CacheChange_t& change,
-        const fastrtps::rtps::GUID_t& reader_guid) const
+        const fastdds::rtps::CacheChange_t& change,
+        const fastdds::rtps::GUID_t& reader_guid) const
 {
     bool ret_val = true;
 
@@ -115,7 +115,7 @@ void ContentFilteredTopicImpl::update_signature()
 }
 
 bool ContentFilteredTopicImpl::check_filter_signature(
-        const fastrtps::rtps::CacheChange_t& change,
+        const fastdds::rtps::CacheChange_t& change,
         bool& filter_result) const
 {
     // Empty expressions always pass the filter
@@ -138,7 +138,7 @@ bool ContentFilteredTopicImpl::check_filter_signature(
     // matches our own signature, in which case found is set to true, and filter_result is set to the result present
     // on the ContentFilterInfo parameter for that signature.
     auto parameter_process = [&](
-        fastrtps::rtps::CDRMessage_t* msg,
+        fastdds::rtps::CDRMessage_t* msg,
         const ParameterId_t pid,
         uint16_t plength)
             {
@@ -157,7 +157,7 @@ bool ContentFilteredTopicImpl::check_filter_signature(
                     plength -= 8;
 
                     // Read and validate numBitmaps
-                    valid &= fastrtps::rtps::CDRMessage::readUInt32(msg, &num_bitmaps);
+                    valid &= fastdds::rtps::CDRMessage::readUInt32(msg, &num_bitmaps);
                     valid &= num_bitmaps * 4 <= plength;
                     if (!valid || 0 == num_bitmaps)
                     {
@@ -170,7 +170,7 @@ bool ContentFilteredTopicImpl::check_filter_signature(
                     plength -= static_cast<uint16_t>(num_bitmaps * 4);
 
                     // Read and validate numSignatures
-                    valid &= fastrtps::rtps::CDRMessage::readUInt32(msg, &num_signatures);
+                    valid &= fastdds::rtps::CDRMessage::readUInt32(msg, &num_signatures);
                     valid &= num_signatures * 16 <= plength;
                     if (!valid || 0 == num_signatures || ((num_signatures + 31) / 32) != num_bitmaps)
                     {
@@ -205,7 +205,7 @@ bool ContentFilteredTopicImpl::check_filter_signature(
                         uint32_t bitmap = 0;
 
                         msg->pos = bitmap_pos + bitmap_idx * 4;
-                        fastrtps::rtps::CDRMessage::readUInt32(msg, &bitmap);
+                        fastdds::rtps::CDRMessage::readUInt32(msg, &bitmap);
                         filter_result = 0 != (bitmap & bitmask);
                     }
                 }
@@ -214,7 +214,7 @@ bool ContentFilteredTopicImpl::check_filter_signature(
             };
 
     uint32_t qos_size = 0;
-    fastrtps::rtps::CDRMessage_t msg(change.inline_qos);
+    fastdds::rtps::CDRMessage_t msg(change.inline_qos);
     ParameterList::readParameterListfromCDRMsg(msg, parameter_process, false, qos_size);
 
     return found;

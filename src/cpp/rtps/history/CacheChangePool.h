@@ -31,7 +31,7 @@
 #include <cstddef>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 /**
@@ -131,7 +131,7 @@ private:
 };
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 #endif /* RTPS_HISTORY_CACHECHANGEPOOL_H_ */

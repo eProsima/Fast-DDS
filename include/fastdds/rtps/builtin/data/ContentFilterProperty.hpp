@@ -46,7 +46,7 @@ public:
         /// Preallocated size of the filter expression
         size_t expression_initial_size = 0;
         /// Allocation configuration for the list of expression parameters
-        fastrtps::ResourceLimitedContainerConfig expression_parameters{ 0, 100, 1 };
+        fastdds::ResourceLimitedContainerConfig expression_parameters{ 0, 100, 1 };
     };
 
     /**
@@ -72,7 +72,7 @@ public:
     /// May be empty to indicate the ContentFilterProperty is not present.
     std::string filter_expression;
     /// List of values for the parameters present on the filter expression
-    fastrtps::ResourceLimitedVector<fastcdr::string_255, std::true_type> expression_parameters;
+    fastdds::ResourceLimitedVector<fastcdr::string_255, std::true_type> expression_parameters;
 };
 
 }  // namespace rtps

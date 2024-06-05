@@ -30,11 +30,11 @@
 
 namespace eprosima {
 
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 class EDP;
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 
 namespace fastdds {
 namespace dds {
@@ -133,7 +133,7 @@ public:
     virtual inline void clear() = 0;
 
     static uint32_t get_cdr_serialized_size(
-            const std::vector<fastrtps::rtps::octet>& data)
+            const std::vector<fastdds::rtps::octet>& data)
     {
         // Size of data
         uint32_t data_size = static_cast<uint32_t>(data.size());
@@ -151,7 +151,7 @@ protected:
 /**
  * Enum DurabilityQosPolicyKind_t, different kinds of durability for DurabilityQosPolicy.
  */
-typedef enum DurabilityQosPolicyKind : fastrtps::rtps::octet
+typedef enum DurabilityQosPolicyKind : fastdds::rtps::octet
 {
     VOLATILE_DURABILITY_QOS,        //!< Volatile Durability (default for Subscribers).
     TRANSIENT_LOCAL_DURABILITY_QOS, //!< Transient Local Durability (default for Publishers).
@@ -187,15 +187,15 @@ public:
     /**
      * Translates kind to rtps layer equivalent
      */
-    inline fastrtps::rtps::DurabilityKind_t durabilityKind() const
+    inline fastdds::rtps::DurabilityKind_t durabilityKind() const
     {
         switch (kind)
         {
             default:
-            case VOLATILE_DURABILITY_QOS: return fastrtps::rtps::VOLATILE;
-            case TRANSIENT_LOCAL_DURABILITY_QOS: return fastrtps::rtps::TRANSIENT_LOCAL;
-            case TRANSIENT_DURABILITY_QOS: return fastrtps::rtps::TRANSIENT;
-            case PERSISTENT_DURABILITY_QOS: return fastrtps::rtps::PERSISTENT;
+            case VOLATILE_DURABILITY_QOS: return fastdds::rtps::VOLATILE;
+            case TRANSIENT_LOCAL_DURABILITY_QOS: return fastdds::rtps::TRANSIENT_LOCAL;
+            case TRANSIENT_DURABILITY_QOS: return fastdds::rtps::TRANSIENT;
+            case PERSISTENT_DURABILITY_QOS: return fastdds::rtps::PERSISTENT;
         }
     }
 
@@ -203,15 +203,15 @@ public:
      * Set kind from rtps layer equivalent
      */
     inline void durabilityKind(
-            const fastrtps::rtps::DurabilityKind_t new_kind)
+            const fastdds::rtps::DurabilityKind_t new_kind)
     {
         switch (new_kind)
         {
             default:
-            case fastrtps::rtps::VOLATILE: kind = VOLATILE_DURABILITY_QOS; break;
-            case fastrtps::rtps::TRANSIENT_LOCAL: kind = TRANSIENT_LOCAL_DURABILITY_QOS; break;
-            case fastrtps::rtps::TRANSIENT: kind = TRANSIENT_DURABILITY_QOS; break;
-            case fastrtps::rtps::PERSISTENT: kind = PERSISTENT_DURABILITY_QOS; break;
+            case fastdds::rtps::VOLATILE: kind = VOLATILE_DURABILITY_QOS; break;
+            case fastdds::rtps::TRANSIENT_LOCAL: kind = TRANSIENT_LOCAL_DURABILITY_QOS; break;
+            case fastdds::rtps::TRANSIENT: kind = TRANSIENT_DURABILITY_QOS; break;
+            case fastdds::rtps::PERSISTENT: kind = PERSISTENT_DURABILITY_QOS; break;
         }
 
     }
@@ -252,7 +252,7 @@ public:
         std::swap(*this, reset);
     }
 
-    fastrtps::Duration_t period;
+    fastdds::Duration_t period;
 };
 
 /**
@@ -283,13 +283,13 @@ public:
         std::swap(*this, reset);
     }
 
-    fastrtps::Duration_t duration;
+    fastdds::Duration_t duration;
 };
 
 /**
  * Enum LivelinessQosPolicyKind, different kinds of liveliness for LivelinessQosPolicy
  */
-typedef enum LivelinessQosPolicyKind : fastrtps::rtps::octet
+typedef enum LivelinessQosPolicyKind : fastdds::rtps::octet
 {
     AUTOMATIC_LIVELINESS_QOS,             //!< Automatic Liveliness, default value.
     MANUAL_BY_PARTICIPANT_LIVELINESS_QOS, //!< MANUAL_BY_PARTICIPANT_LIVELINESS_QOS
@@ -317,8 +317,8 @@ public:
         , QosPolicy(true)
         , kind(AUTOMATIC_LIVELINESS_QOS)
     {
-        lease_duration = fastrtps::c_TimeInfinite;
-        announcement_period = fastrtps::c_TimeInfinite;
+        lease_duration = fastdds::c_TimeInfinite;
+        announcement_period = fastdds::c_TimeInfinite;
     }
 
     virtual FASTDDS_EXPORTED_API ~LivelinessQosPolicy()
@@ -332,14 +332,14 @@ public:
     }
 
     LivelinessQosPolicyKind kind;
-    fastrtps::Duration_t lease_duration;
-    fastrtps::Duration_t announcement_period;
+    fastdds::Duration_t lease_duration;
+    fastdds::Duration_t announcement_period;
 };
 
 /**
  * Enum ReliabilityQosPolicyKind, different kinds of reliability for ReliabilityQosPolicy.
  */
-typedef enum ReliabilityQosPolicyKind : fastrtps::rtps::octet
+typedef enum ReliabilityQosPolicyKind : fastdds::rtps::octet
 {
     BEST_EFFORT_RELIABILITY_QOS = 0x01, //!< Best Effort reliability (default for Subscribers).
     RELIABLE_RELIABILITY_QOS = 0x02 //!< Reliable reliability (default for Publishers).
@@ -377,7 +377,7 @@ public:
     }
 
     ReliabilityQosPolicyKind kind;
-    fastrtps::Duration_t max_blocking_time;
+    fastdds::Duration_t max_blocking_time;
 };
 
 
@@ -385,7 +385,7 @@ public:
 /**
  * Enum OwnershipQosPolicyKind, different kinds of ownership for OwnershipQosPolicy.
  */
-enum OwnershipQosPolicyKind : fastrtps::rtps::octet
+enum OwnershipQosPolicyKind : fastdds::rtps::octet
 {
     SHARED_OWNERSHIP_QOS, //!< Shared Ownership, default value.
     EXCLUSIVE_OWNERSHIP_QOS //!< Exclusive ownership
@@ -424,7 +424,7 @@ public:
 /**
  * Enum OwnershipQosPolicyKind, different kinds of destination order for DestinationOrderQosPolicy.
  */
-enum DestinationOrderQosPolicyKind : fastrtps::rtps::octet
+enum DestinationOrderQosPolicyKind : fastdds::rtps::octet
 {
     BY_RECEPTION_TIMESTAMP_DESTINATIONORDER_QOS, //!< By Reception Timestamp, default value.
     BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS //!< By Source Timestamp.
@@ -467,9 +467,9 @@ public:
  * Class GenericDataQosPolicy, base class to transmit user data during the discovery phase.
  */
 class GenericDataQosPolicy : public Parameter_t, public QosPolicy,
-    public fastrtps::ResourceLimitedVector<fastrtps::rtps::octet>
+    public fastdds::ResourceLimitedVector<fastdds::rtps::octet>
 {
-    using ResourceLimitedOctetVector = fastrtps::ResourceLimitedVector<fastrtps::rtps::octet>;
+    using ResourceLimitedOctetVector = fastdds::ResourceLimitedVector<fastdds::rtps::octet>;
 
 public:
 
@@ -598,12 +598,12 @@ public:
     {
         if (size > 0)
         {
-            configuration_ = fastrtps::ResourceLimitedContainerConfig::fixed_size_configuration(size);
+            configuration_ = fastdds::ResourceLimitedContainerConfig::fixed_size_configuration(size);
             collection_.reserve(configuration_.maximum);
         }
         else
         {
-            configuration_ = fastrtps::ResourceLimitedContainerConfig::dynamic_allocation_configuration();
+            configuration_ = fastdds::ResourceLimitedContainerConfig::dynamic_allocation_configuration();
         }
     }
 
@@ -753,13 +753,13 @@ public:
         std::swap(*this, reset);
     }
 
-    fastrtps::Duration_t minimum_separation;
+    fastdds::Duration_t minimum_separation;
 };
 
 /**
  * Enum PresentationQosPolicyAccessScopeKind, different kinds of Presentation Policy order for PresentationQosPolicy.
  */
-enum PresentationQosPolicyAccessScopeKind : fastrtps::rtps::octet
+enum PresentationQosPolicyAccessScopeKind : fastdds::rtps::octet
 {
     INSTANCE_PRESENTATION_QOS, //!< Instance Presentation, default value.
     TOPIC_PRESENTATION_QOS, //!< Topic Presentation.
@@ -812,7 +812,7 @@ public:
 class PartitionQosPolicy : public Parameter_t, public QosPolicy
 {
     friend class ParameterList;
-    friend class fastrtps::rtps::EDP;
+    friend class fastdds::rtps::EDP;
 
 public:
 
@@ -910,7 +910,7 @@ private:
 /**
  * Enum HistoryQosPolicyKind, different kinds of History Qos for HistoryQosPolicy.
  */
-enum HistoryQosPolicyKind : fastrtps::rtps::octet
+enum HistoryQosPolicyKind : fastdds::rtps::octet
 {
     KEEP_LAST_HISTORY_QOS, //!< Keep only a number of samples, default value.
     KEEP_ALL_HISTORY_QOS //!< Keep all samples until the ResourceLimitsQosPolicy are exhausted.
@@ -1006,7 +1006,7 @@ class DurabilityServiceQosPolicy : public Parameter_t, public QosPolicy
 
 public:
 
-    fastrtps::Duration_t service_cleanup_delay;
+    fastdds::Duration_t service_cleanup_delay;
     HistoryQosPolicyKind history_kind;
     int32_t history_depth;
     int32_t max_samples;
@@ -1049,7 +1049,7 @@ public:
     FASTDDS_EXPORTED_API LifespanQosPolicy()
         : Parameter_t(PID_LIFESPAN, PARAMETER_TIME_LENGTH)
         , QosPolicy(true)
-        , duration(fastrtps::c_TimeInfinite)
+        , duration(fastdds::c_TimeInfinite)
     {
     }
 
@@ -1063,7 +1063,7 @@ public:
         std::swap(*this, reset);
     }
 
-    fastrtps::Duration_t duration;
+    fastdds::Duration_t duration;
 };
 
 /**
@@ -1132,7 +1132,7 @@ public:
 /**
  * Enum PublishModeQosPolicyKind, different kinds of publication synchronism
  */
-typedef enum PublishModeQosPolicyKind : fastrtps::rtps::octet
+typedef enum PublishModeQosPolicyKind : fastdds::rtps::octet
 {
     SYNCHRONOUS_PUBLISH_MODE,   //!< Synchronous publication mode (default for writers).
     ASYNCHRONOUS_PUBLISH_MODE   //!< Asynchronous publication mode.

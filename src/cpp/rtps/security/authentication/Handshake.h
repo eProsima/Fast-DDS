@@ -22,7 +22,7 @@
 #include <rtps/security/common/Handle.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 namespace security {
 
@@ -31,7 +31,7 @@ typedef Handle HandshakeHandle;
 typedef Token HandshakeMessageToken;
 
 } //namespace eprosima
-} //namespace fastrtps
+} //namespace fastdds
 } //namespace rtps
 } //namespace security
 

@@ -25,8 +25,8 @@
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
 
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds;
+using namespace eprosima::fastdds::rtps;
 using test_UDPv4Transport = eprosima::fastdds::rtps::test_UDPv4Transport;
 using test_UDPv4TransportDescriptor = eprosima::fastdds::rtps::test_UDPv4TransportDescriptor;
 
@@ -123,7 +123,7 @@ protected:
             if (0 < loss_rate)
             {
                 testTransport->drop_data_frag_messages_filter_ =
-                        [&fragment_count, loss_rate](eprosima::fastrtps::rtps::CDRMessage_t& msg)->bool
+                        [&fragment_count, loss_rate](eprosima::fastdds::rtps::CDRMessage_t& msg)->bool
                         {
                             static_cast<void>(msg);
 
@@ -662,7 +662,7 @@ TEST(PubSubFragmentsLimited,
 
     reader.history_depth(2)
             .expect_inline_qos(true)
-            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .reliability(eprosima::fastdds::RELIABLE_RELIABILITY_QOS)
             .init();
 
     ASSERT_TRUE(reader.isInitialized());
@@ -686,7 +686,7 @@ TEST(PubSubFragmentsLimited,
             .heartbeat_period_seconds(0)
             .heartbeat_period_nanosec(1000000)
             .history_depth(1)
-            .asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
+            .asynchronously(eprosima::fastdds::ASYNCHRONOUS_PUBLISH_MODE).init();
 
     ASSERT_TRUE(writer.isInitialized());
 

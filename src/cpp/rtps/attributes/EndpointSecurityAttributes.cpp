@@ -21,7 +21,7 @@
 #include <rtps/security/accesscontrol/SecurityMaskUtilities.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 namespace security {
 
@@ -92,5 +92,5 @@ bool EndpointSecurityAttributes::match(
 
 } // namespace security
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima

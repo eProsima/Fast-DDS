@@ -123,7 +123,7 @@ struct TypeForKind_<TK_CHAR16>
 template <>
 struct TypeForKind_<TK_BYTE>
 {
-    using type = eprosima::fastrtps::rtps::octet;
+    using type = eprosima::fastdds::rtps::octet;
     using sequence_type = ByteSeq;
 };
 

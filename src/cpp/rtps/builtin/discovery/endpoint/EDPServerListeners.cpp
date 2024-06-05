@@ -32,7 +32,7 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds::rtps;
 
 PDPServer* EDPServerPUBListener::get_pdp()
 {

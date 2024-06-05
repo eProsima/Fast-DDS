@@ -28,7 +28,7 @@
 #include <rtps/security/exceptions/SecurityException.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 namespace security {
 
@@ -228,7 +228,7 @@ bool Logging::compose_header(
 
 } //namespace security
 } //namespace rtps
-} //namespace fastrtps
+} //namespace fastdds
 } //namespace eprosima
 
 
@@ -268,7 +268,7 @@ bool Logging::compose_header(
 
 #define __FASTDDS_SECURITY_LOGGING_EX(LEVEL, CLASS, MESSAGE)             \
     do {                                                                  \
-        eprosima::fastrtps::rtps::security::SecurityException lexception; \
+        eprosima::fastdds::rtps::security::SecurityException lexception; \
         __FASTDDS_SECURITY_LOGGING(LEVEL, CLASS, MESSAGE, lexception);   \
     } while (0);
 

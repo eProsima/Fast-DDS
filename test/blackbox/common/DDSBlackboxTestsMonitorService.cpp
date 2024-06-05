@@ -28,8 +28,8 @@
 using namespace eprosima::fastdds;
 using namespace eprosima::fastdds::dds;
 
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds;
+using namespace eprosima::fastdds::rtps;
 
 enum communication_type
 {
@@ -1561,7 +1561,7 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_liveliness_lost_status)
     DataWriterQos dw_qos;
 
     dw_qos.liveliness().kind = eprosima::fastdds::dds::MANUAL_BY_TOPIC_LIVELINESS_QOS;
-    dw_qos.liveliness().lease_duration = eprosima::fastrtps::Time_t{1, 0};
+    dw_qos.liveliness().lease_duration = eprosima::fastdds::Time_t{1, 0};
 
     MSP.create_and_add_writer(dw_qos);
     MSP.assert_liveliness();
@@ -1618,12 +1618,12 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_liveliness_changed_status)
 
     dr_qos.reliability().kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
     dr_qos.liveliness().kind = eprosima::fastdds::dds::MANUAL_BY_TOPIC_LIVELINESS_QOS;
-    dr_qos.liveliness().lease_duration = eprosima::fastrtps::Time_t{1, 0};
+    dr_qos.liveliness().lease_duration = eprosima::fastdds::Time_t{1, 0};
 
     DataWriterQos dw_qos;
 
     dw_qos.liveliness().kind = eprosima::fastdds::dds::MANUAL_BY_TOPIC_LIVELINESS_QOS;
-    dw_qos.liveliness().lease_duration = eprosima::fastrtps::Time_t{1, 0};
+    dw_qos.liveliness().lease_duration = eprosima::fastdds::Time_t{1, 0};
 
     MSP.create_and_add_reader(dr_qos);
     MSP.create_and_add_writer(dw_qos);
@@ -1680,8 +1680,8 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_deadline_missed_status)
     DataReaderQos dr_qos;
     DataWriterQos dw_qos;
 
-    dr_qos.deadline().period = eprosima::fastrtps::Time_t{1, 0};
-    dw_qos.deadline().period = eprosima::fastrtps::Time_t{1, 0};
+    dr_qos.deadline().period = eprosima::fastdds::Time_t{1, 0};
+    dw_qos.deadline().period = eprosima::fastdds::Time_t{1, 0};
 
     MSP.create_and_add_reader(dr_qos);
     MSP.create_and_add_writer(dw_qos);
@@ -1743,7 +1743,7 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_sample_lost_status)
     DomainParticipantQos dqos;
 
     auto testTransport = std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
-    testTransport->drop_data_messages_filter_ = [](eprosima::fastrtps::rtps::CDRMessage_t& msg)-> bool
+    testTransport->drop_data_messages_filter_ = [](eprosima::fastdds::rtps::CDRMessage_t& msg)-> bool
             {
                 uint32_t old_pos = msg.pos;
 
@@ -2331,8 +2331,8 @@ TEST(DDSMonitorServiceTest,  monitor_service_properly_handles_topic_instances)
                 // Jump the reader entity id
                 msg.pos += 4;
                 // Read the writer's entity id
-                eprosima::fastrtps::rtps::EntityId_t writer_entity_id;
-                eprosima::fastrtps::rtps::CDRMessage::readEntityId(&msg, &writer_entity_id);
+                eprosima::fastdds::rtps::EntityId_t writer_entity_id;
+                eprosima::fastdds::rtps::CDRMessage::readEntityId(&msg, &writer_entity_id);
 
                 if (ENTITYID_MONITOR_SERVICE_WRITER == writer_entity_id)
                 {
@@ -2353,8 +2353,8 @@ TEST(DDSMonitorServiceTest,  monitor_service_properly_handles_topic_instances)
     DataWriterQos dw_qos;
 
     //! Set deadline as 1 sec
-    dr_qos.deadline().period = eprosima::fastrtps::Time_t{1, 000000000};
-    dw_qos.deadline().period = eprosima::fastrtps::Time_t{1, 000000000};
+    dr_qos.deadline().period = eprosima::fastdds::Time_t{1, 000000000};
+    dw_qos.deadline().period = eprosima::fastdds::Time_t{1, 000000000};
 
     MSP.create_and_add_reader(dr_qos);
     MSP.create_and_add_writer(dw_qos);
@@ -2395,8 +2395,8 @@ TEST(DDSMonitorServiceTest,  monitor_service_late_joiner_consumer_receives_only_
     DataWriterQos dw_qos;
 
     // Set deadline as 0,5 secs to continously keep missing the deadline later
-    dr_qos.deadline().period = eprosima::fastrtps::Time_t{0, 500000000};
-    dw_qos.deadline().period = eprosima::fastrtps::Time_t{0, 500000000};
+    dr_qos.deadline().period = eprosima::fastdds::Time_t{0, 500000000};
+    dw_qos.deadline().period = eprosima::fastdds::Time_t{0, 500000000};
 
     MSP.create_and_add_reader(dr_qos);
     MSP.create_and_add_writer(dw_qos);

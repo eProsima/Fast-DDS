@@ -19,15 +19,15 @@ public:
 
     MOCK_METHOD2(serialize, bool(
                 void* data,
-                eprosima::fastrtps::rtps::SerializedPayload_t* payload));
+                eprosima::fastdds::rtps::SerializedPayload_t* payload));
 
     MOCK_METHOD3(serialize, bool(
                 void* data,
-                eprosima::fastrtps::rtps::SerializedPayload_t* payload,
+                eprosima::fastdds::rtps::SerializedPayload_t* payload,
                 DataRepresentationId_t data_representation));
 
     MOCK_METHOD2(deserialize, bool(
-                eprosima::fastrtps::rtps::SerializedPayload_t* payload,
+                eprosima::fastdds::rtps::SerializedPayload_t* payload,
                 void* data));
 
     MOCK_METHOD2(getSerializedSizeProvider, std::function<uint32_t()> (
@@ -59,16 +59,16 @@ TEST(DataReaderHistory, exclusive_ownership_non_keyed_sample_reception)
     qos.ownership().kind = eprosima::fastdds::dds::EXCLUSIVE_OWNERSHIP_QOS;
     qos.history().kind = KEEP_ALL_HISTORY_QOS;
     DataReaderHistory history(type, topic, qos);
-    eprosima::fastrtps::RecursiveTimedMutex mutex;
-    eprosima::fastrtps::rtps::StatelessReader reader(&history, &mutex);
+    eprosima::fastdds::RecursiveTimedMutex mutex;
+    eprosima::fastdds::rtps::StatelessReader reader(&history, &mutex);
 
-    eprosima::fastrtps::rtps::CacheChange_t dw1_change;
+    eprosima::fastdds::rtps::CacheChange_t dw1_change;
     dw1_change.writerGUID = {{}, 1};
     dw1_change.reader_info.writer_ownership_strength = 1;
-    eprosima::fastrtps::rtps::CacheChange_t dw2_change;
+    eprosima::fastdds::rtps::CacheChange_t dw2_change;
     dw2_change.writerGUID = {{}, 2};
     dw2_change.reader_info.writer_ownership_strength = 2;
-    eprosima::fastrtps::rtps::CacheChange_t dw3_change;
+    eprosima::fastdds::rtps::CacheChange_t dw3_change;
     dw3_change.writerGUID = {{}, 3};
     dw3_change.reader_info.writer_ownership_strength = 3;
 
@@ -139,19 +139,19 @@ TEST(DataReaderHistory, exclusive_ownership_keyed_sample_reception)
     qos.ownership().kind = eprosima::fastdds::dds::EXCLUSIVE_OWNERSHIP_QOS;
     qos.history().kind = KEEP_ALL_HISTORY_QOS;
     DataReaderHistory history(type, topic, qos);
-    eprosima::fastrtps::RecursiveTimedMutex mutex;
-    eprosima::fastrtps::rtps::StatelessReader reader(&history, &mutex);
+    eprosima::fastdds::RecursiveTimedMutex mutex;
+    eprosima::fastdds::rtps::StatelessReader reader(&history, &mutex);
 
-    const InstanceHandle_t instance_1 = eprosima::fastrtps::rtps::GUID_t{{}, 1};
-    const InstanceHandle_t instance_2 = eprosima::fastrtps::rtps::GUID_t{{}, 2};
-    const InstanceHandle_t instance_3 = eprosima::fastrtps::rtps::GUID_t{{}, 3};
-    eprosima::fastrtps::rtps::CacheChange_t dw1_change;
+    const InstanceHandle_t instance_1 = eprosima::fastdds::rtps::GUID_t{{}, 1};
+    const InstanceHandle_t instance_2 = eprosima::fastdds::rtps::GUID_t{{}, 2};
+    const InstanceHandle_t instance_3 = eprosima::fastdds::rtps::GUID_t{{}, 3};
+    eprosima::fastdds::rtps::CacheChange_t dw1_change;
     dw1_change.writerGUID = {{}, 1};
     dw1_change.reader_info.writer_ownership_strength = 1;
-    eprosima::fastrtps::rtps::CacheChange_t dw2_change;
+    eprosima::fastdds::rtps::CacheChange_t dw2_change;
     dw2_change.writerGUID = {{}, 2};
     dw2_change.reader_info.writer_ownership_strength = 2;
-    eprosima::fastrtps::rtps::CacheChange_t dw3_change;
+    eprosima::fastdds::rtps::CacheChange_t dw3_change;
     dw3_change.writerGUID = {{}, 3};
     dw3_change.reader_info.writer_ownership_strength = 3;
 

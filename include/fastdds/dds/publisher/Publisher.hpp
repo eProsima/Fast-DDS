@@ -36,11 +36,11 @@ class Publisher;
 } // namespace dds
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 
 class TopicAttributes;
 
-} // namespace fastrtps
+} // namespace fastdds
 
 namespace fastdds {
 namespace dds {
@@ -161,7 +161,7 @@ public:
             const DataWriterQos& qos,
             DataWriterListener* listener = nullptr,
             const StatusMask& mask = StatusMask::all(),
-            std::shared_ptr<fastrtps::rtps::IPayloadPool> payload_pool = nullptr);
+            std::shared_ptr<fastdds::rtps::IPayloadPool> payload_pool = nullptr);
 
     /**
      * This operation creates a DataWriter. The returned DataWriter will be attached and belongs to the Publisher.
@@ -178,7 +178,7 @@ public:
             const std::string& profile_name,
             DataWriterListener* listener = nullptr,
             const StatusMask& mask = StatusMask::all(),
-            std::shared_ptr<fastrtps::rtps::IPayloadPool> payload_pool = nullptr);
+            std::shared_ptr<fastdds::rtps::IPayloadPool> payload_pool = nullptr);
 
     /**
      * This operation deletes a DataWriter that belongs to the Publisher.
@@ -259,7 +259,7 @@ public:
      * Publisher receives the acknowledgments and RETCODE_ERROR otherwise.
      */
     FASTDDS_EXPORTED_API ReturnCode_t wait_for_acknowledgments(
-            const fastrtps::Duration_t& max_wait);
+            const fastdds::Duration_t& max_wait);
 
     /**
      * This operation returns the DomainParticipant to which the Publisher belongs.

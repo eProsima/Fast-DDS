@@ -34,7 +34,7 @@
 #include <rtps/network/NetworkFactory.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 constexpr size_t max_unicast_locators = 4u;
@@ -1125,24 +1125,24 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_wrong_topic_name_deser
                 filter_expression,
                 expression_parameters
                 );
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::addUInt16(&msg, fastdds::dds::PID_CONTENT_FILTER_PROPERTY));
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::addUInt16(&msg, static_cast<uint16_t>(len - 4)));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::addUInt16(&msg, fastdds::dds::PID_CONTENT_FILTER_PROPERTY));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::addUInt16(&msg, static_cast<uint16_t>(len - 4)));
             // content_filtered_topic_name
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::add_string(&msg, content_filtered_topic_name));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::add_string(&msg, content_filtered_topic_name));
             // related_topic_name
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::add_string(&msg, related_topic_name));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::add_string(&msg, related_topic_name));
             // filter_class_name
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::add_string(&msg, filter_class_name));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::add_string(&msg, filter_class_name));
             // filter_expression
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::add_string(&msg, filter_expression));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::add_string(&msg, filter_expression));
             // expression_parameters
             // sequence length
             uint32_t num_params = static_cast<uint32_t>(expression_parameters.size());
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::addUInt32(&msg, num_params));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::addUInt32(&msg, num_params));
             // Add all parameters
             for (const std::string& param : expression_parameters)
             {
-                EXPECT_TRUE(fastrtps::rtps::CDRMessage::add_string(&msg, param));
+                EXPECT_TRUE(fastdds::rtps::CDRMessage::add_string(&msg, param));
             }
         }
         EXPECT_TRUE(fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_sentinel(&msg));
@@ -1174,24 +1174,24 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_wrong_topic_name_deser
                 filter_expression,
                 expression_parameters
                 );
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::addUInt16(&msg, fastdds::dds::PID_CONTENT_FILTER_PROPERTY));
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::addUInt16(&msg, static_cast<uint16_t>(len - 4)));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::addUInt16(&msg, fastdds::dds::PID_CONTENT_FILTER_PROPERTY));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::addUInt16(&msg, static_cast<uint16_t>(len - 4)));
             // content_filtered_topic_name
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::add_string(&msg, content_filtered_topic_name));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::add_string(&msg, content_filtered_topic_name));
             // related_topic_name
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::add_string(&msg, related_topic_name));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::add_string(&msg, related_topic_name));
             // filter_class_name
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::add_string(&msg, filter_class_name));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::add_string(&msg, filter_class_name));
             // filter_expression
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::add_string(&msg, filter_expression));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::add_string(&msg, filter_expression));
             // expression_parameters
             // sequence length
             uint32_t num_params = static_cast<uint32_t>(expression_parameters.size());
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::addUInt32(&msg, num_params));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::addUInt32(&msg, num_params));
             // Add all parameters
             for (const std::string& param : expression_parameters)
             {
-                EXPECT_TRUE(fastrtps::rtps::CDRMessage::add_string(&msg, param));
+                EXPECT_TRUE(fastdds::rtps::CDRMessage::add_string(&msg, param));
             }
         }
         EXPECT_TRUE(fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_sentinel(&msg));
@@ -1259,24 +1259,24 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_wrong_related_topic_na
                 filter_expression,
                 expression_parameters
                 );
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::addUInt16(&msg, fastdds::dds::PID_CONTENT_FILTER_PROPERTY));
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::addUInt16(&msg, static_cast<uint16_t>(len - 4)));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::addUInt16(&msg, fastdds::dds::PID_CONTENT_FILTER_PROPERTY));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::addUInt16(&msg, static_cast<uint16_t>(len - 4)));
             // content_filtered_topic_name
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::add_string(&msg, content_filtered_topic_name));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::add_string(&msg, content_filtered_topic_name));
             // related_topic_name
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::add_string(&msg, related_topic_name));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::add_string(&msg, related_topic_name));
             // filter_class_name
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::add_string(&msg, filter_class_name));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::add_string(&msg, filter_class_name));
             // filter_expression
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::add_string(&msg, filter_expression));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::add_string(&msg, filter_expression));
             // expression_parameters
             // sequence length
             uint32_t num_params = static_cast<uint32_t>(expression_parameters.size());
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::addUInt32(&msg, num_params));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::addUInt32(&msg, num_params));
             // Add all parameters
             for (const std::string& param : expression_parameters)
             {
-                EXPECT_TRUE(fastrtps::rtps::CDRMessage::add_string(&msg, param));
+                EXPECT_TRUE(fastdds::rtps::CDRMessage::add_string(&msg, param));
             }
         }
         EXPECT_TRUE(fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_sentinel(&msg));
@@ -1308,24 +1308,24 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_wrong_related_topic_na
                 filter_expression,
                 expression_parameters
                 );
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::addUInt16(&msg, fastdds::dds::PID_CONTENT_FILTER_PROPERTY));
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::addUInt16(&msg, static_cast<uint16_t>(len - 4)));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::addUInt16(&msg, fastdds::dds::PID_CONTENT_FILTER_PROPERTY));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::addUInt16(&msg, static_cast<uint16_t>(len - 4)));
             // content_filtered_topic_name
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::add_string(&msg, content_filtered_topic_name));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::add_string(&msg, content_filtered_topic_name));
             // related_topic_name
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::add_string(&msg, related_topic_name));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::add_string(&msg, related_topic_name));
             // filter_class_name
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::add_string(&msg, filter_class_name));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::add_string(&msg, filter_class_name));
             // filter_expression
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::add_string(&msg, filter_expression));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::add_string(&msg, filter_expression));
             // expression_parameters
             // sequence length
             uint32_t num_params = static_cast<uint32_t>(expression_parameters.size());
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::addUInt32(&msg, num_params));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::addUInt32(&msg, num_params));
             // Add all parameters
             for (const std::string& param : expression_parameters)
             {
-                EXPECT_TRUE(fastrtps::rtps::CDRMessage::add_string(&msg, param));
+                EXPECT_TRUE(fastdds::rtps::CDRMessage::add_string(&msg, param));
             }
         }
         EXPECT_TRUE(fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_sentinel(&msg));
@@ -1397,24 +1397,24 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_wrong_filter_class_des
                 filter_expression,
                 expression_parameters
                 );
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::addUInt16(&msg, fastdds::dds::PID_CONTENT_FILTER_PROPERTY));
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::addUInt16(&msg, static_cast<uint16_t>(len - 4)));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::addUInt16(&msg, fastdds::dds::PID_CONTENT_FILTER_PROPERTY));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::addUInt16(&msg, static_cast<uint16_t>(len - 4)));
             // content_filtered_topic_name
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::add_string(&msg, content_filtered_topic_name));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::add_string(&msg, content_filtered_topic_name));
             // related_topic_name
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::add_string(&msg, related_topic_name));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::add_string(&msg, related_topic_name));
             // filter_class_name
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::add_string(&msg, filter_class_name));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::add_string(&msg, filter_class_name));
             // filter_expression
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::add_string(&msg, filter_expression));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::add_string(&msg, filter_expression));
             // expression_parameters
             // sequence length
             uint32_t num_params = static_cast<uint32_t>(expression_parameters.size());
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::addUInt32(&msg, num_params));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::addUInt32(&msg, num_params));
             // Add all parameters
             for (const std::string& param : expression_parameters)
             {
-                EXPECT_TRUE(fastrtps::rtps::CDRMessage::add_string(&msg, param));
+                EXPECT_TRUE(fastdds::rtps::CDRMessage::add_string(&msg, param));
             }
         }
         EXPECT_TRUE(fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_sentinel(&msg));
@@ -1446,24 +1446,24 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_wrong_filter_class_des
                 filter_expression,
                 expression_parameters
                 );
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::addUInt16(&msg, fastdds::dds::PID_CONTENT_FILTER_PROPERTY));
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::addUInt16(&msg, static_cast<uint16_t>(len - 4)));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::addUInt16(&msg, fastdds::dds::PID_CONTENT_FILTER_PROPERTY));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::addUInt16(&msg, static_cast<uint16_t>(len - 4)));
             // content_filtered_topic_name
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::add_string(&msg, content_filtered_topic_name));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::add_string(&msg, content_filtered_topic_name));
             // related_topic_name
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::add_string(&msg, related_topic_name));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::add_string(&msg, related_topic_name));
             // filter_class_name
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::add_string(&msg, filter_class_name));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::add_string(&msg, filter_class_name));
             // filter_expression
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::add_string(&msg, filter_expression));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::add_string(&msg, filter_expression));
             // expression_parameters
             // sequence length
             uint32_t num_params = static_cast<uint32_t>(expression_parameters.size());
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::addUInt32(&msg, num_params));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::addUInt32(&msg, num_params));
             // Add all parameters
             for (const std::string& param : expression_parameters)
             {
-                EXPECT_TRUE(fastrtps::rtps::CDRMessage::add_string(&msg, param));
+                EXPECT_TRUE(fastdds::rtps::CDRMessage::add_string(&msg, param));
             }
         }
         EXPECT_TRUE(fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_sentinel(&msg));
@@ -1535,24 +1535,24 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_wrong_filter_expressio
                 filter_expression,
                 expression_parameters
                 );
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::addUInt16(&msg, fastdds::dds::PID_CONTENT_FILTER_PROPERTY));
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::addUInt16(&msg, static_cast<uint16_t>(len - 4)));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::addUInt16(&msg, fastdds::dds::PID_CONTENT_FILTER_PROPERTY));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::addUInt16(&msg, static_cast<uint16_t>(len - 4)));
             // content_filtered_topic_name
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::add_string(&msg, content_filtered_topic_name));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::add_string(&msg, content_filtered_topic_name));
             // related_topic_name
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::add_string(&msg, related_topic_name));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::add_string(&msg, related_topic_name));
             // filter_class_name
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::add_string(&msg, filter_class_name));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::add_string(&msg, filter_class_name));
             // filter_expression
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::add_string(&msg, filter_expression));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::add_string(&msg, filter_expression));
             // expression_parameters
             // sequence length
             uint32_t num_params = static_cast<uint32_t>(expression_parameters.size());
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::addUInt32(&msg, num_params));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::addUInt32(&msg, num_params));
             // Add all parameters
             for (const std::string& param : expression_parameters)
             {
-                EXPECT_TRUE(fastrtps::rtps::CDRMessage::add_string(&msg, param));
+                EXPECT_TRUE(fastdds::rtps::CDRMessage::add_string(&msg, param));
             }
         }
         EXPECT_TRUE(fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_sentinel(&msg));
@@ -1628,16 +1628,16 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_wrong_cdr_message_dese
     //Empty buffer but not enough memory.
     {
         CDRMessage_t msg(20);
-        fastrtps::rtps::CDRMessage::addUInt16(&msg, fastdds::dds::PID_CONTENT_FILTER_PROPERTY);
-        fastrtps::rtps::CDRMessage::addUInt16(&msg, len - 4);
+        fastdds::rtps::CDRMessage::addUInt16(&msg, fastdds::dds::PID_CONTENT_FILTER_PROPERTY);
+        fastdds::rtps::CDRMessage::addUInt16(&msg, len - 4);
         // content_filtered_topic_name
-        fastrtps::rtps::CDRMessage::add_string(&msg, content_filtered_topic_name);
+        fastdds::rtps::CDRMessage::add_string(&msg, content_filtered_topic_name);
         // related_topic_name
-        fastrtps::rtps::CDRMessage::add_string(&msg, related_topic_name);
+        fastdds::rtps::CDRMessage::add_string(&msg, related_topic_name);
         // filter_class_name
-        fastrtps::rtps::CDRMessage::add_string(&msg, filter_class_name);
+        fastdds::rtps::CDRMessage::add_string(&msg, filter_class_name);
         // filter_expression
-        fastrtps::rtps::CDRMessage::add_string(&msg, filter_expression);
+        fastdds::rtps::CDRMessage::add_string(&msg, filter_expression);
         ASSERT_FALSE(fastdds::dds::ParameterSerializer<fastdds::rtps::ContentFilterProperty>::read_from_cdr_message(
                     content_filter_property, &msg, len));
     }
@@ -1645,16 +1645,16 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_wrong_cdr_message_dese
     {
         CDRMessage_t msg(30);
         msg.pos = 10;
-        fastrtps::rtps::CDRMessage::addUInt16(&msg, fastdds::dds::PID_CONTENT_FILTER_PROPERTY);
-        fastrtps::rtps::CDRMessage::addUInt16(&msg, len - 4);
+        fastdds::rtps::CDRMessage::addUInt16(&msg, fastdds::dds::PID_CONTENT_FILTER_PROPERTY);
+        fastdds::rtps::CDRMessage::addUInt16(&msg, len - 4);
         // content_filtered_topic_name
-        fastrtps::rtps::CDRMessage::add_string(&msg, content_filtered_topic_name);
+        fastdds::rtps::CDRMessage::add_string(&msg, content_filtered_topic_name);
         // related_topic_name
-        fastrtps::rtps::CDRMessage::add_string(&msg, related_topic_name);
+        fastdds::rtps::CDRMessage::add_string(&msg, related_topic_name);
         // filter_class_name
-        fastrtps::rtps::CDRMessage::add_string(&msg, filter_class_name);
+        fastdds::rtps::CDRMessage::add_string(&msg, filter_class_name);
         // filter_expression
-        fastrtps::rtps::CDRMessage::add_string(&msg, filter_expression);
+        fastdds::rtps::CDRMessage::add_string(&msg, filter_expression);
         msg.pos = 10;
         ASSERT_FALSE(fastdds::dds::ParameterSerializer<fastdds::rtps::ContentFilterProperty>::read_from_cdr_message(
                     content_filter_property, &msg, len));
@@ -1790,25 +1790,25 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_max_parameter_check)
                 filter_expression,
                 expression_parameters
                 );
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::addUInt16(&msg, fastdds::dds::PID_CONTENT_FILTER_PROPERTY));
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::addUInt16(&msg, static_cast<uint16_t>(len - 4)));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::addUInt16(&msg, fastdds::dds::PID_CONTENT_FILTER_PROPERTY));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::addUInt16(&msg, static_cast<uint16_t>(len - 4)));
             // content_filtered_topic_name
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::add_string(&msg, content_filtered_topic_name));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::add_string(&msg, content_filtered_topic_name));
             // related_topic_name
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::add_string(&msg, related_topic_name));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::add_string(&msg, related_topic_name));
             // filter_class_name
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::add_string(&msg, filter_class_name));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::add_string(&msg, filter_class_name));
             // filter_expression
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::add_string(&msg, filter_expression));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::add_string(&msg, filter_expression));
             // expression_parameters
             // sequence length
             uint32_t num_params = static_cast<uint32_t>(expression_parameters.size());
             EXPECT_EQ(num_params, 100u);
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::addUInt32(&msg, num_params));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::addUInt32(&msg, num_params));
             // Add all parameters
             for (const std::string& param : expression_parameters)
             {
-                EXPECT_TRUE(fastrtps::rtps::CDRMessage::add_string(&msg, param));
+                EXPECT_TRUE(fastdds::rtps::CDRMessage::add_string(&msg, param));
             }
         }
         EXPECT_TRUE(fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_sentinel(&msg));
@@ -1830,16 +1830,16 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_max_parameter_check)
                 filter_expression,
                 expression_parameters
                 );
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::addUInt16(&msg_fault, fastdds::dds::PID_CONTENT_FILTER_PROPERTY));
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::addUInt16(&msg_fault, static_cast<uint16_t>(len - 4)));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::addUInt16(&msg_fault, fastdds::dds::PID_CONTENT_FILTER_PROPERTY));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::addUInt16(&msg_fault, static_cast<uint16_t>(len - 4)));
             // content_filtered_topic_name
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::add_string(&msg_fault, content_filtered_topic_name));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::add_string(&msg_fault, content_filtered_topic_name));
             // related_topic_name
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::add_string(&msg_fault, related_topic_name));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::add_string(&msg_fault, related_topic_name));
             // filter_class_name
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::add_string(&msg_fault, filter_class_name));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::add_string(&msg_fault, filter_class_name));
             // filter_expression
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::add_string(&msg_fault, filter_expression));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::add_string(&msg_fault, filter_expression));
             // expression_parameters
             // sequence length
 
@@ -1847,11 +1847,11 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_max_parameter_check)
             expression_parameters.push_back("Parameter");
             uint32_t num_params = static_cast<uint32_t>(expression_parameters.size());
             EXPECT_EQ(num_params, 101u);
-            EXPECT_TRUE(fastrtps::rtps::CDRMessage::addUInt32(&msg_fault, num_params));
+            EXPECT_TRUE(fastdds::rtps::CDRMessage::addUInt32(&msg_fault, num_params));
             // Add all parameters
             for (const std::string& param : expression_parameters)
             {
-                EXPECT_TRUE(fastrtps::rtps::CDRMessage::add_string(&msg_fault, param));
+                EXPECT_TRUE(fastdds::rtps::CDRMessage::add_string(&msg_fault, param));
             }
         }
         EXPECT_TRUE(fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_sentinel(&msg_fault));
@@ -1882,7 +1882,7 @@ TEST(BuiltinDataSerializationTests, null_checks)
 }
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 int main(

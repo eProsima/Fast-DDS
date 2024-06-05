@@ -59,7 +59,7 @@ public:
     }
 
     //!Writer Timing Attributes
-    fastrtps::rtps::WriterTimes times;
+    fastdds::rtps::WriterTimes times;
 
     //!Disable positive acks QoS, implemented in the library.
     DisablePositiveACKsQosPolicy disable_positive_acks;

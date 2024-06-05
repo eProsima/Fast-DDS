@@ -40,7 +40,7 @@ struct IConnectionsObserver
      * @return Whether the implementor has been properly notified
      */
     virtual bool on_local_entity_connections_change(
-            const fastrtps::rtps::GUID_t& guid) const = 0;
+            const fastdds::rtps::GUID_t& guid) const = 0;
 };
 
 } // rtps

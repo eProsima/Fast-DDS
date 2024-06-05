@@ -35,10 +35,10 @@
 #include <rtps/builtin/liveliness/WLP.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 
-using namespace eprosima::fastrtps;
+using namespace eprosima::fastdds;
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 
@@ -188,7 +188,7 @@ void BuiltinProtocols::filter_server_remote_locators(
 
 bool BuiltinProtocols::addLocalWriter(
         RTPSWriter* w,
-        const fastrtps::TopicAttributes& topicAtt,
+        const fastdds::TopicAttributes& topicAtt,
         const fastdds::dds::WriterQos& wqos)
 {
     bool ok = true;
@@ -222,7 +222,7 @@ bool BuiltinProtocols::addLocalWriter(
 
 bool BuiltinProtocols::addLocalReader(
         RTPSReader* R,
-        const fastrtps::TopicAttributes& topicAtt,
+        const fastdds::TopicAttributes& topicAtt,
         const fastdds::dds::ReaderQos& rqos,
         const fastdds::rtps::ContentFilterProperty* content_filter)
 {

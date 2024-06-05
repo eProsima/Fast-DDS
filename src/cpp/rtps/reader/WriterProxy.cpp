@@ -45,7 +45,7 @@
 #endif // SHOULD_DEBUG_LINUX
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 WriterProxy::~WriterProxy()
@@ -653,5 +653,5 @@ int WriterProxy::get_thread_id() const
 #endif // SHOULD_DEBUG_LINUX
 
 } /* namespace rtps */
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */

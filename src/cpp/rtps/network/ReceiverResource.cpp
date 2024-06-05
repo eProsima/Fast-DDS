@@ -27,7 +27,7 @@ using namespace std;
 using namespace eprosima::fastdds::rtps;
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 ReceiverResource::ReceiverResource(
@@ -165,5 +165,5 @@ ReceiverResource::~ReceiverResource()
 }
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima

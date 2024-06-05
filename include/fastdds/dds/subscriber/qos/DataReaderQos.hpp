@@ -32,7 +32,7 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-using TopicAttributesQos = fastrtps::TopicAttributes;
+using TopicAttributesQos = fastdds::TopicAttributes;
 
 //! Qos Policy to configure the DisablePositiveACKsQos and the reader attributes
 class RTPSReliableReaderQos
@@ -67,7 +67,7 @@ public:
     /*!
      * @brief Times associated with the Reliable Readers events.
      */
-    fastrtps::rtps::ReaderTimes times;
+    fastdds::rtps::ReaderTimes times;
 
     /*!
      * @brief Control the sending of positive ACKs
@@ -107,11 +107,11 @@ public:
     }
 
     //! Matched publishers allocation limits.
-    fastrtps::ResourceLimitedContainerConfig matched_publisher_allocation;
+    fastdds::ResourceLimitedContainerConfig matched_publisher_allocation;
     //! SampleInfo allocation limits.
-    fastrtps::ResourceLimitedContainerConfig sample_infos_allocation{ 32u };
+    fastdds::ResourceLimitedContainerConfig sample_infos_allocation{ 32u };
     //! Loaned collections allocation limits.
-    fastrtps::ResourceLimitedContainerConfig outstanding_reads_allocation{ 2u };
+    fastdds::ResourceLimitedContainerConfig outstanding_reads_allocation{ 2u };
 
     /**
      * Maximum number of samples to return on a single call to read / take.

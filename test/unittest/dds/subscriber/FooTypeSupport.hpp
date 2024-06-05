@@ -39,14 +39,14 @@ public:
 
     bool serialize(
             void* data,
-            eprosima::fastrtps::rtps::SerializedPayload_t* payload) override
+            eprosima::fastdds::rtps::SerializedPayload_t* payload) override
     {
         return serialize(data, payload, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
     }
 
     bool serialize(
             void* data,
-            fastrtps::rtps::SerializedPayload_t* payload,
+            fastdds::rtps::SerializedPayload_t* payload,
             DataRepresentationId_t data_representation) override
     {
         FooType* p_type = static_cast<FooType*>(data);
@@ -88,7 +88,7 @@ public:
     }
 
     bool deserialize(
-            fastrtps::rtps::SerializedPayload_t* payload,
+            fastdds::rtps::SerializedPayload_t* payload,
             void* data) override
     {
         //Convert DATA to pointer of your type
@@ -152,7 +152,7 @@ public:
 
     bool getKey(
             void* data,
-            fastrtps::rtps::InstanceHandle_t* handle,
+            fastdds::rtps::InstanceHandle_t* handle,
             bool force_md5) override
     {
         FooType* p_type = static_cast<FooType*>(data);

@@ -40,7 +40,7 @@
 #endif // ifdef FASTDDS_STATISTICS
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class RTPSParticipant;
@@ -49,7 +49,7 @@ class RTPSParticipant;
 
 class TopicAttributes;
 
-} // namespace fastrtps
+} // namespace fastdds
 
 namespace fastdds {
 namespace dds {
@@ -108,14 +108,14 @@ public:
             const DataWriterQos& qos,
             DataWriterListener* listener,
             const StatusMask& mask = StatusMask::all(),
-            std::shared_ptr<fastrtps::rtps::IPayloadPool> payload_pool = nullptr);
+            std::shared_ptr<fastdds::rtps::IPayloadPool> payload_pool = nullptr);
 
     DataWriter* create_datawriter_with_profile(
             Topic* topic,
             const std::string& profile_name,
             DataWriterListener* listener,
             const StatusMask& mask = StatusMask::all(),
-            std::shared_ptr<fastrtps::rtps::IPayloadPool> payload_pool = nullptr);
+            std::shared_ptr<fastdds::rtps::IPayloadPool> payload_pool = nullptr);
 
     ReturnCode_t delete_datawriter(
             const DataWriter* writer);
@@ -124,7 +124,7 @@ public:
             const std::string& topic_name) const;
 
     bool contains_entity(
-            const fastrtps::rtps::InstanceHandle_t& handle) const;
+            const fastdds::rtps::InstanceHandle_t& handle) const;
 
     bool get_datawriters(
             std::vector<DataWriter*>& writers) const;
@@ -148,7 +148,7 @@ public:
      */
 
     ReturnCode_t wait_for_acknowledgments(
-            const fastrtps::Duration_t& max_wait);
+            const fastdds::Duration_t& max_wait);
 
     const DomainParticipant* get_participant() const;
 
@@ -175,14 +175,14 @@ public:
             DataWriterQos& writer_qos,
             const TopicQos& topic_qos);
 
-    fastrtps::rtps::RTPSParticipant* rtps_participant() const
+    fastdds::rtps::RTPSParticipant* rtps_participant() const
     {
         return rtps_participant_;
     }
 
     const Publisher* get_publisher() const;
 
-    const fastrtps::rtps::InstanceHandle_t& get_instance_handle() const;
+    const fastdds::rtps::InstanceHandle_t& get_instance_handle() const;
 
     //! Remove all listeners in the hierarchy to allow a quiet destruction
     void disable();
@@ -203,7 +203,7 @@ public:
 #ifdef FASTDDS_STATISTICS
     bool get_monitoring_status(
             statistics::MonitorServiceData& status,
-            const fastrtps::rtps::GUID_t& entity_guid);
+            const fastdds::rtps::GUID_t& entity_guid);
 #endif //FASTDDS_STATISTICS
 
 protected:
@@ -253,18 +253,18 @@ protected:
 
     Publisher* user_publisher_;
 
-    fastrtps::rtps::RTPSParticipant* rtps_participant_;
+    fastdds::rtps::RTPSParticipant* rtps_participant_;
 
     DataWriterQos default_datawriter_qos_;
 
-    fastrtps::rtps::InstanceHandle_t handle_;
+    fastdds::rtps::InstanceHandle_t handle_;
 
     virtual DataWriterImpl* create_datawriter_impl(
             const TypeSupport& type,
             Topic* topic,
             const DataWriterQos& qos,
             DataWriterListener* listener,
-            std::shared_ptr<fastrtps::rtps::IPayloadPool> payload_pool);
+            std::shared_ptr<fastdds::rtps::IPayloadPool> payload_pool);
 
     static void set_qos(
             PublisherQos& to,

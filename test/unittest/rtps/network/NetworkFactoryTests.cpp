@@ -27,8 +27,8 @@
 #include <MockTransport.h>
 #include <rtps/network/NetworkFactory.h>
 
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds;
+using namespace eprosima::fastdds::rtps;
 using namespace eprosima::fastdds::rtps;
 
 class NetworkTests : public ::testing::Test

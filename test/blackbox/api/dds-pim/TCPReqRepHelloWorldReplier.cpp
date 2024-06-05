@@ -35,7 +35,7 @@
 
 #include <gtest/gtest.h>
 
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds::rtps;
 using namespace eprosima::fastdds::rtps;
 using namespace eprosima::fastdds::dds;
 
@@ -95,7 +95,7 @@ void TCPReqRepHelloWorldReplier::init(
     DomainParticipantQos participant_qos;
     participant_qos.wire_protocol().participant_id = participantId;
     participant_qos.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod = Duration_t(1, 0);
-    participant_qos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastrtps::c_TimeInfinite;
+    participant_qos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastdds::c_TimeInfinite;
 
     participant_qos.transport().use_builtin_transports = false;
 

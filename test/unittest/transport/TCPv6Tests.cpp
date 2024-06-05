@@ -33,8 +33,8 @@
 #include "mock/MockTCPv6Transport.h"
 #include <MockReceiverResource.h>
 
-using namespace eprosima::fastrtps::rtps;
-using namespace eprosima::fastrtps;
+using namespace eprosima::fastdds::rtps;
+using namespace eprosima::fastdds;
 using TCPv6Transport = eprosima::fastdds::rtps::TCPv6Transport;
 using TCPv6TransportDescriptor = eprosima::fastdds::rtps::TCPv6TransportDescriptor;
 using NetworkBuffer = eprosima::fastdds::rtps::NetworkBuffer;

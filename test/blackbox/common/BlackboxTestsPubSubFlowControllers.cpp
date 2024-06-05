@@ -21,8 +21,8 @@
 #include "PubSubWriter.hpp"
 #include "PubSubWriterReader.hpp"
 
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds;
+using namespace eprosima::fastdds::rtps;
 
 class PubSubFlowControllers : public testing::TestWithParam<eprosima::fastdds::rtps::FlowControllerSchedulerPolicy>
 {
@@ -181,18 +181,18 @@ TEST_P(PubSubFlowControllers, AsyncMultipleWritersFlowController64kb)
     ASSERT_TRUE(entities.isInitialized());
 
     // Create second writer.
-    eprosima::fastrtps::rtps::PropertySeq writers2_properties;
-    eprosima::fastrtps::rtps::Property priority;
+    eprosima::fastdds::rtps::PropertySeq writers2_properties;
+    eprosima::fastdds::rtps::Property priority;
     priority.name("fastdds.sfc.priority");
     priority.value("-1");
     writers2_properties.push_back(priority);
-    eprosima::fastrtps::rtps::Property bandwidth_limit;
+    eprosima::fastdds::rtps::Property bandwidth_limit;
     bandwidth_limit.name("fastdds.sfc.bandwidth_reservation");
     bandwidth_limit.value("10");
     writers2_properties.push_back(bandwidth_limit);
     ASSERT_TRUE(entities.create_additional_topics(1, "/", writers2_properties));
 
-    eprosima::fastrtps::rtps::PropertySeq writers3_properties;
+    eprosima::fastdds::rtps::PropertySeq writers3_properties;
     priority.name("fastdds.sfc.priority");
     priority.value("1");
     writers3_properties.push_back(priority);
@@ -201,7 +201,7 @@ TEST_P(PubSubFlowControllers, AsyncMultipleWritersFlowController64kb)
     writers3_properties.push_back(bandwidth_limit);
     ASSERT_TRUE(entities.create_additional_topics(1, "/", writers3_properties));
 
-    eprosima::fastrtps::rtps::PropertySeq writers4_properties;
+    eprosima::fastdds::rtps::PropertySeq writers4_properties;
     priority.name("fastdds.sfc.priority");
     priority.value("4");
     writers4_properties.push_back(priority);

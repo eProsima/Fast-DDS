@@ -99,8 +99,8 @@ bool DiscoveryServer::init(
     // Create DS SERVER locator
     eprosima::fastdds::rtps::Locator listening_locator;
     eprosima::fastdds::rtps::Locator connection_locator;
-    eprosima::fastrtps::rtps::IPLocator::setPhysicalPort(listening_locator, server_port);
-    eprosima::fastrtps::rtps::IPLocator::setPhysicalPort(connection_locator, connection_server_port);
+    eprosima::fastdds::rtps::IPLocator::setPhysicalPort(listening_locator, server_port);
+    eprosima::fastdds::rtps::IPLocator::setPhysicalPort(connection_locator, connection_server_port);
 
     std::shared_ptr<eprosima::fastdds::rtps::TransportDescriptorInterface> descriptor;
 
@@ -119,9 +119,9 @@ bool DiscoveryServer::init(
             descriptor = descriptor_tmp;
 
             listening_locator.kind = LOCATOR_KIND_UDPv4;
-            eprosima::fastrtps::rtps::IPLocator::setIPv4(listening_locator, ip_listening_address);
+            eprosima::fastdds::rtps::IPLocator::setIPv4(listening_locator, ip_listening_address);
             connection_locator.kind = LOCATOR_KIND_UDPv4;
-            eprosima::fastrtps::rtps::IPLocator::setIPv4(connection_locator, ip_connection_address);
+            eprosima::fastdds::rtps::IPLocator::setIPv4(connection_locator, ip_connection_address);
             break;
         }
 
@@ -132,9 +132,9 @@ bool DiscoveryServer::init(
             descriptor = descriptor_tmp;
 
             listening_locator.kind = LOCATOR_KIND_UDPv6;
-            eprosima::fastrtps::rtps::IPLocator::setIPv6(listening_locator, ip_listening_address);
+            eprosima::fastdds::rtps::IPLocator::setIPv6(listening_locator, ip_listening_address);
             connection_locator.kind = LOCATOR_KIND_UDPv6;
-            eprosima::fastrtps::rtps::IPLocator::setIPv6(connection_locator, ip_connection_address);
+            eprosima::fastdds::rtps::IPLocator::setIPv6(connection_locator, ip_connection_address);
             break;
         }
 
@@ -146,11 +146,11 @@ bool DiscoveryServer::init(
             descriptor = descriptor_tmp;
 
             listening_locator.kind = LOCATOR_KIND_TCPv4;
-            eprosima::fastrtps::rtps::IPLocator::setLogicalPort(listening_locator, server_port);
-            eprosima::fastrtps::rtps::IPLocator::setIPv4(listening_locator, ip_listening_address);
+            eprosima::fastdds::rtps::IPLocator::setLogicalPort(listening_locator, server_port);
+            eprosima::fastdds::rtps::IPLocator::setIPv4(listening_locator, ip_listening_address);
             connection_locator.kind = LOCATOR_KIND_TCPv4;
-            eprosima::fastrtps::rtps::IPLocator::setIPv4(connection_locator, ip_connection_address);
-            eprosima::fastrtps::rtps::IPLocator::setLogicalPort(connection_locator, connection_server_port);
+            eprosima::fastdds::rtps::IPLocator::setIPv4(connection_locator, ip_connection_address);
+            eprosima::fastdds::rtps::IPLocator::setLogicalPort(connection_locator, connection_server_port);
             break;
         }
 
@@ -162,11 +162,11 @@ bool DiscoveryServer::init(
             descriptor = descriptor_tmp;
 
             listening_locator.kind = LOCATOR_KIND_TCPv6;
-            eprosima::fastrtps::rtps::IPLocator::setLogicalPort(listening_locator, server_port);
-            eprosima::fastrtps::rtps::IPLocator::setIPv6(listening_locator, ip_listening_address);
+            eprosima::fastdds::rtps::IPLocator::setLogicalPort(listening_locator, server_port);
+            eprosima::fastdds::rtps::IPLocator::setIPv6(listening_locator, ip_listening_address);
             connection_locator.kind = LOCATOR_KIND_TCPv6;
-            eprosima::fastrtps::rtps::IPLocator::setIPv6(connection_locator, ip_connection_address);
-            eprosima::fastrtps::rtps::IPLocator::setLogicalPort(connection_locator, connection_server_port);
+            eprosima::fastdds::rtps::IPLocator::setIPv6(connection_locator, ip_connection_address);
+            eprosima::fastdds::rtps::IPLocator::setLogicalPort(connection_locator, connection_server_port);
             break;
         }
 
@@ -179,7 +179,7 @@ bool DiscoveryServer::init(
 
     // Set participant as SERVER
     pqos.wire_protocol().builtin.discovery_config.discoveryProtocol =
-            eprosima::fastrtps::rtps::DiscoveryProtocol_t::SERVER;
+            eprosima::fastdds::rtps::DiscoveryProtocol_t::SERVER;
 
     // Set SERVER's GUID prefix
     pqos.wire_protocol().prefix = get_discovery_server_guid_from_id(server_id);
@@ -250,16 +250,16 @@ DiscoveryServer::~DiscoveryServer()
 
 void DiscoveryServer::ServerListener::on_participant_discovery(
         eprosima::fastdds::dds::DomainParticipant* /*participant*/,
-        eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info,
+        eprosima::fastdds::rtps::ParticipantDiscoveryInfo&& info,
         bool& should_be_ignored)
 {
     static_cast<void>(should_be_ignored);
-    if (info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
+    if (info.status == eprosima::fastdds::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
     {
         std::cout << "Discovered Participant with GUID " << info.info.m_guid << std::endl;
     }
-    else if (info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT ||
-            info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT)
+    else if (info.status == eprosima::fastdds::rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT ||
+            info.status == eprosima::fastdds::rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT)
     {
         std::cout << "Dropped Participant with GUID " << info.info.m_guid << std::endl;
     }

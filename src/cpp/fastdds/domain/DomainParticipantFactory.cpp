@@ -40,12 +40,12 @@
 #include <xmlparser/XMLEndpointParser.h>
 #include <xmlparser/XMLProfileManager.h>
 
-using namespace eprosima::fastrtps::xmlparser;
+using namespace eprosima::fastdds::xmlparser;
 
 using eprosima::fastdds::dds::Log;
 
-using eprosima::fastrtps::rtps::RTPSDomain;
-using eprosima::fastrtps::rtps::RTPSParticipant;
+using eprosima::fastdds::rtps::RTPSDomain;
+using eprosima::fastdds::rtps::RTPSParticipant;
 
 namespace eprosima {
 namespace fastdds {
@@ -55,8 +55,8 @@ DomainParticipantFactory::DomainParticipantFactory()
     : default_xml_profiles_loaded(false)
     , default_domain_id_(0)
     , default_participant_qos_(PARTICIPANT_QOS_DEFAULT)
-    , topic_pool_(fastrtps::rtps::TopicPayloadPoolRegistry::instance())
-    , rtps_domain_(fastrtps::rtps::RTPSDomainImpl::get_instance())
+    , topic_pool_(fastdds::rtps::TopicPayloadPoolRegistry::instance())
+    , rtps_domain_(fastdds::rtps::RTPSDomainImpl::get_instance())
     , log_resources_(detail::get_log_resources())
 {
 }
@@ -169,7 +169,7 @@ DomainParticipant* DomainParticipantFactory::create_participant(
             new eprosima::fastdds::statistics::dds::DomainParticipantImpl(dom_part, did, pqos, listener);
 #endif // FASTDDS_STATISTICS
 
-    if (fastrtps::rtps::GUID_t::unknown() != dom_part_impl->guid())
+    if (fastdds::rtps::GUID_t::unknown() != dom_part_impl->guid())
     {
         {
             std::lock_guard<std::mutex> guard(mtx_participants_);
@@ -398,7 +398,7 @@ ReturnCode_t DomainParticipantFactory::load_XML_profiles_string(
 ReturnCode_t DomainParticipantFactory::check_xml_static_discovery(
         std::string& xml_file)
 {
-    eprosima::fastrtps::xmlparser::XMLEndpointParser parser;
+    eprosima::fastdds::xmlparser::XMLEndpointParser parser;
     if (XMLP_ret::XML_OK != parser.loadXMLFile(xml_file))
     {
         EPROSIMA_LOG_ERROR(DOMAIN, "Error parsing xml file");

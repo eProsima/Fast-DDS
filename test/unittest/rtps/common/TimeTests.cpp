@@ -16,7 +16,7 @@
 
 #include <fastdds/rtps/common/Time_t.h>
 
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds::rtps;
 
 /*
  * Test << operator

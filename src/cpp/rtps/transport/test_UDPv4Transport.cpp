@@ -26,11 +26,11 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-using octet = fastrtps::rtps::octet;
-using CDRMessage_t = fastrtps::rtps::CDRMessage_t;
-using SubmessageHeader_t = fastrtps::rtps::SubmessageHeader_t;
-using SequenceNumber_t = fastrtps::rtps::SequenceNumber_t;
-using EntityId_t = fastrtps::rtps::EntityId_t;
+using octet = fastdds::rtps::octet;
+using CDRMessage_t = fastdds::rtps::CDRMessage_t;
+using SubmessageHeader_t = fastdds::rtps::SubmessageHeader_t;
+using SequenceNumber_t = fastdds::rtps::SequenceNumber_t;
+using EntityId_t = fastdds::rtps::EntityId_t;
 
 std::vector<std::vector<octet>> test_UDPv4Transport::test_UDPv4Transport_DropLog;
 std::atomic<uint32_t> test_UDPv4Transport::test_UDPv4Transport_DropLogLength(0);
@@ -157,7 +157,7 @@ bool test_UDPv4TransportDescriptor::operator ==(
 }
 
 bool test_UDPv4Transport::get_ips(
-        std::vector<fastrtps::rtps::IPFinder::info_IP>& locNames,
+        std::vector<fastdds::rtps::IPFinder::info_IP>& locNames,
         bool return_loopback,
         bool force_lookup) const
 {
@@ -168,8 +168,8 @@ bool test_UDPv4Transport::get_ips(
 
     if (return_loopback)
     {
-        fastrtps::rtps::IPFinder::info_IP local;
-        local.type = fastrtps::rtps::IPFinder::IPTYPE::IP4_LOCAL;
+        fastdds::rtps::IPFinder::info_IP local;
+        local.type = fastdds::rtps::IPFinder::IPTYPE::IP4_LOCAL;
         local.dev = "lo";
         local.name = "127.0.0.1";
         local.locator.kind = LOCATOR_KIND_UDPv4;
@@ -190,10 +190,10 @@ LocatorList test_UDPv4Transport::NormalizeLocator(
     }
 
     LocatorList list;
-    if (fastrtps::rtps::IPLocator::isAny(locator))
+    if (fastdds::rtps::IPLocator::isAny(locator))
     {
         Locator newloc(locator);
-        fastrtps::rtps::IPLocator::setIPv4(newloc, "127.0.0.1");
+        fastdds::rtps::IPLocator::setIPv4(newloc, "127.0.0.1");
         list.push_back(newloc);
     }
     else
@@ -207,13 +207,13 @@ bool test_UDPv4Transport::send(
         const std::vector<NetworkBuffer>& buffers,
         uint32_t total_bytes,
         eProsimaUDPSocket& socket,
-        fastrtps::rtps::LocatorsIterator* destination_locators_begin,
-        fastrtps::rtps::LocatorsIterator* destination_locators_end,
+        fastdds::rtps::LocatorsIterator* destination_locators_begin,
+        fastdds::rtps::LocatorsIterator* destination_locators_end,
         bool only_multicast_purpose,
         bool whitelisted,
         const std::chrono::steady_clock::time_point& max_blocking_time_point)
 {
-    fastrtps::rtps::LocatorsIterator& it = *destination_locators_begin;
+    fastdds::rtps::LocatorsIterator& it = *destination_locators_begin;
 
     bool ret = true;
 
@@ -258,7 +258,7 @@ bool test_UDPv4Transport::send(
         bool whitelisted,
         const std::chrono::microseconds& timeout)
 {
-    bool is_multicast_remote_address = fastrtps::rtps::IPLocator::IPLocator::isMulticast(remote_locator);
+    bool is_multicast_remote_address = fastdds::rtps::IPLocator::IPLocator::isMulticast(remote_locator);
     if (is_multicast_remote_address == only_multicast_purpose || whitelisted)
     {
         if (packet_should_drop(buffers, total_bytes) || should_drop_locator(remote_locator))
@@ -288,16 +288,16 @@ static bool ReadSubmessageHeader(
 
     smh.submessageId = msg.buffer[msg.pos]; msg.pos++;
     smh.flags = msg.buffer[msg.pos]; msg.pos++;
-    msg.msg_endian = smh.flags & BIT(0) ? fastrtps::rtps::LITTLEEND : fastrtps::rtps::BIGEND;
+    msg.msg_endian = smh.flags & BIT(0) ? fastdds::rtps::LITTLEEND : fastdds::rtps::BIGEND;
     uint16_t length = 0;
-    fastrtps::rtps::CDRMessage::readUInt16(&msg, &length);
+    fastdds::rtps::CDRMessage::readUInt16(&msg, &length);
 
     if (msg.pos + length > msg.length)
     {
         return false;
     }
 
-    if ((length == 0) && (smh.submessageId != fastrtps::rtps::INFO_TS) && (smh.submessageId != fastrtps::rtps::PAD))
+    if ((length == 0) && (smh.submessageId != fastdds::rtps::INFO_TS) && (smh.submessageId != fastdds::rtps::PAD))
     {
         // THIS IS THE LAST SUBMESSAGE
         smh.submessageLength = msg.length - msg.pos;
@@ -318,8 +318,8 @@ bool test_UDPv4Transport::should_drop_locator(
            locator_filter_(remote_locator) ||
            // If there are no interfaces (simulate_no_interfaces), only multicast and localhost traffic is sent
            (simulate_no_interfaces &&
-           !fastrtps::rtps::IPLocator::isMulticast(remote_locator) &&
-           !fastrtps::rtps::IPLocator::isLocal(remote_locator));
+           !fastdds::rtps::IPLocator::isMulticast(remote_locator) &&
+           !fastdds::rtps::IPLocator::isLocal(remote_locator));
 }
 
 bool test_UDPv4Transport::packet_should_drop(
@@ -376,15 +376,15 @@ bool test_UDPv4Transport::packet_should_drop(
 
         switch (cdrSubMessageHeader.submessageId)
         {
-            case fastrtps::rtps::DATA:
+            case fastdds::rtps::DATA:
                 // Get WriterID.
                 cdrMessage.pos += 8;
-                fastrtps::rtps::CDRMessage::readEntityId(&cdrMessage, &writer_id);
-                fastrtps::rtps::CDRMessage::readInt32(&cdrMessage, &sequence_number.high);
-                fastrtps::rtps::CDRMessage::readUInt32(&cdrMessage, &sequence_number.low);
+                fastdds::rtps::CDRMessage::readEntityId(&cdrMessage, &writer_id);
+                fastdds::rtps::CDRMessage::readInt32(&cdrMessage, &sequence_number.high);
+                fastdds::rtps::CDRMessage::readUInt32(&cdrMessage, &sequence_number.low);
                 cdrMessage.pos = old_pos;
 
-                if (writer_id == fastrtps::rtps::c_EntityId_SPDPWriter)
+                if (writer_id == fastdds::rtps::c_EntityId_SPDPWriter)
                 {
                     if (always_drop_participant_builtin_topic_data)
                     {
@@ -403,7 +403,7 @@ bool test_UDPv4Transport::packet_should_drop(
                         return true;
                     }
                 }
-                else if (writer_id == fastrtps::rtps::c_EntityId_SEDPPubWriter)
+                else if (writer_id == fastdds::rtps::c_EntityId_SEDPPubWriter)
                 {
                     if (drop_publication_builtin_topic_data_)
                     {
@@ -418,7 +418,7 @@ bool test_UDPv4Transport::packet_should_drop(
                         return true;
                     }
                 }
-                else if (writer_id == fastrtps::rtps::c_EntityId_SEDPSubWriter)
+                else if (writer_id == fastdds::rtps::c_EntityId_SEDPSubWriter)
                 {
                     if (drop_subscription_builtin_topic_data_)
                     {
@@ -447,7 +447,7 @@ bool test_UDPv4Transport::packet_should_drop(
 
                 break;
 
-            case fastrtps::rtps::ACKNACK:
+            case fastdds::rtps::ACKNACK:
                 if (should_be_dropped(&drop_ack_nack_messages_percentage_))
                 {
                     return true;
@@ -459,10 +459,10 @@ bool test_UDPv4Transport::packet_should_drop(
 
                 break;
 
-            case fastrtps::rtps::HEARTBEAT:
+            case fastdds::rtps::HEARTBEAT:
                 cdrMessage.pos += 8;
-                fastrtps::rtps::CDRMessage::readInt32(&cdrMessage, &sequence_number.high);
-                fastrtps::rtps::CDRMessage::readUInt32(&cdrMessage, &sequence_number.low);
+                fastdds::rtps::CDRMessage::readInt32(&cdrMessage, &sequence_number.high);
+                fastdds::rtps::CDRMessage::readUInt32(&cdrMessage, &sequence_number.low);
                 cdrMessage.pos = old_pos;
                 if (should_be_dropped(&drop_heartbeat_messages_percentage_))
                 {
@@ -475,7 +475,7 @@ bool test_UDPv4Transport::packet_should_drop(
 
                 break;
 
-            case fastrtps::rtps::DATA_FRAG:
+            case fastdds::rtps::DATA_FRAG:
                 if (should_be_dropped(&drop_data_frag_messages_percentage_))
                 {
                     return true;
@@ -487,10 +487,10 @@ bool test_UDPv4Transport::packet_should_drop(
 
                 break;
 
-            case fastrtps::rtps::GAP:
+            case fastdds::rtps::GAP:
                 cdrMessage.pos += 8;
-                fastrtps::rtps::CDRMessage::readInt32(&cdrMessage, &sequence_number.high);
-                fastrtps::rtps::CDRMessage::readUInt32(&cdrMessage, &sequence_number.low);
+                fastdds::rtps::CDRMessage::readInt32(&cdrMessage, &sequence_number.high);
+                fastdds::rtps::CDRMessage::readUInt32(&cdrMessage, &sequence_number.low);
                 cdrMessage.pos = old_pos;
                 if (should_be_dropped(&drop_gap_messages_percentage_))
                 {

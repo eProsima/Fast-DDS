@@ -6,7 +6,7 @@
 
 TEST(TimedConditionVariable, wait_for)
 {
-    eprosima::fastrtps::TimedConditionVariable cv;
+    eprosima::fastdds::TimedConditionVariable cv;
     std::timed_mutex mutex;
     std::unique_lock<std::timed_mutex> lock(mutex);
 
@@ -22,7 +22,7 @@ TEST(TimedConditionVariable, wait_for)
 
 TEST(TimedConditionVariable, wait_until)
 {
-    eprosima::fastrtps::TimedConditionVariable cv;
+    eprosima::fastdds::TimedConditionVariable cv;
     std::timed_mutex mutex;
     std::unique_lock<std::timed_mutex> lock(mutex);
 

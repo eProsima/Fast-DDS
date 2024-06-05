@@ -29,7 +29,7 @@
 #include <fastdds/utils/TimedMutex.hpp>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class RTPSReader;
@@ -218,7 +218,7 @@ protected:
 };
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 #endif // _FASTDDS_RTPS_READERHISTORY_H_

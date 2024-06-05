@@ -38,9 +38,9 @@ namespace detail {
 /// Book-keeping information for an instance
 struct DataReaderInstance
 {
-    using ChangeCollection = eprosima::fastrtps::ResourceLimitedVector<DataReaderCacheChange, std::true_type>;
-    using WriterOwnership = std::pair<fastrtps::rtps::GUID_t, uint32_t>;
-    using WriterCollection = eprosima::fastrtps::ResourceLimitedVector<WriterOwnership, std::false_type>;
+    using ChangeCollection = eprosima::fastdds::ResourceLimitedVector<DataReaderCacheChange, std::true_type>;
+    using WriterOwnership = std::pair<fastdds::rtps::GUID_t, uint32_t>;
+    using WriterCollection = eprosima::fastdds::ResourceLimitedVector<WriterOwnership, std::false_type>;
 
     //! A vector of DataReader changes belonging to the same instance
     ChangeCollection cache_changes;
@@ -60,15 +60,15 @@ struct DataReaderInstance
     int32_t no_writers_generation_count = 0;
 
     DataReaderInstance(
-            const eprosima::fastrtps::ResourceLimitedContainerConfig& changes_allocation,
-            const eprosima::fastrtps::ResourceLimitedContainerConfig& writers_allocation)
+            const eprosima::fastdds::ResourceLimitedContainerConfig& changes_allocation,
+            const eprosima::fastdds::ResourceLimitedContainerConfig& writers_allocation)
         : cache_changes(changes_allocation)
         , alive_writers(writers_allocation)
     {
     }
 
     void writer_update_its_ownership_strength(
-            const fastrtps::rtps::GUID_t& writer_guid,
+            const fastdds::rtps::GUID_t& writer_guid,
             const uint32_t ownership_strength)
     {
         if (writer_guid == current_owner.first)
@@ -93,8 +93,8 @@ struct DataReaderInstance
 
     bool update_state(
             DataReaderHistoryCounters& counters,
-            const fastrtps::rtps::ChangeKind_t change_kind,
-            const fastrtps::rtps::GUID_t& writer_guid,
+            const fastdds::rtps::ChangeKind_t change_kind,
+            const fastdds::rtps::GUID_t& writer_guid,
             const uint32_t ownership_strength)
     {
         bool ret_val = false;
@@ -110,20 +110,20 @@ struct DataReaderInstance
 
         switch (change_kind)
         {
-            case fastrtps::rtps::ALIVE:
+            case fastdds::rtps::ALIVE:
                 ret_val = writer_alive(counters, writer_guid, ownership_strength);
                 break;
 
-            case fastrtps::rtps::NOT_ALIVE_DISPOSED:
+            case fastdds::rtps::NOT_ALIVE_DISPOSED:
                 ret_val = writer_dispose(counters, writer_guid, ownership_strength);
                 break;
 
-            case fastrtps::rtps::NOT_ALIVE_DISPOSED_UNREGISTERED:
+            case fastdds::rtps::NOT_ALIVE_DISPOSED_UNREGISTERED:
                 ret_val = writer_dispose(counters, writer_guid, ownership_strength);
                 ret_val |= writer_unregister(counters, writer_guid);
                 break;
 
-            case fastrtps::rtps::NOT_ALIVE_UNREGISTERED:
+            case fastdds::rtps::NOT_ALIVE_UNREGISTERED:
                 ret_val = writer_unregister(counters, writer_guid);
                 break;
 
@@ -137,14 +137,14 @@ struct DataReaderInstance
 
     bool writer_removed(
             DataReaderHistoryCounters& counters,
-            const fastrtps::rtps::GUID_t& writer_guid)
+            const fastdds::rtps::GUID_t& writer_guid)
     {
         return has_been_accounted_ && writer_unregister(counters, writer_guid);
     }
 
     void deadline_missed()
     {
-        if (fastrtps::rtps::c_Guid_Unknown != current_owner.first)
+        if (fastdds::rtps::c_Guid_Unknown != current_owner.first)
         {
             if (alive_writers.remove_if([&](const WriterOwnership& item)
                     {
@@ -153,7 +153,7 @@ struct DataReaderInstance
             {
 
                 current_owner.second = 0;
-                current_owner.first = fastrtps::rtps::c_Guid_Unknown;
+                current_owner.first = fastdds::rtps::c_Guid_Unknown;
                 if (alive_writers.empty() && (InstanceStateKind::ALIVE_INSTANCE_STATE == instance_state))
                 {
                     instance_state = InstanceStateKind::NOT_ALIVE_NO_WRITERS_INSTANCE_STATE;
@@ -173,7 +173,7 @@ private:
 
     bool writer_alive(
             DataReaderHistoryCounters& counters,
-            const fastrtps::rtps::GUID_t& writer_guid,
+            const fastdds::rtps::GUID_t& writer_guid,
             const uint32_t ownership_strength)
     {
         bool ret_val = false;
@@ -197,11 +197,11 @@ private:
         }
         else if ((std::numeric_limits<uint32_t>::max)() == ownership_strength) // uint32_t::max indicates we are in SHARED_OWNERSHIP_QOS.
         {
-            assert(eprosima::fastrtps::rtps::c_Guid_Unknown == current_owner.first);
+            assert(eprosima::fastdds::rtps::c_Guid_Unknown == current_owner.first);
             assert((std::numeric_limits<uint32_t>::max)() == current_owner.second);
             ret_val = true;
         }
-        else if (eprosima::fastrtps::rtps::c_Guid_Unknown == current_owner.first) // Without owner.
+        else if (eprosima::fastdds::rtps::c_Guid_Unknown == current_owner.first) // Without owner.
         {
             current_owner.first = writer_guid;
             current_owner.second = ownership_strength;
@@ -237,7 +237,7 @@ private:
 
     bool writer_dispose(
             DataReaderHistoryCounters& counters,
-            const fastrtps::rtps::GUID_t& writer_guid,
+            const fastdds::rtps::GUID_t& writer_guid,
             const uint32_t ownership_strength)
     {
         bool ret_val = false;
@@ -268,7 +268,7 @@ private:
 
     bool writer_unregister(
             DataReaderHistoryCounters& counters,
-            const fastrtps::rtps::GUID_t& writer_guid)
+            const fastdds::rtps::GUID_t& writer_guid)
     {
         bool ret_val = false;
 
@@ -280,7 +280,7 @@ private:
             if (writer_guid == current_owner.first)
             {
                 current_owner.second = 0;
-                current_owner.first = fastrtps::rtps::c_Guid_Unknown;
+                current_owner.first = fastdds::rtps::c_Guid_Unknown;
                 if (ALIVE_INSTANCE_STATE == instance_state)
                 {
                     update_owner();
@@ -300,7 +300,7 @@ private:
     }
 
     void writer_set(
-            const fastrtps::rtps::GUID_t& writer_guid,
+            const fastdds::rtps::GUID_t& writer_guid,
             const uint32_t ownership_strength)
     {
         auto it = std::find_if(alive_writers.begin(), alive_writers.end(), [&writer_guid](const WriterOwnership& item)

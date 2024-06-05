@@ -29,8 +29,8 @@
 #include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastdds/utils/IPLocator.h>
 
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds;
+using namespace eprosima::fastdds::rtps;
 
 TestWriterSocket::TestWriterSocket()
     : mp_participant(nullptr)
@@ -51,7 +51,7 @@ bool TestWriterSocket::init(
 {
     //CREATE PARTICIPANT
     RTPSParticipantAttributes PParam;
-    PParam.builtin.discovery_config.discoveryProtocol = eprosima::fastrtps::rtps::DiscoveryProtocol::NONE;
+    PParam.builtin.discovery_config.discoveryProtocol = eprosima::fastdds::rtps::DiscoveryProtocol::NONE;
     PParam.builtin.use_WriterLivelinessProtocol = false;
     mp_participant = RTPSDomain::createParticipant(0, PParam);
     if (mp_participant == nullptr)

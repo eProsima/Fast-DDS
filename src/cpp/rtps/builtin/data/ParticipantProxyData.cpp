@@ -39,11 +39,11 @@
 #include "ProxyDataFilters.hpp"
 #include "ProxyHashTables.hpp"
 
-using namespace eprosima::fastrtps;
+using namespace eprosima::fastdds;
 using ParameterList = eprosima::fastdds::dds::ParameterList;
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 using ::operator <<;
@@ -950,5 +950,5 @@ void ParticipantProxyData::assert_liveliness()
 }
 
 } /* namespace rtps */
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */

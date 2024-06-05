@@ -31,7 +31,7 @@
 #include <unordered_map>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 // Static allocation ancillary for proxies
@@ -185,7 +185,7 @@ public:
 };
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 #endif // _FASTDDS_RTPS_BUILTIN_DATA_PROXYHASHTABLES_HPP_

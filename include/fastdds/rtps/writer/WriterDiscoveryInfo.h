@@ -22,7 +22,7 @@
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 /**
@@ -66,7 +66,7 @@ public:
 };
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 #endif // _RTPS_WRITER_WRITERDISCOVERYINFO_H_

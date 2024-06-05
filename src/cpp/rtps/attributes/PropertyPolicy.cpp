@@ -20,7 +20,7 @@
 
 #include <algorithm>
 
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds::rtps;
 
 PropertyPolicy PropertyPolicyHelper::get_properties_with_prefix(
         const PropertyPolicy& property_policy,

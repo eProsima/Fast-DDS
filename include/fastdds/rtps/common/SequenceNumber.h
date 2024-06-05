@@ -29,7 +29,7 @@
 #include <fastdds/utils/fixed_size_bitmap.hpp>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 
@@ -415,7 +415,7 @@ inline std::istream& operator >>(
 #endif // DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 #endif /* _FASTDDS_RTPS_ELEM_SEQNUM_H_ */

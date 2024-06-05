@@ -29,7 +29,7 @@ protected:
 
     virtual void SetUp()
     {
-        plugin = new eprosima::fastrtps::rtps::security::LogTopic();
+        plugin = new eprosima::fastdds::rtps::security::LogTopic();
 
         ASSERT_NE(nullptr, plugin);
     }
@@ -44,7 +44,7 @@ public:
     LoggingPluginTest() = default;
     ~LoggingPluginTest() = default;
 
-    eprosima::fastrtps::rtps::security::Logging* plugin = nullptr;
+    eprosima::fastdds::rtps::security::Logging* plugin = nullptr;
 
     const std::string security_log_filename = "security_logs.log";
 
@@ -56,13 +56,13 @@ constexpr long LoggingPluginTest::NUM_LOG_LEVELS;
 
 TEST_F(LoggingPluginTest, DefaultBehavior)
 {
-    eprosima::fastrtps::rtps::security::SecurityException exception;
+    eprosima::fastdds::rtps::security::SecurityException exception;
 
     // Options not set
 
     EXPECT_FALSE(plugin->options_set());
 
-    eprosima::fastrtps::rtps::security::LogOptions log_options;
+    eprosima::fastdds::rtps::security::LogOptions log_options;
     EXPECT_FALSE(plugin->get_log_options(log_options, exception)) << exception.what();
 
     EXPECT_FALSE(plugin->enable_logging(exception)) << exception.what();
@@ -95,13 +95,13 @@ TEST_F(LoggingPluginTest, AsyncFileLogging)
     // First remove previous executions file
     std::remove(security_log_filename.c_str());
 
-    eprosima::fastrtps::rtps::security::LogOptions log_options;
+    eprosima::fastdds::rtps::security::LogOptions log_options;
 
     log_options.distribute = false;
     log_options.log_file = security_log_filename;
-    log_options.log_level = eprosima::fastrtps::rtps::security::LoggingLevel::DEBUG_LEVEL;
+    log_options.log_level = eprosima::fastdds::rtps::security::LoggingLevel::DEBUG_LEVEL;
 
-    eprosima::fastrtps::rtps::security::SecurityException exception;
+    eprosima::fastdds::rtps::security::SecurityException exception;
 
     //  plugin->set_domain_id();
     //  plugin->set_guid();
@@ -117,7 +117,7 @@ TEST_F(LoggingPluginTest, AsyncFileLogging)
         threads.emplace_back(new std::thread([this, i, &exception]
                 {
                     plugin->log(
-                        static_cast<eprosima::fastrtps::rtps::security::LoggingLevel>(i),
+                        static_cast<eprosima::fastdds::rtps::security::LoggingLevel>(i),
                         std::string("Report from thread ") + std::to_string(i),
                         "Logging,fileloggingtest",
                         exception);

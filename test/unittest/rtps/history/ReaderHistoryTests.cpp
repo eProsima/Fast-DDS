@@ -25,7 +25,7 @@
 #include <rtps/reader/StatefulReader.hpp>
 
 
-using namespace eprosima::fastrtps;
+using namespace eprosima::fastdds;
 using namespace ::rtps;
 using namespace ::testing;
 using namespace std;

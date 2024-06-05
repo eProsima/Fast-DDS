@@ -37,7 +37,7 @@
 #include "../flowcontrol/FlowController.hpp"
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 RTPSWriter::RTPSWriter(
@@ -497,6 +497,6 @@ void RTPSWriter::add_statistics_sent_submessage(
 }
 
 }  // namespace rtps
-}  // namespace fastrtps
+}  // namespace fastdds
 
 }  // namespace eprosima

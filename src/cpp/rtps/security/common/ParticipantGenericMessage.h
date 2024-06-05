@@ -22,7 +22,7 @@
 #include <fastdds/rtps/common/Token.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 namespace security {
 
@@ -392,7 +392,7 @@ private:
 
 } //namespace security
 } //namespace rtps
-} //namespace fastrtps
+} //namespace fastdds
 } //namespace eprosima
 
 #endif // _FASTDDS_RTPS_SECURITY_COMMON_PARTICIPANTGENERICMESSAGE_H_

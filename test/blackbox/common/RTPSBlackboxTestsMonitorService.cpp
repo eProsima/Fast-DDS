@@ -20,7 +20,7 @@
 #include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds::rtps;
 
 /*
  * Abbreviations

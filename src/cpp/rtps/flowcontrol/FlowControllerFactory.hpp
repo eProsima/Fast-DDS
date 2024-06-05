@@ -10,11 +10,11 @@
 
 namespace eprosima {
 
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 class RTPSParticipantImpl;
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 
 namespace fastdds {
 namespace rtps {
@@ -45,7 +45,7 @@ public:
      * @param participant Pointer to the participant owner of this object.
      */
     void init(
-            fastrtps::rtps::RTPSParticipantImpl* participant);
+            fastdds::rtps::RTPSParticipantImpl* participant);
 
     /*!
      * Registers a new flow controller.
@@ -64,11 +64,11 @@ public:
      */
     FlowController* retrieve_flow_controller(
             const std::string& flow_controller_name,
-            const fastrtps::rtps::WriterAttributes& writer_attributes);
+            const fastdds::rtps::WriterAttributes& writer_attributes);
 
 private:
 
-    fastrtps::rtps::RTPSParticipantImpl* participant_ = nullptr;
+    fastdds::rtps::RTPSParticipantImpl* participant_ = nullptr;
 
     //! Stores the created flow controllers.
     std::map<std::string, std::unique_ptr<FlowController>> flow_controllers_;

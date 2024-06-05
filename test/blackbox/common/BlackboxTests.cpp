@@ -26,8 +26,8 @@
 #include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/RTPSDomain.h>
 
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds;
+using namespace eprosima::fastdds::rtps;
 
 //#define cout "Use Log instead!"
 

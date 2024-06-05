@@ -238,7 +238,7 @@ public:
 /**
  * Enum DurabilityQosPolicyKind_t, different kinds of durability for DurabilityQosPolicy.
  */
-typedef enum DurabilityQosPolicyKind : fastrtps::rtps::octet
+typedef enum DurabilityQosPolicyKind : fastdds::rtps::octet
 {
     /**
      * The Service does not need to keep any samples of data-instances on behalf of any DataReader that is not
@@ -294,17 +294,17 @@ public:
     /**
      * Translates kind to rtps layer equivalent
      *
-     * @return fastrtps::rtps::DurabilityKind_t
+     * @return fastdds::rtps::DurabilityKind_t
      */
-    inline fastrtps::rtps::DurabilityKind_t durabilityKind() const
+    inline fastdds::rtps::DurabilityKind_t durabilityKind() const
     {
         switch (kind)
         {
             default:
-            case VOLATILE_DURABILITY_QOS: return fastrtps::rtps::VOLATILE;
-            case TRANSIENT_LOCAL_DURABILITY_QOS: return fastrtps::rtps::TRANSIENT_LOCAL;
-            case TRANSIENT_DURABILITY_QOS: return fastrtps::rtps::TRANSIENT;
-            case PERSISTENT_DURABILITY_QOS: return fastrtps::rtps::PERSISTENT;
+            case VOLATILE_DURABILITY_QOS: return fastdds::rtps::VOLATILE;
+            case TRANSIENT_LOCAL_DURABILITY_QOS: return fastdds::rtps::TRANSIENT_LOCAL;
+            case TRANSIENT_DURABILITY_QOS: return fastdds::rtps::TRANSIENT;
+            case PERSISTENT_DURABILITY_QOS: return fastdds::rtps::PERSISTENT;
         }
     }
 
@@ -319,18 +319,18 @@ public:
     /**
      * Set kind passing the rtps layer equivalent kind
      *
-     * @param new_kind fastrtps::rtps::DurabilityKind_t
+     * @param new_kind fastdds::rtps::DurabilityKind_t
      */
     inline void durabilityKind(
-            const fastrtps::rtps::DurabilityKind_t new_kind)
+            const fastdds::rtps::DurabilityKind_t new_kind)
     {
         switch (new_kind)
         {
             default:
-            case fastrtps::rtps::VOLATILE: kind = VOLATILE_DURABILITY_QOS; break;
-            case fastrtps::rtps::TRANSIENT_LOCAL: kind = TRANSIENT_LOCAL_DURABILITY_QOS; break;
-            case fastrtps::rtps::TRANSIENT: kind = TRANSIENT_DURABILITY_QOS; break;
-            case fastrtps::rtps::PERSISTENT: kind = PERSISTENT_DURABILITY_QOS; break;
+            case fastdds::rtps::VOLATILE: kind = VOLATILE_DURABILITY_QOS; break;
+            case fastdds::rtps::TRANSIENT_LOCAL: kind = TRANSIENT_LOCAL_DURABILITY_QOS; break;
+            case fastdds::rtps::TRANSIENT: kind = TRANSIENT_DURABILITY_QOS; break;
+            case fastdds::rtps::PERSISTENT: kind = PERSISTENT_DURABILITY_QOS; break;
         }
 
     }
@@ -398,7 +398,7 @@ public:
      * minimum_separation. <br>
      * By default, c_TimeInifinite.
      */
-    fastrtps::Duration_t period;
+    fastdds::Duration_t period;
 };
 
 /**
@@ -446,13 +446,13 @@ public:
 public:
 
     //!Maximum acceptable delay from the time data is written until it is received. <br> By default, c_TimeZero.
-    fastrtps::Duration_t duration;
+    fastdds::Duration_t duration;
 };
 
 /**
  * Enum LivelinessQosPolicyKind, different kinds of liveliness for LivelinessQosPolicy
  */
-typedef enum LivelinessQosPolicyKind : fastrtps::rtps::octet
+typedef enum LivelinessQosPolicyKind : fastdds::rtps::octet
 {
     /**
      * The infrastructure will automatically signal liveliness for the DataWriters at least as often as required by the lease_duration.
@@ -529,20 +529,20 @@ public:
      *  inactive.
      *  By default, c_TimeInfinite.
      */
-    fastrtps::Duration_t lease_duration;
+    fastdds::Duration_t lease_duration;
     /*! The period for automatic assertion of liveliness.
      *  Only used for DataWriters with AUTOMATIC liveliness.
      *  By default, c_TimeInfinite.
      *
      * @warning When not infinite, must be < lease_duration, and it is advisable to be less than 0.7*lease_duration.
      */
-    fastrtps::Duration_t announcement_period;
+    fastdds::Duration_t announcement_period;
 };
 
 /**
  * Enum ReliabilityQosPolicyKind, different kinds of reliability for ReliabilityQosPolicy.
  */
-typedef enum ReliabilityQosPolicyKind : fastrtps::rtps::octet
+typedef enum ReliabilityQosPolicyKind : fastdds::rtps::octet
 {
     /**
      * Indicates that it is acceptable to not retry propagation of any samples. Presumably new values for the samples
@@ -617,7 +617,7 @@ public:
      * <br>
      * By default, 100 ms.
      */
-    fastrtps::Duration_t max_blocking_time;
+    fastdds::Duration_t max_blocking_time;
 };
 
 
@@ -625,7 +625,7 @@ public:
 /**
  * Enum OwnershipQosPolicyKind, different kinds of ownership for OwnershipQosPolicy.
  */
-enum OwnershipQosPolicyKind : fastrtps::rtps::octet
+enum OwnershipQosPolicyKind : fastdds::rtps::octet
 {
     /**
      * Indicates shared ownership for each instance. Multiple writers are allowed to update the same instance and all the
@@ -688,7 +688,7 @@ public:
 /**
  * Enum DestinationOrderQosPolicyKind, different kinds of destination order for DestinationOrderQosPolicy.
  */
-enum DestinationOrderQosPolicyKind : fastrtps::rtps::octet
+enum DestinationOrderQosPolicyKind : fastdds::rtps::octet
 {
     /**
      * Indicates that data is ordered based on the reception time at each Subscriber. Since each subscriber may receive
@@ -757,9 +757,9 @@ public:
  * Class GenericDataQosPolicy, base class to transmit user data during the discovery phase.
  */
 class GenericDataQosPolicy : public Parameter_t, public QosPolicy,
-    public fastrtps::ResourceLimitedVector<fastrtps::rtps::octet>
+    public fastdds::ResourceLimitedVector<fastdds::rtps::octet>
 {
-    using ResourceLimitedOctetVector = fastrtps::ResourceLimitedVector<fastrtps::rtps::octet>;
+    using ResourceLimitedOctetVector = fastdds::ResourceLimitedVector<fastdds::rtps::octet>;
 
 public:
 
@@ -887,12 +887,12 @@ public:
     {
         if (size > 0)
         {
-            configuration_ = fastrtps::ResourceLimitedContainerConfig::fixed_size_configuration(size);
+            configuration_ = fastdds::ResourceLimitedContainerConfig::fixed_size_configuration(size);
             collection_.reserve(configuration_.maximum);
         }
         else
         {
-            configuration_ = fastrtps::ResourceLimitedContainerConfig::dynamic_allocation_configuration();
+            configuration_ = fastdds::ResourceLimitedContainerConfig::dynamic_allocation_configuration();
         }
     }
 
@@ -1134,13 +1134,13 @@ public:
 public:
 
     //! Minimum interval between samples. By default, c_TimeZero (the DataReader is interested in all values)
-    fastrtps::Duration_t minimum_separation;
+    fastdds::Duration_t minimum_separation;
 };
 
 /**
  * Enum PresentationQosPolicyAccessScopeKind, different kinds of Presentation Policy order for PresentationQosPolicy.
  */
-enum PresentationQosPolicyAccessScopeKind : fastrtps::rtps::octet
+enum PresentationQosPolicyAccessScopeKind : fastdds::rtps::octet
 {
     /**
      * Scope spans only a single instance. Indicates that changes to one instance need not be coherent nor ordered with
@@ -1323,7 +1323,7 @@ public:
          * @param ptr Pointer to be set
          */
         const_iterator(
-                const fastrtps::rtps::octet* ptr)
+                const fastdds::rtps::octet* ptr)
             : ptr_(ptr)
             , value_ (ptr_)
         {
@@ -1381,7 +1381,7 @@ public:
     private:
 
         //!Pointer
-        const fastrtps::rtps::octet* ptr_;
+        const fastdds::rtps::octet* ptr_;
         //!Partition
         Partition_t value_;
 
@@ -1545,7 +1545,7 @@ public:
 
         partitions_.reserve(partitions_.length + size + alignment + 4);
 
-        fastrtps::rtps::octet* o = (fastrtps::rtps::octet*)&size;
+        fastdds::rtps::octet* o = (fastdds::rtps::octet*)&size;
         memcpy(partitions_.data + partitions_.length, o, 4);
         partitions_.length += 4;
 
@@ -1629,7 +1629,7 @@ private:
     //! Maximum size <br> By default, 0.
     uint32_t max_size_;
     //! Partitions
-    fastrtps::rtps::SerializedPayload_t partitions_;
+    fastdds::rtps::SerializedPayload_t partitions_;
     //! Number of partitions. <br> By default, 0.
     uint32_t Npartitions_;
 };
@@ -1637,7 +1637,7 @@ private:
 /**
  * Enum HistoryQosPolicyKind, different kinds of History Qos for HistoryQosPolicy.
  */
-enum HistoryQosPolicyKind : fastrtps::rtps::octet
+enum HistoryQosPolicyKind : fastdds::rtps::octet
 {
     /**
      * On the publishing side, the Service will only attempt to keep the most recent “depth” samples of each instance
@@ -1852,7 +1852,7 @@ public:
      * @brief Control when the service is able to remove all information regarding a data-instance. <br>
      * By default, c_TimeZero.
      */
-    fastrtps::Duration_t service_cleanup_delay;
+    fastdds::Duration_t service_cleanup_delay;
     /**
      * @brief Controls the HistoryQosPolicy of the fictitious DataReader that stores the data within the durability service.
      * <br>
@@ -1929,7 +1929,7 @@ public:
 public:
 
     //! Period of validity. <br> By default, c_TimeInfinite.
-    fastrtps::Duration_t duration;
+    fastdds::Duration_t duration;
 };
 
 /**
@@ -2027,7 +2027,7 @@ public:
 /**
  * Enum PublishModeQosPolicyKind, different kinds of publication synchronism
  */
-typedef enum PublishModeQosPolicyKind : fastrtps::rtps::octet
+typedef enum PublishModeQosPolicyKind : fastdds::rtps::octet
 {
     SYNCHRONOUS_PUBLISH_MODE,    //!< Synchronous publication mode (default for writers).
     ASYNCHRONOUS_PUBLISH_MODE    //!< Asynchronous publication mode.
@@ -2280,7 +2280,7 @@ public:
     //! True if this QoS is enabled. <br> By default, false
     bool enabled;
     //! The duration to keep samples for (not serialized as not needed by reader). <br> By default, c_TimeInfinite
-    fastrtps::Duration_t duration;
+    fastdds::Duration_t duration;
 };
 
 /**
@@ -2647,10 +2647,10 @@ private:
 } // namespace xtypes
 
 //!Holds allocation limits affecting collections managed by a participant.
-using ParticipantResourceLimitsQos = fastrtps::rtps::RTPSParticipantAllocationAttributes;
+using ParticipantResourceLimitsQos = fastdds::rtps::RTPSParticipantAllocationAttributes;
 
 //! Property policies
-using PropertyPolicyQos = fastrtps::rtps::PropertyPolicy;
+using PropertyPolicyQos = fastdds::rtps::PropertyPolicy;
 
 //! Qos Policy that configures the wire protocol
 class WireProtocolConfigQos : public QosPolicy
@@ -2693,16 +2693,16 @@ public:
     }
 
     //! Optionally allows user to define the GuidPrefix_t
-    fastrtps::rtps::GuidPrefix_t prefix;
+    fastdds::rtps::GuidPrefix_t prefix;
 
     //! Participant ID <br> By default, -1.
     int32_t participant_id;
 
     //! Builtin parameters.
-    fastrtps::rtps::BuiltinAttributes builtin;
+    fastdds::rtps::BuiltinAttributes builtin;
 
     //! Port Parameters
-    fastrtps::rtps::PortParameters port;
+    fastdds::rtps::PortParameters port;
 
     /**
      * Default list of Unicast Locators to be used for any Endpoint defined inside this RTPSParticipant in the case
@@ -2845,8 +2845,8 @@ public:
     int16_t entity_id = -1;
 
     //! Underlying History memory policy. <br> By default, PREALLOCATED_WITH_REALLOC_MEMORY_MODE.
-    fastrtps::rtps::MemoryManagementPolicy_t history_memory_policy =
-            fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+    fastdds::rtps::MemoryManagementPolicy_t history_memory_policy =
+            fastdds::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 };
 
 //!Qos Policy to configure the limit of the writer resources
@@ -2876,15 +2876,15 @@ public:
     }
 
     //!Matched subscribers allocation limits.
-    fastrtps::ResourceLimitedContainerConfig matched_subscriber_allocation;
+    fastdds::ResourceLimitedContainerConfig matched_subscriber_allocation;
     //!Reader filters allocation limits.
-    fastrtps::ResourceLimitedContainerConfig reader_filters_allocation;
+    fastdds::ResourceLimitedContainerConfig reader_filters_allocation;
 };
 
 /**
  * Data sharing configuration kinds
  */
-enum DataSharingKind : fastrtps::rtps::octet
+enum DataSharingKind : fastdds::rtps::octet
 {
     /**
      * Automatic configuration.

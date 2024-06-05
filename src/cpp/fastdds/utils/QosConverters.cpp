@@ -27,7 +27,7 @@ namespace fastdds {
 namespace dds {
 namespace utils {
 
-using fastrtps::rtps::Property;
+using fastdds::rtps::Property;
 using std::string;
 
 void set_qos_from_attributes(
@@ -136,7 +136,7 @@ void set_qos_from_attributes(
 
 void set_qos_from_attributes(
         DomainParticipantQos& qos,
-        const eprosima::fastrtps::rtps::RTPSParticipantAttributes& attr)
+        const eprosima::fastdds::rtps::RTPSParticipantAttributes& attr)
 {
     qos.user_data().setValue(attr.userData);
     qos.allocation() = attr.allocation;
@@ -167,7 +167,7 @@ void set_qos_from_attributes(
     // Merge attributes and qos properties
     for (auto property : attr.properties.properties())
     {
-        string* property_value = fastrtps::rtps::PropertyPolicyHelper::find_property(
+        string* property_value = fastdds::rtps::PropertyPolicyHelper::find_property(
             qos.properties(), property.name());
         if (nullptr == property_value)
         {
@@ -182,7 +182,7 @@ void set_qos_from_attributes(
 }
 
 void set_attributes_from_qos(
-        fastrtps::rtps::RTPSParticipantAttributes& attr,
+        fastdds::rtps::RTPSParticipantAttributes& attr,
         const DomainParticipantQos& qos)
 {
     attr.allocation = qos.allocation();

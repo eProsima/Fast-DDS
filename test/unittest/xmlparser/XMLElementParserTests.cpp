@@ -40,21 +40,21 @@
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds;
+using namespace eprosima::fastdds::rtps;
 using namespace eprosima::testing;
 
-using eprosima::fastrtps::xmlparser::BaseNode;
-using eprosima::fastrtps::xmlparser::DataNode;
-using eprosima::fastrtps::xmlparser::NodeType;
-using eprosima::fastrtps::xmlparser::XMLP_ret;
-using eprosima::fastrtps::xmlparser::XMLParser;
-using eprosima::fastrtps::xmlparser::up_participant_t;
-using eprosima::fastrtps::xmlparser::up_node_participant_t;
-using eprosima::fastrtps::xmlparser::node_participant_t;
-using eprosima::fastrtps::xmlparser::sp_transport_t;
+using eprosima::fastdds::xmlparser::BaseNode;
+using eprosima::fastdds::xmlparser::DataNode;
+using eprosima::fastdds::xmlparser::NodeType;
+using eprosima::fastdds::xmlparser::XMLP_ret;
+using eprosima::fastdds::xmlparser::XMLParser;
+using eprosima::fastdds::xmlparser::up_participant_t;
+using eprosima::fastdds::xmlparser::up_node_participant_t;
+using eprosima::fastdds::xmlparser::node_participant_t;
+using eprosima::fastdds::xmlparser::sp_transport_t;
 
-using eprosima::fastrtps::xmlparser::XMLProfileManager;
+using eprosima::fastdds::xmlparser::XMLProfileManager;
 
 class XMLParserTests : public ::testing::Test
 {
@@ -1772,7 +1772,7 @@ TEST_F(XMLParserTests, getXMLWriterReaderUnsupportedQosPolicies)
 TEST_F(XMLParserTests, ParticipantAllocationAttributesDataLimits)
 {
     uint8_t ident = 1;
-    eprosima::fastrtps::rtps::RTPSParticipantAllocationAttributes allocation;
+    eprosima::fastdds::rtps::RTPSParticipantAllocationAttributes allocation;
     tinyxml2::XMLDocument xml_doc;
     tinyxml2::XMLElement* titleElement;
 
@@ -1811,7 +1811,7 @@ TEST_F(XMLParserTests, ParticipantAllocationAttributesDataLimits)
 TEST_F(XMLParserTests, getXMLDiscoverySettingsStaticEDP)
 {
     uint8_t ident = 1;
-    eprosima::fastrtps::rtps::DiscoverySettings settings;
+    eprosima::fastdds::rtps::DiscoverySettings settings;
     tinyxml2::XMLDocument xml_doc;
     tinyxml2::XMLElement* titleElement;
 

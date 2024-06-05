@@ -35,7 +35,7 @@ namespace statistics {
  * @return true when the entity id corresponds to a builtin statistics writer.
  */
 inline bool is_statistics_builtin(
-        const fastrtps::rtps::EntityId_t& entity_id)
+        const fastdds::rtps::EntityId_t& entity_id)
 {
     return 0x60 == (0xE0 & entity_id.value[3]);
 }
@@ -47,7 +47,7 @@ inline bool is_statistics_builtin(
  */
 inline void set_statistics_entity_id(
         uint32_t kind,
-        fastrtps::rtps::EntityId_t& entity_id)
+        fastdds::rtps::EntityId_t& entity_id)
 {
     entity_id.value[3] = 0x62;
     entity_id.value[2] = kind & 0xFF;

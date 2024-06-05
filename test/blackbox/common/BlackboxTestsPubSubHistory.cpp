@@ -27,7 +27,7 @@
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
 
-using namespace eprosima::fastrtps;
+using namespace eprosima::fastdds;
 using namespace eprosima::fastdds::rtps;
 
 enum communication_type
@@ -1055,7 +1055,7 @@ TEST_P(PubSubHistory, ReliableTransientLocalKeepLast1)
 
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
     reader.startReception(expected_data);
-    eprosima::fastrtps::rtps::SequenceNumber_t seq;
+    eprosima::fastdds::rtps::SequenceNumber_t seq;
     seq.low = 10;
     reader.block_for_seq(seq);
 
@@ -1101,7 +1101,7 @@ TEST_P(PubSubHistory, ReliableTransientLocalKeepLast1Data300Kb)
     reader.wait_discovery();
 
     reader.startReception(reader_data);
-    eprosima::fastrtps::rtps::SequenceNumber_t seq;
+    eprosima::fastdds::rtps::SequenceNumber_t seq;
     seq.low = 10;
     reader.block_for_seq(seq);
 
@@ -1330,7 +1330,7 @@ TEST(PubSubHistory, ReliableUnmatchWithFutureChanges)
     std::atomic_bool drop_heartbeat {false};
 
     auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
-    testTransport->drop_data_messages_filter_ = [&drop_data](eprosima::fastrtps::rtps::CDRMessage_t& msg)
+    testTransport->drop_data_messages_filter_ = [&drop_data](eprosima::fastdds::rtps::CDRMessage_t& msg)
             -> bool
             {
                 auto old_pos = msg.pos;
@@ -1339,19 +1339,19 @@ TEST(PubSubHistory, ReliableUnmatchWithFutureChanges)
                 msg.pos += 2 + 2 + 4;
 
                 // Read writer entity id
-                eprosima::fastrtps::rtps::GUID_t writer_guid;
-                eprosima::fastrtps::rtps::CDRMessage::readEntityId(&msg, &writer_guid.entityId);
+                eprosima::fastdds::rtps::GUID_t writer_guid;
+                eprosima::fastdds::rtps::CDRMessage::readEntityId(&msg, &writer_guid.entityId);
                 msg.pos = old_pos;
 
                 return drop_data && !writer_guid.is_builtin();
             };
-    testTransport->drop_heartbeat_messages_filter_ = [&drop_heartbeat](eprosima::fastrtps::rtps::CDRMessage_t& msg)
+    testTransport->drop_heartbeat_messages_filter_ = [&drop_heartbeat](eprosima::fastdds::rtps::CDRMessage_t& msg)
             -> bool
             {
                 auto old_pos = msg.pos;
                 msg.pos += 4;
-                eprosima::fastrtps::rtps::GUID_t writer_guid;
-                eprosima::fastrtps::rtps::CDRMessage::readEntityId(&msg, &writer_guid.entityId);
+                eprosima::fastdds::rtps::GUID_t writer_guid;
+                eprosima::fastdds::rtps::CDRMessage::readEntityId(&msg, &writer_guid.entityId);
                 msg.pos = old_pos;
 
                 return drop_heartbeat && !writer_guid.is_builtin();

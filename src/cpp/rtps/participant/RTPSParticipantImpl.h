@@ -103,7 +103,7 @@ class TypeLookupManager;
 } // namespace dds
 } // namespace fastdds
 
-namespace fastrtps {
+namespace fastdds {
 
 class TopicAttributes;
 class MessageReceiver;
@@ -1253,7 +1253,7 @@ public:
      * @return true if the operation succeeds.
      */
     bool fill_discovery_data_from_cdr_message(
-            fastrtps::rtps::ParticipantProxyData& data,
+            fastdds::rtps::ParticipantProxyData& data,
             fastdds::statistics::MonitorServiceStatusData& msg);
 
     /**
@@ -1265,7 +1265,7 @@ public:
      * @return true if the operation succeeds.
      */
     bool fill_discovery_data_from_cdr_message(
-            fastrtps::rtps::WriterProxyData& data,
+            fastdds::rtps::WriterProxyData& data,
             fastdds::statistics::MonitorServiceStatusData& msg);
 
     /**
@@ -1277,7 +1277,7 @@ public:
      * @return true if the operation succeeds.
      */
     bool fill_discovery_data_from_cdr_message(
-            fastrtps::rtps::ReaderProxyData& data,
+            fastdds::rtps::ReaderProxyData& data,
             fastdds::statistics::MonitorServiceStatusData& msg);
 
     bool get_entity_connections(

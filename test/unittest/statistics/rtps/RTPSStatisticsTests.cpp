@@ -56,12 +56,12 @@ namespace fastdds {
 namespace statistics {
 namespace rtps {
 
-class RTPSParticipantMock : public fastrtps::rtps::RTPSParticipant
+class RTPSParticipantMock : public fastdds::rtps::RTPSParticipant
 {
 
 public:
 
-    fastrtps::rtps::RTPSParticipantImpl* get_impl()
+    fastdds::rtps::RTPSParticipantImpl* get_impl()
     {
         return mp_impl;
     }
@@ -178,7 +178,7 @@ class RTPSStatisticsTestsImpl
                 TransportFilter&&) = delete;
 
         bool operator ()(
-                fastrtps::rtps::CDRMessage_t& msg) const noexcept
+                fastdds::rtps::CDRMessage_t& msg) const noexcept
         {
             try
             {
@@ -193,37 +193,37 @@ class RTPSStatisticsTestsImpl
 
     };
 
-    std::map<fastrtps::rtps::SubmessageId, TransportFilter> filters_;
+    std::map<fastdds::rtps::SubmessageId, TransportFilter> filters_;
 
 protected:
 
-    fastrtps::rtps::WriterHistory* writer_history_ = nullptr;
-    fastrtps::rtps::ReaderHistory* reader_history_ = nullptr;
+    fastdds::rtps::WriterHistory* writer_history_ = nullptr;
+    fastdds::rtps::ReaderHistory* reader_history_ = nullptr;
 
-    fastrtps::rtps::RTPSParticipant* participant_ = nullptr;
-    fastrtps::rtps::RTPSWriter* writer_ = nullptr;
-    fastrtps::rtps::RTPSReader* reader_ = nullptr;
+    fastdds::rtps::RTPSParticipant* participant_ = nullptr;
+    fastdds::rtps::RTPSWriter* writer_ = nullptr;
+    fastdds::rtps::RTPSReader* reader_ = nullptr;
 
     // Getters and setters for the transport filter
     using filter = fastdds::rtps::test_UDPv4TransportDescriptor::filter;
 
     template<class F>
     void set_transport_filter(
-            fastrtps::rtps::SubmessageId id,
+            fastdds::rtps::SubmessageId id,
             F f) noexcept
     {
         filters_[id].external_filter_ = f;
     }
 
     void set_transport_filter(
-            fastrtps::rtps::SubmessageId id,
+            fastdds::rtps::SubmessageId id,
             std::nullptr_t) noexcept
     {
         filters_[id].external_filter_ = nullptr;
     }
 
     test_Descriptor::filter get_transport_filter(
-            fastrtps::rtps::SubmessageId id) noexcept
+            fastdds::rtps::SubmessageId id) noexcept
     {
         return filters_[id].external_filter_;
     }
@@ -232,7 +232,7 @@ public:
 
     void create_participant()
     {
-        using namespace fastrtps::rtps;
+        using namespace fastdds::rtps;
 
         // create the participant
         RTPSParticipantAttributes p_attr;
@@ -266,7 +266,7 @@ public:
 
     void remove_participant()
     {
-        using namespace fastrtps::rtps;
+        using namespace fastdds::rtps;
 
         // Remove the endpoints
         destroy_endpoints();
@@ -277,10 +277,10 @@ public:
 
     void create_reader(
             uint32_t payloadMaxSize,
-            fastrtps::rtps::ReliabilityKind_t reliability_qos = fastrtps::rtps::ReliabilityKind_t::RELIABLE,
-            fastrtps::rtps::DurabilityKind_t durability_qos = fastrtps::rtps::DurabilityKind_t::VOLATILE)
+            fastdds::rtps::ReliabilityKind_t reliability_qos = fastdds::rtps::ReliabilityKind_t::RELIABLE,
+            fastdds::rtps::DurabilityKind_t durability_qos = fastdds::rtps::DurabilityKind_t::VOLATILE)
     {
-        using namespace fastrtps::rtps;
+        using namespace fastdds::rtps;
 
         HistoryAttributes history_attributes;
         history_attributes.payloadMaxSize = payloadMaxSize;
@@ -301,10 +301,10 @@ public:
 
     void create_writer(
             uint32_t payloadMaxSize,
-            fastrtps::rtps::ReliabilityKind_t reliability_qos = fastrtps::rtps::ReliabilityKind_t::RELIABLE,
-            fastrtps::rtps::DurabilityKind_t durability_qos = fastrtps::rtps::DurabilityKind_t::TRANSIENT_LOCAL)
+            fastdds::rtps::ReliabilityKind_t reliability_qos = fastdds::rtps::ReliabilityKind_t::RELIABLE,
+            fastdds::rtps::DurabilityKind_t durability_qos = fastdds::rtps::DurabilityKind_t::TRANSIENT_LOCAL)
     {
-        using namespace fastrtps::rtps;
+        using namespace fastdds::rtps;
 
         HistoryAttributes history_attributes;
         history_attributes.payloadMaxSize = payloadMaxSize;
@@ -321,10 +321,10 @@ public:
 
     void create_lazy_writer(
             uint32_t payloadMaxSize,
-            fastrtps::rtps::ReliabilityKind_t reliability_qos = fastrtps::rtps::ReliabilityKind_t::RELIABLE,
-            fastrtps::rtps::DurabilityKind_t durability_qos = fastrtps::rtps::DurabilityKind_t::TRANSIENT_LOCAL)
+            fastdds::rtps::ReliabilityKind_t reliability_qos = fastdds::rtps::ReliabilityKind_t::RELIABLE,
+            fastdds::rtps::DurabilityKind_t durability_qos = fastdds::rtps::DurabilityKind_t::TRANSIENT_LOCAL)
     {
-        using namespace fastrtps::rtps;
+        using namespace fastdds::rtps;
 
         HistoryAttributes history_attributes;
         history_attributes.payloadMaxSize = payloadMaxSize;
@@ -343,7 +343,7 @@ public:
 
     void create_endpoints(
             uint32_t payloadMaxSize,
-            fastrtps::rtps::ReliabilityKind_t reliability_qos = fastrtps::rtps::ReliabilityKind_t::RELIABLE)
+            fastdds::rtps::ReliabilityKind_t reliability_qos = fastdds::rtps::ReliabilityKind_t::RELIABLE)
     {
         create_reader(payloadMaxSize, reliability_qos);
         create_writer(payloadMaxSize, reliability_qos);
@@ -354,8 +354,8 @@ public:
             fastcdr::string_255 data_type,
             fastcdr::string_255 topic_name)
     {
-        using namespace fastrtps;
-        using namespace fastrtps::rtps;
+        using namespace fastdds;
+        using namespace fastdds::rtps;
 
         TopicAttributes Tatt;
         Tatt.topicKind = key ? TopicKind_t::WITH_KEY : TopicKind_t::NO_KEY;
@@ -382,7 +382,7 @@ public:
 
     void destroy_endpoints()
     {
-        using namespace fastrtps::rtps;
+        using namespace fastdds::rtps;
 
         if (nullptr != writer_ )
         {
@@ -404,7 +404,7 @@ public:
     void write_small_sample(
             uint32_t length)
     {
-        using namespace fastrtps::rtps;
+        using namespace fastdds::rtps;
 
         ASSERT_NE(nullptr, writer_);
 
@@ -429,7 +429,7 @@ public:
             uint32_t length,
             uint16_t fragment_size)
     {
-        using namespace fastrtps::rtps;
+        using namespace fastdds::rtps;
 
         ASSERT_NE(nullptr, writer_);
 
@@ -462,12 +462,12 @@ public:
     // Sets up the test fixture.
     void SetUp() override
     {
-        using namespace fastrtps;
+        using namespace fastdds;
 
         // Intraprocess must be disable in order to receive DATA callbacks
         LibrarySettings att;
         att.intraprocess_delivery = INTRAPROCESS_OFF;
-        fastrtps::rtps::RTPSDomain::set_library_settings(att);
+        fastdds::rtps::RTPSDomain::set_library_settings(att);
 
         create_participant();
     }
@@ -489,7 +489,7 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_management)
 {
     // Check API add and remove interfaces
     using namespace std;
-    using namespace fastrtps::rtps;
+    using namespace fastdds::rtps;
 
     // Create the testing endpoints
     create_endpoints(255);
@@ -587,8 +587,8 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_management)
 TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks)
 {
     using namespace ::testing;
-    using namespace fastrtps;
-    using namespace fastrtps::rtps;
+    using namespace fastdds;
+    using namespace fastdds::rtps;
     using namespace std;
 
     std::atomic<unsigned int> samples_filtered{0};
@@ -596,7 +596,7 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks)
     // make sure some messages are lost to assure the RESENT_DATAS callback
     set_transport_filter(
         DATA,
-        [&samples_filtered](fastrtps::rtps::CDRMessage_t& msg)-> bool
+        [&samples_filtered](fastdds::rtps::CDRMessage_t& msg)-> bool
         {
             uint32_t old_pos = msg.pos;
 
@@ -765,8 +765,8 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks)
 TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks_fragmented)
 {
     using namespace ::testing;
-    using namespace fastrtps;
-    using namespace fastrtps::rtps;
+    using namespace fastdds;
+    using namespace fastdds::rtps;
     using namespace std;
 
     // payload size
@@ -776,7 +776,7 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks_fragmented)
     // make sure some messages are lost to assure the NACKFRAG callback
     set_transport_filter(
         DATA_FRAG,
-        [](fastrtps::rtps::CDRMessage_t& msg)-> bool
+        [](fastdds::rtps::CDRMessage_t& msg)-> bool
         {
             static uint32_t max_fragment = 0;
             static bool keep_filtering = true;
@@ -784,7 +784,7 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks_fragmented)
             uint32_t fragmentNum = 0;
             uint32_t old_pos = msg.pos;
             msg.pos += 20;
-            fastrtps::rtps::CDRMessage::readUInt32(&msg, &fragmentNum);
+            fastdds::rtps::CDRMessage::readUInt32(&msg, &fragmentNum);
             msg.pos = old_pos;
 
             // generate losses only on the first burst
@@ -865,14 +865,14 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks_fragmented)
 TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks_no_enabled_writers)
 {
     using namespace ::testing;
-    using namespace fastrtps;
-    using namespace fastrtps::rtps;
+    using namespace fastdds;
+    using namespace fastdds::rtps;
     using namespace std;
 
     // make sure some messages are lost to assure the RESENT_DATAS callback
     set_transport_filter(
         DATA,
-        [](fastrtps::rtps::CDRMessage_t& msg)-> bool
+        [](fastdds::rtps::CDRMessage_t& msg)-> bool
         {
             static unsigned int samples_filtered = 0;
             uint32_t old_pos = msg.pos;
@@ -1015,8 +1015,8 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks_no_enabled_writer
 TEST_F(RTPSStatisticsTests, statistics_rpts_listener_gap_callback)
 {
     using namespace ::testing;
-    using namespace fastrtps;
-    using namespace fastrtps::rtps;
+    using namespace fastdds;
+    using namespace fastdds::rtps;
     using namespace std;
 
     uint32_t enable_writers_mask =
@@ -1096,8 +1096,8 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_gap_callback)
 TEST_F(RTPSStatisticsTests, statistics_rpts_listener_discovery_callbacks)
 {
     using namespace ::testing;
-    using namespace fastrtps;
-    using namespace fastrtps::rtps;
+    using namespace fastdds;
+    using namespace fastdds::rtps;
     using namespace std;
 
     uint32_t enable_writers_mask =
@@ -1162,8 +1162,8 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_discovery_callbacks)
 TEST_F(RTPSStatisticsTests, statistics_rpts_avoid_empty_resent_callbacks)
 {
     using namespace ::testing;
-    using namespace fastrtps;
-    using namespace fastrtps::rtps;
+    using namespace fastdds;
+    using namespace fastdds::rtps;
     using namespace std;
 
     // The history must be cleared after the acknack is received
@@ -1173,7 +1173,7 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_avoid_empty_resent_callbacks)
     // filter out all user DATAs
     set_transport_filter(
         DATA,
-        [](fastrtps::rtps::CDRMessage_t& msg)-> bool
+        [](fastdds::rtps::CDRMessage_t& msg)-> bool
         {
             uint32_t old_pos = msg.pos;
 
@@ -1196,7 +1196,7 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_avoid_empty_resent_callbacks)
 
     set_transport_filter(
         ACKNACK,
-        [&acknack_sent](fastrtps::rtps::CDRMessage_t& msg)-> bool
+        [&acknack_sent](fastdds::rtps::CDRMessage_t& msg)-> bool
         {
             uint32_t old_pos = msg.pos;
 
@@ -1279,8 +1279,8 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_avoid_empty_resent_callbacks)
 TEST_F(RTPSStatisticsTests, statistics_rpts_unordered_datagrams)
 {
     using namespace ::testing;
-    using namespace fastrtps;
-    using namespace fastrtps::rtps;
+    using namespace fastdds;
+    using namespace fastdds::rtps;
     using namespace std;
 
     using test_UDPv4Transport = eprosima::fastdds::rtps::test_UDPv4Transport;
@@ -1313,7 +1313,7 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_unordered_datagrams)
     test_UDPv4Transport::test_UDPv4Transport_DropLogLength = num_messages;
     set_transport_filter(
         DATA_FRAG,
-        [](fastrtps::rtps::CDRMessage_t& msg)-> bool
+        [](fastdds::rtps::CDRMessage_t& msg)-> bool
         {
             uint32_t old_pos = msg.pos;
 

@@ -28,7 +28,7 @@
 #include <fastrtps/qos/ParameterTypes.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 
 using QosPolicy = fastdds::dds::QosPolicy;
 using DurabilityQosPolicyKind = fastdds::dds::DurabilityQosPolicyKind;
@@ -106,7 +106,7 @@ namespace xtypes {
 using TypeInformationParameter = fastdds::dds::xtypes::TypeInformationParameter;
 } //namespace xtypes
 
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 #endif /* QOS_POLICIES_H_ */

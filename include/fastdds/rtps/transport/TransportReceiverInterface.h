@@ -40,7 +40,7 @@ public:
      * @param remote_locator Locator identifying the remote endpoint.
      */
     virtual void OnDataReceived(
-            const fastrtps::rtps::octet* data,
+            const fastdds::rtps::octet* data,
             const uint32_t size,
             const Locator& local_locator,
             const Locator& remote_locator) = 0;

@@ -487,7 +487,7 @@ public:
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b byte.
      */
     FASTDDS_EXPORTED_API virtual ReturnCode_t get_byte_value(
-            eprosima::fastrtps::rtps::octet& value,
+            eprosima::fastdds::rtps::octet& value,
             MemberId id) = 0;
 
     /*!
@@ -500,7 +500,7 @@ public:
      */
     FASTDDS_EXPORTED_API virtual ReturnCode_t set_byte_value(
             MemberId id,
-            eprosima::fastrtps::rtps::octet value) = 0;
+            eprosima::fastdds::rtps::octet value) = 0;
 
     /*!
      * Retrieves an \b bool value associated to an identifier.

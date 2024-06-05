@@ -35,7 +35,7 @@ public:
 
     static bool add_to_cdr_message(
             const QosPolicy& qos_policy,
-            fastrtps::rtps::CDRMessage_t* cdr_message)
+            fastdds::rtps::CDRMessage_t* cdr_message)
     {
         bool valid = ParameterSerializer<QosPolicy>::add_common_to_cdr_message(qos_policy, cdr_message);
         valid &= add_content_to_cdr_message(qos_policy, cdr_message);
@@ -44,7 +44,7 @@ public:
 
     static bool read_from_cdr_message(
             QosPolicy& qos_policy,
-            fastrtps::rtps::CDRMessage_t* cdr_message,
+            fastdds::rtps::CDRMessage_t* cdr_message,
             const uint16_t parameter_length)
     {
         bool valid = true;
@@ -62,7 +62,7 @@ private:
 
     static bool add_content_to_cdr_message(
             const QosPolicy&,
-            fastrtps::rtps::CDRMessage_t*)
+            fastdds::rtps::CDRMessage_t*)
     {
         static_assert(sizeof(QosPolicy) == 0, "Not implemented");
         return false;
@@ -70,7 +70,7 @@ private:
 
     static bool read_content_from_cdr_message(
             QosPolicy&,
-            fastrtps::rtps::CDRMessage_t*,
+            fastdds::rtps::CDRMessage_t*,
             const uint16_t)
     {
         static_assert(sizeof(QosPolicy) == 0, "Not implemented");
@@ -82,19 +82,19 @@ private:
 template<>
 inline bool QosPoliciesSerializer<DurabilityQosPolicy>::add_content_to_cdr_message(
         const DurabilityQosPolicy& qos_policy,
-        fastrtps::rtps::CDRMessage_t* cdr_message)
+        fastdds::rtps::CDRMessage_t* cdr_message)
 {
-    bool valid = fastrtps::rtps::CDRMessage::addOctet(cdr_message, qos_policy.kind);
-    valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message, 0);
-    valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message, 0);
-    valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message, 0);
+    bool valid = fastdds::rtps::CDRMessage::addOctet(cdr_message, qos_policy.kind);
+    valid &= fastdds::rtps::CDRMessage::addOctet(cdr_message, 0);
+    valid &= fastdds::rtps::CDRMessage::addOctet(cdr_message, 0);
+    valid &= fastdds::rtps::CDRMessage::addOctet(cdr_message, 0);
     return valid;
 }
 
 template<>
 inline bool QosPoliciesSerializer<DurabilityQosPolicy>::read_content_from_cdr_message(
         DurabilityQosPolicy& qos_policy,
-        fastrtps::rtps::CDRMessage_t* cdr_message,
+        fastdds::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
     if (parameter_length != PARAMETER_KIND_LENGTH)
@@ -102,8 +102,8 @@ inline bool QosPoliciesSerializer<DurabilityQosPolicy>::read_content_from_cdr_me
         return false;
     }
     qos_policy.length = parameter_length;
-    bool valid = fastrtps::rtps::CDRMessage::readOctet(cdr_message,
-                    (fastrtps::rtps::octet*)&qos_policy.kind);
+    bool valid = fastdds::rtps::CDRMessage::readOctet(cdr_message,
+                    (fastdds::rtps::octet*)&qos_policy.kind);
     cdr_message->pos += 3; //padding
     return valid;
 }
@@ -111,11 +111,11 @@ inline bool QosPoliciesSerializer<DurabilityQosPolicy>::read_content_from_cdr_me
 template<>
 inline bool QosPoliciesSerializer<DeadlineQosPolicy>::add_content_to_cdr_message(
         const DeadlineQosPolicy& qos_policy,
-        fastrtps::rtps::CDRMessage_t* cdr_message)
+        fastdds::rtps::CDRMessage_t* cdr_message)
 {
-    bool valid = fastrtps::rtps::CDRMessage::addInt32(cdr_message,
+    bool valid = fastdds::rtps::CDRMessage::addInt32(cdr_message,
                     qos_policy.period.seconds);
-    valid &= fastrtps::rtps::CDRMessage::addUInt32(cdr_message,
+    valid &= fastdds::rtps::CDRMessage::addUInt32(cdr_message,
                     qos_policy.period.fraction());
     return valid;
 }
@@ -123,7 +123,7 @@ inline bool QosPoliciesSerializer<DeadlineQosPolicy>::add_content_to_cdr_message
 template<>
 inline bool QosPoliciesSerializer<DeadlineQosPolicy>::read_content_from_cdr_message(
         DeadlineQosPolicy& qos_policy,
-        fastrtps::rtps::CDRMessage_t* cdr_message,
+        fastdds::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
     if (parameter_length != PARAMETER_TIME_LENGTH)
@@ -131,10 +131,10 @@ inline bool QosPoliciesSerializer<DeadlineQosPolicy>::read_content_from_cdr_mess
         return false;
     }
     qos_policy.length = parameter_length;
-    bool valid = fastrtps::rtps::CDRMessage::readInt32(cdr_message,
+    bool valid = fastdds::rtps::CDRMessage::readInt32(cdr_message,
                     &qos_policy.period.seconds);
     uint32_t frac(0);
-    valid &= fastrtps::rtps::CDRMessage::readUInt32(cdr_message, &frac);
+    valid &= fastdds::rtps::CDRMessage::readUInt32(cdr_message, &frac);
     qos_policy.period.fraction(frac);
     return valid;
 }
@@ -142,17 +142,17 @@ inline bool QosPoliciesSerializer<DeadlineQosPolicy>::read_content_from_cdr_mess
 template <>
 inline bool QosPoliciesSerializer<LatencyBudgetQosPolicy>::add_content_to_cdr_message(
         const LatencyBudgetQosPolicy& qos_policy,
-        fastrtps::rtps::CDRMessage_t* cdr_message)
+        fastdds::rtps::CDRMessage_t* cdr_message)
 {
-    bool valid = fastrtps::rtps::CDRMessage::addInt32(cdr_message, qos_policy.duration.seconds);
-    valid &= fastrtps::rtps::CDRMessage::addUInt32(cdr_message, qos_policy.duration.fraction());
+    bool valid = fastdds::rtps::CDRMessage::addInt32(cdr_message, qos_policy.duration.seconds);
+    valid &= fastdds::rtps::CDRMessage::addUInt32(cdr_message, qos_policy.duration.fraction());
     return valid;
 }
 
 template<>
 inline bool QosPoliciesSerializer<LatencyBudgetQosPolicy>::read_content_from_cdr_message(
         LatencyBudgetQosPolicy& qos_policy,
-        fastrtps::rtps::CDRMessage_t* cdr_message,
+        fastdds::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
     if (parameter_length != PARAMETER_TIME_LENGTH)
@@ -160,10 +160,10 @@ inline bool QosPoliciesSerializer<LatencyBudgetQosPolicy>::read_content_from_cdr
         return false;
     }
     qos_policy.length = parameter_length;
-    bool valid = fastrtps::rtps::CDRMessage::readInt32(cdr_message,
+    bool valid = fastdds::rtps::CDRMessage::readInt32(cdr_message,
                     &qos_policy.duration.seconds);
     uint32_t frac(0);
-    valid &= fastrtps::rtps::CDRMessage::readUInt32(cdr_message, &frac);
+    valid &= fastdds::rtps::CDRMessage::readUInt32(cdr_message, &frac);
     qos_policy.duration.fraction(frac);
     return valid;
 }
@@ -171,15 +171,15 @@ inline bool QosPoliciesSerializer<LatencyBudgetQosPolicy>::read_content_from_cdr
 template<>
 inline bool QosPoliciesSerializer<LivelinessQosPolicy>::add_content_to_cdr_message(
         const LivelinessQosPolicy& qos_policy,
-        fastrtps::rtps::CDRMessage_t* cdr_message)
+        fastdds::rtps::CDRMessage_t* cdr_message)
 {
-    bool valid = fastrtps::rtps::CDRMessage::addOctet(cdr_message, qos_policy.kind);
-    valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message, 0);
-    valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message, 0);
-    valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message, 0);
-    valid &= fastrtps::rtps::CDRMessage::addInt32(cdr_message,
+    bool valid = fastdds::rtps::CDRMessage::addOctet(cdr_message, qos_policy.kind);
+    valid &= fastdds::rtps::CDRMessage::addOctet(cdr_message, 0);
+    valid &= fastdds::rtps::CDRMessage::addOctet(cdr_message, 0);
+    valid &= fastdds::rtps::CDRMessage::addOctet(cdr_message, 0);
+    valid &= fastdds::rtps::CDRMessage::addInt32(cdr_message,
                     qos_policy.lease_duration.seconds);
-    valid &= fastrtps::rtps::CDRMessage::addUInt32(cdr_message,
+    valid &= fastdds::rtps::CDRMessage::addUInt32(cdr_message,
                     qos_policy.lease_duration.fraction());
     return valid;
 }
@@ -187,7 +187,7 @@ inline bool QosPoliciesSerializer<LivelinessQosPolicy>::add_content_to_cdr_messa
 template<>
 inline bool QosPoliciesSerializer<LivelinessQosPolicy>::read_content_from_cdr_message(
         LivelinessQosPolicy& qos_policy,
-        fastrtps::rtps::CDRMessage_t* cdr_message,
+        fastdds::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
     if (parameter_length != PARAMETER_KIND_LENGTH + PARAMETER_TIME_LENGTH)
@@ -195,13 +195,13 @@ inline bool QosPoliciesSerializer<LivelinessQosPolicy>::read_content_from_cdr_me
         return false;
     }
     qos_policy.length = parameter_length;
-    bool valid = fastrtps::rtps::CDRMessage::readOctet(cdr_message,
-                    (fastrtps::rtps::octet*)&qos_policy.kind);
+    bool valid = fastdds::rtps::CDRMessage::readOctet(cdr_message,
+                    (fastdds::rtps::octet*)&qos_policy.kind);
     cdr_message->pos += 3; //padding
-    valid &= fastrtps::rtps::CDRMessage::readInt32(cdr_message,
+    valid &= fastdds::rtps::CDRMessage::readInt32(cdr_message,
                     &qos_policy.lease_duration.seconds);
     uint32_t frac(0);
-    valid &= fastrtps::rtps::CDRMessage::readUInt32(cdr_message, &frac);
+    valid &= fastdds::rtps::CDRMessage::readUInt32(cdr_message, &frac);
     qos_policy.lease_duration.fraction(frac);
     return valid;
 }
@@ -209,16 +209,16 @@ inline bool QosPoliciesSerializer<LivelinessQosPolicy>::read_content_from_cdr_me
 template<>
 inline bool QosPoliciesSerializer<ReliabilityQosPolicy>::add_content_to_cdr_message(
         const ReliabilityQosPolicy& qos_policy,
-        fastrtps::rtps::CDRMessage_t* cdr_message)
+        fastdds::rtps::CDRMessage_t* cdr_message)
 {
-    bool valid = fastrtps::rtps::CDRMessage::addOctet(cdr_message, qos_policy.kind);
-    valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message, 0);
-    valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message, 0);
-    valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message, 0);
-    valid &= fastrtps::rtps::CDRMessage::addInt32(cdr_message,
+    bool valid = fastdds::rtps::CDRMessage::addOctet(cdr_message, qos_policy.kind);
+    valid &= fastdds::rtps::CDRMessage::addOctet(cdr_message, 0);
+    valid &= fastdds::rtps::CDRMessage::addOctet(cdr_message, 0);
+    valid &= fastdds::rtps::CDRMessage::addOctet(cdr_message, 0);
+    valid &= fastdds::rtps::CDRMessage::addInt32(cdr_message,
                     qos_policy.max_blocking_time.seconds);
     valid &=
-            fastrtps::rtps::CDRMessage::addUInt32(cdr_message,
+            fastdds::rtps::CDRMessage::addUInt32(cdr_message,
                     qos_policy.max_blocking_time.fraction());
     return valid;
 }
@@ -226,7 +226,7 @@ inline bool QosPoliciesSerializer<ReliabilityQosPolicy>::add_content_to_cdr_mess
 template<>
 inline bool QosPoliciesSerializer<ReliabilityQosPolicy>::read_content_from_cdr_message(
         ReliabilityQosPolicy& qos_policy,
-        fastrtps::rtps::CDRMessage_t* cdr_message,
+        fastdds::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
     if (parameter_length != PARAMETER_KIND_LENGTH + PARAMETER_TIME_LENGTH)
@@ -234,13 +234,13 @@ inline bool QosPoliciesSerializer<ReliabilityQosPolicy>::read_content_from_cdr_m
         return false;
     }
     qos_policy.length = parameter_length;
-    bool valid = fastrtps::rtps::CDRMessage::readOctet(cdr_message,
-                    (fastrtps::rtps::octet*)&qos_policy.kind);
+    bool valid = fastdds::rtps::CDRMessage::readOctet(cdr_message,
+                    (fastdds::rtps::octet*)&qos_policy.kind);
     cdr_message->pos += 3; //padding
-    valid &= fastrtps::rtps::CDRMessage::readInt32(cdr_message,
+    valid &= fastdds::rtps::CDRMessage::readInt32(cdr_message,
                     &qos_policy.max_blocking_time.seconds);
     uint32_t frac(0);
-    valid &= fastrtps::rtps::CDRMessage::readUInt32(cdr_message, &frac);
+    valid &= fastdds::rtps::CDRMessage::readUInt32(cdr_message, &frac);
     qos_policy.max_blocking_time.fraction(frac);
     return valid;
 }
@@ -248,19 +248,19 @@ inline bool QosPoliciesSerializer<ReliabilityQosPolicy>::read_content_from_cdr_m
 template<>
 inline bool QosPoliciesSerializer<OwnershipQosPolicy>::add_content_to_cdr_message(
         const OwnershipQosPolicy& qos_policy,
-        fastrtps::rtps::CDRMessage_t* cdr_message)
+        fastdds::rtps::CDRMessage_t* cdr_message)
 {
-    bool valid = fastrtps::rtps::CDRMessage::addOctet(cdr_message, qos_policy.kind);
-    valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message, 0);
-    valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message, 0);
-    valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message, 0);
+    bool valid = fastdds::rtps::CDRMessage::addOctet(cdr_message, qos_policy.kind);
+    valid &= fastdds::rtps::CDRMessage::addOctet(cdr_message, 0);
+    valid &= fastdds::rtps::CDRMessage::addOctet(cdr_message, 0);
+    valid &= fastdds::rtps::CDRMessage::addOctet(cdr_message, 0);
     return valid;
 }
 
 template<>
 inline bool QosPoliciesSerializer<OwnershipQosPolicy>::read_content_from_cdr_message(
         OwnershipQosPolicy& qos_policy,
-        fastrtps::rtps::CDRMessage_t* cdr_message,
+        fastdds::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
     if (parameter_length != PARAMETER_KIND_LENGTH)
@@ -268,8 +268,8 @@ inline bool QosPoliciesSerializer<OwnershipQosPolicy>::read_content_from_cdr_mes
         return false;
     }
     qos_policy.length = parameter_length;
-    bool valid = fastrtps::rtps::CDRMessage::readOctet(cdr_message,
-                    (fastrtps::rtps::octet*)&qos_policy.kind);
+    bool valid = fastdds::rtps::CDRMessage::readOctet(cdr_message,
+                    (fastdds::rtps::octet*)&qos_policy.kind);
     cdr_message->pos += 3; //padding
     return valid;
 }
@@ -277,19 +277,19 @@ inline bool QosPoliciesSerializer<OwnershipQosPolicy>::read_content_from_cdr_mes
 template<>
 inline bool QosPoliciesSerializer<DestinationOrderQosPolicy>::add_content_to_cdr_message(
         const DestinationOrderQosPolicy& qos_policy,
-        fastrtps::rtps::CDRMessage_t* cdr_message)
+        fastdds::rtps::CDRMessage_t* cdr_message)
 {
-    bool valid = fastrtps::rtps::CDRMessage::addOctet(cdr_message, qos_policy.kind);
-    valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message, 0);
-    valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message, 0);
-    valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message, 0);
+    bool valid = fastdds::rtps::CDRMessage::addOctet(cdr_message, qos_policy.kind);
+    valid &= fastdds::rtps::CDRMessage::addOctet(cdr_message, 0);
+    valid &= fastdds::rtps::CDRMessage::addOctet(cdr_message, 0);
+    valid &= fastdds::rtps::CDRMessage::addOctet(cdr_message, 0);
     return valid;
 }
 
 template<>
 inline bool QosPoliciesSerializer<DestinationOrderQosPolicy>::read_content_from_cdr_message(
         DestinationOrderQosPolicy& qos_policy,
-        fastrtps::rtps::CDRMessage_t* cdr_message,
+        fastdds::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
     if (parameter_length != PARAMETER_KIND_LENGTH)
@@ -297,8 +297,8 @@ inline bool QosPoliciesSerializer<DestinationOrderQosPolicy>::read_content_from_
         return false;
     }
     qos_policy.length = parameter_length;
-    bool valid = fastrtps::rtps::CDRMessage::readOctet(cdr_message,
-                    (fastrtps::rtps::octet*)&qos_policy.kind);
+    bool valid = fastdds::rtps::CDRMessage::readOctet(cdr_message,
+                    (fastdds::rtps::octet*)&qos_policy.kind);
     cdr_message->pos += 3; //padding
     return valid;
 }
@@ -306,13 +306,13 @@ inline bool QosPoliciesSerializer<DestinationOrderQosPolicy>::read_content_from_
 template<>
 inline bool QosPoliciesSerializer<ResourceLimitsQosPolicy>::add_content_to_cdr_message(
         const ResourceLimitsQosPolicy& qos_policy,
-        fastrtps::rtps::CDRMessage_t* cdr_message)
+        fastdds::rtps::CDRMessage_t* cdr_message)
 {
-    bool valid = fastrtps::rtps::CDRMessage::addInt32(cdr_message,
+    bool valid = fastdds::rtps::CDRMessage::addInt32(cdr_message,
                     qos_policy.max_samples);
     valid &=
-            fastrtps::rtps::CDRMessage::addInt32(cdr_message, qos_policy.max_instances);
-    valid &= fastrtps::rtps::CDRMessage::addInt32(cdr_message,
+            fastdds::rtps::CDRMessage::addInt32(cdr_message, qos_policy.max_instances);
+    valid &= fastdds::rtps::CDRMessage::addInt32(cdr_message,
                     qos_policy.max_samples_per_instance);
     return valid;
 }
@@ -320,7 +320,7 @@ inline bool QosPoliciesSerializer<ResourceLimitsQosPolicy>::add_content_to_cdr_m
 template<>
 inline bool QosPoliciesSerializer<ResourceLimitsQosPolicy>::read_content_from_cdr_message(
         ResourceLimitsQosPolicy& qos_policy,
-        fastrtps::rtps::CDRMessage_t* cdr_message,
+        fastdds::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
     if (parameter_length != 12)
@@ -328,11 +328,11 @@ inline bool QosPoliciesSerializer<ResourceLimitsQosPolicy>::read_content_from_cd
         return false;
     }
     qos_policy.length = parameter_length;
-    bool valid = fastrtps::rtps::CDRMessage::readInt32(cdr_message,
+    bool valid = fastdds::rtps::CDRMessage::readInt32(cdr_message,
                     &qos_policy.max_samples);
-    valid &= fastrtps::rtps::CDRMessage::readInt32(cdr_message,
+    valid &= fastdds::rtps::CDRMessage::readInt32(cdr_message,
                     &qos_policy.max_instances);
-    valid &= fastrtps::rtps::CDRMessage::readInt32(cdr_message,
+    valid &= fastdds::rtps::CDRMessage::readInt32(cdr_message,
                     &qos_policy.max_samples_per_instance);
     return valid;
 }
@@ -340,13 +340,13 @@ inline bool QosPoliciesSerializer<ResourceLimitsQosPolicy>::read_content_from_cd
 template<>
 inline bool QosPoliciesSerializer<TimeBasedFilterQosPolicy>::add_content_to_cdr_message(
         const TimeBasedFilterQosPolicy& qos_policy,
-        fastrtps::rtps::CDRMessage_t* cdr_message)
+        fastdds::rtps::CDRMessage_t* cdr_message)
 {
     bool valid =
-            fastrtps::rtps::CDRMessage::addInt32(cdr_message,
+            fastdds::rtps::CDRMessage::addInt32(cdr_message,
                     qos_policy.minimum_separation.seconds);
     valid &=
-            fastrtps::rtps::CDRMessage::addUInt32(cdr_message,
+            fastdds::rtps::CDRMessage::addUInt32(cdr_message,
                     qos_policy.minimum_separation.fraction());
     return valid;
 }
@@ -354,7 +354,7 @@ inline bool QosPoliciesSerializer<TimeBasedFilterQosPolicy>::add_content_to_cdr_
 template<>
 inline bool QosPoliciesSerializer<TimeBasedFilterQosPolicy>::read_content_from_cdr_message(
         TimeBasedFilterQosPolicy& qos_policy,
-        fastrtps::rtps::CDRMessage_t* cdr_message,
+        fastdds::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
     if (parameter_length != PARAMETER_TIME_LENGTH)
@@ -362,10 +362,10 @@ inline bool QosPoliciesSerializer<TimeBasedFilterQosPolicy>::read_content_from_c
         return false;
     }
     qos_policy.length = parameter_length;
-    bool valid = fastrtps::rtps::CDRMessage::readInt32(cdr_message,
+    bool valid = fastdds::rtps::CDRMessage::readInt32(cdr_message,
                     &qos_policy.minimum_separation.seconds);
     uint32_t frac(0);
-    valid &= fastrtps::rtps::CDRMessage::readUInt32(cdr_message, &frac);
+    valid &= fastdds::rtps::CDRMessage::readUInt32(cdr_message, &frac);
     qos_policy.minimum_separation.fraction(frac);
     return valid;
 }
@@ -373,20 +373,20 @@ inline bool QosPoliciesSerializer<TimeBasedFilterQosPolicy>::read_content_from_c
 template<>
 inline bool QosPoliciesSerializer<PresentationQosPolicy>::add_content_to_cdr_message(
         const PresentationQosPolicy& qos_policy,
-        fastrtps::rtps::CDRMessage_t* cdr_message)
+        fastdds::rtps::CDRMessage_t* cdr_message)
 {
-    bool valid = fastrtps::rtps::CDRMessage::addOctet(cdr_message,
+    bool valid = fastdds::rtps::CDRMessage::addOctet(cdr_message,
                     qos_policy.access_scope);
-    valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message, 0);
-    valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message, 0);
-    valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message, 0);
+    valid &= fastdds::rtps::CDRMessage::addOctet(cdr_message, 0);
+    valid &= fastdds::rtps::CDRMessage::addOctet(cdr_message, 0);
+    valid &= fastdds::rtps::CDRMessage::addOctet(cdr_message, 0);
 
-    valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message,
-                    (fastrtps::rtps::octet)qos_policy.coherent_access);
-    valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message,
-                    (fastrtps::rtps::octet)qos_policy.ordered_access);
-    valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message, 0);
-    valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message, 0);
+    valid &= fastdds::rtps::CDRMessage::addOctet(cdr_message,
+                    (fastdds::rtps::octet)qos_policy.coherent_access);
+    valid &= fastdds::rtps::CDRMessage::addOctet(cdr_message,
+                    (fastdds::rtps::octet)qos_policy.ordered_access);
+    valid &= fastdds::rtps::CDRMessage::addOctet(cdr_message, 0);
+    valid &= fastdds::rtps::CDRMessage::addOctet(cdr_message, 0);
 
     return valid;
 }
@@ -394,7 +394,7 @@ inline bool QosPoliciesSerializer<PresentationQosPolicy>::add_content_to_cdr_mes
 template<>
 inline bool QosPoliciesSerializer<PresentationQosPolicy>::read_content_from_cdr_message(
         PresentationQosPolicy& qos_policy,
-        fastrtps::rtps::CDRMessage_t* cdr_message,
+        fastdds::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
     if (parameter_length != PARAMETER_PRESENTATION_LENGTH)
@@ -402,13 +402,13 @@ inline bool QosPoliciesSerializer<PresentationQosPolicy>::read_content_from_cdr_
         return false;
     }
     qos_policy.length = parameter_length;
-    bool valid = fastrtps::rtps::CDRMessage::readOctet(cdr_message,
-                    (fastrtps::rtps::octet*)&qos_policy.access_scope);
+    bool valid = fastdds::rtps::CDRMessage::readOctet(cdr_message,
+                    (fastdds::rtps::octet*)&qos_policy.access_scope);
     cdr_message->pos += 3; //padding
-    valid &= fastrtps::rtps::CDRMessage::readOctet(cdr_message,
-                    (fastrtps::rtps::octet*)&qos_policy.coherent_access);
-    valid &= fastrtps::rtps::CDRMessage::readOctet(cdr_message,
-                    (fastrtps::rtps::octet*)&qos_policy.ordered_access);
+    valid &= fastdds::rtps::CDRMessage::readOctet(cdr_message,
+                    (fastdds::rtps::octet*)&qos_policy.coherent_access);
+    valid &= fastdds::rtps::CDRMessage::readOctet(cdr_message,
+                    (fastdds::rtps::octet*)&qos_policy.ordered_access);
     cdr_message->pos += 2; //padding
     return valid;
 }
@@ -435,9 +435,9 @@ inline uint32_t QosPoliciesSerializer<PartitionQosPolicy>::cdr_serialized_size(
 template<>
 inline bool QosPoliciesSerializer<PartitionQosPolicy>::add_to_cdr_message(
         const PartitionQosPolicy& qos_policy,
-        fastrtps::rtps::CDRMessage_t* cdr_message)
+        fastdds::rtps::CDRMessage_t* cdr_message)
 {
-    bool valid = fastrtps::rtps::CDRMessage::addUInt16(cdr_message, qos_policy.Pid);
+    bool valid = fastdds::rtps::CDRMessage::addUInt16(cdr_message, qos_policy.Pid);
 
     //Obtain qos_policy.length:
     uint16_t len = 4;
@@ -447,13 +447,13 @@ inline bool QosPoliciesSerializer<PartitionQosPolicy>::add_to_cdr_message(
         len += static_cast<uint16_t>(it->size()); //Already accounts for null char
         len = (len + 3) & ~3;
     }
-    valid &= fastrtps::rtps::CDRMessage::addUInt16(cdr_message, len);
+    valid &= fastdds::rtps::CDRMessage::addUInt16(cdr_message, len);
 
-    valid &= fastrtps::rtps::CDRMessage::addUInt32(cdr_message,
+    valid &= fastdds::rtps::CDRMessage::addUInt32(cdr_message,
                     static_cast<uint32_t>(qos_policy.size()));
     for (PartitionQosPolicy::const_iterator it = qos_policy.begin(); it != qos_policy.end(); ++it)
     {
-        valid &= fastrtps::rtps::CDRMessage::add_string(cdr_message, it->name());
+        valid &= fastdds::rtps::CDRMessage::add_string(cdr_message, it->name());
     }
 
     return valid;
@@ -462,7 +462,7 @@ inline bool QosPoliciesSerializer<PartitionQosPolicy>::add_to_cdr_message(
 template<>
 inline bool QosPoliciesSerializer<PartitionQosPolicy>::read_content_from_cdr_message(
         PartitionQosPolicy& qos_policy,
-        fastrtps::rtps::CDRMessage_t* cdr_message,
+        fastdds::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
     if (qos_policy.max_size() != 0 && parameter_length > qos_policy.max_size() + 4)
@@ -473,14 +473,14 @@ inline bool QosPoliciesSerializer<PartitionQosPolicy>::read_content_from_cdr_mes
 
     uint32_t pos_ref = cdr_message->pos;
     uint32_t num_partitions = 0;
-    bool valid = fastrtps::rtps::CDRMessage::readUInt32(cdr_message, &num_partitions);
+    bool valid = fastdds::rtps::CDRMessage::readUInt32(cdr_message, &num_partitions);
     //partitions_.reserve(parameter_length - 4);
 
     for (size_t i = 0; i < num_partitions; ++i)
     {
         uint32_t partition_size, alignment;
 
-        valid &= fastrtps::rtps::CDRMessage::readUInt32(cdr_message, &partition_size);
+        valid &= fastdds::rtps::CDRMessage::readUInt32(cdr_message, &partition_size);
         if (!valid)
         {
             return false;
@@ -500,20 +500,20 @@ inline bool QosPoliciesSerializer<PartitionQosPolicy>::read_content_from_cdr_mes
 template<>
 inline bool QosPoliciesSerializer<HistoryQosPolicy>::add_content_to_cdr_message(
         const HistoryQosPolicy& qos_policy,
-        fastrtps::rtps::CDRMessage_t* cdr_message)
+        fastdds::rtps::CDRMessage_t* cdr_message)
 {
-    bool valid = fastrtps::rtps::CDRMessage::addOctet(cdr_message, qos_policy.kind);
-    valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message, 0);
-    valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message, 0);
-    valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message, 0);
-    valid &= fastrtps::rtps::CDRMessage::addInt32(cdr_message, qos_policy.depth);
+    bool valid = fastdds::rtps::CDRMessage::addOctet(cdr_message, qos_policy.kind);
+    valid &= fastdds::rtps::CDRMessage::addOctet(cdr_message, 0);
+    valid &= fastdds::rtps::CDRMessage::addOctet(cdr_message, 0);
+    valid &= fastdds::rtps::CDRMessage::addOctet(cdr_message, 0);
+    valid &= fastdds::rtps::CDRMessage::addInt32(cdr_message, qos_policy.depth);
     return valid;
 }
 
 template<>
 inline bool QosPoliciesSerializer<HistoryQosPolicy>::read_content_from_cdr_message(
         HistoryQosPolicy& qos_policy,
-        fastrtps::rtps::CDRMessage_t* cdr_message,
+        fastdds::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
     if (parameter_length != PARAMETER_KIND_LENGTH + 4)
@@ -521,36 +521,36 @@ inline bool QosPoliciesSerializer<HistoryQosPolicy>::read_content_from_cdr_messa
         return false;
     }
     qos_policy.length = parameter_length;
-    bool valid = fastrtps::rtps::CDRMessage::readOctet(cdr_message, (fastrtps::rtps::octet*)&qos_policy.kind);
+    bool valid = fastdds::rtps::CDRMessage::readOctet(cdr_message, (fastdds::rtps::octet*)&qos_policy.kind);
     cdr_message->pos += 3; //padding
-    valid &= fastrtps::rtps::CDRMessage::readInt32(cdr_message, &qos_policy.depth);
+    valid &= fastdds::rtps::CDRMessage::readInt32(cdr_message, &qos_policy.depth);
     return valid;
 }
 
 template<>
 inline bool QosPoliciesSerializer<DurabilityServiceQosPolicy>::add_content_to_cdr_message(
         const DurabilityServiceQosPolicy& qos_policy,
-        fastrtps::rtps::CDRMessage_t* cdr_message)
+        fastdds::rtps::CDRMessage_t* cdr_message)
 {
-    bool valid = fastrtps::rtps::CDRMessage::addInt32(cdr_message,
+    bool valid = fastdds::rtps::CDRMessage::addInt32(cdr_message,
                     qos_policy.service_cleanup_delay.seconds);
-    valid &= fastrtps::rtps::CDRMessage::addUInt32(cdr_message,
+    valid &= fastdds::rtps::CDRMessage::addUInt32(cdr_message,
                     qos_policy.service_cleanup_delay.fraction());
-    valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message, qos_policy.history_kind);
-    valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message, 0);
-    valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message, 0);
-    valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message, 0);
-    valid &= fastrtps::rtps::CDRMessage::addInt32(cdr_message, qos_policy.history_depth);
-    valid &= fastrtps::rtps::CDRMessage::addInt32(cdr_message, qos_policy.max_samples);
-    valid &= fastrtps::rtps::CDRMessage::addInt32(cdr_message, qos_policy.max_instances);
-    valid &= fastrtps::rtps::CDRMessage::addInt32(cdr_message, qos_policy.max_samples_per_instance);
+    valid &= fastdds::rtps::CDRMessage::addOctet(cdr_message, qos_policy.history_kind);
+    valid &= fastdds::rtps::CDRMessage::addOctet(cdr_message, 0);
+    valid &= fastdds::rtps::CDRMessage::addOctet(cdr_message, 0);
+    valid &= fastdds::rtps::CDRMessage::addOctet(cdr_message, 0);
+    valid &= fastdds::rtps::CDRMessage::addInt32(cdr_message, qos_policy.history_depth);
+    valid &= fastdds::rtps::CDRMessage::addInt32(cdr_message, qos_policy.max_samples);
+    valid &= fastdds::rtps::CDRMessage::addInt32(cdr_message, qos_policy.max_instances);
+    valid &= fastdds::rtps::CDRMessage::addInt32(cdr_message, qos_policy.max_samples_per_instance);
     return valid;
 }
 
 template<>
 inline bool QosPoliciesSerializer<DurabilityServiceQosPolicy>::read_content_from_cdr_message(
         DurabilityServiceQosPolicy& qos_policy,
-        fastrtps::rtps::CDRMessage_t* cdr_message,
+        fastdds::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
     if (parameter_length != PARAMETER_TIME_LENGTH + PARAMETER_KIND_LENGTH + 16)
@@ -558,34 +558,34 @@ inline bool QosPoliciesSerializer<DurabilityServiceQosPolicy>::read_content_from
         return false;
     }
     qos_policy.length = parameter_length;
-    bool valid = fastrtps::rtps::CDRMessage::readInt32(cdr_message,
+    bool valid = fastdds::rtps::CDRMessage::readInt32(cdr_message,
                     &qos_policy.service_cleanup_delay.seconds);
     uint32_t frac(0);
-    valid &= fastrtps::rtps::CDRMessage::readUInt32(cdr_message, &frac);
+    valid &= fastdds::rtps::CDRMessage::readUInt32(cdr_message, &frac);
     qos_policy.service_cleanup_delay.fraction(frac);
-    valid &= fastrtps::rtps::CDRMessage::readOctet(cdr_message, (fastrtps::rtps::octet*)&qos_policy.history_kind);
+    valid &= fastdds::rtps::CDRMessage::readOctet(cdr_message, (fastdds::rtps::octet*)&qos_policy.history_kind);
     cdr_message->pos += 3; //padding
-    valid &= fastrtps::rtps::CDRMessage::readInt32(cdr_message, &qos_policy.history_depth);
-    valid &= fastrtps::rtps::CDRMessage::readInt32(cdr_message, &qos_policy.max_samples);
-    valid &= fastrtps::rtps::CDRMessage::readInt32(cdr_message, &qos_policy.max_instances);
-    valid &= fastrtps::rtps::CDRMessage::readInt32(cdr_message, &qos_policy.max_samples_per_instance);
+    valid &= fastdds::rtps::CDRMessage::readInt32(cdr_message, &qos_policy.history_depth);
+    valid &= fastdds::rtps::CDRMessage::readInt32(cdr_message, &qos_policy.max_samples);
+    valid &= fastdds::rtps::CDRMessage::readInt32(cdr_message, &qos_policy.max_instances);
+    valid &= fastdds::rtps::CDRMessage::readInt32(cdr_message, &qos_policy.max_samples_per_instance);
     return valid;
 }
 
 template<>
 inline bool QosPoliciesSerializer<LifespanQosPolicy>::add_content_to_cdr_message(
         const LifespanQosPolicy& qos_policy,
-        fastrtps::rtps::CDRMessage_t* cdr_message)
+        fastdds::rtps::CDRMessage_t* cdr_message)
 {
-    bool valid = fastrtps::rtps::CDRMessage::addInt32(cdr_message, qos_policy.duration.seconds);
-    valid &= fastrtps::rtps::CDRMessage::addUInt32(cdr_message, qos_policy.duration.fraction());
+    bool valid = fastdds::rtps::CDRMessage::addInt32(cdr_message, qos_policy.duration.seconds);
+    valid &= fastdds::rtps::CDRMessage::addUInt32(cdr_message, qos_policy.duration.fraction());
     return valid;
 }
 
 template<>
 inline bool QosPoliciesSerializer<LifespanQosPolicy>::read_content_from_cdr_message(
         LifespanQosPolicy& qos_policy,
-        fastrtps::rtps::CDRMessage_t* cdr_message,
+        fastdds::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
     if (parameter_length != PARAMETER_TIME_LENGTH)
@@ -593,9 +593,9 @@ inline bool QosPoliciesSerializer<LifespanQosPolicy>::read_content_from_cdr_mess
         return false;
     }
     qos_policy.length = parameter_length;
-    bool valid = fastrtps::rtps::CDRMessage::readInt32(cdr_message, &qos_policy.duration.seconds);
+    bool valid = fastdds::rtps::CDRMessage::readInt32(cdr_message, &qos_policy.duration.seconds);
     uint32_t frac(0);
-    valid &= fastrtps::rtps::CDRMessage::readUInt32(cdr_message, &frac);
+    valid &= fastdds::rtps::CDRMessage::readUInt32(cdr_message, &frac);
     qos_policy.duration.fraction(frac);
     return valid;
 }
@@ -603,16 +603,16 @@ inline bool QosPoliciesSerializer<LifespanQosPolicy>::read_content_from_cdr_mess
 template<>
 inline bool QosPoliciesSerializer<OwnershipStrengthQosPolicy>::add_content_to_cdr_message(
         const OwnershipStrengthQosPolicy& qos_policy,
-        fastrtps::rtps::CDRMessage_t* cdr_message)
+        fastdds::rtps::CDRMessage_t* cdr_message)
 {
-    bool valid = fastrtps::rtps::CDRMessage::addUInt32(cdr_message, qos_policy.value);
+    bool valid = fastdds::rtps::CDRMessage::addUInt32(cdr_message, qos_policy.value);
     return valid;
 }
 
 template<>
 inline bool QosPoliciesSerializer<OwnershipStrengthQosPolicy>::read_content_from_cdr_message(
         OwnershipStrengthQosPolicy& qos_policy,
-        fastrtps::rtps::CDRMessage_t* cdr_message,
+        fastdds::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
     if (parameter_length != 4)
@@ -620,22 +620,22 @@ inline bool QosPoliciesSerializer<OwnershipStrengthQosPolicy>::read_content_from
         return false;
     }
     qos_policy.length = parameter_length;
-    return fastrtps::rtps::CDRMessage::readUInt32(cdr_message, &qos_policy.value);
+    return fastdds::rtps::CDRMessage::readUInt32(cdr_message, &qos_policy.value);
 }
 
 template<>
 inline bool QosPoliciesSerializer<TransportPriorityQosPolicy>::add_content_to_cdr_message(
         const TransportPriorityQosPolicy& qos_policy,
-        fastrtps::rtps::CDRMessage_t* cdr_message)
+        fastdds::rtps::CDRMessage_t* cdr_message)
 {
-    bool valid = fastrtps::rtps::CDRMessage::addUInt32(cdr_message, qos_policy.value);
+    bool valid = fastdds::rtps::CDRMessage::addUInt32(cdr_message, qos_policy.value);
     return valid;
 }
 
 template<>
 inline bool QosPoliciesSerializer<TransportPriorityQosPolicy>::read_content_from_cdr_message(
         TransportPriorityQosPolicy& qos_policy,
-        fastrtps::rtps::CDRMessage_t* cdr_message,
+        fastdds::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
     if (parameter_length != 4)
@@ -643,7 +643,7 @@ inline bool QosPoliciesSerializer<TransportPriorityQosPolicy>::read_content_from
         return false;
     }
     qos_policy.length = parameter_length;
-    return fastrtps::rtps::CDRMessage::readUInt32(cdr_message, &qos_policy.value);
+    return fastdds::rtps::CDRMessage::readUInt32(cdr_message, &qos_policy.value);
 }
 
 template<>
@@ -661,24 +661,24 @@ inline uint32_t QosPoliciesSerializer<DataRepresentationQosPolicy>::cdr_serializ
 template<>
 inline bool QosPoliciesSerializer<DataRepresentationQosPolicy>::add_to_cdr_message(
         const DataRepresentationQosPolicy& qos_policy,
-        fastrtps::rtps::CDRMessage_t* cdr_message)
+        fastdds::rtps::CDRMessage_t* cdr_message)
 {
-    bool valid = fastrtps::rtps::CDRMessage::addUInt16(cdr_message, qos_policy.Pid);
+    bool valid = fastdds::rtps::CDRMessage::addUInt16(cdr_message, qos_policy.Pid);
 
     uint16_t len = static_cast<uint16_t>(qos_policy.m_value.size() * sizeof(uint16_t)) + 4;
     len = (len + 3) & ~3;
 
-    valid &= fastrtps::rtps::CDRMessage::addUInt16(cdr_message, len);
+    valid &= fastdds::rtps::CDRMessage::addUInt16(cdr_message, len);
     valid &=
-            fastrtps::rtps::CDRMessage::addUInt32(cdr_message,
+            fastdds::rtps::CDRMessage::addUInt32(cdr_message,
                     static_cast<uint32_t>(qos_policy.m_value.size()));
     for (const DataRepresentationId_t& id : qos_policy.m_value)
     {
-        valid &= fastrtps::rtps::CDRMessage::addUInt16(cdr_message, static_cast<uint16_t>(id));
+        valid &= fastdds::rtps::CDRMessage::addUInt16(cdr_message, static_cast<uint16_t>(id));
     }
     if (qos_policy.m_value.size() % 2 == 1) // Odd, we must align
     {
-        valid &= fastrtps::rtps::CDRMessage::addUInt16(cdr_message, uint16_t(0));
+        valid &= fastdds::rtps::CDRMessage::addUInt16(cdr_message, uint16_t(0));
     }
     return valid;
 }
@@ -686,17 +686,17 @@ inline bool QosPoliciesSerializer<DataRepresentationQosPolicy>::add_to_cdr_messa
 template<>
 inline bool QosPoliciesSerializer<DataRepresentationQosPolicy>::read_content_from_cdr_message(
         DataRepresentationQosPolicy& qos_policy,
-        fastrtps::rtps::CDRMessage_t* cdr_message,
+        fastdds::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
     qos_policy.length = parameter_length;
 
     int16_t temp(0);
     uint32_t datasize(0);
-    bool valid = fastrtps::rtps::CDRMessage::readUInt32(cdr_message, &datasize);
+    bool valid = fastdds::rtps::CDRMessage::readUInt32(cdr_message, &datasize);
     for (uint32_t i = 0; i < datasize; ++i)
     {
-        valid &= fastrtps::rtps::CDRMessage::readInt16(cdr_message, &temp);
+        valid &= fastdds::rtps::CDRMessage::readInt16(cdr_message, &temp);
         qos_policy.m_value.push_back(static_cast<DataRepresentationId_t>(temp));
     }
     return valid;
@@ -705,32 +705,32 @@ inline bool QosPoliciesSerializer<DataRepresentationQosPolicy>::read_content_fro
 template<>
 inline bool QosPoliciesSerializer<TypeConsistencyEnforcementQosPolicy>::add_content_to_cdr_message(
         const TypeConsistencyEnforcementQosPolicy& qos_policy,
-        fastrtps::rtps::CDRMessage_t* cdr_message)
+        fastdds::rtps::CDRMessage_t* cdr_message)
 {
-    bool valid = fastrtps::rtps::CDRMessage::addUInt16(cdr_message, qos_policy.m_kind);
+    bool valid = fastdds::rtps::CDRMessage::addUInt16(cdr_message, qos_policy.m_kind);
     valid &=
-            fastrtps::rtps::CDRMessage::addOctet(cdr_message,
-                    static_cast<fastrtps::rtps::octet>(qos_policy.m_ignore_sequence_bounds));
+            fastdds::rtps::CDRMessage::addOctet(cdr_message,
+                    static_cast<fastdds::rtps::octet>(qos_policy.m_ignore_sequence_bounds));
     valid &=
-            fastrtps::rtps::CDRMessage::addOctet(cdr_message,
-                    static_cast<fastrtps::rtps::octet>(qos_policy.m_ignore_string_bounds));
+            fastdds::rtps::CDRMessage::addOctet(cdr_message,
+                    static_cast<fastdds::rtps::octet>(qos_policy.m_ignore_string_bounds));
     valid &=
-            fastrtps::rtps::CDRMessage::addOctet(cdr_message,
-                    static_cast<fastrtps::rtps::octet>(qos_policy.m_ignore_member_names));
+            fastdds::rtps::CDRMessage::addOctet(cdr_message,
+                    static_cast<fastdds::rtps::octet>(qos_policy.m_ignore_member_names));
     valid &=
-            fastrtps::rtps::CDRMessage::addOctet(cdr_message,
-                    static_cast<fastrtps::rtps::octet>(qos_policy.m_prevent_type_widening));
+            fastdds::rtps::CDRMessage::addOctet(cdr_message,
+                    static_cast<fastdds::rtps::octet>(qos_policy.m_prevent_type_widening));
     valid &=
-            fastrtps::rtps::CDRMessage::addOctet(cdr_message,
-                    static_cast<fastrtps::rtps::octet>(qos_policy.m_force_type_validation));
-    valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message, fastrtps::rtps::octet(0x00)); // 8th byte
+            fastdds::rtps::CDRMessage::addOctet(cdr_message,
+                    static_cast<fastdds::rtps::octet>(qos_policy.m_force_type_validation));
+    valid &= fastdds::rtps::CDRMessage::addOctet(cdr_message, fastdds::rtps::octet(0x00)); // 8th byte
     return valid;
 }
 
 template<>
 inline bool QosPoliciesSerializer<TypeConsistencyEnforcementQosPolicy>::read_content_from_cdr_message(
         TypeConsistencyEnforcementQosPolicy& qos_policy,
-        fastrtps::rtps::CDRMessage_t* cdr_message,
+        fastdds::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
     if (parameter_length < 2)
@@ -739,43 +739,43 @@ inline bool QosPoliciesSerializer<TypeConsistencyEnforcementQosPolicy>::read_con
     }
 
     uint16_t uKind(0);
-    fastrtps::rtps::octet temp(0);
+    fastdds::rtps::octet temp(0);
     qos_policy.m_ignore_sequence_bounds = false;
     qos_policy.m_ignore_string_bounds = false;
     qos_policy.m_ignore_member_names = false;
     qos_policy.m_prevent_type_widening = false;
     qos_policy.m_force_type_validation = false;
 
-    bool valid = fastrtps::rtps::CDRMessage::readUInt16(cdr_message, &uKind);
+    bool valid = fastdds::rtps::CDRMessage::readUInt16(cdr_message, &uKind);
     qos_policy.m_kind = static_cast<TypeConsistencyKind>(uKind);
 
     if (parameter_length >= 3)
     {
-        valid &= fastrtps::rtps::CDRMessage::readOctet(cdr_message, &temp);
+        valid &= fastdds::rtps::CDRMessage::readOctet(cdr_message, &temp);
         qos_policy.m_ignore_sequence_bounds = temp == 0 ? false : true;
     }
 
     if (valid && parameter_length >= 4)
     {
-        valid &= fastrtps::rtps::CDRMessage::readOctet(cdr_message, &temp);
+        valid &= fastdds::rtps::CDRMessage::readOctet(cdr_message, &temp);
         qos_policy.m_ignore_string_bounds = temp == 0 ? false : true;
     }
 
     if (valid && parameter_length >= 5)
     {
-        valid &= fastrtps::rtps::CDRMessage::readOctet(cdr_message, &temp);
+        valid &= fastdds::rtps::CDRMessage::readOctet(cdr_message, &temp);
         qos_policy.m_ignore_member_names = temp == 0 ? false : true;
     }
 
     if (valid && parameter_length >= 6)
     {
-        valid &= fastrtps::rtps::CDRMessage::readOctet(cdr_message, &temp);
+        valid &= fastdds::rtps::CDRMessage::readOctet(cdr_message, &temp);
         qos_policy.m_prevent_type_widening = temp == 0 ? false : true;
     }
 
     if (valid && parameter_length >= 7)
     {
-        valid &= fastrtps::rtps::CDRMessage::readOctet(cdr_message, &temp);
+        valid &= fastdds::rtps::CDRMessage::readOctet(cdr_message, &temp);
         qos_policy.m_force_type_validation = temp == 0 ? false : true;
     }
 
@@ -785,19 +785,19 @@ inline bool QosPoliciesSerializer<TypeConsistencyEnforcementQosPolicy>::read_con
 template<>
 inline bool QosPoliciesSerializer<DisablePositiveACKsQosPolicy>::add_content_to_cdr_message(
         const DisablePositiveACKsQosPolicy&,
-        fastrtps::rtps::CDRMessage_t* cdr_message)
+        fastdds::rtps::CDRMessage_t* cdr_message)
 {
-    bool valid = fastrtps::rtps::CDRMessage::addOctet(cdr_message, (fastrtps::rtps::octet)0x01);
-    valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message, (fastrtps::rtps::octet)0x00);
-    valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message, (fastrtps::rtps::octet)0x00);
-    valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message, (fastrtps::rtps::octet)0x00);
+    bool valid = fastdds::rtps::CDRMessage::addOctet(cdr_message, (fastdds::rtps::octet)0x01);
+    valid &= fastdds::rtps::CDRMessage::addOctet(cdr_message, (fastdds::rtps::octet)0x00);
+    valid &= fastdds::rtps::CDRMessage::addOctet(cdr_message, (fastdds::rtps::octet)0x00);
+    valid &= fastdds::rtps::CDRMessage::addOctet(cdr_message, (fastdds::rtps::octet)0x00);
     return valid;
 }
 
 template<>
 inline bool QosPoliciesSerializer<DisablePositiveACKsQosPolicy>::read_content_from_cdr_message(
         DisablePositiveACKsQosPolicy& qos_policy,
-        fastrtps::rtps::CDRMessage_t* cdr_message,
+        fastdds::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
     if (parameter_length != PARAMETER_BOOL_LENGTH)
@@ -805,8 +805,8 @@ inline bool QosPoliciesSerializer<DisablePositiveACKsQosPolicy>::read_content_fr
         return false;
     }
     qos_policy.length = parameter_length;
-    fastrtps::rtps::octet value(0);
-    bool valid = fastrtps::rtps::CDRMessage::readOctet(cdr_message, &value);
+    fastdds::rtps::octet value(0);
+    bool valid = fastdds::rtps::CDRMessage::readOctet(cdr_message, &value);
     qos_policy.enabled = (value == 0) ? false : true;
     cdr_message->pos += 3; //padding
     return valid;
@@ -825,21 +825,21 @@ inline uint32_t QosPoliciesSerializer<DataSharingQosPolicy>::cdr_serialized_size
 template<>
 inline bool QosPoliciesSerializer<DataSharingQosPolicy>::add_to_cdr_message(
         const DataSharingQosPolicy& qos_policy,
-        fastrtps::rtps::CDRMessage_t* cdr_message)
+        fastdds::rtps::CDRMessage_t* cdr_message)
 {
-    bool valid = fastrtps::rtps::CDRMessage::addUInt16(cdr_message, qos_policy.Pid);
+    bool valid = fastdds::rtps::CDRMessage::addUInt16(cdr_message, qos_policy.Pid);
 
     //Obtain qos_policy.length: str_length + str_data
 
     uint16_t len = 4 + static_cast<uint16_t>(qos_policy.domain_ids().size()) * 8;
-    valid &= fastrtps::rtps::CDRMessage::addUInt16(cdr_message, len);
+    valid &= fastdds::rtps::CDRMessage::addUInt16(cdr_message, len);
 
     //Add the values:
-    valid &= fastrtps::rtps::CDRMessage::addUInt32(cdr_message,
+    valid &= fastdds::rtps::CDRMessage::addUInt32(cdr_message,
                     static_cast<uint32_t>(qos_policy.domain_ids().size()));
     for (uint64_t id : qos_policy.domain_ids())
     {
-        valid &= fastrtps::rtps::CDRMessage::addUInt64(cdr_message, id);
+        valid &= fastdds::rtps::CDRMessage::addUInt64(cdr_message, id);
     }
 
     return valid;
@@ -848,7 +848,7 @@ inline bool QosPoliciesSerializer<DataSharingQosPolicy>::add_to_cdr_message(
 template<>
 inline bool QosPoliciesSerializer<DataSharingQosPolicy>::read_content_from_cdr_message(
         DataSharingQosPolicy& qos_policy,
-        fastrtps::rtps::CDRMessage_t* cdr_message,
+        fastdds::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
     qos_policy.length = parameter_length;
@@ -858,7 +858,7 @@ inline bool QosPoliciesSerializer<DataSharingQosPolicy>::read_content_from_cdr_m
     qos_policy.on(".");
 
     uint32_t num_domains = 0;
-    bool valid = fastrtps::rtps::CDRMessage::readUInt32(cdr_message, &num_domains);
+    bool valid = fastdds::rtps::CDRMessage::readUInt32(cdr_message, &num_domains);
 
     if (!valid || (qos_policy.max_domains() != 0 && num_domains > qos_policy.max_domains()))
     {
@@ -868,7 +868,7 @@ inline bool QosPoliciesSerializer<DataSharingQosPolicy>::read_content_from_cdr_m
     for (size_t i = 0; i < num_domains; ++i)
     {
         uint64_t domain {0};
-        valid &= fastrtps::rtps::CDRMessage::readUInt64(cdr_message, &domain);
+        valid &= fastdds::rtps::CDRMessage::readUInt64(cdr_message, &domain);
         qos_policy.add_domain_id(domain);
     }
 
@@ -890,13 +890,13 @@ inline uint32_t QosPoliciesSerializer<TypeIdV1>::cdr_serialized_size(
 template<>
 inline bool QosPoliciesSerializer<TypeIdV1>::add_to_cdr_message(
         const TypeIdV1& qos_policy,
-        fastrtps::rtps::CDRMessage_t* cdr_message)
+        fastdds::rtps::CDRMessage_t* cdr_message)
 {
     eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     size_t current_alignment {0};
     size_t size = calculator.calculate_serialized_size(qos_policy.m_type_identifier, current_alignment)
-            + eprosima::fastrtps::rtps::SerializedPayload_t::representation_header_size;
-    fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(size));
+            + eprosima::fastdds::rtps::SerializedPayload_t::representation_header_size;
+    fastdds::rtps::SerializedPayload_t payload(static_cast<uint32_t>(size));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
 
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
@@ -914,13 +914,13 @@ inline bool QosPoliciesSerializer<TypeIdV1>::add_to_cdr_message(
     size = (ser.get_serialized_data_length() + 3) & ~3;
 #endif // FASTCDR_VERSION_MAJOR == 1
 
-    bool valid = fastrtps::rtps::CDRMessage::addUInt16(cdr_message, qos_policy.Pid);
-    valid &= fastrtps::rtps::CDRMessage::addUInt16(cdr_message, static_cast<uint16_t>(size));
-    valid &= fastrtps::rtps::CDRMessage::addData(cdr_message, payload.data, payload.length);
+    bool valid = fastdds::rtps::CDRMessage::addUInt16(cdr_message, qos_policy.Pid);
+    valid &= fastdds::rtps::CDRMessage::addUInt16(cdr_message, static_cast<uint16_t>(size));
+    valid &= fastdds::rtps::CDRMessage::addData(cdr_message, payload.data, payload.length);
 
     for (uint32_t count = payload.length; count < size; ++count)
     {
-        valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message, 0);
+        valid &= fastdds::rtps::CDRMessage::addOctet(cdr_message, 0);
     }
 
     return valid;
@@ -929,13 +929,13 @@ inline bool QosPoliciesSerializer<TypeIdV1>::add_to_cdr_message(
 template<>
 inline bool QosPoliciesSerializer<TypeIdV1>::read_content_from_cdr_message(
         TypeIdV1& qos_policy,
-        fastrtps::rtps::CDRMessage_t* cdr_message,
+        fastdds::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
-    fastrtps::rtps::SerializedPayload_t payload(parameter_length);
+    fastdds::rtps::SerializedPayload_t payload(parameter_length);
     eprosima::fastcdr::FastBuffer fastbuffer((char*)payload.data, parameter_length);
 
-    fastrtps::rtps::CDRMessage::readData(cdr_message, payload.data, parameter_length); // Object that manages the raw buffer.
+    fastdds::rtps::CDRMessage::readData(cdr_message, payload.data, parameter_length); // Object that manages the raw buffer.
 
     eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN
 #if FASTCDR_VERSION_MAJOR == 1
@@ -972,13 +972,13 @@ inline uint32_t QosPoliciesSerializer<TypeObjectV1>::cdr_serialized_size(
 template<>
 inline bool QosPoliciesSerializer<TypeObjectV1>::add_to_cdr_message(
         const TypeObjectV1& qos_policy,
-        fastrtps::rtps::CDRMessage_t* cdr_message)
+        fastdds::rtps::CDRMessage_t* cdr_message)
 {
     eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     size_t current_alignment {0};
     size_t size = calculator.calculate_serialized_size(qos_policy.m_type_object, current_alignment)
-            + eprosima::fastrtps::rtps::SerializedPayload_t::representation_header_size;
-    fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(size));
+            + eprosima::fastdds::rtps::SerializedPayload_t::representation_header_size;
+    fastdds::rtps::SerializedPayload_t payload(static_cast<uint32_t>(size));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
 
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
@@ -996,13 +996,13 @@ inline bool QosPoliciesSerializer<TypeObjectV1>::add_to_cdr_message(
     size = (ser.get_serialized_data_length() + 3) & ~3;
 #endif // FASTCDR_VERSION_MAJOR == 1
 
-    bool valid = fastrtps::rtps::CDRMessage::addUInt16(cdr_message, qos_policy.Pid);
-    valid &= fastrtps::rtps::CDRMessage::addUInt16(cdr_message, static_cast<uint16_t>(size));
-    valid &= fastrtps::rtps::CDRMessage::addData(cdr_message, payload.data, payload.length);
+    bool valid = fastdds::rtps::CDRMessage::addUInt16(cdr_message, qos_policy.Pid);
+    valid &= fastdds::rtps::CDRMessage::addUInt16(cdr_message, static_cast<uint16_t>(size));
+    valid &= fastdds::rtps::CDRMessage::addData(cdr_message, payload.data, payload.length);
 
     for (uint32_t count = payload.length; count < size; ++count)
     {
-        valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message, 0);
+        valid &= fastdds::rtps::CDRMessage::addOctet(cdr_message, 0);
     }
 
     return valid;
@@ -1011,13 +1011,13 @@ inline bool QosPoliciesSerializer<TypeObjectV1>::add_to_cdr_message(
 template<>
 inline bool QosPoliciesSerializer<TypeObjectV1>::read_content_from_cdr_message(
         TypeObjectV1& qos_policy,
-        fastrtps::rtps::CDRMessage_t* cdr_message,
+        fastdds::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
-    fastrtps::rtps::SerializedPayload_t payload(parameter_length);
+    fastdds::rtps::SerializedPayload_t payload(parameter_length);
     eprosima::fastcdr::FastBuffer fastbuffer((char*)payload.data, parameter_length);
 
-    fastrtps::rtps::CDRMessage::readData(cdr_message, payload.data, parameter_length); // Object that manages the raw buffer.
+    fastdds::rtps::CDRMessage::readData(cdr_message, payload.data, parameter_length); // Object that manages the raw buffer.
 
     eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN
 #if FASTCDR_VERSION_MAJOR == 1
@@ -1054,14 +1054,14 @@ inline uint32_t QosPoliciesSerializer<xtypes::TypeInformationParameter>::cdr_ser
 template<>
 inline bool QosPoliciesSerializer<xtypes::TypeInformationParameter>::add_to_cdr_message(
         const xtypes::TypeInformationParameter& qos_policy,
-        fastrtps::rtps::CDRMessage_t* cdr_message)
+        fastdds::rtps::CDRMessage_t* cdr_message)
 {
     eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
     size_t current_alignment {0};
     size_t size =
             calculator.calculate_serialized_size(qos_policy.type_information,
-                    current_alignment) + eprosima::fastrtps::rtps::SerializedPayload_t::representation_header_size;
-    fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(size));
+                    current_alignment) + eprosima::fastdds::rtps::SerializedPayload_t::representation_header_size;
+    fastdds::rtps::SerializedPayload_t payload(static_cast<uint32_t>(size));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
 
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
@@ -1079,13 +1079,13 @@ inline bool QosPoliciesSerializer<xtypes::TypeInformationParameter>::add_to_cdr_
     size = (ser.get_serialized_data_length() + 3) & ~3;
 #endif // FASTCDR_VERSION_MAJOR == 1
 
-    bool valid = fastrtps::rtps::CDRMessage::addUInt16(cdr_message, qos_policy.Pid);
-    valid &= fastrtps::rtps::CDRMessage::addUInt16(cdr_message, static_cast<uint16_t>(size));
-    valid &= fastrtps::rtps::CDRMessage::addData(cdr_message, payload.data, payload.length);
+    bool valid = fastdds::rtps::CDRMessage::addUInt16(cdr_message, qos_policy.Pid);
+    valid &= fastdds::rtps::CDRMessage::addUInt16(cdr_message, static_cast<uint16_t>(size));
+    valid &= fastdds::rtps::CDRMessage::addData(cdr_message, payload.data, payload.length);
 
     for (uint32_t count = payload.length; count < size; ++count)
     {
-        valid &= fastrtps::rtps::CDRMessage::addOctet(cdr_message, 0);
+        valid &= fastdds::rtps::CDRMessage::addOctet(cdr_message, 0);
     }
 
     return valid;
@@ -1094,13 +1094,13 @@ inline bool QosPoliciesSerializer<xtypes::TypeInformationParameter>::add_to_cdr_
 template<>
 inline bool QosPoliciesSerializer<xtypes::TypeInformationParameter>::read_content_from_cdr_message(
         xtypes::TypeInformationParameter& qos_policy,
-        fastrtps::rtps::CDRMessage_t* cdr_message,
+        fastdds::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
-    fastrtps::rtps::SerializedPayload_t payload(parameter_length);
+    fastdds::rtps::SerializedPayload_t payload(parameter_length);
     eprosima::fastcdr::FastBuffer fastbuffer((char*)payload.data, parameter_length);
 
-    fastrtps::rtps::CDRMessage::readData(cdr_message, payload.data, parameter_length); // Object that manages the raw buffer.
+    fastdds::rtps::CDRMessage::readData(cdr_message, payload.data, parameter_length); // Object that manages the raw buffer.
 
     eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             eprosima::fastcdr::CdrVersion::XCDRv2);
@@ -1132,27 +1132,27 @@ inline uint32_t QosPoliciesSerializer<GenericDataQosPolicy>::cdr_serialized_size
 template<>
 inline bool QosPoliciesSerializer<GenericDataQosPolicy>::add_to_cdr_message(
         const GenericDataQosPolicy& qos_policy,
-        fastrtps::rtps::CDRMessage_t* cdr_message)
+        fastdds::rtps::CDRMessage_t* cdr_message)
 {
-    bool valid = fastrtps::rtps::CDRMessage::addUInt16(cdr_message, qos_policy.Pid);
+    bool valid = fastdds::rtps::CDRMessage::addUInt16(cdr_message, qos_policy.Pid);
     uint16_t siz = static_cast<uint16_t>(qos_policy.size());
     siz = (siz + 3) & ~3;
-    valid &= fastrtps::rtps::CDRMessage::addUInt16(cdr_message, static_cast<uint16_t>(4 + siz));
-    valid &= fastrtps::rtps::CDRMessage::addOctetVector(cdr_message, &qos_policy.data_vec(), true);
+    valid &= fastdds::rtps::CDRMessage::addUInt16(cdr_message, static_cast<uint16_t>(4 + siz));
+    valid &= fastdds::rtps::CDRMessage::addOctetVector(cdr_message, &qos_policy.data_vec(), true);
     return valid;
 }
 
 template<>
 inline bool QosPoliciesSerializer<GenericDataQosPolicy>::read_content_from_cdr_message(
         GenericDataQosPolicy& qos_policy,
-        fastrtps::rtps::CDRMessage_t* cdr_message,
+        fastdds::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
     uint32_t pos_ref = cdr_message->pos;
 
     // Read size of data
     uint32_t len;
-    if (!fastrtps::rtps::CDRMessage::readUInt32(cdr_message, &len))
+    if (!fastdds::rtps::CDRMessage::readUInt32(cdr_message, &len))
     {
         return false;
     }
@@ -1166,7 +1166,7 @@ inline bool QosPoliciesSerializer<GenericDataQosPolicy>::read_content_from_cdr_m
     // Either the data is size limited and already has max_size() allocated
     // or it is not limited and we resize if needed
     qos_policy.resize(len);
-    if (!fastrtps::rtps::CDRMessage::readData(cdr_message, qos_policy.data(), len))
+    if (!fastdds::rtps::CDRMessage::readData(cdr_message, qos_policy.data(), len))
     {
         return false;
     }
@@ -1196,7 +1196,7 @@ inline uint32_t QosPoliciesSerializer<UserDataQosPolicy>::cdr_serialized_size(
 template<>
 inline bool QosPoliciesSerializer<UserDataQosPolicy>::add_to_cdr_message(
         const UserDataQosPolicy& qos_policy,
-        fastrtps::rtps::CDRMessage_t* cdr_message)
+        fastdds::rtps::CDRMessage_t* cdr_message)
 {
     return QosPoliciesSerializer<GenericDataQosPolicy>::add_to_cdr_message(qos_policy, cdr_message);
 }
@@ -1204,7 +1204,7 @@ inline bool QosPoliciesSerializer<UserDataQosPolicy>::add_to_cdr_message(
 template<>
 inline bool QosPoliciesSerializer<UserDataQosPolicy>::read_from_cdr_message(
         UserDataQosPolicy& qos_policy,
-        fastrtps::rtps::CDRMessage_t* cdr_message,
+        fastdds::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
     return QosPoliciesSerializer<GenericDataQosPolicy>::read_from_cdr_message(qos_policy, cdr_message,
@@ -1221,7 +1221,7 @@ inline uint32_t QosPoliciesSerializer<GroupDataQosPolicy>::cdr_serialized_size(
 template<>
 inline bool QosPoliciesSerializer<GroupDataQosPolicy>::add_to_cdr_message(
         const GroupDataQosPolicy& qos_policy,
-        fastrtps::rtps::CDRMessage_t* cdr_message)
+        fastdds::rtps::CDRMessage_t* cdr_message)
 {
     return QosPoliciesSerializer<GenericDataQosPolicy>::add_to_cdr_message(qos_policy, cdr_message);
 }
@@ -1229,7 +1229,7 @@ inline bool QosPoliciesSerializer<GroupDataQosPolicy>::add_to_cdr_message(
 template<>
 inline bool QosPoliciesSerializer<GroupDataQosPolicy>::read_from_cdr_message(
         GroupDataQosPolicy& qos_policy,
-        fastrtps::rtps::CDRMessage_t* cdr_message,
+        fastdds::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
     return QosPoliciesSerializer<GenericDataQosPolicy>::read_from_cdr_message(qos_policy, cdr_message,
@@ -1246,7 +1246,7 @@ inline uint32_t QosPoliciesSerializer<TopicDataQosPolicy>::cdr_serialized_size(
 template<>
 inline bool QosPoliciesSerializer<TopicDataQosPolicy>::add_to_cdr_message(
         const TopicDataQosPolicy& qos_policy,
-        fastrtps::rtps::CDRMessage_t* cdr_message)
+        fastdds::rtps::CDRMessage_t* cdr_message)
 {
     return QosPoliciesSerializer<GenericDataQosPolicy>::add_to_cdr_message(qos_policy, cdr_message);
 }
@@ -1254,7 +1254,7 @@ inline bool QosPoliciesSerializer<TopicDataQosPolicy>::add_to_cdr_message(
 template<>
 inline bool QosPoliciesSerializer<TopicDataQosPolicy>::read_from_cdr_message(
         TopicDataQosPolicy& qos_policy,
-        fastrtps::rtps::CDRMessage_t* cdr_message,
+        fastdds::rtps::CDRMessage_t* cdr_message,
         const uint16_t parameter_length)
 {
     return QosPoliciesSerializer<GenericDataQosPolicy>::read_from_cdr_message(qos_policy, cdr_message,

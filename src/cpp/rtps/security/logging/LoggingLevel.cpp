@@ -20,7 +20,7 @@
 #include <rtps/security/exceptions/SecurityException.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 namespace security {
 
@@ -116,5 +116,5 @@ bool LogLevel_to_string(
 
 } //namespace security
 } //namespace rtps
-} //namespace fastrtps
+} //namespace fastdds
 } //namespace eprosima

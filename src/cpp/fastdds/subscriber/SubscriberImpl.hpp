@@ -34,7 +34,7 @@
 #include <statistics/rtps/monitor-service/interfaces/IStatusQueryable.hpp>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class RTPSParticipant;
@@ -43,7 +43,7 @@ class RTPSParticipant;
 
 class TopicAttributes;
 
-} // namespace fastrtps
+} // namespace fastdds
 
 namespace fastdds {
 namespace dds {
@@ -97,14 +97,14 @@ public:
             const DataReaderQos& reader_qos,
             DataReaderListener* listener = nullptr,
             const StatusMask& mask = StatusMask::all(),
-            std::shared_ptr<fastrtps::rtps::IPayloadPool> payload_pool = nullptr);
+            std::shared_ptr<fastdds::rtps::IPayloadPool> payload_pool = nullptr);
 
     DataReader* create_datareader_with_profile(
             TopicDescription* topic,
             const std::string& profile_name,
             DataReaderListener* listener,
             const StatusMask& mask = StatusMask::all(),
-            std::shared_ptr<fastrtps::rtps::IPayloadPool> payload_pool = nullptr);
+            std::shared_ptr<fastdds::rtps::IPayloadPool> payload_pool = nullptr);
 
     ReturnCode_t delete_datareader(
             const DataReader* reader);
@@ -113,7 +113,7 @@ public:
             const std::string& topic_name) const;
 
     bool contains_entity(
-            const fastrtps::rtps::InstanceHandle_t& handle) const;
+            const fastdds::rtps::InstanceHandle_t& handle) const;
     /* TODO
        bool begin_access();
      */
@@ -160,12 +160,12 @@ public:
         return participant_;
     }
 
-    const fastrtps::rtps::RTPSParticipant* rtps_participant() const
+    const fastdds::rtps::RTPSParticipant* rtps_participant() const
     {
         return rtps_participant_;
     }
 
-    fastrtps::rtps::RTPSParticipant* rtps_participant()
+    fastdds::rtps::RTPSParticipant* rtps_participant()
     {
         return rtps_participant_;
     }
@@ -175,7 +175,7 @@ public:
         return user_subscriber_;
     }
 
-    const fastrtps::rtps::InstanceHandle_t& get_instance_handle() const;
+    const fastdds::rtps::InstanceHandle_t& get_instance_handle() const;
 
     //! Remove all listeners in the hierarchy to allow a quiet destruction
     void disable();
@@ -227,7 +227,7 @@ public:
 #ifdef FASTDDS_STATISTICS
     bool get_monitoring_status(
             statistics::MonitorServiceData& status,
-            const fastrtps::rtps::GUID_t& entity_guid);
+            const fastdds::rtps::GUID_t& entity_guid);
 #endif //FASTDDS_STATISTICS
 
 protected:
@@ -293,18 +293,18 @@ protected:
     Subscriber* user_subscriber_;
 
     //!RTPSParticipant
-    fastrtps::rtps::RTPSParticipant* rtps_participant_;
+    fastdds::rtps::RTPSParticipant* rtps_participant_;
 
     DataReaderQos default_datareader_qos_;
 
-    fastrtps::rtps::InstanceHandle_t handle_;
+    fastdds::rtps::InstanceHandle_t handle_;
 
     virtual DataReaderImpl* create_datareader_impl(
             const TypeSupport& type,
             TopicDescription* topic,
             const DataReaderQos& qos,
             DataReaderListener* listener,
-            std::shared_ptr<fastrtps::rtps::IPayloadPool> payload_pool);
+            std::shared_ptr<fastdds::rtps::IPayloadPool> payload_pool);
 };
 
 } /* namespace dds */

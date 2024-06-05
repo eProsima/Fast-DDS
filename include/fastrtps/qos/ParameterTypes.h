@@ -34,7 +34,7 @@
 #include <vector>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 
 #if HAVE_SECURITY
 namespace rtps {

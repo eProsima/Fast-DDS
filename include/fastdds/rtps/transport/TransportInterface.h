@@ -44,7 +44,7 @@ static const std::string s_IPv4AddressAny = "0.0.0.0";
 //! Default IPv6 address
 static const std::string s_IPv6AddressAny = "::";
 
-using SendResourceList = std::vector<std::unique_ptr<fastrtps::rtps::SenderResource>>;
+using SendResourceList = std::vector<std::unique_ptr<fastdds::rtps::SenderResource>>;
 using NetmaskFilterInfo = std::pair<NetmaskFilterKind, std::vector<AllowedNetworkInterface>>;
 using TransportNetmaskFilterInfo = std::pair<int32_t, NetmaskFilterInfo>;
 
@@ -94,7 +94,7 @@ public:
      * @return True when the transport was correctly initialized.
      */
     virtual bool init(
-            const fastrtps::rtps::PropertyPolicy* properties = nullptr,
+            const fastdds::rtps::PropertyPolicy* properties = nullptr,
             const uint32_t& max_msg_size_no_frag = 0) = 0;
 
     /**
@@ -153,7 +153,7 @@ public:
      */
     virtual bool OpenOutputChannels(
             SendResourceList& sender_resource_list,
-            const fastrtps::rtps::LocatorSelectorEntry& locator_selector_entry);
+            const fastdds::rtps::LocatorSelectorEntry& locator_selector_entry);
 
     /**
      * Close the channel that maps to/from the given locator selector entry.
@@ -163,7 +163,7 @@ public:
      */
     virtual void CloseOutputChannels(
             SendResourceList& sender_resource_list,
-            const fastrtps::rtps::LocatorSelectorEntry& locator_selector_entry);
+            const fastdds::rtps::LocatorSelectorEntry& locator_selector_entry);
 
     /** Opens an input channel to receive incoming connections.
      *   If there is an existing channel it registers the receiver interface.
@@ -201,7 +201,7 @@ public:
      * @param [in, out] selector Locator selector.
      */
     virtual void select_locators(
-            fastrtps::rtps::LocatorSelector& selector) const = 0;
+            fastdds::rtps::LocatorSelector& selector) const = 0;
 
     //! Must report whether the given locator is from the local host
     virtual bool is_local_locator(
@@ -242,7 +242,7 @@ public:
     //! Configure the initial peer locators list
     virtual bool configureInitialPeerLocator(
             Locator& locator,
-            const fastrtps::rtps::PortParameters& port_params,
+            const fastdds::rtps::PortParameters& port_params,
             uint32_t domainId,
             LocatorList& list) const = 0;
 

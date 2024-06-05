@@ -1379,7 +1379,7 @@ traits<DynamicType>::ref_type DynamicTypeBuilderFactoryImpl::base_type_from_type
             // Find related type object
             xtypes::TypeObject base_type_object;
             if (RETCODE_OK !=
-                    fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().get_type_object(
+                    fastdds::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().get_type_object(
                         type_identifier, base_type_object))
             {
                 EPROSIMA_LOG_ERROR(DYN_TYPES, "Given TypeIdentifier unknown to TypeObjectRegistry");
@@ -1409,7 +1409,7 @@ bool DynamicTypeBuilderFactoryImpl::apply_custom_annotations(
             // Find annotation type object
             xtypes::TypeObject annotation_type_object;
             if (RETCODE_OK !=
-                    fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().get_type_object(
+                    fastdds::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().get_type_object(
                         annotation.annotation_typeid(), annotation_type_object))
             {
                 EPROSIMA_LOG_ERROR(DYN_TYPES, "Given annotation type identifier unknown to TypeObjectRegistry");

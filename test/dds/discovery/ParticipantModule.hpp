@@ -31,7 +31,7 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds::rtps;
 
 class ParticipantModule : public DomainParticipantListener
 {

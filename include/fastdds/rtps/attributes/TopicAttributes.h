@@ -26,7 +26,7 @@
 
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 
 /**
  * Class TopicAttributes, used by the user to define the attributes of the topic associated with a Publisher or Subscriber.
@@ -146,7 +146,7 @@ bool inline operator !=(
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */
 
 #endif /* TOPICPARAMETERS_H_ */

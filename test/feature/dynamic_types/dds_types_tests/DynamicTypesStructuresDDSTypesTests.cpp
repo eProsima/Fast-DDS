@@ -817,8 +817,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructOctet)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    eprosima::fastrtps::rtps::octet value = 255;
-    eprosima::fastrtps::rtps::octet test_value = 0;
+    eprosima::fastdds::rtps::octet value = 255;
+    eprosima::fastdds::rtps::octet test_value = 0;
     EXPECT_EQ(data->set_byte_value(data->get_member_id_by_name(var_byte_name), value), RETCODE_OK);
     EXPECT_EQ(data->get_byte_value(test_value, data->get_member_id_by_name(var_byte_name)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
@@ -1286,8 +1286,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructBitset)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    eprosima::fastrtps::rtps::octet octet_value = 5;
-    eprosima::fastrtps::rtps::octet test_octet_value = 0;
+    eprosima::fastdds::rtps::octet octet_value = 5;
+    eprosima::fastdds::rtps::octet test_octet_value = 0;
     bool bool_value = true;
     bool test_bool_value = false;
     uint16_t ushort_value = 1000;
@@ -1358,7 +1358,7 @@ struct testing_values_struct
     double test_double_value;
     long double test_long_double_value;
     bool test_bool_value;
-    eprosima::fastrtps::rtps::octet test_byte_value;
+    eprosima::fastdds::rtps::octet test_byte_value;
     char test_char_value;
     wchar_t test_wchar_value;
     std::string test_string_value;
@@ -1370,7 +1370,7 @@ struct testing_values_struct
     Int16Seq test_array_value;
     Int32Seq test_seq_value;
     int32_t test_map_value;
-    eprosima::fastrtps::rtps::octet test_octet_value;
+    eprosima::fastdds::rtps::octet test_octet_value;
 };
 
 void check_structure_static_data(
@@ -1554,7 +1554,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructStructures)
     double double_value = 502.12;
     long double long_double_value = 13.2;
     bool bool_value = true;
-    eprosima::fastrtps::rtps::octet byte_value = 234;
+    eprosima::fastdds::rtps::octet byte_value = 234;
     char char_value = 'a';
     wchar_t wchar_value = L'0';
     std::string string_value = "TESTING_STRING";
@@ -1567,7 +1567,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructStructures)
     Int16Seq array_value = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
     Int32Seq seq_value = {10, 20};
     int32_t map_value = 253;
-    eprosima::fastrtps::rtps::octet octet_value = 7;
+    eprosima::fastdds::rtps::octet octet_value = 7;
     testing_values_struct testing_values;
 
     DynamicData::_ref_type short_struct_data = data->loan_value(data->get_member_id_by_name(var_short_struct_name));

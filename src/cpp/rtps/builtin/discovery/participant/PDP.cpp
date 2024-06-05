@@ -58,7 +58,7 @@
 #include <utils/TimeConversion.hpp>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 // Default configuration values for PDP reliable entities.
@@ -1601,5 +1601,5 @@ void PDP::add_builtin_security_attributes(
 #endif // HAVE_SECURITY
 
 } /* namespace rtps */
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */

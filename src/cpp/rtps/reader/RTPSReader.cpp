@@ -27,7 +27,7 @@
 
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 RTPSReader::RTPSReader(
@@ -49,5 +49,5 @@ RTPSReader::~RTPSReader()
 }
 
 } /* namespace rtps */
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */

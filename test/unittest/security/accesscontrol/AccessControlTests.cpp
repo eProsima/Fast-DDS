@@ -27,8 +27,8 @@
 #include <security/authentication/PKIIdentityHandle.h>
 #include <security/OpenSSLInit.hpp>
 
-using namespace eprosima::fastrtps::rtps;
-using namespace eprosima::fastrtps::rtps::security;
+using namespace eprosima::fastdds::rtps;
+using namespace eprosima::fastdds::rtps::security;
 
 static const char* certs_path = nullptr;
 
@@ -48,7 +48,7 @@ protected:
 
     AccessControlTest()
     {
-        static eprosima::fastrtps::rtps::security::OpenSSLInit openssl_init;
+        static eprosima::fastdds::rtps::security::OpenSSLInit openssl_init;
     }
 
     void fill_common_participant_security_attributes(

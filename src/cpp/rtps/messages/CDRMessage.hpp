@@ -34,7 +34,7 @@
 #include <rtps/security/common/ParticipantGenericMessage.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 namespace security {
 class ParticipantGenericMessage;
@@ -348,7 +348,7 @@ bool skip(
 } /* namespace CDRMessage */
 
 } /* namespace rtps */
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS

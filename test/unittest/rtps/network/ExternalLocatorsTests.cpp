@@ -21,12 +21,12 @@
 
 using namespace eprosima::fastdds::rtps;
 using namespace eprosima::fastdds::rtps::network;
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds::rtps;
 
 // -------------------- Auxiliary methods to compare locator lists --------------------
 
 static bool operator == (
-        const eprosima::fastrtps::ResourceLimitedVector<Locator>& lhs,
+        const eprosima::fastdds::ResourceLimitedVector<Locator>& lhs,
         const eprosima::fastdds::rtps::LocatorList& rhs)
 {
     LocatorList left_list;
@@ -40,8 +40,8 @@ static bool operator == (
 }
 
 static bool operator == (
-        const eprosima::fastrtps::ResourceLimitedVector<Locator>& lhs,
-        const eprosima::fastrtps::ResourceLimitedVector<Locator>& rhs)
+        const eprosima::fastdds::ResourceLimitedVector<Locator>& lhs,
+        const eprosima::fastdds::ResourceLimitedVector<Locator>& rhs)
 {
     LocatorList right_list;
 
@@ -54,8 +54,8 @@ static bool operator == (
 }
 
 static bool operator == (
-        const eprosima::fastrtps::rtps::RemoteLocatorList& lhs,
-        const eprosima::fastrtps::rtps::RemoteLocatorList& rhs)
+        const eprosima::fastdds::rtps::RemoteLocatorList& lhs,
+        const eprosima::fastdds::rtps::RemoteLocatorList& rhs)
 {
     return lhs.multicast == rhs.multicast && lhs.unicast == rhs.unicast;
 }

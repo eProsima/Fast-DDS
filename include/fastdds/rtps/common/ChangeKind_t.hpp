@@ -22,7 +22,7 @@
 #include <fastdds/fastdds_dll.hpp>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 /**
@@ -38,7 +38,7 @@ enum FASTDDS_EXPORTED_API ChangeKind_t
 };
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 #endif /* _FASTDDS_RTPS_COMMON_CHANGEKINDT_HPP_ */

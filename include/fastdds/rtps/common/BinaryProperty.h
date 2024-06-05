@@ -25,7 +25,7 @@
 #include <cstdint>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class BinaryProperty
@@ -176,7 +176,7 @@ class BinaryPropertyHelper
 };
 
 } //namespace rtps
-} //namespace fastrtps
+} //namespace fastdds
 } //namespace eprosima
 
 #endif // _FASTDDS_RTPS_COMMON_BINARYPROPERTY_H_

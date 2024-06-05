@@ -49,14 +49,14 @@
 #include <rtps/history/ITopicPayloadPool.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class RTPSReader;
 class TimedEvent;
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 
 namespace fastdds {
 namespace dds {
@@ -86,8 +86,8 @@ class DataReaderImpl
 
 protected:
 
-    using ITopicPayloadPool = eprosima::fastrtps::rtps::ITopicPayloadPool;
-    using IPayloadPool = eprosima::fastrtps::rtps::IPayloadPool;
+    using ITopicPayloadPool = eprosima::fastdds::rtps::ITopicPayloadPool;
+    using IPayloadPool = eprosima::fastdds::rtps::IPayloadPool;
 
     friend class SubscriberImpl;
 
@@ -100,7 +100,7 @@ protected:
             TopicDescription* topic,
             const DataReaderQos& qos,
             DataReaderListener* listener = nullptr,
-            std::shared_ptr<fastrtps::rtps::IPayloadPool> payload_pool = nullptr);
+            std::shared_ptr<fastdds::rtps::IPayloadPool> payload_pool = nullptr);
 
 public:
 
@@ -120,7 +120,7 @@ public:
      * Method to block the current thread until an unread message is available
      */
     bool wait_for_unread_message(
-            const fastrtps::Duration_t& timeout);
+            const fastdds::Duration_t& timeout);
 
 
     /** @name Read or take data methods.
@@ -218,9 +218,9 @@ public:
      * Get associated GUID
      * @return Associated GUID
      */
-    const fastrtps::rtps::GUID_t& guid() const;
+    const fastdds::rtps::GUID_t& guid() const;
 
-    fastrtps::rtps::InstanceHandle_t get_instance_handle() const;
+    fastdds::rtps::InstanceHandle_t get_instance_handle() const;
 
     /**
      * Get topic data type
@@ -253,7 +253,7 @@ public:
     /* TODO
        bool get_key_value(
             void* data,
-            const fastrtps::rtps::InstanceHandle_t& handle);
+            const fastdds::rtps::InstanceHandle_t& handle);
      */
 
     ReturnCode_t get_liveliness_changed_status(
@@ -286,7 +286,7 @@ public:
 
     /* TODO
        bool wait_for_historical_data(
-       const fastrtps::Duration_t& max_wait) const;
+       const fastdds::Duration_t& max_wait) const;
      */
 
     //! Remove all listeners in the hierarchy to allow a quiet destruction
@@ -383,7 +383,7 @@ protected:
     SubscriberImpl* subscriber_ = nullptr;
 
     //!Pointer to associated RTPSReader
-    fastrtps::rtps::RTPSReader* reader_ = nullptr;
+    fastdds::rtps::RTPSReader* reader_ = nullptr;
 
     //! Pointer to the TopicDataType object.
     TypeSupport type_;
@@ -399,9 +399,9 @@ protected:
     DataReaderListener* listener_ = nullptr;
     mutable std::mutex listener_mutex_;
 
-    fastrtps::rtps::GUID_t guid_;
+    fastdds::rtps::GUID_t guid_;
 
-    class InnerDataReaderListener : public fastrtps::rtps::ReaderListener
+    class InnerDataReaderListener : public fastdds::rtps::ReaderListener
     {
     public:
 
@@ -416,32 +416,32 @@ protected:
         }
 
         void on_reader_matched(
-                fastrtps::rtps::RTPSReader* reader,
-                const fastrtps::rtps::MatchingInfo& info) override;
+                fastdds::rtps::RTPSReader* reader,
+                const fastdds::rtps::MatchingInfo& info) override;
 
         void on_data_available(
-                fastrtps::rtps::RTPSReader* reader,
-                const fastrtps::rtps::GUID_t& writer_guid,
-                const fastrtps::rtps::SequenceNumber_t& first_sequence,
-                const fastrtps::rtps::SequenceNumber_t& last_sequence,
+                fastdds::rtps::RTPSReader* reader,
+                const fastdds::rtps::GUID_t& writer_guid,
+                const fastdds::rtps::SequenceNumber_t& first_sequence,
+                const fastdds::rtps::SequenceNumber_t& last_sequence,
                 bool& should_notify_individual_changes) override;
 
         void on_liveliness_changed(
-                fastrtps::rtps::RTPSReader* reader,
+                fastdds::rtps::RTPSReader* reader,
                 const LivelinessChangedStatus& status) override;
 
         void on_requested_incompatible_qos(
-                fastrtps::rtps::RTPSReader* reader,
+                fastdds::rtps::RTPSReader* reader,
                 fastdds::dds::PolicyMask qos) override;
 
         void on_sample_lost(
-                fastrtps::rtps::RTPSReader* reader,
+                fastdds::rtps::RTPSReader* reader,
                 int32_t sample_lost_since_last_update) override;
 
         void on_sample_rejected(
-                fastrtps::rtps::RTPSReader* reader,
+                fastdds::rtps::RTPSReader* reader,
                 SampleRejectedStatusKind reason,
-                const fastrtps::rtps::CacheChange_t* const change) override;
+                const fastdds::rtps::CacheChange_t* const change) override;
 
 #ifdef FASTDDS_STATISTICS
         void notify_status_observer(
@@ -454,13 +454,13 @@ protected:
     reader_listener_;
 
     //! A timer used to check for deadlines
-    fastrtps::rtps::TimedEvent* deadline_timer_ = nullptr;
+    fastdds::rtps::TimedEvent* deadline_timer_ = nullptr;
 
     //! Deadline duration in microseconds
     std::chrono::duration<double, std::ratio<1, 1000000>> deadline_duration_us_;
 
     //! The current timer owner, i.e. the instance which started the deadline timer
-    fastrtps::rtps::InstanceHandle_t timer_owner_;
+    fastdds::rtps::InstanceHandle_t timer_owner_;
 
     //! Subscription matched status
     SubscriptionMatchedStatus subscription_matched_status_;
@@ -480,7 +480,7 @@ protected:
     SampleRejectedStatus sample_rejected_status_;
 
     //! A timed callback to remove expired samples
-    fastrtps::rtps::TimedEvent* lifespan_timer_ = nullptr;
+    fastdds::rtps::TimedEvent* lifespan_timer_ = nullptr;
 
     //! The lifespan duration
     std::chrono::duration<double, std::ratio<1, 1000000>> lifespan_duration_us_;
@@ -575,9 +575,9 @@ protected:
             const fastrtps::rtps::MatchingInfo& status);
 
     bool on_data_available(
-            const fastrtps::rtps::GUID_t& writer_guid,
-            const fastrtps::rtps::SequenceNumber_t& first_sequence,
-            const fastrtps::rtps::SequenceNumber_t& last_sequence);
+            const fastdds::rtps::GUID_t& writer_guid,
+            const fastdds::rtps::SequenceNumber_t& first_sequence,
+            const fastdds::rtps::SequenceNumber_t& last_sequence);
 
     /**
      * @brief A method called when a new cache change is added
@@ -585,7 +585,7 @@ protected:
      * @return True if the change was added (due to some QoS it could have been 'rejected')
      */
     bool on_new_cache_change_added(
-            const fastrtps::rtps::CacheChange_t* const change);
+            const fastdds::rtps::CacheChange_t* const change);
 
     /**
      * @brief Method called when an instance misses the deadline
@@ -602,7 +602,7 @@ protected:
      */
     bool lifespan_expired();
 
-    fastrtps::TopicAttributes topic_attributes() const;
+    fastdds::TopicAttributes topic_attributes() const;
 
     void subscriber_qos_updated();
 
@@ -623,7 +623,7 @@ protected:
      */
     const SampleRejectedStatus& update_sample_rejected_status(
             SampleRejectedStatusKind reason,
-            const fastrtps::rtps::CacheChange_t* const change_in);
+            const fastdds::rtps::CacheChange_t* const change_in);
 
     /**
      * Returns the most appropriate listener to handle the callback for the given status,
@@ -639,7 +639,7 @@ protected:
     void stop();
 
     ReturnCode_t check_datasharing_compatible(
-            const fastrtps::rtps::ReaderAttributes& reader_attributes,
+            const fastdds::rtps::ReaderAttributes& reader_attributes,
             bool& is_datasharing_compatible) const;
 
 private:

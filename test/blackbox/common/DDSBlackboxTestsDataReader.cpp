@@ -36,8 +36,8 @@
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
 
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds;
+using namespace eprosima::fastdds::rtps;
 
 #define INCOMPATIBLE_TEST_TOPIC_NAME std::string( \
         std::string("incompatible_") + TEST_TOPIC_NAME)
@@ -262,7 +262,7 @@ TEST(DDSDataReader, GetFirstUntakenInfoReturnsTheFirstValidChange)
     EntityId_t reader_id;
 
     testTransport_1->drop_data_messages_filter_ =
-            [&writer1_id, &reader_id](eprosima::fastrtps::rtps::CDRMessage_t& msg)-> bool
+            [&writer1_id, &reader_id](eprosima::fastdds::rtps::CDRMessage_t& msg)-> bool
             {
                 uint32_t old_pos = msg.pos;
 

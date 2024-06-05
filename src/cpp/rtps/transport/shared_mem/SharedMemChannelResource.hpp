@@ -148,7 +148,7 @@ private:
             if (message_receiver() != nullptr)
             {
                 message_receiver()->OnDataReceived(
-                    static_cast<fastrtps::rtps::octet*>(message->data()),
+                    static_cast<fastdds::rtps::octet*>(message->data()),
                     message->size(),
                     input_locator, remote_locator);
             }

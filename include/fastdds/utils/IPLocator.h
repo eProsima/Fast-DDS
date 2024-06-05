@@ -29,7 +29,7 @@
 #include <vector>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class Locator_t;
@@ -300,7 +300,7 @@ private:
 };
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } /* namespace eprosima */
 
 #endif /* IP_LOCATOR_H_ */

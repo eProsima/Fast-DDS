@@ -46,7 +46,7 @@ public:
     }
 
     DomainParticipantFactory()
-        : rtps_domain_(fastrtps::rtps::RTPSDomainImpl::get_instance())
+        : rtps_domain_(fastdds::rtps::RTPSDomainImpl::get_instance())
     {
     }
 
@@ -58,7 +58,7 @@ public:
 
 private:
 
-    std::shared_ptr<fastrtps::rtps::RTPSDomainImpl> rtps_domain_;
+    std::shared_ptr<fastdds::rtps::RTPSDomainImpl> rtps_domain_;
 
 };
 

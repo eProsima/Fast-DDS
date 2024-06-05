@@ -45,7 +45,7 @@
 #include <rtps/history/ITopicPayloadPool.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class RTPSWriter;
@@ -54,7 +54,7 @@ class TimedEvent;
 
 } // namespace rtps
 
-} // namespace fastrtps
+} // namespace fastdds
 
 namespace fastdds {
 
@@ -75,7 +75,7 @@ class Publisher;
 class DataWriterImpl : protected rtps::IReaderDataFilter
 {
     using LoanInitializationKind = DataWriter::LoanInitializationKind;
-    using CacheChange_t = eprosima::fastrtps::rtps::CacheChange_t;
+    using CacheChange_t = eprosima::fastdds::rtps::CacheChange_t;
     class LoanCollection;
 
 protected:
@@ -89,7 +89,7 @@ protected:
     DataWriterImpl()
         : history_(atts_,
                 500,
-                fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE,
+                fastdds::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE,
                 [](const InstanceHandle_t&)
                 {
                 })
@@ -103,10 +103,10 @@ protected:
             Topic*,
             const DataWriterQos&,
             DataWriterListener* listener = nullptr,
-            std::shared_ptr<fastrtps::rtps::IPayloadPool> payload_pool = nullptr)
+            std::shared_ptr<fastdds::rtps::IPayloadPool> payload_pool = nullptr)
         : history_(atts_,
                 500,
-                fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE,
+                fastdds::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE,
                 [](const InstanceHandle_t&)
                 {
                 })
@@ -121,11 +121,11 @@ protected:
             TypeSupport,
             Topic*,
             const DataWriterQos&,
-            const fastrtps::rtps::EntityId_t&,
+            const fastdds::rtps::EntityId_t&,
             DataWriterListener* listener = nullptr)
         : history_(atts_,
                 500,
-                fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE,
+                fastdds::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE,
                 [](const InstanceHandle_t&)
                 {
                 })
@@ -172,7 +172,7 @@ public:
 
     bool write(
             void*,
-            fastrtps::rtps::WriteParams& )
+            fastdds::rtps::WriteParams& )
     {
         return true;
     }
@@ -187,7 +187,7 @@ public:
     ReturnCode_t write_w_timestamp(
             void*,
             const InstanceHandle_t&,
-            const fastrtps::Time_t& )
+            const fastdds::Time_t& )
     {
         return RETCODE_OK;
     }
@@ -200,7 +200,7 @@ public:
 
     InstanceHandle_t register_instance_w_timestamp(
             void*,
-            const fastrtps::Time_t& )
+            const fastdds::Time_t& )
     {
         return InstanceHandle_t();
     }
@@ -216,7 +216,7 @@ public:
     ReturnCode_t unregister_instance_w_timestamp(
             void*,
             const InstanceHandle_t&,
-            const fastrtps::Time_t&,
+            const fastdds::Time_t&,
             bool  = false)
     {
         return RETCODE_OK;
@@ -226,11 +226,11 @@ public:
     {
         static uint16_t entitiy_id_counter;
         entitiy_id_counter += 1;
-        guid_.entityId.value[2] = (fastrtps::rtps::octet)entitiy_id_counter;
+        guid_.entityId.value[2] = (fastdds::rtps::octet)entitiy_id_counter;
         guid_.entityId.value[3] = 0x2;
     }
 
-    const fastrtps::rtps::GUID_t& guid() const
+    const fastdds::rtps::GUID_t& guid() const
     {
 
         return guid_;
@@ -238,7 +238,7 @@ public:
 
     InstanceHandle_t get_instance_handle() const
     {
-        return fastrtps::rtps::InstanceHandle_t();
+        return fastdds::rtps::InstanceHandle_t();
     }
 
     TypeSupport get_type() const
@@ -247,7 +247,7 @@ public:
     }
 
     ReturnCode_t wait_for_acknowledgments(
-            const fastrtps::Duration_t& )
+            const fastdds::Duration_t& )
     {
         return RETCODE_OK;
     }
@@ -255,7 +255,7 @@ public:
     ReturnCode_t wait_for_acknowledgments(
             void*,
             const InstanceHandle_t&,
-            const fastrtps::Duration_t& )
+            const fastdds::Duration_t& )
     {
         return RETCODE_OK;
     }
@@ -361,8 +361,8 @@ public:
     }
 
     bool is_relevant(
-            const fastrtps::rtps::CacheChange_t&,
-            const fastrtps::rtps::GUID_t&) const override
+            const fastdds::rtps::CacheChange_t&,
+            const fastdds::rtps::GUID_t&) const override
     {
         return true;
     }
@@ -422,10 +422,10 @@ public:
     }
 
     //! Pointer to the associated Data Writer.
-    fastrtps::rtps::RTPSWriter* writer_ = nullptr;
+    fastdds::rtps::RTPSWriter* writer_ = nullptr;
     Topic* topic_ = nullptr;
     Publisher* pub_ = nullptr;
-    fastrtps::rtps::GUID_t guid_;
+    fastdds::rtps::GUID_t guid_;
     DataWriterQos qos_;
 
     DataWriter* user_datawriter_ = nullptr;
@@ -435,7 +435,7 @@ public:
     OfferedIncompatibleQosStatus offered_incompatible_qos_status_;
     std::chrono::duration<double, std::ratio<1, 1000000>> lifespan_duration_us_;
     DataWriterHistory history_;
-    fastrtps::TopicAttributes atts_;
+    fastdds::TopicAttributes atts_;
 
 };
 
