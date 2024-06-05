@@ -55,6 +55,10 @@ public:
 
 protected:
 
+    bool check_discovery_conditions(
+            ParticipantProxyData& participant_data,
+            void* extra_data) override;
+
     void process_alive_data(
             ParticipantProxyData* old_data,
             ParticipantProxyData& new_data,

@@ -86,6 +86,18 @@ void PDPSecurityInitiatorListener::process_alive_data(
 
 }
 
+bool PDPSecurityInitiatorListener::check_discovery_conditions(
+        ParticipantProxyData& /* participant_data */,
+        void* /* extra data*/)
+{
+    /* Do not check PID_VENDOR_ID */
+    // In Discovery Server we don't impose
+    // domain ids to be the same
+    /* Do not check PID_DOMAIN_ID */
+    /* Do not check PARTICIPANT_TYPE */
+    return true;
+}
+
 } /* namespace rtps */
 } /* namespace fastrtps */
 } /* namespace eprosima */
