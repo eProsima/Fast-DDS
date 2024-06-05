@@ -30,6 +30,11 @@ namespace dds {
 
 /**
  * @brief LoanableSequence specialization for DynamicData.
+ *
+ * This class provides a sequence container for handling loanable collections
+ * of DynamicData.
+ *
+ * @tparam _NonConstEnabler to enable data access through [] operator on non-const sequences.
  */
 template<typename _NonConstEnabler>
 class LoanableSequence<fastrtps::types::DynamicData, _NonConstEnabler>
@@ -37,15 +42,28 @@ class LoanableSequence<fastrtps::types::DynamicData, _NonConstEnabler>
 {
 public:
 
+    /// Type for the size of the sequence.
     using size_type = LoanableCollection::size_type;
+
+    /// Type for the elements in the sequence.
     using element_type = LoanableCollection::element_type;
 
+    /**
+     * @brief Construct a LoanableSequence with a specified dynamic type.
+     *
+     * @param[in] dyn_type Pointer to the DynamicType.
+     */
     LoanableSequence(
             fastrtps::types::DynamicType_ptr dyn_type)
         : dynamic_type_support_(new fastrtps::types::DynamicPubSubType(dyn_type))
     {
     }
 
+    /**
+     * @brief Construct a LoanableSequence with a specified maximum size.
+     *
+     * @param[in] max Maximum size of the sequence.
+     */
     LoanableSequence(
             size_type max)
     {
@@ -57,6 +75,9 @@ public:
         resize(max);
     }
 
+    /**
+     * @brief Destructor for LoanableSequence.
+     */
     ~LoanableSequence()
     {
         if (elements_ && !has_ownership_)
@@ -68,12 +89,24 @@ public:
         release();
     }
 
+    /**
+     * @brief Copy constructor for LoanableSequence.
+     *
+     * @param[in] other The other LoanableSequence to copy from.
+     */
     LoanableSequence(
             const LoanableSequence& other)
     {
         *this = other;
     }
 
+    /**
+     * @brief Copy assignment operator for LoanableSequence.
+     *
+     * @param[in] other The other LoanableSequence to assign from.
+     *
+     * @return A reference to this LoanableSequence.
+     */
     LoanableSequence& operator =(
             const LoanableSequence& other)
     {
@@ -93,9 +126,21 @@ public:
         return *this;
     }
 
+    /**
+     * @brief Move constructor for LoanableSequence.
+     *
+     * @param[in] other The other LoanableSequence to move from.
+     */
     LoanableSequence(
             LoanableSequence&&) = default;
 
+    /**
+     * @brief Move assignment operator for LoanableSequence.
+     *
+     * @param[in] other The other LoanableSequence to move from.
+     *
+     * @return A reference to this LoanableSequence.
+     */
     LoanableSequence& operator =(
             LoanableSequence&&) = default;
 
@@ -108,6 +153,11 @@ protected:
 
 private:
 
+    /**
+     * @brief Resize the sequence to a new maximum size.
+     *
+     * @param[in] maximum The new maximum size.
+     */
     void resize(
             size_type maximum) override
     {
@@ -125,6 +175,9 @@ private:
         }
     }
 
+    /**
+     * @brief Release all elements and clear the sequence.
+     */
     void release()
     {
         if (has_ownership_ && elements_)
@@ -143,11 +196,14 @@ private:
         has_ownership_ = true;
     }
 
+    /// Container for holding the DynamicData elements.
     std::vector<fastrtps::types::DynamicData*> data_;
 
+    /// Pointer to the DynamicPubSubType type support.
     std::unique_ptr<fastrtps::types::DynamicPubSubType> dynamic_type_support_;
 };
 
+/// Alias for LoanableSequence with DynamicData and true_type.
 using DynamicLoanableSequence = LoanableSequence<fastrtps::types::DynamicData, std::true_type>;
 
 } // namespace dds
