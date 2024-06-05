@@ -14,6 +14,7 @@ Version 2.13.0
 * Added configuration of builtin transports through DomainParticipantQos, environment variable and XML.
 * Enable support for DataRepresentationQos to select the CDR encoding.
 * Added authentication handshake properties.
+* Added `max_message_size` property to limit output datagrams size
 
 Version 2.12.0
 --------------
