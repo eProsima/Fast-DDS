@@ -29,10 +29,11 @@
 #include <fastdds/rtps/history/IChangePool.h>
 #include <fastdds/rtps/history/IPayloadPool.h>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
-#include <fastdds/rtps/writer/ChangeForReader.h>
-#include <fastdds/rtps/writer/ReaderLocator.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>
+
+#include <rtps/writer/ChangeForReader.h>
+#include <rtps/writer/ReaderLocator.h>
 
 namespace eprosima {
 namespace fastrtps {
