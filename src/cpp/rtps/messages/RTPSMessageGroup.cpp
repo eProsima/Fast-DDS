@@ -277,6 +277,7 @@ RTPSMessageGroup::RTPSMessageGroup(
     header_msg_ = &(send_buffer_->rtpsmsg_fullmsg_);
     submessage_msg_ = &(send_buffer_->rtpsmsg_submessage_);
     buffers_to_send_ = &(send_buffer_->buffers_);
+    payloads_to_send_ = &(send_buffer_->payloads_);
 
     // Init RTPS message.
     reset_to_header();
@@ -316,6 +317,8 @@ RTPSMessageGroup::~RTPSMessageGroup() noexcept(false)
     {
         if (!internal_buffer_)
         {
+            buffers_to_send_->clear();
+            payloads_to_send_->clear();
             participant_->return_send_buffer(std::move(send_buffer_));
         }
         throw;
@@ -323,6 +326,9 @@ RTPSMessageGroup::~RTPSMessageGroup() noexcept(false)
 
     if (!internal_buffer_)
     {
+        buffers_to_send_->clear();
+        // Payloads are released in the destructor
+        payloads_to_send_->clear();
         participant_->return_send_buffer(std::move(send_buffer_));
     }
 }
@@ -335,6 +341,8 @@ void RTPSMessageGroup::reset_to_header()
 
     buffers_to_send_->clear();
     buffers_bytes_ = 0;
+    // Payloads are released in the destructor
+    payloads_to_send_->clear();
 }
 
 void RTPSMessageGroup::flush()
@@ -544,7 +552,7 @@ bool RTPSMessageGroup::add_info_ts_in_buffer(
 }
 
 bool RTPSMessageGroup::add_data(
-        const CacheChange_t& change,
+        CacheChange_t& change,
         bool expectsInlineQos)
 {
     assert(nullptr != sender_);
@@ -577,6 +585,12 @@ bool RTPSMessageGroup::add_data(
     copy_data = protect_payload || protect_submessage || protect_rtps;
 #endif // if HAVE_SECURITY
     const EntityId_t& readerId = get_entity_id(sender_->remote_guids());
+
+    // If gather-send is possible, get payload
+    if (!copy_data)
+    {
+        get_payload(change);
+    }
 
     CacheChange_t change_to_add;
     change_to_add.copy_not_memcpy(&change);
@@ -648,7 +662,7 @@ bool RTPSMessageGroup::add_data(
 }
 
 bool RTPSMessageGroup::add_data_frag(
-        const CacheChange_t& change,
+        CacheChange_t& change,
         const uint32_t fragment_number,
         bool expectsInlineQos)
 {
@@ -686,6 +700,12 @@ bool RTPSMessageGroup::add_data_frag(
     copy_data = protect_payload || protect_submessage || protect_rtps;
 #endif // if HAVE_SECURITY
     const EntityId_t& readerId = get_entity_id(sender_->remote_guids());
+
+    // If gather-send is possible, get payload
+    if (!copy_data)
+    {
+        get_payload(change);
+    }
 
     // TODO (Ricardo). Check to create special wrapper.
     CacheChange_t change_to_add;
@@ -912,6 +932,14 @@ bool RTPSMessageGroup::create_gap_submessage(
 
     return true;
 }
+
+void RTPSMessageGroup::get_payload(
+            CacheChange_t& change)
+    {
+        payloads_to_send_->emplace_back();
+        // Get payload to avoid returning it to the pool before sending
+        change.serializedPayload.payload_owner_->get_payload(change.serializedPayload, payloads_to_send_->back());
+    }
 
 #ifdef FASTDDS_STATISTICS
 void RTPSMessageGroup::add_stats_submsg()

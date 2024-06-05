@@ -119,7 +119,7 @@ public:
      * @return True when message was added to the group.
      */
     bool add_data(
-            const CacheChange_t& change,
+            CacheChange_t& change,
             bool expects_inline_qos);
 
     /**
@@ -130,7 +130,7 @@ public:
      * @return True when message was added to the group.
      */
     bool add_data_frag(
-            const CacheChange_t& change,
+            CacheChange_t& change,
             const uint32_t fragment_number,
             bool expects_inline_qos);
 
@@ -318,6 +318,9 @@ private:
             const SequenceNumberSet_t& gap_bitmap,
             const EntityId_t& reader_id);
 
+    void get_payload(
+            CacheChange_t& change);
+
 #ifdef FASTDDS_STATISTICS
     //! Append the Statistics message to the header_msg_ and add the corresponding buffer to buffers_to_send_.
     void add_stats_submsg();
@@ -356,6 +359,9 @@ private:
 
     // Vector of buffers that will be sent along the header
     ResourceLimitedVector<eprosima::fastdds::rtps::NetworkBuffer>* buffers_to_send_ = nullptr;
+
+    // Vector of payloads of which the RTPSMessageGroup is the owner
+    ResourceLimitedVector<eprosima::fastrtps::rtps::SerializedPayload_t>* payloads_to_send_;
 
     // Bytes to send in the next list of buffers
     uint32_t buffers_bytes_ = 0;

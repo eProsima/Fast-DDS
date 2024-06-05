@@ -51,6 +51,7 @@ public:
         , rtpsmsg_encrypt_(0u)
 #endif // if HAVE_SECURITY
         , buffers_(ResourceLimitedContainerConfig(16, std::numeric_limits<size_t>::max dummy_avoid_winmax (), 16))
+        , payloads_(ResourceLimitedContainerConfig(16, std::numeric_limits<size_t>::max dummy_avoid_winmax (), 16))
     {
         rtpsmsg_fullmsg_.reserve(payload);
         rtpsmsg_submessage_.reserve(payload);
@@ -79,6 +80,7 @@ public:
         , rtpsmsg_encrypt_(0u)
 #endif // if HAVE_SECURITY
         , buffers_(nb_config)
+        , payloads_(nb_config)
     {
         rtpsmsg_fullmsg_.init(buffer_ptr, payload);
         buffer_ptr += payload;
@@ -112,6 +114,9 @@ public:
 
     //! Vector to store the NetworkBuffers that will be used to form the RTPS message.
     eprosima::fastrtps::ResourceLimitedVector<eprosima::fastdds::rtps::NetworkBuffer> buffers_;
+
+    //! Mirror vector of buffers_ to store the serialized payloads.
+    eprosima::fastrtps::ResourceLimitedVector<eprosima::fastrtps::rtps::SerializedPayload_t> payloads_;
 };
 
 } // namespace rtps
