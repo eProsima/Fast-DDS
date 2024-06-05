@@ -37,7 +37,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  ubuntu-ci:
+  fastdds_build:
 
     strategy:
       fail-fast: false
@@ -49,6 +49,114 @@ jobs:
     with:
       os-image: ${{ matrix.os-image }}
       label: ${{ inputs.label || 'ubuntu-ci' }}
+      colcon-args: ${{ inputs.colcon-args }}
+      cmake-args: '-DSECURITY=ON ${{ inputs.cmake-args }}'
+      ctest-args: ${{ inputs.ctest-args || '-LE xfail' }}
+      fastdds-branch: ${{ inputs.fastdds_branch || github.ref || 'master' }}
+
+  fastdds_build_test:
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os-image:
+          - 'ubuntu-22.04'
+
+    uses: ./.github/workflows/fastdds-test.yml
+    needs: fastdds_build
+    with:
+      os-image: ${{ matrix.os-image }}
+      label: ${{ inputs.label || 'fastdds_build_test' }}
+      colcon-args: ${{ inputs.colcon-args }}
+      cmake-args: '-DSECURITY=ON ${{ inputs.cmake-args }}'
+      ctest-args: ${{ inputs.ctest-args || '-LE xfail' }}
+      fastdds-branch: ${{ inputs.fastdds_branch || github.ref || 'master' }}
+
+  fastdds_python_build:
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os-image:
+          - 'ubuntu-22.04'
+
+    uses: ./.github/workflows/fastdds-python-build.yml
+    needs: fastdds_build
+    with:
+      os-image: ${{ matrix.os-image }}
+      label: ${{ inputs.label || 'fastdds_python_build' }}
+      colcon-args: ${{ inputs.colcon-args }}
+      cmake-args: '-DSECURITY=ON ${{ inputs.cmake-args }}'
+      ctest-args: ${{ inputs.ctest-args || '-LE xfail' }}
+      fastdds-branch: ${{ inputs.fastdds_branch || github.ref || 'master' }}
+
+  fastdds_python_test:
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os-image:
+          - 'ubuntu-22.04'
+
+    uses: ./.github/workflows/fastdds-python-test.yml
+    needs: fastdds_python_build
+    with:
+      os-image: ${{ matrix.os-image }}
+      label: ${{ inputs.label || 'fastdds_python_test' }}
+      colcon-args: ${{ inputs.colcon-args }}
+      cmake-args: '-DSECURITY=ON ${{ inputs.cmake-args }}'
+      ctest-args: ${{ inputs.ctest-args || '-LE xfail' }}
+      fastdds-branch: ${{ inputs.fastdds_branch || github.ref || 'master' }}
+
+  fastdds_docs_build_test:
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os-image:
+          - 'ubuntu-22.04'
+
+    uses: ./.github/workflows/fastdds-docs-build-test.yml
+    needs: fastdds_python_build
+    with:
+      os-image: ${{ matrix.os-image }}
+      label: ${{ inputs.label || 'fastdds_docs_build_test' }}
+      colcon-args: ${{ inputs.colcon-args }}
+      cmake-args: '-DSECURITY=ON ${{ inputs.cmake-args }}'
+      ctest-args: ${{ inputs.ctest-args || '-LE xfail' }}
+      fastdds-branch: ${{ inputs.fastdds_branch || github.ref || 'master' }}
+
+  fastdds_shapesdemo_build:
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os-image:
+          - 'ubuntu-22.04'
+
+    uses: ./.github/workflows/shapesdemo-build.yml
+    needs: fastdds_build
+    with:
+      os-image: ${{ matrix.os-image }}
+      label: ${{ inputs.label || 'fastdds_shapesdemo_build' }}
+      colcon-args: ${{ inputs.colcon-args }}
+      cmake-args: '-DSECURITY=ON ${{ inputs.cmake-args }}'
+      ctest-args: ${{ inputs.ctest-args || '-LE xfail' }}
+      fastdds-branch: ${{ inputs.fastdds_branch || github.ref || 'master' }}
+
+  fastdds_discovery_server_build_test:
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os-image:
+          - 'ubuntu-22.04'
+
+    uses: ./.github/workflows/fastdds-ds-build-test.yml
+    needs: fastdds_build
+    with:
+      os-image: ${{ matrix.os-image }}
+      label: ${{ inputs.label || 'fastdds_discovery_server_build_test' }}
       colcon-args: ${{ inputs.colcon-args }}
       cmake-args: '-DSECURITY=ON ${{ inputs.cmake-args }}'
       ctest-args: ${{ inputs.ctest-args || '-LE xfail' }}
