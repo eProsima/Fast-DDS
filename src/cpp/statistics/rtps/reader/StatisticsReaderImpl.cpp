@@ -59,8 +59,8 @@ const GUID_t& StatisticsReaderImpl::get_guid() const
 }
 
 void StatisticsReaderImpl::on_data_notify(
-        const fastrtps::rtps::GUID_t& writer_guid,
-        const fastrtps::rtps::Time_t& source_timestamp)
+        const eprosima::fastrtps::rtps::GUID_t& writer_guid,
+        const eprosima::fastrtps::rtps::Time_t& source_timestamp)
 {
     // Get current timestamp
     fastrtps::rtps::Time_t current_time;
