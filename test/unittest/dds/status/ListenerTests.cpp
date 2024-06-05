@@ -108,6 +108,7 @@ public:
     {
         return true;
     }
+
 };
 
 class RTPSWriterMock : public eprosima::fastrtps::rtps::RTPSWriter

@@ -37,6 +37,7 @@
 #include <fastdds/rtps/writer/RTPSWriter.h>
 
 #ifdef FASTDDS_STATISTICS
+
 void register_monitorservice_types_type_objects()
 {
 }
@@ -44,6 +45,7 @@ void register_monitorservice_types_type_objects()
 void register_types_type_objects()
 {
 }
+
 #endif  // FASTDDS_STATISTICS
 
 namespace eprosima {
@@ -70,7 +72,7 @@ TEST(StatefulReaderTests, RTPSCorrectGAPProcessing)
     HistoryAttributes hatt{};
     ReaderHistory reader_history(hatt);
     WriterHistory writer_history(hatt);
-    
+
     ReaderAttributes reader_att{};
     reader_att.endpoint.endpointKind = READER;
     reader_att.endpoint.reliabilityKind = RELIABLE;
