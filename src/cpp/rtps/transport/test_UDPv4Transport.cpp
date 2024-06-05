@@ -93,6 +93,9 @@ test_UDPv4TransportDescriptor::test_UDPv4TransportDescriptor()
             {
                 return false;
             })
+    , dropParticipantBuiltinTopicData(false)
+    , dropPublicationBuiltinTopicData(false)
+    , dropSubscriptionBuiltinTopicData(false)
     , dropDataFragMessagesPercentage(0)
     , drop_data_frag_messages_filter_([](CDRMessage_t&)
             {
