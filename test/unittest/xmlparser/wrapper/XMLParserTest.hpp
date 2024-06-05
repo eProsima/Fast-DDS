@@ -252,10 +252,10 @@ public:
 
     static XMLP_ret getXMLThroughputController_wrapper(
             tinyxml2::XMLElement* elem,
-            ThroughputControllerDescriptor& throughtController,
+            ThroughputControllerDescriptor& throughputController,
             uint8_t ident)
     {
-        return getXMLThroughputController(elem, throughtController, ident);
+        return getXMLThroughputController(elem, throughputController, ident);
     }
 
     static XMLP_ret getXMLFlowControllerDescriptorList_wrapper(
