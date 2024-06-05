@@ -93,6 +93,12 @@ public:
         return *this;
     }
 
+    LoanableSequence(
+            LoanableSequence&&) = default;
+
+    LoanableSequence& operator =(
+            LoanableSequence&&) = default;
+
 protected:
 
     using LoanableCollection::maximum_;
