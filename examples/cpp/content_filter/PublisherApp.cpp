@@ -31,8 +31,6 @@
 
 #include "HelloWorldTypeObjectSupport.hpp"
 
-using namespace eprosima::fastdds::dds;
-
 namespace eprosima {
 namespace fastdds {
 namespace examples {
