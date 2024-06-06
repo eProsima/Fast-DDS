@@ -1273,7 +1273,7 @@ void register_FinalExtensibilityInheritance_type_identifier(
         "FinalExtensibilityInheritance", type_ids_FinalExtensibilityInheritance);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_FinalExtensibilityInheritance)
     {
-        StructTypeFlag struct_flags_FinalExtensibilityInheritance = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_FinalExtensibilityInheritance = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::FINAL,
                 false, false);
         static_cast<void>(return_code_FinalExtensibilityInheritance);
         return_code_FinalExtensibilityInheritance =

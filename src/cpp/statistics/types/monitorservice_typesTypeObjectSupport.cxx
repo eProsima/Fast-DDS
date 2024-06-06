@@ -110,7 +110,7 @@ void register_Connection_type_identifier(
         "eprosima::fastdds::statistics::Connection", type_ids_Connection);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_Connection)
     {
-        StructTypeFlag struct_flags_Connection = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_Connection = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_Connection);
         QualifiedTypeName type_name_Connection = "eprosima::fastdds::statistics::Connection";
@@ -316,7 +316,7 @@ void register_QosPolicyCount_s_type_identifier(
         "eprosima::fastdds::statistics::QosPolicyCount_s", type_ids_QosPolicyCount_s);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_QosPolicyCount_s)
     {
-        StructTypeFlag struct_flags_QosPolicyCount_s = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_QosPolicyCount_s = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_QosPolicyCount_s);
         QualifiedTypeName type_name_QosPolicyCount_s = "eprosima::fastdds::statistics::QosPolicyCount_s";
@@ -406,7 +406,7 @@ void register_BaseStatus_s_type_identifier(
         "eprosima::fastdds::statistics::BaseStatus_s", type_ids_BaseStatus_s);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_BaseStatus_s)
     {
-        StructTypeFlag struct_flags_BaseStatus_s = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_BaseStatus_s = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_BaseStatus_s);
         QualifiedTypeName type_name_BaseStatus_s = "eprosima::fastdds::statistics::BaseStatus_s";
@@ -546,7 +546,7 @@ void register_IncompatibleQoSStatus_s_type_identifier(
         "eprosima::fastdds::statistics::IncompatibleQoSStatus_s", type_ids_IncompatibleQoSStatus_s);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_IncompatibleQoSStatus_s)
     {
-        StructTypeFlag struct_flags_IncompatibleQoSStatus_s = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_IncompatibleQoSStatus_s = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_IncompatibleQoSStatus_s);
         QualifiedTypeName type_name_IncompatibleQoSStatus_s = "eprosima::fastdds::statistics::IncompatibleQoSStatus_s";
@@ -664,7 +664,7 @@ void register_LivelinessChangedStatus_s_type_identifier(
         "eprosima::fastdds::statistics::LivelinessChangedStatus_s", type_ids_LivelinessChangedStatus_s);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_LivelinessChangedStatus_s)
     {
-        StructTypeFlag struct_flags_LivelinessChangedStatus_s = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_LivelinessChangedStatus_s = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_LivelinessChangedStatus_s);
         QualifiedTypeName type_name_LivelinessChangedStatus_s = "eprosima::fastdds::statistics::LivelinessChangedStatus_s";
@@ -818,7 +818,7 @@ void register_DeadlineMissedStatus_s_type_identifier(
         "eprosima::fastdds::statistics::DeadlineMissedStatus_s", type_ids_DeadlineMissedStatus_s);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_DeadlineMissedStatus_s)
     {
-        StructTypeFlag struct_flags_DeadlineMissedStatus_s = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_DeadlineMissedStatus_s = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_DeadlineMissedStatus_s);
         QualifiedTypeName type_name_DeadlineMissedStatus_s = "eprosima::fastdds::statistics::DeadlineMissedStatus_s";
@@ -1138,8 +1138,7 @@ void register_MonitorServiceData_type_identifier(
         "eprosima::fastdds::statistics::MonitorServiceData", type_ids_MonitorServiceData);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_MonitorServiceData)
     {
-        ReturnCode_t return_code_MonitorServiceData;
-        UnionTypeFlag union_flags_MonitorServiceData = TypeObjectUtils::build_union_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        UnionTypeFlag union_flags_MonitorServiceData = TypeObjectUtils::build_union_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         QualifiedTypeName type_name_MonitorServiceData = "eprosima::fastdds::statistics::MonitorServiceData";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_MonitorServiceData;
@@ -1535,7 +1534,7 @@ void register_MonitorServiceStatusData_type_identifier(
         "eprosima::fastdds::statistics::MonitorServiceStatusData", type_ids_MonitorServiceStatusData);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_MonitorServiceStatusData)
     {
-        StructTypeFlag struct_flags_MonitorServiceStatusData = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_MonitorServiceStatusData = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_MonitorServiceStatusData);
         QualifiedTypeName type_name_MonitorServiceStatusData = "eprosima::fastdds::statistics::MonitorServiceStatusData";

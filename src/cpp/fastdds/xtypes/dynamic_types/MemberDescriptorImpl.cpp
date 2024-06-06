@@ -56,6 +56,7 @@ ReturnCode_t MemberDescriptorImpl::copy_from(
     is_must_understand_ = descriptor.is_must_understand_;
     is_shared_ = descriptor.is_shared_;
     is_default_label_ = descriptor.is_default_label_;
+    is_try_construct_kind_set_ = descriptor.is_try_construct_kind_set_;
 
     return RETCODE_OK;
 }
@@ -268,15 +269,18 @@ bool MemberDescriptorImpl::is_consistent() noexcept
     }
 
     // Check try_construct built-in annotation.
-    if (TryConstructKind::DISCARD != try_construct_kind_)
+    if (is_try_construct_kind_set_)
     {
         if (TK_STRUCTURE != parent_kind_ && TK_UNION != parent_kind_)
         {
-            EPROSIMA_LOG_WARNING(DYN_TYPES,
+            EPROSIMA_LOG_ERROR(DYN_TYPES,
                     "try_construct_kind is set but parent type of member is not TK_STRUCTURE or TK_UNION.");
+            return false;
         }
-
-        EPROSIMA_LOG_WARNING(DYN_TYPES, "try_construct_kind is not implemented yet.");
+        else if (TryConstructKind::DISCARD != try_construct_kind_)
+        {
+            EPROSIMA_LOG_WARNING(DYN_TYPES, "try_construct_kind is not implemented yet.");
+        }
     }
 
     // TK_MAP member cannot be key.

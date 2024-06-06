@@ -49,7 +49,7 @@ void register_FlowControlExample_type_identifier(
         "FlowControlExample", type_ids_FlowControlExample);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_FlowControlExample)
     {
-        StructTypeFlag struct_flags_FlowControlExample = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_FlowControlExample = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_FlowControlExample);
         QualifiedTypeName type_name_FlowControlExample = "FlowControlExample";

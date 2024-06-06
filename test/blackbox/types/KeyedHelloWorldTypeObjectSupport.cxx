@@ -49,7 +49,7 @@ void register_KeyedHelloWorld_type_identifier(
         "KeyedHelloWorld", type_ids_KeyedHelloWorld);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_KeyedHelloWorld)
     {
-        StructTypeFlag struct_flags_KeyedHelloWorld = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_KeyedHelloWorld = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_KeyedHelloWorld);
         QualifiedTypeName type_name_KeyedHelloWorld = "KeyedHelloWorld";

@@ -1273,7 +1273,7 @@ void register_AppendableExtensibilityInheritance_type_identifier(
         "AppendableExtensibilityInheritance", type_ids_AppendableExtensibilityInheritance);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_AppendableExtensibilityInheritance)
     {
-        StructTypeFlag struct_flags_AppendableExtensibilityInheritance = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_AppendableExtensibilityInheritance = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_AppendableExtensibilityInheritance);
         return_code_AppendableExtensibilityInheritance =

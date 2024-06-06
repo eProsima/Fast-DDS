@@ -49,7 +49,7 @@ void register_Data64kb_type_identifier(
         "Data64kb", type_ids_Data64kb);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_Data64kb)
     {
-        StructTypeFlag struct_flags_Data64kb = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_Data64kb = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_Data64kb);
         QualifiedTypeName type_name_Data64kb = "Data64kb";

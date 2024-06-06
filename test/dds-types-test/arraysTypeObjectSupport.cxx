@@ -50,7 +50,7 @@ void register_ArrayShort_type_identifier(
         "ArrayShort", type_ids_ArrayShort);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayShort)
     {
-        StructTypeFlag struct_flags_ArrayShort = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayShort = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayShort);
         QualifiedTypeName type_name_ArrayShort = "ArrayShort";
@@ -144,7 +144,7 @@ void register_ArrayUShort_type_identifier(
         "ArrayUShort", type_ids_ArrayUShort);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayUShort)
     {
-        StructTypeFlag struct_flags_ArrayUShort = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayUShort = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayUShort);
         QualifiedTypeName type_name_ArrayUShort = "ArrayUShort";
@@ -238,7 +238,7 @@ void register_ArrayLong_type_identifier(
         "ArrayLong", type_ids_ArrayLong);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayLong)
     {
-        StructTypeFlag struct_flags_ArrayLong = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayLong = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayLong);
         QualifiedTypeName type_name_ArrayLong = "ArrayLong";
@@ -332,7 +332,7 @@ void register_ArrayULong_type_identifier(
         "ArrayULong", type_ids_ArrayULong);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayULong)
     {
-        StructTypeFlag struct_flags_ArrayULong = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayULong = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayULong);
         QualifiedTypeName type_name_ArrayULong = "ArrayULong";
@@ -426,7 +426,7 @@ void register_ArrayLongLong_type_identifier(
         "ArrayLongLong", type_ids_ArrayLongLong);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayLongLong)
     {
-        StructTypeFlag struct_flags_ArrayLongLong = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayLongLong = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayLongLong);
         QualifiedTypeName type_name_ArrayLongLong = "ArrayLongLong";
@@ -520,7 +520,7 @@ void register_ArrayULongLong_type_identifier(
         "ArrayULongLong", type_ids_ArrayULongLong);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayULongLong)
     {
-        StructTypeFlag struct_flags_ArrayULongLong = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayULongLong = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayULongLong);
         QualifiedTypeName type_name_ArrayULongLong = "ArrayULongLong";
@@ -614,7 +614,7 @@ void register_ArrayFloat_type_identifier(
         "ArrayFloat", type_ids_ArrayFloat);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayFloat)
     {
-        StructTypeFlag struct_flags_ArrayFloat = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayFloat = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayFloat);
         QualifiedTypeName type_name_ArrayFloat = "ArrayFloat";
@@ -708,7 +708,7 @@ void register_ArrayDouble_type_identifier(
         "ArrayDouble", type_ids_ArrayDouble);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayDouble)
     {
-        StructTypeFlag struct_flags_ArrayDouble = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayDouble = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayDouble);
         QualifiedTypeName type_name_ArrayDouble = "ArrayDouble";
@@ -802,7 +802,7 @@ void register_ArrayLongDouble_type_identifier(
         "ArrayLongDouble", type_ids_ArrayLongDouble);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayLongDouble)
     {
-        StructTypeFlag struct_flags_ArrayLongDouble = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayLongDouble = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayLongDouble);
         QualifiedTypeName type_name_ArrayLongDouble = "ArrayLongDouble";
@@ -896,7 +896,7 @@ void register_ArrayBoolean_type_identifier(
         "ArrayBoolean", type_ids_ArrayBoolean);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayBoolean)
     {
-        StructTypeFlag struct_flags_ArrayBoolean = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayBoolean = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayBoolean);
         QualifiedTypeName type_name_ArrayBoolean = "ArrayBoolean";
@@ -990,7 +990,7 @@ void register_ArrayOctet_type_identifier(
         "ArrayOctet", type_ids_ArrayOctet);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayOctet)
     {
-        StructTypeFlag struct_flags_ArrayOctet = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayOctet = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayOctet);
         QualifiedTypeName type_name_ArrayOctet = "ArrayOctet";
@@ -1084,7 +1084,7 @@ void register_ArrayChar_type_identifier(
         "ArrayChar", type_ids_ArrayChar);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayChar)
     {
-        StructTypeFlag struct_flags_ArrayChar = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayChar = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayChar);
         QualifiedTypeName type_name_ArrayChar = "ArrayChar";
@@ -1178,7 +1178,7 @@ void register_ArrayWChar_type_identifier(
         "ArrayWChar", type_ids_ArrayWChar);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayWChar)
     {
-        StructTypeFlag struct_flags_ArrayWChar = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayWChar = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayWChar);
         QualifiedTypeName type_name_ArrayWChar = "ArrayWChar";
@@ -1272,7 +1272,7 @@ void register_ArrayString_type_identifier(
         "ArrayString", type_ids_ArrayString);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayString)
     {
-        StructTypeFlag struct_flags_ArrayString = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayString = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayString);
         QualifiedTypeName type_name_ArrayString = "ArrayString";
@@ -1374,7 +1374,7 @@ void register_ArrayWString_type_identifier(
         "ArrayWString", type_ids_ArrayWString);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayWString)
     {
-        StructTypeFlag struct_flags_ArrayWString = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayWString = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayWString);
         QualifiedTypeName type_name_ArrayWString = "ArrayWString";
@@ -1476,7 +1476,7 @@ void register_ArrayBoundedString_type_identifier(
         "ArrayBoundedString", type_ids_ArrayBoundedString);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayBoundedString)
     {
-        StructTypeFlag struct_flags_ArrayBoundedString = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayBoundedString = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayBoundedString);
         QualifiedTypeName type_name_ArrayBoundedString = "ArrayBoundedString";
@@ -1568,7 +1568,7 @@ void register_ArrayBoundedWString_type_identifier(
         "ArrayBoundedWString", type_ids_ArrayBoundedWString);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayBoundedWString)
     {
-        StructTypeFlag struct_flags_ArrayBoundedWString = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayBoundedWString = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayBoundedWString);
         QualifiedTypeName type_name_ArrayBoundedWString = "ArrayBoundedWString";
@@ -1660,7 +1660,7 @@ void register_ArrayEnum_type_identifier(
         "ArrayEnum", type_ids_ArrayEnum);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayEnum)
     {
-        StructTypeFlag struct_flags_ArrayEnum = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayEnum = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayEnum);
         QualifiedTypeName type_name_ArrayEnum = "ArrayEnum";
@@ -1752,7 +1752,7 @@ void register_ArrayBitMask_type_identifier(
         "ArrayBitMask", type_ids_ArrayBitMask);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayBitMask)
     {
-        StructTypeFlag struct_flags_ArrayBitMask = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayBitMask = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayBitMask);
         QualifiedTypeName type_name_ArrayBitMask = "ArrayBitMask";
@@ -1844,7 +1844,7 @@ void register_ArrayAlias_type_identifier(
         "ArrayAlias", type_ids_ArrayAlias);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayAlias)
     {
-        StructTypeFlag struct_flags_ArrayAlias = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayAlias = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayAlias);
         QualifiedTypeName type_name_ArrayAlias = "ArrayAlias";
@@ -1936,7 +1936,7 @@ void register_ArrayShortArray_type_identifier(
         "ArrayShortArray", type_ids_ArrayShortArray);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayShortArray)
     {
-        StructTypeFlag struct_flags_ArrayShortArray = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayShortArray = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayShortArray);
         QualifiedTypeName type_name_ArrayShortArray = "ArrayShortArray";
@@ -2032,7 +2032,7 @@ void register_ArraySequence_type_identifier(
         "ArraySequence", type_ids_ArraySequence);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArraySequence)
     {
-        StructTypeFlag struct_flags_ArraySequence = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArraySequence = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArraySequence);
         QualifiedTypeName type_name_ArraySequence = "ArraySequence";
@@ -2158,7 +2158,7 @@ void register_ArrayMap_type_identifier(
         "ArrayMap", type_ids_ArrayMap);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayMap)
     {
-        StructTypeFlag struct_flags_ArrayMap = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayMap = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayMap);
         QualifiedTypeName type_name_ArrayMap = "ArrayMap";
@@ -2311,7 +2311,7 @@ void register_ArrayUnion_type_identifier(
         "ArrayUnion", type_ids_ArrayUnion);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayUnion)
     {
-        StructTypeFlag struct_flags_ArrayUnion = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayUnion = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayUnion);
         QualifiedTypeName type_name_ArrayUnion = "ArrayUnion";
@@ -2403,7 +2403,7 @@ void register_ArrayStructure_type_identifier(
         "ArrayStructure", type_ids_ArrayStructure);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayStructure)
     {
-        StructTypeFlag struct_flags_ArrayStructure = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayStructure = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayStructure);
         QualifiedTypeName type_name_ArrayStructure = "ArrayStructure";
@@ -2495,7 +2495,7 @@ void register_ArrayBitset_type_identifier(
         "ArrayBitset", type_ids_ArrayBitset);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayBitset)
     {
-        StructTypeFlag struct_flags_ArrayBitset = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayBitset = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayBitset);
         QualifiedTypeName type_name_ArrayBitset = "ArrayBitset";
@@ -2587,7 +2587,7 @@ void register_ArrayMultiDimensionShort_type_identifier(
         "ArrayMultiDimensionShort", type_ids_ArrayMultiDimensionShort);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayMultiDimensionShort)
     {
-        StructTypeFlag struct_flags_ArrayMultiDimensionShort = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayMultiDimensionShort = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayMultiDimensionShort);
         QualifiedTypeName type_name_ArrayMultiDimensionShort = "ArrayMultiDimensionShort";
@@ -2685,7 +2685,7 @@ void register_ArrayMultiDimensionUShort_type_identifier(
         "ArrayMultiDimensionUShort", type_ids_ArrayMultiDimensionUShort);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayMultiDimensionUShort)
     {
-        StructTypeFlag struct_flags_ArrayMultiDimensionUShort = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayMultiDimensionUShort = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayMultiDimensionUShort);
         QualifiedTypeName type_name_ArrayMultiDimensionUShort = "ArrayMultiDimensionUShort";
@@ -2783,7 +2783,7 @@ void register_ArrayMultiDimensionLong_type_identifier(
         "ArrayMultiDimensionLong", type_ids_ArrayMultiDimensionLong);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayMultiDimensionLong)
     {
-        StructTypeFlag struct_flags_ArrayMultiDimensionLong = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayMultiDimensionLong = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayMultiDimensionLong);
         QualifiedTypeName type_name_ArrayMultiDimensionLong = "ArrayMultiDimensionLong";
@@ -2881,7 +2881,7 @@ void register_ArrayMultiDimensionULong_type_identifier(
         "ArrayMultiDimensionULong", type_ids_ArrayMultiDimensionULong);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayMultiDimensionULong)
     {
-        StructTypeFlag struct_flags_ArrayMultiDimensionULong = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayMultiDimensionULong = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayMultiDimensionULong);
         QualifiedTypeName type_name_ArrayMultiDimensionULong = "ArrayMultiDimensionULong";
@@ -2979,7 +2979,7 @@ void register_ArrayMultiDimensionLongLong_type_identifier(
         "ArrayMultiDimensionLongLong", type_ids_ArrayMultiDimensionLongLong);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayMultiDimensionLongLong)
     {
-        StructTypeFlag struct_flags_ArrayMultiDimensionLongLong = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayMultiDimensionLongLong = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayMultiDimensionLongLong);
         QualifiedTypeName type_name_ArrayMultiDimensionLongLong = "ArrayMultiDimensionLongLong";
@@ -3077,7 +3077,7 @@ void register_ArrayMultiDimensionULongLong_type_identifier(
         "ArrayMultiDimensionULongLong", type_ids_ArrayMultiDimensionULongLong);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayMultiDimensionULongLong)
     {
-        StructTypeFlag struct_flags_ArrayMultiDimensionULongLong = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayMultiDimensionULongLong = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayMultiDimensionULongLong);
         QualifiedTypeName type_name_ArrayMultiDimensionULongLong = "ArrayMultiDimensionULongLong";
@@ -3175,7 +3175,7 @@ void register_ArrayMultiDimensionFloat_type_identifier(
         "ArrayMultiDimensionFloat", type_ids_ArrayMultiDimensionFloat);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayMultiDimensionFloat)
     {
-        StructTypeFlag struct_flags_ArrayMultiDimensionFloat = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayMultiDimensionFloat = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayMultiDimensionFloat);
         QualifiedTypeName type_name_ArrayMultiDimensionFloat = "ArrayMultiDimensionFloat";
@@ -3273,7 +3273,7 @@ void register_ArrayMultiDimensionDouble_type_identifier(
         "ArrayMultiDimensionDouble", type_ids_ArrayMultiDimensionDouble);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayMultiDimensionDouble)
     {
-        StructTypeFlag struct_flags_ArrayMultiDimensionDouble = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayMultiDimensionDouble = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayMultiDimensionDouble);
         QualifiedTypeName type_name_ArrayMultiDimensionDouble = "ArrayMultiDimensionDouble";
@@ -3371,7 +3371,7 @@ void register_ArrayMultiDimensionLongDouble_type_identifier(
         "ArrayMultiDimensionLongDouble", type_ids_ArrayMultiDimensionLongDouble);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayMultiDimensionLongDouble)
     {
-        StructTypeFlag struct_flags_ArrayMultiDimensionLongDouble = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayMultiDimensionLongDouble = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayMultiDimensionLongDouble);
         QualifiedTypeName type_name_ArrayMultiDimensionLongDouble = "ArrayMultiDimensionLongDouble";
@@ -3469,7 +3469,7 @@ void register_ArrayMultiDimensionBoolean_type_identifier(
         "ArrayMultiDimensionBoolean", type_ids_ArrayMultiDimensionBoolean);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayMultiDimensionBoolean)
     {
-        StructTypeFlag struct_flags_ArrayMultiDimensionBoolean = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayMultiDimensionBoolean = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayMultiDimensionBoolean);
         QualifiedTypeName type_name_ArrayMultiDimensionBoolean = "ArrayMultiDimensionBoolean";
@@ -3567,7 +3567,7 @@ void register_ArrayMultiDimensionOctet_type_identifier(
         "ArrayMultiDimensionOctet", type_ids_ArrayMultiDimensionOctet);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayMultiDimensionOctet)
     {
-        StructTypeFlag struct_flags_ArrayMultiDimensionOctet = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayMultiDimensionOctet = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayMultiDimensionOctet);
         QualifiedTypeName type_name_ArrayMultiDimensionOctet = "ArrayMultiDimensionOctet";
@@ -3665,7 +3665,7 @@ void register_ArrayMultiDimensionChar_type_identifier(
         "ArrayMultiDimensionChar", type_ids_ArrayMultiDimensionChar);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayMultiDimensionChar)
     {
-        StructTypeFlag struct_flags_ArrayMultiDimensionChar = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayMultiDimensionChar = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayMultiDimensionChar);
         QualifiedTypeName type_name_ArrayMultiDimensionChar = "ArrayMultiDimensionChar";
@@ -3763,7 +3763,7 @@ void register_ArrayMultiDimensionWChar_type_identifier(
         "ArrayMultiDimensionWChar", type_ids_ArrayMultiDimensionWChar);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayMultiDimensionWChar)
     {
-        StructTypeFlag struct_flags_ArrayMultiDimensionWChar = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayMultiDimensionWChar = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayMultiDimensionWChar);
         QualifiedTypeName type_name_ArrayMultiDimensionWChar = "ArrayMultiDimensionWChar";
@@ -3861,7 +3861,7 @@ void register_ArrayMultiDimensionString_type_identifier(
         "ArrayMultiDimensionString", type_ids_ArrayMultiDimensionString);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayMultiDimensionString)
     {
-        StructTypeFlag struct_flags_ArrayMultiDimensionString = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayMultiDimensionString = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayMultiDimensionString);
         QualifiedTypeName type_name_ArrayMultiDimensionString = "ArrayMultiDimensionString";
@@ -3967,7 +3967,7 @@ void register_ArrayMultiDimensionWString_type_identifier(
         "ArrayMultiDimensionWString", type_ids_ArrayMultiDimensionWString);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayMultiDimensionWString)
     {
-        StructTypeFlag struct_flags_ArrayMultiDimensionWString = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayMultiDimensionWString = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayMultiDimensionWString);
         QualifiedTypeName type_name_ArrayMultiDimensionWString = "ArrayMultiDimensionWString";
@@ -4073,7 +4073,7 @@ void register_ArrayMultiDimensionBoundedString_type_identifier(
         "ArrayMultiDimensionBoundedString", type_ids_ArrayMultiDimensionBoundedString);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayMultiDimensionBoundedString)
     {
-        StructTypeFlag struct_flags_ArrayMultiDimensionBoundedString = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayMultiDimensionBoundedString = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayMultiDimensionBoundedString);
         QualifiedTypeName type_name_ArrayMultiDimensionBoundedString = "ArrayMultiDimensionBoundedString";
@@ -4169,7 +4169,7 @@ void register_ArrayMultiDimensionBoundedWString_type_identifier(
         "ArrayMultiDimensionBoundedWString", type_ids_ArrayMultiDimensionBoundedWString);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayMultiDimensionBoundedWString)
     {
-        StructTypeFlag struct_flags_ArrayMultiDimensionBoundedWString = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayMultiDimensionBoundedWString = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayMultiDimensionBoundedWString);
         QualifiedTypeName type_name_ArrayMultiDimensionBoundedWString = "ArrayMultiDimensionBoundedWString";
@@ -4265,7 +4265,7 @@ void register_ArrayMultiDimensionEnum_type_identifier(
         "ArrayMultiDimensionEnum", type_ids_ArrayMultiDimensionEnum);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayMultiDimensionEnum)
     {
-        StructTypeFlag struct_flags_ArrayMultiDimensionEnum = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayMultiDimensionEnum = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayMultiDimensionEnum);
         QualifiedTypeName type_name_ArrayMultiDimensionEnum = "ArrayMultiDimensionEnum";
@@ -4361,7 +4361,7 @@ void register_ArrayMultiDimensionBitMask_type_identifier(
         "ArrayMultiDimensionBitMask", type_ids_ArrayMultiDimensionBitMask);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayMultiDimensionBitMask)
     {
-        StructTypeFlag struct_flags_ArrayMultiDimensionBitMask = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayMultiDimensionBitMask = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayMultiDimensionBitMask);
         QualifiedTypeName type_name_ArrayMultiDimensionBitMask = "ArrayMultiDimensionBitMask";
@@ -4457,7 +4457,7 @@ void register_ArrayMultiDimensionAlias_type_identifier(
         "ArrayMultiDimensionAlias", type_ids_ArrayMultiDimensionAlias);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayMultiDimensionAlias)
     {
-        StructTypeFlag struct_flags_ArrayMultiDimensionAlias = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayMultiDimensionAlias = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayMultiDimensionAlias);
         QualifiedTypeName type_name_ArrayMultiDimensionAlias = "ArrayMultiDimensionAlias";
@@ -4553,7 +4553,7 @@ void register_ArrayMultiDimensionSequence_type_identifier(
         "ArrayMultiDimensionSequence", type_ids_ArrayMultiDimensionSequence);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayMultiDimensionSequence)
     {
-        StructTypeFlag struct_flags_ArrayMultiDimensionSequence = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayMultiDimensionSequence = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayMultiDimensionSequence);
         QualifiedTypeName type_name_ArrayMultiDimensionSequence = "ArrayMultiDimensionSequence";
@@ -4683,7 +4683,7 @@ void register_ArrayMultiDimensionMap_type_identifier(
         "ArrayMultiDimensionMap", type_ids_ArrayMultiDimensionMap);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayMultiDimensionMap)
     {
-        StructTypeFlag struct_flags_ArrayMultiDimensionMap = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayMultiDimensionMap = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayMultiDimensionMap);
         QualifiedTypeName type_name_ArrayMultiDimensionMap = "ArrayMultiDimensionMap";
@@ -4840,7 +4840,7 @@ void register_ArrayMultiDimensionUnion_type_identifier(
         "ArrayMultiDimensionUnion", type_ids_ArrayMultiDimensionUnion);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayMultiDimensionUnion)
     {
-        StructTypeFlag struct_flags_ArrayMultiDimensionUnion = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayMultiDimensionUnion = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayMultiDimensionUnion);
         QualifiedTypeName type_name_ArrayMultiDimensionUnion = "ArrayMultiDimensionUnion";
@@ -4936,7 +4936,7 @@ void register_ArrayMultiDimensionStructure_type_identifier(
         "ArrayMultiDimensionStructure", type_ids_ArrayMultiDimensionStructure);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayMultiDimensionStructure)
     {
-        StructTypeFlag struct_flags_ArrayMultiDimensionStructure = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayMultiDimensionStructure = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayMultiDimensionStructure);
         QualifiedTypeName type_name_ArrayMultiDimensionStructure = "ArrayMultiDimensionStructure";
@@ -5032,7 +5032,7 @@ void register_ArrayMultiDimensionBitset_type_identifier(
         "ArrayMultiDimensionBitset", type_ids_ArrayMultiDimensionBitset);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayMultiDimensionBitset)
     {
-        StructTypeFlag struct_flags_ArrayMultiDimensionBitset = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayMultiDimensionBitset = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayMultiDimensionBitset);
         QualifiedTypeName type_name_ArrayMultiDimensionBitset = "ArrayMultiDimensionBitset";
@@ -5128,7 +5128,7 @@ void register_ArraySingleDimensionLiteralsShort_type_identifier(
         "ArraySingleDimensionLiteralsShort", type_ids_ArraySingleDimensionLiteralsShort);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArraySingleDimensionLiteralsShort)
     {
-        StructTypeFlag struct_flags_ArraySingleDimensionLiteralsShort = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArraySingleDimensionLiteralsShort = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArraySingleDimensionLiteralsShort);
         QualifiedTypeName type_name_ArraySingleDimensionLiteralsShort = "ArraySingleDimensionLiteralsShort";
@@ -5222,7 +5222,7 @@ void register_ArraySingleDimensionLiteralsUnsignedShort_type_identifier(
         "ArraySingleDimensionLiteralsUnsignedShort", type_ids_ArraySingleDimensionLiteralsUnsignedShort);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArraySingleDimensionLiteralsUnsignedShort)
     {
-        StructTypeFlag struct_flags_ArraySingleDimensionLiteralsUnsignedShort = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArraySingleDimensionLiteralsUnsignedShort = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArraySingleDimensionLiteralsUnsignedShort);
         QualifiedTypeName type_name_ArraySingleDimensionLiteralsUnsignedShort = "ArraySingleDimensionLiteralsUnsignedShort";
@@ -5316,7 +5316,7 @@ void register_ArraySingleDimensionLiteralsLong_type_identifier(
         "ArraySingleDimensionLiteralsLong", type_ids_ArraySingleDimensionLiteralsLong);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArraySingleDimensionLiteralsLong)
     {
-        StructTypeFlag struct_flags_ArraySingleDimensionLiteralsLong = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArraySingleDimensionLiteralsLong = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArraySingleDimensionLiteralsLong);
         QualifiedTypeName type_name_ArraySingleDimensionLiteralsLong = "ArraySingleDimensionLiteralsLong";
@@ -5410,7 +5410,7 @@ void register_ArraySingleDimensionLiteralsUnsignedLong_type_identifier(
         "ArraySingleDimensionLiteralsUnsignedLong", type_ids_ArraySingleDimensionLiteralsUnsignedLong);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArraySingleDimensionLiteralsUnsignedLong)
     {
-        StructTypeFlag struct_flags_ArraySingleDimensionLiteralsUnsignedLong = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArraySingleDimensionLiteralsUnsignedLong = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArraySingleDimensionLiteralsUnsignedLong);
         QualifiedTypeName type_name_ArraySingleDimensionLiteralsUnsignedLong = "ArraySingleDimensionLiteralsUnsignedLong";
@@ -5504,7 +5504,7 @@ void register_ArraySingleDimensionLiteralsLongLong_type_identifier(
         "ArraySingleDimensionLiteralsLongLong", type_ids_ArraySingleDimensionLiteralsLongLong);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArraySingleDimensionLiteralsLongLong)
     {
-        StructTypeFlag struct_flags_ArraySingleDimensionLiteralsLongLong = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArraySingleDimensionLiteralsLongLong = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArraySingleDimensionLiteralsLongLong);
         QualifiedTypeName type_name_ArraySingleDimensionLiteralsLongLong = "ArraySingleDimensionLiteralsLongLong";
@@ -5598,7 +5598,7 @@ void register_ArraySingleDimensionLiteralsUnsignedLongLong_type_identifier(
         "ArraySingleDimensionLiteralsUnsignedLongLong", type_ids_ArraySingleDimensionLiteralsUnsignedLongLong);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArraySingleDimensionLiteralsUnsignedLongLong)
     {
-        StructTypeFlag struct_flags_ArraySingleDimensionLiteralsUnsignedLongLong = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArraySingleDimensionLiteralsUnsignedLongLong = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArraySingleDimensionLiteralsUnsignedLongLong);
         QualifiedTypeName type_name_ArraySingleDimensionLiteralsUnsignedLongLong = "ArraySingleDimensionLiteralsUnsignedLongLong";
@@ -5692,7 +5692,7 @@ void register_ArraySingleDimensionLiteralsFloat_type_identifier(
         "ArraySingleDimensionLiteralsFloat", type_ids_ArraySingleDimensionLiteralsFloat);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArraySingleDimensionLiteralsFloat)
     {
-        StructTypeFlag struct_flags_ArraySingleDimensionLiteralsFloat = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArraySingleDimensionLiteralsFloat = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArraySingleDimensionLiteralsFloat);
         QualifiedTypeName type_name_ArraySingleDimensionLiteralsFloat = "ArraySingleDimensionLiteralsFloat";
@@ -5786,7 +5786,7 @@ void register_ArraySingleDimensionLiteralsDouble_type_identifier(
         "ArraySingleDimensionLiteralsDouble", type_ids_ArraySingleDimensionLiteralsDouble);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArraySingleDimensionLiteralsDouble)
     {
-        StructTypeFlag struct_flags_ArraySingleDimensionLiteralsDouble = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArraySingleDimensionLiteralsDouble = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArraySingleDimensionLiteralsDouble);
         QualifiedTypeName type_name_ArraySingleDimensionLiteralsDouble = "ArraySingleDimensionLiteralsDouble";
@@ -5880,7 +5880,7 @@ void register_ArraySingleDimensionLiteralsLongDouble_type_identifier(
         "ArraySingleDimensionLiteralsLongDouble", type_ids_ArraySingleDimensionLiteralsLongDouble);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArraySingleDimensionLiteralsLongDouble)
     {
-        StructTypeFlag struct_flags_ArraySingleDimensionLiteralsLongDouble = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArraySingleDimensionLiteralsLongDouble = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArraySingleDimensionLiteralsLongDouble);
         QualifiedTypeName type_name_ArraySingleDimensionLiteralsLongDouble = "ArraySingleDimensionLiteralsLongDouble";
@@ -5974,7 +5974,7 @@ void register_ArraySingleDimensionLiteralsBoolean_type_identifier(
         "ArraySingleDimensionLiteralsBoolean", type_ids_ArraySingleDimensionLiteralsBoolean);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArraySingleDimensionLiteralsBoolean)
     {
-        StructTypeFlag struct_flags_ArraySingleDimensionLiteralsBoolean = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArraySingleDimensionLiteralsBoolean = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArraySingleDimensionLiteralsBoolean);
         QualifiedTypeName type_name_ArraySingleDimensionLiteralsBoolean = "ArraySingleDimensionLiteralsBoolean";
@@ -6068,7 +6068,7 @@ void register_ArraySingleDimensionLiteralsOctet_type_identifier(
         "ArraySingleDimensionLiteralsOctet", type_ids_ArraySingleDimensionLiteralsOctet);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArraySingleDimensionLiteralsOctet)
     {
-        StructTypeFlag struct_flags_ArraySingleDimensionLiteralsOctet = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArraySingleDimensionLiteralsOctet = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArraySingleDimensionLiteralsOctet);
         QualifiedTypeName type_name_ArraySingleDimensionLiteralsOctet = "ArraySingleDimensionLiteralsOctet";
@@ -6162,7 +6162,7 @@ void register_ArraySingleDimensionLiteralsChar_type_identifier(
         "ArraySingleDimensionLiteralsChar", type_ids_ArraySingleDimensionLiteralsChar);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArraySingleDimensionLiteralsChar)
     {
-        StructTypeFlag struct_flags_ArraySingleDimensionLiteralsChar = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArraySingleDimensionLiteralsChar = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArraySingleDimensionLiteralsChar);
         QualifiedTypeName type_name_ArraySingleDimensionLiteralsChar = "ArraySingleDimensionLiteralsChar";
@@ -6256,7 +6256,7 @@ void register_ArraySingleDimensionLiteralsWChar_type_identifier(
         "ArraySingleDimensionLiteralsWChar", type_ids_ArraySingleDimensionLiteralsWChar);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArraySingleDimensionLiteralsWChar)
     {
-        StructTypeFlag struct_flags_ArraySingleDimensionLiteralsWChar = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArraySingleDimensionLiteralsWChar = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArraySingleDimensionLiteralsWChar);
         QualifiedTypeName type_name_ArraySingleDimensionLiteralsWChar = "ArraySingleDimensionLiteralsWChar";
@@ -6350,7 +6350,7 @@ void register_ArraySingleDimensionLiteralsString_type_identifier(
         "ArraySingleDimensionLiteralsString", type_ids_ArraySingleDimensionLiteralsString);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArraySingleDimensionLiteralsString)
     {
-        StructTypeFlag struct_flags_ArraySingleDimensionLiteralsString = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArraySingleDimensionLiteralsString = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArraySingleDimensionLiteralsString);
         QualifiedTypeName type_name_ArraySingleDimensionLiteralsString = "ArraySingleDimensionLiteralsString";
@@ -6452,7 +6452,7 @@ void register_ArraySingleDimensionLiteralsWString_type_identifier(
         "ArraySingleDimensionLiteralsWString", type_ids_ArraySingleDimensionLiteralsWString);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArraySingleDimensionLiteralsWString)
     {
-        StructTypeFlag struct_flags_ArraySingleDimensionLiteralsWString = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArraySingleDimensionLiteralsWString = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArraySingleDimensionLiteralsWString);
         QualifiedTypeName type_name_ArraySingleDimensionLiteralsWString = "ArraySingleDimensionLiteralsWString";
@@ -6554,7 +6554,7 @@ void register_ArraySingleDimensionLiteralsBoundedString_type_identifier(
         "ArraySingleDimensionLiteralsBoundedString", type_ids_ArraySingleDimensionLiteralsBoundedString);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArraySingleDimensionLiteralsBoundedString)
     {
-        StructTypeFlag struct_flags_ArraySingleDimensionLiteralsBoundedString = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArraySingleDimensionLiteralsBoundedString = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArraySingleDimensionLiteralsBoundedString);
         QualifiedTypeName type_name_ArraySingleDimensionLiteralsBoundedString = "ArraySingleDimensionLiteralsBoundedString";
@@ -6646,7 +6646,7 @@ void register_ArraySingleDimensionLiteralsBoundedWString_type_identifier(
         "ArraySingleDimensionLiteralsBoundedWString", type_ids_ArraySingleDimensionLiteralsBoundedWString);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArraySingleDimensionLiteralsBoundedWString)
     {
-        StructTypeFlag struct_flags_ArraySingleDimensionLiteralsBoundedWString = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArraySingleDimensionLiteralsBoundedWString = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArraySingleDimensionLiteralsBoundedWString);
         QualifiedTypeName type_name_ArraySingleDimensionLiteralsBoundedWString = "ArraySingleDimensionLiteralsBoundedWString";
@@ -6738,7 +6738,7 @@ void register_ArraySingleDimensionLiteralsEnum_type_identifier(
         "ArraySingleDimensionLiteralsEnum", type_ids_ArraySingleDimensionLiteralsEnum);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArraySingleDimensionLiteralsEnum)
     {
-        StructTypeFlag struct_flags_ArraySingleDimensionLiteralsEnum = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArraySingleDimensionLiteralsEnum = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArraySingleDimensionLiteralsEnum);
         QualifiedTypeName type_name_ArraySingleDimensionLiteralsEnum = "ArraySingleDimensionLiteralsEnum";
@@ -6830,7 +6830,7 @@ void register_ArraySingleDimensionLiteralsBitMask_type_identifier(
         "ArraySingleDimensionLiteralsBitMask", type_ids_ArraySingleDimensionLiteralsBitMask);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArraySingleDimensionLiteralsBitMask)
     {
-        StructTypeFlag struct_flags_ArraySingleDimensionLiteralsBitMask = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArraySingleDimensionLiteralsBitMask = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArraySingleDimensionLiteralsBitMask);
         QualifiedTypeName type_name_ArraySingleDimensionLiteralsBitMask = "ArraySingleDimensionLiteralsBitMask";
@@ -6922,7 +6922,7 @@ void register_ArraySingleDimensionLiteralsAlias_type_identifier(
         "ArraySingleDimensionLiteralsAlias", type_ids_ArraySingleDimensionLiteralsAlias);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArraySingleDimensionLiteralsAlias)
     {
-        StructTypeFlag struct_flags_ArraySingleDimensionLiteralsAlias = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArraySingleDimensionLiteralsAlias = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArraySingleDimensionLiteralsAlias);
         QualifiedTypeName type_name_ArraySingleDimensionLiteralsAlias = "ArraySingleDimensionLiteralsAlias";
@@ -7014,7 +7014,7 @@ void register_ArraySingleDimensionLiteralsShortArray_type_identifier(
         "ArraySingleDimensionLiteralsShortArray", type_ids_ArraySingleDimensionLiteralsShortArray);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArraySingleDimensionLiteralsShortArray)
     {
-        StructTypeFlag struct_flags_ArraySingleDimensionLiteralsShortArray = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArraySingleDimensionLiteralsShortArray = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArraySingleDimensionLiteralsShortArray);
         QualifiedTypeName type_name_ArraySingleDimensionLiteralsShortArray = "ArraySingleDimensionLiteralsShortArray";
@@ -7110,7 +7110,7 @@ void register_ArraySingleDimensionLiteralsSequence_type_identifier(
         "ArraySingleDimensionLiteralsSequence", type_ids_ArraySingleDimensionLiteralsSequence);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArraySingleDimensionLiteralsSequence)
     {
-        StructTypeFlag struct_flags_ArraySingleDimensionLiteralsSequence = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArraySingleDimensionLiteralsSequence = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArraySingleDimensionLiteralsSequence);
         QualifiedTypeName type_name_ArraySingleDimensionLiteralsSequence = "ArraySingleDimensionLiteralsSequence";
@@ -7236,7 +7236,7 @@ void register_ArraySingleDimensionLiteralsMap_type_identifier(
         "ArraySingleDimensionLiteralsMap", type_ids_ArraySingleDimensionLiteralsMap);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArraySingleDimensionLiteralsMap)
     {
-        StructTypeFlag struct_flags_ArraySingleDimensionLiteralsMap = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArraySingleDimensionLiteralsMap = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArraySingleDimensionLiteralsMap);
         QualifiedTypeName type_name_ArraySingleDimensionLiteralsMap = "ArraySingleDimensionLiteralsMap";
@@ -7389,7 +7389,7 @@ void register_ArraySingleDimensionLiteralsUnion_type_identifier(
         "ArraySingleDimensionLiteralsUnion", type_ids_ArraySingleDimensionLiteralsUnion);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArraySingleDimensionLiteralsUnion)
     {
-        StructTypeFlag struct_flags_ArraySingleDimensionLiteralsUnion = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArraySingleDimensionLiteralsUnion = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArraySingleDimensionLiteralsUnion);
         QualifiedTypeName type_name_ArraySingleDimensionLiteralsUnion = "ArraySingleDimensionLiteralsUnion";
@@ -7481,7 +7481,7 @@ void register_ArraySingleDimensionLiteralsStructure_type_identifier(
         "ArraySingleDimensionLiteralsStructure", type_ids_ArraySingleDimensionLiteralsStructure);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArraySingleDimensionLiteralsStructure)
     {
-        StructTypeFlag struct_flags_ArraySingleDimensionLiteralsStructure = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArraySingleDimensionLiteralsStructure = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArraySingleDimensionLiteralsStructure);
         QualifiedTypeName type_name_ArraySingleDimensionLiteralsStructure = "ArraySingleDimensionLiteralsStructure";
@@ -7573,7 +7573,7 @@ void register_ArraySingleDimensionLiteralsBitset_type_identifier(
         "ArraySingleDimensionLiteralsBitset", type_ids_ArraySingleDimensionLiteralsBitset);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArraySingleDimensionLiteralsBitset)
     {
-        StructTypeFlag struct_flags_ArraySingleDimensionLiteralsBitset = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArraySingleDimensionLiteralsBitset = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArraySingleDimensionLiteralsBitset);
         QualifiedTypeName type_name_ArraySingleDimensionLiteralsBitset = "ArraySingleDimensionLiteralsBitset";
@@ -7665,7 +7665,7 @@ void register_ArrayMultiDimensionLiteralsShort_type_identifier(
         "ArrayMultiDimensionLiteralsShort", type_ids_ArrayMultiDimensionLiteralsShort);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayMultiDimensionLiteralsShort)
     {
-        StructTypeFlag struct_flags_ArrayMultiDimensionLiteralsShort = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayMultiDimensionLiteralsShort = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayMultiDimensionLiteralsShort);
         QualifiedTypeName type_name_ArrayMultiDimensionLiteralsShort = "ArrayMultiDimensionLiteralsShort";
@@ -7763,7 +7763,7 @@ void register_ArrayMultiDimensionLiteralsUShort_type_identifier(
         "ArrayMultiDimensionLiteralsUShort", type_ids_ArrayMultiDimensionLiteralsUShort);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayMultiDimensionLiteralsUShort)
     {
-        StructTypeFlag struct_flags_ArrayMultiDimensionLiteralsUShort = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayMultiDimensionLiteralsUShort = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayMultiDimensionLiteralsUShort);
         QualifiedTypeName type_name_ArrayMultiDimensionLiteralsUShort = "ArrayMultiDimensionLiteralsUShort";
@@ -7861,7 +7861,7 @@ void register_ArrayMultiDimensionLiteralsLong_type_identifier(
         "ArrayMultiDimensionLiteralsLong", type_ids_ArrayMultiDimensionLiteralsLong);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayMultiDimensionLiteralsLong)
     {
-        StructTypeFlag struct_flags_ArrayMultiDimensionLiteralsLong = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayMultiDimensionLiteralsLong = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayMultiDimensionLiteralsLong);
         QualifiedTypeName type_name_ArrayMultiDimensionLiteralsLong = "ArrayMultiDimensionLiteralsLong";
@@ -7959,7 +7959,7 @@ void register_ArrayMultiDimensionLiteralsULong_type_identifier(
         "ArrayMultiDimensionLiteralsULong", type_ids_ArrayMultiDimensionLiteralsULong);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayMultiDimensionLiteralsULong)
     {
-        StructTypeFlag struct_flags_ArrayMultiDimensionLiteralsULong = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayMultiDimensionLiteralsULong = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayMultiDimensionLiteralsULong);
         QualifiedTypeName type_name_ArrayMultiDimensionLiteralsULong = "ArrayMultiDimensionLiteralsULong";
@@ -8057,7 +8057,7 @@ void register_ArrayMultiDimensionLiteralsLongLong_type_identifier(
         "ArrayMultiDimensionLiteralsLongLong", type_ids_ArrayMultiDimensionLiteralsLongLong);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayMultiDimensionLiteralsLongLong)
     {
-        StructTypeFlag struct_flags_ArrayMultiDimensionLiteralsLongLong = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayMultiDimensionLiteralsLongLong = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayMultiDimensionLiteralsLongLong);
         QualifiedTypeName type_name_ArrayMultiDimensionLiteralsLongLong = "ArrayMultiDimensionLiteralsLongLong";
@@ -8155,7 +8155,7 @@ void register_ArrayMultiDimensionLiteralsULongLong_type_identifier(
         "ArrayMultiDimensionLiteralsULongLong", type_ids_ArrayMultiDimensionLiteralsULongLong);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayMultiDimensionLiteralsULongLong)
     {
-        StructTypeFlag struct_flags_ArrayMultiDimensionLiteralsULongLong = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayMultiDimensionLiteralsULongLong = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayMultiDimensionLiteralsULongLong);
         QualifiedTypeName type_name_ArrayMultiDimensionLiteralsULongLong = "ArrayMultiDimensionLiteralsULongLong";
@@ -8253,7 +8253,7 @@ void register_ArrayMultiDimensionLiteralsFloat_type_identifier(
         "ArrayMultiDimensionLiteralsFloat", type_ids_ArrayMultiDimensionLiteralsFloat);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayMultiDimensionLiteralsFloat)
     {
-        StructTypeFlag struct_flags_ArrayMultiDimensionLiteralsFloat = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayMultiDimensionLiteralsFloat = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayMultiDimensionLiteralsFloat);
         QualifiedTypeName type_name_ArrayMultiDimensionLiteralsFloat = "ArrayMultiDimensionLiteralsFloat";
@@ -8351,7 +8351,7 @@ void register_ArrayMultiDimensionLiteralsDouble_type_identifier(
         "ArrayMultiDimensionLiteralsDouble", type_ids_ArrayMultiDimensionLiteralsDouble);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayMultiDimensionLiteralsDouble)
     {
-        StructTypeFlag struct_flags_ArrayMultiDimensionLiteralsDouble = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayMultiDimensionLiteralsDouble = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayMultiDimensionLiteralsDouble);
         QualifiedTypeName type_name_ArrayMultiDimensionLiteralsDouble = "ArrayMultiDimensionLiteralsDouble";
@@ -8449,7 +8449,7 @@ void register_ArrayMultiDimensionLiteralsLongDouble_type_identifier(
         "ArrayMultiDimensionLiteralsLongDouble", type_ids_ArrayMultiDimensionLiteralsLongDouble);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayMultiDimensionLiteralsLongDouble)
     {
-        StructTypeFlag struct_flags_ArrayMultiDimensionLiteralsLongDouble = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayMultiDimensionLiteralsLongDouble = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayMultiDimensionLiteralsLongDouble);
         QualifiedTypeName type_name_ArrayMultiDimensionLiteralsLongDouble = "ArrayMultiDimensionLiteralsLongDouble";
@@ -8547,7 +8547,7 @@ void register_ArrayMultiDimensionLiteralsBoolean_type_identifier(
         "ArrayMultiDimensionLiteralsBoolean", type_ids_ArrayMultiDimensionLiteralsBoolean);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayMultiDimensionLiteralsBoolean)
     {
-        StructTypeFlag struct_flags_ArrayMultiDimensionLiteralsBoolean = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayMultiDimensionLiteralsBoolean = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayMultiDimensionLiteralsBoolean);
         QualifiedTypeName type_name_ArrayMultiDimensionLiteralsBoolean = "ArrayMultiDimensionLiteralsBoolean";
@@ -8645,7 +8645,7 @@ void register_ArrayMultiDimensionLiteralsOctet_type_identifier(
         "ArrayMultiDimensionLiteralsOctet", type_ids_ArrayMultiDimensionLiteralsOctet);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayMultiDimensionLiteralsOctet)
     {
-        StructTypeFlag struct_flags_ArrayMultiDimensionLiteralsOctet = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayMultiDimensionLiteralsOctet = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayMultiDimensionLiteralsOctet);
         QualifiedTypeName type_name_ArrayMultiDimensionLiteralsOctet = "ArrayMultiDimensionLiteralsOctet";
@@ -8743,7 +8743,7 @@ void register_ArrayMultiDimensionLiteralsChar_type_identifier(
         "ArrayMultiDimensionLiteralsChar", type_ids_ArrayMultiDimensionLiteralsChar);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayMultiDimensionLiteralsChar)
     {
-        StructTypeFlag struct_flags_ArrayMultiDimensionLiteralsChar = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayMultiDimensionLiteralsChar = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayMultiDimensionLiteralsChar);
         QualifiedTypeName type_name_ArrayMultiDimensionLiteralsChar = "ArrayMultiDimensionLiteralsChar";
@@ -8841,7 +8841,7 @@ void register_ArrayMultiDimensionLiteralsWChar_type_identifier(
         "ArrayMultiDimensionLiteralsWChar", type_ids_ArrayMultiDimensionLiteralsWChar);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayMultiDimensionLiteralsWChar)
     {
-        StructTypeFlag struct_flags_ArrayMultiDimensionLiteralsWChar = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayMultiDimensionLiteralsWChar = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayMultiDimensionLiteralsWChar);
         QualifiedTypeName type_name_ArrayMultiDimensionLiteralsWChar = "ArrayMultiDimensionLiteralsWChar";
@@ -8939,7 +8939,7 @@ void register_ArrayMultiDimensionLiteralsString_type_identifier(
         "ArrayMultiDimensionLiteralsString", type_ids_ArrayMultiDimensionLiteralsString);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayMultiDimensionLiteralsString)
     {
-        StructTypeFlag struct_flags_ArrayMultiDimensionLiteralsString = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayMultiDimensionLiteralsString = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayMultiDimensionLiteralsString);
         QualifiedTypeName type_name_ArrayMultiDimensionLiteralsString = "ArrayMultiDimensionLiteralsString";
@@ -9045,7 +9045,7 @@ void register_ArrayMultiDimensionLiteralsWString_type_identifier(
         "ArrayMultiDimensionLiteralsWString", type_ids_ArrayMultiDimensionLiteralsWString);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayMultiDimensionLiteralsWString)
     {
-        StructTypeFlag struct_flags_ArrayMultiDimensionLiteralsWString = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayMultiDimensionLiteralsWString = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayMultiDimensionLiteralsWString);
         QualifiedTypeName type_name_ArrayMultiDimensionLiteralsWString = "ArrayMultiDimensionLiteralsWString";
@@ -9151,7 +9151,7 @@ void register_ArrayMultiDimensionLiteralsBoundedString_type_identifier(
         "ArrayMultiDimensionLiteralsBoundedString", type_ids_ArrayMultiDimensionLiteralsBoundedString);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayMultiDimensionLiteralsBoundedString)
     {
-        StructTypeFlag struct_flags_ArrayMultiDimensionLiteralsBoundedString = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayMultiDimensionLiteralsBoundedString = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayMultiDimensionLiteralsBoundedString);
         QualifiedTypeName type_name_ArrayMultiDimensionLiteralsBoundedString = "ArrayMultiDimensionLiteralsBoundedString";
@@ -9247,7 +9247,7 @@ void register_ArrayMultiDimensionLiteralsBoundedWString_type_identifier(
         "ArrayMultiDimensionLiteralsBoundedWString", type_ids_ArrayMultiDimensionLiteralsBoundedWString);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayMultiDimensionLiteralsBoundedWString)
     {
-        StructTypeFlag struct_flags_ArrayMultiDimensionLiteralsBoundedWString = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayMultiDimensionLiteralsBoundedWString = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayMultiDimensionLiteralsBoundedWString);
         QualifiedTypeName type_name_ArrayMultiDimensionLiteralsBoundedWString = "ArrayMultiDimensionLiteralsBoundedWString";
@@ -9343,7 +9343,7 @@ void register_ArrayMultiDimensionLiteralsEnum_type_identifier(
         "ArrayMultiDimensionLiteralsEnum", type_ids_ArrayMultiDimensionLiteralsEnum);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayMultiDimensionLiteralsEnum)
     {
-        StructTypeFlag struct_flags_ArrayMultiDimensionLiteralsEnum = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayMultiDimensionLiteralsEnum = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayMultiDimensionLiteralsEnum);
         QualifiedTypeName type_name_ArrayMultiDimensionLiteralsEnum = "ArrayMultiDimensionLiteralsEnum";
@@ -9439,7 +9439,7 @@ void register_ArrayMultiDimensionLiteralsBitMask_type_identifier(
         "ArrayMultiDimensionLiteralsBitMask", type_ids_ArrayMultiDimensionLiteralsBitMask);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayMultiDimensionLiteralsBitMask)
     {
-        StructTypeFlag struct_flags_ArrayMultiDimensionLiteralsBitMask = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayMultiDimensionLiteralsBitMask = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayMultiDimensionLiteralsBitMask);
         QualifiedTypeName type_name_ArrayMultiDimensionLiteralsBitMask = "ArrayMultiDimensionLiteralsBitMask";
@@ -9535,7 +9535,7 @@ void register_ArrayMultiDimensionLiteralsAlias_type_identifier(
         "ArrayMultiDimensionLiteralsAlias", type_ids_ArrayMultiDimensionLiteralsAlias);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayMultiDimensionLiteralsAlias)
     {
-        StructTypeFlag struct_flags_ArrayMultiDimensionLiteralsAlias = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayMultiDimensionLiteralsAlias = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayMultiDimensionLiteralsAlias);
         QualifiedTypeName type_name_ArrayMultiDimensionLiteralsAlias = "ArrayMultiDimensionLiteralsAlias";
@@ -9631,7 +9631,7 @@ void register_ArrayMultiDimensionLiteralsSequence_type_identifier(
         "ArrayMultiDimensionLiteralsSequence", type_ids_ArrayMultiDimensionLiteralsSequence);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayMultiDimensionLiteralsSequence)
     {
-        StructTypeFlag struct_flags_ArrayMultiDimensionLiteralsSequence = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayMultiDimensionLiteralsSequence = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayMultiDimensionLiteralsSequence);
         QualifiedTypeName type_name_ArrayMultiDimensionLiteralsSequence = "ArrayMultiDimensionLiteralsSequence";
@@ -9761,7 +9761,7 @@ void register_ArrayMultiDimensionLiteralsMap_type_identifier(
         "ArrayMultiDimensionLiteralsMap", type_ids_ArrayMultiDimensionLiteralsMap);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayMultiDimensionLiteralsMap)
     {
-        StructTypeFlag struct_flags_ArrayMultiDimensionLiteralsMap = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayMultiDimensionLiteralsMap = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayMultiDimensionLiteralsMap);
         QualifiedTypeName type_name_ArrayMultiDimensionLiteralsMap = "ArrayMultiDimensionLiteralsMap";
@@ -9918,7 +9918,7 @@ void register_ArrayMultiDimensionLiteralsUnion_type_identifier(
         "ArrayMultiDimensionLiteralsUnion", type_ids_ArrayMultiDimensionLiteralsUnion);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayMultiDimensionLiteralsUnion)
     {
-        StructTypeFlag struct_flags_ArrayMultiDimensionLiteralsUnion = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayMultiDimensionLiteralsUnion = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayMultiDimensionLiteralsUnion);
         QualifiedTypeName type_name_ArrayMultiDimensionLiteralsUnion = "ArrayMultiDimensionLiteralsUnion";
@@ -10014,7 +10014,7 @@ void register_ArrayMultiDimensionLiteralsStructure_type_identifier(
         "ArrayMultiDimensionLiteralsStructure", type_ids_ArrayMultiDimensionLiteralsStructure);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayMultiDimensionLiteralsStructure)
     {
-        StructTypeFlag struct_flags_ArrayMultiDimensionLiteralsStructure = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayMultiDimensionLiteralsStructure = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayMultiDimensionLiteralsStructure);
         QualifiedTypeName type_name_ArrayMultiDimensionLiteralsStructure = "ArrayMultiDimensionLiteralsStructure";
@@ -10110,7 +10110,7 @@ void register_ArrayMultiDimensionLiteralsBitSet_type_identifier(
         "ArrayMultiDimensionLiteralsBitSet", type_ids_ArrayMultiDimensionLiteralsBitSet);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ArrayMultiDimensionLiteralsBitSet)
     {
-        StructTypeFlag struct_flags_ArrayMultiDimensionLiteralsBitSet = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ArrayMultiDimensionLiteralsBitSet = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ArrayMultiDimensionLiteralsBitSet);
         QualifiedTypeName type_name_ArrayMultiDimensionLiteralsBitSet = "ArrayMultiDimensionLiteralsBitSet";
@@ -10206,7 +10206,7 @@ void register_BoundedSmallArrays_type_identifier(
         "BoundedSmallArrays", type_ids_BoundedSmallArrays);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_BoundedSmallArrays)
     {
-        StructTypeFlag struct_flags_BoundedSmallArrays = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_BoundedSmallArrays = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_BoundedSmallArrays);
         QualifiedTypeName type_name_BoundedSmallArrays = "BoundedSmallArrays";
@@ -10300,7 +10300,7 @@ void register_BoundedBigArrays_type_identifier(
         "BoundedBigArrays", type_ids_BoundedBigArrays);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_BoundedBigArrays)
     {
-        StructTypeFlag struct_flags_BoundedBigArrays = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_BoundedBigArrays = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_BoundedBigArrays);
         QualifiedTypeName type_name_BoundedBigArrays = "BoundedBigArrays";

@@ -49,7 +49,7 @@ void register_sample_type_identifier(
         "sample", type_ids_sample);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_sample)
     {
-        StructTypeFlag struct_flags_sample = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_sample = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_sample);
         QualifiedTypeName type_name_sample = "sample";

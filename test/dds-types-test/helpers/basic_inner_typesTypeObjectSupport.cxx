@@ -345,7 +345,7 @@ void register_InnerStructureHelper_type_identifier(
         "InnerStructureHelper", type_ids_InnerStructureHelper);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_InnerStructureHelper)
     {
-        StructTypeFlag struct_flags_InnerStructureHelper = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_InnerStructureHelper = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 true, false);
         static_cast<void>(return_code_InnerStructureHelper);
         QualifiedTypeName type_name_InnerStructureHelper = "InnerStructureHelper";
@@ -442,7 +442,7 @@ void register_InnerEmptyStructureHelper_type_identifier(
         "InnerEmptyStructureHelper", type_ids_InnerEmptyStructureHelper);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_InnerEmptyStructureHelper)
     {
-        StructTypeFlag struct_flags_InnerEmptyStructureHelper = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_InnerEmptyStructureHelper = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 true, false);
         static_cast<void>(return_code_InnerEmptyStructureHelper);
         QualifiedTypeName type_name_InnerEmptyStructureHelper = "InnerEmptyStructureHelper";
@@ -478,8 +478,12 @@ void register_InnerUnionHelper_type_identifier(
         "InnerUnionHelper", type_ids_InnerUnionHelper);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_InnerUnionHelper)
     {
+<<<<<<< HEAD
         ReturnCode_t return_code_InnerUnionHelper;
         UnionTypeFlag union_flags_InnerUnionHelper = TypeObjectUtils::build_union_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+=======
+        UnionTypeFlag union_flags_InnerUnionHelper = TypeObjectUtils::build_union_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
+>>>>>>> a7d037ba7 (Refs #21044. More ExtensibilityKind standard)
                 true, false);
         QualifiedTypeName type_name_InnerUnionHelper = "InnerUnionHelper";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_InnerUnionHelper;

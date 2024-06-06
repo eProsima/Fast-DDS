@@ -49,7 +49,7 @@ void register_KeyedData1mb_type_identifier(
         "KeyedData1mb", type_ids_KeyedData1mb);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_KeyedData1mb)
     {
-        StructTypeFlag struct_flags_KeyedData1mb = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_KeyedData1mb = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_KeyedData1mb);
         QualifiedTypeName type_name_KeyedData1mb = "KeyedData1mb";

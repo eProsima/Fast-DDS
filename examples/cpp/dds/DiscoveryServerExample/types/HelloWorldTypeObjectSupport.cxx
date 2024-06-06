@@ -49,7 +49,7 @@ void register_HelloWorld_type_identifier(
         "HelloWorld", type_ids_HelloWorld);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_HelloWorld)
     {
-        StructTypeFlag struct_flags_HelloWorld = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_HelloWorld = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_HelloWorld);
         QualifiedTypeName type_name_HelloWorld = "HelloWorld";

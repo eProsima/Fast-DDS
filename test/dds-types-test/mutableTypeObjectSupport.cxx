@@ -1273,7 +1273,7 @@ void register_MutableExtensibilityInheritance_type_identifier(
         "MutableExtensibilityInheritance", type_ids_MutableExtensibilityInheritance);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_MutableExtensibilityInheritance)
     {
-        StructTypeFlag struct_flags_MutableExtensibilityInheritance = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_MutableExtensibilityInheritance = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::MUTABLE,
                 false, false);
         static_cast<void>(return_code_MutableExtensibilityInheritance);
         return_code_MutableExtensibilityInheritance =

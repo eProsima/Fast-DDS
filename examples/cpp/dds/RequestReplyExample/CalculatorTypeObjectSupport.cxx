@@ -116,7 +116,7 @@ void register_RequestType_type_identifier(
         "RequestType", type_ids_RequestType);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_RequestType)
     {
-        StructTypeFlag struct_flags_RequestType = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_RequestType = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_RequestType);
         QualifiedTypeName type_name_RequestType = "RequestType";
@@ -234,7 +234,7 @@ void register_ReplyType_type_identifier(
         "ReplyType", type_ids_ReplyType);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ReplyType)
     {
-        StructTypeFlag struct_flags_ReplyType = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ReplyType = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ReplyType);
         QualifiedTypeName type_name_ReplyType = "ReplyType";

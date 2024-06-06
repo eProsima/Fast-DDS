@@ -50,7 +50,7 @@ void register_SequenceShort_type_identifier(
         "SequenceShort", type_ids_SequenceShort);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_SequenceShort)
     {
-        StructTypeFlag struct_flags_SequenceShort = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_SequenceShort = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_SequenceShort);
         QualifiedTypeName type_name_SequenceShort = "SequenceShort";
@@ -142,7 +142,7 @@ void register_SequenceUShort_type_identifier(
         "SequenceUShort", type_ids_SequenceUShort);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_SequenceUShort)
     {
-        StructTypeFlag struct_flags_SequenceUShort = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_SequenceUShort = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_SequenceUShort);
         QualifiedTypeName type_name_SequenceUShort = "SequenceUShort";
@@ -234,7 +234,7 @@ void register_SequenceLong_type_identifier(
         "SequenceLong", type_ids_SequenceLong);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_SequenceLong)
     {
-        StructTypeFlag struct_flags_SequenceLong = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_SequenceLong = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_SequenceLong);
         QualifiedTypeName type_name_SequenceLong = "SequenceLong";
@@ -326,7 +326,7 @@ void register_SequenceULong_type_identifier(
         "SequenceULong", type_ids_SequenceULong);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_SequenceULong)
     {
-        StructTypeFlag struct_flags_SequenceULong = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_SequenceULong = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_SequenceULong);
         QualifiedTypeName type_name_SequenceULong = "SequenceULong";
@@ -418,7 +418,7 @@ void register_SequenceLongLong_type_identifier(
         "SequenceLongLong", type_ids_SequenceLongLong);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_SequenceLongLong)
     {
-        StructTypeFlag struct_flags_SequenceLongLong = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_SequenceLongLong = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_SequenceLongLong);
         QualifiedTypeName type_name_SequenceLongLong = "SequenceLongLong";
@@ -510,7 +510,7 @@ void register_SequenceULongLong_type_identifier(
         "SequenceULongLong", type_ids_SequenceULongLong);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_SequenceULongLong)
     {
-        StructTypeFlag struct_flags_SequenceULongLong = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_SequenceULongLong = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_SequenceULongLong);
         QualifiedTypeName type_name_SequenceULongLong = "SequenceULongLong";
@@ -602,7 +602,7 @@ void register_SequenceFloat_type_identifier(
         "SequenceFloat", type_ids_SequenceFloat);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_SequenceFloat)
     {
-        StructTypeFlag struct_flags_SequenceFloat = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_SequenceFloat = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_SequenceFloat);
         QualifiedTypeName type_name_SequenceFloat = "SequenceFloat";
@@ -694,7 +694,7 @@ void register_SequenceDouble_type_identifier(
         "SequenceDouble", type_ids_SequenceDouble);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_SequenceDouble)
     {
-        StructTypeFlag struct_flags_SequenceDouble = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_SequenceDouble = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_SequenceDouble);
         QualifiedTypeName type_name_SequenceDouble = "SequenceDouble";
@@ -786,7 +786,7 @@ void register_SequenceLongDouble_type_identifier(
         "SequenceLongDouble", type_ids_SequenceLongDouble);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_SequenceLongDouble)
     {
-        StructTypeFlag struct_flags_SequenceLongDouble = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_SequenceLongDouble = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_SequenceLongDouble);
         QualifiedTypeName type_name_SequenceLongDouble = "SequenceLongDouble";
@@ -878,7 +878,7 @@ void register_SequenceBoolean_type_identifier(
         "SequenceBoolean", type_ids_SequenceBoolean);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_SequenceBoolean)
     {
-        StructTypeFlag struct_flags_SequenceBoolean = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_SequenceBoolean = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_SequenceBoolean);
         QualifiedTypeName type_name_SequenceBoolean = "SequenceBoolean";
@@ -970,7 +970,7 @@ void register_SequenceOctet_type_identifier(
         "SequenceOctet", type_ids_SequenceOctet);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_SequenceOctet)
     {
-        StructTypeFlag struct_flags_SequenceOctet = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_SequenceOctet = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_SequenceOctet);
         QualifiedTypeName type_name_SequenceOctet = "SequenceOctet";
@@ -1062,7 +1062,7 @@ void register_SequenceChar_type_identifier(
         "SequenceChar", type_ids_SequenceChar);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_SequenceChar)
     {
-        StructTypeFlag struct_flags_SequenceChar = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_SequenceChar = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_SequenceChar);
         QualifiedTypeName type_name_SequenceChar = "SequenceChar";
@@ -1154,7 +1154,7 @@ void register_SequenceWChar_type_identifier(
         "SequenceWChar", type_ids_SequenceWChar);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_SequenceWChar)
     {
-        StructTypeFlag struct_flags_SequenceWChar = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_SequenceWChar = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_SequenceWChar);
         QualifiedTypeName type_name_SequenceWChar = "SequenceWChar";
@@ -1246,7 +1246,7 @@ void register_SequenceString_type_identifier(
         "SequenceString", type_ids_SequenceString);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_SequenceString)
     {
-        StructTypeFlag struct_flags_SequenceString = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_SequenceString = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_SequenceString);
         QualifiedTypeName type_name_SequenceString = "SequenceString";
@@ -1346,7 +1346,7 @@ void register_SequenceWString_type_identifier(
         "SequenceWString", type_ids_SequenceWString);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_SequenceWString)
     {
-        StructTypeFlag struct_flags_SequenceWString = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_SequenceWString = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_SequenceWString);
         QualifiedTypeName type_name_SequenceWString = "SequenceWString";
@@ -1446,7 +1446,7 @@ void register_SequenceStringBounded_type_identifier(
         "SequenceStringBounded", type_ids_SequenceStringBounded);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_SequenceStringBounded)
     {
-        StructTypeFlag struct_flags_SequenceStringBounded = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_SequenceStringBounded = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_SequenceStringBounded);
         QualifiedTypeName type_name_SequenceStringBounded = "SequenceStringBounded";
@@ -1536,7 +1536,7 @@ void register_SequenceWStringBounded_type_identifier(
         "SequenceWStringBounded", type_ids_SequenceWStringBounded);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_SequenceWStringBounded)
     {
-        StructTypeFlag struct_flags_SequenceWStringBounded = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_SequenceWStringBounded = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_SequenceWStringBounded);
         QualifiedTypeName type_name_SequenceWStringBounded = "SequenceWStringBounded";
@@ -1626,7 +1626,7 @@ void register_SequenceEnum_type_identifier(
         "SequenceEnum", type_ids_SequenceEnum);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_SequenceEnum)
     {
-        StructTypeFlag struct_flags_SequenceEnum = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_SequenceEnum = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_SequenceEnum);
         QualifiedTypeName type_name_SequenceEnum = "SequenceEnum";
@@ -1716,7 +1716,7 @@ void register_SequenceBitMask_type_identifier(
         "SequenceBitMask", type_ids_SequenceBitMask);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_SequenceBitMask)
     {
-        StructTypeFlag struct_flags_SequenceBitMask = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_SequenceBitMask = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_SequenceBitMask);
         QualifiedTypeName type_name_SequenceBitMask = "SequenceBitMask";
@@ -1806,7 +1806,7 @@ void register_SequenceAlias_type_identifier(
         "SequenceAlias", type_ids_SequenceAlias);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_SequenceAlias)
     {
-        StructTypeFlag struct_flags_SequenceAlias = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_SequenceAlias = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_SequenceAlias);
         QualifiedTypeName type_name_SequenceAlias = "SequenceAlias";
@@ -1896,7 +1896,7 @@ void register_SequenceShortArray_type_identifier(
         "SequenceShortArray", type_ids_SequenceShortArray);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_SequenceShortArray)
     {
-        StructTypeFlag struct_flags_SequenceShortArray = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_SequenceShortArray = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_SequenceShortArray);
         QualifiedTypeName type_name_SequenceShortArray = "SequenceShortArray";
@@ -1986,7 +1986,7 @@ void register_SequenceSequence_type_identifier(
         "SequenceSequence", type_ids_SequenceSequence);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_SequenceSequence)
     {
-        StructTypeFlag struct_flags_SequenceSequence = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_SequenceSequence = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_SequenceSequence);
         QualifiedTypeName type_name_SequenceSequence = "SequenceSequence";
@@ -2076,7 +2076,7 @@ void register_SequenceMap_type_identifier(
         "SequenceMap", type_ids_SequenceMap);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_SequenceMap)
     {
-        StructTypeFlag struct_flags_SequenceMap = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_SequenceMap = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_SequenceMap);
         QualifiedTypeName type_name_SequenceMap = "SequenceMap";
@@ -2166,7 +2166,7 @@ void register_SequenceUnion_type_identifier(
         "SequenceUnion", type_ids_SequenceUnion);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_SequenceUnion)
     {
-        StructTypeFlag struct_flags_SequenceUnion = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_SequenceUnion = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_SequenceUnion);
         QualifiedTypeName type_name_SequenceUnion = "SequenceUnion";
@@ -2256,7 +2256,7 @@ void register_SequenceStructure_type_identifier(
         "SequenceStructure", type_ids_SequenceStructure);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_SequenceStructure)
     {
-        StructTypeFlag struct_flags_SequenceStructure = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_SequenceStructure = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_SequenceStructure);
         QualifiedTypeName type_name_SequenceStructure = "SequenceStructure";
@@ -2346,7 +2346,7 @@ void register_SequenceBitset_type_identifier(
         "SequenceBitset", type_ids_SequenceBitset);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_SequenceBitset)
     {
-        StructTypeFlag struct_flags_SequenceBitset = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_SequenceBitset = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_SequenceBitset);
         QualifiedTypeName type_name_SequenceBitset = "SequenceBitset";
@@ -2436,7 +2436,7 @@ void register_BoundedSmallSequences_type_identifier(
         "BoundedSmallSequences", type_ids_BoundedSmallSequences);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_BoundedSmallSequences)
     {
-        StructTypeFlag struct_flags_BoundedSmallSequences = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_BoundedSmallSequences = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_BoundedSmallSequences);
         QualifiedTypeName type_name_BoundedSmallSequences = "BoundedSmallSequences";
@@ -2598,7 +2598,7 @@ void register_BoundedBigSequences_type_identifier(
         "BoundedBigSequences", type_ids_BoundedBigSequences);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_BoundedBigSequences)
     {
-        StructTypeFlag struct_flags_BoundedBigSequences = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_BoundedBigSequences = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_BoundedBigSequences);
         QualifiedTypeName type_name_BoundedBigSequences = "BoundedBigSequences";

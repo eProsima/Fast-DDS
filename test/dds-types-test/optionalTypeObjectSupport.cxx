@@ -50,7 +50,7 @@ void register_short_optional_type_identifier(
         "short_optional", type_ids_short_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_short_optional)
     {
-        StructTypeFlag struct_flags_short_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_short_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_short_optional);
         QualifiedTypeName type_name_short_optional = "short_optional";
@@ -123,7 +123,7 @@ void register_ushort_optional_type_identifier(
         "ushort_optional", type_ids_ushort_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ushort_optional)
     {
-        StructTypeFlag struct_flags_ushort_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ushort_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ushort_optional);
         QualifiedTypeName type_name_ushort_optional = "ushort_optional";
@@ -196,7 +196,7 @@ void register_long_optional_type_identifier(
         "long_optional", type_ids_long_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_long_optional)
     {
-        StructTypeFlag struct_flags_long_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_long_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_long_optional);
         QualifiedTypeName type_name_long_optional = "long_optional";
@@ -269,7 +269,7 @@ void register_ulong_optional_type_identifier(
         "ulong_optional", type_ids_ulong_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ulong_optional)
     {
-        StructTypeFlag struct_flags_ulong_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ulong_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ulong_optional);
         QualifiedTypeName type_name_ulong_optional = "ulong_optional";
@@ -342,7 +342,7 @@ void register_longlong_optional_type_identifier(
         "longlong_optional", type_ids_longlong_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_longlong_optional)
     {
-        StructTypeFlag struct_flags_longlong_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_longlong_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_longlong_optional);
         QualifiedTypeName type_name_longlong_optional = "longlong_optional";
@@ -415,7 +415,7 @@ void register_ulonglong_optional_type_identifier(
         "ulonglong_optional", type_ids_ulonglong_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ulonglong_optional)
     {
-        StructTypeFlag struct_flags_ulonglong_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ulonglong_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ulonglong_optional);
         QualifiedTypeName type_name_ulonglong_optional = "ulonglong_optional";
@@ -488,7 +488,7 @@ void register_float_optional_type_identifier(
         "float_optional", type_ids_float_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_float_optional)
     {
-        StructTypeFlag struct_flags_float_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_float_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_float_optional);
         QualifiedTypeName type_name_float_optional = "float_optional";
@@ -561,7 +561,7 @@ void register_double_optional_type_identifier(
         "double_optional", type_ids_double_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_double_optional)
     {
-        StructTypeFlag struct_flags_double_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_double_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_double_optional);
         QualifiedTypeName type_name_double_optional = "double_optional";
@@ -634,7 +634,7 @@ void register_longdouble_optional_type_identifier(
         "longdouble_optional", type_ids_longdouble_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_longdouble_optional)
     {
-        StructTypeFlag struct_flags_longdouble_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_longdouble_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_longdouble_optional);
         QualifiedTypeName type_name_longdouble_optional = "longdouble_optional";
@@ -707,7 +707,7 @@ void register_boolean_optional_type_identifier(
         "boolean_optional", type_ids_boolean_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_boolean_optional)
     {
-        StructTypeFlag struct_flags_boolean_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_boolean_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_boolean_optional);
         QualifiedTypeName type_name_boolean_optional = "boolean_optional";
@@ -780,7 +780,7 @@ void register_octet_optional_type_identifier(
         "octet_optional", type_ids_octet_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_octet_optional)
     {
-        StructTypeFlag struct_flags_octet_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_octet_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_octet_optional);
         QualifiedTypeName type_name_octet_optional = "octet_optional";
@@ -853,7 +853,7 @@ void register_char_optional_type_identifier(
         "char_optional", type_ids_char_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_char_optional)
     {
-        StructTypeFlag struct_flags_char_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_char_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_char_optional);
         QualifiedTypeName type_name_char_optional = "char_optional";
@@ -926,7 +926,7 @@ void register_wchar_optional_type_identifier(
         "wchar_optional", type_ids_wchar_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_wchar_optional)
     {
-        StructTypeFlag struct_flags_wchar_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_wchar_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_wchar_optional);
         QualifiedTypeName type_name_wchar_optional = "wchar_optional";
@@ -999,7 +999,7 @@ void register_short_align_1_optional_type_identifier(
         "short_align_1_optional", type_ids_short_align_1_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_short_align_1_optional)
     {
-        StructTypeFlag struct_flags_short_align_1_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_short_align_1_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_short_align_1_optional);
         QualifiedTypeName type_name_short_align_1_optional = "short_align_1_optional";
@@ -1102,7 +1102,7 @@ void register_short_align_2_optional_type_identifier(
         "short_align_2_optional", type_ids_short_align_2_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_short_align_2_optional)
     {
-        StructTypeFlag struct_flags_short_align_2_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_short_align_2_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_short_align_2_optional);
         QualifiedTypeName type_name_short_align_2_optional = "short_align_2_optional";
@@ -1205,7 +1205,7 @@ void register_short_align_4_optional_type_identifier(
         "short_align_4_optional", type_ids_short_align_4_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_short_align_4_optional)
     {
-        StructTypeFlag struct_flags_short_align_4_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_short_align_4_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_short_align_4_optional);
         QualifiedTypeName type_name_short_align_4_optional = "short_align_4_optional";
@@ -1308,7 +1308,7 @@ void register_ushort_align_1_optional_type_identifier(
         "ushort_align_1_optional", type_ids_ushort_align_1_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ushort_align_1_optional)
     {
-        StructTypeFlag struct_flags_ushort_align_1_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ushort_align_1_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ushort_align_1_optional);
         QualifiedTypeName type_name_ushort_align_1_optional = "ushort_align_1_optional";
@@ -1411,7 +1411,7 @@ void register_ushort_align_2_optional_type_identifier(
         "ushort_align_2_optional", type_ids_ushort_align_2_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ushort_align_2_optional)
     {
-        StructTypeFlag struct_flags_ushort_align_2_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ushort_align_2_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ushort_align_2_optional);
         QualifiedTypeName type_name_ushort_align_2_optional = "ushort_align_2_optional";
@@ -1514,7 +1514,7 @@ void register_ushort_align_4_optional_type_identifier(
         "ushort_align_4_optional", type_ids_ushort_align_4_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ushort_align_4_optional)
     {
-        StructTypeFlag struct_flags_ushort_align_4_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ushort_align_4_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ushort_align_4_optional);
         QualifiedTypeName type_name_ushort_align_4_optional = "ushort_align_4_optional";
@@ -1617,7 +1617,7 @@ void register_long_align_1_optional_type_identifier(
         "long_align_1_optional", type_ids_long_align_1_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_long_align_1_optional)
     {
-        StructTypeFlag struct_flags_long_align_1_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_long_align_1_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_long_align_1_optional);
         QualifiedTypeName type_name_long_align_1_optional = "long_align_1_optional";
@@ -1720,7 +1720,7 @@ void register_long_align_2_optional_type_identifier(
         "long_align_2_optional", type_ids_long_align_2_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_long_align_2_optional)
     {
-        StructTypeFlag struct_flags_long_align_2_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_long_align_2_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_long_align_2_optional);
         QualifiedTypeName type_name_long_align_2_optional = "long_align_2_optional";
@@ -1823,7 +1823,7 @@ void register_long_align_4_optional_type_identifier(
         "long_align_4_optional", type_ids_long_align_4_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_long_align_4_optional)
     {
-        StructTypeFlag struct_flags_long_align_4_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_long_align_4_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_long_align_4_optional);
         QualifiedTypeName type_name_long_align_4_optional = "long_align_4_optional";
@@ -1926,7 +1926,7 @@ void register_ulong_align_1_optional_type_identifier(
         "ulong_align_1_optional", type_ids_ulong_align_1_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ulong_align_1_optional)
     {
-        StructTypeFlag struct_flags_ulong_align_1_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ulong_align_1_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ulong_align_1_optional);
         QualifiedTypeName type_name_ulong_align_1_optional = "ulong_align_1_optional";
@@ -2029,7 +2029,7 @@ void register_ulong_align_2_optional_type_identifier(
         "ulong_align_2_optional", type_ids_ulong_align_2_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ulong_align_2_optional)
     {
-        StructTypeFlag struct_flags_ulong_align_2_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ulong_align_2_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ulong_align_2_optional);
         QualifiedTypeName type_name_ulong_align_2_optional = "ulong_align_2_optional";
@@ -2132,7 +2132,7 @@ void register_ulong_align_4_optional_type_identifier(
         "ulong_align_4_optional", type_ids_ulong_align_4_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ulong_align_4_optional)
     {
-        StructTypeFlag struct_flags_ulong_align_4_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ulong_align_4_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ulong_align_4_optional);
         QualifiedTypeName type_name_ulong_align_4_optional = "ulong_align_4_optional";
@@ -2235,7 +2235,7 @@ void register_longlong_align_1_optional_type_identifier(
         "longlong_align_1_optional", type_ids_longlong_align_1_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_longlong_align_1_optional)
     {
-        StructTypeFlag struct_flags_longlong_align_1_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_longlong_align_1_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_longlong_align_1_optional);
         QualifiedTypeName type_name_longlong_align_1_optional = "longlong_align_1_optional";
@@ -2338,7 +2338,7 @@ void register_longlong_align_2_optional_type_identifier(
         "longlong_align_2_optional", type_ids_longlong_align_2_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_longlong_align_2_optional)
     {
-        StructTypeFlag struct_flags_longlong_align_2_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_longlong_align_2_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_longlong_align_2_optional);
         QualifiedTypeName type_name_longlong_align_2_optional = "longlong_align_2_optional";
@@ -2441,7 +2441,7 @@ void register_longlong_align_4_optional_type_identifier(
         "longlong_align_4_optional", type_ids_longlong_align_4_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_longlong_align_4_optional)
     {
-        StructTypeFlag struct_flags_longlong_align_4_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_longlong_align_4_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_longlong_align_4_optional);
         QualifiedTypeName type_name_longlong_align_4_optional = "longlong_align_4_optional";
@@ -2544,7 +2544,7 @@ void register_ulonglong_align_1_optional_type_identifier(
         "ulonglong_align_1_optional", type_ids_ulonglong_align_1_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ulonglong_align_1_optional)
     {
-        StructTypeFlag struct_flags_ulonglong_align_1_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ulonglong_align_1_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ulonglong_align_1_optional);
         QualifiedTypeName type_name_ulonglong_align_1_optional = "ulonglong_align_1_optional";
@@ -2647,7 +2647,7 @@ void register_ulonglong_align_2_optional_type_identifier(
         "ulonglong_align_2_optional", type_ids_ulonglong_align_2_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ulonglong_align_2_optional)
     {
-        StructTypeFlag struct_flags_ulonglong_align_2_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ulonglong_align_2_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ulonglong_align_2_optional);
         QualifiedTypeName type_name_ulonglong_align_2_optional = "ulonglong_align_2_optional";
@@ -2750,7 +2750,7 @@ void register_ulonglong_align_4_optional_type_identifier(
         "ulonglong_align_4_optional", type_ids_ulonglong_align_4_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_ulonglong_align_4_optional)
     {
-        StructTypeFlag struct_flags_ulonglong_align_4_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_ulonglong_align_4_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_ulonglong_align_4_optional);
         QualifiedTypeName type_name_ulonglong_align_4_optional = "ulonglong_align_4_optional";
@@ -2853,7 +2853,7 @@ void register_float_align_1_optional_type_identifier(
         "float_align_1_optional", type_ids_float_align_1_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_float_align_1_optional)
     {
-        StructTypeFlag struct_flags_float_align_1_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_float_align_1_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_float_align_1_optional);
         QualifiedTypeName type_name_float_align_1_optional = "float_align_1_optional";
@@ -2956,7 +2956,7 @@ void register_float_align_2_optional_type_identifier(
         "float_align_2_optional", type_ids_float_align_2_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_float_align_2_optional)
     {
-        StructTypeFlag struct_flags_float_align_2_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_float_align_2_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_float_align_2_optional);
         QualifiedTypeName type_name_float_align_2_optional = "float_align_2_optional";
@@ -3059,7 +3059,7 @@ void register_float_align_4_optional_type_identifier(
         "float_align_4_optional", type_ids_float_align_4_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_float_align_4_optional)
     {
-        StructTypeFlag struct_flags_float_align_4_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_float_align_4_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_float_align_4_optional);
         QualifiedTypeName type_name_float_align_4_optional = "float_align_4_optional";
@@ -3162,7 +3162,7 @@ void register_double_align_1_optional_type_identifier(
         "double_align_1_optional", type_ids_double_align_1_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_double_align_1_optional)
     {
-        StructTypeFlag struct_flags_double_align_1_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_double_align_1_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_double_align_1_optional);
         QualifiedTypeName type_name_double_align_1_optional = "double_align_1_optional";
@@ -3265,7 +3265,7 @@ void register_double_align_2_optional_type_identifier(
         "double_align_2_optional", type_ids_double_align_2_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_double_align_2_optional)
     {
-        StructTypeFlag struct_flags_double_align_2_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_double_align_2_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_double_align_2_optional);
         QualifiedTypeName type_name_double_align_2_optional = "double_align_2_optional";
@@ -3368,7 +3368,7 @@ void register_double_align_4_optional_type_identifier(
         "double_align_4_optional", type_ids_double_align_4_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_double_align_4_optional)
     {
-        StructTypeFlag struct_flags_double_align_4_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_double_align_4_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_double_align_4_optional);
         QualifiedTypeName type_name_double_align_4_optional = "double_align_4_optional";
@@ -3471,7 +3471,7 @@ void register_longdouble_align_1_optional_type_identifier(
         "longdouble_align_1_optional", type_ids_longdouble_align_1_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_longdouble_align_1_optional)
     {
-        StructTypeFlag struct_flags_longdouble_align_1_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_longdouble_align_1_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_longdouble_align_1_optional);
         QualifiedTypeName type_name_longdouble_align_1_optional = "longdouble_align_1_optional";
@@ -3574,7 +3574,7 @@ void register_longdouble_align_2_optional_type_identifier(
         "longdouble_align_2_optional", type_ids_longdouble_align_2_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_longdouble_align_2_optional)
     {
-        StructTypeFlag struct_flags_longdouble_align_2_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_longdouble_align_2_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_longdouble_align_2_optional);
         QualifiedTypeName type_name_longdouble_align_2_optional = "longdouble_align_2_optional";
@@ -3677,7 +3677,7 @@ void register_longdouble_align_4_optional_type_identifier(
         "longdouble_align_4_optional", type_ids_longdouble_align_4_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_longdouble_align_4_optional)
     {
-        StructTypeFlag struct_flags_longdouble_align_4_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_longdouble_align_4_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_longdouble_align_4_optional);
         QualifiedTypeName type_name_longdouble_align_4_optional = "longdouble_align_4_optional";
@@ -3780,7 +3780,7 @@ void register_boolean_align_1_optional_type_identifier(
         "boolean_align_1_optional", type_ids_boolean_align_1_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_boolean_align_1_optional)
     {
-        StructTypeFlag struct_flags_boolean_align_1_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_boolean_align_1_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_boolean_align_1_optional);
         QualifiedTypeName type_name_boolean_align_1_optional = "boolean_align_1_optional";
@@ -3883,7 +3883,7 @@ void register_boolean_align_2_optional_type_identifier(
         "boolean_align_2_optional", type_ids_boolean_align_2_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_boolean_align_2_optional)
     {
-        StructTypeFlag struct_flags_boolean_align_2_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_boolean_align_2_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_boolean_align_2_optional);
         QualifiedTypeName type_name_boolean_align_2_optional = "boolean_align_2_optional";
@@ -3986,7 +3986,7 @@ void register_boolean_align_4_optional_type_identifier(
         "boolean_align_4_optional", type_ids_boolean_align_4_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_boolean_align_4_optional)
     {
-        StructTypeFlag struct_flags_boolean_align_4_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_boolean_align_4_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_boolean_align_4_optional);
         QualifiedTypeName type_name_boolean_align_4_optional = "boolean_align_4_optional";
@@ -4089,7 +4089,7 @@ void register_octet_align_1_optional_type_identifier(
         "octet_align_1_optional", type_ids_octet_align_1_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_octet_align_1_optional)
     {
-        StructTypeFlag struct_flags_octet_align_1_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_octet_align_1_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_octet_align_1_optional);
         QualifiedTypeName type_name_octet_align_1_optional = "octet_align_1_optional";
@@ -4192,7 +4192,7 @@ void register_octet_align_2_optional_type_identifier(
         "octet_align_2_optional", type_ids_octet_align_2_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_octet_align_2_optional)
     {
-        StructTypeFlag struct_flags_octet_align_2_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_octet_align_2_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_octet_align_2_optional);
         QualifiedTypeName type_name_octet_align_2_optional = "octet_align_2_optional";
@@ -4295,7 +4295,7 @@ void register_octet_align_4_optional_type_identifier(
         "octet_align_4_optional", type_ids_octet_align_4_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_octet_align_4_optional)
     {
-        StructTypeFlag struct_flags_octet_align_4_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_octet_align_4_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_octet_align_4_optional);
         QualifiedTypeName type_name_octet_align_4_optional = "octet_align_4_optional";
@@ -4398,7 +4398,7 @@ void register_char_align_1_optional_type_identifier(
         "char_align_1_optional", type_ids_char_align_1_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_char_align_1_optional)
     {
-        StructTypeFlag struct_flags_char_align_1_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_char_align_1_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_char_align_1_optional);
         QualifiedTypeName type_name_char_align_1_optional = "char_align_1_optional";
@@ -4501,7 +4501,7 @@ void register_char_align_2_optional_type_identifier(
         "char_align_2_optional", type_ids_char_align_2_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_char_align_2_optional)
     {
-        StructTypeFlag struct_flags_char_align_2_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_char_align_2_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_char_align_2_optional);
         QualifiedTypeName type_name_char_align_2_optional = "char_align_2_optional";
@@ -4604,7 +4604,7 @@ void register_char_align_4_optional_type_identifier(
         "char_align_4_optional", type_ids_char_align_4_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_char_align_4_optional)
     {
-        StructTypeFlag struct_flags_char_align_4_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_char_align_4_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_char_align_4_optional);
         QualifiedTypeName type_name_char_align_4_optional = "char_align_4_optional";
@@ -4707,7 +4707,7 @@ void register_wchar_align_1_optional_type_identifier(
         "wchar_align_1_optional", type_ids_wchar_align_1_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_wchar_align_1_optional)
     {
-        StructTypeFlag struct_flags_wchar_align_1_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_wchar_align_1_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_wchar_align_1_optional);
         QualifiedTypeName type_name_wchar_align_1_optional = "wchar_align_1_optional";
@@ -4810,7 +4810,7 @@ void register_wchar_align_2_optional_type_identifier(
         "wchar_align_2_optional", type_ids_wchar_align_2_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_wchar_align_2_optional)
     {
-        StructTypeFlag struct_flags_wchar_align_2_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_wchar_align_2_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_wchar_align_2_optional);
         QualifiedTypeName type_name_wchar_align_2_optional = "wchar_align_2_optional";
@@ -4913,7 +4913,7 @@ void register_wchar_align_4_optional_type_identifier(
         "wchar_align_4_optional", type_ids_wchar_align_4_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_wchar_align_4_optional)
     {
-        StructTypeFlag struct_flags_wchar_align_4_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_wchar_align_4_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_wchar_align_4_optional);
         QualifiedTypeName type_name_wchar_align_4_optional = "wchar_align_4_optional";
@@ -5016,7 +5016,7 @@ void register_sequence_short_optional_type_identifier(
         "sequence_short_optional", type_ids_sequence_short_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_sequence_short_optional)
     {
-        StructTypeFlag struct_flags_sequence_short_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_sequence_short_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_sequence_short_optional);
         QualifiedTypeName type_name_sequence_short_optional = "sequence_short_optional";
@@ -5121,7 +5121,7 @@ void register_sequence_short_align_1_optional_type_identifier(
         "sequence_short_align_1_optional", type_ids_sequence_short_align_1_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_sequence_short_align_1_optional)
     {
-        StructTypeFlag struct_flags_sequence_short_align_1_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_sequence_short_align_1_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_sequence_short_align_1_optional);
         QualifiedTypeName type_name_sequence_short_align_1_optional = "sequence_short_align_1_optional";
@@ -5256,7 +5256,7 @@ void register_sequence_short_align_2_optional_type_identifier(
         "sequence_short_align_2_optional", type_ids_sequence_short_align_2_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_sequence_short_align_2_optional)
     {
-        StructTypeFlag struct_flags_sequence_short_align_2_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_sequence_short_align_2_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_sequence_short_align_2_optional);
         QualifiedTypeName type_name_sequence_short_align_2_optional = "sequence_short_align_2_optional";
@@ -5391,7 +5391,7 @@ void register_sequence_short_align_4_optional_type_identifier(
         "sequence_short_align_4_optional", type_ids_sequence_short_align_4_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_sequence_short_align_4_optional)
     {
-        StructTypeFlag struct_flags_sequence_short_align_4_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_sequence_short_align_4_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_sequence_short_align_4_optional);
         QualifiedTypeName type_name_sequence_short_align_4_optional = "sequence_short_align_4_optional";
@@ -5526,7 +5526,7 @@ void register_string_unbounded_optional_type_identifier(
         "string_unbounded_optional", type_ids_string_unbounded_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_string_unbounded_optional)
     {
-        StructTypeFlag struct_flags_string_unbounded_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_string_unbounded_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_string_unbounded_optional);
         QualifiedTypeName type_name_string_unbounded_optional = "string_unbounded_optional";
@@ -5607,7 +5607,7 @@ void register_string_unbounded_align_1_optional_type_identifier(
         "string_unbounded_align_1_optional", type_ids_string_unbounded_align_1_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_string_unbounded_align_1_optional)
     {
-        StructTypeFlag struct_flags_string_unbounded_align_1_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_string_unbounded_align_1_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_string_unbounded_align_1_optional);
         QualifiedTypeName type_name_string_unbounded_align_1_optional = "string_unbounded_align_1_optional";
@@ -5718,7 +5718,7 @@ void register_string_unbounded_align_2_optional_type_identifier(
         "string_unbounded_align_2_optional", type_ids_string_unbounded_align_2_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_string_unbounded_align_2_optional)
     {
-        StructTypeFlag struct_flags_string_unbounded_align_2_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_string_unbounded_align_2_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_string_unbounded_align_2_optional);
         QualifiedTypeName type_name_string_unbounded_align_2_optional = "string_unbounded_align_2_optional";
@@ -5829,7 +5829,7 @@ void register_string_unbounded_align_4_optional_type_identifier(
         "string_unbounded_align_4_optional", type_ids_string_unbounded_align_4_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_string_unbounded_align_4_optional)
     {
-        StructTypeFlag struct_flags_string_unbounded_align_4_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_string_unbounded_align_4_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_string_unbounded_align_4_optional);
         QualifiedTypeName type_name_string_unbounded_align_4_optional = "string_unbounded_align_4_optional";
@@ -5940,7 +5940,7 @@ void register_string_bounded_optional_type_identifier(
         "string_bounded_optional", type_ids_string_bounded_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_string_bounded_optional)
     {
-        StructTypeFlag struct_flags_string_bounded_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_string_bounded_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_string_bounded_optional);
         QualifiedTypeName type_name_string_bounded_optional = "string_bounded_optional";
@@ -6021,7 +6021,7 @@ void register_string_bounded_align_1_optional_type_identifier(
         "string_bounded_align_1_optional", type_ids_string_bounded_align_1_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_string_bounded_align_1_optional)
     {
-        StructTypeFlag struct_flags_string_bounded_align_1_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_string_bounded_align_1_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_string_bounded_align_1_optional);
         QualifiedTypeName type_name_string_bounded_align_1_optional = "string_bounded_align_1_optional";
@@ -6132,7 +6132,7 @@ void register_string_bounded_align_2_optional_type_identifier(
         "string_bounded_align_2_optional", type_ids_string_bounded_align_2_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_string_bounded_align_2_optional)
     {
-        StructTypeFlag struct_flags_string_bounded_align_2_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_string_bounded_align_2_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_string_bounded_align_2_optional);
         QualifiedTypeName type_name_string_bounded_align_2_optional = "string_bounded_align_2_optional";
@@ -6243,7 +6243,7 @@ void register_string_bounded_align_4_optional_type_identifier(
         "string_bounded_align_4_optional", type_ids_string_bounded_align_4_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_string_bounded_align_4_optional)
     {
-        StructTypeFlag struct_flags_string_bounded_align_4_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_string_bounded_align_4_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_string_bounded_align_4_optional);
         QualifiedTypeName type_name_string_bounded_align_4_optional = "string_bounded_align_4_optional";
@@ -6354,7 +6354,7 @@ void register_map_short_optional_type_identifier(
         "map_short_optional", type_ids_map_short_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_map_short_optional)
     {
-        StructTypeFlag struct_flags_map_short_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_map_short_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_map_short_optional);
         QualifiedTypeName type_name_map_short_optional = "map_short_optional";
@@ -6486,7 +6486,7 @@ void register_map_short_align_1_optional_type_identifier(
         "map_short_align_1_optional", type_ids_map_short_align_1_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_map_short_align_1_optional)
     {
-        StructTypeFlag struct_flags_map_short_align_1_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_map_short_align_1_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_map_short_align_1_optional);
         QualifiedTypeName type_name_map_short_align_1_optional = "map_short_align_1_optional";
@@ -6648,7 +6648,7 @@ void register_map_short_align_2_optional_type_identifier(
         "map_short_align_2_optional", type_ids_map_short_align_2_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_map_short_align_2_optional)
     {
-        StructTypeFlag struct_flags_map_short_align_2_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_map_short_align_2_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_map_short_align_2_optional);
         QualifiedTypeName type_name_map_short_align_2_optional = "map_short_align_2_optional";
@@ -6810,7 +6810,7 @@ void register_map_short_align_4_optional_type_identifier(
         "map_short_align_4_optional", type_ids_map_short_align_4_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_map_short_align_4_optional)
     {
-        StructTypeFlag struct_flags_map_short_align_4_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_map_short_align_4_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_map_short_align_4_optional);
         QualifiedTypeName type_name_map_short_align_4_optional = "map_short_align_4_optional";
@@ -6972,7 +6972,7 @@ void register_array_short_optional_type_identifier(
         "array_short_optional", type_ids_array_short_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_array_short_optional)
     {
-        StructTypeFlag struct_flags_array_short_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_array_short_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_array_short_optional);
         QualifiedTypeName type_name_array_short_optional = "array_short_optional";
@@ -7079,7 +7079,7 @@ void register_array_short_align_1_optional_type_identifier(
         "array_short_align_1_optional", type_ids_array_short_align_1_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_array_short_align_1_optional)
     {
-        StructTypeFlag struct_flags_array_short_align_1_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_array_short_align_1_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_array_short_align_1_optional);
         QualifiedTypeName type_name_array_short_align_1_optional = "array_short_align_1_optional";
@@ -7216,7 +7216,7 @@ void register_array_short_align_2_optional_type_identifier(
         "array_short_align_2_optional", type_ids_array_short_align_2_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_array_short_align_2_optional)
     {
-        StructTypeFlag struct_flags_array_short_align_2_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_array_short_align_2_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_array_short_align_2_optional);
         QualifiedTypeName type_name_array_short_align_2_optional = "array_short_align_2_optional";
@@ -7353,7 +7353,7 @@ void register_array_short_align_4_optional_type_identifier(
         "array_short_align_4_optional", type_ids_array_short_align_4_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_array_short_align_4_optional)
     {
-        StructTypeFlag struct_flags_array_short_align_4_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_array_short_align_4_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_array_short_align_4_optional);
         QualifiedTypeName type_name_array_short_align_4_optional = "array_short_align_4_optional";
@@ -7490,7 +7490,7 @@ void register_struct_optional_type_identifier(
         "struct_optional", type_ids_struct_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_struct_optional)
     {
-        StructTypeFlag struct_flags_struct_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_struct_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_struct_optional);
         QualifiedTypeName type_name_struct_optional = "struct_optional";
@@ -7561,7 +7561,7 @@ void register_struct_align_1_optional_type_identifier(
         "struct_align_1_optional", type_ids_struct_align_1_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_struct_align_1_optional)
     {
-        StructTypeFlag struct_flags_struct_align_1_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_struct_align_1_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_struct_align_1_optional);
         QualifiedTypeName type_name_struct_align_1_optional = "struct_align_1_optional";
@@ -7662,7 +7662,7 @@ void register_struct_align_2_optional_type_identifier(
         "struct_align_2_optional", type_ids_struct_align_2_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_struct_align_2_optional)
     {
-        StructTypeFlag struct_flags_struct_align_2_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_struct_align_2_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_struct_align_2_optional);
         QualifiedTypeName type_name_struct_align_2_optional = "struct_align_2_optional";
@@ -7763,7 +7763,7 @@ void register_struct_align_4_optional_type_identifier(
         "struct_align_4_optional", type_ids_struct_align_4_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_struct_align_4_optional)
     {
-        StructTypeFlag struct_flags_struct_align_4_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_struct_align_4_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_struct_align_4_optional);
         QualifiedTypeName type_name_struct_align_4_optional = "struct_align_4_optional";
@@ -7864,7 +7864,7 @@ void register_InnerStructOptional_type_identifier(
         "InnerStructOptional", type_ids_InnerStructOptional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_InnerStructOptional)
     {
-        StructTypeFlag struct_flags_InnerStructOptional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_InnerStructOptional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_InnerStructOptional);
         QualifiedTypeName type_name_InnerStructOptional = "InnerStructOptional";
@@ -7967,7 +7967,7 @@ void register_opt_struct_optional_type_identifier(
         "opt_struct_optional", type_ids_opt_struct_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_opt_struct_optional)
     {
-        StructTypeFlag struct_flags_opt_struct_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_opt_struct_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_opt_struct_optional);
         QualifiedTypeName type_name_opt_struct_optional = "opt_struct_optional";
@@ -8038,7 +8038,7 @@ void register_opt_struct_align_1_optional_type_identifier(
         "opt_struct_align_1_optional", type_ids_opt_struct_align_1_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_opt_struct_align_1_optional)
     {
-        StructTypeFlag struct_flags_opt_struct_align_1_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_opt_struct_align_1_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_opt_struct_align_1_optional);
         QualifiedTypeName type_name_opt_struct_align_1_optional = "opt_struct_align_1_optional";
@@ -8139,7 +8139,7 @@ void register_opt_struct_align_2_optional_type_identifier(
         "opt_struct_align_2_optional", type_ids_opt_struct_align_2_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_opt_struct_align_2_optional)
     {
-        StructTypeFlag struct_flags_opt_struct_align_2_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_opt_struct_align_2_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_opt_struct_align_2_optional);
         QualifiedTypeName type_name_opt_struct_align_2_optional = "opt_struct_align_2_optional";
@@ -8240,7 +8240,7 @@ void register_opt_struct_align_4_optional_type_identifier(
         "opt_struct_align_4_optional", type_ids_opt_struct_align_4_optional);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_opt_struct_align_4_optional)
     {
-        StructTypeFlag struct_flags_opt_struct_align_4_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_opt_struct_align_4_optional = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_opt_struct_align_4_optional);
         QualifiedTypeName type_name_opt_struct_align_4_optional = "opt_struct_align_4_optional";

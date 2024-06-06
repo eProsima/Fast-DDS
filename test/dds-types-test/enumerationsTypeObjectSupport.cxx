@@ -110,7 +110,7 @@ void register_EnumStructure_type_identifier(
         "EnumStructure", type_ids_EnumStructure);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_EnumStructure)
     {
-        StructTypeFlag struct_flags_EnumStructure = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_EnumStructure = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_EnumStructure);
         QualifiedTypeName type_name_EnumStructure = "EnumStructure";
@@ -196,7 +196,7 @@ void register_BitMaskStructure_type_identifier(
         "BitMaskStructure", type_ids_BitMaskStructure);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_BitMaskStructure)
     {
-        StructTypeFlag struct_flags_BitMaskStructure = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_BitMaskStructure = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_BitMaskStructure);
         QualifiedTypeName type_name_BitMaskStructure = "BitMaskStructure";
@@ -254,7 +254,7 @@ void register_BoundedBitMaskStructure_type_identifier(
         "BoundedBitMaskStructure", type_ids_BoundedBitMaskStructure);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_BoundedBitMaskStructure)
     {
-        StructTypeFlag struct_flags_BoundedBitMaskStructure = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_BoundedBitMaskStructure = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_BoundedBitMaskStructure);
         QualifiedTypeName type_name_BoundedBitMaskStructure = "BoundedBitMaskStructure";

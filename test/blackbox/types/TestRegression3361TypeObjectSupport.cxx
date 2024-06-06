@@ -50,7 +50,7 @@ void register_TestRegression3361_type_identifier(
         "TestRegression3361", type_ids_TestRegression3361);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_TestRegression3361)
     {
-        StructTypeFlag struct_flags_TestRegression3361 = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_TestRegression3361 = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_TestRegression3361);
         QualifiedTypeName type_name_TestRegression3361 = "TestRegression3361";

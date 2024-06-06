@@ -49,7 +49,7 @@ void register_AllocTestType_type_identifier(
         "AllocTestType", type_ids_AllocTestType);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_AllocTestType)
     {
-        StructTypeFlag struct_flags_AllocTestType = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_AllocTestType = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_AllocTestType);
         QualifiedTypeName type_name_AllocTestType = "AllocTestType";

@@ -29,7 +29,6 @@ namespace xtypes {
 
 enum class ExtensibilityKind : uint32_t
 {
-    NOT_APPLIED,
     FINAL,
     APPENDABLE,
     MUTABLE

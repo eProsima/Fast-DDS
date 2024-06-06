@@ -49,7 +49,7 @@ void register_StringTest_type_identifier(
         "StringTest", type_ids_StringTest);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_StringTest)
     {
-        StructTypeFlag struct_flags_StringTest = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_StringTest = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         static_cast<void>(return_code_StringTest);
         QualifiedTypeName type_name_StringTest = "StringTest";
