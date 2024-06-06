@@ -132,7 +132,6 @@ struct SampleLoanManager
         CacheChange_t tmp;
         tmp.copy_not_memcpy(change);
         change->payload_owner()->get_payload(change->serializedPayload, tmp.serializedPayload);
-        item->owner = tmp.payload_owner();
         item->payload = tmp.serializedPayload;
         tmp.payload_owner(nullptr);
         tmp.serializedPayload.data = nullptr;
@@ -165,10 +164,10 @@ struct SampleLoanManager
         {
             CacheChange_t tmp;
             tmp.serializedPayload = item->payload;
-            tmp.payload_owner(item->owner);
-            item->owner->release_payload(tmp.serializedPayload);
+            tmp.payload_owner(item->payload_owner());
+            item->payload_owner()->release_payload(tmp.serializedPayload);
             item->payload.data = nullptr;
-            item->owner = nullptr;
+            item->payload_owner(nullptr);
 
             item = free_loans_.push_back(*item);
             assert(nullptr != item);
@@ -183,12 +182,13 @@ private:
         void* sample = nullptr;
         SampleIdentity identity;
         SerializedPayload_t payload;
-        IPayloadPool* owner = nullptr;
         uint32_t num_refs = 0;
 
         ~OutstandingLoanItem()
         {
+            // Avoid releasing payload and freeing data
             payload.data = nullptr;
+            payload_owner(nullptr);
         }
 
         OutstandingLoanItem() = default;
@@ -205,6 +205,22 @@ private:
                 const OutstandingLoanItem& other) const
         {
             return other.sample == sample && other.payload.data == payload.data;
+        }
+
+        IPayloadPool const* payload_owner() const
+        {
+            return payload.payload_owner();
+        }
+
+        IPayloadPool* payload_owner()
+        {
+            return payload.payload_owner();
+        }
+
+        void payload_owner(
+                IPayloadPool* owner)
+        {
+            payload.payload_owner(owner);
         }
 
     };
