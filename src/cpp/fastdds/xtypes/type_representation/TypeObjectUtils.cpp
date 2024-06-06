@@ -77,7 +77,7 @@ const TypeObjectHashId TypeObjectUtils::build_type_object_hash_id(
 }
 
 CollectionElementFlag TypeObjectUtils::build_collection_element_flag(
-        TryConstructKind try_construct_kind,
+        TryConstructFailAction try_construct_kind,
         bool external)
 {
     CollectionElementFlag collection_element_flag = 0;
@@ -90,7 +90,7 @@ CollectionElementFlag TypeObjectUtils::build_collection_element_flag(
 }
 
 StructMemberFlag TypeObjectUtils::build_struct_member_flag(
-        TryConstructKind try_construct_kind,
+        TryConstructFailAction try_construct_kind,
         bool optional,
         bool must_understand,
         bool key,
@@ -122,7 +122,7 @@ StructMemberFlag TypeObjectUtils::build_struct_member_flag(
 }
 
 UnionMemberFlag TypeObjectUtils::build_union_member_flag(
-        TryConstructKind try_construct_kind,
+        TryConstructFailAction try_construct_kind,
         bool default_member,
         bool external)
 {
@@ -140,7 +140,7 @@ UnionMemberFlag TypeObjectUtils::build_union_member_flag(
 }
 
 UnionDiscriminatorFlag TypeObjectUtils::build_union_discriminator_flag(
-        TryConstructKind try_construct_kind,
+        TryConstructFailAction try_construct_kind,
         bool key)
 {
     UnionDiscriminatorFlag union_discriminator_flag = 0;
@@ -1841,23 +1841,23 @@ void TypeObjectUtils::type_object_consistency(
 
 void TypeObjectUtils::set_try_construct_behavior(
         MemberFlag& member_flag,
-        TryConstructKind try_construct_kind)
+        TryConstructFailAction try_construct_kind)
 {
     switch (try_construct_kind)
     {
-        case TryConstructKind::USE_DEFAULT:
+        case TryConstructFailAction::USE_DEFAULT:
             member_flag |= MemberFlagBits::TRY_CONSTRUCT2;
             break;
 
-        case TryConstructKind::TRIM:
+        case TryConstructFailAction::TRIM:
             member_flag |= MemberFlagBits::TRY_CONSTRUCT1 | MemberFlagBits::TRY_CONSTRUCT2;
             break;
 
-        case TryConstructKind::DISCARD:
+        case TryConstructFailAction::DISCARD:
             member_flag |= MemberFlagBits::TRY_CONSTRUCT1;
             break;
 
-        // TryContructKind::NOT_APPLIED
+        // INVALID
         default:
             break;
     }

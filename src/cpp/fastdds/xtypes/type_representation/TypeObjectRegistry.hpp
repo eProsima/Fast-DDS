@@ -1017,9 +1017,9 @@ protected:
      * @brief Auxiliary function to translate TryConstructKind namespace.
      *
      * @param[in] try_construct_kind to be translated.
-     * @return const TryConstructKind translated.
+     * @return const @ref TryConstructFailAction translated.
      */
-    TryConstructKind try_construct_kind(
+    TryConstructFailAction try_construct_kind(
             eprosima::fastdds::dds::TryConstructKind try_construct_kind) const;
 
     /**

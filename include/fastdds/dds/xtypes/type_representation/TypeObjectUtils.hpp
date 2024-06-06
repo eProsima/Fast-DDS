@@ -69,7 +69,7 @@ public:
      * @return CollectionElementFlag instance.
      */
     FASTDDS_EXPORTED_API static CollectionElementFlag build_collection_element_flag(
-            TryConstructKind try_construct_kind,
+            TryConstructFailAction try_construct_kind,
             bool external);
 
     /**
@@ -85,7 +85,7 @@ public:
      * @return StructMemberFlag instance.
      */
     FASTDDS_EXPORTED_API static StructMemberFlag build_struct_member_flag(
-            TryConstructKind try_construct_kind,
+            TryConstructFailAction try_construct_kind,
             bool optional,
             bool must_understand,
             bool key,
@@ -100,7 +100,7 @@ public:
      * @return UnionMemberFlag instance.
      */
     FASTDDS_EXPORTED_API static UnionMemberFlag build_union_member_flag(
-            TryConstructKind try_construct_kind,
+            TryConstructFailAction try_construct_kind,
             bool default_member,
             bool external);
 
@@ -112,7 +112,7 @@ public:
      * @return UnionDiscriminatorFlag instance.
      */
     FASTDDS_EXPORTED_API static UnionDiscriminatorFlag build_union_discriminator_flag(
-            TryConstructKind try_construct_kind,
+            TryConstructFailAction try_construct_kind,
             bool key);
 
     /**
@@ -1970,11 +1970,11 @@ protected:
      * @brief Set the try construct behavior in a given MemberFlag
      *
      * @param[in,out] member_flag Bitmask to be set.
-     * @param[in] try_construct_kind TryConstructKind.
+     * @param[in] try_construct_kind @ref TryConstructFailAction.
      */
     static void set_try_construct_behavior(
             MemberFlag& member_flag,
-            TryConstructKind try_construct_kind);
+            TryConstructFailAction try_construct_kind);
 
     /**
      * @brief Set the TypeFlag object.
