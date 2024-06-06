@@ -73,7 +73,7 @@ void register_StructShort_type_identifier(
                         "var_short Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
-            StructMemberFlag member_flags_var_short = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_short = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_short = 0x00000000;
             bool common_var_short_ec {false};
@@ -133,7 +133,7 @@ void register_StructUnsignedShort_type_identifier(
                         "var_ushort Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
-            StructMemberFlag member_flags_var_ushort = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_ushort = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_ushort = 0x00000000;
             bool common_var_ushort_ec {false};
@@ -193,7 +193,7 @@ void register_StructLong_type_identifier(
                         "var_long Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
-            StructMemberFlag member_flags_var_long = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_long = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_long = 0x00000000;
             bool common_var_long_ec {false};
@@ -253,7 +253,7 @@ void register_StructUnsignedLong_type_identifier(
                         "var_ulong Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
-            StructMemberFlag member_flags_var_ulong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_ulong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_ulong = 0x00000000;
             bool common_var_ulong_ec {false};
@@ -313,7 +313,7 @@ void register_StructLongLong_type_identifier(
                         "var_longlong Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
-            StructMemberFlag member_flags_var_longlong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_longlong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_longlong = 0x00000000;
             bool common_var_longlong_ec {false};
@@ -373,7 +373,7 @@ void register_StructUnsignedLongLong_type_identifier(
                         "var_ulonglong Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
-            StructMemberFlag member_flags_var_ulonglong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_ulonglong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_ulonglong = 0x00000000;
             bool common_var_ulonglong_ec {false};
@@ -433,7 +433,7 @@ void register_StructFloat_type_identifier(
                         "var_float Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
-            StructMemberFlag member_flags_var_float = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_float = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_float = 0x00000000;
             bool common_var_float_ec {false};
@@ -493,7 +493,7 @@ void register_StructDouble_type_identifier(
                         "var_double Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
-            StructMemberFlag member_flags_var_double = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_double = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_double = 0x00000000;
             bool common_var_double_ec {false};
@@ -553,7 +553,7 @@ void register_StructLongDouble_type_identifier(
                         "var_longdouble Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
-            StructMemberFlag member_flags_var_longdouble = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_longdouble = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_longdouble = 0x00000000;
             bool common_var_longdouble_ec {false};
@@ -613,7 +613,7 @@ void register_StructBoolean_type_identifier(
                         "var_boolean Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
-            StructMemberFlag member_flags_var_boolean = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_boolean = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_boolean = 0x00000000;
             bool common_var_boolean_ec {false};
@@ -673,7 +673,7 @@ void register_StructOctet_type_identifier(
                         "var_octet Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
-            StructMemberFlag member_flags_var_octet = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_octet = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_octet = 0x00000000;
             bool common_var_octet_ec {false};
@@ -733,7 +733,7 @@ void register_StructChar8_type_identifier(
                         "var_char8 Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
-            StructMemberFlag member_flags_var_char8 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_char8 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_char8 = 0x00000000;
             bool common_var_char8_ec {false};
@@ -793,7 +793,7 @@ void register_StructChar16_type_identifier(
                         "var_char16 Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
-            StructMemberFlag member_flags_var_char16 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_char16 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_char16 = 0x00000000;
             bool common_var_char16_ec {false};
@@ -861,7 +861,7 @@ void register_StructString_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_string = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_string = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_string = 0x00000000;
             bool common_var_string_ec {false};
@@ -929,7 +929,7 @@ void register_StructWString_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_wstring = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_wstring = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_wstring = 0x00000000;
             bool common_var_wstring_ec {false};
@@ -987,7 +987,7 @@ void register_StructBoundedString_type_identifier(
             {
             ::register_Inner_alias_bounded_string_helper_type_identifier(type_ids_var_bounded_string);
             }
-            StructMemberFlag member_flags_var_bounded_string = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_bounded_string = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_bounded_string = 0x00000000;
             bool common_var_bounded_string_ec {false};
@@ -1045,7 +1045,7 @@ void register_StructBoundedWString_type_identifier(
             {
             ::register_Inner_alias_bounded_wstring_helper_type_identifier(type_ids_var_bounded_wstring);
             }
-            StructMemberFlag member_flags_var_bounded_wstring = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_bounded_wstring = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_bounded_wstring = 0x00000000;
             bool common_var_bounded_wstring_ec {false};
@@ -1103,7 +1103,7 @@ void register_StructEnum_type_identifier(
             {
             ::register_InnerEnumHelper_type_identifier(type_ids_var_enum);
             }
-            StructMemberFlag member_flags_var_enum = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_enum = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_enum = 0x00000000;
             bool common_var_enum_ec {false};
@@ -1161,7 +1161,7 @@ void register_StructBitMask_type_identifier(
             {
             ::register_InnerBitMaskHelper_type_identifier(type_ids_var_bitmask);
             }
-            StructMemberFlag member_flags_var_bitmask = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_bitmask = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_bitmask = 0x00000000;
             bool common_var_bitmask_ec {false};
@@ -1219,7 +1219,7 @@ void register_StructAlias_type_identifier(
             {
             ::register_InnerAliasHelper_type_identifier(type_ids_var_alias);
             }
-            StructMemberFlag member_flags_var_alias = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_alias = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_alias = 0x00000000;
             bool common_var_alias_ec {false};
@@ -1313,7 +1313,7 @@ void register_StructShortArray_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_short = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_short = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_short = 0x00000000;
             bool common_var_array_short_ec {false};
@@ -1405,7 +1405,7 @@ void register_StructSequence_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_sequence = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_sequence = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_sequence = 0x00000000;
             bool common_var_sequence_ec {false};
@@ -1524,7 +1524,7 @@ void register_StructMap_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_map = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_map = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_map = 0x00000000;
             bool common_var_map_ec {false};
@@ -1582,7 +1582,7 @@ void register_StructUnion_type_identifier(
             {
             ::register_InnerUnionHelper_type_identifier(type_ids_var_union);
             }
-            StructMemberFlag member_flags_var_union = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_union = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_union = 0x00000000;
             bool common_var_union_ec {false};
@@ -1640,7 +1640,7 @@ void register_StructStructure_type_identifier(
             {
             ::register_InnerStructureHelper_type_identifier(type_ids_var_structure);
             }
-            StructMemberFlag member_flags_var_structure = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_structure = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_structure = 0x00000000;
             bool common_var_structure_ec {false};
@@ -1698,7 +1698,7 @@ void register_StructBitset_type_identifier(
             {
             ::register_InnerBitsetHelper_type_identifier(type_ids_var_bitset);
             }
-            StructMemberFlag member_flags_var_bitset = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_bitset = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_bitset = 0x00000000;
             bool common_var_bitset_ec {false};
@@ -1786,7 +1786,7 @@ void register_Structures_type_identifier(
             {
             ::register_StructShort_type_identifier(type_ids_var_StructShort);
             }
-            StructMemberFlag member_flags_var_StructShort = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_StructShort = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_StructShort = 0x00000000;
             bool common_var_StructShort_ec {false};
@@ -1814,7 +1814,7 @@ void register_Structures_type_identifier(
             {
             ::register_StructUnsignedShort_type_identifier(type_ids_var_StructUnsignedShort);
             }
-            StructMemberFlag member_flags_var_StructUnsignedShort = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_StructUnsignedShort = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_StructUnsignedShort = 0x00000001;
             bool common_var_StructUnsignedShort_ec {false};
@@ -1842,7 +1842,7 @@ void register_Structures_type_identifier(
             {
             ::register_StructLong_type_identifier(type_ids_var_StructLong);
             }
-            StructMemberFlag member_flags_var_StructLong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_StructLong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_StructLong = 0x00000002;
             bool common_var_StructLong_ec {false};
@@ -1870,7 +1870,7 @@ void register_Structures_type_identifier(
             {
             ::register_StructUnsignedLong_type_identifier(type_ids_var_StructUnsignedLong);
             }
-            StructMemberFlag member_flags_var_StructUnsignedLong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_StructUnsignedLong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_StructUnsignedLong = 0x00000003;
             bool common_var_StructUnsignedLong_ec {false};
@@ -1898,7 +1898,7 @@ void register_Structures_type_identifier(
             {
             ::register_StructLongLong_type_identifier(type_ids_var_StructLongLong);
             }
-            StructMemberFlag member_flags_var_StructLongLong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_StructLongLong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_StructLongLong = 0x00000004;
             bool common_var_StructLongLong_ec {false};
@@ -1926,7 +1926,7 @@ void register_Structures_type_identifier(
             {
             ::register_StructUnsignedLongLong_type_identifier(type_ids_var_StructUnsignedLongLong);
             }
-            StructMemberFlag member_flags_var_StructUnsignedLongLong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_StructUnsignedLongLong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_StructUnsignedLongLong = 0x00000005;
             bool common_var_StructUnsignedLongLong_ec {false};
@@ -1954,7 +1954,7 @@ void register_Structures_type_identifier(
             {
             ::register_StructFloat_type_identifier(type_ids_var_StructFloat);
             }
-            StructMemberFlag member_flags_var_StructFloat = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_StructFloat = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_StructFloat = 0x00000006;
             bool common_var_StructFloat_ec {false};
@@ -1982,7 +1982,7 @@ void register_Structures_type_identifier(
             {
             ::register_StructDouble_type_identifier(type_ids_var_StructDouble);
             }
-            StructMemberFlag member_flags_var_StructDouble = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_StructDouble = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_StructDouble = 0x00000007;
             bool common_var_StructDouble_ec {false};
@@ -2010,7 +2010,7 @@ void register_Structures_type_identifier(
             {
             ::register_StructLongDouble_type_identifier(type_ids_var_StructLongDouble);
             }
-            StructMemberFlag member_flags_var_StructLongDouble = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_StructLongDouble = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_StructLongDouble = 0x00000008;
             bool common_var_StructLongDouble_ec {false};
@@ -2038,7 +2038,7 @@ void register_Structures_type_identifier(
             {
             ::register_StructBoolean_type_identifier(type_ids_var_StructBoolean);
             }
-            StructMemberFlag member_flags_var_StructBoolean = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_StructBoolean = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_StructBoolean = 0x00000009;
             bool common_var_StructBoolean_ec {false};
@@ -2066,7 +2066,7 @@ void register_Structures_type_identifier(
             {
             ::register_StructOctet_type_identifier(type_ids_var_StructOctet);
             }
-            StructMemberFlag member_flags_var_StructOctet = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_StructOctet = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_StructOctet = 0x0000000a;
             bool common_var_StructOctet_ec {false};
@@ -2094,7 +2094,7 @@ void register_Structures_type_identifier(
             {
             ::register_StructChar8_type_identifier(type_ids_var_StructChar8);
             }
-            StructMemberFlag member_flags_var_StructChar8 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_StructChar8 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_StructChar8 = 0x0000000b;
             bool common_var_StructChar8_ec {false};
@@ -2122,7 +2122,7 @@ void register_Structures_type_identifier(
             {
             ::register_StructChar16_type_identifier(type_ids_var_StructChar16);
             }
-            StructMemberFlag member_flags_var_StructChar16 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_StructChar16 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_StructChar16 = 0x0000000c;
             bool common_var_StructChar16_ec {false};
@@ -2150,7 +2150,7 @@ void register_Structures_type_identifier(
             {
             ::register_StructString_type_identifier(type_ids_var_StructString);
             }
-            StructMemberFlag member_flags_var_StructString = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_StructString = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_StructString = 0x0000000d;
             bool common_var_StructString_ec {false};
@@ -2178,7 +2178,7 @@ void register_Structures_type_identifier(
             {
             ::register_StructWString_type_identifier(type_ids_var_StructWString);
             }
-            StructMemberFlag member_flags_var_StructWString = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_StructWString = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_StructWString = 0x0000000e;
             bool common_var_StructWString_ec {false};
@@ -2206,7 +2206,7 @@ void register_Structures_type_identifier(
             {
             ::register_StructBoundedString_type_identifier(type_ids_var_StructBoundedString);
             }
-            StructMemberFlag member_flags_var_StructBoundedString = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_StructBoundedString = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_StructBoundedString = 0x0000000f;
             bool common_var_StructBoundedString_ec {false};
@@ -2234,7 +2234,7 @@ void register_Structures_type_identifier(
             {
             ::register_StructBoundedWString_type_identifier(type_ids_var_StructBoundedWString);
             }
-            StructMemberFlag member_flags_var_StructBoundedWString = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_StructBoundedWString = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_StructBoundedWString = 0x00000010;
             bool common_var_StructBoundedWString_ec {false};
@@ -2262,7 +2262,7 @@ void register_Structures_type_identifier(
             {
             ::register_StructEnum_type_identifier(type_ids_var_StructEnum);
             }
-            StructMemberFlag member_flags_var_StructEnum = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_StructEnum = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_StructEnum = 0x00000011;
             bool common_var_StructEnum_ec {false};
@@ -2290,7 +2290,7 @@ void register_Structures_type_identifier(
             {
             ::register_StructBitMask_type_identifier(type_ids_var_StructBitMask);
             }
-            StructMemberFlag member_flags_var_StructBitMask = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_StructBitMask = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_StructBitMask = 0x00000012;
             bool common_var_StructBitMask_ec {false};
@@ -2318,7 +2318,7 @@ void register_Structures_type_identifier(
             {
             ::register_StructAlias_type_identifier(type_ids_var_StructAlias);
             }
-            StructMemberFlag member_flags_var_StructAlias = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_StructAlias = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_StructAlias = 0x00000013;
             bool common_var_StructAlias_ec {false};
@@ -2346,7 +2346,7 @@ void register_Structures_type_identifier(
             {
             ::register_StructShortArray_type_identifier(type_ids_var_StructShortArray);
             }
-            StructMemberFlag member_flags_var_StructShortArray = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_StructShortArray = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_StructShortArray = 0x00000014;
             bool common_var_StructShortArray_ec {false};
@@ -2374,7 +2374,7 @@ void register_Structures_type_identifier(
             {
             ::register_StructSequence_type_identifier(type_ids_var_StructSequence);
             }
-            StructMemberFlag member_flags_var_StructSequence = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_StructSequence = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_StructSequence = 0x00000015;
             bool common_var_StructSequence_ec {false};
@@ -2402,7 +2402,7 @@ void register_Structures_type_identifier(
             {
             ::register_StructMap_type_identifier(type_ids_var_StructMap);
             }
-            StructMemberFlag member_flags_var_StructMap = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_StructMap = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_StructMap = 0x00000016;
             bool common_var_StructMap_ec {false};
@@ -2430,7 +2430,7 @@ void register_Structures_type_identifier(
             {
             ::register_StructUnion_type_identifier(type_ids_var_StructUnion);
             }
-            StructMemberFlag member_flags_var_StructUnion = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_StructUnion = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_StructUnion = 0x00000017;
             bool common_var_StructUnion_ec {false};
@@ -2458,7 +2458,7 @@ void register_Structures_type_identifier(
             {
             ::register_StructStructure_type_identifier(type_ids_var_StructStructure);
             }
-            StructMemberFlag member_flags_var_StructStructure = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_StructStructure = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_StructStructure = 0x00000018;
             bool common_var_StructStructure_ec {false};
@@ -2486,7 +2486,7 @@ void register_Structures_type_identifier(
             {
             ::register_StructBitset_type_identifier(type_ids_var_StructBitset);
             }
-            StructMemberFlag member_flags_var_StructBitset = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_StructBitset = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_StructBitset = 0x00000019;
             bool common_var_StructBitset_ec {false};
@@ -2514,7 +2514,7 @@ void register_Structures_type_identifier(
             {
             ::register_StructEmpty_type_identifier(type_ids_var_StructEmpty);
             }
-            StructMemberFlag member_flags_var_StructEmpty = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_StructEmpty = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_StructEmpty = 0x0000001a;
             bool common_var_StructEmpty_ec {false};
@@ -2575,7 +2575,7 @@ void register_foo_type_identifier(
                         "a Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
-            StructMemberFlag member_flags_a = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_a = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_a = 0x00000000;
             bool common_a_ec {false};
@@ -2605,7 +2605,7 @@ void register_foo_type_identifier(
                         "b Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
-            StructMemberFlag member_flags_b = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_b = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_b = 0x00000001;
             bool common_b_ec {false};
@@ -2668,7 +2668,7 @@ void register_foo_type_identifier(
                         "d Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
-            StructMemberFlag member_flags_d = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_d = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_d = 0x00000000;
             bool common_d_ec {false};
@@ -2730,7 +2730,7 @@ void register_bar_type_identifier(
                         "e Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
-            StructMemberFlag member_flags_e = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_e = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_e = 0x00000000;
             bool common_e_ec {false};
@@ -2788,7 +2788,7 @@ void register_root1_type_identifier(
             {
                 testing_1::register_foo_type_identifier(type_ids_foo_struct);
             }
-            StructMemberFlag member_flags_foo_struct = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_foo_struct = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_foo_struct = 0x00000000;
             bool common_foo_struct_ec {false};
@@ -2818,7 +2818,7 @@ void register_root1_type_identifier(
                         "c Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
-            StructMemberFlag member_flags_c = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_c = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_c = 0x00000001;
             bool common_c_ec {false};
@@ -2876,7 +2876,7 @@ void register_root2_type_identifier(
             {
                 testing_2::register_foo_type_identifier(type_ids_foo_struct);
             }
-            StructMemberFlag member_flags_foo_struct = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_foo_struct = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_foo_struct = 0x00000000;
             bool common_foo_struct_ec {false};
@@ -2904,7 +2904,7 @@ void register_root2_type_identifier(
             {
             ::register_bar_type_identifier(type_ids_bar_struct);
             }
-            StructMemberFlag member_flags_bar_struct = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_bar_struct = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_bar_struct = 0x00000001;
             bool common_bar_struct_ec {false};
@@ -2962,7 +2962,7 @@ void register_root_type_identifier(
             {
             ::register_root1_type_identifier(type_ids_var_root1);
             }
-            StructMemberFlag member_flags_var_root1 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_root1 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_root1 = 0x00000000;
             bool common_var_root1_ec {false};
@@ -2990,7 +2990,7 @@ void register_root_type_identifier(
             {
             ::register_root2_type_identifier(type_ids_var_root2);
             }
-            StructMemberFlag member_flags_var_root2 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_root2 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_root2 = 0x00000001;
             bool common_var_root2_ec {false};

@@ -80,7 +80,7 @@ void register_StringStruct_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_string8 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_string8 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_string8 = 0x00000000;
             bool common_var_string8_ec {false};
@@ -148,7 +148,7 @@ void register_WStringStruct_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_string16 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_string16 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_string16 = 0x00000000;
             bool common_var_string16_ec {false};
@@ -216,7 +216,7 @@ void register_SmallStringStruct_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_small_string = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_small_string = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_small_string = 0x00000000;
             bool common_var_small_string_ec {false};
@@ -284,7 +284,7 @@ void register_SmallWStringStruct_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_small_wstring = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_small_wstring = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_small_wstring = 0x00000000;
             bool common_var_small_wstring_ec {false};
@@ -352,7 +352,7 @@ void register_LargeStringStruct_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_large_string = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_large_string = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_large_string = 0x00000000;
             bool common_var_large_string_ec {false};
@@ -420,7 +420,7 @@ void register_LargeWStringStruct_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_large_wstring = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_large_wstring = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_large_wstring = 0x00000000;
             bool common_var_large_wstring_ec {false};

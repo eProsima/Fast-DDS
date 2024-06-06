@@ -301,7 +301,7 @@ void register_BitsetStruct_type_identifier(
             {
             ::register_InnerBitsetHelper_type_identifier(type_ids_var_InnerBitsetHelper);
             }
-            StructMemberFlag member_flags_var_InnerBitsetHelper = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_InnerBitsetHelper = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_InnerBitsetHelper = 0x00000000;
             bool common_var_InnerBitsetHelper_ec {false};
@@ -329,7 +329,7 @@ void register_BitsetStruct_type_identifier(
             {
             ::register_InnerTypedBitsetHelper_type_identifier(type_ids_var_InnerTypedBitsetHelper);
             }
-            StructMemberFlag member_flags_var_InnerTypedBitsetHelper = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_InnerTypedBitsetHelper = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_InnerTypedBitsetHelper = 0x00000001;
             bool common_var_InnerTypedBitsetHelper_ec {false};
@@ -357,7 +357,7 @@ void register_BitsetStruct_type_identifier(
             {
             ::register_InnerTypedBitsetHelper2_type_identifier(type_ids_var_InnerTypedBitsetHelper2);
             }
-            StructMemberFlag member_flags_var_InnerTypedBitsetHelper2 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_InnerTypedBitsetHelper2 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_InnerTypedBitsetHelper2 = 0x00000002;
             bool common_var_InnerTypedBitsetHelper2_ec {false};
@@ -385,7 +385,7 @@ void register_BitsetStruct_type_identifier(
             {
             ::register_InnerTypedBitsetHelper3_type_identifier(type_ids_var_InnerTypedBitsetHelper3);
             }
-            StructMemberFlag member_flags_var_InnerTypedBitsetHelper3 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_InnerTypedBitsetHelper3 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_InnerTypedBitsetHelper3 = 0x00000003;
             bool common_var_InnerTypedBitsetHelper3_ec {false};
@@ -413,7 +413,7 @@ void register_BitsetStruct_type_identifier(
             {
             ::register_InnerTypedBitsetHelper4_type_identifier(type_ids_var_InnerTypedBitsetHelper4);
             }
-            StructMemberFlag member_flags_var_InnerTypedBitsetHelper4 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_InnerTypedBitsetHelper4 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_InnerTypedBitsetHelper4 = 0x00000004;
             bool common_var_InnerTypedBitsetHelper4_ec {false};

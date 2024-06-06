@@ -107,7 +107,7 @@ void register_ArrayShort_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_short = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_short = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_short = 0x00000000;
             bool common_var_array_short_ec {false};
@@ -201,7 +201,7 @@ void register_ArrayUShort_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_ushort = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_ushort = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_ushort = 0x00000000;
             bool common_var_array_ushort_ec {false};
@@ -295,7 +295,7 @@ void register_ArrayLong_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_long = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_long = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_long = 0x00000000;
             bool common_var_array_long_ec {false};
@@ -389,7 +389,7 @@ void register_ArrayULong_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_ulong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_ulong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_ulong = 0x00000000;
             bool common_var_array_ulong_ec {false};
@@ -483,7 +483,7 @@ void register_ArrayLongLong_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_longlong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_longlong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_longlong = 0x00000000;
             bool common_var_array_longlong_ec {false};
@@ -577,7 +577,7 @@ void register_ArrayULongLong_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_ulonglong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_ulonglong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_ulonglong = 0x00000000;
             bool common_var_array_ulonglong_ec {false};
@@ -671,7 +671,7 @@ void register_ArrayFloat_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_float = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_float = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_float = 0x00000000;
             bool common_var_array_float_ec {false};
@@ -765,7 +765,7 @@ void register_ArrayDouble_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_double = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_double = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_double = 0x00000000;
             bool common_var_array_double_ec {false};
@@ -859,7 +859,7 @@ void register_ArrayLongDouble_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_longdouble = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_longdouble = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_longdouble = 0x00000000;
             bool common_var_array_longdouble_ec {false};
@@ -953,7 +953,7 @@ void register_ArrayBoolean_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_boolean = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_boolean = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_boolean = 0x00000000;
             bool common_var_array_boolean_ec {false};
@@ -1047,7 +1047,7 @@ void register_ArrayOctet_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_octet = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_octet = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_octet = 0x00000000;
             bool common_var_array_octet_ec {false};
@@ -1141,7 +1141,7 @@ void register_ArrayChar_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_char = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_char = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_char = 0x00000000;
             bool common_var_array_char_ec {false};
@@ -1235,7 +1235,7 @@ void register_ArrayWChar_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_wchar = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_wchar = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_wchar = 0x00000000;
             bool common_var_array_wchar_ec {false};
@@ -1337,7 +1337,7 @@ void register_ArrayString_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_string = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_string = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_string = 0x00000000;
             bool common_var_array_string_ec {false};
@@ -1439,7 +1439,7 @@ void register_ArrayWString_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_wstring = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_wstring = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_wstring = 0x00000000;
             bool common_var_array_wstring_ec {false};
@@ -1531,7 +1531,7 @@ void register_ArrayBoundedString_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_bounded_string = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_bounded_string = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_bounded_string = 0x00000000;
             bool common_var_array_bounded_string_ec {false};
@@ -1623,7 +1623,7 @@ void register_ArrayBoundedWString_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_bounded_wstring = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_bounded_wstring = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_bounded_wstring = 0x00000000;
             bool common_var_array_bounded_wstring_ec {false};
@@ -1715,7 +1715,7 @@ void register_ArrayEnum_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_enum = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_enum = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_enum = 0x00000000;
             bool common_var_array_enum_ec {false};
@@ -1807,7 +1807,7 @@ void register_ArrayBitMask_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_bitmask = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_bitmask = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_bitmask = 0x00000000;
             bool common_var_array_bitmask_ec {false};
@@ -1899,7 +1899,7 @@ void register_ArrayAlias_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_alias = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_alias = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_alias = 0x00000000;
             bool common_var_array_alias_ec {false};
@@ -1995,7 +1995,7 @@ void register_ArrayShortArray_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_short_array = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_short_array = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_short_array = 0x00000000;
             bool common_var_array_short_array_ec {false};
@@ -2121,7 +2121,7 @@ void register_ArraySequence_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_sequence = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_sequence = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_sequence = 0x00000000;
             bool common_var_array_sequence_ec {false};
@@ -2274,7 +2274,7 @@ void register_ArrayMap_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_map = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_map = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_map = 0x00000000;
             bool common_var_array_map_ec {false};
@@ -2366,7 +2366,7 @@ void register_ArrayUnion_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_union = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_union = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_union = 0x00000000;
             bool common_var_array_union_ec {false};
@@ -2458,7 +2458,7 @@ void register_ArrayStructure_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_structure = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_structure = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_structure = 0x00000000;
             bool common_var_array_structure_ec {false};
@@ -2550,7 +2550,7 @@ void register_ArrayBitset_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_bitset = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_bitset = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_bitset = 0x00000000;
             bool common_var_array_bitset_ec {false};
@@ -2648,7 +2648,7 @@ void register_ArrayMultiDimensionShort_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_short = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_short = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_short = 0x00000000;
             bool common_var_array_short_ec {false};
@@ -2746,7 +2746,7 @@ void register_ArrayMultiDimensionUShort_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_ushort = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_ushort = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_ushort = 0x00000000;
             bool common_var_array_ushort_ec {false};
@@ -2844,7 +2844,7 @@ void register_ArrayMultiDimensionLong_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_long = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_long = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_long = 0x00000000;
             bool common_var_array_long_ec {false};
@@ -2942,7 +2942,7 @@ void register_ArrayMultiDimensionULong_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_ulong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_ulong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_ulong = 0x00000000;
             bool common_var_array_ulong_ec {false};
@@ -3040,7 +3040,7 @@ void register_ArrayMultiDimensionLongLong_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_longlong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_longlong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_longlong = 0x00000000;
             bool common_var_array_longlong_ec {false};
@@ -3138,7 +3138,7 @@ void register_ArrayMultiDimensionULongLong_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_ulonglong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_ulonglong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_ulonglong = 0x00000000;
             bool common_var_array_ulonglong_ec {false};
@@ -3236,7 +3236,7 @@ void register_ArrayMultiDimensionFloat_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_float = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_float = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_float = 0x00000000;
             bool common_var_array_float_ec {false};
@@ -3334,7 +3334,7 @@ void register_ArrayMultiDimensionDouble_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_double = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_double = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_double = 0x00000000;
             bool common_var_array_double_ec {false};
@@ -3432,7 +3432,7 @@ void register_ArrayMultiDimensionLongDouble_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_longdouble = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_longdouble = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_longdouble = 0x00000000;
             bool common_var_array_longdouble_ec {false};
@@ -3530,7 +3530,7 @@ void register_ArrayMultiDimensionBoolean_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_boolean = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_boolean = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_boolean = 0x00000000;
             bool common_var_array_boolean_ec {false};
@@ -3628,7 +3628,7 @@ void register_ArrayMultiDimensionOctet_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_octet = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_octet = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_octet = 0x00000000;
             bool common_var_array_octet_ec {false};
@@ -3726,7 +3726,7 @@ void register_ArrayMultiDimensionChar_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_char = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_char = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_char = 0x00000000;
             bool common_var_array_char_ec {false};
@@ -3824,7 +3824,7 @@ void register_ArrayMultiDimensionWChar_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_wchar = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_wchar = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_wchar = 0x00000000;
             bool common_var_array_wchar_ec {false};
@@ -3930,7 +3930,7 @@ void register_ArrayMultiDimensionString_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_string = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_string = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_string = 0x00000000;
             bool common_var_array_string_ec {false};
@@ -4036,7 +4036,7 @@ void register_ArrayMultiDimensionWString_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_wstring = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_wstring = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_wstring = 0x00000000;
             bool common_var_array_wstring_ec {false};
@@ -4132,7 +4132,7 @@ void register_ArrayMultiDimensionBoundedString_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_bounded_string = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_bounded_string = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_bounded_string = 0x00000000;
             bool common_var_array_bounded_string_ec {false};
@@ -4228,7 +4228,7 @@ void register_ArrayMultiDimensionBoundedWString_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_bounded_wstring = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_bounded_wstring = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_bounded_wstring = 0x00000000;
             bool common_var_array_bounded_wstring_ec {false};
@@ -4324,7 +4324,7 @@ void register_ArrayMultiDimensionEnum_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_enum = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_enum = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_enum = 0x00000000;
             bool common_var_array_enum_ec {false};
@@ -4420,7 +4420,7 @@ void register_ArrayMultiDimensionBitMask_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_bitmask = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_bitmask = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_bitmask = 0x00000000;
             bool common_var_array_bitmask_ec {false};
@@ -4516,7 +4516,7 @@ void register_ArrayMultiDimensionAlias_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_alias = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_alias = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_alias = 0x00000000;
             bool common_var_array_alias_ec {false};
@@ -4646,7 +4646,7 @@ void register_ArrayMultiDimensionSequence_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_sequence = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_sequence = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_sequence = 0x00000000;
             bool common_var_array_sequence_ec {false};
@@ -4803,7 +4803,7 @@ void register_ArrayMultiDimensionMap_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_map = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_map = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_map = 0x00000000;
             bool common_var_array_map_ec {false};
@@ -4899,7 +4899,7 @@ void register_ArrayMultiDimensionUnion_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_union = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_union = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_union = 0x00000000;
             bool common_var_array_union_ec {false};
@@ -4995,7 +4995,7 @@ void register_ArrayMultiDimensionStructure_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_structure = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_structure = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_structure = 0x00000000;
             bool common_var_array_structure_ec {false};
@@ -5091,7 +5091,7 @@ void register_ArrayMultiDimensionBitset_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_bitset = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_bitset = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_bitset = 0x00000000;
             bool common_var_array_bitset_ec {false};
@@ -5185,7 +5185,7 @@ void register_ArraySingleDimensionLiteralsShort_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_short = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_short = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_short = 0x00000000;
             bool common_var_array_short_ec {false};
@@ -5279,7 +5279,7 @@ void register_ArraySingleDimensionLiteralsUnsignedShort_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_ushort = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_ushort = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_ushort = 0x00000000;
             bool common_var_array_ushort_ec {false};
@@ -5373,7 +5373,7 @@ void register_ArraySingleDimensionLiteralsLong_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_long = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_long = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_long = 0x00000000;
             bool common_var_array_long_ec {false};
@@ -5467,7 +5467,7 @@ void register_ArraySingleDimensionLiteralsUnsignedLong_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_ulong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_ulong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_ulong = 0x00000000;
             bool common_var_array_ulong_ec {false};
@@ -5561,7 +5561,7 @@ void register_ArraySingleDimensionLiteralsLongLong_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_longlong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_longlong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_longlong = 0x00000000;
             bool common_var_array_longlong_ec {false};
@@ -5655,7 +5655,7 @@ void register_ArraySingleDimensionLiteralsUnsignedLongLong_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_ulonglong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_ulonglong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_ulonglong = 0x00000000;
             bool common_var_array_ulonglong_ec {false};
@@ -5749,7 +5749,7 @@ void register_ArraySingleDimensionLiteralsFloat_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_float = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_float = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_float = 0x00000000;
             bool common_var_array_float_ec {false};
@@ -5843,7 +5843,7 @@ void register_ArraySingleDimensionLiteralsDouble_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_double = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_double = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_double = 0x00000000;
             bool common_var_array_double_ec {false};
@@ -5937,7 +5937,7 @@ void register_ArraySingleDimensionLiteralsLongDouble_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_longdouble = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_longdouble = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_longdouble = 0x00000000;
             bool common_var_array_longdouble_ec {false};
@@ -6031,7 +6031,7 @@ void register_ArraySingleDimensionLiteralsBoolean_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_boolean = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_boolean = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_boolean = 0x00000000;
             bool common_var_array_boolean_ec {false};
@@ -6125,7 +6125,7 @@ void register_ArraySingleDimensionLiteralsOctet_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_octet = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_octet = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_octet = 0x00000000;
             bool common_var_array_octet_ec {false};
@@ -6219,7 +6219,7 @@ void register_ArraySingleDimensionLiteralsChar_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_char = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_char = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_char = 0x00000000;
             bool common_var_array_char_ec {false};
@@ -6313,7 +6313,7 @@ void register_ArraySingleDimensionLiteralsWChar_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_wchar = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_wchar = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_wchar = 0x00000000;
             bool common_var_array_wchar_ec {false};
@@ -6415,7 +6415,7 @@ void register_ArraySingleDimensionLiteralsString_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_string = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_string = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_string = 0x00000000;
             bool common_var_array_string_ec {false};
@@ -6517,7 +6517,7 @@ void register_ArraySingleDimensionLiteralsWString_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_wstring = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_wstring = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_wstring = 0x00000000;
             bool common_var_array_wstring_ec {false};
@@ -6609,7 +6609,7 @@ void register_ArraySingleDimensionLiteralsBoundedString_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_bounded_string = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_bounded_string = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_bounded_string = 0x00000000;
             bool common_var_array_bounded_string_ec {false};
@@ -6701,7 +6701,7 @@ void register_ArraySingleDimensionLiteralsBoundedWString_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_bounded_wstring = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_bounded_wstring = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_bounded_wstring = 0x00000000;
             bool common_var_array_bounded_wstring_ec {false};
@@ -6793,7 +6793,7 @@ void register_ArraySingleDimensionLiteralsEnum_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_enum = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_enum = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_enum = 0x00000000;
             bool common_var_array_enum_ec {false};
@@ -6885,7 +6885,7 @@ void register_ArraySingleDimensionLiteralsBitMask_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_bitmask = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_bitmask = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_bitmask = 0x00000000;
             bool common_var_array_bitmask_ec {false};
@@ -6977,7 +6977,7 @@ void register_ArraySingleDimensionLiteralsAlias_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_alias = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_alias = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_alias = 0x00000000;
             bool common_var_array_alias_ec {false};
@@ -7073,7 +7073,7 @@ void register_ArraySingleDimensionLiteralsShortArray_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_short_array = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_short_array = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_short_array = 0x00000000;
             bool common_var_array_short_array_ec {false};
@@ -7199,7 +7199,7 @@ void register_ArraySingleDimensionLiteralsSequence_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_sequence = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_sequence = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_sequence = 0x00000000;
             bool common_var_array_sequence_ec {false};
@@ -7352,7 +7352,7 @@ void register_ArraySingleDimensionLiteralsMap_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_map = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_map = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_map = 0x00000000;
             bool common_var_array_map_ec {false};
@@ -7444,7 +7444,7 @@ void register_ArraySingleDimensionLiteralsUnion_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_union = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_union = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_union = 0x00000000;
             bool common_var_array_union_ec {false};
@@ -7536,7 +7536,7 @@ void register_ArraySingleDimensionLiteralsStructure_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_structure = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_structure = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_structure = 0x00000000;
             bool common_var_array_structure_ec {false};
@@ -7628,7 +7628,7 @@ void register_ArraySingleDimensionLiteralsBitset_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_bitset = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_bitset = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_bitset = 0x00000000;
             bool common_var_array_bitset_ec {false};
@@ -7726,7 +7726,7 @@ void register_ArrayMultiDimensionLiteralsShort_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_short = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_short = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_short = 0x00000000;
             bool common_var_array_short_ec {false};
@@ -7824,7 +7824,7 @@ void register_ArrayMultiDimensionLiteralsUShort_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_ushort = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_ushort = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_ushort = 0x00000000;
             bool common_var_array_ushort_ec {false};
@@ -7922,7 +7922,7 @@ void register_ArrayMultiDimensionLiteralsLong_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_long = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_long = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_long = 0x00000000;
             bool common_var_array_long_ec {false};
@@ -8020,7 +8020,7 @@ void register_ArrayMultiDimensionLiteralsULong_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_ulong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_ulong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_ulong = 0x00000000;
             bool common_var_array_ulong_ec {false};
@@ -8118,7 +8118,7 @@ void register_ArrayMultiDimensionLiteralsLongLong_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_longlong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_longlong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_longlong = 0x00000000;
             bool common_var_array_longlong_ec {false};
@@ -8216,7 +8216,7 @@ void register_ArrayMultiDimensionLiteralsULongLong_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_ulonglong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_ulonglong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_ulonglong = 0x00000000;
             bool common_var_array_ulonglong_ec {false};
@@ -8314,7 +8314,7 @@ void register_ArrayMultiDimensionLiteralsFloat_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_float = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_float = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_float = 0x00000000;
             bool common_var_array_float_ec {false};
@@ -8412,7 +8412,7 @@ void register_ArrayMultiDimensionLiteralsDouble_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_double = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_double = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_double = 0x00000000;
             bool common_var_array_double_ec {false};
@@ -8510,7 +8510,7 @@ void register_ArrayMultiDimensionLiteralsLongDouble_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_longdouble = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_longdouble = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_longdouble = 0x00000000;
             bool common_var_array_longdouble_ec {false};
@@ -8608,7 +8608,7 @@ void register_ArrayMultiDimensionLiteralsBoolean_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_boolean = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_boolean = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_boolean = 0x00000000;
             bool common_var_array_boolean_ec {false};
@@ -8706,7 +8706,7 @@ void register_ArrayMultiDimensionLiteralsOctet_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_octet = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_octet = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_octet = 0x00000000;
             bool common_var_array_octet_ec {false};
@@ -8804,7 +8804,7 @@ void register_ArrayMultiDimensionLiteralsChar_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_char = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_char = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_char = 0x00000000;
             bool common_var_array_char_ec {false};
@@ -8902,7 +8902,7 @@ void register_ArrayMultiDimensionLiteralsWChar_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_wchar = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_wchar = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_wchar = 0x00000000;
             bool common_var_array_wchar_ec {false};
@@ -9008,7 +9008,7 @@ void register_ArrayMultiDimensionLiteralsString_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_string = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_string = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_string = 0x00000000;
             bool common_var_array_string_ec {false};
@@ -9114,7 +9114,7 @@ void register_ArrayMultiDimensionLiteralsWString_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_wstring = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_wstring = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_wstring = 0x00000000;
             bool common_var_array_wstring_ec {false};
@@ -9210,7 +9210,7 @@ void register_ArrayMultiDimensionLiteralsBoundedString_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_bounded_string = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_bounded_string = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_bounded_string = 0x00000000;
             bool common_var_array_bounded_string_ec {false};
@@ -9306,7 +9306,7 @@ void register_ArrayMultiDimensionLiteralsBoundedWString_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_bounded_wstring = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_bounded_wstring = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_bounded_wstring = 0x00000000;
             bool common_var_array_bounded_wstring_ec {false};
@@ -9402,7 +9402,7 @@ void register_ArrayMultiDimensionLiteralsEnum_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_enum = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_enum = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_enum = 0x00000000;
             bool common_var_array_enum_ec {false};
@@ -9498,7 +9498,7 @@ void register_ArrayMultiDimensionLiteralsBitMask_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_bitmask = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_bitmask = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_bitmask = 0x00000000;
             bool common_var_array_bitmask_ec {false};
@@ -9594,7 +9594,7 @@ void register_ArrayMultiDimensionLiteralsAlias_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_alias = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_alias = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_alias = 0x00000000;
             bool common_var_array_alias_ec {false};
@@ -9724,7 +9724,7 @@ void register_ArrayMultiDimensionLiteralsSequence_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_sequence = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_sequence = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_sequence = 0x00000000;
             bool common_var_array_sequence_ec {false};
@@ -9881,7 +9881,7 @@ void register_ArrayMultiDimensionLiteralsMap_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_map = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_map = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_map = 0x00000000;
             bool common_var_array_map_ec {false};
@@ -9977,7 +9977,7 @@ void register_ArrayMultiDimensionLiteralsUnion_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_union = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_union = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_union = 0x00000000;
             bool common_var_array_union_ec {false};
@@ -10073,7 +10073,7 @@ void register_ArrayMultiDimensionLiteralsStructure_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_structure = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_structure = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_structure = 0x00000000;
             bool common_var_array_structure_ec {false};
@@ -10169,7 +10169,7 @@ void register_ArrayMultiDimensionLiteralsBitSet_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_bitset = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_bitset = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_bitset = 0x00000000;
             bool common_var_array_bitset_ec {false};
@@ -10263,7 +10263,7 @@ void register_BoundedSmallArrays_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_small = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_small = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_small = 0x00000000;
             bool common_var_array_small_ec {false};
@@ -10357,7 +10357,7 @@ void register_BoundedBigArrays_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_array_big = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_array_big = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_array_big = 0x00000000;
             bool common_var_array_big_ec {false};

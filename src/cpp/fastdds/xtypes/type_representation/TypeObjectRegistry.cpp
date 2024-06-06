@@ -1638,8 +1638,7 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_struct_dynamic_type(
     {
         MemberDescriptorImpl& member_descriptor {(*member)->get_descriptor()};
         StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(
-            member_descriptor.is_try_construct_kind_set() ?
-            try_construct_kind(member_descriptor.try_construct_kind()) : TryConstructKind::NOT_APPLIED,
+            try_construct_kind(member_descriptor.try_construct_kind()),
             member_descriptor.is_optional(), member_descriptor.is_must_understand(), member_descriptor.is_key(),
             member_descriptor.is_shared());
         TypeIdentifierPair member_type_ids;
@@ -1685,7 +1684,7 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_union_dynamic_type(
 
     // Union discriminator is described using a TypeDescriptor and not a MemberDescriptor (!)
     UnionDiscriminatorFlag discriminator_flags {TypeObjectUtils::build_union_discriminator_flag(
-                                                    TryConstructKind::NOT_APPLIED, false)};
+                                                    TryConstructFailAction::DISCARD, false)};
     TypeIdentifierPair discriminator_type_ids;
     register_typeobject_w_dynamic_type(type_descriptor.discriminator_type(), discriminator_type_ids);
     bool ec {false};
@@ -1710,9 +1709,8 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_union_dynamic_type(
         {
             MemberDescriptorImpl& member_descriptor {member->get_descriptor()};
             UnionMemberFlag member_flags {TypeObjectUtils::build_union_member_flag(
-                                              member_descriptor.is_try_construct_kind_set() ? try_construct_kind(
-                                                  member_descriptor.try_construct_kind()) :
-                                              TryConstructKind::NOT_APPLIED, member_descriptor.is_default_label(),
+                                              try_construct_kind(member_descriptor.try_construct_kind()),
+                                              member_descriptor.is_default_label(),
                                               member_descriptor.is_shared())};
             TypeIdentifierPair member_type_ids;
             register_typeobject_w_dynamic_type(member_descriptor.type(), member_type_ids);
@@ -2436,20 +2434,20 @@ ExtensibilityKind TypeObjectRegistry::extensibility_kind(
     return ret_extensibility_kind;
 }
 
-TryConstructKind TypeObjectRegistry::try_construct_kind(
+TryConstructFailAction TypeObjectRegistry::try_construct_kind(
         eprosima::fastdds::dds::TryConstructKind try_construct_kind) const
 {
-    TryConstructKind ret_try_construct_kind {TryConstructKind::NOT_APPLIED};
+    TryConstructFailAction ret_try_construct_kind {TryConstructFailAction::DISCARD};
     switch (try_construct_kind)
     {
         case eprosima::fastdds::dds::TryConstructKind::DISCARD:
-            ret_try_construct_kind = TryConstructKind::DISCARD;
+            ret_try_construct_kind = TryConstructFailAction::DISCARD;
             break;
         case eprosima::fastdds::dds::TryConstructKind::TRIM:
-            ret_try_construct_kind = TryConstructKind::TRIM;
+            ret_try_construct_kind = TryConstructFailAction::TRIM;
             break;
         case eprosima::fastdds::dds::TryConstructKind::USE_DEFAULT:
-            ret_try_construct_kind = TryConstructKind::USE_DEFAULT;
+            ret_try_construct_kind = TryConstructFailAction::USE_DEFAULT;
             break;
     }
     return ret_try_construct_kind;

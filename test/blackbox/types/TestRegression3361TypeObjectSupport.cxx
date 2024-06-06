@@ -71,7 +71,7 @@ void register_TestRegression3361_type_identifier(
             {
                 TestModule::register_MACHINEID_type_identifier(type_ids_uuid);
             }
-            StructMemberFlag member_flags_uuid = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_uuid = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_uuid = 0x00000000;
             bool common_uuid_ec {false};

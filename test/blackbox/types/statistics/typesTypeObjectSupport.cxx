@@ -110,7 +110,7 @@ void register_EntityId_s_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_value = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_value = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_value = 0x00000000;
             bool common_value_ec {false};
@@ -204,7 +204,7 @@ void register_GuidPrefix_s_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_value = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_value = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_value = 0x00000000;
             bool common_value_ec {false};
@@ -262,7 +262,7 @@ void register_GUID_s_type_identifier(
             {
                 eprosima::fastdds::statistics::detail::register_GuidPrefix_s_type_identifier(type_ids_guidPrefix);
             }
-            StructMemberFlag member_flags_guidPrefix = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_guidPrefix = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_guidPrefix = 0x00000000;
             bool common_guidPrefix_ec {false};
@@ -290,7 +290,7 @@ void register_GUID_s_type_identifier(
             {
                 eprosima::fastdds::statistics::detail::register_EntityId_s_type_identifier(type_ids_entityId);
             }
-            StructMemberFlag member_flags_entityId = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_entityId = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_entityId = 0x00000001;
             bool common_entityId_ec {false};
@@ -350,7 +350,7 @@ void register_SequenceNumber_s_type_identifier(
                         "high Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
-            StructMemberFlag member_flags_high = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_high = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_high = 0x00000000;
             bool common_high_ec {false};
@@ -380,7 +380,7 @@ void register_SequenceNumber_s_type_identifier(
                         "low Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
-            StructMemberFlag member_flags_low = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_low = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_low = 0x00000001;
             bool common_low_ec {false};
@@ -438,7 +438,7 @@ void register_SampleIdentity_s_type_identifier(
             {
                 eprosima::fastdds::statistics::detail::register_GUID_s_type_identifier(type_ids_writer_guid);
             }
-            StructMemberFlag member_flags_writer_guid = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_writer_guid = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_writer_guid = 0x00000000;
             bool common_writer_guid_ec {false};
@@ -466,7 +466,7 @@ void register_SampleIdentity_s_type_identifier(
             {
                 eprosima::fastdds::statistics::detail::register_SequenceNumber_s_type_identifier(type_ids_sequence_number);
             }
-            StructMemberFlag member_flags_sequence_number = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_sequence_number = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_sequence_number = 0x00000001;
             bool common_sequence_number_ec {false};
@@ -526,7 +526,7 @@ void register_Locator_s_type_identifier(
                         "kind Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
-            StructMemberFlag member_flags_kind = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_kind = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_kind = 0x00000000;
             bool common_kind_ec {false};
@@ -556,7 +556,7 @@ void register_Locator_s_type_identifier(
                         "port Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
-            StructMemberFlag member_flags_port = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_port = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_port = 0x00000001;
             bool common_port_ec {false};
@@ -620,7 +620,7 @@ void register_Locator_s_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_address = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_address = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_address = 0x00000002;
             bool common_address_ec {false};
@@ -680,7 +680,7 @@ void register_DiscoveryTime_type_identifier(
             {
                 eprosima::fastdds::statistics::detail::register_GUID_s_type_identifier(type_ids_local_participant_guid);
             }
-            StructMemberFlag member_flags_local_participant_guid = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_local_participant_guid = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, true, false);
             MemberId member_id_local_participant_guid = 0x00000000;
             bool common_local_participant_guid_ec {false};
@@ -721,7 +721,7 @@ void register_DiscoveryTime_type_identifier(
             {
                 eprosima::fastdds::statistics::detail::register_GUID_s_type_identifier(type_ids_remote_entity_guid);
             }
-            StructMemberFlag member_flags_remote_entity_guid = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_remote_entity_guid = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, true, false);
             MemberId member_id_remote_entity_guid = 0x00000001;
             bool common_remote_entity_guid_ec {false};
@@ -764,7 +764,7 @@ void register_DiscoveryTime_type_identifier(
                         "time Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
-            StructMemberFlag member_flags_time = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_time = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_time = 0x00000002;
             bool common_time_ec {false};
@@ -802,7 +802,7 @@ void register_DiscoveryTime_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_host = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_host = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_host = 0x00000003;
             bool common_host_ec {false};
@@ -840,7 +840,7 @@ void register_DiscoveryTime_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_user = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_user = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_user = 0x00000004;
             bool common_user_ec {false};
@@ -878,7 +878,7 @@ void register_DiscoveryTime_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_process = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_process = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_process = 0x00000005;
             bool common_process_ec {false};
@@ -936,7 +936,7 @@ void register_EntityCount_type_identifier(
             {
                 eprosima::fastdds::statistics::detail::register_GUID_s_type_identifier(type_ids_guid);
             }
-            StructMemberFlag member_flags_guid = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_guid = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, true, false);
             MemberId member_id_guid = 0x00000000;
             bool common_guid_ec {false};
@@ -979,7 +979,7 @@ void register_EntityCount_type_identifier(
                         "count Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
-            StructMemberFlag member_flags_count = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_count = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_count = 0x00000001;
             bool common_count_ec {false};
@@ -1037,7 +1037,7 @@ void register_SampleIdentityCount_type_identifier(
             {
                 eprosima::fastdds::statistics::detail::register_SampleIdentity_s_type_identifier(type_ids_sample_id);
             }
-            StructMemberFlag member_flags_sample_id = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_sample_id = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, true, false);
             MemberId member_id_sample_id = 0x00000000;
             bool common_sample_id_ec {false};
@@ -1080,7 +1080,7 @@ void register_SampleIdentityCount_type_identifier(
                         "count Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
-            StructMemberFlag member_flags_count = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_count = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_count = 0x00000001;
             bool common_count_ec {false};
@@ -1138,7 +1138,7 @@ void register_Entity2LocatorTraffic_type_identifier(
             {
                 eprosima::fastdds::statistics::detail::register_GUID_s_type_identifier(type_ids_src_guid);
             }
-            StructMemberFlag member_flags_src_guid = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_src_guid = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, true, false);
             MemberId member_id_src_guid = 0x00000000;
             bool common_src_guid_ec {false};
@@ -1179,7 +1179,7 @@ void register_Entity2LocatorTraffic_type_identifier(
             {
                 eprosima::fastdds::statistics::detail::register_Locator_s_type_identifier(type_ids_dst_locator);
             }
-            StructMemberFlag member_flags_dst_locator = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_dst_locator = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, true, false);
             MemberId member_id_dst_locator = 0x00000001;
             bool common_dst_locator_ec {false};
@@ -1222,7 +1222,7 @@ void register_Entity2LocatorTraffic_type_identifier(
                         "packet_count Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
-            StructMemberFlag member_flags_packet_count = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_packet_count = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_packet_count = 0x00000002;
             bool common_packet_count_ec {false};
@@ -1252,7 +1252,7 @@ void register_Entity2LocatorTraffic_type_identifier(
                         "byte_count Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
-            StructMemberFlag member_flags_byte_count = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_byte_count = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_byte_count = 0x00000003;
             bool common_byte_count_ec {false};
@@ -1282,7 +1282,7 @@ void register_Entity2LocatorTraffic_type_identifier(
                         "byte_magnitude_order Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
-            StructMemberFlag member_flags_byte_magnitude_order = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_byte_magnitude_order = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_byte_magnitude_order = 0x00000004;
             bool common_byte_magnitude_order_ec {false};
@@ -1340,7 +1340,7 @@ void register_WriterReaderData_type_identifier(
             {
                 eprosima::fastdds::statistics::detail::register_GUID_s_type_identifier(type_ids_writer_guid);
             }
-            StructMemberFlag member_flags_writer_guid = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_writer_guid = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, true, false);
             MemberId member_id_writer_guid = 0x00000000;
             bool common_writer_guid_ec {false};
@@ -1381,7 +1381,7 @@ void register_WriterReaderData_type_identifier(
             {
                 eprosima::fastdds::statistics::detail::register_GUID_s_type_identifier(type_ids_reader_guid);
             }
-            StructMemberFlag member_flags_reader_guid = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_reader_guid = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, true, false);
             MemberId member_id_reader_guid = 0x00000001;
             bool common_reader_guid_ec {false};
@@ -1424,7 +1424,7 @@ void register_WriterReaderData_type_identifier(
                         "data Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
-            StructMemberFlag member_flags_data = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_data = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_data = 0x00000002;
             bool common_data_ec {false};
@@ -1482,7 +1482,7 @@ void register_Locator2LocatorData_type_identifier(
             {
                 eprosima::fastdds::statistics::detail::register_Locator_s_type_identifier(type_ids_src_locator);
             }
-            StructMemberFlag member_flags_src_locator = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_src_locator = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, true, false);
             MemberId member_id_src_locator = 0x00000000;
             bool common_src_locator_ec {false};
@@ -1523,7 +1523,7 @@ void register_Locator2LocatorData_type_identifier(
             {
                 eprosima::fastdds::statistics::detail::register_Locator_s_type_identifier(type_ids_dst_locator);
             }
-            StructMemberFlag member_flags_dst_locator = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_dst_locator = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, true, false);
             MemberId member_id_dst_locator = 0x00000001;
             bool common_dst_locator_ec {false};
@@ -1566,7 +1566,7 @@ void register_Locator2LocatorData_type_identifier(
                         "data Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
-            StructMemberFlag member_flags_data = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_data = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_data = 0x00000002;
             bool common_data_ec {false};
@@ -1624,7 +1624,7 @@ void register_EntityData_type_identifier(
             {
                 eprosima::fastdds::statistics::detail::register_GUID_s_type_identifier(type_ids_guid);
             }
-            StructMemberFlag member_flags_guid = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_guid = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, true, false);
             MemberId member_id_guid = 0x00000000;
             bool common_guid_ec {false};
@@ -1667,7 +1667,7 @@ void register_EntityData_type_identifier(
                         "data Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
-            StructMemberFlag member_flags_data = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_data = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_data = 0x00000001;
             bool common_data_ec {false};
@@ -1725,7 +1725,7 @@ void register_PhysicalData_type_identifier(
             {
                 eprosima::fastdds::statistics::detail::register_GUID_s_type_identifier(type_ids_participant_guid);
             }
-            StructMemberFlag member_flags_participant_guid = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_participant_guid = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, true, false);
             MemberId member_id_participant_guid = 0x00000000;
             bool common_participant_guid_ec {false};
@@ -1776,7 +1776,7 @@ void register_PhysicalData_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_host = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_host = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_host = 0x00000001;
             bool common_host_ec {false};
@@ -1814,7 +1814,7 @@ void register_PhysicalData_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_user = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_user = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_user = 0x00000002;
             bool common_user_ec {false};
@@ -1852,7 +1852,7 @@ void register_PhysicalData_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_process = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_process = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_process = 0x00000003;
             bool common_process_ec {false};
@@ -1898,7 +1898,7 @@ void register_Data_type_identifier(
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_Data;
         CompleteTypeDetail detail_Data = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_Data, ann_custom_Data, type_name_Data.to_string());
         CompleteUnionHeader header_Data = TypeObjectUtils::build_complete_union_header(detail_Data);
-        UnionDiscriminatorFlag member_flags_Data = TypeObjectUtils::build_union_discriminator_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+        UnionDiscriminatorFlag member_flags_Data = TypeObjectUtils::build_union_discriminator_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                 false);
         return_code_Data =
             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -1939,7 +1939,7 @@ void register_Data_type_identifier(
             {
                 eprosima::fastdds::statistics::register_WriterReaderData_type_identifier(type_ids_Data);
             }
-            UnionMemberFlag member_flags_writer_reader_data = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            UnionMemberFlag member_flags_writer_reader_data = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false);
             UnionCaseLabelSeq label_seq_writer_reader_data;
             TypeObjectUtils::add_union_case_label(label_seq_writer_reader_data, static_cast<int32_t>(EventKind::HISTORY2HISTORY_LATENCY));
@@ -1969,7 +1969,7 @@ void register_Data_type_identifier(
             {
                 eprosima::fastdds::statistics::register_Locator2LocatorData_type_identifier(type_ids_Data);
             }
-            UnionMemberFlag member_flags_locator2locator_data = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            UnionMemberFlag member_flags_locator2locator_data = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false);
             UnionCaseLabelSeq label_seq_locator2locator_data;
             TypeObjectUtils::add_union_case_label(label_seq_locator2locator_data, static_cast<int32_t>(EventKind::NETWORK_LATENCY));
@@ -1999,7 +1999,7 @@ void register_Data_type_identifier(
             {
                 eprosima::fastdds::statistics::register_EntityData_type_identifier(type_ids_Data);
             }
-            UnionMemberFlag member_flags_entity_data = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            UnionMemberFlag member_flags_entity_data = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false);
             UnionCaseLabelSeq label_seq_entity_data;
             TypeObjectUtils::add_union_case_label(label_seq_entity_data, static_cast<int32_t>(EventKind::PUBLICATION_THROUGHPUT));
@@ -2030,7 +2030,7 @@ void register_Data_type_identifier(
             {
                 eprosima::fastdds::statistics::register_Entity2LocatorTraffic_type_identifier(type_ids_Data);
             }
-            UnionMemberFlag member_flags_entity2locator_traffic = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            UnionMemberFlag member_flags_entity2locator_traffic = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false);
             UnionCaseLabelSeq label_seq_entity2locator_traffic;
             TypeObjectUtils::add_union_case_label(label_seq_entity2locator_traffic, static_cast<int32_t>(EventKind::RTPS_SENT));
@@ -2061,7 +2061,7 @@ void register_Data_type_identifier(
             {
                 eprosima::fastdds::statistics::register_EntityCount_type_identifier(type_ids_Data);
             }
-            UnionMemberFlag member_flags_entity_count = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            UnionMemberFlag member_flags_entity_count = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false);
             UnionCaseLabelSeq label_seq_entity_count;
             TypeObjectUtils::add_union_case_label(label_seq_entity_count, static_cast<int32_t>(EventKind::RESENT_DATAS));
@@ -2098,7 +2098,7 @@ void register_Data_type_identifier(
             {
                 eprosima::fastdds::statistics::register_DiscoveryTime_type_identifier(type_ids_Data);
             }
-            UnionMemberFlag member_flags_discovery_time = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            UnionMemberFlag member_flags_discovery_time = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false);
             UnionCaseLabelSeq label_seq_discovery_time;
             TypeObjectUtils::add_union_case_label(label_seq_discovery_time, static_cast<int32_t>(EventKind::DISCOVERED_ENTITY));
@@ -2128,7 +2128,7 @@ void register_Data_type_identifier(
             {
                 eprosima::fastdds::statistics::register_SampleIdentityCount_type_identifier(type_ids_Data);
             }
-            UnionMemberFlag member_flags_sample_identity_count = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            UnionMemberFlag member_flags_sample_identity_count = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false);
             UnionCaseLabelSeq label_seq_sample_identity_count;
             TypeObjectUtils::add_union_case_label(label_seq_sample_identity_count, static_cast<int32_t>(EventKind::SAMPLE_DATAS));
@@ -2158,7 +2158,7 @@ void register_Data_type_identifier(
             {
                 eprosima::fastdds::statistics::register_PhysicalData_type_identifier(type_ids_Data);
             }
-            UnionMemberFlag member_flags_physical_data = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            UnionMemberFlag member_flags_physical_data = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false);
             UnionCaseLabelSeq label_seq_physical_data;
             TypeObjectUtils::add_union_case_label(label_seq_physical_data, static_cast<int32_t>(EventKind::PHYSICAL_DATA));

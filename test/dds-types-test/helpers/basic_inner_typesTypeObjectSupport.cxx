@@ -375,7 +375,7 @@ void register_InnerStructureHelper_type_identifier(
                         "field1 Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
-            StructMemberFlag member_flags_field1 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_field1 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_field1 = 0x00000000;
             bool common_field1_ec {false};
@@ -405,7 +405,7 @@ void register_InnerStructureHelper_type_identifier(
                         "field2 Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
-            StructMemberFlag member_flags_field2 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_field2 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_field2 = 0x00000001;
             bool common_field2_ec {false};
@@ -493,7 +493,7 @@ void register_InnerUnionHelper_type_identifier(
 
         CompleteTypeDetail detail_InnerUnionHelper = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_InnerUnionHelper, ann_custom_InnerUnionHelper, type_name_InnerUnionHelper.to_string());
         CompleteUnionHeader header_InnerUnionHelper = TypeObjectUtils::build_complete_union_header(detail_InnerUnionHelper);
-        UnionDiscriminatorFlag member_flags_InnerUnionHelper = TypeObjectUtils::build_union_discriminator_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+        UnionDiscriminatorFlag member_flags_InnerUnionHelper = TypeObjectUtils::build_union_discriminator_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                 false);
         return_code_InnerUnionHelper =
             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
@@ -536,7 +536,7 @@ void register_InnerUnionHelper_type_identifier(
                         "longValue Union member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
-            UnionMemberFlag member_flags_longValue = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            UnionMemberFlag member_flags_longValue = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false);
             UnionCaseLabelSeq label_seq_longValue;
             TypeObjectUtils::add_union_case_label(label_seq_longValue, static_cast<int32_t>(0));
@@ -568,7 +568,7 @@ void register_InnerUnionHelper_type_identifier(
                         "floatValue Union member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
-            UnionMemberFlag member_flags_floatValue = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            UnionMemberFlag member_flags_floatValue = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false);
             UnionCaseLabelSeq label_seq_floatValue;
             TypeObjectUtils::add_union_case_label(label_seq_floatValue, static_cast<int32_t>(1));
@@ -600,7 +600,7 @@ void register_InnerUnionHelper_type_identifier(
                         "shortValue Union member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
-            UnionMemberFlag member_flags_shortValue = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            UnionMemberFlag member_flags_shortValue = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     true, false);
             UnionCaseLabelSeq label_seq_shortValue;
             MemberId member_id_shortValue = 0x00000003;

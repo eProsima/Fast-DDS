@@ -1360,7 +1360,7 @@ void register_BasicAnnotationsStruct_type_identifier(
                         "basic_annotations_member Structure member TypeIdentifier unknown to TypeObjectRegistry.");
                 return;
             }
-            StructMemberFlag member_flags_basic_annotations_member = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_basic_annotations_member = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_basic_annotations_member = 0x00000000;
             bool common_basic_annotations_member_ec {false};

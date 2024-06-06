@@ -71,7 +71,7 @@ void register_RelativePathIncludeStruct_type_identifier(
             {
             ::register_InnerEnumHelper_type_identifier(type_ids_value);
             }
-            StructMemberFlag member_flags_value = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_value = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_value = 0x00000000;
             bool common_value_ec {false};

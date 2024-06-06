@@ -64,8 +64,6 @@ class MemberDescriptorImpl : public virtual MemberDescriptor
     //! @ref TryConstructKind
     TryConstructKind try_construct_kind_ {TryConstructKind::DISCARD};
 
-    bool is_try_construct_kind_set_ {false};
-
     //! Member's type
     traits<DynamicType>::ref_type type_;
 
@@ -225,7 +223,6 @@ public:
             TryConstructKind try_construct_kind) noexcept override
     {
         try_construct_kind_ = try_construct_kind;
-        is_try_construct_kind_set_ = true;
     }
 
     bool is_key() const noexcept override
@@ -324,11 +321,6 @@ public:
             UnionCaseLabelSeq& label) noexcept;
 
     bool is_consistent() noexcept override;
-
-    bool is_try_construct_kind_set() const noexcept
-    {
-        return is_try_construct_kind_set_;
-    }
 
 };
 

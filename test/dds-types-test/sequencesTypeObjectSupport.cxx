@@ -105,7 +105,7 @@ void register_SequenceShort_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_sequence_short = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_sequence_short = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_sequence_short = 0x00000000;
             bool common_var_sequence_short_ec {false};
@@ -197,7 +197,7 @@ void register_SequenceUShort_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_sequence_ushort = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_sequence_ushort = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_sequence_ushort = 0x00000000;
             bool common_var_sequence_ushort_ec {false};
@@ -289,7 +289,7 @@ void register_SequenceLong_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_sequence_long = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_sequence_long = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_sequence_long = 0x00000000;
             bool common_var_sequence_long_ec {false};
@@ -381,7 +381,7 @@ void register_SequenceULong_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_sequence_ulong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_sequence_ulong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_sequence_ulong = 0x00000000;
             bool common_var_sequence_ulong_ec {false};
@@ -473,7 +473,7 @@ void register_SequenceLongLong_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_sequence_longlong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_sequence_longlong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_sequence_longlong = 0x00000000;
             bool common_var_sequence_longlong_ec {false};
@@ -565,7 +565,7 @@ void register_SequenceULongLong_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_sequence_ulonglong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_sequence_ulonglong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_sequence_ulonglong = 0x00000000;
             bool common_var_sequence_ulonglong_ec {false};
@@ -657,7 +657,7 @@ void register_SequenceFloat_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_sequence_float = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_sequence_float = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_sequence_float = 0x00000000;
             bool common_var_sequence_float_ec {false};
@@ -749,7 +749,7 @@ void register_SequenceDouble_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_sequence_double = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_sequence_double = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_sequence_double = 0x00000000;
             bool common_var_sequence_double_ec {false};
@@ -841,7 +841,7 @@ void register_SequenceLongDouble_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_sequence_longdouble = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_sequence_longdouble = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_sequence_longdouble = 0x00000000;
             bool common_var_sequence_longdouble_ec {false};
@@ -933,7 +933,7 @@ void register_SequenceBoolean_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_sequence_boolean = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_sequence_boolean = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_sequence_boolean = 0x00000000;
             bool common_var_sequence_boolean_ec {false};
@@ -1025,7 +1025,7 @@ void register_SequenceOctet_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_sequence_octet = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_sequence_octet = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_sequence_octet = 0x00000000;
             bool common_var_sequence_octet_ec {false};
@@ -1117,7 +1117,7 @@ void register_SequenceChar_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_sequence_char = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_sequence_char = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_sequence_char = 0x00000000;
             bool common_var_sequence_char_ec {false};
@@ -1209,7 +1209,7 @@ void register_SequenceWChar_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_sequence_wchar = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_sequence_wchar = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_sequence_wchar = 0x00000000;
             bool common_var_sequence_wchar_ec {false};
@@ -1309,7 +1309,7 @@ void register_SequenceString_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_sequence_string = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_sequence_string = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_sequence_string = 0x00000000;
             bool common_var_sequence_string_ec {false};
@@ -1409,7 +1409,7 @@ void register_SequenceWString_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_sequence_wstring = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_sequence_wstring = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_sequence_wstring = 0x00000000;
             bool common_var_sequence_wstring_ec {false};
@@ -1499,7 +1499,7 @@ void register_SequenceStringBounded_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_sequence_bounded_string = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_sequence_bounded_string = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_sequence_bounded_string = 0x00000000;
             bool common_var_sequence_bounded_string_ec {false};
@@ -1589,7 +1589,7 @@ void register_SequenceWStringBounded_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_sequence_bounded_wstring = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_sequence_bounded_wstring = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_sequence_bounded_wstring = 0x00000000;
             bool common_var_sequence_bounded_wstring_ec {false};
@@ -1679,7 +1679,7 @@ void register_SequenceEnum_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_sequence_enum = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_sequence_enum = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_sequence_enum = 0x00000000;
             bool common_var_sequence_enum_ec {false};
@@ -1769,7 +1769,7 @@ void register_SequenceBitMask_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_sequence_bitmask = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_sequence_bitmask = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_sequence_bitmask = 0x00000000;
             bool common_var_sequence_bitmask_ec {false};
@@ -1859,7 +1859,7 @@ void register_SequenceAlias_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_sequence_alias = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_sequence_alias = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_sequence_alias = 0x00000000;
             bool common_var_sequence_alias_ec {false};
@@ -1949,7 +1949,7 @@ void register_SequenceShortArray_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_sequence_short_array = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_sequence_short_array = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_sequence_short_array = 0x00000000;
             bool common_var_sequence_short_array_ec {false};
@@ -2039,7 +2039,7 @@ void register_SequenceSequence_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_sequence_sequence = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_sequence_sequence = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_sequence_sequence = 0x00000000;
             bool common_var_sequence_sequence_ec {false};
@@ -2129,7 +2129,7 @@ void register_SequenceMap_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_sequence_map = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_sequence_map = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_sequence_map = 0x00000000;
             bool common_var_sequence_map_ec {false};
@@ -2219,7 +2219,7 @@ void register_SequenceUnion_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_sequence_union = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_sequence_union = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_sequence_union = 0x00000000;
             bool common_var_sequence_union_ec {false};
@@ -2309,7 +2309,7 @@ void register_SequenceStructure_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_sequence_structure = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_sequence_structure = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_sequence_structure = 0x00000000;
             bool common_var_sequence_structure_ec {false};
@@ -2399,7 +2399,7 @@ void register_SequenceBitset_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_sequence_bitset = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_sequence_bitset = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_sequence_bitset = 0x00000000;
             bool common_var_sequence_bitset_ec {false};
@@ -2491,7 +2491,7 @@ void register_BoundedSmallSequences_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_sequence_small = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_sequence_small = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_sequence_small = 0x00000000;
             bool common_var_sequence_small_ec {false};
@@ -2561,7 +2561,7 @@ void register_BoundedSmallSequences_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_unbounded_string_small_bounded_sequence = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_unbounded_string_small_bounded_sequence = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_unbounded_string_small_bounded_sequence = 0x00000001;
             bool common_var_unbounded_string_small_bounded_sequence_ec {false};
@@ -2653,7 +2653,7 @@ void register_BoundedBigSequences_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_sequence_big = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_sequence_big = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_sequence_big = 0x00000000;
             bool common_var_sequence_big_ec {false};
@@ -2723,7 +2723,7 @@ void register_BoundedBigSequences_type_identifier(
                     }
                 }
             }
-            StructMemberFlag member_flags_var_unbounded_string_large_bounded_sequence = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_unbounded_string_large_bounded_sequence = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
             MemberId member_id_var_unbounded_string_large_bounded_sequence = 0x00000001;
             bool common_var_unbounded_string_large_bounded_sequence_ec {false};
