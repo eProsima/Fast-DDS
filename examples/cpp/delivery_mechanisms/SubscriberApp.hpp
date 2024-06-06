@@ -46,7 +46,7 @@ class SubscriberApp : public Application, public DataReaderListener
 public:
 
     SubscriberApp(
-            const CLIParser::entity_config& config,
+            const CLIParser::delivery_mechanisms_config& config,
             const std::string& topic_name);
 
     ~SubscriberApp();

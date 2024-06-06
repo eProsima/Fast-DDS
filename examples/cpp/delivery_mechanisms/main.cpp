@@ -45,7 +45,7 @@ int main(
     auto ret = EXIT_SUCCESS;
     const std::string topic_name = "delivery_mechanisms_topic";
     CLIParser::delivery_mechanisms_config config = CLIParser::parse_cli_options(argc, argv);
-    uint16_t samples = config.entity_configuration.samples;
+    uint16_t samples = config.samples;
     std::string app_name = CLIParser::parse_entity_kind(config.entity);
     std::shared_ptr<Application> app;
 

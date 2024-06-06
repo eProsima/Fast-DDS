@@ -49,7 +49,7 @@ class PubSubApp : public Application, public DataReaderListener, public DataWrit
 public:
 
     PubSubApp(
-            const CLIParser::entity_config& config,
+            const CLIParser::delivery_mechanisms_config& config,
             const std::string& topic_name);
 
     ~PubSubApp();

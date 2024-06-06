@@ -43,7 +43,7 @@ class PublisherApp : public Application, public DataWriterListener
 public:
 
     PublisherApp(
-            const CLIParser::entity_config& config,
+            const CLIParser::delivery_mechanisms_config& config,
             const std::string& topic_name);
 
     ~PublisherApp();

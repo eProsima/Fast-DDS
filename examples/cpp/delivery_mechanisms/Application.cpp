@@ -40,13 +40,13 @@ std::shared_ptr<Application> Application::make_app(
     switch (config.entity)
     {
         case CLIParser::EntityKind::PUBLISHER:
-            entity = std::make_shared<PublisherApp>(config.entity_configuration, topic_name);
+            entity = std::make_shared<PublisherApp>(config, topic_name);
             break;
         case CLIParser::EntityKind::SUBSCRIBER:
-            entity = std::make_shared<SubscriberApp>(config.entity_configuration, topic_name);
+            entity = std::make_shared<SubscriberApp>(config, topic_name);
             break;
         case CLIParser::EntityKind::PUBSUB:
-            entity = std::make_shared<PubSubApp>(config.entity_configuration, topic_name);
+            entity = std::make_shared<PubSubApp>(config, topic_name);
             break;
         case CLIParser::EntityKind::UNDEFINED:
         default:

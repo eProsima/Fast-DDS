@@ -50,7 +50,7 @@ namespace examples {
 namespace delivery_mechanisms {
 
 PubSubApp::PubSubApp(
-        const CLIParser::entity_config& config,
+        const CLIParser::delivery_mechanisms_config& config,
         const std::string& topic_name)
     : participant_(nullptr)
     , publisher_(nullptr)
@@ -75,51 +75,60 @@ PubSubApp::PubSubApp(
     {
         max_samples = DATAWRITER_QOS_DEFAULT.resource_limits().max_samples_per_instance;
     }
-    // Special definitions for certain delivery mechanisms
-    std::shared_ptr<SharedMemTransportDescriptor> shm_transport_ = std::make_shared<SharedMemTransportDescriptor>();
-    shm_transport_->segment_size(shm_transport_->max_message_size() * max_samples);
-    std::shared_ptr<TCPv4TransportDescriptor> tcp_transport_ = std::make_shared<TCPv4TransportDescriptor>();
-    LibrarySettings library_settings;
-    Locator tcp_initial_peers_locator_;
-    tcp_initial_peers_locator_.kind = LOCATOR_KIND_TCPv4;
-    tcp_initial_peers_locator_.port = 0;
-    eprosima::fastrtps::rtps::IPLocator::setIPv4(tcp_initial_peers_locator_, "127.0.0.1");
-    pqos.transport().use_builtin_transports = false;
+
     if (config.ignore_local_endpoints)
     {
         pqos.properties().properties().emplace_back(
             "fastdds.ignore_local_endpoints",
             "true");
     }
+
+    // Transport default definitions
+    pqos.transport().use_builtin_transports = false;
+    LibrarySettings library_settings;
+    library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
+
     switch (config.delivery_mechanism)
     {
-        case CLIParser::DeliveryMechanismKind::INTRA_PROCESS:
-            // No transport needed, but at least a transport needs to be declared to avoid participant creation failure
+        case CLIParser::DeliveryMechanismKind::INTRA_PROCESS:   // (It should never reach this section
+        {   // No transport needed, but at least a transport needs to be declared to avoid participant creation failure
             pqos.transport().use_builtin_transports = true;
             library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
             break;
+        }
         case CLIParser::DeliveryMechanismKind::SHM:
         case CLIParser::DeliveryMechanismKind::DATA_SHARING:
+        {
+            std::shared_ptr<SharedMemTransportDescriptor> shm_transport_ =
+                    std::make_shared<SharedMemTransportDescriptor>();
+            shm_transport_->segment_size(shm_transport_->max_message_size() * max_samples);
             pqos.transport().user_transports.push_back(shm_transport_);
-            library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
             break;
+        }
         case CLIParser::DeliveryMechanismKind::TCP:
+        {
+            std::shared_ptr<TCPv4TransportDescriptor> tcp_transport_ = std::make_shared<TCPv4TransportDescriptor>();
             pqos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastrtps::c_TimeInfinite;
             pqos.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod = Duration_t(5, 0);
-            pqos.wire_protocol().builtin.initialPeersList.push_back(tcp_initial_peers_locator_);
             tcp_transport_->sendBufferSize = 0;
             tcp_transport_->receiveBufferSize = 0;
             tcp_transport_->set_WAN_address("127.0.0.1");
             tcp_transport_->add_listener_port(5100);
             pqos.transport().user_transports.push_back(tcp_transport_);
-            library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
             break;
+        }
         case CLIParser::DeliveryMechanismKind::UDP:
-        default:
+        {
             pqos.transport().user_transports.push_back(std::make_shared<UDPv4TransportDescriptor>());
-            library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
             break;
+        }
+        default:
+        {
+            pqos.transport().use_builtin_transports = true;
+            break;
+        }
     }
+    
     auto factory = DomainParticipantFactory::get_instance();
     factory->set_library_settings(library_settings);
     participant_ = factory->create_participant(config.domain, pqos, nullptr, StatusMask::none());
@@ -175,20 +184,15 @@ PubSubApp::PubSubApp(
     writer_qos.resource_limits().max_samples_per_instance = max_samples;
     reader_qos.resource_limits().max_samples = reader_qos.resource_limits().max_instances * max_samples;
     writer_qos.resource_limits().max_samples = writer_qos.resource_limits().max_instances * max_samples;
-    switch (config.delivery_mechanism)
+    if (CLIParser::DeliveryMechanismKind::DATA_SHARING == config.delivery_mechanism)
     {
-        case CLIParser::DeliveryMechanismKind::DATA_SHARING:
-            reader_qos.data_sharing().automatic();
-            writer_qos.data_sharing().automatic();
-            break;
-        case CLIParser::DeliveryMechanismKind::SHM:
-        case CLIParser::DeliveryMechanismKind::TCP:
-        case CLIParser::DeliveryMechanismKind::UDP:
-        case CLIParser::DeliveryMechanismKind::INTRA_PROCESS:
-        default:
-            reader_qos.data_sharing().off();
-            writer_qos.data_sharing().off();
-            break;
+        reader_qos.data_sharing().automatic();
+        writer_qos.data_sharing().automatic();
+    }
+    else
+    {
+        reader_qos.data_sharing().off();
+        writer_qos.data_sharing().off();
     }
     reader_ = subscriber_->create_datareader(topic_, reader_qos, this, StatusMask::all());
     if (reader_ == nullptr)
