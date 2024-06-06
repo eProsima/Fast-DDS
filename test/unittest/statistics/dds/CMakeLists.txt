@@ -221,6 +221,7 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/PersistenceFactory.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/SQLite3PersistenceService.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/sqlite3.c
+        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/reader/reader_utils.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/reader/RTPSReader.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/reader/StatefulPersistentReader.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/reader/StatefulReader.cpp
