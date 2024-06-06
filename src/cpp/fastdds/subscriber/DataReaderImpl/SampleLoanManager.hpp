@@ -129,12 +129,7 @@ struct SampleLoanManager
         assert(item->num_refs == 0);
 
         // Increment references of input payload
-        CacheChange_t tmp;
-        tmp.copy_not_memcpy(change);
-        change->payload_owner()->get_payload(change->serializedPayload, tmp.serializedPayload);
-        item->payload = tmp.serializedPayload;
-        tmp.payload_owner(nullptr);
-        tmp.serializedPayload.data = nullptr;
+        change->serializedPayload.payload_owner->get_payload(change->serializedPayload, item->payload);
 
         // Perform deserialization
         if (is_plain_)
@@ -162,12 +157,9 @@ struct SampleLoanManager
         item->num_refs -= 1;
         if (item->num_refs == 0)
         {
-            CacheChange_t tmp;
-            tmp.serializedPayload = item->payload;
-            tmp.payload_owner(item->payload_owner());
-            item->payload_owner()->release_payload(tmp.serializedPayload);
+            item->payload.payload_owner->release_payload(item->payload);
             item->payload.data = nullptr;
-            item->payload_owner(nullptr);
+            item->payload.payload_owner = nullptr;
 
             item = free_loans_.push_back(*item);
             assert(nullptr != item);
@@ -187,8 +179,8 @@ private:
         ~OutstandingLoanItem()
         {
             // Avoid releasing payload and freeing data
+            payload.payload_owner = nullptr;
             payload.data = nullptr;
-            payload_owner(nullptr);
         }
 
         OutstandingLoanItem() = default;
@@ -205,22 +197,6 @@ private:
                 const OutstandingLoanItem& other) const
         {
             return other.sample == sample && other.payload.data == payload.data;
-        }
-
-        IPayloadPool const* payload_owner() const
-        {
-            return payload.payload_owner();
-        }
-
-        IPayloadPool* payload_owner()
-        {
-            return payload.payload_owner();
-        }
-
-        void payload_owner(
-                IPayloadPool* owner)
-        {
-            payload.payload_owner(owner);
         }
 
     };

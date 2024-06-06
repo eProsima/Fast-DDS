@@ -48,8 +48,8 @@ struct PayloadInfo_t
         assert(payload.data == nullptr);
         assert(payload.length == 0);
 
-        payload_owner = change.payload_owner();
-        change.payload_owner(nullptr);
+        payload_owner = change.serializedPayload.payload_owner;
+        change.serializedPayload.payload_owner = nullptr;
 
         payload = change.serializedPayload;
         change.serializedPayload.data = nullptr;
@@ -61,7 +61,7 @@ struct PayloadInfo_t
     void move_into_change(
             CacheChange_t& change)
     {
-        assert(change.payload_owner() == nullptr);
+        assert(change.serializedPayload.payload_owner == nullptr);
         assert(change.serializedPayload.data == nullptr);
         assert(change.serializedPayload.length == 0);
 
@@ -71,7 +71,7 @@ struct PayloadInfo_t
         payload.pos = 0;
         payload.max_size = 0;
 
-        change.payload_owner(payload_owner);
+        change.serializedPayload.payload_owner = payload_owner;
         payload_owner = nullptr;
     }
 
