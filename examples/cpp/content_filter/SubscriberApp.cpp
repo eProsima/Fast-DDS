@@ -28,6 +28,7 @@
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
+#include <fastdds/rtps/common/Locator.h>
 
 #include "HelloWorldTypeObjectSupport.hpp"
 
@@ -46,11 +47,24 @@ SubscriberApp::SubscriberApp(
     , filter_topic_(nullptr)
     , stop_(false)
 {
-    // Set DomainParticipant name
+    // Set intraprocess to OFF
+    LibrarySettings library_settings;
+    library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
+
+    // Get DomainParticipantFactory
+    auto factory = DomainParticipantFactory::get_instance();
+    factory->set_library_settings(library_settings);
+
+    // Set DomainParticipant qos
     DomainParticipantQos pqos;
     pqos.name("Participant_sub");
+    eprosima::fastrtps::rtps::Locator_t default_unicast_locator;
+    pqos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(default_unicast_locator);
+    // Initial peer will be UDPv4 address 127.0.0.1.
+    eprosima::fastrtps::rtps::Locator_t initial_peer;
+    eprosima::fastrtps::rtps::IPLocator::setIPv4(initial_peer, "127.0.0.1");
+    pqos.wire_protocol().builtin.initialPeersList.push_back(initial_peer);
     // Create DomainParticipant
-    auto factory = DomainParticipantFactory::get_instance();
     participant_ = factory->create_participant(0, pqos);
     if (participant_ == nullptr)
     {
@@ -124,6 +138,7 @@ SubscriberApp::SubscriberApp(
 
     // Create the DataReader
     DataReaderQos rqos = DATAREADER_QOS_DEFAULT;
+    rqos.data_sharing().off();
     // In order to receive all samples, DataReader is configured as RELIABLE and TRANSIENT_LOCAL (ensure reception even
     // if DataReader matching is after DataWriter one)
     rqos.reliability().kind = RELIABLE_RELIABILITY_QOS;

@@ -28,6 +28,7 @@
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
+#include <fastdds/rtps/common/Locator.h>
 
 #include "HelloWorldTypeObjectSupport.hpp"
 
@@ -56,11 +57,25 @@ PublisherApp::PublisherApp(
     hello_.index(0);
     hello_.message("HelloWorld");
 
-    // Set DomainParticipant name
+    // Set intraprocess to OFF
+    LibrarySettings library_settings;
+    library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
+
+    // Get DomainParticipantFactory
+    auto factory = DomainParticipantFactory::get_instance();
+    factory->set_library_settings(library_settings);
+
+    // Set DomainParticipant qos
     DomainParticipantQos pqos;
     pqos.name("Participant_pub");
+    eprosima::fastrtps::rtps::Locator_t default_unicast_locator;
+    pqos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(default_unicast_locator);
+    // Initial peer will be UDPv4 address 127.0.0.1.
+    eprosima::fastrtps::rtps::Locator_t initial_peer;
+    eprosima::fastrtps::rtps::IPLocator::setIPv4(initial_peer, "127.0.0.1");
+    pqos.wire_protocol().builtin.initialPeersList.push_back(initial_peer);
     // Create DomainParticipant in domain 0
-    participant_ = DomainParticipantFactory::get_instance()->create_participant(0, pqos);
+    participant_ = factory->create_participant(0, pqos);
     if (participant_ == nullptr)
     {
         throw std::runtime_error("Participant initialization failed");
@@ -84,7 +99,9 @@ PublisherApp::PublisherApp(
     }
 
     // Create the DataWriter
-    writer_ = publisher_->create_datawriter(topic_, DATAWRITER_QOS_DEFAULT, this);
+    DataWriterQos wqos = DATAWRITER_QOS_DEFAULT;
+    wqos.data_sharing().off();
+    writer_ = publisher_->create_datawriter(topic_, wqos, this);
     if (writer_ == nullptr)
     {
         throw std::runtime_error("DataWriter initialization failed");
