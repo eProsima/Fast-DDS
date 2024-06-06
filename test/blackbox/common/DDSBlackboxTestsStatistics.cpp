@@ -697,28 +697,12 @@ public:
 
     void destroy() override
     {
-        if (datareader_ != nullptr)
-        {
-            subscriber_->delete_datareader(datareader_);
-        }
-        if (topic_ != nullptr)
-        {
-            participant_->delete_topic(topic_);
-        }
-        if (subscriber_ != nullptr)
-        {
-            participant_->delete_subscriber(subscriber_);
-        }
-
         participant_->delete_contained_entities();
-
         DomainParticipantFactory::get_instance()->delete_participant(participant_);
-
         participant_ = nullptr;
     }
 
 };
-
 
 // Regression test for #20816. When an application is terminated with delete_contained_entities()
 // it has to properly finish. The test creates a number of participants with some of them sharing the same topic.
