@@ -15,7 +15,6 @@
 #include <csignal>
 #include <cstdlib>
 #include <iostream>
-#include <string>
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/attributes/BuiltinTransports.hpp>
@@ -58,20 +57,14 @@ public:
         DEFAULT
     };
 
-    //! Entity configuration structure (shared for both publisher and subscriber applications)
-    struct entity_config
-    {
-        uint16_t samples = 0;
-        uint32_t domain = 0;
-        bool ignore_local_endpoints = false;
-        DeliveryMechanismKind delivery_mechanism = DeliveryMechanismKind::DEFAULT;
-    };
-
     //! DeliveryMechanisms structure for the application
     struct delivery_mechanisms_config
     {
         CLIParser::EntityKind entity = CLIParser::EntityKind::UNDEFINED;
-        entity_config entity_configuration;
+        bool ignore_local_endpoints = false;
+        uint16_t samples = 0;
+        uint32_t domain = 0;
+        DeliveryMechanismKind delivery_mechanism = DeliveryMechanismKind::DEFAULT;
     };
 
     /**
@@ -131,6 +124,12 @@ public:
     {
         delivery_mechanisms_config config;
 
+        if (argc < 2)
+        {
+            EPROSIMA_LOG_ERROR(CLI_PARSER, "missing entity argument");
+            print_help(EXIT_FAILURE);
+        }
+
         std::string first_argument = argv[1];
 
         if (first_argument == "publisher" )
@@ -177,7 +176,7 @@ public:
                         }
                         else
                         {
-                            config.entity_configuration.domain = static_cast<uint16_t>(input);
+                            config.domain = static_cast<uint16_t>(input);
                         }
                     }
                     catch (const std::invalid_argument& e)
@@ -213,7 +212,7 @@ public:
                         }
                         else
                         {
-                            config.entity_configuration.samples = static_cast<uint16_t>(input);
+                            config.samples = static_cast<uint16_t>(input);
                         }
                     }
                     catch (const std::invalid_argument& e)
@@ -241,25 +240,25 @@ public:
                     std::string mechanism = argv[i];
                     if (mechanism == "TCP" || mechanism == "tcp")
                     {
-                        config.entity_configuration.delivery_mechanism = DeliveryMechanismKind::TCP;
+                        config.delivery_mechanism = DeliveryMechanismKind::TCP;
                     }
                     else if (mechanism == "UDP" || mechanism == "udp")
                     {
-                        config.entity_configuration.delivery_mechanism = DeliveryMechanismKind::UDP;
+                        config.delivery_mechanism = DeliveryMechanismKind::UDP;
                     }
                     else if (mechanism == "SHM" || mechanism == "shm")
                     {
-                        config.entity_configuration.delivery_mechanism = DeliveryMechanismKind::SHM;
+                        config.delivery_mechanism = DeliveryMechanismKind::SHM;
                     }
                     else if (mechanism == "DATA-SHARING" || mechanism == "data-sharing")
                     {
-                        config.entity_configuration.delivery_mechanism = DeliveryMechanismKind::DATA_SHARING;
+                        config.delivery_mechanism = DeliveryMechanismKind::DATA_SHARING;
                     }
                     else if (mechanism == "INTRA-PROCESS" || mechanism == "intra-process")
                     {
                         if (config.entity == EntityKind::PUBSUB)
                         {
-                            config.entity_configuration.delivery_mechanism = DeliveryMechanismKind::INTRA_PROCESS;
+                            config.delivery_mechanism = DeliveryMechanismKind::INTRA_PROCESS;
                         }
                         else
                         {
@@ -284,7 +283,7 @@ public:
             {
                 if (config.entity == EntityKind::PUBSUB)
                 {
-                    config.entity_configuration.ignore_local_endpoints = true;
+                    config.ignore_local_endpoints = true;
                 }
                 else
                 {
