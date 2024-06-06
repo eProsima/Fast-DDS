@@ -531,7 +531,7 @@ ReturnCode_t DataWriterImpl::loan_sample(
     if (!add_loan(sample, payload))
     {
         sample = nullptr;
-        return_payload_to_pool(payload);
+        payload_pool_->release_payload(payload);
         return RETCODE_OUT_OF_RESOURCES;
     }
 
@@ -557,7 +557,7 @@ ReturnCode_t DataWriterImpl::loan_sample(
             if (!type_->construct_sample(sample))
             {
                 check_and_remove_loan(sample, payload);
-                return_payload_to_pool(payload);
+                payload_pool_->release_payload(payload);
                 sample = nullptr;
                 return RETCODE_UNSUPPORTED;
             }
@@ -592,7 +592,7 @@ ReturnCode_t DataWriterImpl::discard_loan(
     }
 
     // Return payload to pool
-    return_payload_to_pool(payload);
+    payload_pool_->release_payload(payload);
     sample = nullptr;
 
     return RETCODE_OK;
@@ -987,7 +987,7 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
         if ((ALIVE == change_kind) && !type_->serialize(data, &payload, data_representation_))
         {
             EPROSIMA_LOG_WARNING(DATA_WRITER, "Data serialization returned false");
-            return_payload_to_pool(payload);
+            payload_pool_->release_payload(payload);
             return RETCODE_ERROR;
         }
     }

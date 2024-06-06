@@ -77,9 +77,6 @@ public:
      * the payload (after all readers have been informed of the received data), method @c release_payload will be
      * called to indicate that the reception thread is not using the payload anymore.
      *
-     * @warning @c data_owner contained in @c data can only be changed from @c nullptr to @c this. If a value
-     * different from @c nullptr is received it should be left unchanged.
-     *
      * @warning @c data fields can only be changed when @c payload_owner contained in @c data is @c nullptr. If a
      * value different from @c nullptr is received all fields in @c data should be left unchanged.
      *

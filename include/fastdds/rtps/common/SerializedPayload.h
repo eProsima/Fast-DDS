@@ -95,12 +95,6 @@ struct FASTDDS_EXPORTED_API SerializedPayload_t
 
     ~SerializedPayload_t()
     {
-        if (payload_owner != nullptr)
-        {
-            payload_owner->release_payload(*this);
-        }
-        assert(payload_owner == nullptr);
-
         this->empty();
     }
 
@@ -162,6 +156,12 @@ struct FASTDDS_EXPORTED_API SerializedPayload_t
     //! Empty the payload
     void empty()
     {
+        if (payload_owner != nullptr)
+        {
+            payload_owner->release_payload(*this);
+        }
+        assert(payload_owner == nullptr);
+
         length = 0;
         encapsulation = CDR_BE;
         max_size = 0;

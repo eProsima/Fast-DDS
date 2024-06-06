@@ -671,32 +671,18 @@ protected:
             const SizeFunctor& size_getter,
             SerializedPayload_t& payload)
     {
-        CacheChange_t change;
         if (!payload_pool_)
         {
             return false;
         }
 
         uint32_t size = fixed_payload_size_ ? fixed_payload_size_ : size_getter();
-        if (!payload_pool_->get_payload(size, change.serializedPayload))
+        if (!payload_pool_->get_payload(size, payload))
         {
             return false;
         }
 
-        payload = change.serializedPayload;
-        change.serializedPayload.data = nullptr;
-        change.serializedPayload.payload_owner = nullptr;
         return true;
-    }
-
-    void return_payload_to_pool(
-            SerializedPayload_t& payload)
-    {
-        CacheChange_t change;
-        change.serializedPayload = payload;
-        payload.data = nullptr;
-        payload.payload_owner = nullptr;
-        payload_pool_->release_payload(change.serializedPayload);
     }
 
     bool add_loan(

@@ -158,8 +158,8 @@ struct SampleLoanManager
         if (item->num_refs == 0)
         {
             item->payload.payload_owner->release_payload(item->payload);
-            item->payload.data = nullptr;
-            item->payload.payload_owner = nullptr;
+            assert(item->payload.data == nullptr);
+            assert(item->payload.payload_owner == nullptr);
 
             item = free_loans_.push_back(*item);
             assert(nullptr != item);
