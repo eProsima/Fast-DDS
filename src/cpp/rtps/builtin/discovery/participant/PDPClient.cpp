@@ -43,6 +43,7 @@
 #include <rtps/builtin/discovery/participant/timedevent/DSClientEvent.h>
 #include <rtps/builtin/liveliness/WLP.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/reader/BaseReader.hpp>
 #include <rtps/reader/StatefulReader.hpp>
 #include <rtps/writer/ReaderProxy.hpp>
 #include <rtps/writer/StatefulWriter.hpp>
@@ -348,7 +349,6 @@ bool PDPClient::create_ds_pdp_reliable_endpoints(
     ratt.endpoint.reliabilityKind = RELIABLE;
     ratt.times.heartbeatResponseDelay = pdp_heartbeat_response_delay;
 #if HAVE_SECURITY
-    ratt.accept_messages_from_unkown_writers = !is_discovery_protected && mp_RTPSParticipant->is_secure();
     if (is_discovery_protected)
     {
         ratt.endpoint.security_attributes().is_submessage_protected = true;
@@ -459,6 +459,10 @@ bool PDPClient::create_ds_pdp_reliable_endpoints(
             {
                 match_pdp_writer_nts_(it);
                 match_pdp_reader_nts_(it);
+            }
+            else if (!is_discovery_protected)
+            {
+                BaseReader::downcast(endpoints.reader.reader_)->allow_unknown_writers();
             }
 #else
             if (!is_discovery_protected)

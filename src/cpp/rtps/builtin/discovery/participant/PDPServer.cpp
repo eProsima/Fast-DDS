@@ -45,6 +45,7 @@
 #include <rtps/builtin/discovery/participant/timedevent/DServerEvent.hpp>
 #include <rtps/builtin/liveliness/WLP.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/reader/BaseReader.hpp>
 #include <rtps/reader/StatefulReader.hpp>
 #include <rtps/writer/StatefulWriter.hpp>
 #include <utils/TimeConversion.hpp>
@@ -401,12 +402,13 @@ bool PDPServer::create_ds_pdp_reliable_endpoints(
 #else
     EntityId_t reader_entity = c_EntityId_SPDPReader;
 #endif // if HAVE_SECURITY
-    // Enable unknown clients to reach this reader
-    ratt.accept_messages_from_unkown_writers = true;
     if (mp_RTPSParticipant->createReader(&reader, ratt, endpoints.reader.history_.get(),
             endpoints.reader.listener_.get(), reader_entity, true, false))
     {
         endpoints.reader.reader_ = dynamic_cast<fastrtps::rtps::StatefulReader*>(reader);
+
+        // Enable unknown clients to reach this reader
+        BaseReader::downcast(endpoints.reader.reader_)->allow_unknown_writers();
 
 #if HAVE_SECURITY
         mp_RTPSParticipant->set_endpoint_rtps_protection_supports(reader, false);
