@@ -404,7 +404,8 @@ private:
         bool is_valid = true;
         if (has_ownership)  //< On loans the user must check the validity anyways
         {
-            DataSharingPayloadPool* pool = dynamic_cast<DataSharingPayloadPool*>(change->serializedPayload.payload_owner);
+            DataSharingPayloadPool* pool =
+                    dynamic_cast<DataSharingPayloadPool*>(change->serializedPayload.payload_owner);
             if (pool)
             {
                 //Check if the payload is dirty

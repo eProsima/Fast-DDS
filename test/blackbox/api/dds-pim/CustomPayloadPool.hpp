@@ -66,7 +66,7 @@ public:
         payload.max_size = data.length;
 
         // Tell the CacheChange who needs to release its payload
-        payload.payload_owner =this;
+        payload.payload_owner = this;
 
         ++requested_payload_count;
 
