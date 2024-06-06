@@ -2028,6 +2028,7 @@ XMLP_ret XMLParser::fillDataNode(
                 <xs:element name="userData" type="octetVectorType" minOccurs="0"/>
                 <xs:element name="participantID" type="int32Type" minOccurs="0"/>
                 <xs:element name="throughputController" type="throughputControllerType" minOccurs="0"/>
+                <xs:element name="flow_controller_descriptors" type="flowControllerDescriptorsType" minOccurs="0"/>
                 <xs:element name="userTransports" type="stringListType" minOccurs="0"/>
                 <xs:element name="useBuiltinTransports" type="boolType" minOccurs="0"/>
                 <xs:element name="propertiesPolicy" type="propertyPolicyType" minOccurs="0"/>
@@ -2216,6 +2217,16 @@ XMLP_ret XMLParser::fillDataNode(
                 return XMLP_ret::XML_ERROR;
             }
             EPROSIMA_LOG_WARNING(XML_PARSER, THROUGHPUT_CONT << " XML tag is deprecated");
+        }
+        else if (strcmp(name, FLOW_CONTROLLER_DESCRIPTOR_LIST) == 0)
+        {
+            // flow_controller_descriptors
+            if (XMLP_ret::XML_OK !=
+                    getXMLFlowControllerDescriptorList(p_aux0,
+                    participant_node.get()->rtps.flow_controllers, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, USER_TRANS) == 0)
         {

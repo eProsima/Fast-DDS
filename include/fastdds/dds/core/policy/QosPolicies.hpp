@@ -2046,7 +2046,7 @@ public:
      *
      * @since 2.4.0
      */
-    const char* flow_controller_name = fastdds::rtps::FASTDDS_FLOW_CONTROLLER_DEFAULT;
+    std::string flow_controller_name = fastdds::rtps::FASTDDS_FLOW_CONTROLLER_DEFAULT;
 
     inline void clear() override
     {
@@ -2058,7 +2058,7 @@ public:
             const PublishModeQosPolicy& b) const
     {
         return (this->kind == b.kind) &&
-               0 == strcmp(flow_controller_name, b.flow_controller_name) &&
+               flow_controller_name == b.flow_controller_name.c_str() &&
                QosPolicy::operator ==(b);
     }
 

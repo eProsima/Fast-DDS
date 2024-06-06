@@ -753,7 +753,7 @@ bool RTPSParticipantImpl::create_writer(
 
     GUID_t guid(m_guid.guidPrefix, entId);
     fastdds::rtps::FlowController* flow_controller = nullptr;
-    const char* flow_controller_name = param.flow_controller_name;
+    std::string flow_controller_name = param.flow_controller_name;
 
     // Support of old flow controller style.
     if (param.throughputController.bytesPerPeriod != UINT32_MAX && param.throughputController.periodMillisecs != 0)
