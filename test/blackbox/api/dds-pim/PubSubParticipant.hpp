@@ -27,7 +27,9 @@
 #include <vector>
 
 #include <asio.hpp>
+
 #include <gtest/gtest.h>
+
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
@@ -38,14 +40,16 @@
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
-#include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
+#include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
+
+#include "PubSubTypeTraits.hpp"
 
 /**
  * @brief A class with one participant that can have multiple publishers and subscribers
  */
-template<class TypeSupport>
+template<class TypeSupport, typename TypeTraits = PubSubTypeTraits<TypeSupport>>
 class PubSubParticipant
 {
 public:
@@ -129,13 +133,7 @@ private:
         void on_data_available(
                 eprosima::fastdds::dds::DataReader* reader) override
         {
-            type data;
-            eprosima::fastdds::dds::SampleInfo info;
-
-            while (ReturnCode_t::RETCODE_OK == reader->take_next_sample(&data, &info))
-            {
-                participant_->data_received();
-            }
+            participant_->data_received(reader);
         }
 
     private:
@@ -316,7 +314,7 @@ public:
         if (participant_ != nullptr)
         {
             participant_qos_ = participant_->get_qos();
-            type_.reset(new type_support());
+            TypeTraits::build_type_support(type_);
             participant_->register_type(type_);
             return true;
         }
@@ -414,6 +412,7 @@ public:
             type& msg,
             unsigned int index = 0)
     {
+        TypeTraits::print_sent_data(msg);
         return std::get<2>(publishers_[index])->write((void*)&msg);
     }
 
@@ -817,11 +816,21 @@ public:
         sub_liveliness_cv_.notify_one();
     }
 
-    void data_received()
+    void data_received(
+            eprosima::fastdds::dds::DataReader* reader)
     {
-        std::unique_lock<std::mutex> lock(sub_data_mutex_);
-        sub_times_data_received_++;
-        sub_data_cv_.notify_one();
+        type* data = static_cast<type*>(type_.create_data());
+        eprosima::fastdds::dds::SampleInfo info;
+
+        while (ReturnCode_t::RETCODE_OK == reader->take_next_sample(data, &info))
+        {
+            TypeTraits::print_received_data(*data);
+            std::unique_lock<std::mutex> lock(sub_data_mutex_);
+            sub_times_data_received_++;
+            sub_data_cv_.notify_one();
+        }
+
+        type_.delete_data(data);
     }
 
     unsigned int pub_times_liveliness_lost()

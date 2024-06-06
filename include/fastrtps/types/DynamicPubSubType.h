@@ -15,10 +15,10 @@
 #ifndef TYPES_DYNAMIC_PUB_SUB_TYPE_H
 #define TYPES_DYNAMIC_PUB_SUB_TYPE_H
 
-#include <fastrtps/types/TypesBase.h>
 #include <fastdds/dds/topic/TopicDataType.hpp>
+#include <fastrtps/types/DynamicData.h>
 #include <fastrtps/types/DynamicTypePtr.h>
-#include <fastrtps/types/DynamicDataPtr.h>
+#include <fastrtps/types/TypesBase.h>
 #include <fastrtps/utils/md5.h>
 
 namespace eprosima {
@@ -44,6 +44,8 @@ protected:
     extensibility_ {APPENDABLE};
 
 public:
+
+    typedef DynamicData type;
 
     RTPS_DllAPI DynamicPubSubType();
 
