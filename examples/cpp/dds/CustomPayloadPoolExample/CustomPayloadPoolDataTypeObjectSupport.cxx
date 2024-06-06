@@ -49,7 +49,7 @@ void register_CustomPayloadPoolData_type_identifier(
         "CustomPayloadPoolData", type_ids_CustomPayloadPoolData);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_CustomPayloadPoolData)
     {
-        StructTypeFlag struct_flags_CustomPayloadPoolData = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_CustomPayloadPoolData = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         QualifiedTypeName type_name_CustomPayloadPoolData = "CustomPayloadPoolData";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_CustomPayloadPoolData;

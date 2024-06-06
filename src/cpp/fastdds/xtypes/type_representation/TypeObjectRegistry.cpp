@@ -1611,9 +1611,7 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_struct_dynamic_type(
     const TypeDescriptorImpl& type_descriptor {dynamic_type->get_descriptor()};
 
     StructTypeFlag struct_flags {TypeObjectUtils::build_struct_type_flag(
-                                     type_descriptor.is_extensibility_set() ?
-                                     extensibility_kind(
-                                         type_descriptor.extensibility_kind()) : ExtensibilityKind::NOT_APPLIED,
+                                     extensibility_kind(type_descriptor.extensibility_kind()),
                                      type_descriptor.is_nested(), false)};
 
     CompleteTypeDetail detail;
@@ -1673,9 +1671,7 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_union_dynamic_type(
     const TypeDescriptorImpl& type_descriptor {dynamic_type->get_descriptor()};
 
     UnionTypeFlag union_flags {TypeObjectUtils::build_union_type_flag(
-                                   type_descriptor.is_extensibility_set() ?
-                                   extensibility_kind(
-                                       type_descriptor.extensibility_kind()) : ExtensibilityKind::NOT_APPLIED,
+                                   extensibility_kind(type_descriptor.extensibility_kind()),
                                    type_descriptor.is_nested(), false)};
 
     CompleteTypeDetail detail;
@@ -2418,7 +2414,7 @@ ReturnCode_t TypeObjectRegistry::complete_member_detail(
 ExtensibilityKind TypeObjectRegistry::extensibility_kind(
         eprosima::fastdds::dds::ExtensibilityKind extensibility_kind) const
 {
-    ExtensibilityKind ret_extensibility_kind {ExtensibilityKind::NOT_APPLIED};
+    ExtensibilityKind ret_extensibility_kind {ExtensibilityKind::APPENDABLE};
     switch (extensibility_kind)
     {
         case eprosima::fastdds::dds::ExtensibilityKind::FINAL:
