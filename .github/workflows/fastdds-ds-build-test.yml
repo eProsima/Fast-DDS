@@ -34,13 +34,11 @@ defaults:
 
 jobs:
   fastdds_discovery_server_build_test:
-    needs: fastdds_build
-
+    runs-on: ${{ inputs.os-image }}
     if: ${{ (
           !contains(github.event.pull_request.labels.*.name, 'skip-ci') &&
           !contains(github.event.pull_request.labels.*.name, 'conflicts')
         ) }}
-    runs-on: ${{ inputs.os-image }}
     strategy:
       fail-fast: false
       matrix:

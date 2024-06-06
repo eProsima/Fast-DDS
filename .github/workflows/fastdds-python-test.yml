@@ -34,13 +34,12 @@ defaults:
 
 jobs:
   fastdds_python_build_test:
-    needs: fastdds_python_build
+    runs-on: ${{ inputs.os-image }}
     if: ${{ (
           !contains(github.event.pull_request.labels.*.name, 'skip-ci') &&
           !contains(github.event.pull_request.labels.*.name, 'no-test') &&
           !contains(github.event.pull_request.labels.*.name, 'conflicts')
         ) }}
-    runs-on: ${{ inputs.os-image }}
     steps:
       - name: Download python build artifacts
         uses: eProsima/eProsima-CI/external/download-artifact@v0

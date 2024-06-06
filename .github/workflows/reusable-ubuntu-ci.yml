@@ -1,4 +1,4 @@
-name: Fast DDS Ubuntu CI - Fast DDS build
+name: Fast DDS Ubuntu CI reusable workflow
 
 on:
   workflow_call:
@@ -34,102 +34,77 @@ defaults:
 
 jobs:
   fastdds_build:
-    runs-on: ${{ inputs.os-image }}
-    if: ${{ (
-          !contains(github.event.pull_request.labels.*.name, 'skip-ci') &&
-          !contains(github.event.pull_request.labels.*.name, 'conflicts')
-        ) }}
-    strategy:
-      fail-fast: false
-      matrix:
-        cmake-build-type:
-          - 'RelWithDebInfo'
-    steps:
-      - name: Add ci-pending label if PR
-        if: ${{ github.event_name == 'pull_request' }}
-        uses: eProsima/eProsima-CI/external/add_labels@v0
-        with:
-          labels: ci-pending
-          number: ${{ github.event.number }}
-          repo: eProsima/Fast-DDS
+    uses: ./.github/workflows/fastdds-build.yml
+    with:
+      os-image: ${{ inputs.os-image }}
+      label: ${{ inputs.label }}
+      colcon-args: ${{ inputs.colcon-args }}
+      cmake-args: ${{ inputs.cmake-args }}
+      ctest-args: ${{ inputs.ctest-args }}
+      fastdds-branch: ${{ inputs.fastdds_branch }}
 
-      - name: Sync eProsima/Fast-DDS repository
-        uses: eProsima/eProsima-CI/external/checkout@v0
-        with:
-          path: src/fastdds
-          ref: ${{ inputs.fastdds-branch }}
+  fastdds_build_test:
+    uses: ./.github/workflows/fastdds-test.yml
+    needs: fastdds_build
+    with:
+      os-image: ${{ inputs.os-image }}
+      label: ${{ inputs.label}}
+      colcon-args: ${{ inputs.colcon-args }}
+      cmake-args: ${{ inputs.cmake-args }}
+      ctest-args: ${{ inputs.ctest-args }}
+      fastdds-branch: ${{ inputs.fastdds_branch }}
 
-      - name: Install Fix Python version
-        uses: eProsima/eProsima-CI/external/setup-python@v0
-        with:
-          python-version: '3.11'
+  fastdds_python_build:
+    uses: ./.github/workflows/fastdds-python-build.yml
+    needs: fastdds_build
+    with:
+      os-image: ${{ inputs.os-image }}
+      label: ${{ inputs.label}}
+      colcon-args: ${{ inputs.colcon-args }}
+      cmake-args: ${{ inputs.cmake-args }}
+      ctest-args: ${{ inputs.ctest-args }}
+      fastdds-branch: ${{ inputs.fastdds_branch }}
 
-      - name: Get minimum supported version of CMake
-        uses: eProsima/eProsima-CI/external/get-cmake@v0
-        with:
-          cmakeVersion: '3.22.6'
+  fastdds_python_test:
+    uses: ./.github/workflows/fastdds-python-test.yml
+    needs: fastdds_python_build
+    with:
+      os-image: ${{ inputs.os-image }}
+      label: ${{ inputs.label}}
+      colcon-args: ${{ inputs.colcon-args }}
+      cmake-args: ${{ inputs.cmake-args }}
+      ctest-args: ${{ inputs.ctest-args }}
+      fastdds-branch: ${{ inputs.fastdds_branch }}
 
-      - name: Install apt dependencies
-        uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
-        with:
-          packages: libasio-dev libtinyxml2-dev libssl-dev
-          update: false
-          upgrade: false
+  fastdds_docs_build_test:
+    uses: ./.github/workflows/fastdds-docs-build-test.yml
+    needs: fastdds_python_build
+    with:
+      os-image: ${{ inputs.os-image }}
+      label: ${{ inputs.label}}
+      colcon-args: ${{ inputs.colcon-args }}
+      cmake-args: ${{ inputs.cmake-args }}
+      ctest-args: ${{ inputs.ctest-args }}
+      fastdds-branch: ${{ inputs.fastdds_branch }}
 
-      - name: Install colcon
-        uses: eProsima/eProsima-CI/ubuntu/install_colcon@v0
+  fastdds_shapesdemo_build:
+    uses: ./.github/workflows/shapesdemo-build.yml
+    needs: fastdds_build
+    with:
+      os-image: ${{ inputs.os-image }}
+      label: ${{ inputs.label}}
+      colcon-args: ${{ inputs.colcon-args }}
+      cmake-args: ${{ inputs.cmake-args }}
+      ctest-args: ${{ inputs.ctest-args }}
+      fastdds-branch: ${{ inputs.fastdds_branch }}
 
-      - name: Install Python dependencies
-        uses: eProsima/eProsima-CI/multiplatform/install_python_packages@v0
-        with:
-          packages: vcstool xmlschema
-          upgrade: false
-
-      - name: Setup CCache
-        uses: eProsima/eProsima-CI/external/setup-ccache-action@v0
-
-      - name: Set up hosts file for DNS testing
-        run: |
-          sudo echo "" | sudo tee -a /etc/hosts
-          sudo echo "127.0.0.1 localhost.test" | sudo tee -a /etc/hosts
-          sudo echo "::1 localhost.test" | sudo tee -a /etc/hosts
-          sudo echo "154.56.134.194 www.eprosima.com.test" | sudo tee -a /etc/hosts
-          sudo echo "216.58.215.164 www.acme.com.test" | sudo tee -a /etc/hosts
-          sudo echo "2a00:1450:400e:803::2004 www.acme.com.test" | sudo tee -a /etc/hosts
-          sudo echo "140.82.121.4 www.foo.com.test" | sudo tee -a /etc/hosts
-          sudo echo "140.82.121.3 www.foo.com.test" | sudo tee -a /etc/hosts
-          sudo echo "ff1e::ffff:efff:1 acme.org.test" | sudo tee -a /etc/hosts
-
-      # TODO(eduponz): Set up libp11 and SoftHSM. NOTE: using SoftHSM requires adding the runner to a group,
-      #                which entails logout/login or rebooting the machine. This is not feasible in a CI environment.
-
-      - name: Fetch Fast DDS dependencies
-        uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
-        with:
-          vcs_repos_file: ${{ github.workspace }}/src/fastdds/fastdds.repos
-          destination_workspace: src
-          skip_existing: 'true'
-
-      - name: Fetch Fast DDS CI dependencies
-        uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
-        with:
-          vcs_repos_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/ci.repos
-          destination_workspace: src
-          skip_existing: 'true'
-
-      - name: Colcon build
-        continue-on-error: false
-        uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
-        with:
-          colcon_meta_file: ''
-          colcon_build_args: ${{ inputs.colcon-args }}
-          cmake_args: ${{ inputs.cmake-args }}
-          cmake_args_default: -DCMAKE_CXX_FLAGS="-Werror -Wall -Wextra -Wpedantic -Wunused-value -Woverloaded-virtual"
-          cmake_build_type: ${{ matrix.cmake-build-type }}
-          workspace: ${{ github.workspace }}
-
-      - name: Upload build artifacts
-        uses: eProsima/eProsima-CI/external/upload-artifact@v0
-        with:
-          name: fastdds_build_${{ inputs.label }}
-          path: ${{ github.workspace }}
+  fastdds_discovery_server_build_test:
+    uses: ./.github/workflows/fastdds-ds-build-test.yml
+    needs: fastdds_build
+    with:
+      os-image: ${{ inputs.os-image }}
+      label: ${{ inputs.label}}
+      colcon-args: ${{ inputs.colcon-args }}
+      cmake-args: ${{ inputs.cmake-args }}
+      ctest-args: ${{ inputs.ctest-args }}
+      fastdds-branch: ${{ inputs.fastdds_branch }}

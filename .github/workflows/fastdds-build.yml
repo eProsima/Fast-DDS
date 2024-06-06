@@ -1,4 +1,4 @@
-name: Fast DDS Ubuntu CI - Fast DDS python build
+name: Fast DDS Ubuntu CI - Fast DDS build
 
 on:
   workflow_call:
@@ -33,7 +33,7 @@ defaults:
     shell: bash
 
 jobs:
-  fastdds_python_build:
+  fastdds_build:
     runs-on: ${{ inputs.os-image }}
     if: ${{ (
           !contains(github.event.pull_request.labels.*.name, 'skip-ci') &&
@@ -45,11 +45,19 @@ jobs:
         cmake-build-type:
           - 'RelWithDebInfo'
     steps:
-      - name: Download build artifacts
-        uses: eProsima/eProsima-CI/external/download-artifact@v0
+      - name: Add ci-pending label if PR
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: eProsima/eProsima-CI/external/add_labels@v0
         with:
-          name: fastdds_build_${{ inputs.label }}
-          path: ${{ github.workspace }}
+          labels: ci-pending
+          number: ${{ github.event.number }}
+          repo: eProsima/Fast-DDS
+
+      - name: Sync eProsima/Fast-DDS repository
+        uses: eProsima/eProsima-CI/external/checkout@v0
+        with:
+          path: src/fastdds
+          ref: ${{ inputs.fastdds-branch }}
 
       - name: Install Fix Python version
         uses: eProsima/eProsima-CI/external/setup-python@v0
@@ -61,49 +69,55 @@ jobs:
         with:
           cmakeVersion: '3.22.6'
 
-      - name: Install apt packages
+      - name: Install apt dependencies
         uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
         with:
-          packages: libasio-dev libtinyxml2-dev libssl-dev swig
+          packages: libasio-dev libtinyxml2-dev libssl-dev
+          update: false
+          upgrade: false
 
       - name: Install colcon
         uses: eProsima/eProsima-CI/ubuntu/install_colcon@v0
 
       - name: Install Python dependencies
-        uses: eProsima/eProsima-CI/ubuntu/install_python_packages@v0
+        uses: eProsima/eProsima-CI/multiplatform/install_python_packages@v0
         with:
-          packages: xmlschema
+          packages: vcstool xmlschema
+          upgrade: false
 
       - name: Setup CCache
         uses: eProsima/eProsima-CI/external/setup-ccache-action@v0
 
-      - name: Get Fast DDS Python branch
-        id: get_fastdds_python_branch
-        uses: eProsima/eProsima-CI/ubuntu/get_related_branch_from_repo@v0
-        with:
-          remote_repository: eProsima/Fast-DDS-python
-          fallback_branch: ${{ inputs.fastdds_python_branch || 'main' }}
+      # TODO(eduponz): Set up libp11 and SoftHSM. NOTE: using SoftHSM requires adding the runner to a group,
+      #                which entails logout/login or rebooting the machine. This is not feasible in a CI environment.
 
-      - name: Download Fast DDS Python repo
-        uses: eProsima/eProsima-CI/external/checkout@v0
+      - name: Fetch Fast DDS dependencies
+        uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
         with:
-          repository: eProsima/Fast-DDS-python
-          path: src/fastdds-python
-          ref: ${{ steps.get_fastdds_python_branch.outputs.deduced_branch }}
+          vcs_repos_file: ${{ github.workspace }}/src/fastdds/fastdds.repos
+          destination_workspace: src
+          skip_existing: 'true'
+
+      - name: Fetch Fast DDS CI dependencies
+        uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
+        with:
+          vcs_repos_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/ci.repos
+          destination_workspace: src
+          skip_existing: 'true'
 
       - name: Colcon build
         continue-on-error: false
         uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
         with:
           colcon_meta_file: ''
-          colcon_build_args: '${{ inputs.colcon-args }} --executor parallel --mixin ccache --packages-up-to fastdds_python'
+          colcon_build_args: ${{ inputs.colcon-args }}
           cmake_args: ${{ inputs.cmake-args }}
-          cmake_args_default: ''
+          cmake_args_default: -DCMAKE_CXX_FLAGS="-Werror -Wall -Wextra -Wpedantic -Wunused-value -Woverloaded-virtual"
           cmake_build_type: ${{ matrix.cmake-build-type }}
           workspace: ${{ github.workspace }}
 
-      - name: Upload python build artifacts
+      - name: Upload build artifacts
         uses: eProsima/eProsima-CI/external/upload-artifact@v0
         with:
-          name: fastdds_python_build_${{ inputs.label }}
+          name: fastdds_build_${{ inputs.label }}
           path: ${{ github.workspace }}
