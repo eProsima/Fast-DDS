@@ -50,14 +50,15 @@ SubscriberApp::SubscriberApp(
     DomainParticipantQos pqos;
     pqos.name("Participant_sub");
     // Create DomainParticipant
-    participant_ = DomainParticipantFactory::get_instance()->create_participant(0, pqos);
+    auto factory = DomainParticipantFactory::get_instance();
+    participant_ = factory->create_participant(0, pqos);
     if (participant_ == nullptr)
     {
         throw std::runtime_error("Participant initialization failed");
     }
 
     // If using the custom filter
-    if (config.custom_filter)
+    if (config.filter_kind == CLIParser::FIlterKind::CUSTOM)
     {
         // Register the filter factory
         if (eprosima::fastdds::dds::RETCODE_OK !=
@@ -87,7 +88,7 @@ SubscriberApp::SubscriberApp(
     // Create the ContentFilteredTopic
     std::string expression;
     std::vector<std::string> parameters;
-    if (config.custom_filter)
+   if (config.filter_kind == CLIParser::FIlterKind::CUSTOM)
     {
         // Custom filter: reject samples where index > parameters[0] and index < parameters[1].
         // Custom filter does not use expression. However, an empty expression disables filtering, so some expression
@@ -99,7 +100,7 @@ SubscriberApp::SubscriberApp(
                 participant_->create_contentfilteredtopic("HelloWorldFilteredTopic1", topic_, expression, parameters,
                         "MY_CUSTOM_FILTER");
     }
-    else
+    else if (config.filter_kind == CLIParser::FIlterKind::DEFAULT)
     {
         // Default filter: accept samples meeting the given expression: index between the two given parameters
         expression = "index between %0 and %1";
@@ -108,6 +109,14 @@ SubscriberApp::SubscriberApp(
         filter_topic_ =
                 participant_->create_contentfilteredtopic("HelloWorldFilteredTopic1", topic_, expression, parameters);
     }
+    else if (config.filter_kind == CLIParser::FIlterKind::NONE)
+    {
+        // An empty expression disables filtering
+        expression = "";
+        filter_topic_ =
+                participant_->create_contentfilteredtopic("HelloWorldFilteredTopic1", topic_, expression, parameters);
+    }
+
     if (filter_topic_ == nullptr)
     {
         throw std::runtime_error("Filter Topic initialization failed");

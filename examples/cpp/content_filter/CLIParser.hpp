@@ -43,6 +43,14 @@ public:
         UNDEFINED
     };
 
+    //! Filter kind enumeration
+    enum class FIlterKind : uint8_t
+    {
+        DEFAULT,
+        CUSTOM,
+        NONE
+    };
+
     //! Publisher configuration structure
     struct publisher_config
     {
@@ -53,7 +61,7 @@ public:
     //! Subscriber application configuration structure
     struct subscriber_config
     {
-        bool custom_filter = false;
+        CLIParser::FIlterKind filter_kind = CLIParser::FIlterKind::DEFAULT;
         std::string upper_bound = "9";
         std::string lower_bound = "5";
     };
@@ -76,23 +84,23 @@ public:
     static void print_help(
             uint8_t return_code)
     {
-        std::cout << "Usage: content_filter <entity> [options]"                                                   << std::endl;
-        std::cout << ""                                                                                           << std::endl;
-        std::cout << "Entities:"                                                                                  << std::endl;
-        std::cout << " publisher                                         Run a publisher entity"                  << std::endl;
-        std::cout << " subscriber                                        Run a subscriber entity"                 << std::endl;
-        std::cout << ""                                                                                           << std::endl;
-        std::cout << "Common options:"                                                                            << std::endl;
-        std::cout << " -h, --help                                        Print this help message"                 << std::endl;
-        std::cout << "Publisher options:"                                                                         << std::endl;
-        std::cout << " -s <num>, --samples <num>                         Number of samples to send"               << std::endl;
-        std::cout << "                                                   (Default: 0 [unlimited])"                << std::endl;
-        std::cout << " -i <num>, --interval <num>                        Time between samples in milliseconds"    << std::endl;
-        std::cout << "Subscriber options:"                                                                        << std::endl;
-        std::cout << " -f <default/custom>, --filter <default/custom>    Kind of Content Filter to use"           << std::endl;
-        std::cout << "                                                   (Default: DDS SQL default filter)"       << std::endl;
-        std::cout << " -lb <num>, --lower-bound <num>                    Lower bound of the data range to filter" << std::endl;
-        std::cout << " -up <num>, --upper-bound <num>                    Upper bound of the data range to filter" << std::endl;
+        std::cout << "Usage: content_filter <entity> [options]"                                                          << std::endl;
+        std::cout << ""                                                                                                  << std::endl;
+        std::cout << "Entities:"                                                                                         << std::endl;
+        std::cout << " publisher                                                Run a publisher entity"                  << std::endl;
+        std::cout << " subscriber                                               Run a subscriber entity"                 << std::endl;
+        std::cout << ""                                                                                                  << std::endl;
+        std::cout << "Common options:"                                                                                   << std::endl;
+        std::cout << " -h, --help                                               Print this help message"                 << std::endl;
+        std::cout << "Publisher options:"                                                                                << std::endl;
+        std::cout << " -s <num>, --samples <num>                                Number of samples to send"               << std::endl;
+        std::cout << "                                                          (Default: 0 [unlimited])"                << std::endl;
+        std::cout << " -i <num>, --interval <num>                               Time between samples in milliseconds"    << std::endl;
+        std::cout << "Subscriber options:"                                                                               << std::endl;
+        std::cout << " -f <default/custom/none>, --filter <default/custom/none> Kind of Content Filter to use"           << std::endl;
+        std::cout << "                                                          (Default: DDS SQL default filter)"       << std::endl;
+        std::cout << " -lb <num>, --lower-bound <num>                           Lower bound of the data range to filter" << std::endl;
+        std::cout << " -up <num>, --upper-bound <num>                           Upper bound of the data range to filter" << std::endl;
         std::exit(return_code);
     }
 
@@ -227,11 +235,15 @@ public:
                         std::string filter_type = argv[++i];
                         if (filter_type == "custom")
                         {
-                            config.sub_config.custom_filter = true;
+                            config.sub_config.filter_kind = CLIParser::FIlterKind::CUSTOM;
                         }
                         else if (filter_type == "default")
                         {
-                            config.sub_config.custom_filter = false;
+                            config.sub_config.filter_kind = CLIParser::FIlterKind::DEFAULT;
+                        }
+                        else if (filter_type == "none")
+                        {
+                            config.sub_config.filter_kind = CLIParser::FIlterKind::NONE;
                         }
                         else
                         {
