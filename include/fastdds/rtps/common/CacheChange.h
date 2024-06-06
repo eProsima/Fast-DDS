@@ -321,22 +321,6 @@ struct FASTDDS_EXPORTED_API CacheChange_t
         return is_fully_assembled();
     }
 
-    IPayloadPool const* payload_owner() const
-    {
-        return serializedPayload.payload_owner();
-    }
-
-    IPayloadPool* payload_owner()
-    {
-        return serializedPayload.payload_owner();
-    }
-
-    void payload_owner(
-            IPayloadPool* owner)
-    {
-        serializedPayload.payload_owner(owner);
-    }
-
 private:
 
     // Fragment size

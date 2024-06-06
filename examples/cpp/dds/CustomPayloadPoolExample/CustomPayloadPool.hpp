@@ -45,7 +45,7 @@ public:
         payload.max_size = size;
 
         // Tell the SerializedPayload who needs to release its payload
-        payload.payload_owner(this);
+        payload.payload_owner = this;
 
         return true;
     }
@@ -61,7 +61,7 @@ public:
         memcpy(payload_buff, data.data, data.length);
 
         // Tell the SerializedPayload who needs to release its payload
-        payload.payload_owner(this);
+        payload.payload_owner = this;
 
         // Assign the payload buffer to the SerializedPayload and update sizes
         payload.data = payload_buff;
@@ -75,7 +75,7 @@ public:
             eprosima::fastrtps::rtps::SerializedPayload_t& payload)
     {
         // Ensure precondition
-        if (this != payload.payload_owner())
+        if (this != payload.payload_owner)
         {
             std::cerr << "Trying to release a payload buffer allocated by a different PayloadPool." << std::endl;
             return false;
@@ -90,7 +90,7 @@ public:
         payload.max_size = 0;
 
         // Reset the owner of the payload
-        payload.payload_owner(nullptr);
+        payload.payload_owner = nullptr;
 
         return true;
     }

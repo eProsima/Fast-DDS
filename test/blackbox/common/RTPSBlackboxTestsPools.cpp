@@ -111,7 +111,7 @@ public:
 
         octet* payload_buff = data.data;
 
-        if (data.payload_owner() == this)
+        if (data.payload_owner == this)
         {
             uint32_t& refs = all_payloads_[payload_buff];
             EXPECT_LT(0u, refs);
@@ -122,7 +122,7 @@ public:
             payload.data = payload_buff;
             payload.length = data.length;
             payload.max_size = data.max_size;
-            payload.payload_owner(this);
+            payload.payload_owner = this;
             return true;
         }
 
@@ -134,14 +134,14 @@ public:
         ++num_copies_;
         payload.copy(&data, true);
 
-        if (data.payload_owner() == nullptr)
+        if (data.payload_owner == nullptr)
         {
             payload_buff = payload.data;
             uint32_t& refs = all_payloads_[payload_buff];
             ++refs;
             ++num_reserves_;
 
-            data.payload_owner(this);
+            data.payload_owner = this;
             data.data = payload_buff;
             data.max_size = payload.max_size;
         }
@@ -154,7 +154,7 @@ public:
     {
         std::lock_guard<std::mutex> lock(mutex_);
 
-        EXPECT_EQ(this, payload.payload_owner());
+        EXPECT_EQ(this, payload.payload_owner);
 
         octet* payload_buff = payload.data;
         uint32_t& refs = all_payloads_[payload_buff];
@@ -170,7 +170,7 @@ public:
         payload.data = nullptr;
         payload.max_size = 0;
         payload.length = 0;
-        payload.payload_owner(nullptr);
+        payload.payload_owner = nullptr;
 
         return true;
     }
@@ -220,7 +220,7 @@ private:
         payload.max_size = payload_size_;
         payload.length = 0;
         payload.pos = 0;
-        payload.payload_owner(this);
+        payload.payload_owner = this;
 
         return true;
     }

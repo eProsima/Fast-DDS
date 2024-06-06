@@ -424,7 +424,7 @@ void StatelessReader::remove_changes_from(
         if (is_payload_pool_lost)
         {
             (*it)->serializedPayload.data = nullptr;
-            (*it)->payload_owner(nullptr);
+            (*it)->serializedPayload.payload_owner = nullptr;
         }
         history_->remove_change(*it);
     }
@@ -611,7 +611,7 @@ bool StatelessReader::process_data_msg(
             if (is_datasharing)
             {
                 //We may receive the change from the listener (with owner a ReaderPool) or intraprocess (with owner a WriterPool)
-                ReaderPool* datasharing_pool = dynamic_cast<ReaderPool*>(change->payload_owner());
+                ReaderPool* datasharing_pool = dynamic_cast<ReaderPool*>(change->serializedPayload.payload_owner);
                 if (!datasharing_pool)
                 {
                     datasharing_pool = datasharing_listener_->get_pool_for_writer(change->writerGUID).get();
@@ -640,7 +640,7 @@ bool StatelessReader::process_data_msg(
             {
                 EPROSIMA_LOG_INFO(RTPS_MSG_IN,
                         IDSTRING "MessageReceiver not add change " << change_to_add->sequenceNumber);
-                change_to_add->payload_owner()->release_payload(change_to_add->serializedPayload);
+                change_to_add->serializedPayload.payload_owner->release_payload(change_to_add->serializedPayload);
                 change_pool_->release_cache(change_to_add);
                 return false;
             }

@@ -33,7 +33,7 @@ public:
             SerializedPayload_t& payload) override
     {
         payload.reserve(std::max(size, min_payload_size_));
-        payload.payload_owner(this);
+        payload.payload_owner = this;
         return true;
     }
 

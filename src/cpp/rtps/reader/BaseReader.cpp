@@ -284,7 +284,7 @@ void BaseReader::release_cache(
 {
     std::lock_guard<decltype(mp_mutex)> guard(mp_mutex);
 
-    fastrtps::rtps::IPayloadPool* pool = change->payload_owner();
+    fastrtps::rtps::IPayloadPool* pool = change->serializedPayload.payload_owner;
     if (pool)
     {
         pool->release_payload(change->serializedPayload);

@@ -43,7 +43,7 @@ public:
         payload.max_size = size;
 
         // Tell the CacheChange who needs to release its payload
-        payload.payload_owner(this);
+        payload.payload_owner = this;
 
         ++requested_payload_count;
 
@@ -66,7 +66,7 @@ public:
         payload.max_size = data.length;
 
         // Tell the CacheChange who needs to release its payload
-        payload.payload_owner(this);
+        payload.payload_owner =this;
 
         ++requested_payload_count;
 
@@ -77,7 +77,7 @@ public:
             eprosima::fastrtps::rtps::SerializedPayload_t& payload)
     {
         // Ensure precondition
-        assert(this == payload.payload_owner());
+        assert(this == payload.payload_owner);
 
         // Dealloc the buffer of the payload
         delete[] payload.data;
@@ -88,7 +88,7 @@ public:
         payload.max_size = 0;
 
         // Reset the owner of the payload
-        payload.payload_owner(nullptr);
+        payload.payload_owner = nullptr;
 
         ++returned_payload_count;
 

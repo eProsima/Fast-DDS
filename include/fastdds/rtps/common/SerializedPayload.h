@@ -71,7 +71,7 @@ struct FASTDDS_EXPORTED_API SerializedPayload_t
     //!Position when reading
     uint32_t pos;
     //!Pool that created the payload
-    IPayloadPool* payload_owner_ = nullptr;
+    IPayloadPool* payload_owner = nullptr;
 
     //!Default constructor
     SerializedPayload_t()
@@ -95,11 +95,11 @@ struct FASTDDS_EXPORTED_API SerializedPayload_t
 
     ~SerializedPayload_t()
     {
-        if (payload_owner_ != nullptr)
+        if (payload_owner != nullptr)
         {
-            payload_owner_->release_payload(*this);
+            payload_owner->release_payload(*this);
         }
-        assert(payload_owner_ == nullptr);
+        assert(payload_owner == nullptr);
 
         this->empty();
     }
@@ -199,22 +199,6 @@ struct FASTDDS_EXPORTED_API SerializedPayload_t
             memset(data + max_size, 0, (new_size - max_size) * sizeof(octet));
         }
         max_size = new_size;
-    }
-
-    IPayloadPool const* payload_owner() const
-    {
-        return payload_owner_;
-    }
-
-    IPayloadPool* payload_owner()
-    {
-        return payload_owner_;
-    }
-
-    void payload_owner(
-            IPayloadPool* owner)
-    {
-        payload_owner_ = owner;
     }
 
 };

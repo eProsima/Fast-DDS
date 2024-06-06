@@ -24,10 +24,10 @@ public:
     bool release_payload(
             SerializedPayload_t& payload) override
     {
-        assert(payload.payload_owner() == this);
+        assert(payload.payload_owner == this);
 
         payload.empty();
-        payload.payload_owner(nullptr);
+        payload.payload_owner = nullptr;
 
         return true;
     }

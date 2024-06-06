@@ -39,7 +39,7 @@ public:
     bool release_payload(
             SerializedPayload_t& payload) override
     {
-        assert(payload.payload_owner() == this);
+        assert(payload.payload_owner == this);
 
         {
             if (PayloadNode::dereference(payload.data))
@@ -62,7 +62,7 @@ public:
         payload.pos = 0;
         payload.max_size = 0;
         payload.data = nullptr;
-        payload.payload_owner(nullptr);
+        payload.payload_owner = nullptr;
 
         return true;
     }

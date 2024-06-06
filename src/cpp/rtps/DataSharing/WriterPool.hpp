@@ -75,7 +75,7 @@ public:
 
         payload.data = payload_node->data();
         payload.max_size = max_data_size_;
-        payload.payload_owner(this);
+        payload.payload_owner = this;
 
         return true;
     }
@@ -84,12 +84,12 @@ public:
             SerializedPayload_t& data,
             SerializedPayload_t& payload) override
     {
-        if (data.payload_owner() == this)
+        if (data.payload_owner == this)
         {
             payload.data = data.data;
             payload.length = data.length;
             payload.max_size = data.length;
-            payload.payload_owner(this);
+            payload.payload_owner = this;
             return true;
         }
         else
@@ -102,9 +102,9 @@ public:
                     return false;
                 }
 
-                if (data.payload_owner() == nullptr)
+                if (data.payload_owner == nullptr)
                 {
-                    data.payload_owner(this);
+                    data.payload_owner = this;
                     data.data = payload.data;
                 }
 
@@ -118,7 +118,7 @@ public:
     bool release_payload(
             SerializedPayload_t& payload) override
     {
-        assert(payload.payload_owner() == this);
+        assert(payload.payload_owner == this);
 
         // Payloads are reset on the `get` operation, the `release` leaves the data to give more chances to the reader
         PayloadNode* payload_node = PayloadNode::get_from_data(payload.data);
@@ -270,7 +270,7 @@ public:
     {
         assert(cache_change);
         assert(cache_change->serializedPayload.data);
-        assert(cache_change->payload_owner() == this);
+        assert(cache_change->serializedPayload.payload_owner == this);
         assert(free_history_size_ > 0);
 
         // Fill the payload metadata with the change info
@@ -308,7 +308,7 @@ public:
     {
         assert(cache_change);
         assert(cache_change->serializedPayload.data);
-        assert(cache_change->payload_owner() == this);
+        assert(cache_change->serializedPayload.payload_owner == this);
         assert(descriptor_->notified_end != descriptor_->notified_begin);
         assert(free_history_size_ < descriptor_->history_size);
 

@@ -43,7 +43,7 @@ public:
         payload.data = new octet[size];
         payload.max_size = size;
         payload.length = size;
-        payload.payload_owner(this);
+        payload.payload_owner = this;
         return true;
     }
 
@@ -54,10 +54,10 @@ public:
         payload.data = data.data;
         payload.max_size = data.max_size;
         payload.length = data.length;
-        payload.payload_owner(this);
-        if (data.payload_owner() == nullptr)
+        payload.payload_owner = this;
+        if (data.payload_owner == nullptr)
         {
-            data.payload_owner(this);
+            data.payload_owner = this;
         }
         return true;
     }
@@ -68,7 +68,7 @@ public:
         delete[] payload.data;
         payload.max_size = 0;
         payload.length = 0;
-        payload.payload_owner(nullptr);
+        payload.payload_owner = nullptr;
         return true;
     }
 

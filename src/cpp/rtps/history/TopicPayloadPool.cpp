@@ -53,7 +53,7 @@ bool TopicPayloadPool::do_get_payload(
             lock.unlock();
             payload.data = nullptr;
             payload.max_size = 0;
-            payload.payload_owner(nullptr);
+            payload.payload_owner = nullptr;
             return false;
         }
     }
@@ -75,7 +75,7 @@ bool TopicPayloadPool::do_get_payload(
 
             payload.data = nullptr;
             payload.max_size = 0;
-            payload.payload_owner(nullptr);
+            payload.payload_owner = nullptr;
             return false;
         }
     }
@@ -84,7 +84,7 @@ bool TopicPayloadPool::do_get_payload(
     payload_node->reference();
     payload.data = payload_node->data();
     payload.max_size = payload_node->data_size();
-    payload.payload_owner(this);
+    payload.payload_owner = this;
 
     return true;
 }
@@ -93,14 +93,14 @@ bool TopicPayloadPool::get_payload(
         SerializedPayload_t& data,
         SerializedPayload_t& payload)
 {
-    if (data.payload_owner() == this)
+    if (data.payload_owner == this)
     {
         PayloadNode::reference(data.data);
 
         payload.data = data.data;
         payload.length = data.length;
         payload.max_size = PayloadNode::data_size(data.data);
-        payload.payload_owner(this);
+        payload.payload_owner = this;
         return true;
     }
     else
@@ -113,9 +113,9 @@ bool TopicPayloadPool::get_payload(
                 return false;
             }
 
-            if (data.payload_owner() == nullptr)
+            if (data.payload_owner == nullptr)
             {
-                data.payload_owner(this);
+                data.payload_owner = this;
                 data.data = payload.data;
                 PayloadNode::reference(data.data);
             }
@@ -130,7 +130,7 @@ bool TopicPayloadPool::get_payload(
 bool TopicPayloadPool::release_payload(
         SerializedPayload_t& payload)
 {
-    assert(payload.payload_owner() == this);
+    assert(payload.payload_owner == this);
 
     if (PayloadNode::dereference(payload.data))
     {
@@ -143,7 +143,7 @@ bool TopicPayloadPool::release_payload(
     payload.pos = 0;
     payload.max_size = 0;
     payload.data = nullptr;
-    payload.payload_owner(nullptr);
+    payload.payload_owner = nullptr;
     return true;
 }
 

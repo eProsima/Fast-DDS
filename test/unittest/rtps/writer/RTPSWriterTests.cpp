@@ -40,7 +40,7 @@ public:
         bool result = get_payload_delegate(size, payload);
         if (result)
         {
-            payload.payload_owner(this);
+            payload.payload_owner = this;
         }
         return result;
     }
@@ -56,7 +56,7 @@ public:
         bool result = get_payload_delegate(data, payload);
         if (result)
         {
-            payload.payload_owner(this);
+            payload.payload_owner = this;
         }
         return result;
     }
@@ -70,7 +70,7 @@ public:
         bool result = release_payload_delegate(payload);
         if (result)
         {
-            payload.payload_owner(nullptr);
+            payload.payload_owner = nullptr;
         }
         return result;
     }

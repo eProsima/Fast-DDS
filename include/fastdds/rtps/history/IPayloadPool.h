@@ -46,8 +46,8 @@ public:
      *
      * In both cases, the received @c size will be for the whole serialized payload.
      *
-     * @param [in]     size          Number of bytes required for the serialized payload.
-     * @param [in,out] payload       Payload of the cache change used in the operation
+     * @param [in]     size     Number of bytes required for the serialized payload.
+     * @param [in,out] payload  Payload of the cache change used in the operation
      *
      * @returns whether the operation succeeded or not
      *
@@ -65,12 +65,12 @@ public:
      *
      * This method will usually be called when a reader receives a whole cache change.
      *
-     * @param [in,out] data          Serialized payload received
-     * @param [in,out] payload  Cache change to assign the payload to
+     * @param [in,out] data     Serialized payload received
+     * @param [in,out] payload  Destination serialized payload
      *
      * @returns whether the operation succeeded or not
      *
-     * @note @c data is received as references to accommodate the case where several readers
+     * @note @c data is received as reference to accommodate the case where several readers
      * receive the same payload. If the payload has no owner, it means it is allocated on the stack of a
      * reception thread, and a copy should be performed. The pool may decide in that case to point @c data.data
      * to the new copy and take ownership of the payload. In that case, when the reception thread is done with
@@ -80,7 +80,7 @@ public:
      * @warning @c data_owner contained in @c data can only be changed from @c nullptr to @c this. If a value
      * different from @c nullptr is received it should be left unchanged.
      *
-     * @warning @c data fields can only be changed when @c data_owner contained in @c data is @c nullptr. If a
+     * @warning @c data fields can only be changed when @c payload_owner contained in @c data is @c nullptr. If a
      * value different from @c nullptr is received all fields in @c data should be left unchanged.
      *
      * @post

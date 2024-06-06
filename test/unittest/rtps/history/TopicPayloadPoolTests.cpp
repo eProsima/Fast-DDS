@@ -200,11 +200,11 @@ protected:
 
             ch->writerGUID = GUID_t(GuidPrefix_t(), 1);
             ch->sequenceNumber = SequenceNumber_t(0, i);
-            IPayloadPool* owner = cache_changes[i]->payload_owner();
+            IPayloadPool* owner = cache_changes[i]->serializedPayload.payload_owner;
             ASSERT_TRUE(pool->get_payload(cache_changes[i]->serializedPayload, ch->serializedPayload));
             ASSERT_NE(ch->serializedPayload.data, nullptr);
             ASSERT_EQ(ch->serializedPayload.data, cache_changes[i]->serializedPayload.data);
-            ASSERT_EQ(ch->payload_owner(), owner);
+            ASSERT_EQ(ch->serializedPayload.payload_owner, owner);
         }
 
         for (CacheChange_t* ch : cache_changes)
@@ -347,7 +347,7 @@ void do_dynamic_topic_payload_pool_zero_size_test(
     change_to_add->sequenceNumber = SequenceNumber_t(0, 1);
 
     //! Retrieve owner (nullptr)
-    IPayloadPool* payload_owner = change->payload_owner();
+    IPayloadPool* payload_owner = change->serializedPayload.payload_owner;
 
     //! get the payload of size 0.
     //! Allocate it on the pool
@@ -355,7 +355,7 @@ void do_dynamic_topic_payload_pool_zero_size_test(
     ASSERT_TRUE(pool->get_payload(change->serializedPayload, change_to_add->serializedPayload));
 
     //! Now set the payload ownership on the source change
-    change->payload_owner(payload_owner);
+    change->serializedPayload.payload_owner = payload_owner;
 
     //! Release the payload from the source change
     pool->release_payload(change->serializedPayload);

@@ -25,7 +25,7 @@ public:
             SerializedPayload_t& payload) override
     {
         payload.reserve(size);
-        payload.payload_owner(this);
+        payload.payload_owner = this;
         return true;
     }
 
@@ -35,7 +35,7 @@ public:
     {
         if (payload.copy(&data, false))
         {
-            payload.payload_owner(this);
+            payload.payload_owner = this;
             return true;
         }
         return false;
@@ -44,11 +44,11 @@ public:
     bool release_payload(
             SerializedPayload_t& payload) override
     {
-        assert(payload.payload_owner() == this);
+        assert(payload.payload_owner == this);
 
         payload.length = 0;
         payload.pos = 0;
-        payload.payload_owner(nullptr);
+        payload.payload_owner = nullptr;
 
         return true;
     }

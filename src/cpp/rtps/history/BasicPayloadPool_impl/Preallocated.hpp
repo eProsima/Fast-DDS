@@ -33,7 +33,7 @@ public:
             SerializedPayload_t& payload) override
     {
         payload.reserve(payload_size_);
-        payload.payload_owner(this);
+        payload.payload_owner = this;
         return true;
     }
 
@@ -44,7 +44,7 @@ public:
         payload.reserve(payload_size_);
         if (payload.copy(&data, true))
         {
-            payload.payload_owner(this);
+            payload.payload_owner = this;
             return true;
         }
 

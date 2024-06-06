@@ -54,12 +54,12 @@ public:
             SerializedPayload_t& data,
             SerializedPayload_t& payload) override
     {
-        if (data.payload_owner() == this)
+        if (data.payload_owner == this)
         {
             payload.data = data.data;
             payload.length = data.length;
             payload.max_size = data.length;
-            payload.payload_owner(this);
+            payload.payload_owner = this;
             return true;
         }
         return false;
@@ -68,7 +68,7 @@ public:
     /**
      * Prepares and fills the change in the datasharing protocol.
      *
-     * If the payload is not owned by @c data_owner, it is assumed to be an intraprocess writer and the
+     * If the payload is not owned by this pool, it is assumed to be an intraprocess writer and the
      * change is direclty read from the shared history.
      *
      * @param data The serialized payload data to be used.
@@ -81,7 +81,7 @@ public:
         if (!get_payload(data, cache_change.serializedPayload))
         {
             // If owner is not this, then it must be an intraprocess datasharing writer
-            assert(nullptr != dynamic_cast<DataSharingPayloadPool*>(data.payload_owner()));
+            assert(nullptr != dynamic_cast<DataSharingPayloadPool*>(data.payload_owner));
             PayloadNode* payload = PayloadNode::get_from_data(data.data);
 
             // No need to check validity, on intraprocess there is no override of payloads
@@ -92,7 +92,7 @@ public:
     bool release_payload(
             SerializedPayload_t& payload) override
     {
-        assert(payload.payload_owner() == this);
+        assert(payload.payload_owner == this);
 
         return DataSharingPayloadPool::release_payload(payload);
     }
@@ -230,7 +230,7 @@ public:
         // Reset the data (may cause errors later on)
         cache_change.sequenceNumber = c_SequenceNumber_Unknown;
         cache_change.serializedPayload.data = nullptr;
-        cache_change.payload_owner(nullptr);
+        cache_change.serializedPayload.payload_owner = nullptr;
     }
 
     bool read_from_shared_history(
@@ -257,7 +257,7 @@ public:
             return false;
         }
 
-        cache_change.payload_owner(this);
+        cache_change.serializedPayload.payload_owner = this;
         return true;
     }
 

@@ -251,7 +251,7 @@ bool RTPSWriter::release_change(
 
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
 
-    IPayloadPool* pool = change->payload_owner();
+    IPayloadPool* pool = change->serializedPayload.payload_owner;
     if (pool)
     {
         pool->release_payload(change->serializedPayload);

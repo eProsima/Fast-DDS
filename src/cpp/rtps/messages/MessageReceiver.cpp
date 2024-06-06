@@ -154,7 +154,7 @@ void MessageReceiver::process_data_message_with_security(
 
                 SerializedPayload_t original_payload = change.serializedPayload;
                 reader->process_data_msg(&change);
-                IPayloadPool* payload_pool = change.payload_owner();
+                IPayloadPool* payload_pool = change.serializedPayload.payload_owner;
                 if (payload_pool)
                 {
                     payload_pool->release_payload(change.serializedPayload);
@@ -910,7 +910,7 @@ bool MessageReceiver::proc_Submsg_Data(
     //Look for the correct reader to add the change
     process_data_message_function_(readerID, ch, was_decoded);
 
-    IPayloadPool* payload_pool = ch.payload_owner();
+    IPayloadPool* payload_pool = ch.serializedPayload.payload_owner;
     if (payload_pool)
     {
         payload_pool->release_payload(ch.serializedPayload);
