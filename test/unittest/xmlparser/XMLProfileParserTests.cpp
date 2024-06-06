@@ -78,7 +78,247 @@ protected:
 
 };
 
+<<<<<<< HEAD
 TEST_F(XMLProfileParserTests, XMLParserRootLibrarySettings)
+=======
+class XMLProfileParserTests : public XMLProfileParserBasicTests, public testing::WithParamInterface<bool>
+{
+protected:
+
+    void SetUp() override
+    {
+        XMLProfileParserBasicTests::SetUp();
+
+        // Use plain file by default
+        xml_filename_ = "test_xml_profile.xml";
+
+        // Check if loading from environment variables should be tested
+        if (GetParam())
+        {
+            // Use different file
+            xml_filename_ = "test_xml_profile_env_var.xml";
+
+            // Set environment variables values
+            for (const std::pair<std::string, std::string>& value : c_environment_values_)
+            {
+                set_environment_variable(value.first.c_str(), value.second.c_str());
+            }
+        }
+    }
+
+    void TearDown() override
+    {
+        if (GetParam())
+        {
+            for (const std::pair<std::string, std::string>& value : c_environment_values_)
+            {
+                clear_environment_variable(value.first.c_str());
+            }
+        }
+    }
+
+    std::string xml_filename_ = "test_xml_profile.xml";
+
+    const std::pair<std::string, std::string> c_environment_values_[167]
+    {
+        {"XML_PROFILES_ENV_VAR_1",   "123"},
+        {"XML_PROFILES_ENV_VAR_2",   "4"},
+        {"XML_PROFILES_ENV_VAR_3",   "1"},
+        {"XML_PROFILES_ENV_VAR_4",   "10"},
+        {"XML_PROFILES_ENV_VAR_5",   "20"},
+        {"XML_PROFILES_ENV_VAR_6",   "2"},
+        {"XML_PROFILES_ENV_VAR_7",   "10"},
+        {"XML_PROFILES_ENV_VAR_8",   "20"},
+        {"XML_PROFILES_ENV_VAR_9",   "2"},
+        {"XML_PROFILES_ENV_VAR_10",  "10"},
+        {"XML_PROFILES_ENV_VAR_11",  "20"},
+        {"XML_PROFILES_ENV_VAR_12",  "2"},
+        {"XML_PROFILES_ENV_VAR_13",  "127"},
+        {"XML_PROFILES_ENV_VAR_14",  "true"},
+        {"XML_PROFILES_ENV_VAR_15",  "192.168.1.2"},
+        {"XML_PROFILES_ENV_VAR_16",  "2019"},
+        {"XML_PROFILES_ENV_VAR_17",  "239.255.0.1"},
+        {"XML_PROFILES_ENV_VAR_18",  "2021"},
+        {"XML_PROFILES_ENV_VAR_19",  "true"},
+        {"XML_PROFILES_ENV_VAR_20",  "10.10.10.10"},
+        {"XML_PROFILES_ENV_VAR_21",  "2001"},
+        {"XML_PROFILES_ENV_VAR_22",  "32"},
+        {"XML_PROFILES_ENV_VAR_23",  "1000"},
+        {"XML_PROFILES_ENV_VAR_24",  "SIMPLE"},
+        {"XML_PROFILES_ENV_VAR_25",  "SIMPLE"},
+        {"XML_PROFILES_ENV_VAR_26",  "FILTER_SAME_PROCESS | FILTER_DIFFERENT_HOST"},
+        {"XML_PROFILES_ENV_VAR_27",  "10"},
+        {"XML_PROFILES_ENV_VAR_28",  "333"},
+        {"XML_PROFILES_ENV_VAR_29",  "DURATION_INFINITY"},
+        {"XML_PROFILES_ENV_VAR_30",  "2"},
+        {"XML_PROFILES_ENV_VAR_31",  "1"},
+        {"XML_PROFILES_ENV_VAR_32",  "827"},
+        {"XML_PROFILES_ENV_VAR_33",  "false"},
+        {"XML_PROFILES_ENV_VAR_34",  "true"},
+        {"XML_PROFILES_ENV_VAR_35",  "false"},
+        {"XML_PROFILES_ENV_VAR_36",  "false"},
+        {"XML_PROFILES_ENV_VAR_37",  "192.168.1.5"},
+        {"XML_PROFILES_ENV_VAR_38",  "9999"},
+        {"XML_PROFILES_ENV_VAR_39",  "192.168.1.6"},
+        {"XML_PROFILES_ENV_VAR_40",  "6666"},
+        {"XML_PROFILES_ENV_VAR_41",  "239.255.0.2"},
+        {"XML_PROFILES_ENV_VAR_42",  "32"},
+        {"XML_PROFILES_ENV_VAR_43",  "239.255.0.3"},
+        {"XML_PROFILES_ENV_VAR_44",  "2112"},
+        {"XML_PROFILES_ENV_VAR_45",  "10.10.10.10"},
+        {"XML_PROFILES_ENV_VAR_46",  "2002"},
+        {"XML_PROFILES_ENV_VAR_47",  "239.255.0.1"},
+        {"XML_PROFILES_ENV_VAR_48",  "21120"},
+        {"XML_PROFILES_ENV_VAR_49",  "PREALLOCATED"},
+        {"XML_PROFILES_ENV_VAR_50",  "PREALLOCATED"},
+        {"XML_PROFILES_ENV_VAR_51",  "1000"},
+        {"XML_PROFILES_ENV_VAR_52",  "2000"},
+        {"XML_PROFILES_ENV_VAR_53",  "55"},
+        {"XML_PROFILES_ENV_VAR_54",  "true"},
+        {"XML_PROFILES_ENV_VAR_55",  "true"},
+        {"XML_PROFILES_ENV_VAR_56",  "12"},
+        {"XML_PROFILES_ENV_VAR_57",  "34"},
+        {"XML_PROFILES_ENV_VAR_58",  "56"},
+        {"XML_PROFILES_ENV_VAR_59",  "78"},
+        {"XML_PROFILES_ENV_VAR_60",  "90"},
+        {"XML_PROFILES_ENV_VAR_61",  "123"},
+        {"XML_PROFILES_ENV_VAR_62",  "456"},
+        {"XML_PROFILES_ENV_VAR_63",  "9898"},
+        {"XML_PROFILES_ENV_VAR_64",  "true"},
+        {"XML_PROFILES_ENV_VAR_65",  "test_name"},
+        {"XML_PROFILES_ENV_VAR_66",  "56.30.0.ce"},
+        {"XML_PROFILES_ENV_VAR_67",  "KEEP_LAST"},
+        {"XML_PROFILES_ENV_VAR_68",  "50"},
+        {"XML_PROFILES_ENV_VAR_69",  "432"},
+        {"XML_PROFILES_ENV_VAR_70",  "1"},
+        {"XML_PROFILES_ENV_VAR_71",  "100"},
+        {"XML_PROFILES_ENV_VAR_72",  "123"},
+        {"XML_PROFILES_ENV_VAR_73",  "TRANSIENT_LOCAL"},
+        {"XML_PROFILES_ENV_VAR_74",  "MANUAL_BY_PARTICIPANT"},
+        {"XML_PROFILES_ENV_VAR_75",  "1"},
+        {"XML_PROFILES_ENV_VAR_76",  "2"},
+        {"XML_PROFILES_ENV_VAR_77",  "DURATION_INFINITY"},
+        {"XML_PROFILES_ENV_VAR_78",  "BEST_EFFORT"},
+        {"XML_PROFILES_ENV_VAR_79",  "0"},
+        {"XML_PROFILES_ENV_VAR_80",  "0"},
+        {"XML_PROFILES_ENV_VAR_81",  "partition_name_a"},
+        {"XML_PROFILES_ENV_VAR_82",  "partition_name_b"},
+        {"XML_PROFILES_ENV_VAR_83",  "ASYNCHRONOUS"},
+        {"XML_PROFILES_ENV_VAR_84",  "56.30.0.1"},
+        {"XML_PROFILES_ENV_VAR_85",  "5.3.1.0"},
+        {"XML_PROFILES_ENV_VAR_86",  "5.3.1.0.F1"},
+        {"XML_PROFILES_ENV_VAR_87",  "0"},
+        {"XML_PROFILES_ENV_VAR_88",  "0"},
+        {"XML_PROFILES_ENV_VAR_89",  "11"},
+        {"XML_PROFILES_ENV_VAR_90",  "32"},
+        {"XML_PROFILES_ENV_VAR_91",  "0"},
+        {"XML_PROFILES_ENV_VAR_92",  "0"},
+        {"XML_PROFILES_ENV_VAR_93",  "121"},
+        {"XML_PROFILES_ENV_VAR_94",  "332"},
+        {"XML_PROFILES_ENV_VAR_95",  "192.168.1.3"},
+        {"XML_PROFILES_ENV_VAR_96",  "197"},
+        {"XML_PROFILES_ENV_VAR_97",  "192.168.1.9"},
+        {"XML_PROFILES_ENV_VAR_98",  "219"},
+        {"XML_PROFILES_ENV_VAR_99",  "239.255.0.1"},
+        {"XML_PROFILES_ENV_VAR_100", "2020"},
+        {"XML_PROFILES_ENV_VAR_101", ""},
+        {"XML_PROFILES_ENV_VAR_102", "1989"},
+        {"XML_PROFILES_ENV_VAR_103", "true"},
+        {"XML_PROFILES_ENV_VAR_104", "10.10.10.10"},
+        {"XML_PROFILES_ENV_VAR_105", "2001"},
+        {"XML_PROFILES_ENV_VAR_106", "DYNAMIC"},
+        {"XML_PROFILES_ENV_VAR_107", "67"},
+        {"XML_PROFILES_ENV_VAR_108", "87"},
+        {"XML_PROFILES_ENV_VAR_109", "10"},
+        {"XML_PROFILES_ENV_VAR_110", "10"},
+        {"XML_PROFILES_ENV_VAR_111", "0"},
+        {"XML_PROFILES_ENV_VAR_112", "KEEP_ALL"},
+        {"XML_PROFILES_ENV_VAR_113", "1001"},
+        {"XML_PROFILES_ENV_VAR_114", "52"},
+        {"XML_PROFILES_ENV_VAR_115", "25"},
+        {"XML_PROFILES_ENV_VAR_116", "32"},
+        {"XML_PROFILES_ENV_VAR_117", "37"},
+        {"XML_PROFILES_ENV_VAR_118", "PERSISTENT"},
+        {"XML_PROFILES_ENV_VAR_119", "MANUAL_BY_TOPIC"},
+        {"XML_PROFILES_ENV_VAR_120", "11"},
+        {"XML_PROFILES_ENV_VAR_121", "22"},
+        {"XML_PROFILES_ENV_VAR_122", "0"},
+        {"XML_PROFILES_ENV_VAR_123", "0"},
+        {"XML_PROFILES_ENV_VAR_124", "RELIABLE"},
+        {"XML_PROFILES_ENV_VAR_125", "DURATION_INFINITY"},
+        {"XML_PROFILES_ENV_VAR_126", "partition_name_c"},
+        {"XML_PROFILES_ENV_VAR_127", "partition_name_d"},
+        {"XML_PROFILES_ENV_VAR_128", "partition_name_e"},
+        {"XML_PROFILES_ENV_VAR_129", "partition_name_f"},
+        {"XML_PROFILES_ENV_VAR_130", "56.30.0.1"},
+        {"XML_PROFILES_ENV_VAR_131", "5.3.1.0"},
+        {"XML_PROFILES_ENV_VAR_132", "5.3.1.0.F1"},
+        {"XML_PROFILES_ENV_VAR_133", "0"},
+        {"XML_PROFILES_ENV_VAR_134", "0"},
+        {"XML_PROFILES_ENV_VAR_135", "18"},
+        {"XML_PROFILES_ENV_VAR_136", "81"},
+        {"XML_PROFILES_ENV_VAR_137", "192.168.1.10"},
+        {"XML_PROFILES_ENV_VAR_138", "196"},
+        {"XML_PROFILES_ENV_VAR_139", "212"},
+        {"XML_PROFILES_ENV_VAR_140", "239.255.0.10"},
+        {"XML_PROFILES_ENV_VAR_141", "220"},
+        {"XML_PROFILES_ENV_VAR_142", "239.255.0.11"},
+        {"XML_PROFILES_ENV_VAR_143", "9891"},
+        {"XML_PROFILES_ENV_VAR_144", "true"},
+        {"XML_PROFILES_ENV_VAR_145", "10.10.10.10"},
+        {"XML_PROFILES_ENV_VAR_146", "2001"},
+        {"XML_PROFILES_ENV_VAR_147", "true"},
+        {"XML_PROFILES_ENV_VAR_148", "PREALLOCATED_WITH_REALLOC"},
+        {"XML_PROFILES_ENV_VAR_149", "13"},
+        {"XML_PROFILES_ENV_VAR_150", "31"},
+        {"XML_PROFILES_ENV_VAR_151", "10"},
+        {"XML_PROFILES_ENV_VAR_152", "10"},
+        {"XML_PROFILES_ENV_VAR_153", "0"},
+        {"XML_PROFILES_ENV_VAR_154", "KEEP_ALL"},
+        {"XML_PROFILES_ENV_VAR_155", "1001"},
+        {"XML_PROFILES_ENV_VAR_156", "FULL"},
+        {"XML_PROFILES_ENV_VAR_157", "true"},
+        {"XML_PROFILES_ENV_VAR_158", "-1"},
+        {"XML_PROFILES_ENV_VAR_159", "0"},
+        {"XML_PROFILES_ENV_VAR_160", "0"},
+        {"XML_PROFILES_ENV_VAR_161", "-1"},
+        {"XML_PROFILES_ENV_VAR_162", "ON"},
+        {"XML_PROFILES_ENV_VAR_163", "test_flow_controller"},
+        {"XML_PROFILES_ENV_VAR_164", "HIGH_PRIORITY"},
+        {"XML_PROFILES_ENV_VAR_165", "2048"},
+        {"XML_PROFILES_ENV_VAR_166",  "45"},
+        {"XML_PROFILES_ENV_VAR_167",  "test_flow_controller"}
+    };
+
+};
+
+static void check_external_locator(
+        const eprosima::fastdds::rtps::ExternalLocators& external_locators,
+        uint8_t externality,
+        uint8_t cost,
+        uint8_t mask,
+        const char* address,
+        uint32_t port)
+{
+    auto ext_it = external_locators.find(externality);
+    ASSERT_NE(ext_it, external_locators.end());
+    auto cost_it = ext_it->second.find(cost);
+    ASSERT_NE(cost_it, ext_it->second.end());
+    for (const eprosima::fastdds::rtps::LocatorWithMask& loc : cost_it->second)
+    {
+        if (IPLocator::ip_to_string(loc).compare(address) == 0)
+        {
+            EXPECT_EQ(mask, loc.mask());
+            EXPECT_EQ(port, loc.port);
+            return;
+        }
+    }
+
+    EXPECT_FALSE(true);
+}
+
+TEST_F(XMLProfileParserBasicTests, XMLParserRootLibrarySettings)
+>>>>>>> e6044e011 (Add XML configuration for FlowControllerDescriptor to 2.x (#4893))
 {
     ASSERT_EQ(xmlparser::XMLP_ret::XML_OK,
             xmlparser::XMLProfileManager::loadXMLFile("test_xml_root_library_settings.xml"));
@@ -219,7 +459,115 @@ TEST_F(XMLProfileParserTests, XMLParserParticipant)
     ParticipantAttributes participant_atts;
 
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
+<<<<<<< HEAD
             xmlparser::XMLProfileManager::loadXMLFile("test_xml_profiles.xml"));
+=======
+            xmlparser::XMLProfileManager::loadXMLFile(xml_filename_));
+    EXPECT_EQ(  xmlparser::XMLP_ret::XML_OK,
+            xmlparser::XMLProfileManager::fillParticipantAttributes(participant_profile, participant_atts));
+
+    EXPECT_EQ(participant_atts.domainId, 123u);
+    RTPSParticipantAttributes& rtps_atts = participant_atts.rtps;
+    BuiltinAttributes& builtin = rtps_atts.builtin;
+    Locator_t locator;
+    LocatorListIterator loc_list_it;
+    PortParameters& port = rtps_atts.port;
+
+    EXPECT_EQ(rtps_atts.allocation.locators.max_unicast_locators, 4u);
+    EXPECT_EQ(rtps_atts.allocation.locators.max_multicast_locators, 1u);
+    EXPECT_EQ(rtps_atts.allocation.participants.initial, 10u);
+    EXPECT_EQ(rtps_atts.allocation.participants.maximum, 20u);
+    EXPECT_EQ(rtps_atts.allocation.participants.increment, 2u);
+    EXPECT_EQ(rtps_atts.allocation.readers.initial, 10u);
+    EXPECT_EQ(rtps_atts.allocation.readers.maximum, 20u);
+    EXPECT_EQ(rtps_atts.allocation.readers.increment, 2u);
+    EXPECT_EQ(rtps_atts.allocation.writers.initial, 10u);
+    EXPECT_EQ(rtps_atts.allocation.writers.maximum, 20u);
+    EXPECT_EQ(rtps_atts.allocation.writers.increment, 2u);
+    EXPECT_EQ(rtps_atts.allocation.send_buffers.preallocated_number, 127u);
+    EXPECT_EQ(rtps_atts.allocation.send_buffers.dynamic, true);
+
+    IPLocator::setIPv4(locator, 192, 168, 1, 2);
+    locator.port = 2019;
+    EXPECT_EQ(*rtps_atts.defaultUnicastLocatorList.begin(), locator);
+    IPLocator::setIPv4(locator, 239, 255, 0, 1);
+    locator.port = 2021;
+    EXPECT_EQ(*rtps_atts.defaultMulticastLocatorList.begin(), locator);
+    IPLocator::setIPv4(locator, 192, 168, 1, 1);
+    locator.port = 1979;
+    check_external_locator(rtps_atts.default_external_unicast_locators, 100, 200, 10, "10.10.10.10", 2001);
+    EXPECT_TRUE(rtps_atts.ignore_non_matching_locators);
+    EXPECT_EQ(rtps_atts.sendSocketBufferSize, 32u);
+    EXPECT_EQ(rtps_atts.listenSocketBufferSize, 1000u);
+    EXPECT_EQ(builtin.discovery_config.discoveryProtocol, eprosima::fastrtps::rtps::DiscoveryProtocol::SIMPLE);
+    EXPECT_EQ(builtin.discovery_config.ignoreParticipantFlags,
+            eprosima::fastrtps::rtps::ParticipantFilteringFlags_t::FILTER_SAME_PROCESS |
+            eprosima::fastrtps::rtps::ParticipantFilteringFlags_t::FILTER_DIFFERENT_HOST);
+    EXPECT_EQ(builtin.use_WriterLivelinessProtocol, false);
+    EXPECT_EQ(builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol, true);
+    EXPECT_EQ(builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol, false);
+    EXPECT_EQ(builtin.discovery_config.leaseDuration, c_TimeInfinite);
+    EXPECT_EQ(builtin.discovery_config.leaseDuration_announcementperiod.seconds, 10);
+    EXPECT_EQ(builtin.discovery_config.leaseDuration_announcementperiod.nanosec, 333u);
+    EXPECT_EQ(builtin.discovery_config.initial_announcements.count, 2u);
+    EXPECT_EQ(builtin.discovery_config.initial_announcements.period.seconds, 1);
+    EXPECT_EQ(builtin.discovery_config.initial_announcements.period.nanosec, 827u);
+    EXPECT_FALSE(builtin.avoid_builtin_multicast);
+    EXPECT_EQ(builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader, false);
+    EXPECT_EQ(builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter, true);
+    check_external_locator(rtps_atts.builtin.metatraffic_external_unicast_locators, 100, 200, 10, "10.10.10.10", 2002);
+    IPLocator::setIPv4(locator, 192, 168, 1, 5);
+    locator.port = 9999;
+    EXPECT_EQ(*(loc_list_it = builtin.metatrafficUnicastLocatorList.begin()), locator);
+    IPLocator::setIPv4(locator, 192, 168, 1, 6);
+    locator.port = 6666;
+    ++loc_list_it;
+    EXPECT_EQ(*loc_list_it, locator);
+    IPLocator::setIPv4(locator, 239, 255, 0, 2);
+    locator.port = 32;
+    EXPECT_EQ(*(loc_list_it = builtin.metatrafficMulticastLocatorList.begin()), locator);
+    IPLocator::setIPv4(locator, 239, 255, 0, 3);
+    locator.port = 2112;
+    ++loc_list_it;
+    EXPECT_EQ(*loc_list_it, locator);
+    IPLocator::setIPv4(locator, 239, 255, 0, 1);
+    locator.port = 21120;
+    EXPECT_EQ(*(loc_list_it = builtin.initialPeersList.begin()), locator);
+    EXPECT_EQ(builtin.readerHistoryMemoryPolicy, PREALLOCATED_MEMORY_MODE);
+    EXPECT_EQ(builtin.writerHistoryMemoryPolicy, PREALLOCATED_MEMORY_MODE);
+    EXPECT_EQ(builtin.readerPayloadSize, 1000u);
+    EXPECT_EQ(builtin.writerPayloadSize, 2000u);
+    EXPECT_EQ(builtin.mutation_tries, 55u);
+    EXPECT_TRUE(builtin.typelookup_config.use_client);
+    EXPECT_TRUE(builtin.typelookup_config.use_server);
+    EXPECT_EQ(port.portBase, 12);
+    EXPECT_EQ(port.domainIDGain, 34);
+    EXPECT_EQ(port.participantIDGain, 56);
+    EXPECT_EQ(port.offsetd0, 78);
+    EXPECT_EQ(port.offsetd1, 90);
+    EXPECT_EQ(port.offsetd2, 123);
+    EXPECT_EQ(port.offsetd3, 456);
+    EXPECT_EQ(rtps_atts.participantID, 9898);
+    //EXPECT_EQ(rtps_atts.throughputController.bytesPerPeriod, 2048u);
+    //EXPECT_EQ(rtps_atts.throughputController.periodMillisecs, 45u);
+    EXPECT_EQ(rtps_atts.flow_controllers.at(0)->max_bytes_per_period, 2048);
+    EXPECT_EQ(rtps_atts.flow_controllers.at(0)->period_ms, 45u);
+    EXPECT_EQ(rtps_atts.useBuiltinTransports, true);
+    EXPECT_EQ(rtps_atts.netmaskFilter, eprosima::fastdds::rtps::NetmaskFilterKind::ON);
+    EXPECT_EQ(std::string(rtps_atts.getName()), "test_name");
+}
+
+/*
+ * Checks the participant parsing (with deprecated but supported elements)
+ */
+TEST_F(XMLProfileParserBasicTests, XMLParserParticipantDeprecated)
+{
+    std::string participant_profile = std::string("test_participant_profile");
+    ParticipantAttributes participant_atts;
+
+    ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
+            xmlparser::XMLProfileManager::loadXMLFile("test_xml_deprecated.xml"));
+>>>>>>> e6044e011 (Add XML configuration for FlowControllerDescriptor to 2.x (#4893))
     EXPECT_EQ(  xmlparser::XMLP_ret::XML_OK,
             xmlparser::XMLProfileManager::fillParticipantAttributes(participant_profile, participant_atts));
 
@@ -302,6 +650,8 @@ TEST_F(XMLProfileParserTests, XMLParserParticipant)
     EXPECT_EQ(rtps_atts.participantID, 9898);
     EXPECT_EQ(rtps_atts.throughputController.bytesPerPeriod, 2048u);
     EXPECT_EQ(rtps_atts.throughputController.periodMillisecs, 45u);
+    EXPECT_EQ(rtps_atts.flow_controllers.at(0)->max_bytes_per_period, 2048);
+    EXPECT_EQ(rtps_atts.flow_controllers.at(0)->period_ms, 45u);
     EXPECT_EQ(rtps_atts.useBuiltinTransports, true);
     EXPECT_EQ(std::string(rtps_atts.getName()), "test_name");
 }
@@ -312,7 +662,98 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultParticipantProfile)
     ParticipantAttributes participant_atts;
 
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
+<<<<<<< HEAD
             xmlparser::XMLProfileManager::loadXMLFile("test_xml_profiles.xml"));
+=======
+            xmlparser::XMLProfileManager::loadXMLFile(xml_filename_));
+    xmlparser::XMLProfileManager::getDefaultParticipantAttributes(participant_atts);
+
+    EXPECT_EQ(participant_atts.domainId, 123u);
+    RTPSParticipantAttributes& rtps_atts = participant_atts.rtps;
+    BuiltinAttributes& builtin = rtps_atts.builtin;
+    Locator_t locator;
+    LocatorListIterator loc_list_it;
+    PortParameters& port = rtps_atts.port;
+
+    IPLocator::setIPv4(locator, 192, 168, 1, 2);
+    locator.port = 2019;
+    EXPECT_EQ(*rtps_atts.defaultUnicastLocatorList.begin(), locator);
+    IPLocator::setIPv4(locator, 239, 255, 0, 1);
+    locator.port = 2021;
+    EXPECT_EQ(*rtps_atts.defaultMulticastLocatorList.begin(), locator);
+    IPLocator::setIPv4(locator, 192, 168, 1, 1);
+    locator.port = 1979;
+    check_external_locator(rtps_atts.default_external_unicast_locators, 100, 200, 10, "10.10.10.10", 2001);
+    EXPECT_TRUE(rtps_atts.ignore_non_matching_locators);
+    EXPECT_EQ(rtps_atts.sendSocketBufferSize, 32u);
+    EXPECT_EQ(rtps_atts.listenSocketBufferSize, 1000u);
+    EXPECT_EQ(builtin.discovery_config.discoveryProtocol, eprosima::fastrtps::rtps::DiscoveryProtocol::SIMPLE);
+    EXPECT_EQ(builtin.discovery_config.ignoreParticipantFlags,
+            eprosima::fastrtps::rtps::ParticipantFilteringFlags_t::FILTER_SAME_PROCESS |
+            eprosima::fastrtps::rtps::ParticipantFilteringFlags_t::FILTER_DIFFERENT_HOST);
+    EXPECT_EQ(builtin.use_WriterLivelinessProtocol, false);
+    EXPECT_EQ(builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol, true);
+    EXPECT_EQ(builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol, false);
+    EXPECT_EQ(builtin.discovery_config.leaseDuration, c_TimeInfinite);
+    EXPECT_EQ(builtin.discovery_config.leaseDuration_announcementperiod.seconds, 10);
+    EXPECT_EQ(builtin.discovery_config.leaseDuration_announcementperiod.nanosec, 333u);
+    EXPECT_EQ(builtin.discovery_config.initial_announcements.count, 2u);
+    EXPECT_EQ(builtin.discovery_config.initial_announcements.period.seconds, 1);
+    EXPECT_EQ(builtin.discovery_config.initial_announcements.period.nanosec, 827u);
+    EXPECT_FALSE(builtin.avoid_builtin_multicast);
+    EXPECT_EQ(builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader, false);
+    EXPECT_EQ(builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter, true);
+    check_external_locator(rtps_atts.builtin.metatraffic_external_unicast_locators, 100, 200, 10, "10.10.10.10", 2002);
+    IPLocator::setIPv4(locator, 192, 168, 1, 5);
+    locator.port = 9999;
+    EXPECT_EQ(*(loc_list_it = builtin.metatrafficUnicastLocatorList.begin()), locator);
+    IPLocator::setIPv4(locator, 192, 168, 1, 6);
+    locator.port = 6666;
+    ++loc_list_it;
+    EXPECT_EQ(*loc_list_it, locator);
+    IPLocator::setIPv4(locator, 239, 255, 0, 2);
+    locator.port = 32;
+    EXPECT_EQ(*(loc_list_it = builtin.metatrafficMulticastLocatorList.begin()), locator);
+    IPLocator::setIPv4(locator, 239, 255, 0, 3);
+    locator.port = 2112;
+    ++loc_list_it;
+    EXPECT_EQ(*loc_list_it, locator);
+    IPLocator::setIPv4(locator, 239, 255, 0, 1);
+    locator.port = 21120;
+    EXPECT_EQ(*(loc_list_it = builtin.initialPeersList.begin()), locator);
+    EXPECT_EQ(builtin.readerHistoryMemoryPolicy, PREALLOCATED_MEMORY_MODE);
+    EXPECT_EQ(builtin.writerHistoryMemoryPolicy, PREALLOCATED_MEMORY_MODE);
+    EXPECT_EQ(builtin.readerPayloadSize, 1000u);
+    EXPECT_EQ(builtin.writerPayloadSize, 2000u);
+    EXPECT_EQ(builtin.mutation_tries, 55u);
+    EXPECT_TRUE(builtin.typelookup_config.use_client);
+    EXPECT_TRUE(builtin.typelookup_config.use_server);
+    EXPECT_EQ(port.portBase, 12);
+    EXPECT_EQ(port.domainIDGain, 34);
+    EXPECT_EQ(port.participantIDGain, 56);
+    EXPECT_EQ(port.offsetd0, 78);
+    EXPECT_EQ(port.offsetd1, 90);
+    EXPECT_EQ(port.offsetd2, 123);
+    EXPECT_EQ(port.offsetd3, 456);
+    EXPECT_EQ(rtps_atts.participantID, 9898);
+    //EXPECT_EQ(rtps_atts.throughputController.bytesPerPeriod, 2048u);
+    //EXPECT_EQ(rtps_atts.throughputController.periodMillisecs, 45u);
+    EXPECT_EQ(rtps_atts.flow_controllers.at(0)->max_bytes_per_period, 2048);
+    EXPECT_EQ(rtps_atts.flow_controllers.at(0)->period_ms, 45u);
+    EXPECT_EQ(rtps_atts.useBuiltinTransports, true);
+    EXPECT_EQ(std::string(rtps_atts.getName()), "test_name");
+}
+
+/*
+ * Checks the participant default profile parsing (with deprecated but supported elements)
+ */
+TEST_F(XMLProfileParserBasicTests, XMLParserDefaultParticipantProfileDeprecated)
+{
+    ParticipantAttributes participant_atts;
+
+    ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
+            xmlparser::XMLProfileManager::loadXMLFile("test_xml_deprecated.xml"));
+>>>>>>> e6044e011 (Add XML configuration for FlowControllerDescriptor to 2.x (#4893))
     xmlparser::XMLProfileManager::getDefaultParticipantAttributes(participant_atts);
 
     EXPECT_EQ(participant_atts.domainId, 2019102u);
@@ -380,6 +821,8 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultParticipantProfile)
     EXPECT_EQ(rtps_atts.participantID, 9898);
     EXPECT_EQ(rtps_atts.throughputController.bytesPerPeriod, 2048u);
     EXPECT_EQ(rtps_atts.throughputController.periodMillisecs, 45u);
+    EXPECT_EQ(rtps_atts.flow_controllers.at(0)->max_bytes_per_period, 2048);
+    EXPECT_EQ(rtps_atts.flow_controllers.at(0)->period_ms, 45u);
     EXPECT_EQ(rtps_atts.useBuiltinTransports, true);
     EXPECT_EQ(std::string(rtps_atts.getName()), "test_name");
 }
@@ -390,7 +833,87 @@ TEST_F(XMLProfileParserTests, XMLParserPublisher)
     PublisherAttributes publisher_atts;
 
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
+<<<<<<< HEAD
             xmlparser::XMLProfileManager::loadXMLFile("test_xml_profiles.xml"));
+=======
+            xmlparser::XMLProfileManager::loadXMLFile(xml_filename_));
+    EXPECT_EQ(  xmlparser::XMLP_ret::XML_OK,
+            xmlparser::XMLProfileManager::fillPublisherAttributes(publisher_profile, publisher_atts));
+
+    TopicAttributes& pub_topic = publisher_atts.topic;
+    WriterQos& pub_qos = publisher_atts.qos;
+    Locator_t locator;
+    LocatorListIterator loc_list_it;
+    WriterTimes& pub_times = publisher_atts.times;
+
+    //EXPECT_EQ(pub_topic.topicKind, NO_KEY);
+    //EXPECT_EQ(pub_topic.topicName, "samplePubSubTopic");
+    //EXPECT_EQ(pub_topic.topicDataType, "samplePubSubTopicType");
+    EXPECT_EQ(pub_topic.historyQos.kind, KEEP_LAST_HISTORY_QOS);
+    EXPECT_EQ(pub_topic.historyQos.depth, 50);
+    EXPECT_EQ(pub_topic.resourceLimitsQos.max_samples, 432);
+    EXPECT_EQ(pub_topic.resourceLimitsQos.max_instances, 1);
+    EXPECT_EQ(pub_topic.resourceLimitsQos.max_samples_per_instance, 100);
+    EXPECT_EQ(pub_topic.resourceLimitsQos.allocated_samples, 123);
+    EXPECT_EQ(pub_qos.m_durability.kind, TRANSIENT_LOCAL_DURABILITY_QOS);
+    EXPECT_EQ(pub_qos.m_liveliness.kind, MANUAL_BY_PARTICIPANT_LIVELINESS_QOS);
+    EXPECT_EQ(pub_qos.m_liveliness.lease_duration.seconds, 1);
+    EXPECT_EQ(pub_qos.m_liveliness.lease_duration.nanosec, 2u);
+    EXPECT_EQ(pub_qos.m_liveliness.announcement_period, c_TimeInfinite);
+    EXPECT_EQ(pub_qos.m_reliability.kind, BEST_EFFORT_RELIABILITY_QOS);
+    EXPECT_EQ(pub_qos.m_reliability.max_blocking_time, c_TimeZero);
+    EXPECT_EQ(pub_qos.m_partition.names()[0], "partition_name_a");
+    EXPECT_EQ(pub_qos.m_partition.names()[1], "partition_name_b");
+    EXPECT_EQ(pub_qos.m_publishMode.kind, ASYNCHRONOUS_PUBLISH_MODE);
+    EXPECT_EQ(pub_qos.m_publishMode.flow_controller_name, "test_flow_controller");
+    EXPECT_EQ(pub_times.initialHeartbeatDelay, c_TimeZero);
+    EXPECT_EQ(pub_times.heartbeatPeriod.seconds, 11);
+    EXPECT_EQ(pub_times.heartbeatPeriod.nanosec, 32u);
+    EXPECT_EQ(pub_times.nackResponseDelay, c_TimeZero);
+    EXPECT_EQ(pub_times.nackSupressionDuration.seconds, 121);
+    EXPECT_EQ(pub_times.nackSupressionDuration.nanosec, 332u);
+    EXPECT_TRUE(publisher_atts.ignore_non_matching_locators);
+    check_external_locator(publisher_atts.external_unicast_locators, 100, 200, 10, "10.10.10.10", 2001);
+    IPLocator::setIPv4(locator, 192, 168, 1, 3);
+    locator.port = 197;
+    EXPECT_EQ(*(loc_list_it = publisher_atts.unicastLocatorList.begin()), locator);
+    IPLocator::setIPv4(locator, 192, 168, 1, 9);
+    locator.port = 219;
+    ++loc_list_it;
+    EXPECT_EQ(*loc_list_it, locator);
+    IPLocator::setIPv4(locator, 239, 255, 0, 1);
+    locator.port = 2020;
+    EXPECT_EQ(*(loc_list_it = publisher_atts.multicastLocatorList.begin()), locator);
+    IPLocator::setIPv4(locator, 0, 0, 0, 0);
+    locator.port = 0;
+    ++loc_list_it;
+    EXPECT_EQ(*loc_list_it, locator);
+    locator.port = 1989;
+    ++loc_list_it;
+    EXPECT_EQ(*loc_list_it, locator);
+    //locator.port = 2021;
+    //EXPECT_EQ(*(loc_list_it = publisher_atts.outLocatorList.begin()), locator);
+    //EXPECT_EQ(loc_list_it->get_port(), 2021);
+    //EXPECT_EQ(publisher_atts.throughputController.bytesPerPeriod, 9236u);
+    //EXPECT_EQ(publisher_atts.throughputController.periodMillisecs, 234u);
+    EXPECT_EQ(publisher_atts.historyMemoryPolicy, DYNAMIC_RESERVE_MEMORY_MODE);
+    EXPECT_EQ(publisher_atts.getUserDefinedID(), 67);
+    EXPECT_EQ(publisher_atts.getEntityID(), 87);
+    EXPECT_EQ(publisher_atts.matched_subscriber_allocation, ResourceLimitedContainerConfig::fixed_size_configuration(
+                10u));
+}
+
+/*
+ * Checks the data writer parsing (with deprecated but supported elements)
+ */
+TEST_F(XMLProfileParserBasicTests, XMLParserPublisherDeprecated)
+{
+    std::string publisher_profile = std::string("test_publisher_profile");
+    PublisherAttributes publisher_atts;
+
+    ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
+            xmlparser::XMLProfileManager::loadXMLFile("test_xml_deprecated.xml"));
+>>>>>>> e6044e011 (Add XML configuration for FlowControllerDescriptor to 2.x (#4893))
     EXPECT_EQ(  xmlparser::XMLP_ret::XML_OK,
             xmlparser::XMLProfileManager::fillPublisherAttributes(publisher_profile, publisher_atts));
 
@@ -419,6 +942,7 @@ TEST_F(XMLProfileParserTests, XMLParserPublisher)
     EXPECT_EQ(pub_qos.m_partition.names()[0], "partition_name_a");
     EXPECT_EQ(pub_qos.m_partition.names()[1], "partition_name_b");
     EXPECT_EQ(pub_qos.m_publishMode.kind, ASYNCHRONOUS_PUBLISH_MODE);
+    EXPECT_EQ(pub_qos.m_publishMode.flow_controller_name, "test_flow_controller");
     EXPECT_EQ(pub_times.initialHeartbeatDelay, c_TimeZero);
     EXPECT_EQ(pub_times.heartbeatPeriod.seconds, 11);
     EXPECT_EQ(pub_times.heartbeatPeriod.nanosec, 32u);
@@ -460,7 +984,85 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultPublisherProfile)
     PublisherAttributes publisher_atts;
 
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
+<<<<<<< HEAD
             xmlparser::XMLProfileManager::loadXMLFile("test_xml_profiles.xml"));
+=======
+            xmlparser::XMLProfileManager::loadXMLFile(xml_filename_));
+    xmlparser::XMLProfileManager::getDefaultPublisherAttributes(publisher_atts);
+
+    TopicAttributes& pub_topic = publisher_atts.topic;
+    WriterQos& pub_qos = publisher_atts.qos;
+    Locator_t locator;
+    LocatorListIterator loc_list_it;
+    WriterTimes& pub_times = publisher_atts.times;
+
+    //EXPECT_EQ(pub_topic.topicKind, NO_KEY);
+    //EXPECT_EQ(pub_topic.topicName, "samplePubSubTopic");
+    //EXPECT_EQ(pub_topic.topicDataType, "samplePubSubTopicType");
+    EXPECT_EQ(pub_topic.historyQos.kind, KEEP_LAST_HISTORY_QOS);
+    EXPECT_EQ(pub_topic.historyQos.depth, 50);
+    EXPECT_EQ(pub_topic.resourceLimitsQos.max_samples, 432);
+    EXPECT_EQ(pub_topic.resourceLimitsQos.max_instances, 1);
+    EXPECT_EQ(pub_topic.resourceLimitsQos.max_samples_per_instance, 100);
+    EXPECT_EQ(pub_topic.resourceLimitsQos.allocated_samples, 123);
+    EXPECT_EQ(pub_qos.m_durability.kind, TRANSIENT_LOCAL_DURABILITY_QOS);
+    EXPECT_EQ(pub_qos.m_liveliness.kind, MANUAL_BY_PARTICIPANT_LIVELINESS_QOS);
+    EXPECT_EQ(pub_qos.m_liveliness.lease_duration.seconds, 1);
+    EXPECT_EQ(pub_qos.m_liveliness.lease_duration.nanosec, 2u);
+    EXPECT_EQ(pub_qos.m_liveliness.announcement_period, c_TimeInfinite);
+    EXPECT_EQ(pub_qos.m_reliability.kind, BEST_EFFORT_RELIABILITY_QOS);
+    EXPECT_EQ(pub_qos.m_reliability.max_blocking_time, c_TimeZero);
+    EXPECT_EQ(pub_qos.m_partition.names()[0], "partition_name_a");
+    EXPECT_EQ(pub_qos.m_partition.names()[1], "partition_name_b");
+    EXPECT_EQ(pub_qos.m_publishMode.kind, ASYNCHRONOUS_PUBLISH_MODE);
+    EXPECT_EQ(pub_qos.m_publishMode.flow_controller_name, "test_flow_controller");
+    EXPECT_EQ(pub_times.initialHeartbeatDelay, c_TimeZero);
+    EXPECT_EQ(pub_times.heartbeatPeriod.seconds, 11);
+    EXPECT_EQ(pub_times.heartbeatPeriod.nanosec, 32u);
+    EXPECT_EQ(pub_times.nackResponseDelay, c_TimeZero);
+    EXPECT_EQ(pub_times.nackSupressionDuration.seconds, 121);
+    EXPECT_EQ(pub_times.nackSupressionDuration.nanosec, 332u);
+    EXPECT_TRUE(publisher_atts.ignore_non_matching_locators);
+    check_external_locator(publisher_atts.external_unicast_locators, 100, 200, 10, "10.10.10.10", 2001);
+    IPLocator::setIPv4(locator, 192, 168, 1, 3);
+    locator.port = 197;
+    EXPECT_EQ(*(loc_list_it = publisher_atts.unicastLocatorList.begin()), locator);
+    IPLocator::setIPv4(locator, 192, 168, 1, 9);
+    locator.port = 219;
+    ++loc_list_it;
+    EXPECT_EQ(*loc_list_it, locator);
+    IPLocator::setIPv4(locator, 239, 255, 0, 1);
+    locator.port = 2020;
+    EXPECT_EQ(*(loc_list_it = publisher_atts.multicastLocatorList.begin()), locator);
+    IPLocator::setIPv4(locator, 0, 0, 0, 0);
+    locator.port = 0;
+    ++loc_list_it;
+    EXPECT_EQ(*loc_list_it, locator);
+    locator.port = 1989;
+    ++loc_list_it;
+    EXPECT_EQ(*loc_list_it, locator);
+    //locator.port = 2021;
+    //EXPECT_EQ(*(loc_list_it = publisher_atts.outLocatorList.begin()), locator);
+    //EXPECT_EQ(loc_list_it->get_port(), 2021);
+    //EXPECT_EQ(publisher_atts.throughputController.bytesPerPeriod, 9236u);
+    //EXPECT_EQ(publisher_atts.throughputController.periodMillisecs, 234u);
+    EXPECT_EQ(publisher_atts.historyMemoryPolicy, DYNAMIC_RESERVE_MEMORY_MODE);
+    EXPECT_EQ(publisher_atts.getUserDefinedID(), 67);
+    EXPECT_EQ(publisher_atts.getEntityID(), 87);
+    EXPECT_EQ(publisher_atts.matched_subscriber_allocation, ResourceLimitedContainerConfig::fixed_size_configuration(
+                10u));
+}
+
+/*
+ * Checks the data writer default profile parsing (with deprecated but supported elements)
+ */
+TEST_F(XMLProfileParserBasicTests, XMLParserDefaultPublisherProfileDeprecated)
+{
+    PublisherAttributes publisher_atts;
+
+    ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
+            xmlparser::XMLProfileManager::loadXMLFile("test_xml_deprecated.xml"));
+>>>>>>> e6044e011 (Add XML configuration for FlowControllerDescriptor to 2.x (#4893))
     xmlparser::XMLProfileManager::getDefaultPublisherAttributes(publisher_atts);
 
     TopicAttributes& pub_topic = publisher_atts.topic;
@@ -488,6 +1090,7 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultPublisherProfile)
     EXPECT_EQ(pub_qos.m_partition.names()[0], "partition_name_a");
     EXPECT_EQ(pub_qos.m_partition.names()[1], "partition_name_b");
     EXPECT_EQ(pub_qos.m_publishMode.kind, ASYNCHRONOUS_PUBLISH_MODE);
+    EXPECT_EQ(pub_qos.m_publishMode.flow_controller_name, "test_flow_controller");
     EXPECT_EQ(pub_times.initialHeartbeatDelay, c_TimeZero);
     EXPECT_EQ(pub_times.heartbeatPeriod.seconds, 11);
     EXPECT_EQ(pub_times.heartbeatPeriod.nanosec, 32u);

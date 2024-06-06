@@ -37,9 +37,95 @@
         <xs:restriction base="xs:unsignedShort"/>
     </xs:simpleType>
 
+<<<<<<< HEAD
     <xs:simpleType name="octetType">
         <xs:restriction base="xs:unsignedByte"/>
     </xs:simpleType>
+=======
+    <!--Participant:
+        | ╠ att. profile_name       [string] REQ,
+        | ╚ att. is_default_profile [bool],
+        |
+        ├ domainID [uint32], (0~232)
+        └ rtps     [0~1]
+            ├ name                                 [string],
+            ├ defaultUnicastLocatorList            [0~1],
+            ├ defaultMulticastLocatorList          [0~1],
+            ├ default_external_unicast_locators    [0~1],
+            ├ ignore_non_matching_locators         [bool],
+            ├ sendSocketBufferSize                 [uint32],
+            ├ listenSocketBufferSize               [uint32],
+            ├ netmask_filter                       [string] ("OFF", "AUTO", "ON"),
+            ├ builtin                              [0~1],
+            ├ port                                 [0~1],
+            ├ participantID                        [int32],
+            ├ userTransports                       [0~1],
+            |   └ transport_id                     [1~*] [string],
+            ├ useBuiltinTransports                 [bool],
+            ├ builtinTransports                    [0~1],
+            ├ propertiesPolicy                     [0~1],
+            ├ allocation                           [0~1],
+            ├ userData                             [0~1],
+            ├ prefix                               [0~1],
+            ├ flow_controller_descriptor_list      [flowControllerDescriptorListType],
+            ├ builtin_controllers_sender_thread    [threadSettingsType],
+            ├ timed_events_thread                  [threadSettingsType],
+            ├ discovery_server_thread              [threadSettingsType],
+            ├ builtin_transports_reception_threads [threadSettingsType],
+            └ security_log_thread                  [threadSettingsType]-->
+    <!-- TODO:  How to ensure that the userTransports identifiers exist in transport descriptors in the XML file? -->
+    <xs:complexType name="participantProfileType">
+        <xs:all>
+            <xs:element name="domainId" type="domainIDType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="rtps" minOccurs="0" maxOccurs="1">
+                <xs:complexType>
+                    <xs:all>
+                        <xs:element name="name" type="string" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="defaultUnicastLocatorList" type="locatorListType" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="defaultMulticastLocatorList" type="locatorListType" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="default_external_unicast_locators" type="externalLocatorListType" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="ignore_non_matching_locators" type="boolean" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="sendSocketBufferSize" type="uint32" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="listenSocketBufferSize" type="uint32" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="netmask_filter" minOccurs="0" maxOccurs="1">
+                            <xs:simpleType>
+                                <xs:restriction base="xs:string">
+                                    <xs:enumeration value="OFF"/>
+                                    <xs:enumeration value="AUTO"/>
+                                    <xs:enumeration value="ON"/>
+                                </xs:restriction>
+                            </xs:simpleType>
+                        </xs:element>
+                        <xs:element name="builtin" type="builtinAttributesType" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="port" type="portType" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="participantID" type="int32" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="userTransports" minOccurs="0" maxOccurs="1">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element name="transport_id" type="string" minOccurs="1" maxOccurs="unbounded"/>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="useBuiltinTransports" type="boolean" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="builtinTransports" type="builtinTransportsType" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="propertiesPolicy" type="propertyPolicyType" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="allocation" type="rtpsParticipantAllocationAttributesType"  minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="userData" type="octectVectorQosPolicyType" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="prefix" type="prefixType" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="flow_controller_descriptor_list" type="flowControllerDescriptorListType" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="builtin_controllers_sender_thread" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="timed_events_thread" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="discovery_server_thread" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="builtin_transports_reception_threads" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="security_log_thread" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
+                    </xs:all>
+                </xs:complexType>
+            </xs:element>
+        </xs:all>
+        <xs:attribute name="profile_name" type="string" use="required"/>
+        <xs:attribute name="is_default_profile" type="boolean" use="optional"/>
+    </xs:complexType>
+>>>>>>> e6044e011 (Add XML configuration for FlowControllerDescriptor to 2.x (#4893))
 
     <xs:simpleType name="boolType">
         <xs:restriction base="xs:boolean"/> <!-- {true, false} -->
@@ -527,6 +613,72 @@
         </xs:restriction>
     </xs:simpleType>
 
+<<<<<<< HEAD
+=======
+    <!--QoS Ownership Strength:
+        └ value [uint32] -->
+    <xs:complexType name="ownershipStrengthQosPolicyType">
+        <xs:all>
+            <xs:element name="value" type="uint32" minOccurs="0" maxOccurs="1"/>
+        </xs:all>
+    </xs:complexType>
+
+    <!--QoS Partition:
+        └ names    [1~*],
+            └ name [string] -->
+    <xs:complexType name="partitionQosPolicyType">
+        <xs:all>
+            <xs:element name="names" minOccurs="1" maxOccurs="1">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="name" type="string" minOccurs="1" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:all>
+    </xs:complexType>
+
+    <!--QoS Presentation:
+        ├ access_scope    [string] ("INSTANCE", "TOPIC", "GROUP")
+        ├ coherent_access [bool],
+        └ ordered_access  [bool], -->
+    <xs:complexType name="presentationQosPolicyType">
+        <xs:all>
+            <xs:element name="access_scope" minOccurs="0" maxOccurs="1">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="INSTANCE"/>
+                        <xs:enumeration value="TOPIC"/>
+                        <xs:enumeration value="GROUP"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="coherent_access" type="boolean" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="ordered_access" type="boolean" minOccurs="0" maxOccurs="1"/>
+        </xs:all>
+    </xs:complexType>
+
+    <!--QoS Publish Mode:
+        ├ kind [string] ("ASYNCHRONOUS", "SYNCHRONOUS")
+        └ flow_controller_name [string] -->
+    <xs:complexType name="publishModeQosPolicyType">
+        <xs:all>
+            <xs:element name="kind" minOccurs="0" maxOccurs="1">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="SYNCHRONOUS"/>
+                        <xs:enumeration value="ASYNCHRONOUS"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="flow_controller_name" type="string" minOccurs="0" maxOccurs="1"/>
+        </xs:all>
+    </xs:complexType>
+
+    <!--QoS Reliability:
+        ├ kind              [string] ("BEST_EFFORT", "RELIABLE")
+        └ max_blocking_time [durationType], -->
+>>>>>>> e6044e011 (Add XML configuration for FlowControllerDescriptor to 2.x (#4893))
     <xs:complexType name="reliabilityQosPolicyType">
         <xs:all>
             <xs:element name="kind" type="reliabilityQosKindType" minOccurs="0"/>
@@ -619,10 +771,61 @@
         </xs:all>
     </xs:complexType>
 
+<<<<<<< HEAD
     <xs:complexType name="propertyPolicyType">
         <xs:all minOccurs="0">
             <xs:element name="properties" type="propertyVectorType" minOccurs="0"/>
             <xs:element name="binary_properties" type="binaryPropertyVectorType" minOccurs="0"/>
+=======
+    <!--Flow Controller Descriptor List Type:
+        └ flow_controller_descriptor [1~*]-->
+    <xs:complexType name="flowControllerDescriptorListType">
+        <xs:sequence minOccurs="1" maxOccurs="unbounded">   <!-- multiple instances of the elements -->
+            <xs:element name="flow_controller_descriptor" type="flowControllerDescriptorType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!--Flow Controller Descriptor Type:
+        ├ name                  [string] req,
+        ├ scheduler             [flowControllerSchedulerPolicy],
+        ├ max_bytes_per_period  [int32],
+        ├ period_ms             [uint64],
+        └ sender_thread         [threadSettingsType]-->
+    <xs:complexType name="flowControllerDescriptorType">
+        <xs:all>
+            <xs:element name="name" type="string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="scheduler" type="flowControllerSchedulerPolicy" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="max_bytes_per_period" type="int32" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="period_ms" type="uint64" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="sender_thread" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
+        </xs:all>
+    </xs:complexType>
+
+    <!--Flow Controller Scheduler Policy Type [string]:
+         ("FIFO", "ROUND_ROBIN", "HIGH_PRIORITY", "PRIORITY_WITH_RESERVATION")-->
+    <xs:simpleType name="flowControllerSchedulerPolicy">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="FIFO" />
+            <xs:enumeration value="ROUND_ROBIN" />
+            <xs:enumeration value="HIGH_PRIORITY" />
+            <xs:enumeration value="PRIORITY_WITH_RESERVATION" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!--Thread Settings Type:
+        | ╠ att. port        [uint32]
+        |
+        ├ scheduling_policy  [int32],
+        ├ priority           [int32],
+        ├ affinity           [uint64],
+        └ stack_size         [int32]-->
+    <xs:complexType name="threadSettingsType">
+        <xs:all>
+            <xs:element name="scheduling_policy" type="uint32_with_negative_default" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="priority" type="int32" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="affinity" type="uint64" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="stack_size" type="uint32_with_negative_default" minOccurs="0" maxOccurs="1"/>
+>>>>>>> e6044e011 (Add XML configuration for FlowControllerDescriptor to 2.x (#4893))
         </xs:all>
     </xs:complexType>
 
