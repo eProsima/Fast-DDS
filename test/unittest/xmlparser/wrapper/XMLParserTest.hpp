@@ -258,6 +258,14 @@ public:
         return getXMLThroughputController(elem, throughputController, ident);
     }
 
+    static XMLP_ret getXMLFlowControllerDescriptorList_wrapper(
+            tinyxml2::XMLElement* elem,
+            FlowControllerDescriptorList& flow_controller_descriptors,
+            uint8_t ident)
+    {
+        return getXMLFlowControllerDescriptorList(elem, flow_controller_descriptors, ident);
+    }
+
     static XMLP_ret getXMLTopicAttributes_wrapper(
             tinyxml2::XMLElement* elem,
             TopicAttributes& topic,

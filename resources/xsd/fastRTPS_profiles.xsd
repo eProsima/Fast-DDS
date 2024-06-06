@@ -135,6 +135,7 @@
             ├ allocation                           [0~1],
             ├ userData                             [0~1],
             ├ prefix                               [0~1],
+            ├ flow_controller_descriptor_list      [flowControllerDescriptorListType],
             ├ builtin_controllers_sender_thread    [threadSettingsType],
             ├ timed_events_thread                  [threadSettingsType],
             ├ discovery_server_thread              [threadSettingsType],
@@ -179,6 +180,7 @@
                         <xs:element name="allocation" type="rtpsParticipantAllocationAttributesType"  minOccurs="0" maxOccurs="1"/>
                         <xs:element name="userData" type="octectVectorQosPolicyType" minOccurs="0" maxOccurs="1"/>
                         <xs:element name="prefix" type="prefixType" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="flow_controller_descriptor_list" type="flowControllerDescriptorListType" minOccurs="0" maxOccurs="1"/>
                         <xs:element name="builtin_controllers_sender_thread" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
                         <xs:element name="timed_events_thread" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
                         <xs:element name="discovery_server_thread" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
@@ -1690,7 +1692,8 @@
     </xs:complexType>
 
     <!--QoS Publish Mode:
-        └ kind [string] ("ASYNCHRONOUS", "SYNCHRONOUS") -->
+        ├ kind [string] ("ASYNCHRONOUS", "SYNCHRONOUS")
+        └ flow_controller_name [string] -->
     <xs:complexType name="publishModeQosPolicyType">
         <xs:all>
             <xs:element name="kind" minOccurs="0" maxOccurs="1">
@@ -1701,6 +1704,7 @@
                     </xs:restriction>
                 </xs:simpleType>
             </xs:element>
+            <xs:element name="flow_controller_name" type="string" minOccurs="0" maxOccurs="1"/>
         </xs:all>
     </xs:complexType>
 
@@ -1830,6 +1834,41 @@
             <xs:element name="propagate" type="boolean" minOccurs="0" maxOccurs="1"/>
         </xs:all>
     </xs:complexType>
+
+    <!--Flow Controller Descriptor List Type:
+        └ flow_controller_descriptor [1~*]-->
+    <xs:complexType name="flowControllerDescriptorListType">
+        <xs:sequence minOccurs="1" maxOccurs="unbounded">   <!-- multiple instances of the elements -->
+            <xs:element name="flow_controller_descriptor" type="flowControllerDescriptorType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!--Flow Controller Descriptor Type:
+        ├ name                  [string] req,
+        ├ scheduler             [flowControllerSchedulerPolicy],
+        ├ max_bytes_per_period  [int32],
+        ├ period_ms             [uint64],
+        └ sender_thread         [threadSettingsType]-->
+    <xs:complexType name="flowControllerDescriptorType">
+        <xs:all>
+            <xs:element name="name" type="string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="scheduler" type="flowControllerSchedulerPolicy" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="max_bytes_per_period" type="int32" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="period_ms" type="uint64" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="sender_thread" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
+        </xs:all>
+    </xs:complexType>
+
+    <!--Flow Controller Scheduler Policy Type [string]:
+         ("FIFO", "ROUND_ROBIN", "HIGH_PRIORITY", "PRIORITY_WITH_RESERVATION")-->
+    <xs:simpleType name="flowControllerSchedulerPolicy">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="FIFO" />
+            <xs:enumeration value="ROUND_ROBIN" />
+            <xs:enumeration value="HIGH_PRIORITY" />
+            <xs:enumeration value="PRIORITY_WITH_RESERVATION" />
+        </xs:restriction>
+    </xs:simpleType>
 
     <!--Thread Settings Type:
         | ╠ att. port        [uint32]

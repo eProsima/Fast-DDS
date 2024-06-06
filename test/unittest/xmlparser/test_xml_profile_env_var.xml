@@ -178,6 +178,20 @@
                     <affinity>${XML_PROFILES_ENV_VAR_160}</affinity>
                     <stack_size>${XML_PROFILES_ENV_VAR_161}</stack_size>
                 </security_log_thread>
+                <flow_controller_descriptor_list>
+                    <flow_controller_descriptor>
+                        <name>${XML_PROFILES_ENV_VAR_163}</name>
+                        <scheduler>${XML_PROFILES_ENV_VAR_164}</scheduler>
+                        <max_bytes_per_period>${XML_PROFILES_ENV_VAR_165}</max_bytes_per_period>
+                        <period_ms>${XML_PROFILES_ENV_VAR_166}</period_ms>
+                        <sender_thread>
+                            <scheduling_policy>${XML_PROFILES_ENV_VAR_158}</scheduling_policy>
+                            <priority>${XML_PROFILES_ENV_VAR_159}</priority>
+                            <affinity>${XML_PROFILES_ENV_VAR_160}</affinity>
+                            <stack_size>${XML_PROFILES_ENV_VAR_161}</stack_size>
+                        </sender_thread>
+                    </flow_controller_descriptor>
+                </flow_controller_descriptor_list>
             </rtps>
         </participant>
 
@@ -223,6 +237,7 @@
                 </partition>
                 <publishMode>
                     <kind>${XML_PROFILES_ENV_VAR_83}</kind>
+                    <flow_controller_name>${XML_PROFILES_ENV_VAR_167}</flow_controller_name>
                 </publishMode>
                 <userData>
                     <value>${XML_PROFILES_ENV_VAR_84}</value>

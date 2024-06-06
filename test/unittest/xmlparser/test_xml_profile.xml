@@ -197,6 +197,18 @@
                     <affinity>12</affinity>
                     <stack_size>12</stack_size>
                 </security_log_thread>
+                <flow_controller_descriptor_list>
+                    <flow_controller_descriptor>
+                        <name>test_flow_controller</name>
+                        <scheduler>HIGH_PRIORITY</scheduler>
+                        <max_bytes_per_period>2048</max_bytes_per_period>
+                        <period_ms>45</period_ms>
+                        <sender_thread>
+                            <affinity>15</affinity>
+                            <stack_size>1048576</stack_size>
+                        </sender_thread>
+                    </flow_controller_descriptor>
+                </flow_controller_descriptor_list>
             </rtps>
         </participant>
 
@@ -242,6 +254,7 @@
                 </partition>
                 <publishMode>
                     <kind>ASYNCHRONOUS</kind>
+                    <flow_controller_name>test_flow_controller</flow_controller_name>
                 </publishMode>
                 <userData>
                     <value>56.30.0.1</value>
