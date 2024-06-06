@@ -20,34 +20,37 @@
 #ifndef _TEST_BLACKBOX_PUBSUBWRITERREADER_HPP_
 #define _TEST_BLACKBOX_PUBSUBWRITERREADER_HPP_
 
-#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <asio.hpp>
+#include <condition_variable>
+#include <list>
+#include <map>
+#include <string>
+#include <tuple>
+#include <vector>
+
+#include <gtest/gtest.h>
+
 #include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
-#include <fastdds/dds/topic/Topic.hpp>
-#include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
+#include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
-#include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
+#include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastdds/dds/topic/Topic.hpp>
 #include <fastrtps/transport/TransportDescriptorInterface.h>
 
-#include <string>
-#include <list>
-#include <map>
-#include <vector>
-#include <tuple>
-#include <condition_variable>
-#include <asio.hpp>
-#include <gtest/gtest.h>
+#include "PubSubTypeTraits.hpp"
 
 using DomainParticipantFactory = eprosima::fastdds::dds::DomainParticipantFactory;
 
-template<class TypeSupport>
+template<class TypeSupport, typename TypeTraits = PubSubTypeTraits<TypeSupport>>
 class PubSubWriterReader
 {
     class ParticipantListener : public eprosima::fastdds::dds::DomainParticipantListener
@@ -303,6 +306,7 @@ public:
 
     typedef TypeSupport type_support;
     typedef typename type_support::type type;
+    typedef typename TypeTraits::DataListType datalist_type;
 
     PubSubWriterReader(
             const std::string& topic_name)
@@ -388,7 +392,7 @@ public:
         ASSERT_NE(participant_, nullptr);
         ASSERT_TRUE(participant_->is_enabled());
 
-        type_.reset(new type_support());
+        TypeTraits::build_type_support(type_);
 
         // Register type
         ASSERT_EQ(participant_->register_type(type_), ReturnCode_t::RETCODE_OK);
@@ -535,7 +539,7 @@ public:
     }
 
     void send(
-            std::list<type>& msgs)
+            std::list<datalist_type>& msgs)
     {
         auto it = msgs.begin();
 
@@ -548,7 +552,7 @@ public:
                     std::get<1>(tuple)->write((void*)&(*it));
                 }
 
-                default_send_print<type>(*it);
+                TypeTraits::print_sent_data(*it);
                 it = msgs.erase(it);
 
             }
@@ -559,14 +563,14 @@ public:
         }
     }
 
-    std::list<type> data_not_received()
+    std::list<datalist_type> data_not_received()
     {
         std::unique_lock<std::mutex> lock(mutex_);
         return total_msgs_;
     }
 
     void startReception(
-            std::list<type>& msgs)
+            std::list<datalist_type>& msgs)
     {
         mutex_.lock();
         total_msgs_ = msgs;
@@ -864,10 +868,10 @@ private:
             bool& returnedValue)
     {
         returnedValue = false;
-        type data;
+        type* data = static_cast<type*>(type_.create_data());
         eprosima::fastdds::dds::SampleInfo info;
 
-        if ((ReturnCode_t::RETCODE_OK == datareader->take_next_sample((void*)&data, &info)))
+        if ((ReturnCode_t::RETCODE_OK == datareader->take_next_sample(data, &info)))
         {
             returnedValue = true;
 
@@ -881,7 +885,11 @@ private:
 
                 if (info.instance_state == eprosima::fastdds::dds::ALIVE_INSTANCE_STATE)
                 {
-                    auto it = std::find(total_msgs_.begin(), total_msgs_.end(), data);
+                    auto it = std::find_if(total_msgs_.begin(), total_msgs_.end(),
+                                    [&](const datalist_type& elem)
+                                    {
+                                        return TypeTraits::compare_data(elem, *data);
+                                    });
                     ASSERT_NE(it, total_msgs_.end());
                     total_msgs_.erase(it);
                 }
@@ -889,10 +897,13 @@ private:
             if (info.instance_state == eprosima::fastdds::dds::ALIVE_INSTANCE_STATE)
             {
                 ++current_received_count_;
-                default_receive_print<type>(data);
+                TypeTraits::print_received_data(*data);
                 cv_.notify_one();
             }
         }
+
+        // Delete the free-storage allocated data sample
+        type_.delete_data(data);
     }
 
     void publication_matched(
@@ -967,7 +978,7 @@ private:
 
     std::string topic_name_;
     bool initialized_;
-    std::list<type> total_msgs_;
+    std::list<datalist_type> total_msgs_;
     std::mutex mutex_;
     std::condition_variable cv_;
     std::mutex mutexDiscovery_;

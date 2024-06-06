@@ -13,17 +13,33 @@
 // limitations under the License.
 
 #include <atomic>
+#include <chrono>
+#include <cstdint>
+#include <string>
 #include <thread>
+#include <vector>
 
 #include <gtest/gtest.h>
 
+#include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
+#include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
+#include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastdds/dds/topic/qos/TopicQos.hpp>
+#include <fastdds/dds/topic/Topic.hpp>
+#include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
 #include <fastrtps/attributes/LibrarySettingsAttributes.h>
+#include <fastrtps/types/DynamicData.h>
+#include <fastrtps/types/DynamicPubSubType.h>
+#include <fastrtps/types/TypesBase.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
+#include "../types/dynamic_types_traits.hpp"
 #include "../types/HelloWorldTypeObject.h"
 #include "../types/TestRegression3361PubSubTypes.h"
 #include "../types/TestRegression3361TypeObject.h"
@@ -611,6 +627,130 @@ TEST(DDSContentFilter, CorrectlyHandleAliasOtherHeader)
     participant->delete_contentfilteredtopic(filtered_topic);
     participant->delete_topic(topic);
     dpf->delete_participant(participant);
+}
+
+/**
+ * @brief PubSubReader specialization for using a DynamicPubSubType with content filtering,
+ * overriding postprocess_sample to count valid and invalid samples.
+ *
+ * @tparam TypeTraits TypeTraits to be used.
+ */
+template<typename TypeTraits>
+class CFTDynamicPubSubReader : public PubSubReader<fastrtps::types::DynamicPubSubType, TypeTraits>
+{
+public:
+
+    /**
+     * @brief Construct a new CFTDynamicPubSubReader object
+     *
+     * @param topic_name Name of the topic to be used
+     * @param filter_expression Content filter expression
+     * @param expression_parameters Content filter expression parameters
+     */
+    CFTDynamicPubSubReader(
+            const std::string& topic_name,
+            const std::string& filter_expression,
+            const std::vector<std::string>& expression_parameters)
+        : PubSubReader<fastrtps::types::DynamicPubSubType, TypeTraits>(
+            topic_name,
+            filter_expression,
+            expression_parameters)
+    {
+    }
+
+    /**
+     * @brief Count of valid samples received
+     */
+    std::atomic<uint16_t> valid_samples{0};
+
+    /**
+     * @brief Count of invalid samples received
+     */
+    std::atomic<uint16_t> invalid_samples{0};
+
+private:
+
+    /**
+     * @brief Postprocess the received samples, counting valid and invalid ones
+     *
+     * @param sample Sample to be postprocessed
+     * @param info SampleInfo of the sample
+     */
+    void postprocess_sample(
+            const fastrtps::types::DynamicPubSubType::type& /* sample */,
+            const SampleInfo& info) override final
+    {
+        if (info.valid_data)
+        {
+            ++valid_samples;
+        }
+        else
+        {
+            ++invalid_samples;
+        }
+    }
+
+};
+
+/*
+ * Regression test for https://eprosima.easyredmine.com/issues/20815
+ * Check that the content filter is only applied to alive changes.
+ * The test creates a reliable writer and a reader with a content filter that only accepts messages with a specific
+ * string. After discovery, the writer sends 10 samples which pass the filter in 10 different instances, with the
+ * particularity that after each write, the instance is unregistered.
+ * The DATA(u) generated would not pass the filter if it was applied. To check that the filter is only applied to
+ * ALIVE changes (not unregister or disposed), the test checks that the reader receives 10 valid samples (one per
+ * sample sent) and 10 invalid samples (one per unregister). Furthermore, it also checks that no samples are lost.
+ */
+TEST(DDSContentFilter, OnlyFilterAliveChanges)
+{
+
+    /* Create reader with CFT */
+    std::string expression = "index = 1";
+    CFTDynamicPubSubReader<DynamicKeyedHelloworldTypeTraits> reader("TestTopic", expression, {});
+    reader.reliability(RELIABLE_RELIABILITY_QOS).history_depth(2).init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    /* Create writer */
+    PubSubWriter<fastrtps::types::DynamicPubSubType, DynamicKeyedHelloworldTypeTraits> writer("TestTopic");
+    writer.reliability(RELIABLE_RELIABILITY_QOS).history_depth(2).init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    /* Wait for discovery */
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    /* Send 10 samples, each on a different instance, unregistering instances after writing */
+    const size_t num_samples = 10;
+    reader.startReception(num_samples);
+
+    for (size_t i = 0; i < num_samples; ++i)
+    {
+        DynamicData* data = static_cast<DynamicData*>(writer.get_type_support().create_data());
+
+        data->set_uint16_value(
+            static_cast<uint16_t>(i),
+            static_cast<fastrtps::types::MemberId>(DynamicKeyedHelloworldTypeTraits::KeyedHelloWorldMembers::KEY));
+
+        data->set_uint16_value(
+            1u,
+            static_cast<fastrtps::types::MemberId>(DynamicKeyedHelloworldTypeTraits::KeyedHelloWorldMembers::INDEX));
+
+        InstanceHandle_t handle = writer.register_instance(*data);
+        ASSERT_NE(HANDLE_NIL, handle);
+        ASSERT_EQ(ReturnCode_t::RETCODE_OK, writer.send_sample(*data, handle));
+        ASSERT_EQ(true, writer.unregister_instance(*data, handle));
+
+        writer.get_type_support().delete_data(data);
+    }
+
+    // Wait until all samples are acknowledged
+    writer.waitForAllAcked(std::chrono::seconds(3));
+
+    /* Check that both samples and unregisters are received */
+    ASSERT_EQ(reader.valid_samples.load(), 10u);
+    ASSERT_EQ(reader.invalid_samples.load(), 10u);
+    ASSERT_EQ(reader.get_sample_lost_status().total_count, 0);
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P

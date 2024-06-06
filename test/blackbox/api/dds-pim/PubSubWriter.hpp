@@ -32,30 +32,31 @@
 #include <Windows.h>
 #endif // _MSC_VER
 
-#include <fastdds/dds/core/condition/StatusCondition.hpp>
+#include <fastdds/dds/common/InstanceHandle.hpp>
 #include <fastdds/dds/core/condition/GuardCondition.hpp>
+#include <fastdds/dds/core/condition/StatusCondition.hpp>
 #include <fastdds/dds/core/condition/WaitSet.hpp>
-#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
-#include <fastdds/dds/topic/Topic.hpp>
-#include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
+#include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
-#include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/dds/topic/Topic.hpp>
+#include <fastdds/rtps/flowcontrol/FlowControllerSchedulerPolicy.hpp>
+#include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
 #include <fastdds/rtps/transport/UDPTransportDescriptor.h>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
 #include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
-#include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
-#include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/xmlparser/XMLParser.h>
 #include <fastrtps/xmlparser/XMLTree.h>
-#include <fastrtps/utils/IPLocator.h>
-#include <fastdds/rtps/flowcontrol/FlowControllerSchedulerPolicy.hpp>
 
+#include "PubSubTypeTraits.hpp"
 
 using DomainParticipantFactory = eprosima::fastdds::dds::DomainParticipantFactory;
 using eprosima::fastrtps::rtps::IPLocator;
@@ -63,7 +64,7 @@ using eprosima::fastdds::rtps::UDPTransportDescriptor;
 using eprosima::fastdds::rtps::UDPv4TransportDescriptor;
 using eprosima::fastdds::rtps::UDPv6TransportDescriptor;
 
-template<class TypeSupport>
+template<class TypeSupport, typename TypeTraits = PubSubTypeTraits<TypeSupport>>
 class PubSubWriter
 {
     class ParticipantListener : public eprosima::fastdds::dds::DomainParticipantListener
@@ -254,6 +255,7 @@ public:
 
     typedef TypeSupport type_support;
     typedef typename type_support::type type;
+    typedef typename TypeTraits::DataListType datalist_type;
 
     PubSubWriter(
             const std::string& topic_name)
@@ -359,7 +361,7 @@ public:
         {
             participant_guid_ = participant_->guid();
 
-            type_.reset(new type_support());
+            TypeTraits::build_type_support(type_);
 
             // Register type
             ASSERT_EQ(participant_->register_type(type_), ReturnCode_t::RETCODE_OK);
@@ -467,7 +469,7 @@ public:
     }
 
     void send(
-            std::list<type>& msgs,
+            std::list<datalist_type>& msgs,
             uint32_t milliseconds = 0)
     {
         auto it = msgs.begin();
@@ -476,7 +478,7 @@ public:
         {
             if (datawriter_->write((void*)&(*it)))
             {
-                default_send_print<type>(*it);
+                TypeTraits::print_sent_data(*it);
                 it = msgs.erase(it);
                 if (milliseconds > 0)
                 {
@@ -513,8 +515,16 @@ public:
     bool send_sample(
             type& msg)
     {
-        default_send_print(msg);
+        TypeTraits::print_sent_data(msg);
         return datawriter_->write((void*)&msg);
+    }
+
+    ReturnCode_t send_sample(
+            type& msg,
+            const eprosima::fastdds::dds::InstanceHandle_t& instance_handle)
+    {
+        TypeTraits::print_sent_data(msg);
+        return datawriter_->write((void*)&msg, instance_handle);
     }
 
     void assert_liveliness()
@@ -1599,6 +1609,11 @@ public:
     {
         participant_qos_.wire_protocol().builtin.use_WriterLivelinessProtocol = use_wlp;
         return *this;
+    }
+
+    eprosima::fastdds::dds::TypeSupport get_type_support()
+    {
+        return type_;
     }
 
 protected:

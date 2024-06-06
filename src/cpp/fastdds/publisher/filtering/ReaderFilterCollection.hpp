@@ -133,13 +133,17 @@ public:
                         // Copy the signature
                         std::copy(entry.filter_signature.begin(), entry.filter_signature.end(), signature);
 
-                        // Evaluate filter and update filtered_out_readers
-                        bool filter_result = entry.filter->evaluate(change.serializedPayload, info, it->first);
-                        if (!filter_result)
+                        // Only evaluate filter on ALIVE changes, as UNREGISTERED and DISPOSED are always relevant
+                        bool filter_result = true;
+                        if (fastrtps::rtps::ALIVE == change.kind)
                         {
-                            change.filtered_out_readers.emplace_back(it->first);
+                            // Evaluate filter and update filtered_out_readers
+                            filter_result = entry.filter->evaluate(change.serializedPayload, info, it->first);
+                            if (!filter_result)
+                            {
+                                change.filtered_out_readers.emplace_back(it->first);
+                            }
                         }
-
                         return filter_result;
                     };
 
