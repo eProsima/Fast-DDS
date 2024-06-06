@@ -143,7 +143,7 @@ public:
     Duration_t keep_duration;
 
     //! Flow controller name. Default: fastdds::rtps::FASTDDS_FLOW_CONTROLLER_DEFAULT.
-    const char* flow_controller_name = fastdds::rtps::FASTDDS_FLOW_CONTROLLER_DEFAULT;
+    std::string flow_controller_name = fastdds::rtps::FASTDDS_FLOW_CONTROLLER_DEFAULT;
 };
 
 } /* namespace rtps */

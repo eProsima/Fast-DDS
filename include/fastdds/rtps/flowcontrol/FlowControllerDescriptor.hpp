@@ -15,6 +15,8 @@
 #ifndef FASTDDS_RTPS_FLOWCONTROL_FLOWCONTROLLERDESCRIPTOR_HPP
 #define FASTDDS_RTPS_FLOWCONTROL_FLOWCONTROLLERDESCRIPTOR_HPP
 
+#include <string>
+
 #include "FlowControllerConsts.hpp"
 #include "FlowControllerSchedulerPolicy.hpp"
 
@@ -31,7 +33,7 @@ namespace rtps {
 struct FlowControllerDescriptor
 {
     //! Name of the flow controller.
-    const char* name = nullptr;
+    std::string name = FASTDDS_FLOW_CONTROLLER_DEFAULT;
 
     //! Scheduler policy used by the flow controller.
     //!
