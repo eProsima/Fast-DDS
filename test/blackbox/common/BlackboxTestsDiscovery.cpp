@@ -2194,7 +2194,8 @@ TEST(Discovery, discovery_cyclone_participant_with_custom_pid)
 
     /* Create participant with custom transport and listener */
     DiscoveryListener listener;
-    uint32_t domain_id = static_cast<uint32_t>(GET_PID()) % 230;
+    /* We need to match the domain id in the datagram */
+    uint32_t domain_id = 0;
     DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
     DomainParticipant* participant = factory->create_participant(domain_id, participant_qos, &listener);
     ASSERT_NE(nullptr, participant);
