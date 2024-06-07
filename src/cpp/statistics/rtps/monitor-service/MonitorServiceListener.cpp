@@ -63,7 +63,7 @@ bool MonitorServiceListener::on_local_entity_connections_change(
     return monitor_srv_->push_entity_update(guid.entityId, StatusKind::CONNECTION_LIST);
 }
 
-void MonitorServiceListener::onWriterMatched(
+void MonitorServiceListener::on_writer_matched(
         fastdds::rtps::RTPSWriter*,
         const fastdds::rtps::MatchingInfo& info)
 {

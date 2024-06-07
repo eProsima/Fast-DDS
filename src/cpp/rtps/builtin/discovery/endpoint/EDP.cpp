@@ -468,7 +468,7 @@ bool EDP::unpairReaderProxy(
                         MatchingInfo info;
                         info.status = REMOVED_MATCHING;
                         info.remoteEndpointGuid = reader_guid;
-                        listener->onWriterMatched(&w, info);
+                        listener->on_writer_matched(&w, info);
                     }
                 }
 
@@ -881,7 +881,7 @@ bool EDP::pairingWriter(
                         MatchingInfo info;
                         info.status = MATCHED_MATCHING;
                         info.remoteEndpointGuid = reader_guid;
-                        W->getListener()->onWriterMatched(W, info);
+                        W->getListener()->on_writer_matched(W, info);
                     }
                 }
 #endif // if HAVE_SECURITY
@@ -905,7 +905,7 @@ bool EDP::pairingWriter(
                         MatchingInfo info;
                         info.status = REMOVED_MATCHING;
                         info.remoteEndpointGuid = reader_guid;
-                        W->getListener()->onWriterMatched(W, info);
+                        W->getListener()->on_writer_matched(W, info);
                     }
                 }
             }
@@ -956,7 +956,7 @@ bool EDP::pairing_reader_proxy_with_any_local_writer(
                                 MatchingInfo info;
                                 info.status = MATCHED_MATCHING;
                                 info.remoteEndpointGuid = reader_guid;
-                                w.getListener()->onWriterMatched(&w, info);
+                                w.getListener()->on_writer_matched(&w, info);
                             }
                         }
 #endif // if HAVE_SECURITY
@@ -981,7 +981,7 @@ bool EDP::pairing_reader_proxy_with_any_local_writer(
                                 MatchingInfo info;
                                 info.status = REMOVED_MATCHING;
                                 info.remoteEndpointGuid = reader_guid;
-                                w.getListener()->onWriterMatched(&w, info);
+                                w.getListener()->on_writer_matched(&w, info);
                             }
                         }
                     }
@@ -1047,7 +1047,7 @@ bool EDP::pairing_reader_proxy_with_local_writer(
                                     MatchingInfo info;
                                     info.status = REMOVED_MATCHING;
                                     info.remoteEndpointGuid = reader_guid;
-                                    w.getListener()->onWriterMatched(&w, info);
+                                    w.getListener()->on_writer_matched(&w, info);
                                 }
                             }
                         }
@@ -1089,7 +1089,7 @@ bool EDP::pairing_remote_reader_with_local_writer_after_security(
                             MatchingInfo info;
                             info.status = MATCHED_MATCHING;
                             info.remoteEndpointGuid = reader_guid;
-                            w.getListener()->onWriterMatched(&w, info);
+                            w.getListener()->on_writer_matched(&w, info);
                         }
                     }
                     // don't look anymore

@@ -72,7 +72,7 @@ private:
         {
         }
 
-        void onWriterMatched(
+        void on_writer_matched(
                 eprosima::fastdds::rtps::RTPSWriter* /*writer*/,
                 const eprosima::fastdds::rtps::MatchingInfo& info) override
         {

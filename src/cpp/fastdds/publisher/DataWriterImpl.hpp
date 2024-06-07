@@ -421,7 +421,7 @@ protected:
         {
         }
 
-        void onWriterMatched(
+        void on_writer_matched(
                 fastdds::rtps::RTPSWriter* writer,
                 const fastdds::rtps::MatchingInfo& info) override;
 

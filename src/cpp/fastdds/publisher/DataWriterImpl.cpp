@@ -1281,7 +1281,7 @@ const Publisher* DataWriterImpl::get_publisher() const
     return publisher_->get_publisher();
 }
 
-void DataWriterImpl::InnerDataWriterListener::onWriterMatched(
+void DataWriterImpl::InnerDataWriterListener::on_writer_matched(
         RTPSWriter* /*writer*/,
         const MatchingInfo& info)
 {

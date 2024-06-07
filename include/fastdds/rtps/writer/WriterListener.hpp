@@ -49,7 +49,7 @@ public:
      * @param writer Pointer to the RTPSWriter.
      * @param info Matching Information.
      */
-    virtual void onWriterMatched(
+    virtual void on_writer_matched(
             RTPSWriter* writer,
             const MatchingInfo& info)
     {

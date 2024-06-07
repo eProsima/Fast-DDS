@@ -56,7 +56,7 @@ public:
     bool on_local_entity_connections_change(
             const fastdds::rtps::GUID_t& guid) const override;
 
-    void onWriterMatched(
+    void on_writer_matched(
             fastdds::rtps::RTPSWriter* writer,
             const fastdds::rtps::MatchingInfo& info) override;
 

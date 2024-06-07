@@ -627,7 +627,7 @@ void verify_expectations_on_publication_matched (
 {
     rtps::MatchingInfo status;
 
-    RTPSDomain::writer_->listener_->onWriterMatched(nullptr, status);
+    RTPSDomain::writer_->listener_->on_writer_matched(nullptr, status);
     Mock::VerifyAndClearExpectations(&datawriter_listener_);
     Mock::VerifyAndClearExpectations(&publisher_listener_);
     Mock::VerifyAndClearExpectations(&participant_listener_);
