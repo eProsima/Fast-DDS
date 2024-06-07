@@ -154,19 +154,35 @@ void LifespanSubscriber::run(
     // Now wait and try to remove from history
     std::cout << std::endl << "Subscriber waiting for " << sleep_ms << " milliseconds" << std::endl << std::endl;
     std::this_thread::sleep_for(std::chrono::milliseconds(sleep_ms));
+    
+    LoanableSequence<Lifespan> data_values;
+    SampleInfoSeq sample_infos;
 
-    LifespanPubSubType::type data;
-    SampleInfo info;
+    int32_t max_samples = listener.n_samples;
+    ReturnCode_t result = reader_->take(
+        data_values,
+        sample_infos,
+        max_samples,
+        ANY_SAMPLE_STATE
+    );
 
-    for ( uint32_t i = 0; i < listener.n_samples; i++ )
+    if (result == ReturnCode_t::RETCODE_OK)
     {
-        if (reader_->take_next_sample((void*) &data, &info) == ReturnCode_t::RETCODE_OK)
+        size_t samples_taken = sample_infos.length();
+        std::cout << samples_taken << std::endl;
+        for (size_t i = 0; i < samples_taken; ++i)
         {
-            std::cout << "Message " << data.message() << " " << data.index() << " read from history" << std::endl;
-        }
-        else
-        {
-            std::cout << "Could not read message " << i << " from history" << std::endl;
+            Lifespan& sample = data_values[i];
+            SampleInfo& sample_info = sample_infos[i];
+
+            std::cout << "Message " << sample.message() << " with index " << sample.index() 
+                    << " read from history." << std::endl;
         }
     }
+    else
+    {
+        std::cout << "Could not read message from history" << std::endl;
+    }
+
+    reader_->return_loan(data_values, sample_infos);
 }
