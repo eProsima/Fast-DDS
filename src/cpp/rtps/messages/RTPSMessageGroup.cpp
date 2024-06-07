@@ -586,12 +586,6 @@ bool RTPSMessageGroup::add_data(
 #endif // if HAVE_SECURITY
     const EntityId_t& readerId = get_entity_id(sender_->remote_guids());
 
-    // If gather-send is possible, get payload
-    if (!copy_data)
-    {
-        get_payload(change);
-    }
-
     CacheChange_t change_to_add;
     change_to_add.copy_not_memcpy(&change);
     change_to_add.serializedPayload.data = change.serializedPayload.data;
@@ -658,7 +652,17 @@ bool RTPSMessageGroup::add_data(
     }
 #endif // if HAVE_SECURITY
 
-    return insert_submessage(is_big_submessage);
+    if (insert_submessage(is_big_submessage))
+    {
+        // If gather-send is possible, get payload
+        if (!copy_data)
+        {
+            get_payload(change);
+        }
+        return true;
+    }
+
+    return false;
 }
 
 bool RTPSMessageGroup::add_data_frag(
@@ -700,12 +704,6 @@ bool RTPSMessageGroup::add_data_frag(
     copy_data = protect_payload || protect_submessage || protect_rtps;
 #endif // if HAVE_SECURITY
     const EntityId_t& readerId = get_entity_id(sender_->remote_guids());
-
-    // If gather-send is possible, get payload
-    if (!copy_data)
-    {
-        get_payload(change);
-    }
 
     // TODO (Ricardo). Check to create special wrapper.
     CacheChange_t change_to_add;
@@ -773,7 +771,16 @@ bool RTPSMessageGroup::add_data_frag(
     }
 #endif // if HAVE_SECURITY
 
-    return insert_submessage(false);
+    if (insert_submessage(false))
+    {
+        // If gather-send is possible, get payload
+        if (!copy_data)
+        {
+            get_payload(change);
+        }
+        return true;
+    }
+    return false;
 }
 
 bool RTPSMessageGroup::add_heartbeat(
