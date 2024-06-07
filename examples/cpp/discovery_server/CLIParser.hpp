@@ -75,21 +75,21 @@ public:
 
     //! Publisher client configuration structure
     struct client_publisher_config : public common_config,
-                                     public pubsub_config
+        public pubsub_config
     {
         uint16_t interval{100};
     };
 
     //! Subscriber client configuration structure
     struct client_subscriber_config : public common_config,
-                                      public pubsub_config
+        public pubsub_config
     {
     };
 
     //! Server configuration structure
     //! A server can, in turn, act as a client
     struct server_config : public common_config,
-                           public client_config
+        public client_config
     {
         bool is_also_client{false};
         uint16_t listening_port{16166};
@@ -106,16 +106,16 @@ public:
         client_subscriber_config sub_config;
         server_config srv_config;
 
-        friend std::ostream& operator<< (
-            std::ostream& os,
-            const ds_example_config& config)
+        friend std::ostream& operator << (
+                std::ostream& os,
+                const ds_example_config& config)
         {
             os << "Entity: " << parse_entity_kind(config.entity) << std::endl;
             os << "Common options:" << std::endl;
             os << "  Transport: " << static_cast<int>(config.pub_config.transport_kind) << std::endl;
 
             if (config.entity != CLIParser::EntityKind::SERVER ||
-                (config.entity == CLIParser::EntityKind::SERVER && config.srv_config.is_also_client))
+                    (config.entity == CLIParser::EntityKind::SERVER && config.srv_config.is_also_client))
             {
                 os << "Client options:" << std::endl;
                 os << "  Connection address: " << config.pub_config.connection_address << std::endl;
@@ -147,6 +147,7 @@ public:
 
             return os;
         }
+
     };
 
     /**
@@ -442,7 +443,7 @@ public:
                         else
                         {
                             if (config.entity == CLIParser::EntityKind::CLIENT_PUBLISHER ||
-                                config.entity == CLIParser::EntityKind::CLIENT_SUBSCRIBER)
+                                    config.entity == CLIParser::EntityKind::CLIENT_SUBSCRIBER)
                             {
                                 config.pub_config.samples = static_cast<uint16_t>(input);
                                 config.sub_config.samples = static_cast<uint16_t>(input);
@@ -492,7 +493,7 @@ public:
                         {
                             int input = std::stoi(argv[i]);
                             if (input < std::numeric_limits<std::uint16_t>::min() ||
-                                input > std::numeric_limits<std::uint16_t>::max())
+                                    input > std::numeric_limits<std::uint16_t>::max())
                             {
                                 throw std::out_of_range("interval argument out of range");
                             }

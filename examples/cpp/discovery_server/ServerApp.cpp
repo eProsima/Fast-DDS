@@ -249,10 +249,12 @@ void ServerApp::run()
         {
             bool timeout = false;
             cv_.wait_for(period_lock, std::chrono::seconds(timeout_), [&]()
-            {
-                timeout = ((std::chrono::steady_clock::now() - start_time_) >= std::chrono::milliseconds(timeout_ * 1000));
-                return is_stopped() || timeout;
-            });
+                    {
+                        timeout =
+                        ((std::chrono::steady_clock::now() - start_time_) >=
+                        std::chrono::milliseconds(timeout_ * 1000));
+                        return is_stopped() || timeout;
+                    });
 
             if (timeout)
             {
@@ -262,9 +264,9 @@ void ServerApp::run()
         else
         {
             cv_.wait(period_lock, [&]()
-            {
-                return is_stopped();
-            });
+                    {
+                        return is_stopped();
+                    });
         }
     }
 }
