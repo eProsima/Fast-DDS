@@ -26,8 +26,8 @@ public:
     {
         assert(payload.payload_owner == this);
 
-        payload.empty();
         payload.payload_owner = nullptr;
+        payload.empty();
 
         return true;
     }
