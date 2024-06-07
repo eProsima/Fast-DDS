@@ -18,8 +18,6 @@
 #ifndef RTPS_WRITER__READERPROXY_HPP
 #define RTPS_WRITER__READERPROXY_HPP
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-
 #include <algorithm>
 #include <atomic>
 #include <mutex>
@@ -506,5 +504,4 @@ private:
 } /* namespace fastrtps */
 } /* namespace eprosima */
 
-#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#endif /* RTPS_WRITER__READERPROXY_HPP */
+#endif // RTPS_WRITER__READERPROXY_HPP
