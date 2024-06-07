@@ -1,0 +1,66 @@
+version: "3"
+
+services:
+  subscriber:
+    image: @DOCKER_IMAGE_NAME@
+    volumes:
+      - @PROJECT_BINARY_DIR@:@PROJECT_BINARY_DIR@
+      - @fastcdr_LIB_DIR@:@fastcdr_LIB_DIR@
+      @TINYXML2_LIB_DIR_COMPOSE_VOLUME@
+    environment:
+      # TODO(eduponz): LD_LIBRARY_PATH is not the correct variable for Windows
+      LD_LIBRARY_PATH: @PROJECT_BINARY_DIR@/src/cpp:@fastcdr_LIB_DIR@@TINYXML2_LIB_DIR_COMPOSE_LD_LIBRARY_PATH@
+      EXAMPLE_DIR: @PROJECT_BINARY_DIR@/examples/cpp/discovery_server@FILE_EXTENSION@
+      SUBSCRIBER_ADDITIONAL_ARGUMENTS: ${SUB_ARGS}
+    command: @SHELL_EXECUTABLE@ -c "$${EXAMPLE_DIR}/discovery_server@FILE_EXTENSION@ subscriber --reliable --transient-local $${SUBSCRIBER_ADDITIONAL_ARGUMENTS}"
+    network_mode: host
+    ipc: host
+    depends_on:
+      - server_1
+
+  publisher:
+    image: @DOCKER_IMAGE_NAME@
+    volumes:
+      - @PROJECT_BINARY_DIR@:@PROJECT_BINARY_DIR@
+      - @fastcdr_LIB_DIR@:@fastcdr_LIB_DIR@
+      @TINYXML2_LIB_DIR_COMPOSE_VOLUME@
+    environment:
+      # TODO(eduponz): LD_LIBRARY_PATH is not the correct variable for Windows
+      LD_LIBRARY_PATH: @PROJECT_BINARY_DIR@/src/cpp:@fastcdr_LIB_DIR@@TINYXML2_LIB_DIR_COMPOSE_LD_LIBRARY_PATH@
+      EXAMPLE_DIR: @PROJECT_BINARY_DIR@/examples/cpp/discovery_server@FILE_EXTENSION@
+      PUBLISHER_ADDITIONAL_ARGUMENTS: ${PUB_ARGS}
+    command: @SHELL_EXECUTABLE@ -c "$${EXAMPLE_DIR}/discovery_server@FILE_EXTENSION@ publisher --reliable --transient-local $${PUBLISHER_ADDITIONAL_ARGUMENTS}"
+    network_mode: host
+    ipc: host
+    depends_on:
+      - server_1
+
+  server_1:
+    image: @DOCKER_IMAGE_NAME@
+    volumes:
+      - @PROJECT_BINARY_DIR@:@PROJECT_BINARY_DIR@
+      - @fastcdr_LIB_DIR@:@fastcdr_LIB_DIR@
+      @TINYXML2_LIB_DIR_COMPOSE_VOLUME@
+    environment:
+      # TODO(eduponz): LD_LIBRARY_PATH is not the correct variable for Windows
+      LD_LIBRARY_PATH: @PROJECT_BINARY_DIR@/src/cpp:@fastcdr_LIB_DIR@@TINYXML2_LIB_DIR_COMPOSE_LD_LIBRARY_PATH@
+      EXAMPLE_DIR: @PROJECT_BINARY_DIR@/examples/cpp/discovery_server@FILE_EXTENSION@
+      SERVER1_ADDITIONAL_ARGUMENTS: ${SERVER1_ARGS}
+    network_mode: host
+    ipc: host
+    command: @SHELL_EXECUTABLE@ -c "$${EXAMPLE_DIR}/discovery_server@FILE_EXTENSION@ server $${SERVER1_ADDITIONAL_ARGUMENTS}"
+
+  server_2:
+    image: @DOCKER_IMAGE_NAME@
+    volumes:
+      - @PROJECT_BINARY_DIR@:@PROJECT_BINARY_DIR@
+      - @fastcdr_LIB_DIR@:@fastcdr_LIB_DIR@
+      @TINYXML2_LIB_DIR_COMPOSE_VOLUME@
+    environment:
+      # TODO(eduponz): LD_LIBRARY_PATH is not the correct variable for Windows
+      LD_LIBRARY_PATH: @PROJECT_BINARY_DIR@/src/cpp:@fastcdr_LIB_DIR@@TINYXML2_LIB_DIR_COMPOSE_LD_LIBRARY_PATH@
+      EXAMPLE_DIR: @PROJECT_BINARY_DIR@/examples/cpp/discovery_server@FILE_EXTENSION@
+      SERVER2_ADDITIONAL_ARGUMENTS: ${SERVER2_ARGS}
+    network_mode: host
+    ipc: host
+    command: @SHELL_EXECUTABLE@ -c "$${EXAMPLE_DIR}/discovery_server@FILE_EXTENSION@ server $${SERVER2_ADDITIONAL_ARGUMENTS}"
