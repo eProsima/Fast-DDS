@@ -718,7 +718,7 @@ protected:
 private:
 
     static std::mutex collections_mtx_;
-    static std::vector<std::string> flow_controller_descriptor_names_;
+    static std::set<std::string> flow_controller_descriptor_names_;
 };
 
 } // namespace xmlparser
