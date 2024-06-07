@@ -112,6 +112,9 @@ public:
             if (it->data == payload_data)
             {
                 payload = *it;
+                // Avoid releasing the payload in destructor
+                it->payload_owner = nullptr;
+                it->data = nullptr;
                 loans_.erase(it);
                 return true;
             }
@@ -563,6 +566,10 @@ ReturnCode_t DataWriterImpl::loan_sample(
             }
             break;
     }
+
+    // Avoid releasing the payload in destructor
+    payload.payload_owner = nullptr;
+    payload.data = nullptr;
 
     return RETCODE_OK;
 }

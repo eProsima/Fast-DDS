@@ -83,6 +83,13 @@ struct FASTDDS_EXPORTED_API SerializedPayload_t
     {
     }
 
+    //!Copy constructor
+    SerializedPayload_t(
+            const SerializedPayload_t& other) = default;
+    //!Copy operator
+    SerializedPayload_t& operator = (
+            const SerializedPayload_t& other) = default;
+
     /**
      * @param len Maximum size of the payload
      */
@@ -112,6 +119,39 @@ struct FASTDDS_EXPORTED_API SerializedPayload_t
         return ((encapsulation == other.encapsulation) &&
                (length == other.length) &&
                (0 == memcmp(data, other.data, length)));
+    }
+
+    //!Move operator
+    SerializedPayload_t& operator = (
+            SerializedPayload_t&& other) noexcept
+    {
+        if (this == &other)
+        {
+            return *this;
+        }
+
+        encapsulation = other.encapsulation;
+        length = other.length;
+        data = other.data;
+        max_size = other.max_size;
+        pos = other.pos;
+        payload_owner = other.payload_owner;
+
+        other.encapsulation = CDR_BE;
+        other.length = 0;
+        other.data = nullptr;
+        other.max_size = 0;
+        other.pos = 0;
+        other.payload_owner = nullptr;
+
+        return *this;
+    }
+
+    //!Move constructor
+    SerializedPayload_t(
+            SerializedPayload_t&& other) noexcept
+    {
+        *this = std::move(other);
     }
 
     /*!
