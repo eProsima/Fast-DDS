@@ -1,4 +1,4 @@
-// Copyright 2023 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ SubscriberApp::SubscriberApp(
     , subscriber_(nullptr)
     , topic_(nullptr)
     , reader_(nullptr)
-    , type_(new CustomPayloadPoolDataPubSubType())
+    , type_(new HelloWorldPubSubType())
     , samples_(config.samples)
     , received_samples_(0)
     , stop_(false)

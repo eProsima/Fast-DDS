@@ -1,4 +1,4 @@
-// Copyright 2023 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ PublisherApp::PublisherApp(
     , publisher_(nullptr)
     , topic_(nullptr)
     , writer_(nullptr)
-    , type_(new CustomPayloadPoolDataPubSubType())
+    , type_(new HelloWorldPubSubType())
     , matched_(0)
     , samples_(config.samples)
     , stop_(false)
@@ -51,7 +51,7 @@ PublisherApp::PublisherApp(
 {
     // Set up the data type with initial values
     hello_.index(0);
-    hello_.message("CustomPayloadPool");
+    hello_.message("HelloWorld");
 
     payload_pool_ = std::make_shared<CustomPayloadPool>();
 

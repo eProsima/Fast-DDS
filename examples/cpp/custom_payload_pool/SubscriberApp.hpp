@@ -1,4 +1,4 @@
-// Copyright 2023 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@
 #include "Application.hpp"
 #include "CLIParser.hpp"
 #include "CustomPayloadPool.hpp"
-#include "CustomPayloadPoolDataPubSubTypes.h"
+#include "HelloWorldPubSubTypes.h"
 
 using namespace eprosima::fastdds::dds;
 namespace eprosima {
@@ -68,7 +68,7 @@ private:
     //! Return the current state of execution
     bool is_stopped();
 
-    CustomPayloadPoolData hello_;
+    HelloWorld hello_;
 
     std::shared_ptr<CustomPayloadPool> payload_pool_;
 

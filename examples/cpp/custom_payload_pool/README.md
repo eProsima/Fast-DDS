@@ -7,7 +7,7 @@ In that way, a custom payload pool is mandatory to be implemented, and passed to
 
 To launch this test open two different consoles:
 
-In the first one launch: `./CustomPayloadPoolExample publisher` (or `CustomPayloadPoolExample.exe publisher` on Windows).
-In the second one: `./CustomPayloadPoolExample subscriber` (or `CustomPayloadPoolExample.exe subscriber` on Windows).
+In the first one launch: `./HelloWorldExample publisher` (or `HelloWorldExample.exe publisher` on Windows).
+In the second one: `./HelloWorldExample subscriber` (or `HelloWorldExample.exe subscriber` on Windows).
 
 The endpoints will match and communicate with the custom payload pool.

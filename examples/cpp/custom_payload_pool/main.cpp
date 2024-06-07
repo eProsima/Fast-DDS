@@ -1,4 +1,4 @@
-// Copyright 2023 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ int main(
 {
 
     auto ret = EXIT_SUCCESS;
-    const std::string topic_name = "custom_payload_pool_topic";
+    const std::string topic_name = "hello_world_topic";
     CLIParser::custom_payload_pool_config config = CLIParser::parse_cli_options(argc, argv);
     uint16_t samples = 0;
     switch (config.entity)
