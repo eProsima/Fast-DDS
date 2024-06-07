@@ -56,8 +56,9 @@ PublisherApp::PublisherApp(
     payload_pool_ = std::make_shared<CustomPayloadPool>();
 
     // Create the participant
+    DomainParticipantQos pqos = PARTICIPANT_QOS_DEFAULT;
     auto factory = DomainParticipantFactory::get_instance();
-    participant_ = factory->create_participant_with_default_profile(nullptr, StatusMask::none());
+    participant_ = factory->create_participant(config.domain, pqos);
     if (participant_ == nullptr)
     {
         throw std::runtime_error("Participant initialization failed");

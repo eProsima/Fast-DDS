@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _FASTDDS_CUSTOM_PAYLOAD_POOL_DATA_PUBLISHER_HPP_
-#define _FASTDDS_CUSTOM_PAYLOAD_POOL_DATA_PUBLISHER_HPP_
+#ifndef _FASTDDS_CUSTOM_PAYLOAD_POOL_PUBLISHER_HPP_
+#define _FASTDDS_CUSTOM_PAYLOAD_POOL_PUBLISHER_HPP_
 
 #include <condition_variable>
 #include <mutex>
@@ -103,4 +103,4 @@ private:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif /* _FASTDDS_CUSTOM_PAYLOAD_POOL_DATA_PUBLISHER_H_ */
+#endif /* _FASTDDS_CUSTOM_PAYLOAD_POOL_PUBLISHER_H_ */

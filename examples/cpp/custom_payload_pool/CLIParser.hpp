@@ -46,6 +46,7 @@ public:
     struct subscriber_config
     {
         uint16_t samples = 0;
+        uint16_t domain = 0;
     };
 
     //! Publisher application configuration structure
@@ -83,6 +84,8 @@ public:
         std::cout << "  -s <num>, --samples <num>       Number of samples to send or receive"   << std::endl;
         std::cout << "                                  [0 <= <num> <= 65535]"                  << std::endl;
         std::cout << "                                  (Default: 0 [unlimited])"               << std::endl;
+        std::cout << "  -d <num>, --domain <num>        Domain ID number [0 <= <num> <= 232]"   << std::endl;
+        std::cout << "                                  (Default: 0)"                           << std::endl;
         std::cout << "Publisher options:"                                                       << std::endl;
         std::cout << "  -i, --interval                  Time between samples in milliseconds "  << std::endl;
         std::cout << "                                  (Default: 100)"                         << std::endl;
@@ -184,6 +187,51 @@ public:
                     print_help(EXIT_FAILURE);
                 }
             }
+             else if (arg == "-d" || arg == "--domain")
+            {
+                if (i + 1 < argc)
+                {
+                    try
+                    {
+                        int input = std::stoi(argv[++i]);
+                        if (input < 0 || input > 232)
+                        {
+                            throw std::out_of_range("domain argument out of range");
+                        }
+                        else
+                        {
+                            if (config.entity == CLIParser::EntityKind::PUBLISHER)
+                            {
+                                config.pub_config.domain = static_cast<uint16_t>(input);
+                            }
+                            else if (config.entity == CLIParser::EntityKind::SUBSCRIBER)
+                            {
+                                config.sub_config.domain = static_cast<uint16_t>(input);
+                            }
+                            else
+                            {
+                                EPROSIMA_LOG_ERROR(CLI_PARSER, "entity not specified for --domain argument");
+                                print_help(EXIT_FAILURE);
+                            }
+                        }
+                    }
+                    catch (const std::invalid_argument& e)
+                    {
+                        EPROSIMA_LOG_ERROR(CLI_PARSER, "invalid domain argument for " + arg + ": " + e.what());
+                        print_help(EXIT_FAILURE);
+                    }
+                    catch (const std::out_of_range& e)
+                    {
+                        EPROSIMA_LOG_ERROR(CLI_PARSER, "domain argument out of range for " + arg + ": " + e.what());
+                        print_help(EXIT_FAILURE);
+                    }
+                }
+                else
+                {
+                    EPROSIMA_LOG_ERROR(CLI_PARSER, "missing argument for " + arg);
+                    print_help(EXIT_FAILURE);
+                }
+            }
             else if (arg == "-i" || arg == "--interval")
             {
                 if (i + 1 < argc)
@@ -192,7 +240,7 @@ public:
                     {
                         if (config.entity == CLIParser::EntityKind::PUBLISHER)
                         {
-                            config.pub_config.interval = std::stoi(argv[++i]);
+                            config.pub_config.interval = static_cast<uint16_t>(std::stoi(argv[++i]));
                         }
                         else
                         {

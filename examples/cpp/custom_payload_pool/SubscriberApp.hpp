@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _FASTDDS_CUSTOM_PAYLOAD_POOL_DATA_SUBSCRIBER_HPP_
-#define _FASTDDS_CUSTOM_PAYLOAD_POOL_DATA_SUBSCRIBER_HPP_
+#ifndef _FASTDDS_CUSTOM_PAYLOAD_POOL_SUBSCRIBER_HPP_
+#define _FASTDDS_CUSTOM_PAYLOAD_POOL_SUBSCRIBER_HPP_
 
 #include <condition_variable>
 #include <mutex>
@@ -101,4 +101,4 @@ private:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif /* _FASTDDS_CUSTOM_PAYLOAD_POOL_DATA_SUBSCRIBER_HPP_ */
+#endif /* _FASTDDS_CUSTOM_PAYLOAD_POOL_SUBSCRIBER_HPP_ */
