@@ -17,7 +17,7 @@
  *
  */
 
-#include <rtps/writer/ReaderLocator.h>
+#include <rtps/writer/ReaderLocator.hpp>
 
 #include <fastdds/rtps/common/CacheChange.h>
 #include <fastdds/rtps/common/LocatorListComparisons.hpp>

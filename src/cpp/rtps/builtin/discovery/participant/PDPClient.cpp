@@ -44,7 +44,7 @@
 #include <rtps/builtin/liveliness/WLP.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/reader/StatefulReader.hpp>
-#include <rtps/writer/ReaderProxy.h>
+#include <rtps/writer/ReaderProxy.hpp>
 #include <rtps/writer/StatefulWriter.hpp>
 #include <utils/shared_mutex.hpp>
 #include <utils/SystemInfo.hpp>

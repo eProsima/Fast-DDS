@@ -17,7 +17,7 @@
  *
  */
 
-#include <rtps/writer/ReaderProxy.h>
+#include <rtps/writer/ReaderProxy.hpp>
 
 #include <mutex>
 #include <cassert>

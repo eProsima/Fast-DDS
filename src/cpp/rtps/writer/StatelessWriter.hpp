@@ -32,8 +32,8 @@
 #include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>
 
-#include <rtps/writer/ChangeForReader.h>
-#include <rtps/writer/ReaderLocator.h>
+#include <rtps/writer/ChangeForReader.hpp>
+#include <rtps/writer/ReaderLocator.hpp>
 
 namespace eprosima {
 namespace fastrtps {
