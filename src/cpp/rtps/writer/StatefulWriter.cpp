@@ -47,7 +47,7 @@
 #include <rtps/resources/ResourceEvent.h>
 #include <rtps/resources/TimedEvent.h>
 #include <rtps/RTPSDomainImpl.hpp>
-#include <rtps/writer/ReaderProxy.h>
+#include <rtps/writer/ReaderProxy.hpp>
 #include <utils/TimeConversion.hpp>
 
 #ifdef FASTDDS_STATISTICS

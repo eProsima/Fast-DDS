@@ -36,7 +36,7 @@
 #include <rtps/builtin/discovery/database/DiscoveryDataQueueInfo.hpp>
 #include <rtps/builtin/discovery/database/DiscoveryEndpointInfo.hpp>
 #include <rtps/builtin/discovery/database/DiscoveryParticipantInfo.hpp>
-#include <rtps/writer/ReaderProxy.h>
+#include <rtps/writer/ReaderProxy.hpp>
 #include <utils/DBQueue.hpp>
 
 namespace eprosima {
