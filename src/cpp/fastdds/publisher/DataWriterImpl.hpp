@@ -423,7 +423,7 @@ protected:
 
         void onWriterMatched(
                 fastdds::rtps::RTPSWriter* writer,
-                const fastdds::dds::PublicationMatchedStatus& info) override;
+                const fastdds::rtps::MatchingInfo& info) override;
 
         void on_offered_incompatible_qos(
                 fastdds::rtps::RTPSWriter* writer,
@@ -449,10 +449,6 @@ protected:
 #endif //FASTDDS_STATISTICS
 
         DataWriterImpl* data_writer_;
-
-    private:
-
-        using rtps::WriterListener::onWriterMatched;
     }
     writer_listener_;
 
@@ -561,7 +557,7 @@ protected:
     bool remove_min_seq_change();
 
     void update_publication_matched_status(
-            const PublicationMatchedStatus& status);
+            const fastdds::rtps::MatchingInfo& status);
 
     /**
      * @brief A method called when an instance misses the deadline

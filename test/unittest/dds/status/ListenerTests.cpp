@@ -625,7 +625,7 @@ void verify_expectations_on_publication_matched (
         StrictMock<CustomPublisherListener>& publisher_listener_,
         StrictMock<CustomDataWriterListener>& datawriter_listener_)
 {
-    fastdds::dds::PublicationMatchedStatus status;
+    rtps::MatchingInfo status;
 
     RTPSDomain::writer_->listener_->onWriterMatched(nullptr, status);
     Mock::VerifyAndClearExpectations(&datawriter_listener_);

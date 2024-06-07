@@ -342,10 +342,6 @@ public:
     }
 
 #endif // if HAVE_SECURITY
-    const fastdds::dds::PublicationMatchedStatus& update_publication_matched_status(
-            const GUID_t& reader_guid,
-            const GUID_t& writer_guid,
-            int change);
 
     //! Pointer to the PDP object that contains the endpoint discovery protocol.
     PDP* mp_PDP;
@@ -393,12 +389,6 @@ private:
             const WriterProxyData* wdata,
             const ReaderProxyData* rdata) const;
 
-    using pool_allocator_t =
-            foonathan::memory::memory_pool<foonathan::memory::node_pool, foonathan::memory::heap_allocator>;
-
-    pool_allocator_t writer_status_allocator_;
-
-    foonathan::memory::map<GUID_t, fastdds::dds::PublicationMatchedStatus, pool_allocator_t> writer_status_;
 };
 
 } // namespace rtps

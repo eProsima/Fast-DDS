@@ -74,7 +74,7 @@ private:
 
         void onWriterMatched(
                 eprosima::fastdds::rtps::RTPSWriter* /*writer*/,
-                eprosima::fastdds::rtps::MatchingInfo& info) override
+                const eprosima::fastdds::rtps::MatchingInfo& info) override
         {
             if (info.status == eprosima::fastdds::rtps::MATCHED_MATCHING)
             {
@@ -96,8 +96,6 @@ private:
         }
 
     private:
-
-        using eprosima::fastdds::rtps::WriterListener::onWriterMatched;
 
         Listener& operator =(
                 const Listener&) = delete;

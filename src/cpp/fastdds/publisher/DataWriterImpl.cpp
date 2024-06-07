@@ -1283,7 +1283,7 @@ const Publisher* DataWriterImpl::get_publisher() const
 
 void DataWriterImpl::InnerDataWriterListener::onWriterMatched(
         RTPSWriter* /*writer*/,
-        const PublicationMatchedStatus& info)
+        const MatchingInfo& info)
 {
     data_writer_->update_publication_matched_status(info);
 
@@ -1459,9 +1459,9 @@ ReturnCode_t DataWriterImpl::wait_for_acknowledgments(
 }
 
 void DataWriterImpl::update_publication_matched_status(
-        const PublicationMatchedStatus& status)
+        const MatchingInfo& status)
 {
-    auto count_change = status.current_count_change;
+    auto count_change = status.status == MATCHED_MATCHING ? 1 : -1;
     publication_matched_status_.current_count += count_change;
     publication_matched_status_.current_count_change += count_change;
     if (count_change > 0)
@@ -1469,7 +1469,7 @@ void DataWriterImpl::update_publication_matched_status(
         publication_matched_status_.total_count += count_change;
         publication_matched_status_.total_count_change += count_change;
     }
-    publication_matched_status_.last_subscription_handle = status.last_subscription_handle;
+    publication_matched_status_.last_subscription_handle = status.remoteEndpointGuid;
 }
 
 ReturnCode_t DataWriterImpl::get_publication_matched_status(

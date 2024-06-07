@@ -59,7 +59,7 @@ public:
 
         void onWriterMatched(
                 eprosima::fastdds::rtps::RTPSWriter*,
-                eprosima::fastdds::rtps::MatchingInfo& info) override
+                const eprosima::fastdds::rtps::MatchingInfo& info) override
         {
             if (info.status == eprosima::fastdds::rtps::MATCHED_MATCHING)
             {
@@ -69,9 +69,6 @@ public:
 
         int n_matched;
 
-    private:
-
-        using eprosima::fastdds::rtps::WriterListener::onWriterMatched;
     }
     m_listener;
 };

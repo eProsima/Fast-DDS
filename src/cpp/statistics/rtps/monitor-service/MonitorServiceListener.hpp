@@ -58,7 +58,7 @@ public:
 
     void onWriterMatched(
             fastdds::rtps::RTPSWriter* writer,
-            fastdds::rtps::MatchingInfo& info) override;
+            const fastdds::rtps::MatchingInfo& info) override;
 
     void onWriterChangeReceivedByAll(
             fastdds::rtps::RTPSWriter* writer,
@@ -67,10 +67,6 @@ public:
 protected:
 
     MonitorService* monitor_srv_;
-
-private:
-
-    using fastdds::rtps::WriterListener::onWriterMatched;
 
 };
 

@@ -65,7 +65,7 @@ bool MonitorServiceListener::on_local_entity_connections_change(
 
 void MonitorServiceListener::onWriterMatched(
         fastdds::rtps::RTPSWriter*,
-        fastdds::rtps::MatchingInfo& info)
+        const fastdds::rtps::MatchingInfo& info)
 {
     if (info.status == eprosima::fastdds::rtps::MATCHED_MATCHING)
     {

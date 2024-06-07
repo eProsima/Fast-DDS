@@ -72,11 +72,6 @@ EDP::EDP(
         RTPSParticipantImpl* part)
     : mp_PDP(p)
     , mp_RTPSParticipant(part)
-    , writer_status_allocator_(
-        writer_map_helper::node_size,
-        writer_map_helper::min_pool_size<pool_allocator_t>(
-            part->getRTPSParticipantAttributes().allocation.total_writers().initial))
-    , writer_status_(writer_status_allocator_)
 {
 }
 
@@ -474,10 +469,6 @@ bool EDP::unpairReaderProxy(
                         info.status = REMOVED_MATCHING;
                         info.remoteEndpointGuid = reader_guid;
                         listener->onWriterMatched(&w, info);
-
-                        const PublicationMatchedStatus& pub_info =
-                        update_publication_matched_status(reader_guid, writer_guid, -1);
-                        listener->onWriterMatched(&w, pub_info);
                     }
                 }
 
@@ -891,11 +882,6 @@ bool EDP::pairingWriter(
                         info.status = MATCHED_MATCHING;
                         info.remoteEndpointGuid = reader_guid;
                         W->getListener()->onWriterMatched(W, info);
-
-                        const GUID_t& writer_guid = W->getGuid();
-                        const PublicationMatchedStatus& pub_info =
-                                update_publication_matched_status(reader_guid, writer_guid, 1);
-                        W->getListener()->onWriterMatched(W, pub_info);
                     }
                 }
 #endif // if HAVE_SECURITY
@@ -920,12 +906,6 @@ bool EDP::pairingWriter(
                         info.status = REMOVED_MATCHING;
                         info.remoteEndpointGuid = reader_guid;
                         W->getListener()->onWriterMatched(W, info);
-
-                        const GUID_t& writer_guid = W->getGuid();
-                        const PublicationMatchedStatus& pub_info =
-                                update_publication_matched_status(reader_guid, writer_guid, -1);
-                        W->getListener()->onWriterMatched(W, pub_info);
-
                     }
                 }
             }
@@ -977,10 +957,6 @@ bool EDP::pairing_reader_proxy_with_any_local_writer(
                                 info.status = MATCHED_MATCHING;
                                 info.remoteEndpointGuid = reader_guid;
                                 w.getListener()->onWriterMatched(&w, info);
-
-                                const PublicationMatchedStatus& pub_info =
-                                update_publication_matched_status(reader_guid, writerGUID, 1);
-                                w.getListener()->onWriterMatched(&w, pub_info);
                             }
                         }
 #endif // if HAVE_SECURITY
@@ -1006,10 +982,6 @@ bool EDP::pairing_reader_proxy_with_any_local_writer(
                                 info.status = REMOVED_MATCHING;
                                 info.remoteEndpointGuid = reader_guid;
                                 w.getListener()->onWriterMatched(&w, info);
-
-                                const PublicationMatchedStatus& pub_info =
-                                update_publication_matched_status(reader_guid, writerGUID, -1);
-                                w.getListener()->onWriterMatched(&w, pub_info);
                             }
                         }
                     }
@@ -1076,10 +1048,6 @@ bool EDP::pairing_reader_proxy_with_local_writer(
                                     info.status = REMOVED_MATCHING;
                                     info.remoteEndpointGuid = reader_guid;
                                     w.getListener()->onWriterMatched(&w, info);
-
-                                    const PublicationMatchedStatus& pub_info =
-                                    update_publication_matched_status(reader_guid, writerGUID, -1);
-                                    w.getListener()->onWriterMatched(&w, pub_info);
                                 }
                             }
                         }
@@ -1122,10 +1090,6 @@ bool EDP::pairing_remote_reader_with_local_writer_after_security(
                             info.status = MATCHED_MATCHING;
                             info.remoteEndpointGuid = reader_guid;
                             w.getListener()->onWriterMatched(&w, info);
-
-                            const PublicationMatchedStatus& pub_info =
-                            update_publication_matched_status(reader_guid, writerGUID, 1);
-                            w.getListener()->onWriterMatched(&w, pub_info);
                         }
                     }
                     // don't look anymore
@@ -1334,34 +1298,6 @@ bool EDP::pairing_remote_writer_with_local_reader_after_security(
 }
 
 #endif // if HAVE_SECURITY
-
-const fastdds::dds::PublicationMatchedStatus& EDP::update_publication_matched_status(
-        const GUID_t& reader_guid,
-        const GUID_t& writer_guid,
-        int change)
-{
-    std::lock_guard<std::recursive_mutex> _(*mp_PDP->getMutex());
-
-    PublicationMatchedStatus* status;
-    auto it = writer_status_.find(writer_guid);
-    if (it == writer_status_.end())
-    {
-        auto pair = writer_status_.emplace(writer_guid, PublicationMatchedStatus{});
-        status = &pair.first->second;
-    }
-    else
-    {
-        status = &it->second;
-    }
-
-    status->current_count = change;
-    status->current_count_change = change;
-    status->total_count += change;
-    status->total_count_change += change;
-    status->last_subscription_handle = reader_guid;
-
-    return *status;
-}
 
 } // namespace rtps
 } // namespace fastdds
