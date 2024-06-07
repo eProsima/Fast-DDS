@@ -187,7 +187,7 @@ public:
                     print_help(EXIT_FAILURE);
                 }
             }
-             else if (arg == "-d" || arg == "--domain")
+            else if (arg == "-d" || arg == "--domain")
             {
                 if (i + 1 < argc)
                 {
