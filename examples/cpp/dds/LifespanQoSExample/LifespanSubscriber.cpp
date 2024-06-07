@@ -170,8 +170,8 @@ void LifespanSubscriber::run(
         size_t samples_taken = sample_infos.length();
         for (size_t i = 0; i < samples_taken; ++i)
         {
-            Lifespan &sample = data_values[i];
-            SampleInfo &sample_info = sample_infos[i];
+            Lifespan& sample = data_values[i];
+            SampleInfo& sample_info = sample_infos[i];
 
             std::cout << "Message " << sample.message() << " with index " << sample.index()
                       << " read from history." << std::endl;
