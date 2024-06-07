@@ -126,7 +126,7 @@ protected:
             fastdds::rtps::RTPSReader* reader,
             const fastdds::rtps::CacheChange_t* const change) override;
 
-    void onWriterChangeReceivedByAll(
+    void on_writer_change_received_by_all(
             fastdds::rtps::RTPSWriter*,
             fastdds::rtps::CacheChange_t* change) override;
 

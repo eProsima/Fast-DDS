@@ -343,7 +343,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_ok_begin_handshake_r
 
     stateless_reader_->listener_->on_new_cache_change_added(stateless_reader_, change);
 
-    volatile_writer_->listener_->onWriterChangeReceivedByAll(volatile_writer_, kx_change_to_remove);
+    volatile_writer_->listener_->on_writer_change_received_by_all(volatile_writer_, kx_change_to_remove);
 
     return_handle(remote_identity_handle);
     return_handle(handshake_handle);
@@ -536,7 +536,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_pending_handshake_re
     fill_participant_key(participant_data.m_guid);
     ASSERT_TRUE(manager_.discovered_participant(participant_data));
 
-    volatile_writer_->listener_->onWriterChangeReceivedByAll(volatile_writer_, kx_change_to_remove);
+    volatile_writer_->listener_->on_writer_change_received_by_all(volatile_writer_, kx_change_to_remove);
 
     ParticipantGenericMessage message;
     message.message_identity().source_guid(participant_data.m_guid);
@@ -740,7 +740,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_ok_process_handshake
 
     stateless_reader_->listener_->on_new_cache_change_added(stateless_reader_, change);
 
-    volatile_writer_->listener_->onWriterChangeReceivedByAll(volatile_writer_, kx_change_to_remove);
+    volatile_writer_->listener_->on_writer_change_received_by_all(volatile_writer_, kx_change_to_remove);
 }
 
 TEST_F(SecurityTest, discovered_participant_process_message_process_handshake_reply_new_change_fail)
@@ -1140,7 +1140,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_ok_process_handshake
 
     stateless_reader_->listener_->on_new_cache_change_added(stateless_reader_, change);
 
-    volatile_writer_->listener_->onWriterChangeReceivedByAll(volatile_writer_, kx_change_to_remove);
+    volatile_writer_->listener_->on_writer_change_received_by_all(volatile_writer_, kx_change_to_remove);
 }
 
 int main(

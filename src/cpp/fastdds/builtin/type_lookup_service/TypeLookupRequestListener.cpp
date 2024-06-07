@@ -450,7 +450,7 @@ void TypeLookupRequestListener::on_new_cache_change_added(
     reader->get_history()->remove_change(change);
 }
 
-void TypeLookupRequestListener::onWriterChangeReceivedByAll(
+void TypeLookupRequestListener::on_writer_change_received_by_all(
         fastdds::rtps::RTPSWriter*,
         fastdds::rtps::CacheChange_t* change)
 {

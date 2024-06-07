@@ -77,7 +77,7 @@ void MonitorServiceListener::on_writer_matched(
     }
 }
 
-void MonitorServiceListener::onWriterChangeReceivedByAll(
+void MonitorServiceListener::on_writer_change_received_by_all(
         fastdds::rtps::RTPSWriter* writer,
         fastdds::rtps::CacheChange_t* change)
 {

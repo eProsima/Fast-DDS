@@ -876,7 +876,7 @@ private:
         }
     }
 
-    void onWriterChangeReceivedByAll(
+    void on_writer_change_received_by_all(
             RTPSWriter* writer,
             CacheChange_t* change) override;
 

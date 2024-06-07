@@ -60,7 +60,7 @@ public:
             fastdds::rtps::RTPSWriter* writer,
             const fastdds::rtps::MatchingInfo& info) override;
 
-    void onWriterChangeReceivedByAll(
+    void on_writer_change_received_by_all(
             fastdds::rtps::RTPSWriter* writer,
             fastdds::rtps::CacheChange_t* change) override;
 

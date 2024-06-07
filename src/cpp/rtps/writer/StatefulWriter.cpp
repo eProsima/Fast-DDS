@@ -1500,7 +1500,7 @@ void StatefulWriter::check_acked_status()
                     }
 
                     // Notify reception of change (may remove that change on VOLATILE writers)
-                    mp_listener->onWriterChangeReceivedByAll(this, change);
+                    mp_listener->on_writer_change_received_by_all(this, change);
 
                     // Stop if we got to either next_all_acked_notify_sequence_ or the first change
                 } while (seq > end_seq);

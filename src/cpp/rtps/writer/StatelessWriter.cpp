@@ -299,7 +299,7 @@ void StatelessWriter::unsent_change_added_to_history(
         EPROSIMA_LOG_INFO(RTPS_WRITER, "No reader to add change.");
         if (mp_listener != nullptr)
         {
-            mp_listener->onWriterChangeReceivedByAll(this, change);
+            mp_listener->on_writer_change_received_by_all(this, change);
         }
     }
 
@@ -873,7 +873,7 @@ DeliveryRetCode StatelessWriter::deliver_sample_nts(
 
         if (nullptr != mp_listener)
         {
-            mp_listener->onWriterChangeReceivedByAll(this, cache_change);
+            mp_listener->on_writer_change_received_by_all(this, cache_change);
         }
     }
 

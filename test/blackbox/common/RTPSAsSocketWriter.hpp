@@ -87,7 +87,7 @@ public:
         }
     }
 
-    void onWriterChangeReceivedByAll(
+    void on_writer_change_received_by_all(
             eprosima::fastdds::rtps::RTPSWriter* /*writer*/,
             eprosima::fastdds::rtps::CacheChange_t* change) override
     {

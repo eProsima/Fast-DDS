@@ -164,7 +164,7 @@ TEST_F(SecurityTest, discovered_participant_validation_remote_identity_pending_h
 
     ASSERT_TRUE(manager_.discovered_participant(participant_data));
 
-    volatile_writer_->listener_->onWriterChangeReceivedByAll(volatile_writer_, kx_change_to_remove);
+    volatile_writer_->listener_->on_writer_change_received_by_all(volatile_writer_, kx_change_to_remove);
 
     return_handle(remote_identity_handle);
     return_handle(handshake_handle);
@@ -337,7 +337,7 @@ TEST_F(SecurityTest, discovered_participant_validation_remote_identity_pending_h
 
     ASSERT_TRUE(manager_.discovered_participant(participant_data));
 
-    volatile_writer_->listener_->onWriterChangeReceivedByAll(volatile_writer_, kx_change_to_remove);
+    volatile_writer_->listener_->on_writer_change_received_by_all(volatile_writer_, kx_change_to_remove);
 
     destroy_manager_and_change(change);
 

@@ -4342,7 +4342,7 @@ bool SecurityManager::DiscoveredParticipantInfo::check_guid_comes_from(
     return ret;
 }
 
-void SecurityManager::onWriterChangeReceivedByAll(
+void SecurityManager::on_writer_change_received_by_all(
         RTPSWriter* writer,
         CacheChange_t* change)
 {

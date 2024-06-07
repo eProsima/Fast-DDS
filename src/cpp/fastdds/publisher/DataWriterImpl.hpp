@@ -429,7 +429,7 @@ protected:
                 fastdds::rtps::RTPSWriter* writer,
                 fastdds::dds::PolicyMask qos) override;
 
-        void onWriterChangeReceivedByAll(
+        void on_writer_change_received_by_all(
                 fastdds::rtps::RTPSWriter* writer,
                 fastdds::rtps::CacheChange_t* change) override;
 

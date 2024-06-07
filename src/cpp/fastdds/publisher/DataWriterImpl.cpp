@@ -1323,7 +1323,7 @@ void DataWriterImpl::InnerDataWriterListener::on_offered_incompatible_qos(
     data_writer_->user_datawriter_->get_statuscondition().get_impl()->set_status(notify_status, true);
 }
 
-void DataWriterImpl::InnerDataWriterListener::onWriterChangeReceivedByAll(
+void DataWriterImpl::InnerDataWriterListener::on_writer_change_received_by_all(
         RTPSWriter* /*writer*/,
         CacheChange_t* ch)
 {
