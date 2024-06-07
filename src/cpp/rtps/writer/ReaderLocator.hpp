@@ -18,8 +18,6 @@
 #ifndef RTPS_WRITER__READERLOCATOR_HPP
 #define RTPS_WRITER__READERLOCATOR_HPP
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-
 #include <vector>
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/common/Guid.h>
@@ -270,5 +268,4 @@ private:
 } /* namespace fastrtps */
 } /* namespace eprosima */
 
-#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#endif /* RTPS_WRITER__READERLOCATOR_HPP */
+#endif // RTPS_WRITER__READERLOCATOR_HPP

@@ -29,8 +29,6 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-
 /**
  * Enum ChangeForReaderStatus_t, possible states for a CacheChange_t in a ReaderProxy.
  *  @ingroup COMMON_MODULE
@@ -207,10 +205,8 @@ struct ChangeForReaderCmp
 
 };
 
-#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-
 } // namespace rtps
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif /* RTPS_WRITER__CHANGEFORREADER_HPP */
+#endif // RTPS_WRITER__CHANGEFORREADER_HPP
