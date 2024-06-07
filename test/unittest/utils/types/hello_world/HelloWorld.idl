@@ -1,5 +1,0 @@
-struct HelloWorld_TypeIntrospectionExample
-{
-    unsigned long index;
-    string message;
-};
