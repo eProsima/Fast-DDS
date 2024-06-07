@@ -65,6 +65,22 @@ set(SYSTEMINFOTESTS_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp)
 
+set(RESOURCEIDLTOJSONTESTS_SOURCE
+    idl_to_json_Tests.cpp
+    ${PROJECT_SOURCE_DIR}/test/unittest/utils/types/types.cpp)
+
+file(GLOB DATATYPEBASE_SOURCES_CPP "types/*.cpp")
+file(GLOB DATATYPE_SOURCES_CPP "types/**/**/*.cpp")
+file(GLOB DATATYPE_SOURCES_CXX "types/**/**/*.cxx")
+
+set(
+    EXAMPLE_SOURCES
+        ${IMPLEMENTATION_SOURCES_CPP}
+        ${DATATYPEBASE_SOURCES_CPP}
+        ${DATATYPE_SOURCES_CPP}
+        ${DATATYPE_SOURCES_CXX}
+    )
+
 include_directories(mock/)
 
 add_executable(StringMatchingTests ${STRINGMATCHINGTESTS_SOURCE})
@@ -166,6 +182,20 @@ target_compile_definitions(SharedMutexTests PUBLIC USE_THIRDPARTY_SHARED_MUTEX=1
 target_include_directories(SharedMutexTests PRIVATE ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(SharedMutexTests PUBLIC GTest::gtest)
 gtest_discover_tests(SharedMutexTests)
+
+add_executable(idl_to_json_Tests ${RESOURCEIDLTOJSONTESTS_SOURCE} ${EXAMPLE_SOURCES})
+target_compile_definitions(idl_to_json_Tests PRIVATE
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+    )
+target_include_directories(idl_to_json_Tests PRIVATE
+    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
+target_link_libraries(idl_to_json_Tests
+    fastdds
+    fastcdr
+    GTest::gtest
+    )
+gtest_discover_tests(idl_to_json_Tests)
 
 ###############################################################################
 # Necessary files
