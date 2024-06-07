@@ -13,10 +13,10 @@
 // limitations under the License.
 
 /**
- * @file ReaderProxy.h
+ * @file ReaderProxy.hpp
  */
-#ifndef _FASTDDS_RTPS_WRITER_READERPROXY_H_
-#define _FASTDDS_RTPS_WRITER_READERPROXY_H_
+#ifndef RTPS_WRITER__READERPROXY_HPP
+#define RTPS_WRITER__READERPROXY_HPP
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
@@ -35,8 +35,8 @@
 #include <fastdds/rtps/common/Types.h>
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>
 
-#include <rtps/writer/ChangeForReader.h>
-#include <rtps/writer/ReaderLocator.h>
+#include <rtps/writer/ChangeForReader.hpp>
+#include <rtps/writer/ReaderLocator.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -507,4 +507,4 @@ private:
 } /* namespace eprosima */
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#endif /* _FASTDDS_RTPS_WRITER_READERPROXY_H_ */
+#endif /* RTPS_WRITER__READERPROXY_HPP */

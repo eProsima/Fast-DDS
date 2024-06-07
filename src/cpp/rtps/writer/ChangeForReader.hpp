@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * @file ChangeForReader.h
+ * @file ChangeForReader.hpp
  */
 
-#ifndef _FASTDDS_RTPS_CHANGEFORREADER_H_
-#define _FASTDDS_RTPS_CHANGEFORREADER_H_
+#ifndef RTPS_WRITER__CHANGEFORREADER_HPP
+#define RTPS_WRITER__CHANGEFORREADER_HPP
 
 #include <fastdds/rtps/common/CacheChange.h>
 #include <fastdds/rtps/common/FragmentNumber.h>
@@ -213,4 +213,4 @@ struct ChangeForReaderCmp
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif /* _FASTDDS_RTPS_CHANGEFORREADER_H_ */
+#endif /* RTPS_WRITER__CHANGEFORREADER_HPP */
