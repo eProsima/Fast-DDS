@@ -21,8 +21,6 @@
 
 #include <cstdint>
 
-#include <fastdds/rtps/common/Types.h>
-
 namespace asio {
 // Forward declaration of asio::const_buffer
 class const_buffer;
@@ -46,7 +44,7 @@ struct NetworkBuffer final
     NetworkBuffer() = default;
 
     NetworkBuffer(
-            const fastrtps::rtps::octet* ptr,
+            const void* ptr,
             uint32_t s)
         : buffer(ptr)
         , size(s)

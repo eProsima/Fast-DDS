@@ -938,7 +938,7 @@ void RTPSMessageGroup::get_payload(
 {
     payloads_to_send_->emplace_back();
     // Get payload to avoid returning it to the pool before sending
-    change.serializedPayload.payload_owner_->get_payload(change.serializedPayload, payloads_to_send_->back());
+    change.serializedPayload.payload_owner->get_payload(change.serializedPayload, payloads_to_send_->back());
 }
 
 #ifdef FASTDDS_STATISTICS

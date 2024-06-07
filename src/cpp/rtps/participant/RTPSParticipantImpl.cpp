@@ -683,8 +683,7 @@ void RTPSParticipantImpl::setup_output_traffic()
 
     bool allow_growing_buffers = m_att.allocation.send_buffers.dynamic;
     size_t num_send_buffers = m_att.allocation.send_buffers.preallocated_number;
-    size_t num_network_buffers = m_att.allocation.send_buffers.preallocated_network_buffers;
-    size_t inc_network_buffers = m_att.allocation.send_buffers.allocation_inc_network_buffers;
+    ResourceLimitedContainerConfig network_buffers_config =  m_att.allocation.send_buffers.network_buffers_config;
     if (num_send_buffers == 0)
     {
         // Two buffers (user, events)
@@ -693,22 +692,16 @@ void RTPSParticipantImpl::setup_output_traffic()
         num_send_buffers += m_receiverResourcelist.size();
     }
 
-    if (num_network_buffers == 0)
+    if (network_buffers_config.initial == 0 && network_buffers_config.increment == 0)
     {
-        // 16 network buffers per send buffer by default
-        num_network_buffers = 16;
-    }
-
-    if (inc_network_buffers == 0)
-    {
-        // New buffers dynamically allocated when needed during RTPS message creation
-        // 16 buffers increment by default
-        inc_network_buffers = 16;
+        // 16 network buffers per send buffer preallocated by default
+        network_buffers_config.initial = 16;
+        // New buffers dynamically allocated when needed during RTPS message creation by default
+        network_buffers_config.increment = 16;
     }
 
     // Create buffer pool
-    send_buffers_.reset(new SendBuffersManager(num_send_buffers, allow_growing_buffers, num_network_buffers,
-            inc_network_buffers));
+    send_buffers_.reset(new SendBuffersManager(num_send_buffers, allow_growing_buffers, network_buffers_config));
     send_buffers_->init(this);
 
     // Initialize flow controller factory.

@@ -68,8 +68,7 @@ struct SendBuffersAllocationAttributes
     {
         return (this->preallocated_number == b.preallocated_number) &&
                (this->dynamic == b.dynamic) &&
-               (this->preallocated_network_buffers == b.preallocated_network_buffers) &&
-               (this->allocation_inc_network_buffers == b.allocation_inc_network_buffers);
+               (this->network_buffers_config == b.network_buffers_config);
     }
 
     /** Initial number of send buffers to allocate.
@@ -89,21 +88,14 @@ struct SendBuffersAllocationAttributes
      */
     bool dynamic = false;
 
-    /** Initial number of network buffers to allocate for each send buffer.
+    /** Configuration for the network buffers.
      *
-     * This attribute controls the initial number of network buffers to be allocated for
-     * each send buffer. If the value is 0 (default), the initial number of preallocated
-     * network buffers will be 16.
+     * This attribute controls the allocation behavior of the network buffers used by each
+     * send buffer. The default value will use a value of 16 network buffers for both
+     * the preallocated buffers and the dynamic increment allocation, with no maximum limit.
      */
-    size_t preallocated_network_buffers = 0u;
-
-    /** Number of network buffers to allocate when growing the vector.
-     *
-     * This attribute controls the number of network buffers to be allocated when growing
-     * the vector of send buffers if it runs out of capacity. If the value is 0 (default),
-     * the number of network buffers to be dynamically allocated will be 16.
-     */
-    size_t allocation_inc_network_buffers = 0u;
+    ResourceLimitedContainerConfig network_buffers_config = ResourceLimitedContainerConfig(0,
+                    std::numeric_limits<size_t>::max dummy_avoid_winmax (), 0);
 };
 
 /**

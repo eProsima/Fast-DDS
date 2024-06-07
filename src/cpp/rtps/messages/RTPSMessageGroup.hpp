@@ -361,7 +361,7 @@ private:
     ResourceLimitedVector<eprosima::fastdds::rtps::NetworkBuffer>* buffers_to_send_ = nullptr;
 
     // Vector of payloads of which the RTPSMessageGroup is the owner
-    ResourceLimitedVector<eprosima::fastrtps::rtps::SerializedPayload_t>* payloads_to_send_;
+    ResourceLimitedVector<eprosima::fastrtps::rtps::SerializedPayload_t>* payloads_to_send_ = nullptr;
 
     // Bytes to send in the next list of buffers
     uint32_t buffers_bytes_ = 0;
