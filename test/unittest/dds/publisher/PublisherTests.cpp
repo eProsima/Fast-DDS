@@ -397,7 +397,7 @@ TEST(PublisherTests, ChangeDefaultDataWriterQos)
     EXPECT_FALSE(wqos.writer_data_lifecycle().autodispose_unregistered_instances);
     // .publish_mode
     EXPECT_EQ(eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE, wqos.publish_mode().kind);
-    EXPECT_EQ(true, wqos.publish_mode().flow_controller_name == "Prueba");
+    EXPECT_EQ(0, strcmp(wqos.publish_mode().flow_controller_name, "Prueba"));
     count = 1;
     for (auto prop : wqos.properties().properties())
     {
