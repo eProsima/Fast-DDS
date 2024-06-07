@@ -1058,11 +1058,17 @@ XMLP_ret XMLParser::getXMLFlowControllerDescriptorList(
             {
                 std::lock_guard<std::mutex> lock(collections_mtx_);
                 // name - stringType
-                auto element_inserted = flow_controller_descriptor_names_.insert(get_element_text(p_aux1));
-                if (element_inserted.first == flow_controller_descriptor_names_.end() ||
-                        element_inserted.first->empty())
+                std::string element = get_element_text(p_aux1);
+                if (element.empty())
                 {
-                    EPROSIMA_LOG_ERROR(XMLPARSER, "Node flow controller node '" << NAME << "' invalid");
+                    EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << NAME << "' without content");
+                    return XMLP_ret::XML_ERROR;
+                }
+                auto element_inserted = flow_controller_descriptor_names_.insert(element);
+                if (element_inserted.first == flow_controller_descriptor_names_.end())
+                {
+                    EPROSIMA_LOG_ERROR(XMLPARSER,
+                            "Insertion error for flow controller node '" << FLOW_CONTROLLER_NAME << "'");
                     return XMLP_ret::XML_ERROR;
                 }
                 flow_controller_descriptor->name = element_inserted.first->c_str();
@@ -2846,11 +2852,16 @@ XMLP_ret XMLParser::getXMLPublishModeQos(
         else if (strcmp(name, FLOW_CONTROLLER_NAME) == 0)
         {
             std::lock_guard<std::mutex> lock(collections_mtx_);
-            auto element_inserted = flow_controller_descriptor_names_.insert(get_element_text(p_aux0));
-            if (element_inserted.first == flow_controller_descriptor_names_.end() ||
-                    element_inserted.first->empty())
+            std::string element = get_element_text(p_aux0);
+            if (element.empty())
             {
-                EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << FLOW_CONTROLLER_NAME << "' invalid");
+                EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << FLOW_CONTROLLER_NAME << "' without content");
+                return XMLP_ret::XML_ERROR;
+            }
+            auto element_inserted = flow_controller_descriptor_names_.insert(element);
+            if (element_inserted.first == flow_controller_descriptor_names_.end())
+            {
+                EPROSIMA_LOG_ERROR(XMLPARSER, "Insertion error for node '" << FLOW_CONTROLLER_NAME << "'");
                 return XMLP_ret::XML_ERROR;
             }
             publishMode.flow_controller_name = element_inserted.first->c_str();
