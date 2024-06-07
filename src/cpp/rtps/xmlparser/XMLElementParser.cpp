@@ -136,6 +136,9 @@ namespace eprosima {
 namespace fastrtps {
 namespace xmlparser {
 
+std::mutex XMLParser::collections_mtx_;
+std::vector<std::string> XMLParser::flow_controller_descriptor_names_;
+
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastdds::xml::detail;
 
@@ -1053,9 +1056,11 @@ XMLP_ret XMLParser::getXMLFlowControllerDescriptorList(
 
             if (strcmp(name, NAME) == 0)
             {
+                std::lock_guard<std::mutex> lock(collections_mtx_);
                 // name - stringType
-                flow_controller_descriptor->name = get_element_text(p_aux1);
-                if (flow_controller_descriptor->name.empty())
+                flow_controller_descriptor_names_.emplace_back(get_element_text(p_aux1));
+                flow_controller_descriptor->name = flow_controller_descriptor_names_.back().c_str();
+                if (flow_controller_descriptor_names_.back().empty())
                 {
                     EPROSIMA_LOG_ERROR(XMLPARSER, "<" << p_aux1->Value() << "> getXMLString XML_ERROR!");
                     return XMLP_ret::XML_ERROR;
@@ -2839,9 +2844,10 @@ XMLP_ret XMLParser::getXMLPublishModeQos(
         }
         else if (strcmp(name, FLOW_CONTROLLER_NAME) == 0)
         {
-
-            publishMode.flow_controller_name = get_element_text(p_aux0);
-            if (publishMode.flow_controller_name.empty())
+            std::lock_guard<std::mutex> lock(collections_mtx_);
+            flow_controller_descriptor_names_.emplace_back(get_element_text(p_aux0));
+            publishMode.flow_controller_name = flow_controller_descriptor_names_.back().c_str();
+            if (flow_controller_descriptor_names_.back().empty())
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << FLOW_CONTROLLER_NAME << "' without content");
                 return XMLP_ret::XML_ERROR;
