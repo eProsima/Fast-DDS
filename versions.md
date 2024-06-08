@@ -1,20 +1,6 @@
 Forthcoming
 -----------
 
-<<<<<<< HEAD
-=======
-* Added new `flow_controller_descriptor_list` XML configuration.
-
-Version 2.14.0
---------------
-
-* Added authentication handshake properties.
-* Added methods OpenOutputChannels and CloseOutputChannels to TransportInterface with LocatorSelectorEntry argument.
-* Added `netmask_filter`, `allowlist` and `blocklist` transport configuration options.
-* Added extra configuration options for the builitin transports.
-* Limit the amount of listening ports for TCP servers to 1.
-
->>>>>>> e6044e011 (Add XML configuration for FlowControllerDescriptor to 2.x (#4893))
 Version 2.13.0
 --------------
 
@@ -29,6 +15,7 @@ Version 2.13.0
 * Enable support for DataRepresentationQos to select the CDR encoding.
 * Added authentication handshake properties.
 * Added `max_message_size` property to limit output datagrams size
+* Added new `flow_controller_descriptor_list` XML configuration.
 
 Version 2.12.0
 --------------
