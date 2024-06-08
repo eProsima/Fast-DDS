@@ -27,6 +27,8 @@
 #include <fastrtps/attributes/LibrarySettingsAttributes.h>
 
 #include <map>
+#include <mutex>
+#include <set>
 #include <string>
 
 namespace tinyxml2 {
@@ -161,6 +163,14 @@ public:
      */
     RTPS_DllAPI static XMLP_ret loadXMLDynamicTypes(
             tinyxml2::XMLElement& types);
+
+
+    /**
+     * Clears the private static collections.
+     *
+     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
+     */
+    RTPS_DllAPI static XMLP_ret clear();
 
 protected:
 
@@ -627,6 +637,11 @@ protected:
             tinyxml2::XMLElement* elem,
             eprosima::fastdds::rtps::BuiltinTransports* bt,
             uint8_t ident);
+
+private:
+
+    static std::mutex collections_mtx_;
+    static std::set<std::string> flow_controller_descriptor_names_;
 };
 
 } // namespace xmlparser
