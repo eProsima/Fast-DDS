@@ -2833,6 +2833,13 @@ XMLP_ret XMLParser::fillDataNode(
     return XMLP_ret::XML_OK;
 }
 
+XMLP_ret XMLParser::clear()
+{
+    std::lock_guard<std::mutex> lock(collections_mtx_);
+    flow_controller_descriptor_names_.clear();
+    return XMLP_ret::XML_OK;
+}
+
 } // namespace xmlparser
 } // namespace fastrtps
 } // namespace eprosima

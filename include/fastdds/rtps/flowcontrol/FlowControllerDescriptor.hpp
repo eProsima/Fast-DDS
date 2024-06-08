@@ -15,8 +15,6 @@
 #ifndef FASTDDS_RTPS_FLOWCONTROL_FLOWCONTROLLERDESCRIPTOR_HPP
 #define FASTDDS_RTPS_FLOWCONTROL_FLOWCONTROLLERDESCRIPTOR_HPP
 
-#include <string>
-
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
 
 #include "FlowControllerConsts.hpp"
@@ -35,7 +33,7 @@ namespace rtps {
 struct FlowControllerDescriptor
 {
     //! Name of the flow controller.
-    std::string name = FASTDDS_FLOW_CONTROLLER_DEFAULT;
+    const char* name = FASTDDS_FLOW_CONTROLLER_DEFAULT;
 
     //! Scheduler policy used by the flow controller.
     //!

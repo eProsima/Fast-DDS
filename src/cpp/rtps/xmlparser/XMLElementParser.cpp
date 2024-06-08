@@ -136,6 +136,9 @@ namespace eprosima {
 namespace fastrtps {
 namespace xmlparser {
 
+std::mutex XMLParser::collections_mtx_;
+std::set<std::string> XMLParser::flow_controller_descriptor_names_;
+
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastdds::xml::detail;
 
@@ -1053,13 +1056,22 @@ XMLP_ret XMLParser::getXMLFlowControllerDescriptorList(
 
             if (strcmp(name, NAME) == 0)
             {
+                std::lock_guard<std::mutex> lock(collections_mtx_);
                 // name - stringType
-                flow_controller_descriptor->name = get_element_text(p_aux1);
-                if (flow_controller_descriptor->name.empty())
+                std::string element = get_element_text(p_aux1);
+                if (element.empty())
                 {
-                    EPROSIMA_LOG_ERROR(XMLPARSER, "<" << p_aux1->Value() << "> getXMLString XML_ERROR!");
+                    EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << NAME << "' without content");
                     return XMLP_ret::XML_ERROR;
                 }
+                auto element_inserted = flow_controller_descriptor_names_.insert(element);
+                if (element_inserted.first == flow_controller_descriptor_names_.end())
+                {
+                    EPROSIMA_LOG_ERROR(XMLPARSER,
+                            "Insertion error for flow controller node '" << FLOW_CONTROLLER_NAME << "'");
+                    return XMLP_ret::XML_ERROR;
+                }
+                flow_controller_descriptor->name = element_inserted.first->c_str();
                 name_defined = true;
             }
             else if (strcmp(name, SCHEDULER) == 0)
@@ -2839,13 +2851,20 @@ XMLP_ret XMLParser::getXMLPublishModeQos(
         }
         else if (strcmp(name, FLOW_CONTROLLER_NAME) == 0)
         {
-
-            publishMode.flow_controller_name = get_element_text(p_aux0);
-            if (publishMode.flow_controller_name.empty())
+            std::lock_guard<std::mutex> lock(collections_mtx_);
+            std::string element = get_element_text(p_aux0);
+            if (element.empty())
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << FLOW_CONTROLLER_NAME << "' without content");
                 return XMLP_ret::XML_ERROR;
             }
+            auto element_inserted = flow_controller_descriptor_names_.insert(element);
+            if (element_inserted.first == flow_controller_descriptor_names_.end())
+            {
+                EPROSIMA_LOG_ERROR(XMLPARSER, "Insertion error for node '" << FLOW_CONTROLLER_NAME << "'");
+                return XMLP_ret::XML_ERROR;
+            }
+            publishMode.flow_controller_name = element_inserted.first->c_str();
         }
         else
         {
