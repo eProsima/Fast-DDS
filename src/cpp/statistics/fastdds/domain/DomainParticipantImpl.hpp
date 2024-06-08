@@ -99,6 +99,89 @@ public:
     static bool is_statistics_topic_name(
             const std::string& topic_name) noexcept;
 
+<<<<<<< HEAD
+=======
+    /**
+     * @brief This override calls the parent method and returns builtin publishers to nullptr
+     *
+     * @return RETCODE_OK if successful
+     * @note This method is meant to be used followed by a deletion of the participant as it implies
+     * the deletion of the builtin statistics publishers.
+     */
+    efd::ReturnCode_t delete_contained_entities() override;
+
+    /**
+     * Enables the monitor service in this DomainParticipant.
+     *
+     * @return RETCODE_OK if the monitor service could be correctly enabled.
+     * @return RETCODE_ERROR if the monitor service could not be enabled properly.
+     * @return RETCODE_UNSUPPORTED if FASTDDS_STATISTICS is not enabled.
+     *
+     */
+    efd::ReturnCode_t enable_monitor_service();
+
+    /**
+     * Disables the monitor service in this DomainParticipant. Does nothing if the service was not enabled before.
+     *
+     * @return RETCODE_OK if the monitor service could be correctly disabled.
+     * @return RETCODE_NOT_ENABLED if the monitor service was not previously enabled.
+     * @return RETCODE_ERROR if the service could not be properly disabled.
+     * @return RETCODE_UNSUPPORTED if FASTDDS_STATISTICS is not enabled.
+     *
+     */
+    efd::ReturnCode_t disable_monitor_service();
+
+    /**
+     * fills in the ParticipantProxyData from a MonitorService Message
+     *
+     * @param [out] data Proxy to fill
+     * @param [in] msg MonitorService Message to get the proxy information from.
+     *
+     * @return RETCODE_OK if the operation succeeds.
+     * @return RETCODE_ERROR if the  operation fails.
+     */
+    efd::ReturnCode_t fill_discovery_data_from_cdr_message(
+            fastrtps::rtps::ParticipantProxyData& data,
+            fastdds::statistics::MonitorServiceStatusData& msg);
+
+    /**
+     * fills in the WriterProxyData from a MonitorService Message
+     *
+     * @param [out] data Proxy to fill.
+     * @param [in] msg MonitorService Message to get the proxy information from.
+     *
+     * @return RETCODE_OK if the operation succeeds.
+     * @return RETCODE_ERROR if the  operation fails.
+     */
+    efd::ReturnCode_t fill_discovery_data_from_cdr_message(
+            fastrtps::rtps::WriterProxyData& data,
+            fastdds::statistics::MonitorServiceStatusData& msg);
+
+    /**
+     * fills in the ReaderProxyData from a MonitorService Message
+     *
+     * @param [out] data Proxy to fill.
+     * @param [in] msg MonitorService Message to get the proxy information from.
+     *
+     * @return RETCODE_OK if the operation succeeds.
+     * @return RETCODE_ERROR if the  operation fails.
+     */
+    efd::ReturnCode_t fill_discovery_data_from_cdr_message(
+            fastrtps::rtps::ReaderProxyData& data,
+            fastdds::statistics::MonitorServiceStatusData& msg);
+
+    /**
+     * Gets the status observer for that entity
+     *
+     * @return status observer
+     */
+
+    const rtps::IStatusObserver* get_status_observer()
+    {
+        return status_observer_.load();
+    }
+
+>>>>>>> 0d62335cc (Properly delete builtin statistics writers upon `delete_contained_entities()`  (#4891))
 protected:
 
     /**
