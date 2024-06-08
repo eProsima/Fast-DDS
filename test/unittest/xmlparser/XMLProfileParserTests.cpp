@@ -865,7 +865,7 @@ TEST_F(XMLProfileParserTests, XMLParserPublisher)
     EXPECT_EQ(pub_qos.m_partition.names()[0], "partition_name_a");
     EXPECT_EQ(pub_qos.m_partition.names()[1], "partition_name_b");
     EXPECT_EQ(pub_qos.m_publishMode.kind, ASYNCHRONOUS_PUBLISH_MODE);
-    EXPECT_EQ(pub_qos.m_publishMode.flow_controller_name, "test_flow_controller");
+    EXPECT_EQ(0, strcmp(pub_qos.m_publishMode.flow_controller_name, "test_flow_controller"));
     EXPECT_EQ(pub_times.initialHeartbeatDelay, c_TimeZero);
     EXPECT_EQ(pub_times.heartbeatPeriod.seconds, 11);
     EXPECT_EQ(pub_times.heartbeatPeriod.nanosec, 32u);
@@ -942,7 +942,7 @@ TEST_F(XMLProfileParserBasicTests, XMLParserPublisherDeprecated)
     EXPECT_EQ(pub_qos.m_partition.names()[0], "partition_name_a");
     EXPECT_EQ(pub_qos.m_partition.names()[1], "partition_name_b");
     EXPECT_EQ(pub_qos.m_publishMode.kind, ASYNCHRONOUS_PUBLISH_MODE);
-    EXPECT_EQ(pub_qos.m_publishMode.flow_controller_name, "test_flow_controller");
+    EXPECT_EQ(0, strcmp(pub_qos.m_publishMode.flow_controller_name, "test_flow_controller"));
     EXPECT_EQ(pub_times.initialHeartbeatDelay, c_TimeZero);
     EXPECT_EQ(pub_times.heartbeatPeriod.seconds, 11);
     EXPECT_EQ(pub_times.heartbeatPeriod.nanosec, 32u);
@@ -1015,7 +1015,7 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultPublisherProfile)
     EXPECT_EQ(pub_qos.m_partition.names()[0], "partition_name_a");
     EXPECT_EQ(pub_qos.m_partition.names()[1], "partition_name_b");
     EXPECT_EQ(pub_qos.m_publishMode.kind, ASYNCHRONOUS_PUBLISH_MODE);
-    EXPECT_EQ(pub_qos.m_publishMode.flow_controller_name, "test_flow_controller");
+    EXPECT_EQ(0, strcmp(pub_qos.m_publishMode.flow_controller_name, "test_flow_controller"));
     EXPECT_EQ(pub_times.initialHeartbeatDelay, c_TimeZero);
     EXPECT_EQ(pub_times.heartbeatPeriod.seconds, 11);
     EXPECT_EQ(pub_times.heartbeatPeriod.nanosec, 32u);
@@ -1090,7 +1090,7 @@ TEST_F(XMLProfileParserBasicTests, XMLParserDefaultPublisherProfileDeprecated)
     EXPECT_EQ(pub_qos.m_partition.names()[0], "partition_name_a");
     EXPECT_EQ(pub_qos.m_partition.names()[1], "partition_name_b");
     EXPECT_EQ(pub_qos.m_publishMode.kind, ASYNCHRONOUS_PUBLISH_MODE);
-    EXPECT_EQ(pub_qos.m_publishMode.flow_controller_name, "test_flow_controller");
+    EXPECT_EQ(0, strcmp(pub_qos.m_publishMode.flow_controller_name, "test_flow_controller"));
     EXPECT_EQ(pub_times.initialHeartbeatDelay, c_TimeZero);
     EXPECT_EQ(pub_times.heartbeatPeriod.seconds, 11);
     EXPECT_EQ(pub_times.heartbeatPeriod.nanosec, 32u);
