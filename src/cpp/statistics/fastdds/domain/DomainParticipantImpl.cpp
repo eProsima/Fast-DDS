@@ -287,15 +287,8 @@ void DomainParticipantImpl::disable()
 
 ReturnCode_t DomainParticipantImpl::delete_contained_entities()
 {
-    ReturnCode_t ret = efd::DomainParticipantImpl::delete_contained_entities();
-
-    if (ret == ReturnCode_t::RETCODE_OK)
-    {
-        builtin_publisher_impl_ = nullptr;
-        builtin_publisher_ = nullptr;
-    }
-
-    return ret;
+    delete_statistics_builtin_entities();
+    return efd::DomainParticipantImpl::delete_contained_entities();
 }
 
 ReturnCode_t DomainParticipantImpl::enable_monitor_service()
