@@ -17,15 +17,16 @@
  *
  */
 
-#ifndef QOS_POLICIES_H_
-#define QOS_POLICIES_H_
+#ifndef _FASTDDS_QOS_POLICIES_H_
+#define _FASTDDS_QOS_POLICIES_H_
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 
 #include <vector>
-#include <fastdds/rtps/common/Types.h>
+
+#include <fastdds/dds/core/policy/ParameterTypes.hpp>
 #include <fastdds/rtps/common/Time_t.h>
-#include <fastrtps/qos/ParameterTypes.h>
+#include <fastdds/rtps/common/Types.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -109,4 +110,4 @@ using TypeInformationParameter = fastdds::dds::xtypes::TypeInformationParameter;
 } // namespace fastdds
 } // namespace eprosima
 
-#endif /* QOS_POLICIES_H_ */
+#endif /* _FASTDDS_QOS_POLICIES_H_ */

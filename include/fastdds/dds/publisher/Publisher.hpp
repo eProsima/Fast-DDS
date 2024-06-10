@@ -40,6 +40,12 @@ namespace fastdds {
 
 class TopicAttributes;
 
+namespace rtps {
+
+class IPayloadPool;
+
+} // namespace rtps
+
 namespace dds {
 
 class DomainParticipant;

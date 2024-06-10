@@ -38,6 +38,7 @@ namespace fastdds {
 namespace rtps {
 
 class RTPSParticipant;
+class IPayloadPool;
 
 } //namespace rtps
 
