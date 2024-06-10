@@ -56,6 +56,7 @@ public:
     {
         uint16_t samples = 0;
         uint16_t interval = 100;
+        bool filtering = true;
     };
 
     //! Subscriber application configuration structure
@@ -96,6 +97,8 @@ public:
         std::cout << " -s <num>, --samples <num>                                Number of samples to send"               << std::endl;
         std::cout << "                                                          (Default: 0 [unlimited])"                << std::endl;
         std::cout << " -i <num>, --interval <num>                               Time between samples in milliseconds"    << std::endl;
+        std::cout << " -f <true/false>, --filter <true/false>                   Apply filter on the writer side"         << std::endl;
+        std::cout << "                                                          (Default: true)"                         << std::endl;
         std::cout << "Subscriber options:"                                                                               << std::endl;
         std::cout << " -f <default/custom/none>, --filter <default/custom/none> Kind of Content Filter to use"           << std::endl;
         std::cout << "                                                          (Default: DDS SQL default filter)"       << std::endl;
@@ -253,8 +256,20 @@ public:
                     }
                     else if (config.entity == CLIParser::EntityKind::PUBLISHER)
                     {
-                        EPROSIMA_LOG_ERROR(CLI_PARSER, "filter option can only be used with the Subscriber");
-                        print_help(EXIT_FAILURE);
+                        std::string filtering = argv[++i];
+                        if (filtering == "true")
+                        {
+                            config.pub_config.filtering = true;
+                        }
+                        else if (filtering == "false")
+                        {
+                            config.pub_config.filtering = false;
+                        }
+                        else
+                        {
+                            EPROSIMA_LOG_ERROR(CLI_PARSER, "unknown --filter argument");
+                            print_help(EXIT_FAILURE);
+                        }
                     }
                     else
                     {

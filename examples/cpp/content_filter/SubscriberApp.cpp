@@ -29,6 +29,7 @@
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
 
 #include "HelloWorldTypeObjectSupport.hpp"
 
@@ -55,15 +56,19 @@ SubscriberApp::SubscriberApp(
     auto factory = DomainParticipantFactory::get_instance();
     factory->set_library_settings(library_settings);
 
-    // Set DomainParticipant qos
+    // Set DomainParticipant name
     DomainParticipantQos pqos;
     pqos.name("Participant_sub");
+    // Disable multicast for enabling filtering also on the writer side
     eprosima::fastrtps::rtps::Locator_t default_unicast_locator;
     pqos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(default_unicast_locator);
     // Initial peer will be UDPv4 address 127.0.0.1.
     eprosima::fastrtps::rtps::Locator_t initial_peer;
     eprosima::fastrtps::rtps::IPLocator::setIPv4(initial_peer, "127.0.0.1");
     pqos.wire_protocol().builtin.initialPeersList.push_back(initial_peer);
+    pqos.transport().use_builtin_transports = false;
+    std::shared_ptr<eprosima::fastdds::rtps::UDPv4TransportDescriptor> udp_descriptor = std::make_shared<eprosima::fastdds::rtps::UDPv4TransportDescriptor>();
+    pqos.transport().user_transports.push_back(udp_descriptor);
     // Create DomainParticipant
     participant_ = factory->create_participant(0, pqos);
     if (participant_ == nullptr)
