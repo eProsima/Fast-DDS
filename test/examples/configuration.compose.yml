@@ -1,4 +1,3 @@
-# FASTDDS_TODO_BEFORE(3, 0, "This compose file should be used for the future configuration example");
 version: "3"
 
 services:
