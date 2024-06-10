@@ -310,23 +310,26 @@ SampleIdentity TypeLookupManager::get_types(
 
 ReturnCode_t TypeLookupManager::async_get_type(
         eprosima::ProxyPool<eprosima::fastrtps::rtps::WriterProxyData>::smart_ptr& temp_writer_data,
+        const fastrtps::rtps::GUID_t& type_server,
         const AsyncGetTypeWriterCallback& callback)
 {
     return check_type_identifier_received<eprosima::fastrtps::rtps::WriterProxyData>(
-        temp_writer_data, callback, async_get_type_writer_callbacks_);
+        temp_writer_data, type_server, callback, async_get_type_writer_callbacks_);
 }
 
 ReturnCode_t TypeLookupManager::async_get_type(
         eprosima::ProxyPool<eprosima::fastrtps::rtps::ReaderProxyData>::smart_ptr&  temp_reader_data,
+        const fastrtps::rtps::GUID_t& type_server,
         const AsyncGetTypeReaderCallback& callback)
 {
     return check_type_identifier_received<eprosima::fastrtps::rtps::ReaderProxyData>(
-        temp_reader_data, callback, async_get_type_reader_callbacks_);
+        temp_reader_data, type_server, callback, async_get_type_reader_callbacks_);
 }
 
 template <typename ProxyType, typename AsyncCallback>
 ReturnCode_t TypeLookupManager::check_type_identifier_received(
         typename eprosima::ProxyPool<ProxyType>::smart_ptr& temp_proxy_data,
+        const fastrtps::rtps::GUID_t& type_server,
         const AsyncCallback& callback,
         std::unordered_map<xtypes::TypeIdentfierWithSize,
         std::vector<std::pair<ProxyType*,
@@ -334,7 +337,6 @@ ReturnCode_t TypeLookupManager::check_type_identifier_received(
 {
     xtypes::TypeIdentfierWithSize type_identifier_with_size =
             temp_proxy_data->type_information().type_information.complete().typeid_with_size();
-    fastrtps::rtps::GUID_t type_server = temp_proxy_data->guid();
 
     // Check if the type is known
     if (fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().

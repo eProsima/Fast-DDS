@@ -111,6 +111,7 @@ bool BuiltinProtocols::initBuiltinProtocols(
 
 #if HAVE_SQLITE3
         case DiscoveryProtocol_t::BACKUP:
+            EPROSIMA_LOG_WARNING(RTPS_PDP, "BACKUP discovery protocol is not yet supported with XTypes.");
             mp_PDP = new fastdds::rtps::PDPServer(this, allocation, DurabilityKind_t::TRANSIENT);
             break;
 #endif // if HAVE_SQLITE3

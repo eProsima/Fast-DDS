@@ -180,6 +180,7 @@ public:
      * Use builtin TypeLookup service to solve the type and dependencies of a given TypeInformation.
      * It receives a callback that will be used to notify when the negotiation is complete.
      * @param temp_proxy_data[in] Temporary Writer/Reader ProxyData that originated the request.
+     * @param type_server[in] GUID of the remote participant that has the type.
      * @param callback Callback called when the negotiation is complete.
      * @return ReturnCode_t RETCODE_OK if the type is already known.
      *                      RETCODE_NO_DATA if type is not known, and a negotiation has been started.
@@ -187,9 +188,11 @@ public:
      */
     ReturnCode_t async_get_type(
             eprosima::ProxyPool<eprosima::fastrtps::rtps::WriterProxyData>::smart_ptr& temp_proxy_data,
+            const fastrtps::rtps::GUID_t& type_server,
             const AsyncGetTypeWriterCallback& callback);
     ReturnCode_t async_get_type(
             eprosima::ProxyPool<eprosima::fastrtps::rtps::ReaderProxyData>::smart_ptr& temp_proxy_data,
+            const fastrtps::rtps::GUID_t& type_server,
             const AsyncGetTypeReaderCallback& callback);
 
 protected:
@@ -200,6 +203,7 @@ protected:
      * Adds a callback to the async_get_type_callbacks_ entry of the TypeIdentfierWithSize, or creates a new one if
      * TypeIdentfierWithSize was not in the map before
      * @param temp_proxy_data[in] Temporary Writer/Reader ProxyData that originated the request.
+     * @param type_server[in] GUID of the remote participant that has the type.
      * @param callback[in] Callback to add.
      * @param async_get_type_callbacks[in] The collection ProxyData and their callbacks to use.
      * @return ReturnCode_t RETCODE_OK if type is known.
@@ -209,6 +213,7 @@ protected:
     template <typename ProxyType, typename AsyncCallback>
     ReturnCode_t check_type_identifier_received(
             typename eprosima::ProxyPool<ProxyType>::smart_ptr& temp_proxy_data,
+            const fastrtps::rtps::GUID_t& type_server,
             const AsyncCallback& callback,
             std::unordered_map<xtypes::TypeIdentfierWithSize,
             std::vector<std::pair<ProxyType*,
