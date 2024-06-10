@@ -731,7 +731,7 @@ bool StatefulReader::process_data_frag_msg(
             if (!history_->get_change(change_to_add->sequenceNumber, change_to_add->writerGUID, &work_change))
             {
                 // A new change should be reserved
-                if (reserve_cache(&work_change, sampleSize))
+                if (reserve_cache(sampleSize, work_change))
                 {
                     if (work_change->serializedPayload.max_size < sampleSize)
                     {

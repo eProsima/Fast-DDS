@@ -260,7 +260,7 @@ bool ReaderHistory::do_reserve_cache(
         CacheChange_t** change,
         uint32_t size)
 {
-    return BaseReader::downcast(mp_reader)->reserve_cache(change, size);
+    return BaseReader::downcast(mp_reader)->reserve_cache(size, *change);
 }
 
 void ReaderHistory::do_release_cache(

@@ -140,14 +140,16 @@ public:
     }
 
     /**
-     * Reserve a CacheChange_t.
-     * @param change Pointer to pointer to the Cache.
-     * @param dataCdrSerializedSize Size of the Cache.
+     * @brief Reserve a CacheChange_t.
+     *
+     * @param [in]  cdr_payload_size  Size of the received payload.
+     * @param [out] change            Pointer to the reserved change.
+     *
      * @return True if correctly reserved.
      */
     bool reserve_cache(
-            fastrtps::rtps::CacheChange_t** change,
-            uint32_t dataCdrSerializedSize);
+            uint32_t cdr_payload_size,
+            fastrtps::rtps::CacheChange_t*& change);
 
     /**
      * Release a cacheChange.

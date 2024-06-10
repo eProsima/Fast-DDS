@@ -246,12 +246,12 @@ BaseReader* BaseReader::downcast(
 }
 
 bool BaseReader::reserve_cache(
-        fastrtps::rtps::CacheChange_t** change,
-        uint32_t dataCdrSerializedSize)
+        uint32_t cdr_payload_size,
+        fastrtps::rtps::CacheChange_t*& change)
 {
     std::lock_guard<decltype(mp_mutex)> guard(mp_mutex);
 
-    *change = nullptr;
+    change = nullptr;
 
     fastrtps::rtps::CacheChange_t* reserved_change = nullptr;
     if (!change_pool_->reserve_cache(reserved_change))
@@ -260,7 +260,7 @@ bool BaseReader::reserve_cache(
         return false;
     }
 
-    uint32_t payload_size = fixed_payload_size_ ? fixed_payload_size_ : dataCdrSerializedSize;
+    uint32_t payload_size = fixed_payload_size_ ? fixed_payload_size_ : cdr_payload_size;
     if (!payload_pool_->get_payload(payload_size, *reserved_change))
     {
         change_pool_->release_cache(reserved_change);
@@ -268,7 +268,7 @@ bool BaseReader::reserve_cache(
         return false;
     }
 
-    *change = reserved_change;
+    change = reserved_change;
     return true;
 }
 

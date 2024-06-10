@@ -150,7 +150,7 @@ public:
     // *INDENT-OFF* Uncrustify makes a mess with MOCK_METHOD macros
     MOCK_METHOD1(change_removed_by_history, bool(fastrtps::rtps::CacheChange_t* change));
 
-    MOCK_METHOD2(reserve_cache, bool(fastrtps::rtps::CacheChange_t** a_change, uint32_t dataCdrSerializedSize));
+    MOCK_METHOD2(reserve_cache, bool(uint32_t, fastrtps::rtps::CacheChange_t*&));
 
     MOCK_METHOD1(release_cache, void(fastrtps::rtps::CacheChange_t* a_change));
     // *INDENT-ON*
