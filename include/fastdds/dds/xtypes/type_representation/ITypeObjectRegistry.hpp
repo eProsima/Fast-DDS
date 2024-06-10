@@ -54,7 +54,7 @@ public:
      *
      * @param[in] type_name Name of the type being registered.
      * @param[in] complete_type_object CompleteTypeObject related to the given type name.
-     * @param[out] type_ids TypeIdentifiers corresponding to the CompleteTypeObject just registered and the
+     * @param[out] type_ids @ref TypeIdentifierPair corresponding to the CompleteTypeObject just registered and the
      * generated MinimalTypeObject.
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
      *                      RETCODE_BAD_PARAMETER if there is already another different TypeObject registered with the
@@ -95,7 +95,7 @@ public:
      * @brief Register DynamicType TypeObject.
      *
      * @param[in] dynamic_type DynamicType to be registered.
-     * @param[out] type_ids TypeIdentifiers corresponding to the registered DynamicType TypeObject.
+     * @param[out] type_ids @ref TypeIdentifierPair corresponding to the registered DynamicType TypeObject.
      * @return ReturnCode_t RETCODE_OK always.
      */
     virtual FASTDDS_EXPORTED_API ReturnCode_t register_typeobject_w_dynamic_type(
@@ -110,7 +110,7 @@ public:
      * @pre type_name must not be empty.
      *
      * @param[in] type_name Name of the type being registered.
-     * @param[inout] type_identifier TypeIdentifier related to the given type name. It must be set in
+     * @param[in,out] type_identifier @ref TypeIdentifierPair related to the given type name. It must be set in
      * @ref TypeIdentifierPair::type_identifier1. At the end this object is filled with both TypeIdentifiers.
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
      *                      RETCODE_BAD_PARAMETER if there is already another different TypeIdentifier registered with
@@ -175,7 +175,7 @@ public:
      *
      * @pre type_ids must not be empty.
      *
-     * @param[in] type_ids @ref TypeIdentifier which type information is queried.
+     * @param[in] type_ids @ref TypeIdentifierPair which type information is queried.
      * @param[out] type_information Related TypeInformation for the given @ref TypeIdentifier.
      * @param[in] with_dependencies
      * @return ReturnCode_t RETCODE_OK if the type_ids are found within the registry.

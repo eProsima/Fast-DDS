@@ -94,7 +94,7 @@ public:
      *
      * @param[in] type_name Name of the type being registered.
      * @param[in] complete_type_object CompleteTypeObject related to the given type name.
-     * @param[out] type_ids TypeIdentifiers corresponding to the CompleteTypeObject just registered and the
+     * @param[out] type_ids @ref TypeIdentifierPair corresponding to the CompleteTypeObject just registered and the
      * generated MinimalTypeObject.
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
      *                      RETCODE_BAD_PARAMETER if there is already another different TypeObject registered with the
@@ -119,7 +119,7 @@ public:
      *      @ref TypeIdentifierPair::type_identifier1 consistency is only checked in Debug build mode.
      *
      * @param[in] type_object Related TypeObject being registered.
-     * @param[inout] type_ids Returns the registered @ref TypeIdentifier.
+     * @param[in,out] type_ids Returns the registered @ref TypeIdentifierPair.
      * @ref TypeIdentifierPair::type_identifier1 might be TK_NONE.
      * In other case this function will check it is consistence with the provided @TypeObject.
      * @return ReturnCode_t RETCODE_OK if correctly registered.
@@ -139,7 +139,7 @@ public:
      * @pre type_name must not be empty.
      *
      * @param[in] type_name Name of the type being registered.
-     * @param[inout] type_identifier TypeIdentifier related to the given type name. It must be set in
+     * @param[inout] type_identifier @ref TypeIdentifierPair related to the given type name. It must be set in
      * @ref TypeIdentifierPair::type_identifier1. At the end this object is filled with both TypeIdentifiers.
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
      *                      RETCODE_BAD_PARAMETER if there is already another different TypeIdentifier registered with
@@ -204,7 +204,7 @@ public:
      *
      * @pre type_ids must not be empty. At least @ref TypeIdentifierPair::type_identifier1 must be filled.
      *
-     * @param[in] type_ids @ref TypeIdentifier which type information is queried.
+     * @param[in] type_ids @ref TypeIdentifierPair which type information is queried.
      * @param[out] type_information Related TypeInformation for the given @ref TypeIdentifier.
      * @param[in] with_dependencies
      * @return ReturnCode_t RETCODE_OK if the type_ids are found within the registry.
@@ -263,7 +263,7 @@ public:
      * @brief Register DynamicType TypeObject.
      *
      * @param[in] dynamic_type DynamicType to be registered.
-     * @param[out] type_ids TypeIdentifiers corresponding to the registered DynamicType TypeObject.
+     * @param[out] type_ids @ref TypeIdentifierPair corresponding to the registered DynamicType TypeObject.
      * @return ReturnCode_t RETCODE_OK always.
      */
     ReturnCode_t register_typeobject_w_dynamic_type(
@@ -778,7 +778,7 @@ protected:
      * @brief Register DynamicType TypeObject of an Alias type.
      *
      * @param[in] dynamic_type Alias DynamicType to be registered.
-     * @param[out] type_ids TypeIdentifiers corresponding to the Alias DynamicType TypeObject.
+     * @param[out] type_ids @ref TypeIdentifierPair corresponding to the Alias DynamicType TypeObject.
      * @return ReturnCode_t RETCODE_OK always.
      */
     ReturnCode_t register_typeobject_w_alias_dynamic_type(
@@ -789,7 +789,7 @@ protected:
      * @brief Register DynamicType TypeObject of an Annotation type.
      *
      * @param[in] dynamic_type Annotation DynamicType to be registered.
-     * @param[out] type_ids TypeIdentifiers corresponding to the Alias DynamicType TypeObject.
+     * @param[out] type_ids @ref TypeIdentifierPair corresponding to the Alias DynamicType TypeObject.
      * @return ReturnCode_t RETCODE_OK always.
      */
     ReturnCode_t register_typeobject_w_annotation_dynamic_type(
@@ -800,7 +800,7 @@ protected:
      * @brief Register DynamicType TypeObject of a Structure type.
      *
      * @param[in] dynamic_type Structure DynamicType to be registered.
-     * @param[out] type_ids TypeIdentifiers corresponding to the Alias DynamicType TypeObject.
+     * @param[out] type_ids @ref TypeIdentifierPair corresponding to the Alias DynamicType TypeObject.
      * @return ReturnCode_t RETCODE_OK always.
      */
     ReturnCode_t register_typeobject_w_struct_dynamic_type(
@@ -811,7 +811,7 @@ protected:
      * @brief Register DynamicType TypeObject of a Union type.
      *
      * @param[in] dynamic_type Union DynamicType to be registered.
-     * @param[out] type_ids TypeIdentifiers corresponding to the Alias DynamicType TypeObject.
+     * @param[out] type_ids @ref TypeIdentifierPair corresponding to the Alias DynamicType TypeObject.
      * @return ReturnCode_t RETCODE_OK always.
      */
     ReturnCode_t register_typeobject_w_union_dynamic_type(
@@ -822,7 +822,7 @@ protected:
      * @brief Register DynamicType TypeObject of a Bitset type.
      *
      * @param[in] dynamic_type Bitset DynamicType to be registered.
-     * @param[out] type_ids TypeIdentifiers corresponding to the Alias DynamicType TypeObject.
+     * @param[out] type_ids @ref TypeIdentifierPair corresponding to the Alias DynamicType TypeObject.
      * @return ReturnCode_t RETCODE_OK always.
      */
     ReturnCode_t register_typeobject_w_bitset_dynamic_type(
@@ -833,7 +833,7 @@ protected:
      * @brief Register DynamicType TypeObject of a Sequence type.
      *
      * @param[in] dynamic_type Sequence DynamicType to be registered.
-     * @param[out] type_ids TypeIdentifiers corresponding to the Alias DynamicType TypeObject.
+     * @param[out] type_ids @ref TypeIdentifierPair corresponding to the Alias DynamicType TypeObject.
      * @return ReturnCode_t RETCODE_OK always.
      */
     ReturnCode_t register_typeobject_w_sequence_dynamic_type(
@@ -844,7 +844,7 @@ protected:
      * @brief Register DynamicType TypeObject of a Array type.
      *
      * @param[in] dynamic_type Array DynamicType to be registered.
-     * @param[out] type_ids TypeIdentifiers corresponding to the Alias DynamicType TypeObject.
+     * @param[out] type_ids @ref TypeIdentifierPair corresponding to the Alias DynamicType TypeObject.
      * @return ReturnCode_t RETCODE_OK always.
      */
     ReturnCode_t register_typeobject_w_array_dynamic_type(
@@ -855,7 +855,7 @@ protected:
      * @brief Register DynamicType TypeObject of a Map type.
      *
      * @param[in] dynamic_type Map DynamicType to be registered.
-     * @param[out] type_ids TypeIdentifiers corresponding to the Alias DynamicType TypeObject.
+     * @param[out] type_ids @ref TypeIdentifierPair corresponding to the Alias DynamicType TypeObject.
      * @return ReturnCode_t RETCODE_OK always.
      */
     ReturnCode_t register_typeobject_w_map_dynamic_type(
@@ -866,7 +866,7 @@ protected:
      * @brief Register DynamicType TypeObject of a Enumeration type.
      *
      * @param[in] dynamic_type Enumeration DynamicType to be registered.
-     * @param[out] type_ids TypeIdentifiers corresponding to the Alias DynamicType TypeObject.
+     * @param[out] type_ids @ref TypeIdentifierPair corresponding to the Alias DynamicType TypeObject.
      * @return ReturnCode_t RETCODE_OK always.
      */
     ReturnCode_t register_typeobject_w_enum_dynamic_type(
@@ -877,7 +877,7 @@ protected:
      * @brief Register DynamicType TypeObject of a Bitmask type.
      *
      * @param[in] dynamic_type Bitmask DynamicType to be registered.
-     * @param[out] type_ids TypeIdentifiers corresponding to the Alias DynamicType TypeObject.
+     * @param[out] type_ids @ref TypeIdentifierPair corresponding to the Alias DynamicType TypeObject.
      * @return ReturnCode_t RETCODE_OK always.
      */
     ReturnCode_t register_typeobject_w_bitmask_dynamic_type(
@@ -888,7 +888,7 @@ protected:
      * @brief Register DynamicType indirect-hash TypeIdentifier of a Sequence type.
      *
      * @param[in] dynamic_type Sequence DynamicType to be registered.
-     * @param[out] type_ids TypeIdentifiers corresponding to the Alias DynamicType TypeObject.
+     * @param[out] type_ids @ref TypeIdentifierPair corresponding to the Alias DynamicType TypeObject.
      * @return ReturnCode_t RETCODE_OK always.
      */
     ReturnCode_t typeidentifier_w_sequence_dynamic_type(
