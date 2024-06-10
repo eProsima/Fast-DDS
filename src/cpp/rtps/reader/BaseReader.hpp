@@ -132,16 +132,6 @@ public:
     void allow_unknown_writers();
 
     /**
-     * @brief Whether the reader accepts messages directed to unknown readers.
-     *
-     * @return true if the reader accepts messages directed to unknown readers, false otherwise.
-     */
-    bool accept_messages_to_unknown_readers() const
-    {
-        return accept_messages_to_unknown_readers_;
-    }
-
-    /**
      * @return The liveliness kind of this reader
      */
     fastdds::dds::LivelinessQosPolicyKind liveliness_kind() const
@@ -235,9 +225,10 @@ public:
             int32_t not_alive_change);
 
     /**
-     * Processes a new DATA message. Previously the message must have been accepted by function acceptMsgDirectedTo.
+     * @brief Processes a new DATA message.
      *
-     * @param change Pointer to the CacheChange_t.
+     * @param change  Pointer to the CacheChange_t.
+     *
      * @return true if the reader accepts messages from the.
      */
     virtual bool process_data_msg(
@@ -425,8 +416,6 @@ protected:
     /// The liveliness changed status struct as defined in the DDS
     fastdds::dds::LivelinessChangedStatus liveliness_changed_status_;
 
-    /// Accept msg to unknwon readers
-    bool accept_messages_to_unknown_readers_ = true;
     /// Trusted writer (for Builtin)
     fastrtps::rtps::EntityId_t trusted_writer_entity_id_;
 

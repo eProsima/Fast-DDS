@@ -696,11 +696,8 @@ bool MessageReceiver::willAReaderAcceptMsgDirectedTo(
         {
             for (const auto& it : readers.second)
             {
-                if (it->accept_messages_to_unknown_readers())
-                {
-                    first_reader = it;
-                    return true;
-                }
+                first_reader = it;
+                return true;
             }
         }
     }
@@ -731,10 +728,7 @@ void MessageReceiver::findAllReaders(
         {
             for (const auto& it : readers.second)
             {
-                if (it->accept_messages_to_unknown_readers())
-                {
-                    callback(it);
-                }
+                callback(it);
             }
         }
     }
