@@ -6,6 +6,10 @@ Forthcoming
 * Remove API marked as deprecated.
 * Removed deprecated FastRTPS API tests.
 * Removed no longer supported `FASTRTPS_API_TESTS` CMake options.
+* RTPS layer APIs refactor (RTPSReader, ReaderListener, ReaderAttributes):
+  * Several methods that were meant for internal use have been removed from public API
+  * All public methods now have `snake_case` names
+  * All public attributes now have `snake_case` names
 * Public API that is no longer public:
   * XML Parser API no longer public.
   * ParticipantAttributes
