@@ -23,7 +23,7 @@ namespace dds {
 
 typedef uint32_t DomainId_t;
 
-const DomainId_t c_DomainId_t_Unknown = 0xFFFFFFFF;
+const DomainId_t DOMAIN_ID_UNKNOWN = 0xFFFFFFFF;
 
 const int32_t LENGTH_UNLIMITED = -1;
 

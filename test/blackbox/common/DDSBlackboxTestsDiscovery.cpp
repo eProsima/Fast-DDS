@@ -2034,7 +2034,6 @@ TEST(DDSDiscovery, pdp_simple_participants_exchange_same_pid_domain_id_and_disco
  * do not discover each other despite the first one is initial peer of the second.
  *
  */
-
 TEST(DDSDiscovery, pdp_simple_initial_peer_participants_with_different_domain_ids_do_not_discover)
 {
     PubSubWriter<HelloWorldPubSubType> writer_domain_1(TEST_TOPIC_NAME);
@@ -2064,7 +2063,6 @@ TEST(DDSDiscovery, pdp_simple_initial_peer_participants_with_different_domain_id
  * discover each other.
  *
  */
-
 TEST(DDSDiscovery, client_server_participants_with_different_domain_ids_discover)
 {
     PubSubReader<HelloWorldPubSubType> server_domain_1(TEST_TOPIC_NAME);

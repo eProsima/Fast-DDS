@@ -25,7 +25,7 @@
                         <locator>
                             <udpv4>
                                 <address>127.0.0.1</address>
-                                <port>7412</port>
+                                <port>11500</port>
                             </udpv4>
                         </locator>
                     </initialPeersList>
@@ -50,14 +50,14 @@
                         <locator>
                             <udpv4>
                                 <address>127.0.0.1</address>
-                                <port>7412</port>
+                                <port>11500</port>
                             </udpv4>
                         </locator>
                     </metatrafficUnicastLocatorList>
                     <metatrafficMulticastLocatorList>
                         <locator>
                             <udpv4>
-                                <port>7400</port>
+                                <port>11600</port>
                                 <address>239.255.0.1</address>
                             </udpv4>
                         </locator>

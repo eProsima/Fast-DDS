@@ -148,11 +148,12 @@ void PDPServerListener::on_new_cache_change_added(
                 return;
             }
 
-            bool is_client = true;
-            if (!check_discovery_conditions(participant_data, &is_client))
+            auto ret = check_server_discovery_conditions(participant_data);
+            if (!ret.first)
             {
                 return;
             }
+            bool is_client = ret.second;
 
             const auto& pattr = pdp_server()->getRTPSParticipant()->getAttributes();
             fastdds::rtps::network::external_locators::filter_remote_locators(participant_data,
@@ -361,18 +362,18 @@ void PDPServerListener::on_new_cache_change_added(
     EPROSIMA_LOG_INFO(RTPS_PDP_LISTENER, "");
 }
 
-bool PDPServerListener::check_discovery_conditions(
-        ParticipantProxyData& participant_data,
-        void* extra_data /* bool is_client*/)
+std::pair<bool, bool> PDPServerListener::check_server_discovery_conditions(
+        ParticipantProxyData& participant_data)
 {
-    bool ret = true;
+    // is_valid, is_client
+    std::pair<bool, bool> ret{true, true};
 
     /* Check PID_VENDOR_ID */
     if (participant_data.m_VendorId != fastrtps::rtps::c_VendorId_eProsima)
     {
         EPROSIMA_LOG_INFO(RTPS_PDP_LISTENER,
                 "DATA(p|Up) from different vendor is not supported for Discover-Server operation");
-        ret = false;
+        ret.first = false;
     }
 
     // In Discovery Server we don't impose
@@ -382,7 +383,7 @@ bool PDPServerListener::check_discovery_conditions(
     fastdds::dds::ParameterPropertyList_t properties = participant_data.m_properties;
 
     /* Check DS_VERSION */
-    if (ret)
+    if (ret.first)
     {
         auto ds_version = std::find_if(
             properties.begin(),
@@ -398,7 +399,7 @@ bool PDPServerListener::check_discovery_conditions(
             {
                 EPROSIMA_LOG_ERROR(RTPS_PDP_LISTENER, "Minimum " << dds::parameter_property_ds_version
                                                                  << " is 1.0, found: " << ds_version->second());
-                ret = false;
+                ret.first = false;
             }
             EPROSIMA_LOG_INFO(RTPS_PDP_LISTENER, "Participant " << dds::parameter_property_ds_version << ": "
                                                                 << ds_version->second());
@@ -410,7 +411,7 @@ bool PDPServerListener::check_discovery_conditions(
     }
 
     /* Check PARTICIPANT_TYPE */
-    if (ret)
+    if (ret.first)
     {
         auto participant_type = std::find_if(
             properties.begin(),
@@ -426,19 +427,19 @@ bool PDPServerListener::check_discovery_conditions(
                     participant_type->second() == ParticipantType::BACKUP ||
                     participant_type->second() == ParticipantType::SUPER_CLIENT)
             {
-                *static_cast<bool*>(extra_data) = false;
+                ret.second = false;
             }
             else if (participant_type->second() == ParticipantType::SIMPLE)
             {
                 EPROSIMA_LOG_INFO(RTPS_PDP_LISTENER, "Ignoring " << dds::parameter_property_participant_type << ": "
                                                                  << participant_type->second());
-                ret = false;
+                ret.first = false;
             }
             else if (participant_type->second() != ParticipantType::CLIENT)
             {
                 EPROSIMA_LOG_ERROR(RTPS_PDP_LISTENER, "Wrong " << dds::parameter_property_participant_type << ": "
                                                                << participant_type->second());
-                ret = false;
+                ret.first = false;
             }
             EPROSIMA_LOG_INFO(RTPS_PDP_LISTENER, "Participant type " << participant_type->second());
         }
@@ -458,11 +459,10 @@ bool PDPServerListener::check_discovery_conditions(
             // as persistent will have this property.
             if (persistence_guid != properties.end())
             {
-                // is_client = false
-                *static_cast<bool*>(extra_data) = false;
+                ret.second = false;
             }
             EPROSIMA_LOG_INFO(RTPS_PDP_LISTENER,
-                    "Participant is client: " << std::boolalpha << *static_cast<bool*>(extra_data));
+                    "Participant is client: " << std::boolalpha << ret.second);
         }
     }
 

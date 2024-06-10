@@ -87,8 +87,7 @@ void PDPSecurityInitiatorListener::process_alive_data(
 }
 
 bool PDPSecurityInitiatorListener::check_discovery_conditions(
-        ParticipantProxyData& /* participant_data */,
-        void* /* extra data*/)
+        ParticipantProxyData& /* participant_data */)
 {
     /* Do not check PID_VENDOR_ID */
     // In Discovery Server we don't impose

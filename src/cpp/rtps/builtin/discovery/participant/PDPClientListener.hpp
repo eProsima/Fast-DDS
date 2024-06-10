@@ -19,7 +19,6 @@
 
 #ifndef _FASTDDS_RTPS_PDPCLIENTLISTENER_H_
 #define _FASTDDS_RTPS_PDPCLIENTLISTENER_H_
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <rtps/builtin/discovery/participant/PDPListener.h>
 
@@ -48,8 +47,7 @@ public:
 protected:
 
     bool check_discovery_conditions(
-            ParticipantProxyData& pdata,
-            void* extra_data) override;
+            ParticipantProxyData& pdata) override;
 
 };
 
@@ -58,5 +56,4 @@ protected:
 } /* namespace fastrtps */
 } /* namespace eprosima */
 
-#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* _FASTDDS_RTPS_PDPCLIENTLISTENER_H_ */

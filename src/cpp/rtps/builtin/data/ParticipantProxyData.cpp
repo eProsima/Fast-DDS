@@ -52,7 +52,7 @@ ParticipantProxyData::ParticipantProxyData(
         const RTPSParticipantAllocationAttributes& allocation)
     : m_protocolVersion(c_ProtocolVersion)
     , m_VendorId(c_VendorId_Unknown)
-    , m_domain_id(fastdds::dds::c_DomainId_t_Unknown)
+    , m_domain_id(fastdds::dds::DOMAIN_ID_UNKNOWN)
     , m_expectsInlineQos(false)
     , m_availableBuiltinEndpoints(0)
     , m_networkConfiguration(0)
@@ -154,7 +154,7 @@ uint32_t ParticipantProxyData::get_serialized_size(
     ret_val += 4 + 4;
 
     // PID_DOMAIN_ID
-    ret_val += 4 + 4;
+    ret_val += 4 + PARAMETER_DOMAINID_LENGTH;
 
     if (m_expectsInlineQos)
     {
@@ -765,7 +765,7 @@ void ParticipantProxyData::clear()
     m_guid = GUID_t();
     //set_VendorId_Unknown(m_VendorId);
     m_VendorId = c_VendorId_Unknown;
-    m_domain_id = fastdds::dds::c_DomainId_t_Unknown;
+    m_domain_id = fastdds::dds::DOMAIN_ID_UNKNOWN;
     m_expectsInlineQos = false;
     m_availableBuiltinEndpoints = 0;
     m_networkConfiguration = 0;
