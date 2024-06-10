@@ -94,12 +94,31 @@ public:
             const fastrtps::rtps::GUID_t& writer,
             const fastrtps::rtps::SequenceNumber_t& sn) const override;
 
+    /**
+     * @brief Get a pointer to a BaseReader object from a RTPSReader pointer.
+     *
+     * @param reader  Pointer to the RTPSReader object.
+     *
+     * @return Pointer to the BaseReader object.
+     */
     static BaseReader* downcast(
             fastrtps::rtps::RTPSReader* reader);
 
+    /**
+     * @brief Get a pointer to a BaseReader object from a Endpoint pointer.
+     *
+     * @param endpoint  Pointer to the Endpoint object.
+     *
+     * @return Pointer to the BaseReader object.
+     */
     static BaseReader* downcast(
             fastrtps::rtps::Endpoint* endpoint);
 
+    /**
+     * @brief Set the entity ID of the trusted writer.
+     *
+     * @param writer  Entity ID of the trusted writer.
+     */
     void set_trusted_writer(
             const fastrtps::rtps::EntityId_t& writer)
     {
@@ -113,7 +132,7 @@ public:
     void allow_unknown_writers();
 
     /**
-     * Whether the reader accepts messages directed to unknown readers.
+     * @brief Whether the reader accepts messages directed to unknown readers.
      *
      * @return true if the reader accepts messages directed to unknown readers, false otherwise.
      */
@@ -122,18 +141,25 @@ public:
         return accept_messages_to_unknown_readers_;
     }
 
-    //! @return The liveliness kind of this reader
+    /**
+     * @return The liveliness kind of this reader
+     */
     fastdds::dds::LivelinessQosPolicyKind liveliness_kind() const
     {
         return liveliness_kind_;
     }
 
-    //! @return The liveliness lease duration of this reader
+    /**
+     * @return The liveliness lease duration of this reader
+     */
     fastrtps::Duration_t liveliness_lease_duration() const
     {
         return liveliness_lease_duration_;
     }
 
+    /**
+     * @return the datasharing listener associated with this reader.
+     */
     const std::unique_ptr<fastrtps::rtps::IDataSharingListener>& datasharing_listener() const
     {
         return datasharing_listener_;
@@ -152,7 +178,9 @@ public:
             fastrtps::rtps::CacheChange_t*& change);
 
     /**
-     * Release a cacheChange.
+     * @brief Release a CacheChange_t.
+     *
+     * @param change  Pointer to the change to release.
      */
     void release_cache(
             fastrtps::rtps::CacheChange_t* change);
@@ -168,7 +196,8 @@ public:
             fastrtps::rtps::CacheChange_t* change) = 0;
 
     /**
-     * Called just before a change is going to be deserialized.
+     * @brief Called just before a change is going to be deserialized.
+     *
      * @param [in]  change            Pointer to the change being accessed.
      * @param [out] writer            Writer proxy the @c change belongs to.
      * @param [out] is_future_change  Whether the change is in the future (i.e. there are
@@ -182,7 +211,8 @@ public:
             bool& is_future_change) = 0;
 
     /**
-     * Called after the change has been deserialized.
+     * @brief Called after the change has been deserialized.
+     *
      * @param [in] change        Pointer to the change being accessed.
      * @param [in] writer        Writer proxy the @c change belongs to.
      * @param [in] mark_as_read  Whether the @c change should be marked as read or not.
@@ -366,38 +396,38 @@ protected:
     bool is_datasharing_compatible_with(
             const fastrtps::rtps::WriterProxyData& wdata);
 
-    //! Listener
+    /// Listener
     fastrtps::rtps::ReaderListener* listener_;
-    //! Accept msg from unknown writers (BE-true,RE-false)
+    /// Accept msg from unknown writers (BE-true,RE-false)
     bool accept_messages_from_unkown_writers_;
-    //! Expects Inline Qos.
+    /// Expects Inline Qos.
     bool expects_inline_qos_;
 
     IReaderDataFilter* data_filter_ = nullptr;
 
-    //!ReaderHistoryState
+    /// ReaderHistoryState
     fastrtps::rtps::ReaderHistoryState* history_state_;
 
     uint64_t total_unread_ = 0;
 
     fastrtps::TimedConditionVariable new_notification_cv_;
 
-    //! The liveliness kind of this reader
+    /// The liveliness kind of this reader
     fastdds::dds::LivelinessQosPolicyKind liveliness_kind_;
-    //! The liveliness lease duration of this reader
+    /// The liveliness lease duration of this reader
     fastrtps::Duration_t liveliness_lease_duration_;
 
-    //! Whether the writer is datasharing compatible or not
+    /// Whether the writer is datasharing compatible or not
     bool is_datasharing_compatible_ = false;
-    //! The listener for the datasharing notifications
+    /// The listener for the datasharing notifications
     std::unique_ptr<fastrtps::rtps::IDataSharingListener> datasharing_listener_;
 
-    //! The liveliness changed status struct as defined in the DDS
+    /// The liveliness changed status struct as defined in the DDS
     fastdds::dds::LivelinessChangedStatus liveliness_changed_status_;
 
-    //! Accept msg to unknwon readers
+    /// Accept msg to unknwon readers
     bool accept_messages_to_unknown_readers_ = true;
-    //! Trusted writer (for Builtin)
+    /// Trusted writer (for Builtin)
     fastrtps::rtps::EntityId_t trusted_writer_entity_id_;
 
 private:
