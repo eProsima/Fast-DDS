@@ -91,27 +91,17 @@ public:
 
     /// Deleted copy constructor for LoanableSequence.
     LoanableSequence(
-            const LoanableSequence& other) = delete;
+            const LoanableSequence&) = delete;
 
     /// Deleted copy assignment operator for LoanableSequence.
     LoanableSequence& operator =(
-            const LoanableSequence& other) = delete;
+            const LoanableSequence&) = delete;
 
-    /**
-     * @brief Move constructor for LoanableSequence.
-     *
-     * @param[in] other The other LoanableSequence to move from.
-     */
+    /// Move constructor for LoanableSequence.
     LoanableSequence(
             LoanableSequence&&) = default;
 
-    /**
-     * @brief Move assignment operator for LoanableSequence.
-     *
-     * @param[in] other The other LoanableSequence to move from.
-     *
-     * @return A reference to this LoanableSequence.
-     */
+    /// Move assignment operator for LoanableSequence.
     LoanableSequence& operator =(
             LoanableSequence&&) = default;
 
