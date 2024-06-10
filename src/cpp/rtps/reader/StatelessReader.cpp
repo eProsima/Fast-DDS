@@ -469,8 +469,7 @@ CacheChange_t* StatelessReader::next_unread_cache()
 }
 
 bool StatelessReader::change_removed_by_history(
-        CacheChange_t* ch,
-        WriterProxy* /*prox*/)
+        CacheChange_t* ch)
 {
     if (!ch->isRead)
     {

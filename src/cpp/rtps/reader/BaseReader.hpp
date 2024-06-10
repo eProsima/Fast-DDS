@@ -158,14 +158,14 @@ public:
             fastrtps::rtps::CacheChange_t* change);
 
     /**
-     * Method to indicate the reader that some change has been removed due to HistoryQos requirements.
-     * @param change Pointer to the CacheChange_t.
-     * @param prox Pointer to the WriterProxy.
+     * @brief Method to notify the reader that a change has been removed from its history.
+     *
+     * @param change  Pointer to the CacheChange_t that was removed from the history.
+     *
      * @return True if correctly removed.
      */
     virtual bool change_removed_by_history(
-            fastrtps::rtps::CacheChange_t* change,
-            fastrtps::rtps::WriterProxy* prox = nullptr) = 0;
+            fastrtps::rtps::CacheChange_t* change) = 0;
 
     /**
      * Called just before a change is going to be deserialized.

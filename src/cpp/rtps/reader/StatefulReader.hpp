@@ -163,8 +163,7 @@ public:
      * @return True if correctly removed.
      */
     bool change_removed_by_history(
-            CacheChange_t* change,
-            WriterProxy* prox = nullptr) override;
+            CacheChange_t* change) override;
 
     /**
      * This method is called when a new change is received. This method calls the received_change of the History

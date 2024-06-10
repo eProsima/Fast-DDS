@@ -1017,8 +1017,7 @@ History::const_iterator StatefulReader::find_cache_in_fragmented_process(
 }
 
 bool StatefulReader::change_removed_by_history(
-        CacheChange_t* a_change,
-        WriterProxy* wp)
+        CacheChange_t* a_change)
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
 
@@ -1035,14 +1034,10 @@ bool StatefulReader::change_removed_by_history(
                 }
             }
 
-            WriterProxy* proxy = wp;
-
-            if (nullptr == proxy)
+            WriterProxy* proxy = nullptr;
+            if (!findWriterProxy(a_change->writerGUID, &proxy))
             {
-                if (!findWriterProxy(a_change->writerGUID, &proxy))
-                {
-                    return false;
-                }
+                return false;
             }
 
             if (nullptr != proxy)
@@ -1055,19 +1050,14 @@ bool StatefulReader::change_removed_by_history(
             /* A not fully assembled fragmented sample may be removed when receiving a newer sample and KEEP_LAST
              * policy. The WriterProxy should consider it as irrelevant to avoid an infinite loop asking for it.
              */
-            WriterProxy* proxy = wp;
-
-            if (nullptr == proxy)
+            WriterProxy* proxy = nullptr;
+            if (!findWriterProxy(a_change->writerGUID, &proxy))
             {
-                if (!findWriterProxy(a_change->writerGUID, &proxy))
-                {
-                    return false;
-                }
-
-                proxy->irrelevant_change_set(a_change->sequenceNumber);
-                send_ack_if_datasharing(this, history_, proxy, a_change->sequenceNumber);
+                return false;
             }
 
+            proxy->irrelevant_change_set(a_change->sequenceNumber);
+            send_ack_if_datasharing(this, history_, proxy, a_change->sequenceNumber);
         }
 
         return true;

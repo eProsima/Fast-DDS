@@ -108,8 +108,7 @@ public:
      * @return True if correctly removed.
      */
     bool change_removed_by_history(
-            CacheChange_t* change,
-            WriterProxy* prox = nullptr) override;
+            CacheChange_t* change) override;
 
     /**
      * Processes a new DATA message.
