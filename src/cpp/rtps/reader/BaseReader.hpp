@@ -225,22 +225,23 @@ public:
             int32_t not_alive_change);
 
     /**
-     * @brief Processes a new DATA message.
+     * @brief Process an incoming DATA message.
      *
-     * @param change  Pointer to the CacheChange_t.
+     * @param change  Pointer to the incoming CacheChange_t.
      *
-     * @return true if the reader accepts messages from the.
+     * @return true if the reader accepts message.
      */
     virtual bool process_data_msg(
             fastrtps::rtps::CacheChange_t* change) = 0;
 
     /**
-     * Processes a new DATA FRAG message.
+     * @brief Process an incoming DATA_FRAG message.
      *
-     * @param change Pointer to the CacheChange_t.
-     * @param sampleSize Size of the complete, assembled message.
-     * @param fragmentStartingNum Starting number of this particular message.
-     * @param fragmentsInSubmessage Number of fragments on this particular message.
+     * @param change                 Pointer to the incoming CacheChange_t.
+     * @param sampleSize             Size of the complete, assembled message.
+     * @param fragmentStartingNum    Starting number of this particular message.
+     * @param fragmentsInSubmessage  Number of fragments on this particular message.
+     *
      * @return true if the reader accepts message.
      */
     virtual bool process_data_frag_msg(
@@ -250,7 +251,8 @@ public:
             uint16_t fragmentsInSubmessage) = 0;
 
     /**
-     * Processes a new HEARTBEAT message.
+     * @brief Process an incoming HEARTBEAT message.
+     *
      * @param writerGUID
      * @param hbCount
      * @param firstSN
@@ -258,7 +260,8 @@ public:
      * @param finalFlag
      * @param livelinessFlag
      * @param origin_vendor_id
-     * @return true if the reader accepts messages from the.
+     *
+     * @return true if the reader accepts message.
      */
     virtual bool process_heartbeat_msg(
             const fastrtps::rtps::GUID_t& writerGUID,
@@ -270,12 +273,14 @@ public:
             VendorId_t origin_vendor_id = c_VendorId_Unknown) = 0;
 
     /**
-     * Processes a new GAP message.
+     * @brief Process an incoming GAP message.
+     *
      * @param writerGUID
      * @param gapStart
      * @param gapList
      * @param origin_vendor_id
-     * @return true if the reader accepts messages from the.
+     *
+     * @return true if the reader accepts message.
      */
     virtual bool process_gap_msg(
             const fastrtps::rtps::GUID_t& writerGUID,
@@ -324,96 +329,113 @@ protected:
             fastrtps::rtps::ReaderHistory* hist,
             fastrtps::rtps::ReaderListener* listen);
 
-    /*!
+    /**
      * @brief Whether a history record may be removed.
-     * @param removed_by_lease Whether the GUIDs are being removed due to a participant drop.
+     *
+     * @param removed_by_lease  Whether the history record is to be removed due to a participant drop.
+     *
      * @return Whether the history record may be removed.
      */
     virtual bool may_remove_history_record(
             bool removed_by_lease);
 
-    /*!
-     * @brief Add a remote writer to the persistence_guid map
-     * @param guid GUID of the remote writer
-     * @param persistence_guid Persistence GUID of the remote writer
+    /**
+     * @brief Add a remote writer to the persistence_guid map.
+     *
+     * @param guid              GUID of the remote writer.
+     * @param persistence_guid  Persistence GUID of the remote writer.
      */
     void add_persistence_guid(
             const fastrtps::rtps::GUID_t& guid,
             const fastrtps::rtps::GUID_t& persistence_guid);
 
-    /*!
-     * @brief Remove a remote writer from the persistence_guid map
-     * @param guid GUID of the remote writer
-     * @param persistence_guid Persistence GUID of the remote writer
-     * @param removed_by_lease Whether the GUIDs are being removed due to a participant drop.
+    /**
+     * @brief Remove a remote writer from the persistence_guid map.
+     *
+     * @param guid              GUID of the remote writer.
+     * @param persistence_guid  Persistence GUID of the remote writer.
+     * @param removed_by_lease  Whether the GUIDs are being removed due to a participant drop.
      */
     void remove_persistence_guid(
             const fastrtps::rtps::GUID_t& guid,
             const fastrtps::rtps::GUID_t& persistence_guid,
             bool removed_by_lease);
 
-    /*!
-     * @brief Get the last notified sequence for a RTPS guid
-     * @param guid The RTPS guid to query
-     * @return Last notified sequence number for input guid
-     * @remarks Takes persistence_guid into consideration
+    /**
+     * @brief Get the last notified sequence for a writer's GUID.
+     *
+     * @param guid  The writer GUID to query.
+     *
+     * @return Last notified sequence number for input guid.
+     * @remarks Takes persistence_guid into consideration.
      */
     fastrtps::rtps::SequenceNumber_t get_last_notified(
             const fastrtps::rtps::GUID_t& guid);
 
-    /*!
-     * @brief Update the last notified sequence for a RTPS guid
-     * @param guid The RTPS guid of the writer
-     * @param seq Max sequence number available on writer
-     * @return Previous value of last notified sequence number for input guid
-     * @remarks Takes persistence_guid into consideration
+    /**
+     * @brief Update the last notified sequence for a writer's GUID.
+     *
+     * @param guid  The GUID of the writer.
+     * @param seq   Max sequence number available on writer.
+     *
+     * @return Previous value of last notified sequence number for input GUID.
+     * @remarks Takes persistence_guid into consideration.
      */
     fastrtps::rtps::SequenceNumber_t update_last_notified(
             const fastrtps::rtps::GUID_t& guid,
             const fastrtps::rtps::SequenceNumber_t& seq);
 
-    /*!
-     * @brief Persist the last notified sequence for a persistence guid
+    /**
+     * @brief Persist the last notified sequence for a persistence guid.
      * This method is called inside update_last_notified just after updating the last notified sequence for a writer
      * and gives persistent readers the opportunity to write the new sequence number to the database.
      *
-     * @param persistence_guid The persistence guid to update
-     * @param seq Sequence number to set for input guid
+     * @param persistence_guid  The persistence guid to update.
+     * @param seq               Sequence number to set for input guid.
      */
     virtual void persist_last_notified_nts(
             const fastrtps::rtps::GUID_t& persistence_guid,
             const fastrtps::rtps::SequenceNumber_t& seq);
 
+    /**
+     * @brief Check if a writer can communicate with this reader using data-sharing.
+     *
+     * @param wdata  Discovery information of the writer to check.
+     *
+     * @return Whether the writer is datasharing compatible with this reader or not.
+     */
     bool is_datasharing_compatible_with(
             const fastrtps::rtps::WriterProxyData& wdata);
 
-    /// Listener
+    /// Pointer to the listener associated with this reader.
     fastrtps::rtps::ReaderListener* listener_;
-    /// Accept msg from unknown writers (BE-true,RE-false)
+    /// Whether the reader accepts messages from unmatched writers.
     bool accept_messages_from_unkown_writers_;
-    /// Expects Inline Qos.
+    /// Whether the reader expects inline QoS.
     bool expects_inline_qos_;
 
+    /// The data filter associated with this reader.
     IReaderDataFilter* data_filter_ = nullptr;
 
-    /// ReaderHistoryState
+    /// The history record associated with this reader.
     fastrtps::rtps::ReaderHistoryState* history_state_;
 
+    /// Total number of unread samples in the history.
     uint64_t total_unread_ = 0;
-
+    /// Condition variable to wait for unread samples.
     fastrtps::TimedConditionVariable new_notification_cv_;
 
-    /// The liveliness kind of this reader
+    /// The liveliness kind of this reader.
     fastdds::dds::LivelinessQosPolicyKind liveliness_kind_;
-    /// The liveliness lease duration of this reader
+    /// The liveliness lease duration of this reader.
     fastrtps::Duration_t liveliness_lease_duration_;
 
-    /// Whether the writer is datasharing compatible or not
+    /// Whether the reader is datasharing compatible.
     bool is_datasharing_compatible_ = false;
-    /// The listener for the datasharing notifications
+    /// The listener for the datasharing notifications.
     std::unique_ptr<fastrtps::rtps::IDataSharingListener> datasharing_listener_;
 
-    /// The liveliness changed status struct as defined in the DDS
+    /// The liveliness changed status struct as defined in the DDS standard.
     fastdds::dds::LivelinessChangedStatus liveliness_changed_status_;
 
     /// Trusted writer (for Builtin)
@@ -421,10 +443,25 @@ protected:
 
 private:
 
+    /**
+     * @brief Perform pools related setup.
+     * This method is called from the constructor to perform the necessary setup for the payload and change pools.
+     *
+     * @param payload_pool  Payload pool to use.
+     * @param change_pool   Change pool to use.
+     */
     void init(
             const std::shared_ptr<fastrtps::rtps::IPayloadPool>& payload_pool,
             const std::shared_ptr<fastrtps::rtps::IChangePool>& change_pool);
 
+    /**
+     * @brief Perform datasharing related setup.
+     * This method is called from the constructor to perform the necessary setup for datasharing.
+     * If datasharing is enabled in the reader attributes, the method will create the necessary notification
+     * segment, along with the corresponding listener.
+     *
+     * @param att  Attributes of the reader.
+     */
     void setup_datasharing(
             const fastrtps::rtps::ReaderAttributes& att);
 
