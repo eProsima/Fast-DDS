@@ -528,12 +528,9 @@ traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_struc
     type_descriptor.kind(TK_STRUCTURE);
     type_descriptor.name(struct_type.header().detail().type_name());
     type_descriptor.is_nested(struct_type.struct_flags() & xtypes::IS_NESTED);
-    if (struct_type.struct_flags() & (xtypes::IS_FINAL | xtypes::IS_APPENDABLE | xtypes::IS_MUTABLE))
-    {
-        type_descriptor.extensibility_kind(struct_type.struct_flags() & xtypes::IS_FINAL ? ExtensibilityKind::FINAL :
-                (struct_type.struct_flags() &
-                xtypes::IS_MUTABLE ? ExtensibilityKind::MUTABLE : ExtensibilityKind::APPENDABLE));
-    }
+    type_descriptor.extensibility_kind(struct_type.struct_flags() & xtypes::IS_FINAL ? ExtensibilityKind::FINAL :
+            (struct_type.struct_flags() &
+            xtypes::IS_MUTABLE ? ExtensibilityKind::MUTABLE : ExtensibilityKind::APPENDABLE));
     bool inheritance_correct {true};
     if (xtypes::TK_NONE != struct_type.header().base_type()._d())
     {

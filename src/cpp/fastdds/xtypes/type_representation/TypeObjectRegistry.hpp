@@ -68,9 +68,11 @@ using ReturnCode_t = eprosima::fastdds::dds::ReturnCode_t;
 struct TypeRegistryEntry
 {
     // TypeObject
-    TypeObject type_object_;
+    TypeObject type_object;
     // TypeObject serialized size
-    uint32_t type_object_serialized_size_ {0};
+    uint32_t type_object_serialized_size {0};
+    // Complementary TypeIdentifier.
+    TypeIdentifier complementary_type_id;
 
     bool operator !=(
             const TypeRegistryEntry& entry);

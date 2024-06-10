@@ -49,8 +49,9 @@ constexpr const int32_t NO_DEPENDENCIES = -1;
 bool TypeRegistryEntry::operator !=(
         const TypeRegistryEntry& entry)
 {
-    return this->type_object_ != entry.type_object_ ||
-           this->type_object_serialized_size_ != entry.type_object_serialized_size_;
+    return this->type_object != entry.type_object ||
+           this->type_object_serialized_size != entry.type_object_serialized_size ||
+           this->complementary_type_id != entry.complementary_type_id;
 }
 
 ReturnCode_t TypeObjectRegistry::register_type_object(
@@ -75,12 +76,14 @@ ReturnCode_t TypeObjectRegistry::register_type_object(
 #endif // !defined(NDEBUG)
     TypeRegistryEntry complete_entry;
     TypeRegistryEntry minimal_entry;
-    complete_entry.type_object_.complete(complete_type_object);
-    minimal_entry.type_object_ = build_minimal_from_complete_type_object(complete_type_object);
-    type_ids.type_identifier1(calculate_type_identifier(minimal_entry.type_object_,
-            minimal_entry.type_object_serialized_size_));
-    type_ids.type_identifier2(calculate_type_identifier(complete_entry.type_object_,
-            complete_entry.type_object_serialized_size_));
+    complete_entry.type_object.complete(complete_type_object);
+    minimal_entry.type_object = build_minimal_from_complete_type_object(complete_type_object);
+    type_ids.type_identifier1(calculate_type_identifier(minimal_entry.type_object,
+            minimal_entry.type_object_serialized_size));
+    type_ids.type_identifier2(calculate_type_identifier(complete_entry.type_object,
+            complete_entry.type_object_serialized_size));
+    complete_entry.complementary_type_id = type_ids.type_identifier1();
+    minimal_entry.complementary_type_id = type_ids.type_identifier2();
 
     std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
     auto type_ids_result {local_type_identifiers_.insert({type_name, type_ids})};
@@ -256,16 +259,16 @@ ReturnCode_t TypeObjectRegistry::get_type_objects(
         if (EK_MINIMAL == type_ids.type_identifier1()._d())
         {
             type_objects.minimal_type_object =
-                    type_registry_entries_.at(type_ids.type_identifier1()).type_object_;
+                    type_registry_entries_.at(type_ids.type_identifier1()).type_object;
             type_objects.complete_type_object =
-                    type_registry_entries_.at(type_ids.type_identifier2()).type_object_;
+                    type_registry_entries_.at(type_ids.type_identifier2()).type_object;
         }
         else
         {
             type_objects.complete_type_object =
-                    type_registry_entries_.at(type_ids.type_identifier1()).type_object_;
+                    type_registry_entries_.at(type_ids.type_identifier1()).type_object;
             type_objects.minimal_type_object =
-                    type_registry_entries_.at(type_ids.type_identifier2()).type_object_;
+                    type_registry_entries_.at(type_ids.type_identifier2()).type_object;
         }
     }
     return ret_code;
@@ -302,7 +305,7 @@ ReturnCode_t TypeObjectRegistry::get_type_object(
     try
     {
         std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
-        type_object = type_registry_entries_.at(type_identifier).type_object_;
+        type_object = type_registry_entries_.at(type_identifier).type_object;
     }
     catch (std::exception&)
     {
@@ -391,11 +394,11 @@ ReturnCode_t TypeObjectRegistry::get_type_information(
 
         std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
         type_information.complete().typeid_with_size().typeobject_serialized_size(type_registry_entries_.at(
-                    type_ids.type_identifier1()).type_object_serialized_size_);
+                    type_ids.type_identifier1()).type_object_serialized_size);
         if (TK_NONE != type_ids.type_identifier2()._d())
         {
             type_information.minimal().typeid_with_size().typeobject_serialized_size(type_registry_entries_.at(
-                        type_ids.type_identifier2()).type_object_serialized_size_);
+                        type_ids.type_identifier2()).type_object_serialized_size);
         }
     }
     else
@@ -451,11 +454,11 @@ ReturnCode_t TypeObjectRegistry::get_type_information(
 
         std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
         type_information.minimal().typeid_with_size().typeobject_serialized_size(type_registry_entries_.at(
-                    type_ids.type_identifier1()).type_object_serialized_size_);
+                    type_ids.type_identifier1()).type_object_serialized_size);
         if (TK_NONE != type_ids.type_identifier2()._d())
         {
             type_information.complete().typeid_with_size().typeobject_serialized_size(type_registry_entries_.at(
-                        type_ids.type_identifier2()).type_object_serialized_size_);
+                        type_ids.type_identifier2()).type_object_serialized_size);
         }
     }
     return RETCODE_OK;
@@ -486,7 +489,7 @@ bool TypeObjectRegistry::is_type_identifier_known(
         if (it != type_registry_entries_.end())
         {
             // Check typeobject_serialized_size is the same
-            if (it->second.type_object_serialized_size_ == type_identifier_with_size.typeobject_serialized_size())
+            if (it->second.type_object_serialized_size == type_identifier_with_size.typeobject_serialized_size())
             {
                 return true;
             }
@@ -587,16 +590,18 @@ ReturnCode_t TypeObjectRegistry::register_type_object(
     if (EK_COMPLETE == type_object._d())
     {
         TypeRegistryEntry entry;
-        entry.type_object_ = build_minimal_from_complete_type_object(type_object.complete());
-        type_ids.type_identifier1(calculate_type_identifier(entry.type_object_, entry.type_object_serialized_size_));
+        entry.type_object = build_minimal_from_complete_type_object(type_object.complete());
+        type_ids.type_identifier1(calculate_type_identifier(entry.type_object, entry.type_object_serialized_size));
+        entry.complementary_type_id = type_ids.type_identifier2();
 
         std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
         type_registry_entries_.insert({type_ids.type_identifier1(), entry});
     }
 
     TypeRegistryEntry entry;
-    entry.type_object_ = type_object;
-    entry.type_object_serialized_size_ = type_object_serialized_size;
+    entry.type_object = type_object;
+    entry.type_object_serialized_size = type_object_serialized_size;
+    entry.complementary_type_id = type_ids.type_identifier1();
 
     std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
     type_registry_entries_.insert({type_identifier, entry});
@@ -831,23 +836,13 @@ ReturnCode_t TypeObjectRegistry::get_dependencies_from_type_object(
 const TypeIdentifier TypeObjectRegistry::get_complementary_type_identifier(
         const TypeIdentifier& type_id)
 {
-    std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
-    for (const auto& it : local_type_identifiers_)
+    if (TypeObjectUtils::is_direct_hash_type_identifier(type_id))
     {
-        if (it.second.type_identifier1() == type_id)
+        std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
+        auto it = type_registry_entries_.find(type_id);
+        if (type_registry_entries_.end() != it)
         {
-            if (TK_NONE != it.second.type_identifier2()._d())
-            {
-                return it.second.type_identifier2();
-            }
-            else
-            {
-                return it.second.type_identifier1();
-            }
-        }
-        else if (it.second.type_identifier2() == type_id)
-        {
-            return it.second.type_identifier1();
+            return it->second.complementary_type_id;
         }
     }
     return type_id;
@@ -915,7 +910,7 @@ void TypeObjectRegistry::add_dependency(
     type_id_size.type_id(type_id);
     {
         std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
-        type_id_size.typeobject_serialized_size(type_registry_entries_.at(type_id).type_object_serialized_size_);
+        type_id_size.typeobject_serialized_size(type_registry_entries_.at(type_id).type_object_serialized_size);
     }
     type_dependencies.insert(type_id_size);
 }
@@ -1279,16 +1274,10 @@ const TypeIdentifier TypeObjectRegistry::minimal_from_complete_type_identifier(
         case EK_COMPLETE:
         {
             std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
-            for (const auto& it : local_type_identifiers_)
+            auto it = type_registry_entries_.find(type_id);
+            if (type_registry_entries_.end() != it)
             {
-                if (it.second.type_identifier1() == type_id)
-                {
-                    return it.second.type_identifier2();
-                }
-                else if (it.second.type_identifier2() == type_id)
-                {
-                    return it.second.type_identifier1();
-                }
+                return it->second.complementary_type_id;
             }
         }
         break;
