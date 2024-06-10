@@ -157,70 +157,46 @@ bool IPFinder::getIPs(
         std::vector<info_IP>* vec_name,
         bool return_loopback)
 {
-    struct ifaddrs* ifaddr, * ifa;
-    int family, s;
-    char host[NI_MAXHOST];
+    int sockfd = 0;
+    unsigned int num = 0;
+    std::string ipv4addr;
+    struct ifreq buf[INET_ADDRSTRLEN];
+    struct ifconf ifc;
 
-    // TODO arm64 doesn't seem to support getifaddrs
-    if (getifaddrs(&ifaddr) == -1)
-    {
-        perror("getifaddrs");
+    sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+    if (sockfd < 0) {
         return false;
     }
 
-    for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next)
-    {
-        if (ifa->ifa_addr == NULL || (ifa->ifa_flags & IFF_RUNNING) == 0)
-        {
+    ifc.ifc_len = sizeof(buf);
+    ifc.ifc_buf = (caddr_t)buf;
+
+    if (ioctl(sockfd, SIOCGIFCONF, (char*)&ifc)) {
+        close(sockfd);
+        return false;
+    }
+
+    for (num = 0; num < (ifc.ifc_len / sizeof(struct ifreq)); num++) {
+        if (ioctl(sockfd, SIOCGIFADDR, (char*)&buf[num])) {
             continue;
         }
 
-        family = ifa->ifa_addr->sa_family;
+        ipv4addr = std::string(inet_ntoa(((struct sockaddr_in*)(&buf[num].ifr_addr))->sin_addr));
 
-        if (family == AF_INET)
-        {
-            s = getnameinfo(ifa->ifa_addr, sizeof(struct sockaddr_in),
-                            host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
-            if (s != 0)
-            {
-                logWarning(UTILS, "getnameinfo() failed: " << gai_strerror(s));
-                continue;
-            }
-            info_IP info;
-            info.type = IP4;
-            info.name = std::string(host);
-            info.dev = std::string(ifa->ifa_name);
-            parseIP4(info);
+        // TODO ipv6.
+        info_IP info;
+        info.type = IP4;
+        info.name = ipv4addr;
+        info.dev = std::string(buf[num].ifr_name);
+        parseIP4(info);
 
-            if (return_loopback || info.type != IP4_LOCAL)
-            {
-                vec_name->push_back(info);
-            }
-        }
-        else if (family == AF_INET6)
+        if (return_loopback || info.type != IP4_LOCAL)
         {
-            s = getnameinfo(ifa->ifa_addr, sizeof(struct sockaddr_in6),
-                            host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
-            if (s != 0)
-            {
-                logWarning(UTILS, "getnameinfo() failed: " << gai_strerror(s));
-                continue;
-            }
-            info_IP info;
-            info.type = IP6;
-            info.name = std::string(host);
-            info.dev = std::string(ifa->ifa_name);
-            if (parseIP6(info))
-            {
-                if (return_loopback || info.type != IP6_LOCAL)
-                {
-                    vec_name->push_back(info);
-                }
-            }
+            vec_name->push_back(info);
         }
     }
 
-    freeifaddrs(ifaddr);
+    close(sockfd);
     return true;
 }
 
