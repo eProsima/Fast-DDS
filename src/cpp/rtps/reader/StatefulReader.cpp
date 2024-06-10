@@ -931,7 +931,7 @@ bool StatefulReader::process_gap_msg(
             if (pWP->irrelevant_change_set(auxSN))
             {
                 CacheChange_t* to_remove = nullptr;
-                auto ret_iterator = find_cache_in_fragmented_process(auxSN, pWP->guid(), &to_remove, history_iterator);
+                auto ret_iterator = find_cache_in_fragmented_process(auxSN, pWP->guid(), to_remove, history_iterator);
                 if (to_remove != nullptr)
                 {
                     // we called the History version to avoid callbacks
@@ -951,7 +951,7 @@ bool StatefulReader::process_gap_msg(
                 {
                     CacheChange_t* to_remove = nullptr;
                     auto ret_iterator =
-                    find_cache_in_fragmented_process(auxSN, pWP->guid(), &to_remove, history_iterator);
+                    find_cache_in_fragmented_process(auxSN, pWP->guid(), to_remove, history_iterator);
                     if (to_remove != nullptr)
                     {
                         // we called the History version to avoid callbacks
@@ -1003,14 +1003,14 @@ bool StatefulReader::acceptMsgFrom(
 History::const_iterator StatefulReader::find_cache_in_fragmented_process(
         const SequenceNumber_t& sequence_number,
         const GUID_t& writer_guid,
-        CacheChange_t** change,
+        CacheChange_t*& change,
         History::const_iterator hint) const
 {
-    auto ret_val = history_->get_change_nts(sequence_number, writer_guid, change, hint);
+    auto ret_val = history_->get_change_nts(sequence_number, writer_guid, &change, hint);
 
-    if (nullptr != *change && (*change)->is_fully_assembled())
+    if (nullptr != change && change->is_fully_assembled())
     {
-        *change = nullptr;
+        change = nullptr;
     }
 
     return ret_val;
@@ -1602,14 +1602,14 @@ void StatefulReader::send_acknack(
                 [&](const SequenceNumber_t& seq)
                 {
                     // Check if the CacheChange_t is uncompleted.
-                    CacheChange_t* uncomplete_change = nullptr;
+                    CacheChange_t* incomplete_change = nullptr;
                     auto ret_iterator = find_cache_in_fragmented_process(
-                        seq, guid, &uncomplete_change, history_iterator);
+                        seq, guid, incomplete_change, history_iterator);
                     if (ret_iterator != history_->changesEnd())
                     {
                         history_iterator = ret_iterator;
                     }
-                    if (uncomplete_change == nullptr)
+                    if (incomplete_change == nullptr)
                     {
                         if (!sns.add(seq))
                         {
@@ -1622,7 +1622,7 @@ void StatefulReader::send_acknack(
                     else
                     {
                         FragmentNumberSet_t frag_sns;
-                        uncomplete_change->get_missing_fragments(frag_sns);
+                        incomplete_change->get_missing_fragments(frag_sns);
                         ++nackfrag_count_;
                         EPROSIMA_LOG_INFO(RTPS_READER, "Sending NACKFRAG for sample" << seq << ": " << frag_sns; );
 

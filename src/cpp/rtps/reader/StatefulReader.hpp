@@ -38,7 +38,7 @@ class WriterProxy;
 class RTPSMessageSenderInterface;
 
 /**
- * Class StatefulReader, specialization of RTPSReader than stores the state of the matched writers.
+ * Class StatefulReader, specialization of BaseReader that stores the state of the matched writers.
  * @ingroup READER_MODULE
  */
 class StatefulReader : public fastdds::rtps::BaseReader
@@ -318,21 +318,20 @@ private:
             WriterProxy** wp) const;
 
     /*!
-     * @brief Search if there is a CacheChange_t, giving SequenceNumber_t and writer GUID_t,
-     * waiting to be completed because it is fragmented.
-     * @param sequence_number SequenceNumber_t of the searched CacheChange_t.
-     * @param writer_guid writer GUID_t of the searched CacheChange_t.
-     * @param change If a CacheChange_t was found, this argument will fill with its pointer.
-     * In other case nullptr is returned.
-     * @param hint Iterator since the search will start.
-     * Used to improve the search.
-     * @return Iterator pointing to the position were CacheChange_t was found.
-     * It can be used to improve next search.
+     * @brief Search for an incomplete (i.e. fragments pending) change, given its sequence number and writer's GUID.
+     *
+     * @param sequence_number [in] Sequence number of the change to search.
+     * @param writer_guid [in]     Writer's GUID of the change to search.
+     * @param change [out]         Pointer to the incomplete change if found, nullptr otherwise.
+     * @param hint [in]            Iterator to start searching from. Used to improve the search.
+     *
+     * @return Iterator pointing to the position were the change was found.
+     *         It can be used to improve the following call to this same method.
      */
     fastrtps::rtps::History::const_iterator find_cache_in_fragmented_process(
             const fastrtps::rtps::SequenceNumber_t& sequence_number,
             const fastrtps::rtps::GUID_t& writer_guid,
-            fastrtps::rtps::CacheChange_t** change,
+            fastrtps::rtps::CacheChange_t*& change,
             fastrtps::rtps::History::const_iterator hint) const;
 
     /*!
