@@ -481,6 +481,27 @@ TEST_F(EdpTests, CheckDataRepresentationCompatibility)
     }
 }
 
+TEST(MatchingFailureMask, matching_failure_mask_overflow)
+{
+    EDP::MatchingFailureMask mask;
+
+    mask.set(EDP::MatchingFailureMask::different_topic);
+    ASSERT_TRUE(mask.test(EDP::MatchingFailureMask::different_topic));
+
+    mask.set(EDP::MatchingFailureMask::inconsistent_topic);
+    ASSERT_TRUE(mask.test(EDP::MatchingFailureMask::inconsistent_topic));
+
+    mask.set(EDP::MatchingFailureMask::incompatible_qos);
+    ASSERT_TRUE(mask.test(EDP::MatchingFailureMask::incompatible_qos));
+
+    mask.set(EDP::MatchingFailureMask::partitions);
+    ASSERT_TRUE(mask.test(EDP::MatchingFailureMask::partitions));
+
+    mask.set(EDP::MatchingFailureMask::different_typeinfo);
+    ASSERT_TRUE(mask.test(EDP::MatchingFailureMask::different_typeinfo));
+}
+
+
 } // namespace rtps
 } // namespace fastrtps
 } // namespace eprosima
