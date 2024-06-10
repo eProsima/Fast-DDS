@@ -65,7 +65,7 @@ PublisherApp::PublisherApp(
     {
         max_samples = DATAWRITER_QOS_DEFAULT.resource_limits().max_samples_per_instance;
     }
-    
+
     // Transport default definitions
     pqos.transport().use_builtin_transports = false;
     LibrarySettings library_settings;
@@ -74,7 +74,8 @@ PublisherApp::PublisherApp(
     switch (config.delivery_mechanism)
     {
         case CLIParser::DeliveryMechanismKind::INTRA_PROCESS:   // (It should never reach this section
-        {   // No transport needed, but at least a transport needs to be declared to avoid participant creation failure
+        {
+            // No transport needed, but at least a transport needs to be declared to avoid participant creation failure
             pqos.transport().use_builtin_transports = true;
             library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
             break;

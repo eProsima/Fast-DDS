@@ -91,7 +91,8 @@ PubSubApp::PubSubApp(
     switch (config.delivery_mechanism)
     {
         case CLIParser::DeliveryMechanismKind::INTRA_PROCESS:   // (It should never reach this section
-        {   // No transport needed, but at least a transport needs to be declared to avoid participant creation failure
+        {
+            // No transport needed, but at least a transport needs to be declared to avoid participant creation failure
             pqos.transport().use_builtin_transports = true;
             library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
             break;
@@ -128,7 +129,7 @@ PubSubApp::PubSubApp(
             break;
         }
     }
-    
+
     auto factory = DomainParticipantFactory::get_instance();
     factory->set_library_settings(library_settings);
     participant_ = factory->create_participant(config.domain, pqos, nullptr, StatusMask::none());
