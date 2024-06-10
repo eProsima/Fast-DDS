@@ -71,16 +71,23 @@ public:
     public:
 
         //! Bit index for matching failing due to different topic
-        static const uint32_t different_topic = (0x00000001 << 0u);
+        static const uint32_t different_topic = 0u;
 
         //! Bit index for matching failing due to inconsistent topic (same topic name but different characteristics)
-        static const uint32_t inconsistent_topic = (0x00000001 << 1u);
+        static const uint32_t inconsistent_topic = 1u;
 
         //! Bit index for matching failing due to incompatible QoS
-        static const uint32_t incompatible_qos = (0x00000001 << 2u);
+        static const uint32_t incompatible_qos = 2u;
 
         //! Bit index for matching failing due to inconsistent partitions
+<<<<<<< HEAD:include/fastdds/rtps/builtin/discovery/endpoint/EDP.h
         static const uint32_t partitions = (0x00000001 << 3u);
+=======
+        static const uint32_t partitions = 3u;
+
+        //! Bit index for matching failing due to incompatible TypeInformation
+        static const uint32_t different_typeinfo = 4u;
+>>>>>>> 5e1f1dd22 (Correctly initialize `MatchingFailureMask` constants to be used with the `std::bitset` API (#4922)):src/cpp/rtps/builtin/discovery/endpoint/EDP.h
     };
 
     /**

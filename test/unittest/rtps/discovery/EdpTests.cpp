@@ -399,6 +399,75 @@ TEST_F(EdpTests, CheckPositiveAckCompatibility)
     }
 }
 
+<<<<<<< HEAD
+=======
+TEST_F(EdpTests, CheckDataRepresentationCompatibility)
+{
+    using DataRepresentationQosVector = std::vector<fastdds::dds::DataRepresentationId>;
+    std::vector<QosTestingCase<DataRepresentationQosVector>> testing_cases{
+        { {}, {}, fastdds::dds::INVALID_QOS_POLICY_ID},
+        { {}, {fastdds::dds::DataRepresentationId::XCDR_DATA_REPRESENTATION}, fastdds::dds::INVALID_QOS_POLICY_ID},
+        { {},
+            {fastdds::dds::DataRepresentationId::XCDR_DATA_REPRESENTATION,
+             fastdds::dds::DataRepresentationId::XCDR2_DATA_REPRESENTATION},
+            fastdds::dds::INVALID_QOS_POLICY_ID},
+        { {}, {fastdds::dds::DataRepresentationId::XCDR2_DATA_REPRESENTATION},
+            fastdds::dds::DATAREPRESENTATION_QOS_POLICY_ID},
+        { {fastdds::dds::DataRepresentationId::XCDR_DATA_REPRESENTATION}, {}, fastdds::dds::INVALID_QOS_POLICY_ID},
+        { {fastdds::dds::DataRepresentationId::XCDR_DATA_REPRESENTATION},
+            {fastdds::dds::DataRepresentationId::XCDR_DATA_REPRESENTATION},
+            fastdds::dds::INVALID_QOS_POLICY_ID},
+        { {fastdds::dds::DataRepresentationId::XCDR_DATA_REPRESENTATION},
+            {fastdds::dds::DataRepresentationId::XCDR_DATA_REPRESENTATION,
+             fastdds::dds::DataRepresentationId::XCDR2_DATA_REPRESENTATION},
+            fastdds::dds::INVALID_QOS_POLICY_ID},
+        { {fastdds::dds::DataRepresentationId::XCDR_DATA_REPRESENTATION},
+            {fastdds::dds::DataRepresentationId::XCDR2_DATA_REPRESENTATION},
+            fastdds::dds::DATAREPRESENTATION_QOS_POLICY_ID},
+        { {fastdds::dds::DataRepresentationId::XCDR2_DATA_REPRESENTATION}, {},
+            fastdds::dds::DATAREPRESENTATION_QOS_POLICY_ID},
+        { {fastdds::dds::DataRepresentationId::XCDR2_DATA_REPRESENTATION},
+            {fastdds::dds::DataRepresentationId::XCDR_DATA_REPRESENTATION},
+            fastdds::dds::DATAREPRESENTATION_QOS_POLICY_ID},
+        { {fastdds::dds::DataRepresentationId::XCDR2_DATA_REPRESENTATION},
+            {fastdds::dds::DataRepresentationId::XCDR_DATA_REPRESENTATION,
+             fastdds::dds::DataRepresentationId::XCDR2_DATA_REPRESENTATION},
+            fastdds::dds::INVALID_QOS_POLICY_ID},
+        { {fastdds::dds::DataRepresentationId::XCDR2_DATA_REPRESENTATION},
+            {fastdds::dds::DataRepresentationId::XCDR2_DATA_REPRESENTATION},
+            fastdds::dds::INVALID_QOS_POLICY_ID}
+    };
+
+    for (auto testing_case : testing_cases)
+    {
+        wdata->m_qos.representation.m_value = testing_case.offered_qos;
+        rdata->m_qos.representation.m_value = testing_case.requested_qos;
+        check_expectations(testing_case.failed_qos);
+    }
+}
+
+TEST(MatchingFailureMask, matching_failure_mask_overflow)
+{
+    EDP::MatchingFailureMask mask;
+
+    mask.set(EDP::MatchingFailureMask::different_topic);
+    EXPECT_TRUE(mask.test(EDP::MatchingFailureMask::different_topic));
+
+    mask.set(EDP::MatchingFailureMask::inconsistent_topic);
+    EXPECT_TRUE(mask.test(EDP::MatchingFailureMask::inconsistent_topic));
+
+    mask.set(EDP::MatchingFailureMask::incompatible_qos);
+    EXPECT_TRUE(mask.test(EDP::MatchingFailureMask::incompatible_qos));
+
+    mask.set(EDP::MatchingFailureMask::partitions);
+    EXPECT_TRUE(mask.test(EDP::MatchingFailureMask::partitions));
+
+    mask.set(EDP::MatchingFailureMask::different_typeinfo);
+    EXPECT_TRUE(mask.test(EDP::MatchingFailureMask::different_typeinfo));
+}
+
+
+>>>>>>> 5e1f1dd22 (Correctly initialize `MatchingFailureMask` constants to be used with the `std::bitset` API (#4922))
 } // namespace rtps
 } // namespace fastrtps
 } // namespace eprosima
