@@ -291,10 +291,10 @@ TEST_P(PersistenceGuid, SetPersistenceGuidByXML)
                             </qos>                                                                \
                             <historyMemoryPolicy>PREALLOCATED</historyMemoryPolicy>               \
                             <times>                                                               \
-                                <heartbeatResponseDelay>                                          \
+                                <heartbeat_response_delay>                                          \
                                     <sec>0</sec>                                                  \
                                     <nanosec>100000000</nanosec>                                  \
-                                </heartbeatResponseDelay>                                         \
+                                </heartbeat_response_delay>                                         \
                             </times>                                                              \
                             <propertiesPolicy>                                                    \
                                 <properties>                                                      \

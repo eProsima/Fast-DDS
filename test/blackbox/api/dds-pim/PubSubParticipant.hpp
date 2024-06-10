@@ -267,7 +267,7 @@ public:
         datawriter_qos_.reliability().max_blocking_time.nanosec = 0;
 
         // By default, heartbeat period delay is 100 milliseconds.
-        datareader_qos_.reliable_reader_qos().times.heartbeatResponseDelay = 0.1;
+        datareader_qos_.reliable_reader_qos().times.heartbeat_response_delay = 0.1;
     }
 
     ~PubSubParticipant()

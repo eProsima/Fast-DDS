@@ -64,7 +64,7 @@ public:
             const SequenceNumber_t& initial_sequence)
     {
         WriterProxy::start(attributes, initial_sequence);
-        initial_acknack_test_->update_interval(reader_->getTimes().initialAcknackDelay);
+        initial_acknack_test_->update_interval(reader_->getTimes().initial_acknack_delay);
         initial_acknack_test_->restart_timer();
     }
 

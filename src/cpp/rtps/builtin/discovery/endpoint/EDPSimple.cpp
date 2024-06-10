@@ -389,7 +389,7 @@ void EDPSimple::set_builtin_reader_attributes(
     attributes = mp_PDP->create_builtin_reader_attributes();
 
     // Timings are configured using EDP default values
-    attributes.times.heartbeatResponseDelay = edp_heartbeat_response_delay;
+    attributes.times.heartbeat_response_delay = edp_heartbeat_response_delay;
 }
 
 void EDPSimple::set_builtin_writer_attributes(

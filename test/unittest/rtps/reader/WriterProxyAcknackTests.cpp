@@ -49,13 +49,13 @@ TEST(WriterProxyAcknackTests, AcknackBackoff)
     SequenceNumberSet_t t1(SequenceNumber_t(0, 0));
     EXPECT_CALL(readerMock, simp_send_acknack(t1)).Times(2u);
     EXPECT_EQ ( wproxy.initial_acknack_->getIntervalMilliSec(),
-            readerMock.getTimes().initialAcknackDelay.to_ns() / 1000000);
+            readerMock.getTimes().initial_acknack_delay.to_ns() / 1000000);
     wproxy.perform_initial_ack_nack();
     EXPECT_EQ ( wproxy.initial_acknack_->getIntervalMilliSec(),
-            readerMock.getTimes().initialAcknackDelay.to_ns() * 2 / 1000000);
+            readerMock.getTimes().initial_acknack_delay.to_ns() * 2 / 1000000);
     wproxy.perform_initial_ack_nack();
     EXPECT_EQ ( wproxy.initial_acknack_->getIntervalMilliSec(),
-            readerMock.getTimes().initialAcknackDelay.to_ns() * 4 / 1000000);
+            readerMock.getTimes().initial_acknack_delay.to_ns() * 4 / 1000000);
 
     // Simulate heartbeat reception and check if the delay cannot be updated again
     bool assert_liveliness = false;
@@ -73,10 +73,10 @@ TEST(WriterProxyAcknackTests, AcknackBackoff)
         current_sample_lost);
 
     EXPECT_EQ ( wproxy.initial_acknack_->getIntervalMilliSec(),
-            readerMock.getTimes().initialAcknackDelay.to_ns() * 4 / 1000000);
+            readerMock.getTimes().initial_acknack_delay.to_ns() * 4 / 1000000);
     wproxy.perform_initial_ack_nack();
     EXPECT_EQ ( wproxy.initial_acknack_->getIntervalMilliSec(),
-            readerMock.getTimes().initialAcknackDelay.to_ns() * 4 / 1000000);
+            readerMock.getTimes().initial_acknack_delay.to_ns() * 4 / 1000000);
 
 }
 

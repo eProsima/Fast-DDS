@@ -127,8 +127,8 @@ void WriterProxy::start(
     assert(get_mutex_owner() == get_thread_id());
 #endif // SHOULD_DEBUG_LINUX
 
-    heartbeat_response_->update_interval(reader_->getTimes().heartbeatResponseDelay);
-    initial_acknack_->update_interval(reader_->getTimes().initialAcknackDelay);
+    heartbeat_response_->update_interval(reader_->getTimes().heartbeat_response_delay);
+    initial_acknack_->update_interval(reader_->getTimes().initial_acknack_delay);
 
     locators_entry_.remote_guid = attributes.guid();
     guid_as_vector_.push_back(attributes.guid());

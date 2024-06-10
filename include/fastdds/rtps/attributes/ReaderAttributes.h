@@ -41,14 +41,14 @@ public:
     bool operator ==(
             const ReaderTimes& b) const
     {
-        return (initialAcknackDelay == b.initialAcknackDelay)  &&
-               (heartbeatResponseDelay == b.heartbeatResponseDelay);
+        return (initial_acknack_delay == b.initial_acknack_delay)  &&
+               (heartbeat_response_delay == b.heartbeat_response_delay);
     }
 
     //! Initial AckNack delay. Default value 70ms.
-    Duration_t initialAcknackDelay {0, 70 * 1000 * 1000};
+    Duration_t initial_acknack_delay {0, 70 * 1000 * 1000};
     //! Delay to be applied when a HEARTBEAT message is received, default value 5ms.
-    Duration_t heartbeatResponseDelay {0,  5 * 1000 * 1000};
+    Duration_t heartbeat_response_delay {0,  5 * 1000 * 1000};
 };
 
 /**

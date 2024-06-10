@@ -147,9 +147,8 @@ public:
         topic_attr_.topicName = t.str();
 
         // By default, heartbeat period delay is 100 milliseconds.
-        reader_attr_.times.heartbeatResponseDelay.seconds = 0;
-        //reader_attr_.times.heartbeatResponseDelay.nanosec = 100000000;
-        reader_attr_.times.heartbeatResponseDelay.nanosec = 100000000;
+        reader_attr_.times.heartbeat_response_delay.seconds = 0;
+        reader_attr_.times.heartbeat_response_delay.nanosec = 100000000;
 
         participant_attr_.builtin.discovery_config.discoveryProtocol =
                 eprosima::fastrtps::rtps::DiscoveryProtocol::SIMPLE;

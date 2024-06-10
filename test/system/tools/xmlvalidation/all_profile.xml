@@ -670,13 +670,13 @@
             </qos>
 
             <times>
-                <initialAcknackDelay>
+                <initial_acknack_delay>
                     <nanosec>12</nanosec>
-                </initialAcknackDelay>
+                </initial_acknack_delay>
 
-                <heartbeatResponseDelay>
+                <heartbeat_response_delay>
                     <sec>3</sec>
-                </heartbeatResponseDelay>
+                </heartbeat_response_delay>
             </times>
 
             <unicastLocatorList>

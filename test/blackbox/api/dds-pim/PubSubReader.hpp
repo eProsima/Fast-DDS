@@ -356,8 +356,8 @@ public:
                 eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 
         // By default, heartbeat period delay is 100 milliseconds.
-        datareader_qos_.reliable_reader_qos().times.heartbeatResponseDelay.seconds = 0;
-        datareader_qos_.reliable_reader_qos().times.heartbeatResponseDelay.nanosec = 100000000;
+        datareader_qos_.reliable_reader_qos().times.heartbeat_response_delay.seconds = 0;
+        datareader_qos_.reliable_reader_qos().times.heartbeat_response_delay.nanosec = 100000000;
 
         // By default don't check for overlapping
         loan_sample_validation(false);
@@ -1169,12 +1169,12 @@ public:
         return *this;
     }
 
-    PubSubReader& heartbeatResponseDelay(
+    PubSubReader& heartbeat_response_delay(
             const int32_t secs,
             const int32_t frac)
     {
-        datareader_qos_.reliable_reader_qos().times.heartbeatResponseDelay.seconds = secs;
-        datareader_qos_.reliable_reader_qos().times.heartbeatResponseDelay.fraction(frac);
+        datareader_qos_.reliable_reader_qos().times.heartbeat_response_delay.seconds = secs;
+        datareader_qos_.reliable_reader_qos().times.heartbeat_response_delay.fraction(frac);
         return *this;
     }
 

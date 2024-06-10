@@ -2909,8 +2909,8 @@ TEST_F(XMLParserTests, getXMLWriterTimes_NegativeClauses)
 /*
  * This test checks the negative cases in the xml child element of <ReaderTimes>
  * 1. Check an invalid tag of:
- *      <initialAcknackDelay>
- *      <heartbeatResponseDelay>
+ *      <initial_acknack_delay>
+ *      <heartbeat_response_delay>
  * 2. Check invalid element
  */
 TEST_F(XMLParserTests, getXMLReaderTimes_NegativeClauses)
@@ -2941,8 +2941,8 @@ TEST_F(XMLParserTests, getXMLReaderTimes_NegativeClauses)
 
     std::vector<std::string> field_vec =
     {
-        "initialAcknackDelay",
-        "heartbeatResponseDelay",
+        "initial_acknack_delay",
+        "heartbeat_response_delay",
     };
 
     for (std::string tag : field_vec)

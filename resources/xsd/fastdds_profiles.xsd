@@ -906,12 +906,12 @@
 
     <!--| Data Reader / Subscriber Definition |-->
     <!--Data Reader Times:
-        ├ initialAcknackDelay    [durationType],
-        └ heartbeatResponseDelay [durationType] -->
+        ├ initial_acknack_delay    [durationType],
+        └ heartbeat_response_delay [durationType] -->
     <xs:complexType name="readerTimesType">
         <xs:all>
-            <xs:element name="initialAcknackDelay" type="durationType" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="heartbeatResponseDelay" type="durationType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="initial_acknack_delay" type="durationType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="heartbeat_response_delay" type="durationType" minOccurs="0" maxOccurs="1"/>
         </xs:all>
     </xs:complexType>
 

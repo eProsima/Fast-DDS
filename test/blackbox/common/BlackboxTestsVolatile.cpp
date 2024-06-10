@@ -442,7 +442,7 @@ TEST_P(Volatile, VolatileLateJoinerSubGapLost)
     reader1.history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS).
             reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
             durability_kind(eprosima::fastdds::dds::VOLATILE_DURABILITY_QOS).
-            //heartbeatResponseDelay(5,0).
+            //heartbeat_response_delay(5,0).
             init();
 
     ASSERT_TRUE(reader1.isInitialized());

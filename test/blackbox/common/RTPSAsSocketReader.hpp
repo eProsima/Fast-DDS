@@ -120,8 +120,8 @@ public:
         hattr_.memoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 
         // By default, heartbeat period delay is 100 milliseconds.
-        reader_attr_.times.heartbeatResponseDelay.seconds = 0;
-        reader_attr_.times.heartbeatResponseDelay.nanosec = 100000000;
+        reader_attr_.times.heartbeat_response_delay.seconds = 0;
+        reader_attr_.times.heartbeat_response_delay.nanosec = 100000000;
     }
 
     virtual ~RTPSAsSocketReader()

@@ -1406,12 +1406,12 @@ bool StatefulReader::updateTimes(
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     if (is_alive_)
     {
-        if (times_.heartbeatResponseDelay != ti.heartbeatResponseDelay)
+        if (times_.heartbeat_response_delay != ti.heartbeat_response_delay)
         {
             times_ = ti;
             for (WriterProxy* writer : matched_writers_)
             {
-                writer->update_heartbeat_response_interval(times_.heartbeatResponseDelay);
+                writer->update_heartbeat_response_interval(times_.heartbeat_response_delay);
             }
         }
     }

@@ -302,10 +302,10 @@ TEST(SubscriberTests, ChangeDefaultDataReaderQos)
     qos.durability_service().max_instances = 20;
     qos.durability_service().max_samples_per_instance = 30;
     // .reliable_reader_qos
-    qos.reliable_reader_qos().times.initialAcknackDelay.seconds = 34;
-    qos.reliable_reader_qos().times.initialAcknackDelay.nanosec = 32u;
-    qos.reliable_reader_qos().times.heartbeatResponseDelay.seconds = 432;
-    qos.reliable_reader_qos().times.heartbeatResponseDelay.nanosec = 43u;
+    qos.reliable_reader_qos().times.initial_acknack_delay.seconds = 34;
+    qos.reliable_reader_qos().times.initial_acknack_delay.nanosec = 32u;
+    qos.reliable_reader_qos().times.heartbeat_response_delay.seconds = 432;
+    qos.reliable_reader_qos().times.heartbeat_response_delay.nanosec = 43u;
     qos.reliable_reader_qos().disable_positive_ACKs.enabled = true;
     qos.reliable_reader_qos().disable_positive_ACKs.duration.seconds = 13;
     qos.reliable_reader_qos().disable_positive_ACKs.duration.nanosec = 320u;
@@ -424,10 +424,10 @@ TEST(SubscriberTests, ChangeDefaultDataReaderQos)
     EXPECT_EQ(20, rqos.durability_service().max_instances);
     EXPECT_EQ(30, rqos.durability_service().max_samples_per_instance);
     // .reliable_reader_qos
-    EXPECT_EQ(34, rqos.reliable_reader_qos().times.initialAcknackDelay.seconds);
-    EXPECT_EQ(32u, rqos.reliable_reader_qos().times.initialAcknackDelay.nanosec);
-    EXPECT_EQ(432, rqos.reliable_reader_qos().times.heartbeatResponseDelay.seconds);
-    EXPECT_EQ(43u, rqos.reliable_reader_qos().times.heartbeatResponseDelay.nanosec);
+    EXPECT_EQ(34, rqos.reliable_reader_qos().times.initial_acknack_delay.seconds);
+    EXPECT_EQ(32u, rqos.reliable_reader_qos().times.initial_acknack_delay.nanosec);
+    EXPECT_EQ(432, rqos.reliable_reader_qos().times.heartbeat_response_delay.seconds);
+    EXPECT_EQ(43u, rqos.reliable_reader_qos().times.heartbeat_response_delay.nanosec);
     EXPECT_TRUE(rqos.reliable_reader_qos().disable_positive_ACKs.enabled);
     EXPECT_EQ(13, rqos.reliable_reader_qos().disable_positive_ACKs.duration.seconds);
     EXPECT_EQ(320u, rqos.reliable_reader_qos().disable_positive_ACKs.duration.nanosec);

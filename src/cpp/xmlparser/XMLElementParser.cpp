@@ -2979,8 +2979,8 @@ XMLP_ret XMLParser::getXMLReaderTimes(
     /*
         <xs:complexType name="readerTimesType">
             <xs:all minOccurs="0">
-                <xs:element name="initialAcknackDelay" type="durationType" minOccurs="0"/>
-                <xs:element name="heartbeatResponseDelay" type="durationType" minOccurs="0"/>
+                <xs:element name="initial_acknack_delay" type="durationType" minOccurs="0"/>
+                <xs:element name="heartbeat_response_delay" type="durationType" minOccurs="0"/>
             </xs:all>
         </xs:complexType>
      */
@@ -2992,16 +2992,16 @@ XMLP_ret XMLParser::getXMLReaderTimes(
         name = p_aux0->Name();
         if (strcmp(name, INIT_ACKNACK_DELAY) == 0)
         {
-            // initialAcknackDelay
-            if (XMLP_ret::XML_OK != getXMLDuration(p_aux0, times.initialAcknackDelay, ident))
+            // initial_acknack_delay
+            if (XMLP_ret::XML_OK != getXMLDuration(p_aux0, times.initial_acknack_delay, ident))
             {
                 return XMLP_ret::XML_ERROR;
             }
         }
         else if (strcmp(name, HEARTB_RESP_DELAY) == 0)
         {
-            // heartbeatResponseDelay
-            if (XMLP_ret::XML_OK != getXMLDuration(p_aux0, times.heartbeatResponseDelay, ident))
+            // heartbeat_response_delay
+            if (XMLP_ret::XML_OK != getXMLDuration(p_aux0, times.heartbeat_response_delay, ident))
             {
                 return XMLP_ret::XML_ERROR;
             }
