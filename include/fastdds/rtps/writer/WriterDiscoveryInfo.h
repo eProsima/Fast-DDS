@@ -35,6 +35,8 @@ public:
 
     //!Enum DISCOVERY_STATUS, four different status for discovered writers.
     //!@ingroup RTPS_MODULE
+    // *INDENT-OFF* : Does not understand the #if correctly and ends up removing the ;
+    //                at the end of the enum, which does not build.
 #if defined(_WIN32)
     enum FASTDDS_EXPORTED_API DISCOVERY_STATUS
 #else
@@ -46,7 +48,7 @@ public:
         REMOVED_WRITER,
         IGNORED_WRITER
     };
-
+    // *INDENT-ON*
     WriterDiscoveryInfo(
             const WriterProxyData& data)
         : status(DISCOVERED_WRITER)

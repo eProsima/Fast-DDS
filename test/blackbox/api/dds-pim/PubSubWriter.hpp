@@ -779,7 +779,7 @@ public:
         auto secs = std::chrono::duration_cast<std::chrono::seconds>(nsecs);
         nsecs -= secs;
         eprosima::fastdds::Duration_t timeout {static_cast<int32_t>(secs.count()),
-                                                static_cast<uint32_t>(nsecs.count())};
+                                               static_cast<uint32_t>(nsecs.count())};
         return (eprosima::fastdds::dds::RETCODE_OK ==
                datawriter_->wait_for_acknowledgments(timeout));
     }
@@ -796,7 +796,7 @@ public:
         auto secs = std::chrono::duration_cast<std::chrono::seconds>(nsecs);
         nsecs -= secs;
         eprosima::fastdds::Duration_t timeout {static_cast<int32_t>(secs.count()),
-                                                static_cast<uint32_t>(nsecs.count())};
+                                               static_cast<uint32_t>(nsecs.count())};
         return (eprosima::fastdds::dds::RETCODE_OK ==
                datawriter_->wait_for_acknowledgments(data, instance_handle, timeout));
     }

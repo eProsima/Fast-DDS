@@ -38,7 +38,7 @@
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
-    
+
 using Log = fastdds::dds::Log;
 
 static void endpoint_to_locator(
