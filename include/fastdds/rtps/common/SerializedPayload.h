@@ -85,10 +85,10 @@ struct FASTDDS_EXPORTED_API SerializedPayload_t
 
     //!Copy constructor
     SerializedPayload_t(
-            const SerializedPayload_t& other) = default;
+            const SerializedPayload_t& other) = delete;
     //!Copy operator
     SerializedPayload_t& operator = (
-            const SerializedPayload_t& other) = default;
+            const SerializedPayload_t& other) = delete;
 
     /**
      * @param len Maximum size of the payload

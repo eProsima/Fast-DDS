@@ -776,10 +776,10 @@ bool StatefulReader::process_data_frag_msg(
                     pWP->received_change_set(work_change->sequenceNumber);
 
                     // Temporarilly assign the inline qos while evaluating the data filter
-                    work_change->inline_qos = incomingChange->inline_qos;
+                    work_change->inline_qos = std::move(incomingChange->inline_qos);
                     bool filtered_out =
                             !fastdds::rtps::change_is_relevant_for_filter(*work_change, m_guid, data_filter_);
-                    work_change->inline_qos = SerializedPayload_t();
+                    incomingChange->inline_qos = std::move(work_change->inline_qos);
 
                     if (filtered_out)
                     {

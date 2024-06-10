@@ -66,7 +66,7 @@ struct SampleLoanManager
             {
                 item.sample = type_->createData();
             }
-            free_loans_.push_back(item);
+            free_loans_.push_back(std::move(item));
         }
     }
 
@@ -117,7 +117,7 @@ struct SampleLoanManager
         else
         {
             // Reuse a free entry
-            item = used_loans_.push_back(free_loans_.back());
+            item = used_loans_.push_back(std::move(free_loans_.back()));
             assert(nullptr != item);
             free_loans_.pop_back();
         }
@@ -161,7 +161,7 @@ struct SampleLoanManager
             assert(item->payload.data == nullptr);
             assert(item->payload.payload_owner == nullptr);
 
-            item = free_loans_.push_back(*item);
+            item = free_loans_.push_back(std::move(*item));
             assert(nullptr != item);
             used_loans_.remove(*item);
         }
@@ -185,9 +185,9 @@ private:
 
         OutstandingLoanItem() = default;
         OutstandingLoanItem(
-                const OutstandingLoanItem&) = default;
+                const OutstandingLoanItem&) = delete;
         OutstandingLoanItem& operator =(
-                const OutstandingLoanItem&) = default;
+                const OutstandingLoanItem&) = delete;
         OutstandingLoanItem(
                 OutstandingLoanItem&&) = default;
         OutstandingLoanItem& operator =(

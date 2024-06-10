@@ -152,15 +152,16 @@ void MessageReceiver::process_data_message_with_security(
                 std::swap(change.serializedPayload.data, crypto_payload_.data);
                 std::swap(change.serializedPayload.length, crypto_payload_.length);
 
-                SerializedPayload_t original_payload = change.serializedPayload;
+                octet* original_payload_data = change.serializedPayload.data;
+                uint32_t original_payload_length = change.serializedPayload.length;
                 reader->process_data_msg(&change);
                 IPayloadPool* payload_pool = change.serializedPayload.payload_owner;
                 if (payload_pool)
                 {
                     payload_pool->release_payload(change.serializedPayload);
-                    change.serializedPayload = original_payload;
+                    change.serializedPayload.data = original_payload_data;
+                    change.serializedPayload.length = original_payload_length;
                 }
-                original_payload.data = nullptr;
                 std::swap(change.serializedPayload.data, crypto_payload_.data);
                 std::swap(change.serializedPayload.length, crypto_payload_.length);
             };

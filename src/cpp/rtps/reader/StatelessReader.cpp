@@ -789,10 +789,10 @@ bool StatelessReader::process_data_frag_msg(
                 if (change_completed != nullptr)
                 {
                     // Temporarilly assign the inline qos while evaluating the data filter
-                    change_completed->inline_qos = incomingChange->inline_qos;
+                    change_completed->inline_qos = std::move(incomingChange->inline_qos);
                     bool filtered_out = !fastdds::rtps::change_is_relevant_for_filter(*change_completed, m_guid,
                                     data_filter_);
-                    change_completed->inline_qos = SerializedPayload_t();
+                    incomingChange->inline_qos = std::move(change_completed->inline_qos);
 
                     if (filtered_out)
                     {

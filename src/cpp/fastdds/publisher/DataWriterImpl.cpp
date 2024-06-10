@@ -99,7 +99,7 @@ public:
     {
         static_cast<void>(data);
         assert(data == payload.data + SerializedPayload_t::representation_header_size);
-        return loans_.push_back(payload);
+        return loans_.push_back(std::move(payload));
     }
 
     bool check_and_remove_loan(
@@ -111,10 +111,8 @@ public:
         {
             if (it->data == payload_data)
             {
-                payload = *it;
                 // Avoid releasing the payload in destructor
-                it->payload_owner = nullptr;
-                it->data = nullptr;
+                payload = std::move(*it);
                 loans_.erase(it);
                 return true;
             }
@@ -1002,9 +1000,7 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
     CacheChange_t* ch = writer_->new_change(change_kind, handle);
     if (ch != nullptr)
     {
-        ch->serializedPayload = payload;
-        payload.data = nullptr;
-        payload.payload_owner = nullptr;
+        ch->serializedPayload = std::move(payload);
 
         bool added = false;
         if (reader_filters_)
@@ -1026,9 +1022,7 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
         {
             if (was_loaned)
             {
-                payload = ch->serializedPayload;
-                ch->serializedPayload.data = nullptr;
-                ch->serializedPayload.payload_owner = nullptr;
+                payload = std::move(ch->serializedPayload);
                 add_loan(data, payload);
             }
             writer_->release_change(ch);
