@@ -258,10 +258,10 @@ bool ThroughputPublisher::init(
         dw_qos_.reliability(rp);
 
         RTPSReliableWriterQos rw_qos;
-        rw_qos.times.heartbeatPeriod.seconds = 0;
-        rw_qos.times.heartbeatPeriod.nanosec = 100000000;
-        rw_qos.times.nackSupressionDuration = {0, 0};
-        rw_qos.times.nackResponseDelay = {0, 0};
+        rw_qos.times.heartbeat_period.seconds = 0;
+        rw_qos.times.heartbeat_period.nanosec = 100000000;
+        rw_qos.times.nack_supression_duration = {0, 0};
+        rw_qos.times.nack_response_delay = {0, 0};
 
         dw_qos_.reliable_writer_qos(rw_qos);
     }

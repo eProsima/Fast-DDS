@@ -278,14 +278,14 @@ TEST(PublisherTests, ChangeDefaultDataWriterQos)
     property.value("Value2");
     qos.properties().properties().push_back(property);
     // .reliable_writer_qos
-    qos.reliable_writer_qos().times.initialHeartbeatDelay.seconds = 2;
-    qos.reliable_writer_qos().times.initialHeartbeatDelay.nanosec = 15u;
-    qos.reliable_writer_qos().times.heartbeatPeriod.seconds = 3;
-    qos.reliable_writer_qos().times.heartbeatPeriod.nanosec = 16u;
-    qos.reliable_writer_qos().times.nackResponseDelay.seconds = 4;
-    qos.reliable_writer_qos().times.nackResponseDelay.nanosec = 17u;
-    qos.reliable_writer_qos().times.nackSupressionDuration.seconds = 5;
-    qos.reliable_writer_qos().times.nackSupressionDuration.nanosec = 18u;
+    qos.reliable_writer_qos().times.initial_heartbeat_delay.seconds = 2;
+    qos.reliable_writer_qos().times.initial_heartbeat_delay.nanosec = 15u;
+    qos.reliable_writer_qos().times.heartbeat_period.seconds = 3;
+    qos.reliable_writer_qos().times.heartbeat_period.nanosec = 16u;
+    qos.reliable_writer_qos().times.nack_response_delay.seconds = 4;
+    qos.reliable_writer_qos().times.nack_response_delay.nanosec = 17u;
+    qos.reliable_writer_qos().times.nack_supression_duration.seconds = 5;
+    qos.reliable_writer_qos().times.nack_supression_duration.nanosec = 18u;
     qos.reliable_writer_qos().disable_positive_acks.enabled = true;
     qos.reliable_writer_qos().disable_positive_acks.duration.seconds = 13;
     qos.reliable_writer_qos().disable_positive_acks.duration.nanosec = 320u;
@@ -396,14 +396,14 @@ TEST(PublisherTests, ChangeDefaultDataWriterQos)
         ++count;
     }
     // .reliable_writer_qos
-    EXPECT_EQ(2, wqos.reliable_writer_qos().times.initialHeartbeatDelay.seconds);
-    EXPECT_EQ(15u, wqos.reliable_writer_qos().times.initialHeartbeatDelay.nanosec);
-    EXPECT_EQ(3, wqos.reliable_writer_qos().times.heartbeatPeriod.seconds);
-    EXPECT_EQ(16u, wqos.reliable_writer_qos().times.heartbeatPeriod.nanosec);
-    EXPECT_EQ(4, wqos.reliable_writer_qos().times.nackResponseDelay.seconds);
-    EXPECT_EQ(17u, wqos.reliable_writer_qos().times.nackResponseDelay.nanosec);
-    EXPECT_EQ(5, wqos.reliable_writer_qos().times.nackSupressionDuration.seconds);
-    EXPECT_EQ(18u, wqos.reliable_writer_qos().times.nackSupressionDuration.nanosec);
+    EXPECT_EQ(2, wqos.reliable_writer_qos().times.initial_heartbeat_delay.seconds);
+    EXPECT_EQ(15u, wqos.reliable_writer_qos().times.initial_heartbeat_delay.nanosec);
+    EXPECT_EQ(3, wqos.reliable_writer_qos().times.heartbeat_period.seconds);
+    EXPECT_EQ(16u, wqos.reliable_writer_qos().times.heartbeat_period.nanosec);
+    EXPECT_EQ(4, wqos.reliable_writer_qos().times.nack_response_delay.seconds);
+    EXPECT_EQ(17u, wqos.reliable_writer_qos().times.nack_response_delay.nanosec);
+    EXPECT_EQ(5, wqos.reliable_writer_qos().times.nack_supression_duration.seconds);
+    EXPECT_EQ(18u, wqos.reliable_writer_qos().times.nack_supression_duration.nanosec);
     EXPECT_TRUE(wqos.reliable_writer_qos().disable_positive_acks.enabled);
     EXPECT_EQ(13, wqos.reliable_writer_qos().disable_positive_acks.duration.seconds);
     EXPECT_EQ(320u, wqos.reliable_writer_qos().disable_positive_acks.duration.nanosec);

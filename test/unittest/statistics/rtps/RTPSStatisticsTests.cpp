@@ -312,8 +312,8 @@ public:
         writer_history_ = new WriterHistory(history_attributes);
 
         WriterAttributes w_att;
-        w_att.times.heartbeatPeriod.seconds = 0;
-        w_att.times.heartbeatPeriod.nanosec = 250 * 1000 * 1000; // reduce acknowledgement wait
+        w_att.times.heartbeat_period.seconds = 0;
+        w_att.times.heartbeat_period.nanosec = 250 * 1000 * 1000; // reduce acknowledgement wait
         w_att.endpoint.reliabilityKind = reliability_qos;
         w_att.endpoint.durabilityKind = durability_qos;
 
@@ -332,10 +332,10 @@ public:
         writer_history_ = new WriterHistory(history_attributes);
 
         WriterAttributes w_att;
-        w_att.times.heartbeatPeriod.seconds = 3;
-        w_att.times.heartbeatPeriod.nanosec = 0;
-        w_att.times.nackResponseDelay.seconds = 0;
-        w_att.times.nackResponseDelay.nanosec = 300 * 1000 * 1000; // increase ACKNACK response delay
+        w_att.times.heartbeat_period.seconds = 3;
+        w_att.times.heartbeat_period.nanosec = 0;
+        w_att.times.nack_response_delay.seconds = 0;
+        w_att.times.nack_response_delay.nanosec = 300 * 1000 * 1000; // increase ACKNACK response delay
         w_att.endpoint.reliabilityKind = reliability_qos;
         w_att.endpoint.durabilityKind = durability_qos;
 

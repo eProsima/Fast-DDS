@@ -433,22 +433,22 @@
             </qos>
 
             <times>
-                <initialHeartbeatDelay>
+                <initial_heartbeat_delay>
                     <sec>1</sec>
                     <nanosec>856000</nanosec>
-                </initialHeartbeatDelay>
-                <heartbeatPeriod>
+                </initial_heartbeat_delay>
+                <heartbeat_period>
                     <sec>1</sec>
                     <nanosec>856000</nanosec>
-                </heartbeatPeriod>
-                <nackResponseDelay>
+                </heartbeat_period>
+                <nack_response_delay>
                     <sec>1</sec>
                     <nanosec>856000</nanosec>
-                </nackResponseDelay>
-                <nackSupressionDuration>
+                </nack_response_delay>
+                <nack_supression_duration>
                     <sec>1</sec>
                     <nanosec>856000</nanosec>
-                </nackSupressionDuration>
+                </nack_supression_duration>
             </times>
 
             <unicastLocatorList>

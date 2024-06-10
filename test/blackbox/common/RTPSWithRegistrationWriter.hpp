@@ -131,10 +131,10 @@ public:
         topic_attr_.topicName = t.str();
 
         // By default, heartbeat period and nack response delay are 100 milliseconds.
-        writer_attr_.times.heartbeatPeriod.seconds = 0;
-        writer_attr_.times.heartbeatPeriod.nanosec = 100000000;
-        writer_attr_.times.nackResponseDelay.seconds = 0;
-        writer_attr_.times.nackResponseDelay.nanosec = 100000000;
+        writer_attr_.times.heartbeat_period.seconds = 0;
+        writer_attr_.times.heartbeat_period.nanosec = 100000000;
+        writer_attr_.times.nack_response_delay.seconds = 0;
+        writer_attr_.times.nack_response_delay.nanosec = 100000000;
 
         participant_attr_.builtin.discovery_config.discoveryProtocol =
                 eprosima::fastdds::rtps::DiscoveryProtocol::SIMPLE;
@@ -417,14 +417,14 @@ public:
     RTPSWithRegistrationWriter& heartbeat_period_seconds(
             int32_t sec)
     {
-        writer_attr_.times.heartbeatPeriod.seconds = sec;
+        writer_attr_.times.heartbeat_period.seconds = sec;
         return *this;
     }
 
     RTPSWithRegistrationWriter& heartbeat_period_nanosec(
             uint32_t nanosec)
     {
-        writer_attr_.times.heartbeatPeriod.nanosec = nanosec;
+        writer_attr_.times.heartbeat_period.nanosec = nanosec;
         return *this;
     }
 

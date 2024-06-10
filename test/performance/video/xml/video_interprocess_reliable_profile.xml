@@ -39,10 +39,10 @@
                 </publishMode>
             </qos>
             <times>
-                <heartbeatPeriod>
+                <heartbeat_period>
                     <sec>0</sec>
                     <nanosec>100000000</nanosec>
-                </heartbeatPeriod>
+                </heartbeat_period>
             </times>
             <historyMemoryPolicy>PREALLOCATED_WITH_REALLOC</historyMemoryPolicy>
         </data_writer>

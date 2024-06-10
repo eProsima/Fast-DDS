@@ -441,9 +441,9 @@ bool PDPServer::create_ds_pdp_reliable_endpoints(
     watt.endpoint.unicastLocatorList = mp_builtin->m_metatrafficUnicastLocatorList;
     watt.endpoint.external_unicast_locators = mp_builtin->m_att.metatraffic_external_unicast_locators;
     watt.endpoint.ignore_non_matching_locators = pattr.ignore_non_matching_locators;
-    watt.times.heartbeatPeriod = pdp_heartbeat_period;
-    watt.times.nackResponseDelay = pdp_nack_response_delay;
-    watt.times.nackSupressionDuration = pdp_nack_supression_duration;
+    watt.times.heartbeat_period = pdp_heartbeat_period;
+    watt.times.nack_response_delay = pdp_nack_response_delay;
+    watt.times.nack_supression_duration = pdp_nack_supression_duration;
     watt.mode = ASYNCHRONOUS_WRITER;
 #if HAVE_SECURITY
     if (secure)

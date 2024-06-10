@@ -256,10 +256,10 @@ public:
 #endif // if defined(PREALLOCATED_WITH_REALLOC_MEMORY_MODE_TEST)
 
         // By default, heartbeat period and nack response delay are 100 milliseconds.
-        datawriter_qos_.reliable_writer_qos().times.heartbeatPeriod.seconds = 0;
-        datawriter_qos_.reliable_writer_qos().times.heartbeatPeriod.nanosec = 100000000;
-        datawriter_qos_.reliable_writer_qos().times.nackResponseDelay.seconds = 0;
-        datawriter_qos_.reliable_writer_qos().times.nackResponseDelay.nanosec = 100000000;
+        datawriter_qos_.reliable_writer_qos().times.heartbeat_period.seconds = 0;
+        datawriter_qos_.reliable_writer_qos().times.heartbeat_period.nanosec = 100000000;
+        datawriter_qos_.reliable_writer_qos().times.nack_response_delay.seconds = 0;
+        datawriter_qos_.reliable_writer_qos().times.nack_response_delay.nanosec = 100000000;
 
         // Increase default max_blocking_time to 1 second, as our CI infrastructure shows some
         // big CPU overhead sometimes

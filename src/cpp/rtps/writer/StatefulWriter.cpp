@@ -218,7 +218,7 @@ void StatefulWriter::init(
         {
             return send_periodic_heartbeat();
         },
-        fastdds::rtps::TimeConv::Time_t2MilliSecondsDouble(m_times.heartbeatPeriod));
+        fastdds::rtps::TimeConv::Time_t2MilliSecondsDouble(m_times.heartbeat_period));
 
     nack_response_event_ = new TimedEvent(
         pimpl->getEventResource(),
@@ -227,7 +227,7 @@ void StatefulWriter::init(
             perform_nack_response();
             return false;
         },
-        fastdds::rtps::TimeConv::Time_t2MilliSecondsDouble(m_times.nackResponseDelay));
+        fastdds::rtps::TimeConv::Time_t2MilliSecondsDouble(m_times.nack_response_delay));
 
     if (disable_positive_acks_)
     {
@@ -1619,30 +1619,30 @@ void StatefulWriter::updateTimes(
         const WriterTimes& times)
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
-    if (m_times.heartbeatPeriod != times.heartbeatPeriod)
+    if (m_times.heartbeat_period != times.heartbeat_period)
     {
-        periodic_hb_event_->update_interval(times.heartbeatPeriod);
+        periodic_hb_event_->update_interval(times.heartbeat_period);
     }
-    if (m_times.nackResponseDelay != times.nackResponseDelay)
+    if (m_times.nack_response_delay != times.nack_response_delay)
     {
         if (nack_response_event_ != nullptr)
         {
-            nack_response_event_->update_interval(times.nackResponseDelay);
+            nack_response_event_->update_interval(times.nack_response_delay);
         }
     }
-    if (m_times.nackSupressionDuration != times.nackSupressionDuration)
+    if (m_times.nack_supression_duration != times.nack_supression_duration)
     {
         for_matched_readers(matched_local_readers_, matched_datasharing_readers_, matched_remote_readers_,
                 [&times](ReaderProxy* reader)
                 {
-                    reader->update_nack_supression_interval(times.nackSupressionDuration);
+                    reader->update_nack_supression_interval(times.nack_supression_duration);
                     return false;
                 }
                 );
 
         for (ReaderProxy* it : matched_readers_pool_)
         {
-            it->update_nack_supression_interval(times.nackSupressionDuration);
+            it->update_nack_supression_interval(times.nack_supression_duration);
         }
     }
     m_times = times;

@@ -2680,10 +2680,10 @@ TEST_F(XMLParserTests, getXMLPartitionQos_NegativeClauses)
 /*
  * This test checks the negative cases in the xml child element of <WriterTimes>
  * 1. Check an invalid tag of:
- *      <initialHeartbeatDelay>
- *      <heartbeatPeriod>
- *      <nackResponseDelay>
- *      <nackSupressionDuration>
+ *      <initial_heartbeat_delay>
+ *      <heartbeat_period>
+ *      <nack_response_delay>
+ *      <nack_supression_duration>
  * 2. Check invalid element
  */
 TEST_F(XMLParserTests, getXMLWriterTimes_NegativeClauses)
@@ -2714,10 +2714,10 @@ TEST_F(XMLParserTests, getXMLWriterTimes_NegativeClauses)
 
     std::vector<std::string> field_vec =
     {
-        "initialHeartbeatDelay",
-        "heartbeatPeriod",
-        "nackResponseDelay",
-        "nackSupressionDuration",
+        "initial_heartbeat_delay",
+        "heartbeat_period",
+        "nack_response_delay",
+        "nack_supression_duration",
     };
 
     for (std::string tag : field_vec)

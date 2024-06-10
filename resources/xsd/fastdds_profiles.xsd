@@ -873,16 +873,16 @@
 
     <!--| Data Writer / Publisher  Definition |-->
     <!--Data Writer Times:
-        ├ initialHeartbeatDelay  [durationType],
-        ├ heartbeatPeriod        [durationType],
-        ├ nackResponseDelay      [durationType],
-        └ nackSupressionDuration [durationType] -->
+        ├ initial_heartbeat_delay  [durationType],
+        ├ heartbeat_period        [durationType],
+        ├ nack_response_delay      [durationType],
+        └ nack_supression_duration [durationType] -->
     <xs:complexType name="writerTimesType">
         <xs:all>
-            <xs:element name="initialHeartbeatDelay" type="durationType" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="heartbeatPeriod" type="durationType" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="nackResponseDelay" type="durationType" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="nackSupressionDuration" type="durationType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="initial_heartbeat_delay" type="durationType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="heartbeat_period" type="durationType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="nack_response_delay" type="durationType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="nack_supression_duration" type="durationType" minOccurs="0" maxOccurs="1"/>
         </xs:all>
     </xs:complexType>
 

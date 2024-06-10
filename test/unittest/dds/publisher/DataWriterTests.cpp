@@ -694,7 +694,7 @@ TEST(DataWriterTests, InvalidQos)
     EXPECT_EQ(inconsistent_code, datawriter->set_qos(qos));
 
     qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    qos.reliable_writer_qos().times.heartbeatPeriod = eprosima::fastdds::c_TimeInfinite;
+    qos.reliable_writer_qos().times.heartbeat_period = eprosima::fastdds::c_TimeInfinite;
     EXPECT_EQ(inconsistent_code, datawriter->set_qos(qos));
 
     qos = DATAWRITER_QOS_DEFAULT;

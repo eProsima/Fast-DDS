@@ -122,21 +122,21 @@
             </qos>
 
             <times>
-                <initialHeartbeatDelay>
+                <initial_heartbeat_delay>
                     <nanosec>12</nanosec>
-                </initialHeartbeatDelay>
+                </initial_heartbeat_delay>
 
-                <heartbeatPeriod>
+                <heartbeat_period>
                     <sec>3</sec>
-                </heartbeatPeriod>
+                </heartbeat_period>
 
-                <nackResponseDelay>
+                <nack_response_delay>
                     <nanosec>5</nanosec>
-                </nackResponseDelay>
+                </nack_response_delay>
 
-                <nackSupressionDuration>
+                <nack_supression_duration>
                     <sec>0</sec>
-                </nackSupressionDuration>
+                </nack_supression_duration>
             </times>
 
             <unicastLocatorList>

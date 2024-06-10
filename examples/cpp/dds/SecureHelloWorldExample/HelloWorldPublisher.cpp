@@ -91,8 +91,8 @@ bool HelloWorldPublisher::init()
     wqos.history().depth = 20;
     wqos.resource_limits().max_samples = 50;
     wqos.resource_limits().max_samples_per_instance = 20;
-    wqos.reliable_writer_qos().times.heartbeatPeriod.seconds = 2;
-    wqos.reliable_writer_qos().times.heartbeatPeriod.nanosec = 200 * 1000 * 1000;
+    wqos.reliable_writer_qos().times.heartbeat_period.seconds = 2;
+    wqos.reliable_writer_qos().times.heartbeat_period.nanosec = 200 * 1000 * 1000;
     writer_ = publisher_->create_datawriter(topic_, wqos, &listener_);
 
     if (writer_ == nullptr)

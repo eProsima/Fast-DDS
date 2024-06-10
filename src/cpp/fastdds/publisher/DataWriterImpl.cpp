@@ -1894,7 +1894,7 @@ ReturnCode_t DataWriterImpl::check_qos(
             EPROSIMA_LOG_ERROR(RTPS_QOS_CHECK, "BEST_EFFORT incompatible with pull mode");
             return RETCODE_INCONSISTENT_POLICY;
         }
-        if (c_TimeInfinite == qos.reliable_writer_qos().times.heartbeatPeriod)
+        if (c_TimeInfinite == qos.reliable_writer_qos().times.heartbeat_period)
         {
             EPROSIMA_LOG_ERROR(RTPS_QOS_CHECK, "Infinite heartbeat period incompatible with pull mode");
             return RETCODE_INCONSISTENT_POLICY;
