@@ -194,12 +194,13 @@ public:
 
     /**
      * @brief A method to update the liveliness changed status of the reader
-     * @param writer The writer changing liveliness, specified by its guid
-     * @param alive_change The change requested for alive count. Should be -1, 0 or +1
-     * @param not_alive_change The change requested for not alive count. Should be -1, 0 or +1
+     *
+     * @param writer            The writer changing liveliness, specified by its guid
+     * @param alive_change      The change requested for alive count. Should be -1, 0 or +1
+     * @param not_alive_change  The change requested for not alive count. Should be -1, 0 or +1
      */
     void update_liveliness_changed_status(
-            fastrtps::rtps::GUID_t writer,
+            const fastrtps::rtps::GUID_t& writer,
             int32_t alive_change,
             int32_t not_alive_change);
 

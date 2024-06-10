@@ -293,7 +293,7 @@ void BaseReader::release_cache(
 }
 
 void BaseReader::update_liveliness_changed_status(
-        fastrtps::rtps::GUID_t writer,
+        const fastrtps::rtps::GUID_t& writer,
         int32_t alive_change,
         int32_t not_alive_change)
 {

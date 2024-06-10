@@ -391,11 +391,11 @@ bool StatefulReader::matched_writer_remove(
 
             if (writer_liveliness_status == LivelinessData::WriterStatus::ALIVE)
             {
-                wlp->update_liveliness_changed_status(writer_guid, this, -1, 0);
+                update_liveliness_changed_status(writer_guid, -1, 0);
             }
             else if (writer_liveliness_status == LivelinessData::WriterStatus::NOT_ALIVE)
             {
-                wlp->update_liveliness_changed_status(writer_guid, this, 0, -1);
+                update_liveliness_changed_status(writer_guid, 0, -1);
             }
 
         }
