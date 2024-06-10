@@ -26,6 +26,7 @@
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/Endpoint.h>
 #include <fastdds/rtps/common/CacheChange.h>
+#include <fastdds/rtps/common/EntityId_t.hpp>
 #include <fastdds/rtps/common/SequenceNumber.h>
 #include <fastdds/rtps/common/SerializedPayload.h>
 #include <fastdds/rtps/common/Time_t.h>
@@ -243,6 +244,12 @@ BaseReader* BaseReader::downcast(
 {
     assert(nullptr != dynamic_cast<BaseReader*>(endpoint));
     return static_cast<BaseReader*>(endpoint);
+}
+
+void BaseReader::allow_unknown_writers()
+{
+    assert(fastrtps::rtps::EntityId_t::unknown() != trusted_writer_entity_id_);
+    accept_messages_from_unkown_writers_ = true;
 }
 
 bool BaseReader::reserve_cache(

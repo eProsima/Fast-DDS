@@ -107,10 +107,10 @@ public:
         trusted_writer_entity_id_ = writer;
     }
 
-    void allow_unknown_writers()
-    {
-        accept_messages_from_unkown_writers_ = true;
-    }
+    /**
+     * @brief Allow reception ALIVE changes from non-matched writers.
+     */
+    void allow_unknown_writers();
 
     /**
      * Whether the reader accepts messages directed to unknown readers.
