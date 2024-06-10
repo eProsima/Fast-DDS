@@ -123,12 +123,11 @@ ReaderListener* BaseReader::get_listener() const
     return listener_;
 }
 
-bool BaseReader::set_listener(
+void BaseReader::set_listener(
         ReaderListener* target)
 {
     std::lock_guard<decltype(mp_mutex)> lock(mp_mutex);
     listener_ = target;
-    return true;
 }
 
 bool BaseReader::expects_inline_qos() const
@@ -436,7 +435,7 @@ void BaseReader::persist_last_notified_nts(
         const fastrtps::rtps::GUID_t& peristence_guid,
         const fastrtps::rtps::SequenceNumber_t& seq)
 {
-    // Empty base implementation since base behavior it to not persist data
+    // Empty base implementation since base behavior is to not persist data
     static_cast<void>(peristence_guid);
     static_cast<void>(seq);
 }

@@ -55,17 +55,21 @@ class RTPSReader : public Endpoint
 public:
 
     /**
-     * Add a matched writer represented by its attributes.
-     * @param wdata Attributes of the writer to add.
+     * @brief Add a matched writer represented by its attributes.
+     *
+     * @param wdata  Discovery information regarding the writer to add.
+     *
      * @return True if correctly added.
      */
     FASTDDS_EXPORTED_API virtual bool matched_writer_add(
             const WriterProxyData& wdata) = 0;
 
     /**
-     * Remove a writer represented by its attributes from the matched writers.
-     * @param writer_guid GUID of the writer to remove.
-     * @param removed_by_lease Whether the writer is being unmatched due to a participant drop.
+     * @brief Remove a writer from the matched writers.
+     *
+     * @param writer_guid       GUID of the writer to remove.
+     * @param removed_by_lease  Whether the writer is being unmatched due to a participant drop.
+     *
      * @return True if correctly removed.
      */
     FASTDDS_EXPORTED_API virtual bool matched_writer_remove(
@@ -73,78 +77,107 @@ public:
             bool removed_by_lease = false) = 0;
 
     /**
-     * Tells us if a specific Writer is matched against this reader.
-     * @param writer_guid GUID of the writer to check.
-     * @return True if it is matched.
+     * @brief Check if a specific writer is matched against this reader.
+     *
+     * @param writer_guid  GUID of the writer to check.
+     *
+     * @return True if the specified writer is matched with this reader.
      */
     FASTDDS_EXPORTED_API virtual bool matched_writer_is_matched(
             const GUID_t& writer_guid) = 0;
 
     /**
-     * Assert the liveliness of a matched writer.
-     * @param writer GUID of the writer to assert.
+     * @brief Assert the liveliness of a matched writer.
+     *
+     * @param writer  GUID of the writer on which to assert liveliness.
      */
     FASTDDS_EXPORTED_API virtual void assert_writer_liveliness(
             const GUID_t& writer) = 0;
 
-    /*!
-     * @brief Returns there is a clean state with all Writers.
-     * It occurs when the Reader received all samples sent by Writers. In other words,
-     * its WriterProxies are up to date.
-     * @return There is a clean state with all Writers.
+    /**
+     * @brief Check if this reader is in a clean state with all its matched writers.
+     * This will happen when the reader has received all samples announced by all its matched writers.
+     *
+     * @return Whether the reader is in a clean state with all its matched writers.
      */
     FASTDDS_EXPORTED_API virtual bool is_in_clean_state() = 0;
 
     /**
-     * Get the associated listener, secondary attached Listener in case it is of compound type
+     * @brief Get the associated listener.
+     *
      * @return Pointer to the associated reader listener.
      */
     FASTDDS_EXPORTED_API virtual ReaderListener* get_listener() const = 0;
 
     /**
-     * Switch the ReaderListener kind for the Reader.
-     * If the RTPSReader does not belong to the built-in protocols it switches out the old one.
-     * If it belongs to the built-in protocols, it sets the new ReaderListener callbacks to be called after the
-     * built-in ReaderListener ones.
-     * @param target Pointed to ReaderLister to attach
-     * @return True is correctly set.
+     * @brief Change the listener associated to this reader.
+     *
+     * @param listener  The new listener to associate to this reader.
      */
-    FASTDDS_EXPORTED_API virtual bool set_listener(
-            ReaderListener* target) = 0;
+    FASTDDS_EXPORTED_API virtual void set_listener(
+            ReaderListener* listener) = 0;
 
     /**
-     * @return True if the reader expects Inline QOS.
+     * @return True if the reader expects Inline QoS.
      */
     FASTDDS_EXPORTED_API virtual bool expects_inline_qos() const = 0;
 
-    //! Returns a pointer to the associated History.
+    /**
+     * @return a pointer to the associated History.
+     */
     FASTDDS_EXPORTED_API virtual ReaderHistory* get_history() const = 0;
 
-    //! @return The content filter associated to this reader.
+    /**
+     * @return The content filter associated to this reader.
+     */
     FASTDDS_EXPORTED_API virtual eprosima::fastdds::rtps::IReaderDataFilter* get_content_filter() const = 0;
 
-    //! Set the content filter associated to this reader.
-    //! @param filter Pointer to the content filter to associate to this reader.
+    /**
+     * Set the content filter associated to this reader.
+     *
+     * @param filter  Pointer to the content filter to associate to this reader.
+     */
     FASTDDS_EXPORTED_API virtual void set_content_filter(
             eprosima::fastdds::rtps::IReaderDataFilter* filter) = 0;
 
     /**
-     * Read the next unread CacheChange_t from the history
+     * @brief Read the next unread CacheChange_t from the history.
+     *
      * @return A pointer to the first unread CacheChange_t from the history.
      */
     FASTDDS_EXPORTED_API virtual CacheChange_t* next_unread_cache() = 0;
 
     /**
-     * Get the next CacheChange_t from the history to take.
+     * @brief Get the next CacheChange_t from the history to take.
+     *
      * @return A pointer to the first CacheChange_t in the history.
      */
     FASTDDS_EXPORTED_API virtual CacheChange_t* next_untaken_cache() = 0;
 
+    /**
+     * Wait until there is an unread CacheChange_t in the history.
+     *
+     * @param timeout  Maximum time to wait.
+     *
+     * @return true if there is an unread CacheChange_t in the history.
+     */
     FASTDDS_EXPORTED_API virtual bool wait_for_unread_cache(
             const eprosima::fastrtps::Duration_t& timeout) = 0;
 
+    /**
+     * Get the number of unread CacheChange_t in the history.
+     *
+     * @return The number of unread CacheChange_t in the history.
+     */
     FASTDDS_EXPORTED_API virtual uint64_t get_unread_count() const = 0;
 
+    /**
+     * Get the number of unread CacheChange_t in the history and optionally mark them as read.
+     *
+     * @param mark_as_read  Whether to mark the unread CacheChange_t as read.
+     *
+     * @return The number of previously unread CacheChange_t in the history.
+     */
     FASTDDS_EXPORTED_API virtual uint64_t get_unread_count(
             bool mark_as_read) = 0;
 
@@ -211,7 +244,7 @@ protected:
 
     ~RTPSReader();
 
-    //! ReaderHistory
+    /// ReaderHistory
     ReaderHistory* history_;
 
 private:

@@ -67,36 +67,17 @@ class BaseReader
 
 public:
 
-    /**
-     * Get the associated listener, secondary attached Listener in case it is of compound type
-     * @return Pointer to the associated reader listener.
-     */
     fastrtps::rtps::ReaderListener* get_listener() const override;
 
-    /**
-     * Switch the ReaderListener kind for the Reader.
-     * If the RTPSReader does not belong to the built-in protocols it switches out the old one.
-     * If it belongs to the built-in protocols, it sets the new ReaderListener callbacks to be called after the
-     * built-in ReaderListener ones.
-     * @param target Pointed to ReaderLister to attach
-     * @return True is correctly set.
-     */
-    bool set_listener(
-            fastrtps::rtps::ReaderListener* target) override;
+    void set_listener(
+            fastrtps::rtps::ReaderListener* listener) override;
 
-    /**
-     * @return True if the reader expects Inline QOS.
-     */
     bool expects_inline_qos() const override;
 
-    //! Returns a pointer to the associated History.
     fastrtps::rtps::ReaderHistory* get_history() const override;
 
-    //! @return The content filter associated to this reader.
     IReaderDataFilter* get_content_filter() const override;
 
-    //! Set the content filter associated to this reader.
-    //! @param filter Pointer to the content filter to associate to this reader.
     void set_content_filter(
             IReaderDataFilter* filter) override;
 
