@@ -67,7 +67,8 @@ SubscriberApp::SubscriberApp(
     eprosima::fastrtps::rtps::IPLocator::setIPv4(initial_peer, "127.0.0.1");
     pqos.wire_protocol().builtin.initialPeersList.push_back(initial_peer);
     pqos.transport().use_builtin_transports = false;
-    std::shared_ptr<eprosima::fastdds::rtps::UDPv4TransportDescriptor> udp_descriptor = std::make_shared<eprosima::fastdds::rtps::UDPv4TransportDescriptor>();
+    std::shared_ptr<eprosima::fastdds::rtps::UDPv4TransportDescriptor> udp_descriptor =
+            std::make_shared<eprosima::fastdds::rtps::UDPv4TransportDescriptor>();
     pqos.transport().user_transports.push_back(udp_descriptor);
     // Create DomainParticipant
     participant_ = factory->create_participant(0, pqos);
@@ -107,7 +108,7 @@ SubscriberApp::SubscriberApp(
     // Create the ContentFilteredTopic
     std::string expression;
     std::vector<std::string> parameters;
-   if (config.filter_kind == CLIParser::FIlterKind::CUSTOM)
+    if (config.filter_kind == CLIParser::FIlterKind::CUSTOM)
     {
         // Custom filter: reject samples where index > parameters[0] and index < parameters[1].
         // Custom filter does not use expression. However, an empty expression disables filtering, so some expression

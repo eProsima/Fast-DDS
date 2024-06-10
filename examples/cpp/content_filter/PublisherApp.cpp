@@ -78,7 +78,8 @@ PublisherApp::PublisherApp(
     eprosima::fastrtps::rtps::IPLocator::setIPv4(initial_peer, 127, 0, 0, 1);
     pqos.wire_protocol().builtin.initialPeersList.push_back(initial_peer);
     pqos.transport().use_builtin_transports = false;
-    std::shared_ptr<eprosima::fastdds::rtps::UDPv4TransportDescriptor> udp_descriptor = std::make_shared<eprosima::fastdds::rtps::UDPv4TransportDescriptor>();
+    std::shared_ptr<eprosima::fastdds::rtps::UDPv4TransportDescriptor> udp_descriptor =
+            std::make_shared<eprosima::fastdds::rtps::UDPv4TransportDescriptor>();
     pqos.transport().user_transports.push_back(udp_descriptor);
     // Create DomainParticipant in domain 0
     participant_ = factory->create_participant(0, pqos);
@@ -107,12 +108,14 @@ PublisherApp::PublisherApp(
     // Create the DataWriter
     DataWriterQos wqos = DATAWRITER_QOS_DEFAULT;
     wqos.data_sharing().off();
-    if(config.filtering){
+    if (config.filtering)
+    {
         wqos.writer_resource_limits().reader_filters_allocation.initial = 0;
         wqos.writer_resource_limits().reader_filters_allocation.maximum = 10;
         wqos.writer_resource_limits().reader_filters_allocation.increment = 1;
     }
-    else {
+    else
+    {
         wqos.writer_resource_limits().reader_filters_allocation.maximum = 0;
     }
     writer_ = publisher_->create_datawriter(topic_, wqos, this);
