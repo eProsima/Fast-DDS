@@ -435,11 +435,11 @@ void TypeLookupRequestListener::onNewCacheChangeAdded(
     TypeLookup_Request request;
     if (typelookup_manager_->receive(*change, request))
     {
-        // Add request to the processing queue
-        requests_queue_.push(request);
         {
-            // Notify processor
             std::unique_lock<std::mutex> guard(request_processor_cv_mutex_);
+            // Add request to the processing queue
+            requests_queue_.push(request);
+            // Notify processor
             request_processor_cv_.notify_all();
         }
     }
