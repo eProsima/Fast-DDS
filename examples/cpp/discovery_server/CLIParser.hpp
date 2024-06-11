@@ -417,14 +417,15 @@ public:
             else if (arg == "-t" || arg == "--topic")
             {
                 if (config.entity == CLIParser::EntityKind::CLIENT_PUBLISHER ||
-                    config.entity == CLIParser::EntityKind::CLIENT_SUBSCRIBER)
+                        config.entity == CLIParser::EntityKind::CLIENT_SUBSCRIBER)
                 {
                     config.pub_config.topic_name = argv[i];
                     config.sub_config.topic_name = argv[i];
                 }
                 else
                 {
-                    EPROSIMA_LOG_ERROR(CLI_PARSER, "wrong or missing entity for --topic argument: only available for publisher and subscriber");
+                    EPROSIMA_LOG_ERROR(CLI_PARSER,
+                            "wrong or missing entity for --topic argument: only available for publisher and subscriber");
                     print_help(EXIT_FAILURE);
                 }
             }
@@ -561,7 +562,7 @@ public:
                                     input > std::numeric_limits<uint16_t>::max())
                             {
                                 throw std::out_of_range("listening-port argument " + std::string(
-                                                argv[i]) + " out of range [0, 65535].");
+                                                  argv[i]) + " out of range [0, 65535].");
                             }
                             else
                             {
@@ -604,7 +605,7 @@ public:
                             if (input < 0 || input > 255)
                             {
                                 throw std::out_of_range("id argument " + std::string(
-                                                argv[i]) + " out of range [0, 255].");
+                                                  argv[i]) + " out of range [0, 255].");
                             }
                             else
                             {
@@ -648,7 +649,7 @@ public:
                                     input > std::numeric_limits<uint16_t>::max())
                             {
                                 throw std::out_of_range("timeout argument " + std::string(
-                                                argv[i]) + " out of range [0, 65535].");
+                                                  argv[i]) + " out of range [0, 65535].");
                             }
                             else
                             {
@@ -687,8 +688,8 @@ public:
         }
 
         if (uses_ipv6
-            && !listening_address_was_set
-            && config.entity == CLIParser::EntityKind::SERVER)
+                && !listening_address_was_set
+                && config.entity == CLIParser::EntityKind::SERVER)
         {
             config.srv_config.listening_address = "::1";
         }
