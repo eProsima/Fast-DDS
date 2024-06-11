@@ -109,32 +109,6 @@ protected:
 
 public:
 
-    /**
-     * Create a new change based with the provided changeKind.
-     * @param data Data of the change.
-     * @param changeKind The type of change.
-     * @param handle InstanceHandle to assign.
-     * @return Pointer to the CacheChange or nullptr if incorrect.
-     */
-    template<typename T>
-    CacheChange_t* new_change(
-            T& data,
-            ChangeKind_t changeKind,
-            InstanceHandle_t handle = c_InstanceHandle_Unknown)
-    {
-        return new_change([data]() -> uint32_t
-                       {
-#if FASTCDR_VERSION_MAJOR == 1
-                           return (uint32_t)T::getCdrSerializedSize(data);
-#else
-                           eprosima::fastcdr::CdrSizeCalculator calculator(
-                               eprosima::fastdds::rtps::DEFAULT_XCDR_VERSION);
-                           size_t current_alignment {0};
-                           return (uint32_t)calculator.calculate_serialized_size(data, current_alignment);
-#endif // if FASTCDR_VERSION_MAJOR == 1
-                       }, changeKind, handle);
-    }
-
     FASTDDS_EXPORTED_API CacheChange_t* new_change(
             const std::function<uint32_t()>& dataCdrSerializedSize,
             ChangeKind_t changeKind,

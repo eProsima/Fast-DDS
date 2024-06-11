@@ -138,7 +138,12 @@ void pool_initialization_test (
             .WillOnce(Return(true));
 
     TestDataType data;
-    CacheChange_t* ch = writer->new_change(data, ALIVE);
+    CacheChange_t* ch = writer->new_change([&]() -> uint32_t
+    {
+        eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastdds::rtps::DEFAULT_XCDR_VERSION);
+        size_t current_alignment{ 0 };
+        return (uint32_t)calculator.calculate_serialized_size(data, current_alignment);
+    }, ALIVE);
     ASSERT_NE(ch, nullptr);
 
     // Changes released to the writer have the payload returned to the pool
