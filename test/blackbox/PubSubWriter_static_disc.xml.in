@@ -4,7 +4,7 @@
         <reader>
             <userId>3</userId>
             <entityID>4</entityID>
-            <expectsInlineQos>false</expectsInlineQos>
+            <expects_inline_qos>false</expects_inline_qos>
             <topicName>BlackBox_StaticDiscovery_@TOPIC_RANDOM_NUMBER@</topicName>
             <topicDataType>HelloWorld</topicDataType>
             <topicKind>NO_KEY</topicKind>

@@ -88,7 +88,7 @@ void set_qos_from_attributes(
 {
     qos.reader_resource_limits().matched_publisher_allocation = attr.matched_publisher_allocation;
     qos.properties() = attr.properties;
-    qos.expects_inline_qos(attr.expectsInlineQos);
+    qos.expects_inline_qos(attr.expects_inline_qos);
     qos.endpoint().unicast_locator_list = attr.unicastLocatorList;
     qos.endpoint().multicast_locator_list = attr.multicastLocatorList;
     qos.endpoint().remote_locator_list = attr.remoteLocatorList;

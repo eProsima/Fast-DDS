@@ -79,7 +79,7 @@ private:
         {
         }
 
-        void onNewCacheChangeAdded(
+        void on_new_cache_change_added(
                 eprosima::fastrtps::rtps::RTPSReader* reader,
                 const eprosima::fastrtps::rtps::CacheChange_t* const change) override
         {
@@ -120,8 +120,8 @@ public:
         hattr_.memoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 
         // By default, heartbeat period delay is 100 milliseconds.
-        reader_attr_.times.heartbeatResponseDelay.seconds = 0;
-        reader_attr_.times.heartbeatResponseDelay.nanosec = 100000000;
+        reader_attr_.times.heartbeat_response_delay.seconds = 0;
+        reader_attr_.times.heartbeat_response_delay.nanosec = 100000000;
     }
 
     virtual ~RTPSAsSocketReader()
@@ -152,7 +152,10 @@ public:
         ASSERT_NE(history_, nullptr);
 
         //Create reader
-        reader_ = eprosima::fastrtps::rtps::RTPSDomain::createRTPSReader(participant_, reader_attr_, history_,
+        auto attr = reader_attr_;
+        attr.accept_messages_from_unkown_writers =
+                eprosima::fastrtps::rtps::RELIABLE != reader_attr_.endpoint.reliabilityKind;
+        reader_ = eprosima::fastrtps::rtps::RTPSDomain::createRTPSReader(participant_, attr, history_,
                         &listener_);
         ASSERT_NE(reader_, nullptr);
 
@@ -320,10 +323,6 @@ public:
             wattr.guid().entityId.value[3] = 3;
             reader_->matched_writer_add(wattr);
         }
-        else
-        {
-            reader_->enableMessagesFromUnkownWriters(true);
-        }
     }
 
     RTPSAsSocketReader& disable_positive_acks(
@@ -367,7 +366,7 @@ private:
                 cv_.notify_one();
             }
 
-            eprosima::fastrtps::rtps::ReaderHistory* history = reader->getHistory();
+            eprosima::fastrtps::rtps::ReaderHistory* history = reader->get_history();
             ASSERT_NE(history, nullptr);
 
             history->remove_change((eprosima::fastrtps::rtps::CacheChange_t*)change);

@@ -19,90 +19,57 @@
 #ifndef _FASTDDS_RTPS_READER_RTPSREADER_H_
 #define _FASTDDS_RTPS_READER_RTPSREADER_H_
 
-#include <functional>
+#include <cstdint>
+#include <memory>
 
-#include <fastdds/dds/core/status/LivelinessChangedStatus.hpp>
+#include <fastdds/fastdds_dll.hpp>
 #include <fastdds/rtps/attributes/ReaderAttributes.h>
-#include <fastdds/rtps/builtin/data/WriterProxyData.h>
+#include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/common/SequenceNumber.h>
 #include <fastdds/rtps/common/Time_t.h>
-#include <fastdds/rtps/common/VendorId_t.hpp>
 #include <fastdds/rtps/Endpoint.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
+#include <fastdds/statistics/IListeners.hpp>
 #include <fastdds/statistics/rtps/monitor_service/connections_fwd.hpp>
 #include <fastdds/statistics/rtps/StatisticsCommon.hpp>
-#include <fastdds/utils/TimedConditionVariable.hpp>
 
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
 // Forward declarations
-class LivelinessManager;
-class ReaderListener;
-class WriterProxy;
 struct CacheChange_t;
-struct ReaderHistoryState;
+class ReaderListener;
+class RTPSParticipantImpl;
 class WriterProxyData;
-class IDataSharingListener;
 
 /**
  * Class RTPSReader, manages the reception of data from its matched writers.
+ * Needs to be constructed using the createRTPSReader method from the RTPSDomain.
  * @ingroup READER_MODULE
  */
-class RTPSReader
-    : public Endpoint
-    , public fastdds::statistics::StatisticsReaderImpl
+class RTPSReader : public Endpoint
 {
-    friend class ReaderHistory;
-    friend class RTPSParticipantImpl;
-    friend class MessageReceiver;
-    friend class EDP;
-    friend class WLP;
-
-protected:
-
-    RTPSReader(
-            RTPSParticipantImpl* pimpl,
-            const GUID_t& guid,
-            const ReaderAttributes& att,
-            ReaderHistory* hist,
-            ReaderListener* listen = nullptr);
-
-    RTPSReader(
-            RTPSParticipantImpl* pimpl,
-            const GUID_t& guid,
-            const ReaderAttributes& att,
-            const std::shared_ptr<IPayloadPool>& payload_pool,
-            ReaderHistory* hist,
-            ReaderListener* listen = nullptr);
-
-    RTPSReader(
-            RTPSParticipantImpl* pimpl,
-            const GUID_t& guid,
-            const ReaderAttributes& att,
-            const std::shared_ptr<IPayloadPool>& payload_pool,
-            const std::shared_ptr<IChangePool>& change_pool,
-            ReaderHistory* hist,
-            ReaderListener* listen = nullptr);
-
-    virtual ~RTPSReader();
 
 public:
 
     /**
-     * Add a matched writer represented by its attributes.
-     * @param wdata Attributes of the writer to add.
+     * @brief Add a matched writer represented by its attributes.
+     *
+     * @param wdata  Discovery information regarding the writer to add.
+     *
      * @return True if correctly added.
      */
     FASTDDS_EXPORTED_API virtual bool matched_writer_add(
             const WriterProxyData& wdata) = 0;
 
     /**
-     * Remove a writer represented by its attributes from the matched writers.
-     * @param writer_guid GUID of the writer to remove.
-     * @param removed_by_lease Whether the writer is being unmatched due to a participant drop.
+     * @brief Remove a writer from the matched writers.
+     *
+     * @param writer_guid       GUID of the writer to remove.
+     * @param removed_by_lease  Whether the writer is being unmatched due to a participant drop.
+     *
      * @return True if correctly removed.
      */
     FASTDDS_EXPORTED_API virtual bool matched_writer_remove(
@@ -110,238 +77,109 @@ public:
             bool removed_by_lease = false) = 0;
 
     /**
-     * Tells us if a specific Writer is matched against this reader.
-     * @param writer_guid GUID of the writer to check.
-     * @return True if it is matched.
+     * @brief Check if a specific writer is matched against this reader.
+     *
+     * @param writer_guid  GUID of the writer to check.
+     *
+     * @return True if the specified writer is matched with this reader.
      */
     FASTDDS_EXPORTED_API virtual bool matched_writer_is_matched(
             const GUID_t& writer_guid) = 0;
 
     /**
-     * Processes a new DATA message. Previously the message must have been accepted by function acceptMsgDirectedTo.
+     * @brief Assert the liveliness of a matched writer.
      *
-     * @param change Pointer to the CacheChange_t.
-     * @return true if the reader accepts messages from the.
+     * @param writer  GUID of the writer on which to assert liveliness.
      */
-    FASTDDS_EXPORTED_API virtual bool processDataMsg(
-            CacheChange_t* change) = 0;
-
-    /**
-     * Processes a new DATA FRAG message.
-     *
-     * @param change Pointer to the CacheChange_t.
-     * @param sampleSize Size of the complete, assembled message.
-     * @param fragmentStartingNum Starting number of this particular message.
-     * @param fragmentsInSubmessage Number of fragments on this particular message.
-     * @return true if the reader accepts message.
-     */
-    FASTDDS_EXPORTED_API virtual bool processDataFragMsg(
-            CacheChange_t* change,
-            uint32_t sampleSize,
-            uint32_t fragmentStartingNum,
-            uint16_t fragmentsInSubmessage) = 0;
-
-    /**
-     * Processes a new HEARTBEAT message.
-     * @param writerGUID
-     * @param hbCount
-     * @param firstSN
-     * @param lastSN
-     * @param finalFlag
-     * @param livelinessFlag
-     * @param origin_vendor_id
-     * @return true if the reader accepts messages from the.
-     */
-    FASTDDS_EXPORTED_API virtual bool processHeartbeatMsg(
-            const GUID_t& writerGUID,
-            uint32_t hbCount,
-            const SequenceNumber_t& firstSN,
-            const SequenceNumber_t& lastSN,
-            bool finalFlag,
-            bool livelinessFlag,
-            fastdds::rtps::VendorId_t origin_vendor_id = c_VendorId_Unknown) = 0;
-
-    /**
-     * Processes a new GAP message.
-     * @param writerGUID
-     * @param gapStart
-     * @param gapList
-     * @param origin_vendor_id
-     * @return true if the reader accepts messages from the.
-     */
-    FASTDDS_EXPORTED_API virtual bool processGapMsg(
-            const GUID_t& writerGUID,
-            const SequenceNumber_t& gapStart,
-            const SequenceNumberSet_t& gapList,
-            fastdds::rtps::VendorId_t origin_vendor_id = c_VendorId_Unknown) = 0;
-
-    /**
-     * Method to indicate the reader that some change has been removed due to HistoryQos requirements.
-     * @param change Pointer to the CacheChange_t.
-     * @param prox Pointer to the WriterProxy.
-     * @return True if correctly removed.
-     */
-    FASTDDS_EXPORTED_API virtual bool change_removed_by_history(
-            CacheChange_t* change,
-            WriterProxy* prox = nullptr) = 0;
-
-    /**
-     * Get the associated listener, secondary attached Listener in case it is of compound type
-     * @return Pointer to the associated reader listener.
-     */
-    FASTDDS_EXPORTED_API ReaderListener* getListener() const;
-
-    /**
-     * Switch the ReaderListener kind for the Reader.
-     * If the RTPSReader does not belong to the built-in protocols it switches out the old one.
-     * If it belongs to the built-in protocols, it sets the new ReaderListener callbacks to be called after the
-     * built-in ReaderListener ones.
-     * @param target Pointed to ReaderLister to attach
-     * @return True is correctly set.
-     */
-    FASTDDS_EXPORTED_API bool setListener(
-            ReaderListener* target);
-
-    /**
-     * Reserve a CacheChange_t.
-     * @param change Pointer to pointer to the Cache.
-     * @param dataCdrSerializedSize Size of the Cache.
-     * @return True if correctly reserved.
-     */
-    FASTDDS_EXPORTED_API bool reserveCache(
-            CacheChange_t** change,
-            uint32_t dataCdrSerializedSize);
-
-    /**
-     * Release a cacheChange.
-     */
-    FASTDDS_EXPORTED_API void releaseCache(
-            CacheChange_t* change);
-
-    /**
-     * Read the next unread CacheChange_t from the history
-     * @param change Pointer to pointer of CacheChange_t
-     * @param wp Pointer to pointer to the WriterProxy
-     * @return True if read.
-     */
-    FASTDDS_EXPORTED_API virtual bool nextUnreadCache(
-            CacheChange_t** change,
-            WriterProxy** wp) = 0;
-
-    /**
-     * Get the next CacheChange_t from the history to take.
-     * @param change Pointer to pointer of CacheChange_t.
-     * @param wp Pointer to pointer to the WriterProxy.
-     * @return True if read.
-     */
-    FASTDDS_EXPORTED_API virtual bool nextUntakenCache(
-            CacheChange_t** change,
-            WriterProxy** wp) = 0;
-
-    FASTDDS_EXPORTED_API bool wait_for_unread_cache(
-            const eprosima::fastrtps::Duration_t& timeout);
-
-    FASTDDS_EXPORTED_API uint64_t get_unread_count() const;
-
-    FASTDDS_EXPORTED_API uint64_t get_unread_count(
-            bool mark_as_read);
-
-    /**
-     * @return True if the reader expects Inline QOS.
-     */
-    FASTDDS_EXPORTED_API inline bool expectsInlineQos()
-    {
-        return m_expectsInlineQos;
-    }
-
-    //! Returns a pointer to the associated History.
-    FASTDDS_EXPORTED_API inline ReaderHistory* getHistory()
-    {
-        return mp_history;
-    }
-
-    //! @return The content filter associated to this reader.
-    FASTDDS_EXPORTED_API eprosima::fastdds::rtps::IReaderDataFilter* get_content_filter() const
-    {
-        std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
-        return data_filter_;
-    }
-
-    //! Set the content filter associated to this reader.
-    //! @param filter Pointer to the content filter to associate to this reader.
-    FASTDDS_EXPORTED_API void set_content_filter(
-            eprosima::fastdds::rtps::IReaderDataFilter* filter)
-    {
-        std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
-        data_filter_ = filter;
-    }
-
-    /*!
-     * @brief Returns there is a clean state with all Writers.
-     * It occurs when the Reader received all samples sent by Writers. In other words,
-     * its WriterProxies are up to date.
-     * @return There is a clean state with all Writers.
-     */
-    virtual bool isInCleanState() = 0;
-
-    //! The liveliness changed status struct as defined in the DDS
-    fastdds::dds::LivelinessChangedStatus liveliness_changed_status_;
-
-    inline void enableMessagesFromUnkownWriters(
-            bool enable)
-    {
-        m_acceptMessagesFromUnkownWriters = enable;
-    }
-
-    void setTrustedWriter(
-            const EntityId_t& writer)
-    {
-        m_acceptMessagesFromUnkownWriters = false;
-        m_trustedWriterEntityId = writer;
-    }
-
-    /**
-     * Assert the liveliness of a matched writer.
-     * @param writer GUID of the writer to assert.
-     */
-    virtual void assert_writer_liveliness(
+    FASTDDS_EXPORTED_API virtual void assert_writer_liveliness(
             const GUID_t& writer) = 0;
 
     /**
-     * Called just before a change is going to be deserialized.
-     * @param [in]  change            Pointer to the change being accessed.
-     * @param [out] wp                Writer proxy the @c change belongs to.
-     * @param [out] is_future_change  Whether the change is in the future (i.e. there are
-     *                                earlier unreceived changes from the same writer).
+     * @brief Check if this reader is in a clean state with all its matched writers.
+     * This will happen when the reader has received all samples announced by all its matched writers.
      *
-     * @return Whether the change is still valid or not.
+     * @return Whether the reader is in a clean state with all its matched writers.
      */
-    virtual bool begin_sample_access_nts(
-            CacheChange_t* change,
-            WriterProxy*& wp,
-            bool& is_future_change) = 0;
+    FASTDDS_EXPORTED_API virtual bool is_in_clean_state() = 0;
 
     /**
-     * Called after the change has been deserialized.
-     * @param [in] change        Pointer to the change being accessed.
-     * @param [in] wp            Writer proxy the @c change belongs to.
-     * @param [in] mark_as_read  Whether the @c change should be marked as read or not.
+     * @brief Get the associated listener.
+     *
+     * @return Pointer to the associated reader listener.
      */
-    virtual void end_sample_access_nts(
-            CacheChange_t* change,
-            WriterProxy*& wp,
+    FASTDDS_EXPORTED_API virtual ReaderListener* get_listener() const = 0;
+
+    /**
+     * @brief Change the listener associated to this reader.
+     *
+     * @param listener  The new listener to associate to this reader.
+     */
+    FASTDDS_EXPORTED_API virtual void set_listener(
+            ReaderListener* listener) = 0;
+
+    /**
+     * @return True if the reader expects Inline QoS.
+     */
+    FASTDDS_EXPORTED_API virtual bool expects_inline_qos() const = 0;
+
+    /**
+     * @return a pointer to the associated History.
+     */
+    FASTDDS_EXPORTED_API virtual ReaderHistory* get_history() const = 0;
+
+    /**
+     * @return The content filter associated to this reader.
+     */
+    FASTDDS_EXPORTED_API virtual eprosima::fastdds::rtps::IReaderDataFilter* get_content_filter() const = 0;
+
+    /**
+     * Set the content filter associated to this reader.
+     *
+     * @param filter  Pointer to the content filter to associate to this reader.
+     */
+    FASTDDS_EXPORTED_API virtual void set_content_filter(
+            eprosima::fastdds::rtps::IReaderDataFilter* filter) = 0;
+
+    /**
+     * @brief Read the next unread CacheChange_t from the history.
+     *
+     * @return A pointer to the first unread CacheChange_t from the history.
+     */
+    FASTDDS_EXPORTED_API virtual CacheChange_t* next_unread_cache() = 0;
+
+    /**
+     * @brief Get the next CacheChange_t from the history to take.
+     *
+     * @return A pointer to the first CacheChange_t in the history.
+     */
+    FASTDDS_EXPORTED_API virtual CacheChange_t* next_untaken_cache() = 0;
+
+    /**
+     * Wait until there is an unread CacheChange_t in the history.
+     *
+     * @param timeout  Maximum time to wait.
+     *
+     * @return true if there is an unread CacheChange_t in the history.
+     */
+    FASTDDS_EXPORTED_API virtual bool wait_for_unread_cache(
+            const eprosima::fastrtps::Duration_t& timeout) = 0;
+
+    /**
+     * Get the number of unread CacheChange_t in the history.
+     *
+     * @return The number of unread CacheChange_t in the history.
+     */
+    FASTDDS_EXPORTED_API virtual uint64_t get_unread_count() const = 0;
+
+    /**
+     * Get the number of unread CacheChange_t in the history and optionally mark them as read.
+     *
+     * @param mark_as_read  Whether to mark the unread CacheChange_t as read.
+     *
+     * @return The number of previously unread CacheChange_t in the history.
+     */
+    FASTDDS_EXPORTED_API virtual uint64_t get_unread_count(
             bool mark_as_read) = 0;
-
-    /**
-     * Called when the user has retrieved a change from the history.
-     * @param change Pointer to the change to ACK
-     * @param writer Writer proxy of the \c change.
-     * @param mark_as_read Whether the \c change should be marked as read or not
-     */
-    virtual void change_read_by_user(
-            CacheChange_t* change,
-            WriterProxy* writer,
-            bool mark_as_read = true) = 0;
 
     /**
      * Checks whether the sample is still valid or is corrupted.
@@ -354,15 +192,10 @@ public:
      *
      * @return true if the sample is valid
      */
-    FASTDDS_EXPORTED_API bool is_sample_valid(
+    FASTDDS_EXPORTED_API virtual bool is_sample_valid(
             const void* data,
             const GUID_t& writer,
-            const SequenceNumber_t& sn) const;
-
-    const std::unique_ptr<IDataSharingListener>& datasharing_listener() const
-    {
-        return datasharing_listener_;
-    }
+            const SequenceNumber_t& sn) const = 0;
 
 #ifdef FASTDDS_STATISTICS
 
@@ -371,24 +204,24 @@ public:
      * @param listener
      * @return true if successfully added
      */
-    FASTDDS_EXPORTED_API bool add_statistics_listener(
-            std::shared_ptr<fastdds::statistics::IListener> listener);
+    FASTDDS_EXPORTED_API virtual bool add_statistics_listener(
+            std::shared_ptr<fastdds::statistics::IListener> listener) = 0;
 
     /**
      * Remove a listener from receiving statistics backend callbacks
      * @param listener
      * @return true if successfully removed
      */
-    FASTDDS_EXPORTED_API bool remove_statistics_listener(
-            std::shared_ptr<fastdds::statistics::IListener> listener);
+    FASTDDS_EXPORTED_API virtual bool remove_statistics_listener(
+            std::shared_ptr<fastdds::statistics::IListener> listener) = 0;
 
     /**
      * @brief Set the enabled statistics writers mask
      *
      * @param enabled_writers The new mask to set
      */
-    FASTDDS_EXPORTED_API void set_enabled_statistics_writers_mask(
-            uint32_t enabled_writers);
+    FASTDDS_EXPORTED_API virtual void set_enabled_statistics_writers_mask(
+            uint32_t enabled_writers) = 0;
 
     /**
      * @brief Get the connection list of this reader
@@ -403,134 +236,26 @@ public:
 
 protected:
 
-    virtual bool may_remove_history_record(
-            bool removed_by_lease);
-
-    /*!
-     * @brief Add a remote writer to the persistence_guid map
-     * @param guid GUID of the remote writer
-     * @param persistence_guid Persistence GUID of the remote writer
-     */
-    void add_persistence_guid(
+    RTPSReader(
+            RTPSParticipantImpl* pimpl,
             const GUID_t& guid,
-            const GUID_t& persistence_guid);
+            const ReaderAttributes& att,
+            ReaderHistory* hist);
 
-    /*!
-     * @brief Remove a remote writer from the persistence_guid map
-     * @param guid GUID of the remote writer
-     * @param persistence_guid Persistence GUID of the remote writer
-     * @param removed_by_lease Whether the GUIDs are being removed due to a participant drop.
-     */
-    void remove_persistence_guid(
-            const GUID_t& guid,
-            const GUID_t& persistence_guid,
-            bool removed_by_lease);
+    ~RTPSReader();
 
-    /*!
-     * @brief Get the last notified sequence for a RTPS guid
-     * @param guid The RTPS guid to query
-     * @return Last notified sequence number for input guid
-     * @remarks Takes persistence_guid into consideration
-     */
-    SequenceNumber_t get_last_notified(
-            const GUID_t& guid);
-
-    /*!
-     * @brief Update the last notified sequence for a RTPS guid
-     * @param guid The RTPS guid of the writer
-     * @param seq Max sequence number available on writer
-     * @return Previous value of last notified sequence number for input guid
-     * @remarks Takes persistence_guid into consideration
-     */
-    SequenceNumber_t update_last_notified(
-            const GUID_t& guid,
-            const SequenceNumber_t& seq);
-
-    /*!
-     * @brief Set the last notified sequence for a persistence guid
-     * @param persistence_guid The persistence guid to update
-     * @param seq Sequence number to set for input guid
-     * @remarks Persistent readers will write to DB
-     */
-    virtual void set_last_notified(
-            const GUID_t& persistence_guid,
-            const SequenceNumber_t& seq);
-
-    /*!
-     * @brief Search if there is a CacheChange_t, giving SequenceNumber_t and writer GUID_t,
-     * waiting to be completed because it is fragmented.
-     * @param sequence_number SequenceNumber_t of the searched CacheChange_t.
-     * @param writer_guid writer GUID_t of the searched CacheChange_t.
-     * @param change If a CacheChange_t was found, this argument will fill with its pointer.
-     * In other case nullptr is returned.
-     * @param hint Iterator since the search will start.
-     * Used to improve the search.
-     * @return Iterator pointing to the position were CacheChange_t was found.
-     * It can be used to improve next search.
-     */
-    History::const_iterator findCacheInFragmentedProcess(
-            const SequenceNumber_t& sequence_number,
-            const GUID_t& writer_guid,
-            CacheChange_t** change,
-            History::const_iterator hint) const;
-
-    /**
-     * Creates the listener for the datasharing notifications
-     *
-     * @param limits Resource limits for the number of matched datasharing writers
-     */
-    void create_datasharing_listener(
-            ResourceLimitedContainerConfig limits);
-
-    bool is_datasharing_compatible_with(
-            const WriterProxyData& wdata);
-
-    //!ReaderHistory
-    ReaderHistory* mp_history;
-    //!Listener
-    ReaderListener* mp_listener;
-    //!Accept msg to unknwon readers (default=true)
-    bool m_acceptMessagesToUnknownReaders;
-    //!Accept msg from unknwon writers (BE-true,RE-false)
-    bool m_acceptMessagesFromUnkownWriters;
-    //!Trusted writer (for Builtin)
-    EntityId_t m_trustedWriterEntityId;
-    //!Expects Inline Qos.
-    bool m_expectsInlineQos;
-
-    //!ReaderHistoryState
-    ReaderHistoryState* history_state_;
-
-    uint64_t total_unread_ = 0;
-
-    TimedConditionVariable new_notification_cv_;
-
-    //! The liveliness kind of this reader
-    LivelinessQosPolicyKind liveliness_kind_;
-    //! The liveliness lease duration of this reader
-    Duration_t liveliness_lease_duration_;
-
-    //! Whether the writer is datasharing compatible or not
-    bool is_datasharing_compatible_ = false;
-    //! The listener for the datasharing notifications
-    std::unique_ptr<IDataSharingListener> datasharing_listener_;
-
-    eprosima::fastdds::rtps::IReaderDataFilter* data_filter_ = nullptr;
+    /// ReaderHistory
+    ReaderHistory* history_;
 
 private:
 
     RTPSReader& operator =(
             const RTPSReader&) = delete;
 
-    void init(
-            const std::shared_ptr<IPayloadPool>& payload_pool,
-            const std::shared_ptr<IChangePool>& change_pool,
-            const ReaderAttributes& att);
-
 };
 
-} /* namespace rtps */
-} /* namespace fastrtps */
-} /* namespace eprosima */
+}  // namespace rtps
+}  // namespace fastrtps
+}  // namespace eprosima
 
 #endif /* _FASTDDS_RTPS_READER_RTPSREADER_H_ */

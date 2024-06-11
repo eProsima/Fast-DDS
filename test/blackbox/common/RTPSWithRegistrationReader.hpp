@@ -78,7 +78,7 @@ private:
         {
         }
 
-        void onNewCacheChangeAdded(
+        void on_new_cache_change_added(
                 eprosima::fastrtps::rtps::RTPSReader* reader,
                 const eprosima::fastrtps::rtps::CacheChange_t* const change) override
         {
@@ -88,9 +88,9 @@ private:
             reader_.receive_one(reader, change);
         }
 
-        void onReaderMatched(
+        void on_reader_matched(
                 eprosima::fastrtps::rtps::RTPSReader* /*reader*/,
-                eprosima::fastrtps::rtps::MatchingInfo& info) override
+                const eprosima::fastrtps::rtps::MatchingInfo& info) override
         {
             if (info.status == eprosima::fastrtps::rtps::MATCHED_MATCHING)
             {
@@ -112,8 +112,6 @@ private:
         }
 
     private:
-
-        using eprosima::fastrtps::rtps::ReaderListener::onReaderMatched;
 
         Listener& operator =(
                 const Listener&) = delete;
@@ -149,9 +147,8 @@ public:
         topic_attr_.topicName = t.str();
 
         // By default, heartbeat period delay is 100 milliseconds.
-        reader_attr_.times.heartbeatResponseDelay.seconds = 0;
-        //reader_attr_.times.heartbeatResponseDelay.nanosec = 100000000;
-        reader_attr_.times.heartbeatResponseDelay.nanosec = 100000000;
+        reader_attr_.times.heartbeat_response_delay.seconds = 0;
+        reader_attr_.times.heartbeat_response_delay.nanosec = 100000000;
 
         participant_attr_.builtin.discovery_config.discoveryProtocol =
                 eprosima::fastrtps::rtps::DiscoveryProtocol::SIMPLE;
@@ -601,7 +598,7 @@ private:
                 cv_.notify_one();
             }
 
-            eprosima::fastrtps::rtps::ReaderHistory* history = reader->getHistory();
+            eprosima::fastrtps::rtps::ReaderHistory* history = reader->get_history();
             EXPECT_EQ(history, history_);
 
             history->remove_change((eprosima::fastrtps::rtps::CacheChange_t*)change);

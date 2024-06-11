@@ -369,14 +369,14 @@
                 </groupData>
             </qos>
             <times>
-                <initialAcknackDelay>
+                <initial_acknack_delay>
                     <sec>${XML_PROFILES_ENV_VAR_133}</sec>
                     <nanosec>${XML_PROFILES_ENV_VAR_134}</nanosec>
-                </initialAcknackDelay>
-                <heartbeatResponseDelay>
+                </initial_acknack_delay>
+                <heartbeat_response_delay>
                     <sec>${XML_PROFILES_ENV_VAR_135}</sec>
                     <nanosec>${XML_PROFILES_ENV_VAR_136}</nanosec>
-                </heartbeatResponseDelay>
+                </heartbeat_response_delay>
             </times>
             <unicastLocatorList>
                 <locator>
@@ -416,7 +416,7 @@
                     <port>${XML_PROFILES_ENV_VAR_146}</port>
                 </udpv4>
             </external_unicast_locators>
-            <expectsInlineQos>${XML_PROFILES_ENV_VAR_147}</expectsInlineQos>
+            <expects_inline_qos>${XML_PROFILES_ENV_VAR_147}</expects_inline_qos>
             <historyMemoryPolicy>${XML_PROFILES_ENV_VAR_148}</historyMemoryPolicy>
             <userDefinedID>${XML_PROFILES_ENV_VAR_149}</userDefinedID>
             <entityID>${XML_PROFILES_ENV_VAR_150}</entityID>

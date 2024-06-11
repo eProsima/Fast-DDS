@@ -612,14 +612,14 @@
             </qos>
 
             <times>
-                <initialAcknackDelay>
+                <initial_acknack_delay>
                     <sec>1</sec>
                     <nanosec>856000</nanosec>
-                </initialAcknackDelay>
-                <heartbeatResponseDelay>
+                </initial_acknack_delay>
+                <heartbeat_response_delay>
                     <sec>1</sec>
                     <nanosec>856000</nanosec>
-                </heartbeatResponseDelay>
+                </heartbeat_response_delay>
             </times>
 
             <unicastLocatorList>
@@ -682,7 +682,7 @@
             </external_unicast_locators>
 
             <ignore_non_matching_locators>true</ignore_non_matching_locators>
-            <expectsInlineQos>true</expectsInlineQos>
+            <expects_inline_qos>true</expects_inline_qos>
             <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
 
             <propertiesPolicy>

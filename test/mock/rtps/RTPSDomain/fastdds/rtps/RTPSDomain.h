@@ -119,8 +119,8 @@ public:
             ReaderHistory* history,
             ReaderListener* listen = nullptr)
     {
-        reader_->setHistory(history);
-        reader_->setListener(listen);
+        reader_->set_history(history);
+        reader_->set_listener(listen);
         return reader_;
     }
 
@@ -131,8 +131,8 @@ public:
             ReaderHistory* history,
             ReaderListener* listen = nullptr)
     {
-        reader_->setHistory(history);
-        reader_->setListener(listen);
+        reader_->set_history(history);
+        reader_->set_listener(listen);
         return reader_;
     }
 
@@ -144,8 +144,8 @@ public:
             ReaderHistory* history,
             ReaderListener* listen = nullptr)
     {
-        reader_->setHistory(history);
-        reader_->setListener(listen);
+        reader_->set_history(history);
+        reader_->set_listener(listen);
         return reader_;
     }
 

@@ -43,6 +43,7 @@
 #include <rtps/builtin/discovery/participant/timedevent/DSClientEvent.h>
 #include <rtps/builtin/liveliness/WLP.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/reader/BaseReader.hpp>
 #include <rtps/reader/StatefulReader.hpp>
 #include <rtps/writer/ReaderProxy.hpp>
 #include <rtps/writer/StatefulWriter.hpp>
@@ -268,7 +269,7 @@ bool PDPClient::create_ds_pdp_best_effort_reader(
     endpoints.stateless_reader.history_.reset(new ReaderHistory(hatt));
 
     ReaderAttributes ratt;
-    ratt.expectsInlineQos = false;
+    ratt.expects_inline_qos = false;
     ratt.endpoint.endpointKind = READER;
     ratt.endpoint.multicastLocatorList = mp_builtin->m_metatrafficMulticastLocatorList;
     ratt.endpoint.unicastLocatorList = mp_builtin->m_metatrafficUnicastLocatorList;
@@ -337,7 +338,7 @@ bool PDPClient::create_ds_pdp_reliable_endpoints(
     endpoints.reader.history_.reset(new ReaderHistory(hatt));
 
     ReaderAttributes ratt;
-    ratt.expectsInlineQos = false;
+    ratt.expects_inline_qos = false;
     ratt.endpoint.endpointKind = READER;
     ratt.endpoint.multicastLocatorList = mp_builtin->m_metatrafficMulticastLocatorList;
     ratt.endpoint.unicastLocatorList = mp_builtin->m_metatrafficUnicastLocatorList;
@@ -346,7 +347,7 @@ bool PDPClient::create_ds_pdp_reliable_endpoints(
     ratt.endpoint.topicKind = WITH_KEY;
     ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
     ratt.endpoint.reliabilityKind = RELIABLE;
-    ratt.times.heartbeatResponseDelay = pdp_heartbeat_response_delay;
+    ratt.times.heartbeat_response_delay = pdp_heartbeat_response_delay;
 #if HAVE_SECURITY
     if (is_discovery_protected)
     {
@@ -461,7 +462,7 @@ bool PDPClient::create_ds_pdp_reliable_endpoints(
             }
             else if (!is_discovery_protected)
             {
-                endpoints.reader.reader_->enableMessagesFromUnkownWriters(true);
+                BaseReader::downcast(endpoints.reader.reader_)->allow_unknown_writers();
             }
 #else
             if (!is_discovery_protected)
@@ -699,7 +700,7 @@ bool PDPClient::is_all_servers_PDPdata_updated()
     // Assess all server DATA has been received
     auto endpoints = static_cast<fastdds::rtps::DiscoveryServerPDPEndpoints*>(builtin_endpoints_.get());
     assert(endpoints->reader.reader_);
-    return endpoints->reader.reader_->isInCleanState();
+    return endpoints->reader.reader_->is_in_clean_state();
 }
 
 void PDPClient::announceParticipantState(

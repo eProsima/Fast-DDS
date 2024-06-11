@@ -101,11 +101,11 @@ void TestReaderPersistent::run()
     std::cin.ignore();
 }
 
-void TestReaderPersistent::MyListener::onNewCacheChangeAdded(
+void TestReaderPersistent::MyListener::on_new_cache_change_added(
         RTPSReader* reader,
         const CacheChange_t* const change)
 {
     printf("Received: %s\n", change->serializedPayload.data);
-    reader->getHistory()->remove_change((CacheChange_t*)change);
+    reader->get_history()->remove_change((CacheChange_t*)change);
     n_received++;
 }

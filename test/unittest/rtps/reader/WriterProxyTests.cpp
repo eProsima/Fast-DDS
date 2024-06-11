@@ -48,8 +48,8 @@ TEST(WriterProxyTests, MissingChangesUpdate)
     // Testing the Timed events are properly configured
     EXPECT_CALL(readerMock, getEventResource()).Times(1u);
     WriterProxy wproxy(&readerMock, RemoteLocatorsAllocationAttributes(), ResourceLimitedContainerConfig());
-    EXPECT_CALL(*wproxy.initial_acknack_, update_interval(readerMock.getTimes().initialAcknackDelay)).Times(1u);
-    EXPECT_CALL(*wproxy.heartbeat_response_, update_interval(readerMock.getTimes().heartbeatResponseDelay)).Times(1u);
+    EXPECT_CALL(*wproxy.initial_acknack_, update_interval(readerMock.getTimes().initial_acknack_delay)).Times(1u);
+    EXPECT_CALL(*wproxy.heartbeat_response_, update_interval(readerMock.getTimes().heartbeat_response_delay)).Times(1u);
     EXPECT_CALL(*wproxy.initial_acknack_, restart_timer()).Times(1u);
     wproxy.start(wattr, SequenceNumber_t());
 
@@ -247,8 +247,8 @@ TEST(WriterProxyTests, LostChangesUpdate)
     StatefulReader readerMock;
     EXPECT_CALL(readerMock, getEventResource()).Times(1u);
     WriterProxy wproxy(&readerMock, RemoteLocatorsAllocationAttributes(), ResourceLimitedContainerConfig());
-    EXPECT_CALL(*wproxy.initial_acknack_, update_interval(readerMock.getTimes().initialAcknackDelay)).Times(1u);
-    EXPECT_CALL(*wproxy.heartbeat_response_, update_interval(readerMock.getTimes().heartbeatResponseDelay)).Times(1u);
+    EXPECT_CALL(*wproxy.initial_acknack_, update_interval(readerMock.getTimes().initial_acknack_delay)).Times(1u);
+    EXPECT_CALL(*wproxy.heartbeat_response_, update_interval(readerMock.getTimes().heartbeat_response_delay)).Times(1u);
     EXPECT_CALL(*wproxy.initial_acknack_, restart_timer()).Times(1u);
     wproxy.start(wattr, SequenceNumber_t());
 
@@ -373,8 +373,8 @@ TEST(WriterProxyTests, ReceivedChangeSet)
     /// Tests that heartbeat response timed event is updated with new interval
     /// Tests that initial acknack timed event is started
 
-    EXPECT_CALL(*wproxy.initial_acknack_, update_interval(readerMock.getTimes().initialAcknackDelay)).Times(1u);
-    EXPECT_CALL(*wproxy.heartbeat_response_, update_interval(readerMock.getTimes().heartbeatResponseDelay)).Times(1u);
+    EXPECT_CALL(*wproxy.initial_acknack_, update_interval(readerMock.getTimes().initial_acknack_delay)).Times(1u);
+    EXPECT_CALL(*wproxy.heartbeat_response_, update_interval(readerMock.getTimes().heartbeat_response_delay)).Times(1u);
     EXPECT_CALL(*wproxy.initial_acknack_, restart_timer()).Times(1u);
     wproxy.start(wattr, SequenceNumber_t());
 
@@ -543,8 +543,8 @@ TEST(WriterProxyTests, IrrelevantChangeSet)
     StatefulReader readerMock;
     EXPECT_CALL(readerMock, getEventResource()).Times(1u);
     WriterProxy wproxy(&readerMock, RemoteLocatorsAllocationAttributes(), ResourceLimitedContainerConfig());
-    EXPECT_CALL(*wproxy.initial_acknack_, update_interval(readerMock.getTimes().initialAcknackDelay)).Times(1u);
-    EXPECT_CALL(*wproxy.heartbeat_response_, update_interval(readerMock.getTimes().heartbeatResponseDelay)).Times(1u);
+    EXPECT_CALL(*wproxy.initial_acknack_, update_interval(readerMock.getTimes().initial_acknack_delay)).Times(1u);
+    EXPECT_CALL(*wproxy.heartbeat_response_, update_interval(readerMock.getTimes().heartbeat_response_delay)).Times(1u);
     EXPECT_CALL(*wproxy.initial_acknack_, restart_timer()).Times(1u);
     wproxy.start(wattr, SequenceNumber_t());
 

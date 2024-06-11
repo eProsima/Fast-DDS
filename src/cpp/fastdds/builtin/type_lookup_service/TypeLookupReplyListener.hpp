@@ -124,7 +124,7 @@ protected:
      * @param reader The reader receiving the cache change.
      * @param change The cache change.
      */
-    void onNewCacheChangeAdded(
+    void on_new_cache_change_added(
             fastrtps::rtps::RTPSReader* reader,
             const fastrtps::rtps::CacheChange_t* const change) override;
 

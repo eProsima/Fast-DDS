@@ -29,6 +29,7 @@
 #include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
 
+#include <rtps/reader/BaseReader.hpp>
 #include <utils/shared_memory/BoostAtExitRegistry.hpp>
 #include <utils/SystemInfo.hpp>
 
@@ -44,6 +45,9 @@ namespace rtps {
  */
 class RTPSDomainImpl
 {
+
+    using BaseReader = fastdds::rtps::BaseReader;
+
 public:
 
     typedef std::pair<RTPSParticipant*, RTPSParticipantImpl*> t_p_RTPSParticipant;
@@ -174,7 +178,7 @@ public:
      *
      * @returns A pointer to a local reader given its endpoint guid, or nullptr if not found.
      */
-    static RTPSReader* find_local_reader(
+    static BaseReader* find_local_reader(
             const GUID_t& reader_guid);
 
     /**

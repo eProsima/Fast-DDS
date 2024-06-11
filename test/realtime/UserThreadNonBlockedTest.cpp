@@ -139,8 +139,8 @@ protected:
         library_attributes.intraprocess_delivery = eprosima::fastdds::INTRAPROCESS_OFF;
         eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_library_settings(library_attributes);
 
-        datareader_qos_.reliable_reader_qos().times.initialAcknackDelay.seconds = 10;
-        datareader_qos_.reliable_reader_qos().times.heartbeatResponseDelay.seconds = 10;
+        datareader_qos_.reliable_reader_qos().times.initial_acknack_delay.seconds = 10;
+        datareader_qos_.reliable_reader_qos().times.heartbeat_response_delay.seconds = 10;
 
         // Slow flow-controller used in some test
         auto slow_flowcontroller = std::make_shared<eprosima::fastdds::rtps::FlowControllerDescriptor>();

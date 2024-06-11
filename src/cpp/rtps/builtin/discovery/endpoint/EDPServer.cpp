@@ -496,7 +496,7 @@ bool EDPServer::process_and_release_change(
 
             if (nullptr != builtin_to_release.first)
             {
-                builtin_to_release.first->releaseCache(change);
+                builtin_to_release.first->release_cache(change);
                 ret_val = true;
             }
         }

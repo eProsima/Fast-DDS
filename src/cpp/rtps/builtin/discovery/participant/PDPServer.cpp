@@ -45,6 +45,7 @@
 #include <rtps/builtin/discovery/participant/timedevent/DServerEvent.hpp>
 #include <rtps/builtin/liveliness/WLP.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/reader/BaseReader.hpp>
 #include <rtps/reader/StatefulReader.hpp>
 #include <rtps/writer/StatefulWriter.hpp>
 #include <utils/TimeConversion.hpp>
@@ -277,7 +278,7 @@ bool PDPServer::create_ds_pdp_best_effort_reader(
     endpoints.stateless_reader.history_.reset(new ReaderHistory(hatt));
 
     ReaderAttributes ratt;
-    ratt.expectsInlineQos = false;
+    ratt.expects_inline_qos = false;
     ratt.endpoint.endpointKind = READER;
     ratt.endpoint.multicastLocatorList = mp_builtin->m_metatrafficMulticastLocatorList;
     ratt.endpoint.unicastLocatorList = mp_builtin->m_metatrafficUnicastLocatorList;
@@ -365,7 +366,7 @@ bool PDPServer::create_ds_pdp_reliable_endpoints(
 
     // PDP Reader Attributes
     ReaderAttributes ratt;
-    ratt.expectsInlineQos = false;
+    ratt.expects_inline_qos = false;
     ratt.endpoint.endpointKind = READER;
     ratt.endpoint.multicastLocatorList = mp_builtin->m_metatrafficMulticastLocatorList;
     ratt.endpoint.unicastLocatorList = mp_builtin->m_metatrafficUnicastLocatorList;
@@ -375,7 +376,7 @@ bool PDPServer::create_ds_pdp_reliable_endpoints(
     // change depending of backup mode
     ratt.endpoint.durabilityKind = durability_;
     ratt.endpoint.reliabilityKind = RELIABLE;
-    ratt.times.heartbeatResponseDelay = pdp_heartbeat_response_delay;
+    ratt.times.heartbeat_response_delay = pdp_heartbeat_response_delay;
 #if HAVE_SECURITY
     if (secure)
     {
@@ -407,7 +408,7 @@ bool PDPServer::create_ds_pdp_reliable_endpoints(
         endpoints.reader.reader_ = dynamic_cast<fastrtps::rtps::StatefulReader*>(reader);
 
         // Enable unknown clients to reach this reader
-        reader->enableMessagesFromUnkownWriters(true);
+        BaseReader::downcast(endpoints.reader.reader_)->allow_unknown_writers();
 
 #if HAVE_SECURITY
         mp_RTPSParticipant->set_endpoint_rtps_protection_supports(reader, false);
@@ -1051,7 +1052,7 @@ bool PDPServer::remove_remote_participant(
 
         // TODO check in standard if DROP payload is always 0
         // We create the drop from Reader to make release simplier
-        endpoints->reader.reader_->reserveCache(&pC, mp_builtin->m_att.writerPayloadSize);
+        endpoints->reader.reader_->reserve_cache(mp_builtin->m_att.writerPayloadSize, pC);
 
         // We must create the corresponding DATA(p[UD])
         if (nullptr != pC)
@@ -1084,7 +1085,7 @@ bool PDPServer::remove_remote_participant(
             else
             {
                 // if the database doesn't take the ownership remove
-                endpoints->reader.reader_->releaseCache(pC);
+                endpoints->reader.reader_->release_cache(pC);
             }
         }
     }
@@ -1431,7 +1432,7 @@ void PDPServer::process_changes_release_(
                     endpoints->writer.history_.get(),
                     ch,
                     false);
-                endpoints->reader.reader_->releaseCache(ch);
+                endpoints->reader.reader_->release_cache(ch);
             }
             else
             {
@@ -1761,7 +1762,7 @@ bool PDPServer::process_backup_discovery_database_restore(
             std::istringstream(it.value()["change"]["sample_identity"].get<std::string>()) >> sample_identity_aux;
 
             // Reserve memory for new change. There will not be changes from own server
-            if (!endpoints->reader.reader_->reserveCache(&change_aux, length))
+            if (!endpoints->reader.reader_->reserve_cache(length, change_aux))
             {
                 EPROSIMA_LOG_ERROR(RTPS_PDP_SERVER, "Error creating CacheChange");
                 // TODO release changes and exit
@@ -1782,7 +1783,7 @@ bool PDPServer::process_backup_discovery_database_restore(
             {
                 change_aux->writerGUID = change_aux->write_params.sample_identity().writer_guid();
                 change_aux->sequenceNumber = change_aux->write_params.sample_identity().sequence_number();
-                builtin_endpoints_->main_listener()->onNewCacheChangeAdded(endpoints->reader.reader_, change_aux);
+                builtin_endpoints_->main_listener()->on_new_cache_change_added(endpoints->reader.reader_, change_aux);
             }
         }
 
@@ -1800,7 +1801,7 @@ bool PDPServer::process_backup_discovery_database_restore(
             else
             {
                 // Reserve memory for new change. There will not be changes from own server
-                if (!edp->publications_reader_.first->reserveCache(&change_aux, length))
+                if (!edp->publications_reader_.first->reserve_cache(length, change_aux))
                 {
                     EPROSIMA_LOG_ERROR(RTPS_PDP_SERVER, "Error creating CacheChange");
                     // TODO release changes and exit
@@ -1822,7 +1823,7 @@ bool PDPServer::process_backup_discovery_database_restore(
                     && change_aux->kind == fastrtps::rtps::ALIVE
                     && it.value()["topic"] != discovery_db().virtual_topic())
             {
-                edp_pub_listener->onNewCacheChangeAdded(edp->publications_reader_.first, change_aux);
+                edp_pub_listener->on_new_cache_change_added(edp->publications_reader_.first, change_aux);
             }
         }
 
@@ -1839,7 +1840,7 @@ bool PDPServer::process_backup_discovery_database_restore(
             else
             {
                 // Reserve memory for new change. There will not be changes from own server
-                if (!edp->subscriptions_reader_.first->reserveCache(&change_aux, length))
+                if (!edp->subscriptions_reader_.first->reserve_cache(length, change_aux))
                 {
                     EPROSIMA_LOG_ERROR(RTPS_PDP_SERVER, "Error creating CacheChange");
                     // TODO release changes and exit
@@ -1858,7 +1859,7 @@ bool PDPServer::process_backup_discovery_database_restore(
                     && change_aux->kind == fastrtps::rtps::ALIVE
                     && it.value()["topic"] != discovery_db().virtual_topic())
             {
-                edp_sub_listener->onNewCacheChangeAdded(edp->subscriptions_reader_.first, change_aux);
+                edp_sub_listener->on_new_cache_change_added(edp->subscriptions_reader_.first, change_aux);
             }
         }
 
@@ -1919,7 +1920,7 @@ bool PDPServer::process_backup_restore_queue(
     //                 else
     //                 {
     //                     ddb::from_json(json_change, *change_aux);
-    //                     mp_listener->onNewCacheChangeAdded(endpoints->reader.reader_, change_aux);
+    //                     listener_->on_new_cache_change_added(endpoints->reader.reader_, change_aux);
     //                 }
 
     //             }
@@ -1933,7 +1934,7 @@ bool PDPServer::process_backup_restore_queue(
     //                 else
     //                 {
     //                     ddb::from_json(json_change, *change_aux);
-    //                     edp_pub_listener->onNewCacheChangeAdded(edp->publications_reader_.first, change_aux);
+    //                     edp_pub_listener->on_new_cache_change_added(edp->publications_reader_.first, change_aux);
     //                 }
     //             }
     //             else if (discovery_db_.is_reader(iHandle2GUID(instance_handle_aux)))
@@ -1946,7 +1947,7 @@ bool PDPServer::process_backup_restore_queue(
     //                 else
     //                 {
     //                     ddb::from_json(json_change, *change_aux);
-    //                     edp_sub_listener->onNewCacheChangeAdded(edp->subscriptions_reader_.first, change_aux);
+    //                     edp_sub_listener->on_new_cache_change_added(edp->subscriptions_reader_.first, change_aux);
     //                 }
     //             }
     //         }
@@ -1963,7 +1964,7 @@ bool PDPServer::process_backup_restore_queue(
     //                 else
     //                 {
     //                     ddb::from_json(json_change, *change_aux);
-    //                     mp_listener->onNewCacheChangeAdded(endpoints->reader.reader_, change_aux);
+    //                     listener_->on_new_cache_change_added(endpoints->reader.reader_, change_aux);
     //                 }
 
     //             }
@@ -1977,7 +1978,7 @@ bool PDPServer::process_backup_restore_queue(
     //                 else
     //                 {
     //                     ddb::from_json(json_change, *change_aux);
-    //                     edp_pub_listener->onNewCacheChangeAdded(edp->publications_reader_.first, change_aux);
+    //                     edp_pub_listener->on_new_cache_change_added(edp->publications_reader_.first, change_aux);
     //                 }
     //             }
     //             else if (discovery_db_.is_reader(iHandle2GUID(instance_handle_aux)))
@@ -1990,7 +1991,7 @@ bool PDPServer::process_backup_restore_queue(
     //                 else
     //                 {
     //                     ddb::from_json(json_change, *change_aux);
-    //                     edp_sub_listener->onNewCacheChangeAdded(edp->subscriptions_reader_.first, change_aux);
+    //                     edp_sub_listener->on_new_cache_change_added(edp->subscriptions_reader_.first, change_aux);
     //                 }
     //             }
     //         }

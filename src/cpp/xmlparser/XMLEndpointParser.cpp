@@ -275,7 +275,7 @@ XMLP_ret XMLEndpointParser::loadXMLReaderEndpoint(
             else
             {
                 EPROSIMA_LOG_ERROR(RTPS_EDP,
-                        "Bad XML file, endpoint of expectsInlineQos: " << auxString << " is not valid");
+                        "Bad XML file, endpoint of expects_inline_qos: " << auxString << " is not valid");
                 delete(rdata);
                 return XMLP_ret::XML_ERROR;
             }

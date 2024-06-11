@@ -533,7 +533,7 @@ bool TypeLookupManager::create_endpoints()
     ratt.endpoint.ignore_non_matching_locators = pattr.ignore_non_matching_locators;
     ratt.endpoint.remoteLocatorList = builtin_protocols_->m_initialPeersList;
     ratt.matched_writers_allocation = pattr.allocation.participants;
-    ratt.expectsInlineQos = true;
+    ratt.expects_inline_qos = true;
     ratt.endpoint.topicKind = fastrtps::rtps::NO_KEY;
     ratt.endpoint.reliabilityKind = fastrtps::rtps::RELIABLE;
     ratt.endpoint.durabilityKind = fastrtps::rtps::VOLATILE;

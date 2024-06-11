@@ -33,6 +33,15 @@
 #include <fastdds/rtps/common/Time_t.h>
 
 namespace eprosima {
+
+namespace fastdds {
+namespace rtps {
+
+class BaseReader;
+
+} // namespace rtps
+} // namespace fastdds
+
 namespace fastrtps {
 namespace rtps {
 
@@ -61,6 +70,8 @@ class WLP
     friend class WLPListener;
     friend class StatefulReader;
     friend class StatelessReader;
+
+    using BaseReader = fastdds::rtps::BaseReader;
 
 public:
 
@@ -206,7 +217,7 @@ private:
     std::vector<RTPSWriter*> manual_by_topic_writers_;
 
     //! List of readers
-    std::vector<RTPSReader*> readers_;
+    std::vector<BaseReader*> readers_;
     //! A boolean indicating that there is at least one reader requesting automatic liveliness
     bool automatic_readers_;
 
@@ -257,7 +268,7 @@ private:
      */
     void update_liveliness_changed_status(
             GUID_t writer,
-            RTPSReader* reader,
+            BaseReader* reader,
             int32_t alive_change,
             int32_t not_alive_change);
 

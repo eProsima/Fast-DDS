@@ -177,9 +177,9 @@ ReturnCode_t DataReaderImpl::enable()
     att.endpoint.setUserDefinedID(qos_.endpoint().user_defined_id);
     att.times = qos_.reliable_reader_qos().times;
     att.liveliness_lease_duration = qos_.liveliness().lease_duration;
-    att.liveliness_kind_ = qos_.liveliness().kind;
+    att.liveliness_kind = qos_.liveliness().kind;
     att.matched_writers_allocation = qos_.reader_resource_limits().matched_publisher_allocation;
-    att.expectsInlineQos = qos_.expects_inline_qos();
+    att.expects_inline_qos = qos_.expects_inline_qos();
     att.disable_positive_acks = qos_.reliable_reader_qos().disable_positive_ACKs.enabled;
     att.data_sharing_listener_thread = qos_.data_sharing().data_sharing_listener_thread();
 
@@ -299,7 +299,7 @@ ReturnCode_t DataReaderImpl::enable()
     {
         EPROSIMA_LOG_ERROR(DATA_READER, "Could not register reader on discovery protocols");
 
-        reader_->setListener(nullptr);
+        reader_->set_listener(nullptr);
         stop();
 
         return RETCODE_ERROR;
@@ -313,7 +313,7 @@ void DataReaderImpl::disable()
     set_listener(nullptr);
     if (reader_ != nullptr)
     {
-        reader_->setListener(nullptr);
+        reader_->set_listener(nullptr);
     }
 }
 
@@ -939,9 +939,9 @@ void DataReaderImpl::InnerDataReaderListener::on_data_available(
     }
 }
 
-void DataReaderImpl::InnerDataReaderListener::onReaderMatched(
+void DataReaderImpl::InnerDataReaderListener::on_reader_matched(
         RTPSReader* /*reader*/,
-        const SubscriptionMatchedStatus& info)
+        const MatchingInfo& info)
 {
     data_reader_->update_subscription_matched_status(info);
 
@@ -1158,9 +1158,9 @@ bool DataReaderImpl::on_new_cache_change_added(
 }
 
 void DataReaderImpl::update_subscription_matched_status(
-        const SubscriptionMatchedStatus& status)
+        const MatchingInfo& status)
 {
-    auto count_change = status.current_count_change;
+    auto count_change = status.status == MATCHED_MATCHING ? 1 : -1;
     subscription_matched_status_.current_count += count_change;
     subscription_matched_status_.current_count_change += count_change;
     if (count_change > 0)
@@ -1168,11 +1168,11 @@ void DataReaderImpl::update_subscription_matched_status(
         subscription_matched_status_.total_count += count_change;
         subscription_matched_status_.total_count_change += count_change;
     }
-    subscription_matched_status_.last_publication_handle = status.last_publication_handle;
+    subscription_matched_status_.last_publication_handle = status.remoteEndpointGuid;
 
     if (count_change < 0)
     {
-        history_.writer_not_alive(iHandle2GUID(status.last_publication_handle));
+        history_.writer_not_alive(status.remoteEndpointGuid);
         try_notify_read_conditions();
     }
 }

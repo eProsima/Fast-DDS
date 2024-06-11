@@ -31,6 +31,7 @@
 
 #include <rtps/messages/MessageReceiver.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/reader/BaseReader.hpp>
 #include <statistics/rtps/messages/RTPSStatisticsMessages.hpp>
 #include <statistics/rtps/StatisticsBase.hpp>
 #include <utils/shared_mutex.hpp>
@@ -44,6 +45,8 @@ using ParameterList = eprosima::fastdds::dds::ParameterList;
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
+
+using BaseReader = fastdds::rtps::BaseReader;
 
 MessageReceiver::MessageReceiver(
         RTPSParticipantImpl* participant,
@@ -122,7 +125,7 @@ void MessageReceiver::process_data_message_with_security(
         CacheChange_t& change,
         bool was_decoded)
 {
-    auto process_message = [was_decoded, &change, this](RTPSReader* reader)
+    auto process_message = [was_decoded, &change, this](BaseReader* reader)
             {
                 if (!was_decoded && reader->getAttributes().security_attributes().is_submessage_protected)
                 {
@@ -131,7 +134,7 @@ void MessageReceiver::process_data_message_with_security(
 
                 if (!reader->getAttributes().security_attributes().is_payload_protected)
                 {
-                    reader->processDataMsg(&change);
+                    reader->process_data_msg(&change);
                     return;
                 }
 
@@ -150,7 +153,7 @@ void MessageReceiver::process_data_message_with_security(
                 std::swap(change.serializedPayload.length, crypto_payload_.length);
 
                 SerializedPayload_t original_payload = change.serializedPayload;
-                reader->processDataMsg(&change);
+                reader->process_data_msg(&change);
                 IPayloadPool* payload_pool = change.payload_owner();
                 if (payload_pool)
                 {
@@ -174,7 +177,7 @@ void MessageReceiver::process_data_fragment_message_with_security(
         bool was_decoded)
 {
     auto process_message = [was_decoded, &change, sample_size, fragment_starting_num, fragments_in_submessage, this](
-        RTPSReader* reader)
+        BaseReader* reader)
             {
                 if (!was_decoded && reader->getAttributes().security_attributes().is_submessage_protected)
                 {
@@ -183,7 +186,7 @@ void MessageReceiver::process_data_fragment_message_with_security(
 
                 if (!reader->getAttributes().security_attributes().is_payload_protected)
                 {
-                    reader->processDataFragMsg(&change, sample_size, fragment_starting_num, fragments_in_submessage);
+                    reader->process_data_frag_msg(&change, sample_size, fragment_starting_num, fragments_in_submessage);
                     return;
                 }
 
@@ -200,7 +203,7 @@ void MessageReceiver::process_data_fragment_message_with_security(
 
                 std::swap(change.serializedPayload.data, crypto_payload_.data);
                 std::swap(change.serializedPayload.length, crypto_payload_.length);
-                reader->processDataFragMsg(&change, sample_size, fragment_starting_num, fragments_in_submessage);
+                reader->process_data_frag_msg(&change, sample_size, fragment_starting_num, fragments_in_submessage);
                 std::swap(change.serializedPayload.data, crypto_payload_.data);
                 std::swap(change.serializedPayload.length, crypto_payload_.length);
             };
@@ -215,9 +218,9 @@ void MessageReceiver::process_data_message_without_security(
         CacheChange_t& change,
         bool /*was_decoded*/)
 {
-    auto process_message = [&change](RTPSReader* reader)
+    auto process_message = [&change](BaseReader* reader)
             {
-                reader->processDataMsg(&change);
+                reader->process_data_msg(&change);
             };
 
     findAllReaders(reader_id, process_message);
@@ -231,9 +234,10 @@ void MessageReceiver::process_data_fragment_message_without_security(
         uint16_t fragments_in_submessage,
         bool /*was_decoded*/)
 {
-    auto process_message = [&change, sample_size, fragment_starting_num, fragments_in_submessage](RTPSReader* reader)
+    auto process_message = [&change, sample_size, fragment_starting_num, fragments_in_submessage](
+        BaseReader* reader)
             {
-                reader->processDataFragMsg(&change, sample_size, fragment_starting_num, fragments_in_submessage);
+                reader->process_data_frag_msg(&change, sample_size, fragment_starting_num, fragments_in_submessage);
             };
 
     findAllReaders(reader_id, process_message);
@@ -258,13 +262,13 @@ void MessageReceiver::associateEndpoint(
     }
     else
     {
-        const auto reader = dynamic_cast<RTPSReader*>(to_add);
+        const auto reader = BaseReader::downcast(to_add);
         const auto entityId = reader->getGuid().entityId;
         // search for set of readers by entity ID
         const auto readers = associated_readers_.find(entityId);
         if (readers == associated_readers_.end())
         {
-            auto vec = std::vector<RTPSReader*>();
+            auto vec = std::vector<BaseReader*>();
             vec.push_back(reader);
             associated_readers_.emplace(entityId, vec);
         }
@@ -305,7 +309,7 @@ void MessageReceiver::removeEndpoint(
         auto readers = associated_readers_.find(to_remove->getGuid().entityId);
         if (readers != associated_readers_.end())
         {
-            auto* var = dynamic_cast<RTPSReader*>(to_remove);
+            auto* var = BaseReader::downcast(to_remove);
             for (auto it = readers->second.begin(); it != readers->second.end(); ++it)
             {
                 if (*it == var)
@@ -668,7 +672,7 @@ bool MessageReceiver::readSubmessageHeader(
 
 bool MessageReceiver::willAReaderAcceptMsgDirectedTo(
         const EntityId_t& readerID,
-        RTPSReader*& first_reader) const
+        BaseReader*& first_reader) const
 {
     first_reader = nullptr;
     if (associated_readers_.empty())
@@ -692,11 +696,8 @@ bool MessageReceiver::willAReaderAcceptMsgDirectedTo(
         {
             for (const auto& it : readers.second)
             {
-                if (it->m_acceptMessagesToUnknownReaders)
-                {
-                    first_reader = it;
-                    return true;
-                }
+                first_reader = it;
+                return true;
             }
         }
     }
@@ -727,10 +728,7 @@ void MessageReceiver::findAllReaders(
         {
             for (const auto& it : readers.second)
             {
-                if (it->m_acceptMessagesToUnknownReaders)
-                {
-                    callback(it);
-                }
+                callback(it);
             }
         }
     }
@@ -779,7 +777,7 @@ bool MessageReceiver::proc_Submsg_Data(
     valid &= CDRMessage::readInt16(msg, &octetsToInlineQos); //it should be 16 in this implementation
 
     //reader and writer ID
-    RTPSReader* first_reader = nullptr;
+    BaseReader* first_reader = nullptr;
     EntityId_t readerID;
     valid &= CDRMessage::readEntityId(msg, &readerID);
 
@@ -906,7 +904,7 @@ bool MessageReceiver::proc_Submsg_Data(
         ch.sourceTimestamp = timestamp_;
     }
 
-    EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "from Writer " << ch.writerGUID << "; possible RTPSReader entities: " <<
+    EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "from Writer " << ch.writerGUID << "; possible Reader entities: " <<
             associated_readers_.size());
 
     //Look for the correct reader to add the change
@@ -963,7 +961,7 @@ bool MessageReceiver::proc_Submsg_DataFrag(
     valid &= CDRMessage::readInt16(msg, &octetsToInlineQos); //it should be 16 in this implementation
 
     //reader and writer ID
-    RTPSReader* first_reader = nullptr;
+    BaseReader* first_reader = nullptr;
     EntityId_t readerID;
     valid &= CDRMessage::readEntityId(msg, &readerID);
 
@@ -1093,7 +1091,7 @@ bool MessageReceiver::proc_Submsg_DataFrag(
         ch.sourceTimestamp = timestamp_;
     }
 
-    EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "from Writer " << ch.writerGUID << "; possible RTPSReader entities: " <<
+    EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "from Writer " << ch.writerGUID << "; possible Reader entities: " <<
             associated_readers_.size());
     process_data_fragment_message_function_(readerID, ch, sampleSize, fragmentStartingNum, fragmentsInSubmessage,
             was_decoded);
@@ -1157,7 +1155,8 @@ bool MessageReceiver::proc_Submsg_Heartbeat(
 
     //Look for the correct reader and writers:
     findAllReaders(readerGUID.entityId,
-            [was_decoded, &writerGUID, &HBCount, &firstSN, &lastSN, finalFlag, livelinessFlag, this](RTPSReader* reader)
+            [was_decoded, &writerGUID, &HBCount, &firstSN, &lastSN, finalFlag, livelinessFlag, this](
+                BaseReader* reader)
             {
                 // Only used when HAVE_SECURITY is defined
                 static_cast<void>(was_decoded);
@@ -1165,7 +1164,7 @@ bool MessageReceiver::proc_Submsg_Heartbeat(
                 if (was_decoded || !reader->getAttributes().security_attributes().is_submessage_protected)
 #endif  // HAVE_SECURITY
                 {
-                    reader->processHeartbeatMsg(writerGUID, HBCount, firstSN, lastSN, finalFlag, livelinessFlag,
+                    reader->process_heartbeat_msg(writerGUID, HBCount, firstSN, lastSN, finalFlag, livelinessFlag,
                     source_vendor_id_);
                 }
             });
@@ -1265,7 +1264,7 @@ bool MessageReceiver::proc_Submsg_Gap(
     }
 
     findAllReaders(readerGUID.entityId,
-            [was_decoded, &writerGUID, &gapStart, &gapList, this](RTPSReader* reader)
+            [was_decoded, &writerGUID, &gapStart, &gapList, this](BaseReader* reader)
             {
                 // Only used when HAVE_SECURITY is defined
                 static_cast<void>(was_decoded);
@@ -1273,7 +1272,7 @@ bool MessageReceiver::proc_Submsg_Gap(
                 if (was_decoded || !reader->getAttributes().security_attributes().is_submessage_protected)
 #endif  // HAVE_SECURITY
                 {
-                    reader->processGapMsg(writerGUID, gapStart, gapList, source_vendor_id_);
+                    reader->process_gap_msg(writerGUID, gapStart, gapList, source_vendor_id_);
                 }
             });
 
@@ -1435,51 +1434,13 @@ bool MessageReceiver::proc_Submsg_NackFrag(
 bool MessageReceiver::proc_Submsg_HeartbeatFrag(
         CDRMessage_t* msg,
         SubmessageHeader_t* smh,
-        bool /*was_decoded*/) const
+        bool was_decoded) const
 {
-    eprosima::shared_lock<eprosima::shared_mutex> guard(mtx_);
+    // TODO: Add support for HEARTBEAT_FRAG submessage
+    static_cast<void>(msg);
+    static_cast<void>(smh);
+    static_cast<void>(was_decoded);
 
-    bool endiannessFlag = (smh->flags & BIT(0)) != 0;
-    //Assign message endianness
-    if (endiannessFlag)
-    {
-        msg->msg_endian = LITTLEEND;
-    }
-    else
-    {
-        msg->msg_endian = BIGEND;
-    }
-
-    GUID_t readerGUID;
-    GUID_t writerGUID;
-    readerGUID.guidPrefix = dest_guid_prefix_;
-    CDRMessage::readEntityId(msg, &readerGUID.entityId);
-    writerGUID.guidPrefix = source_guid_prefix_;
-    CDRMessage::readEntityId(msg, &writerGUID.entityId);
-
-    SequenceNumber_t writerSN;
-    CDRMessage::readSequenceNumber(msg, &writerSN);
-
-    FragmentNumber_t lastFN;
-    CDRMessage::readUInt32(msg, static_cast<uint32_t*>(&lastFN));
-
-    uint32_t HBCount;
-    CDRMessage::readUInt32(msg, &HBCount);
-
-    // XXX TODO VALIDATE DATA?
-
-    //Look for the correct reader and writers:
-    /* XXX TODO
-       std::lock_guard<std::mutex> guard(mtx_);
-       for (std::vector<RTPSReader*>::iterator it = associated_readers_.begin();
-            it != associated_readers_.end(); ++it)
-       {
-           if ((*it)->acceptMsgDirectedTo(readerGUID.entityId))
-           {
-           (*it)->processHeartbeatMsg(writerGUID, HBCount, firstSN, lastSN, finalFlag, livelinessFlag);
-           }
-       }
-     */
     return true;
 }
 

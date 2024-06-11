@@ -158,7 +158,7 @@ void SecurityTest::reply_process_ok(
     EXPECT_CALL(participant_, pdp()).Times(1).WillOnce(Return(&pdp_));
     EXPECT_CALL(pdp_, get_participant_proxy_data_serialized(BIGEND)).Times(1);
 
-    stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
+    stateless_reader_->listener_->on_new_cache_change_added(stateless_reader_, change);
 
     if (reply_message_change != nullptr)
     {
@@ -249,7 +249,7 @@ void SecurityTest::final_message_process_ok(
     CacheChange_t* kx_change_to_remove = new CacheChange_t(200);
     expect_kx_exchange(kx_change_to_add, kx_change_to_remove);
 
-    stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
+    stateless_reader_->listener_->on_new_cache_change_added(stateless_reader_, change);
 
     volatile_writer_->listener_->onWriterChangeReceivedByAll(volatile_writer_, kx_change_to_remove);
 

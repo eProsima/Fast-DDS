@@ -51,7 +51,7 @@ PDPListener::PDPListener(
 {
 }
 
-void PDPListener::onNewCacheChangeAdded(
+void PDPListener::on_new_cache_change_added(
         RTPSReader* reader,
         const CacheChange_t* const change_in)
 {

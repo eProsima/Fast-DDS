@@ -71,8 +71,8 @@ bool TestReaderSocket::init(
     IPLocator::setIPv4(loc, ip);
     loc.port = static_cast<uint16_t>(port);
     ratt.endpoint.multicastLocatorList.push_back(loc);
+    ratt.accept_messages_from_unkown_writers = true;
     mp_reader = RTPSDomain::createRTPSReader(mp_participant, ratt, mp_history, &m_listener);
-    mp_reader->enableMessagesFromUnkownWriters(true);
     if (mp_reader == nullptr)
     {
         return false;
@@ -88,11 +88,11 @@ void TestReaderSocket::run()
     std::cin >> aux;
 }
 
-void TestReaderSocket::MyListener::onNewCacheChangeAdded(
+void TestReaderSocket::MyListener::on_new_cache_change_added(
         RTPSReader* reader,
         const CacheChange_t* const change)
 {
     printf("Received: %s\n", change->serializedPayload.data);
-    reader->getHistory()->remove_change((CacheChange_t*)change);
+    reader->get_history()->remove_change((CacheChange_t*)change);
     m_received++;
 }

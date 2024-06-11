@@ -31,6 +31,7 @@
 #include <fastdds/subscriber/DataReaderImpl/ReadTakeCommand.hpp>
 
 #include <rtps/common/ChangeComparison.hpp>
+#include <rtps/reader/BaseReader.hpp>
 #include <rtps/reader/WriterProxy.h>
 #include <utils/collections/sorted_vector_insert.hpp>
 
@@ -361,9 +362,10 @@ bool DataReaderHistory::get_first_untaken_info(
             WriterProxy* wp = nullptr;
             bool is_future_change = false;
 
-            if (mp_reader->begin_sample_access_nts(instance_change, wp, is_future_change))
+            auto base_reader = rtps::BaseReader::downcast(mp_reader);
+            if (base_reader->begin_sample_access_nts(instance_change, wp, is_future_change))
             {
-                mp_reader->end_sample_access_nts(instance_change, wp, false);
+                base_reader->end_sample_access_nts(instance_change, wp, false);
                 if (is_future_change)
                 {
                     continue;

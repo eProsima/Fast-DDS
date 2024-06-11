@@ -29,12 +29,15 @@
 #include <rtps/messages/RTPSGapBuilder.hpp>
 #include <rtps/messages/RTPSMessageGroup_t.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/reader/BaseReader.hpp>
 
 #include <statistics/rtps/messages/RTPSStatisticsMessages.hpp>
 
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
+
+using BaseReader = fastdds::rtps::BaseReader;
 
 /**
  * An InlineQosWriter that puts the inline_qos of a CacheChange_t into a CDRMessage_t.
@@ -866,8 +869,7 @@ bool RTPSMessageGroup::add_acknack(
 #endif // if HAVE_SECURITY
 
     // Notify the statistics module, note that only readers add acknacks
-    assert(nullptr != dynamic_cast<RTPSReader*>(endpoint_));
-    static_cast<fastdds::statistics::StatisticsReaderImpl*>(static_cast<RTPSReader*>(endpoint_))->on_acknack(count);
+    BaseReader::downcast(endpoint_)->on_acknack(count);
 
     return insert_submessage(false);
 }
@@ -922,8 +924,7 @@ bool RTPSMessageGroup::add_nackfrag(
 #endif // if HAVE_SECURITY
 
     // Notify the statistics module, note that only readers add NACKFRAGs
-    assert(nullptr != dynamic_cast<RTPSReader*>(endpoint_));
-    static_cast<RTPSReader*>(endpoint_)->on_nackfrag(count);
+    BaseReader::downcast(endpoint_)->on_nackfrag(count);
 
     return insert_submessage(false);
 }

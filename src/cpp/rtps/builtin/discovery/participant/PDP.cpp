@@ -1534,7 +1534,7 @@ ReaderAttributes PDP::create_builtin_reader_attributes() const
     attributes.endpoint.topicKind = WITH_KEY;
 
     // Built-in readers never expect inline qos
-    attributes.expectsInlineQos = false;
+    attributes.expects_inline_qos = false;
 
     return attributes;
 }

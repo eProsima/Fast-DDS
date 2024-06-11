@@ -28,6 +28,8 @@
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>
 
+#include <rtps/reader/BaseReader.hpp>
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
@@ -36,10 +38,10 @@ class WriterProxy;
 class RTPSMessageSenderInterface;
 
 /**
- * Class StatefulReader, specialization of RTPSReader than stores the state of the matched writers.
+ * Class StatefulReader, specialization of BaseReader that stores the state of the matched writers.
  * @ingroup READER_MODULE
  */
-class StatefulReader : public RTPSReader
+class StatefulReader : public fastdds::rtps::BaseReader
 {
 public:
 
@@ -116,7 +118,7 @@ public:
      * @param change Pointer to the CacheChange_t.
      * @return true if the reader accepts messages.
      */
-    bool processDataMsg(
+    bool process_data_msg(
             CacheChange_t* change) override;
 
     /**
@@ -128,7 +130,7 @@ public:
      * @param fragmentsInSubmessage Number of fragments on this particular message.
      * @return true if the reader accepts message.
      */
-    bool processDataFragMsg(
+    bool process_data_frag_msg(
             CacheChange_t* change,
             uint32_t sampleSize,
             uint32_t fragmentStartingNum,
@@ -139,7 +141,7 @@ public:
      *
      * @return true if the reader accepts messages.
      */
-    bool processHeartbeatMsg(
+    bool process_heartbeat_msg(
             const GUID_t& writerGUID,
             uint32_t hbCount,
             const SequenceNumber_t& firstSN,
@@ -148,7 +150,7 @@ public:
             bool livelinessFlag,
             fastdds::rtps::VendorId_t origin_vendor_id = c_VendorId_Unknown) override;
 
-    bool processGapMsg(
+    bool process_gap_msg(
             const GUID_t& writerGUID,
             const SequenceNumber_t& gapStart,
             const SequenceNumberSet_t& gapList,
@@ -161,8 +163,7 @@ public:
      * @return True if correctly removed.
      */
     bool change_removed_by_history(
-            CacheChange_t* change,
-            WriterProxy* prox = nullptr) override;
+            CacheChange_t* change) override;
 
     /**
      * This method is called when a new change is received. This method calls the received_change of the History
@@ -193,25 +194,9 @@ public:
      */
     ResourceEvent& getEventResource() const;
 
-    /**
-     * Read the next unread CacheChange_t from the history
-     * @param change Pointer to pointer of CacheChange_t
-     * @param wpout Pointer to pointer the matched writer proxy
-     * @return True if read.
-     */
-    bool nextUnreadCache(
-            CacheChange_t** change,
-            WriterProxy** wpout = nullptr) override;
+    CacheChange_t* next_unread_cache() override;
 
-    /**
-     * Take the next CacheChange_t from the history;
-     * @param change Pointer to pointer of CacheChange_t
-     * @param wpout Pointer to pointer the matched writer proxy
-     * @return True if read.
-     */
-    bool nextUntakenCache(
-            CacheChange_t** change,
-            WriterProxy** wpout = nullptr) override;
+    CacheChange_t* next_untaken_cache() override;
 
     /**
      * Update the times parameters of the Reader.
@@ -245,7 +230,7 @@ public:
      * its WriterProxies are up to date.
      * @return There is a clean state with all Writers.
      */
-    bool isInCleanState() override;
+    bool is_in_clean_state() override;
 
     /**
      * Sends an acknack message from this reader.
@@ -294,7 +279,7 @@ public:
     /**
      * Called just before a change is going to be deserialized.
      * @param [in]  change            Pointer to the change being accessed.
-     * @param [out] wp                Writer proxy the @c change belongs to.
+     * @param [out] writer            Writer proxy the @c change belongs to.
      * @param [out] is_future_change  Whether the change is in the future (i.e. there are
      *                                earlier unreceived changes from the same writer).
      *
@@ -302,30 +287,19 @@ public:
      */
     bool begin_sample_access_nts(
             CacheChange_t* change,
-            WriterProxy*& wp,
+            WriterProxy*& writer,
             bool& is_future_change) override;
 
     /**
      * Called after the change has been deserialized.
      * @param [in] change        Pointer to the change being accessed.
-     * @param [in] wp            Writer proxy the @c change belongs to.
+     * @param [in] writer        Writer proxy the @c change belongs to.
      * @param [in] mark_as_read  Whether the @c change should be marked as read or not.
      */
     void end_sample_access_nts(
             CacheChange_t* change,
-            WriterProxy*& wp,
+            WriterProxy*& writer,
             bool mark_as_read) override;
-
-    /**
-     * Called when the user has retrieved a change from the history.
-     * @param change Pointer to the change to ACK
-     * @param writer Writer proxy of the \c change.
-     * @param mark_as_read Whether the \c change should be marked as read or not
-     */
-    void change_read_by_user(
-            CacheChange_t* change,
-            WriterProxy* writer,
-            bool mark_as_read = true) override;
 
 #ifdef FASTDDS_STATISTICS
     bool get_connections(
@@ -341,6 +315,23 @@ private:
     bool acceptMsgFrom(
             const GUID_t& entityGUID,
             WriterProxy** wp) const;
+
+    /*!
+     * @brief Search for an incomplete (i.e. fragments pending) change, given its sequence number and writer's GUID.
+     *
+     * @param sequence_number [in] Sequence number of the change to search.
+     * @param writer_guid [in]     Writer's GUID of the change to search.
+     * @param change [out]         Pointer to the incomplete change if found, nullptr otherwise.
+     * @param hint [in]            Iterator to start searching from. Used to improve the search.
+     *
+     * @return Iterator pointing to the position were the change was found.
+     *         It can be used to improve the following call to this same method.
+     */
+    fastrtps::rtps::History::const_iterator find_cache_in_fragmented_process(
+            const fastrtps::rtps::SequenceNumber_t& sequence_number,
+            const fastrtps::rtps::GUID_t& writer_guid,
+            fastrtps::rtps::CacheChange_t*& change,
+            fastrtps::rtps::History::const_iterator hint) const;
 
     /*!
      * @remarks Non thread-safe.

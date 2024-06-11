@@ -50,7 +50,7 @@ PDPServer* PDPServerListener::pdp_server()
     return static_cast<PDPServer*>(parent_pdp_);
 }
 
-void PDPServerListener::onNewCacheChangeAdded(
+void PDPServerListener::on_new_cache_change_added(
         RTPSReader* reader,
         const CacheChange_t* const change_in)
 {
@@ -287,7 +287,7 @@ void PDPServerListener::onNewCacheChangeAdded(
                 else
                 {
                     // If the database doesn't take the ownership, then return the CacheChante_t to the pool.
-                    pdp_reader->releaseCache(change.release());
+                    pdp_reader->release_cache(change.release());
                 }
 
             }

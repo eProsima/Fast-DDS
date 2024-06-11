@@ -87,6 +87,12 @@ class MonitorService;
 
 #endif //FASTDDS_STATISTICS
 
+namespace rtps {
+
+class BaseReader;
+
+} // namespace rtps
+
 namespace dds {
 namespace builtin {
 
@@ -134,6 +140,9 @@ class RTPSParticipantImpl
     , private security::SecurityPluginFactory
 #endif // if HAVE_SECURITY
 {
+
+    using BaseReader = fastdds::rtps::BaseReader;
+
     /*
        Receiver Control block is a struct we use to encapsulate the resources that take part in message reception.
        It contains:
@@ -373,7 +382,7 @@ public:
     /*!
      * @remarks Non thread-safe.
      */
-    const std::vector<RTPSReader*>& getAllReaders() const;
+    const std::vector<BaseReader*>& getAllReaders() const;
 
     uint32_t getMaxMessageSize() const;
 
@@ -479,7 +488,7 @@ public:
     /***
      * @returns A pointer to a local reader given its endpoint guid, or nullptr if not found.
      */
-    RTPSReader* find_local_reader(
+    BaseReader* find_local_reader(
             const GUID_t& reader_guid);
 
     /***
@@ -571,12 +580,12 @@ private:
     //!Writer List.
     std::vector<RTPSWriter*> m_allWriterList;
     //!Reader List
-    std::vector<RTPSReader*> m_allReaderList;
+    std::vector<BaseReader*> m_allReaderList;
     //!Listen thread list.
     //!Writer List.
     std::vector<RTPSWriter*> m_userWriterList;
     //!Reader List
-    std::vector<RTPSReader*> m_userReaderList;
+    std::vector<BaseReader*> m_userReaderList;
     //!Network Factory
     NetworkFactory m_network_Factory;
     //! Type cheking function
@@ -1019,7 +1028,7 @@ public:
         // check if we are reentrying
         shared_lock<shared_mutex> _(endpoints_list_mutex);
 
-        for ( RTPSReader* pr : m_userReaderList)
+        for (BaseReader* pr : m_userReaderList)
         {
             if (!f(*pr))
             {

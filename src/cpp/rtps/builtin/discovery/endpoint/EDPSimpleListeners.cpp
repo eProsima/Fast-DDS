@@ -156,7 +156,7 @@ void EDPBasePUBListener::add_writer_from_change(
     }
 }
 
-void EDPSimplePUBListener::onNewCacheChangeAdded(
+void EDPSimplePUBListener::on_new_cache_change_added(
         RTPSReader* reader,
         const CacheChange_t* const change_in)
 {
@@ -296,7 +296,7 @@ void EDPBaseSUBListener::add_reader_from_change(
     }
 }
 
-void EDPSimpleSUBListener::onNewCacheChangeAdded(
+void EDPSimpleSUBListener::on_new_cache_change_added(
         RTPSReader* reader,
         const CacheChange_t* const change_in)
 {

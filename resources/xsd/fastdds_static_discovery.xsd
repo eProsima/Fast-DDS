@@ -106,7 +106,7 @@
         <xs:all>
             <xs:element name="userId" type="xs:positiveInteger"/>
             <xs:element name="entityID" type="xs:positiveInteger"/>
-            <xs:element name="expectsInlineQos" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="expects_inline_qos" type="xs:boolean" minOccurs="0"/>
             <xs:element name="topicName" type="xs:string"/>
             <xs:element name="topicDataType" type="xs:string"/>
             <xs:element name="topicKind" type="topicKind"/>

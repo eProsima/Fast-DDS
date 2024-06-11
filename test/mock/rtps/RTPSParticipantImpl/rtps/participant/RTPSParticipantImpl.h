@@ -34,6 +34,7 @@
 #include <fastdds/rtps/writer/RTPSWriter.h>
 
 #include <rtps/network/NetworkFactory.h>
+#include <rtps/reader/BaseReader.hpp>
 #include <rtps/resources/ResourceEvent.h>
 #if HAVE_SECURITY
 #include <rtps/security/SecurityManager.h>
@@ -219,7 +220,7 @@ public:
         if (*reader != nullptr)
         {
             (*reader)->history_ = hist;
-            (*reader)->listener_ = listen;
+            fastdds::rtps::BaseReader::downcast(*reader)->listener_ = listen;
 
             auto guid = generate_endpoint_guid();
             (*reader)->m_guid = guid;
@@ -242,7 +243,7 @@ public:
         if (*reader != nullptr)
         {
             (*reader)->history_ = hist;
-            (*reader)->listener_ = listen;
+            fastdds::rtps::BaseReader::downcast(*reader)->listener_ = listen;
 
             auto guid = generate_endpoint_guid();
             (*reader)->m_guid = guid;

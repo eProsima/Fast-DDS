@@ -53,22 +53,9 @@ public:
      * @param reader Matching reader
      * @param info Matching information of the reader
      */
-    virtual void onReaderMatched(
+    virtual void on_reader_matched(
             RTPSReader* reader,
-            MatchingInfo& info)
-    {
-        static_cast<void>(reader);
-        static_cast<void>(info);
-    }
-
-    /**
-     * This method is invoked when a new reader matches
-     * @param reader Matching reader
-     * @param info Subscription matching information
-     */
-    virtual void onReaderMatched(
-            RTPSReader* reader,
-            const fastdds::dds::SubscriptionMatchedStatus& info)
+            const MatchingInfo& info)
     {
         static_cast<void>(reader);
         static_cast<void>(info);
@@ -80,9 +67,9 @@ public:
      * @param change Pointer to the CacheChange_t. This is a const pointer to const data
      * to indicate that the user should not dispose of this data himself.
      * To remove the data call the remove_change method of the ReaderHistory.
-     * reader->getHistory()->remove_change((CacheChange_t*)change).
+     * reader->get_history()->remove_change((CacheChange_t*)change).
      */
-    virtual void onNewCacheChangeAdded(
+    virtual void on_new_cache_change_added(
             RTPSReader* reader,
             const CacheChange_t* const change)
     {
@@ -181,7 +168,7 @@ public:
      * @param [in]  last_sequence                     Sequence number of the last change made available.
      *                                                It will always be greater or equal than @c first_sequence.
      * @param [out] should_notify_individual_changes  Whether the individual changes should be notified by means of
-     *                                                @c onNewCacheChangeAdded.
+     *                                                @c on_new_cache_change_added.
      */
     virtual void on_data_available(
             RTPSReader* reader,

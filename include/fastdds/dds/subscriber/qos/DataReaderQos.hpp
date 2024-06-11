@@ -703,9 +703,9 @@ public:
     }
 
     /**
-     * Getter for expectsInlineQos
+     * Getter for expects_inline_qos
      *
-     * @return expectsInlineQos
+     * @return expects_inline_qos
      */
     FASTDDS_EXPORTED_API bool expects_inline_qos() const
     {
@@ -713,9 +713,9 @@ public:
     }
 
     /**
-     * Setter for expectsInlineQos
+     * Setter for expects_inline_qos
      *
-     * @param new_value new value for the expectsInlineQos
+     * @param new_value new value for the expects_inline_qos
      */
     FASTDDS_EXPORTED_API void expects_inline_qos(
             bool new_value)

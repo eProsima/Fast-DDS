@@ -25,6 +25,7 @@
 #include <fastdds/rtps/writer/RTPSWriter.h>
 
 #include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/reader/BaseReader.hpp>
 #include <rtps/DataSharing/DataSharingListener.hpp>
 #include <rtps/DataSharing/DataSharingNotifier.hpp>
 #include "rtps/RTPSDomainImpl.hpp"
@@ -32,6 +33,8 @@
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
+
+using BaseReader = fastdds::rtps::BaseReader;
 
 ReaderLocator::ReaderLocator(
         RTPSWriter* owner,
@@ -227,7 +230,7 @@ void ReaderLocator::datasharing_notify()
 
     if (reader)
     {
-        reader->datasharing_listener()->notify(true);
+        BaseReader::downcast(reader)->datasharing_listener()->notify(true);
     }
     else
     {

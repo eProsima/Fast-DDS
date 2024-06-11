@@ -46,6 +46,7 @@
 #define IDSTRING "(ID:" << std::this_thread::get_id() << ") " <<
 
 using namespace eprosima::fastrtps::rtps;
+using BaseReader = eprosima::fastdds::rtps::BaseReader;
 
 static void send_datasharing_ack(
         StatefulReader* reader,
@@ -126,7 +127,7 @@ StatefulReader::StatefulReader(
         const ReaderAttributes& att,
         ReaderHistory* hist,
         ReaderListener* listen)
-    : RTPSReader(pimpl, guid, att, hist, listen)
+    : BaseReader(pimpl, guid, att, hist, listen)
     , acknack_count_(0)
     , nackfrag_count_(0)
     , times_(att.times)
@@ -146,7 +147,7 @@ StatefulReader::StatefulReader(
         const std::shared_ptr<IPayloadPool>& payload_pool,
         ReaderHistory* hist,
         ReaderListener* listen)
-    : RTPSReader(pimpl, guid, att, payload_pool, hist, listen)
+    : BaseReader(pimpl, guid, att, payload_pool, hist, listen)
     , acknack_count_(0)
     , nackfrag_count_(0)
     , times_(att.times)
@@ -167,7 +168,7 @@ StatefulReader::StatefulReader(
         const std::shared_ptr<IChangePool>& change_pool,
         ReaderHistory* hist,
         ReaderListener* listen)
-    : RTPSReader(pimpl, guid, att, payload_pool, change_pool, hist, listen)
+    : BaseReader(pimpl, guid, att, payload_pool, change_pool, hist, listen)
     , acknack_count_(0)
     , nackfrag_count_(0)
     , times_(att.times)
@@ -205,7 +206,7 @@ bool StatefulReader::matched_writer_add(
             return false;
         }
 
-        listener = mp_listener;
+        listener = listener_;
         bool is_same_process = RTPSDomainImpl::should_intraprocess_between(m_guid, wdata.guid());
         bool is_datasharing = is_datasharing_compatible_with(wdata);
 
@@ -218,7 +219,7 @@ bool StatefulReader::matched_writer_add(
                 if (EXCLUSIVE_OWNERSHIP_QOS == m_att.ownershipKind &&
                         it->ownership_strength() != wdata.m_qos.m_ownershipStrength.value)
                 {
-                    mp_history->writer_update_its_ownership_strength_nts(
+                    history_->writer_update_its_ownership_strength_nts(
                         it->guid(), wdata.m_qos.m_ownershipStrength.value);
                 }
                 it->update(wdata);
@@ -291,7 +292,7 @@ bool StatefulReader::matched_writer_add(
         {
             if (datasharing_listener_->add_datasharing_writer(wdata.guid(),
                     m_att.durabilityKind == VOLATILE,
-                    mp_history->m_att.maximumReservedCaches))
+                    history_->m_att.maximumReservedCaches))
             {
                 matched_writers_.push_back(wp);
                 EPROSIMA_LOG_INFO(RTPS_READER, "Writer Proxy " << wdata.guid() << " added to " << this->m_guid.entityId
@@ -390,11 +391,11 @@ bool StatefulReader::matched_writer_remove(
 
             if (writer_liveliness_status == LivelinessData::WriterStatus::ALIVE)
             {
-                wlp->update_liveliness_changed_status(writer_guid, this, -1, 0);
+                update_liveliness_changed_status(writer_guid, -1, 0);
             }
             else if (writer_liveliness_status == LivelinessData::WriterStatus::NOT_ALIVE)
             {
-                wlp->update_liveliness_changed_status(writer_guid, this, 0, -1);
+                update_liveliness_changed_status(writer_guid, 0, -1);
             }
 
         }
@@ -410,7 +411,7 @@ bool StatefulReader::matched_writer_remove(
     if (is_alive_)
     {
         //Remove cachechanges belonging to the unmatched writer
-        mp_history->writer_unmatched(writer_guid, get_last_notified(writer_guid));
+        history_->writer_unmatched(writer_guid, get_last_notified(writer_guid));
 
         for (ResourceLimitedVector<WriterProxy*>::iterator it = matched_writers_.begin();
                 it != matched_writers_.end();
@@ -445,10 +446,10 @@ bool StatefulReader::matched_writer_remove(
                 lock.lock();
             }
             matched_writers_pool_.push_back(wproxy);
-            if (nullptr != mp_listener)
+            if (nullptr != listener_)
             {
                 // call the listener without the lock taken
-                ReaderListener* listener = mp_listener;
+                ReaderListener* listener = listener_;
                 lock.unlock();
                 listener->on_writer_discovery(this, WriterDiscoveryInfo::REMOVED_WRITER, writer_guid, nullptr);
             }
@@ -556,7 +557,7 @@ void StatefulReader::assert_writer_liveliness(
     }
 }
 
-bool StatefulReader::processDataMsg(
+bool StatefulReader::process_data_msg(
         CacheChange_t* change)
 {
     WriterProxy* pWP = nullptr;
@@ -587,14 +588,14 @@ bool StatefulReader::processDataMsg(
 
             size_t unknown_missing_changes_up_to = pWP ? pWP->unknown_missing_changes_up_to(change->sequenceNumber) : 0;
             bool will_never_be_accepted = false;
-            if (!mp_history->can_change_be_added_nts(change->writerGUID, change->serializedPayload.length,
+            if (!history_->can_change_be_added_nts(change->writerGUID, change->serializedPayload.length,
                     unknown_missing_changes_up_to, will_never_be_accepted))
             {
                 if (will_never_be_accepted && pWP)
                 {
                     pWP->irrelevant_change_set(change->sequenceNumber);
                     NotifyChanges(pWP);
-                    send_ack_if_datasharing(this, mp_history, pWP, change->sequenceNumber);
+                    send_ack_if_datasharing(this, history_, pWP, change->sequenceNumber);
                 }
                 return false;
             }
@@ -605,7 +606,7 @@ bool StatefulReader::processDataMsg(
                 {
                     pWP->irrelevant_change_set(change->sequenceNumber);
                     NotifyChanges(pWP);
-                    send_ack_if_datasharing(this, mp_history, pWP, change->sequenceNumber);
+                    send_ack_if_datasharing(this, history_, pWP, change->sequenceNumber);
                 }
                 // Change was filtered out, so there isn't anything else to do
                 return true;
@@ -675,7 +676,7 @@ bool StatefulReader::processDataMsg(
     return false;
 }
 
-bool StatefulReader::processDataFragMsg(
+bool StatefulReader::process_data_frag_msg(
         CacheChange_t* incomingChange,
         uint32_t sampleSize,
         uint32_t fragmentStartingNum,
@@ -711,14 +712,14 @@ bool StatefulReader::processDataFragMsg(
 
             size_t changes_up_to = pWP->unknown_missing_changes_up_to(incomingChange->sequenceNumber);
             bool will_never_be_accepted = false;
-            if (!mp_history->can_change_be_added_nts(incomingChange->writerGUID, sampleSize, changes_up_to,
+            if (!history_->can_change_be_added_nts(incomingChange->writerGUID, sampleSize, changes_up_to,
                     will_never_be_accepted))
             {
                 if (will_never_be_accepted)
                 {
                     pWP->irrelevant_change_set(incomingChange->sequenceNumber);
                     NotifyChanges(pWP);
-                    send_ack_if_datasharing(this, mp_history, pWP, incomingChange->sequenceNumber);
+                    send_ack_if_datasharing(this, history_, pWP, incomingChange->sequenceNumber);
                 }
                 return false;
             }
@@ -727,14 +728,14 @@ bool StatefulReader::processDataFragMsg(
 
             CacheChange_t* change_created = nullptr;
             CacheChange_t* work_change = nullptr;
-            if (!mp_history->get_change(change_to_add->sequenceNumber, change_to_add->writerGUID, &work_change))
+            if (!history_->get_change(change_to_add->sequenceNumber, change_to_add->writerGUID, &work_change))
             {
                 // A new change should be reserved
-                if (reserveCache(&work_change, sampleSize))
+                if (reserve_cache(sampleSize, work_change))
                 {
                     if (work_change->serializedPayload.max_size < sampleSize)
                     {
-                        releaseCache(work_change);
+                        release_cache(work_change);
                         work_change = nullptr;
                     }
                     else
@@ -768,7 +769,7 @@ bool StatefulReader::processDataFragMsg(
                     EPROSIMA_LOG_INFO(RTPS_MSG_IN,
                             IDSTRING "MessageReceiver not add change " << change_created->sequenceNumber.to64long());
 
-                    releaseCache(change_created);
+                    release_cache(change_created);
                     work_change = nullptr;
                 }
             }
@@ -777,7 +778,7 @@ bool StatefulReader::processDataFragMsg(
             if (work_change != nullptr && work_change->is_fully_assembled())
             {
                 fastdds::dds::SampleRejectedStatusKind rejection_reason;
-                if (mp_history->completed_change(work_change, changes_up_to, rejection_reason))
+                if (history_->completed_change(work_change, changes_up_to, rejection_reason))
                 {
                     pWP->received_change_set(work_change->sequenceNumber);
 
@@ -789,7 +790,7 @@ bool StatefulReader::processDataFragMsg(
 
                     if (filtered_out)
                     {
-                        mp_history->remove_change(work_change);
+                        history_->remove_change(work_change);
                     }
 
                     NotifyChanges(pWP);
@@ -799,9 +800,9 @@ bool StatefulReader::processDataFragMsg(
                     bool has_to_notify = false;
                     if (fastdds::dds::NOT_REJECTED != rejection_reason)
                     {
-                        if (getListener())
+                        if (get_listener())
                         {
-                            getListener()->on_sample_rejected((RTPSReader*)this, rejection_reason, work_change);
+                            get_listener()->on_sample_rejected(this, rejection_reason, work_change);
                         }
 
                         /* Special case: rejected by REJECTED_BY_INSTANCES_LIMIT should never be received again.
@@ -813,10 +814,10 @@ bool StatefulReader::processDataFragMsg(
                         }
                     }
 
-                    History::const_iterator chit = mp_history->find_change_nts(work_change);
-                    if (chit != mp_history->changesEnd())
+                    History::const_iterator chit = history_->find_change_nts(work_change);
+                    if (chit != history_->changesEnd())
                     {
-                        mp_history->remove_change_nts(chit);
+                        history_->remove_change_nts(chit);
                     }
                     else
                     {
@@ -835,7 +836,7 @@ bool StatefulReader::processDataFragMsg(
     return true;
 }
 
-bool StatefulReader::processHeartbeatMsg(
+bool StatefulReader::process_heartbeat_msg(
         const GUID_t& writerGUID,
         uint32_t hbCount,
         const SequenceNumber_t& firstSN,
@@ -860,13 +861,13 @@ bool StatefulReader::processHeartbeatMsg(
                     hbCount, firstSN, lastSN, finalFlag, livelinessFlag, disable_positive_acks_, assert_liveliness,
                     current_sample_lost))
         {
-            mp_history->remove_fragmented_changes_until(firstSN, writerGUID);
+            history_->remove_fragmented_changes_until(firstSN, writerGUID);
 
             if (0 < current_sample_lost)
             {
-                if (getListener() != nullptr)
+                if (get_listener() != nullptr)
                 {
-                    getListener()->on_sample_lost((RTPSReader*)this, current_sample_lost);
+                    get_listener()->on_sample_lost(this, current_sample_lost);
                 }
             }
 
@@ -905,7 +906,7 @@ bool StatefulReader::processHeartbeatMsg(
     return false;
 }
 
-bool StatefulReader::processGapMsg(
+bool StatefulReader::process_gap_msg(
         const GUID_t& writerGUID,
         const SequenceNumber_t& gapStart,
         const SequenceNumberSet_t& gapList,
@@ -924,19 +925,19 @@ bool StatefulReader::processGapMsg(
         // TODO (Miguel C): Refactor this inside WriterProxy
         SequenceNumber_t auxSN;
         SequenceNumber_t finalSN = gapList.base();
-        History::const_iterator history_iterator = mp_history->changesBegin();
+        History::const_iterator history_iterator = history_->changesBegin();
         for (auxSN = gapStart; auxSN < finalSN; auxSN++)
         {
             if (pWP->irrelevant_change_set(auxSN))
             {
                 CacheChange_t* to_remove = nullptr;
-                auto ret_iterator = findCacheInFragmentedProcess(auxSN, pWP->guid(), &to_remove, history_iterator);
+                auto ret_iterator = find_cache_in_fragmented_process(auxSN, pWP->guid(), to_remove, history_iterator);
                 if (to_remove != nullptr)
                 {
                     // we called the History version to avoid callbacks
-                    history_iterator = mp_history->History::remove_change_nts(ret_iterator);
+                    history_iterator = history_->History::remove_change_nts(ret_iterator);
                 }
-                else if (ret_iterator != mp_history->changesEnd())
+                else if (ret_iterator != history_->changesEnd())
                 {
                     history_iterator = ret_iterator;
                 }
@@ -950,13 +951,13 @@ bool StatefulReader::processGapMsg(
                 {
                     CacheChange_t* to_remove = nullptr;
                     auto ret_iterator =
-                    findCacheInFragmentedProcess(auxSN, pWP->guid(), &to_remove, history_iterator);
+                    find_cache_in_fragmented_process(auxSN, pWP->guid(), to_remove, history_iterator);
                     if (to_remove != nullptr)
                     {
                         // we called the History version to avoid callbacks
-                        history_iterator = mp_history->History::remove_change_nts(ret_iterator);
+                        history_iterator = history_->History::remove_change_nts(ret_iterator);
                     }
-                    else if (ret_iterator != mp_history->changesEnd())
+                    else if (ret_iterator != history_->changesEnd())
                     {
                         history_iterator = ret_iterator;
                     }
@@ -987,10 +988,10 @@ bool StatefulReader::acceptMsgFrom(
         }
     }
 
-    // Check if it's a framework's one. In this case, m_acceptMessagesFromUnkownWriters
+    // Check if it's a framework's one. In this case, accept_messages_from_unkown_writers_
     // is an enabler for the trusted entity comparison
-    if (m_acceptMessagesFromUnkownWriters
-            && (writerId.entityId == m_trustedWriterEntityId))
+    if (accept_messages_from_unkown_writers_
+            && (writerId.entityId == trusted_writer_entity_id_))
     {
         *wp = nullptr;
         return true;
@@ -999,9 +1000,24 @@ bool StatefulReader::acceptMsgFrom(
     return false;
 }
 
+History::const_iterator StatefulReader::find_cache_in_fragmented_process(
+        const SequenceNumber_t& sequence_number,
+        const GUID_t& writer_guid,
+        CacheChange_t*& change,
+        History::const_iterator hint) const
+{
+    auto ret_val = history_->get_change_nts(sequence_number, writer_guid, &change, hint);
+
+    if (nullptr != change && change->is_fully_assembled())
+    {
+        change = nullptr;
+    }
+
+    return ret_val;
+}
+
 bool StatefulReader::change_removed_by_history(
-        CacheChange_t* a_change,
-        WriterProxy* wp)
+        CacheChange_t* a_change)
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
 
@@ -1018,19 +1034,15 @@ bool StatefulReader::change_removed_by_history(
                 }
             }
 
-            WriterProxy* proxy = wp;
-
-            if (nullptr == proxy)
+            WriterProxy* proxy = nullptr;
+            if (!findWriterProxy(a_change->writerGUID, &proxy))
             {
-                if (!findWriterProxy(a_change->writerGUID, &proxy))
-                {
-                    return false;
-                }
+                return false;
             }
 
             if (nullptr != proxy)
             {
-                send_ack_if_datasharing(this, mp_history, proxy, a_change->sequenceNumber);
+                send_ack_if_datasharing(this, history_, proxy, a_change->sequenceNumber);
             }
         }
         else
@@ -1038,19 +1050,14 @@ bool StatefulReader::change_removed_by_history(
             /* A not fully assembled fragmented sample may be removed when receiving a newer sample and KEEP_LAST
              * policy. The WriterProxy should consider it as irrelevant to avoid an infinite loop asking for it.
              */
-            WriterProxy* proxy = wp;
-
-            if (nullptr == proxy)
+            WriterProxy* proxy = nullptr;
+            if (!findWriterProxy(a_change->writerGUID, &proxy))
             {
-                if (!findWriterProxy(a_change->writerGUID, &proxy))
-                {
-                    return false;
-                }
-
-                proxy->irrelevant_change_set(a_change->sequenceNumber);
-                send_ack_if_datasharing(this, mp_history, proxy, a_change->sequenceNumber);
+                return false;
             }
 
+            proxy->irrelevant_change_set(a_change->sequenceNumber);
+            send_ack_if_datasharing(this, history_, proxy, a_change->sequenceNumber);
         }
 
         return true;
@@ -1076,7 +1083,7 @@ bool StatefulReader::change_received(
         if (!findWriterProxy(a_change->writerGUID, &prox))
         {
             // discard non framework messages from unknown writer
-            if (a_change->writerGUID.entityId != m_trustedWriterEntityId)
+            if (a_change->writerGUID.entityId != trusted_writer_entity_id_)
             {
                 EPROSIMA_LOG_INFO(RTPS_READER,
                         "Writer Proxy " << a_change->writerGUID << " not matched to this Reader " << m_guid.entityId);
@@ -1093,7 +1100,7 @@ bool StatefulReader::change_received(
                 // Only make visible the change if there is not other with bigger sequence number.
                 if (get_last_notified(a_change->writerGUID) < a_change->sequenceNumber)
                 {
-                    if (mp_history->received_change(a_change, 0))
+                    if (history_->received_change(a_change, 0))
                     {
                         Time_t::now(a_change->reader_info.receptionTimestamp);
 
@@ -1102,7 +1109,7 @@ bool StatefulReader::change_received(
                         // initialized using this SequenceNumber_t. Note that on a SERVER the own DATA(p) may be in any
                         // position within the WriterHistory preventing effective data exchange.
                         update_last_notified(a_change->writerGUID, SequenceNumber_t(0, 1));
-                        auto listener = getListener();
+                        auto listener = get_listener();
                         if (listener != nullptr)
                         {
                             bool notify_single = false;
@@ -1111,7 +1118,7 @@ bool StatefulReader::change_received(
                             listener->on_data_available(this, guid, seq, seq, notify_single);
                             if (notify_single)
                             {
-                                listener->onNewCacheChangeAdded(this, a_change);
+                                listener->on_new_cache_change_added(this, a_change);
                             }
                         }
 
@@ -1142,9 +1149,9 @@ bool StatefulReader::change_received(
     }
 
     // NOTE: Depending on QoS settings, one change can be removed from history
-    // inside the call to mp_history->received_change
+    // inside the call to history_->received_change
     fastdds::dds::SampleRejectedStatusKind rejection_reason;
-    if (mp_history->received_change(a_change, unknown_missing_changes_up_to, rejection_reason))
+    if (history_->received_change(a_change, unknown_missing_changes_up_to, rejection_reason))
     {
         auto payload_length = a_change->serializedPayload.length;
 
@@ -1159,10 +1166,10 @@ bool StatefulReader::change_received(
             /* Search if the first fragment was stored, because it may have been discarded due to being older and KEEP_LAST
              * policy. In this case this samples should be set as irrelevant.
              */
-            if (mp_history->changesEnd() == mp_history->find_change(a_change))
+            if (history_->changesEnd() == history_->find_change(a_change))
             {
                 prox->irrelevant_change_set(a_change->sequenceNumber);
-                send_ack_if_datasharing(this, mp_history, prox, a_change->sequenceNumber);
+                send_ack_if_datasharing(this, history_, prox, a_change->sequenceNumber);
                 ret = false;
 
             }
@@ -1182,9 +1189,9 @@ bool StatefulReader::change_received(
     {
         if (fastdds::dds::NOT_REJECTED != rejection_reason)
         {
-            if (getListener() && (a_change->is_fully_assembled() || (a_change->contains_first_fragment())))
+            if (get_listener() && (a_change->is_fully_assembled() || (a_change->contains_first_fragment())))
             {
-                getListener()->on_sample_rejected((RTPSReader*)this, rejection_reason, a_change);
+                get_listener()->on_sample_rejected(this, rejection_reason, a_change);
             }
 
             /* Special case: rejected by REJECTED_BY_INSTANCES_LIMIT should never be received again.
@@ -1212,10 +1219,10 @@ void StatefulReader::NotifyChanges(
 
     // Update state before notifying
     update_last_notified(proxGUID, max_seq);
-    History::const_iterator it = mp_history->changesBegin();
+    History::const_iterator it = history_->changesBegin();
     SequenceNumber_t next_seq = first_seq;
     while (next_seq != c_SequenceNumber_Unknown &&
-            mp_history->changesEnd() != (it = mp_history->get_change_nts(next_seq, proxGUID, &aux_ch, it)) &&
+            history_->changesEnd() != (it = history_->get_change_nts(next_seq, proxGUID, &aux_ch, it)) &&
             (*it)->sequenceNumber <= max_seq)
     {
         aux_ch = *it;
@@ -1236,7 +1243,7 @@ void StatefulReader::NotifyChanges(
     }
 
     // Notify listener if new data is available
-    auto listener = getListener();
+    auto listener = get_listener();
     if (new_data_available && (nullptr != listener))
     {
         bool notify_individual = false;
@@ -1244,18 +1251,18 @@ void StatefulReader::NotifyChanges(
 
         if (notify_individual)
         {
-            it = mp_history->changesBegin();
+            it = history_->changesBegin();
             next_seq = first_seq;
             while (next_seq <= max_seq &&
-                    mp_history->changesEnd() != (it = mp_history->get_change_nts(next_seq, proxGUID, &aux_ch, it)) &&
+                    history_->changesEnd() != (it = history_->get_change_nts(next_seq, proxGUID, &aux_ch, it)) &&
                     (*it)->sequenceNumber <= max_seq)
             {
                 aux_ch = *it;
                 next_seq = aux_ch->sequenceNumber + 1;
-                listener->onNewCacheChangeAdded(this, aux_ch);
+                listener->on_new_cache_change_added(this, aux_ch);
 
                 // Reset the iterator to the beginning, since it may be invalidated inside the callback
-                it = mp_history->changesBegin();
+                it = history_->changesBegin();
             }
         }
     }
@@ -1273,8 +1280,8 @@ void StatefulReader::remove_changes_from(
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     std::vector<CacheChange_t*> toremove;
-    for (std::vector<CacheChange_t*>::iterator it = mp_history->changesBegin();
-            it != mp_history->changesEnd(); ++it)
+    for (std::vector<CacheChange_t*>::iterator it = history_->changesBegin();
+            it != history_->changesEnd(); ++it)
     {
         if ((*it)->writerGUID == writerGUID)
         {
@@ -1292,7 +1299,7 @@ void StatefulReader::remove_changes_from(
             (*it)->serializedPayload.data = nullptr;
             (*it)->payload_owner(nullptr);
         }
-        mp_history->remove_change(*it);
+        history_->remove_change(*it);
     }
 }
 
@@ -1301,20 +1308,18 @@ ResourceEvent& StatefulReader::getEventResource() const
     return mp_RTPSParticipant->getEventResource();
 }
 
-bool StatefulReader::nextUntakenCache(
-        CacheChange_t** change,
-        WriterProxy** wpout)
+CacheChange_t* StatefulReader::next_untaken_cache()
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     if (!is_alive_)
     {
-        return false;
+        return nullptr;
     }
 
     bool takeok = false;
     WriterProxy* wp;
-    std::vector<CacheChange_t*>::iterator it = mp_history->changesBegin();
-    while (it != mp_history->changesEnd())
+    std::vector<CacheChange_t*>::iterator it = history_->changesBegin();
+    while (it != history_->changesEnd())
     {
         if (this->matched_writer_lookup((*it)->writerGUID, &wp))
         {
@@ -1333,42 +1338,32 @@ bool StatefulReader::nextUntakenCache(
             EPROSIMA_LOG_WARNING(RTPS_READER,
                     "Removing change " << (*it)->sequenceNumber << " from " << (*it)->writerGUID <<
                     " because is no longer paired");
-            it = mp_history->remove_change(it);
+            it = history_->remove_change(it);
         }
 
         if (takeok)
         {
-
-            *change = *it;
-
-            if (wpout != nullptr)
-            {
-                *wpout = wp;
-            }
-
-            break;
+            return *it;
         }
     }
 
-    return takeok;
+    return nullptr;
 }
 
 // TODO Porque elimina aqui y no cuando hay unpairing
-bool StatefulReader::nextUnreadCache(
-        CacheChange_t** change,
-        WriterProxy** wpout)
+CacheChange_t* StatefulReader::next_unread_cache()
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     if (!is_alive_)
     {
-        return false;
+        return nullptr;
     }
 
     std::vector<CacheChange_t*> toremove;
     bool readok = false;
     WriterProxy* wp = nullptr;
-    std::vector<CacheChange_t*>::iterator it = mp_history->changesBegin();
-    while (it != mp_history->changesEnd())
+    std::vector<CacheChange_t*>::iterator it = history_->changesBegin();
+    while (it != history_->changesEnd())
     {
         if ((*it)->isRead)
         {
@@ -1392,25 +1387,17 @@ bool StatefulReader::nextUnreadCache(
             EPROSIMA_LOG_WARNING(RTPS_READER,
                     "Removing change " << (*it)->sequenceNumber << " from " << (*it)->writerGUID <<
                     " because is no longer paired");
-            it = mp_history->remove_change(it);
+            it = history_->remove_change(it);
             continue;
         }
 
         if (readok)
         {
-
-            *change = *it;
-
-            if (wpout != nullptr)
-            {
-                *wpout = wp;
-            }
-
-            break;
+            return *it;
         }
     }
 
-    return readok;
+    return nullptr;
 }
 
 bool StatefulReader::updateTimes(
@@ -1419,19 +1406,19 @@ bool StatefulReader::updateTimes(
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     if (is_alive_)
     {
-        if (times_.heartbeatResponseDelay != ti.heartbeatResponseDelay)
+        if (times_.heartbeat_response_delay != ti.heartbeat_response_delay)
         {
             times_ = ti;
             for (WriterProxy* writer : matched_writers_)
             {
-                writer->update_heartbeat_response_interval(times_.heartbeatResponseDelay);
+                writer->update_heartbeat_response_interval(times_.heartbeat_response_delay);
             }
         }
     }
     return true;
 }
 
-bool StatefulReader::isInCleanState()
+bool StatefulReader::is_in_clean_state()
 {
     std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
 
@@ -1451,16 +1438,16 @@ bool StatefulReader::isInCleanState()
 
 bool StatefulReader::begin_sample_access_nts(
         CacheChange_t* change,
-        WriterProxy*& wp,
+        WriterProxy*& writer,
         bool& is_future_change)
 {
     const GUID_t& writer_guid = change->writerGUID;
     is_future_change = false;
 
-    if (matched_writer_lookup(writer_guid, &wp))
+    if (matched_writer_lookup(writer_guid, &writer))
     {
         SequenceNumber_t seq;
-        seq = wp->available_changes_max();
+        seq = writer->available_changes_max();
         if (seq < change->sequenceNumber)
         {
             is_future_change = true;
@@ -1472,15 +1459,7 @@ bool StatefulReader::begin_sample_access_nts(
 
 void StatefulReader::end_sample_access_nts(
         CacheChange_t* change,
-        WriterProxy*& wp,
-        bool mark_as_read)
-{
-    change_read_by_user(change, wp, mark_as_read);
-}
-
-void StatefulReader::change_read_by_user(
-        CacheChange_t* change,
-        WriterProxy* writer,
+        WriterProxy*& writer,
         bool mark_as_read)
 {
     assert(!writer || change->writerGUID == writer->guid());
@@ -1497,7 +1476,7 @@ void StatefulReader::change_read_by_user(
 
     if (mark_as_read)
     {
-        send_ack_if_datasharing(this, mp_history, writer, change->sequenceNumber);
+        send_ack_if_datasharing(this, history_, writer, change->sequenceNumber);
     }
 }
 
@@ -1592,7 +1571,7 @@ void StatefulReader::send_acknack(
     }
 
     // ACKNACK for datasharing writers is done for changes with status READ, not on reception
-    // This is handled in change_read_by_user
+    // This is handled in end_sample_access_nts
     if (writer->is_datasharing_writer())
     {
         return;
@@ -1607,19 +1586,20 @@ void StatefulReader::send_acknack(
         {
             GUID_t guid = sender->remote_guids().at(0);
             SequenceNumberSet_t sns(writer->available_changes_max() + 1);
-            History::const_iterator history_iterator = mp_history->changesBegin();
+            History::const_iterator history_iterator = history_->changesBegin();
 
             missing_changes.for_each(
                 [&](const SequenceNumber_t& seq)
                 {
                     // Check if the CacheChange_t is uncompleted.
-                    CacheChange_t* uncomplete_change = nullptr;
-                    auto ret_iterator = findCacheInFragmentedProcess(seq, guid, &uncomplete_change, history_iterator);
-                    if (ret_iterator != mp_history->changesEnd())
+                    CacheChange_t* incomplete_change = nullptr;
+                    auto ret_iterator = find_cache_in_fragmented_process(
+                        seq, guid, incomplete_change, history_iterator);
+                    if (ret_iterator != history_->changesEnd())
                     {
                         history_iterator = ret_iterator;
                     }
-                    if (uncomplete_change == nullptr)
+                    if (incomplete_change == nullptr)
                     {
                         if (!sns.add(seq))
                         {
@@ -1632,7 +1612,7 @@ void StatefulReader::send_acknack(
                     else
                     {
                         FragmentNumberSet_t frag_sns;
-                        uncomplete_change->get_missing_fragments(frag_sns);
+                        incomplete_change->get_missing_fragments(frag_sns);
                         ++nackfrag_count_;
                         EPROSIMA_LOG_INFO(RTPS_READER, "Sending NACKFRAG for sample" << seq << ": " << frag_sns; );
 

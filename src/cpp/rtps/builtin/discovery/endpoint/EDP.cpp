@@ -39,6 +39,7 @@
 #include <rtps/builtin/discovery/participant/PDP.h>
 #include <rtps/network/utils/external_locators.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/reader/BaseReader.hpp>
 #include <rtps/RTPSDomainImpl.hpp>
 #if HAVE_SECURITY
 #include <rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
@@ -54,6 +55,7 @@ using namespace eprosima::fastrtps;
 using eprosima::fastdds::dds::PublicationMatchedStatus;
 using eprosima::fastdds::dds::SubscriptionMatchedStatus;
 using ParameterList = eprosima::fastdds::dds::ParameterList;
+using BaseReader = eprosima::fastdds::rtps::BaseReader;
 
 namespace eprosima {
 namespace fastrtps {
@@ -73,15 +75,10 @@ EDP::EDP(
         RTPSParticipantImpl* part)
     : mp_PDP(p)
     , mp_RTPSParticipant(part)
-    , reader_status_allocator_(
-        reader_map_helper::node_size,
-        reader_map_helper::min_pool_size<pool_allocator_t>(
-            part->getRTPSParticipantAttributes().allocation.total_readers().initial))
     , writer_status_allocator_(
         writer_map_helper::node_size,
         writer_map_helper::min_pool_size<pool_allocator_t>(
             part->getRTPSParticipantAttributes().allocation.total_writers().initial))
-    , reader_status_(reader_status_allocator_)
     , writer_status_(writer_status_allocator_)
 {
 }
@@ -116,7 +113,7 @@ bool EDP::newLocalReaderProxyData(
                 const auto& ratt = reader->getAttributes();
 
                 rpd->isAlive(true);
-                rpd->m_expectsInlineQos = reader->expectsInlineQos();
+                rpd->m_expectsInlineQos = reader->expects_inline_qos();
                 rpd->guid(reader->getGuid());
                 rpd->key() = rpd->guid();
                 if (ratt.multicastLocatorList.empty() && ratt.unicastLocatorList.empty())
@@ -366,7 +363,7 @@ bool EDP::updatedLocalReader(
                     rdata->content_filter().filter_expression = "";
                 }
                 rdata->isAlive(true);
-                rdata->m_expectsInlineQos = reader->expectsInlineQos();
+                rdata->m_expectsInlineQos = reader->expects_inline_qos();
 
                 if (att.auto_fill_type_information)
                 {
@@ -486,7 +483,7 @@ bool EDP::unpairWriterProxy(
 
     EPROSIMA_LOG_INFO(RTPS_EDP, writer_guid);
 
-    mp_RTPSParticipant->forEachUserReader([&, removed_by_lease](RTPSReader& r) -> bool
+    mp_RTPSParticipant->forEachUserReader([&, removed_by_lease](BaseReader& r) -> bool
             {
                 if (r.matched_writer_remove(writer_guid, removed_by_lease))
                 {
@@ -498,16 +495,12 @@ bool EDP::unpairWriterProxy(
 
                     //MATCHED AND ADDED CORRECTLY:
                     ReaderListener* listener = nullptr;
-                    if (nullptr != (listener = r.getListener()))
+                    if (nullptr != (listener = r.get_listener()))
                     {
                         MatchingInfo info;
                         info.status = REMOVED_MATCHING;
                         info.remoteEndpointGuid = writer_guid;
-                        listener->onReaderMatched(&r, info);
-
-                        const SubscriptionMatchedStatus& sub_info =
-                        update_subscription_matched_status(reader_guid, writer_guid, -1);
-                        listener->onReaderMatched(&r, sub_info);
+                        listener->on_reader_matched(&r, info);
                     }
                 }
 
@@ -853,7 +846,7 @@ bool EDP::pairingReader(
             if (valid)
             {
 #if HAVE_SECURITY
-                if (!mp_RTPSParticipant->security_manager().discovered_writer(R->m_guid, (*pit)->m_guid,
+                if (!mp_RTPSParticipant->security_manager().discovered_writer(reader_guid, (*pit)->m_guid,
                         *wdatait, R->getAttributes().security_attributes()))
                 {
                     EPROSIMA_LOG_ERROR(RTPS_EDP, "Security manager returns an error for reader " << reader_guid);
@@ -862,28 +855,24 @@ bool EDP::pairingReader(
                 if (R->matched_writer_add(*wdatait))
                 {
                     EPROSIMA_LOG_INFO(RTPS_EDP_MATCH,
-                            "WP:" << wdatait->guid() << " match R:" << R->getGuid() << ". RLoc:" <<
+                            "WP:" << wdatait->guid() << " match R:" << reader_guid << ". RLoc:" <<
                             wdatait->remote_locators());
                     //MATCHED AND ADDED CORRECTLY:
-                    if (R->getListener() != nullptr)
+                    if (R->get_listener() != nullptr)
                     {
                         MatchingInfo info;
                         info.status = MATCHED_MATCHING;
                         info.remoteEndpointGuid = writer_guid;
-                        R->getListener()->onReaderMatched(R, info);
-
-                        const SubscriptionMatchedStatus& sub_info =
-                                update_subscription_matched_status(reader_guid, writer_guid, 1);
-                        R->getListener()->onReaderMatched(R, sub_info);
+                        R->get_listener()->on_reader_matched(R, info);
                     }
                 }
 #endif // if HAVE_SECURITY
             }
             else
             {
-                if (no_match_reason.test(MatchingFailureMask::incompatible_qos) && R->getListener() != nullptr)
+                if (no_match_reason.test(MatchingFailureMask::incompatible_qos) && R->get_listener() != nullptr)
                 {
-                    R->getListener()->on_requested_incompatible_qos(R, incompatible_qos);
+                    R->get_listener()->on_requested_incompatible_qos(R, incompatible_qos);
                 }
 
                 //EPROSIMA_LOG_INFO(RTPS_EDP,RTPS_CYAN<<"Valid Matching to writerProxy: "<<wdatait->m_guid<<RTPS_DEF<<endl);
@@ -896,16 +885,12 @@ bool EDP::pairingReader(
 #endif // if HAVE_SECURITY
 
                     //MATCHED AND ADDED CORRECTLY:
-                    if (R->getListener() != nullptr)
+                    if (R->get_listener() != nullptr)
                     {
                         MatchingInfo info;
                         info.status = REMOVED_MATCHING;
                         info.remoteEndpointGuid = writer_guid;
-                        R->getListener()->onReaderMatched(R, info);
-
-                        const SubscriptionMatchedStatus& sub_info =
-                                update_subscription_matched_status(reader_guid, writer_guid, -1);
-                        R->getListener()->onReaderMatched(R, sub_info);
+                        R->get_listener()->on_reader_matched(R, info);
                     }
                 }
             }
@@ -1225,7 +1210,7 @@ bool EDP::pairing_writer_proxy_with_any_local_reader(
 
     EPROSIMA_LOG_INFO(RTPS_EDP, wdata->guid() << " in topic: \"" << wdata->topicName() << "\"");
 
-    mp_RTPSParticipant->forEachUserReader([&, wdata](RTPSReader& r) -> bool
+    mp_RTPSParticipant->forEachUserReader([&, wdata](BaseReader& r) -> bool
             {
                 auto temp_reader_proxy_data = get_temporary_reader_proxies_pool().get();
                 GUID_t readerGUID = r.getGuid();
@@ -1254,25 +1239,21 @@ bool EDP::pairing_writer_proxy_with_any_local_reader(
                             "WP:" << wdata->guid() << " match R:" << r.getGuid() << ". WLoc:" <<
                                 wdata->remote_locators());
                             //MATCHED AND ADDED CORRECTLY:
-                            if (r.getListener() != nullptr)
+                            if (r.get_listener() != nullptr)
                             {
                                 MatchingInfo info;
                                 info.status = MATCHED_MATCHING;
                                 info.remoteEndpointGuid = writer_guid;
-                                r.getListener()->onReaderMatched(&r, info);
-
-                                const SubscriptionMatchedStatus& sub_info =
-                                update_subscription_matched_status(readerGUID, writer_guid, 1);
-                                r.getListener()->onReaderMatched(&r, sub_info);
+                                r.get_listener()->on_reader_matched(&r, info);
                             }
                         }
 #endif // if HAVE_SECURITY
                     }
                     else
                     {
-                        if (no_match_reason.test(MatchingFailureMask::incompatible_qos) && r.getListener() != nullptr)
+                        if (no_match_reason.test(MatchingFailureMask::incompatible_qos) && r.get_listener() != nullptr)
                         {
-                            r.getListener()->on_requested_incompatible_qos(&r, incompatible_qos);
+                            r.get_listener()->on_requested_incompatible_qos(&r, incompatible_qos);
                         }
 
                         if (r.matched_writer_is_matched(writer_guid)
@@ -1283,16 +1264,12 @@ bool EDP::pairing_writer_proxy_with_any_local_reader(
                             writer_guid);
 #endif // if HAVE_SECURITY
                             //MATCHED AND ADDED CORRECTLY:
-                            if (r.getListener() != nullptr)
+                            if (r.get_listener() != nullptr)
                             {
                                 MatchingInfo info;
                                 info.status = REMOVED_MATCHING;
                                 info.remoteEndpointGuid = writer_guid;
-                                r.getListener()->onReaderMatched(&r, info);
-
-                                const SubscriptionMatchedStatus& sub_info =
-                                update_subscription_matched_status(readerGUID, writer_guid, -1);
-                                r.getListener()->onReaderMatched(&r, sub_info);
+                                r.get_listener()->on_reader_matched(&r, info);
                             }
                         }
                     }
@@ -1312,7 +1289,7 @@ bool EDP::pairing_writer_proxy_with_local_reader(
 {
     EPROSIMA_LOG_INFO(RTPS_EDP, wdata.guid() << " in topic: \"" << wdata.topicName() << "\"");
 
-    mp_RTPSParticipant->forEachUserReader([&](RTPSReader& r) -> bool
+    mp_RTPSParticipant->forEachUserReader([&](BaseReader& r) -> bool
             {
                 GUID_t readerGUID = r.getGuid();
 
@@ -1342,9 +1319,9 @@ bool EDP::pairing_writer_proxy_with_local_reader(
                         else
                         {
                             if (no_match_reason.test(MatchingFailureMask::incompatible_qos) &&
-                            r.getListener() != nullptr)
+                            r.get_listener() != nullptr)
                             {
-                                r.getListener()->on_requested_incompatible_qos(&r, incompatible_qos);
+                                r.get_listener()->on_requested_incompatible_qos(&r, incompatible_qos);
                             }
 
                             if (r.matched_writer_is_matched(writer_guid)
@@ -1353,16 +1330,12 @@ bool EDP::pairing_writer_proxy_with_local_reader(
                                 mp_RTPSParticipant->security_manager().remove_writer(readerGUID,
                                 remote_participant_guid, writer_guid);
                                 //MATCHED AND ADDED CORRECTLY:
-                                if (r.getListener() != nullptr)
+                                if (r.get_listener() != nullptr)
                                 {
                                     MatchingInfo info;
                                     info.status = REMOVED_MATCHING;
                                     info.remoteEndpointGuid = writer_guid;
-                                    r.getListener()->onReaderMatched(&r, info);
-
-                                    const SubscriptionMatchedStatus& sub_info =
-                                    update_subscription_matched_status(readerGUID, writer_guid, -1);
-                                    r.getListener()->onReaderMatched(&r, sub_info);
+                                    r.get_listener()->on_reader_matched(&r, info);
                                 }
                             }
                         }
@@ -1384,7 +1357,7 @@ bool EDP::pairing_remote_writer_with_local_reader_after_security(
     bool matched = false;
     bool found = false;
 
-    mp_RTPSParticipant->forEachUserReader([&](RTPSReader& r) -> bool
+    mp_RTPSParticipant->forEachUserReader([&](BaseReader& r) -> bool
             {
                 GUID_t readerGUID = r.getGuid();
 
@@ -1401,16 +1374,12 @@ bool EDP::pairing_remote_writer_with_local_reader_after_security(
                         matched = true;
 
                         //MATCHED AND ADDED CORRECTLY:
-                        if (r.getListener() != nullptr)
+                        if (r.get_listener() != nullptr)
                         {
                             MatchingInfo info;
                             info.status = MATCHED_MATCHING;
                             info.remoteEndpointGuid = writer_guid;
-                            r.getListener()->onReaderMatched(&r, info);
-
-                            const SubscriptionMatchedStatus& sub_info =
-                            update_subscription_matched_status(readerGUID, writer_guid, 1);
-                            r.getListener()->onReaderMatched(&r, sub_info);
+                            r.get_listener()->on_reader_matched(&r, info);
 
                         }
                     }
@@ -1426,34 +1395,6 @@ bool EDP::pairing_remote_writer_with_local_reader_after_security(
 }
 
 #endif // if HAVE_SECURITY
-
-const SubscriptionMatchedStatus& EDP::update_subscription_matched_status(
-        const GUID_t& reader_guid,
-        const GUID_t& writer_guid,
-        int change)
-{
-    std::lock_guard<std::recursive_mutex> _(*mp_PDP->getMutex());
-
-    SubscriptionMatchedStatus* status;
-    auto it = reader_status_.find(reader_guid);
-    if (it == reader_status_.end())
-    {
-        auto pair = reader_status_.emplace(reader_guid, SubscriptionMatchedStatus{});
-        status = &pair.first->second;
-    }
-    else
-    {
-        status = &it->second;
-    }
-
-    status->current_count = change;
-    status->current_count_change = change;
-    status->total_count += change;
-    status->total_count_change += change;
-    status->last_publication_handle = writer_guid;
-
-    return *status;
-}
 
 const fastdds::dds::PublicationMatchedStatus& EDP::update_publication_matched_status(
         const GUID_t& reader_guid,

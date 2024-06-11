@@ -54,7 +54,7 @@ WLPListener::~WLPListener()
 {
 }
 
-void WLPListener::onNewCacheChangeAdded(
+void WLPListener::on_new_cache_change_added(
         RTPSReader* reader,
         const CacheChange_t* const changeIN)
 {
@@ -69,7 +69,7 @@ void WLPListener::onNewCacheChangeAdded(
         return;
     }
     //Check the serializedPayload:
-    auto history = reader->getHistory();
+    auto history = reader->get_history();
     for (auto ch = history->changesBegin(); ch != history->changesEnd(); ++ch)
     {
         if ((*ch)->instanceHandle == change->instanceHandle && (*ch)->sequenceNumber < change->sequenceNumber)

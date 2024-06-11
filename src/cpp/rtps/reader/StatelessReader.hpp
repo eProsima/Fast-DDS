@@ -29,6 +29,8 @@
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>
 
+#include <rtps/reader/BaseReader.hpp>
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
@@ -37,7 +39,7 @@ namespace rtps {
  * Class StatelessReader, specialization of the RTPSReader for Best Effort Readers.
  * @ingroup READER_MODULE
  */
-class StatelessReader : public RTPSReader
+class StatelessReader : public fastdds::rtps::BaseReader
 {
     friend class RTPSParticipantImpl;
 
@@ -106,8 +108,7 @@ public:
      * @return True if correctly removed.
      */
     bool change_removed_by_history(
-            CacheChange_t* change,
-            WriterProxy* prox = nullptr) override;
+            CacheChange_t* change) override;
 
     /**
      * Processes a new DATA message.
@@ -115,7 +116,7 @@ public:
      * @param change Pointer to the CacheChange_t.
      * @return true if the reader accepts messages from the.
      */
-    bool processDataMsg(
+    bool process_data_msg(
             CacheChange_t* change) override;
 
     /**
@@ -127,7 +128,7 @@ public:
      * @param fragmentsInSubmessage Number of fragments on this particular message.
      * @return true if the reader accepts message.
      */
-    bool processDataFragMsg(
+    bool process_data_frag_msg(
             CacheChange_t* change,
             uint32_t sampleSize,
             uint32_t fragmentStartingNum,
@@ -138,7 +139,7 @@ public:
      *
      * @return true if the reader accepts messages from the.
      */
-    bool processHeartbeatMsg(
+    bool process_heartbeat_msg(
             const GUID_t& writerGUID,
             uint32_t hbCount,
             const SequenceNumber_t& firstSN,
@@ -147,7 +148,7 @@ public:
             bool livelinessFlag,
             fastdds::rtps::VendorId_t origin_vendor_id = c_VendorId_Unknown) override;
 
-    bool processGapMsg(
+    bool process_gap_msg(
             const GUID_t& writerGUID,
             const SequenceNumber_t& gapStart,
             const SequenceNumberSet_t& gapList,
@@ -162,25 +163,9 @@ public:
     bool change_received(
             CacheChange_t* a_change);
 
-    /**
-     * Read the next unread CacheChange_t from the history
-     * @param change Pointer to pointer of CacheChange_t
-     * @param wpout Pointer to pointer of the matched writer proxy
-     * @return True if read.
-     */
-    bool nextUnreadCache(
-            CacheChange_t** change,
-            WriterProxy** wpout = nullptr) override;
+    CacheChange_t* next_unread_cache() override;
 
-    /**
-     * Take the next CacheChange_t from the history;
-     * @param change Pointer to pointer of CacheChange_t
-     * @param wpout Pointer to pointer of the matched writer proxy
-     * @return True if read.
-     */
-    bool nextUntakenCache(
-            CacheChange_t** change,
-            WriterProxy** wpout = nullptr) override;
+    CacheChange_t* next_untaken_cache() override;
 
     /**
      * Get the number of matched writers
@@ -196,7 +181,7 @@ public:
      * StatelessReader allways return true;
      * @return true
      */
-    bool isInCleanState() override
+    bool is_in_clean_state() override
     {
         return true;
     }
@@ -220,7 +205,7 @@ public:
     /**
      * Called just before a change is going to be deserialized.
      * @param [in]  change            Pointer to the change being accessed.
-     * @param [out] wp                Writer proxy the @c change belongs to.
+     * @param [out] writer            Writer proxy the @c change belongs to.
      * @param [out] is_future_change  Whether the change is in the future (i.e. there are
      *                                earlier unreceived changes from the same writer).
      *
@@ -228,30 +213,19 @@ public:
      */
     bool begin_sample_access_nts(
             CacheChange_t* change,
-            WriterProxy*& wp,
+            WriterProxy*& writer,
             bool& is_future_change) override;
 
     /**
      * Called after the change has been deserialized.
      * @param [in] change        Pointer to the change being accessed.
-     * @param [in] wp            Writer proxy the @c change belongs to.
+     * @param [in] writer        Writer proxy the @c change belongs to.
      * @param [in] mark_as_read  Whether the @c change should be marked as read or not.
      */
     void end_sample_access_nts(
             CacheChange_t* change,
-            WriterProxy*& wp,
+            WriterProxy*& writer,
             bool mark_as_read) override;
-
-    /**
-     * Called when the user has retrieved a change from the history.
-     * @param change Pointer to the change to ACK
-     * @param writer Writer proxy of the \c change.
-     * @param mark_as_read Whether the \c change should be marked as read or not
-     */
-    void change_read_by_user(
-            CacheChange_t* change,
-            WriterProxy* writer,
-            bool mark_as_read = true) override;
 
 #ifdef FASTDDS_STATISTICS
     bool get_connections(

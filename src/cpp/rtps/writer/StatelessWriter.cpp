@@ -41,12 +41,14 @@
 #include <rtps/messages/RTPSMessageGroup.hpp>
 #include <rtps/network/utils/external_locators.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/reader/BaseReader.hpp>
 #include <rtps/RTPSDomainImpl.hpp>
 
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
+using BaseReader = fastdds::rtps::BaseReader;
 
 /**
  * Loops over all the readers in the vector, applying the given routine.
@@ -355,7 +357,7 @@ bool StatelessWriter::intraprocess_delivery(
         {
             change->write_params.sample_identity(change->write_params.related_sample_identity());
         }
-        return reader->processDataMsg(change);
+        return BaseReader::downcast(reader)->process_data_msg(change);
     }
 
     return false;

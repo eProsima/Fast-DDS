@@ -21,7 +21,7 @@
 
 #include <fastdds/rtps/attributes/ReaderAttributes.h>
 #include <fastdds/rtps/common/Guid.h>
-#include <fastdds/rtps/reader/RTPSReader.h>
+#include <rtps/reader/BaseReader.hpp>
 #include <rtps/resources/ResourceEvent.h>
 
 namespace eprosima {
@@ -34,7 +34,7 @@ class RTPSMessageSenderInterface;
 class RTPSParticipantImpl;
 struct CDRMessage_t;
 
-class StatefulReader : public RTPSReader
+class StatefulReader : public fastdds::rtps::BaseReader
 {
 public:
 
@@ -47,7 +47,7 @@ public:
     StatefulReader(
             ReaderHistory* history,
             RecursiveTimedMutex* mutex)
-        : RTPSReader(history, mutex)
+        : fastdds::rtps::BaseReader(history, mutex)
     {
     }
 
@@ -65,6 +65,10 @@ public:
     MOCK_METHOD2(change_received, bool(CacheChange_t* a_change, WriterProxy* prox));
 
     MOCK_METHOD1 (matched_writer_is_matched, bool(const GUID_t& writer_guid));
+
+    MOCK_METHOD1 (assert_writer_liveliness, void(const GUID_t& writer_guid));
+
+    MOCK_METHOD0 (is_in_clean_state, bool());
     // *INDENT-ON*
 
     ReaderTimes& getTimes()

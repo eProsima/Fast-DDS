@@ -35,6 +35,7 @@
 #include <rtps/builtin/liveliness/WLPListener.h>
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/reader/BaseReader.hpp>
 #include <rtps/reader/StatefulReader.hpp>
 #include <rtps/resources/ResourceEvent.h>
 #include <rtps/resources/TimedEvent.h>
@@ -45,6 +46,8 @@
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
+
+using BaseReader = fastdds::rtps::BaseReader;
 
 static void set_builtin_reader_history_attributes(
         HistoryAttributes& hatt,
@@ -294,7 +297,7 @@ bool WLP::createEndpoints()
     ratt.endpoint.topicKind = WITH_KEY;
     ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
     ratt.endpoint.reliabilityKind = RELIABLE;
-    ratt.expectsInlineQos = true;
+    ratt.expects_inline_qos = true;
     ratt.endpoint.unicastLocatorList =  mp_builtinProtocols->m_metatrafficUnicastLocatorList;
     ratt.endpoint.multicastLocatorList = mp_builtinProtocols->m_metatrafficMulticastLocatorList;
     ratt.endpoint.external_unicast_locators = mp_builtinProtocols->m_att.metatraffic_external_unicast_locators;
@@ -401,7 +404,7 @@ bool WLP::createSecureEndpoints()
     ratt.endpoint.topicKind = WITH_KEY;
     ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
     ratt.endpoint.reliabilityKind = RELIABLE;
-    ratt.expectsInlineQos = true;
+    ratt.expects_inline_qos = true;
     ratt.endpoint.unicastLocatorList = mp_builtinProtocols->m_metatrafficUnicastLocatorList;
     ratt.endpoint.multicastLocatorList = mp_builtinProtocols->m_metatrafficMulticastLocatorList;
     ratt.endpoint.external_unicast_locators = mp_builtinProtocols->m_att.metatraffic_external_unicast_locators;
@@ -829,6 +832,8 @@ bool WLP::add_local_reader(
         RTPSReader* reader,
         const fastdds::dds::ReaderQos& rqos)
 {
+    auto base_reader = BaseReader::downcast(reader);
+
     std::lock_guard<std::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
 
     if (rqos.m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS)
@@ -836,7 +841,7 @@ bool WLP::add_local_reader(
         automatic_readers_ = true;
     }
 
-    readers_.push_back(reader);
+    readers_.push_back(base_reader);
 
     return true;
 }
@@ -844,12 +849,13 @@ bool WLP::add_local_reader(
 bool WLP::remove_local_reader(
         RTPSReader* reader)
 {
+    auto base_reader = BaseReader::downcast(reader);
     std::lock_guard<std::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
 
     auto it = std::find(
         readers_.begin(),
         readers_.end(),
-        reader);
+        base_reader);
     if (it != readers_.end())
     {
         readers_.erase(it);
@@ -1074,10 +1080,10 @@ void WLP::sub_liveliness_changed(
 {
     // Writer with given guid lost liveliness, check which readers were matched and inform them
 
-    for (RTPSReader* reader : readers_)
+    for (BaseReader* reader : readers_)
     {
-        if (reader->liveliness_kind_ == kind &&
-                reader->liveliness_lease_duration_ == lease_duration)
+        if (reader->liveliness_kind() == kind &&
+                reader->liveliness_lease_duration() == lease_duration)
         {
             if (reader->matched_writer_is_matched(writer))
             {
@@ -1093,25 +1099,11 @@ void WLP::sub_liveliness_changed(
 
 void WLP::update_liveliness_changed_status(
         GUID_t writer,
-        RTPSReader* reader,
+        BaseReader* reader,
         int32_t alive_change,
         int32_t not_alive_change)
 {
-    std::lock_guard<RecursiveTimedMutex> lock(reader->getMutex());
-
-    reader->liveliness_changed_status_.alive_count += alive_change;
-    reader->liveliness_changed_status_.alive_count_change += alive_change;
-    reader->liveliness_changed_status_.not_alive_count += not_alive_change;
-    reader->liveliness_changed_status_.not_alive_count_change += not_alive_change;
-    reader->liveliness_changed_status_.last_publication_handle = writer;
-
-    if (reader->getListener() != nullptr)
-    {
-        reader->getListener()->on_liveliness_changed(reader, reader->liveliness_changed_status_);
-
-        reader->liveliness_changed_status_.alive_count_change = 0;
-        reader->liveliness_changed_status_.not_alive_count_change = 0;
-    }
+    reader->update_liveliness_changed_status(writer, alive_change, not_alive_change);
 }
 
 } /* namespace rtps */

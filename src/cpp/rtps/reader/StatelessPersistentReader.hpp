@@ -70,7 +70,7 @@ public:
 
 protected:
 
-    virtual void set_last_notified(
+    void persist_last_notified_nts(
             const GUID_t& persistence_guid,
             const SequenceNumber_t& seq) override;
 

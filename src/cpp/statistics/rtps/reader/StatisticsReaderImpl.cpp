@@ -19,6 +19,8 @@
 #include <statistics/rtps/StatisticsBase.hpp>
 
 #include <fastdds/rtps/reader/RTPSReader.h>
+
+#include <rtps/reader/BaseReader.hpp>
 #include <statistics/types/types.hpp>
 
 using eprosima::fastrtps::RecursiveTimedMutex;
@@ -28,6 +30,8 @@ using eprosima::fastrtps::rtps::GUID_t;
 namespace eprosima {
 namespace fastdds {
 namespace statistics {
+
+using BaseReader = fastdds::rtps::BaseReader;
 
 StatisticsReaderImpl::StatisticsReaderImpl()
 {
@@ -46,19 +50,19 @@ StatisticsReaderAncillary* StatisticsReaderImpl::get_members() const
 RecursiveTimedMutex& StatisticsReaderImpl::get_statistics_mutex()
 {
     static_assert(
-        std::is_base_of<StatisticsReaderImpl, RTPSReader>::value,
+        std::is_base_of<StatisticsReaderImpl, BaseReader>::value,
         "Must be call from a writer.");
 
-    return static_cast<RTPSReader*>(this)->getMutex();
+    return static_cast<BaseReader*>(this)->getMutex();
 }
 
 const GUID_t& StatisticsReaderImpl::get_guid() const
 {
     static_assert(
-        std::is_base_of<StatisticsReaderImpl, RTPSReader>::value,
+        std::is_base_of<StatisticsReaderImpl, BaseReader>::value,
         "This method should be called from an actual RTPSReader");
 
-    return static_cast<const RTPSReader*>(this)->getGuid();
+    return static_cast<const BaseReader*>(this)->getGuid();
 }
 
 void StatisticsReaderImpl::on_data_notify(

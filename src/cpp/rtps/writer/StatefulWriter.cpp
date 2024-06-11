@@ -44,6 +44,7 @@
 #include <rtps/messages/RTPSMessageGroup.hpp>
 #include <rtps/network/utils/external_locators.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/reader/BaseReader.hpp>
 #include <rtps/resources/ResourceEvent.h>
 #include <rtps/resources/TimedEvent.h>
 #include <rtps/RTPSDomainImpl.hpp>
@@ -61,6 +62,8 @@
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
+
+using BaseReader = fastdds::rtps::BaseReader;
 
 /**
  * Loops over all the readers in the vector, applying the given routine.
@@ -477,7 +480,7 @@ bool StatefulWriter::intraprocess_delivery(
         {
             change->write_params.sample_identity(change->write_params.related_sample_identity());
         }
-        return reader->processDataMsg(change);
+        return BaseReader::downcast(reader)->process_data_msg(change);
     }
     return false;
 }
@@ -490,7 +493,8 @@ bool StatefulWriter::intraprocess_gap(
     RTPSReader* reader = reader_proxy->local_reader();
     if (reader)
     {
-        return reader->processGapMsg(m_guid, first_seq, SequenceNumberSet_t(last_seq), c_VendorId_eProsima);
+        return BaseReader::downcast(reader)->process_gap_msg(
+            m_guid, first_seq, SequenceNumberSet_t(last_seq), c_VendorId_eProsima);
     }
 
     return false;
@@ -523,9 +527,8 @@ bool StatefulWriter::intraprocess_heartbeat(
                 (liveliness || reader_proxy->has_changes()))
         {
             incrementHBCount();
-            returned_value =
-                    reader->processHeartbeatMsg(m_guid, m_heartbeatCount, first_seq, last_seq, true, liveliness,
-                            c_VendorId_eProsima);
+            returned_value = BaseReader::downcast(reader)->process_heartbeat_msg(
+                m_guid, m_heartbeatCount, first_seq, last_seq, true, liveliness, c_VendorId_eProsima);
         }
     }
 
