@@ -48,41 +48,34 @@ SubscriberApp::SubscriberApp(
     , filter_topic_(nullptr)
     , stop_(false)
 {
-    // Set intraprocess to OFF
-    LibrarySettings library_settings;
-    library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-
-    // Get DomainParticipantFactory
-    auto factory = DomainParticipantFactory::get_instance();
-    factory->set_library_settings(library_settings);
-
     // Set DomainParticipant name
     DomainParticipantQos pqos;
     pqos.name("Participant_sub");
-    // Disable multicast for enabling filtering also on the writer side
-    eprosima::fastrtps::rtps::Locator_t default_unicast_locator;
-    pqos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(default_unicast_locator);
-    // Initial peer will be UDPv4 address 127.0.0.1.
-    eprosima::fastrtps::rtps::Locator_t initial_peer;
-    eprosima::fastrtps::rtps::IPLocator::setIPv4(initial_peer, "127.0.0.1");
-    pqos.wire_protocol().builtin.initialPeersList.push_back(initial_peer);
+
+    // Get DomainParticipantFactory instance
+    auto factory = DomainParticipantFactory::get_instance();
+    // Set intraprocess to OFF
+    LibrarySettings library_settings;
+    library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
+    factory->set_library_settings(library_settings);
     pqos.transport().use_builtin_transports = false;
     std::shared_ptr<eprosima::fastdds::rtps::UDPv4TransportDescriptor> udp_descriptor =
             std::make_shared<eprosima::fastdds::rtps::UDPv4TransportDescriptor>();
     pqos.transport().user_transports.push_back(udp_descriptor);
+
     // Create DomainParticipant
-    participant_ = factory->create_participant(0, pqos);
+    participant_ = factory->create_participant(1, pqos);
     if (participant_ == nullptr)
     {
         throw std::runtime_error("Participant initialization failed");
     }
 
     // If using the custom filter
-    if (config.filter_kind == CLIParser::FIlterKind::CUSTOM)
+    if (config.filter_kind == CLIParser::FilterKind::CUSTOM)
     {
         // Register the filter factory
         if (eprosima::fastdds::dds::RETCODE_OK !=
-                participant_->register_content_filter_factory("MY_CUSTOM_FILTER", &filter_factory))
+                participant_->register_content_filter_factory("CUSTOM_FILTER", &filter_factory))
         {
             throw std::runtime_error("Custom filter initialization failed");
         }
@@ -108,7 +101,7 @@ SubscriberApp::SubscriberApp(
     // Create the ContentFilteredTopic
     std::string expression;
     std::vector<std::string> parameters;
-    if (config.filter_kind == CLIParser::FIlterKind::CUSTOM)
+    if (config.filter_kind == CLIParser::FilterKind::CUSTOM)
     {
         // Custom filter: reject samples where index > parameters[0] and index < parameters[1].
         // Custom filter does not use expression. However, an empty expression disables filtering, so some expression
@@ -118,18 +111,18 @@ SubscriberApp::SubscriberApp(
         parameters.push_back(config.upper_bound);
         filter_topic_ =
                 participant_->create_contentfilteredtopic("HelloWorldFilteredTopic1", topic_, expression, parameters,
-                        "MY_CUSTOM_FILTER");
+                        "CUSTOM_FILTER");
     }
-    else if (config.filter_kind == CLIParser::FIlterKind::DEFAULT)
+    else if (config.filter_kind == CLIParser::FilterKind::DEFAULT)
     {
         // Default filter: accept samples meeting the given expression: index between the two given parameters
-        expression = "index between %0 and %1";
+        expression = config.filter_expression;
         parameters.push_back(config.lower_bound);
         parameters.push_back(config.upper_bound);
         filter_topic_ =
                 participant_->create_contentfilteredtopic("HelloWorldFilteredTopic1", topic_, expression, parameters);
     }
-    else if (config.filter_kind == CLIParser::FIlterKind::NONE)
+    else if (config.filter_kind == CLIParser::FilterKind::NONE)
     {
         // An empty expression disables filtering
         expression = "";

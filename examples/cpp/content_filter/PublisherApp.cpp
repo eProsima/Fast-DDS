@@ -58,31 +58,15 @@ PublisherApp::PublisherApp(
     hello_.index(0);
     hello_.message("HelloWorld");
 
-    // Set intraprocess to OFF
-    LibrarySettings library_settings;
-    library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-
-    // Get DomainParticipantFactory
-    auto factory = DomainParticipantFactory::get_instance();
-    factory->set_library_settings(library_settings);
-
     // Set DomainParticipant name
     DomainParticipantQos pqos;
     pqos.name("Participant_pub");
-    // Disable multicast for enabling filtering also on the writer side
-    eprosima::fastrtps::rtps::Locator_t default_unicast_locator;
-    default_unicast_locator.kind =  LOCATOR_KIND_UDPv4;
-    pqos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(default_unicast_locator);
-    eprosima::fastrtps::rtps::Locator_t initial_peer;
-    initial_peer.kind = LOCATOR_KIND_UDPv4;
-    eprosima::fastrtps::rtps::IPLocator::setIPv4(initial_peer, 127, 0, 0, 1);
-    pqos.wire_protocol().builtin.initialPeersList.push_back(initial_peer);
-    pqos.transport().use_builtin_transports = false;
-    std::shared_ptr<eprosima::fastdds::rtps::UDPv4TransportDescriptor> udp_descriptor =
-            std::make_shared<eprosima::fastdds::rtps::UDPv4TransportDescriptor>();
-    pqos.transport().user_transports.push_back(udp_descriptor);
+
+    // Get DomainParticipantFactory
+    auto factory = DomainParticipantFactory::get_instance();
+
     // Create DomainParticipant in domain 0
-    participant_ = factory->create_participant(0, pqos);
+    participant_ = factory->create_participant(1, pqos);
     if (participant_ == nullptr)
     {
         throw std::runtime_error("Participant initialization failed");
@@ -108,16 +92,9 @@ PublisherApp::PublisherApp(
     // Create the DataWriter
     DataWriterQos wqos = DATAWRITER_QOS_DEFAULT;
     wqos.data_sharing().off();
-    if (config.filtering)
-    {
-        wqos.writer_resource_limits().reader_filters_allocation.initial = 0;
-        wqos.writer_resource_limits().reader_filters_allocation.maximum = 10;
-        wqos.writer_resource_limits().reader_filters_allocation.increment = 1;
-    }
-    else
-    {
-        wqos.writer_resource_limits().reader_filters_allocation.maximum = 0;
-    }
+    wqos.writer_resource_limits().reader_filters_allocation.initial = 0;
+    wqos.writer_resource_limits().reader_filters_allocation.maximum = config.max_reader_filters;
+    wqos.writer_resource_limits().reader_filters_allocation.increment = 1;
     writer_ = publisher_->create_datawriter(topic_, wqos, this);
     if (writer_ == nullptr)
     {

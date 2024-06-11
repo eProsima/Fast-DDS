@@ -56,13 +56,14 @@ public:
     {
         uint16_t samples = 0;
         uint16_t interval = 100;
-        bool filtering = true;
+        uint16_t max_reader_filters = 32;
     };
 
     //! Subscriber application configuration structure
     struct subscriber_config
     {
         CLIParser::FilterKind filter_kind = CLIParser::FilterKind::DEFAULT;
+        std::string filter_expression = "index between %0 and %1";
         std::string upper_bound = "9";
         std::string lower_bound = "5";
     };
@@ -85,25 +86,29 @@ public:
     static void print_help(
             uint8_t return_code)
     {
-        std::cout << "Usage: content_filter <entity> [options]"                                                          << std::endl;
-        std::cout << ""                                                                                                  << std::endl;
-        std::cout << "Entities:"                                                                                         << std::endl;
-        std::cout << " publisher                                                Run a publisher entity"                  << std::endl;
-        std::cout << " subscriber                                               Run a subscriber entity"                 << std::endl;
-        std::cout << ""                                                                                                  << std::endl;
-        std::cout << "Common options:"                                                                                   << std::endl;
-        std::cout << " -h, --help                                               Print this help message"                 << std::endl;
-        std::cout << "Publisher options:"                                                                                << std::endl;
-        std::cout << " -s <num>, --samples <num>                                Number of samples to send"               << std::endl;
-        std::cout << "                                                          (Default: 0 [unlimited])"                << std::endl;
-        std::cout << " -i <num>, --interval <num>                               Time between samples in milliseconds"    << std::endl;
-        std::cout << " -f <true/false>, --filter <true/false>                   Apply filter on the writer side"         << std::endl;
-        std::cout << "                                                          (Default: true)"                         << std::endl;
-        std::cout << "Subscriber options:"                                                                               << std::endl;
-        std::cout << " -f <default/custom/none>, --filter <default/custom/none> Kind of Content Filter to use"           << std::endl;
-        std::cout << "                                                          (Default: DDS SQL default filter)"       << std::endl;
-        std::cout << " -lb <num>, --lower-bound <num>                           Lower bound of the data range to filter" << std::endl;
-        std::cout << " -up <num>, --upper-bound <num>                           Upper bound of the data range to filter" << std::endl;
+        std::cout << "Usage: content_filter <entity> [options]"                                                                                << std::endl;
+        std::cout << ""                                                                                                                        << std::endl;
+        std::cout << "Entities:"                                                                                                               << std::endl;
+        std::cout << " publisher                                                Run a publisher entity"                                        << std::endl;
+        std::cout << " subscriber                                               Run a subscriber entity"                                       << std::endl;
+        std::cout << ""                                                                                                                        << std::endl;
+        std::cout << "Common options:"                                                                                                         << std::endl;
+        std::cout << " -h, --help                                               Print this help message"                                       << std::endl;
+        std::cout << "Publisher options:"                                                                                                      << std::endl;
+        std::cout << " -s <num>, --samples <num>                                Number of samples to send"                                     << std::endl;
+        std::cout << "                                                          (Default: 0 [unlimited])"                                      << std::endl;
+        std::cout << " -i <num>, --interval <num>                               Time between samples in milliseconds"                          << std::endl;
+        std::cout << "           --reader-filters <num>                         Set the maximum number of readers that the writer"             << std::endl;
+        std::cout << "                                                          evaluates for applying the filter"                             << std::endl;
+        std::cout << "                                                          (Default: 32)"                                                 << std::endl;
+        std::cout << "Subscriber options:"                                                                                                     << std::endl;
+        std::cout << "           --filter-kind <default/custom/none>            Kind of Content Filter to use"                                 << std::endl;
+        std::cout << "                                                          (Default: default SQL filter)"                                 << std::endl;
+        std::cout << "           --filter-expression <string>                   Filter Expression of the default SQL filter"                   << std::endl;
+        std::cout << "                                                          (Default: \"index between %0 and %1\", where %0 and %1"        << std::endl;
+        std::cout << "                                                          are the indeces of the parameters, i.e. lb and ub)"            << std::endl;
+        std::cout << " -lb <num>, --lower-bound <num>                           Lower bound of the data range to filter. (Default: 5)"         << std::endl;
+        std::cout << " -up <num>, --upper-bound <num>                           Upper bound of the data range to filter. (Default: 9)"         << std::endl;
         std::exit(return_code);
     }
 
@@ -230,7 +235,32 @@ public:
                     print_help(EXIT_FAILURE);
                 }
             }
-            else if (arg == "-f" || arg == "--filter")
+            else if (arg == "--reader-filters")
+            {
+                if (i + 1 < argc)
+                {
+                    if (config.entity == CLIParser::EntityKind::PUBLISHER)
+                    {
+                        config.pub_config.max_reader_filters = static_cast<uint16_t>(std::stoi(argv[++i]));
+                    }
+                    else if (config.entity == CLIParser::EntityKind::SUBSCRIBER)
+                    {
+                        EPROSIMA_LOG_ERROR(CLI_PARSER, "--reader-filters is only valid for publisher entity");
+                        print_help(EXIT_FAILURE);
+                    }
+                    else
+                    {
+                        EPROSIMA_LOG_ERROR(CLI_PARSER, "entity not specified for --reader-filters argument");
+                        print_help(EXIT_FAILURE);
+                    }
+                }
+                else
+                {
+                    EPROSIMA_LOG_ERROR(CLI_PARSER, "missing argument for " + arg);
+                    print_help(EXIT_FAILURE);
+                }
+            }
+            else if (arg == "--filter-kind")
             {
                 if (i + 1 < argc)
                 {
@@ -257,20 +287,8 @@ public:
                     }
                     else if (config.entity == CLIParser::EntityKind::PUBLISHER)
                     {
-                        std::string filtering = argv[++i];
-                        if (filtering == "true")
-                        {
-                            config.pub_config.filtering = true;
-                        }
-                        else if (filtering == "false")
-                        {
-                            config.pub_config.filtering = false;
-                        }
-                        else
-                        {
-                            EPROSIMA_LOG_ERROR(CLI_PARSER, "unknown --filter argument");
-                            print_help(EXIT_FAILURE);
-                        }
+                        EPROSIMA_LOG_ERROR(CLI_PARSER, "--filter is only valid for subscriber entity");
+                        print_help(EXIT_FAILURE);
                     }
                     else
                     {
@@ -284,6 +302,34 @@ public:
                     print_help(EXIT_FAILURE);
                 }
             }
+            else if (arg == "--filter-expression")
+            {
+                if (i + 1 < argc)
+                {
+                    if (config.entity == CLIParser::EntityKind::SUBSCRIBER)
+                    {
+                        std::string filter_expression = argv[++i];
+                        config.sub_config.filter_expression = filter_expression;
+
+                    }
+                    else if (config.entity == CLIParser::EntityKind::PUBLISHER)
+                    {
+                        EPROSIMA_LOG_ERROR(CLI_PARSER, "--filter is only valid for subscriber entity");
+                        print_help(EXIT_FAILURE);
+                    }
+                    else
+                    {
+                        EPROSIMA_LOG_ERROR(CLI_PARSER, "entity not specified for --filter argument");
+                        print_help(EXIT_FAILURE);
+                    }
+                }
+                else
+                {
+                    EPROSIMA_LOG_ERROR(CLI_PARSER, "missing argument for " + arg);
+                    print_help(EXIT_FAILURE);
+                }
+            }
+
             else if (arg == "-lb" || arg == "--lower-bound")
             {
                 if (i + 1 < argc)

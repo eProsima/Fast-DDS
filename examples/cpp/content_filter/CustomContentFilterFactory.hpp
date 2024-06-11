@@ -35,7 +35,7 @@ public:
             eprosima::fastdds::dds::IContentFilter*& filter_instance) override
     {
         // Check the ContentFilteredTopic should be created by this factory.
-        if (0 != strcmp(filter_class_name, "MY_CUSTOM_FILTER") ||
+        if (0 != strcmp(filter_class_name, "CUSTOM_FILTER") ||
                 // Check the ContentFilteredTopic is created for the unique type this Custom Filter supports.
                 0 != strcmp(type_name, "HelloWorld") ||
                 // Check that the two mandatory filter parameters were set.

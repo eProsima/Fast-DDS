@@ -36,7 +36,7 @@
 #include "Application.hpp"
 #include "CLIParser.hpp"
 #include "HelloWorldPubSubTypes.h"
-#include "MyCustomFilterFactory.hpp"
+#include "CustomContentFilterFactory.hpp"
 
 using namespace eprosima::fastdds::dds;
 namespace eprosima {
@@ -93,7 +93,7 @@ private:
     ContentFilteredTopic* filter_topic_;
 
     //! Custom filter factory
-    MyCustomFilterFactory filter_factory;
+    CustomContentFilterFactory filter_factory;
 
     std::atomic<bool> stop_;
 
