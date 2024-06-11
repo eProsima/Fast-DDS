@@ -58,6 +58,11 @@ concurrency:
 
 jobs:
   sanitizers-ci:
+    if: ${{ (
+              !contains(github.event.pull_request.labels.*.name, 'skip-ci') &&
+              !contains(github.event.pull_request.labels.*.name, 'no-test') &&
+              !contains(github.event.pull_request.labels.*.name, 'conflicts')
+            ) }}
     uses: ./.github/workflows/reusable-sanitizers-ci.yml
     with:
       label: ${{ inputs.label || 'fastdds-sanitizers-ci' }}

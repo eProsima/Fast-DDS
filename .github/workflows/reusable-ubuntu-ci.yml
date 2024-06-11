@@ -35,10 +35,6 @@ defaults:
 jobs:
   fastdds_build:
     runs-on: ${{ inputs.os-image }}
-    if: ${{ (
-          !contains(github.event.pull_request.labels.*.name, 'skip-ci') &&
-          !contains(github.event.pull_request.labels.*.name, 'conflicts')
-        ) }}
     strategy:
       fail-fast: false
       matrix:
@@ -120,11 +116,7 @@ jobs:
   fastdds_build_test:
     needs: fastdds_build
     runs-on: ${{ inputs.os-image }}
-    if: ${{ (
-          !contains(github.event.pull_request.labels.*.name, 'skip-ci') &&
-          !contains(github.event.pull_request.labels.*.name, 'no-test') &&
-          !contains(github.event.pull_request.labels.*.name, 'conflicts')
-        ) }}
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') }}
     strategy:
       fail-fast: false
       matrix:
@@ -196,7 +188,7 @@ jobs:
       - name: Colcon test
         id: test
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') }}
-        uses: eProsima/eProsima-CI/multiplatform/colcon_test@v0
+        uses: eProsima/eProsima-CI/multiplatform/colcon_test@feature/colcon_test_metas
         with:
           colcon_test_args: ${{ inputs.colcon-args }}
           colcon_test_args_default: --event-handlers=console_direct+
@@ -208,7 +200,7 @@ jobs:
 
       - name: Fast DDS test summary
         uses: eProsima/eProsima-CI/multiplatform/junit_summary@v0
-        if: ${{ !cancelled() && !contains(github.event.pull_request.labels.*.name, 'no-test') }}
+        if: ${{ !cancelled() }}
         with:
           junit_reports_dir: "${{ steps.test.outputs.ctest_results_path }}"
           print_summary: 'True'
@@ -219,10 +211,6 @@ jobs:
   fastdds_python_build:
     needs: fastdds_build
     runs-on: ${{ inputs.os-image }}
-    if: ${{ (
-          !contains(github.event.pull_request.labels.*.name, 'skip-ci') &&
-          !contains(github.event.pull_request.labels.*.name, 'conflicts')
-        ) }}
     strategy:
       fail-fast: false
       matrix:
@@ -295,11 +283,6 @@ jobs:
   fastdds_python_build_test:
     needs: fastdds_python_build
     runs-on: ${{ inputs.os-image }}
-    if: ${{ (
-          !contains(github.event.pull_request.labels.*.name, 'skip-ci') &&
-          !contains(github.event.pull_request.labels.*.name, 'no-test') &&
-          !contains(github.event.pull_request.labels.*.name, 'conflicts')
-        ) }}
     strategy:
       fail-fast: false
       matrix:
@@ -383,10 +366,6 @@ jobs:
   fastdds_docs_build_test:
     needs: fastdds_python_build
     runs-on: ${{ inputs.os-image }}
-    if: ${{ (
-          !contains(github.event.pull_request.labels.*.name, 'skip-ci') &&
-          !contains(github.event.pull_request.labels.*.name, 'conflicts')
-        ) }}
     strategy:
       fail-fast: false
       matrix:
@@ -489,10 +468,6 @@ jobs:
 
   fastdds_shapesdemo_build:
     needs: fastdds_build
-    if: ${{ (
-          !contains(github.event.pull_request.labels.*.name, 'skip-ci') &&
-          !contains(github.event.pull_request.labels.*.name, 'conflicts')
-        ) }}
     runs-on: ${{ inputs.os-image }}
     strategy:
       fail-fast: false
@@ -571,11 +546,6 @@ jobs:
 
   fastdds_discovery_server_build_test:
     needs: fastdds_build
-
-    if: ${{ (
-          !contains(github.event.pull_request.labels.*.name, 'skip-ci') &&
-          !contains(github.event.pull_request.labels.*.name, 'conflicts')
-        ) }}
     runs-on: ${{ inputs.os-image }}
     strategy:
       fail-fast: false

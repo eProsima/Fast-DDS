@@ -38,6 +38,11 @@ concurrency:
 
 jobs:
   ubuntu-ci:
+
+    if: ${{ (
+              !contains(github.event.pull_request.labels.*.name, 'skip-ci') &&
+              !contains(github.event.pull_request.labels.*.name, 'conflicts')
+            ) }}
     uses: ./.github/workflows/reusable-ubuntu-ci.yml
     with:
       os-image: 'ubuntu-22.04'

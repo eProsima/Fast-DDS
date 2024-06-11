@@ -52,12 +52,7 @@ defaults:
 
 jobs:
   asan_fastdds_build:
-    if: ${{ (
-          !contains(github.event.pull_request.labels.*.name, 'skip-ci') &&
-          !contains(github.event.pull_request.labels.*.name, 'no-test') &&
-          !contains(github.event.pull_request.labels.*.name, 'conflicts') &&
-          (inputs.run_asan_fastdds == true)
-        ) }}
+    if: ${{ inputs.run_asan_fastdds }}
     runs-on: ubuntu-22.04
     steps:
       - name: Add ci-pending label if PR
@@ -136,12 +131,6 @@ jobs:
 
   asan_fastdds_test:
     needs: asan_fastdds_build
-    if: ${{ (
-          !contains(github.event.pull_request.labels.*.name, 'skip-ci') &&
-          !contains(github.event.pull_request.labels.*.name, 'no-test') &&
-          !contains(github.event.pull_request.labels.*.name, 'conflicts') &&
-          (inputs.run_asan_fastdds == true)
-        ) }}
     runs-on: ubuntu-22.04
     steps:
       - name: Download build artifacts
@@ -232,12 +221,7 @@ jobs:
             --sanitizer asan
 
   asan_discovery_server_test:
-    if: ${{ (
-          !contains(github.event.pull_request.labels.*.name, 'skip-ci') &&
-          !contains(github.event.pull_request.labels.*.name, 'no-test') &&
-          !contains(github.event.pull_request.labels.*.name, 'conflicts') &&
-          (inputs.run_asan_discovery_server == true)
-        ) }}
+    if: ${{ inputs.run_asan_discovery_server }}
     needs: asan_fastdds_build
     runs-on: ubuntu-22.04
     steps:
@@ -331,12 +315,7 @@ jobs:
             --sanitizer=asan
 
   tsan_fastdds_test:
-    if: ${{ (
-          !contains(github.event.pull_request.labels.*.name, 'skip-ci') &&
-          !contains(github.event.pull_request.labels.*.name, 'no-test') &&
-          !contains(github.event.pull_request.labels.*.name, 'conflicts') &&
-          (inputs.run_tsan_fastdds == true)
-        ) }}
+    if: ${{ inputs.run_tsan_fastdds }}
     runs-on: ubuntu-22.04
     env:
       TSAN_OPTIONS: second_deadlock_stack=1 history_size=7 memory_limit_mb=5000

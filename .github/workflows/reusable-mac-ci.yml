@@ -37,10 +37,6 @@ jobs:
     # so we'll use that one for now, as clang 15 is the supported compiler for Fast DDS in macOS.
     # (see https://github.com/eProsima/Fast-DDS/blob/master/PLATFORM_SUPPORT.md#compilers)
     runs-on: macos-13
-    if: ${{ (
-          !contains(github.event.pull_request.labels.*.name, 'skip-ci') &&
-          !contains(github.event.pull_request.labels.*.name, 'conflicts')
-        ) }}
     strategy:
       fail-fast: false
       matrix:
