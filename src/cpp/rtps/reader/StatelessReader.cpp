@@ -625,7 +625,15 @@ bool StatelessReader::process_data_msg(
                 }
                 datasharing_pool->get_datasharing_change(change->serializedPayload, *change_to_add);
             }
-            else if (!payload_pool_->get_payload(change->serializedPayload, change_to_add->serializedPayload))
+            else if (payload_pool_->get_payload(change->serializedPayload, change_to_add->serializedPayload))
+            {
+                if (change->serializedPayload.payload_owner == nullptr)
+                {
+                    change_to_add->serializedPayload.payload_owner->get_payload(change_to_add->serializedPayload,
+                            change->serializedPayload);
+                }
+            }
+            else
             {
                 EPROSIMA_LOG_WARNING(RTPS_MSG_IN, IDSTRING "Problem copying CacheChange, received data is: "
                         << change->serializedPayload.length << " bytes and max size in reader "

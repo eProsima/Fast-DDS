@@ -81,7 +81,7 @@ public:
     }
 
     bool get_payload(
-            SerializedPayload_t& data,
+            const SerializedPayload_t& data,
             SerializedPayload_t& payload) override
     {
         if (data.payload_owner == this)
@@ -100,12 +100,6 @@ public:
                 {
                     release_payload(payload);
                     return false;
-                }
-
-                if (data.payload_owner == nullptr)
-                {
-                    data.payload_owner = this;
-                    data.data = payload.data;
                 }
 
                 return true;

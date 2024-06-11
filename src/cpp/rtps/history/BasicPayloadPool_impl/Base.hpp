@@ -30,7 +30,7 @@ public:
     }
 
     bool get_payload(
-            SerializedPayload_t& data,
+            const SerializedPayload_t& data,
             SerializedPayload_t& payload) override
     {
         if (payload.copy(&data, false))

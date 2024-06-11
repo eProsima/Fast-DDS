@@ -51,7 +51,7 @@ public:
     }
 
     bool get_payload(
-            eprosima::fastrtps::rtps::SerializedPayload_t& data,
+            const eprosima::fastrtps::rtps::SerializedPayload_t& data,
             eprosima::fastrtps::rtps::SerializedPayload_t& payload)
     {
         // Reserve new memory for the payload buffer

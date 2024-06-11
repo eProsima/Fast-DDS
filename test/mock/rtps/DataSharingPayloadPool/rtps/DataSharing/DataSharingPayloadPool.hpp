@@ -48,17 +48,13 @@ public:
     }
 
     bool get_payload(
-            SerializedPayload_t& data,
+            const SerializedPayload_t& data,
             SerializedPayload_t& payload) override
     {
         payload.data = data.data;
         payload.max_size = data.max_size;
         payload.length = data.length;
         payload.payload_owner = this;
-        if (data.payload_owner == nullptr)
-        {
-            data.payload_owner = this;
-        }
         return true;
     }
 

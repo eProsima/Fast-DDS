@@ -90,7 +90,7 @@ bool TopicPayloadPool::do_get_payload(
 }
 
 bool TopicPayloadPool::get_payload(
-        SerializedPayload_t& data,
+        const SerializedPayload_t& data,
         SerializedPayload_t& payload)
 {
     if (data.payload_owner == this)
@@ -111,13 +111,6 @@ bool TopicPayloadPool::get_payload(
             {
                 release_payload(payload);
                 return false;
-            }
-
-            if (data.payload_owner == nullptr)
-            {
-                data.payload_owner = this;
-                data.data = payload.data;
-                PayloadNode::reference(data.data);
             }
 
             return true;

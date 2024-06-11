@@ -72,13 +72,9 @@ public:
      *
      * @note @c data is received as reference to accommodate the case where several readers
      * receive the same payload. If the payload has no owner, it means it is allocated on the stack of a
-     * reception thread, and a copy should be performed. The pool may decide in that case to point @c data.data
-     * to the new copy and take ownership of the payload. In that case, when the reception thread is done with
-     * the payload (after all readers have been informed of the received data), method @c release_payload will be
-     * called to indicate that the reception thread is not using the payload anymore.
-     *
-     * @warning @c data fields can only be changed when @c payload_owner contained in @c data is @c nullptr. If a
-     * value different from @c nullptr is received all fields in @c data should be left unchanged.
+     * reception thread, and a copy should be performed. If the ownership of @c data needs to be changed,
+     * a consecutive call to this method needs to be called with the arguments swapped, leveraging the
+     * post-condition of this method which ensures that @c payload.payload_owner points to @c this.
      *
      * @post
      *     @li Field @c payload.payload_owner equals this
@@ -88,7 +84,7 @@ public:
      *     @li Content of @c payload.data is the same as @c data.data
      */
     virtual bool get_payload(
-            SerializedPayload_t& data,
+            const SerializedPayload_t& data,
             SerializedPayload_t& payload) = 0;
 
     /**

@@ -59,7 +59,7 @@ public:
             SerializedPayload_t& payload) override;
 
     bool get_payload(
-            SerializedPayload_t& data,
+            const SerializedPayload_t& data,
             SerializedPayload_t& payload) override;
 
     bool release_payload(
