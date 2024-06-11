@@ -30,6 +30,9 @@
 #include <fastdds/dds/xtypes/dynamic_types/TypeDescriptor.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/Types.hpp>
 
+constexpr const char* var_basic_short_name = "var_basic_short";
+constexpr const char* basic_annotations_member_name = "basic_annotations_member";
+
 namespace eprosima {
 namespace fastdds {
 namespace dds {
@@ -221,6 +224,57 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_EmptyAnnotatedStruct)
 
     xtypes::TypeIdentifierPair static_type_ids;
     register_EmptyAnnotatedStruct_type_identifier(static_type_ids);
+    check_typeobject_registry(struct_type, static_type_ids);
+
+    EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
+}
+
+TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BasicAnnotationsTest)
+{
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    type_descriptor->kind(TK_STRUCTURE);
+    type_descriptor->name("BasicAnnotationsStruct");
+    DynamicTypeBuilder::_ref_type type_builder {factory->create_type(type_descriptor)};
+    ASSERT_TRUE(type_builder);
+
+    AnnotationDescriptor::_ref_type annotation_descriptor {traits<AnnotationDescriptor>::make_shared()};
+    TypeDescriptor::_ref_type annotation_type {traits<TypeDescriptor>::make_shared()};
+    annotation_type->kind(TK_ANNOTATION);
+    annotation_type->name("BasicAnnotationsTest");
+    DynamicTypeBuilder::_ref_type annotation_builder {factory->create_type(annotation_type)};
+
+    MemberDescriptor::_ref_type annotation_parameter {traits<MemberDescriptor>::make_shared()};
+    annotation_parameter->name(var_basic_short_name);
+    annotation_parameter->type(factory->get_primitive_type(TK_INT16));
+    annotation_builder->add_member(annotation_parameter);
+
+    annotation_descriptor->type(annotation_builder->build());
+    annotation_descriptor->set_value(var_basic_short_name, std::to_string(1));
+
+    type_builder->apply_annotation(annotation_descriptor);
+
+    MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
+    member_descriptor->name(basic_annotations_member_name);
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT16));
+    type_builder->add_member(member_descriptor);
+    type_builder->apply_annotation_to_member(0, annotation_descriptor);
+
+    DynamicType::_ref_type struct_type {type_builder->build()};
+
+    DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
+    ASSERT_TRUE(data);
+
+    for (auto encoding : encodings)
+    {
+        BasicAnnotationsStruct struct_data;
+        TypeSupport static_pubsubType {new BasicAnnotationsStructPubSubType()};
+        check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
+    }
+
+    xtypes::TypeIdentifierPair static_type_ids;
+    register_BasicAnnotationsStruct_type_identifier(static_type_ids);
     check_typeobject_registry(struct_type, static_type_ids);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);

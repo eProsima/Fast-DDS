@@ -34,6 +34,14 @@ ReturnCode_t AnnotationDescriptorImpl::get_value(
         ObjectName& value,
         const ObjectName& key) noexcept
 {
+    const AnnotationDescriptorImpl& myself = *this;
+    return myself.get_value(value, key);
+}
+
+ReturnCode_t AnnotationDescriptorImpl::get_value(
+        ObjectName& value,
+        const ObjectName& key) const noexcept
+{
     auto it = value_.find(key);
 
     if (it != value_.end())
@@ -47,6 +55,13 @@ ReturnCode_t AnnotationDescriptorImpl::get_value(
 
 ReturnCode_t AnnotationDescriptorImpl::get_all_value(
         Parameters& value) noexcept
+{
+    const AnnotationDescriptorImpl& myself = *this;
+    return myself.get_all_value(value);
+}
+
+ReturnCode_t AnnotationDescriptorImpl::get_all_value(
+        Parameters& value) const noexcept
 {
     value = value_;
     return RETCODE_OK;

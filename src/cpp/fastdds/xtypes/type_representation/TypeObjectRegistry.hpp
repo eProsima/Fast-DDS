@@ -35,6 +35,7 @@
 #include <fastdds/dds/xtypes/type_representation/TypeObjectUtils.hpp>
 #include <fastdds/fastdds_dll.hpp>
 
+#include <fastdds/xtypes/dynamic_types/AnnotationDescriptorImpl.hpp>
 #include <fastdds/xtypes/dynamic_types/DynamicTypeImpl.hpp>
 #include <fastdds/xtypes/dynamic_types/MemberDescriptorImpl.hpp>
 #include <fastdds/xtypes/type_representation/TypeIdentifierWithSizeHashSpecialization.h>
@@ -957,7 +958,7 @@ protected:
      * @return ReturnCode_t RETCODE_OK always.
      */
     ReturnCode_t  apply_custom_annotations(
-            const DynamicType::_ref_type& dynamic_type,
+            const std::vector<AnnotationDescriptorImpl>& annotations,
             eprosima::fastcdr::optional<AppliedAnnotationSeq>& ann_custom);
 
     /**
@@ -1003,7 +1004,7 @@ protected:
      * @return ReturnCode_t RETCODE_OK always.
      */
     ReturnCode_t complete_member_detail(
-            const MemberDescriptorImpl& member_descriptor,
+            const traits<DynamicTypeMemberImpl>::ref_type& member,
             CompleteMemberDetail& member_detail);
 
     /**

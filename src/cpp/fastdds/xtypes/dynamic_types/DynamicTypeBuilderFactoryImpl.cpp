@@ -1422,8 +1422,23 @@ bool DynamicTypeBuilderFactoryImpl::apply_custom_annotations(
             {
                 for (const xtypes::AppliedAnnotationParameter& parameter : annotation.param_seq().value())
                 {
-                    annotation_descriptor->set_value(get_string_from_name_hash(parameter.paramname_hash()),
-                            get_annotation_parameter_value(parameter.value()));
+                    ObjectName paramname = get_string_from_name_hash(parameter.paramname_hash());
+                    // Search the real name of annotation parameter.
+                    if (xtypes::EK_COMPLETE == annotation_type_object._d())
+                    {
+                        for (auto member : annotation_type_object.complete().annotation_type().member_seq())
+                        {
+                            xtypes::NameHash member_name_hash {xtypes::TypeObjectUtils::name_hash(
+                                                                   member.name().to_string())};
+
+                            if (parameter.paramname_hash() == member_name_hash)
+                            {
+                                paramname = member.name();
+                                break;
+                            }
+                        }
+                    }
+                    annotation_descriptor->set_value(paramname, get_annotation_parameter_value(parameter.value()));
                 }
             }
             if (member_id != MEMBER_ID_INVALID &&

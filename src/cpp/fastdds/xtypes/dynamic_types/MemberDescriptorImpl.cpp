@@ -24,6 +24,49 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
+bool default_value_compare(
+        const traits<DynamicType>::ref_type type,
+        const std::string& d1,
+        const std::string& d2)
+{
+    bool ret_value {false};
+    if (d1 == d2)
+    {
+        ret_value = true;
+    }
+    else
+    {
+        switch (type->get_kind())
+        {
+            case TK_BOOLEAN:
+                ret_value = (d1.empty() && 0 == d2.compare(CONST_FALSE)) ||
+                        (0 == d1.compare(CONST_FALSE) && d2.empty());
+                break;
+            case TK_BYTE:
+            case TK_INT8:
+            case TK_UINT8:
+            case TK_INT16:
+            case TK_UINT16:
+            case TK_INT32:
+            case TK_UINT32:
+            case TK_INT64:
+            case TK_UINT64:
+            case TK_FLOAT32:
+            case TK_FLOAT64:
+            case TK_FLOAT128:
+            case TK_CHAR8:
+            case TK_CHAR16:
+            case TK_ENUM:
+                ret_value = (d1.empty() && 0 == d2.compare("0")) ||
+                        (0 == d1.compare("0") && d2.empty());
+                break;
+            default:
+                break;
+        }
+    }
+    return ret_value;
+}
+
 template<>
 traits<MemberDescriptor>::ref_type traits<MemberDescriptor>::make_shared()
 {
@@ -73,7 +116,7 @@ bool MemberDescriptorImpl::equals(
     return name_ == descriptor.name_ &&
            id_ == descriptor.id_ &&
            (type_ && type_->equals(descriptor.type_)) &&
-           default_value_ == descriptor.default_value_ &&
+           default_value_compare(type_, default_value_, descriptor.default_value_) &&
            index_ == descriptor.index_ &&
            equal_labels(descriptor.label_) &&
            try_construct_kind_ == descriptor.try_construct_kind_ &&

@@ -35,6 +35,7 @@
 #include <fastdds/dds/xtypes/type_representation/TypeObjectUtils.hpp>
 #include <fastdds/utils/md5.h>
 
+#include <fastdds/xtypes/dynamic_types/AnnotationDescriptorImpl.hpp>
 #include <fastdds/xtypes/dynamic_types/DynamicTypeImpl.hpp>
 #include <fastdds/xtypes/dynamic_types/TypeDescriptorImpl.hpp>
 #include <fastdds/xtypes/dynamic_types/TypeValueConverter.hpp>
@@ -1635,7 +1636,7 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_struct_dynamic_type(
                                            TypeObjectUtils::retrieve_complete_type_identifier(member_type_ids, ec))};
 
         CompleteMemberDetail member_detail;
-        complete_member_detail(member_descriptor, member_detail);
+        complete_member_detail(*member, member_detail);
         CompleteStructMember struct_member {TypeObjectUtils::build_complete_struct_member(common, member_detail)};
         TypeObjectUtils::add_complete_struct_member(member_seq, struct_member);
     }
@@ -1681,7 +1682,8 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_union_dynamic_type(
     eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> ann_builtin;
     apply_verbatim_annotation(type_descriptor.discriminator_type(), ann_builtin);
     eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom;
-    apply_custom_annotations(type_descriptor.discriminator_type(), ann_custom);
+    apply_custom_annotations(traits<DynamicType>::narrow<DynamicTypeImpl>(
+                type_descriptor.discriminator_type())->get_annotations(), ann_custom);
     CompleteDiscriminatorMember discriminator {TypeObjectUtils::build_complete_discriminator_member(
                                                    common_discriminator, ann_builtin, ann_custom)};
 
@@ -1709,7 +1711,7 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_union_dynamic_type(
                                               ec), labels)};
 
             CompleteMemberDetail member_detail;
-            complete_member_detail(member_descriptor, member_detail);
+            complete_member_detail(member, member_detail);
             CompleteUnionMember union_member {TypeObjectUtils::build_complete_union_member(common, member_detail)};
             TypeObjectUtils::add_complete_union_member(member_seq, union_member);
         }
@@ -1748,7 +1750,7 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_bitset_dynamic_type(
                                        static_cast<uint8_t>(type_descriptor.bound().at(member_descriptor.index())),
                                        type_kind(member_descriptor.type()->get_kind()))};
         CompleteMemberDetail member_detail;
-        complete_member_detail(member_descriptor, member_detail);
+        complete_member_detail(bitfield, member_detail);
         CompleteBitfield bitfield_member {TypeObjectUtils::build_complete_bitfield(common, member_detail)};
         TypeObjectUtils::add_complete_bitfield(field_seq, bitfield_member);
     }
@@ -1790,7 +1792,8 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_sequence_dynamic_type(
                                                         ec))};
 
     eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom;
-    apply_custom_annotations(type_descriptor.element_type(), ann_custom);
+    apply_custom_annotations(traits<DynamicType>::narrow<DynamicTypeImpl>(
+                type_descriptor.element_type())->get_annotations(), ann_custom);
 
     CompleteElementDetail detail_element {TypeObjectUtils::build_complete_element_detail(
                                               eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
@@ -1832,7 +1835,8 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_array_dynamic_type(
                                                         ec))};
 
     eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom;
-    apply_custom_annotations(type_descriptor.element_type(), ann_custom);
+    apply_custom_annotations(traits<DynamicType>::narrow<DynamicTypeImpl>(
+                type_descriptor.element_type())->get_annotations(), ann_custom);
     CompleteElementDetail detail_element {TypeObjectUtils::build_complete_element_detail(
                                               eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
                                               ann_custom)};
@@ -1875,7 +1879,8 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_map_dynamic_type(
                                                         ec))};
 
     eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom;
-    apply_custom_annotations(type_descriptor.element_type(), ann_custom);
+    apply_custom_annotations(traits<DynamicType>::narrow<DynamicTypeImpl>(
+                type_descriptor.element_type())->get_annotations(), ann_custom);
     CompleteElementDetail detail_element {TypeObjectUtils::build_complete_element_detail(
                                               eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
                                               ann_custom)};
@@ -1888,7 +1893,8 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_map_dynamic_type(
                                                     key_type_ids,
                                                     ec))};
     eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_key;
-    apply_custom_annotations(type_descriptor.key_element_type(), ann_custom_key);
+    apply_custom_annotations(traits<DynamicType>::narrow<DynamicTypeImpl>(
+                type_descriptor.key_element_type())->get_annotations(), ann_custom_key);
     CompleteElementDetail detail_key {TypeObjectUtils::build_complete_element_detail(
                                           eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
                                           ann_custom_key)};
@@ -1946,7 +1952,7 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_enum_dynamic_type(
         CommonEnumeratedLiteral common_literal {TypeObjectUtils::build_common_enumerated_literal(
                                                     member_descriptor.index(), flags)};
         CompleteMemberDetail member_detail;
-        complete_member_detail(member_descriptor, member_detail);
+        complete_member_detail(literal, member_detail);
         CompleteEnumeratedLiteral literal_member {TypeObjectUtils::build_complete_enumerated_literal(common_literal,
                                                           member_detail)};
         TypeObjectUtils::add_complete_enumerated_literal(literal_seq, literal_member);
@@ -1985,7 +1991,7 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_bitmask_dynamic_type(
         CommonBitflag common_bitflag {TypeObjectUtils::build_common_bitflag(
                                           static_cast<uint16_t>(member_descriptor.id()), 0)};
         CompleteMemberDetail member_detail;
-        complete_member_detail(member_descriptor, member_detail);
+        complete_member_detail(bitflag, member_detail);
         CompleteBitflag bitflag_member {TypeObjectUtils::build_complete_bitflag(common_bitflag, member_detail)};
         TypeObjectUtils::add_complete_bitflag(flag_seq, bitflag_member);
     }
@@ -2214,55 +2220,49 @@ ReturnCode_t TypeObjectRegistry::typeidentifier_w_wstring_dynamic_type(
 }
 
 ReturnCode_t TypeObjectRegistry::apply_custom_annotations(
-        const DynamicType::_ref_type& dynamic_type,
+        const std::vector<AnnotationDescriptorImpl>& annotations,
         eprosima::fastcdr::optional<AppliedAnnotationSeq>& ann_custom)
 {
     ReturnCode_t ret_code {RETCODE_OK};
     AppliedAnnotationSeq tmp_ann_custom;
-    if (0 != dynamic_type->get_annotation_count())
+    for (auto& annotation_descriptor : annotations)
     {
-        AnnotationDescriptor::_ref_type annotation_descriptor {traits<AnnotationDescriptor>::make_shared()};
-        for (uint32_t i {0}; i < dynamic_type->get_annotation_count(); ++i)
+        TypeIdentifierPair annotation_typeids;
+        register_typeobject_w_annotation_dynamic_type(traits<DynamicType>::narrow<DynamicTypeImpl>(
+                    annotation_descriptor.type()), annotation_typeids);
+
+        Parameters parameter_seq;
+        annotation_descriptor.get_all_value(parameter_seq); // Always returns RETCODE_OK
+
+        eprosima::fastcdr::optional<AppliedAnnotationParameterSeq> param_seq;
+        AppliedAnnotationParameterSeq tmp_param_seq;
+        for (auto param = parameter_seq.begin(); param != parameter_seq.end(); ++param)
         {
-            dynamic_type->get_annotation(annotation_descriptor, i);
+            NameHash paramname_hash {TypeObjectUtils::name_hash(param->first.to_string())};
 
-            TypeIdentifierPair annotation_typeids;
-            register_typeobject_w_annotation_dynamic_type(traits<DynamicType>::narrow<DynamicTypeImpl>(
-                        annotation_descriptor->type()), annotation_typeids);
-
-            Parameters parameter_seq;
-            annotation_descriptor->get_all_value(parameter_seq); // Always returns RETCODE_OK
-
-            eprosima::fastcdr::optional<AppliedAnnotationParameterSeq> param_seq;
-            AppliedAnnotationParameterSeq tmp_param_seq;
-            for (auto param = parameter_seq.begin(); param != parameter_seq.end(); ++param)
-            {
-                NameHash paramname_hash {TypeObjectUtils::name_hash(param->first.to_string())};
-
-                AnnotationParameterValue param_value;
-                DynamicTypeMember::_ref_type param_member;
-                // DynamicTypeBuilder::apply_annotation checks annotation consistency.
-                ret_code = annotation_descriptor->type()->get_member_by_name(param_member, param->first);
-                assert(RETCODE_OK == ret_code);
-                MemberDescriptor::_ref_type param_descriptor {traits<MemberDescriptor>::make_shared()};
-                param_member->get_descriptor(param_descriptor);
-                set_annotation_parameter_value(param_descriptor->type(), param->second.to_string(),
-                        param_value);
-                AppliedAnnotationParameter parameter {TypeObjectUtils::build_applied_annotation_parameter(
-                                                          paramname_hash, param_value)};
-                TypeObjectUtils::add_applied_annotation_parameter(tmp_param_seq, parameter);
-            }
-            if (!tmp_param_seq.empty())
-            {
-                param_seq = tmp_param_seq;
-            }
-            bool ec {false};
-            AppliedAnnotation applied_annotation {TypeObjectUtils::build_applied_annotation(TypeObjectUtils::retrieve_complete_type_identifier(
-                                                              annotation_typeids,
-                                                              ec),
-                                                          param_seq)};
-            TypeObjectUtils::add_applied_annotation(tmp_ann_custom, applied_annotation);
+            AnnotationParameterValue param_value;
+            DynamicTypeMember::_ref_type param_member;
+            // DynamicTypeBuilder::apply_annotation checks annotation consistency.
+            ret_code = annotation_descriptor.type()->get_member_by_name(param_member, param->first);
+            assert(RETCODE_OK == ret_code);
+            MemberDescriptor::_ref_type param_descriptor {traits<MemberDescriptor>::make_shared()};
+            param_member->get_descriptor(param_descriptor);
+            set_annotation_parameter_value(param_descriptor->type(), param->second.to_string(),
+                    param_value);
+            AppliedAnnotationParameter parameter {TypeObjectUtils::build_applied_annotation_parameter(
+                                                      paramname_hash, param_value)};
+            TypeObjectUtils::add_applied_annotation_parameter(tmp_param_seq, parameter);
         }
+        if (!tmp_param_seq.empty())
+        {
+            param_seq = tmp_param_seq;
+        }
+        bool ec {false};
+        AppliedAnnotation applied_annotation {TypeObjectUtils::build_applied_annotation(TypeObjectUtils::retrieve_complete_type_identifier(
+                                                          annotation_typeids,
+                                                          ec),
+                                                      param_seq)};
+        TypeObjectUtils::add_applied_annotation(tmp_ann_custom, applied_annotation);
     }
     if (!tmp_ann_custom.empty())
     {
@@ -2377,7 +2377,7 @@ ReturnCode_t TypeObjectRegistry::complete_type_detail(
     apply_verbatim_annotation(dynamic_type, ann_builtin);
 
     eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom;
-    apply_custom_annotations(dynamic_type, ann_custom);
+    apply_custom_annotations(dynamic_type->get_annotations(), ann_custom);
 
     detail = TypeObjectUtils::build_complete_type_detail(ann_builtin, ann_custom,
                     dynamic_type->get_name());
@@ -2386,16 +2386,16 @@ ReturnCode_t TypeObjectRegistry::complete_type_detail(
 }
 
 ReturnCode_t TypeObjectRegistry::complete_member_detail(
-        const MemberDescriptorImpl& member_descriptor,
+        const traits<DynamicTypeMemberImpl>::ref_type& member,
         CompleteMemberDetail& member_detail)
 {
     // @unit, @max, @min, @range & @hashid builtin annotations are not applied with dynamic language binding
     eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin; // Empty
 
     eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom;
-    apply_custom_annotations(member_descriptor.type(), ann_custom);
+    apply_custom_annotations(member->get_annotations(), ann_custom);
 
-    member_detail = TypeObjectUtils::build_complete_member_detail(member_descriptor.name(),
+    member_detail = TypeObjectUtils::build_complete_member_detail(member->get_descriptor().name(),
                     member_ann_builtin, ann_custom);
     return RETCODE_OK;
 }
