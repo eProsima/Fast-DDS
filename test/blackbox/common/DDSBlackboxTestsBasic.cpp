@@ -797,7 +797,8 @@ TEST(DDSBasic, endpoint_custom_payload_pools)
 
     std::this_thread::sleep_for(std::chrono::seconds(2));
 
-    ASSERT_EQ(reader_payload_pool->requested_payload_count, 1u);
+    // Two consecutive calls to get_payload are expected
+    ASSERT_EQ(reader_payload_pool->requested_payload_count, 2u);
     ASSERT_EQ(writer_payload_pool->requested_payload_count, 1u);
 
     participant->delete_contained_entities();

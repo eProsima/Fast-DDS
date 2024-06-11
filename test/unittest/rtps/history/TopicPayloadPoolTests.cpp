@@ -346,16 +346,13 @@ void do_dynamic_topic_payload_pool_zero_size_test(
     change_to_add->writerGUID = GUID_t(GuidPrefix_t(), 1);
     change_to_add->sequenceNumber = SequenceNumber_t(0, 1);
 
-    //! Retrieve owner (nullptr)
-    IPayloadPool* payload_owner = change->serializedPayload.payload_owner;
-
     //! get the payload of size 0.
     //! Allocate it on the pool
     //! Set change_to_add owner
     ASSERT_TRUE(pool->get_payload(change->serializedPayload, change_to_add->serializedPayload));
 
     //! Now set the payload ownership on the source change
-    change->serializedPayload.payload_owner = payload_owner;
+    pool->get_payload(change_to_add->serializedPayload, change->serializedPayload);
 
     //! Release the payload from the source change
     pool->release_payload(change->serializedPayload);
