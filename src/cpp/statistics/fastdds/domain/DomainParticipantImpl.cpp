@@ -222,88 +222,12 @@ void DomainParticipantImpl::disable()
     efd::DomainParticipantImpl::disable();
 }
 
-<<<<<<< HEAD
-=======
 ReturnCode_t DomainParticipantImpl::delete_contained_entities()
 {
     delete_statistics_builtin_entities();
     return efd::DomainParticipantImpl::delete_contained_entities();
 }
 
-ReturnCode_t DomainParticipantImpl::enable_monitor_service()
-{
-    ReturnCode_t ret = efd::RETCODE_OK;
-
-    if (!rtps_participant_->is_monitor_service_created())
-    {
-        status_observer_.store(rtps_participant_->create_monitor_service(*this));
-    }
-
-    if (!rtps_participant_->enable_monitor_service() ||
-            nullptr == status_observer_)
-    {
-        ret = efd::RETCODE_ERROR;
-    }
-
-    return ret;
-}
-
-ReturnCode_t DomainParticipantImpl::disable_monitor_service()
-{
-    ReturnCode_t ret = efd::RETCODE_OK;
-
-    if (!rtps_participant_->is_monitor_service_created() ||
-            !rtps_participant_->disable_monitor_service())
-    {
-        ret = efd::RETCODE_NOT_ENABLED;
-    }
-
-    return ret;
-}
-
-ReturnCode_t DomainParticipantImpl::fill_discovery_data_from_cdr_message(
-        fastrtps::rtps::ParticipantProxyData& data,
-        fastdds::statistics::MonitorServiceStatusData& msg)
-{
-    ReturnCode_t ret{efd::RETCODE_OK};
-
-    if (!get_rtps_participant()->fill_discovery_data_from_cdr_message(data, msg))
-    {
-        ret = efd::RETCODE_ERROR;
-    }
-
-    return ret;
-}
-
-ReturnCode_t DomainParticipantImpl::fill_discovery_data_from_cdr_message(
-        fastrtps::rtps::WriterProxyData& data,
-        fastdds::statistics::MonitorServiceStatusData& msg)
-{
-    ReturnCode_t ret{efd::RETCODE_OK};
-
-    if (!get_rtps_participant()->fill_discovery_data_from_cdr_message(data, msg))
-    {
-        ret = efd::RETCODE_ERROR;
-    }
-
-    return ret;
-}
-
-ReturnCode_t DomainParticipantImpl::fill_discovery_data_from_cdr_message(
-        fastrtps::rtps::ReaderProxyData& data,
-        fastdds::statistics::MonitorServiceStatusData& msg)
-{
-    ReturnCode_t ret{efd::RETCODE_OK};
-
-    if (!get_rtps_participant()->fill_discovery_data_from_cdr_message(data, msg))
-    {
-        ret = efd::RETCODE_ERROR;
-    }
-
-    return ret;
-}
-
->>>>>>> 0d62335cc (Properly delete builtin statistics writers upon `delete_contained_entities()`  (#4891))
 efd::PublisherImpl* DomainParticipantImpl::create_publisher_impl(
         const efd::PublisherQos& qos,
         efd::PublisherListener* listener)
