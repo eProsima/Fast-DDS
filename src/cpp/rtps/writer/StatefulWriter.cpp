@@ -48,6 +48,7 @@
 #include <rtps/resources/ResourceEvent.h>
 #include <rtps/resources/TimedEvent.h>
 #include <rtps/RTPSDomainImpl.hpp>
+#include <rtps/writer/BaseWriter.hpp>
 #include <rtps/writer/ReaderProxy.hpp>
 #include <utils/TimeConversion.hpp>
 
@@ -64,6 +65,7 @@ namespace fastdds {
 namespace rtps {
 
 using BaseReader = fastdds::rtps::BaseReader;
+using BaseWriter = fastdds::rtps::BaseWriter;
 
 /**
  * Loops over all the readers in the vector, applying the given routine.
@@ -173,10 +175,10 @@ StatefulWriter::StatefulWriter(
         RTPSParticipantImpl* pimpl,
         const GUID_t& guid,
         const WriterAttributes& att,
-        fastdds::rtps::FlowController* flow_controller,
+        FlowController* flow_controller,
         WriterHistory* history,
         WriterListener* listener)
-    : RTPSWriter(pimpl, guid, att, flow_controller, history, listener)
+    : BaseWriter(pimpl, guid, att, flow_controller, history, listener)
     , periodic_hb_event_(nullptr)
     , nack_response_event_(nullptr)
     , ack_event_(nullptr)

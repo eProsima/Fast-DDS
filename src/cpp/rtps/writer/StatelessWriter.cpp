@@ -43,12 +43,14 @@
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/reader/BaseReader.hpp>
 #include <rtps/RTPSDomainImpl.hpp>
+#include <rtps/writer/BaseWriter.hpp>
 
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
 using BaseReader = fastdds::rtps::BaseReader;
+using BaseWriter = fastdds::rtps::BaseWriter;
 
 /**
  * Loops over all the readers in the vector, applying the given routine.
@@ -150,10 +152,10 @@ StatelessWriter::StatelessWriter(
         RTPSParticipantImpl* impl,
         const GUID_t& guid,
         const WriterAttributes& attributes,
-        fastdds::rtps::FlowController* flow_controller,
+        FlowController* flow_controller,
         WriterHistory* history,
         WriterListener* listener)
-    : RTPSWriter(impl, guid, attributes, flow_controller, history, listener)
+    : BaseWriter(impl, guid, attributes, flow_controller, history, listener)
     , matched_remote_readers_(attributes.matched_readers_allocation)
     , matched_local_readers_(attributes.matched_readers_allocation)
     , matched_datasharing_readers_(attributes.matched_readers_allocation)

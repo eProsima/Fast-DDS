@@ -32,6 +32,7 @@
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>
 
+#include <rtps/writer/BaseWriter.hpp>
 #include <rtps/writer/ChangeForReader.hpp>
 #include <rtps/writer/ReaderLocator.hpp>
 
@@ -42,10 +43,10 @@ namespace rtps {
 class RTPSMessageGroup;
 
 /**
- * Class StatelessWriter, specialization of RTPSWriter that manages writers that don't keep state of the matched readers.
+ * Class StatelessWriter, specialization of BaseWriter that manages writers that don't keep state of the matched readers.
  * @ingroup WRITER_MODULE
  */
-class StatelessWriter : public RTPSWriter
+class StatelessWriter : public fastdds::rtps::BaseWriter
 {
     friend class RTPSParticipantImpl;
     friend class RTPSMessageGroup;

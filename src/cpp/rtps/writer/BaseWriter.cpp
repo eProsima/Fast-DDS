@@ -13,53 +13,39 @@
 // limitations under the License.
 
 /**
- * @file BaseWriter.hpp
+ * @file BaseWriter.cpp
  */
 
-#ifndef RTPS_WRITER__BASEWRITER_HPP
-#define RTPS_WRITER__BASEWRITER_HPP
+#include <rtps/writer/BaseWriter.hpp>
 
 #include <memory>
 
+#include <fastdds/rtps/attributes/WriterAttributes.hpp>
+#include <fastdds/rtps/common/Guid.hpp>
+#include <fastdds/rtps/history/IChangePool.hpp>
+#include <fastdds/rtps/history/IPayloadPool.hpp>
+#include <fastdds/rtps/history/WriterHistory.hpp>
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
+#include <fastdds/rtps/writer/WriterListener.hpp>
+
+#include <rtps/flowcontrol/FlowController.hpp>
+#include <rtps/participant/RTPSParticipantImpl.h>
 
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-struct CacheChange_t;
-class DataSharingNotifier;
-class FlowController;
-struct GUID_t;
-class ICacheChangePool;
-class IPayloadPool;
-class RTPSMessageGroup;
-class RTPSParticipantImpl;
-class WriterAttributes;
-class WriterHistory;
-class WriterListener;
-
-class BaseWriter : public fastdds::rtps::RTPSWriter
+BaseWriter::BaseWriter(
+        RTPSParticipantImpl* impl,
+        const GUID_t& guid,
+        const WriterAttributes& att,
+        FlowController* flow_controller,
+        WriterHistory* hist,
+        WriterListener* listen)
+    : RTPSWriter(impl, guid, att, flow_controller, hist, listen)
 {
-
-public:
-
-    virtual ~BaseWriter() = default;
-
-protected:
-
-    BaseWriter(
-            RTPSParticipantImpl* impl,
-            const GUID_t& guid,
-            const WriterAttributes& att,
-            FlowController* flow_controller,
-            WriterHistory* hist,
-            WriterListener* listen = nullptr);
-
-};
+}
 
 } // namespace rtps
 } // namespace fastdds
 } // namespace eprosima
-
-#endif  // RTPS_WRITER__BASEWRITER_HPP

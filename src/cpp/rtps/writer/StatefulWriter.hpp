@@ -31,6 +31,8 @@
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>
 
+#include <rtps/writer/BaseWriter.hpp>
+
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
@@ -39,10 +41,10 @@ class ReaderProxy;
 class TimedEvent;
 
 /**
- * Class StatefulWriter, specialization of RTPSWriter that maintains information of each matched Reader.
+ * Class StatefulWriter, specialization of BaseWriter that maintains information of each matched Reader.
  * @ingroup WRITER_MODULE
  */
-class StatefulWriter : public RTPSWriter
+class StatefulWriter : public fastdds::rtps::BaseWriter
 {
     friend class RTPSParticipantImpl;
     friend class ReaderProxy;

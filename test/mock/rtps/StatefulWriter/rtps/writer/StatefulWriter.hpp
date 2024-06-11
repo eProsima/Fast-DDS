@@ -23,6 +23,8 @@
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
 
+#include <rtps/writer/BaseWriter.hpp>
+
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
@@ -30,7 +32,7 @@ namespace rtps {
 class RTPSParticipantImpl;
 class ReaderProxy;
 
-class StatefulWriter : public RTPSWriter
+class StatefulWriter : public fastdds::rtps::BaseWriter
 {
 public:
 

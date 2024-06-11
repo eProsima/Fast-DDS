@@ -211,6 +211,7 @@ set(${PROJECT_NAME}_source_files
     rtps/transport/UDPTransportInterface.cpp
     rtps/transport/UDPv4Transport.cpp
     rtps/transport/UDPv6Transport.cpp
+    rtps/writer/BaseWriter.cpp
     rtps/writer/LivelinessManager.cpp
     rtps/writer/LocatorSelectorSender.cpp
     rtps/writer/PersistentWriter.cpp
