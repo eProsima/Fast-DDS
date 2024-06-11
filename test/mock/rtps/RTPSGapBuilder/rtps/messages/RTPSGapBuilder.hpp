@@ -20,6 +20,9 @@
 #ifndef RTPSGAPBUILDER_HPP
 #define RTPSGAPBUILDER_HPP
 
+#include <fastdds/rtps/common/SequenceNumber.h>
+#include <fastdds/rtps/common/Guid.h>
+
 #include <rtps/messages/RTPSMessageGroup.hpp>
 
 namespace eprosima {

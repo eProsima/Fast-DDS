@@ -17,7 +17,7 @@
  *
  */
 
-#include <fastdds/rtps/writer/ReaderProxy.h>
+#include <rtps/writer/ReaderProxy.hpp>
 
 #include <mutex>
 #include <cassert>
@@ -29,7 +29,7 @@
 
 #include <rtps/DataSharing/DataSharingNotifier.hpp>
 #include <rtps/history/HistoryAttributesExtension.hpp>
-#include "rtps/messages/RTPSGapBuilder.hpp"
+#include <rtps/messages/RTPSGapBuilder.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/resources/TimedEvent.h>
 #include <rtps/writer/StatefulWriter.hpp>

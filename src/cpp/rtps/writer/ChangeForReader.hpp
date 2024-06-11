@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * @file ChangeForReader.h
+ * @file ChangeForReader.hpp
  */
 
-#ifndef _FASTDDS_RTPS_CHANGEFORREADER_H_
-#define _FASTDDS_RTPS_CHANGEFORREADER_H_
+#ifndef RTPS_WRITER__CHANGEFORREADER_HPP
+#define RTPS_WRITER__CHANGEFORREADER_HPP
 
 #include <fastdds/rtps/common/CacheChange.h>
 #include <fastdds/rtps/common/FragmentNumber.h>
@@ -28,8 +28,6 @@
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
-
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 /**
  * Enum ChangeForReaderStatus_t, possible states for a CacheChange_t in a ReaderProxy.
@@ -207,10 +205,8 @@ struct ChangeForReaderCmp
 
 };
 
-#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-
 } // namespace rtps
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif /* _FASTDDS_RTPS_CHANGEFORREADER_H_ */
+#endif // RTPS_WRITER__CHANGEFORREADER_HPP
