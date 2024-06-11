@@ -50,8 +50,8 @@ RTPSWriter::RTPSWriter(
         WriterListener* listen)
     : Endpoint(impl, guid, att.endpoint)
     , flow_controller_(flow_controller)
-    , mp_history(hist)
-    , mp_listener(listen)
+    , history_(hist)
+    , listener_(listen)
     , is_async_(att.mode == SYNCHRONOUS_WRITER ? false : true)
     , liveliness_kind_(att.liveliness_kind)
     , liveliness_lease_duration_(att.liveliness_lease_duration)
@@ -80,22 +80,22 @@ void RTPSWriter::init(
     }
 
     fixed_payload_size_ = 0;
-    if (mp_history->m_att.memoryPolicy == PREALLOCATED_MEMORY_MODE)
+    if (history_->m_att.memoryPolicy == PREALLOCATED_MEMORY_MODE)
     {
-        fixed_payload_size_ = mp_history->m_att.payloadMaxSize;
+        fixed_payload_size_ = history_->m_att.payloadMaxSize;
     }
 
     if (att.endpoint.data_sharing_configuration().kind() != dds::OFF)
     {
-        std::shared_ptr<WriterPool> pool = std::dynamic_pointer_cast<WriterPool>(mp_history->get_payload_pool());
+        std::shared_ptr<WriterPool> pool = std::dynamic_pointer_cast<WriterPool>(history_->get_payload_pool());
         if (!pool || !pool->init_shared_memory(this, att.endpoint.data_sharing_configuration().shm_directory()))
         {
             EPROSIMA_LOG_ERROR(RTPS_WRITER, "Could not initialize DataSharing writer pool");
         }
     }
 
-    mp_history->mp_writer = this;
-    mp_history->mp_mutex = &mp_mutex;
+    history_->mp_writer = this;
+    history_->mp_mutex = &mp_mutex;
 
     flow_controller_->register_writer(this);
 
@@ -109,8 +109,8 @@ RTPSWriter::~RTPSWriter()
     // Deletion of the events has to be made in child destructor.
     // Also at this point all CacheChange_t must have been released by the child destructor
 
-    mp_history->mp_writer = nullptr;
-    mp_history->mp_mutex = nullptr;
+    history_->mp_writer = nullptr;
+    history_->mp_mutex = nullptr;
 }
 
 void RTPSWriter::deinit()
@@ -118,17 +118,17 @@ void RTPSWriter::deinit()
     // First, unregister changes from FlowController. This action must be protected.
     {
         std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
-        for (auto it = mp_history->changesBegin(); it != mp_history->changesEnd(); ++it)
+        for (auto it = history_->changesBegin(); it != history_->changesEnd(); ++it)
         {
             flow_controller_->remove_change(*it, std::chrono::steady_clock::now() + std::chrono::hours(24));
         }
 
-        for (auto it = mp_history->changesBegin(); it != mp_history->changesEnd(); ++it)
+        for (auto it = history_->changesBegin(); it != history_->changesEnd(); ++it)
         {
-            mp_history->release_change(*it);
+            history_->release_change(*it);
         }
 
-        mp_history->m_changes.clear();
+        history_->m_changes.clear();
     }
     flow_controller_->unregister_writer(this);
 }
@@ -136,7 +136,7 @@ void RTPSWriter::deinit()
 SequenceNumber_t RTPSWriter::get_seq_num_min()
 {
     CacheChange_t* change;
-    if (mp_history->get_min_change(&change) && change != nullptr)
+    if (history_->get_min_change(&change) && change != nullptr)
     {
         return change->sequenceNumber;
     }
@@ -149,7 +149,7 @@ SequenceNumber_t RTPSWriter::get_seq_num_min()
 SequenceNumber_t RTPSWriter::get_seq_num_max()
 {
     CacheChange_t* change;
-    if (mp_history->get_max_change(&change) && change != nullptr)
+    if (history_->get_max_change(&change) && change != nullptr)
     {
         return change->sequenceNumber;
     }
@@ -161,7 +161,7 @@ SequenceNumber_t RTPSWriter::get_seq_num_max()
 
 uint32_t RTPSWriter::getTypeMaxSerialized()
 {
-    return mp_history->getTypeMaxSerialized();
+    return history_->getTypeMaxSerialized();
 }
 
 constexpr uint32_t info_dst_message_length = 16;
