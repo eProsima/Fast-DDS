@@ -487,8 +487,8 @@ bool EDP::unpairWriterProxy(
             {
                 if (r.matched_writer_remove(writer_guid, removed_by_lease))
                 {
-                    const GUID_t& reader_guid = r.getGuid();
 #if HAVE_SECURITY
+                    const GUID_t& reader_guid = r.getGuid();
                     mp_RTPSParticipant->security_manager().remove_writer(reader_guid,
                     participant_guid, writer_guid);
 #endif // if HAVE_SECURITY
