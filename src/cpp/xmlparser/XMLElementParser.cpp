@@ -1134,7 +1134,7 @@ XMLP_ret XMLParser::getXMLTopicAttributes(
 
 XMLP_ret XMLParser::getXMLResourceLimitsQos(
         tinyxml2::XMLElement* elem,
-        ResourceLimitsQosPolicy& resourceLimitsQos,
+        dds::ResourceLimitsQosPolicy& resourceLimitsQos,
         uint8_t ident)
 {
     /*
@@ -1282,7 +1282,7 @@ XMLP_ret XMLParser::getXMLContainerAllocationConfig(
 
 XMLP_ret XMLParser::getXMLHistoryQosPolicy(
         tinyxml2::XMLElement* elem,
-        HistoryQosPolicy& historyQos,
+        dds::HistoryQosPolicy& historyQos,
         uint8_t ident)
 {
     /*
@@ -1318,8 +1318,8 @@ XMLP_ret XMLParser::getXMLHistoryQosPolicy(
             }
 
             if (!get_element_enum_value(text.c_str(), historyQos.kind,
-                    KEEP_LAST, HistoryQosPolicyKind::KEEP_LAST_HISTORY_QOS,
-                    KEEP_ALL, HistoryQosPolicyKind::KEEP_ALL_HISTORY_QOS))
+                    KEEP_LAST, dds::HistoryQosPolicyKind::KEEP_LAST_HISTORY_QOS,
+                    KEEP_ALL, dds::HistoryQosPolicyKind::KEEP_ALL_HISTORY_QOS))
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << KIND << "' with bad content");
                 return XMLP_ret::XML_ERROR;
@@ -1687,7 +1687,7 @@ XMLP_ret XMLParser::getXMLReaderQosPolicies(
 
 XMLP_ret XMLParser::getXMLDurabilityQos(
         tinyxml2::XMLElement* elem,
-        DurabilityQosPolicy& durability,
+        dds::DurabilityQosPolicy& durability,
         uint8_t /*ident*/)
 {
     /*
@@ -1726,10 +1726,10 @@ XMLP_ret XMLParser::getXMLDurabilityQos(
             bKindDefined = true;
 
             if (!get_element_enum_value(text.c_str(), durability.kind,
-                    _VOLATILE, DurabilityQosPolicyKind::VOLATILE_DURABILITY_QOS,
-                    _TRANSIENT_LOCAL, DurabilityQosPolicyKind::TRANSIENT_LOCAL_DURABILITY_QOS,
-                    _TRANSIENT, DurabilityQosPolicyKind::TRANSIENT_DURABILITY_QOS,
-                    _PERSISTENT, DurabilityQosPolicyKind::PERSISTENT_DURABILITY_QOS))
+                    _VOLATILE, dds::DurabilityQosPolicyKind::VOLATILE_DURABILITY_QOS,
+                    _TRANSIENT_LOCAL, dds::DurabilityQosPolicyKind::TRANSIENT_LOCAL_DURABILITY_QOS,
+                    _TRANSIENT, dds::DurabilityQosPolicyKind::TRANSIENT_DURABILITY_QOS,
+                    _PERSISTENT, dds::DurabilityQosPolicyKind::PERSISTENT_DURABILITY_QOS))
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << KIND << "' with bad content");
                 return XMLP_ret::XML_ERROR;
@@ -1802,11 +1802,11 @@ XMLP_ret XMLParser::getXMLDurabilityQos(
             }
             if (strcmp(text.c_str(), KEEP_LAST) == 0)
             {
-                durabilityService.history_kind = HistoryQosPolicyKind::KEEP_LAST_HISTORY_QOS;
+                durabilityService.history_kind = dds::HistoryQosPolicyKind::KEEP_LAST_HISTORY_QOS;
             }
             else if (strcmp(text.c_str(), KEEP_ALL) == 0)
             {
-                durabilityService.history_kind = HistoryQosPolicyKind::KEEP_ALL_HISTORY_QOS;
+                durabilityService.history_kind = dds::HistoryQosPolicyKind::KEEP_ALL_HISTORY_QOS;
             }
             else
             {
@@ -1858,7 +1858,7 @@ XMLP_ret XMLParser::getXMLDurabilityQos(
 
 XMLP_ret XMLParser::getXMLDeadlineQos(
         tinyxml2::XMLElement* elem,
-        DeadlineQosPolicy& deadline,
+        dds::DeadlineQosPolicy& deadline,
         uint8_t ident)
 {
     /*
@@ -1900,7 +1900,7 @@ XMLP_ret XMLParser::getXMLDeadlineQos(
 
 XMLP_ret XMLParser::getXMLLatencyBudgetQos(
         tinyxml2::XMLElement* elem,
-        LatencyBudgetQosPolicy& latencyBudget,
+        dds::LatencyBudgetQosPolicy& latencyBudget,
         uint8_t ident)
 {
     /*
@@ -1942,7 +1942,7 @@ XMLP_ret XMLParser::getXMLLatencyBudgetQos(
 
 XMLP_ret XMLParser::getXMLLivelinessQos(
         tinyxml2::XMLElement* elem,
-        LivelinessQosPolicy& liveliness,
+        dds::LivelinessQosPolicy& liveliness,
         uint8_t ident)
 {
     /*
@@ -1980,9 +1980,9 @@ XMLP_ret XMLParser::getXMLLivelinessQos(
             }
 
             if (!get_element_enum_value(text.c_str(), liveliness.kind,
-                    AUTOMATIC, LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS,
-                    MANUAL_BY_PARTICIPANT, LivelinessQosPolicyKind::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS,
-                    MANUAL_BY_TOPIC, LivelinessQosPolicyKind::MANUAL_BY_TOPIC_LIVELINESS_QOS))
+                    AUTOMATIC, dds::LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS,
+                    MANUAL_BY_PARTICIPANT, dds::LivelinessQosPolicyKind::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS,
+                    MANUAL_BY_TOPIC, dds::LivelinessQosPolicyKind::MANUAL_BY_TOPIC_LIVELINESS_QOS))
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << KIND << "' with bad content");
                 return XMLP_ret::XML_ERROR;
@@ -2016,7 +2016,7 @@ XMLP_ret XMLParser::getXMLLivelinessQos(
 
 XMLP_ret XMLParser::getXMLReliabilityQos(
         tinyxml2::XMLElement* elem,
-        ReliabilityQosPolicy& reliability,
+        dds::ReliabilityQosPolicy& reliability,
         uint8_t ident)
 {
     /*
@@ -2052,8 +2052,8 @@ XMLP_ret XMLParser::getXMLReliabilityQos(
             }
 
             if (!get_element_enum_value(text.c_str(), reliability.kind,
-                    _BEST_EFFORT, ReliabilityQosPolicyKind::BEST_EFFORT_RELIABILITY_QOS,
-                    _RELIABLE, ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS))
+                    _BEST_EFFORT, dds::ReliabilityQosPolicyKind::BEST_EFFORT_RELIABILITY_QOS,
+                    _RELIABLE, dds::ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS))
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << KIND << "' with bad content");
                 return XMLP_ret::XML_ERROR;
@@ -2078,7 +2078,7 @@ XMLP_ret XMLParser::getXMLReliabilityQos(
 
 XMLP_ret XMLParser::getXMLLifespanQos(
         tinyxml2::XMLElement* elem,
-        LifespanQosPolicy& lifespan,
+        dds::LifespanQosPolicy& lifespan,
         uint8_t ident)
 {
     /*
@@ -2121,7 +2121,7 @@ XMLP_ret XMLParser::getXMLLifespanQos(
 
 XMLP_ret XMLParser::getXMLDisablePositiveAcksQos(
         tinyxml2::XMLElement* elem,
-        DisablePositiveACKsQosPolicy& disablePositiveAcks,
+        dds::DisablePositiveACKsQosPolicy& disablePositiveAcks,
         uint8_t ident)
 {
     /*
@@ -2164,7 +2164,7 @@ XMLP_ret XMLParser::getXMLDisablePositiveAcksQos(
 
 XMLP_ret XMLParser::getXMLDataSharingQos(
         tinyxml2::XMLElement* elem,
-        DataSharingQosPolicy& data_sharing,
+        dds::DataSharingQosPolicy& data_sharing,
         uint8_t ident)
 {
     /*
@@ -2193,7 +2193,7 @@ XMLP_ret XMLParser::getXMLDataSharingQos(
         </xs:complexType>
      */
     bool kind_found = false;
-    DataSharingKind kind = DataSharingKind::AUTO;
+    dds::DataSharingKind kind = dds::DataSharingKind::AUTO;
     std::string shm_directory = "";
     int32_t max_domains = 0;
     std::vector<uint16_t> domain_ids;
@@ -2222,10 +2222,10 @@ XMLP_ret XMLParser::getXMLDataSharingQos(
             }
 
             if (!get_element_enum_value(text.c_str(), kind,
-                    ON, DataSharingKind::ON,
-                    OFF, DataSharingKind::OFF,
-                    AUTOMATIC, DataSharingKind::AUTO,
-                    AUTO, DataSharingKind::AUTO))
+                    ON, dds::DataSharingKind::ON,
+                    OFF, dds::DataSharingKind::OFF,
+                    AUTOMATIC, dds::DataSharingKind::AUTO,
+                    AUTO, dds::DataSharingKind::AUTO))
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << KIND << "' with bad content");
                 return XMLP_ret::XML_ERROR;
@@ -2325,15 +2325,15 @@ XMLP_ret XMLParser::getXMLDataSharingQos(
 
     switch (kind)
     {
-        case DataSharingKind::ON:
+        case dds::DataSharingKind::ON:
             data_sharing.on(shm_directory, domain_ids);
             break;
 
-        case DataSharingKind::AUTO:
+        case dds::DataSharingKind::AUTO:
             data_sharing.automatic(shm_directory, domain_ids);
             break;
 
-        case DataSharingKind::OFF:
+        case dds::DataSharingKind::OFF:
             data_sharing.off();
             break;
 
@@ -2391,7 +2391,7 @@ XMLP_ret XMLParser::getXMLDataSharingQos(
 
 XMLP_ret XMLParser::getXMLOwnershipQos(
         tinyxml2::XMLElement* elem,
-        OwnershipQosPolicy& ownership,
+        dds::OwnershipQosPolicy& ownership,
         uint8_t ident)
 {
     (void)ident;
@@ -2427,8 +2427,8 @@ XMLP_ret XMLParser::getXMLOwnershipQos(
             }
 
             if (!get_element_enum_value(text.c_str(), ownership.kind,
-                    SHARED, OwnershipQosPolicyKind::SHARED_OWNERSHIP_QOS,
-                    EXCLUSIVE, OwnershipQosPolicyKind::EXCLUSIVE_OWNERSHIP_QOS))
+                    SHARED, dds::OwnershipQosPolicyKind::SHARED_OWNERSHIP_QOS,
+                    EXCLUSIVE, dds::OwnershipQosPolicyKind::EXCLUSIVE_OWNERSHIP_QOS))
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << KIND << "' with bad content");
                 return XMLP_ret::XML_ERROR;
@@ -2452,7 +2452,7 @@ XMLP_ret XMLParser::getXMLOwnershipQos(
 
 XMLP_ret XMLParser::getXMLOwnershipStrengthQos(
         tinyxml2::XMLElement* elem,
-        OwnershipStrengthQosPolicy& ownershipStrength,
+        dds::OwnershipStrengthQosPolicy& ownershipStrength,
         uint8_t ident)
 {
 
@@ -2648,7 +2648,7 @@ XMLP_ret XMLParser::getXMLOwnershipStrengthQos(
 
 XMLP_ret XMLParser::getXMLPartitionQos(
         tinyxml2::XMLElement* elem,
-        PartitionQosPolicy& partition,
+        dds::PartitionQosPolicy& partition,
         uint8_t ident)
 {
     /*
@@ -2707,7 +2707,7 @@ XMLP_ret XMLParser::getXMLPartitionQos(
 
 XMLP_ret XMLParser::getXMLPublishModeQos(
         tinyxml2::XMLElement* elem,
-        PublishModeQosPolicy& publishMode,
+        dds::PublishModeQosPolicy& publishMode,
         uint8_t /*ident*/)
 {
     /*
@@ -2742,8 +2742,8 @@ XMLP_ret XMLParser::getXMLPublishModeQos(
             }
 
             if (!get_element_enum_value(text.c_str(), publishMode.kind,
-                    SYNCHRONOUS, PublishModeQosPolicyKind::SYNCHRONOUS_PUBLISH_MODE,
-                    ASYNCHRONOUS, PublishModeQosPolicyKind::ASYNCHRONOUS_PUBLISH_MODE))
+                    SYNCHRONOUS, dds::PublishModeQosPolicyKind::SYNCHRONOUS_PUBLISH_MODE,
+                    ASYNCHRONOUS, dds::PublishModeQosPolicyKind::ASYNCHRONOUS_PUBLISH_MODE))
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << KIND << "' bad content");
                 return XMLP_ret::XML_ERROR;

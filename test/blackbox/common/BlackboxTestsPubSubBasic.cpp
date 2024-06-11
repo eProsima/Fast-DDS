@@ -726,7 +726,8 @@ TEST_P(PubSubBasic, unique_flows_one_writer_two_readers)
     PropertyPolicy properties;
     properties.properties().emplace_back("fastdds.unique_network_flows", "");
 
-    readers.sub_topic_name(TEST_TOPIC_NAME).sub_property_policy(properties).reliability(RELIABLE_RELIABILITY_QOS);
+    readers.sub_topic_name(TEST_TOPIC_NAME).sub_property_policy(properties).reliability(
+        eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
 
     ASSERT_TRUE(readers.init_participant());
     ASSERT_TRUE(readers.init_subscriber(0));
@@ -802,7 +803,7 @@ TEST_P(PubSubBasic, BestEffortTwoWritersConsecutives)
     for (int i = 0; i < 2; ++i)
     {
         PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
-        writer.history_depth(10).reliability(BEST_EFFORT_RELIABILITY_QOS);
+        writer.history_depth(10).reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS);
         two_consecutive_writers(reader, writer, false);
     }
 }
@@ -812,13 +813,13 @@ TEST_P(PubSubBasic, ReliableVolatileTwoWritersConsecutives)
 {
     PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
 
-    reader.history_depth(10).reliability(RELIABLE_RELIABILITY_QOS).init();
+    reader.history_depth(10).reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).init();
     EXPECT_TRUE(reader.isInitialized());
 
     for (int i = 0; i < 2; ++i)
     {
         PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
-        writer.history_depth(10).durability_kind(VOLATILE_DURABILITY_QOS);
+        writer.history_depth(10).durability_kind(eprosima::fastdds::dds::VOLATILE_DURABILITY_QOS);
         two_consecutive_writers(reader, writer, true);
     }
 }
@@ -827,7 +828,7 @@ TEST_P(PubSubBasic, ReliableVolatileTwoWritersConsecutivesSameGuid)
 {
     PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
 
-    reader.history_depth(10).reliability(RELIABLE_RELIABILITY_QOS).init();
+    reader.history_depth(10).reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).init();
     EXPECT_TRUE(reader.isInitialized());
 
     auto reader_prefix = reader.participant_guid().guidPrefix;
@@ -837,7 +838,8 @@ TEST_P(PubSubBasic, ReliableVolatileTwoWritersConsecutivesSameGuid)
     for (int i = 0; i < 2; ++i)
     {
         PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
-        writer.history_depth(10).durability_kind(VOLATILE_DURABILITY_QOS).guid_prefix(writer_prefix);
+        writer.history_depth(10).durability_kind(eprosima::fastdds::dds::VOLATILE_DURABILITY_QOS).guid_prefix(
+            writer_prefix);
         two_consecutive_writers(reader, writer, true);
     }
 }
@@ -846,14 +848,15 @@ TEST_P(PubSubBasic, ReliableTransientLocalTwoWritersConsecutives)
 {
     PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
 
-    reader.history_depth(10).reliability(RELIABLE_RELIABILITY_QOS).durability_kind(TRANSIENT_LOCAL_DURABILITY_QOS);
+    reader.history_depth(10).reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).durability_kind(
+        eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS);
     reader.init();
     EXPECT_TRUE(reader.isInitialized());
 
     for (int i = 0; i < 2; ++i)
     {
         PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
-        writer.history_depth(10).reliability(RELIABLE_RELIABILITY_QOS);
+        writer.history_depth(10).reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
         two_consecutive_writers(reader, writer, true);
     }
 }

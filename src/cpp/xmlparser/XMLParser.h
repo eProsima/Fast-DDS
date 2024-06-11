@@ -445,87 +445,87 @@ protected:
 
     static XMLP_ret getXMLPublishModeQos(
             tinyxml2::XMLElement* elem,
-            PublishModeQosPolicy& publishMode,
+            dds::PublishModeQosPolicy& publishMode,
             uint8_t ident);
 
     static XMLP_ret getXMLGroupDataQos(
             tinyxml2::XMLElement* elem,
-            GroupDataQosPolicy& groupData,
+            dds::GroupDataQosPolicy& groupData,
             uint8_t ident);
 
     static XMLP_ret getXMLTopicDataQos(
             tinyxml2::XMLElement* elem,
-            TopicDataQosPolicy& topicData,
+            dds::TopicDataQosPolicy& topicData,
             uint8_t ident);
 
     static XMLP_ret getXMLPartitionQos(
             tinyxml2::XMLElement* elem,
-            PartitionQosPolicy& partition,
+            dds::PartitionQosPolicy& partition,
             uint8_t ident);
 
     static XMLP_ret getXMLPresentationQos(
             tinyxml2::XMLElement* elem,
-            PresentationQosPolicy& presentation,
+            dds::PresentationQosPolicy& presentation,
             uint8_t ident);
 
     static XMLP_ret getXMLDestinationOrderQos(
             tinyxml2::XMLElement* elem,
-            DestinationOrderQosPolicy& destinationOrder,
+            dds::DestinationOrderQosPolicy& destinationOrder,
             uint8_t ident);
 
     static XMLP_ret getXMLOwnershipStrengthQos(
             tinyxml2::XMLElement* elem,
-            OwnershipStrengthQosPolicy& ownershipStrength,
+            dds::OwnershipStrengthQosPolicy& ownershipStrength,
             uint8_t ident);
 
     static XMLP_ret getXMLOwnershipQos(
             tinyxml2::XMLElement* elem,
-            OwnershipQosPolicy& ownership,
+            dds::OwnershipQosPolicy& ownership,
             uint8_t ident);
 
     static XMLP_ret getXMLTimeBasedFilterQos(
             tinyxml2::XMLElement* elem,
-            TimeBasedFilterQosPolicy& timeBasedFilter,
+            dds::TimeBasedFilterQosPolicy& timeBasedFilter,
             uint8_t ident);
 
     static XMLP_ret getXMLUserDataQos(
             tinyxml2::XMLElement* elem,
-            UserDataQosPolicy& userData,
+            dds::UserDataQosPolicy& userData,
             uint8_t ident);
 
     static XMLP_ret getXMLLifespanQos(
             tinyxml2::XMLElement* elem,
-            LifespanQosPolicy& lifespan,
+            dds::LifespanQosPolicy& lifespan,
             uint8_t ident);
 
     static XMLP_ret getXMLReliabilityQos(
             tinyxml2::XMLElement* elem,
-            ReliabilityQosPolicy& reliability,
+            dds::ReliabilityQosPolicy& reliability,
             uint8_t ident);
 
     static XMLP_ret getXMLLivelinessQos(
             tinyxml2::XMLElement* elem,
-            LivelinessQosPolicy& liveliness,
+            dds::LivelinessQosPolicy& liveliness,
             uint8_t ident);
 
     static XMLP_ret getXMLLatencyBudgetQos(
             tinyxml2::XMLElement* elem,
-            LatencyBudgetQosPolicy& latencyBudget,
+            dds::LatencyBudgetQosPolicy& latencyBudget,
             uint8_t ident);
 
     static XMLP_ret getXMLDeadlineQos(
             tinyxml2::XMLElement* elem,
-            DeadlineQosPolicy& deadline,
+            dds::DeadlineQosPolicy& deadline,
             uint8_t ident);
 
     static XMLP_ret getXMLDurabilityServiceQos(
             tinyxml2::XMLElement* elem,
-            DurabilityServiceQosPolicy& durabilityService,
+            dds::DurabilityServiceQosPolicy& durabilityService,
             uint8_t ident);
 
     static XMLP_ret getXMLDurabilityQos(
             tinyxml2::XMLElement* elem,
-            DurabilityQosPolicy& durability,
+            dds::DurabilityQosPolicy& durability,
             uint8_t ident);
 
     static XMLP_ret getXMLTopicAttributes(
@@ -535,12 +535,12 @@ protected:
 
     static XMLP_ret getXMLHistoryQosPolicy(
             tinyxml2::XMLElement* elem,
-            HistoryQosPolicy& historyQos,
+            dds::HistoryQosPolicy& historyQos,
             uint8_t ident);
 
     static XMLP_ret getXMLResourceLimitsQos(
             tinyxml2::XMLElement* elem,
-            ResourceLimitsQosPolicy& resourceLimitsQos,
+            dds::ResourceLimitsQosPolicy& resourceLimitsQos,
             uint8_t ident);
 
     static XMLP_ret getXMLContainerAllocationConfig(
@@ -650,12 +650,12 @@ protected:
 
     static XMLP_ret getXMLDisablePositiveAcksQos(
             tinyxml2::XMLElement* elem,
-            DisablePositiveACKsQosPolicy& disablePositiveAcks,
+            dds::DisablePositiveACKsQosPolicy& disablePositiveAcks,
             uint8_t ident);
 
     static XMLP_ret getXMLDataSharingQos(
             tinyxml2::XMLElement* elem,
-            DataSharingQosPolicy& data_sharing,
+            dds::DataSharingQosPolicy& data_sharing,
             uint8_t ident);
 
     static XMLP_ret getXMLguidPrefix(

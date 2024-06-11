@@ -121,8 +121,8 @@ WLP::WLP(
     automatic_instance_handle_ = tmp_guid;
     manual_by_participant_instance_handle_ = automatic_instance_handle_;
 
-    automatic_instance_handle_.value[15] = AUTOMATIC_LIVELINESS_QOS + 0x01;
-    manual_by_participant_instance_handle_.value[15] = MANUAL_BY_PARTICIPANT_LIVELINESS_QOS + 0x01;
+    automatic_instance_handle_.value[15] = dds::AUTOMATIC_LIVELINESS_QOS + 0x01;
+    manual_by_participant_instance_handle_.value[15] = dds::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS + 0x01;
 }
 
 WLP::~WLP()
@@ -192,7 +192,7 @@ bool WLP::initWL(
 
     pub_liveliness_manager_ = new LivelinessManager(
         [&](const GUID_t& guid,
-        const LivelinessQosPolicyKind& kind,
+        const dds::LivelinessQosPolicyKind& kind,
         const Duration_t& lease_duration,
         int alive_count,
         int not_alive_count) -> void
@@ -209,7 +209,7 @@ bool WLP::initWL(
 
     sub_liveliness_manager_ = new LivelinessManager(
         [&](const GUID_t& guid,
-        const LivelinessQosPolicyKind& kind,
+        const dds::LivelinessQosPolicyKind& kind,
         const Duration_t& lease_duration,
         int alive_count,
         int not_alive_count) -> void
@@ -496,16 +496,16 @@ bool WLP::assignRemoteEndpoints(
     temp_writer_proxy_data_.persistence_guid(pdata.get_persistence_guid());
     temp_writer_proxy_data_.set_remote_locators(pdata.metatraffic_locators, network, use_multicast_locators);
     temp_writer_proxy_data_.topicKind(WITH_KEY);
-    temp_writer_proxy_data_.m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-    temp_writer_proxy_data_.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    temp_writer_proxy_data_.m_qos.m_durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
+    temp_writer_proxy_data_.m_qos.m_reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
 
     temp_reader_proxy_data_.clear();
     temp_reader_proxy_data_.m_expectsInlineQos = false;
     temp_reader_proxy_data_.guid().guidPrefix = pdata.m_guid.guidPrefix;
     temp_reader_proxy_data_.set_remote_locators(pdata.metatraffic_locators, network, use_multicast_locators);
     temp_reader_proxy_data_.topicKind(WITH_KEY);
-    temp_reader_proxy_data_.m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-    temp_reader_proxy_data_.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    temp_reader_proxy_data_.m_qos.m_durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
+    temp_reader_proxy_data_.m_qos.m_reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
 
     auxendp &= fastdds::rtps::BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_WRITER;
     if (auxendp != 0 && this->mp_builtinReader != nullptr)
@@ -628,7 +628,7 @@ bool WLP::add_local_writer(
     double wAnnouncementPeriodMilliSec(fastdds::rtps::TimeConv::Duration_t2MilliSecondsDouble(wqos.m_liveliness.
                     announcement_period));
 
-    if (wqos.m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS )
+    if (wqos.m_liveliness.kind == dds::AUTOMATIC_LIVELINESS_QOS )
     {
         if (automatic_liveliness_assertion_ == nullptr)
         {
@@ -655,7 +655,7 @@ bool WLP::add_local_writer(
         }
         automatic_writers_.push_back(W);
     }
-    else if (wqos.m_liveliness.kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
+    else if (wqos.m_liveliness.kind == dds::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
     {
         if (manual_liveliness_assertion_ == nullptr)
         {
@@ -690,7 +690,7 @@ bool WLP::add_local_writer(
             EPROSIMA_LOG_ERROR(RTPS_LIVELINESS, "Could not add writer " << W->getGuid() << " to liveliness manager");
         }
     }
-    else if (wqos.m_liveliness.kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
+    else if (wqos.m_liveliness.kind == dds::MANUAL_BY_TOPIC_LIVELINESS_QOS)
     {
         manual_by_topic_writers_.push_back(W);
 
@@ -717,7 +717,7 @@ bool WLP::remove_local_writer(
 
     LivelinessData::WriterStatus writer_status;
 
-    if (W->get_liveliness_kind() == AUTOMATIC_LIVELINESS_QOS)
+    if (W->get_liveliness_kind() == dds::AUTOMATIC_LIVELINESS_QOS)
     {
         auto it = std::find(
             automatic_writers_.begin(),
@@ -752,7 +752,7 @@ bool WLP::remove_local_writer(
         automatic_liveliness_assertion_->update_interval_millisec(min_automatic_ms_);
         return true;
     }
-    else if (W->get_liveliness_kind() == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
+    else if (W->get_liveliness_kind() == dds::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
     {
         auto it = std::find(
             manual_by_participant_writers_.begin(),
@@ -797,7 +797,7 @@ bool WLP::remove_local_writer(
         manual_liveliness_assertion_->update_interval_millisec(min_manual_by_participant_ms_);
         return true;
     }
-    else if (W->get_liveliness_kind() == MANUAL_BY_TOPIC_LIVELINESS_QOS)
+    else if (W->get_liveliness_kind() == dds::MANUAL_BY_TOPIC_LIVELINESS_QOS)
     {
         auto it = std::find(
             manual_by_topic_writers_.begin(),
@@ -836,7 +836,7 @@ bool WLP::add_local_reader(
 
     std::lock_guard<std::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
 
-    if (rqos.m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS)
+    if (rqos.m_liveliness.kind == dds::AUTOMATIC_LIVELINESS_QOS)
     {
         automatic_readers_ = true;
     }
@@ -884,7 +884,7 @@ bool WLP::participant_liveliness_assertion()
 
     if (0 < manual_by_participant_writers_.size())
     {
-        if (pub_liveliness_manager_->is_any_alive(MANUAL_BY_PARTICIPANT_LIVELINESS_QOS))
+        if (pub_liveliness_manager_->is_any_alive(dds::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS))
         {
             lock.unlock();
             return send_liveliness_message(manual_by_participant_instance_handle_);
@@ -973,7 +973,7 @@ WriterHistory* WLP::builtin_writer_history()
 
 bool WLP::assert_liveliness(
         GUID_t writer,
-        LivelinessQosPolicyKind kind,
+        dds::LivelinessQosPolicyKind kind,
         Duration_t lease_duration)
 {
     return pub_liveliness_manager_->assert_liveliness(
@@ -987,7 +987,7 @@ bool WLP::assert_liveliness_manual_by_participant()
     if (manual_by_participant_writers_.size() > 0)
     {
         return pub_liveliness_manager_->assert_liveliness(
-            MANUAL_BY_PARTICIPANT_LIVELINESS_QOS,
+            dds::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS,
             mp_participant->getGuid().guidPrefix);
     }
     return false;
@@ -995,7 +995,7 @@ bool WLP::assert_liveliness_manual_by_participant()
 
 void WLP::pub_liveliness_changed(
         const GUID_t& writer,
-        const LivelinessQosPolicyKind& kind,
+        const dds::LivelinessQosPolicyKind& kind,
         const Duration_t& lease_duration,
         int32_t alive_change,
         int32_t not_alive_change)
@@ -1009,7 +1009,7 @@ void WLP::pub_liveliness_changed(
         return;
     }
 
-    if (kind == AUTOMATIC_LIVELINESS_QOS)
+    if (kind == dds::AUTOMATIC_LIVELINESS_QOS)
     {
         for (RTPSWriter* w: automatic_writers_)
         {
@@ -1029,7 +1029,7 @@ void WLP::pub_liveliness_changed(
             }
         }
     }
-    else if (kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
+    else if (kind == dds::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
     {
         for (RTPSWriter* w: manual_by_participant_writers_)
         {
@@ -1049,7 +1049,7 @@ void WLP::pub_liveliness_changed(
             }
         }
     }
-    else if (kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
+    else if (kind == dds::MANUAL_BY_TOPIC_LIVELINESS_QOS)
     {
         for (RTPSWriter* w: manual_by_topic_writers_)
         {
@@ -1073,7 +1073,7 @@ void WLP::pub_liveliness_changed(
 
 void WLP::sub_liveliness_changed(
         const GUID_t& writer,
-        const LivelinessQosPolicyKind& kind,
+        const dds::LivelinessQosPolicyKind& kind,
         const Duration_t& lease_duration,
         int32_t alive_change,
         int32_t not_alive_change)

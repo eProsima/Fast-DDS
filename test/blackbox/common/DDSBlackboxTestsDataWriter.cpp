@@ -102,7 +102,7 @@ TEST_P(DDSDataWriter, WaitForAcknowledgmentInstance)
     writer.disable_builtin_transport().add_user_transport_to_pparams(testTransport).init();
     ASSERT_TRUE(writer.isInitialized());
 
-    reader.reliability(RELIABLE_RELIABILITY_QOS).init();
+    reader.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).init();
     ASSERT_TRUE(reader.isInitialized());
 
     writer.wait_discovery();
@@ -405,14 +405,14 @@ TEST(DDSDataWriter, HeartbeatWhileDestruction)
         // A high number of samples increases the probability of the data race to occur
         size_t n_samples = 1000;
 
-        reader.reliability(RELIABLE_RELIABILITY_QOS)
-                .durability_kind(TRANSIENT_LOCAL_DURABILITY_QOS)
+        reader.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+                .durability_kind(eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS)
                 .init();
         ASSERT_TRUE(reader.isInitialized());
 
-        writer.reliability(RELIABLE_RELIABILITY_QOS)
-                .durability_kind(TRANSIENT_LOCAL_DURABILITY_QOS)
-                .history_kind(KEEP_LAST_HISTORY_QOS)
+        writer.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+                .durability_kind(eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS)
+                .history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS)
                 .history_depth(static_cast<int32_t>(n_samples))
                 .resource_limits_max_samples(static_cast<int32_t>(n_samples))
                 .resource_limits_max_instances(static_cast<int32_t>(1))

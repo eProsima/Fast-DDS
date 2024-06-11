@@ -194,7 +194,7 @@ uint32_t ParticipantProxyData::get_serialized_size(
     if (m_userData.size() > 0)
     {
         // PID_USER_DATA
-        ret_val += fastdds::dds::QosPoliciesSerializer<UserDataQosPolicy>::cdr_serialized_size(m_userData);
+        ret_val += fastdds::dds::QosPoliciesSerializer<dds::UserDataQosPolicy>::cdr_serialized_size(m_userData);
     }
 
     if (m_properties.size() > 0)
@@ -347,7 +347,7 @@ bool ParticipantProxyData::writeToCDRMessage(
 
     if (m_userData.size() > 0)
     {
-        if (!fastdds::dds::QosPoliciesSerializer<UserDataQosPolicy>::add_to_cdr_message(m_userData,
+        if (!fastdds::dds::QosPoliciesSerializer<dds::UserDataQosPolicy>::add_to_cdr_message(m_userData,
                 msg))
         {
             return false;
@@ -677,8 +677,9 @@ bool ParticipantProxyData::readFromCDRMessage(
                     }
                     case fastdds::dds::PID_USER_DATA:
                     {
-                        if (!fastdds::dds::QosPoliciesSerializer<UserDataQosPolicy>::read_from_cdr_message(m_userData,
-                                msg, plength))
+                        if (!fastdds::dds::QosPoliciesSerializer<dds::UserDataQosPolicy>::read_from_cdr_message(
+                                    m_userData,
+                                    msg, plength))
                         {
                             return false;
                         }
