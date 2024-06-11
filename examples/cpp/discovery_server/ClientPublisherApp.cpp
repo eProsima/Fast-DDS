@@ -188,7 +188,7 @@ ClientPublisherApp::ClientPublisherApp(
     }
 
     // Create the topic
-    topic_ = participant_->create_topic(config.topic_name, "HelloWorld", TOPIC_QOS_DEFAULT);
+    topic_ = participant_->create_topic(config.topic_name, type_.get_type_name(), TOPIC_QOS_DEFAULT);
 
     if (topic_ == nullptr)
     {
@@ -207,9 +207,9 @@ ClientPublisherApp::ClientPublisherApp(
         wqos.reliability().kind = BEST_EFFORT_RELIABILITY_QOS;
     }
 
-    if (config.transient_local)
+    if (!config.transient_local)
     {
-        wqos.durability().kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+        wqos.durability().kind = VOLATILE_DURABILITY_QOS;
     }
 
     writer_ = publisher_->create_datawriter(topic_, wqos, this);

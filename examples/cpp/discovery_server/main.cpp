@@ -53,9 +53,6 @@ int main(
         case CLIParser::EntityKind::CLIENT_SUBSCRIBER:
             samples = config.sub_config.samples;
             break;
-        case CLIParser::EntityKind::SERVER:
-            samples = config.sub_config.samples;
-            break;
         default:
             break;
     }

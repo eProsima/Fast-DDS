@@ -50,12 +50,6 @@ public:
         UNDEFINED
     };
 
-    //! Common configuration for all the entities
-    struct common_config
-    {
-        TransportKind transport_kind{TransportKind::UDPv4};
-    };
-
     //! Clients common configuration
     struct client_config
     {
@@ -74,24 +68,24 @@ public:
     };
 
     //! Publisher client configuration structure
-    struct client_publisher_config : public common_config,
-        public pubsub_config
+    struct client_publisher_config : public pubsub_config
     {
+        TransportKind transport_kind{TransportKind::UDPv4};
         uint16_t interval{100};
     };
 
     //! Subscriber client configuration structure
-    struct client_subscriber_config : public common_config,
-        public pubsub_config
+    struct client_subscriber_config : public pubsub_config
     {
+        TransportKind transport_kind{TransportKind::UDPv4};
     };
 
     //! Server configuration structure
     //! A server can, in turn, act as a client
-    struct server_config : public common_config,
-        public client_config
+    struct server_config : public client_config
     {
         bool is_also_client{false};
+        TransportKind transport_kind{TransportKind::UDPv4};
         uint16_t listening_port{16166};
         uint16_t id{0};
         uint16_t timeout{0};
@@ -167,13 +161,13 @@ public:
         std::cout << "  subscriber                           Run a client subscriber entity."          << std::endl;
         std::cout << "  server                               Run a server entity."                     << std::endl;
         std::cout << ""                                                                                << std::endl;
-        std::cout << "Common options:"                                                                 << std::endl;
         std::cout << "  -h,       --help                     Print this help message."                 << std::endl;
-        std::cout << "  -c <str>, --connection-address <str> Server address"                           << std::endl;
+        std::cout << "Client options (common to Publisher, Subscriber and Server acting as Client):"   << std::endl;
+        std::cout << "  -c <str>, --connection-address <str> Address of the Server to connect to"      << std::endl;
         std::cout << "                                       (Default address: 127.0.0.1)."            << std::endl;
-        std::cout << "  -p <num>, --connection-port <num>    Server listening port"                    << std::endl;
+        std::cout << "  -p <num>, --connection-port <num>    Port of the Server to connect to"         << std::endl;
         std::cout << "                                       (Default port: 16166)."                   << std::endl;
-        std::cout << "  -d <num>  --connection-ds-id <num>   Id of the Discovery Server to connect to" << std::endl;
+        std::cout << "            --connection-ds-id <num>   Id of the Discovery Server to connect to" << std::endl;
         std::cout << "                                       (0 by default)."                          << std::endl;
         std::cout << "            --transport <str>          [udpv4|udpv6|tcpv4|tcpv6|shm] "           << std::endl;
         std::cout << "                                       (udpv4 by default)."                      << std::endl;
@@ -192,6 +186,7 @@ public:
         std::cout << ""                                                                                << std::endl;
         std::cout << "Subscriber options:"                                                             << std::endl;
         std::cout << "  -t <str>, --topic <str>              Topic name"                               << std::endl;
+        std::cout << "                                       (Default: discovery_server_topic)."       << std::endl;
         std::cout << "  -s <num>, --samples <num>            Number of samples to receive"             << std::endl;
         std::cout << "                                       (Default: 0 => infinite samples)."        << std::endl;
         std::cout << "  -r, --reliable                       Set Reliability QoS as reliable"          << std::endl;
@@ -206,7 +201,7 @@ public:
         std::cout << "                                       (Default port: 16166)"                    << std::endl;
         std::cout << "            --id <num>                 Id of the Discovery Server (Default: 0)." << std::endl;
         std::cout << "            --timeout <num>            Number of seconds before finish"          << std::endl;
-        std::cout << "            --id <num>                 the process (Default: 0 = till ^C)."      << std::endl;
+        std::cout << "                                       the process (Default: 0 = till ^C)."      << std::endl;
         std::exit(return_code);
     }
 
@@ -255,6 +250,8 @@ public:
             print_help(EXIT_FAILURE);
         }
 
+        bool uses_ipv6 = false;
+        bool listening_address_was_set = false;
         for (int i = 2; i < argc; ++i)
         {
             std::string arg = argv[i];
@@ -281,6 +278,7 @@ public:
                         config.pub_config.transport_kind = TransportKind::UDPv6;
                         config.sub_config.transport_kind = TransportKind::UDPv6;
                         config.srv_config.transport_kind = TransportKind::UDPv6;
+                        uses_ipv6 = true;
                     }
                     else if (input == "tcpv4")
                     {
@@ -293,6 +291,7 @@ public:
                         config.pub_config.transport_kind = TransportKind::TCPv6;
                         config.sub_config.transport_kind = TransportKind::TCPv6;
                         config.srv_config.transport_kind = TransportKind::TCPv6;
+                        uses_ipv6 = true;
                     }
                     else if (input == "shm")
                     {
@@ -373,7 +372,7 @@ public:
                     print_help(EXIT_FAILURE);
                 }
             }
-            else if (arg == "-d" || arg == "--connection-ds-id")
+            else if (arg == "--connection-ds-id")
             {
                 if (++i < argc)
                 {
@@ -415,16 +414,17 @@ public:
                 }
             }
             // PubSub options
-            else if (arg == "-t" || arg == "--topic-name")
+            else if (arg == "-t" || arg == "--topic")
             {
-                if (++i < argc)
+                if (config.entity == CLIParser::EntityKind::CLIENT_PUBLISHER ||
+                    config.entity == CLIParser::EntityKind::CLIENT_SUBSCRIBER)
                 {
                     config.pub_config.topic_name = argv[i];
                     config.sub_config.topic_name = argv[i];
                 }
                 else
                 {
-                    EPROSIMA_LOG_ERROR(CLI_PARSER, "parsing topic name argument");
+                    EPROSIMA_LOG_ERROR(CLI_PARSER, "wrong or missing entity for --topic argument: only available for publisher and subscriber");
                     print_help(EXIT_FAILURE);
                 }
             }
@@ -531,7 +531,16 @@ public:
             {
                 if (++i < argc)
                 {
-                    config.srv_config.listening_address = argv[i];
+                    if (config.entity == CLIParser::EntityKind::SERVER )
+                    {
+                        config.srv_config.listening_address = argv[i];
+                        listening_address_was_set = true;
+                    }
+                    else
+                    {
+                        EPROSIMA_LOG_ERROR(CLI_PARSER, "listening address  argument is only valid for server entity");
+                        print_help(EXIT_FAILURE);
+                    }
                 }
                 else
                 {
@@ -543,29 +552,37 @@ public:
             {
                 if (++i < argc)
                 {
-                    try
+                    if (config.entity == CLIParser::EntityKind::SERVER)
                     {
-                        int input = std::stoi(argv[i]);
-                        if (input < std::numeric_limits<uint16_t>::min() ||
-                                input > std::numeric_limits<uint16_t>::max())
+                        try
                         {
-                            throw std::out_of_range("listening-port argument " + std::string(
-                                              argv[i]) + " out of range [0, 65535].");
+                            int input = std::stoi(argv[i]);
+                            if (input < std::numeric_limits<uint16_t>::min() ||
+                                    input > std::numeric_limits<uint16_t>::max())
+                            {
+                                throw std::out_of_range("listening-port argument " + std::string(
+                                                argv[i]) + " out of range [0, 65535].");
+                            }
+                            else
+                            {
+                                config.srv_config.listening_port = static_cast<uint16_t>(input);
+                            }
                         }
-                        else
+                        catch (const std::invalid_argument& e)
                         {
-                            config.srv_config.listening_port = static_cast<uint16_t>(input);
+                            EPROSIMA_LOG_ERROR(CLI_PARSER, "invalid listening-port argument " + std::string(
+                                        argv[i]) + ": " + std::string(e.what()));
+                            print_help(EXIT_FAILURE);
+                        }
+                        catch (const std::out_of_range& e)
+                        {
+                            EPROSIMA_LOG_ERROR(CLI_PARSER, std::string(e.what()));
+                            print_help(EXIT_FAILURE);
                         }
                     }
-                    catch (const std::invalid_argument& e)
+                    else
                     {
-                        EPROSIMA_LOG_ERROR(CLI_PARSER, "invalid listening-port argument " + std::string(
-                                    argv[i]) + ": " + std::string(e.what()));
-                        print_help(EXIT_FAILURE);
-                    }
-                    catch (const std::out_of_range& e)
-                    {
-                        EPROSIMA_LOG_ERROR(CLI_PARSER, std::string(e.what()));
+                        EPROSIMA_LOG_ERROR(CLI_PARSER, "--listening-port argument is only valid for server entity");
                         print_help(EXIT_FAILURE);
                     }
                 }
@@ -579,28 +596,36 @@ public:
             {
                 if (++i < argc)
                 {
-                    try
+                    if (config.entity == CLIParser::EntityKind::SERVER)
                     {
-                        int input = std::stoi(argv[i]);
-                        if (input < 0 || input > 255)
+                        try
                         {
-                            throw std::out_of_range("id argument " + std::string(
-                                              argv[i]) + " out of range [0, 255].");
+                            int input = std::stoi(argv[i]);
+                            if (input < 0 || input > 255)
+                            {
+                                throw std::out_of_range("id argument " + std::string(
+                                                argv[i]) + " out of range [0, 255].");
+                            }
+                            else
+                            {
+                                config.srv_config.id = static_cast<uint16_t>(input);
+                            }
                         }
-                        else
+                        catch (const std::invalid_argument& e)
                         {
-                            config.srv_config.id = static_cast<uint16_t>(input);
+                            EPROSIMA_LOG_ERROR(CLI_PARSER, "invalid id argument " + std::string(
+                                        argv[i]) + ": " + std::string(e.what()));
+                            print_help(EXIT_FAILURE);
+                        }
+                        catch (const std::out_of_range& e)
+                        {
+                            EPROSIMA_LOG_ERROR(CLI_PARSER, std::string(e.what()));
+                            print_help(EXIT_FAILURE);
                         }
                     }
-                    catch (const std::invalid_argument& e)
+                    else
                     {
-                        EPROSIMA_LOG_ERROR(CLI_PARSER, "invalid id argument " + std::string(
-                                    argv[i]) + ": " + std::string(e.what()));
-                        print_help(EXIT_FAILURE);
-                    }
-                    catch (const std::out_of_range& e)
-                    {
-                        EPROSIMA_LOG_ERROR(CLI_PARSER, std::string(e.what()));
+                        EPROSIMA_LOG_ERROR(CLI_PARSER, "--listening-port argument is only valid for server entity");
                         print_help(EXIT_FAILURE);
                     }
                 }
@@ -614,29 +639,37 @@ public:
             {
                 if (++i < argc)
                 {
-                    try
+                    if (config.entity == CLIParser::EntityKind::SERVER)
                     {
-                        int input = std::stoi(argv[i]);
-                        if (input < std::numeric_limits<uint16_t>::min() ||
-                                input > std::numeric_limits<uint16_t>::max())
+                        try
                         {
-                            throw std::out_of_range("timeout argument " + std::string(
-                                              argv[i]) + " out of range [0, 65535].");
+                            int input = std::stoi(argv[i]);
+                            if (input < std::numeric_limits<uint16_t>::min() ||
+                                    input > std::numeric_limits<uint16_t>::max())
+                            {
+                                throw std::out_of_range("timeout argument " + std::string(
+                                                argv[i]) + " out of range [0, 65535].");
+                            }
+                            else
+                            {
+                                config.srv_config.timeout = static_cast<uint16_t>(input);
+                            }
                         }
-                        else
+                        catch (const std::invalid_argument& e)
                         {
-                            config.srv_config.timeout = static_cast<uint16_t>(input);
+                            EPROSIMA_LOG_ERROR(CLI_PARSER, "invalid timeout argument " + std::string(
+                                        argv[i]) + ": " + std::string(e.what()));
+                            print_help(EXIT_FAILURE);
+                        }
+                        catch (const std::out_of_range& e)
+                        {
+                            EPROSIMA_LOG_ERROR(CLI_PARSER, std::string(e.what()));
+                            print_help(EXIT_FAILURE);
                         }
                     }
-                    catch (const std::invalid_argument& e)
+                    else
                     {
-                        EPROSIMA_LOG_ERROR(CLI_PARSER, "invalid timeout argument " + std::string(
-                                    argv[i]) + ": " + std::string(e.what()));
-                        print_help(EXIT_FAILURE);
-                    }
-                    catch (const std::out_of_range& e)
-                    {
-                        EPROSIMA_LOG_ERROR(CLI_PARSER, std::string(e.what()));
+                        EPROSIMA_LOG_ERROR(CLI_PARSER, "--listening-port argument is only valid for server entity");
                         print_help(EXIT_FAILURE);
                     }
                 }
@@ -651,6 +684,13 @@ public:
                 EPROSIMA_LOG_ERROR(CLI_PARSER, "unknown option " + arg);
                 print_help(EXIT_FAILURE);
             }
+        }
+
+        if (uses_ipv6
+            && !listening_address_was_set
+            && config.entity == CLIParser::EntityKind::SERVER)
+        {
+            config.srv_config.listening_address = "::1";
         }
 
         return config;

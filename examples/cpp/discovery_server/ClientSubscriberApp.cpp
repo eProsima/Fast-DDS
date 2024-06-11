@@ -134,7 +134,7 @@ ClientSubscriberApp::ClientSubscriberApp(
 
             server_locator.kind = LOCATOR_KIND_TCPv6;
             eprosima::fastrtps::rtps::IPLocator::setLogicalPort(server_locator, server_port);
-            eprosima::fastrtps::rtps::IPLocator::setIPv4(server_locator, ip_server_address);
+            eprosima::fastrtps::rtps::IPLocator::setIPv6(server_locator, ip_server_address);
             break;
         }
 
@@ -189,7 +189,7 @@ ClientSubscriberApp::ClientSubscriberApp(
     // Create the topic
     topic_ = participant_->create_topic(
         config.topic_name,
-        "HelloWorld",
+        type_.get_type_name(),
         TOPIC_QOS_DEFAULT);
 
     if (topic_ == nullptr)
