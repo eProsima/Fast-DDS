@@ -144,7 +144,7 @@ SubscriberApp::SubscriberApp(
     {
         rqos.reliability().kind = RELIABLE_RELIABILITY_QOS;
     }
-        if (config.transient_local)
+    if (config.transient_local)
     {
         rqos.durability().kind = TRANSIENT_LOCAL_DURABILITY_QOS;
     }

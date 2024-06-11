@@ -90,33 +90,36 @@ public:
     static void print_help(
             uint8_t return_code)
     {
-        std::cout << "Usage: content_filter <entity> [options]"                                                                                << std::endl;
-        std::cout << ""                                                                                                                        << std::endl;
-        std::cout << "Entities:"                                                                                                               << std::endl;
-        std::cout << " publisher                                                Run a publisher entity"                                        << std::endl;
-        std::cout << " subscriber                                               Run a subscriber entity"                                       << std::endl;
-        std::cout << ""                                                                                                                        << std::endl;
-        std::cout << "Common options:"                                                                                                         << std::endl;
-        std::cout << " -h, --help                                               Print this help message"                                       << std::endl;
-        std::cout << "     --reliable                                           Set Reliability QoS as reliable"                               << std::endl;
-        std::cout << "                                                          (Default: reliable)"                                           << std::endl;
-        std::cout << "     --transient-local                                    Set Durability QoS as transient local"                         << std::endl;
-        std::cout << "                                                          (Default: transient local)"                                           << std::endl;
-        std::cout << "Publisher options:"                                                                                                      << std::endl;
-        std::cout << " -s <num>, --samples <num>                                Number of samples to send"                                     << std::endl;
-        std::cout << "                                                          (Default: 0 [unlimited])"                                      << std::endl;
-        std::cout << " -i <num>, --interval <num>                               Time between samples in milliseconds"                          << std::endl;
-        std::cout << "           --reader-filters <num>                         Set the maximum number of readers that the writer"             << std::endl;
-        std::cout << "                                                          evaluates for applying the filter"                             << std::endl;
-        std::cout << "                                                          (Default: 32)"                                                 << std::endl;
-        std::cout << "Subscriber options:"                                                                                                     << std::endl;
-        std::cout << "           --filter-kind <default/custom/none>            Kind of Content Filter to use"                                 << std::endl;
-        std::cout << "                                                          (Default: default SQL filter)"                                 << std::endl;
-        std::cout << "           --filter-expression <string>                   Filter Expression of the default SQL filter"                   << std::endl;
-        std::cout << "                                                          (Default: \"index between %0 and %1\", where %0 and %1"        << std::endl;
-        std::cout << "                                                          are the indeces of the parameters, i.e. lb and ub)"            << std::endl;
-        std::cout << " -lb <num>, --lower-bound <num>                           Lower bound of the data range to filter. (Default: 5)"         << std::endl;
-        std::cout << " -up <num>, --upper-bound <num>                           Upper bound of the data range to filter. (Default: 9)"         << std::endl;
+        std::cout << "Usage: content_filter <entity> [options]"                                         << std::endl;
+        std::cout << ""                                                                                 << std::endl;
+        std::cout << "Entities:"                                                                        << std::endl;
+        std::cout << " publisher                            Run a publisher entity"                     << std::endl;
+        std::cout << " subscriber                           Run a subscriber entity"                    << std::endl;
+        std::cout << ""                                                                                 << std::endl;
+        std::cout << "Common options:"                                                                  << std::endl;
+        std::cout << " -h, --help                           Print this help message"                    << std::endl;
+        std::cout << "     --reliable                       Set Reliability QoS as reliable"            << std::endl;
+        std::cout << "                                      (Default: reliable)"                        << std::endl;
+        std::cout << "     --transient-local                Set Durability QoS as transient local"      << std::endl;
+        std::cout << "                                      (Default: transient local)"                 << std::endl;
+        std::cout << "Publisher options:"                                                               << std::endl;
+        std::cout << " -s <num>, --samples <num>            Number of samples to send"                  << std::endl;
+        std::cout << "                                      (Default: 0 [unlimited])"                   << std::endl;
+        std::cout << " -i <num>, --interval <num>           Time between samples in milliseconds"       << std::endl;
+        std::cout << "           --reader-filters <num>     Set the maximum number of readers that the" << std::endl;
+        std::cout << "                                      writer evaluates for applying the filter"   << std::endl;
+        std::cout << "                                      (Default: 32)"                              << std::endl;
+        std::cout << "Subscriber options:"                                                              << std::endl;
+        std::cout << " --filter-kind <default/custom/none>  Kind of Content Filter to use"              << std::endl;
+        std::cout << "                                      (Default: default SQL filter)"              << std::endl;
+        std::cout << " --filter-expression <string>         Filter Expression of default SQL filter"    << std::endl;
+        std::cout << "                                      (Default: \"index between %0 and %1\","     << std::endl;
+        std::cout << "                                      where %0 and %1 are the indeces of the"     << std::endl;
+        std::cout << "                                      parameters, i.e. lb and ub)"                << std::endl;
+        std::cout << " -lb <num>, --lower-bound <num>       Lower bound of the data range to filter."   << std::endl;
+        std::cout << "                                      (Default: 5)"                               << std::endl;
+        std::cout << " -up <num>, --upper-bound <num>       Upper bound of the data range to filter."   << std::endl;
+        std::cout << "                                      (Default: 9)"                               << std::endl;
         std::exit(return_code);
     }
 
