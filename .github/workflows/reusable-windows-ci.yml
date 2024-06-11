@@ -140,7 +140,7 @@ jobs:
       - name: Fetch Fast DDS CI dependencies
         uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
         with:
-          vcs_repos_file: ${{ github.workspace }}\src\fastdds\.github\workflows\config\ci.repos
+          vcs_repos_file: ${{ github.workspace }}\src\fastdds\.github\workflows\config\fastdds_test.repos
           destination_workspace: src
           skip_existing: 'true'
 
@@ -149,9 +149,9 @@ jobs:
         continue-on-error: false
         uses: eProsima/eProsima-CI/windows/colcon_build@v0
         with:
-          colcon_meta_file: ${{ github.workspace }}\src\fastdds\.github\workflows\config\ci.meta
+          colcon_meta_file: ${{ github.workspace }}\src\fastdds\.github\workflows\config\fastdds_build.meta ${{ github.workspace }}\src\fastdds\.github\workflows\config\fastdds_test.meta
           colcon_build_args: ${{ inputs.colcon-args }}
-          # The following Fast DDS CMake options need to be specified here instead of in the ci.meta file
+          # The following Fast DDS CMake options need to be specified here instead of in the meta files
           # because they vary from platform to platform
           cmake_args_default: ${{ inputs.cmake-args }} -T ${{ matrix.vs-toolset }} -DTHIRDPARTY_Asio=FORCE -DTHIRDPARTY_TinyXML2=FORCE -DTHIRDPARTY_fastcdr=OFF -DTHIRDPARTY_UPDATE=ON -DEPROSIMA_EXTRA_CMAKE_CXX_FLAGS="/MP /WX"
           cmake_build_type: ${{ matrix.cmake-config }}
