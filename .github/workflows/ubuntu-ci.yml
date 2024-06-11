@@ -38,16 +38,9 @@ concurrency:
 
 jobs:
   ubuntu-ci:
-
-    strategy:
-      fail-fast: false
-      matrix:
-        os-image:
-          - 'ubuntu-22.04'
-
     uses: ./.github/workflows/reusable-ubuntu-ci.yml
     with:
-      os-image: ${{ matrix.os-image }}
+      os-image: 'ubuntu-22.04'
       label: ${{ inputs.label || 'ubuntu-ci' }}
       colcon-args: ${{ inputs.colcon-args }}
       cmake-args: '-DSECURITY=ON ${{ inputs.cmake-args }}'
