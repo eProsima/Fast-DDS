@@ -80,14 +80,7 @@ public:
         static const uint32_t incompatible_qos = 2u;
 
         //! Bit index for matching failing due to inconsistent partitions
-<<<<<<< HEAD:include/fastdds/rtps/builtin/discovery/endpoint/EDP.h
-        static const uint32_t partitions = (0x00000001 << 3u);
-=======
         static const uint32_t partitions = 3u;
-
-        //! Bit index for matching failing due to incompatible TypeInformation
-        static const uint32_t different_typeinfo = 4u;
->>>>>>> 5e1f1dd22 (Correctly initialize `MatchingFailureMask` constants to be used with the `std::bitset` API (#4922)):src/cpp/rtps/builtin/discovery/endpoint/EDP.h
     };
 
     /**
