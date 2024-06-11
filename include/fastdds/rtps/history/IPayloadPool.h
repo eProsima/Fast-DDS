@@ -70,10 +70,9 @@ public:
      *
      * @returns whether the operation succeeded or not
      *
-     * @note @c data is received as reference to accommodate the case where several readers
-     * receive the same payload. If the payload has no owner, it means it is allocated on the stack of a
+     * @note If @c data has no owner, it means it is allocated on the stack of a
      * reception thread, and a copy should be performed. If the ownership of @c data needs to be changed,
-     * a consecutive call to this method needs to be called with the arguments swapped, leveraging the
+     * a consecutive call to this method needs to be performed with the arguments swapped, leveraging the
      * post-condition of this method which ensures that @c payload.payload_owner points to @c this.
      *
      * @post

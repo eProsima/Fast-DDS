@@ -629,8 +629,7 @@ bool StatelessReader::process_data_msg(
             {
                 if (change->serializedPayload.payload_owner == nullptr)
                 {
-                    change_to_add->serializedPayload.payload_owner->get_payload(change_to_add->serializedPayload,
-                            change->serializedPayload);
+                    payload_pool_->get_payload(change_to_add->serializedPayload, change->serializedPayload);
                 }
             }
             else
