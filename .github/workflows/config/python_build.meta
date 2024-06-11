@@ -1,4 +1,0 @@
-names:
-    fastdds:
-        cmake-args:
-            - "-DSECURITY=ON"

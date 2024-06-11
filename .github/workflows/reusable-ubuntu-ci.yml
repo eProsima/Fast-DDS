@@ -27,6 +27,14 @@ on:
         description: 'Branch or tag of Fast DDS repository (https://github.com/eProsima/Fast-DDS)'
         required: true
         type: string
+      security:
+        description: 'Enable security features'
+        required: false
+        type: boolean
+        default: true
+
+env:
+    security-cmake-flag: '-DSECURITY=ON'        # set to 'ON' as security input default value is 'true'
 
 defaults:
   run:
@@ -86,6 +94,14 @@ jobs:
         with:
           api_token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Setup security configuration
+        run: |
+          if [ "${{ inputs.security }}" = "true" ]; then
+            echo "security-cmake-flag='-DSECURITY=ON'" >> $GITHUB_ENV
+          else
+            echo "security-cmake-flag='-DSECURITY=OFF'" >> $GITHUB_ENV
+          fi
+
       # TODO(eduponz): Set up libp11 and SoftHSM. NOTE: using SoftHSM requires adding the runner to a group,
       #                which entails logout/login or rebooting the machine. This is not feasible in a CI environment.
 
@@ -102,7 +118,7 @@ jobs:
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta
           colcon_build_args: ${{ inputs.colcon-args }}
-          cmake_args: ${{ inputs.cmake-args }}
+          cmake_args: '${{ env.security-cmake-flag }} ${{ inputs.cmake-args }}'
           cmake_args_default: -DCMAKE_CXX_FLAGS="-Werror -Wall -Wextra -Wpedantic -Wunused-value -Woverloaded-virtual"
           cmake_build_type: ${{ matrix.cmake-build-type }}
           workspace: ${{ github.workspace }}
@@ -113,7 +129,7 @@ jobs:
           name: fastdds_build_${{ inputs.label }}
           path: ${{ github.workspace }}
 
-  fastdds_build_test:
+  fastdds_test:
     needs: fastdds_build
     runs-on: ${{ inputs.os-image }}
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') }}
@@ -180,8 +196,8 @@ jobs:
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_test.meta
           colcon_build_args: ${{ inputs.colcon-args }}
-          cmake_args: ${{ inputs.cmake-args }}
-          cmake_args_default: -DCMAKE_CXX_FLAGS="-Werror -Wall -Wextra -Wpedantic -Wunused-value -Woverloaded-virtual" -DFASTDDS_EXAMPLE_TESTS=ON
+          cmake_args: '${{ env.security-cmake-flag }} ${{ inputs.cmake-args }}'
+          cmake_args_default: -DCMAKE_CXX_FLAGS="-Werror -Wall -Wextra -Wpedantic -Wunused-value -Woverloaded-virtual"
           cmake_build_type: ${{ matrix.cmake-build-type }}
           workspace: ${{ github.workspace }}
 
@@ -190,10 +206,10 @@ jobs:
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') }}
         uses: eProsima/eProsima-CI/multiplatform/colcon_test@feature/colcon_test_metas
         with:
+          colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_test.meta
           colcon_test_args: ${{ inputs.colcon-args }}
           colcon_test_args_default: --event-handlers=console_direct+
           ctest_args: ${{ inputs.ctest-args }}
-          ctest_args_default: --repeat until-pass:3 --timeout 300 --label-exclude "xfail"
           packages_names: fastdds
           workspace: ${{ github.workspace }}
           test_report_artifact: ${{ format('test_report_{0}_{1}_{2}', inputs.label, github.job, join(matrix.*, '_')) }}
@@ -254,7 +270,7 @@ jobs:
         uses: eProsima/eProsima-CI/ubuntu/get_related_branch_from_repo@v0
         with:
           remote_repository: eProsima/Fast-DDS-python
-          fallback_branch: ${{ inputs.fastdds_branch || 'main' }}
+          fallback_branch: ${{ inputs.fastdds-branch || 'main' }}
 
       - name: Download Fast DDS Python repo
         uses: eProsima/eProsima-CI/external/checkout@v0
@@ -267,9 +283,9 @@ jobs:
         continue-on-error: false
         uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
         with:
-          colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta ${{ github.workspace }}/src/fastdds/.github/workflows/config/python_build.meta
+          colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta
           colcon_build_args: '${{ inputs.colcon-args }} --executor parallel --mixin ccache --packages-up-to fastdds_python'
-          cmake_args: ${{ inputs.cmake-args }}
+          cmake_args: '${{ env.security-cmake-flag }} ${{ inputs.cmake-args }}'
           cmake_args_default: ''
           cmake_build_type: ${{ matrix.cmake-build-type }}
           workspace: ${{ github.workspace }}
@@ -280,7 +296,7 @@ jobs:
           name: fastdds_python_build_${{ inputs.label }}
           path: ${{ github.workspace }}
 
-  fastdds_python_build_test:
+  fastdds_python_test:
     needs: fastdds_python_build
     runs-on: ${{ inputs.os-image }}
     strategy:
@@ -332,9 +348,9 @@ jobs:
         continue-on-error: false
         uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
         with:
-          colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta ${{ github.workspace }}/src/fastdds/.github/workflows/config/python_build.meta ${{ github.workspace }}/src/fastdds/.github/workflows/config/python_test.meta
+          colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta ${{ github.workspace }}/src/fastdds/.github/workflows/config/python_test.meta
           colcon_build_args: '${{ inputs.colcon-args }} --executor parallel --mixin ccache --packages-up-to fastdds_python'
-          cmake_args: ${{ inputs.cmake-args }}
+          cmake_args: '${{ env.security-cmake-flag }} ${{ inputs.cmake-args }}'
           cmake_args_default: ''
           cmake_build_type: ${{ matrix.cmake-build-type }}
           workspace: ${{ github.workspace }}
@@ -344,10 +360,10 @@ jobs:
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') }}
         uses: eProsima/eProsima-CI/multiplatform/colcon_test@v0
         with:
+          colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/python_test.meta
           colcon_test_args: ${{ inputs.colcon-args }}
           colcon_test_args_default: --event-handlers=console_direct+
           ctest_args: ${{ inputs.ctest-args }}
-          ctest_args_default: --repeat until-pass:3 --timeout 300 --label-exclude "xfail"
           packages_names: fastdds_python
           workspace: ${{ github.workspace }}
           workspace_dependencies: ''
@@ -363,9 +379,10 @@ jobs:
           show_disabled: 'False'
           show_skipped: 'False'
 
-  fastdds_docs_build_test:
+  fastdds_docs_test:
     needs: fastdds_python_build
     runs-on: ${{ inputs.os-image }}
+    if: ${{ inputs.security }}
     strategy:
       fail-fast: false
       matrix:
@@ -409,7 +426,7 @@ jobs:
         uses: eProsima/eProsima-CI/ubuntu/get_related_branch_from_repo@v0
         with:
           remote_repository: eProsima/Fast-DDS-docs
-          fallback_branch: ${{ inputs.fastdds_branch || 'master' }}
+          fallback_branch: ${{ inputs.fastdds-branch || 'master' }}
 
       - name: Download Fast DDS documentation repo
         uses: eProsima/eProsima-CI/external/checkout@v0
@@ -437,8 +454,7 @@ jobs:
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta ${{ github.workspace }}/src/fastdds/.github/workflows/config/documentation.meta
           colcon_build_args: '${{ inputs.colcon-args }} --packages-up-to fastdds-docs'
-          cmake_args: ${{ inputs.cmake-args }}
-          cmake_args_default: ''
+          cmake_args: '${{ env.security-cmake-flag }} ${{ inputs.cmake-args }}'
           cmake_build_type: ${{ matrix.cmake-build-type }}
           workspace: ${{ github.workspace }}
 
@@ -450,7 +466,6 @@ jobs:
           colcon_test_args: ${{ inputs.colcon-args }}
           colcon_test_args_default: --event-handlers=console_direct+
           ctest_args: ${{ inputs.ctest-args }}
-          ctest_args_default: ''
           packages_names: fastdds-docs
           workspace: ${{ github.workspace }}
           workspace_dependencies: ''
@@ -539,12 +554,12 @@ jobs:
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta
           colcon_build_args: '${{ inputs.colcon-args }} --packages-up-to ShapesDemo'
-          cmake_args: ${{ inputs.cmake-args }}
+          cmake_args: '${{ env.security-cmake-flag }} ${{ inputs.cmake-args }}'
           cmake_args_default: -DCMAKE_CXX_FLAGS="-Werror -Wall -Wextra -Wpedantic -Wunused-value -Woverloaded-virtual"
           cmake_build_type: ${{ matrix.cmake-build-type }}
           workspace: ${{ github.workspace }}
 
-  fastdds_discovery_server_build_test:
+  fastdds_discovery_server_test:
     needs: fastdds_build
     runs-on: ${{ inputs.os-image }}
     strategy:
@@ -612,7 +627,7 @@ jobs:
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta
           colcon_build_args: '${{ inputs.colcon-args }} --packages-up-to discovery-server'
-          cmake_args: ${{ inputs.cmake-args }}
+          cmake_args: '${{ env.security-cmake-flag }} ${{ inputs.cmake-args }}'
           cmake_args_default: -DCMAKE_CXX_FLAGS="-Werror -Wall -Wextra -Wpedantic -Wunused-value -Woverloaded-virtual"
           cmake_build_type: ${{ matrix.cmake-build-type }}
           workspace: ${{ github.workspace }}
@@ -622,10 +637,10 @@ jobs:
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') }}
         uses: eProsima/eProsima-CI/multiplatform/colcon_test@v0
         with:
+          colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/discovery_server_test.meta
           colcon_test_args: ${{ inputs.colcon-args }}
           colcon_test_args_default: --event-handlers=console_direct+
           ctest_args: ${{ inputs.ctest-args }}
-          ctest_args_default: --repeat until-pass:3 --timeout 300 --label-exclude "xfail"
           packages_names: discovery-server
           workspace: ${{ github.workspace }}
           workspace_dependencies: ''

@@ -1,7 +1,5 @@
 names:
-    fastdds_python:
-        cmake-args:
-            - "-DBUILD_TESTING=ON"
+    discovery-server:
         ctest-args: [
                 "--repeat", "until-pass:3"
                 "--timeout", "300",
