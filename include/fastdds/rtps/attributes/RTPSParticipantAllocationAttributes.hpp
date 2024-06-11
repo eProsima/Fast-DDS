@@ -94,8 +94,8 @@ struct SendBuffersAllocationAttributes
      * send buffer. The default value will use a value of 16 network buffers for both
      * the preallocated buffers and the dynamic increment allocation, with no maximum limit.
      */
-    ResourceLimitedContainerConfig network_buffers_config = ResourceLimitedContainerConfig(0,
-                    std::numeric_limits<size_t>::max dummy_avoid_winmax (), 0);
+    ResourceLimitedContainerConfig network_buffers_config = ResourceLimitedContainerConfig(16u,
+                    std::numeric_limits<size_t>::max dummy_avoid_winmax (), 16u);
 };
 
 /**

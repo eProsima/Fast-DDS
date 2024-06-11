@@ -103,8 +103,8 @@ private:
     //!To wait for a buffer to be returned to the pool.
     TimedConditionVariable available_cv_;
     //!Configuration for the network buffers.
-    ResourceLimitedContainerConfig network_buffers_config_ = ResourceLimitedContainerConfig(16,
-                    std::numeric_limits<size_t>::max dummy_avoid_winmax (), 16);
+    ResourceLimitedContainerConfig network_buffers_config_ = ResourceLimitedContainerConfig(16u,
+                    std::numeric_limits<size_t>::max dummy_avoid_winmax (), 16u);
 
 };
 
