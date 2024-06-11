@@ -71,16 +71,16 @@ public:
     public:
 
         //! Bit index for matching failing due to different topic
-        static const uint32_t different_topic = (0x00000001 << 0u);
+        static const uint32_t different_topic = 0u;
 
         //! Bit index for matching failing due to inconsistent topic (same topic name but different characteristics)
-        static const uint32_t inconsistent_topic = (0x00000001 << 1u);
+        static const uint32_t inconsistent_topic = 1u;
 
         //! Bit index for matching failing due to incompatible QoS
-        static const uint32_t incompatible_qos = (0x00000001 << 2u);
+        static const uint32_t incompatible_qos = 2u;
 
         //! Bit index for matching failing due to inconsistent partitions
-        static const uint32_t partitions = (0x00000001 << 3u);
+        static const uint32_t partitions = 3u;
     };
 
     /**
