@@ -1,14 +1,14 @@
-#ifndef _CONTENTFILTEREDTOPICEXAMPLE_MYCUSTOMFILTERFACTORY_HPP_
-#define _CONTENTFILTEREDTOPICEXAMPLE_MYCUSTOMFILTERFACTORY_HPP_
+#ifndef _FASTDDS_CONTENT_FILTER_CUSTOM_FILTER_FACTORY_HPP_
+#define _FASTDDS_CONTENT_FILTER_CUSTOM_FILTER_FACTORY_HPP_
 
 #include <fastdds/dds/topic/IContentFilter.hpp>
 #include <fastdds/dds/topic/IContentFilterFactory.hpp>
 #include <fastdds/dds/topic/TopicDataType.hpp>
 
-#include "MyCustomFilter.hpp"
+#include "CustomContentFilter.hpp"
 
 //! Custom filter factory
-class MyCustomFilterFactory : public eprosima::fastdds::dds::IContentFilterFactory
+class CustomContentFilterFactory : public eprosima::fastdds::dds::IContentFilterFactory
 {
 public:
 
@@ -47,11 +47,11 @@ public:
         // If there is an update, delete previous instance.
         if (nullptr != filter_instance)
         {
-            delete(dynamic_cast<MyCustomFilter*>(filter_instance));
+            delete(dynamic_cast<CustomContentFilter*>(filter_instance));
         }
 
         // Instantiation of the Custom Filter.
-        filter_instance = new MyCustomFilter(std::stoi(filter_parameters[0]), std::stoi(filter_parameters[1]));
+        filter_instance = new CustomContentFilter(std::stoi(filter_parameters[0]), std::stoi(filter_parameters[1]));
 
         return eprosima::fastdds::dds::RETCODE_OK;
     }
@@ -71,7 +71,7 @@ public:
             eprosima::fastdds::dds::IContentFilter* filter_instance) override
     {
         // Check the ContentFilteredTopic should be created by this factory.
-        if (0 != strcmp(filter_class_name, "MY_CUSTOM_FILTER") ||
+        if (0 != strcmp(filter_class_name, "CUSTOM_FILTER") ||
                 // Check the filter instance is valid
                 nullptr != filter_instance)
         {
@@ -81,11 +81,11 @@ public:
         // Deletion of the Custom Filter.
         if (nullptr != filter_instance)
         {
-            delete(dynamic_cast<MyCustomFilter*>(filter_instance));
+            delete(dynamic_cast<CustomContentFilter*>(filter_instance));
         }
 
         return eprosima::fastdds::dds::RETCODE_OK;
     }
 
 };
-#endif // _CONTENTFILTEREDTOPICEXAMPLE_MYCUSTOMFILTERFACTORY_HPP_
+#endif // _FASTDDS_CONTENT_FILTER_CUSTOM_FILTER_FACTORY_HPP_

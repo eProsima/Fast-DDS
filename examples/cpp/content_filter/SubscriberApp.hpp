@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _CONTENT_FILTER_SUBSCRIBER_APP_HPP_
-#define _CONTENT_FILTER_SUBSCRIBER_APP_HPP_
+#ifndef _FASTDDS_CONTENT_FILTER_SUBSCRIBER_APP_HPP_
+#define _FASTDDS_CONTENT_FILTER_SUBSCRIBER_APP_HPP_
 
 #include <atomic>
 #include <condition_variable>
@@ -107,4 +107,4 @@ private:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _CONTENT_FILTER_SUBSCRIBER_APP_HPP_
+#endif // _FASTDDS_CONTENT_FILTER_SUBSCRIBER_APP_HPP_

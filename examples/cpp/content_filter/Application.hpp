@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _FASTDDS_FILTER_CONTENT_APPLICATION_HPP_
-#define _FASTDDS_FILTER_CONTENT_APPLICATION_HPP_
+#ifndef _FASTDDS_CONTENT_FILTER_APPLICATION_HPP_
+#define _FASTDDS_CONTENT_FILTER_APPLICATION_HPP_
 
 #include <atomic>
 
@@ -53,4 +53,4 @@ public:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif /* _FASTDDS_FILTER_CONTENT_APPLICATION_HPP_ */
+#endif /* _FASTDDS_CONTEN_FILTER_APPLICATION_HPP_ */

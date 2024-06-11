@@ -1,5 +1,5 @@
-#ifndef _CONTENTFILTEREDTOPICEXAMPLE_MYCUSTOMFILTER_HPP_
-#define _CONTENTFILTEREDTOPICEXAMPLE_MYCUSTOMFILTER_HPP_
+#ifndef _FASTDDS_CONTENT_FILTER_CUSTOM_FILTER_HPP_
+#define _FASTDDS_CONTENT_FILTER_CUSTOM_FILTER_HPP_
 
 #include <fastcdr/Cdr.h>
 
@@ -9,17 +9,17 @@
 //! Custom filter class
 //! It requieres two parameters 'low_mark_' and 'high_mark_'.
 //! Filter samples which index is lower than 'low_mark_' and higher than 'high_mark_'.
-class MyCustomFilter : public eprosima::fastdds::dds::IContentFilter
+class CustomContentFilter : public eprosima::fastdds::dds::IContentFilter
 {
 public:
 
     /**
-     * @brief Construct a new MyCustomFilter object
+     * @brief Construct a new CustomContentFilter object
      *
      * @param low_mark
      * @param high_mark
      */
-    MyCustomFilter(
+    CustomContentFilter(
             int low_mark,
             int high_mark)
         : low_mark_(low_mark)
@@ -28,7 +28,7 @@ public:
     }
 
     //! Destructor
-    virtual ~MyCustomFilter() = default;
+    virtual ~CustomContentFilter() = default;
 
     /**
      * @brief Evaluate filter discriminating whether the sample is relevant or not, i.e. whether it meets the filtering
@@ -78,4 +78,4 @@ private:
 
 };
 
-#endif // _CONTENTFILTEREDTOPICEXAMPLE_MYCUSTOMFILTER_HPP_
+#endif // _FASTDDS_CONTENT_FILTER_CUSTOM_FILTER_HPP_
