@@ -63,6 +63,7 @@ set(${PROJECT_NAME}_source_files
     rtps/DataSharing/DataSharingListener.cpp
     rtps/DataSharing/DataSharingNotification.cpp
     rtps/reader/WriterProxy.cpp
+    rtps/reader/reader_utils.cpp
     rtps/reader/StatefulReader.cpp
     rtps/reader/StatelessReader.cpp
     rtps/reader/RTPSReader.cpp
