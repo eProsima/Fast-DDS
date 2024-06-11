@@ -45,6 +45,10 @@ Forthcoming
 * Added new `flow_controller_descriptor_list` XML configuration, remove `ThroughtputController`.
 * Migrate `#define`s within `BuiltinEndpoints.hpp` to namespaced `constexpr` variables.
 * Make `StdoutErrConsumer` the default log consumer.
+* IPayloadPool refactor:
+  * `payload_owner` moved from `CacheChange_t` to `SerializedPayload_t`.
+  * `SerializedPayload_t` copies are now forbidden.
+  * Refactor of `get_payload` methods.
 
 
 Version 2.14.0
