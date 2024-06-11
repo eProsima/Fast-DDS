@@ -42,6 +42,12 @@ public:
         return false;
     }
 
+    static const NameHash name_hash(
+            const std::string&)
+    {
+        return {};
+    }
+
 };
 
 } // xtypes
