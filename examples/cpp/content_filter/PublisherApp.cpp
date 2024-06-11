@@ -95,6 +95,14 @@ PublisherApp::PublisherApp(
     wqos.writer_resource_limits().reader_filters_allocation.initial = 0;
     wqos.writer_resource_limits().reader_filters_allocation.maximum = config.max_reader_filters;
     wqos.writer_resource_limits().reader_filters_allocation.increment = 1;
+    if (!config.transient_local)
+    {
+        wqos.durability().kind = VOLATILE_DURABILITY_QOS;
+    }
+    if (!config.reliable)
+    {
+        wqos.reliability().kind = BEST_EFFORT_RELIABILITY_QOS;
+    }
     writer_ = publisher_->create_datawriter(topic_, wqos, this);
     if (writer_ == nullptr)
     {

@@ -140,8 +140,14 @@ SubscriberApp::SubscriberApp(
     rqos.data_sharing().off();
     // In order to receive all samples, DataReader is configured as RELIABLE and TRANSIENT_LOCAL (ensure reception even
     // if DataReader matching is after DataWriter one)
-    rqos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    rqos.durability().kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+    if (config.reliable)
+    {
+        rqos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    }
+        if (config.transient_local)
+    {
+        rqos.durability().kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+    }
     reader_ = subscriber_->create_datareader(filter_topic_, rqos, this);
     if (reader_ == nullptr)
     {

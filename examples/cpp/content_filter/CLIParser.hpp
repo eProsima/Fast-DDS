@@ -57,6 +57,8 @@ public:
         uint16_t samples = 0;
         uint16_t interval = 100;
         uint16_t max_reader_filters = 32;
+        bool transient_local = true;
+        bool reliable = true;
     };
 
     //! Subscriber application configuration structure
@@ -66,6 +68,8 @@ public:
         std::string filter_expression = "index between %0 and %1";
         std::string upper_bound = "9";
         std::string lower_bound = "5";
+        bool transient_local = true;
+        bool reliable = true;
     };
 
     //! Configuration structure for the application
@@ -94,6 +98,10 @@ public:
         std::cout << ""                                                                                                                        << std::endl;
         std::cout << "Common options:"                                                                                                         << std::endl;
         std::cout << " -h, --help                                               Print this help message"                                       << std::endl;
+        std::cout << "     --reliable                                           Set Reliability QoS as reliable"                               << std::endl;
+        std::cout << "                                                          (Default: reliable)"                                           << std::endl;
+        std::cout << "     --transient-local                                    Set Durability QoS as transient local"                         << std::endl;
+        std::cout << "                                                          (Default: transient local)"                                           << std::endl;
         std::cout << "Publisher options:"                                                                                                      << std::endl;
         std::cout << " -s <num>, --samples <num>                                Number of samples to send"                                     << std::endl;
         std::cout << "                                                          (Default: 0 [unlimited])"                                      << std::endl;
@@ -251,6 +259,60 @@ public:
                     else
                     {
                         EPROSIMA_LOG_ERROR(CLI_PARSER, "entity not specified for --reader-filters argument");
+                        print_help(EXIT_FAILURE);
+                    }
+                }
+                else
+                {
+                    EPROSIMA_LOG_ERROR(CLI_PARSER, "missing argument for " + arg);
+                    print_help(EXIT_FAILURE);
+                }
+            }
+            else if (arg == "--reliable")
+            {
+                if (i + 1 < argc)
+                {
+                    std::string reliable = argv[++i];
+                    if (reliable == "true")
+                    {
+                        config.pub_config.reliable = true;
+                        config.sub_config.reliable = true;
+                    }
+                    else if (reliable == "false")
+                    {
+                        config.pub_config.reliable = false;
+                        config.sub_config.reliable = false;
+                    }
+                    else
+                    {
+                        EPROSIMA_LOG_ERROR(CLI_PARSER, "unknown --reliable argument");
+                        print_help(EXIT_FAILURE);
+                    }
+                }
+                else
+                {
+                    EPROSIMA_LOG_ERROR(CLI_PARSER, "missing argument for " + arg);
+                    print_help(EXIT_FAILURE);
+                }
+            }
+            else if (arg == "--transient-local")
+            {
+                if (i + 1 < argc)
+                {
+                    std::string transient = argv[++i];
+                    if (transient == "true")
+                    {
+                        config.pub_config.transient_local = true;
+                        config.sub_config.transient_local = true;
+                    }
+                    else if (transient == "false")
+                    {
+                        config.pub_config.transient_local = false;
+                        config.sub_config.transient_local = false;
+                    }
+                    else
+                    {
+                        EPROSIMA_LOG_ERROR(CLI_PARSER, "unknown --transient-local argument");
                         print_help(EXIT_FAILURE);
                     }
                 }
