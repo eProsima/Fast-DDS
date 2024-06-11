@@ -83,13 +83,6 @@ struct FASTDDS_EXPORTED_API SerializedPayload_t
     {
     }
 
-    //!Copy constructor
-    SerializedPayload_t(
-            const SerializedPayload_t& other) = delete;
-    //!Copy operator
-    SerializedPayload_t& operator = (
-            const SerializedPayload_t& other) = delete;
-
     /**
      * @param len Maximum size of the payload
      */
@@ -100,52 +93,12 @@ struct FASTDDS_EXPORTED_API SerializedPayload_t
         this->reserve(len);
     }
 
-    /*!
-     * Destructor
-     * It is expected to release the payload if the payload owner is not nullptr before destruction
-     */
-    ~SerializedPayload_t()
-    {
-        if (payload_owner != nullptr)
-        {
-            payload_owner->release_payload(*this);
-        }
-        this->empty();
-    }
-
-    bool operator == (
-            const SerializedPayload_t& other) const
-    {
-        return ((encapsulation == other.encapsulation) &&
-               (length == other.length) &&
-               (0 == memcmp(data, other.data, length)));
-    }
-
-    //!Move operator
+    //!Copy constructor
+    SerializedPayload_t(
+            const SerializedPayload_t& other) = delete;
+    //!Copy operator
     SerializedPayload_t& operator = (
-            SerializedPayload_t&& other) noexcept
-    {
-        if (this == &other)
-        {
-            return *this;
-        }
-
-        encapsulation = other.encapsulation;
-        length = other.length;
-        data = other.data;
-        max_size = other.max_size;
-        pos = other.pos;
-        payload_owner = other.payload_owner;
-
-        other.encapsulation = CDR_BE;
-        other.length = 0;
-        other.data = nullptr;
-        other.max_size = 0;
-        other.pos = 0;
-        other.payload_owner = nullptr;
-
-        return *this;
-    }
+            const SerializedPayload_t& other) = delete;
 
     //!Move constructor
     SerializedPayload_t(
@@ -153,6 +106,19 @@ struct FASTDDS_EXPORTED_API SerializedPayload_t
     {
         *this = std::move(other);
     }
+
+    //!Move operator
+    SerializedPayload_t& operator = (
+            SerializedPayload_t&& other) noexcept;
+
+    /*!
+     * Destructor
+     * It is expected to release the payload if the payload owner is not nullptr before destruction
+     */
+    ~SerializedPayload_t();
+
+    bool operator == (
+            const SerializedPayload_t& other) const;
 
     /*!
      * Copy another structure (including allocating new space for the data).
@@ -162,29 +128,7 @@ struct FASTDDS_EXPORTED_API SerializedPayload_t
      */
     bool copy(
             const SerializedPayload_t* serData,
-            bool with_limit = true)
-    {
-        length = serData->length;
-
-        if (serData->length > max_size)
-        {
-            if (with_limit)
-            {
-                return false;
-            }
-            else
-            {
-                this->reserve(serData->length);
-            }
-        }
-        encapsulation = serData->encapsulation;
-        if (length == 0)
-        {
-            return true;
-        }
-        memcpy(data, serData->data, length);
-        return true;
-    }
+            bool with_limit = true);
 
     /*!
      * Allocate new space for fragmented data
@@ -192,61 +136,16 @@ struct FASTDDS_EXPORTED_API SerializedPayload_t
      * @return True if correct
      */
     bool reserve_fragmented(
-            SerializedPayload_t* serData)
-    {
-        length = serData->length;
-        max_size = serData->length;
-        encapsulation = serData->encapsulation;
-        data = (octet*)calloc(length, sizeof(octet));
-        return true;
-    }
+            SerializedPayload_t* serData);
 
     /*!
      * Empty the payload
      * @pre payload_owner must be nullptr
      */
-    void empty()
-    {
-        assert(payload_owner == nullptr);
-
-        length = 0;
-        encapsulation = CDR_BE;
-        max_size = 0;
-        if (data != nullptr)
-        {
-            free(data);
-        }
-        data = nullptr;
-    }
+    void empty();
 
     void reserve(
-            uint32_t new_size)
-    {
-        if (new_size <= this->max_size)
-        {
-            return;
-        }
-        if (data == nullptr)
-        {
-            data = (octet*)calloc(new_size, sizeof(octet));
-            if (!data)
-            {
-                throw std::bad_alloc();
-            }
-        }
-        else
-        {
-            void* old_data = data;
-            data = (octet*)realloc(data, new_size);
-            if (!data)
-            {
-                free(old_data);
-                throw std::bad_alloc();
-            }
-            memset(data + max_size, 0, (new_size - max_size) * sizeof(octet));
-        }
-        max_size = new_size;
-    }
+            uint32_t new_size);
 
 };
 

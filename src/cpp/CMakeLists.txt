@@ -141,6 +141,7 @@ set(${PROJECT_NAME}_source_files
     rtps/builtin/liveliness/WLP.cpp
     rtps/builtin/liveliness/WLPListener.cpp
     rtps/common/GuidPrefix_t.cpp
+    rtps/common/SerializedPayload.cpp
     rtps/common/LocatorWithMask.cpp
     rtps/common/Time_t.cpp
     rtps/common/Token.cpp
