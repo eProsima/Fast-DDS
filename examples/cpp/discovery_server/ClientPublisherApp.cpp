@@ -194,11 +194,7 @@ ClientPublisherApp::ClientPublisherApp(
     // Create de data writer
     DataWriterQos wqos = DATAWRITER_QOS_DEFAULT;
 
-    if (config.reliable)
-    {
-        wqos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    }
-    else
+    if (!config.reliable)
     {
         wqos.reliability().kind = BEST_EFFORT_RELIABILITY_QOS;
     }

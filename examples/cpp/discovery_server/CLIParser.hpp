@@ -176,7 +176,7 @@ public:
         std::cout << "  -t <str>, --topic <str>              Topic name"                               << std::endl;
         std::cout << "                                       (Default: discovery_server_topic)."       << std::endl;
         std::cout << "  -r, --reliable                       Set Reliability QoS as reliable"          << std::endl;
-        std::cout << "                                       (Default: reliable)"                      << std::endl;
+        std::cout << "                                       (Default: best effort)"                   << std::endl;
         std::cout << "      --transient-local                Set Durability QoS as transient local"    << std::endl;
         std::cout << "                                       (Default: volatile)"                      << std::endl;
         std::cout << "  -s <num>, --samples <num>            Number of samples to send "               << std::endl;
