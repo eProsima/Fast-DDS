@@ -2,8 +2,6 @@ name: Fast DDS MacOS CI (nightly)
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '0 1 * * *'
 
 jobs:
   nightly-mac-ci-master:
@@ -12,67 +10,10 @@ jobs:
       matrix:
         security:
           - 'ON'
-          - 'OFF'
     uses: eProsima/Fast-DDS/.github/workflows/reusable-mac-ci.yml@feature/detect_flaky_tests
     with:
-      label: 'nightly-sec-${{ matrix.security }}-mac-ci-master'
+      label: 'nightly-sec-${{ matrix.security }}-mac-ci-master-flaky'
       cmake-args: "-DSECURITY=${{ matrix.security }}"
       ctest-args: "-LE xfail"
       fastdds-branch: 'master'
       flakiness-report: true
-
-  nightly-mac-ci-2_14_x:
-    strategy:
-      fail-fast: false
-      matrix:
-        security:
-          - 'ON'
-          - 'OFF'
-    uses: eProsima/Fast-DDS/.github/workflows/reusable-mac-ci.yml@2.14.x
-    with:
-      label: 'nightly-sec-${{ matrix.security }}-mac-ci-2.14.x'
-      cmake-args: "-DSECURITY=${{ matrix.security }}"
-      ctest-args: "-LE xfail"
-      fastdds-branch: '2.14.x'
-
-  nightly-mac-ci-2_13_x:
-    strategy:
-      fail-fast: false
-      matrix:
-        security:
-          - 'ON'
-          - 'OFF'
-    uses: eProsima/Fast-DDS/.github/workflows/reusable-mac-ci.yml@2.13.x
-    with:
-      label: 'nightly-sec-${{ matrix.security }}-mac-ci-2.13.x'
-      cmake-args: "-DSECURITY=${{ matrix.security }}"
-      ctest-args: "-LE xfail"
-      fastdds-branch: '2.13.x'
-
-  nightly-mac-ci-2_10_x:
-    strategy:
-      fail-fast: false
-      matrix:
-        security:
-          - 'ON'
-          - 'OFF'
-    uses: eProsima/Fast-DDS/.github/workflows/reusable-mac-ci.yml@2.10.x
-    with:
-      label: 'nightly-sec-${{ matrix.security }}-mac-ci-2.10.x'
-      cmake-args: "-DSECURITY=${{ matrix.security }}"
-      ctest-args: "-LE xfail"
-      fastdds-branch: '2.10.x'
-
-  nightly-mac-ci-2_6_x:
-    strategy:
-      fail-fast: false
-      matrix:
-        security:
-          - 'ON'
-          - 'OFF'
-    uses: eProsima/Fast-DDS/.github/workflows/reusable-mac-ci.yml@2.6.x
-    with:
-      label: 'nightly-sec-${{ matrix.security }}-mac-ci-2.6.x'
-      cmake-args: "-DSECURITY=${{ matrix.security }}"
-      ctest-args: "-LE xfail"
-      fastdds-branch: '2.6.x'
