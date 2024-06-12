@@ -854,6 +854,7 @@ bool EDP::pairingReader(
 #else
                 if (R->matched_writer_add(*wdatait))
                 {
+                    static_cast<void>(reader_guid);  // Void cast to force usage if we don't have LOG_INFOs
                     EPROSIMA_LOG_INFO(RTPS_EDP_MATCH,
                             "WP:" << wdatait->guid() << " match R:" << reader_guid << ". RLoc:" <<
                             wdatait->remote_locators());
