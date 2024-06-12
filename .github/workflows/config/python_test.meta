@@ -3,7 +3,7 @@ names:
         cmake-args:
             - "-DBUILD_TESTING=ON"
         ctest-args: [
-                "--repeat", "until-pass:3"
+                "--repeat", "until-pass:3",
                 "--timeout", "300",
-                "--label-exclude", "\"xfail\"",
+                "--label-exclude", "\"xfail\""
         ]

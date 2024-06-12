@@ -23,6 +23,16 @@ on:
         description: 'Branch or tag of Fast DDS repository (https://github.com/eProsima/Fast-DDS)'
         type: string
         required: true
+      security:
+        description: 'Enable security features'
+        required: false
+        type: boolean
+        default: true
+      run-tests:
+        description: 'Run suite of tests of Fast DDS, Fast DDS python, and Fast DDS Discovery Server'
+        required: false
+        type: boolean
+        default: true
 
   pull_request:
     types:
@@ -53,3 +63,5 @@ jobs:
       cmake-args: ${{ inputs.cmake-args }}
       ctest-args: ${{ inputs.ctest-args || '-LE xfail' }}
       fastdds-branch: ${{ inputs.fastdds_branch || github.ref || 'master' }}
+      security: ${{ inputs.security || true }}
+      run-tests: ${{ inputs.run-tests || !contains(github.event.pull_request.labels.*.name, 'no-test') }}

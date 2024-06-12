@@ -6,11 +6,10 @@ names:
             - "-DPERFORMANCE_TESTS=ON"
             - "-DPROFILING_TESTS=OFF"
             - "-DSYSTEM_TESTS=ON"
-            - "-DFASTDDS_EXAMPLE_TESTS=ON"
         ctest-args: [
-                "--repeat", "until-pass:3"
+                "--repeat", "until-pass:3",
                 "--timeout", "300",
-                "--label-exclude", "\"xfail\"",
+                "--label-exclude", "\"xfail\""
         ]
     googletest-distribution:
         cmake-args:
