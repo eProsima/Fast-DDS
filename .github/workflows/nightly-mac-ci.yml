@@ -13,12 +13,13 @@ jobs:
         security:
           - 'ON'
           - 'OFF'
-    uses: eProsima/Fast-DDS/.github/workflows/reusable-mac-ci.yml@master
+    uses: eProsima/Fast-DDS/.github/workflows/reusable-mac-ci.yml@feature/detect_flaky_tests
     with:
       label: 'nightly-sec-${{ matrix.security }}-mac-ci-master'
       cmake-args: "-DSECURITY=${{ matrix.security }}"
       ctest-args: "-LE xfail"
       fastdds-branch: 'master'
+      flakiness-report: true
 
   nightly-mac-ci-2_14_x:
     strategy:
