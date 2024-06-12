@@ -54,6 +54,8 @@ jobs:
 
       - name: Setup CCache
         uses: eProsima/eProsima-CI/external/setup-ccache-action@v0
+        with:
+          api_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install apt dependencies
         uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
