@@ -34,6 +34,7 @@
 #include <foonathan/memory/memory_pool.hpp>
 
 #include <set>
+#include <vector>
 
 // Testing purpose
 #ifndef TEST_FRIENDS

@@ -15,6 +15,8 @@
 #ifndef MOCK_TRANSPORT_TCP6_STUFF_H
 #define MOCK_TRANSPORT_TCP6_STUFF_H
 
+#include <vector>
+
 #include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
 #include <rtps/transport/TCPv6Transport.h>
 

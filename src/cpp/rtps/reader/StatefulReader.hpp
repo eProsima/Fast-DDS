@@ -22,6 +22,7 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <mutex>
+#include <vector>
 
 #include <fastdds/rtps/common/CDRMessage_t.h>
 #include <fastdds/rtps/common/VendorId_t.hpp>

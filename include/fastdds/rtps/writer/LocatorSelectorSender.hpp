@@ -1,6 +1,8 @@
 #ifndef _FASTDDS_RTPS_WRITER_LOCATORSELECTORSENDER_HPP_
 #define _FASTDDS_RTPS_WRITER_LOCATORSELECTORSENDER_HPP_
 
+#include <vector>
+
 #include <fastdds/rtps/common/LocatorSelector.hpp>
 #include <fastdds/rtps/messages/RTPSMessageSenderInterface.hpp>
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>

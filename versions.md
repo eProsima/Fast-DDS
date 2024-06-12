@@ -53,7 +53,7 @@ Forthcoming
 * Creation of RTPS messages refactor:
   * New Gather-send method is now used by default, avoiding an extra copy during the creation of the RTPS message.
   * New attribute in `SendBuffersAllocationAttributes` to configure allocation of `NetworkBuffer` vector.
-  * `SenderResource` and Transports API updated to support `NetworkBuffer`.
+  * `SenderResource` and Transport APIs now receive a collection of `NetworkBuffer` on their `send` method.
 
 Version 2.14.0
 --------------

@@ -29,6 +29,7 @@
 #include <mutex>
 #include <set>
 #include <sys/types.h>
+#include <vector>
 
 #if defined(_WIN32)
 #include <process.h>

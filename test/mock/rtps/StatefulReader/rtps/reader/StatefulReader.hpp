@@ -19,7 +19,7 @@
 #ifndef RTPS_READER__STATEFULREADER_HPP
 #define RTPS_READER__STATEFULREADER_HPP
 
-#include <list>
+#include <vector>
 
 #include <fastdds/rtps/attributes/ReaderAttributes.h>
 #include <fastdds/rtps/common/Guid.h>

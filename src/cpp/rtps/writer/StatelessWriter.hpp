@@ -21,9 +21,9 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <condition_variable>
-#include <list>
 #include <memory>
 #include <mutex>
+#include <vector>
 
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/rtps/history/IChangePool.h>

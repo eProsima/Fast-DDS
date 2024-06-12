@@ -20,6 +20,7 @@
 #define _FASTDDS_RTPS_RTPSWRITER_H_
 
 #include <condition_variable>
+#include <vector>
 
 #include <gmock/gmock.h>
 
