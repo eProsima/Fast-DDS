@@ -152,7 +152,7 @@ bool PDPServer::init(
     return true;
 }
 
-bool PDPServer::enable()
+void PDPServer::pre_enable_actions()
 {
     std::vector<nlohmann::json> backup_queue;
     // Restore the DDB from file if this is a BACKUP server
@@ -190,8 +190,6 @@ bool PDPServer::enable()
         // This vector is empty till backup queue is implemented
         process_backup_restore_queue(backup_queue);
     }
-
-    return PDP::enable();
 }
 
 ParticipantProxyData* PDPServer::createParticipantProxyData(

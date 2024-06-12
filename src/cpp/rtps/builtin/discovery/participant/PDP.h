@@ -129,7 +129,12 @@ public:
      *
      * @return true if enabled correctly, or if already enabled; false otherwise
      */
-    virtual bool enable();
+    bool enable();
+
+    /**
+     * @brief Perform actions before enabling the Participant Discovery Protocol if needed
+     */
+    virtual void pre_enable_actions();
 
     /**
      * @brief Disable the Participant Discovery Protocol

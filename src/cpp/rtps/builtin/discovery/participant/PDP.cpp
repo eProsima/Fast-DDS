@@ -413,6 +413,9 @@ bool PDP::enable()
         return true;
     }
 
+    // Perform pre-enable actions (if any)
+    pre_enable_actions();
+
     // Create lease events on already created proxy data objects
     for (ParticipantProxyData* pool_item : participant_proxies_pool_)
     {
@@ -441,6 +444,11 @@ bool PDP::enable()
             get_participant_proxy_data(mp_RTPSParticipant->getGuid().guidPrefix)->m_properties);
 
     return builtin_endpoints_->enable_pdp_readers(mp_RTPSParticipant);
+}
+
+void PDP::pre_enable_actions()
+{
+    // Empty implementation
 }
 
 void PDP::disable()
