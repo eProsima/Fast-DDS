@@ -54,7 +54,8 @@ public:
      *
      * @param[in] type_name Name of the type being registered.
      * @param[in] complete_type_object CompleteTypeObject related to the given type name.
-     * @param[out] type_id TypeIdentifier corresponding to the CompleteTypeObject just registered.
+     * @param[out] type_ids @ref TypeIdentifierPair corresponding to the CompleteTypeObject just registered and the
+     * generated MinimalTypeObject.
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
      *                      RETCODE_BAD_PARAMETER if there is already another different TypeObject registered with the
      *                      given type_name.
@@ -64,18 +65,42 @@ public:
     virtual FASTDDS_EXPORTED_API ReturnCode_t register_type_object(
             const std::string& type_name,
             const CompleteTypeObject& complete_type_object,
-            TypeIdentifier& type_id) = 0;
+            TypeIdentifierPair& type_ids) = 0;
+
+    /**
+     * @brief Register a remote TypeObject.
+     *        This auxiliary method might register only the minimal TypeObject and TypeIdentifier or register both
+     *        TypeObjects constructing the minimal from the complete TypeObject information.
+     *        TypeObject consistency is not checked in this method as the order of the dependencies received by the
+     *        TypeLookupService is not guaranteed.
+     *        The consistency is checked by the TypeLookupService after all dependencies are registered.
+     *
+     * @pre @ref TypeIdentifierPair::type_identifier1 discriminator must match TypeObject discriminator or be TK_NONE.
+     *      @ref TypeIdentifierPair::type_identifier1 consistency is only checked in Debug build mode.
+     *
+     * @param[in] type_object Related TypeObject being registered.
+     * @param[inout] type_ids Returns the registered @ref TypeIdentifier.
+     * @ref TypeIdentifierPair::type_identifier1 might be TK_NONE.
+     * In other case this function will check it is consistence with the provided @ref TypeObject.
+     * @return ReturnCode_t RETCODE_OK if correctly registered.
+     *                      RETCODE_PRECONDITION_NOT_MET if the discriminators differ.
+     *                      RETCODE_PRECONDITION_NOT_MET if the TypeIdentifier is not consistent with the given
+     *                      TypeObject.
+     */
+    virtual ReturnCode_t register_type_object(
+            const TypeObject& type_object,
+            TypeIdentifierPair& type_ids) = 0;
 
     /**
      * @brief Register DynamicType TypeObject.
      *
      * @param[in] dynamic_type DynamicType to be registered.
-     * @param[out] type_id TypeIdentifier corresponding to the registered DynamicType TypeObject.
+     * @param[out] type_ids @ref TypeIdentifierPair corresponding to the registered DynamicType TypeObject.
      * @return ReturnCode_t RETCODE_OK always.
      */
     virtual FASTDDS_EXPORTED_API ReturnCode_t register_typeobject_w_dynamic_type(
             const DynamicType::_ref_type& dynamic_type,
-            TypeIdentifier& type_id) = 0;
+            TypeIdentifierPair& type_ids) = 0;
 
     /**
      * @brief Register an indirect hash TypeIdentifier.
@@ -85,7 +110,8 @@ public:
      * @pre type_name must not be empty.
      *
      * @param[in] type_name Name of the type being registered.
-     * @param[in] type_identifier TypeIdentier related to the given type name.
+     * @param[in,out] type_identifier @ref TypeIdentifierPair related to the given type name. It must be set in
+     * @ref TypeIdentifierPair::type_identifier1. At the end this object is filled with both TypeIdentifiers.
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
      *                      RETCODE_BAD_PARAMETER if there is already another different TypeIdentifier registered with
      *                      the given type_name.
@@ -94,7 +120,7 @@ public:
      */
     virtual FASTDDS_EXPORTED_API ReturnCode_t register_type_identifier(
             const std::string& type_name,
-            const TypeIdentifier& type_identifier) = 0;
+            TypeIdentifierPair& type_identifier) = 0;
 
     /**
      * @brief Get the TypeObjects related to the given type name.
@@ -144,6 +170,23 @@ public:
             const TypeIdentifier& type_identifier,
             TypeObject& type_object) = 0;
 
+    /**
+     * @brief Get the TypeInformation related to a specific type_name.
+     *
+     * @pre type_ids must not be empty.
+     *
+     * @param[in] type_ids @ref TypeIdentifierPair which type information is queried.
+     * @param[out] type_information Related TypeInformation for the given @ref TypeIdentifier.
+     * @param[in] with_dependencies
+     * @return ReturnCode_t RETCODE_OK if the type_ids are found within the registry.
+     *                      RETCODE_NO_DATA if the given type_ids is not found.
+     *                      RETCODE_BAD_PARAMETER if the given @ref TypeIdentifier corresponds to a indirect hash TypeIdentifier.
+     *                      RETCODE_PRECONDITION_NOT_MET if any type_ids is empty.
+     */
+    virtual ReturnCode_t get_type_information(
+            const TypeIdentifierPair& type_ids,
+            TypeInformation& type_information,
+            bool with_dependencies = false) = 0;
 };
 
 

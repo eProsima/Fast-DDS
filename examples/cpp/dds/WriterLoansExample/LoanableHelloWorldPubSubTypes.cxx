@@ -219,9 +219,9 @@ bool LoanableHelloWorldPubSubType::getKey(
     return true;
 }
 
-void LoanableHelloWorldPubSubType::register_type_object_representation() const
+void LoanableHelloWorldPubSubType::register_type_object_representation()
 {
-    register_LoanableHelloWorld_type_objects();
+    register_LoanableHelloWorld_type_identifier(type_identifiers_);
 }
 
 

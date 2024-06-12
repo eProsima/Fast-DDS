@@ -217,7 +217,7 @@ bool ForwardDeclarationsRecursiveStructPubSubType::getKey(
     return true;
 }
 
-void ForwardDeclarationsRecursiveStructPubSubType::register_type_object_representation() const
+void ForwardDeclarationsRecursiveStructPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
         "TypeObject type representation support disabled in generated code");
@@ -412,7 +412,7 @@ bool ForwardStructPubSubType::getKey(
     return true;
 }
 
-void ForwardStructPubSubType::register_type_object_representation() const
+void ForwardStructPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
         "TypeObject type representation support disabled in generated code");
@@ -607,7 +607,7 @@ namespace declarations_module {
         return true;
     }
 
-    void ForwardStructPubSubType::register_type_object_representation() const
+    void ForwardStructPubSubType::register_type_object_representation()
     {
         EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
             "TypeObject type representation support disabled in generated code");
@@ -803,7 +803,7 @@ bool ModuledForwardDeclarationsRecursiveStructPubSubType::getKey(
     return true;
 }
 
-void ModuledForwardDeclarationsRecursiveStructPubSubType::register_type_object_representation() const
+void ModuledForwardDeclarationsRecursiveStructPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
         "TypeObject type representation support disabled in generated code");
@@ -998,7 +998,7 @@ namespace declarations_module {
         return true;
     }
 
-    void ModuledForwardStructPubSubType::register_type_object_representation() const
+    void ModuledForwardStructPubSubType::register_type_object_representation()
     {
         EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
             "TypeObject type representation support disabled in generated code");
@@ -1196,7 +1196,7 @@ bool ModuledCommonNameStructurePubSubType::getKey(
     return true;
 }
 
-void ModuledCommonNameStructurePubSubType::register_type_object_representation() const
+void ModuledCommonNameStructurePubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
         "TypeObject type representation support disabled in generated code");

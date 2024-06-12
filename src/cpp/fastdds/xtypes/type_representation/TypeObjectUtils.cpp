@@ -77,7 +77,7 @@ const TypeObjectHashId TypeObjectUtils::build_type_object_hash_id(
 }
 
 CollectionElementFlag TypeObjectUtils::build_collection_element_flag(
-        TryConstructKind try_construct_kind,
+        TryConstructFailAction try_construct_kind,
         bool external)
 {
     CollectionElementFlag collection_element_flag = 0;
@@ -90,7 +90,7 @@ CollectionElementFlag TypeObjectUtils::build_collection_element_flag(
 }
 
 StructMemberFlag TypeObjectUtils::build_struct_member_flag(
-        TryConstructKind try_construct_kind,
+        TryConstructFailAction try_construct_kind,
         bool optional,
         bool must_understand,
         bool key,
@@ -122,7 +122,7 @@ StructMemberFlag TypeObjectUtils::build_struct_member_flag(
 }
 
 UnionMemberFlag TypeObjectUtils::build_union_member_flag(
-        TryConstructKind try_construct_kind,
+        TryConstructFailAction try_construct_kind,
         bool default_member,
         bool external)
 {
@@ -140,7 +140,7 @@ UnionMemberFlag TypeObjectUtils::build_union_member_flag(
 }
 
 UnionDiscriminatorFlag TypeObjectUtils::build_union_discriminator_flag(
-        TryConstructKind try_construct_kind,
+        TryConstructFailAction try_construct_kind,
         bool key)
 {
     UnionDiscriminatorFlag union_discriminator_flag = 0;
@@ -356,104 +356,104 @@ const ExtendedTypeDefn TypeObjectUtils::build_extended_type_defn()
 ReturnCode_t TypeObjectUtils::build_and_register_s_string_type_identifier(
         const StringSTypeDefn& string,
         const std::string& type_name,
+        TypeIdentifierPair& type_ids,
         bool wstring)
 {
-    TypeIdentifier type_identifier;
-    type_identifier.string_sdefn(string);
+    type_ids.type_identifier1().string_sdefn(string);
     if (wstring)
     {
-        type_identifier._d(TI_STRING16_SMALL);
+        type_ids.type_identifier1()._d(TI_STRING16_SMALL);
     }
-    return type_object_registry_observer().register_type_identifier(type_name, type_identifier);
+    return type_object_registry_observer().register_type_identifier(type_name, type_ids);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_l_string_type_identifier(
         const StringLTypeDefn& string,
         const std::string& type_name,
+        TypeIdentifierPair& type_ids,
         bool wstring)
 {
 #if !defined(NDEBUG)
     string_ldefn_consistency(string);
 #endif // !defined(NDEBUG)
-    TypeIdentifier type_identifier;
-    type_identifier.string_ldefn(string);
+    type_ids.type_identifier1().string_ldefn(string);
     if (wstring)
     {
-        type_identifier._d(TI_STRING16_LARGE);
+        type_ids.type_identifier1()._d(TI_STRING16_LARGE);
     }
-    return type_object_registry_observer().register_type_identifier(type_name, type_identifier);
+    return type_object_registry_observer().register_type_identifier(type_name, type_ids);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_s_sequence_type_identifier(
         const PlainSequenceSElemDefn& plain_seq,
-        const std::string& type_name)
+        const std::string& type_name,
+        TypeIdentifierPair& type_ids)
 {
 #if !defined(NDEBUG)
     seq_sdefn_consistency(plain_seq);
 #endif // !defined(NDEBUG)
-    TypeIdentifier type_identifier;
-    type_identifier.seq_sdefn(plain_seq);
-    return type_object_registry_observer().register_type_identifier(type_name, type_identifier);
+    type_ids.type_identifier1().seq_sdefn(plain_seq);
+    return type_object_registry_observer().register_type_identifier(type_name, type_ids);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_l_sequence_type_identifier(
         const PlainSequenceLElemDefn& plain_seq,
-        const std::string& type_name)
+        const std::string& type_name,
+        TypeIdentifierPair& type_ids)
 {
 #if !defined(NDEBUG)
     seq_ldefn_consistency(plain_seq);
 #endif // !defined(NDEBUG)
-    TypeIdentifier type_identifier;
-    type_identifier.seq_ldefn(plain_seq);
-    return type_object_registry_observer().register_type_identifier(type_name, type_identifier);
+    type_ids.type_identifier1().seq_ldefn(plain_seq);
+    return type_object_registry_observer().register_type_identifier(type_name, type_ids);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_s_array_type_identifier(
         const PlainArraySElemDefn& plain_array,
-        const std::string& type_name)
+        const std::string& type_name,
+        TypeIdentifierPair& type_ids)
 {
 #if !defined(NDEBUG)
     array_sdefn_consistency(plain_array);
 #endif // !defined(NDEBUG)
-    TypeIdentifier type_identifier;
-    type_identifier.array_sdefn(plain_array);
-    return type_object_registry_observer().register_type_identifier(type_name, type_identifier);
+    type_ids.type_identifier1().array_sdefn(plain_array);
+    return type_object_registry_observer().register_type_identifier(type_name, type_ids);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_l_array_type_identifier(
         const PlainArrayLElemDefn& plain_array,
-        const std::string& type_name)
+        const std::string& type_name,
+        TypeIdentifierPair& type_ids)
 {
 #if !defined(NDEBUG)
     array_ldefn_consistency(plain_array);
 #endif // !defined(NDEBUG)
-    TypeIdentifier type_identifier;
-    type_identifier.array_ldefn(plain_array);
-    return type_object_registry_observer().register_type_identifier(type_name, type_identifier);
+    type_ids.type_identifier1().array_ldefn(plain_array);
+    return type_object_registry_observer().register_type_identifier(type_name, type_ids);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_s_map_type_identifier(
         const PlainMapSTypeDefn& plain_map,
-        const std::string& type_name)
+        const std::string& type_name,
+        TypeIdentifierPair& type_ids)
 {
 #if !defined(NDEBUG)
     map_sdefn_consistency(plain_map);
 #endif // !defined(NDEBUG)
-    TypeIdentifier type_identifier;
-    type_identifier.map_sdefn(plain_map);
-    return type_object_registry_observer().register_type_identifier(type_name, type_identifier);
+    type_ids.type_identifier1().map_sdefn(plain_map);
+    return type_object_registry_observer().register_type_identifier(type_name, type_ids);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_l_map_type_identifier(
         const PlainMapLTypeDefn& plain_map,
-        const std::string& type_name)
+        const std::string& type_name,
+        TypeIdentifierPair& type_ids)
 {
 #if !defined(NDEBUG)
     map_ldefn_consistency(plain_map);
 #endif // !defined(NDEBUG)
-    TypeIdentifier type_identifier;
-    type_identifier.map_ldefn(plain_map);
-    return type_object_registry_observer().register_type_identifier(type_name, type_identifier);
+    type_ids.type_identifier1().map_ldefn(plain_map);
+    return type_object_registry_observer().register_type_identifier(type_name, type_ids);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_scc_type_identifier(
@@ -1683,67 +1683,67 @@ const CompleteExtendedType TypeObjectUtils::build_complete_extended_type()
 
 ReturnCode_t TypeObjectUtils::build_and_register_alias_type_object(
         const CompleteAliasType& alias_type,
-        const std::string& type_name)
+        const std::string& type_name,
+        TypeIdentifierPair& type_ids)
 {
 #if !defined(NDEBUG)
     complete_alias_type_consistency(alias_type);
 #endif // !defined(NDEBUG)
     CompleteTypeObject type_object;
     type_object.alias_type(alias_type);
-    TypeIdentifier type_id;
-    return type_object_registry_observer().register_type_object(type_name, type_object, type_id);
+    return type_object_registry_observer().register_type_object(type_name, type_object, type_ids);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_annotation_type_object(
         const CompleteAnnotationType& annotation_type,
         const std::string& type_name,
-        TypeIdentifier& type_id)
+        TypeIdentifierPair& type_ids)
 {
 #if !defined(NDEBUG)
     complete_annotation_type_consistency(annotation_type);
 #endif // !defined(NDEBUG)
     CompleteTypeObject type_object;
     type_object.annotation_type(annotation_type);
-    return type_object_registry_observer().register_type_object(type_name, type_object, type_id);
+    return type_object_registry_observer().register_type_object(type_name, type_object, type_ids);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_struct_type_object(
         const CompleteStructType& struct_type,
         const std::string& type_name,
-        TypeIdentifier& type_id)
+        TypeIdentifierPair& type_ids)
 {
 #if !defined(NDEBUG)
     complete_struct_type_consistency(struct_type);
 #endif // !defined(NDEBUG)
     CompleteTypeObject type_object;
     type_object.struct_type(struct_type);
-    return type_object_registry_observer().register_type_object(type_name, type_object, type_id);
+    return type_object_registry_observer().register_type_object(type_name, type_object, type_ids);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_union_type_object(
         const CompleteUnionType& union_type,
         const std::string& type_name,
-        TypeIdentifier& type_id)
+        TypeIdentifierPair& type_ids)
 {
 #if !defined(NDEBUG)
     complete_union_type_consistency(union_type);
 #endif // !defined(NDEBUG)
     CompleteTypeObject type_object;
     type_object.union_type(union_type);
-    return type_object_registry_observer().register_type_object(type_name, type_object, type_id);
+    return type_object_registry_observer().register_type_object(type_name, type_object, type_ids);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_bitset_type_object(
         const CompleteBitsetType& bitset_type,
-        const std::string& type_name)
+        const std::string& type_name,
+        TypeIdentifierPair& type_ids)
 {
 #if !defined(NDEBUG)
     complete_bitset_type_consistency(bitset_type);
 #endif // !defined(NDEBUG)
     CompleteTypeObject type_object;
     type_object.bitset_type(bitset_type);
-    TypeIdentifier type_id;
-    return type_object_registry_observer().register_type_object(type_name, type_object, type_id);
+    return type_object_registry_observer().register_type_object(type_name, type_object, type_ids);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_sequence_type_object(
@@ -1755,8 +1755,8 @@ ReturnCode_t TypeObjectUtils::build_and_register_sequence_type_object(
 #endif // !defined(NDEBUG)
     CompleteTypeObject type_object;
     type_object.sequence_type(sequence_type);
-    TypeIdentifier type_id;
-    return type_object_registry_observer().register_type_object(type_name, type_object, type_id);
+    TypeIdentifierPair type_ids;
+    return type_object_registry_observer().register_type_object(type_name, type_object, type_ids);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_array_type_object(
@@ -1768,8 +1768,8 @@ ReturnCode_t TypeObjectUtils::build_and_register_array_type_object(
 #endif // !defined(NDEBUG)
     CompleteTypeObject type_object;
     type_object.array_type(array_type);
-    TypeIdentifier type_id;
-    return type_object_registry_observer().register_type_object(type_name, type_object, type_id);
+    TypeIdentifierPair type_ids;
+    return type_object_registry_observer().register_type_object(type_name, type_object, type_ids);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_map_type_object(
@@ -1781,34 +1781,34 @@ ReturnCode_t TypeObjectUtils::build_and_register_map_type_object(
 #endif // !defined(NDEBUG)
     CompleteTypeObject type_object;
     type_object.map_type(map_type);
-    TypeIdentifier type_id;
-    return type_object_registry_observer().register_type_object(type_name, type_object, type_id);
+    TypeIdentifierPair type_ids;
+    return type_object_registry_observer().register_type_object(type_name, type_object, type_ids);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_enumerated_type_object(
         const CompleteEnumeratedType& enumerated_type,
-        const std::string& type_name)
+        const std::string& type_name,
+        TypeIdentifierPair& type_ids)
 {
 #if !defined(NDEBUG)
     complete_enumerated_type_consistency(enumerated_type);
 #endif // !defined(NDEBUG)
     CompleteTypeObject type_object;
     type_object.enumerated_type(enumerated_type);
-    TypeIdentifier type_id;
-    return type_object_registry_observer().register_type_object(type_name, type_object, type_id);
+    return type_object_registry_observer().register_type_object(type_name, type_object, type_ids);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_bitmask_type_object(
         const CompleteBitmaskType& bitmask_type,
-        const std::string& type_name)
+        const std::string& type_name,
+        TypeIdentifierPair& type_ids)
 {
 #if !defined(NDEBUG)
     complete_bitmask_type_consistency(bitmask_type);
 #endif // !defined(NDEBUG)
     CompleteTypeObject type_object;
     type_object.bitmask_type(bitmask_type);
-    TypeIdentifier type_id;
-    return type_object_registry_observer().register_type_object(type_name, type_object, type_id);
+    return type_object_registry_observer().register_type_object(type_name, type_object, type_ids);
 }
 
 const NameHash TypeObjectUtils::name_hash(
@@ -1841,23 +1841,23 @@ void TypeObjectUtils::type_object_consistency(
 
 void TypeObjectUtils::set_try_construct_behavior(
         MemberFlag& member_flag,
-        TryConstructKind try_construct_kind)
+        TryConstructFailAction try_construct_kind)
 {
     switch (try_construct_kind)
     {
-        case TryConstructKind::USE_DEFAULT:
+        case TryConstructFailAction::USE_DEFAULT:
             member_flag |= MemberFlagBits::TRY_CONSTRUCT2;
             break;
 
-        case TryConstructKind::TRIM:
+        case TryConstructFailAction::TRIM:
             member_flag |= MemberFlagBits::TRY_CONSTRUCT1 | MemberFlagBits::TRY_CONSTRUCT2;
             break;
 
-        case TryConstructKind::DISCARD:
+        case TryConstructFailAction::DISCARD:
             member_flag |= MemberFlagBits::TRY_CONSTRUCT1;
             break;
 
-        // TryContructKind::NOT_APPLIED
+        // INVALID
         default:
             break;
     }
@@ -1921,6 +1921,102 @@ bool TypeObjectUtils::is_direct_hash_type_identifier(
         direct_hash = true;
     }
     return direct_hash;
+}
+
+const TypeIdentifier& TypeObjectUtils::retrieve_minimal_type_identifier(
+        const TypeIdentifierPair& type_ids,
+        bool& ec)
+{
+    ec = true;
+
+    if (EK_MINIMAL == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
+            (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
+            EK_MINIMAL == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+            (TI_PLAIN_SEQUENCE_LARGE == type_ids.type_identifier1()._d() &&
+            EK_MINIMAL == type_ids.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+            (TI_PLAIN_ARRAY_SMALL == type_ids.type_identifier1()._d() &&
+            EK_MINIMAL == type_ids.type_identifier1().array_sdefn().header().equiv_kind()) ||
+            (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
+            EK_MINIMAL == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
+            (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
+            (EK_MINIMAL == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+            EK_MINIMAL == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+            (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
+            (EK_MINIMAL == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+            EK_MINIMAL == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
+    {
+        return type_ids.type_identifier1();
+    }
+    else if (EK_MINIMAL == type_ids.type_identifier2()._d() ||
+            (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier2()._d() &&
+            EK_MINIMAL == type_ids.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+            (TI_PLAIN_SEQUENCE_LARGE == type_ids.type_identifier2()._d() &&
+            EK_MINIMAL == type_ids.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+            (TI_PLAIN_ARRAY_SMALL == type_ids.type_identifier2()._d() &&
+            EK_MINIMAL == type_ids.type_identifier2().array_sdefn().header().equiv_kind()) ||
+            (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
+            EK_MINIMAL == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
+            (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
+            (EK_MINIMAL == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+            EK_MINIMAL == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+            (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
+            (EK_MINIMAL == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+            EK_MINIMAL == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
+    {
+        return type_ids.type_identifier2();
+    }
+
+    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Inconsistent key TypeIdentifier.");
+    ec = false;
+    return type_ids.type_identifier1();
+}
+
+const TypeIdentifier& TypeObjectUtils::retrieve_complete_type_identifier(
+        const TypeIdentifierPair& type_ids,
+        bool& ec)
+{
+    ec = true;
+
+    if (EK_COMPLETE == type_ids.type_identifier1()._d() || TK_NONE == type_ids.type_identifier2()._d() ||
+            (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier1()._d() &&
+            EK_COMPLETE == type_ids.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+            (TI_PLAIN_SEQUENCE_LARGE == type_ids.type_identifier1()._d() &&
+            EK_COMPLETE == type_ids.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+            (TI_PLAIN_ARRAY_SMALL == type_ids.type_identifier1()._d() &&
+            EK_COMPLETE == type_ids.type_identifier1().array_sdefn().header().equiv_kind()) ||
+            (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier1()._d() &&
+            EK_COMPLETE == type_ids.type_identifier1().array_ldefn().header().equiv_kind()) ||
+            (TI_PLAIN_MAP_SMALL == type_ids.type_identifier1()._d() &&
+            (EK_COMPLETE == type_ids.type_identifier1().map_sdefn().header().equiv_kind() ||
+            EK_COMPLETE == type_ids.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+            (TI_PLAIN_MAP_LARGE == type_ids.type_identifier1()._d() &&
+            (EK_COMPLETE == type_ids.type_identifier1().map_ldefn().header().equiv_kind() ||
+            EK_COMPLETE == type_ids.type_identifier1().map_ldefn().key_identifier()->_d())))
+    {
+        return type_ids.type_identifier1();
+    }
+    else if (EK_COMPLETE == type_ids.type_identifier2()._d() ||
+            (TI_PLAIN_SEQUENCE_SMALL == type_ids.type_identifier2()._d() &&
+            EK_COMPLETE == type_ids.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+            (TI_PLAIN_SEQUENCE_LARGE == type_ids.type_identifier2()._d() &&
+            EK_COMPLETE == type_ids.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+            (TI_PLAIN_ARRAY_SMALL == type_ids.type_identifier2()._d() &&
+            EK_COMPLETE == type_ids.type_identifier2().array_sdefn().header().equiv_kind()) ||
+            (TI_PLAIN_ARRAY_LARGE == type_ids.type_identifier2()._d() &&
+            EK_COMPLETE == type_ids.type_identifier2().array_ldefn().header().equiv_kind()) ||
+            (TI_PLAIN_MAP_SMALL == type_ids.type_identifier2()._d() &&
+            (EK_COMPLETE == type_ids.type_identifier2().map_sdefn().header().equiv_kind() ||
+            EK_COMPLETE == type_ids.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+            (TI_PLAIN_MAP_LARGE == type_ids.type_identifier2()._d() &&
+            (EK_COMPLETE == type_ids.type_identifier2().map_ldefn().header().equiv_kind() ||
+            EK_COMPLETE == type_ids.type_identifier2().map_ldefn().key_identifier()->_d())))
+    {
+        return type_ids.type_identifier2();
+    }
+
+    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Inconsistent key TypeIdentifier.");
+    ec = false;
+    return type_ids.type_identifier1();
 }
 
 bool TypeObjectUtils::is_indirect_hash_type_identifier(

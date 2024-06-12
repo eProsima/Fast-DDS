@@ -143,6 +143,7 @@ public:
             CDRMessage_t* /*msg*/,
             const NetworkFactory& /*network*/,
             bool /*is_shm_transport_possible*/,
+            bool /*should_filter_locators*/,
             fastdds::rtps::VendorId_t /*source_vendor_id*/)
     {
         return true;

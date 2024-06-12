@@ -21,7 +21,11 @@
 
 #include <gmock/gmock.h>
 
+#include <fastdds/rtps/attributes/ReaderAttributes.h>
+#include <fastdds/rtps/attributes/WriterAttributes.h>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
+#include <fastdds/utils/collections/ResourceLimitedVector.hpp>
+
 #include <rtps/builtin/BuiltinProtocols.h>
 #include <rtps/builtin/discovery/endpoint/EDP.h>
 #include <rtps/messages/CDRMessage.hpp>

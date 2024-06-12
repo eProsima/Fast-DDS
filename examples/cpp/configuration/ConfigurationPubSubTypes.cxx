@@ -219,9 +219,9 @@ bool ConfigurationPubSubType::getKey(
     return true;
 }
 
-void ConfigurationPubSubType::register_type_object_representation() const
+void ConfigurationPubSubType::register_type_object_representation()
 {
-    register_Configuration_type_objects();
+    register_Configuration_type_identifier(type_identifiers_);
 }
 
 

@@ -219,9 +219,9 @@ bool FixIdPubSubType::getKey(
     return true;
 }
 
-void FixIdPubSubType::register_type_object_representation() const
+void FixIdPubSubType::register_type_object_representation()
 {
-    register_member_id_type_objects();
+    register_FixId_type_identifier(type_identifiers_);
 }
 
 FixHexIdPubSubType::FixHexIdPubSubType()
@@ -412,9 +412,9 @@ bool FixHexIdPubSubType::getKey(
     return true;
 }
 
-void FixHexIdPubSubType::register_type_object_representation() const
+void FixHexIdPubSubType::register_type_object_representation()
 {
-    register_member_id_type_objects();
+    register_FixHexId_type_identifier(type_identifiers_);
 }
 
 FixHashidDefaultPubSubType::FixHashidDefaultPubSubType()
@@ -605,9 +605,9 @@ bool FixHashidDefaultPubSubType::getKey(
     return true;
 }
 
-void FixHashidDefaultPubSubType::register_type_object_representation() const
+void FixHashidDefaultPubSubType::register_type_object_representation()
 {
-    register_member_id_type_objects();
+    register_FixHashidDefault_type_identifier(type_identifiers_);
 }
 
 FixHashidPubSubType::FixHashidPubSubType()
@@ -798,9 +798,9 @@ bool FixHashidPubSubType::getKey(
     return true;
 }
 
-void FixHashidPubSubType::register_type_object_representation() const
+void FixHashidPubSubType::register_type_object_representation()
 {
-    register_member_id_type_objects();
+    register_FixHashid_type_identifier(type_identifiers_);
 }
 
 FixMixPubSubType::FixMixPubSubType()
@@ -991,9 +991,9 @@ bool FixMixPubSubType::getKey(
     return true;
 }
 
-void FixMixPubSubType::register_type_object_representation() const
+void FixMixPubSubType::register_type_object_representation()
 {
-    register_member_id_type_objects();
+    register_FixMix_type_identifier(type_identifiers_);
 }
 
 AutoidDefaultPubSubType::AutoidDefaultPubSubType()
@@ -1184,9 +1184,9 @@ bool AutoidDefaultPubSubType::getKey(
     return true;
 }
 
-void AutoidDefaultPubSubType::register_type_object_representation() const
+void AutoidDefaultPubSubType::register_type_object_representation()
 {
-    register_member_id_type_objects();
+    register_AutoidDefault_type_identifier(type_identifiers_);
 }
 
 AutoidSequentialPubSubType::AutoidSequentialPubSubType()
@@ -1377,9 +1377,9 @@ bool AutoidSequentialPubSubType::getKey(
     return true;
 }
 
-void AutoidSequentialPubSubType::register_type_object_representation() const
+void AutoidSequentialPubSubType::register_type_object_representation()
 {
-    register_member_id_type_objects();
+    register_AutoidSequential_type_identifier(type_identifiers_);
 }
 
 AutoidHashPubSubType::AutoidHashPubSubType()
@@ -1570,9 +1570,9 @@ bool AutoidHashPubSubType::getKey(
     return true;
 }
 
-void AutoidHashPubSubType::register_type_object_representation() const
+void AutoidHashPubSubType::register_type_object_representation()
 {
-    register_member_id_type_objects();
+    register_AutoidHash_type_identifier(type_identifiers_);
 }
 
 DerivedAutoidDefaultPubSubType::DerivedAutoidDefaultPubSubType()
@@ -1763,9 +1763,9 @@ bool DerivedAutoidDefaultPubSubType::getKey(
     return true;
 }
 
-void DerivedAutoidDefaultPubSubType::register_type_object_representation() const
+void DerivedAutoidDefaultPubSubType::register_type_object_representation()
 {
-    register_member_id_type_objects();
+    register_DerivedAutoidDefault_type_identifier(type_identifiers_);
 }
 
 DerivedEmptyAutoidSequentialPubSubType::DerivedEmptyAutoidSequentialPubSubType()
@@ -1956,9 +1956,9 @@ bool DerivedEmptyAutoidSequentialPubSubType::getKey(
     return true;
 }
 
-void DerivedEmptyAutoidSequentialPubSubType::register_type_object_representation() const
+void DerivedEmptyAutoidSequentialPubSubType::register_type_object_representation()
 {
-    register_member_id_type_objects();
+    register_DerivedEmptyAutoidSequential_type_identifier(type_identifiers_);
 }
 
 DerivedAutoidSequentialPubSubType::DerivedAutoidSequentialPubSubType()
@@ -2149,9 +2149,9 @@ bool DerivedAutoidSequentialPubSubType::getKey(
     return true;
 }
 
-void DerivedAutoidSequentialPubSubType::register_type_object_representation() const
+void DerivedAutoidSequentialPubSubType::register_type_object_representation()
 {
-    register_member_id_type_objects();
+    register_DerivedAutoidSequential_type_identifier(type_identifiers_);
 }
 
 DerivedAutoidHashPubSubType::DerivedAutoidHashPubSubType()
@@ -2342,9 +2342,9 @@ bool DerivedAutoidHashPubSubType::getKey(
     return true;
 }
 
-void DerivedAutoidHashPubSubType::register_type_object_representation() const
+void DerivedAutoidHashPubSubType::register_type_object_representation()
 {
-    register_member_id_type_objects();
+    register_DerivedAutoidHash_type_identifier(type_identifiers_);
 }
 
 

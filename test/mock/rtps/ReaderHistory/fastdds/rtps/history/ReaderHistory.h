@@ -67,6 +67,11 @@ public:
             CacheChange_t** change));
 
     MOCK_METHOD1(add_change_mock, bool(CacheChange_t*));
+
+    MOCK_METHOD1(find_change, const_iterator(CacheChange_t*));
+
+    MOCK_METHOD2(remove_change, iterator(const_iterator, bool));
+
     // *INDENT-ON*
 
     bool add_change(

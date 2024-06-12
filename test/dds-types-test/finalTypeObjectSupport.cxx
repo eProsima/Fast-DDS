@@ -39,68 +39,19 @@
 
 using namespace eprosima::fastdds::dds::xtypes;
 
-void register_final_type_objects()
-{
-    static std::once_flag once_flag;
-    std::call_once(once_flag, []()
-            {
-                TypeIdentifier type_id;
-                register_InnerStructureHelper_type_identifier(type_id);
-
-                register_InnerEmptyStructureHelper_type_identifier(type_id);
-
-                register_InnerUnionHelper_type_identifier(type_id);
-
-                register_FinalShortStruct_type_identifier(type_id);
-
-                register_FinalUShortStruct_type_identifier(type_id);
-
-                register_FinalLongStruct_type_identifier(type_id);
-
-                register_FinalULongStruct_type_identifier(type_id);
-
-                register_FinalLongLongStruct_type_identifier(type_id);
-
-                register_FinalULongLongStruct_type_identifier(type_id);
-
-                register_FinalFloatStruct_type_identifier(type_id);
-
-                register_FinalDoubleStruct_type_identifier(type_id);
-
-                register_FinalLongDoubleStruct_type_identifier(type_id);
-
-                register_FinalBooleanStruct_type_identifier(type_id);
-
-                register_FinalOctetStruct_type_identifier(type_id);
-
-                register_FinalCharStruct_type_identifier(type_id);
-
-                register_FinalWCharStruct_type_identifier(type_id);
-
-                register_FinalUnionStruct_type_identifier(type_id);
-
-                register_FinalEmptyStruct_type_identifier(type_id);
-
-                register_FinalEmptyInheritanceStruct_type_identifier(type_id);
-
-                register_FinalInheritanceStruct_type_identifier(type_id);
-
-                register_InheritanceEmptyStruct_type_identifier(type_id);
-
-                register_FinalExtensibilityInheritance_type_identifier(type_id);
-
-            });
-}
-
 // TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
 void register_FinalShortStruct_type_identifier(
-        TypeIdentifier& type_id)
+        TypeIdentifierPair& type_ids_FinalShortStruct)
 {
+
+    ReturnCode_t return_code_FinalShortStruct {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_FinalShortStruct =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "FinalShortStruct", type_ids_FinalShortStruct);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_FinalShortStruct)
     {
         StructTypeFlag struct_flags_FinalShortStruct = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::FINAL,
                 false, false);
-        ReturnCode_t return_code_FinalShortStruct;
-        TypeIdentifierPair type_ids_FinalShortStruct;
         QualifiedTypeName type_name_FinalShortStruct = "FinalShortStruct";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_FinalShortStruct;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_FinalShortStruct;
@@ -116,62 +67,26 @@ void register_FinalShortStruct_type_identifier(
         header_FinalShortStruct = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_FinalShortStruct);
         CompleteStructMemberSeq member_seq_FinalShortStruct;
         {
-            return_code_FinalShortStruct =
+            TypeIdentifierPair type_ids_var_short;
+            ReturnCode_t return_code_var_short {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_var_short =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "_int16_t", type_ids_FinalShortStruct);
+                "_int16_t", type_ids_var_short);
 
-            if (return_code_FinalShortStruct != eprosima::fastdds::dds::RETCODE_OK)
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_var_short)
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "var_short Structure member TypeIdentifier unknown to TypeObjectRegistry.");
-                type_id = TypeIdentifier();
                 return;
             }
-            StructMemberFlag member_flags_var_short = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_short = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            CommonStructMember common_var_short;
             MemberId member_id_var_short = 0x00000000;
-            if (EK_COMPLETE == type_ids_FinalShortStruct.type_identifier1()._d() || TK_NONE == type_ids_FinalShortStruct.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_FinalShortStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalShortStruct.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_FinalShortStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalShortStruct.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_FinalShortStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalShortStruct.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_FinalShortStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalShortStruct.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_FinalShortStruct.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_FinalShortStruct.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalShortStruct.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_FinalShortStruct.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_FinalShortStruct.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalShortStruct.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_var_short_ec {false};
+            CommonStructMember common_var_short {TypeObjectUtils::build_common_struct_member(member_id_var_short, member_flags_var_short, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_short, common_var_short_ec))};
+            if (!common_var_short_ec)
             {
-                common_var_short = TypeObjectUtils::build_common_struct_member(member_id_var_short, member_flags_var_short, type_ids_FinalShortStruct.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_FinalShortStruct.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_FinalShortStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalShortStruct.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_FinalShortStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalShortStruct.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_FinalShortStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalShortStruct.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_FinalShortStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalShortStruct.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_FinalShortStruct.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_FinalShortStruct.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalShortStruct.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_FinalShortStruct.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_FinalShortStruct.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalShortStruct.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_var_short = TypeObjectUtils::build_common_struct_member(member_id_var_short, member_flags_var_short, type_ids_FinalShortStruct.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure var_short member TypeIdentifier inconsistent.");
-                type_id = TypeIdentifier();
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure var_short member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_var_short = "var_short";
@@ -183,32 +98,26 @@ void register_FinalShortStruct_type_identifier(
         }
         CompleteStructType struct_type_FinalShortStruct = TypeObjectUtils::build_complete_struct_type(struct_flags_FinalShortStruct, header_FinalShortStruct, member_seq_FinalShortStruct);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_FinalShortStruct, type_name_FinalShortStruct.to_string(), type_id))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_FinalShortStruct, type_name_FinalShortStruct.to_string(), type_ids_FinalShortStruct))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "FinalShortStruct already registered in TypeObjectRegistry for a different type.");
-        }
-        return_code_FinalShortStruct =
-            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-            "FinalShortStruct", type_ids_FinalShortStruct);
-        if (return_code_FinalShortStruct != eprosima::fastdds::dds::RETCODE_OK)
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "FinalShortStruct: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
-            type_id = TypeIdentifier();
-            return;
         }
     }
 }
 // TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
 void register_FinalUShortStruct_type_identifier(
-        TypeIdentifier& type_id)
+        TypeIdentifierPair& type_ids_FinalUShortStruct)
 {
+
+    ReturnCode_t return_code_FinalUShortStruct {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_FinalUShortStruct =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "FinalUShortStruct", type_ids_FinalUShortStruct);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_FinalUShortStruct)
     {
         StructTypeFlag struct_flags_FinalUShortStruct = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::FINAL,
                 false, false);
-        ReturnCode_t return_code_FinalUShortStruct;
-        TypeIdentifierPair type_ids_FinalUShortStruct;
         QualifiedTypeName type_name_FinalUShortStruct = "FinalUShortStruct";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_FinalUShortStruct;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_FinalUShortStruct;
@@ -224,62 +133,26 @@ void register_FinalUShortStruct_type_identifier(
         header_FinalUShortStruct = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_FinalUShortStruct);
         CompleteStructMemberSeq member_seq_FinalUShortStruct;
         {
-            return_code_FinalUShortStruct =
+            TypeIdentifierPair type_ids_var_ushort;
+            ReturnCode_t return_code_var_ushort {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_var_ushort =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "_uint16_t", type_ids_FinalUShortStruct);
+                "_uint16_t", type_ids_var_ushort);
 
-            if (return_code_FinalUShortStruct != eprosima::fastdds::dds::RETCODE_OK)
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_var_ushort)
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "var_ushort Structure member TypeIdentifier unknown to TypeObjectRegistry.");
-                type_id = TypeIdentifier();
                 return;
             }
-            StructMemberFlag member_flags_var_ushort = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_ushort = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            CommonStructMember common_var_ushort;
             MemberId member_id_var_ushort = 0x00000000;
-            if (EK_COMPLETE == type_ids_FinalUShortStruct.type_identifier1()._d() || TK_NONE == type_ids_FinalUShortStruct.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_FinalUShortStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalUShortStruct.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_FinalUShortStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalUShortStruct.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_FinalUShortStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalUShortStruct.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_FinalUShortStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalUShortStruct.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_FinalUShortStruct.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_FinalUShortStruct.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalUShortStruct.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_FinalUShortStruct.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_FinalUShortStruct.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalUShortStruct.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_var_ushort_ec {false};
+            CommonStructMember common_var_ushort {TypeObjectUtils::build_common_struct_member(member_id_var_ushort, member_flags_var_ushort, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_ushort, common_var_ushort_ec))};
+            if (!common_var_ushort_ec)
             {
-                common_var_ushort = TypeObjectUtils::build_common_struct_member(member_id_var_ushort, member_flags_var_ushort, type_ids_FinalUShortStruct.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_FinalUShortStruct.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_FinalUShortStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalUShortStruct.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_FinalUShortStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalUShortStruct.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_FinalUShortStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalUShortStruct.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_FinalUShortStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalUShortStruct.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_FinalUShortStruct.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_FinalUShortStruct.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalUShortStruct.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_FinalUShortStruct.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_FinalUShortStruct.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalUShortStruct.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_var_ushort = TypeObjectUtils::build_common_struct_member(member_id_var_ushort, member_flags_var_ushort, type_ids_FinalUShortStruct.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure var_ushort member TypeIdentifier inconsistent.");
-                type_id = TypeIdentifier();
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure var_ushort member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_var_ushort = "var_ushort";
@@ -291,32 +164,26 @@ void register_FinalUShortStruct_type_identifier(
         }
         CompleteStructType struct_type_FinalUShortStruct = TypeObjectUtils::build_complete_struct_type(struct_flags_FinalUShortStruct, header_FinalUShortStruct, member_seq_FinalUShortStruct);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_FinalUShortStruct, type_name_FinalUShortStruct.to_string(), type_id))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_FinalUShortStruct, type_name_FinalUShortStruct.to_string(), type_ids_FinalUShortStruct))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "FinalUShortStruct already registered in TypeObjectRegistry for a different type.");
-        }
-        return_code_FinalUShortStruct =
-            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-            "FinalUShortStruct", type_ids_FinalUShortStruct);
-        if (return_code_FinalUShortStruct != eprosima::fastdds::dds::RETCODE_OK)
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "FinalUShortStruct: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
-            type_id = TypeIdentifier();
-            return;
         }
     }
 }
 // TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
 void register_FinalLongStruct_type_identifier(
-        TypeIdentifier& type_id)
+        TypeIdentifierPair& type_ids_FinalLongStruct)
 {
+
+    ReturnCode_t return_code_FinalLongStruct {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_FinalLongStruct =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "FinalLongStruct", type_ids_FinalLongStruct);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_FinalLongStruct)
     {
         StructTypeFlag struct_flags_FinalLongStruct = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::FINAL,
                 false, false);
-        ReturnCode_t return_code_FinalLongStruct;
-        TypeIdentifierPair type_ids_FinalLongStruct;
         QualifiedTypeName type_name_FinalLongStruct = "FinalLongStruct";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_FinalLongStruct;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_FinalLongStruct;
@@ -332,62 +199,26 @@ void register_FinalLongStruct_type_identifier(
         header_FinalLongStruct = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_FinalLongStruct);
         CompleteStructMemberSeq member_seq_FinalLongStruct;
         {
-            return_code_FinalLongStruct =
+            TypeIdentifierPair type_ids_var_long;
+            ReturnCode_t return_code_var_long {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_var_long =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "_int32_t", type_ids_FinalLongStruct);
+                "_int32_t", type_ids_var_long);
 
-            if (return_code_FinalLongStruct != eprosima::fastdds::dds::RETCODE_OK)
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_var_long)
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "var_long Structure member TypeIdentifier unknown to TypeObjectRegistry.");
-                type_id = TypeIdentifier();
                 return;
             }
-            StructMemberFlag member_flags_var_long = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_long = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            CommonStructMember common_var_long;
             MemberId member_id_var_long = 0x00000000;
-            if (EK_COMPLETE == type_ids_FinalLongStruct.type_identifier1()._d() || TK_NONE == type_ids_FinalLongStruct.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_FinalLongStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalLongStruct.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_FinalLongStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalLongStruct.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_FinalLongStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalLongStruct.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_FinalLongStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalLongStruct.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_FinalLongStruct.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_FinalLongStruct.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalLongStruct.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_FinalLongStruct.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_FinalLongStruct.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalLongStruct.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_var_long_ec {false};
+            CommonStructMember common_var_long {TypeObjectUtils::build_common_struct_member(member_id_var_long, member_flags_var_long, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_long, common_var_long_ec))};
+            if (!common_var_long_ec)
             {
-                common_var_long = TypeObjectUtils::build_common_struct_member(member_id_var_long, member_flags_var_long, type_ids_FinalLongStruct.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_FinalLongStruct.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_FinalLongStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalLongStruct.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_FinalLongStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalLongStruct.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_FinalLongStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalLongStruct.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_FinalLongStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalLongStruct.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_FinalLongStruct.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_FinalLongStruct.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalLongStruct.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_FinalLongStruct.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_FinalLongStruct.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalLongStruct.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_var_long = TypeObjectUtils::build_common_struct_member(member_id_var_long, member_flags_var_long, type_ids_FinalLongStruct.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure var_long member TypeIdentifier inconsistent.");
-                type_id = TypeIdentifier();
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure var_long member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_var_long = "var_long";
@@ -399,32 +230,26 @@ void register_FinalLongStruct_type_identifier(
         }
         CompleteStructType struct_type_FinalLongStruct = TypeObjectUtils::build_complete_struct_type(struct_flags_FinalLongStruct, header_FinalLongStruct, member_seq_FinalLongStruct);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_FinalLongStruct, type_name_FinalLongStruct.to_string(), type_id))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_FinalLongStruct, type_name_FinalLongStruct.to_string(), type_ids_FinalLongStruct))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "FinalLongStruct already registered in TypeObjectRegistry for a different type.");
-        }
-        return_code_FinalLongStruct =
-            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-            "FinalLongStruct", type_ids_FinalLongStruct);
-        if (return_code_FinalLongStruct != eprosima::fastdds::dds::RETCODE_OK)
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "FinalLongStruct: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
-            type_id = TypeIdentifier();
-            return;
         }
     }
 }
 // TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
 void register_FinalULongStruct_type_identifier(
-        TypeIdentifier& type_id)
+        TypeIdentifierPair& type_ids_FinalULongStruct)
 {
+
+    ReturnCode_t return_code_FinalULongStruct {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_FinalULongStruct =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "FinalULongStruct", type_ids_FinalULongStruct);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_FinalULongStruct)
     {
         StructTypeFlag struct_flags_FinalULongStruct = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::FINAL,
                 false, false);
-        ReturnCode_t return_code_FinalULongStruct;
-        TypeIdentifierPair type_ids_FinalULongStruct;
         QualifiedTypeName type_name_FinalULongStruct = "FinalULongStruct";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_FinalULongStruct;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_FinalULongStruct;
@@ -440,62 +265,26 @@ void register_FinalULongStruct_type_identifier(
         header_FinalULongStruct = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_FinalULongStruct);
         CompleteStructMemberSeq member_seq_FinalULongStruct;
         {
-            return_code_FinalULongStruct =
+            TypeIdentifierPair type_ids_var_ulong;
+            ReturnCode_t return_code_var_ulong {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_var_ulong =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "_uint32_t", type_ids_FinalULongStruct);
+                "_uint32_t", type_ids_var_ulong);
 
-            if (return_code_FinalULongStruct != eprosima::fastdds::dds::RETCODE_OK)
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_var_ulong)
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "var_ulong Structure member TypeIdentifier unknown to TypeObjectRegistry.");
-                type_id = TypeIdentifier();
                 return;
             }
-            StructMemberFlag member_flags_var_ulong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_ulong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            CommonStructMember common_var_ulong;
             MemberId member_id_var_ulong = 0x00000000;
-            if (EK_COMPLETE == type_ids_FinalULongStruct.type_identifier1()._d() || TK_NONE == type_ids_FinalULongStruct.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_FinalULongStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalULongStruct.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_FinalULongStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalULongStruct.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_FinalULongStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalULongStruct.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_FinalULongStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalULongStruct.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_FinalULongStruct.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_FinalULongStruct.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalULongStruct.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_FinalULongStruct.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_FinalULongStruct.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalULongStruct.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_var_ulong_ec {false};
+            CommonStructMember common_var_ulong {TypeObjectUtils::build_common_struct_member(member_id_var_ulong, member_flags_var_ulong, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_ulong, common_var_ulong_ec))};
+            if (!common_var_ulong_ec)
             {
-                common_var_ulong = TypeObjectUtils::build_common_struct_member(member_id_var_ulong, member_flags_var_ulong, type_ids_FinalULongStruct.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_FinalULongStruct.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_FinalULongStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalULongStruct.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_FinalULongStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalULongStruct.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_FinalULongStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalULongStruct.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_FinalULongStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalULongStruct.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_FinalULongStruct.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_FinalULongStruct.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalULongStruct.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_FinalULongStruct.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_FinalULongStruct.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalULongStruct.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_var_ulong = TypeObjectUtils::build_common_struct_member(member_id_var_ulong, member_flags_var_ulong, type_ids_FinalULongStruct.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure var_ulong member TypeIdentifier inconsistent.");
-                type_id = TypeIdentifier();
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure var_ulong member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_var_ulong = "var_ulong";
@@ -507,32 +296,26 @@ void register_FinalULongStruct_type_identifier(
         }
         CompleteStructType struct_type_FinalULongStruct = TypeObjectUtils::build_complete_struct_type(struct_flags_FinalULongStruct, header_FinalULongStruct, member_seq_FinalULongStruct);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_FinalULongStruct, type_name_FinalULongStruct.to_string(), type_id))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_FinalULongStruct, type_name_FinalULongStruct.to_string(), type_ids_FinalULongStruct))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "FinalULongStruct already registered in TypeObjectRegistry for a different type.");
-        }
-        return_code_FinalULongStruct =
-            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-            "FinalULongStruct", type_ids_FinalULongStruct);
-        if (return_code_FinalULongStruct != eprosima::fastdds::dds::RETCODE_OK)
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "FinalULongStruct: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
-            type_id = TypeIdentifier();
-            return;
         }
     }
 }
 // TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
 void register_FinalLongLongStruct_type_identifier(
-        TypeIdentifier& type_id)
+        TypeIdentifierPair& type_ids_FinalLongLongStruct)
 {
+
+    ReturnCode_t return_code_FinalLongLongStruct {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_FinalLongLongStruct =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "FinalLongLongStruct", type_ids_FinalLongLongStruct);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_FinalLongLongStruct)
     {
         StructTypeFlag struct_flags_FinalLongLongStruct = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::FINAL,
                 false, false);
-        ReturnCode_t return_code_FinalLongLongStruct;
-        TypeIdentifierPair type_ids_FinalLongLongStruct;
         QualifiedTypeName type_name_FinalLongLongStruct = "FinalLongLongStruct";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_FinalLongLongStruct;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_FinalLongLongStruct;
@@ -548,62 +331,26 @@ void register_FinalLongLongStruct_type_identifier(
         header_FinalLongLongStruct = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_FinalLongLongStruct);
         CompleteStructMemberSeq member_seq_FinalLongLongStruct;
         {
-            return_code_FinalLongLongStruct =
+            TypeIdentifierPair type_ids_var_longlong;
+            ReturnCode_t return_code_var_longlong {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_var_longlong =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "_int64_t", type_ids_FinalLongLongStruct);
+                "_int64_t", type_ids_var_longlong);
 
-            if (return_code_FinalLongLongStruct != eprosima::fastdds::dds::RETCODE_OK)
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_var_longlong)
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "var_longlong Structure member TypeIdentifier unknown to TypeObjectRegistry.");
-                type_id = TypeIdentifier();
                 return;
             }
-            StructMemberFlag member_flags_var_longlong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_longlong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            CommonStructMember common_var_longlong;
             MemberId member_id_var_longlong = 0x00000000;
-            if (EK_COMPLETE == type_ids_FinalLongLongStruct.type_identifier1()._d() || TK_NONE == type_ids_FinalLongLongStruct.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_FinalLongLongStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalLongLongStruct.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_FinalLongLongStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalLongLongStruct.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_FinalLongLongStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalLongLongStruct.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_FinalLongLongStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalLongLongStruct.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_FinalLongLongStruct.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_FinalLongLongStruct.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalLongLongStruct.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_FinalLongLongStruct.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_FinalLongLongStruct.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalLongLongStruct.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_var_longlong_ec {false};
+            CommonStructMember common_var_longlong {TypeObjectUtils::build_common_struct_member(member_id_var_longlong, member_flags_var_longlong, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_longlong, common_var_longlong_ec))};
+            if (!common_var_longlong_ec)
             {
-                common_var_longlong = TypeObjectUtils::build_common_struct_member(member_id_var_longlong, member_flags_var_longlong, type_ids_FinalLongLongStruct.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_FinalLongLongStruct.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_FinalLongLongStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalLongLongStruct.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_FinalLongLongStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalLongLongStruct.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_FinalLongLongStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalLongLongStruct.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_FinalLongLongStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalLongLongStruct.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_FinalLongLongStruct.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_FinalLongLongStruct.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalLongLongStruct.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_FinalLongLongStruct.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_FinalLongLongStruct.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalLongLongStruct.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_var_longlong = TypeObjectUtils::build_common_struct_member(member_id_var_longlong, member_flags_var_longlong, type_ids_FinalLongLongStruct.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure var_longlong member TypeIdentifier inconsistent.");
-                type_id = TypeIdentifier();
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure var_longlong member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_var_longlong = "var_longlong";
@@ -615,32 +362,26 @@ void register_FinalLongLongStruct_type_identifier(
         }
         CompleteStructType struct_type_FinalLongLongStruct = TypeObjectUtils::build_complete_struct_type(struct_flags_FinalLongLongStruct, header_FinalLongLongStruct, member_seq_FinalLongLongStruct);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_FinalLongLongStruct, type_name_FinalLongLongStruct.to_string(), type_id))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_FinalLongLongStruct, type_name_FinalLongLongStruct.to_string(), type_ids_FinalLongLongStruct))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "FinalLongLongStruct already registered in TypeObjectRegistry for a different type.");
-        }
-        return_code_FinalLongLongStruct =
-            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-            "FinalLongLongStruct", type_ids_FinalLongLongStruct);
-        if (return_code_FinalLongLongStruct != eprosima::fastdds::dds::RETCODE_OK)
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "FinalLongLongStruct: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
-            type_id = TypeIdentifier();
-            return;
         }
     }
 }
 // TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
 void register_FinalULongLongStruct_type_identifier(
-        TypeIdentifier& type_id)
+        TypeIdentifierPair& type_ids_FinalULongLongStruct)
 {
+
+    ReturnCode_t return_code_FinalULongLongStruct {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_FinalULongLongStruct =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "FinalULongLongStruct", type_ids_FinalULongLongStruct);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_FinalULongLongStruct)
     {
         StructTypeFlag struct_flags_FinalULongLongStruct = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::FINAL,
                 false, false);
-        ReturnCode_t return_code_FinalULongLongStruct;
-        TypeIdentifierPair type_ids_FinalULongLongStruct;
         QualifiedTypeName type_name_FinalULongLongStruct = "FinalULongLongStruct";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_FinalULongLongStruct;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_FinalULongLongStruct;
@@ -656,62 +397,26 @@ void register_FinalULongLongStruct_type_identifier(
         header_FinalULongLongStruct = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_FinalULongLongStruct);
         CompleteStructMemberSeq member_seq_FinalULongLongStruct;
         {
-            return_code_FinalULongLongStruct =
+            TypeIdentifierPair type_ids_var_ulonglong;
+            ReturnCode_t return_code_var_ulonglong {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_var_ulonglong =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "_uint64_t", type_ids_FinalULongLongStruct);
+                "_uint64_t", type_ids_var_ulonglong);
 
-            if (return_code_FinalULongLongStruct != eprosima::fastdds::dds::RETCODE_OK)
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_var_ulonglong)
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "var_ulonglong Structure member TypeIdentifier unknown to TypeObjectRegistry.");
-                type_id = TypeIdentifier();
                 return;
             }
-            StructMemberFlag member_flags_var_ulonglong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_ulonglong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            CommonStructMember common_var_ulonglong;
             MemberId member_id_var_ulonglong = 0x00000000;
-            if (EK_COMPLETE == type_ids_FinalULongLongStruct.type_identifier1()._d() || TK_NONE == type_ids_FinalULongLongStruct.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_FinalULongLongStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalULongLongStruct.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_FinalULongLongStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalULongLongStruct.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_FinalULongLongStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalULongLongStruct.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_FinalULongLongStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalULongLongStruct.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_FinalULongLongStruct.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_FinalULongLongStruct.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalULongLongStruct.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_FinalULongLongStruct.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_FinalULongLongStruct.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalULongLongStruct.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_var_ulonglong_ec {false};
+            CommonStructMember common_var_ulonglong {TypeObjectUtils::build_common_struct_member(member_id_var_ulonglong, member_flags_var_ulonglong, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_ulonglong, common_var_ulonglong_ec))};
+            if (!common_var_ulonglong_ec)
             {
-                common_var_ulonglong = TypeObjectUtils::build_common_struct_member(member_id_var_ulonglong, member_flags_var_ulonglong, type_ids_FinalULongLongStruct.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_FinalULongLongStruct.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_FinalULongLongStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalULongLongStruct.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_FinalULongLongStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalULongLongStruct.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_FinalULongLongStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalULongLongStruct.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_FinalULongLongStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalULongLongStruct.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_FinalULongLongStruct.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_FinalULongLongStruct.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalULongLongStruct.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_FinalULongLongStruct.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_FinalULongLongStruct.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalULongLongStruct.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_var_ulonglong = TypeObjectUtils::build_common_struct_member(member_id_var_ulonglong, member_flags_var_ulonglong, type_ids_FinalULongLongStruct.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure var_ulonglong member TypeIdentifier inconsistent.");
-                type_id = TypeIdentifier();
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure var_ulonglong member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_var_ulonglong = "var_ulonglong";
@@ -723,32 +428,26 @@ void register_FinalULongLongStruct_type_identifier(
         }
         CompleteStructType struct_type_FinalULongLongStruct = TypeObjectUtils::build_complete_struct_type(struct_flags_FinalULongLongStruct, header_FinalULongLongStruct, member_seq_FinalULongLongStruct);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_FinalULongLongStruct, type_name_FinalULongLongStruct.to_string(), type_id))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_FinalULongLongStruct, type_name_FinalULongLongStruct.to_string(), type_ids_FinalULongLongStruct))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "FinalULongLongStruct already registered in TypeObjectRegistry for a different type.");
-        }
-        return_code_FinalULongLongStruct =
-            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-            "FinalULongLongStruct", type_ids_FinalULongLongStruct);
-        if (return_code_FinalULongLongStruct != eprosima::fastdds::dds::RETCODE_OK)
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "FinalULongLongStruct: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
-            type_id = TypeIdentifier();
-            return;
         }
     }
 }
 // TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
 void register_FinalFloatStruct_type_identifier(
-        TypeIdentifier& type_id)
+        TypeIdentifierPair& type_ids_FinalFloatStruct)
 {
+
+    ReturnCode_t return_code_FinalFloatStruct {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_FinalFloatStruct =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "FinalFloatStruct", type_ids_FinalFloatStruct);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_FinalFloatStruct)
     {
         StructTypeFlag struct_flags_FinalFloatStruct = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::FINAL,
                 false, false);
-        ReturnCode_t return_code_FinalFloatStruct;
-        TypeIdentifierPair type_ids_FinalFloatStruct;
         QualifiedTypeName type_name_FinalFloatStruct = "FinalFloatStruct";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_FinalFloatStruct;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_FinalFloatStruct;
@@ -764,62 +463,26 @@ void register_FinalFloatStruct_type_identifier(
         header_FinalFloatStruct = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_FinalFloatStruct);
         CompleteStructMemberSeq member_seq_FinalFloatStruct;
         {
-            return_code_FinalFloatStruct =
+            TypeIdentifierPair type_ids_var_float;
+            ReturnCode_t return_code_var_float {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_var_float =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "_float", type_ids_FinalFloatStruct);
+                "_float", type_ids_var_float);
 
-            if (return_code_FinalFloatStruct != eprosima::fastdds::dds::RETCODE_OK)
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_var_float)
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "var_float Structure member TypeIdentifier unknown to TypeObjectRegistry.");
-                type_id = TypeIdentifier();
                 return;
             }
-            StructMemberFlag member_flags_var_float = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_float = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            CommonStructMember common_var_float;
             MemberId member_id_var_float = 0x00000000;
-            if (EK_COMPLETE == type_ids_FinalFloatStruct.type_identifier1()._d() || TK_NONE == type_ids_FinalFloatStruct.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_FinalFloatStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalFloatStruct.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_FinalFloatStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalFloatStruct.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_FinalFloatStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalFloatStruct.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_FinalFloatStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalFloatStruct.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_FinalFloatStruct.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_FinalFloatStruct.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalFloatStruct.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_FinalFloatStruct.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_FinalFloatStruct.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalFloatStruct.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_var_float_ec {false};
+            CommonStructMember common_var_float {TypeObjectUtils::build_common_struct_member(member_id_var_float, member_flags_var_float, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_float, common_var_float_ec))};
+            if (!common_var_float_ec)
             {
-                common_var_float = TypeObjectUtils::build_common_struct_member(member_id_var_float, member_flags_var_float, type_ids_FinalFloatStruct.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_FinalFloatStruct.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_FinalFloatStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalFloatStruct.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_FinalFloatStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalFloatStruct.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_FinalFloatStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalFloatStruct.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_FinalFloatStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalFloatStruct.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_FinalFloatStruct.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_FinalFloatStruct.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalFloatStruct.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_FinalFloatStruct.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_FinalFloatStruct.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalFloatStruct.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_var_float = TypeObjectUtils::build_common_struct_member(member_id_var_float, member_flags_var_float, type_ids_FinalFloatStruct.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure var_float member TypeIdentifier inconsistent.");
-                type_id = TypeIdentifier();
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure var_float member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_var_float = "var_float";
@@ -831,32 +494,26 @@ void register_FinalFloatStruct_type_identifier(
         }
         CompleteStructType struct_type_FinalFloatStruct = TypeObjectUtils::build_complete_struct_type(struct_flags_FinalFloatStruct, header_FinalFloatStruct, member_seq_FinalFloatStruct);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_FinalFloatStruct, type_name_FinalFloatStruct.to_string(), type_id))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_FinalFloatStruct, type_name_FinalFloatStruct.to_string(), type_ids_FinalFloatStruct))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "FinalFloatStruct already registered in TypeObjectRegistry for a different type.");
-        }
-        return_code_FinalFloatStruct =
-            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-            "FinalFloatStruct", type_ids_FinalFloatStruct);
-        if (return_code_FinalFloatStruct != eprosima::fastdds::dds::RETCODE_OK)
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "FinalFloatStruct: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
-            type_id = TypeIdentifier();
-            return;
         }
     }
 }
 // TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
 void register_FinalDoubleStruct_type_identifier(
-        TypeIdentifier& type_id)
+        TypeIdentifierPair& type_ids_FinalDoubleStruct)
 {
+
+    ReturnCode_t return_code_FinalDoubleStruct {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_FinalDoubleStruct =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "FinalDoubleStruct", type_ids_FinalDoubleStruct);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_FinalDoubleStruct)
     {
         StructTypeFlag struct_flags_FinalDoubleStruct = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::FINAL,
                 false, false);
-        ReturnCode_t return_code_FinalDoubleStruct;
-        TypeIdentifierPair type_ids_FinalDoubleStruct;
         QualifiedTypeName type_name_FinalDoubleStruct = "FinalDoubleStruct";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_FinalDoubleStruct;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_FinalDoubleStruct;
@@ -872,62 +529,26 @@ void register_FinalDoubleStruct_type_identifier(
         header_FinalDoubleStruct = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_FinalDoubleStruct);
         CompleteStructMemberSeq member_seq_FinalDoubleStruct;
         {
-            return_code_FinalDoubleStruct =
+            TypeIdentifierPair type_ids_var_double;
+            ReturnCode_t return_code_var_double {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_var_double =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "_double", type_ids_FinalDoubleStruct);
+                "_double", type_ids_var_double);
 
-            if (return_code_FinalDoubleStruct != eprosima::fastdds::dds::RETCODE_OK)
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_var_double)
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "var_double Structure member TypeIdentifier unknown to TypeObjectRegistry.");
-                type_id = TypeIdentifier();
                 return;
             }
-            StructMemberFlag member_flags_var_double = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_double = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            CommonStructMember common_var_double;
             MemberId member_id_var_double = 0x00000000;
-            if (EK_COMPLETE == type_ids_FinalDoubleStruct.type_identifier1()._d() || TK_NONE == type_ids_FinalDoubleStruct.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_FinalDoubleStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalDoubleStruct.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_FinalDoubleStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalDoubleStruct.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_FinalDoubleStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalDoubleStruct.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_FinalDoubleStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalDoubleStruct.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_FinalDoubleStruct.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_FinalDoubleStruct.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalDoubleStruct.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_FinalDoubleStruct.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_FinalDoubleStruct.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalDoubleStruct.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_var_double_ec {false};
+            CommonStructMember common_var_double {TypeObjectUtils::build_common_struct_member(member_id_var_double, member_flags_var_double, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_double, common_var_double_ec))};
+            if (!common_var_double_ec)
             {
-                common_var_double = TypeObjectUtils::build_common_struct_member(member_id_var_double, member_flags_var_double, type_ids_FinalDoubleStruct.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_FinalDoubleStruct.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_FinalDoubleStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalDoubleStruct.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_FinalDoubleStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalDoubleStruct.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_FinalDoubleStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalDoubleStruct.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_FinalDoubleStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalDoubleStruct.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_FinalDoubleStruct.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_FinalDoubleStruct.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalDoubleStruct.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_FinalDoubleStruct.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_FinalDoubleStruct.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalDoubleStruct.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_var_double = TypeObjectUtils::build_common_struct_member(member_id_var_double, member_flags_var_double, type_ids_FinalDoubleStruct.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure var_double member TypeIdentifier inconsistent.");
-                type_id = TypeIdentifier();
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure var_double member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_var_double = "var_double";
@@ -939,32 +560,26 @@ void register_FinalDoubleStruct_type_identifier(
         }
         CompleteStructType struct_type_FinalDoubleStruct = TypeObjectUtils::build_complete_struct_type(struct_flags_FinalDoubleStruct, header_FinalDoubleStruct, member_seq_FinalDoubleStruct);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_FinalDoubleStruct, type_name_FinalDoubleStruct.to_string(), type_id))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_FinalDoubleStruct, type_name_FinalDoubleStruct.to_string(), type_ids_FinalDoubleStruct))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "FinalDoubleStruct already registered in TypeObjectRegistry for a different type.");
-        }
-        return_code_FinalDoubleStruct =
-            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-            "FinalDoubleStruct", type_ids_FinalDoubleStruct);
-        if (return_code_FinalDoubleStruct != eprosima::fastdds::dds::RETCODE_OK)
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "FinalDoubleStruct: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
-            type_id = TypeIdentifier();
-            return;
         }
     }
 }
 // TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
 void register_FinalLongDoubleStruct_type_identifier(
-        TypeIdentifier& type_id)
+        TypeIdentifierPair& type_ids_FinalLongDoubleStruct)
 {
+
+    ReturnCode_t return_code_FinalLongDoubleStruct {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_FinalLongDoubleStruct =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "FinalLongDoubleStruct", type_ids_FinalLongDoubleStruct);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_FinalLongDoubleStruct)
     {
         StructTypeFlag struct_flags_FinalLongDoubleStruct = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::FINAL,
                 false, false);
-        ReturnCode_t return_code_FinalLongDoubleStruct;
-        TypeIdentifierPair type_ids_FinalLongDoubleStruct;
         QualifiedTypeName type_name_FinalLongDoubleStruct = "FinalLongDoubleStruct";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_FinalLongDoubleStruct;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_FinalLongDoubleStruct;
@@ -980,62 +595,26 @@ void register_FinalLongDoubleStruct_type_identifier(
         header_FinalLongDoubleStruct = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_FinalLongDoubleStruct);
         CompleteStructMemberSeq member_seq_FinalLongDoubleStruct;
         {
-            return_code_FinalLongDoubleStruct =
+            TypeIdentifierPair type_ids_var_longdouble;
+            ReturnCode_t return_code_var_longdouble {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_var_longdouble =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "_longdouble", type_ids_FinalLongDoubleStruct);
+                "_longdouble", type_ids_var_longdouble);
 
-            if (return_code_FinalLongDoubleStruct != eprosima::fastdds::dds::RETCODE_OK)
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_var_longdouble)
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "var_longdouble Structure member TypeIdentifier unknown to TypeObjectRegistry.");
-                type_id = TypeIdentifier();
                 return;
             }
-            StructMemberFlag member_flags_var_longdouble = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_longdouble = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            CommonStructMember common_var_longdouble;
             MemberId member_id_var_longdouble = 0x00000000;
-            if (EK_COMPLETE == type_ids_FinalLongDoubleStruct.type_identifier1()._d() || TK_NONE == type_ids_FinalLongDoubleStruct.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_FinalLongDoubleStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalLongDoubleStruct.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_FinalLongDoubleStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalLongDoubleStruct.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_FinalLongDoubleStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalLongDoubleStruct.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_FinalLongDoubleStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalLongDoubleStruct.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_FinalLongDoubleStruct.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_FinalLongDoubleStruct.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalLongDoubleStruct.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_FinalLongDoubleStruct.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_FinalLongDoubleStruct.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalLongDoubleStruct.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_var_longdouble_ec {false};
+            CommonStructMember common_var_longdouble {TypeObjectUtils::build_common_struct_member(member_id_var_longdouble, member_flags_var_longdouble, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_longdouble, common_var_longdouble_ec))};
+            if (!common_var_longdouble_ec)
             {
-                common_var_longdouble = TypeObjectUtils::build_common_struct_member(member_id_var_longdouble, member_flags_var_longdouble, type_ids_FinalLongDoubleStruct.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_FinalLongDoubleStruct.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_FinalLongDoubleStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalLongDoubleStruct.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_FinalLongDoubleStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalLongDoubleStruct.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_FinalLongDoubleStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalLongDoubleStruct.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_FinalLongDoubleStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalLongDoubleStruct.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_FinalLongDoubleStruct.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_FinalLongDoubleStruct.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalLongDoubleStruct.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_FinalLongDoubleStruct.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_FinalLongDoubleStruct.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalLongDoubleStruct.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_var_longdouble = TypeObjectUtils::build_common_struct_member(member_id_var_longdouble, member_flags_var_longdouble, type_ids_FinalLongDoubleStruct.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure var_longdouble member TypeIdentifier inconsistent.");
-                type_id = TypeIdentifier();
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure var_longdouble member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_var_longdouble = "var_longdouble";
@@ -1047,32 +626,26 @@ void register_FinalLongDoubleStruct_type_identifier(
         }
         CompleteStructType struct_type_FinalLongDoubleStruct = TypeObjectUtils::build_complete_struct_type(struct_flags_FinalLongDoubleStruct, header_FinalLongDoubleStruct, member_seq_FinalLongDoubleStruct);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_FinalLongDoubleStruct, type_name_FinalLongDoubleStruct.to_string(), type_id))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_FinalLongDoubleStruct, type_name_FinalLongDoubleStruct.to_string(), type_ids_FinalLongDoubleStruct))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "FinalLongDoubleStruct already registered in TypeObjectRegistry for a different type.");
-        }
-        return_code_FinalLongDoubleStruct =
-            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-            "FinalLongDoubleStruct", type_ids_FinalLongDoubleStruct);
-        if (return_code_FinalLongDoubleStruct != eprosima::fastdds::dds::RETCODE_OK)
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "FinalLongDoubleStruct: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
-            type_id = TypeIdentifier();
-            return;
         }
     }
 }
 // TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
 void register_FinalBooleanStruct_type_identifier(
-        TypeIdentifier& type_id)
+        TypeIdentifierPair& type_ids_FinalBooleanStruct)
 {
+
+    ReturnCode_t return_code_FinalBooleanStruct {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_FinalBooleanStruct =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "FinalBooleanStruct", type_ids_FinalBooleanStruct);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_FinalBooleanStruct)
     {
         StructTypeFlag struct_flags_FinalBooleanStruct = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::FINAL,
                 false, false);
-        ReturnCode_t return_code_FinalBooleanStruct;
-        TypeIdentifierPair type_ids_FinalBooleanStruct;
         QualifiedTypeName type_name_FinalBooleanStruct = "FinalBooleanStruct";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_FinalBooleanStruct;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_FinalBooleanStruct;
@@ -1088,62 +661,26 @@ void register_FinalBooleanStruct_type_identifier(
         header_FinalBooleanStruct = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_FinalBooleanStruct);
         CompleteStructMemberSeq member_seq_FinalBooleanStruct;
         {
-            return_code_FinalBooleanStruct =
+            TypeIdentifierPair type_ids_var_boolean;
+            ReturnCode_t return_code_var_boolean {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_var_boolean =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "_bool", type_ids_FinalBooleanStruct);
+                "_bool", type_ids_var_boolean);
 
-            if (return_code_FinalBooleanStruct != eprosima::fastdds::dds::RETCODE_OK)
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_var_boolean)
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "var_boolean Structure member TypeIdentifier unknown to TypeObjectRegistry.");
-                type_id = TypeIdentifier();
                 return;
             }
-            StructMemberFlag member_flags_var_boolean = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_boolean = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            CommonStructMember common_var_boolean;
             MemberId member_id_var_boolean = 0x00000000;
-            if (EK_COMPLETE == type_ids_FinalBooleanStruct.type_identifier1()._d() || TK_NONE == type_ids_FinalBooleanStruct.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_FinalBooleanStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalBooleanStruct.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_FinalBooleanStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalBooleanStruct.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_FinalBooleanStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalBooleanStruct.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_FinalBooleanStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalBooleanStruct.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_FinalBooleanStruct.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_FinalBooleanStruct.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalBooleanStruct.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_FinalBooleanStruct.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_FinalBooleanStruct.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalBooleanStruct.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_var_boolean_ec {false};
+            CommonStructMember common_var_boolean {TypeObjectUtils::build_common_struct_member(member_id_var_boolean, member_flags_var_boolean, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_boolean, common_var_boolean_ec))};
+            if (!common_var_boolean_ec)
             {
-                common_var_boolean = TypeObjectUtils::build_common_struct_member(member_id_var_boolean, member_flags_var_boolean, type_ids_FinalBooleanStruct.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_FinalBooleanStruct.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_FinalBooleanStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalBooleanStruct.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_FinalBooleanStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalBooleanStruct.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_FinalBooleanStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalBooleanStruct.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_FinalBooleanStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalBooleanStruct.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_FinalBooleanStruct.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_FinalBooleanStruct.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalBooleanStruct.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_FinalBooleanStruct.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_FinalBooleanStruct.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalBooleanStruct.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_var_boolean = TypeObjectUtils::build_common_struct_member(member_id_var_boolean, member_flags_var_boolean, type_ids_FinalBooleanStruct.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure var_boolean member TypeIdentifier inconsistent.");
-                type_id = TypeIdentifier();
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure var_boolean member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_var_boolean = "var_boolean";
@@ -1155,32 +692,26 @@ void register_FinalBooleanStruct_type_identifier(
         }
         CompleteStructType struct_type_FinalBooleanStruct = TypeObjectUtils::build_complete_struct_type(struct_flags_FinalBooleanStruct, header_FinalBooleanStruct, member_seq_FinalBooleanStruct);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_FinalBooleanStruct, type_name_FinalBooleanStruct.to_string(), type_id))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_FinalBooleanStruct, type_name_FinalBooleanStruct.to_string(), type_ids_FinalBooleanStruct))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "FinalBooleanStruct already registered in TypeObjectRegistry for a different type.");
-        }
-        return_code_FinalBooleanStruct =
-            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-            "FinalBooleanStruct", type_ids_FinalBooleanStruct);
-        if (return_code_FinalBooleanStruct != eprosima::fastdds::dds::RETCODE_OK)
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "FinalBooleanStruct: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
-            type_id = TypeIdentifier();
-            return;
         }
     }
 }
 // TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
 void register_FinalOctetStruct_type_identifier(
-        TypeIdentifier& type_id)
+        TypeIdentifierPair& type_ids_FinalOctetStruct)
 {
+
+    ReturnCode_t return_code_FinalOctetStruct {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_FinalOctetStruct =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "FinalOctetStruct", type_ids_FinalOctetStruct);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_FinalOctetStruct)
     {
         StructTypeFlag struct_flags_FinalOctetStruct = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::FINAL,
                 false, false);
-        ReturnCode_t return_code_FinalOctetStruct;
-        TypeIdentifierPair type_ids_FinalOctetStruct;
         QualifiedTypeName type_name_FinalOctetStruct = "FinalOctetStruct";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_FinalOctetStruct;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_FinalOctetStruct;
@@ -1196,62 +727,26 @@ void register_FinalOctetStruct_type_identifier(
         header_FinalOctetStruct = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_FinalOctetStruct);
         CompleteStructMemberSeq member_seq_FinalOctetStruct;
         {
-            return_code_FinalOctetStruct =
+            TypeIdentifierPair type_ids_var_octet;
+            ReturnCode_t return_code_var_octet {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_var_octet =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "_byte", type_ids_FinalOctetStruct);
+                "_byte", type_ids_var_octet);
 
-            if (return_code_FinalOctetStruct != eprosima::fastdds::dds::RETCODE_OK)
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_var_octet)
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "var_octet Structure member TypeIdentifier unknown to TypeObjectRegistry.");
-                type_id = TypeIdentifier();
                 return;
             }
-            StructMemberFlag member_flags_var_octet = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_octet = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            CommonStructMember common_var_octet;
             MemberId member_id_var_octet = 0x00000000;
-            if (EK_COMPLETE == type_ids_FinalOctetStruct.type_identifier1()._d() || TK_NONE == type_ids_FinalOctetStruct.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_FinalOctetStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalOctetStruct.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_FinalOctetStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalOctetStruct.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_FinalOctetStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalOctetStruct.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_FinalOctetStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalOctetStruct.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_FinalOctetStruct.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_FinalOctetStruct.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalOctetStruct.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_FinalOctetStruct.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_FinalOctetStruct.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalOctetStruct.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_var_octet_ec {false};
+            CommonStructMember common_var_octet {TypeObjectUtils::build_common_struct_member(member_id_var_octet, member_flags_var_octet, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_octet, common_var_octet_ec))};
+            if (!common_var_octet_ec)
             {
-                common_var_octet = TypeObjectUtils::build_common_struct_member(member_id_var_octet, member_flags_var_octet, type_ids_FinalOctetStruct.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_FinalOctetStruct.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_FinalOctetStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalOctetStruct.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_FinalOctetStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalOctetStruct.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_FinalOctetStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalOctetStruct.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_FinalOctetStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalOctetStruct.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_FinalOctetStruct.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_FinalOctetStruct.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalOctetStruct.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_FinalOctetStruct.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_FinalOctetStruct.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalOctetStruct.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_var_octet = TypeObjectUtils::build_common_struct_member(member_id_var_octet, member_flags_var_octet, type_ids_FinalOctetStruct.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure var_octet member TypeIdentifier inconsistent.");
-                type_id = TypeIdentifier();
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure var_octet member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_var_octet = "var_octet";
@@ -1263,32 +758,26 @@ void register_FinalOctetStruct_type_identifier(
         }
         CompleteStructType struct_type_FinalOctetStruct = TypeObjectUtils::build_complete_struct_type(struct_flags_FinalOctetStruct, header_FinalOctetStruct, member_seq_FinalOctetStruct);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_FinalOctetStruct, type_name_FinalOctetStruct.to_string(), type_id))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_FinalOctetStruct, type_name_FinalOctetStruct.to_string(), type_ids_FinalOctetStruct))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "FinalOctetStruct already registered in TypeObjectRegistry for a different type.");
-        }
-        return_code_FinalOctetStruct =
-            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-            "FinalOctetStruct", type_ids_FinalOctetStruct);
-        if (return_code_FinalOctetStruct != eprosima::fastdds::dds::RETCODE_OK)
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "FinalOctetStruct: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
-            type_id = TypeIdentifier();
-            return;
         }
     }
 }
 // TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
 void register_FinalCharStruct_type_identifier(
-        TypeIdentifier& type_id)
+        TypeIdentifierPair& type_ids_FinalCharStruct)
 {
+
+    ReturnCode_t return_code_FinalCharStruct {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_FinalCharStruct =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "FinalCharStruct", type_ids_FinalCharStruct);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_FinalCharStruct)
     {
         StructTypeFlag struct_flags_FinalCharStruct = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::FINAL,
                 false, false);
-        ReturnCode_t return_code_FinalCharStruct;
-        TypeIdentifierPair type_ids_FinalCharStruct;
         QualifiedTypeName type_name_FinalCharStruct = "FinalCharStruct";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_FinalCharStruct;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_FinalCharStruct;
@@ -1304,62 +793,26 @@ void register_FinalCharStruct_type_identifier(
         header_FinalCharStruct = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_FinalCharStruct);
         CompleteStructMemberSeq member_seq_FinalCharStruct;
         {
-            return_code_FinalCharStruct =
+            TypeIdentifierPair type_ids_var_char8;
+            ReturnCode_t return_code_var_char8 {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_var_char8 =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "_char", type_ids_FinalCharStruct);
+                "_char", type_ids_var_char8);
 
-            if (return_code_FinalCharStruct != eprosima::fastdds::dds::RETCODE_OK)
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_var_char8)
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "var_char8 Structure member TypeIdentifier unknown to TypeObjectRegistry.");
-                type_id = TypeIdentifier();
                 return;
             }
-            StructMemberFlag member_flags_var_char8 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_char8 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            CommonStructMember common_var_char8;
             MemberId member_id_var_char8 = 0x00000000;
-            if (EK_COMPLETE == type_ids_FinalCharStruct.type_identifier1()._d() || TK_NONE == type_ids_FinalCharStruct.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_FinalCharStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalCharStruct.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_FinalCharStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalCharStruct.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_FinalCharStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalCharStruct.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_FinalCharStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalCharStruct.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_FinalCharStruct.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_FinalCharStruct.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalCharStruct.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_FinalCharStruct.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_FinalCharStruct.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalCharStruct.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_var_char8_ec {false};
+            CommonStructMember common_var_char8 {TypeObjectUtils::build_common_struct_member(member_id_var_char8, member_flags_var_char8, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_char8, common_var_char8_ec))};
+            if (!common_var_char8_ec)
             {
-                common_var_char8 = TypeObjectUtils::build_common_struct_member(member_id_var_char8, member_flags_var_char8, type_ids_FinalCharStruct.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_FinalCharStruct.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_FinalCharStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalCharStruct.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_FinalCharStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalCharStruct.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_FinalCharStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalCharStruct.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_FinalCharStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalCharStruct.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_FinalCharStruct.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_FinalCharStruct.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalCharStruct.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_FinalCharStruct.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_FinalCharStruct.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalCharStruct.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_var_char8 = TypeObjectUtils::build_common_struct_member(member_id_var_char8, member_flags_var_char8, type_ids_FinalCharStruct.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure var_char8 member TypeIdentifier inconsistent.");
-                type_id = TypeIdentifier();
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure var_char8 member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_var_char8 = "var_char8";
@@ -1371,32 +824,26 @@ void register_FinalCharStruct_type_identifier(
         }
         CompleteStructType struct_type_FinalCharStruct = TypeObjectUtils::build_complete_struct_type(struct_flags_FinalCharStruct, header_FinalCharStruct, member_seq_FinalCharStruct);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_FinalCharStruct, type_name_FinalCharStruct.to_string(), type_id))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_FinalCharStruct, type_name_FinalCharStruct.to_string(), type_ids_FinalCharStruct))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "FinalCharStruct already registered in TypeObjectRegistry for a different type.");
-        }
-        return_code_FinalCharStruct =
-            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-            "FinalCharStruct", type_ids_FinalCharStruct);
-        if (return_code_FinalCharStruct != eprosima::fastdds::dds::RETCODE_OK)
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "FinalCharStruct: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
-            type_id = TypeIdentifier();
-            return;
         }
     }
 }
 // TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
 void register_FinalWCharStruct_type_identifier(
-        TypeIdentifier& type_id)
+        TypeIdentifierPair& type_ids_FinalWCharStruct)
 {
+
+    ReturnCode_t return_code_FinalWCharStruct {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_FinalWCharStruct =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "FinalWCharStruct", type_ids_FinalWCharStruct);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_FinalWCharStruct)
     {
         StructTypeFlag struct_flags_FinalWCharStruct = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::FINAL,
                 false, false);
-        ReturnCode_t return_code_FinalWCharStruct;
-        TypeIdentifierPair type_ids_FinalWCharStruct;
         QualifiedTypeName type_name_FinalWCharStruct = "FinalWCharStruct";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_FinalWCharStruct;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_FinalWCharStruct;
@@ -1412,62 +859,26 @@ void register_FinalWCharStruct_type_identifier(
         header_FinalWCharStruct = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_FinalWCharStruct);
         CompleteStructMemberSeq member_seq_FinalWCharStruct;
         {
-            return_code_FinalWCharStruct =
+            TypeIdentifierPair type_ids_var_char16;
+            ReturnCode_t return_code_var_char16 {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_var_char16 =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "_wchar_t", type_ids_FinalWCharStruct);
+                "_wchar_t", type_ids_var_char16);
 
-            if (return_code_FinalWCharStruct != eprosima::fastdds::dds::RETCODE_OK)
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_var_char16)
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "var_char16 Structure member TypeIdentifier unknown to TypeObjectRegistry.");
-                type_id = TypeIdentifier();
                 return;
             }
-            StructMemberFlag member_flags_var_char16 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_char16 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            CommonStructMember common_var_char16;
             MemberId member_id_var_char16 = 0x00000000;
-            if (EK_COMPLETE == type_ids_FinalWCharStruct.type_identifier1()._d() || TK_NONE == type_ids_FinalWCharStruct.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_FinalWCharStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalWCharStruct.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_FinalWCharStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalWCharStruct.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_FinalWCharStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalWCharStruct.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_FinalWCharStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalWCharStruct.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_FinalWCharStruct.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_FinalWCharStruct.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalWCharStruct.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_FinalWCharStruct.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_FinalWCharStruct.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalWCharStruct.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_var_char16_ec {false};
+            CommonStructMember common_var_char16 {TypeObjectUtils::build_common_struct_member(member_id_var_char16, member_flags_var_char16, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_char16, common_var_char16_ec))};
+            if (!common_var_char16_ec)
             {
-                common_var_char16 = TypeObjectUtils::build_common_struct_member(member_id_var_char16, member_flags_var_char16, type_ids_FinalWCharStruct.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_FinalWCharStruct.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_FinalWCharStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalWCharStruct.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_FinalWCharStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalWCharStruct.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_FinalWCharStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalWCharStruct.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_FinalWCharStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalWCharStruct.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_FinalWCharStruct.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_FinalWCharStruct.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalWCharStruct.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_FinalWCharStruct.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_FinalWCharStruct.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalWCharStruct.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_var_char16 = TypeObjectUtils::build_common_struct_member(member_id_var_char16, member_flags_var_char16, type_ids_FinalWCharStruct.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure var_char16 member TypeIdentifier inconsistent.");
-                type_id = TypeIdentifier();
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure var_char16 member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_var_char16 = "var_char16";
@@ -1479,32 +890,26 @@ void register_FinalWCharStruct_type_identifier(
         }
         CompleteStructType struct_type_FinalWCharStruct = TypeObjectUtils::build_complete_struct_type(struct_flags_FinalWCharStruct, header_FinalWCharStruct, member_seq_FinalWCharStruct);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_FinalWCharStruct, type_name_FinalWCharStruct.to_string(), type_id))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_FinalWCharStruct, type_name_FinalWCharStruct.to_string(), type_ids_FinalWCharStruct))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "FinalWCharStruct already registered in TypeObjectRegistry for a different type.");
-        }
-        return_code_FinalWCharStruct =
-            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-            "FinalWCharStruct", type_ids_FinalWCharStruct);
-        if (return_code_FinalWCharStruct != eprosima::fastdds::dds::RETCODE_OK)
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "FinalWCharStruct: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
-            type_id = TypeIdentifier();
-            return;
         }
     }
 }
 // TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
 void register_FinalUnionStruct_type_identifier(
-        TypeIdentifier& type_id)
+        TypeIdentifierPair& type_ids_FinalUnionStruct)
 {
+
+    ReturnCode_t return_code_FinalUnionStruct {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_FinalUnionStruct =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "FinalUnionStruct", type_ids_FinalUnionStruct);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_FinalUnionStruct)
     {
         StructTypeFlag struct_flags_FinalUnionStruct = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::FINAL,
                 false, false);
-        ReturnCode_t return_code_FinalUnionStruct;
-        TypeIdentifierPair type_ids_FinalUnionStruct;
         QualifiedTypeName type_name_FinalUnionStruct = "FinalUnionStruct";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_FinalUnionStruct;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_FinalUnionStruct;
@@ -1520,339 +925,24 @@ void register_FinalUnionStruct_type_identifier(
         header_FinalUnionStruct = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_FinalUnionStruct);
         CompleteStructMemberSeq member_seq_FinalUnionStruct;
         {
-            return_code_FinalUnionStruct =
+            TypeIdentifierPair type_ids_var_union;
+            ReturnCode_t return_code_var_union {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_var_union =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "InnerUnionHelper", type_ids_FinalUnionStruct);
+                "InnerUnionHelper", type_ids_var_union);
 
-            if (return_code_FinalUnionStruct != eprosima::fastdds::dds::RETCODE_OK)
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_var_union)
             {
-                {
-                    ReturnCode_t return_code_InnerUnionHelper;
-                    TypeIdentifierPair type_ids_InnerUnionHelper;
-                    UnionTypeFlag union_flags_InnerUnionHelper = TypeObjectUtils::build_union_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
-                            true, false);
-                    QualifiedTypeName type_name_InnerUnionHelper = "InnerUnionHelper";
-                    eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_InnerUnionHelper;
-                    eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_InnerUnionHelper;
-                    AppliedAnnotationSeq tmp_ann_custom_InnerUnionHelper;
-                    eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_InnerUnionHelper;
-                    if (!tmp_ann_custom_InnerUnionHelper.empty())
-                    {
-                        ann_custom_InnerUnionHelper = tmp_ann_custom_InnerUnionHelper;
-                    }
-
-                    CompleteTypeDetail detail_InnerUnionHelper = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_InnerUnionHelper, ann_custom_InnerUnionHelper, type_name_InnerUnionHelper.to_string());
-                    CompleteUnionHeader header_InnerUnionHelper = TypeObjectUtils::build_complete_union_header(detail_InnerUnionHelper);
-                    UnionDiscriminatorFlag member_flags_InnerUnionHelper = TypeObjectUtils::build_union_discriminator_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                            false);
-                    return_code_InnerUnionHelper =
-                        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                        "_int32_t", type_ids_InnerUnionHelper);
-
-                    if (return_code_InnerUnionHelper != eprosima::fastdds::dds::RETCODE_OK)
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                                "Union discriminator TypeIdentifier unknown to TypeObjectRegistry.");
-                        type_id = TypeIdentifier();
-                        return;
-                    }
-                    CommonDiscriminatorMember common_InnerUnionHelper;
-                    if (EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1()._d() || TK_NONE == type_ids_InnerUnionHelper.type_identifier2()._d())
-                    {
-                        common_InnerUnionHelper = TypeObjectUtils::build_common_discriminator_member(member_flags_InnerUnionHelper, type_ids_InnerUnionHelper.type_identifier1());
-                    }
-                    else if (EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier2()._d())
-                    {
-                        common_InnerUnionHelper = TypeObjectUtils::build_common_discriminator_member(member_flags_InnerUnionHelper, type_ids_InnerUnionHelper.type_identifier2());
-                    }
-                    else
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                                "InnerUnionHelper discriminator TypeIdentifier inconsistent.");
-                        type_id = TypeIdentifier();
-                        return;
-                    }
-                    type_ann_builtin_InnerUnionHelper.reset();
-                    ann_custom_InnerUnionHelper.reset();
-                    CompleteDiscriminatorMember discriminator_InnerUnionHelper = TypeObjectUtils::build_complete_discriminator_member(common_InnerUnionHelper,
-                            type_ann_builtin_InnerUnionHelper, ann_custom_InnerUnionHelper);
-                    CompleteUnionMemberSeq member_seq_InnerUnionHelper;
-                    {
-                        return_code_InnerUnionHelper =
-                            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                            "_int32_t", type_ids_InnerUnionHelper);
-
-                        if (return_code_InnerUnionHelper != eprosima::fastdds::dds::RETCODE_OK)
-                        {
-                            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                                    "longValue Union member TypeIdentifier unknown to TypeObjectRegistry.");
-                            type_id = TypeIdentifier();
-                            return;
-                        }
-                        UnionMemberFlag member_flags_longValue = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                                false, false);
-                        UnionCaseLabelSeq label_seq_longValue;
-                        TypeObjectUtils::add_union_case_label(label_seq_longValue, static_cast<int32_t>(0));
-                        CommonUnionMember common_longValue;
-                        MemberId member_id_longValue = 0x00000001;
-                        if (EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1()._d() || TK_NONE == type_ids_InnerUnionHelper.type_identifier2()._d() ||
-                                (TI_PLAIN_SEQUENCE_SMALL == type_ids_InnerUnionHelper.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                                (TI_PLAIN_SEQUENCE_LARGE == type_ids_InnerUnionHelper.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                                (TI_PLAIN_ARRAY_SMALL == type_ids_InnerUnionHelper.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                                (TI_PLAIN_ARRAY_LARGE == type_ids_InnerUnionHelper.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                                (TI_PLAIN_MAP_SMALL == type_ids_InnerUnionHelper.type_identifier1()._d() &&
-                                (EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().map_sdefn().header().equiv_kind() ||
-                                EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                                (TI_PLAIN_MAP_LARGE == type_ids_InnerUnionHelper.type_identifier1()._d() &&
-                                (EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().map_ldefn().header().equiv_kind() ||
-                                EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().map_ldefn().key_identifier()->_d())))
-                        {
-                            common_longValue = TypeObjectUtils::build_common_union_member(member_id_longValue, member_flags_longValue, type_ids_InnerUnionHelper.type_identifier1(),
-                                    label_seq_longValue);
-                        }
-                        else if (EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier2()._d() ||
-                                (TI_PLAIN_SEQUENCE_SMALL == type_ids_InnerUnionHelper.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                                (TI_PLAIN_SEQUENCE_LARGE == type_ids_InnerUnionHelper.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                                (TI_PLAIN_ARRAY_SMALL == type_ids_InnerUnionHelper.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                                (TI_PLAIN_ARRAY_LARGE == type_ids_InnerUnionHelper.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                                (TI_PLAIN_MAP_SMALL == type_ids_InnerUnionHelper.type_identifier2()._d() &&
-                                (EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier2().map_sdefn().header().equiv_kind() ||
-                                EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                                (TI_PLAIN_MAP_LARGE == type_ids_InnerUnionHelper.type_identifier2()._d() &&
-                                (EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier2().map_ldefn().header().equiv_kind() ||
-                                EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier2().map_ldefn().key_identifier()->_d())))
-                        {
-                            common_longValue = TypeObjectUtils::build_common_union_member(member_id_longValue, member_flags_longValue, type_ids_InnerUnionHelper.type_identifier2(),
-                                    label_seq_longValue);
-                        }
-                        else
-                        {
-                            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                                    "Union longValue member TypeIdentifier inconsistent.");
-                            type_id = TypeIdentifier();
-                            return;
-                        }
-                        MemberName name_longValue = "longValue";
-                        eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_longValue;
-                        ann_custom_InnerUnionHelper.reset();
-                        CompleteMemberDetail detail_longValue = TypeObjectUtils::build_complete_member_detail(name_longValue, member_ann_builtin_longValue, ann_custom_InnerUnionHelper);
-                        CompleteUnionMember member_longValue = TypeObjectUtils::build_complete_union_member(common_longValue, detail_longValue);
-                        TypeObjectUtils::add_complete_union_member(member_seq_InnerUnionHelper, member_longValue);
-                    }
-                    {
-                        return_code_InnerUnionHelper =
-                            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                            "_float", type_ids_InnerUnionHelper);
-
-                        if (return_code_InnerUnionHelper != eprosima::fastdds::dds::RETCODE_OK)
-                        {
-                            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                                    "floatValue Union member TypeIdentifier unknown to TypeObjectRegistry.");
-                            type_id = TypeIdentifier();
-                            return;
-                        }
-                        UnionMemberFlag member_flags_floatValue = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                                false, false);
-                        UnionCaseLabelSeq label_seq_floatValue;
-                        TypeObjectUtils::add_union_case_label(label_seq_floatValue, static_cast<int32_t>(1));
-                        CommonUnionMember common_floatValue;
-                        MemberId member_id_floatValue = 0x00000002;
-                        if (EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1()._d() || TK_NONE == type_ids_InnerUnionHelper.type_identifier2()._d() ||
-                                (TI_PLAIN_SEQUENCE_SMALL == type_ids_InnerUnionHelper.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                                (TI_PLAIN_SEQUENCE_LARGE == type_ids_InnerUnionHelper.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                                (TI_PLAIN_ARRAY_SMALL == type_ids_InnerUnionHelper.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                                (TI_PLAIN_ARRAY_LARGE == type_ids_InnerUnionHelper.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                                (TI_PLAIN_MAP_SMALL == type_ids_InnerUnionHelper.type_identifier1()._d() &&
-                                (EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().map_sdefn().header().equiv_kind() ||
-                                EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                                (TI_PLAIN_MAP_LARGE == type_ids_InnerUnionHelper.type_identifier1()._d() &&
-                                (EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().map_ldefn().header().equiv_kind() ||
-                                EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().map_ldefn().key_identifier()->_d())))
-                        {
-                            common_floatValue = TypeObjectUtils::build_common_union_member(member_id_floatValue, member_flags_floatValue, type_ids_InnerUnionHelper.type_identifier1(),
-                                    label_seq_floatValue);
-                        }
-                        else if (EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier2()._d() ||
-                                (TI_PLAIN_SEQUENCE_SMALL == type_ids_InnerUnionHelper.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                                (TI_PLAIN_SEQUENCE_LARGE == type_ids_InnerUnionHelper.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                                (TI_PLAIN_ARRAY_SMALL == type_ids_InnerUnionHelper.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                                (TI_PLAIN_ARRAY_LARGE == type_ids_InnerUnionHelper.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                                (TI_PLAIN_MAP_SMALL == type_ids_InnerUnionHelper.type_identifier2()._d() &&
-                                (EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier2().map_sdefn().header().equiv_kind() ||
-                                EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                                (TI_PLAIN_MAP_LARGE == type_ids_InnerUnionHelper.type_identifier2()._d() &&
-                                (EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier2().map_ldefn().header().equiv_kind() ||
-                                EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier2().map_ldefn().key_identifier()->_d())))
-                        {
-                            common_floatValue = TypeObjectUtils::build_common_union_member(member_id_floatValue, member_flags_floatValue, type_ids_InnerUnionHelper.type_identifier2(),
-                                    label_seq_floatValue);
-                        }
-                        else
-                        {
-                            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                                    "Union floatValue member TypeIdentifier inconsistent.");
-                            type_id = TypeIdentifier();
-                            return;
-                        }
-                        MemberName name_floatValue = "floatValue";
-                        eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_floatValue;
-                        ann_custom_InnerUnionHelper.reset();
-                        CompleteMemberDetail detail_floatValue = TypeObjectUtils::build_complete_member_detail(name_floatValue, member_ann_builtin_floatValue, ann_custom_InnerUnionHelper);
-                        CompleteUnionMember member_floatValue = TypeObjectUtils::build_complete_union_member(common_floatValue, detail_floatValue);
-                        TypeObjectUtils::add_complete_union_member(member_seq_InnerUnionHelper, member_floatValue);
-                    }
-                    {
-                        return_code_InnerUnionHelper =
-                            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                            "_int16_t", type_ids_InnerUnionHelper);
-
-                        if (return_code_InnerUnionHelper != eprosima::fastdds::dds::RETCODE_OK)
-                        {
-                            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                                    "shortValue Union member TypeIdentifier unknown to TypeObjectRegistry.");
-                            type_id = TypeIdentifier();
-                            return;
-                        }
-                        UnionMemberFlag member_flags_shortValue = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                                true, false);
-                        UnionCaseLabelSeq label_seq_shortValue;
-                        CommonUnionMember common_shortValue;
-                        MemberId member_id_shortValue = 0x00000003;
-                        if (EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1()._d() || TK_NONE == type_ids_InnerUnionHelper.type_identifier2()._d() ||
-                                (TI_PLAIN_SEQUENCE_SMALL == type_ids_InnerUnionHelper.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                                (TI_PLAIN_SEQUENCE_LARGE == type_ids_InnerUnionHelper.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                                (TI_PLAIN_ARRAY_SMALL == type_ids_InnerUnionHelper.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                                (TI_PLAIN_ARRAY_LARGE == type_ids_InnerUnionHelper.type_identifier1()._d() &&
-                                EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                                (TI_PLAIN_MAP_SMALL == type_ids_InnerUnionHelper.type_identifier1()._d() &&
-                                (EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().map_sdefn().header().equiv_kind() ||
-                                EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                                (TI_PLAIN_MAP_LARGE == type_ids_InnerUnionHelper.type_identifier1()._d() &&
-                                (EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().map_ldefn().header().equiv_kind() ||
-                                EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().map_ldefn().key_identifier()->_d())))
-                        {
-                            common_shortValue = TypeObjectUtils::build_common_union_member(member_id_shortValue, member_flags_shortValue, type_ids_InnerUnionHelper.type_identifier1(),
-                                    label_seq_shortValue);
-                        }
-                        else if (EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier2()._d() ||
-                                (TI_PLAIN_SEQUENCE_SMALL == type_ids_InnerUnionHelper.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                                (TI_PLAIN_SEQUENCE_LARGE == type_ids_InnerUnionHelper.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                                (TI_PLAIN_ARRAY_SMALL == type_ids_InnerUnionHelper.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                                (TI_PLAIN_ARRAY_LARGE == type_ids_InnerUnionHelper.type_identifier2()._d() &&
-                                EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                                (TI_PLAIN_MAP_SMALL == type_ids_InnerUnionHelper.type_identifier2()._d() &&
-                                (EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier2().map_sdefn().header().equiv_kind() ||
-                                EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                                (TI_PLAIN_MAP_LARGE == type_ids_InnerUnionHelper.type_identifier2()._d() &&
-                                (EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier2().map_ldefn().header().equiv_kind() ||
-                                EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier2().map_ldefn().key_identifier()->_d())))
-                        {
-                            common_shortValue = TypeObjectUtils::build_common_union_member(member_id_shortValue, member_flags_shortValue, type_ids_InnerUnionHelper.type_identifier2(),
-                                    label_seq_shortValue);
-                        }
-                        else
-                        {
-                            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                                    "Union shortValue member TypeIdentifier inconsistent.");
-                            type_id = TypeIdentifier();
-                            return;
-                        }
-                        MemberName name_shortValue = "shortValue";
-                        eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_shortValue;
-                        ann_custom_InnerUnionHelper.reset();
-                        CompleteMemberDetail detail_shortValue = TypeObjectUtils::build_complete_member_detail(name_shortValue, member_ann_builtin_shortValue, ann_custom_InnerUnionHelper);
-                        CompleteUnionMember member_shortValue = TypeObjectUtils::build_complete_union_member(common_shortValue, detail_shortValue);
-                        TypeObjectUtils::add_complete_union_member(member_seq_InnerUnionHelper, member_shortValue);
-                    }
-                    CompleteUnionType union_type_InnerUnionHelper = TypeObjectUtils::build_complete_union_type(union_flags_InnerUnionHelper, header_InnerUnionHelper, discriminator_InnerUnionHelper,
-                            member_seq_InnerUnionHelper);
-                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_union_type_object(union_type_InnerUnionHelper, type_name_InnerUnionHelper.to_string(), type_id))
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                                "InnerUnionHelper already registered in TypeObjectRegistry for a different type.");
-                    }
-                    return_code_InnerUnionHelper =
-                        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                        "InnerUnionHelper", type_ids_InnerUnionHelper);
-                    if (return_code_InnerUnionHelper != eprosima::fastdds::dds::RETCODE_OK)
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                                    "InnerUnionHelper: Given Union TypeIdentifier unknown to TypeObjectRegistry.");
-                        type_id = TypeIdentifier();
-                        return;
-                    }
-                    return_code_FinalUnionStruct = return_code_InnerUnionHelper;
-                    type_ids_FinalUnionStruct = type_ids_InnerUnionHelper;
-                }
+            ::register_InnerUnionHelper_type_identifier(type_ids_var_union);
             }
-            StructMemberFlag member_flags_var_union = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_union = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            CommonStructMember common_var_union;
             MemberId member_id_var_union = 0x00000000;
-            if (EK_COMPLETE == type_ids_FinalUnionStruct.type_identifier1()._d() || TK_NONE == type_ids_FinalUnionStruct.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_FinalUnionStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalUnionStruct.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_FinalUnionStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalUnionStruct.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_FinalUnionStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalUnionStruct.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_FinalUnionStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalUnionStruct.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_FinalUnionStruct.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_FinalUnionStruct.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalUnionStruct.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_FinalUnionStruct.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_FinalUnionStruct.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalUnionStruct.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_var_union_ec {false};
+            CommonStructMember common_var_union {TypeObjectUtils::build_common_struct_member(member_id_var_union, member_flags_var_union, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_union, common_var_union_ec))};
+            if (!common_var_union_ec)
             {
-                common_var_union = TypeObjectUtils::build_common_struct_member(member_id_var_union, member_flags_var_union, type_ids_FinalUnionStruct.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_FinalUnionStruct.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_FinalUnionStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalUnionStruct.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_FinalUnionStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalUnionStruct.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_FinalUnionStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalUnionStruct.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_FinalUnionStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalUnionStruct.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_FinalUnionStruct.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_FinalUnionStruct.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalUnionStruct.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_FinalUnionStruct.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_FinalUnionStruct.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalUnionStruct.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_var_union = TypeObjectUtils::build_common_struct_member(member_id_var_union, member_flags_var_union, type_ids_FinalUnionStruct.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure var_union member TypeIdentifier inconsistent.");
-                type_id = TypeIdentifier();
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure var_union member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_var_union = "var_union";
@@ -1864,32 +954,26 @@ void register_FinalUnionStruct_type_identifier(
         }
         CompleteStructType struct_type_FinalUnionStruct = TypeObjectUtils::build_complete_struct_type(struct_flags_FinalUnionStruct, header_FinalUnionStruct, member_seq_FinalUnionStruct);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_FinalUnionStruct, type_name_FinalUnionStruct.to_string(), type_id))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_FinalUnionStruct, type_name_FinalUnionStruct.to_string(), type_ids_FinalUnionStruct))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "FinalUnionStruct already registered in TypeObjectRegistry for a different type.");
-        }
-        return_code_FinalUnionStruct =
-            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-            "FinalUnionStruct", type_ids_FinalUnionStruct);
-        if (return_code_FinalUnionStruct != eprosima::fastdds::dds::RETCODE_OK)
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "FinalUnionStruct: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
-            type_id = TypeIdentifier();
-            return;
         }
     }
 }
 // TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
 void register_FinalEmptyStruct_type_identifier(
-        TypeIdentifier& type_id)
+        TypeIdentifierPair& type_ids_FinalEmptyStruct)
 {
+
+    ReturnCode_t return_code_FinalEmptyStruct {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_FinalEmptyStruct =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "FinalEmptyStruct", type_ids_FinalEmptyStruct);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_FinalEmptyStruct)
     {
         StructTypeFlag struct_flags_FinalEmptyStruct = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::FINAL,
                 false, false);
-        ReturnCode_t return_code_FinalEmptyStruct;
-        TypeIdentifierPair type_ids_FinalEmptyStruct;
         QualifiedTypeName type_name_FinalEmptyStruct = "FinalEmptyStruct";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_FinalEmptyStruct;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_FinalEmptyStruct;
@@ -1906,77 +990,33 @@ void register_FinalEmptyStruct_type_identifier(
         CompleteStructMemberSeq member_seq_FinalEmptyStruct;
         CompleteStructType struct_type_FinalEmptyStruct = TypeObjectUtils::build_complete_struct_type(struct_flags_FinalEmptyStruct, header_FinalEmptyStruct, member_seq_FinalEmptyStruct);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_FinalEmptyStruct, type_name_FinalEmptyStruct.to_string(), type_id))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_FinalEmptyStruct, type_name_FinalEmptyStruct.to_string(), type_ids_FinalEmptyStruct))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "FinalEmptyStruct already registered in TypeObjectRegistry for a different type.");
-        }
-        return_code_FinalEmptyStruct =
-            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-            "FinalEmptyStruct", type_ids_FinalEmptyStruct);
-        if (return_code_FinalEmptyStruct != eprosima::fastdds::dds::RETCODE_OK)
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "FinalEmptyStruct: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
-            type_id = TypeIdentifier();
-            return;
         }
     }
 }
 // TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
 void register_FinalEmptyInheritanceStruct_type_identifier(
-        TypeIdentifier& type_id)
+        TypeIdentifierPair& type_ids_FinalEmptyInheritanceStruct)
 {
+
+    ReturnCode_t return_code_FinalEmptyInheritanceStruct {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_FinalEmptyInheritanceStruct =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "FinalEmptyInheritanceStruct", type_ids_FinalEmptyInheritanceStruct);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_FinalEmptyInheritanceStruct)
     {
         StructTypeFlag struct_flags_FinalEmptyInheritanceStruct = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::FINAL,
                 false, false);
-        ReturnCode_t return_code_FinalEmptyInheritanceStruct;
-        TypeIdentifierPair type_ids_FinalEmptyInheritanceStruct;
         return_code_FinalEmptyInheritanceStruct =
             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
             "FinalEmptyStruct", type_ids_FinalEmptyInheritanceStruct);
 
         if (return_code_FinalEmptyInheritanceStruct != eprosima::fastdds::dds::RETCODE_OK)
         {
-            {
-                StructTypeFlag struct_flags_FinalEmptyStruct = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::FINAL,
-                        false, false);
-                ReturnCode_t return_code_FinalEmptyStruct;
-                TypeIdentifierPair type_ids_FinalEmptyStruct;
-                QualifiedTypeName type_name_FinalEmptyStruct = "FinalEmptyStruct";
-                eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_FinalEmptyStruct;
-                eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_FinalEmptyStruct;
-                AppliedAnnotationSeq tmp_ann_custom_FinalEmptyStruct;
-                eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_FinalEmptyStruct;
-                if (!tmp_ann_custom_FinalEmptyStruct.empty())
-                {
-                    ann_custom_FinalEmptyStruct = tmp_ann_custom_FinalEmptyStruct;
-                }
-
-                CompleteTypeDetail detail_FinalEmptyStruct = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_FinalEmptyStruct, ann_custom_FinalEmptyStruct, type_name_FinalEmptyStruct.to_string());
-                CompleteStructHeader header_FinalEmptyStruct;
-                header_FinalEmptyStruct = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_FinalEmptyStruct);
-                CompleteStructMemberSeq member_seq_FinalEmptyStruct;
-                CompleteStructType struct_type_FinalEmptyStruct = TypeObjectUtils::build_complete_struct_type(struct_flags_FinalEmptyStruct, header_FinalEmptyStruct, member_seq_FinalEmptyStruct);
-                if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                        TypeObjectUtils::build_and_register_struct_type_object(struct_type_FinalEmptyStruct, type_name_FinalEmptyStruct.to_string(), type_id))
-                {
-                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "FinalEmptyStruct already registered in TypeObjectRegistry for a different type.");
-                }
-                return_code_FinalEmptyStruct =
-                    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                    "FinalEmptyStruct", type_ids_FinalEmptyStruct);
-                if (return_code_FinalEmptyStruct != eprosima::fastdds::dds::RETCODE_OK)
-                {
-                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                                "FinalEmptyStruct: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
-                    type_id = TypeIdentifier();
-                    return;
-                }
-                return_code_FinalEmptyInheritanceStruct = return_code_FinalEmptyStruct;
-                type_ids_FinalEmptyInheritanceStruct = type_ids_FinalEmptyStruct;
-            }
+::register_FinalEmptyStruct_type_identifier(type_ids_FinalEmptyInheritanceStruct);
         }
         QualifiedTypeName type_name_FinalEmptyInheritanceStruct = "FinalEmptyInheritanceStruct";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_FinalEmptyInheritanceStruct;
@@ -2002,84 +1042,38 @@ void register_FinalEmptyInheritanceStruct_type_identifier(
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "FinalEmptyInheritanceStruct Structure: base_type TypeIdentifier registered in TypeObjectRegistry is inconsistent.");
-            type_id = TypeIdentifier();
             return;
         }
         CompleteStructMemberSeq member_seq_FinalEmptyInheritanceStruct;
         {
-            return_code_FinalEmptyInheritanceStruct =
+            TypeIdentifierPair type_ids_var_str;
+            ReturnCode_t return_code_var_str {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_var_str =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "anonymous_string_unbounded", type_ids_FinalEmptyInheritanceStruct);
+                "anonymous_string_unbounded", type_ids_var_str);
 
-            if (return_code_FinalEmptyInheritanceStruct != eprosima::fastdds::dds::RETCODE_OK)
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_var_str)
             {
                 {
                     SBound bound = 0;
                     StringSTypeDefn string_sdefn = TypeObjectUtils::build_string_s_type_defn(bound);
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
                             TypeObjectUtils::build_and_register_s_string_type_identifier(string_sdefn,
-                            "anonymous_string_unbounded"))
+                            "anonymous_string_unbounded", type_ids_var_str))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "anonymous_string_unbounded already registered in TypeObjectRegistry for a different type.");
                     }
                 }
-                return_code_FinalEmptyInheritanceStruct =
-                    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                    "anonymous_string_unbounded", type_ids_FinalEmptyInheritanceStruct);
-                if (return_code_FinalEmptyInheritanceStruct != eprosima::fastdds::dds::RETCODE_OK)
-                {
-                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                                "anonymous_string_unbounded: Given String TypeIdentifier unknown to TypeObjectRegistry.");
-                    type_id = TypeIdentifier();
-                    return;
-                }
             }
-            StructMemberFlag member_flags_var_str = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_str = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            CommonStructMember common_var_str;
             MemberId member_id_var_str = 0x00000000;
-            if (EK_COMPLETE == type_ids_FinalEmptyInheritanceStruct.type_identifier1()._d() || TK_NONE == type_ids_FinalEmptyInheritanceStruct.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_FinalEmptyInheritanceStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalEmptyInheritanceStruct.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_FinalEmptyInheritanceStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalEmptyInheritanceStruct.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_FinalEmptyInheritanceStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalEmptyInheritanceStruct.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_FinalEmptyInheritanceStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalEmptyInheritanceStruct.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_FinalEmptyInheritanceStruct.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_FinalEmptyInheritanceStruct.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalEmptyInheritanceStruct.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_FinalEmptyInheritanceStruct.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_FinalEmptyInheritanceStruct.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalEmptyInheritanceStruct.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_var_str_ec {false};
+            CommonStructMember common_var_str {TypeObjectUtils::build_common_struct_member(member_id_var_str, member_flags_var_str, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_str, common_var_str_ec))};
+            if (!common_var_str_ec)
             {
-                common_var_str = TypeObjectUtils::build_common_struct_member(member_id_var_str, member_flags_var_str, type_ids_FinalEmptyInheritanceStruct.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_FinalEmptyInheritanceStruct.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_FinalEmptyInheritanceStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalEmptyInheritanceStruct.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_FinalEmptyInheritanceStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalEmptyInheritanceStruct.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_FinalEmptyInheritanceStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalEmptyInheritanceStruct.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_FinalEmptyInheritanceStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalEmptyInheritanceStruct.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_FinalEmptyInheritanceStruct.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_FinalEmptyInheritanceStruct.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalEmptyInheritanceStruct.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_FinalEmptyInheritanceStruct.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_FinalEmptyInheritanceStruct.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalEmptyInheritanceStruct.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_var_str = TypeObjectUtils::build_common_struct_member(member_id_var_str, member_flags_var_str, type_ids_FinalEmptyInheritanceStruct.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure var_str member TypeIdentifier inconsistent.");
-                type_id = TypeIdentifier();
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure var_str member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_var_str = "var_str";
@@ -2091,143 +1085,33 @@ void register_FinalEmptyInheritanceStruct_type_identifier(
         }
         CompleteStructType struct_type_FinalEmptyInheritanceStruct = TypeObjectUtils::build_complete_struct_type(struct_flags_FinalEmptyInheritanceStruct, header_FinalEmptyInheritanceStruct, member_seq_FinalEmptyInheritanceStruct);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_FinalEmptyInheritanceStruct, type_name_FinalEmptyInheritanceStruct.to_string(), type_id))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_FinalEmptyInheritanceStruct, type_name_FinalEmptyInheritanceStruct.to_string(), type_ids_FinalEmptyInheritanceStruct))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "FinalEmptyInheritanceStruct already registered in TypeObjectRegistry for a different type.");
-        }
-        return_code_FinalEmptyInheritanceStruct =
-            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-            "FinalEmptyInheritanceStruct", type_ids_FinalEmptyInheritanceStruct);
-        if (return_code_FinalEmptyInheritanceStruct != eprosima::fastdds::dds::RETCODE_OK)
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "FinalEmptyInheritanceStruct: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
-            type_id = TypeIdentifier();
-            return;
         }
     }
 }
 // TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
 void register_FinalInheritanceStruct_type_identifier(
-        TypeIdentifier& type_id)
+        TypeIdentifierPair& type_ids_FinalInheritanceStruct)
 {
+
+    ReturnCode_t return_code_FinalInheritanceStruct {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_FinalInheritanceStruct =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "FinalInheritanceStruct", type_ids_FinalInheritanceStruct);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_FinalInheritanceStruct)
     {
         StructTypeFlag struct_flags_FinalInheritanceStruct = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::FINAL,
                 false, false);
-        ReturnCode_t return_code_FinalInheritanceStruct;
-        TypeIdentifierPair type_ids_FinalInheritanceStruct;
         return_code_FinalInheritanceStruct =
             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
             "FinalShortStruct", type_ids_FinalInheritanceStruct);
 
         if (return_code_FinalInheritanceStruct != eprosima::fastdds::dds::RETCODE_OK)
         {
-            {
-                StructTypeFlag struct_flags_FinalShortStruct = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::FINAL,
-                        false, false);
-                ReturnCode_t return_code_FinalShortStruct;
-                TypeIdentifierPair type_ids_FinalShortStruct;
-                QualifiedTypeName type_name_FinalShortStruct = "FinalShortStruct";
-                eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_FinalShortStruct;
-                eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_FinalShortStruct;
-                AppliedAnnotationSeq tmp_ann_custom_FinalShortStruct;
-                eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_FinalShortStruct;
-                if (!tmp_ann_custom_FinalShortStruct.empty())
-                {
-                    ann_custom_FinalShortStruct = tmp_ann_custom_FinalShortStruct;
-                }
-
-                CompleteTypeDetail detail_FinalShortStruct = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_FinalShortStruct, ann_custom_FinalShortStruct, type_name_FinalShortStruct.to_string());
-                CompleteStructHeader header_FinalShortStruct;
-                header_FinalShortStruct = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_FinalShortStruct);
-                CompleteStructMemberSeq member_seq_FinalShortStruct;
-                {
-                    return_code_FinalShortStruct =
-                        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                        "_int16_t", type_ids_FinalShortStruct);
-
-                    if (return_code_FinalShortStruct != eprosima::fastdds::dds::RETCODE_OK)
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                                "var_short Structure member TypeIdentifier unknown to TypeObjectRegistry.");
-                        type_id = TypeIdentifier();
-                        return;
-                    }
-                    StructMemberFlag member_flags_var_short = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                            false, false, false, false);
-                    CommonStructMember common_var_short;
-                    MemberId member_id_var_short = 0x00000000;
-                    if (EK_COMPLETE == type_ids_FinalShortStruct.type_identifier1()._d() || TK_NONE == type_ids_FinalShortStruct.type_identifier2()._d() ||
-                            (TI_PLAIN_SEQUENCE_SMALL == type_ids_FinalShortStruct.type_identifier1()._d() &&
-                            EK_COMPLETE == type_ids_FinalShortStruct.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                            (TI_PLAIN_SEQUENCE_LARGE == type_ids_FinalShortStruct.type_identifier1()._d() &&
-                            EK_COMPLETE == type_ids_FinalShortStruct.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                            (TI_PLAIN_ARRAY_SMALL == type_ids_FinalShortStruct.type_identifier1()._d() &&
-                            EK_COMPLETE == type_ids_FinalShortStruct.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                            (TI_PLAIN_ARRAY_LARGE == type_ids_FinalShortStruct.type_identifier1()._d() &&
-                            EK_COMPLETE == type_ids_FinalShortStruct.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                            (TI_PLAIN_MAP_SMALL == type_ids_FinalShortStruct.type_identifier1()._d() &&
-                            (EK_COMPLETE == type_ids_FinalShortStruct.type_identifier1().map_sdefn().header().equiv_kind() ||
-                            EK_COMPLETE == type_ids_FinalShortStruct.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                            (TI_PLAIN_MAP_LARGE == type_ids_FinalShortStruct.type_identifier1()._d() &&
-                            (EK_COMPLETE == type_ids_FinalShortStruct.type_identifier1().map_ldefn().header().equiv_kind() ||
-                            EK_COMPLETE == type_ids_FinalShortStruct.type_identifier1().map_ldefn().key_identifier()->_d())))
-                    {
-                        common_var_short = TypeObjectUtils::build_common_struct_member(member_id_var_short, member_flags_var_short, type_ids_FinalShortStruct.type_identifier1());
-                    }
-                    else if (EK_COMPLETE == type_ids_FinalShortStruct.type_identifier2()._d() ||
-                            (TI_PLAIN_SEQUENCE_SMALL == type_ids_FinalShortStruct.type_identifier2()._d() &&
-                            EK_COMPLETE == type_ids_FinalShortStruct.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                            (TI_PLAIN_SEQUENCE_LARGE == type_ids_FinalShortStruct.type_identifier2()._d() &&
-                            EK_COMPLETE == type_ids_FinalShortStruct.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                            (TI_PLAIN_ARRAY_SMALL == type_ids_FinalShortStruct.type_identifier2()._d() &&
-                            EK_COMPLETE == type_ids_FinalShortStruct.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                            (TI_PLAIN_ARRAY_LARGE == type_ids_FinalShortStruct.type_identifier2()._d() &&
-                            EK_COMPLETE == type_ids_FinalShortStruct.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                            (TI_PLAIN_MAP_SMALL == type_ids_FinalShortStruct.type_identifier2()._d() &&
-                            (EK_COMPLETE == type_ids_FinalShortStruct.type_identifier2().map_sdefn().header().equiv_kind() ||
-                            EK_COMPLETE == type_ids_FinalShortStruct.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                            (TI_PLAIN_MAP_LARGE == type_ids_FinalShortStruct.type_identifier2()._d() &&
-                            (EK_COMPLETE == type_ids_FinalShortStruct.type_identifier2().map_ldefn().header().equiv_kind() ||
-                            EK_COMPLETE == type_ids_FinalShortStruct.type_identifier2().map_ldefn().key_identifier()->_d())))
-                    {
-                        common_var_short = TypeObjectUtils::build_common_struct_member(member_id_var_short, member_flags_var_short, type_ids_FinalShortStruct.type_identifier2());
-                    }
-                    else
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                                "Structure var_short member TypeIdentifier inconsistent.");
-                        type_id = TypeIdentifier();
-                        return;
-                    }
-                    MemberName name_var_short = "var_short";
-                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_var_short;
-                    ann_custom_FinalShortStruct.reset();
-                    CompleteMemberDetail detail_var_short = TypeObjectUtils::build_complete_member_detail(name_var_short, member_ann_builtin_var_short, ann_custom_FinalShortStruct);
-                    CompleteStructMember member_var_short = TypeObjectUtils::build_complete_struct_member(common_var_short, detail_var_short);
-                    TypeObjectUtils::add_complete_struct_member(member_seq_FinalShortStruct, member_var_short);
-                }
-                CompleteStructType struct_type_FinalShortStruct = TypeObjectUtils::build_complete_struct_type(struct_flags_FinalShortStruct, header_FinalShortStruct, member_seq_FinalShortStruct);
-                if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                        TypeObjectUtils::build_and_register_struct_type_object(struct_type_FinalShortStruct, type_name_FinalShortStruct.to_string(), type_id))
-                {
-                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "FinalShortStruct already registered in TypeObjectRegistry for a different type.");
-                }
-                return_code_FinalShortStruct =
-                    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                    "FinalShortStruct", type_ids_FinalShortStruct);
-                if (return_code_FinalShortStruct != eprosima::fastdds::dds::RETCODE_OK)
-                {
-                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                                "FinalShortStruct: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
-                    type_id = TypeIdentifier();
-                    return;
-                }
-                return_code_FinalInheritanceStruct = return_code_FinalShortStruct;
-                type_ids_FinalInheritanceStruct = type_ids_FinalShortStruct;
-            }
+::register_FinalShortStruct_type_identifier(type_ids_FinalInheritanceStruct);
         }
         QualifiedTypeName type_name_FinalInheritanceStruct = "FinalInheritanceStruct";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_FinalInheritanceStruct;
@@ -2253,84 +1137,38 @@ void register_FinalInheritanceStruct_type_identifier(
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "FinalInheritanceStruct Structure: base_type TypeIdentifier registered in TypeObjectRegistry is inconsistent.");
-            type_id = TypeIdentifier();
             return;
         }
         CompleteStructMemberSeq member_seq_FinalInheritanceStruct;
         {
-            return_code_FinalInheritanceStruct =
+            TypeIdentifierPair type_ids_var_str;
+            ReturnCode_t return_code_var_str {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_var_str =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "anonymous_string_unbounded", type_ids_FinalInheritanceStruct);
+                "anonymous_string_unbounded", type_ids_var_str);
 
-            if (return_code_FinalInheritanceStruct != eprosima::fastdds::dds::RETCODE_OK)
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_var_str)
             {
                 {
                     SBound bound = 0;
                     StringSTypeDefn string_sdefn = TypeObjectUtils::build_string_s_type_defn(bound);
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
                             TypeObjectUtils::build_and_register_s_string_type_identifier(string_sdefn,
-                            "anonymous_string_unbounded"))
+                            "anonymous_string_unbounded", type_ids_var_str))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "anonymous_string_unbounded already registered in TypeObjectRegistry for a different type.");
                     }
                 }
-                return_code_FinalInheritanceStruct =
-                    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                    "anonymous_string_unbounded", type_ids_FinalInheritanceStruct);
-                if (return_code_FinalInheritanceStruct != eprosima::fastdds::dds::RETCODE_OK)
-                {
-                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                                "anonymous_string_unbounded: Given String TypeIdentifier unknown to TypeObjectRegistry.");
-                    type_id = TypeIdentifier();
-                    return;
-                }
             }
-            StructMemberFlag member_flags_var_str = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_str = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            CommonStructMember common_var_str;
             MemberId member_id_var_str = 0x00000001;
-            if (EK_COMPLETE == type_ids_FinalInheritanceStruct.type_identifier1()._d() || TK_NONE == type_ids_FinalInheritanceStruct.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_FinalInheritanceStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalInheritanceStruct.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_FinalInheritanceStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalInheritanceStruct.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_FinalInheritanceStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalInheritanceStruct.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_FinalInheritanceStruct.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalInheritanceStruct.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_FinalInheritanceStruct.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_FinalInheritanceStruct.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalInheritanceStruct.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_FinalInheritanceStruct.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_FinalInheritanceStruct.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalInheritanceStruct.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_var_str_ec {false};
+            CommonStructMember common_var_str {TypeObjectUtils::build_common_struct_member(member_id_var_str, member_flags_var_str, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_str, common_var_str_ec))};
+            if (!common_var_str_ec)
             {
-                common_var_str = TypeObjectUtils::build_common_struct_member(member_id_var_str, member_flags_var_str, type_ids_FinalInheritanceStruct.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_FinalInheritanceStruct.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_FinalInheritanceStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalInheritanceStruct.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_FinalInheritanceStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalInheritanceStruct.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_FinalInheritanceStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalInheritanceStruct.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_FinalInheritanceStruct.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalInheritanceStruct.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_FinalInheritanceStruct.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_FinalInheritanceStruct.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalInheritanceStruct.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_FinalInheritanceStruct.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_FinalInheritanceStruct.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalInheritanceStruct.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_var_str = TypeObjectUtils::build_common_struct_member(member_id_var_str, member_flags_var_str, type_ids_FinalInheritanceStruct.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure var_str member TypeIdentifier inconsistent.");
-                type_id = TypeIdentifier();
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure var_str member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_var_str = "var_str";
@@ -2342,143 +1180,33 @@ void register_FinalInheritanceStruct_type_identifier(
         }
         CompleteStructType struct_type_FinalInheritanceStruct = TypeObjectUtils::build_complete_struct_type(struct_flags_FinalInheritanceStruct, header_FinalInheritanceStruct, member_seq_FinalInheritanceStruct);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_FinalInheritanceStruct, type_name_FinalInheritanceStruct.to_string(), type_id))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_FinalInheritanceStruct, type_name_FinalInheritanceStruct.to_string(), type_ids_FinalInheritanceStruct))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "FinalInheritanceStruct already registered in TypeObjectRegistry for a different type.");
-        }
-        return_code_FinalInheritanceStruct =
-            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-            "FinalInheritanceStruct", type_ids_FinalInheritanceStruct);
-        if (return_code_FinalInheritanceStruct != eprosima::fastdds::dds::RETCODE_OK)
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "FinalInheritanceStruct: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
-            type_id = TypeIdentifier();
-            return;
         }
     }
 }
 // TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
 void register_InheritanceEmptyStruct_type_identifier(
-        TypeIdentifier& type_id)
+        TypeIdentifierPair& type_ids_InheritanceEmptyStruct)
 {
+
+    ReturnCode_t return_code_InheritanceEmptyStruct {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_InheritanceEmptyStruct =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "InheritanceEmptyStruct", type_ids_InheritanceEmptyStruct);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_InheritanceEmptyStruct)
     {
         StructTypeFlag struct_flags_InheritanceEmptyStruct = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::FINAL,
                 false, false);
-        ReturnCode_t return_code_InheritanceEmptyStruct;
-        TypeIdentifierPair type_ids_InheritanceEmptyStruct;
         return_code_InheritanceEmptyStruct =
             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
             "FinalShortStruct", type_ids_InheritanceEmptyStruct);
 
         if (return_code_InheritanceEmptyStruct != eprosima::fastdds::dds::RETCODE_OK)
         {
-            {
-                StructTypeFlag struct_flags_FinalShortStruct = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::FINAL,
-                        false, false);
-                ReturnCode_t return_code_FinalShortStruct;
-                TypeIdentifierPair type_ids_FinalShortStruct;
-                QualifiedTypeName type_name_FinalShortStruct = "FinalShortStruct";
-                eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_FinalShortStruct;
-                eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_FinalShortStruct;
-                AppliedAnnotationSeq tmp_ann_custom_FinalShortStruct;
-                eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_FinalShortStruct;
-                if (!tmp_ann_custom_FinalShortStruct.empty())
-                {
-                    ann_custom_FinalShortStruct = tmp_ann_custom_FinalShortStruct;
-                }
-
-                CompleteTypeDetail detail_FinalShortStruct = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_FinalShortStruct, ann_custom_FinalShortStruct, type_name_FinalShortStruct.to_string());
-                CompleteStructHeader header_FinalShortStruct;
-                header_FinalShortStruct = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_FinalShortStruct);
-                CompleteStructMemberSeq member_seq_FinalShortStruct;
-                {
-                    return_code_FinalShortStruct =
-                        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                        "_int16_t", type_ids_FinalShortStruct);
-
-                    if (return_code_FinalShortStruct != eprosima::fastdds::dds::RETCODE_OK)
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                                "var_short Structure member TypeIdentifier unknown to TypeObjectRegistry.");
-                        type_id = TypeIdentifier();
-                        return;
-                    }
-                    StructMemberFlag member_flags_var_short = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                            false, false, false, false);
-                    CommonStructMember common_var_short;
-                    MemberId member_id_var_short = 0x00000000;
-                    if (EK_COMPLETE == type_ids_FinalShortStruct.type_identifier1()._d() || TK_NONE == type_ids_FinalShortStruct.type_identifier2()._d() ||
-                            (TI_PLAIN_SEQUENCE_SMALL == type_ids_FinalShortStruct.type_identifier1()._d() &&
-                            EK_COMPLETE == type_ids_FinalShortStruct.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                            (TI_PLAIN_SEQUENCE_LARGE == type_ids_FinalShortStruct.type_identifier1()._d() &&
-                            EK_COMPLETE == type_ids_FinalShortStruct.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                            (TI_PLAIN_ARRAY_SMALL == type_ids_FinalShortStruct.type_identifier1()._d() &&
-                            EK_COMPLETE == type_ids_FinalShortStruct.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                            (TI_PLAIN_ARRAY_LARGE == type_ids_FinalShortStruct.type_identifier1()._d() &&
-                            EK_COMPLETE == type_ids_FinalShortStruct.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                            (TI_PLAIN_MAP_SMALL == type_ids_FinalShortStruct.type_identifier1()._d() &&
-                            (EK_COMPLETE == type_ids_FinalShortStruct.type_identifier1().map_sdefn().header().equiv_kind() ||
-                            EK_COMPLETE == type_ids_FinalShortStruct.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                            (TI_PLAIN_MAP_LARGE == type_ids_FinalShortStruct.type_identifier1()._d() &&
-                            (EK_COMPLETE == type_ids_FinalShortStruct.type_identifier1().map_ldefn().header().equiv_kind() ||
-                            EK_COMPLETE == type_ids_FinalShortStruct.type_identifier1().map_ldefn().key_identifier()->_d())))
-                    {
-                        common_var_short = TypeObjectUtils::build_common_struct_member(member_id_var_short, member_flags_var_short, type_ids_FinalShortStruct.type_identifier1());
-                    }
-                    else if (EK_COMPLETE == type_ids_FinalShortStruct.type_identifier2()._d() ||
-                            (TI_PLAIN_SEQUENCE_SMALL == type_ids_FinalShortStruct.type_identifier2()._d() &&
-                            EK_COMPLETE == type_ids_FinalShortStruct.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                            (TI_PLAIN_SEQUENCE_LARGE == type_ids_FinalShortStruct.type_identifier2()._d() &&
-                            EK_COMPLETE == type_ids_FinalShortStruct.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                            (TI_PLAIN_ARRAY_SMALL == type_ids_FinalShortStruct.type_identifier2()._d() &&
-                            EK_COMPLETE == type_ids_FinalShortStruct.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                            (TI_PLAIN_ARRAY_LARGE == type_ids_FinalShortStruct.type_identifier2()._d() &&
-                            EK_COMPLETE == type_ids_FinalShortStruct.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                            (TI_PLAIN_MAP_SMALL == type_ids_FinalShortStruct.type_identifier2()._d() &&
-                            (EK_COMPLETE == type_ids_FinalShortStruct.type_identifier2().map_sdefn().header().equiv_kind() ||
-                            EK_COMPLETE == type_ids_FinalShortStruct.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                            (TI_PLAIN_MAP_LARGE == type_ids_FinalShortStruct.type_identifier2()._d() &&
-                            (EK_COMPLETE == type_ids_FinalShortStruct.type_identifier2().map_ldefn().header().equiv_kind() ||
-                            EK_COMPLETE == type_ids_FinalShortStruct.type_identifier2().map_ldefn().key_identifier()->_d())))
-                    {
-                        common_var_short = TypeObjectUtils::build_common_struct_member(member_id_var_short, member_flags_var_short, type_ids_FinalShortStruct.type_identifier2());
-                    }
-                    else
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                                "Structure var_short member TypeIdentifier inconsistent.");
-                        type_id = TypeIdentifier();
-                        return;
-                    }
-                    MemberName name_var_short = "var_short";
-                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_var_short;
-                    ann_custom_FinalShortStruct.reset();
-                    CompleteMemberDetail detail_var_short = TypeObjectUtils::build_complete_member_detail(name_var_short, member_ann_builtin_var_short, ann_custom_FinalShortStruct);
-                    CompleteStructMember member_var_short = TypeObjectUtils::build_complete_struct_member(common_var_short, detail_var_short);
-                    TypeObjectUtils::add_complete_struct_member(member_seq_FinalShortStruct, member_var_short);
-                }
-                CompleteStructType struct_type_FinalShortStruct = TypeObjectUtils::build_complete_struct_type(struct_flags_FinalShortStruct, header_FinalShortStruct, member_seq_FinalShortStruct);
-                if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                        TypeObjectUtils::build_and_register_struct_type_object(struct_type_FinalShortStruct, type_name_FinalShortStruct.to_string(), type_id))
-                {
-                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "FinalShortStruct already registered in TypeObjectRegistry for a different type.");
-                }
-                return_code_FinalShortStruct =
-                    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                    "FinalShortStruct", type_ids_FinalShortStruct);
-                if (return_code_FinalShortStruct != eprosima::fastdds::dds::RETCODE_OK)
-                {
-                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                                "FinalShortStruct: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
-                    type_id = TypeIdentifier();
-                    return;
-                }
-                return_code_InheritanceEmptyStruct = return_code_FinalShortStruct;
-                type_ids_InheritanceEmptyStruct = type_ids_FinalShortStruct;
-            }
+::register_FinalShortStruct_type_identifier(type_ids_InheritanceEmptyStruct);
         }
         QualifiedTypeName type_name_InheritanceEmptyStruct = "InheritanceEmptyStruct";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_InheritanceEmptyStruct;
@@ -2504,149 +1232,38 @@ void register_InheritanceEmptyStruct_type_identifier(
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "InheritanceEmptyStruct Structure: base_type TypeIdentifier registered in TypeObjectRegistry is inconsistent.");
-            type_id = TypeIdentifier();
             return;
         }
         CompleteStructMemberSeq member_seq_InheritanceEmptyStruct;
         CompleteStructType struct_type_InheritanceEmptyStruct = TypeObjectUtils::build_complete_struct_type(struct_flags_InheritanceEmptyStruct, header_InheritanceEmptyStruct, member_seq_InheritanceEmptyStruct);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_InheritanceEmptyStruct, type_name_InheritanceEmptyStruct.to_string(), type_id))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_InheritanceEmptyStruct, type_name_InheritanceEmptyStruct.to_string(), type_ids_InheritanceEmptyStruct))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "InheritanceEmptyStruct already registered in TypeObjectRegistry for a different type.");
-        }
-        return_code_InheritanceEmptyStruct =
-            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-            "InheritanceEmptyStruct", type_ids_InheritanceEmptyStruct);
-        if (return_code_InheritanceEmptyStruct != eprosima::fastdds::dds::RETCODE_OK)
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "InheritanceEmptyStruct: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
-            type_id = TypeIdentifier();
-            return;
         }
     }
 }
 // TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
 void register_FinalExtensibilityInheritance_type_identifier(
-        TypeIdentifier& type_id)
+        TypeIdentifierPair& type_ids_FinalExtensibilityInheritance)
 {
+
+    ReturnCode_t return_code_FinalExtensibilityInheritance {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_FinalExtensibilityInheritance =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "FinalExtensibilityInheritance", type_ids_FinalExtensibilityInheritance);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_FinalExtensibilityInheritance)
     {
-        StructTypeFlag struct_flags_FinalExtensibilityInheritance = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_FinalExtensibilityInheritance = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::FINAL,
                 false, false);
-        ReturnCode_t return_code_FinalExtensibilityInheritance;
-        TypeIdentifierPair type_ids_FinalExtensibilityInheritance;
         return_code_FinalExtensibilityInheritance =
             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
             "FinalShortStruct", type_ids_FinalExtensibilityInheritance);
 
         if (return_code_FinalExtensibilityInheritance != eprosima::fastdds::dds::RETCODE_OK)
         {
-            {
-                StructTypeFlag struct_flags_FinalShortStruct = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::FINAL,
-                        false, false);
-                ReturnCode_t return_code_FinalShortStruct;
-                TypeIdentifierPair type_ids_FinalShortStruct;
-                QualifiedTypeName type_name_FinalShortStruct = "FinalShortStruct";
-                eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_FinalShortStruct;
-                eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_FinalShortStruct;
-                AppliedAnnotationSeq tmp_ann_custom_FinalShortStruct;
-                eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_FinalShortStruct;
-                if (!tmp_ann_custom_FinalShortStruct.empty())
-                {
-                    ann_custom_FinalShortStruct = tmp_ann_custom_FinalShortStruct;
-                }
-
-                CompleteTypeDetail detail_FinalShortStruct = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_FinalShortStruct, ann_custom_FinalShortStruct, type_name_FinalShortStruct.to_string());
-                CompleteStructHeader header_FinalShortStruct;
-                header_FinalShortStruct = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_FinalShortStruct);
-                CompleteStructMemberSeq member_seq_FinalShortStruct;
-                {
-                    return_code_FinalShortStruct =
-                        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                        "_int16_t", type_ids_FinalShortStruct);
-
-                    if (return_code_FinalShortStruct != eprosima::fastdds::dds::RETCODE_OK)
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                                "var_short Structure member TypeIdentifier unknown to TypeObjectRegistry.");
-                        type_id = TypeIdentifier();
-                        return;
-                    }
-                    StructMemberFlag member_flags_var_short = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
-                            false, false, false, false);
-                    CommonStructMember common_var_short;
-                    MemberId member_id_var_short = 0x00000000;
-                    if (EK_COMPLETE == type_ids_FinalShortStruct.type_identifier1()._d() || TK_NONE == type_ids_FinalShortStruct.type_identifier2()._d() ||
-                            (TI_PLAIN_SEQUENCE_SMALL == type_ids_FinalShortStruct.type_identifier1()._d() &&
-                            EK_COMPLETE == type_ids_FinalShortStruct.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                            (TI_PLAIN_SEQUENCE_LARGE == type_ids_FinalShortStruct.type_identifier1()._d() &&
-                            EK_COMPLETE == type_ids_FinalShortStruct.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                            (TI_PLAIN_ARRAY_SMALL == type_ids_FinalShortStruct.type_identifier1()._d() &&
-                            EK_COMPLETE == type_ids_FinalShortStruct.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                            (TI_PLAIN_ARRAY_LARGE == type_ids_FinalShortStruct.type_identifier1()._d() &&
-                            EK_COMPLETE == type_ids_FinalShortStruct.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                            (TI_PLAIN_MAP_SMALL == type_ids_FinalShortStruct.type_identifier1()._d() &&
-                            (EK_COMPLETE == type_ids_FinalShortStruct.type_identifier1().map_sdefn().header().equiv_kind() ||
-                            EK_COMPLETE == type_ids_FinalShortStruct.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                            (TI_PLAIN_MAP_LARGE == type_ids_FinalShortStruct.type_identifier1()._d() &&
-                            (EK_COMPLETE == type_ids_FinalShortStruct.type_identifier1().map_ldefn().header().equiv_kind() ||
-                            EK_COMPLETE == type_ids_FinalShortStruct.type_identifier1().map_ldefn().key_identifier()->_d())))
-                    {
-                        common_var_short = TypeObjectUtils::build_common_struct_member(member_id_var_short, member_flags_var_short, type_ids_FinalShortStruct.type_identifier1());
-                    }
-                    else if (EK_COMPLETE == type_ids_FinalShortStruct.type_identifier2()._d() ||
-                            (TI_PLAIN_SEQUENCE_SMALL == type_ids_FinalShortStruct.type_identifier2()._d() &&
-                            EK_COMPLETE == type_ids_FinalShortStruct.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                            (TI_PLAIN_SEQUENCE_LARGE == type_ids_FinalShortStruct.type_identifier2()._d() &&
-                            EK_COMPLETE == type_ids_FinalShortStruct.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                            (TI_PLAIN_ARRAY_SMALL == type_ids_FinalShortStruct.type_identifier2()._d() &&
-                            EK_COMPLETE == type_ids_FinalShortStruct.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                            (TI_PLAIN_ARRAY_LARGE == type_ids_FinalShortStruct.type_identifier2()._d() &&
-                            EK_COMPLETE == type_ids_FinalShortStruct.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                            (TI_PLAIN_MAP_SMALL == type_ids_FinalShortStruct.type_identifier2()._d() &&
-                            (EK_COMPLETE == type_ids_FinalShortStruct.type_identifier2().map_sdefn().header().equiv_kind() ||
-                            EK_COMPLETE == type_ids_FinalShortStruct.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                            (TI_PLAIN_MAP_LARGE == type_ids_FinalShortStruct.type_identifier2()._d() &&
-                            (EK_COMPLETE == type_ids_FinalShortStruct.type_identifier2().map_ldefn().header().equiv_kind() ||
-                            EK_COMPLETE == type_ids_FinalShortStruct.type_identifier2().map_ldefn().key_identifier()->_d())))
-                    {
-                        common_var_short = TypeObjectUtils::build_common_struct_member(member_id_var_short, member_flags_var_short, type_ids_FinalShortStruct.type_identifier2());
-                    }
-                    else
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                                "Structure var_short member TypeIdentifier inconsistent.");
-                        type_id = TypeIdentifier();
-                        return;
-                    }
-                    MemberName name_var_short = "var_short";
-                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_var_short;
-                    ann_custom_FinalShortStruct.reset();
-                    CompleteMemberDetail detail_var_short = TypeObjectUtils::build_complete_member_detail(name_var_short, member_ann_builtin_var_short, ann_custom_FinalShortStruct);
-                    CompleteStructMember member_var_short = TypeObjectUtils::build_complete_struct_member(common_var_short, detail_var_short);
-                    TypeObjectUtils::add_complete_struct_member(member_seq_FinalShortStruct, member_var_short);
-                }
-                CompleteStructType struct_type_FinalShortStruct = TypeObjectUtils::build_complete_struct_type(struct_flags_FinalShortStruct, header_FinalShortStruct, member_seq_FinalShortStruct);
-                if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                        TypeObjectUtils::build_and_register_struct_type_object(struct_type_FinalShortStruct, type_name_FinalShortStruct.to_string(), type_id))
-                {
-                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "FinalShortStruct already registered in TypeObjectRegistry for a different type.");
-                }
-                return_code_FinalShortStruct =
-                    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                    "FinalShortStruct", type_ids_FinalShortStruct);
-                if (return_code_FinalShortStruct != eprosima::fastdds::dds::RETCODE_OK)
-                {
-                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                                "FinalShortStruct: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
-                    type_id = TypeIdentifier();
-                    return;
-                }
-                return_code_FinalExtensibilityInheritance = return_code_FinalShortStruct;
-                type_ids_FinalExtensibilityInheritance = type_ids_FinalShortStruct;
-            }
+::register_FinalShortStruct_type_identifier(type_ids_FinalExtensibilityInheritance);
         }
         QualifiedTypeName type_name_FinalExtensibilityInheritance = "FinalExtensibilityInheritance";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_FinalExtensibilityInheritance;
@@ -2665,67 +1282,30 @@ void register_FinalExtensibilityInheritance_type_identifier(
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "FinalExtensibilityInheritance Structure: base_type TypeIdentifier registered in TypeObjectRegistry is inconsistent.");
-            type_id = TypeIdentifier();
             return;
         }
         CompleteStructMemberSeq member_seq_FinalExtensibilityInheritance;
         {
-            return_code_FinalExtensibilityInheritance =
+            TypeIdentifierPair type_ids_var_long;
+            ReturnCode_t return_code_var_long {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_var_long =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "_int32_t", type_ids_FinalExtensibilityInheritance);
+                "_int32_t", type_ids_var_long);
 
-            if (return_code_FinalExtensibilityInheritance != eprosima::fastdds::dds::RETCODE_OK)
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_var_long)
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "var_long Structure member TypeIdentifier unknown to TypeObjectRegistry.");
-                type_id = TypeIdentifier();
                 return;
             }
-            StructMemberFlag member_flags_var_long = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_var_long = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            CommonStructMember common_var_long;
             MemberId member_id_var_long = 0x00000001;
-            if (EK_COMPLETE == type_ids_FinalExtensibilityInheritance.type_identifier1()._d() || TK_NONE == type_ids_FinalExtensibilityInheritance.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_FinalExtensibilityInheritance.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalExtensibilityInheritance.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_FinalExtensibilityInheritance.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalExtensibilityInheritance.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_FinalExtensibilityInheritance.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalExtensibilityInheritance.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_FinalExtensibilityInheritance.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_FinalExtensibilityInheritance.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_FinalExtensibilityInheritance.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_FinalExtensibilityInheritance.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalExtensibilityInheritance.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_FinalExtensibilityInheritance.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_FinalExtensibilityInheritance.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalExtensibilityInheritance.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_var_long_ec {false};
+            CommonStructMember common_var_long {TypeObjectUtils::build_common_struct_member(member_id_var_long, member_flags_var_long, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_long, common_var_long_ec))};
+            if (!common_var_long_ec)
             {
-                common_var_long = TypeObjectUtils::build_common_struct_member(member_id_var_long, member_flags_var_long, type_ids_FinalExtensibilityInheritance.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_FinalExtensibilityInheritance.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_FinalExtensibilityInheritance.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalExtensibilityInheritance.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_FinalExtensibilityInheritance.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalExtensibilityInheritance.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_FinalExtensibilityInheritance.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalExtensibilityInheritance.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_FinalExtensibilityInheritance.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_FinalExtensibilityInheritance.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_FinalExtensibilityInheritance.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_FinalExtensibilityInheritance.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalExtensibilityInheritance.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_FinalExtensibilityInheritance.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_FinalExtensibilityInheritance.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_FinalExtensibilityInheritance.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_var_long = TypeObjectUtils::build_common_struct_member(member_id_var_long, member_flags_var_long, type_ids_FinalExtensibilityInheritance.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure var_long member TypeIdentifier inconsistent.");
-                type_id = TypeIdentifier();
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure var_long member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_var_long = "var_long";
@@ -2737,20 +1317,10 @@ void register_FinalExtensibilityInheritance_type_identifier(
         }
         CompleteStructType struct_type_FinalExtensibilityInheritance = TypeObjectUtils::build_complete_struct_type(struct_flags_FinalExtensibilityInheritance, header_FinalExtensibilityInheritance, member_seq_FinalExtensibilityInheritance);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_FinalExtensibilityInheritance, type_name_FinalExtensibilityInheritance.to_string(), type_id))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_FinalExtensibilityInheritance, type_name_FinalExtensibilityInheritance.to_string(), type_ids_FinalExtensibilityInheritance))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "FinalExtensibilityInheritance already registered in TypeObjectRegistry for a different type.");
-        }
-        return_code_FinalExtensibilityInheritance =
-            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-            "FinalExtensibilityInheritance", type_ids_FinalExtensibilityInheritance);
-        if (return_code_FinalExtensibilityInheritance != eprosima::fastdds::dds::RETCODE_OK)
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "FinalExtensibilityInheritance: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
-            type_id = TypeIdentifier();
-            return;
         }
     }
 }

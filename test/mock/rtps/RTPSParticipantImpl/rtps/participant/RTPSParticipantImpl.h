@@ -26,6 +26,7 @@
 #include <gmock/gmock.h>
 
 // Include first possible mocks (depending on include on CMakeLists.txt)
+#include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/history/IChangePool.h>
@@ -349,6 +350,10 @@ public:
 
     MOCK_METHOD(bool, update_removed_participant, (rtps::LocatorList_t&));
 
+    MOCK_METHOD0(has_shm_transport, bool());
+
+    MOCK_METHOD0(typelookup_manager, fastdds::dds::builtin::TypeLookupManager* ());
+
     uint32_t getRTPSParticipantID() const
     {
         return 0;
@@ -419,7 +424,7 @@ private:
 
     MockParticipantListener listener_;
 
-    ResourceEvent events_;
+    ::testing::NiceMock<ResourceEvent> events_;
 
     RTPSParticipantAttributes attr_;
 

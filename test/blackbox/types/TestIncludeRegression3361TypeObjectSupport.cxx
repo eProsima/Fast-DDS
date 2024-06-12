@@ -38,15 +38,65 @@
 
 using namespace eprosima::fastdds::dds::xtypes;
 
-void register_TestIncludeRegression3361_type_objects()
+namespace TestModule {
+void register_MACHINEID_type_identifier(
+        TypeIdentifierPair& type_ids_MACHINEID)
 {
-    static std::once_flag once_flag;
-    std::call_once(once_flag, []()
+    ReturnCode_t return_code_MACHINEID {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_MACHINEID =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "TestModule::MACHINEID", type_ids_MACHINEID);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_MACHINEID)
+    {
+        AliasTypeFlag alias_flags_MACHINEID = 0;
+        QualifiedTypeName type_name_MACHINEID = "TestModule::MACHINEID";
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_MACHINEID;
+        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_MACHINEID;
+        CompleteTypeDetail detail_MACHINEID = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_MACHINEID, ann_custom_MACHINEID, type_name_MACHINEID.to_string());
+        CompleteAliasHeader header_MACHINEID = TypeObjectUtils::build_complete_alias_header(detail_MACHINEID);
+        AliasMemberFlag related_flags_MACHINEID = 0;
+        return_code_MACHINEID =
+            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+            "anonymous_string_unbounded", type_ids_MACHINEID);
+
+        if (eprosima::fastdds::dds::RETCODE_OK != return_code_MACHINEID)
+        {
             {
-                TypeIdentifier type_id;
-            });
+                SBound bound = 0;
+                StringSTypeDefn string_sdefn = TypeObjectUtils::build_string_s_type_defn(bound);
+                if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                        TypeObjectUtils::build_and_register_s_string_type_identifier(string_sdefn,
+                        "anonymous_string_unbounded", type_ids_MACHINEID))
+                {
+                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "anonymous_string_unbounded already registered in TypeObjectRegistry for a different type.");
+                }
+            }
+        }
+        bool common_MACHINEID_ec {false};
+        CommonAliasBody common_MACHINEID {TypeObjectUtils::build_common_alias_body(related_flags_MACHINEID,
+                TypeObjectUtils::retrieve_complete_type_identifier(type_ids_MACHINEID, common_MACHINEID_ec))};
+        if (!common_MACHINEID_ec)
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "TestModule::MACHINEID related TypeIdentifier inconsistent.");
+            return;
+        }
+        eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_MACHINEID;
+        ann_custom_MACHINEID.reset();
+        CompleteAliasBody body_MACHINEID = TypeObjectUtils::build_complete_alias_body(common_MACHINEID,
+                member_ann_builtin_MACHINEID, ann_custom_MACHINEID);
+        CompleteAliasType alias_type_MACHINEID = TypeObjectUtils::build_complete_alias_type(alias_flags_MACHINEID,
+                header_MACHINEID, body_MACHINEID);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_alias_type_object(alias_type_MACHINEID,
+                    type_name_MACHINEID.to_string(), type_ids_MACHINEID))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                "TestModule::MACHINEID already registered in TypeObjectRegistry for a different type.");
+        }
+    }
 }
 
-namespace TestModule {
+
 } // namespace TestModule
 

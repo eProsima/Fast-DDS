@@ -219,9 +219,9 @@ bool FlowControlExamplePubSubType::getKey(
     return true;
 }
 
-void FlowControlExamplePubSubType::register_type_object_representation() const
+void FlowControlExamplePubSubType::register_type_object_representation()
 {
-    register_FlowControlExample_type_objects();
+    register_FlowControlExample_type_identifier(type_identifiers_);
 }
 
 

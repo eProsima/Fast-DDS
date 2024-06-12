@@ -38,26 +38,19 @@
 
 using namespace eprosima::fastdds::dds::xtypes;
 
-void register_AllocTestType_type_objects()
-{
-    static std::once_flag once_flag;
-    std::call_once(once_flag, []()
-            {
-                TypeIdentifier type_id;
-                register_AllocTestType_type_identifier(type_id);
-
-            });
-}
-
 // TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
 void register_AllocTestType_type_identifier(
-        TypeIdentifier& type_id)
+        TypeIdentifierPair& type_ids_AllocTestType)
 {
+
+    ReturnCode_t return_code_AllocTestType {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_AllocTestType =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "AllocTestType", type_ids_AllocTestType);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_AllocTestType)
     {
-        StructTypeFlag struct_flags_AllocTestType = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+        StructTypeFlag struct_flags_AllocTestType = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
-        ReturnCode_t return_code_AllocTestType;
-        TypeIdentifierPair type_ids_AllocTestType;
         QualifiedTypeName type_name_AllocTestType = "AllocTestType";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_AllocTestType;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_AllocTestType;
@@ -66,62 +59,26 @@ void register_AllocTestType_type_identifier(
         header_AllocTestType = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_AllocTestType);
         CompleteStructMemberSeq member_seq_AllocTestType;
         {
-            return_code_AllocTestType =
+            TypeIdentifierPair type_ids_index;
+            ReturnCode_t return_code_index {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_index =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "_uint32_t", type_ids_AllocTestType);
+                "_uint32_t", type_ids_index);
 
-            if (return_code_AllocTestType != eprosima::fastdds::dds::RETCODE_OK)
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_index)
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "index Structure member TypeIdentifier unknown to TypeObjectRegistry.");
-                type_id = TypeIdentifier();
                 return;
             }
-            StructMemberFlag member_flags_index = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_index = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            CommonStructMember common_index;
             MemberId member_id_index = 0x00000000;
-            if (EK_COMPLETE == type_ids_AllocTestType.type_identifier1()._d() || TK_NONE == type_ids_AllocTestType.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_AllocTestType.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_AllocTestType.type_identifier1().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_AllocTestType.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_AllocTestType.type_identifier1().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_AllocTestType.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_AllocTestType.type_identifier1().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_AllocTestType.type_identifier1()._d() &&
-                    EK_COMPLETE == type_ids_AllocTestType.type_identifier1().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_AllocTestType.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_AllocTestType.type_identifier1().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_AllocTestType.type_identifier1().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_AllocTestType.type_identifier1()._d() &&
-                    (EK_COMPLETE == type_ids_AllocTestType.type_identifier1().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_AllocTestType.type_identifier1().map_ldefn().key_identifier()->_d())))
+            bool common_index_ec {false};
+            CommonStructMember common_index {TypeObjectUtils::build_common_struct_member(member_id_index, member_flags_index, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_index, common_index_ec))};
+            if (!common_index_ec)
             {
-                common_index = TypeObjectUtils::build_common_struct_member(member_id_index, member_flags_index, type_ids_AllocTestType.type_identifier1());
-            }
-            else if (EK_COMPLETE == type_ids_AllocTestType.type_identifier2()._d() ||
-                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_AllocTestType.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_AllocTestType.type_identifier2().seq_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_AllocTestType.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_AllocTestType.type_identifier2().seq_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_SMALL == type_ids_AllocTestType.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_AllocTestType.type_identifier2().array_sdefn().header().equiv_kind()) ||
-                    (TI_PLAIN_ARRAY_LARGE == type_ids_AllocTestType.type_identifier2()._d() &&
-                    EK_COMPLETE == type_ids_AllocTestType.type_identifier2().array_ldefn().header().equiv_kind()) ||
-                    (TI_PLAIN_MAP_SMALL == type_ids_AllocTestType.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_AllocTestType.type_identifier2().map_sdefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_AllocTestType.type_identifier2().map_sdefn().key_identifier()->_d())) ||
-                    (TI_PLAIN_MAP_LARGE == type_ids_AllocTestType.type_identifier2()._d() &&
-                    (EK_COMPLETE == type_ids_AllocTestType.type_identifier2().map_ldefn().header().equiv_kind() ||
-                    EK_COMPLETE == type_ids_AllocTestType.type_identifier2().map_ldefn().key_identifier()->_d())))
-            {
-                common_index = TypeObjectUtils::build_common_struct_member(member_id_index, member_flags_index, type_ids_AllocTestType.type_identifier2());
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure index member TypeIdentifier inconsistent.");
-                type_id = TypeIdentifier();
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure index member TypeIdentifier inconsistent.");
                 return;
             }
             MemberName name_index = "index";
@@ -133,20 +90,10 @@ void register_AllocTestType_type_identifier(
         }
         CompleteStructType struct_type_AllocTestType = TypeObjectUtils::build_complete_struct_type(struct_flags_AllocTestType, header_AllocTestType, member_seq_AllocTestType);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_AllocTestType, type_name_AllocTestType.to_string(), type_id))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_AllocTestType, type_name_AllocTestType.to_string(), type_ids_AllocTestType))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "AllocTestType already registered in TypeObjectRegistry for a different type.");
-        }
-        return_code_AllocTestType =
-            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-            "AllocTestType", type_ids_AllocTestType);
-        if (return_code_AllocTestType != eprosima::fastdds::dds::RETCODE_OK)
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "AllocTestType: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
-            type_id = TypeIdentifier();
-            return;
         }
     }
 }

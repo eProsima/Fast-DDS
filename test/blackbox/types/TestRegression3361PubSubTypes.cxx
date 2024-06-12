@@ -219,9 +219,9 @@ bool TestRegression3361PubSubType::getKey(
     return true;
 }
 
-void TestRegression3361PubSubType::register_type_object_representation() const
+void TestRegression3361PubSubType::register_type_object_representation()
 {
-    register_TestRegression3361_type_objects();
+    register_TestRegression3361_type_identifier(type_identifiers_);
 }
 
 

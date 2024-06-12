@@ -141,7 +141,7 @@ public:
 
     static void check_typeobject_registry(
             const DynamicType::_ref_type& dyn_type,
-            const xtypes::TypeIdentifier& static_type_id);
+            const xtypes::TypeIdentifierPair& static_type_ids);
 
     /**
      * Auxiliary methods to create helper types

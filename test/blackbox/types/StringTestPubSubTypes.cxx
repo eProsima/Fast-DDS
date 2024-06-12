@@ -219,9 +219,9 @@ bool StringTestPubSubType::getKey(
     return true;
 }
 
-void StringTestPubSubType::register_type_object_representation() const
+void StringTestPubSubType::register_type_object_representation()
 {
-    register_StringTest_type_objects();
+    register_StringTest_type_identifier(type_identifiers_);
 }
 
 

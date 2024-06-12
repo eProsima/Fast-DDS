@@ -100,9 +100,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_FinalShortStruct)
         EXPECT_EQ(struct_data.var_short(), test_value);
     }
 
-    xtypes::TypeIdentifier static_type_id;
-    register_FinalShortStruct_type_identifier(static_type_id);
-    check_typeobject_registry(struct_type, static_type_id);
+    xtypes::TypeIdentifierPair static_type_ids;
+    register_FinalShortStruct_type_identifier(static_type_ids);
+    check_typeobject_registry(struct_type, static_type_ids);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -139,9 +139,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_FinalUShortStruct)
         EXPECT_EQ(struct_data.var_ushort(), test_value);
     }
 
-    xtypes::TypeIdentifier static_type_id;
-    register_FinalUShortStruct_type_identifier(static_type_id);
-    check_typeobject_registry(struct_type, static_type_id);
+    xtypes::TypeIdentifierPair static_type_ids;
+    register_FinalUShortStruct_type_identifier(static_type_ids);
+    check_typeobject_registry(struct_type, static_type_ids);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -178,9 +178,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_FinalLongStruct)
         EXPECT_EQ(struct_data.var_long(), test_value);
     }
 
-    xtypes::TypeIdentifier static_type_id;
-    register_FinalLongStruct_type_identifier(static_type_id);
-    check_typeobject_registry(struct_type, static_type_id);
+    xtypes::TypeIdentifierPair static_type_ids;
+    register_FinalLongStruct_type_identifier(static_type_ids);
+    check_typeobject_registry(struct_type, static_type_ids);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -217,9 +217,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_FinalULongStruct)
         EXPECT_EQ(struct_data.var_ulong(), test_value);
     }
 
-    xtypes::TypeIdentifier static_type_id;
-    register_FinalULongStruct_type_identifier(static_type_id);
-    check_typeobject_registry(struct_type, static_type_id);
+    xtypes::TypeIdentifierPair static_type_ids;
+    register_FinalULongStruct_type_identifier(static_type_ids);
+    check_typeobject_registry(struct_type, static_type_ids);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -256,9 +256,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_FinalLongLongStruct)
         EXPECT_EQ(struct_data.var_longlong(), test_value);
     }
 
-    xtypes::TypeIdentifier static_type_id;
-    register_FinalLongLongStruct_type_identifier(static_type_id);
-    check_typeobject_registry(struct_type, static_type_id);
+    xtypes::TypeIdentifierPair static_type_ids;
+    register_FinalLongLongStruct_type_identifier(static_type_ids);
+    check_typeobject_registry(struct_type, static_type_ids);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -295,9 +295,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_FinalULongLongStruct)
         EXPECT_EQ(struct_data.var_ulonglong(), test_value);
     }
 
-    xtypes::TypeIdentifier static_type_id;
-    register_FinalULongLongStruct_type_identifier(static_type_id);
-    check_typeobject_registry(struct_type, static_type_id);
+    xtypes::TypeIdentifierPair static_type_ids;
+    register_FinalULongLongStruct_type_identifier(static_type_ids);
+    check_typeobject_registry(struct_type, static_type_ids);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -334,9 +334,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_FinalFloatStruct)
         EXPECT_EQ(struct_data.var_float(), test_value);
     }
 
-    xtypes::TypeIdentifier static_type_id;
-    register_FinalFloatStruct_type_identifier(static_type_id);
-    check_typeobject_registry(struct_type, static_type_id);
+    xtypes::TypeIdentifierPair static_type_ids;
+    register_FinalFloatStruct_type_identifier(static_type_ids);
+    check_typeobject_registry(struct_type, static_type_ids);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -373,9 +373,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_FinalDoubleStruct)
         EXPECT_EQ(struct_data.var_double(), test_value);
     }
 
-    xtypes::TypeIdentifier static_type_id;
-    register_FinalDoubleStruct_type_identifier(static_type_id);
-    check_typeobject_registry(struct_type, static_type_id);
+    xtypes::TypeIdentifierPair static_type_ids;
+    register_FinalDoubleStruct_type_identifier(static_type_ids);
+    check_typeobject_registry(struct_type, static_type_ids);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -412,9 +412,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_FinalLongDoubleStruct)
         EXPECT_EQ(struct_data.var_longdouble(), test_value);
     }
 
-    xtypes::TypeIdentifier static_type_id;
-    register_FinalLongDoubleStruct_type_identifier(static_type_id);
-    check_typeobject_registry(struct_type, static_type_id);
+    xtypes::TypeIdentifierPair static_type_ids;
+    register_FinalLongDoubleStruct_type_identifier(static_type_ids);
+    check_typeobject_registry(struct_type, static_type_ids);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -451,9 +451,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_FinalBooleanStruct)
         EXPECT_EQ(struct_data.var_boolean(), test_value);
     }
 
-    xtypes::TypeIdentifier static_type_id;
-    register_FinalBooleanStruct_type_identifier(static_type_id);
-    check_typeobject_registry(struct_type, static_type_id);
+    xtypes::TypeIdentifierPair static_type_ids;
+    register_FinalBooleanStruct_type_identifier(static_type_ids);
+    check_typeobject_registry(struct_type, static_type_ids);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -490,9 +490,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_FinalOctetStruct)
         EXPECT_EQ(struct_data.var_octet(), test_value);
     }
 
-    xtypes::TypeIdentifier static_type_id;
-    register_FinalOctetStruct_type_identifier(static_type_id);
-    check_typeobject_registry(struct_type, static_type_id);
+    xtypes::TypeIdentifierPair static_type_ids;
+    register_FinalOctetStruct_type_identifier(static_type_ids);
+    check_typeobject_registry(struct_type, static_type_ids);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -529,9 +529,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_FinalCharStruct)
         EXPECT_EQ(struct_data.var_char8(), test_value);
     }
 
-    xtypes::TypeIdentifier static_type_id;
-    register_FinalCharStruct_type_identifier(static_type_id);
-    check_typeobject_registry(struct_type, static_type_id);
+    xtypes::TypeIdentifierPair static_type_ids;
+    register_FinalCharStruct_type_identifier(static_type_ids);
+    check_typeobject_registry(struct_type, static_type_ids);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -568,9 +568,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_FinalWCharStruct)
         EXPECT_EQ(struct_data.var_char16(), test_value);
     }
 
-    xtypes::TypeIdentifier static_type_id;
-    register_FinalWCharStruct_type_identifier(static_type_id);
-    check_typeobject_registry(struct_type, static_type_id);
+    xtypes::TypeIdentifierPair static_type_ids;
+    register_FinalWCharStruct_type_identifier(static_type_ids);
+    check_typeobject_registry(struct_type, static_type_ids);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -620,9 +620,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_FinalUnionStruct)
         EXPECT_EQ(struct_data.var_union().shortValue(), test_short_value);
     }
 
-    xtypes::TypeIdentifier static_type_id;
-    register_FinalUnionStruct_type_identifier(static_type_id);
-    check_typeobject_registry(struct_type, static_type_id);
+    xtypes::TypeIdentifierPair static_type_ids;
+    register_FinalUnionStruct_type_identifier(static_type_ids);
+    check_typeobject_registry(struct_type, static_type_ids);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -641,9 +641,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_FinalEmptyStruct)
                 static_pubsubType);
     }
 
-    xtypes::TypeIdentifier static_type_id;
-    register_FinalEmptyStruct_type_identifier(static_type_id);
-    check_typeobject_registry(struct_type, static_type_id);
+    xtypes::TypeIdentifierPair static_type_ids;
+    register_FinalEmptyStruct_type_identifier(static_type_ids);
+    check_typeobject_registry(struct_type, static_type_ids);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -682,9 +682,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_FinalEmptyInheritanceStruct)
         EXPECT_EQ(struct_data.var_str(), str_test_value);
     }
 
-    xtypes::TypeIdentifier static_type_id;
-    register_FinalEmptyInheritanceStruct_type_identifier(static_type_id);
-    check_typeobject_registry(struct_type, static_type_id);
+    xtypes::TypeIdentifierPair static_type_ids;
+    register_FinalEmptyInheritanceStruct_type_identifier(static_type_ids);
+    check_typeobject_registry(struct_type, static_type_ids);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -730,9 +730,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_FinalInheritanceStruct)
         EXPECT_EQ(struct_data.var_str(), str_test_value);
     }
 
-    xtypes::TypeIdentifier static_type_id;
-    register_FinalInheritanceStruct_type_identifier(static_type_id);
-    check_typeobject_registry(struct_type, static_type_id);
+    xtypes::TypeIdentifierPair static_type_ids;
+    register_FinalInheritanceStruct_type_identifier(static_type_ids);
+    check_typeobject_registry(struct_type, static_type_ids);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -765,9 +765,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_InheritanceEmptyStruct)
         EXPECT_EQ(struct_data.var_short(), short_test_value);
     }
 
-    xtypes::TypeIdentifier static_type_id;
-    register_InheritanceEmptyStruct_type_identifier(static_type_id);
-    check_typeobject_registry(struct_type, static_type_id);
+    xtypes::TypeIdentifierPair static_type_ids;
+    register_InheritanceEmptyStruct_type_identifier(static_type_ids);
+    check_typeobject_registry(struct_type, static_type_ids);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -812,9 +812,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_FinalExtensibilityInheritance)
         EXPECT_EQ(struct_data.var_long(), long_test_value);
     }
 
-    xtypes::TypeIdentifier static_type_id;
-    register_FinalExtensibilityInheritance_type_identifier(static_type_id);
-    check_typeobject_registry(struct_type, static_type_id);
+    xtypes::TypeIdentifierPair static_type_ids;
+    register_FinalExtensibilityInheritance_type_identifier(static_type_ids);
+    check_typeobject_registry(struct_type, static_type_ids);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }

@@ -110,9 +110,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_EnumStructure)
         EXPECT_EQ(static_cast<int32_t>(struct_data.var_scoped_InnerEnumHelper()), scoped_test_value);
     }
 
-    xtypes::TypeIdentifier static_type_id;
-    register_EnumStructure_type_identifier(static_type_id);
-    check_typeobject_registry(struct_type, static_type_id);
+    xtypes::TypeIdentifierPair static_type_ids;
+    register_EnumStructure_type_identifier(static_type_ids);
+    check_typeobject_registry(struct_type, static_type_ids);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -150,9 +150,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BitMaskStructure)
         EXPECT_EQ(struct_data.var_InnerBitMaskHelper(), test_value);
     }
 
-    xtypes::TypeIdentifier static_type_id;
-    register_BitMaskStructure_type_identifier(static_type_id);
-    check_typeobject_registry(struct_type, static_type_id);
+    xtypes::TypeIdentifierPair static_type_ids;
+    register_BitMaskStructure_type_identifier(static_type_ids);
+    check_typeobject_registry(struct_type, static_type_ids);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -192,9 +192,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BoundedBitMaskStructure)
         EXPECT_EQ(struct_data.var_InnerBoundedBitMaskHelper(), test_value);
     }
 
-    xtypes::TypeIdentifier static_type_id;
-    register_BoundedBitMaskStructure_type_identifier(static_type_id);
-    check_typeobject_registry(struct_type, static_type_id);
+    xtypes::TypeIdentifierPair static_type_ids;
+    register_BoundedBitMaskStructure_type_identifier(static_type_ids);
+    check_typeobject_registry(struct_type, static_type_ids);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }

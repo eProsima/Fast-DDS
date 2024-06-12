@@ -219,9 +219,9 @@ bool AllocTestTypePubSubType::getKey(
     return true;
 }
 
-void AllocTestTypePubSubType::register_type_object_representation() const
+void AllocTestTypePubSubType::register_type_object_representation()
 {
-    register_AllocTestType_type_objects();
+    register_AllocTestType_type_identifier(type_identifiers_);
 }
 
 

@@ -50,6 +50,7 @@
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/resources/TimedEvent.h>
 #include <rtps/resources/ResourceEvent.h>
+#include <rtps/RTPSDomainImpl.hpp>
 #include <utils/TimeConversion.hpp>
 #ifdef FASTDDS_STATISTICS
 #include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
@@ -1772,19 +1773,15 @@ fastrtps::TopicAttributes DataReaderImpl::topic_attributes() const
     topic_att.topicDataType = topic_->get_type_name();
     topic_att.historyQos = qos_.history();
     topic_att.resourceLimitsQos = qos_.resource_limits();
-    if (type_->type_object())
+    if (type_->auto_fill_type_information() && xtypes::TK_NONE != type_->type_identifiers().type_identifier1()._d())
     {
-        topic_att.type = *type_->type_object();
+        if (RETCODE_OK ==
+                fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().get_type_information(
+                    type_->type_identifiers(), topic_att.type_information.type_information))
+        {
+            topic_att.type_information.assigned(true);
+        }
     }
-    if (type_->type_identifier())
-    {
-        topic_att.type_id = *type_->type_identifier();
-    }
-    if (type_->type_information())
-    {
-        topic_att.type_information = *type_->type_information();
-    }
-    topic_att.auto_fill_type_information = type_->auto_fill_type_information();
 
     return topic_att;
 }

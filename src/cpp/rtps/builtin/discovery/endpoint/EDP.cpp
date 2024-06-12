@@ -164,20 +164,6 @@ bool EDP::newLocalReaderProxyData(
                     rpd->plugin_security_attributes_ = 0UL;
                 }
 #endif // if HAVE_SECURITY
-                if (att.auto_fill_type_information)
-                {
-                    // TypeInformation
-                    if (!att.type_information.assigned())
-                    {
-                        fastdds::dds::xtypes::TypeInformation type_info;
-                        if (eprosima::fastdds::dds::RETCODE_OK ==
-                                eprosima::fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer()
-                                        .get_type_information(rpd->typeName().c_str(), type_info))
-                        {
-                            rpd->type_information() = type_info;
-                        }
-                    }
-                }
 
                 return true;
             };
@@ -271,21 +257,6 @@ bool EDP::newLocalWriterProxyData(
                 }
 #endif // if HAVE_SECURITY
 
-                if (att.auto_fill_type_information)
-                {
-                    // TypeInformation
-                    if (!att.type_information.assigned())
-                    {
-                        fastdds::dds::xtypes::TypeInformation type_info;
-                        if (eprosima::fastdds::dds::RETCODE_OK ==
-                                eprosima::fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer()
-                                        .get_type_information(wpd->typeName().c_str(), type_info))
-                        {
-                            wpd->type_information() = type_info;
-                        }
-                    }
-                }
-
                 return true;
             };
 
@@ -318,11 +289,11 @@ bool EDP::newLocalWriterProxyData(
 
 bool EDP::updatedLocalReader(
         RTPSReader* reader,
-        const TopicAttributes& att,
+        const TopicAttributes&,
         const fastdds::dds::ReaderQos& rqos,
         const fastdds::rtps::ContentFilterProperty* content_filter)
 {
-    auto init_fun = [this, reader, &rqos, &att, content_filter](
+    auto init_fun = [this, reader, &rqos, content_filter](
         ReaderProxyData* rdata,
         bool updating,
         const ParticipantProxyData& participant_data)
@@ -365,21 +336,6 @@ bool EDP::updatedLocalReader(
                 rdata->isAlive(true);
                 rdata->m_expectsInlineQos = reader->expects_inline_qos();
 
-                if (att.auto_fill_type_information)
-                {
-                    // TypeInformation
-                    if (!rdata->type_information().assigned())
-                    {
-                        fastdds::dds::xtypes::TypeInformation type_info;
-                        if (eprosima::fastdds::dds::RETCODE_OK ==
-                                eprosima::fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer()
-                                        .get_type_information(rdata->typeName().c_str(), type_info))
-                        {
-                            rdata->type_information() = type_info;
-                        }
-                    }
-                }
-
                 return true;
             };
 
@@ -407,10 +363,10 @@ bool EDP::updatedLocalReader(
 
 bool EDP::updatedLocalWriter(
         RTPSWriter* writer,
-        const TopicAttributes& att,
+        const TopicAttributes&,
         const fastdds::dds::WriterQos& wqos)
 {
-    auto init_fun = [this, writer, &wqos, &att](
+    auto init_fun = [this, writer, &wqos](
         WriterProxyData* wdata,
         bool updating,
         const ParticipantProxyData& participant_data)
@@ -431,21 +387,6 @@ bool EDP::updatedLocalWriter(
                     wdata->set_announced_unicast_locators(writer->getAttributes().unicastLocatorList);
                 }
                 wdata->m_qos.setQos(wqos, false);
-
-                if (att.auto_fill_type_information)
-                {
-                    // TypeInformation
-                    if (!wdata->type_information().assigned())
-                    {
-                        fastdds::dds::xtypes::TypeInformation type_info;
-                        if (eprosima::fastdds::dds::RETCODE_OK ==
-                                eprosima::fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer()
-                                        .get_type_information(wdata->typeName().c_str(), type_info))
-                        {
-                            wdata->type_information() = type_info;
-                        }
-                    }
-                }
 
                 return true;
             };

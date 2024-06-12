@@ -1654,18 +1654,14 @@ fastrtps::TopicAttributes DataWriterImpl::get_topic_attributes(
     topic_att.topicName = topic.get_name();
     topic_att.topicDataType = topic.get_type_name();
     topic_att.topicKind = type->m_isGetKeyDefined ? WITH_KEY : NO_KEY;
-    topic_att.auto_fill_type_information = type->auto_fill_type_information();
-    if (type->type_identifier())
+    if (type->auto_fill_type_information() && xtypes::TK_NONE != type->type_identifiers().type_identifier1()._d())
     {
-        topic_att.type_id = *type->type_identifier();
-    }
-    if (type->type_object())
-    {
-        topic_att.type = *type->type_object();
-    }
-    if (type->type_information())
-    {
-        topic_att.type_information = *type->type_information();
+        if (RETCODE_OK ==
+                fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().get_type_information(
+                    type->type_identifiers(), topic_att.type_information.type_information))
+        {
+            topic_att.type_information.assigned(true);
+        }
     }
     return topic_att;
 }

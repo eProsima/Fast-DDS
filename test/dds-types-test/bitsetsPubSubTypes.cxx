@@ -219,9 +219,9 @@ bool BitsetStructPubSubType::getKey(
     return true;
 }
 
-void BitsetStructPubSubType::register_type_object_representation() const
+void BitsetStructPubSubType::register_type_object_representation()
 {
-    register_bitsets_type_objects();
+    register_BitsetStruct_type_identifier(type_identifiers_);
 }
 
 

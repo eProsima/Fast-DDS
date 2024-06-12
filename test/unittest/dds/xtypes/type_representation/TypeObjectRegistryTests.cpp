@@ -38,47 +38,49 @@ TEST(TypeObjectRegistryTests, register_type_object)
     complete_alias_type.header().detail().type_name("alias_name");
     CompleteTypeObject type_object;
     type_object.alias_type(complete_alias_type);
+    TypeIdentifierPair type_ids;
+    type_ids.type_identifier1(type_id);
 #if !defined(NDEBUG)
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_PRECONDITION_NOT_MET,
             DomainParticipantFactory::get_instance()->type_object_registry().register_type_object("alias",
-            type_object, type_id));
+            type_object, type_ids));
 #endif // if !defined(NDEBUG)
     complete_alias_type.body().common().related_type(type_id);
     type_object.alias_type(complete_alias_type);
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_PRECONDITION_NOT_MET,
             DomainParticipantFactory::get_instance()->type_object_registry().register_type_object("", type_object,
-            type_id));
+            type_ids));
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
             DomainParticipantFactory::get_instance()->type_object_registry().register_type_object("alias",
-            type_object, type_id));
+            type_object, type_ids));
     complete_alias_type.header().detail().type_name("other_name");
     type_object.alias_type(complete_alias_type);
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER,
             DomainParticipantFactory::get_instance()->type_object_registry().register_type_object("alias",
-            type_object, type_id));
+            type_object, type_ids));
 }
 
 // Test TypeObjectRegistry::register_type_identifier
 TEST(TypeObjectRegistryTests, register_type_identifier)
 {
-    TypeIdentifier type_id;
-    type_id.equivalence_hash(EquivalenceHash());
+    TypeIdentifierPair type_ids;
+    type_ids.type_identifier1().equivalence_hash(EquivalenceHash());
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_PRECONDITION_NOT_MET,
             DomainParticipantFactory::get_instance()->type_object_registry().register_type_identifier("hash_type_id",
-            type_id));
+            type_ids));
     StringSTypeDefn small_string;
     small_string.bound(10);
-    type_id.string_sdefn(small_string);
+    type_ids.type_identifier1().string_sdefn(small_string);
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_PRECONDITION_NOT_MET,
             DomainParticipantFactory::get_instance()->type_object_registry().register_type_identifier("",
-            type_id));
+            type_ids));
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
             DomainParticipantFactory::get_instance()->type_object_registry().register_type_identifier("string_type_id",
-            type_id));
-    type_id.string_sdefn().bound(5);
+            type_ids));
+    type_ids.type_identifier1().string_sdefn().bound(5);
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER,
             DomainParticipantFactory::get_instance()->type_object_registry().register_type_identifier("string_type_id",
-            type_id));
+            type_ids));
 }
 
 // Test TypeObjectRegistry::get_type_objects
@@ -102,9 +104,11 @@ TEST(TypeObjectRegistryTests, get_type_objects)
     CompleteTypeObject complete_type_object;
     complete_type_object.alias_type(complete_alias_type);
     type_object.complete(complete_type_object);
+    TypeIdentifierPair type_ids;
+    type_ids.type_identifier1(alias_type_id);
     ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK,
             DomainParticipantFactory::get_instance()->type_object_registry().register_type_object("test_name",
-            type_object.complete(), alias_type_id));
+            type_object.complete(), type_ids));
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
             DomainParticipantFactory::get_instance()->type_object_registry().get_type_objects("test_name",
             type_objects));
@@ -114,7 +118,7 @@ TEST(TypeObjectRegistryTests, get_type_objects)
 // Test TypeObjectRegistry::get_type_identifiers
 TEST(TypeObjectRegistryTests, get_type_identifiers)
 {
-    TypeIdentifierPair type_ids;
+    TypeIdentifierPair out_type_ids, type_ids;
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_PRECONDITION_NOT_MET,
             DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers("", type_ids));
     TypeIdentifier none_type_id;
@@ -126,14 +130,17 @@ TEST(TypeObjectRegistryTests, get_type_identifiers)
     // Register fully descriptive TypeIdentifier
     StringSTypeDefn small_string = TypeObjectUtils::build_string_s_type_defn(32);
     type_id.string_sdefn(small_string);
+    out_type_ids.type_identifier1(type_id);
     ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK,
             DomainParticipantFactory::get_instance()->type_object_registry().register_type_identifier("test_type",
-            type_id));
+            out_type_ids));
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
             DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers("test_type",
             type_ids));
     EXPECT_EQ(type_ids.type_identifier1(), type_id);
     EXPECT_EQ(type_ids.type_identifier2(), none_type_id);
+    EXPECT_EQ(type_ids.type_identifier1(), out_type_ids.type_identifier1());
+    EXPECT_EQ(type_ids.type_identifier2(), out_type_ids.type_identifier2());
 
     // Register hash TypeIdentifier
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_NO_DATA,
@@ -147,7 +154,7 @@ TEST(TypeObjectRegistryTests, get_type_identifiers)
     type_object.alias_type(complete_alias_type);
     ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK,
             DomainParticipantFactory::get_instance()->type_object_registry().register_type_object("alias",
-            type_object, type_id));
+            type_object, out_type_ids));
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
             DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers("alias", type_ids));
     EXPECT_TRUE((type_ids.type_identifier1()._d() == EK_MINIMAL && type_ids.type_identifier2()._d() == EK_COMPLETE) ||

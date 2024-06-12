@@ -516,21 +516,25 @@ bool DomainParticipantImpl::register_statistics_type_and_topic(
     if (HISTORY_LATENCY_TOPIC == topic_name)
     {
         efd::TypeSupport history_latency_type(new WriterReaderDataPubSubType);
+        history_latency_type->register_type_object_representation();
         return_code = find_or_create_topic_and_type(topic, topic_name, history_latency_type);
     }
     else if (NETWORK_LATENCY_TOPIC == topic_name)
     {
         efd::TypeSupport network_latency_type(new Locator2LocatorDataPubSubType);
+        network_latency_type->register_type_object_representation();
         return_code = find_or_create_topic_and_type(topic, topic_name, network_latency_type);
     }
     else if (PUBLICATION_THROUGHPUT_TOPIC == topic_name || SUBSCRIPTION_THROUGHPUT_TOPIC == topic_name)
     {
         efd::TypeSupport throughput_type(new EntityDataPubSubType);
+        throughput_type->register_type_object_representation();
         return_code = find_or_create_topic_and_type(topic, topic_name, throughput_type);
     }
     else if (RTPS_SENT_TOPIC == topic_name || RTPS_LOST_TOPIC == topic_name)
     {
         efd::TypeSupport rtps_traffic_type(new Entity2LocatorTrafficPubSubType);
+        rtps_traffic_type->register_type_object_representation();
         return_code = find_or_create_topic_and_type(topic, topic_name, rtps_traffic_type);
     }
     else if (RESENT_DATAS_TOPIC == topic_name || HEARTBEAT_COUNT_TOPIC == topic_name ||
@@ -538,21 +542,25 @@ bool DomainParticipantImpl::register_statistics_type_and_topic(
             DATA_COUNT_TOPIC == topic_name || PDP_PACKETS_TOPIC == topic_name || EDP_PACKETS_TOPIC == topic_name)
     {
         efd::TypeSupport count_type(new EntityCountPubSubType);
+        count_type->register_type_object_representation();
         return_code = find_or_create_topic_and_type(topic, topic_name, count_type);
     }
     else if (DISCOVERY_TOPIC == topic_name)
     {
         efd::TypeSupport discovery_type(new DiscoveryTimePubSubType);
+        discovery_type->register_type_object_representation();
         return_code = find_or_create_topic_and_type(topic, topic_name, discovery_type);
     }
     else if (SAMPLE_DATAS_TOPIC == topic_name)
     {
         efd::TypeSupport sample_identity_count_type(new SampleIdentityCountPubSubType);
+        sample_identity_count_type->register_type_object_representation();
         return_code = find_or_create_topic_and_type(topic, topic_name, sample_identity_count_type);
     }
     else if (PHYSICAL_DATA_TOPIC == topic_name)
     {
         efd::TypeSupport physical_data_type(new PhysicalDataPubSubType);
+        physical_data_type->register_type_object_representation();
         return_code = find_or_create_topic_and_type(topic, topic_name, physical_data_type);
     }
     return return_code;

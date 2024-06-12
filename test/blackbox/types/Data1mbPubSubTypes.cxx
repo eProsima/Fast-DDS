@@ -219,9 +219,9 @@ bool Data1mbPubSubType::getKey(
     return true;
 }
 
-void Data1mbPubSubType::register_type_object_representation() const
+void Data1mbPubSubType::register_type_object_representation()
 {
-    register_Data1mb_type_objects();
+    register_Data1mb_type_identifier(type_identifiers_);
 }
 
 

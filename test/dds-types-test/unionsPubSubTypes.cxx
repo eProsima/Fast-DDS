@@ -219,9 +219,9 @@ bool UnionShortPubSubType::getKey(
     return true;
 }
 
-void UnionShortPubSubType::register_type_object_representation() const
+void UnionShortPubSubType::register_type_object_representation()
 {
-    register_unions_type_objects();
+    register_UnionShort_type_identifier(type_identifiers_);
 }
 
 UnionUShortPubSubType::UnionUShortPubSubType()
@@ -412,9 +412,9 @@ bool UnionUShortPubSubType::getKey(
     return true;
 }
 
-void UnionUShortPubSubType::register_type_object_representation() const
+void UnionUShortPubSubType::register_type_object_representation()
 {
-    register_unions_type_objects();
+    register_UnionUShort_type_identifier(type_identifiers_);
 }
 
 UnionLongPubSubType::UnionLongPubSubType()
@@ -605,9 +605,9 @@ bool UnionLongPubSubType::getKey(
     return true;
 }
 
-void UnionLongPubSubType::register_type_object_representation() const
+void UnionLongPubSubType::register_type_object_representation()
 {
-    register_unions_type_objects();
+    register_UnionLong_type_identifier(type_identifiers_);
 }
 
 UnionULongPubSubType::UnionULongPubSubType()
@@ -798,9 +798,9 @@ bool UnionULongPubSubType::getKey(
     return true;
 }
 
-void UnionULongPubSubType::register_type_object_representation() const
+void UnionULongPubSubType::register_type_object_representation()
 {
-    register_unions_type_objects();
+    register_UnionULong_type_identifier(type_identifiers_);
 }
 
 UnionLongLongPubSubType::UnionLongLongPubSubType()
@@ -991,9 +991,9 @@ bool UnionLongLongPubSubType::getKey(
     return true;
 }
 
-void UnionLongLongPubSubType::register_type_object_representation() const
+void UnionLongLongPubSubType::register_type_object_representation()
 {
-    register_unions_type_objects();
+    register_UnionLongLong_type_identifier(type_identifiers_);
 }
 
 UnionULongLongPubSubType::UnionULongLongPubSubType()
@@ -1184,9 +1184,9 @@ bool UnionULongLongPubSubType::getKey(
     return true;
 }
 
-void UnionULongLongPubSubType::register_type_object_representation() const
+void UnionULongLongPubSubType::register_type_object_representation()
 {
-    register_unions_type_objects();
+    register_UnionULongLong_type_identifier(type_identifiers_);
 }
 
 UnionFloatPubSubType::UnionFloatPubSubType()
@@ -1377,9 +1377,9 @@ bool UnionFloatPubSubType::getKey(
     return true;
 }
 
-void UnionFloatPubSubType::register_type_object_representation() const
+void UnionFloatPubSubType::register_type_object_representation()
 {
-    register_unions_type_objects();
+    register_UnionFloat_type_identifier(type_identifiers_);
 }
 
 UnionDoublePubSubType::UnionDoublePubSubType()
@@ -1570,9 +1570,9 @@ bool UnionDoublePubSubType::getKey(
     return true;
 }
 
-void UnionDoublePubSubType::register_type_object_representation() const
+void UnionDoublePubSubType::register_type_object_representation()
 {
-    register_unions_type_objects();
+    register_UnionDouble_type_identifier(type_identifiers_);
 }
 
 UnionLongDoublePubSubType::UnionLongDoublePubSubType()
@@ -1763,9 +1763,9 @@ bool UnionLongDoublePubSubType::getKey(
     return true;
 }
 
-void UnionLongDoublePubSubType::register_type_object_representation() const
+void UnionLongDoublePubSubType::register_type_object_representation()
 {
-    register_unions_type_objects();
+    register_UnionLongDouble_type_identifier(type_identifiers_);
 }
 
 UnionBooleanPubSubType::UnionBooleanPubSubType()
@@ -1956,9 +1956,9 @@ bool UnionBooleanPubSubType::getKey(
     return true;
 }
 
-void UnionBooleanPubSubType::register_type_object_representation() const
+void UnionBooleanPubSubType::register_type_object_representation()
 {
-    register_unions_type_objects();
+    register_UnionBoolean_type_identifier(type_identifiers_);
 }
 
 UnionOctetPubSubType::UnionOctetPubSubType()
@@ -2149,9 +2149,9 @@ bool UnionOctetPubSubType::getKey(
     return true;
 }
 
-void UnionOctetPubSubType::register_type_object_representation() const
+void UnionOctetPubSubType::register_type_object_representation()
 {
-    register_unions_type_objects();
+    register_UnionOctet_type_identifier(type_identifiers_);
 }
 
 UnionCharPubSubType::UnionCharPubSubType()
@@ -2342,9 +2342,9 @@ bool UnionCharPubSubType::getKey(
     return true;
 }
 
-void UnionCharPubSubType::register_type_object_representation() const
+void UnionCharPubSubType::register_type_object_representation()
 {
-    register_unions_type_objects();
+    register_UnionChar_type_identifier(type_identifiers_);
 }
 
 UnionWCharPubSubType::UnionWCharPubSubType()
@@ -2535,9 +2535,9 @@ bool UnionWCharPubSubType::getKey(
     return true;
 }
 
-void UnionWCharPubSubType::register_type_object_representation() const
+void UnionWCharPubSubType::register_type_object_representation()
 {
-    register_unions_type_objects();
+    register_UnionWChar_type_identifier(type_identifiers_);
 }
 
 UnionStringPubSubType::UnionStringPubSubType()
@@ -2728,9 +2728,9 @@ bool UnionStringPubSubType::getKey(
     return true;
 }
 
-void UnionStringPubSubType::register_type_object_representation() const
+void UnionStringPubSubType::register_type_object_representation()
 {
-    register_unions_type_objects();
+    register_UnionString_type_identifier(type_identifiers_);
 }
 
 UnionWStringPubSubType::UnionWStringPubSubType()
@@ -2921,9 +2921,9 @@ bool UnionWStringPubSubType::getKey(
     return true;
 }
 
-void UnionWStringPubSubType::register_type_object_representation() const
+void UnionWStringPubSubType::register_type_object_representation()
 {
-    register_unions_type_objects();
+    register_UnionWString_type_identifier(type_identifiers_);
 }
 
 UnionBoundedStringPubSubType::UnionBoundedStringPubSubType()
@@ -3114,9 +3114,9 @@ bool UnionBoundedStringPubSubType::getKey(
     return true;
 }
 
-void UnionBoundedStringPubSubType::register_type_object_representation() const
+void UnionBoundedStringPubSubType::register_type_object_representation()
 {
-    register_unions_type_objects();
+    register_UnionBoundedString_type_identifier(type_identifiers_);
 }
 
 UnionBoundedWStringPubSubType::UnionBoundedWStringPubSubType()
@@ -3307,9 +3307,9 @@ bool UnionBoundedWStringPubSubType::getKey(
     return true;
 }
 
-void UnionBoundedWStringPubSubType::register_type_object_representation() const
+void UnionBoundedWStringPubSubType::register_type_object_representation()
 {
-    register_unions_type_objects();
+    register_UnionBoundedWString_type_identifier(type_identifiers_);
 }
 
 UnionInnerEnumHelperPubSubType::UnionInnerEnumHelperPubSubType()
@@ -3500,9 +3500,9 @@ bool UnionInnerEnumHelperPubSubType::getKey(
     return true;
 }
 
-void UnionInnerEnumHelperPubSubType::register_type_object_representation() const
+void UnionInnerEnumHelperPubSubType::register_type_object_representation()
 {
-    register_unions_type_objects();
+    register_UnionInnerEnumHelper_type_identifier(type_identifiers_);
 }
 
 UnionInnerBitMaskHelperPubSubType::UnionInnerBitMaskHelperPubSubType()
@@ -3693,9 +3693,9 @@ bool UnionInnerBitMaskHelperPubSubType::getKey(
     return true;
 }
 
-void UnionInnerBitMaskHelperPubSubType::register_type_object_representation() const
+void UnionInnerBitMaskHelperPubSubType::register_type_object_representation()
 {
-    register_unions_type_objects();
+    register_UnionInnerBitMaskHelper_type_identifier(type_identifiers_);
 }
 
 UnionInnerAliasHelperPubSubType::UnionInnerAliasHelperPubSubType()
@@ -3886,9 +3886,9 @@ bool UnionInnerAliasHelperPubSubType::getKey(
     return true;
 }
 
-void UnionInnerAliasHelperPubSubType::register_type_object_representation() const
+void UnionInnerAliasHelperPubSubType::register_type_object_representation()
 {
-    register_unions_type_objects();
+    register_UnionInnerAliasHelper_type_identifier(type_identifiers_);
 }
 
 UnionArrayPubSubType::UnionArrayPubSubType()
@@ -4079,9 +4079,9 @@ bool UnionArrayPubSubType::getKey(
     return true;
 }
 
-void UnionArrayPubSubType::register_type_object_representation() const
+void UnionArrayPubSubType::register_type_object_representation()
 {
-    register_unions_type_objects();
+    register_UnionArray_type_identifier(type_identifiers_);
 }
 
 UnionSequencePubSubType::UnionSequencePubSubType()
@@ -4272,9 +4272,9 @@ bool UnionSequencePubSubType::getKey(
     return true;
 }
 
-void UnionSequencePubSubType::register_type_object_representation() const
+void UnionSequencePubSubType::register_type_object_representation()
 {
-    register_unions_type_objects();
+    register_UnionSequence_type_identifier(type_identifiers_);
 }
 
 UnionMapPubSubType::UnionMapPubSubType()
@@ -4465,9 +4465,9 @@ bool UnionMapPubSubType::getKey(
     return true;
 }
 
-void UnionMapPubSubType::register_type_object_representation() const
+void UnionMapPubSubType::register_type_object_representation()
 {
-    register_unions_type_objects();
+    register_UnionMap_type_identifier(type_identifiers_);
 }
 
 UnionInnerUnionHelperPubSubType::UnionInnerUnionHelperPubSubType()
@@ -4658,9 +4658,9 @@ bool UnionInnerUnionHelperPubSubType::getKey(
     return true;
 }
 
-void UnionInnerUnionHelperPubSubType::register_type_object_representation() const
+void UnionInnerUnionHelperPubSubType::register_type_object_representation()
 {
-    register_unions_type_objects();
+    register_UnionInnerUnionHelper_type_identifier(type_identifiers_);
 }
 
 UnionInnerStructureHelperPubSubType::UnionInnerStructureHelperPubSubType()
@@ -4851,9 +4851,9 @@ bool UnionInnerStructureHelperPubSubType::getKey(
     return true;
 }
 
-void UnionInnerStructureHelperPubSubType::register_type_object_representation() const
+void UnionInnerStructureHelperPubSubType::register_type_object_representation()
 {
-    register_unions_type_objects();
+    register_UnionInnerStructureHelper_type_identifier(type_identifiers_);
 }
 
 UnionInnerBitsetHelperPubSubType::UnionInnerBitsetHelperPubSubType()
@@ -5044,9 +5044,9 @@ bool UnionInnerBitsetHelperPubSubType::getKey(
     return true;
 }
 
-void UnionInnerBitsetHelperPubSubType::register_type_object_representation() const
+void UnionInnerBitsetHelperPubSubType::register_type_object_representation()
 {
-    register_unions_type_objects();
+    register_UnionInnerBitsetHelper_type_identifier(type_identifiers_);
 }
 
 UnionDiscriminatorShortPubSubType::UnionDiscriminatorShortPubSubType()
@@ -5237,9 +5237,9 @@ bool UnionDiscriminatorShortPubSubType::getKey(
     return true;
 }
 
-void UnionDiscriminatorShortPubSubType::register_type_object_representation() const
+void UnionDiscriminatorShortPubSubType::register_type_object_representation()
 {
-    register_unions_type_objects();
+    register_UnionDiscriminatorShort_type_identifier(type_identifiers_);
 }
 
 UnionDiscriminatorUShortPubSubType::UnionDiscriminatorUShortPubSubType()
@@ -5430,9 +5430,9 @@ bool UnionDiscriminatorUShortPubSubType::getKey(
     return true;
 }
 
-void UnionDiscriminatorUShortPubSubType::register_type_object_representation() const
+void UnionDiscriminatorUShortPubSubType::register_type_object_representation()
 {
-    register_unions_type_objects();
+    register_UnionDiscriminatorUShort_type_identifier(type_identifiers_);
 }
 
 UnionDiscriminatorLongPubSubType::UnionDiscriminatorLongPubSubType()
@@ -5623,9 +5623,9 @@ bool UnionDiscriminatorLongPubSubType::getKey(
     return true;
 }
 
-void UnionDiscriminatorLongPubSubType::register_type_object_representation() const
+void UnionDiscriminatorLongPubSubType::register_type_object_representation()
 {
-    register_unions_type_objects();
+    register_UnionDiscriminatorLong_type_identifier(type_identifiers_);
 }
 
 UnionDiscriminatorULongPubSubType::UnionDiscriminatorULongPubSubType()
@@ -5816,9 +5816,9 @@ bool UnionDiscriminatorULongPubSubType::getKey(
     return true;
 }
 
-void UnionDiscriminatorULongPubSubType::register_type_object_representation() const
+void UnionDiscriminatorULongPubSubType::register_type_object_representation()
 {
-    register_unions_type_objects();
+    register_UnionDiscriminatorULong_type_identifier(type_identifiers_);
 }
 
 UnionDiscriminatorLongLongPubSubType::UnionDiscriminatorLongLongPubSubType()
@@ -6009,9 +6009,9 @@ bool UnionDiscriminatorLongLongPubSubType::getKey(
     return true;
 }
 
-void UnionDiscriminatorLongLongPubSubType::register_type_object_representation() const
+void UnionDiscriminatorLongLongPubSubType::register_type_object_representation()
 {
-    register_unions_type_objects();
+    register_UnionDiscriminatorLongLong_type_identifier(type_identifiers_);
 }
 
 UnionDiscriminatorULongLongPubSubType::UnionDiscriminatorULongLongPubSubType()
@@ -6202,9 +6202,9 @@ bool UnionDiscriminatorULongLongPubSubType::getKey(
     return true;
 }
 
-void UnionDiscriminatorULongLongPubSubType::register_type_object_representation() const
+void UnionDiscriminatorULongLongPubSubType::register_type_object_representation()
 {
-    register_unions_type_objects();
+    register_UnionDiscriminatorULongLong_type_identifier(type_identifiers_);
 }
 
 UnionDiscriminatorBooleanPubSubType::UnionDiscriminatorBooleanPubSubType()
@@ -6395,9 +6395,9 @@ bool UnionDiscriminatorBooleanPubSubType::getKey(
     return true;
 }
 
-void UnionDiscriminatorBooleanPubSubType::register_type_object_representation() const
+void UnionDiscriminatorBooleanPubSubType::register_type_object_representation()
 {
-    register_unions_type_objects();
+    register_UnionDiscriminatorBoolean_type_identifier(type_identifiers_);
 }
 
 UnionDiscriminatorOctetPubSubType::UnionDiscriminatorOctetPubSubType()
@@ -6588,9 +6588,9 @@ bool UnionDiscriminatorOctetPubSubType::getKey(
     return true;
 }
 
-void UnionDiscriminatorOctetPubSubType::register_type_object_representation() const
+void UnionDiscriminatorOctetPubSubType::register_type_object_representation()
 {
-    register_unions_type_objects();
+    register_UnionDiscriminatorOctet_type_identifier(type_identifiers_);
 }
 
 UnionDiscriminatorCharPubSubType::UnionDiscriminatorCharPubSubType()
@@ -6781,9 +6781,9 @@ bool UnionDiscriminatorCharPubSubType::getKey(
     return true;
 }
 
-void UnionDiscriminatorCharPubSubType::register_type_object_representation() const
+void UnionDiscriminatorCharPubSubType::register_type_object_representation()
 {
-    register_unions_type_objects();
+    register_UnionDiscriminatorChar_type_identifier(type_identifiers_);
 }
 
 UnionDiscriminatorWCharPubSubType::UnionDiscriminatorWCharPubSubType()
@@ -6974,9 +6974,9 @@ bool UnionDiscriminatorWCharPubSubType::getKey(
     return true;
 }
 
-void UnionDiscriminatorWCharPubSubType::register_type_object_representation() const
+void UnionDiscriminatorWCharPubSubType::register_type_object_representation()
 {
-    register_unions_type_objects();
+    register_UnionDiscriminatorWChar_type_identifier(type_identifiers_);
 }
 
 UnionDiscriminatorEnumPubSubType::UnionDiscriminatorEnumPubSubType()
@@ -7167,9 +7167,9 @@ bool UnionDiscriminatorEnumPubSubType::getKey(
     return true;
 }
 
-void UnionDiscriminatorEnumPubSubType::register_type_object_representation() const
+void UnionDiscriminatorEnumPubSubType::register_type_object_representation()
 {
-    register_unions_type_objects();
+    register_UnionDiscriminatorEnum_type_identifier(type_identifiers_);
 }
 
 UnionDiscriminatorEnumLabelPubSubType::UnionDiscriminatorEnumLabelPubSubType()
@@ -7360,9 +7360,9 @@ bool UnionDiscriminatorEnumLabelPubSubType::getKey(
     return true;
 }
 
-void UnionDiscriminatorEnumLabelPubSubType::register_type_object_representation() const
+void UnionDiscriminatorEnumLabelPubSubType::register_type_object_representation()
 {
-    register_unions_type_objects();
+    register_UnionDiscriminatorEnumLabel_type_identifier(type_identifiers_);
 }
 
 UnionDiscriminatorAliasPubSubType::UnionDiscriminatorAliasPubSubType()
@@ -7553,9 +7553,9 @@ bool UnionDiscriminatorAliasPubSubType::getKey(
     return true;
 }
 
-void UnionDiscriminatorAliasPubSubType::register_type_object_representation() const
+void UnionDiscriminatorAliasPubSubType::register_type_object_representation()
 {
-    register_unions_type_objects();
+    register_UnionDiscriminatorAlias_type_identifier(type_identifiers_);
 }
 
 UnionSeveralFieldsPubSubType::UnionSeveralFieldsPubSubType()
@@ -7746,9 +7746,9 @@ bool UnionSeveralFieldsPubSubType::getKey(
     return true;
 }
 
-void UnionSeveralFieldsPubSubType::register_type_object_representation() const
+void UnionSeveralFieldsPubSubType::register_type_object_representation()
 {
-    register_unions_type_objects();
+    register_UnionSeveralFields_type_identifier(type_identifiers_);
 }
 
 UnionSeveralFieldsWithDefaultPubSubType::UnionSeveralFieldsWithDefaultPubSubType()
@@ -7939,9 +7939,9 @@ bool UnionSeveralFieldsWithDefaultPubSubType::getKey(
     return true;
 }
 
-void UnionSeveralFieldsWithDefaultPubSubType::register_type_object_representation() const
+void UnionSeveralFieldsWithDefaultPubSubType::register_type_object_representation()
 {
-    register_unions_type_objects();
+    register_UnionSeveralFieldsWithDefault_type_identifier(type_identifiers_);
 }
 
 

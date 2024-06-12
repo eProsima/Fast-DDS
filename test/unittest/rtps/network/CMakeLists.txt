@@ -133,8 +133,8 @@ target_compile_definitions(ExternalLocatorsTests PRIVATE
     )
 target_include_directories(ExternalLocatorsTests PRIVATE
     ${Asio_INCLUDE_DIR}
-    ${PROJECT_SOURCE_DIR}/test/mock/dds/TypeObjectRegistry
-    ${PROJECT_SOURCE_DIR}/test/mock/dds/TypeObjectUtils
+    ${PROJECT_SOURCE_DIR}/test/mock/xtypes/TypeObjectRegistry
+    ${PROJECT_SOURCE_DIR}/test/mock/xtypes/TypeObjectUtils
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/ParticipantProxyData
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReaderProxyData
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSDomainImpl # Dependency of fastdds::xtypes::type_representation
@@ -146,7 +146,7 @@ target_link_libraries(ExternalLocatorsTests
     fastcdr
     fastdds::log
     fastdds::xtypes::dynamic-types::impl
-    GTest::gtest ${MOCKS}
+    GTest::gmock
     ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
 
 if(QNX)

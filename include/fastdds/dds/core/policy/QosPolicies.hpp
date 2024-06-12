@@ -2640,7 +2640,7 @@ public:
 
 private:
 
-    //!Boolean that states if the TypeInformationParameter has been asigned manually or not.
+    //!Boolean that states if the TypeInformationParameter has been assigned manually or not.
     bool assigned_;
 };
 

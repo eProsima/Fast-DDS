@@ -219,9 +219,9 @@ bool InnerStructureHelperChildPubSubType::getKey(
     return true;
 }
 
-void InnerStructureHelperChildPubSubType::register_type_object_representation() const
+void InnerStructureHelperChildPubSubType::register_type_object_representation()
 {
-    register_inheritance_type_objects();
+    register_InnerStructureHelperChild_type_identifier(type_identifiers_);
 }
 
 InnerStructureHelperChildChildPubSubType::InnerStructureHelperChildChildPubSubType()
@@ -412,9 +412,9 @@ bool InnerStructureHelperChildChildPubSubType::getKey(
     return true;
 }
 
-void InnerStructureHelperChildChildPubSubType::register_type_object_representation() const
+void InnerStructureHelperChildChildPubSubType::register_type_object_representation()
 {
-    register_inheritance_type_objects();
+    register_InnerStructureHelperChildChild_type_identifier(type_identifiers_);
 }
 
 InnerStructureHelperEmptyChildPubSubType::InnerStructureHelperEmptyChildPubSubType()
@@ -605,9 +605,9 @@ bool InnerStructureHelperEmptyChildPubSubType::getKey(
     return true;
 }
 
-void InnerStructureHelperEmptyChildPubSubType::register_type_object_representation() const
+void InnerStructureHelperEmptyChildPubSubType::register_type_object_representation()
 {
-    register_inheritance_type_objects();
+    register_InnerStructureHelperEmptyChild_type_identifier(type_identifiers_);
 }
 
 InnerStructureHelperEmptyChildChildPubSubType::InnerStructureHelperEmptyChildChildPubSubType()
@@ -798,9 +798,9 @@ bool InnerStructureHelperEmptyChildChildPubSubType::getKey(
     return true;
 }
 
-void InnerStructureHelperEmptyChildChildPubSubType::register_type_object_representation() const
+void InnerStructureHelperEmptyChildChildPubSubType::register_type_object_representation()
 {
-    register_inheritance_type_objects();
+    register_InnerStructureHelperEmptyChildChild_type_identifier(type_identifiers_);
 }
 
 InnerEmptyStructureHelperChildPubSubType::InnerEmptyStructureHelperChildPubSubType()
@@ -991,9 +991,9 @@ bool InnerEmptyStructureHelperChildPubSubType::getKey(
     return true;
 }
 
-void InnerEmptyStructureHelperChildPubSubType::register_type_object_representation() const
+void InnerEmptyStructureHelperChildPubSubType::register_type_object_representation()
 {
-    register_inheritance_type_objects();
+    register_InnerEmptyStructureHelperChild_type_identifier(type_identifiers_);
 }
 
 StructAliasInheritanceStructPubSubType::StructAliasInheritanceStructPubSubType()
@@ -1184,9 +1184,9 @@ bool StructAliasInheritanceStructPubSubType::getKey(
     return true;
 }
 
-void StructAliasInheritanceStructPubSubType::register_type_object_representation() const
+void StructAliasInheritanceStructPubSubType::register_type_object_representation()
 {
-    register_inheritance_type_objects();
+    register_StructAliasInheritanceStruct_type_identifier(type_identifiers_);
 }
 
 StructuresInheritanceStructPubSubType::StructuresInheritanceStructPubSubType()
@@ -1377,9 +1377,9 @@ bool StructuresInheritanceStructPubSubType::getKey(
     return true;
 }
 
-void StructuresInheritanceStructPubSubType::register_type_object_representation() const
+void StructuresInheritanceStructPubSubType::register_type_object_representation()
 {
-    register_inheritance_type_objects();
+    register_StructuresInheritanceStruct_type_identifier(type_identifiers_);
 }
 
 
@@ -1573,9 +1573,9 @@ bool BitsetsChildInheritanceStructPubSubType::getKey(
     return true;
 }
 
-void BitsetsChildInheritanceStructPubSubType::register_type_object_representation() const
+void BitsetsChildInheritanceStructPubSubType::register_type_object_representation()
 {
-    register_inheritance_type_objects();
+    register_BitsetsChildInheritanceStruct_type_identifier(type_identifiers_);
 }
 
 

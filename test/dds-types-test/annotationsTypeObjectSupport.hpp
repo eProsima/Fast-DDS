@@ -36,12 +36,42 @@
 #define eProsima_user_DllExport
 #endif  // _WIN32
 
-/**
- * @brief Register every TypeObject representation defined in the IDL file in Fast DDS TypeObjectRegistry.
- */
-eProsima_user_DllExport void register_annotations_type_objects();
-
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
+
+namespace AnnotationTest {
+    /**
+     * @brief Register InnerEnumHelper related TypeIdentifier.
+     *        Fully-descriptive TypeIdentifiers are directly registered.
+     *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
+     *        indirectly registered as well.
+     *
+     * @param[out] TypeIdentifier of the registered type.
+     *             The returned TypeIdentifier corresponds to the complete TypeIdentifier in case of hashed TypeIdentifiers.
+     *             Invalid TypeIdentifier is returned in case of error.
+     */
+    eProsima_user_DllExport void register_InnerEnumHelper_type_identifier(
+            eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
+
+
+    /**
+     * @brief Register Inner_alias_bounded_string_helper related TypeIdentifier.
+     *        Fully-descriptive TypeIdentifiers are directly registered.
+     *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
+     *        indirectly registered as well.
+     *
+     * @param[out] TypeIdentifier of the registered type.
+     *             The returned TypeIdentifier corresponds to the complete TypeIdentifier in case of hashed TypeIdentifiers.
+     *             Invalid TypeIdentifier is returned in case of error.
+     */
+    eProsima_user_DllExport void register_Inner_alias_bounded_string_helper_type_identifier(
+            eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
+
+
+
+
+
+} // namespace AnnotationTest
 
 /**
  * @brief Register AnnotationTest related TypeIdentifier.
@@ -54,7 +84,14 @@ eProsima_user_DllExport void register_annotations_type_objects();
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_AnnotationTest_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
+
+namespace EmptyAnnotationTest {
+
+
+
+} // namespace EmptyAnnotationTest
+
 /**
  * @brief Register EmptyAnnotationTest related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -66,7 +103,7 @@ eProsima_user_DllExport void register_AnnotationTest_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_EmptyAnnotationTest_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register AnnotatedStruct related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -78,7 +115,7 @@ eProsima_user_DllExport void register_EmptyAnnotationTest_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_AnnotatedStruct_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register EmptyAnnotatedStruct related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -90,7 +127,14 @@ eProsima_user_DllExport void register_AnnotatedStruct_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_EmptyAnnotatedStruct_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
+
+namespace BasicAnnotationsTest {
+
+
+
+} // namespace BasicAnnotationsTest
+
 /**
  * @brief Register BasicAnnotationsTest related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -102,7 +146,7 @@ eProsima_user_DllExport void register_EmptyAnnotatedStruct_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_BasicAnnotationsTest_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register BasicAnnotationsStruct related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -114,7 +158,7 @@ eProsima_user_DllExport void register_BasicAnnotationsTest_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_BasicAnnotationsStruct_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 
 
 #endif // DOXYGEN_SHOULD_SKIP_THIS_PUBLIC

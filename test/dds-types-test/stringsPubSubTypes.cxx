@@ -219,9 +219,9 @@ bool StringStructPubSubType::getKey(
     return true;
 }
 
-void StringStructPubSubType::register_type_object_representation() const
+void StringStructPubSubType::register_type_object_representation()
 {
-    register_strings_type_objects();
+    register_StringStruct_type_identifier(type_identifiers_);
 }
 
 WStringStructPubSubType::WStringStructPubSubType()
@@ -412,9 +412,9 @@ bool WStringStructPubSubType::getKey(
     return true;
 }
 
-void WStringStructPubSubType::register_type_object_representation() const
+void WStringStructPubSubType::register_type_object_representation()
 {
-    register_strings_type_objects();
+    register_WStringStruct_type_identifier(type_identifiers_);
 }
 
 SmallStringStructPubSubType::SmallStringStructPubSubType()
@@ -605,9 +605,9 @@ bool SmallStringStructPubSubType::getKey(
     return true;
 }
 
-void SmallStringStructPubSubType::register_type_object_representation() const
+void SmallStringStructPubSubType::register_type_object_representation()
 {
-    register_strings_type_objects();
+    register_SmallStringStruct_type_identifier(type_identifiers_);
 }
 
 SmallWStringStructPubSubType::SmallWStringStructPubSubType()
@@ -798,9 +798,9 @@ bool SmallWStringStructPubSubType::getKey(
     return true;
 }
 
-void SmallWStringStructPubSubType::register_type_object_representation() const
+void SmallWStringStructPubSubType::register_type_object_representation()
 {
-    register_strings_type_objects();
+    register_SmallWStringStruct_type_identifier(type_identifiers_);
 }
 
 LargeStringStructPubSubType::LargeStringStructPubSubType()
@@ -991,9 +991,9 @@ bool LargeStringStructPubSubType::getKey(
     return true;
 }
 
-void LargeStringStructPubSubType::register_type_object_representation() const
+void LargeStringStructPubSubType::register_type_object_representation()
 {
-    register_strings_type_objects();
+    register_LargeStringStruct_type_identifier(type_identifiers_);
 }
 
 LargeWStringStructPubSubType::LargeWStringStructPubSubType()
@@ -1184,9 +1184,9 @@ bool LargeWStringStructPubSubType::getKey(
     return true;
 }
 
-void LargeWStringStructPubSubType::register_type_object_representation() const
+void LargeWStringStructPubSubType::register_type_object_representation()
 {
-    register_strings_type_objects();
+    register_LargeWStringStruct_type_identifier(type_identifiers_);
 }
 
 

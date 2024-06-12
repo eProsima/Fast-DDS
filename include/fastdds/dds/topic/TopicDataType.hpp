@@ -24,6 +24,7 @@
 #include <string>
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobject.hpp>
 #include <fastdds/fastdds_dll.hpp>
 #include <fastdds/rtps/common/CdrSerialization.hpp>
 #include <fastdds/rtps/common/InstanceHandle.h>
@@ -203,99 +204,13 @@ public:
     }
 
     /**
-     * Get the type identifier
+     * Get the type identifiers
      *
-     * @return TypeIdV1
+     * @return @ref xtypes::TypeIdentifierPair
      */
-    FASTDDS_EXPORTED_API inline const std::shared_ptr<TypeIdV1> type_identifier() const
+    FASTDDS_EXPORTED_API inline const xtypes::TypeIdentifierPair& type_identifiers() const
     {
-        return type_identifier_;
-    }
-
-    /**
-     * Set type identifier
-     *
-     * @param id new value for TypeIdV1
-     */
-    FASTDDS_EXPORTED_API inline void type_identifier(
-            const TypeIdV1& id)
-    {
-        type_identifier_ = std::make_shared<TypeIdV1>(id);
-    }
-
-    /**
-     * Set type identifier
-     *
-     * @param id shared pointer to TypeIdV1
-     */
-    FASTDDS_EXPORTED_API inline void type_identifier(
-            const std::shared_ptr<TypeIdV1> id)
-    {
-        type_identifier_ = std::move(id);
-    }
-
-    /**
-     * Get the type object
-     *
-     * @return TypeObjectV1
-     */
-    FASTDDS_EXPORTED_API inline const std::shared_ptr<TypeObjectV1> type_object() const
-    {
-        return type_object_;
-    }
-
-    /**
-     * Set type object
-     *
-     * @param object new value for TypeObjectV1
-     */
-    FASTDDS_EXPORTED_API inline void type_object(
-            const TypeObjectV1& object)
-    {
-        type_object_ = std::make_shared<TypeObjectV1>(object);
-    }
-
-    /**
-     * Set type object
-     *
-     * @param object shared pointer to TypeObjectV1
-     */
-    FASTDDS_EXPORTED_API inline void type_object(
-            std::shared_ptr<TypeObjectV1> object)
-    {
-        type_object_ = std::move(object);
-    }
-
-    /**
-     * Get the type information
-     *
-     * @return TypeInformationParameter
-     */
-    FASTDDS_EXPORTED_API inline const std::shared_ptr<xtypes::TypeInformationParameter> type_information() const
-    {
-        return type_information_;
-    }
-
-    /**
-     * Set type information
-     *
-     * @param info new value for TypeInformationParameter
-     */
-    FASTDDS_EXPORTED_API inline void type_information(
-            const xtypes::TypeInformationParameter& info)
-    {
-        type_information_ = std::make_shared<xtypes::TypeInformationParameter>(info);
-    }
-
-    /**
-     * Set type information
-     *
-     * @param info shared pointer to TypeInformationParameter
-     */
-    FASTDDS_EXPORTED_API inline void type_information(
-            std::shared_ptr<xtypes::TypeInformationParameter> info)
-    {
-        type_information_ = std::move(info);
+        return type_identifiers_;
     }
 
     /**
@@ -340,7 +255,7 @@ public:
     /**
      * @brief Register TypeObject type representation
      */
-    FASTDDS_EXPORTED_API virtual inline void register_type_object_representation() const
+    FASTDDS_EXPORTED_API virtual inline void register_type_object_representation()
     {
     }
 
@@ -353,12 +268,7 @@ public:
 
 protected:
 
-    //!Type Identifier XTYPES 1.1
-    std::shared_ptr<TypeIdV1> type_identifier_;
-    //!Type Object XTYPES 1.1
-    std::shared_ptr<TypeObjectV1> type_object_;
-    //!XTYPES 1.2
-    std::shared_ptr<xtypes::TypeInformationParameter> type_information_;
+    xtypes::TypeIdentifierPair type_identifiers_;
 
 private:
 

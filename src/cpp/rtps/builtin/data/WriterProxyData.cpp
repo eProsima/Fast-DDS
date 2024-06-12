@@ -955,13 +955,13 @@ bool WriterProxyData::readFromCDRMessage(
                     case fastdds::dds::PID_TYPE_IDV1:
                     {
                         EPROSIMA_LOG_WARNING(RTPS_PROXY_DATA,
-                                "Reception of TypeIdentifiers is not supported. They will be ignored");
+                                "Reception of TypeIdentifiers is not supported. They will be ignored.");
                         break;
                     }
                     case fastdds::dds::PID_TYPE_OBJECTV1:
                     {
                         EPROSIMA_LOG_WARNING(RTPS_PROXY_DATA,
-                                "Reception of TypeObjects is not supported. They will be ignored");
+                                "Reception of TypeObjects is not supported. They will be ignored.");
                         break;
                     }
                     case fastdds::dds::PID_TYPE_INFORMATION:

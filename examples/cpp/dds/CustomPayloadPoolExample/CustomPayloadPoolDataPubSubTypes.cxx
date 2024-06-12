@@ -219,9 +219,9 @@ bool CustomPayloadPoolDataPubSubType::getKey(
     return true;
 }
 
-void CustomPayloadPoolDataPubSubType::register_type_object_representation() const
+void CustomPayloadPoolDataPubSubType::register_type_object_representation()
 {
-    register_CustomPayloadPoolData_type_objects();
+    register_CustomPayloadPoolData_type_identifier(type_identifiers_);
 }
 
 

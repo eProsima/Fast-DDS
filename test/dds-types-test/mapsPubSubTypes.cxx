@@ -219,9 +219,9 @@ bool MapShortShortPubSubType::getKey(
     return true;
 }
 
-void MapShortShortPubSubType::register_type_object_representation() const
+void MapShortShortPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapShortShort_type_identifier(type_identifiers_);
 }
 
 MapShortUShortPubSubType::MapShortUShortPubSubType()
@@ -412,9 +412,9 @@ bool MapShortUShortPubSubType::getKey(
     return true;
 }
 
-void MapShortUShortPubSubType::register_type_object_representation() const
+void MapShortUShortPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapShortUShort_type_identifier(type_identifiers_);
 }
 
 MapShortLongPubSubType::MapShortLongPubSubType()
@@ -605,9 +605,9 @@ bool MapShortLongPubSubType::getKey(
     return true;
 }
 
-void MapShortLongPubSubType::register_type_object_representation() const
+void MapShortLongPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapShortLong_type_identifier(type_identifiers_);
 }
 
 MapShortULongPubSubType::MapShortULongPubSubType()
@@ -798,9 +798,9 @@ bool MapShortULongPubSubType::getKey(
     return true;
 }
 
-void MapShortULongPubSubType::register_type_object_representation() const
+void MapShortULongPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapShortULong_type_identifier(type_identifiers_);
 }
 
 MapShortLongLongPubSubType::MapShortLongLongPubSubType()
@@ -991,9 +991,9 @@ bool MapShortLongLongPubSubType::getKey(
     return true;
 }
 
-void MapShortLongLongPubSubType::register_type_object_representation() const
+void MapShortLongLongPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapShortLongLong_type_identifier(type_identifiers_);
 }
 
 MapShortULongLongPubSubType::MapShortULongLongPubSubType()
@@ -1184,9 +1184,9 @@ bool MapShortULongLongPubSubType::getKey(
     return true;
 }
 
-void MapShortULongLongPubSubType::register_type_object_representation() const
+void MapShortULongLongPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapShortULongLong_type_identifier(type_identifiers_);
 }
 
 MapShortFloatPubSubType::MapShortFloatPubSubType()
@@ -1377,9 +1377,9 @@ bool MapShortFloatPubSubType::getKey(
     return true;
 }
 
-void MapShortFloatPubSubType::register_type_object_representation() const
+void MapShortFloatPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapShortFloat_type_identifier(type_identifiers_);
 }
 
 MapShortDoublePubSubType::MapShortDoublePubSubType()
@@ -1570,9 +1570,9 @@ bool MapShortDoublePubSubType::getKey(
     return true;
 }
 
-void MapShortDoublePubSubType::register_type_object_representation() const
+void MapShortDoublePubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapShortDouble_type_identifier(type_identifiers_);
 }
 
 MapShortLongDoublePubSubType::MapShortLongDoublePubSubType()
@@ -1763,9 +1763,9 @@ bool MapShortLongDoublePubSubType::getKey(
     return true;
 }
 
-void MapShortLongDoublePubSubType::register_type_object_representation() const
+void MapShortLongDoublePubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapShortLongDouble_type_identifier(type_identifiers_);
 }
 
 MapShortBooleanPubSubType::MapShortBooleanPubSubType()
@@ -1956,9 +1956,9 @@ bool MapShortBooleanPubSubType::getKey(
     return true;
 }
 
-void MapShortBooleanPubSubType::register_type_object_representation() const
+void MapShortBooleanPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapShortBoolean_type_identifier(type_identifiers_);
 }
 
 MapShortOctetPubSubType::MapShortOctetPubSubType()
@@ -2149,9 +2149,9 @@ bool MapShortOctetPubSubType::getKey(
     return true;
 }
 
-void MapShortOctetPubSubType::register_type_object_representation() const
+void MapShortOctetPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapShortOctet_type_identifier(type_identifiers_);
 }
 
 MapShortCharPubSubType::MapShortCharPubSubType()
@@ -2342,9 +2342,9 @@ bool MapShortCharPubSubType::getKey(
     return true;
 }
 
-void MapShortCharPubSubType::register_type_object_representation() const
+void MapShortCharPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapShortChar_type_identifier(type_identifiers_);
 }
 
 MapShortWCharPubSubType::MapShortWCharPubSubType()
@@ -2535,9 +2535,9 @@ bool MapShortWCharPubSubType::getKey(
     return true;
 }
 
-void MapShortWCharPubSubType::register_type_object_representation() const
+void MapShortWCharPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapShortWChar_type_identifier(type_identifiers_);
 }
 
 MapShortStringPubSubType::MapShortStringPubSubType()
@@ -2728,9 +2728,9 @@ bool MapShortStringPubSubType::getKey(
     return true;
 }
 
-void MapShortStringPubSubType::register_type_object_representation() const
+void MapShortStringPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapShortString_type_identifier(type_identifiers_);
 }
 
 MapShortWStringPubSubType::MapShortWStringPubSubType()
@@ -2921,9 +2921,9 @@ bool MapShortWStringPubSubType::getKey(
     return true;
 }
 
-void MapShortWStringPubSubType::register_type_object_representation() const
+void MapShortWStringPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapShortWString_type_identifier(type_identifiers_);
 }
 
 MapShortInnerAliasBoundedStringHelperPubSubType::MapShortInnerAliasBoundedStringHelperPubSubType()
@@ -3114,9 +3114,9 @@ bool MapShortInnerAliasBoundedStringHelperPubSubType::getKey(
     return true;
 }
 
-void MapShortInnerAliasBoundedStringHelperPubSubType::register_type_object_representation() const
+void MapShortInnerAliasBoundedStringHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapShortInnerAliasBoundedStringHelper_type_identifier(type_identifiers_);
 }
 
 MapShortInnerAliasBoundedWStringHelperPubSubType::MapShortInnerAliasBoundedWStringHelperPubSubType()
@@ -3307,9 +3307,9 @@ bool MapShortInnerAliasBoundedWStringHelperPubSubType::getKey(
     return true;
 }
 
-void MapShortInnerAliasBoundedWStringHelperPubSubType::register_type_object_representation() const
+void MapShortInnerAliasBoundedWStringHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapShortInnerAliasBoundedWStringHelper_type_identifier(type_identifiers_);
 }
 
 MapShortInnerEnumHelperPubSubType::MapShortInnerEnumHelperPubSubType()
@@ -3500,9 +3500,9 @@ bool MapShortInnerEnumHelperPubSubType::getKey(
     return true;
 }
 
-void MapShortInnerEnumHelperPubSubType::register_type_object_representation() const
+void MapShortInnerEnumHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapShortInnerEnumHelper_type_identifier(type_identifiers_);
 }
 
 MapShortInnerBitMaskHelperPubSubType::MapShortInnerBitMaskHelperPubSubType()
@@ -3693,9 +3693,9 @@ bool MapShortInnerBitMaskHelperPubSubType::getKey(
     return true;
 }
 
-void MapShortInnerBitMaskHelperPubSubType::register_type_object_representation() const
+void MapShortInnerBitMaskHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapShortInnerBitMaskHelper_type_identifier(type_identifiers_);
 }
 
 MapShortInnerAliasHelperPubSubType::MapShortInnerAliasHelperPubSubType()
@@ -3886,9 +3886,9 @@ bool MapShortInnerAliasHelperPubSubType::getKey(
     return true;
 }
 
-void MapShortInnerAliasHelperPubSubType::register_type_object_representation() const
+void MapShortInnerAliasHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapShortInnerAliasHelper_type_identifier(type_identifiers_);
 }
 
 MapShortInnerAliasArrayHelperPubSubType::MapShortInnerAliasArrayHelperPubSubType()
@@ -4079,9 +4079,9 @@ bool MapShortInnerAliasArrayHelperPubSubType::getKey(
     return true;
 }
 
-void MapShortInnerAliasArrayHelperPubSubType::register_type_object_representation() const
+void MapShortInnerAliasArrayHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapShortInnerAliasArrayHelper_type_identifier(type_identifiers_);
 }
 
 MapShortInnerAliasSequenceHelperPubSubType::MapShortInnerAliasSequenceHelperPubSubType()
@@ -4272,9 +4272,9 @@ bool MapShortInnerAliasSequenceHelperPubSubType::getKey(
     return true;
 }
 
-void MapShortInnerAliasSequenceHelperPubSubType::register_type_object_representation() const
+void MapShortInnerAliasSequenceHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapShortInnerAliasSequenceHelper_type_identifier(type_identifiers_);
 }
 
 MapShortInnerAliasMapHelperPubSubType::MapShortInnerAliasMapHelperPubSubType()
@@ -4465,9 +4465,9 @@ bool MapShortInnerAliasMapHelperPubSubType::getKey(
     return true;
 }
 
-void MapShortInnerAliasMapHelperPubSubType::register_type_object_representation() const
+void MapShortInnerAliasMapHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapShortInnerAliasMapHelper_type_identifier(type_identifiers_);
 }
 
 MapShortInnerUnionHelperPubSubType::MapShortInnerUnionHelperPubSubType()
@@ -4658,9 +4658,9 @@ bool MapShortInnerUnionHelperPubSubType::getKey(
     return true;
 }
 
-void MapShortInnerUnionHelperPubSubType::register_type_object_representation() const
+void MapShortInnerUnionHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapShortInnerUnionHelper_type_identifier(type_identifiers_);
 }
 
 MapShortInnerStructureHelperPubSubType::MapShortInnerStructureHelperPubSubType()
@@ -4851,9 +4851,9 @@ bool MapShortInnerStructureHelperPubSubType::getKey(
     return true;
 }
 
-void MapShortInnerStructureHelperPubSubType::register_type_object_representation() const
+void MapShortInnerStructureHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapShortInnerStructureHelper_type_identifier(type_identifiers_);
 }
 
 MapShortInnerBitsetHelperPubSubType::MapShortInnerBitsetHelperPubSubType()
@@ -5044,9 +5044,9 @@ bool MapShortInnerBitsetHelperPubSubType::getKey(
     return true;
 }
 
-void MapShortInnerBitsetHelperPubSubType::register_type_object_representation() const
+void MapShortInnerBitsetHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapShortInnerBitsetHelper_type_identifier(type_identifiers_);
 }
 
 MapUShortShortPubSubType::MapUShortShortPubSubType()
@@ -5237,9 +5237,9 @@ bool MapUShortShortPubSubType::getKey(
     return true;
 }
 
-void MapUShortShortPubSubType::register_type_object_representation() const
+void MapUShortShortPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapUShortShort_type_identifier(type_identifiers_);
 }
 
 MapUShortUShortPubSubType::MapUShortUShortPubSubType()
@@ -5430,9 +5430,9 @@ bool MapUShortUShortPubSubType::getKey(
     return true;
 }
 
-void MapUShortUShortPubSubType::register_type_object_representation() const
+void MapUShortUShortPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapUShortUShort_type_identifier(type_identifiers_);
 }
 
 MapUShortLongPubSubType::MapUShortLongPubSubType()
@@ -5623,9 +5623,9 @@ bool MapUShortLongPubSubType::getKey(
     return true;
 }
 
-void MapUShortLongPubSubType::register_type_object_representation() const
+void MapUShortLongPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapUShortLong_type_identifier(type_identifiers_);
 }
 
 MapUShortULongPubSubType::MapUShortULongPubSubType()
@@ -5816,9 +5816,9 @@ bool MapUShortULongPubSubType::getKey(
     return true;
 }
 
-void MapUShortULongPubSubType::register_type_object_representation() const
+void MapUShortULongPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapUShortULong_type_identifier(type_identifiers_);
 }
 
 MapUShortLongLongPubSubType::MapUShortLongLongPubSubType()
@@ -6009,9 +6009,9 @@ bool MapUShortLongLongPubSubType::getKey(
     return true;
 }
 
-void MapUShortLongLongPubSubType::register_type_object_representation() const
+void MapUShortLongLongPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapUShortLongLong_type_identifier(type_identifiers_);
 }
 
 MapUShortULongLongPubSubType::MapUShortULongLongPubSubType()
@@ -6202,9 +6202,9 @@ bool MapUShortULongLongPubSubType::getKey(
     return true;
 }
 
-void MapUShortULongLongPubSubType::register_type_object_representation() const
+void MapUShortULongLongPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapUShortULongLong_type_identifier(type_identifiers_);
 }
 
 MapUShortFloatPubSubType::MapUShortFloatPubSubType()
@@ -6395,9 +6395,9 @@ bool MapUShortFloatPubSubType::getKey(
     return true;
 }
 
-void MapUShortFloatPubSubType::register_type_object_representation() const
+void MapUShortFloatPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapUShortFloat_type_identifier(type_identifiers_);
 }
 
 MapUShortDoublePubSubType::MapUShortDoublePubSubType()
@@ -6588,9 +6588,9 @@ bool MapUShortDoublePubSubType::getKey(
     return true;
 }
 
-void MapUShortDoublePubSubType::register_type_object_representation() const
+void MapUShortDoublePubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapUShortDouble_type_identifier(type_identifiers_);
 }
 
 MapUShortLongDoublePubSubType::MapUShortLongDoublePubSubType()
@@ -6781,9 +6781,9 @@ bool MapUShortLongDoublePubSubType::getKey(
     return true;
 }
 
-void MapUShortLongDoublePubSubType::register_type_object_representation() const
+void MapUShortLongDoublePubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapUShortLongDouble_type_identifier(type_identifiers_);
 }
 
 MapUShortBooleanPubSubType::MapUShortBooleanPubSubType()
@@ -6974,9 +6974,9 @@ bool MapUShortBooleanPubSubType::getKey(
     return true;
 }
 
-void MapUShortBooleanPubSubType::register_type_object_representation() const
+void MapUShortBooleanPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapUShortBoolean_type_identifier(type_identifiers_);
 }
 
 MapUShortOctetPubSubType::MapUShortOctetPubSubType()
@@ -7167,9 +7167,9 @@ bool MapUShortOctetPubSubType::getKey(
     return true;
 }
 
-void MapUShortOctetPubSubType::register_type_object_representation() const
+void MapUShortOctetPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapUShortOctet_type_identifier(type_identifiers_);
 }
 
 MapUShortCharPubSubType::MapUShortCharPubSubType()
@@ -7360,9 +7360,9 @@ bool MapUShortCharPubSubType::getKey(
     return true;
 }
 
-void MapUShortCharPubSubType::register_type_object_representation() const
+void MapUShortCharPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapUShortChar_type_identifier(type_identifiers_);
 }
 
 MapUShortWCharPubSubType::MapUShortWCharPubSubType()
@@ -7553,9 +7553,9 @@ bool MapUShortWCharPubSubType::getKey(
     return true;
 }
 
-void MapUShortWCharPubSubType::register_type_object_representation() const
+void MapUShortWCharPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapUShortWChar_type_identifier(type_identifiers_);
 }
 
 MapUShortStringPubSubType::MapUShortStringPubSubType()
@@ -7746,9 +7746,9 @@ bool MapUShortStringPubSubType::getKey(
     return true;
 }
 
-void MapUShortStringPubSubType::register_type_object_representation() const
+void MapUShortStringPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapUShortString_type_identifier(type_identifiers_);
 }
 
 MapUShortWStringPubSubType::MapUShortWStringPubSubType()
@@ -7939,9 +7939,9 @@ bool MapUShortWStringPubSubType::getKey(
     return true;
 }
 
-void MapUShortWStringPubSubType::register_type_object_representation() const
+void MapUShortWStringPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapUShortWString_type_identifier(type_identifiers_);
 }
 
 MapUShortInnerAliasBoundedStringHelperPubSubType::MapUShortInnerAliasBoundedStringHelperPubSubType()
@@ -8132,9 +8132,9 @@ bool MapUShortInnerAliasBoundedStringHelperPubSubType::getKey(
     return true;
 }
 
-void MapUShortInnerAliasBoundedStringHelperPubSubType::register_type_object_representation() const
+void MapUShortInnerAliasBoundedStringHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapUShortInnerAliasBoundedStringHelper_type_identifier(type_identifiers_);
 }
 
 MapUShortInnerAliasBoundedWStringHelperPubSubType::MapUShortInnerAliasBoundedWStringHelperPubSubType()
@@ -8325,9 +8325,9 @@ bool MapUShortInnerAliasBoundedWStringHelperPubSubType::getKey(
     return true;
 }
 
-void MapUShortInnerAliasBoundedWStringHelperPubSubType::register_type_object_representation() const
+void MapUShortInnerAliasBoundedWStringHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapUShortInnerAliasBoundedWStringHelper_type_identifier(type_identifiers_);
 }
 
 MapUShortInnerEnumHelperPubSubType::MapUShortInnerEnumHelperPubSubType()
@@ -8518,9 +8518,9 @@ bool MapUShortInnerEnumHelperPubSubType::getKey(
     return true;
 }
 
-void MapUShortInnerEnumHelperPubSubType::register_type_object_representation() const
+void MapUShortInnerEnumHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapUShortInnerEnumHelper_type_identifier(type_identifiers_);
 }
 
 MapUShortInnerBitMaskHelperPubSubType::MapUShortInnerBitMaskHelperPubSubType()
@@ -8711,9 +8711,9 @@ bool MapUShortInnerBitMaskHelperPubSubType::getKey(
     return true;
 }
 
-void MapUShortInnerBitMaskHelperPubSubType::register_type_object_representation() const
+void MapUShortInnerBitMaskHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapUShortInnerBitMaskHelper_type_identifier(type_identifiers_);
 }
 
 MapUShortInnerAliasHelperPubSubType::MapUShortInnerAliasHelperPubSubType()
@@ -8904,9 +8904,9 @@ bool MapUShortInnerAliasHelperPubSubType::getKey(
     return true;
 }
 
-void MapUShortInnerAliasHelperPubSubType::register_type_object_representation() const
+void MapUShortInnerAliasHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapUShortInnerAliasHelper_type_identifier(type_identifiers_);
 }
 
 MapUShortInnerAliasArrayHelperPubSubType::MapUShortInnerAliasArrayHelperPubSubType()
@@ -9097,9 +9097,9 @@ bool MapUShortInnerAliasArrayHelperPubSubType::getKey(
     return true;
 }
 
-void MapUShortInnerAliasArrayHelperPubSubType::register_type_object_representation() const
+void MapUShortInnerAliasArrayHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapUShortInnerAliasArrayHelper_type_identifier(type_identifiers_);
 }
 
 MapUShortInnerAliasSequenceHelperPubSubType::MapUShortInnerAliasSequenceHelperPubSubType()
@@ -9290,9 +9290,9 @@ bool MapUShortInnerAliasSequenceHelperPubSubType::getKey(
     return true;
 }
 
-void MapUShortInnerAliasSequenceHelperPubSubType::register_type_object_representation() const
+void MapUShortInnerAliasSequenceHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapUShortInnerAliasSequenceHelper_type_identifier(type_identifiers_);
 }
 
 MapUShortInnerAliasMapHelperPubSubType::MapUShortInnerAliasMapHelperPubSubType()
@@ -9483,9 +9483,9 @@ bool MapUShortInnerAliasMapHelperPubSubType::getKey(
     return true;
 }
 
-void MapUShortInnerAliasMapHelperPubSubType::register_type_object_representation() const
+void MapUShortInnerAliasMapHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapUShortInnerAliasMapHelper_type_identifier(type_identifiers_);
 }
 
 MapUShortInnerUnionHelperPubSubType::MapUShortInnerUnionHelperPubSubType()
@@ -9676,9 +9676,9 @@ bool MapUShortInnerUnionHelperPubSubType::getKey(
     return true;
 }
 
-void MapUShortInnerUnionHelperPubSubType::register_type_object_representation() const
+void MapUShortInnerUnionHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapUShortInnerUnionHelper_type_identifier(type_identifiers_);
 }
 
 MapUShortInnerStructureHelperPubSubType::MapUShortInnerStructureHelperPubSubType()
@@ -9869,9 +9869,9 @@ bool MapUShortInnerStructureHelperPubSubType::getKey(
     return true;
 }
 
-void MapUShortInnerStructureHelperPubSubType::register_type_object_representation() const
+void MapUShortInnerStructureHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapUShortInnerStructureHelper_type_identifier(type_identifiers_);
 }
 
 MapUShortInnerBitsetHelperPubSubType::MapUShortInnerBitsetHelperPubSubType()
@@ -10062,9 +10062,9 @@ bool MapUShortInnerBitsetHelperPubSubType::getKey(
     return true;
 }
 
-void MapUShortInnerBitsetHelperPubSubType::register_type_object_representation() const
+void MapUShortInnerBitsetHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapUShortInnerBitsetHelper_type_identifier(type_identifiers_);
 }
 
 MapLongShortPubSubType::MapLongShortPubSubType()
@@ -10255,9 +10255,9 @@ bool MapLongShortPubSubType::getKey(
     return true;
 }
 
-void MapLongShortPubSubType::register_type_object_representation() const
+void MapLongShortPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapLongShort_type_identifier(type_identifiers_);
 }
 
 MapLongUShortPubSubType::MapLongUShortPubSubType()
@@ -10448,9 +10448,9 @@ bool MapLongUShortPubSubType::getKey(
     return true;
 }
 
-void MapLongUShortPubSubType::register_type_object_representation() const
+void MapLongUShortPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapLongUShort_type_identifier(type_identifiers_);
 }
 
 MapLongLongPubSubType::MapLongLongPubSubType()
@@ -10641,9 +10641,9 @@ bool MapLongLongPubSubType::getKey(
     return true;
 }
 
-void MapLongLongPubSubType::register_type_object_representation() const
+void MapLongLongPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapLongLong_type_identifier(type_identifiers_);
 }
 
 MapLongULongPubSubType::MapLongULongPubSubType()
@@ -10834,9 +10834,9 @@ bool MapLongULongPubSubType::getKey(
     return true;
 }
 
-void MapLongULongPubSubType::register_type_object_representation() const
+void MapLongULongPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapLongULong_type_identifier(type_identifiers_);
 }
 
 MapLongKeyLongLongValuePubSubType::MapLongKeyLongLongValuePubSubType()
@@ -11027,9 +11027,9 @@ bool MapLongKeyLongLongValuePubSubType::getKey(
     return true;
 }
 
-void MapLongKeyLongLongValuePubSubType::register_type_object_representation() const
+void MapLongKeyLongLongValuePubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapLongKeyLongLongValue_type_identifier(type_identifiers_);
 }
 
 MapLongULongLongPubSubType::MapLongULongLongPubSubType()
@@ -11220,9 +11220,9 @@ bool MapLongULongLongPubSubType::getKey(
     return true;
 }
 
-void MapLongULongLongPubSubType::register_type_object_representation() const
+void MapLongULongLongPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapLongULongLong_type_identifier(type_identifiers_);
 }
 
 MapLongFloatPubSubType::MapLongFloatPubSubType()
@@ -11413,9 +11413,9 @@ bool MapLongFloatPubSubType::getKey(
     return true;
 }
 
-void MapLongFloatPubSubType::register_type_object_representation() const
+void MapLongFloatPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapLongFloat_type_identifier(type_identifiers_);
 }
 
 MapLongDoublePubSubType::MapLongDoublePubSubType()
@@ -11606,9 +11606,9 @@ bool MapLongDoublePubSubType::getKey(
     return true;
 }
 
-void MapLongDoublePubSubType::register_type_object_representation() const
+void MapLongDoublePubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapLongDouble_type_identifier(type_identifiers_);
 }
 
 MapLongKeyLongDoubleValuePubSubType::MapLongKeyLongDoubleValuePubSubType()
@@ -11799,9 +11799,9 @@ bool MapLongKeyLongDoubleValuePubSubType::getKey(
     return true;
 }
 
-void MapLongKeyLongDoubleValuePubSubType::register_type_object_representation() const
+void MapLongKeyLongDoubleValuePubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapLongKeyLongDoubleValue_type_identifier(type_identifiers_);
 }
 
 MapLongBooleanPubSubType::MapLongBooleanPubSubType()
@@ -11992,9 +11992,9 @@ bool MapLongBooleanPubSubType::getKey(
     return true;
 }
 
-void MapLongBooleanPubSubType::register_type_object_representation() const
+void MapLongBooleanPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapLongBoolean_type_identifier(type_identifiers_);
 }
 
 MapLongOctetPubSubType::MapLongOctetPubSubType()
@@ -12185,9 +12185,9 @@ bool MapLongOctetPubSubType::getKey(
     return true;
 }
 
-void MapLongOctetPubSubType::register_type_object_representation() const
+void MapLongOctetPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapLongOctet_type_identifier(type_identifiers_);
 }
 
 MapLongCharPubSubType::MapLongCharPubSubType()
@@ -12378,9 +12378,9 @@ bool MapLongCharPubSubType::getKey(
     return true;
 }
 
-void MapLongCharPubSubType::register_type_object_representation() const
+void MapLongCharPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapLongChar_type_identifier(type_identifiers_);
 }
 
 MapLongWCharPubSubType::MapLongWCharPubSubType()
@@ -12571,9 +12571,9 @@ bool MapLongWCharPubSubType::getKey(
     return true;
 }
 
-void MapLongWCharPubSubType::register_type_object_representation() const
+void MapLongWCharPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapLongWChar_type_identifier(type_identifiers_);
 }
 
 MapLongStringPubSubType::MapLongStringPubSubType()
@@ -12764,9 +12764,9 @@ bool MapLongStringPubSubType::getKey(
     return true;
 }
 
-void MapLongStringPubSubType::register_type_object_representation() const
+void MapLongStringPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapLongString_type_identifier(type_identifiers_);
 }
 
 MapLongWStringPubSubType::MapLongWStringPubSubType()
@@ -12957,9 +12957,9 @@ bool MapLongWStringPubSubType::getKey(
     return true;
 }
 
-void MapLongWStringPubSubType::register_type_object_representation() const
+void MapLongWStringPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapLongWString_type_identifier(type_identifiers_);
 }
 
 MapLongInnerAliasBoundedStringHelperPubSubType::MapLongInnerAliasBoundedStringHelperPubSubType()
@@ -13150,9 +13150,9 @@ bool MapLongInnerAliasBoundedStringHelperPubSubType::getKey(
     return true;
 }
 
-void MapLongInnerAliasBoundedStringHelperPubSubType::register_type_object_representation() const
+void MapLongInnerAliasBoundedStringHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapLongInnerAliasBoundedStringHelper_type_identifier(type_identifiers_);
 }
 
 MapLongInnerAliasBoundedWStringHelperPubSubType::MapLongInnerAliasBoundedWStringHelperPubSubType()
@@ -13343,9 +13343,9 @@ bool MapLongInnerAliasBoundedWStringHelperPubSubType::getKey(
     return true;
 }
 
-void MapLongInnerAliasBoundedWStringHelperPubSubType::register_type_object_representation() const
+void MapLongInnerAliasBoundedWStringHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapLongInnerAliasBoundedWStringHelper_type_identifier(type_identifiers_);
 }
 
 MapLongInnerEnumHelperPubSubType::MapLongInnerEnumHelperPubSubType()
@@ -13536,9 +13536,9 @@ bool MapLongInnerEnumHelperPubSubType::getKey(
     return true;
 }
 
-void MapLongInnerEnumHelperPubSubType::register_type_object_representation() const
+void MapLongInnerEnumHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapLongInnerEnumHelper_type_identifier(type_identifiers_);
 }
 
 MapLongInnerBitMaskHelperPubSubType::MapLongInnerBitMaskHelperPubSubType()
@@ -13729,9 +13729,9 @@ bool MapLongInnerBitMaskHelperPubSubType::getKey(
     return true;
 }
 
-void MapLongInnerBitMaskHelperPubSubType::register_type_object_representation() const
+void MapLongInnerBitMaskHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapLongInnerBitMaskHelper_type_identifier(type_identifiers_);
 }
 
 MapLongInnerAliasHelperPubSubType::MapLongInnerAliasHelperPubSubType()
@@ -13922,9 +13922,9 @@ bool MapLongInnerAliasHelperPubSubType::getKey(
     return true;
 }
 
-void MapLongInnerAliasHelperPubSubType::register_type_object_representation() const
+void MapLongInnerAliasHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapLongInnerAliasHelper_type_identifier(type_identifiers_);
 }
 
 MapLongInnerAliasArrayHelperPubSubType::MapLongInnerAliasArrayHelperPubSubType()
@@ -14115,9 +14115,9 @@ bool MapLongInnerAliasArrayHelperPubSubType::getKey(
     return true;
 }
 
-void MapLongInnerAliasArrayHelperPubSubType::register_type_object_representation() const
+void MapLongInnerAliasArrayHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapLongInnerAliasArrayHelper_type_identifier(type_identifiers_);
 }
 
 MapLongInnerAliasSequenceHelperPubSubType::MapLongInnerAliasSequenceHelperPubSubType()
@@ -14308,9 +14308,9 @@ bool MapLongInnerAliasSequenceHelperPubSubType::getKey(
     return true;
 }
 
-void MapLongInnerAliasSequenceHelperPubSubType::register_type_object_representation() const
+void MapLongInnerAliasSequenceHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapLongInnerAliasSequenceHelper_type_identifier(type_identifiers_);
 }
 
 MapLongInnerAliasMapHelperPubSubType::MapLongInnerAliasMapHelperPubSubType()
@@ -14501,9 +14501,9 @@ bool MapLongInnerAliasMapHelperPubSubType::getKey(
     return true;
 }
 
-void MapLongInnerAliasMapHelperPubSubType::register_type_object_representation() const
+void MapLongInnerAliasMapHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapLongInnerAliasMapHelper_type_identifier(type_identifiers_);
 }
 
 MapLongInnerUnionHelperPubSubType::MapLongInnerUnionHelperPubSubType()
@@ -14694,9 +14694,9 @@ bool MapLongInnerUnionHelperPubSubType::getKey(
     return true;
 }
 
-void MapLongInnerUnionHelperPubSubType::register_type_object_representation() const
+void MapLongInnerUnionHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapLongInnerUnionHelper_type_identifier(type_identifiers_);
 }
 
 MapLongInnerStructureHelperPubSubType::MapLongInnerStructureHelperPubSubType()
@@ -14887,9 +14887,9 @@ bool MapLongInnerStructureHelperPubSubType::getKey(
     return true;
 }
 
-void MapLongInnerStructureHelperPubSubType::register_type_object_representation() const
+void MapLongInnerStructureHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapLongInnerStructureHelper_type_identifier(type_identifiers_);
 }
 
 MapLongInnerBitsetHelperPubSubType::MapLongInnerBitsetHelperPubSubType()
@@ -15080,9 +15080,9 @@ bool MapLongInnerBitsetHelperPubSubType::getKey(
     return true;
 }
 
-void MapLongInnerBitsetHelperPubSubType::register_type_object_representation() const
+void MapLongInnerBitsetHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapLongInnerBitsetHelper_type_identifier(type_identifiers_);
 }
 
 MapULongShortPubSubType::MapULongShortPubSubType()
@@ -15273,9 +15273,9 @@ bool MapULongShortPubSubType::getKey(
     return true;
 }
 
-void MapULongShortPubSubType::register_type_object_representation() const
+void MapULongShortPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapULongShort_type_identifier(type_identifiers_);
 }
 
 MapULongUShortPubSubType::MapULongUShortPubSubType()
@@ -15466,9 +15466,9 @@ bool MapULongUShortPubSubType::getKey(
     return true;
 }
 
-void MapULongUShortPubSubType::register_type_object_representation() const
+void MapULongUShortPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapULongUShort_type_identifier(type_identifiers_);
 }
 
 MapULongLongPubSubType::MapULongLongPubSubType()
@@ -15659,9 +15659,9 @@ bool MapULongLongPubSubType::getKey(
     return true;
 }
 
-void MapULongLongPubSubType::register_type_object_representation() const
+void MapULongLongPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapULongLong_type_identifier(type_identifiers_);
 }
 
 MapULongULongPubSubType::MapULongULongPubSubType()
@@ -15852,9 +15852,9 @@ bool MapULongULongPubSubType::getKey(
     return true;
 }
 
-void MapULongULongPubSubType::register_type_object_representation() const
+void MapULongULongPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapULongULong_type_identifier(type_identifiers_);
 }
 
 MapKeyULongValueLongLongPubSubType::MapKeyULongValueLongLongPubSubType()
@@ -16045,9 +16045,9 @@ bool MapKeyULongValueLongLongPubSubType::getKey(
     return true;
 }
 
-void MapKeyULongValueLongLongPubSubType::register_type_object_representation() const
+void MapKeyULongValueLongLongPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapKeyULongValueLongLong_type_identifier(type_identifiers_);
 }
 
 MapULongULongLongPubSubType::MapULongULongLongPubSubType()
@@ -16238,9 +16238,9 @@ bool MapULongULongLongPubSubType::getKey(
     return true;
 }
 
-void MapULongULongLongPubSubType::register_type_object_representation() const
+void MapULongULongLongPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapULongULongLong_type_identifier(type_identifiers_);
 }
 
 MapULongFloatPubSubType::MapULongFloatPubSubType()
@@ -16431,9 +16431,9 @@ bool MapULongFloatPubSubType::getKey(
     return true;
 }
 
-void MapULongFloatPubSubType::register_type_object_representation() const
+void MapULongFloatPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapULongFloat_type_identifier(type_identifiers_);
 }
 
 MapULongDoublePubSubType::MapULongDoublePubSubType()
@@ -16624,9 +16624,9 @@ bool MapULongDoublePubSubType::getKey(
     return true;
 }
 
-void MapULongDoublePubSubType::register_type_object_representation() const
+void MapULongDoublePubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapULongDouble_type_identifier(type_identifiers_);
 }
 
 MapKeyULongValueLongDoublePubSubType::MapKeyULongValueLongDoublePubSubType()
@@ -16817,9 +16817,9 @@ bool MapKeyULongValueLongDoublePubSubType::getKey(
     return true;
 }
 
-void MapKeyULongValueLongDoublePubSubType::register_type_object_representation() const
+void MapKeyULongValueLongDoublePubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapKeyULongValueLongDouble_type_identifier(type_identifiers_);
 }
 
 MapULongBooleanPubSubType::MapULongBooleanPubSubType()
@@ -17010,9 +17010,9 @@ bool MapULongBooleanPubSubType::getKey(
     return true;
 }
 
-void MapULongBooleanPubSubType::register_type_object_representation() const
+void MapULongBooleanPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapULongBoolean_type_identifier(type_identifiers_);
 }
 
 MapULongOctetPubSubType::MapULongOctetPubSubType()
@@ -17203,9 +17203,9 @@ bool MapULongOctetPubSubType::getKey(
     return true;
 }
 
-void MapULongOctetPubSubType::register_type_object_representation() const
+void MapULongOctetPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapULongOctet_type_identifier(type_identifiers_);
 }
 
 MapULongCharPubSubType::MapULongCharPubSubType()
@@ -17396,9 +17396,9 @@ bool MapULongCharPubSubType::getKey(
     return true;
 }
 
-void MapULongCharPubSubType::register_type_object_representation() const
+void MapULongCharPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapULongChar_type_identifier(type_identifiers_);
 }
 
 MapULongWCharPubSubType::MapULongWCharPubSubType()
@@ -17589,9 +17589,9 @@ bool MapULongWCharPubSubType::getKey(
     return true;
 }
 
-void MapULongWCharPubSubType::register_type_object_representation() const
+void MapULongWCharPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapULongWChar_type_identifier(type_identifiers_);
 }
 
 MapULongStringPubSubType::MapULongStringPubSubType()
@@ -17782,9 +17782,9 @@ bool MapULongStringPubSubType::getKey(
     return true;
 }
 
-void MapULongStringPubSubType::register_type_object_representation() const
+void MapULongStringPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapULongString_type_identifier(type_identifiers_);
 }
 
 MapULongWStringPubSubType::MapULongWStringPubSubType()
@@ -17975,9 +17975,9 @@ bool MapULongWStringPubSubType::getKey(
     return true;
 }
 
-void MapULongWStringPubSubType::register_type_object_representation() const
+void MapULongWStringPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapULongWString_type_identifier(type_identifiers_);
 }
 
 MapULongInnerAliasBoundedStringHelperPubSubType::MapULongInnerAliasBoundedStringHelperPubSubType()
@@ -18168,9 +18168,9 @@ bool MapULongInnerAliasBoundedStringHelperPubSubType::getKey(
     return true;
 }
 
-void MapULongInnerAliasBoundedStringHelperPubSubType::register_type_object_representation() const
+void MapULongInnerAliasBoundedStringHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapULongInnerAliasBoundedStringHelper_type_identifier(type_identifiers_);
 }
 
 MapULongInnerAliasBoundedWStringHelperPubSubType::MapULongInnerAliasBoundedWStringHelperPubSubType()
@@ -18361,9 +18361,9 @@ bool MapULongInnerAliasBoundedWStringHelperPubSubType::getKey(
     return true;
 }
 
-void MapULongInnerAliasBoundedWStringHelperPubSubType::register_type_object_representation() const
+void MapULongInnerAliasBoundedWStringHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapULongInnerAliasBoundedWStringHelper_type_identifier(type_identifiers_);
 }
 
 MapULongInnerEnumHelperPubSubType::MapULongInnerEnumHelperPubSubType()
@@ -18554,9 +18554,9 @@ bool MapULongInnerEnumHelperPubSubType::getKey(
     return true;
 }
 
-void MapULongInnerEnumHelperPubSubType::register_type_object_representation() const
+void MapULongInnerEnumHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapULongInnerEnumHelper_type_identifier(type_identifiers_);
 }
 
 MapULongInnerBitMaskHelperPubSubType::MapULongInnerBitMaskHelperPubSubType()
@@ -18747,9 +18747,9 @@ bool MapULongInnerBitMaskHelperPubSubType::getKey(
     return true;
 }
 
-void MapULongInnerBitMaskHelperPubSubType::register_type_object_representation() const
+void MapULongInnerBitMaskHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapULongInnerBitMaskHelper_type_identifier(type_identifiers_);
 }
 
 MapULongInnerAliasHelperPubSubType::MapULongInnerAliasHelperPubSubType()
@@ -18940,9 +18940,9 @@ bool MapULongInnerAliasHelperPubSubType::getKey(
     return true;
 }
 
-void MapULongInnerAliasHelperPubSubType::register_type_object_representation() const
+void MapULongInnerAliasHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapULongInnerAliasHelper_type_identifier(type_identifiers_);
 }
 
 MapULongInnerAliasArrayHelperPubSubType::MapULongInnerAliasArrayHelperPubSubType()
@@ -19133,9 +19133,9 @@ bool MapULongInnerAliasArrayHelperPubSubType::getKey(
     return true;
 }
 
-void MapULongInnerAliasArrayHelperPubSubType::register_type_object_representation() const
+void MapULongInnerAliasArrayHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapULongInnerAliasArrayHelper_type_identifier(type_identifiers_);
 }
 
 MapULongInnerAliasSequenceHelperPubSubType::MapULongInnerAliasSequenceHelperPubSubType()
@@ -19326,9 +19326,9 @@ bool MapULongInnerAliasSequenceHelperPubSubType::getKey(
     return true;
 }
 
-void MapULongInnerAliasSequenceHelperPubSubType::register_type_object_representation() const
+void MapULongInnerAliasSequenceHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapULongInnerAliasSequenceHelper_type_identifier(type_identifiers_);
 }
 
 MapULongInnerAliasMapHelperPubSubType::MapULongInnerAliasMapHelperPubSubType()
@@ -19519,9 +19519,9 @@ bool MapULongInnerAliasMapHelperPubSubType::getKey(
     return true;
 }
 
-void MapULongInnerAliasMapHelperPubSubType::register_type_object_representation() const
+void MapULongInnerAliasMapHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapULongInnerAliasMapHelper_type_identifier(type_identifiers_);
 }
 
 MapULongInnerUnionHelperPubSubType::MapULongInnerUnionHelperPubSubType()
@@ -19712,9 +19712,9 @@ bool MapULongInnerUnionHelperPubSubType::getKey(
     return true;
 }
 
-void MapULongInnerUnionHelperPubSubType::register_type_object_representation() const
+void MapULongInnerUnionHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapULongInnerUnionHelper_type_identifier(type_identifiers_);
 }
 
 MapULongInnerStructureHelperPubSubType::MapULongInnerStructureHelperPubSubType()
@@ -19905,9 +19905,9 @@ bool MapULongInnerStructureHelperPubSubType::getKey(
     return true;
 }
 
-void MapULongInnerStructureHelperPubSubType::register_type_object_representation() const
+void MapULongInnerStructureHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapULongInnerStructureHelper_type_identifier(type_identifiers_);
 }
 
 MapULongInnerBitsetHelperPubSubType::MapULongInnerBitsetHelperPubSubType()
@@ -20098,9 +20098,9 @@ bool MapULongInnerBitsetHelperPubSubType::getKey(
     return true;
 }
 
-void MapULongInnerBitsetHelperPubSubType::register_type_object_representation() const
+void MapULongInnerBitsetHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapULongInnerBitsetHelper_type_identifier(type_identifiers_);
 }
 
 MapLongLongShortPubSubType::MapLongLongShortPubSubType()
@@ -20291,9 +20291,9 @@ bool MapLongLongShortPubSubType::getKey(
     return true;
 }
 
-void MapLongLongShortPubSubType::register_type_object_representation() const
+void MapLongLongShortPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapLongLongShort_type_identifier(type_identifiers_);
 }
 
 MapLongLongUShortPubSubType::MapLongLongUShortPubSubType()
@@ -20484,9 +20484,9 @@ bool MapLongLongUShortPubSubType::getKey(
     return true;
 }
 
-void MapLongLongUShortPubSubType::register_type_object_representation() const
+void MapLongLongUShortPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapLongLongUShort_type_identifier(type_identifiers_);
 }
 
 MapLongLongKeyLongValuePubSubType::MapLongLongKeyLongValuePubSubType()
@@ -20677,9 +20677,9 @@ bool MapLongLongKeyLongValuePubSubType::getKey(
     return true;
 }
 
-void MapLongLongKeyLongValuePubSubType::register_type_object_representation() const
+void MapLongLongKeyLongValuePubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapLongLongKeyLongValue_type_identifier(type_identifiers_);
 }
 
 MapLongLongULongPubSubType::MapLongLongULongPubSubType()
@@ -20870,9 +20870,9 @@ bool MapLongLongULongPubSubType::getKey(
     return true;
 }
 
-void MapLongLongULongPubSubType::register_type_object_representation() const
+void MapLongLongULongPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapLongLongULong_type_identifier(type_identifiers_);
 }
 
 MapLongLongLongLongPubSubType::MapLongLongLongLongPubSubType()
@@ -21063,9 +21063,9 @@ bool MapLongLongLongLongPubSubType::getKey(
     return true;
 }
 
-void MapLongLongLongLongPubSubType::register_type_object_representation() const
+void MapLongLongLongLongPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapLongLongLongLong_type_identifier(type_identifiers_);
 }
 
 MapLongLongULongLongPubSubType::MapLongLongULongLongPubSubType()
@@ -21256,9 +21256,9 @@ bool MapLongLongULongLongPubSubType::getKey(
     return true;
 }
 
-void MapLongLongULongLongPubSubType::register_type_object_representation() const
+void MapLongLongULongLongPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapLongLongULongLong_type_identifier(type_identifiers_);
 }
 
 MapLongLongFloatPubSubType::MapLongLongFloatPubSubType()
@@ -21449,9 +21449,9 @@ bool MapLongLongFloatPubSubType::getKey(
     return true;
 }
 
-void MapLongLongFloatPubSubType::register_type_object_representation() const
+void MapLongLongFloatPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapLongLongFloat_type_identifier(type_identifiers_);
 }
 
 MapLongLongKeyDoubleValuePubSubType::MapLongLongKeyDoubleValuePubSubType()
@@ -21642,9 +21642,9 @@ bool MapLongLongKeyDoubleValuePubSubType::getKey(
     return true;
 }
 
-void MapLongLongKeyDoubleValuePubSubType::register_type_object_representation() const
+void MapLongLongKeyDoubleValuePubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapLongLongKeyDoubleValue_type_identifier(type_identifiers_);
 }
 
 MapLongLongLongDoublePubSubType::MapLongLongLongDoublePubSubType()
@@ -21835,9 +21835,9 @@ bool MapLongLongLongDoublePubSubType::getKey(
     return true;
 }
 
-void MapLongLongLongDoublePubSubType::register_type_object_representation() const
+void MapLongLongLongDoublePubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapLongLongLongDouble_type_identifier(type_identifiers_);
 }
 
 MapLongLongBooleanPubSubType::MapLongLongBooleanPubSubType()
@@ -22028,9 +22028,9 @@ bool MapLongLongBooleanPubSubType::getKey(
     return true;
 }
 
-void MapLongLongBooleanPubSubType::register_type_object_representation() const
+void MapLongLongBooleanPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapLongLongBoolean_type_identifier(type_identifiers_);
 }
 
 MapLongLongOctetPubSubType::MapLongLongOctetPubSubType()
@@ -22221,9 +22221,9 @@ bool MapLongLongOctetPubSubType::getKey(
     return true;
 }
 
-void MapLongLongOctetPubSubType::register_type_object_representation() const
+void MapLongLongOctetPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapLongLongOctet_type_identifier(type_identifiers_);
 }
 
 MapLongLongCharPubSubType::MapLongLongCharPubSubType()
@@ -22414,9 +22414,9 @@ bool MapLongLongCharPubSubType::getKey(
     return true;
 }
 
-void MapLongLongCharPubSubType::register_type_object_representation() const
+void MapLongLongCharPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapLongLongChar_type_identifier(type_identifiers_);
 }
 
 MapLongLongWCharPubSubType::MapLongLongWCharPubSubType()
@@ -22607,9 +22607,9 @@ bool MapLongLongWCharPubSubType::getKey(
     return true;
 }
 
-void MapLongLongWCharPubSubType::register_type_object_representation() const
+void MapLongLongWCharPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapLongLongWChar_type_identifier(type_identifiers_);
 }
 
 MapLongLongStringPubSubType::MapLongLongStringPubSubType()
@@ -22800,9 +22800,9 @@ bool MapLongLongStringPubSubType::getKey(
     return true;
 }
 
-void MapLongLongStringPubSubType::register_type_object_representation() const
+void MapLongLongStringPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapLongLongString_type_identifier(type_identifiers_);
 }
 
 MapLongLongWStringPubSubType::MapLongLongWStringPubSubType()
@@ -22993,9 +22993,9 @@ bool MapLongLongWStringPubSubType::getKey(
     return true;
 }
 
-void MapLongLongWStringPubSubType::register_type_object_representation() const
+void MapLongLongWStringPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapLongLongWString_type_identifier(type_identifiers_);
 }
 
 MapLongLongInnerAliasBoundedStringHelperPubSubType::MapLongLongInnerAliasBoundedStringHelperPubSubType()
@@ -23186,9 +23186,9 @@ bool MapLongLongInnerAliasBoundedStringHelperPubSubType::getKey(
     return true;
 }
 
-void MapLongLongInnerAliasBoundedStringHelperPubSubType::register_type_object_representation() const
+void MapLongLongInnerAliasBoundedStringHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapLongLongInnerAliasBoundedStringHelper_type_identifier(type_identifiers_);
 }
 
 MapLongLongInnerAliasBoundedWStringHelperPubSubType::MapLongLongInnerAliasBoundedWStringHelperPubSubType()
@@ -23379,9 +23379,9 @@ bool MapLongLongInnerAliasBoundedWStringHelperPubSubType::getKey(
     return true;
 }
 
-void MapLongLongInnerAliasBoundedWStringHelperPubSubType::register_type_object_representation() const
+void MapLongLongInnerAliasBoundedWStringHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapLongLongInnerAliasBoundedWStringHelper_type_identifier(type_identifiers_);
 }
 
 MapLongLongInnerEnumHelperPubSubType::MapLongLongInnerEnumHelperPubSubType()
@@ -23572,9 +23572,9 @@ bool MapLongLongInnerEnumHelperPubSubType::getKey(
     return true;
 }
 
-void MapLongLongInnerEnumHelperPubSubType::register_type_object_representation() const
+void MapLongLongInnerEnumHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapLongLongInnerEnumHelper_type_identifier(type_identifiers_);
 }
 
 MapLongLongInnerBitMaskHelperPubSubType::MapLongLongInnerBitMaskHelperPubSubType()
@@ -23765,9 +23765,9 @@ bool MapLongLongInnerBitMaskHelperPubSubType::getKey(
     return true;
 }
 
-void MapLongLongInnerBitMaskHelperPubSubType::register_type_object_representation() const
+void MapLongLongInnerBitMaskHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapLongLongInnerBitMaskHelper_type_identifier(type_identifiers_);
 }
 
 MapLongLongInnerAliasHelperPubSubType::MapLongLongInnerAliasHelperPubSubType()
@@ -23958,9 +23958,9 @@ bool MapLongLongInnerAliasHelperPubSubType::getKey(
     return true;
 }
 
-void MapLongLongInnerAliasHelperPubSubType::register_type_object_representation() const
+void MapLongLongInnerAliasHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapLongLongInnerAliasHelper_type_identifier(type_identifiers_);
 }
 
 MapLongLongInnerAliasArrayHelperPubSubType::MapLongLongInnerAliasArrayHelperPubSubType()
@@ -24151,9 +24151,9 @@ bool MapLongLongInnerAliasArrayHelperPubSubType::getKey(
     return true;
 }
 
-void MapLongLongInnerAliasArrayHelperPubSubType::register_type_object_representation() const
+void MapLongLongInnerAliasArrayHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapLongLongInnerAliasArrayHelper_type_identifier(type_identifiers_);
 }
 
 MapLongLongInnerAliasSequenceHelperPubSubType::MapLongLongInnerAliasSequenceHelperPubSubType()
@@ -24344,9 +24344,9 @@ bool MapLongLongInnerAliasSequenceHelperPubSubType::getKey(
     return true;
 }
 
-void MapLongLongInnerAliasSequenceHelperPubSubType::register_type_object_representation() const
+void MapLongLongInnerAliasSequenceHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapLongLongInnerAliasSequenceHelper_type_identifier(type_identifiers_);
 }
 
 MapLongLongInnerAliasMapHelperPubSubType::MapLongLongInnerAliasMapHelperPubSubType()
@@ -24537,9 +24537,9 @@ bool MapLongLongInnerAliasMapHelperPubSubType::getKey(
     return true;
 }
 
-void MapLongLongInnerAliasMapHelperPubSubType::register_type_object_representation() const
+void MapLongLongInnerAliasMapHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapLongLongInnerAliasMapHelper_type_identifier(type_identifiers_);
 }
 
 MapLongLongInnerUnionHelperPubSubType::MapLongLongInnerUnionHelperPubSubType()
@@ -24730,9 +24730,9 @@ bool MapLongLongInnerUnionHelperPubSubType::getKey(
     return true;
 }
 
-void MapLongLongInnerUnionHelperPubSubType::register_type_object_representation() const
+void MapLongLongInnerUnionHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapLongLongInnerUnionHelper_type_identifier(type_identifiers_);
 }
 
 MapLongLongInnerStructureHelperPubSubType::MapLongLongInnerStructureHelperPubSubType()
@@ -24923,9 +24923,9 @@ bool MapLongLongInnerStructureHelperPubSubType::getKey(
     return true;
 }
 
-void MapLongLongInnerStructureHelperPubSubType::register_type_object_representation() const
+void MapLongLongInnerStructureHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapLongLongInnerStructureHelper_type_identifier(type_identifiers_);
 }
 
 MapLongLongInnerBitsetHelperPubSubType::MapLongLongInnerBitsetHelperPubSubType()
@@ -25116,9 +25116,9 @@ bool MapLongLongInnerBitsetHelperPubSubType::getKey(
     return true;
 }
 
-void MapLongLongInnerBitsetHelperPubSubType::register_type_object_representation() const
+void MapLongLongInnerBitsetHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapLongLongInnerBitsetHelper_type_identifier(type_identifiers_);
 }
 
 MapULongLongShortPubSubType::MapULongLongShortPubSubType()
@@ -25309,9 +25309,9 @@ bool MapULongLongShortPubSubType::getKey(
     return true;
 }
 
-void MapULongLongShortPubSubType::register_type_object_representation() const
+void MapULongLongShortPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapULongLongShort_type_identifier(type_identifiers_);
 }
 
 MapULongLongUShortPubSubType::MapULongLongUShortPubSubType()
@@ -25502,9 +25502,9 @@ bool MapULongLongUShortPubSubType::getKey(
     return true;
 }
 
-void MapULongLongUShortPubSubType::register_type_object_representation() const
+void MapULongLongUShortPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapULongLongUShort_type_identifier(type_identifiers_);
 }
 
 MapULongLongLongPubSubType::MapULongLongLongPubSubType()
@@ -25695,9 +25695,9 @@ bool MapULongLongLongPubSubType::getKey(
     return true;
 }
 
-void MapULongLongLongPubSubType::register_type_object_representation() const
+void MapULongLongLongPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapULongLongLong_type_identifier(type_identifiers_);
 }
 
 MapULongLongULongPubSubType::MapULongLongULongPubSubType()
@@ -25888,9 +25888,9 @@ bool MapULongLongULongPubSubType::getKey(
     return true;
 }
 
-void MapULongLongULongPubSubType::register_type_object_representation() const
+void MapULongLongULongPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapULongLongULong_type_identifier(type_identifiers_);
 }
 
 MapULongLongLongLongPubSubType::MapULongLongLongLongPubSubType()
@@ -26081,9 +26081,9 @@ bool MapULongLongLongLongPubSubType::getKey(
     return true;
 }
 
-void MapULongLongLongLongPubSubType::register_type_object_representation() const
+void MapULongLongLongLongPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapULongLongLongLong_type_identifier(type_identifiers_);
 }
 
 MapULongLongULongLongPubSubType::MapULongLongULongLongPubSubType()
@@ -26274,9 +26274,9 @@ bool MapULongLongULongLongPubSubType::getKey(
     return true;
 }
 
-void MapULongLongULongLongPubSubType::register_type_object_representation() const
+void MapULongLongULongLongPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapULongLongULongLong_type_identifier(type_identifiers_);
 }
 
 MapULongLongFloatPubSubType::MapULongLongFloatPubSubType()
@@ -26467,9 +26467,9 @@ bool MapULongLongFloatPubSubType::getKey(
     return true;
 }
 
-void MapULongLongFloatPubSubType::register_type_object_representation() const
+void MapULongLongFloatPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapULongLongFloat_type_identifier(type_identifiers_);
 }
 
 MapKeyULongLongValueDoublePubSubType::MapKeyULongLongValueDoublePubSubType()
@@ -26660,9 +26660,9 @@ bool MapKeyULongLongValueDoublePubSubType::getKey(
     return true;
 }
 
-void MapKeyULongLongValueDoublePubSubType::register_type_object_representation() const
+void MapKeyULongLongValueDoublePubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapKeyULongLongValueDouble_type_identifier(type_identifiers_);
 }
 
 MapULongLongLongDoublePubSubType::MapULongLongLongDoublePubSubType()
@@ -26853,9 +26853,9 @@ bool MapULongLongLongDoublePubSubType::getKey(
     return true;
 }
 
-void MapULongLongLongDoublePubSubType::register_type_object_representation() const
+void MapULongLongLongDoublePubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapULongLongLongDouble_type_identifier(type_identifiers_);
 }
 
 MapULongLongBooleanPubSubType::MapULongLongBooleanPubSubType()
@@ -27046,9 +27046,9 @@ bool MapULongLongBooleanPubSubType::getKey(
     return true;
 }
 
-void MapULongLongBooleanPubSubType::register_type_object_representation() const
+void MapULongLongBooleanPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapULongLongBoolean_type_identifier(type_identifiers_);
 }
 
 MapULongLongOctetPubSubType::MapULongLongOctetPubSubType()
@@ -27239,9 +27239,9 @@ bool MapULongLongOctetPubSubType::getKey(
     return true;
 }
 
-void MapULongLongOctetPubSubType::register_type_object_representation() const
+void MapULongLongOctetPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapULongLongOctet_type_identifier(type_identifiers_);
 }
 
 MapULongLongCharPubSubType::MapULongLongCharPubSubType()
@@ -27432,9 +27432,9 @@ bool MapULongLongCharPubSubType::getKey(
     return true;
 }
 
-void MapULongLongCharPubSubType::register_type_object_representation() const
+void MapULongLongCharPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapULongLongChar_type_identifier(type_identifiers_);
 }
 
 MapULongLongWCharPubSubType::MapULongLongWCharPubSubType()
@@ -27625,9 +27625,9 @@ bool MapULongLongWCharPubSubType::getKey(
     return true;
 }
 
-void MapULongLongWCharPubSubType::register_type_object_representation() const
+void MapULongLongWCharPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapULongLongWChar_type_identifier(type_identifiers_);
 }
 
 MapULongLongStringPubSubType::MapULongLongStringPubSubType()
@@ -27818,9 +27818,9 @@ bool MapULongLongStringPubSubType::getKey(
     return true;
 }
 
-void MapULongLongStringPubSubType::register_type_object_representation() const
+void MapULongLongStringPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapULongLongString_type_identifier(type_identifiers_);
 }
 
 MapULongLongWStringPubSubType::MapULongLongWStringPubSubType()
@@ -28011,9 +28011,9 @@ bool MapULongLongWStringPubSubType::getKey(
     return true;
 }
 
-void MapULongLongWStringPubSubType::register_type_object_representation() const
+void MapULongLongWStringPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapULongLongWString_type_identifier(type_identifiers_);
 }
 
 MapULongLongInnerAliasBoundedStringHelperPubSubType::MapULongLongInnerAliasBoundedStringHelperPubSubType()
@@ -28204,9 +28204,9 @@ bool MapULongLongInnerAliasBoundedStringHelperPubSubType::getKey(
     return true;
 }
 
-void MapULongLongInnerAliasBoundedStringHelperPubSubType::register_type_object_representation() const
+void MapULongLongInnerAliasBoundedStringHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapULongLongInnerAliasBoundedStringHelper_type_identifier(type_identifiers_);
 }
 
 MapULongLongInnerAliasBoundedWStringHelperPubSubType::MapULongLongInnerAliasBoundedWStringHelperPubSubType()
@@ -28397,9 +28397,9 @@ bool MapULongLongInnerAliasBoundedWStringHelperPubSubType::getKey(
     return true;
 }
 
-void MapULongLongInnerAliasBoundedWStringHelperPubSubType::register_type_object_representation() const
+void MapULongLongInnerAliasBoundedWStringHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapULongLongInnerAliasBoundedWStringHelper_type_identifier(type_identifiers_);
 }
 
 MapULongLongInnerEnumHelperPubSubType::MapULongLongInnerEnumHelperPubSubType()
@@ -28590,9 +28590,9 @@ bool MapULongLongInnerEnumHelperPubSubType::getKey(
     return true;
 }
 
-void MapULongLongInnerEnumHelperPubSubType::register_type_object_representation() const
+void MapULongLongInnerEnumHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapULongLongInnerEnumHelper_type_identifier(type_identifiers_);
 }
 
 MapULongLongInnerBitMaskHelperPubSubType::MapULongLongInnerBitMaskHelperPubSubType()
@@ -28783,9 +28783,9 @@ bool MapULongLongInnerBitMaskHelperPubSubType::getKey(
     return true;
 }
 
-void MapULongLongInnerBitMaskHelperPubSubType::register_type_object_representation() const
+void MapULongLongInnerBitMaskHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapULongLongInnerBitMaskHelper_type_identifier(type_identifiers_);
 }
 
 MapULongLongInnerAliasHelperPubSubType::MapULongLongInnerAliasHelperPubSubType()
@@ -28976,9 +28976,9 @@ bool MapULongLongInnerAliasHelperPubSubType::getKey(
     return true;
 }
 
-void MapULongLongInnerAliasHelperPubSubType::register_type_object_representation() const
+void MapULongLongInnerAliasHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapULongLongInnerAliasHelper_type_identifier(type_identifiers_);
 }
 
 MapULongLongInnerAliasArrayHelperPubSubType::MapULongLongInnerAliasArrayHelperPubSubType()
@@ -29169,9 +29169,9 @@ bool MapULongLongInnerAliasArrayHelperPubSubType::getKey(
     return true;
 }
 
-void MapULongLongInnerAliasArrayHelperPubSubType::register_type_object_representation() const
+void MapULongLongInnerAliasArrayHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapULongLongInnerAliasArrayHelper_type_identifier(type_identifiers_);
 }
 
 MapULongLongInnerAliasSequenceHelperPubSubType::MapULongLongInnerAliasSequenceHelperPubSubType()
@@ -29362,9 +29362,9 @@ bool MapULongLongInnerAliasSequenceHelperPubSubType::getKey(
     return true;
 }
 
-void MapULongLongInnerAliasSequenceHelperPubSubType::register_type_object_representation() const
+void MapULongLongInnerAliasSequenceHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapULongLongInnerAliasSequenceHelper_type_identifier(type_identifiers_);
 }
 
 MapULongLongInnerAliasMapHelperPubSubType::MapULongLongInnerAliasMapHelperPubSubType()
@@ -29555,9 +29555,9 @@ bool MapULongLongInnerAliasMapHelperPubSubType::getKey(
     return true;
 }
 
-void MapULongLongInnerAliasMapHelperPubSubType::register_type_object_representation() const
+void MapULongLongInnerAliasMapHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapULongLongInnerAliasMapHelper_type_identifier(type_identifiers_);
 }
 
 MapULongLongInnerUnionHelperPubSubType::MapULongLongInnerUnionHelperPubSubType()
@@ -29748,9 +29748,9 @@ bool MapULongLongInnerUnionHelperPubSubType::getKey(
     return true;
 }
 
-void MapULongLongInnerUnionHelperPubSubType::register_type_object_representation() const
+void MapULongLongInnerUnionHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapULongLongInnerUnionHelper_type_identifier(type_identifiers_);
 }
 
 MapULongLongInnerStructureHelperPubSubType::MapULongLongInnerStructureHelperPubSubType()
@@ -29941,9 +29941,9 @@ bool MapULongLongInnerStructureHelperPubSubType::getKey(
     return true;
 }
 
-void MapULongLongInnerStructureHelperPubSubType::register_type_object_representation() const
+void MapULongLongInnerStructureHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapULongLongInnerStructureHelper_type_identifier(type_identifiers_);
 }
 
 MapULongLongInnerBitsetHelperPubSubType::MapULongLongInnerBitsetHelperPubSubType()
@@ -30134,9 +30134,9 @@ bool MapULongLongInnerBitsetHelperPubSubType::getKey(
     return true;
 }
 
-void MapULongLongInnerBitsetHelperPubSubType::register_type_object_representation() const
+void MapULongLongInnerBitsetHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapULongLongInnerBitsetHelper_type_identifier(type_identifiers_);
 }
 
 MapStringShortPubSubType::MapStringShortPubSubType()
@@ -30327,9 +30327,9 @@ bool MapStringShortPubSubType::getKey(
     return true;
 }
 
-void MapStringShortPubSubType::register_type_object_representation() const
+void MapStringShortPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapStringShort_type_identifier(type_identifiers_);
 }
 
 MapStringUShortPubSubType::MapStringUShortPubSubType()
@@ -30520,9 +30520,9 @@ bool MapStringUShortPubSubType::getKey(
     return true;
 }
 
-void MapStringUShortPubSubType::register_type_object_representation() const
+void MapStringUShortPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapStringUShort_type_identifier(type_identifiers_);
 }
 
 MapStringLongPubSubType::MapStringLongPubSubType()
@@ -30713,9 +30713,9 @@ bool MapStringLongPubSubType::getKey(
     return true;
 }
 
-void MapStringLongPubSubType::register_type_object_representation() const
+void MapStringLongPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapStringLong_type_identifier(type_identifiers_);
 }
 
 MapStringULongPubSubType::MapStringULongPubSubType()
@@ -30906,9 +30906,9 @@ bool MapStringULongPubSubType::getKey(
     return true;
 }
 
-void MapStringULongPubSubType::register_type_object_representation() const
+void MapStringULongPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapStringULong_type_identifier(type_identifiers_);
 }
 
 MapStringLongLongPubSubType::MapStringLongLongPubSubType()
@@ -31099,9 +31099,9 @@ bool MapStringLongLongPubSubType::getKey(
     return true;
 }
 
-void MapStringLongLongPubSubType::register_type_object_representation() const
+void MapStringLongLongPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapStringLongLong_type_identifier(type_identifiers_);
 }
 
 MapStringULongLongPubSubType::MapStringULongLongPubSubType()
@@ -31292,9 +31292,9 @@ bool MapStringULongLongPubSubType::getKey(
     return true;
 }
 
-void MapStringULongLongPubSubType::register_type_object_representation() const
+void MapStringULongLongPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapStringULongLong_type_identifier(type_identifiers_);
 }
 
 MapStringFloatPubSubType::MapStringFloatPubSubType()
@@ -31485,9 +31485,9 @@ bool MapStringFloatPubSubType::getKey(
     return true;
 }
 
-void MapStringFloatPubSubType::register_type_object_representation() const
+void MapStringFloatPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapStringFloat_type_identifier(type_identifiers_);
 }
 
 MapStringDoublePubSubType::MapStringDoublePubSubType()
@@ -31678,9 +31678,9 @@ bool MapStringDoublePubSubType::getKey(
     return true;
 }
 
-void MapStringDoublePubSubType::register_type_object_representation() const
+void MapStringDoublePubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapStringDouble_type_identifier(type_identifiers_);
 }
 
 MapStringLongDoublePubSubType::MapStringLongDoublePubSubType()
@@ -31871,9 +31871,9 @@ bool MapStringLongDoublePubSubType::getKey(
     return true;
 }
 
-void MapStringLongDoublePubSubType::register_type_object_representation() const
+void MapStringLongDoublePubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapStringLongDouble_type_identifier(type_identifiers_);
 }
 
 MapStringBooleanPubSubType::MapStringBooleanPubSubType()
@@ -32064,9 +32064,9 @@ bool MapStringBooleanPubSubType::getKey(
     return true;
 }
 
-void MapStringBooleanPubSubType::register_type_object_representation() const
+void MapStringBooleanPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapStringBoolean_type_identifier(type_identifiers_);
 }
 
 MapStringOctetPubSubType::MapStringOctetPubSubType()
@@ -32257,9 +32257,9 @@ bool MapStringOctetPubSubType::getKey(
     return true;
 }
 
-void MapStringOctetPubSubType::register_type_object_representation() const
+void MapStringOctetPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapStringOctet_type_identifier(type_identifiers_);
 }
 
 MapStringCharPubSubType::MapStringCharPubSubType()
@@ -32450,9 +32450,9 @@ bool MapStringCharPubSubType::getKey(
     return true;
 }
 
-void MapStringCharPubSubType::register_type_object_representation() const
+void MapStringCharPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapStringChar_type_identifier(type_identifiers_);
 }
 
 MapStringWCharPubSubType::MapStringWCharPubSubType()
@@ -32643,9 +32643,9 @@ bool MapStringWCharPubSubType::getKey(
     return true;
 }
 
-void MapStringWCharPubSubType::register_type_object_representation() const
+void MapStringWCharPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapStringWChar_type_identifier(type_identifiers_);
 }
 
 MapStringStringPubSubType::MapStringStringPubSubType()
@@ -32836,9 +32836,9 @@ bool MapStringStringPubSubType::getKey(
     return true;
 }
 
-void MapStringStringPubSubType::register_type_object_representation() const
+void MapStringStringPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapStringString_type_identifier(type_identifiers_);
 }
 
 MapStringWStringPubSubType::MapStringWStringPubSubType()
@@ -33029,9 +33029,9 @@ bool MapStringWStringPubSubType::getKey(
     return true;
 }
 
-void MapStringWStringPubSubType::register_type_object_representation() const
+void MapStringWStringPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapStringWString_type_identifier(type_identifiers_);
 }
 
 MapStringInnerAliasBoundedStringHelperPubSubType::MapStringInnerAliasBoundedStringHelperPubSubType()
@@ -33222,9 +33222,9 @@ bool MapStringInnerAliasBoundedStringHelperPubSubType::getKey(
     return true;
 }
 
-void MapStringInnerAliasBoundedStringHelperPubSubType::register_type_object_representation() const
+void MapStringInnerAliasBoundedStringHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapStringInnerAliasBoundedStringHelper_type_identifier(type_identifiers_);
 }
 
 MapStringInnerAliasBoundedWStringHelperPubSubType::MapStringInnerAliasBoundedWStringHelperPubSubType()
@@ -33415,9 +33415,9 @@ bool MapStringInnerAliasBoundedWStringHelperPubSubType::getKey(
     return true;
 }
 
-void MapStringInnerAliasBoundedWStringHelperPubSubType::register_type_object_representation() const
+void MapStringInnerAliasBoundedWStringHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapStringInnerAliasBoundedWStringHelper_type_identifier(type_identifiers_);
 }
 
 MapStringInnerEnumHelperPubSubType::MapStringInnerEnumHelperPubSubType()
@@ -33608,9 +33608,9 @@ bool MapStringInnerEnumHelperPubSubType::getKey(
     return true;
 }
 
-void MapStringInnerEnumHelperPubSubType::register_type_object_representation() const
+void MapStringInnerEnumHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapStringInnerEnumHelper_type_identifier(type_identifiers_);
 }
 
 MapStringInnerBitMaskHelperPubSubType::MapStringInnerBitMaskHelperPubSubType()
@@ -33801,9 +33801,9 @@ bool MapStringInnerBitMaskHelperPubSubType::getKey(
     return true;
 }
 
-void MapStringInnerBitMaskHelperPubSubType::register_type_object_representation() const
+void MapStringInnerBitMaskHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapStringInnerBitMaskHelper_type_identifier(type_identifiers_);
 }
 
 MapStringInnerAliasHelperPubSubType::MapStringInnerAliasHelperPubSubType()
@@ -33994,9 +33994,9 @@ bool MapStringInnerAliasHelperPubSubType::getKey(
     return true;
 }
 
-void MapStringInnerAliasHelperPubSubType::register_type_object_representation() const
+void MapStringInnerAliasHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapStringInnerAliasHelper_type_identifier(type_identifiers_);
 }
 
 MapStringInnerAliasArrayHelperPubSubType::MapStringInnerAliasArrayHelperPubSubType()
@@ -34187,9 +34187,9 @@ bool MapStringInnerAliasArrayHelperPubSubType::getKey(
     return true;
 }
 
-void MapStringInnerAliasArrayHelperPubSubType::register_type_object_representation() const
+void MapStringInnerAliasArrayHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapStringInnerAliasArrayHelper_type_identifier(type_identifiers_);
 }
 
 MapStringInnerAliasSequenceHelperPubSubType::MapStringInnerAliasSequenceHelperPubSubType()
@@ -34380,9 +34380,9 @@ bool MapStringInnerAliasSequenceHelperPubSubType::getKey(
     return true;
 }
 
-void MapStringInnerAliasSequenceHelperPubSubType::register_type_object_representation() const
+void MapStringInnerAliasSequenceHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapStringInnerAliasSequenceHelper_type_identifier(type_identifiers_);
 }
 
 MapStringInnerAliasMapHelperPubSubType::MapStringInnerAliasMapHelperPubSubType()
@@ -34573,9 +34573,9 @@ bool MapStringInnerAliasMapHelperPubSubType::getKey(
     return true;
 }
 
-void MapStringInnerAliasMapHelperPubSubType::register_type_object_representation() const
+void MapStringInnerAliasMapHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapStringInnerAliasMapHelper_type_identifier(type_identifiers_);
 }
 
 MapStringInnerUnionHelperPubSubType::MapStringInnerUnionHelperPubSubType()
@@ -34766,9 +34766,9 @@ bool MapStringInnerUnionHelperPubSubType::getKey(
     return true;
 }
 
-void MapStringInnerUnionHelperPubSubType::register_type_object_representation() const
+void MapStringInnerUnionHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapStringInnerUnionHelper_type_identifier(type_identifiers_);
 }
 
 MapStringInnerStructureHelperPubSubType::MapStringInnerStructureHelperPubSubType()
@@ -34959,9 +34959,9 @@ bool MapStringInnerStructureHelperPubSubType::getKey(
     return true;
 }
 
-void MapStringInnerStructureHelperPubSubType::register_type_object_representation() const
+void MapStringInnerStructureHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapStringInnerStructureHelper_type_identifier(type_identifiers_);
 }
 
 MapStringInnerBitsetHelperPubSubType::MapStringInnerBitsetHelperPubSubType()
@@ -35152,9 +35152,9 @@ bool MapStringInnerBitsetHelperPubSubType::getKey(
     return true;
 }
 
-void MapStringInnerBitsetHelperPubSubType::register_type_object_representation() const
+void MapStringInnerBitsetHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapStringInnerBitsetHelper_type_identifier(type_identifiers_);
 }
 
 MapWStringShortPubSubType::MapWStringShortPubSubType()
@@ -35345,9 +35345,9 @@ bool MapWStringShortPubSubType::getKey(
     return true;
 }
 
-void MapWStringShortPubSubType::register_type_object_representation() const
+void MapWStringShortPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapWStringShort_type_identifier(type_identifiers_);
 }
 
 MapWStringUShortPubSubType::MapWStringUShortPubSubType()
@@ -35538,9 +35538,9 @@ bool MapWStringUShortPubSubType::getKey(
     return true;
 }
 
-void MapWStringUShortPubSubType::register_type_object_representation() const
+void MapWStringUShortPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapWStringUShort_type_identifier(type_identifiers_);
 }
 
 MapWStringLongPubSubType::MapWStringLongPubSubType()
@@ -35731,9 +35731,9 @@ bool MapWStringLongPubSubType::getKey(
     return true;
 }
 
-void MapWStringLongPubSubType::register_type_object_representation() const
+void MapWStringLongPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapWStringLong_type_identifier(type_identifiers_);
 }
 
 MapWStringULongPubSubType::MapWStringULongPubSubType()
@@ -35924,9 +35924,9 @@ bool MapWStringULongPubSubType::getKey(
     return true;
 }
 
-void MapWStringULongPubSubType::register_type_object_representation() const
+void MapWStringULongPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapWStringULong_type_identifier(type_identifiers_);
 }
 
 MapWStringLongLongPubSubType::MapWStringLongLongPubSubType()
@@ -36117,9 +36117,9 @@ bool MapWStringLongLongPubSubType::getKey(
     return true;
 }
 
-void MapWStringLongLongPubSubType::register_type_object_representation() const
+void MapWStringLongLongPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapWStringLongLong_type_identifier(type_identifiers_);
 }
 
 MapWStringULongLongPubSubType::MapWStringULongLongPubSubType()
@@ -36310,9 +36310,9 @@ bool MapWStringULongLongPubSubType::getKey(
     return true;
 }
 
-void MapWStringULongLongPubSubType::register_type_object_representation() const
+void MapWStringULongLongPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapWStringULongLong_type_identifier(type_identifiers_);
 }
 
 MapWStringFloatPubSubType::MapWStringFloatPubSubType()
@@ -36503,9 +36503,9 @@ bool MapWStringFloatPubSubType::getKey(
     return true;
 }
 
-void MapWStringFloatPubSubType::register_type_object_representation() const
+void MapWStringFloatPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapWStringFloat_type_identifier(type_identifiers_);
 }
 
 MapWStringDoublePubSubType::MapWStringDoublePubSubType()
@@ -36696,9 +36696,9 @@ bool MapWStringDoublePubSubType::getKey(
     return true;
 }
 
-void MapWStringDoublePubSubType::register_type_object_representation() const
+void MapWStringDoublePubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapWStringDouble_type_identifier(type_identifiers_);
 }
 
 MapWStringLongDoublePubSubType::MapWStringLongDoublePubSubType()
@@ -36889,9 +36889,9 @@ bool MapWStringLongDoublePubSubType::getKey(
     return true;
 }
 
-void MapWStringLongDoublePubSubType::register_type_object_representation() const
+void MapWStringLongDoublePubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapWStringLongDouble_type_identifier(type_identifiers_);
 }
 
 MapWStringBooleanPubSubType::MapWStringBooleanPubSubType()
@@ -37082,9 +37082,9 @@ bool MapWStringBooleanPubSubType::getKey(
     return true;
 }
 
-void MapWStringBooleanPubSubType::register_type_object_representation() const
+void MapWStringBooleanPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapWStringBoolean_type_identifier(type_identifiers_);
 }
 
 MapWStringOctetPubSubType::MapWStringOctetPubSubType()
@@ -37275,9 +37275,9 @@ bool MapWStringOctetPubSubType::getKey(
     return true;
 }
 
-void MapWStringOctetPubSubType::register_type_object_representation() const
+void MapWStringOctetPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapWStringOctet_type_identifier(type_identifiers_);
 }
 
 MapWStringCharPubSubType::MapWStringCharPubSubType()
@@ -37468,9 +37468,9 @@ bool MapWStringCharPubSubType::getKey(
     return true;
 }
 
-void MapWStringCharPubSubType::register_type_object_representation() const
+void MapWStringCharPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapWStringChar_type_identifier(type_identifiers_);
 }
 
 MapWStringWCharPubSubType::MapWStringWCharPubSubType()
@@ -37661,9 +37661,9 @@ bool MapWStringWCharPubSubType::getKey(
     return true;
 }
 
-void MapWStringWCharPubSubType::register_type_object_representation() const
+void MapWStringWCharPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapWStringWChar_type_identifier(type_identifiers_);
 }
 
 MapWStringStringPubSubType::MapWStringStringPubSubType()
@@ -37854,9 +37854,9 @@ bool MapWStringStringPubSubType::getKey(
     return true;
 }
 
-void MapWStringStringPubSubType::register_type_object_representation() const
+void MapWStringStringPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapWStringString_type_identifier(type_identifiers_);
 }
 
 MapWStringWStringPubSubType::MapWStringWStringPubSubType()
@@ -38047,9 +38047,9 @@ bool MapWStringWStringPubSubType::getKey(
     return true;
 }
 
-void MapWStringWStringPubSubType::register_type_object_representation() const
+void MapWStringWStringPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapWStringWString_type_identifier(type_identifiers_);
 }
 
 MapWStringInnerAliasBoundedStringHelperPubSubType::MapWStringInnerAliasBoundedStringHelperPubSubType()
@@ -38240,9 +38240,9 @@ bool MapWStringInnerAliasBoundedStringHelperPubSubType::getKey(
     return true;
 }
 
-void MapWStringInnerAliasBoundedStringHelperPubSubType::register_type_object_representation() const
+void MapWStringInnerAliasBoundedStringHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapWStringInnerAliasBoundedStringHelper_type_identifier(type_identifiers_);
 }
 
 MapWStringInnerAliasBoundedWStringHelperPubSubType::MapWStringInnerAliasBoundedWStringHelperPubSubType()
@@ -38433,9 +38433,9 @@ bool MapWStringInnerAliasBoundedWStringHelperPubSubType::getKey(
     return true;
 }
 
-void MapWStringInnerAliasBoundedWStringHelperPubSubType::register_type_object_representation() const
+void MapWStringInnerAliasBoundedWStringHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapWStringInnerAliasBoundedWStringHelper_type_identifier(type_identifiers_);
 }
 
 MapWStringInnerEnumHelperPubSubType::MapWStringInnerEnumHelperPubSubType()
@@ -38626,9 +38626,9 @@ bool MapWStringInnerEnumHelperPubSubType::getKey(
     return true;
 }
 
-void MapWStringInnerEnumHelperPubSubType::register_type_object_representation() const
+void MapWStringInnerEnumHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapWStringInnerEnumHelper_type_identifier(type_identifiers_);
 }
 
 MapWStringInnerBitMaskHelperPubSubType::MapWStringInnerBitMaskHelperPubSubType()
@@ -38819,9 +38819,9 @@ bool MapWStringInnerBitMaskHelperPubSubType::getKey(
     return true;
 }
 
-void MapWStringInnerBitMaskHelperPubSubType::register_type_object_representation() const
+void MapWStringInnerBitMaskHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapWStringInnerBitMaskHelper_type_identifier(type_identifiers_);
 }
 
 MapWStringInnerAliasHelperPubSubType::MapWStringInnerAliasHelperPubSubType()
@@ -39012,9 +39012,9 @@ bool MapWStringInnerAliasHelperPubSubType::getKey(
     return true;
 }
 
-void MapWStringInnerAliasHelperPubSubType::register_type_object_representation() const
+void MapWStringInnerAliasHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapWStringInnerAliasHelper_type_identifier(type_identifiers_);
 }
 
 MapWStringInnerAliasArrayHelperPubSubType::MapWStringInnerAliasArrayHelperPubSubType()
@@ -39205,9 +39205,9 @@ bool MapWStringInnerAliasArrayHelperPubSubType::getKey(
     return true;
 }
 
-void MapWStringInnerAliasArrayHelperPubSubType::register_type_object_representation() const
+void MapWStringInnerAliasArrayHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapWStringInnerAliasArrayHelper_type_identifier(type_identifiers_);
 }
 
 MapWStringInnerAliasSequenceHelperPubSubType::MapWStringInnerAliasSequenceHelperPubSubType()
@@ -39398,9 +39398,9 @@ bool MapWStringInnerAliasSequenceHelperPubSubType::getKey(
     return true;
 }
 
-void MapWStringInnerAliasSequenceHelperPubSubType::register_type_object_representation() const
+void MapWStringInnerAliasSequenceHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapWStringInnerAliasSequenceHelper_type_identifier(type_identifiers_);
 }
 
 MapWStringInnerAliasMapHelperPubSubType::MapWStringInnerAliasMapHelperPubSubType()
@@ -39591,9 +39591,9 @@ bool MapWStringInnerAliasMapHelperPubSubType::getKey(
     return true;
 }
 
-void MapWStringInnerAliasMapHelperPubSubType::register_type_object_representation() const
+void MapWStringInnerAliasMapHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapWStringInnerAliasMapHelper_type_identifier(type_identifiers_);
 }
 
 MapWStringInnerUnionHelperPubSubType::MapWStringInnerUnionHelperPubSubType()
@@ -39784,9 +39784,9 @@ bool MapWStringInnerUnionHelperPubSubType::getKey(
     return true;
 }
 
-void MapWStringInnerUnionHelperPubSubType::register_type_object_representation() const
+void MapWStringInnerUnionHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapWStringInnerUnionHelper_type_identifier(type_identifiers_);
 }
 
 MapWStringInnerStructureHelperPubSubType::MapWStringInnerStructureHelperPubSubType()
@@ -39977,9 +39977,9 @@ bool MapWStringInnerStructureHelperPubSubType::getKey(
     return true;
 }
 
-void MapWStringInnerStructureHelperPubSubType::register_type_object_representation() const
+void MapWStringInnerStructureHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapWStringInnerStructureHelper_type_identifier(type_identifiers_);
 }
 
 MapWStringInnerBitsetHelperPubSubType::MapWStringInnerBitsetHelperPubSubType()
@@ -40170,9 +40170,9 @@ bool MapWStringInnerBitsetHelperPubSubType::getKey(
     return true;
 }
 
-void MapWStringInnerBitsetHelperPubSubType::register_type_object_representation() const
+void MapWStringInnerBitsetHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapWStringInnerBitsetHelper_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedStringHelperShortPubSubType::MapInnerAliasBoundedStringHelperShortPubSubType()
@@ -40363,9 +40363,9 @@ bool MapInnerAliasBoundedStringHelperShortPubSubType::getKey(
     return true;
 }
 
-void MapInnerAliasBoundedStringHelperShortPubSubType::register_type_object_representation() const
+void MapInnerAliasBoundedStringHelperShortPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapInnerAliasBoundedStringHelperShort_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedStringHelperUShortPubSubType::MapInnerAliasBoundedStringHelperUShortPubSubType()
@@ -40556,9 +40556,9 @@ bool MapInnerAliasBoundedStringHelperUShortPubSubType::getKey(
     return true;
 }
 
-void MapInnerAliasBoundedStringHelperUShortPubSubType::register_type_object_representation() const
+void MapInnerAliasBoundedStringHelperUShortPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapInnerAliasBoundedStringHelperUShort_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedStringHelperLongPubSubType::MapInnerAliasBoundedStringHelperLongPubSubType()
@@ -40749,9 +40749,9 @@ bool MapInnerAliasBoundedStringHelperLongPubSubType::getKey(
     return true;
 }
 
-void MapInnerAliasBoundedStringHelperLongPubSubType::register_type_object_representation() const
+void MapInnerAliasBoundedStringHelperLongPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapInnerAliasBoundedStringHelperLong_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedStringHelperULongPubSubType::MapInnerAliasBoundedStringHelperULongPubSubType()
@@ -40942,9 +40942,9 @@ bool MapInnerAliasBoundedStringHelperULongPubSubType::getKey(
     return true;
 }
 
-void MapInnerAliasBoundedStringHelperULongPubSubType::register_type_object_representation() const
+void MapInnerAliasBoundedStringHelperULongPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapInnerAliasBoundedStringHelperULong_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedStringHelperLongLongPubSubType::MapInnerAliasBoundedStringHelperLongLongPubSubType()
@@ -41135,9 +41135,9 @@ bool MapInnerAliasBoundedStringHelperLongLongPubSubType::getKey(
     return true;
 }
 
-void MapInnerAliasBoundedStringHelperLongLongPubSubType::register_type_object_representation() const
+void MapInnerAliasBoundedStringHelperLongLongPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapInnerAliasBoundedStringHelperLongLong_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedStringHelperULongLongPubSubType::MapInnerAliasBoundedStringHelperULongLongPubSubType()
@@ -41328,9 +41328,9 @@ bool MapInnerAliasBoundedStringHelperULongLongPubSubType::getKey(
     return true;
 }
 
-void MapInnerAliasBoundedStringHelperULongLongPubSubType::register_type_object_representation() const
+void MapInnerAliasBoundedStringHelperULongLongPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapInnerAliasBoundedStringHelperULongLong_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedStringHelperFloatPubSubType::MapInnerAliasBoundedStringHelperFloatPubSubType()
@@ -41521,9 +41521,9 @@ bool MapInnerAliasBoundedStringHelperFloatPubSubType::getKey(
     return true;
 }
 
-void MapInnerAliasBoundedStringHelperFloatPubSubType::register_type_object_representation() const
+void MapInnerAliasBoundedStringHelperFloatPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapInnerAliasBoundedStringHelperFloat_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedStringHelperDoublePubSubType::MapInnerAliasBoundedStringHelperDoublePubSubType()
@@ -41714,9 +41714,9 @@ bool MapInnerAliasBoundedStringHelperDoublePubSubType::getKey(
     return true;
 }
 
-void MapInnerAliasBoundedStringHelperDoublePubSubType::register_type_object_representation() const
+void MapInnerAliasBoundedStringHelperDoublePubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapInnerAliasBoundedStringHelperDouble_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedStringHelperLongDoublePubSubType::MapInnerAliasBoundedStringHelperLongDoublePubSubType()
@@ -41907,9 +41907,9 @@ bool MapInnerAliasBoundedStringHelperLongDoublePubSubType::getKey(
     return true;
 }
 
-void MapInnerAliasBoundedStringHelperLongDoublePubSubType::register_type_object_representation() const
+void MapInnerAliasBoundedStringHelperLongDoublePubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapInnerAliasBoundedStringHelperLongDouble_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedStringHelperBooleanPubSubType::MapInnerAliasBoundedStringHelperBooleanPubSubType()
@@ -42100,9 +42100,9 @@ bool MapInnerAliasBoundedStringHelperBooleanPubSubType::getKey(
     return true;
 }
 
-void MapInnerAliasBoundedStringHelperBooleanPubSubType::register_type_object_representation() const
+void MapInnerAliasBoundedStringHelperBooleanPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapInnerAliasBoundedStringHelperBoolean_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedStringHelperOctetPubSubType::MapInnerAliasBoundedStringHelperOctetPubSubType()
@@ -42293,9 +42293,9 @@ bool MapInnerAliasBoundedStringHelperOctetPubSubType::getKey(
     return true;
 }
 
-void MapInnerAliasBoundedStringHelperOctetPubSubType::register_type_object_representation() const
+void MapInnerAliasBoundedStringHelperOctetPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapInnerAliasBoundedStringHelperOctet_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedStringHelperCharPubSubType::MapInnerAliasBoundedStringHelperCharPubSubType()
@@ -42486,9 +42486,9 @@ bool MapInnerAliasBoundedStringHelperCharPubSubType::getKey(
     return true;
 }
 
-void MapInnerAliasBoundedStringHelperCharPubSubType::register_type_object_representation() const
+void MapInnerAliasBoundedStringHelperCharPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapInnerAliasBoundedStringHelperChar_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedStringHelperWCharPubSubType::MapInnerAliasBoundedStringHelperWCharPubSubType()
@@ -42679,9 +42679,9 @@ bool MapInnerAliasBoundedStringHelperWCharPubSubType::getKey(
     return true;
 }
 
-void MapInnerAliasBoundedStringHelperWCharPubSubType::register_type_object_representation() const
+void MapInnerAliasBoundedStringHelperWCharPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapInnerAliasBoundedStringHelperWChar_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedStringHelperStringPubSubType::MapInnerAliasBoundedStringHelperStringPubSubType()
@@ -42872,9 +42872,9 @@ bool MapInnerAliasBoundedStringHelperStringPubSubType::getKey(
     return true;
 }
 
-void MapInnerAliasBoundedStringHelperStringPubSubType::register_type_object_representation() const
+void MapInnerAliasBoundedStringHelperStringPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapInnerAliasBoundedStringHelperString_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedStringHelperWStringPubSubType::MapInnerAliasBoundedStringHelperWStringPubSubType()
@@ -43065,9 +43065,9 @@ bool MapInnerAliasBoundedStringHelperWStringPubSubType::getKey(
     return true;
 }
 
-void MapInnerAliasBoundedStringHelperWStringPubSubType::register_type_object_representation() const
+void MapInnerAliasBoundedStringHelperWStringPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapInnerAliasBoundedStringHelperWString_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedStringHelperInnerAliasBoundedStringHelperPubSubType::MapInnerAliasBoundedStringHelperInnerAliasBoundedStringHelperPubSubType()
@@ -43258,9 +43258,9 @@ bool MapInnerAliasBoundedStringHelperInnerAliasBoundedStringHelperPubSubType::ge
     return true;
 }
 
-void MapInnerAliasBoundedStringHelperInnerAliasBoundedStringHelperPubSubType::register_type_object_representation() const
+void MapInnerAliasBoundedStringHelperInnerAliasBoundedStringHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapInnerAliasBoundedStringHelperInnerAliasBoundedStringHelper_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedStringHelperInnerAliasBoundedWStringHelperPubSubType::MapInnerAliasBoundedStringHelperInnerAliasBoundedWStringHelperPubSubType()
@@ -43451,9 +43451,9 @@ bool MapInnerAliasBoundedStringHelperInnerAliasBoundedWStringHelperPubSubType::g
     return true;
 }
 
-void MapInnerAliasBoundedStringHelperInnerAliasBoundedWStringHelperPubSubType::register_type_object_representation() const
+void MapInnerAliasBoundedStringHelperInnerAliasBoundedWStringHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapInnerAliasBoundedStringHelperInnerAliasBoundedWStringHelper_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedStringHelperInnerEnumHelperPubSubType::MapInnerAliasBoundedStringHelperInnerEnumHelperPubSubType()
@@ -43644,9 +43644,9 @@ bool MapInnerAliasBoundedStringHelperInnerEnumHelperPubSubType::getKey(
     return true;
 }
 
-void MapInnerAliasBoundedStringHelperInnerEnumHelperPubSubType::register_type_object_representation() const
+void MapInnerAliasBoundedStringHelperInnerEnumHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapInnerAliasBoundedStringHelperInnerEnumHelper_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedStringHelperInnerBitMaskHelperPubSubType::MapInnerAliasBoundedStringHelperInnerBitMaskHelperPubSubType()
@@ -43837,9 +43837,9 @@ bool MapInnerAliasBoundedStringHelperInnerBitMaskHelperPubSubType::getKey(
     return true;
 }
 
-void MapInnerAliasBoundedStringHelperInnerBitMaskHelperPubSubType::register_type_object_representation() const
+void MapInnerAliasBoundedStringHelperInnerBitMaskHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapInnerAliasBoundedStringHelperInnerBitMaskHelper_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedStringHelperInnerAliasHelperPubSubType::MapInnerAliasBoundedStringHelperInnerAliasHelperPubSubType()
@@ -44030,9 +44030,9 @@ bool MapInnerAliasBoundedStringHelperInnerAliasHelperPubSubType::getKey(
     return true;
 }
 
-void MapInnerAliasBoundedStringHelperInnerAliasHelperPubSubType::register_type_object_representation() const
+void MapInnerAliasBoundedStringHelperInnerAliasHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapInnerAliasBoundedStringHelperInnerAliasHelper_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedStringHelperInnerAliasArrayHelperPubSubType::MapInnerAliasBoundedStringHelperInnerAliasArrayHelperPubSubType()
@@ -44223,9 +44223,9 @@ bool MapInnerAliasBoundedStringHelperInnerAliasArrayHelperPubSubType::getKey(
     return true;
 }
 
-void MapInnerAliasBoundedStringHelperInnerAliasArrayHelperPubSubType::register_type_object_representation() const
+void MapInnerAliasBoundedStringHelperInnerAliasArrayHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapInnerAliasBoundedStringHelperInnerAliasArrayHelper_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedStringHelperInnerAliasSequenceHelperPubSubType::MapInnerAliasBoundedStringHelperInnerAliasSequenceHelperPubSubType()
@@ -44416,9 +44416,9 @@ bool MapInnerAliasBoundedStringHelperInnerAliasSequenceHelperPubSubType::getKey(
     return true;
 }
 
-void MapInnerAliasBoundedStringHelperInnerAliasSequenceHelperPubSubType::register_type_object_representation() const
+void MapInnerAliasBoundedStringHelperInnerAliasSequenceHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapInnerAliasBoundedStringHelperInnerAliasSequenceHelper_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedStringHelperInnerAliasMapHelperPubSubType::MapInnerAliasBoundedStringHelperInnerAliasMapHelperPubSubType()
@@ -44609,9 +44609,9 @@ bool MapInnerAliasBoundedStringHelperInnerAliasMapHelperPubSubType::getKey(
     return true;
 }
 
-void MapInnerAliasBoundedStringHelperInnerAliasMapHelperPubSubType::register_type_object_representation() const
+void MapInnerAliasBoundedStringHelperInnerAliasMapHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapInnerAliasBoundedStringHelperInnerAliasMapHelper_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedStringHelperInnerUnionHelperPubSubType::MapInnerAliasBoundedStringHelperInnerUnionHelperPubSubType()
@@ -44802,9 +44802,9 @@ bool MapInnerAliasBoundedStringHelperInnerUnionHelperPubSubType::getKey(
     return true;
 }
 
-void MapInnerAliasBoundedStringHelperInnerUnionHelperPubSubType::register_type_object_representation() const
+void MapInnerAliasBoundedStringHelperInnerUnionHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapInnerAliasBoundedStringHelperInnerUnionHelper_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedStringHelperInnerStructureHelperPubSubType::MapInnerAliasBoundedStringHelperInnerStructureHelperPubSubType()
@@ -44995,9 +44995,9 @@ bool MapInnerAliasBoundedStringHelperInnerStructureHelperPubSubType::getKey(
     return true;
 }
 
-void MapInnerAliasBoundedStringHelperInnerStructureHelperPubSubType::register_type_object_representation() const
+void MapInnerAliasBoundedStringHelperInnerStructureHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapInnerAliasBoundedStringHelperInnerStructureHelper_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedStringHelperInnerBitsetHelperPubSubType::MapInnerAliasBoundedStringHelperInnerBitsetHelperPubSubType()
@@ -45188,9 +45188,9 @@ bool MapInnerAliasBoundedStringHelperInnerBitsetHelperPubSubType::getKey(
     return true;
 }
 
-void MapInnerAliasBoundedStringHelperInnerBitsetHelperPubSubType::register_type_object_representation() const
+void MapInnerAliasBoundedStringHelperInnerBitsetHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapInnerAliasBoundedStringHelperInnerBitsetHelper_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedWStringHelperShortPubSubType::MapInnerAliasBoundedWStringHelperShortPubSubType()
@@ -45381,9 +45381,9 @@ bool MapInnerAliasBoundedWStringHelperShortPubSubType::getKey(
     return true;
 }
 
-void MapInnerAliasBoundedWStringHelperShortPubSubType::register_type_object_representation() const
+void MapInnerAliasBoundedWStringHelperShortPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapInnerAliasBoundedWStringHelperShort_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedWStringHelperUShortPubSubType::MapInnerAliasBoundedWStringHelperUShortPubSubType()
@@ -45574,9 +45574,9 @@ bool MapInnerAliasBoundedWStringHelperUShortPubSubType::getKey(
     return true;
 }
 
-void MapInnerAliasBoundedWStringHelperUShortPubSubType::register_type_object_representation() const
+void MapInnerAliasBoundedWStringHelperUShortPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapInnerAliasBoundedWStringHelperUShort_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedWStringHelperLongPubSubType::MapInnerAliasBoundedWStringHelperLongPubSubType()
@@ -45767,9 +45767,9 @@ bool MapInnerAliasBoundedWStringHelperLongPubSubType::getKey(
     return true;
 }
 
-void MapInnerAliasBoundedWStringHelperLongPubSubType::register_type_object_representation() const
+void MapInnerAliasBoundedWStringHelperLongPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapInnerAliasBoundedWStringHelperLong_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedWStringHelperULongPubSubType::MapInnerAliasBoundedWStringHelperULongPubSubType()
@@ -45960,9 +45960,9 @@ bool MapInnerAliasBoundedWStringHelperULongPubSubType::getKey(
     return true;
 }
 
-void MapInnerAliasBoundedWStringHelperULongPubSubType::register_type_object_representation() const
+void MapInnerAliasBoundedWStringHelperULongPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapInnerAliasBoundedWStringHelperULong_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedWStringHelperLongLongPubSubType::MapInnerAliasBoundedWStringHelperLongLongPubSubType()
@@ -46153,9 +46153,9 @@ bool MapInnerAliasBoundedWStringHelperLongLongPubSubType::getKey(
     return true;
 }
 
-void MapInnerAliasBoundedWStringHelperLongLongPubSubType::register_type_object_representation() const
+void MapInnerAliasBoundedWStringHelperLongLongPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapInnerAliasBoundedWStringHelperLongLong_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedWStringHelperULongLongPubSubType::MapInnerAliasBoundedWStringHelperULongLongPubSubType()
@@ -46346,9 +46346,9 @@ bool MapInnerAliasBoundedWStringHelperULongLongPubSubType::getKey(
     return true;
 }
 
-void MapInnerAliasBoundedWStringHelperULongLongPubSubType::register_type_object_representation() const
+void MapInnerAliasBoundedWStringHelperULongLongPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapInnerAliasBoundedWStringHelperULongLong_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedWStringHelperFloatPubSubType::MapInnerAliasBoundedWStringHelperFloatPubSubType()
@@ -46539,9 +46539,9 @@ bool MapInnerAliasBoundedWStringHelperFloatPubSubType::getKey(
     return true;
 }
 
-void MapInnerAliasBoundedWStringHelperFloatPubSubType::register_type_object_representation() const
+void MapInnerAliasBoundedWStringHelperFloatPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapInnerAliasBoundedWStringHelperFloat_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedWStringHelperDoublePubSubType::MapInnerAliasBoundedWStringHelperDoublePubSubType()
@@ -46732,9 +46732,9 @@ bool MapInnerAliasBoundedWStringHelperDoublePubSubType::getKey(
     return true;
 }
 
-void MapInnerAliasBoundedWStringHelperDoublePubSubType::register_type_object_representation() const
+void MapInnerAliasBoundedWStringHelperDoublePubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapInnerAliasBoundedWStringHelperDouble_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedWStringHelperLongDoublePubSubType::MapInnerAliasBoundedWStringHelperLongDoublePubSubType()
@@ -46925,9 +46925,9 @@ bool MapInnerAliasBoundedWStringHelperLongDoublePubSubType::getKey(
     return true;
 }
 
-void MapInnerAliasBoundedWStringHelperLongDoublePubSubType::register_type_object_representation() const
+void MapInnerAliasBoundedWStringHelperLongDoublePubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapInnerAliasBoundedWStringHelperLongDouble_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedWStringHelperBooleanPubSubType::MapInnerAliasBoundedWStringHelperBooleanPubSubType()
@@ -47118,9 +47118,9 @@ bool MapInnerAliasBoundedWStringHelperBooleanPubSubType::getKey(
     return true;
 }
 
-void MapInnerAliasBoundedWStringHelperBooleanPubSubType::register_type_object_representation() const
+void MapInnerAliasBoundedWStringHelperBooleanPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapInnerAliasBoundedWStringHelperBoolean_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedWStringHelperOctetPubSubType::MapInnerAliasBoundedWStringHelperOctetPubSubType()
@@ -47311,9 +47311,9 @@ bool MapInnerAliasBoundedWStringHelperOctetPubSubType::getKey(
     return true;
 }
 
-void MapInnerAliasBoundedWStringHelperOctetPubSubType::register_type_object_representation() const
+void MapInnerAliasBoundedWStringHelperOctetPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapInnerAliasBoundedWStringHelperOctet_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedWStringHelperCharPubSubType::MapInnerAliasBoundedWStringHelperCharPubSubType()
@@ -47504,9 +47504,9 @@ bool MapInnerAliasBoundedWStringHelperCharPubSubType::getKey(
     return true;
 }
 
-void MapInnerAliasBoundedWStringHelperCharPubSubType::register_type_object_representation() const
+void MapInnerAliasBoundedWStringHelperCharPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapInnerAliasBoundedWStringHelperChar_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedWStringHelperWCharPubSubType::MapInnerAliasBoundedWStringHelperWCharPubSubType()
@@ -47697,9 +47697,9 @@ bool MapInnerAliasBoundedWStringHelperWCharPubSubType::getKey(
     return true;
 }
 
-void MapInnerAliasBoundedWStringHelperWCharPubSubType::register_type_object_representation() const
+void MapInnerAliasBoundedWStringHelperWCharPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapInnerAliasBoundedWStringHelperWChar_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedWStringHelperStringPubSubType::MapInnerAliasBoundedWStringHelperStringPubSubType()
@@ -47890,9 +47890,9 @@ bool MapInnerAliasBoundedWStringHelperStringPubSubType::getKey(
     return true;
 }
 
-void MapInnerAliasBoundedWStringHelperStringPubSubType::register_type_object_representation() const
+void MapInnerAliasBoundedWStringHelperStringPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapInnerAliasBoundedWStringHelperString_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedWStringHelperWStringPubSubType::MapInnerAliasBoundedWStringHelperWStringPubSubType()
@@ -48083,9 +48083,9 @@ bool MapInnerAliasBoundedWStringHelperWStringPubSubType::getKey(
     return true;
 }
 
-void MapInnerAliasBoundedWStringHelperWStringPubSubType::register_type_object_representation() const
+void MapInnerAliasBoundedWStringHelperWStringPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapInnerAliasBoundedWStringHelperWString_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedWStringHelperInnerAliasBoundedStringHelperPubSubType::MapInnerAliasBoundedWStringHelperInnerAliasBoundedStringHelperPubSubType()
@@ -48276,9 +48276,9 @@ bool MapInnerAliasBoundedWStringHelperInnerAliasBoundedStringHelperPubSubType::g
     return true;
 }
 
-void MapInnerAliasBoundedWStringHelperInnerAliasBoundedStringHelperPubSubType::register_type_object_representation() const
+void MapInnerAliasBoundedWStringHelperInnerAliasBoundedStringHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapInnerAliasBoundedWStringHelperInnerAliasBoundedStringHelper_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedWStringHelperInnerAliasBoundedWStringHelperPubSubType::MapInnerAliasBoundedWStringHelperInnerAliasBoundedWStringHelperPubSubType()
@@ -48469,9 +48469,9 @@ bool MapInnerAliasBoundedWStringHelperInnerAliasBoundedWStringHelperPubSubType::
     return true;
 }
 
-void MapInnerAliasBoundedWStringHelperInnerAliasBoundedWStringHelperPubSubType::register_type_object_representation() const
+void MapInnerAliasBoundedWStringHelperInnerAliasBoundedWStringHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapInnerAliasBoundedWStringHelperInnerAliasBoundedWStringHelper_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedWStringHelperInnerEnumHelperPubSubType::MapInnerAliasBoundedWStringHelperInnerEnumHelperPubSubType()
@@ -48662,9 +48662,9 @@ bool MapInnerAliasBoundedWStringHelperInnerEnumHelperPubSubType::getKey(
     return true;
 }
 
-void MapInnerAliasBoundedWStringHelperInnerEnumHelperPubSubType::register_type_object_representation() const
+void MapInnerAliasBoundedWStringHelperInnerEnumHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapInnerAliasBoundedWStringHelperInnerEnumHelper_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedWStringHelperInnerBitMaskHelperPubSubType::MapInnerAliasBoundedWStringHelperInnerBitMaskHelperPubSubType()
@@ -48855,9 +48855,9 @@ bool MapInnerAliasBoundedWStringHelperInnerBitMaskHelperPubSubType::getKey(
     return true;
 }
 
-void MapInnerAliasBoundedWStringHelperInnerBitMaskHelperPubSubType::register_type_object_representation() const
+void MapInnerAliasBoundedWStringHelperInnerBitMaskHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapInnerAliasBoundedWStringHelperInnerBitMaskHelper_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedWStringHelperInnerAliasHelperPubSubType::MapInnerAliasBoundedWStringHelperInnerAliasHelperPubSubType()
@@ -49048,9 +49048,9 @@ bool MapInnerAliasBoundedWStringHelperInnerAliasHelperPubSubType::getKey(
     return true;
 }
 
-void MapInnerAliasBoundedWStringHelperInnerAliasHelperPubSubType::register_type_object_representation() const
+void MapInnerAliasBoundedWStringHelperInnerAliasHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapInnerAliasBoundedWStringHelperInnerAliasHelper_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedWStringHelperInnerAliasArrayHelperPubSubType::MapInnerAliasBoundedWStringHelperInnerAliasArrayHelperPubSubType()
@@ -49241,9 +49241,9 @@ bool MapInnerAliasBoundedWStringHelperInnerAliasArrayHelperPubSubType::getKey(
     return true;
 }
 
-void MapInnerAliasBoundedWStringHelperInnerAliasArrayHelperPubSubType::register_type_object_representation() const
+void MapInnerAliasBoundedWStringHelperInnerAliasArrayHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapInnerAliasBoundedWStringHelperInnerAliasArrayHelper_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedWStringHelperInnerAliasSequenceHelperPubSubType::MapInnerAliasBoundedWStringHelperInnerAliasSequenceHelperPubSubType()
@@ -49434,9 +49434,9 @@ bool MapInnerAliasBoundedWStringHelperInnerAliasSequenceHelperPubSubType::getKey
     return true;
 }
 
-void MapInnerAliasBoundedWStringHelperInnerAliasSequenceHelperPubSubType::register_type_object_representation() const
+void MapInnerAliasBoundedWStringHelperInnerAliasSequenceHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapInnerAliasBoundedWStringHelperInnerAliasSequenceHelper_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedWStringHelperInnerAliasMapHelperPubSubType::MapInnerAliasBoundedWStringHelperInnerAliasMapHelperPubSubType()
@@ -49627,9 +49627,9 @@ bool MapInnerAliasBoundedWStringHelperInnerAliasMapHelperPubSubType::getKey(
     return true;
 }
 
-void MapInnerAliasBoundedWStringHelperInnerAliasMapHelperPubSubType::register_type_object_representation() const
+void MapInnerAliasBoundedWStringHelperInnerAliasMapHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapInnerAliasBoundedWStringHelperInnerAliasMapHelper_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedWStringHelperInnerUnionHelperPubSubType::MapInnerAliasBoundedWStringHelperInnerUnionHelperPubSubType()
@@ -49820,9 +49820,9 @@ bool MapInnerAliasBoundedWStringHelperInnerUnionHelperPubSubType::getKey(
     return true;
 }
 
-void MapInnerAliasBoundedWStringHelperInnerUnionHelperPubSubType::register_type_object_representation() const
+void MapInnerAliasBoundedWStringHelperInnerUnionHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapInnerAliasBoundedWStringHelperInnerUnionHelper_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedWStringHelperInnerStructureHelperPubSubType::MapInnerAliasBoundedWStringHelperInnerStructureHelperPubSubType()
@@ -50013,9 +50013,9 @@ bool MapInnerAliasBoundedWStringHelperInnerStructureHelperPubSubType::getKey(
     return true;
 }
 
-void MapInnerAliasBoundedWStringHelperInnerStructureHelperPubSubType::register_type_object_representation() const
+void MapInnerAliasBoundedWStringHelperInnerStructureHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapInnerAliasBoundedWStringHelperInnerStructureHelper_type_identifier(type_identifiers_);
 }
 
 MapInnerAliasBoundedWStringHelperInnerBitsetHelperPubSubType::MapInnerAliasBoundedWStringHelperInnerBitsetHelperPubSubType()
@@ -50206,9 +50206,9 @@ bool MapInnerAliasBoundedWStringHelperInnerBitsetHelperPubSubType::getKey(
     return true;
 }
 
-void MapInnerAliasBoundedWStringHelperInnerBitsetHelperPubSubType::register_type_object_representation() const
+void MapInnerAliasBoundedWStringHelperInnerBitsetHelperPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_MapInnerAliasBoundedWStringHelperInnerBitsetHelper_type_identifier(type_identifiers_);
 }
 
 BoundedSmallMapPubSubType::BoundedSmallMapPubSubType()
@@ -50399,9 +50399,9 @@ bool BoundedSmallMapPubSubType::getKey(
     return true;
 }
 
-void BoundedSmallMapPubSubType::register_type_object_representation() const
+void BoundedSmallMapPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_BoundedSmallMap_type_identifier(type_identifiers_);
 }
 
 BoundedLargeMapPubSubType::BoundedLargeMapPubSubType()
@@ -50592,9 +50592,9 @@ bool BoundedLargeMapPubSubType::getKey(
     return true;
 }
 
-void BoundedLargeMapPubSubType::register_type_object_representation() const
+void BoundedLargeMapPubSubType::register_type_object_representation()
 {
-    register_maps_type_objects();
+    register_BoundedLargeMap_type_identifier(type_identifiers_);
 }
 
 

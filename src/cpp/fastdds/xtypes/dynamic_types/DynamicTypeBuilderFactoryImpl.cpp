@@ -528,12 +528,9 @@ traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_struc
     type_descriptor.kind(TK_STRUCTURE);
     type_descriptor.name(struct_type.header().detail().type_name());
     type_descriptor.is_nested(struct_type.struct_flags() & xtypes::IS_NESTED);
-    if (struct_type.struct_flags() & (xtypes::IS_FINAL | xtypes::IS_APPENDABLE | xtypes::IS_MUTABLE))
-    {
-        type_descriptor.extensibility_kind(struct_type.struct_flags() & xtypes::IS_FINAL ? ExtensibilityKind::FINAL :
-                (struct_type.struct_flags() &
-                xtypes::IS_MUTABLE ? ExtensibilityKind::MUTABLE : ExtensibilityKind::APPENDABLE));
-    }
+    type_descriptor.extensibility_kind(struct_type.struct_flags() & xtypes::IS_FINAL ? ExtensibilityKind::FINAL :
+            (struct_type.struct_flags() &
+            xtypes::IS_MUTABLE ? ExtensibilityKind::MUTABLE : ExtensibilityKind::APPENDABLE));
     bool inheritance_correct {true};
     if (xtypes::TK_NONE != struct_type.header().base_type()._d())
     {
@@ -1425,8 +1422,23 @@ bool DynamicTypeBuilderFactoryImpl::apply_custom_annotations(
             {
                 for (const xtypes::AppliedAnnotationParameter& parameter : annotation.param_seq().value())
                 {
-                    annotation_descriptor->set_value(get_string_from_name_hash(parameter.paramname_hash()),
-                            get_annotation_parameter_value(parameter.value()));
+                    ObjectName paramname = get_string_from_name_hash(parameter.paramname_hash());
+                    // Search the real name of annotation parameter.
+                    if (xtypes::EK_COMPLETE == annotation_type_object._d())
+                    {
+                        for (auto member : annotation_type_object.complete().annotation_type().member_seq())
+                        {
+                            xtypes::NameHash member_name_hash {xtypes::TypeObjectUtils::name_hash(
+                                                                   member.name().to_string())};
+
+                            if (parameter.paramname_hash() == member_name_hash)
+                            {
+                                paramname = member.name();
+                                break;
+                            }
+                        }
+                    }
+                    annotation_descriptor->set_value(paramname, get_annotation_parameter_value(parameter.value()));
                 }
             }
             if (member_id != MEMBER_ID_INVALID &&

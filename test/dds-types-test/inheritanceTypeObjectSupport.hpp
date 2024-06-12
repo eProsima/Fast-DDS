@@ -36,11 +36,6 @@
 #define eProsima_user_DllExport
 #endif  // _WIN32
 
-/**
- * @brief Register every TypeObject representation defined in the IDL file in Fast DDS TypeObjectRegistry.
- */
-eProsima_user_DllExport void register_inheritance_type_objects();
-
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 /**
@@ -54,7 +49,7 @@ eProsima_user_DllExport void register_inheritance_type_objects();
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_InnerStructureHelperChild_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register InnerStructureHelperChildChild related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -66,7 +61,7 @@ eProsima_user_DllExport void register_InnerStructureHelperChild_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_InnerStructureHelperChildChild_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register InnerStructureHelperEmptyChild related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -78,7 +73,7 @@ eProsima_user_DllExport void register_InnerStructureHelperChildChild_type_identi
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_InnerStructureHelperEmptyChild_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register InnerStructureHelperEmptyChildChild related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -90,7 +85,7 @@ eProsima_user_DllExport void register_InnerStructureHelperEmptyChild_type_identi
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_InnerStructureHelperEmptyChildChild_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register InnerEmptyStructureHelperChild related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -102,7 +97,7 @@ eProsima_user_DllExport void register_InnerStructureHelperEmptyChildChild_type_i
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_InnerEmptyStructureHelperChild_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register StructAliasInheritanceStruct related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -114,7 +109,7 @@ eProsima_user_DllExport void register_InnerEmptyStructureHelperChild_type_identi
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_StructAliasInheritanceStruct_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register StructuresInheritanceStruct related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -126,7 +121,43 @@ eProsima_user_DllExport void register_StructAliasInheritanceStruct_type_identifi
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_StructuresInheritanceStruct_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
+/**
+ * @brief Register InnerBitsetHelperChild related TypeIdentifier.
+ *        Fully-descriptive TypeIdentifiers are directly registered.
+ *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
+ *        indirectly registered as well.
+ *
+ * @param[out] TypeIdentifier of the registered type.
+ *             The returned TypeIdentifier corresponds to the complete TypeIdentifier in case of hashed TypeIdentifiers.
+ *             Invalid TypeIdentifier is returned in case of error.
+ */
+eProsima_user_DllExport void register_InnerBitsetHelperChild_type_identifier(
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
+/**
+ * @brief Register InnerBitsetHelperChildChild related TypeIdentifier.
+ *        Fully-descriptive TypeIdentifiers are directly registered.
+ *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
+ *        indirectly registered as well.
+ *
+ * @param[out] TypeIdentifier of the registered type.
+ *             The returned TypeIdentifier corresponds to the complete TypeIdentifier in case of hashed TypeIdentifiers.
+ *             Invalid TypeIdentifier is returned in case of error.
+ */
+eProsima_user_DllExport void register_InnerBitsetHelperChildChild_type_identifier(
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
+/**
+ * @brief Register BitsetAliasInheritanceBitset related TypeIdentifier.
+ *        Fully-descriptive TypeIdentifiers are directly registered.
+ *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
+ *        indirectly registered as well.
+ *
+ * @param[out] TypeIdentifier of the registered type.
+ *             The returned TypeIdentifier corresponds to the complete TypeIdentifier in case of hashed TypeIdentifiers.
+ *             Invalid TypeIdentifier is returned in case of error.
+ */
+eProsima_user_DllExport void register_BitsetAliasInheritanceBitset_type_identifier(
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register BitsetsChildInheritanceStruct related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -138,7 +169,7 @@ eProsima_user_DllExport void register_StructuresInheritanceStruct_type_identifie
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_BitsetsChildInheritanceStruct_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 
 
 #endif // DOXYGEN_SHOULD_SKIP_THIS_PUBLIC

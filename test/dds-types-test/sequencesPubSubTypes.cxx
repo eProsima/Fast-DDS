@@ -219,9 +219,9 @@ bool SequenceShortPubSubType::getKey(
     return true;
 }
 
-void SequenceShortPubSubType::register_type_object_representation() const
+void SequenceShortPubSubType::register_type_object_representation()
 {
-    register_sequences_type_objects();
+    register_SequenceShort_type_identifier(type_identifiers_);
 }
 
 SequenceUShortPubSubType::SequenceUShortPubSubType()
@@ -412,9 +412,9 @@ bool SequenceUShortPubSubType::getKey(
     return true;
 }
 
-void SequenceUShortPubSubType::register_type_object_representation() const
+void SequenceUShortPubSubType::register_type_object_representation()
 {
-    register_sequences_type_objects();
+    register_SequenceUShort_type_identifier(type_identifiers_);
 }
 
 SequenceLongPubSubType::SequenceLongPubSubType()
@@ -605,9 +605,9 @@ bool SequenceLongPubSubType::getKey(
     return true;
 }
 
-void SequenceLongPubSubType::register_type_object_representation() const
+void SequenceLongPubSubType::register_type_object_representation()
 {
-    register_sequences_type_objects();
+    register_SequenceLong_type_identifier(type_identifiers_);
 }
 
 SequenceULongPubSubType::SequenceULongPubSubType()
@@ -798,9 +798,9 @@ bool SequenceULongPubSubType::getKey(
     return true;
 }
 
-void SequenceULongPubSubType::register_type_object_representation() const
+void SequenceULongPubSubType::register_type_object_representation()
 {
-    register_sequences_type_objects();
+    register_SequenceULong_type_identifier(type_identifiers_);
 }
 
 SequenceLongLongPubSubType::SequenceLongLongPubSubType()
@@ -991,9 +991,9 @@ bool SequenceLongLongPubSubType::getKey(
     return true;
 }
 
-void SequenceLongLongPubSubType::register_type_object_representation() const
+void SequenceLongLongPubSubType::register_type_object_representation()
 {
-    register_sequences_type_objects();
+    register_SequenceLongLong_type_identifier(type_identifiers_);
 }
 
 SequenceULongLongPubSubType::SequenceULongLongPubSubType()
@@ -1184,9 +1184,9 @@ bool SequenceULongLongPubSubType::getKey(
     return true;
 }
 
-void SequenceULongLongPubSubType::register_type_object_representation() const
+void SequenceULongLongPubSubType::register_type_object_representation()
 {
-    register_sequences_type_objects();
+    register_SequenceULongLong_type_identifier(type_identifiers_);
 }
 
 SequenceFloatPubSubType::SequenceFloatPubSubType()
@@ -1377,9 +1377,9 @@ bool SequenceFloatPubSubType::getKey(
     return true;
 }
 
-void SequenceFloatPubSubType::register_type_object_representation() const
+void SequenceFloatPubSubType::register_type_object_representation()
 {
-    register_sequences_type_objects();
+    register_SequenceFloat_type_identifier(type_identifiers_);
 }
 
 SequenceDoublePubSubType::SequenceDoublePubSubType()
@@ -1570,9 +1570,9 @@ bool SequenceDoublePubSubType::getKey(
     return true;
 }
 
-void SequenceDoublePubSubType::register_type_object_representation() const
+void SequenceDoublePubSubType::register_type_object_representation()
 {
-    register_sequences_type_objects();
+    register_SequenceDouble_type_identifier(type_identifiers_);
 }
 
 SequenceLongDoublePubSubType::SequenceLongDoublePubSubType()
@@ -1763,9 +1763,9 @@ bool SequenceLongDoublePubSubType::getKey(
     return true;
 }
 
-void SequenceLongDoublePubSubType::register_type_object_representation() const
+void SequenceLongDoublePubSubType::register_type_object_representation()
 {
-    register_sequences_type_objects();
+    register_SequenceLongDouble_type_identifier(type_identifiers_);
 }
 
 SequenceBooleanPubSubType::SequenceBooleanPubSubType()
@@ -1956,9 +1956,9 @@ bool SequenceBooleanPubSubType::getKey(
     return true;
 }
 
-void SequenceBooleanPubSubType::register_type_object_representation() const
+void SequenceBooleanPubSubType::register_type_object_representation()
 {
-    register_sequences_type_objects();
+    register_SequenceBoolean_type_identifier(type_identifiers_);
 }
 
 SequenceOctetPubSubType::SequenceOctetPubSubType()
@@ -2149,9 +2149,9 @@ bool SequenceOctetPubSubType::getKey(
     return true;
 }
 
-void SequenceOctetPubSubType::register_type_object_representation() const
+void SequenceOctetPubSubType::register_type_object_representation()
 {
-    register_sequences_type_objects();
+    register_SequenceOctet_type_identifier(type_identifiers_);
 }
 
 SequenceCharPubSubType::SequenceCharPubSubType()
@@ -2342,9 +2342,9 @@ bool SequenceCharPubSubType::getKey(
     return true;
 }
 
-void SequenceCharPubSubType::register_type_object_representation() const
+void SequenceCharPubSubType::register_type_object_representation()
 {
-    register_sequences_type_objects();
+    register_SequenceChar_type_identifier(type_identifiers_);
 }
 
 SequenceWCharPubSubType::SequenceWCharPubSubType()
@@ -2535,9 +2535,9 @@ bool SequenceWCharPubSubType::getKey(
     return true;
 }
 
-void SequenceWCharPubSubType::register_type_object_representation() const
+void SequenceWCharPubSubType::register_type_object_representation()
 {
-    register_sequences_type_objects();
+    register_SequenceWChar_type_identifier(type_identifiers_);
 }
 
 SequenceStringPubSubType::SequenceStringPubSubType()
@@ -2728,9 +2728,9 @@ bool SequenceStringPubSubType::getKey(
     return true;
 }
 
-void SequenceStringPubSubType::register_type_object_representation() const
+void SequenceStringPubSubType::register_type_object_representation()
 {
-    register_sequences_type_objects();
+    register_SequenceString_type_identifier(type_identifiers_);
 }
 
 SequenceWStringPubSubType::SequenceWStringPubSubType()
@@ -2921,9 +2921,9 @@ bool SequenceWStringPubSubType::getKey(
     return true;
 }
 
-void SequenceWStringPubSubType::register_type_object_representation() const
+void SequenceWStringPubSubType::register_type_object_representation()
 {
-    register_sequences_type_objects();
+    register_SequenceWString_type_identifier(type_identifiers_);
 }
 
 SequenceStringBoundedPubSubType::SequenceStringBoundedPubSubType()
@@ -3114,9 +3114,9 @@ bool SequenceStringBoundedPubSubType::getKey(
     return true;
 }
 
-void SequenceStringBoundedPubSubType::register_type_object_representation() const
+void SequenceStringBoundedPubSubType::register_type_object_representation()
 {
-    register_sequences_type_objects();
+    register_SequenceStringBounded_type_identifier(type_identifiers_);
 }
 
 SequenceWStringBoundedPubSubType::SequenceWStringBoundedPubSubType()
@@ -3307,9 +3307,9 @@ bool SequenceWStringBoundedPubSubType::getKey(
     return true;
 }
 
-void SequenceWStringBoundedPubSubType::register_type_object_representation() const
+void SequenceWStringBoundedPubSubType::register_type_object_representation()
 {
-    register_sequences_type_objects();
+    register_SequenceWStringBounded_type_identifier(type_identifiers_);
 }
 
 SequenceEnumPubSubType::SequenceEnumPubSubType()
@@ -3500,9 +3500,9 @@ bool SequenceEnumPubSubType::getKey(
     return true;
 }
 
-void SequenceEnumPubSubType::register_type_object_representation() const
+void SequenceEnumPubSubType::register_type_object_representation()
 {
-    register_sequences_type_objects();
+    register_SequenceEnum_type_identifier(type_identifiers_);
 }
 
 SequenceBitMaskPubSubType::SequenceBitMaskPubSubType()
@@ -3693,9 +3693,9 @@ bool SequenceBitMaskPubSubType::getKey(
     return true;
 }
 
-void SequenceBitMaskPubSubType::register_type_object_representation() const
+void SequenceBitMaskPubSubType::register_type_object_representation()
 {
-    register_sequences_type_objects();
+    register_SequenceBitMask_type_identifier(type_identifiers_);
 }
 
 SequenceAliasPubSubType::SequenceAliasPubSubType()
@@ -3886,9 +3886,9 @@ bool SequenceAliasPubSubType::getKey(
     return true;
 }
 
-void SequenceAliasPubSubType::register_type_object_representation() const
+void SequenceAliasPubSubType::register_type_object_representation()
 {
-    register_sequences_type_objects();
+    register_SequenceAlias_type_identifier(type_identifiers_);
 }
 
 SequenceShortArrayPubSubType::SequenceShortArrayPubSubType()
@@ -4079,9 +4079,9 @@ bool SequenceShortArrayPubSubType::getKey(
     return true;
 }
 
-void SequenceShortArrayPubSubType::register_type_object_representation() const
+void SequenceShortArrayPubSubType::register_type_object_representation()
 {
-    register_sequences_type_objects();
+    register_SequenceShortArray_type_identifier(type_identifiers_);
 }
 
 SequenceSequencePubSubType::SequenceSequencePubSubType()
@@ -4272,9 +4272,9 @@ bool SequenceSequencePubSubType::getKey(
     return true;
 }
 
-void SequenceSequencePubSubType::register_type_object_representation() const
+void SequenceSequencePubSubType::register_type_object_representation()
 {
-    register_sequences_type_objects();
+    register_SequenceSequence_type_identifier(type_identifiers_);
 }
 
 SequenceMapPubSubType::SequenceMapPubSubType()
@@ -4465,9 +4465,9 @@ bool SequenceMapPubSubType::getKey(
     return true;
 }
 
-void SequenceMapPubSubType::register_type_object_representation() const
+void SequenceMapPubSubType::register_type_object_representation()
 {
-    register_sequences_type_objects();
+    register_SequenceMap_type_identifier(type_identifiers_);
 }
 
 SequenceUnionPubSubType::SequenceUnionPubSubType()
@@ -4658,9 +4658,9 @@ bool SequenceUnionPubSubType::getKey(
     return true;
 }
 
-void SequenceUnionPubSubType::register_type_object_representation() const
+void SequenceUnionPubSubType::register_type_object_representation()
 {
-    register_sequences_type_objects();
+    register_SequenceUnion_type_identifier(type_identifiers_);
 }
 
 SequenceStructurePubSubType::SequenceStructurePubSubType()
@@ -4851,9 +4851,9 @@ bool SequenceStructurePubSubType::getKey(
     return true;
 }
 
-void SequenceStructurePubSubType::register_type_object_representation() const
+void SequenceStructurePubSubType::register_type_object_representation()
 {
-    register_sequences_type_objects();
+    register_SequenceStructure_type_identifier(type_identifiers_);
 }
 
 SequenceBitsetPubSubType::SequenceBitsetPubSubType()
@@ -5044,9 +5044,9 @@ bool SequenceBitsetPubSubType::getKey(
     return true;
 }
 
-void SequenceBitsetPubSubType::register_type_object_representation() const
+void SequenceBitsetPubSubType::register_type_object_representation()
 {
-    register_sequences_type_objects();
+    register_SequenceBitset_type_identifier(type_identifiers_);
 }
 
 BoundedSmallSequencesPubSubType::BoundedSmallSequencesPubSubType()
@@ -5237,9 +5237,9 @@ bool BoundedSmallSequencesPubSubType::getKey(
     return true;
 }
 
-void BoundedSmallSequencesPubSubType::register_type_object_representation() const
+void BoundedSmallSequencesPubSubType::register_type_object_representation()
 {
-    register_sequences_type_objects();
+    register_BoundedSmallSequences_type_identifier(type_identifiers_);
 }
 
 BoundedBigSequencesPubSubType::BoundedBigSequencesPubSubType()
@@ -5430,9 +5430,9 @@ bool BoundedBigSequencesPubSubType::getKey(
     return true;
 }
 
-void BoundedBigSequencesPubSubType::register_type_object_representation() const
+void BoundedBigSequencesPubSubType::register_type_object_representation()
 {
-    register_sequences_type_objects();
+    register_BoundedBigSequences_type_identifier(type_identifiers_);
 }
 
 

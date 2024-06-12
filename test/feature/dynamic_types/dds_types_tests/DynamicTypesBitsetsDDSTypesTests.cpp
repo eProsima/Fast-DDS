@@ -332,9 +332,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BitsetStruct)
         EXPECT_EQ(data_struct.var_InnerTypedBitsetHelper4().ulong_long_bitfield, test_ulong_long_value);
     }
 
-    xtypes::TypeIdentifier static_type_id;
-    register_BitsetStruct_type_identifier(static_type_id);
-    check_typeobject_registry(struct_type, static_type_id);
+    xtypes::TypeIdentifierPair static_type_ids;
+    register_BitsetStruct_type_identifier(static_type_ids);
+    check_typeobject_registry(struct_type, static_type_ids);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }

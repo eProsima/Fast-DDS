@@ -36,11 +36,6 @@
 #define eProsima_user_DllExport
 #endif  // _WIN32
 
-/**
- * @brief Register every TypeObject representation defined in the IDL file in Fast DDS TypeObjectRegistry.
- */
-eProsima_user_DllExport void register_maps_type_objects();
-
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 /**
@@ -54,7 +49,7 @@ eProsima_user_DllExport void register_maps_type_objects();
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapShortShort_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapShortUShort related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -66,7 +61,7 @@ eProsima_user_DllExport void register_MapShortShort_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapShortUShort_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapShortLong related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -78,7 +73,7 @@ eProsima_user_DllExport void register_MapShortUShort_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapShortLong_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapShortULong related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -90,7 +85,7 @@ eProsima_user_DllExport void register_MapShortLong_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapShortULong_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapShortLongLong related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -102,7 +97,7 @@ eProsima_user_DllExport void register_MapShortULong_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapShortLongLong_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapShortULongLong related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -114,7 +109,7 @@ eProsima_user_DllExport void register_MapShortLongLong_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapShortULongLong_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapShortFloat related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -126,7 +121,7 @@ eProsima_user_DllExport void register_MapShortULongLong_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapShortFloat_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapShortDouble related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -138,7 +133,7 @@ eProsima_user_DllExport void register_MapShortFloat_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapShortDouble_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapShortLongDouble related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -150,7 +145,7 @@ eProsima_user_DllExport void register_MapShortDouble_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapShortLongDouble_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapShortBoolean related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -162,7 +157,7 @@ eProsima_user_DllExport void register_MapShortLongDouble_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapShortBoolean_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapShortOctet related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -174,7 +169,7 @@ eProsima_user_DllExport void register_MapShortBoolean_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapShortOctet_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapShortChar related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -186,7 +181,7 @@ eProsima_user_DllExport void register_MapShortOctet_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapShortChar_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapShortWChar related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -198,7 +193,7 @@ eProsima_user_DllExport void register_MapShortChar_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapShortWChar_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapShortString related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -210,7 +205,7 @@ eProsima_user_DllExport void register_MapShortWChar_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapShortString_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapShortWString related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -222,7 +217,7 @@ eProsima_user_DllExport void register_MapShortString_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapShortWString_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapShortInnerAliasBoundedStringHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -234,7 +229,7 @@ eProsima_user_DllExport void register_MapShortWString_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapShortInnerAliasBoundedStringHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapShortInnerAliasBoundedWStringHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -246,7 +241,7 @@ eProsima_user_DllExport void register_MapShortInnerAliasBoundedStringHelper_type
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapShortInnerAliasBoundedWStringHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapShortInnerEnumHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -258,7 +253,7 @@ eProsima_user_DllExport void register_MapShortInnerAliasBoundedWStringHelper_typ
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapShortInnerEnumHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapShortInnerBitMaskHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -270,7 +265,7 @@ eProsima_user_DllExport void register_MapShortInnerEnumHelper_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapShortInnerBitMaskHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapShortInnerAliasHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -282,7 +277,7 @@ eProsima_user_DllExport void register_MapShortInnerBitMaskHelper_type_identifier
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapShortInnerAliasHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapShortInnerAliasArrayHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -294,7 +289,7 @@ eProsima_user_DllExport void register_MapShortInnerAliasHelper_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapShortInnerAliasArrayHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapShortInnerAliasSequenceHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -306,7 +301,7 @@ eProsima_user_DllExport void register_MapShortInnerAliasArrayHelper_type_identif
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapShortInnerAliasSequenceHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapShortInnerAliasMapHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -318,7 +313,7 @@ eProsima_user_DllExport void register_MapShortInnerAliasSequenceHelper_type_iden
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapShortInnerAliasMapHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapShortInnerUnionHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -330,7 +325,7 @@ eProsima_user_DllExport void register_MapShortInnerAliasMapHelper_type_identifie
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapShortInnerUnionHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapShortInnerStructureHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -342,7 +337,7 @@ eProsima_user_DllExport void register_MapShortInnerUnionHelper_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapShortInnerStructureHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapShortInnerBitsetHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -354,7 +349,7 @@ eProsima_user_DllExport void register_MapShortInnerStructureHelper_type_identifi
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapShortInnerBitsetHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapUShortShort related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -366,7 +361,7 @@ eProsima_user_DllExport void register_MapShortInnerBitsetHelper_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapUShortShort_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapUShortUShort related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -378,7 +373,7 @@ eProsima_user_DllExport void register_MapUShortShort_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapUShortUShort_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapUShortLong related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -390,7 +385,7 @@ eProsima_user_DllExport void register_MapUShortUShort_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapUShortLong_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapUShortULong related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -402,7 +397,7 @@ eProsima_user_DllExport void register_MapUShortLong_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapUShortULong_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapUShortLongLong related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -414,7 +409,7 @@ eProsima_user_DllExport void register_MapUShortULong_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapUShortLongLong_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapUShortULongLong related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -426,7 +421,7 @@ eProsima_user_DllExport void register_MapUShortLongLong_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapUShortULongLong_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapUShortFloat related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -438,7 +433,7 @@ eProsima_user_DllExport void register_MapUShortULongLong_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapUShortFloat_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapUShortDouble related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -450,7 +445,7 @@ eProsima_user_DllExport void register_MapUShortFloat_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapUShortDouble_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapUShortLongDouble related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -462,7 +457,7 @@ eProsima_user_DllExport void register_MapUShortDouble_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapUShortLongDouble_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapUShortBoolean related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -474,7 +469,7 @@ eProsima_user_DllExport void register_MapUShortLongDouble_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapUShortBoolean_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapUShortOctet related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -486,7 +481,7 @@ eProsima_user_DllExport void register_MapUShortBoolean_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapUShortOctet_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapUShortChar related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -498,7 +493,7 @@ eProsima_user_DllExport void register_MapUShortOctet_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapUShortChar_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapUShortWChar related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -510,7 +505,7 @@ eProsima_user_DllExport void register_MapUShortChar_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapUShortWChar_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapUShortString related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -522,7 +517,7 @@ eProsima_user_DllExport void register_MapUShortWChar_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapUShortString_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapUShortWString related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -534,7 +529,7 @@ eProsima_user_DllExport void register_MapUShortString_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapUShortWString_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapUShortInnerAliasBoundedStringHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -546,7 +541,7 @@ eProsima_user_DllExport void register_MapUShortWString_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapUShortInnerAliasBoundedStringHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapUShortInnerAliasBoundedWStringHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -558,7 +553,7 @@ eProsima_user_DllExport void register_MapUShortInnerAliasBoundedStringHelper_typ
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapUShortInnerAliasBoundedWStringHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapUShortInnerEnumHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -570,7 +565,7 @@ eProsima_user_DllExport void register_MapUShortInnerAliasBoundedWStringHelper_ty
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapUShortInnerEnumHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapUShortInnerBitMaskHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -582,7 +577,7 @@ eProsima_user_DllExport void register_MapUShortInnerEnumHelper_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapUShortInnerBitMaskHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapUShortInnerAliasHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -594,7 +589,7 @@ eProsima_user_DllExport void register_MapUShortInnerBitMaskHelper_type_identifie
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapUShortInnerAliasHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapUShortInnerAliasArrayHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -606,7 +601,7 @@ eProsima_user_DllExport void register_MapUShortInnerAliasHelper_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapUShortInnerAliasArrayHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapUShortInnerAliasSequenceHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -618,7 +613,7 @@ eProsima_user_DllExport void register_MapUShortInnerAliasArrayHelper_type_identi
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapUShortInnerAliasSequenceHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapUShortInnerAliasMapHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -630,7 +625,7 @@ eProsima_user_DllExport void register_MapUShortInnerAliasSequenceHelper_type_ide
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapUShortInnerAliasMapHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapUShortInnerUnionHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -642,7 +637,7 @@ eProsima_user_DllExport void register_MapUShortInnerAliasMapHelper_type_identifi
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapUShortInnerUnionHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapUShortInnerStructureHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -654,7 +649,7 @@ eProsima_user_DllExport void register_MapUShortInnerUnionHelper_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapUShortInnerStructureHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapUShortInnerBitsetHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -666,7 +661,7 @@ eProsima_user_DllExport void register_MapUShortInnerStructureHelper_type_identif
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapUShortInnerBitsetHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapLongShort related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -678,7 +673,7 @@ eProsima_user_DllExport void register_MapUShortInnerBitsetHelper_type_identifier
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapLongShort_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapLongUShort related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -690,7 +685,7 @@ eProsima_user_DllExport void register_MapLongShort_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapLongUShort_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapLongLong related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -702,7 +697,7 @@ eProsima_user_DllExport void register_MapLongUShort_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapLongLong_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapLongULong related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -714,7 +709,7 @@ eProsima_user_DllExport void register_MapLongLong_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapLongULong_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapLongKeyLongLongValue related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -726,7 +721,7 @@ eProsima_user_DllExport void register_MapLongULong_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapLongKeyLongLongValue_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapLongULongLong related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -738,7 +733,7 @@ eProsima_user_DllExport void register_MapLongKeyLongLongValue_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapLongULongLong_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapLongFloat related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -750,7 +745,7 @@ eProsima_user_DllExport void register_MapLongULongLong_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapLongFloat_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapLongDouble related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -762,7 +757,7 @@ eProsima_user_DllExport void register_MapLongFloat_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapLongDouble_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapLongKeyLongDoubleValue related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -774,7 +769,7 @@ eProsima_user_DllExport void register_MapLongDouble_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapLongKeyLongDoubleValue_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapLongBoolean related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -786,7 +781,7 @@ eProsima_user_DllExport void register_MapLongKeyLongDoubleValue_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapLongBoolean_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapLongOctet related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -798,7 +793,7 @@ eProsima_user_DllExport void register_MapLongBoolean_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapLongOctet_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapLongChar related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -810,7 +805,7 @@ eProsima_user_DllExport void register_MapLongOctet_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapLongChar_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapLongWChar related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -822,7 +817,7 @@ eProsima_user_DllExport void register_MapLongChar_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapLongWChar_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapLongString related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -834,7 +829,7 @@ eProsima_user_DllExport void register_MapLongWChar_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapLongString_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapLongWString related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -846,7 +841,7 @@ eProsima_user_DllExport void register_MapLongString_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapLongWString_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapLongInnerAliasBoundedStringHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -858,7 +853,7 @@ eProsima_user_DllExport void register_MapLongWString_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapLongInnerAliasBoundedStringHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapLongInnerAliasBoundedWStringHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -870,7 +865,7 @@ eProsima_user_DllExport void register_MapLongInnerAliasBoundedStringHelper_type_
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapLongInnerAliasBoundedWStringHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapLongInnerEnumHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -882,7 +877,7 @@ eProsima_user_DllExport void register_MapLongInnerAliasBoundedWStringHelper_type
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapLongInnerEnumHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapLongInnerBitMaskHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -894,7 +889,7 @@ eProsima_user_DllExport void register_MapLongInnerEnumHelper_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapLongInnerBitMaskHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapLongInnerAliasHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -906,7 +901,7 @@ eProsima_user_DllExport void register_MapLongInnerBitMaskHelper_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapLongInnerAliasHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapLongInnerAliasArrayHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -918,7 +913,7 @@ eProsima_user_DllExport void register_MapLongInnerAliasHelper_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapLongInnerAliasArrayHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapLongInnerAliasSequenceHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -930,7 +925,7 @@ eProsima_user_DllExport void register_MapLongInnerAliasArrayHelper_type_identifi
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapLongInnerAliasSequenceHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapLongInnerAliasMapHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -942,7 +937,7 @@ eProsima_user_DllExport void register_MapLongInnerAliasSequenceHelper_type_ident
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapLongInnerAliasMapHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapLongInnerUnionHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -954,7 +949,7 @@ eProsima_user_DllExport void register_MapLongInnerAliasMapHelper_type_identifier
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapLongInnerUnionHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapLongInnerStructureHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -966,7 +961,7 @@ eProsima_user_DllExport void register_MapLongInnerUnionHelper_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapLongInnerStructureHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapLongInnerBitsetHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -978,7 +973,7 @@ eProsima_user_DllExport void register_MapLongInnerStructureHelper_type_identifie
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapLongInnerBitsetHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapULongShort related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -990,7 +985,7 @@ eProsima_user_DllExport void register_MapLongInnerBitsetHelper_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapULongShort_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapULongUShort related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1002,7 +997,7 @@ eProsima_user_DllExport void register_MapULongShort_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapULongUShort_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapULongLong related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1014,7 +1009,7 @@ eProsima_user_DllExport void register_MapULongUShort_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapULongLong_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapULongULong related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1026,7 +1021,7 @@ eProsima_user_DllExport void register_MapULongLong_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapULongULong_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapKeyULongValueLongLong related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1038,7 +1033,7 @@ eProsima_user_DllExport void register_MapULongULong_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapKeyULongValueLongLong_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapULongULongLong related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1050,7 +1045,7 @@ eProsima_user_DllExport void register_MapKeyULongValueLongLong_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapULongULongLong_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapULongFloat related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1062,7 +1057,7 @@ eProsima_user_DllExport void register_MapULongULongLong_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapULongFloat_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapULongDouble related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1074,7 +1069,7 @@ eProsima_user_DllExport void register_MapULongFloat_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapULongDouble_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapKeyULongValueLongDouble related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1086,7 +1081,7 @@ eProsima_user_DllExport void register_MapULongDouble_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapKeyULongValueLongDouble_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapULongBoolean related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1098,7 +1093,7 @@ eProsima_user_DllExport void register_MapKeyULongValueLongDouble_type_identifier
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapULongBoolean_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapULongOctet related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1110,7 +1105,7 @@ eProsima_user_DllExport void register_MapULongBoolean_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapULongOctet_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapULongChar related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1122,7 +1117,7 @@ eProsima_user_DllExport void register_MapULongOctet_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapULongChar_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapULongWChar related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1134,7 +1129,7 @@ eProsima_user_DllExport void register_MapULongChar_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapULongWChar_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapULongString related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1146,7 +1141,7 @@ eProsima_user_DllExport void register_MapULongWChar_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapULongString_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapULongWString related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1158,7 +1153,7 @@ eProsima_user_DllExport void register_MapULongString_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapULongWString_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapULongInnerAliasBoundedStringHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1170,7 +1165,7 @@ eProsima_user_DllExport void register_MapULongWString_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapULongInnerAliasBoundedStringHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapULongInnerAliasBoundedWStringHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1182,7 +1177,7 @@ eProsima_user_DllExport void register_MapULongInnerAliasBoundedStringHelper_type
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapULongInnerAliasBoundedWStringHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapULongInnerEnumHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1194,7 +1189,7 @@ eProsima_user_DllExport void register_MapULongInnerAliasBoundedWStringHelper_typ
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapULongInnerEnumHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapULongInnerBitMaskHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1206,7 +1201,7 @@ eProsima_user_DllExport void register_MapULongInnerEnumHelper_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapULongInnerBitMaskHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapULongInnerAliasHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1218,7 +1213,7 @@ eProsima_user_DllExport void register_MapULongInnerBitMaskHelper_type_identifier
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapULongInnerAliasHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapULongInnerAliasArrayHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1230,7 +1225,7 @@ eProsima_user_DllExport void register_MapULongInnerAliasHelper_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapULongInnerAliasArrayHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapULongInnerAliasSequenceHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1242,7 +1237,7 @@ eProsima_user_DllExport void register_MapULongInnerAliasArrayHelper_type_identif
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapULongInnerAliasSequenceHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapULongInnerAliasMapHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1254,7 +1249,7 @@ eProsima_user_DllExport void register_MapULongInnerAliasSequenceHelper_type_iden
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapULongInnerAliasMapHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapULongInnerUnionHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1266,7 +1261,7 @@ eProsima_user_DllExport void register_MapULongInnerAliasMapHelper_type_identifie
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapULongInnerUnionHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapULongInnerStructureHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1278,7 +1273,7 @@ eProsima_user_DllExport void register_MapULongInnerUnionHelper_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapULongInnerStructureHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapULongInnerBitsetHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1290,7 +1285,7 @@ eProsima_user_DllExport void register_MapULongInnerStructureHelper_type_identifi
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapULongInnerBitsetHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapLongLongShort related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1302,7 +1297,7 @@ eProsima_user_DllExport void register_MapULongInnerBitsetHelper_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapLongLongShort_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapLongLongUShort related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1314,7 +1309,7 @@ eProsima_user_DllExport void register_MapLongLongShort_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapLongLongUShort_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapLongLongKeyLongValue related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1326,7 +1321,7 @@ eProsima_user_DllExport void register_MapLongLongUShort_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapLongLongKeyLongValue_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapLongLongULong related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1338,7 +1333,7 @@ eProsima_user_DllExport void register_MapLongLongKeyLongValue_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapLongLongULong_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapLongLongLongLong related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1350,7 +1345,7 @@ eProsima_user_DllExport void register_MapLongLongULong_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapLongLongLongLong_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapLongLongULongLong related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1362,7 +1357,7 @@ eProsima_user_DllExport void register_MapLongLongLongLong_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapLongLongULongLong_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapLongLongFloat related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1374,7 +1369,7 @@ eProsima_user_DllExport void register_MapLongLongULongLong_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapLongLongFloat_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapLongLongKeyDoubleValue related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1386,7 +1381,7 @@ eProsima_user_DllExport void register_MapLongLongFloat_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapLongLongKeyDoubleValue_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapLongLongLongDouble related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1398,7 +1393,7 @@ eProsima_user_DllExport void register_MapLongLongKeyDoubleValue_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapLongLongLongDouble_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapLongLongBoolean related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1410,7 +1405,7 @@ eProsima_user_DllExport void register_MapLongLongLongDouble_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapLongLongBoolean_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapLongLongOctet related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1422,7 +1417,7 @@ eProsima_user_DllExport void register_MapLongLongBoolean_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapLongLongOctet_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapLongLongChar related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1434,7 +1429,7 @@ eProsima_user_DllExport void register_MapLongLongOctet_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapLongLongChar_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapLongLongWChar related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1446,7 +1441,7 @@ eProsima_user_DllExport void register_MapLongLongChar_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapLongLongWChar_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapLongLongString related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1458,7 +1453,7 @@ eProsima_user_DllExport void register_MapLongLongWChar_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapLongLongString_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapLongLongWString related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1470,7 +1465,7 @@ eProsima_user_DllExport void register_MapLongLongString_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapLongLongWString_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapLongLongInnerAliasBoundedStringHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1482,7 +1477,7 @@ eProsima_user_DllExport void register_MapLongLongWString_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapLongLongInnerAliasBoundedStringHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapLongLongInnerAliasBoundedWStringHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1494,7 +1489,7 @@ eProsima_user_DllExport void register_MapLongLongInnerAliasBoundedStringHelper_t
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapLongLongInnerAliasBoundedWStringHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapLongLongInnerEnumHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1506,7 +1501,7 @@ eProsima_user_DllExport void register_MapLongLongInnerAliasBoundedWStringHelper_
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapLongLongInnerEnumHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapLongLongInnerBitMaskHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1518,7 +1513,7 @@ eProsima_user_DllExport void register_MapLongLongInnerEnumHelper_type_identifier
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapLongLongInnerBitMaskHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapLongLongInnerAliasHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1530,7 +1525,7 @@ eProsima_user_DllExport void register_MapLongLongInnerBitMaskHelper_type_identif
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapLongLongInnerAliasHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapLongLongInnerAliasArrayHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1542,7 +1537,7 @@ eProsima_user_DllExport void register_MapLongLongInnerAliasHelper_type_identifie
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapLongLongInnerAliasArrayHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapLongLongInnerAliasSequenceHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1554,7 +1549,7 @@ eProsima_user_DllExport void register_MapLongLongInnerAliasArrayHelper_type_iden
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapLongLongInnerAliasSequenceHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapLongLongInnerAliasMapHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1566,7 +1561,7 @@ eProsima_user_DllExport void register_MapLongLongInnerAliasSequenceHelper_type_i
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapLongLongInnerAliasMapHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapLongLongInnerUnionHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1578,7 +1573,7 @@ eProsima_user_DllExport void register_MapLongLongInnerAliasMapHelper_type_identi
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapLongLongInnerUnionHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapLongLongInnerStructureHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1590,7 +1585,7 @@ eProsima_user_DllExport void register_MapLongLongInnerUnionHelper_type_identifie
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapLongLongInnerStructureHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapLongLongInnerBitsetHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1602,7 +1597,7 @@ eProsima_user_DllExport void register_MapLongLongInnerStructureHelper_type_ident
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapLongLongInnerBitsetHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapULongLongShort related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1614,7 +1609,7 @@ eProsima_user_DllExport void register_MapLongLongInnerBitsetHelper_type_identifi
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapULongLongShort_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapULongLongUShort related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1626,7 +1621,7 @@ eProsima_user_DllExport void register_MapULongLongShort_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapULongLongUShort_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapULongLongLong related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1638,7 +1633,7 @@ eProsima_user_DllExport void register_MapULongLongUShort_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapULongLongLong_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapULongLongULong related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1650,7 +1645,7 @@ eProsima_user_DllExport void register_MapULongLongLong_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapULongLongULong_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapULongLongLongLong related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1662,7 +1657,7 @@ eProsima_user_DllExport void register_MapULongLongULong_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapULongLongLongLong_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapULongLongULongLong related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1674,7 +1669,7 @@ eProsima_user_DllExport void register_MapULongLongLongLong_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapULongLongULongLong_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapULongLongFloat related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1686,7 +1681,7 @@ eProsima_user_DllExport void register_MapULongLongULongLong_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapULongLongFloat_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapKeyULongLongValueDouble related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1698,7 +1693,7 @@ eProsima_user_DllExport void register_MapULongLongFloat_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapKeyULongLongValueDouble_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapULongLongLongDouble related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1710,7 +1705,7 @@ eProsima_user_DllExport void register_MapKeyULongLongValueDouble_type_identifier
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapULongLongLongDouble_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapULongLongBoolean related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1722,7 +1717,7 @@ eProsima_user_DllExport void register_MapULongLongLongDouble_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapULongLongBoolean_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapULongLongOctet related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1734,7 +1729,7 @@ eProsima_user_DllExport void register_MapULongLongBoolean_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapULongLongOctet_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapULongLongChar related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1746,7 +1741,7 @@ eProsima_user_DllExport void register_MapULongLongOctet_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapULongLongChar_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapULongLongWChar related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1758,7 +1753,7 @@ eProsima_user_DllExport void register_MapULongLongChar_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapULongLongWChar_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapULongLongString related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1770,7 +1765,7 @@ eProsima_user_DllExport void register_MapULongLongWChar_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapULongLongString_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapULongLongWString related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1782,7 +1777,7 @@ eProsima_user_DllExport void register_MapULongLongString_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapULongLongWString_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapULongLongInnerAliasBoundedStringHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1794,7 +1789,7 @@ eProsima_user_DllExport void register_MapULongLongWString_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapULongLongInnerAliasBoundedStringHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapULongLongInnerAliasBoundedWStringHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1806,7 +1801,7 @@ eProsima_user_DllExport void register_MapULongLongInnerAliasBoundedStringHelper_
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapULongLongInnerAliasBoundedWStringHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapULongLongInnerEnumHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1818,7 +1813,7 @@ eProsima_user_DllExport void register_MapULongLongInnerAliasBoundedWStringHelper
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapULongLongInnerEnumHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapULongLongInnerBitMaskHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1830,7 +1825,7 @@ eProsima_user_DllExport void register_MapULongLongInnerEnumHelper_type_identifie
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapULongLongInnerBitMaskHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapULongLongInnerAliasHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1842,7 +1837,7 @@ eProsima_user_DllExport void register_MapULongLongInnerBitMaskHelper_type_identi
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapULongLongInnerAliasHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapULongLongInnerAliasArrayHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1854,7 +1849,7 @@ eProsima_user_DllExport void register_MapULongLongInnerAliasHelper_type_identifi
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapULongLongInnerAliasArrayHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapULongLongInnerAliasSequenceHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1866,7 +1861,7 @@ eProsima_user_DllExport void register_MapULongLongInnerAliasArrayHelper_type_ide
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapULongLongInnerAliasSequenceHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapULongLongInnerAliasMapHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1878,7 +1873,7 @@ eProsima_user_DllExport void register_MapULongLongInnerAliasSequenceHelper_type_
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapULongLongInnerAliasMapHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapULongLongInnerUnionHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1890,7 +1885,7 @@ eProsima_user_DllExport void register_MapULongLongInnerAliasMapHelper_type_ident
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapULongLongInnerUnionHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapULongLongInnerStructureHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1902,7 +1897,7 @@ eProsima_user_DllExport void register_MapULongLongInnerUnionHelper_type_identifi
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapULongLongInnerStructureHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapULongLongInnerBitsetHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1914,7 +1909,7 @@ eProsima_user_DllExport void register_MapULongLongInnerStructureHelper_type_iden
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapULongLongInnerBitsetHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapStringShort related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1926,7 +1921,7 @@ eProsima_user_DllExport void register_MapULongLongInnerBitsetHelper_type_identif
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapStringShort_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapStringUShort related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1938,7 +1933,7 @@ eProsima_user_DllExport void register_MapStringShort_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapStringUShort_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapStringLong related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1950,7 +1945,7 @@ eProsima_user_DllExport void register_MapStringUShort_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapStringLong_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapStringULong related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1962,7 +1957,7 @@ eProsima_user_DllExport void register_MapStringLong_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapStringULong_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapStringLongLong related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1974,7 +1969,7 @@ eProsima_user_DllExport void register_MapStringULong_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapStringLongLong_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapStringULongLong related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1986,7 +1981,7 @@ eProsima_user_DllExport void register_MapStringLongLong_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapStringULongLong_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapStringFloat related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -1998,7 +1993,7 @@ eProsima_user_DllExport void register_MapStringULongLong_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapStringFloat_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapStringDouble related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2010,7 +2005,7 @@ eProsima_user_DllExport void register_MapStringFloat_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapStringDouble_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapStringLongDouble related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2022,7 +2017,7 @@ eProsima_user_DllExport void register_MapStringDouble_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapStringLongDouble_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapStringBoolean related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2034,7 +2029,7 @@ eProsima_user_DllExport void register_MapStringLongDouble_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapStringBoolean_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapStringOctet related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2046,7 +2041,7 @@ eProsima_user_DllExport void register_MapStringBoolean_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapStringOctet_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapStringChar related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2058,7 +2053,7 @@ eProsima_user_DllExport void register_MapStringOctet_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapStringChar_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapStringWChar related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2070,7 +2065,7 @@ eProsima_user_DllExport void register_MapStringChar_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapStringWChar_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapStringString related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2082,7 +2077,7 @@ eProsima_user_DllExport void register_MapStringWChar_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapStringString_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapStringWString related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2094,7 +2089,7 @@ eProsima_user_DllExport void register_MapStringString_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapStringWString_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapStringInnerAliasBoundedStringHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2106,7 +2101,7 @@ eProsima_user_DllExport void register_MapStringWString_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapStringInnerAliasBoundedStringHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapStringInnerAliasBoundedWStringHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2118,7 +2113,7 @@ eProsima_user_DllExport void register_MapStringInnerAliasBoundedStringHelper_typ
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapStringInnerAliasBoundedWStringHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapStringInnerEnumHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2130,7 +2125,7 @@ eProsima_user_DllExport void register_MapStringInnerAliasBoundedWStringHelper_ty
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapStringInnerEnumHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapStringInnerBitMaskHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2142,7 +2137,7 @@ eProsima_user_DllExport void register_MapStringInnerEnumHelper_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapStringInnerBitMaskHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapStringInnerAliasHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2154,7 +2149,7 @@ eProsima_user_DllExport void register_MapStringInnerBitMaskHelper_type_identifie
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapStringInnerAliasHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapStringInnerAliasArrayHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2166,7 +2161,7 @@ eProsima_user_DllExport void register_MapStringInnerAliasHelper_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapStringInnerAliasArrayHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapStringInnerAliasSequenceHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2178,7 +2173,7 @@ eProsima_user_DllExport void register_MapStringInnerAliasArrayHelper_type_identi
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapStringInnerAliasSequenceHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapStringInnerAliasMapHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2190,7 +2185,7 @@ eProsima_user_DllExport void register_MapStringInnerAliasSequenceHelper_type_ide
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapStringInnerAliasMapHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapStringInnerUnionHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2202,7 +2197,7 @@ eProsima_user_DllExport void register_MapStringInnerAliasMapHelper_type_identifi
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapStringInnerUnionHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapStringInnerStructureHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2214,7 +2209,7 @@ eProsima_user_DllExport void register_MapStringInnerUnionHelper_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapStringInnerStructureHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapStringInnerBitsetHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2226,7 +2221,7 @@ eProsima_user_DllExport void register_MapStringInnerStructureHelper_type_identif
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapStringInnerBitsetHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapWStringShort related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2238,7 +2233,7 @@ eProsima_user_DllExport void register_MapStringInnerBitsetHelper_type_identifier
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapWStringShort_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapWStringUShort related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2250,7 +2245,7 @@ eProsima_user_DllExport void register_MapWStringShort_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapWStringUShort_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapWStringLong related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2262,7 +2257,7 @@ eProsima_user_DllExport void register_MapWStringUShort_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapWStringLong_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapWStringULong related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2274,7 +2269,7 @@ eProsima_user_DllExport void register_MapWStringLong_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapWStringULong_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapWStringLongLong related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2286,7 +2281,7 @@ eProsima_user_DllExport void register_MapWStringULong_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapWStringLongLong_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapWStringULongLong related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2298,7 +2293,7 @@ eProsima_user_DllExport void register_MapWStringLongLong_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapWStringULongLong_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapWStringFloat related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2310,7 +2305,7 @@ eProsima_user_DllExport void register_MapWStringULongLong_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapWStringFloat_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapWStringDouble related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2322,7 +2317,7 @@ eProsima_user_DllExport void register_MapWStringFloat_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapWStringDouble_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapWStringLongDouble related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2334,7 +2329,7 @@ eProsima_user_DllExport void register_MapWStringDouble_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapWStringLongDouble_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapWStringBoolean related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2346,7 +2341,7 @@ eProsima_user_DllExport void register_MapWStringLongDouble_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapWStringBoolean_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapWStringOctet related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2358,7 +2353,7 @@ eProsima_user_DllExport void register_MapWStringBoolean_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapWStringOctet_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapWStringChar related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2370,7 +2365,7 @@ eProsima_user_DllExport void register_MapWStringOctet_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapWStringChar_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapWStringWChar related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2382,7 +2377,7 @@ eProsima_user_DllExport void register_MapWStringChar_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapWStringWChar_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapWStringString related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2394,7 +2389,7 @@ eProsima_user_DllExport void register_MapWStringWChar_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapWStringString_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapWStringWString related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2406,7 +2401,7 @@ eProsima_user_DllExport void register_MapWStringString_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapWStringWString_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapWStringInnerAliasBoundedStringHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2418,7 +2413,7 @@ eProsima_user_DllExport void register_MapWStringWString_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapWStringInnerAliasBoundedStringHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapWStringInnerAliasBoundedWStringHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2430,7 +2425,7 @@ eProsima_user_DllExport void register_MapWStringInnerAliasBoundedStringHelper_ty
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapWStringInnerAliasBoundedWStringHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapWStringInnerEnumHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2442,7 +2437,7 @@ eProsima_user_DllExport void register_MapWStringInnerAliasBoundedWStringHelper_t
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapWStringInnerEnumHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapWStringInnerBitMaskHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2454,7 +2449,7 @@ eProsima_user_DllExport void register_MapWStringInnerEnumHelper_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapWStringInnerBitMaskHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapWStringInnerAliasHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2466,7 +2461,7 @@ eProsima_user_DllExport void register_MapWStringInnerBitMaskHelper_type_identifi
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapWStringInnerAliasHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapWStringInnerAliasArrayHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2478,7 +2473,7 @@ eProsima_user_DllExport void register_MapWStringInnerAliasHelper_type_identifier
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapWStringInnerAliasArrayHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapWStringInnerAliasSequenceHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2490,7 +2485,7 @@ eProsima_user_DllExport void register_MapWStringInnerAliasArrayHelper_type_ident
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapWStringInnerAliasSequenceHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapWStringInnerAliasMapHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2502,7 +2497,7 @@ eProsima_user_DllExport void register_MapWStringInnerAliasSequenceHelper_type_id
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapWStringInnerAliasMapHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapWStringInnerUnionHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2514,7 +2509,7 @@ eProsima_user_DllExport void register_MapWStringInnerAliasMapHelper_type_identif
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapWStringInnerUnionHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapWStringInnerStructureHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2526,7 +2521,7 @@ eProsima_user_DllExport void register_MapWStringInnerUnionHelper_type_identifier
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapWStringInnerStructureHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapWStringInnerBitsetHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2538,7 +2533,7 @@ eProsima_user_DllExport void register_MapWStringInnerStructureHelper_type_identi
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapWStringInnerBitsetHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapInnerAliasBoundedStringHelperShort related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2550,7 +2545,7 @@ eProsima_user_DllExport void register_MapWStringInnerBitsetHelper_type_identifie
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapInnerAliasBoundedStringHelperShort_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapInnerAliasBoundedStringHelperUShort related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2562,7 +2557,7 @@ eProsima_user_DllExport void register_MapInnerAliasBoundedStringHelperShort_type
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapInnerAliasBoundedStringHelperUShort_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapInnerAliasBoundedStringHelperLong related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2574,7 +2569,7 @@ eProsima_user_DllExport void register_MapInnerAliasBoundedStringHelperUShort_typ
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapInnerAliasBoundedStringHelperLong_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapInnerAliasBoundedStringHelperULong related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2586,7 +2581,7 @@ eProsima_user_DllExport void register_MapInnerAliasBoundedStringHelperLong_type_
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapInnerAliasBoundedStringHelperULong_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapInnerAliasBoundedStringHelperLongLong related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2598,7 +2593,7 @@ eProsima_user_DllExport void register_MapInnerAliasBoundedStringHelperULong_type
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapInnerAliasBoundedStringHelperLongLong_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapInnerAliasBoundedStringHelperULongLong related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2610,7 +2605,7 @@ eProsima_user_DllExport void register_MapInnerAliasBoundedStringHelperLongLong_t
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapInnerAliasBoundedStringHelperULongLong_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapInnerAliasBoundedStringHelperFloat related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2622,7 +2617,7 @@ eProsima_user_DllExport void register_MapInnerAliasBoundedStringHelperULongLong_
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapInnerAliasBoundedStringHelperFloat_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapInnerAliasBoundedStringHelperDouble related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2634,7 +2629,7 @@ eProsima_user_DllExport void register_MapInnerAliasBoundedStringHelperFloat_type
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapInnerAliasBoundedStringHelperDouble_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapInnerAliasBoundedStringHelperLongDouble related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2646,7 +2641,7 @@ eProsima_user_DllExport void register_MapInnerAliasBoundedStringHelperDouble_typ
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapInnerAliasBoundedStringHelperLongDouble_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapInnerAliasBoundedStringHelperBoolean related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2658,7 +2653,7 @@ eProsima_user_DllExport void register_MapInnerAliasBoundedStringHelperLongDouble
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapInnerAliasBoundedStringHelperBoolean_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapInnerAliasBoundedStringHelperOctet related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2670,7 +2665,7 @@ eProsima_user_DllExport void register_MapInnerAliasBoundedStringHelperBoolean_ty
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapInnerAliasBoundedStringHelperOctet_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapInnerAliasBoundedStringHelperChar related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2682,7 +2677,7 @@ eProsima_user_DllExport void register_MapInnerAliasBoundedStringHelperOctet_type
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapInnerAliasBoundedStringHelperChar_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapInnerAliasBoundedStringHelperWChar related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2694,7 +2689,7 @@ eProsima_user_DllExport void register_MapInnerAliasBoundedStringHelperChar_type_
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapInnerAliasBoundedStringHelperWChar_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapInnerAliasBoundedStringHelperString related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2706,7 +2701,7 @@ eProsima_user_DllExport void register_MapInnerAliasBoundedStringHelperWChar_type
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapInnerAliasBoundedStringHelperString_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapInnerAliasBoundedStringHelperWString related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2718,7 +2713,7 @@ eProsima_user_DllExport void register_MapInnerAliasBoundedStringHelperString_typ
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapInnerAliasBoundedStringHelperWString_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapInnerAliasBoundedStringHelperInnerAliasBoundedStringHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2730,7 +2725,7 @@ eProsima_user_DllExport void register_MapInnerAliasBoundedStringHelperWString_ty
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapInnerAliasBoundedStringHelperInnerAliasBoundedStringHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapInnerAliasBoundedStringHelperInnerAliasBoundedWStringHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2742,7 +2737,7 @@ eProsima_user_DllExport void register_MapInnerAliasBoundedStringHelperInnerAlias
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapInnerAliasBoundedStringHelperInnerAliasBoundedWStringHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapInnerAliasBoundedStringHelperInnerEnumHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2754,7 +2749,7 @@ eProsima_user_DllExport void register_MapInnerAliasBoundedStringHelperInnerAlias
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapInnerAliasBoundedStringHelperInnerEnumHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapInnerAliasBoundedStringHelperInnerBitMaskHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2766,7 +2761,7 @@ eProsima_user_DllExport void register_MapInnerAliasBoundedStringHelperInnerEnumH
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapInnerAliasBoundedStringHelperInnerBitMaskHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapInnerAliasBoundedStringHelperInnerAliasHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2778,7 +2773,7 @@ eProsima_user_DllExport void register_MapInnerAliasBoundedStringHelperInnerBitMa
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapInnerAliasBoundedStringHelperInnerAliasHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapInnerAliasBoundedStringHelperInnerAliasArrayHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2790,7 +2785,7 @@ eProsima_user_DllExport void register_MapInnerAliasBoundedStringHelperInnerAlias
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapInnerAliasBoundedStringHelperInnerAliasArrayHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapInnerAliasBoundedStringHelperInnerAliasSequenceHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2802,7 +2797,7 @@ eProsima_user_DllExport void register_MapInnerAliasBoundedStringHelperInnerAlias
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapInnerAliasBoundedStringHelperInnerAliasSequenceHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapInnerAliasBoundedStringHelperInnerAliasMapHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2814,7 +2809,7 @@ eProsima_user_DllExport void register_MapInnerAliasBoundedStringHelperInnerAlias
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapInnerAliasBoundedStringHelperInnerAliasMapHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapInnerAliasBoundedStringHelperInnerUnionHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2826,7 +2821,7 @@ eProsima_user_DllExport void register_MapInnerAliasBoundedStringHelperInnerAlias
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapInnerAliasBoundedStringHelperInnerUnionHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapInnerAliasBoundedStringHelperInnerStructureHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2838,7 +2833,7 @@ eProsima_user_DllExport void register_MapInnerAliasBoundedStringHelperInnerUnion
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapInnerAliasBoundedStringHelperInnerStructureHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapInnerAliasBoundedStringHelperInnerBitsetHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2850,7 +2845,7 @@ eProsima_user_DllExport void register_MapInnerAliasBoundedStringHelperInnerStruc
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapInnerAliasBoundedStringHelperInnerBitsetHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapInnerAliasBoundedWStringHelperShort related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2862,7 +2857,7 @@ eProsima_user_DllExport void register_MapInnerAliasBoundedStringHelperInnerBitse
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapInnerAliasBoundedWStringHelperShort_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapInnerAliasBoundedWStringHelperUShort related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2874,7 +2869,7 @@ eProsima_user_DllExport void register_MapInnerAliasBoundedWStringHelperShort_typ
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapInnerAliasBoundedWStringHelperUShort_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapInnerAliasBoundedWStringHelperLong related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2886,7 +2881,7 @@ eProsima_user_DllExport void register_MapInnerAliasBoundedWStringHelperUShort_ty
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapInnerAliasBoundedWStringHelperLong_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapInnerAliasBoundedWStringHelperULong related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2898,7 +2893,7 @@ eProsima_user_DllExport void register_MapInnerAliasBoundedWStringHelperLong_type
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapInnerAliasBoundedWStringHelperULong_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapInnerAliasBoundedWStringHelperLongLong related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2910,7 +2905,7 @@ eProsima_user_DllExport void register_MapInnerAliasBoundedWStringHelperULong_typ
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapInnerAliasBoundedWStringHelperLongLong_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapInnerAliasBoundedWStringHelperULongLong related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2922,7 +2917,7 @@ eProsima_user_DllExport void register_MapInnerAliasBoundedWStringHelperLongLong_
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapInnerAliasBoundedWStringHelperULongLong_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapInnerAliasBoundedWStringHelperFloat related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2934,7 +2929,7 @@ eProsima_user_DllExport void register_MapInnerAliasBoundedWStringHelperULongLong
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapInnerAliasBoundedWStringHelperFloat_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapInnerAliasBoundedWStringHelperDouble related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2946,7 +2941,7 @@ eProsima_user_DllExport void register_MapInnerAliasBoundedWStringHelperFloat_typ
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapInnerAliasBoundedWStringHelperDouble_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapInnerAliasBoundedWStringHelperLongDouble related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2958,7 +2953,7 @@ eProsima_user_DllExport void register_MapInnerAliasBoundedWStringHelperDouble_ty
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapInnerAliasBoundedWStringHelperLongDouble_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapInnerAliasBoundedWStringHelperBoolean related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2970,7 +2965,7 @@ eProsima_user_DllExport void register_MapInnerAliasBoundedWStringHelperLongDoubl
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapInnerAliasBoundedWStringHelperBoolean_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapInnerAliasBoundedWStringHelperOctet related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2982,7 +2977,7 @@ eProsima_user_DllExport void register_MapInnerAliasBoundedWStringHelperBoolean_t
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapInnerAliasBoundedWStringHelperOctet_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapInnerAliasBoundedWStringHelperChar related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -2994,7 +2989,7 @@ eProsima_user_DllExport void register_MapInnerAliasBoundedWStringHelperOctet_typ
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapInnerAliasBoundedWStringHelperChar_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapInnerAliasBoundedWStringHelperWChar related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -3006,7 +3001,7 @@ eProsima_user_DllExport void register_MapInnerAliasBoundedWStringHelperChar_type
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapInnerAliasBoundedWStringHelperWChar_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapInnerAliasBoundedWStringHelperString related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -3018,7 +3013,7 @@ eProsima_user_DllExport void register_MapInnerAliasBoundedWStringHelperWChar_typ
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapInnerAliasBoundedWStringHelperString_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapInnerAliasBoundedWStringHelperWString related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -3030,7 +3025,7 @@ eProsima_user_DllExport void register_MapInnerAliasBoundedWStringHelperString_ty
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapInnerAliasBoundedWStringHelperWString_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapInnerAliasBoundedWStringHelperInnerAliasBoundedStringHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -3042,7 +3037,7 @@ eProsima_user_DllExport void register_MapInnerAliasBoundedWStringHelperWString_t
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapInnerAliasBoundedWStringHelperInnerAliasBoundedStringHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapInnerAliasBoundedWStringHelperInnerAliasBoundedWStringHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -3054,7 +3049,7 @@ eProsima_user_DllExport void register_MapInnerAliasBoundedWStringHelperInnerAlia
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapInnerAliasBoundedWStringHelperInnerAliasBoundedWStringHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapInnerAliasBoundedWStringHelperInnerEnumHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -3066,7 +3061,7 @@ eProsima_user_DllExport void register_MapInnerAliasBoundedWStringHelperInnerAlia
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapInnerAliasBoundedWStringHelperInnerEnumHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapInnerAliasBoundedWStringHelperInnerBitMaskHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -3078,7 +3073,7 @@ eProsima_user_DllExport void register_MapInnerAliasBoundedWStringHelperInnerEnum
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapInnerAliasBoundedWStringHelperInnerBitMaskHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapInnerAliasBoundedWStringHelperInnerAliasHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -3090,7 +3085,7 @@ eProsima_user_DllExport void register_MapInnerAliasBoundedWStringHelperInnerBitM
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapInnerAliasBoundedWStringHelperInnerAliasHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapInnerAliasBoundedWStringHelperInnerAliasArrayHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -3102,7 +3097,7 @@ eProsima_user_DllExport void register_MapInnerAliasBoundedWStringHelperInnerAlia
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapInnerAliasBoundedWStringHelperInnerAliasArrayHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapInnerAliasBoundedWStringHelperInnerAliasSequenceHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -3114,7 +3109,7 @@ eProsima_user_DllExport void register_MapInnerAliasBoundedWStringHelperInnerAlia
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapInnerAliasBoundedWStringHelperInnerAliasSequenceHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapInnerAliasBoundedWStringHelperInnerAliasMapHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -3126,7 +3121,7 @@ eProsima_user_DllExport void register_MapInnerAliasBoundedWStringHelperInnerAlia
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapInnerAliasBoundedWStringHelperInnerAliasMapHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapInnerAliasBoundedWStringHelperInnerUnionHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -3138,7 +3133,7 @@ eProsima_user_DllExport void register_MapInnerAliasBoundedWStringHelperInnerAlia
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapInnerAliasBoundedWStringHelperInnerUnionHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapInnerAliasBoundedWStringHelperInnerStructureHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -3150,7 +3145,7 @@ eProsima_user_DllExport void register_MapInnerAliasBoundedWStringHelperInnerUnio
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapInnerAliasBoundedWStringHelperInnerStructureHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register MapInnerAliasBoundedWStringHelperInnerBitsetHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -3162,7 +3157,7 @@ eProsima_user_DllExport void register_MapInnerAliasBoundedWStringHelperInnerStru
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_MapInnerAliasBoundedWStringHelperInnerBitsetHelper_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register BoundedSmallMap related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -3174,7 +3169,7 @@ eProsima_user_DllExport void register_MapInnerAliasBoundedWStringHelperInnerBits
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_BoundedSmallMap_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register BoundedLargeMap related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -3186,7 +3181,7 @@ eProsima_user_DllExport void register_BoundedSmallMap_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_BoundedLargeMap_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 
 
 #endif // DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
