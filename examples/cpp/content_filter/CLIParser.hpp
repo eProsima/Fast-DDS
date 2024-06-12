@@ -227,7 +227,7 @@ public:
                     int input = std::stoi(argv[++i]);
                     if (config.entity == CLIParser::EntityKind::PUBLISHER)
                     {
-                        config.pub_config.interval = input;
+                        config.pub_config.interval = static_cast<uint16_t>(input);
                     }
                     else if (config.entity == CLIParser::EntityKind::SUBSCRIBER)
                     {
