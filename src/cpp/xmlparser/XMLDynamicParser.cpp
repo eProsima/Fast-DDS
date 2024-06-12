@@ -434,7 +434,15 @@ XMLP_ret XMLParser::parseXMLAliasDynamicType(
             const char* boundStr = p_root->Attribute(STR_MAXLENGTH);
             if (boundStr != nullptr)
             {
-                bound = static_cast<uint32_t>(std::stoul(boundStr));
+                try
+                {
+                    bound = static_cast<uint32_t>(std::stoul(boundStr));
+                }
+                catch (const std::exception&)
+                {
+                    EPROSIMA_LOG_ERROR(XMLPARSER, "Error parsing alias type bound: '" << STR_MAXLENGTH << "' out of bounds.");
+                    return XMLP_ret::XML_ERROR;
+                }
             }
             value_type = getDiscriminatorTypeBuilder(type, bound);
         }
@@ -540,10 +548,17 @@ XMLP_ret XMLParser::parseXMLBitsetDynamicType(
             EPROSIMA_LOG_ERROR(XMLPARSER, "Error parsing bitfield bit_bound: Not found.");
             return XMLP_ret::XML_ERROR;
         }
-
         if (nullptr != member_name)
         {
-            bitset_descriptor->bound().push_back(static_cast<uint32_t>(std::stoul(bit_bound)));
+            try
+            {
+                bitset_descriptor->bound().push_back(static_cast<uint32_t>(std::stoul(bit_bound)));
+            }
+            catch (const std::exception&)
+            {
+                EPROSIMA_LOG_ERROR(XMLPARSER, "Error parsing bitfield type bound: '" << BIT_BOUND << "' out of bounds.");
+                return XMLP_ret::XML_ERROR;
+            }
         }
     }
     //}}}
@@ -1595,7 +1610,15 @@ DynamicType::_ref_type XMLParser:: parseXMLMemberDynamicType(
 
         if (nullptr != boundStr)
         {
-            bound = static_cast<uint32_t>(std::stoul(boundStr));
+            try
+            {
+                bound = static_cast<uint32_t>(std::stoul(boundStr));
+            }
+            catch (const std::exception&)
+            {
+                EPROSIMA_LOG_ERROR(XMLPARSER, "Error parsing alias type bound: '" << STR_MAXLENGTH << "' out of bounds.");
+                return {};
+            }
         }
 
         DynamicTypeBuilder::_ref_type string_builder = factory->create_string_type(bound);
@@ -1620,7 +1643,15 @@ DynamicType::_ref_type XMLParser:: parseXMLMemberDynamicType(
 
         if (nullptr != boundStr)
         {
-            bound = static_cast<uint32_t>(std::stoul(boundStr));
+            try
+            {
+                bound = static_cast<uint32_t>(std::stoul(boundStr));
+            }
+            catch (const std::exception&)
+            {
+                EPROSIMA_LOG_ERROR(XMLPARSER, "Error parsing alias type bound: '" << STR_MAXLENGTH << "' out of bounds.");
+                return {};
+            }
         }
 
         DynamicTypeBuilder::_ref_type wstring_builder = factory->create_wstring_type(bound);
