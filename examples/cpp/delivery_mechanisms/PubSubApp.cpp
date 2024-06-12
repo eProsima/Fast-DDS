@@ -90,7 +90,7 @@ PubSubApp::PubSubApp(
 
     switch (config.delivery_mechanism)
     {
-        case CLIParser::DeliveryMechanismKind::INTRA_PROCESS:   // (It should never reach this section
+        case CLIParser::DeliveryMechanismKind::INTRA_PROCESS:
         {
             // No transport needed, but at least a transport needs to be declared to avoid participant creation failure
             pqos.transport().use_builtin_transports = true;
