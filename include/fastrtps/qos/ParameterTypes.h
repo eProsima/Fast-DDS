@@ -53,6 +53,7 @@ using ParameterPort_t = fastdds::dds::ParameterPort_t;
 using ParameterGuid_t = fastdds::dds::ParameterGuid_t;
 using ParameterProtocolVersion_t = fastdds::dds::ParameterProtocolVersion_t;
 using ParameterVendorId_t = fastdds::dds::ParameterVendorId_t;
+using ParameterDomainId_t = fastdds::dds::ParameterDomainId_t;
 using ParameterIP4Address_t = fastdds::dds::ParameterIP4Address_t;
 using ParameterBool_t = fastdds::dds::ParameterBool_t;
 using ParameterStatusInfo_t = fastdds::dds::ParameterStatusInfo_t;

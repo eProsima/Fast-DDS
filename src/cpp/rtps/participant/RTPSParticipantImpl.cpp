@@ -278,6 +278,12 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     , has_shm_transport_(false)
     , match_local_endpoints_(should_match_local_endpoints(PParam))
 {
+    if (domain_id_ == fastdds::dds::DOMAIN_ID_UNKNOWN)
+    {
+        EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Domain ID has to be set to a correct value");
+        return;
+    }
+
     if (c_GuidPrefix_Unknown != persistence_guid)
     {
         m_persistence_guid = GUID_t(persistence_guid, c_EntityId_RTPSParticipant);

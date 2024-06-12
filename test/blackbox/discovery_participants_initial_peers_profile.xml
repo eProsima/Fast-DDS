@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"  ?>
+<dds xmlns="http://www.eprosima.com">
+    <profiles>
+        <transport_descriptors>
+            <transport_descriptor>
+                    <transport_id>transport</transport_id>
+                    <type>UDPv4</type>
+            </transport_descriptor>
+        </transport_descriptors>
+
+        <participant profile_name="participant_from_domain_1">
+            <domainId>1</domainId>
+            <rtps>
+                <name>Participant.domain1</name>
+                <builtinTransports>NONE</builtinTransports>
+                <!--
+                    Need to add at least one transport in
+                    order to be able to create the participant
+                -->
+                <userTransports>
+                    <transport_id>transport</transport_id>
+                </userTransports>
+                <builtin>
+                    <initialPeersList>
+                        <locator>
+                            <udpv4>
+                                <address>127.0.0.1</address>
+                                <port>11500</port>
+                            </udpv4>
+                        </locator>
+                    </initialPeersList>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <participant profile_name="participant_from_domain_2">
+            <domainId>2</domainId>
+            <rtps>
+                <name>Participant.domain2</name>
+                <builtinTransports>NONE</builtinTransports>
+                <!--
+                    Need to add at least one transport in
+                    order to be able to create the participant
+                -->
+                <userTransports>
+                    <transport_id>transport</transport_id>
+                </userTransports>
+                <builtin>
+                    <metatrafficUnicastLocatorList>
+                        <locator>
+                            <udpv4>
+                                <address>127.0.0.1</address>
+                                <port>11500</port>
+                            </udpv4>
+                        </locator>
+                    </metatrafficUnicastLocatorList>
+                    <metatrafficMulticastLocatorList>
+                        <locator>
+                            <udpv4>
+                                <port>11600</port>
+                                <address>239.255.0.1</address>
+                            </udpv4>
+                        </locator>
+                    </metatrafficMulticastLocatorList>
+                </builtin>
+            </rtps>
+        </participant>
+    </profiles>
+</dds>

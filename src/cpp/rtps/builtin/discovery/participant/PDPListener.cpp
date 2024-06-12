@@ -114,6 +114,11 @@ void PDPListener::on_new_cache_change_added(
                 return;
             }
 
+            if (!check_discovery_conditions(temp_participant_data_))
+            {
+                return;
+            }
+
             // Filter locators
             const auto& pattr = parent_pdp_->getRTPSParticipant()->getAttributes();
             fastdds::rtps::network::external_locators::filter_remote_locators(temp_participant_data_,
@@ -272,6 +277,26 @@ void PDPListener::process_alive_data(
 
     // Take again the reader lock
     reader->getMutex().lock();
+}
+
+bool PDPListener::check_discovery_conditions(
+        ParticipantProxyData& participant_data)
+{
+    bool ret = true;
+    uint32_t remote_participant_domain_id = participant_data.m_domain_id;
+
+    // In PDPSimple, do not match if the participant is from a different domain.
+    // If the domain id is unknown, it is assumed to be the same domain
+    if (remote_participant_domain_id != parent_pdp_->getRTPSParticipant()->get_domain_id() &&
+            remote_participant_domain_id != fastdds::dds::DOMAIN_ID_UNKNOWN)
+    {
+        EPROSIMA_LOG_INFO(RTPS_PDP_DISCOVERY, "Received participant with different domain id ("
+                << remote_participant_domain_id << ") than ours ("
+                << parent_pdp_->getRTPSParticipant()->get_domain_id() << ")");
+        ret = false;
+    }
+
+    return ret;
 }
 
 bool PDPListener::get_key(

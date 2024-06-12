@@ -27,6 +27,7 @@
 
 #include <fastcdr/cdr/fixed_size_string.hpp>
 
+#include <fastdds/dds/core/Types.hpp>
 #include <fastdds/rtps/common/InstanceHandle.h>
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/common/SampleIdentity.h>
@@ -524,6 +525,43 @@ public:
 };
 
 #define PARAMETER_GUID_LENGTH 16
+
+/**
+ * @ingroup PARAMETER_MODULE
+ */
+class ParameterDomainId_t : public Parameter_t
+{
+public:
+
+    //!Domain ID. <br> By default, DOMAIN_ID_UNKNOWN.
+    uint32_t domain_id;
+
+    /**
+     * @brief Constructor without parameters
+     */
+    ParameterDomainId_t()
+        : domain_id(DOMAIN_ID_UNKNOWN)
+    {
+    }
+
+    /**
+     * Constructor using a parameter PID and the parameter length
+     *
+     * @param pid Pid of the parameter
+     * @param in_length Its associated length
+     */
+    ParameterDomainId_t(
+            ParameterId_t pid,
+            uint16_t in_length)
+        : Parameter_t(pid, in_length)
+        , domain_id(DOMAIN_ID_UNKNOWN)
+    {
+        domain_id = DOMAIN_ID_UNKNOWN;
+    }
+
+};
+
+#define PARAMETER_DOMAINID_LENGTH 4
 
 /**
  * @ingroup PARAMETER_MODULE

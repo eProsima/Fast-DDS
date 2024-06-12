@@ -1,4 +1,4 @@
-// Copyright 2022 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * @file PDPSecurityInitiatorListener.cpp
+ * @file PDPClientListener.cpp
  *
  */
 
-#include <rtps/builtin/discovery/participant/DS/PDPSecurityInitiatorListener.hpp>
+#include <rtps/builtin/discovery/participant/PDPClientListener.hpp>
 
 #include <mutex>
 
@@ -31,7 +31,6 @@
 #include <rtps/builtin/discovery/endpoint/EDP.h>
 #include <rtps/builtin/discovery/participant/PDP.h>
 #include <rtps/builtin/discovery/participant/PDPEndpoints.hpp>
-#include <rtps/builtin/discovery/participant/PDPListener.h>
 #include <rtps/network/utils/external_locators.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/resources/TimedEvent.h>
@@ -42,51 +41,13 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-PDPSecurityInitiatorListener::PDPSecurityInitiatorListener(
-        PDP* parent,
-        SecurityInitiatedCallback response_cb)
-    : PDPListener(parent)
-    , response_cb_(response_cb)
+PDPClientListener::PDPClientListener(
+        PDP* parent_pdp)
+    : PDPListener(parent_pdp)
 {
 }
 
-void PDPSecurityInitiatorListener::process_alive_data(
-        ParticipantProxyData* old_data,
-        ParticipantProxyData& new_data,
-        GUID_t& writer_guid,
-        RTPSReader* reader,
-        std::unique_lock<std::recursive_mutex>& lock)
-{
-    if (reader->matched_writer_is_matched(writer_guid))
-    {
-        // Act as the standard PDPListener when the writer is matched.
-        // This will be the case for unauthenticated participants when
-        // allowed_unathenticated_participants is true
-        PDPListener::process_alive_data(old_data, new_data, writer_guid, reader, lock);
-        return;
-    }
-
-    if (old_data == nullptr)
-    {
-        auto callback_data = new_data;
-        reader->getMutex().unlock();
-        lock.unlock();
-
-        //! notify security manager in order to start handshake
-        bool ret = parent_pdp_->getRTPSParticipant()->security_manager().discovered_participant(callback_data);
-        //! Reply to the remote participant
-        if (ret)
-        {
-            response_cb_(callback_data);
-        }
-
-        // Take again the reader lock
-        reader->getMutex().lock();
-    }
-
-}
-
-bool PDPSecurityInitiatorListener::check_discovery_conditions(
+bool PDPClientListener::check_discovery_conditions(
         ParticipantProxyData& /* participant_data */)
 {
     /* Do not check PID_VENDOR_ID */

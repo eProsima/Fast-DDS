@@ -434,6 +434,28 @@ inline bool ParameterSerializer<ParameterVendorId_t>::read_content_from_cdr_mess
 }
 
 template<>
+inline bool ParameterSerializer<ParameterDomainId_t>::add_content_to_cdr_message(
+        const ParameterDomainId_t& parameter,
+        fastrtps::rtps::CDRMessage_t* cdr_message)
+{
+    return fastrtps::rtps::CDRMessage::addUInt32(cdr_message, parameter.domain_id);
+}
+
+template<>
+inline bool ParameterSerializer<ParameterDomainId_t>::read_content_from_cdr_message(
+        ParameterDomainId_t& parameter,
+        fastrtps::rtps::CDRMessage_t* cdr_message,
+        const uint16_t parameter_length)
+{
+    if (parameter_length != PARAMETER_DOMAINID_LENGTH)
+    {
+        return false;
+    }
+    parameter.length = parameter_length;
+    return fastrtps::rtps::CDRMessage::readUInt32(cdr_message, &parameter.domain_id);
+}
+
+template<>
 inline bool ParameterSerializer<ParameterIP4Address_t>::add_content_to_cdr_message(
         const ParameterIP4Address_t& parameter,
         fastrtps::rtps::CDRMessage_t* cdr_message)

@@ -49,7 +49,7 @@ Forthcoming
   * `payload_owner` moved from `CacheChange_t` to `SerializedPayload_t`.
   * `SerializedPayload_t` copies are now forbidden.
   * Refactor of `get_payload` methods.
-
+* Use `PID_DOMAIN_ID` during PDP.
 
 Version 2.14.0
 --------------

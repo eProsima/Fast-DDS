@@ -58,6 +58,19 @@ public:
     void on_new_cache_change_added(
             fastrtps::rtps::RTPSReader* reader,
             const fastrtps::rtps::CacheChange_t* const change) override;
+
+protected:
+
+    /**
+     * Checks discovery conditions on a discovery server entity.
+     * Essentially, it checks for incoming PIDS of remote proxy datas.
+     * @param participant_data Remote participant data to check.
+     * @return A pair of booleans.
+     * The first one indicates if the remote participant data is valid.
+     * The second one indicates if the remote participant data is a client.
+     */
+    std::pair<bool, bool> check_server_discovery_conditions(
+            fastrtps::rtps::ParticipantProxyData& participant_data);
 };
 
 
