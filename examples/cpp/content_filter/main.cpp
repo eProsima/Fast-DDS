@@ -17,17 +17,18 @@
  *
  */
 
-#include <vector>
+#include <csignal>
+#include <stdexcept>
+#include <thread>
 
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/log/Log.hpp>
-#include <optionparser.hpp>
 
 #include "Application.hpp"
 #include "CLIParser.hpp"
 
 using namespace eprosima::fastdds::examples::content_filter;
 using eprosima::fastdds::dds::Log;
-namespace option = eprosima::option;
 
 std::function<void(int)> stop_app_handler;
 void signal_handler(
