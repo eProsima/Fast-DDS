@@ -95,23 +95,24 @@ public:
 
     bool add_loan(
             void* data,
-            PayloadInfo_t& payload)
+            SerializedPayload_t& payload)
     {
         static_cast<void>(data);
-        assert(data == payload.payload.data + SerializedPayload_t::representation_header_size);
-        return loans_.push_back(payload);
+        assert(data == payload.data + SerializedPayload_t::representation_header_size);
+        return loans_.push_back(std::move(payload));
     }
 
     bool check_and_remove_loan(
             void* data,
-            PayloadInfo_t& payload)
+            SerializedPayload_t& payload)
     {
         octet* payload_data = static_cast<octet*>(data) - SerializedPayload_t::representation_header_size;
         for (auto it = loans_.begin(); it != loans_.end(); ++it)
         {
-            if (it->payload.data == payload_data)
+            if (it->data == payload_data)
             {
-                payload = *it;
+                // Avoid releasing the payload in destructor
+                payload = std::move(*it);
                 loans_.erase(it);
                 return true;
             }
@@ -137,7 +138,7 @@ private:
             };
     }
 
-    ResourceLimitedVector<PayloadInfo_t> loans_;
+    ResourceLimitedVector<SerializedPayload_t> loans_;
 
 };
 
@@ -508,7 +509,7 @@ ReturnCode_t DataWriterImpl::loan_sample(
 #endif // if HAVE_STRICT_REALTIME
 
     // Get one payload from the pool
-    PayloadInfo_t payload;
+    SerializedPayload_t payload;
     uint32_t size = type_->m_typeSize;
     if (!get_free_payload_from_pool([size]()
             {
@@ -519,19 +520,19 @@ ReturnCode_t DataWriterImpl::loan_sample(
     }
 
     // Leave payload state as if serialization has already been performed
-    payload.payload.length = size;
-    payload.payload.pos = size;
-    payload.payload.data[1] = DEFAULT_ENCAPSULATION;
-    payload.payload.encapsulation = DEFAULT_ENCAPSULATION;
+    payload.length = size;
+    payload.pos = size;
+    payload.data[1] = DEFAULT_ENCAPSULATION;
+    payload.encapsulation = DEFAULT_ENCAPSULATION;
 
     // Sample starts after representation header
-    sample = payload.payload.data + SerializedPayload_t::representation_header_size;
+    sample = payload.data + SerializedPayload_t::representation_header_size;
 
     // Add to loans collection
     if (!add_loan(sample, payload))
     {
         sample = nullptr;
-        return_payload_to_pool(payload);
+        payload_pool_->release_payload(payload);
         return RETCODE_OUT_OF_RESOURCES;
     }
 
@@ -557,12 +558,16 @@ ReturnCode_t DataWriterImpl::loan_sample(
             if (!type_->construct_sample(sample))
             {
                 check_and_remove_loan(sample, payload);
-                return_payload_to_pool(payload);
+                payload_pool_->release_payload(payload);
                 sample = nullptr;
                 return RETCODE_UNSUPPORTED;
             }
             break;
     }
+
+    // Avoid releasing the payload in destructor
+    payload.payload_owner = nullptr;
+    payload.data = nullptr;
 
     return RETCODE_OK;
 }
@@ -585,14 +590,14 @@ ReturnCode_t DataWriterImpl::discard_loan(
     std::lock_guard<RecursiveTimedMutex> lock(writer_->getMutex());
 
     // Remove sample from loans collection
-    PayloadInfo_t payload;
+    SerializedPayload_t payload;
     if ((nullptr == sample) || !check_and_remove_loan(sample, payload))
     {
         return RETCODE_BAD_PARAMETER;
     }
 
     // Return payload to pool
-    return_payload_to_pool(payload);
+    payload_pool_->release_payload(payload);
     sample = nullptr;
 
     return RETCODE_OK;
@@ -975,7 +980,7 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
     std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
 #endif // if HAVE_STRICT_REALTIME
 
-    PayloadInfo_t payload;
+    SerializedPayload_t payload;
     bool was_loaned = check_and_remove_loan(data, payload);
     if (!was_loaned)
     {
@@ -984,10 +989,10 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
             return RETCODE_OUT_OF_RESOURCES;
         }
 
-        if ((ALIVE == change_kind) && !type_->serialize(data, &payload.payload, data_representation_))
+        if ((ALIVE == change_kind) && !type_->serialize(data, &payload, data_representation_))
         {
             EPROSIMA_LOG_WARNING(DATA_WRITER, "Data serialization returned false");
-            return_payload_to_pool(payload);
+            payload_pool_->release_payload(payload);
             return RETCODE_ERROR;
         }
     }
@@ -995,7 +1000,7 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
     CacheChange_t* ch = writer_->new_change(change_kind, handle);
     if (ch != nullptr)
     {
-        payload.move_into_change(*ch);
+        ch->serializedPayload = std::move(payload);
 
         bool added = false;
         if (reader_filters_)
@@ -1017,7 +1022,7 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
         {
             if (was_loaned)
             {
-                payload.move_from_change(*ch);
+                payload = std::move(ch->serializedPayload);
                 add_loan(data, payload);
             }
             writer_->release_change(ch);
@@ -2091,14 +2096,14 @@ bool DataWriterImpl::release_payload_pool()
 
 bool DataWriterImpl::add_loan(
         void* data,
-        PayloadInfo_t& payload)
+        SerializedPayload_t& payload)
 {
     return loans_ && loans_->add_loan(data, payload);
 }
 
 bool DataWriterImpl::check_and_remove_loan(
         void* data,
-        PayloadInfo_t& payload)
+        SerializedPayload_t& payload)
 {
     return loans_ && loans_->check_and_remove_loan(data, payload);
 }

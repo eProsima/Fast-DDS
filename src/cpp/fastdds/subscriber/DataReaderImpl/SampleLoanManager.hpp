@@ -66,7 +66,7 @@ struct SampleLoanManager
             {
                 item.sample = type_->createData();
             }
-            free_loans_.push_back(item);
+            free_loans_.push_back(std::move(item));
         }
     }
 
@@ -117,7 +117,7 @@ struct SampleLoanManager
         else
         {
             // Reuse a free entry
-            item = used_loans_.push_back(free_loans_.back());
+            item = used_loans_.push_back(std::move(free_loans_.back()));
             assert(nullptr != item);
             free_loans_.pop_back();
         }
@@ -129,14 +129,7 @@ struct SampleLoanManager
         assert(item->num_refs == 0);
 
         // Increment references of input payload
-        CacheChange_t tmp;
-        tmp.copy_not_memcpy(change);
-        item->owner = change->payload_owner();
-        change->payload_owner()->get_payload(change->serializedPayload, item->owner, tmp);
-        item->owner = tmp.payload_owner();
-        item->payload = tmp.serializedPayload;
-        tmp.payload_owner(nullptr);
-        tmp.serializedPayload.data = nullptr;
+        change->serializedPayload.payload_owner->get_payload(change->serializedPayload, item->payload);
 
         // Perform deserialization
         if (is_plain_)
@@ -164,14 +157,11 @@ struct SampleLoanManager
         item->num_refs -= 1;
         if (item->num_refs == 0)
         {
-            CacheChange_t tmp;
-            tmp.payload_owner(item->owner);
-            tmp.serializedPayload = item->payload;
-            item->owner->release_payload(tmp);
-            item->payload.data = nullptr;
-            item->owner = nullptr;
+            item->payload.payload_owner->release_payload(item->payload);
+            assert(item->payload.data == nullptr);
+            assert(item->payload.payload_owner == nullptr);
 
-            item = free_loans_.push_back(*item);
+            item = free_loans_.push_back(std::move(*item));
             assert(nullptr != item);
             used_loans_.remove(*item);
         }
@@ -184,19 +174,20 @@ private:
         void* sample = nullptr;
         SampleIdentity identity;
         SerializedPayload_t payload;
-        IPayloadPool* owner = nullptr;
         uint32_t num_refs = 0;
 
         ~OutstandingLoanItem()
         {
+            // Avoid releasing payload and freeing data
+            payload.payload_owner = nullptr;
             payload.data = nullptr;
         }
 
         OutstandingLoanItem() = default;
         OutstandingLoanItem(
-                const OutstandingLoanItem&) = default;
+                const OutstandingLoanItem&) = delete;
         OutstandingLoanItem& operator =(
-                const OutstandingLoanItem&) = default;
+                const OutstandingLoanItem&) = delete;
         OutstandingLoanItem(
                 OutstandingLoanItem&&) = default;
         OutstandingLoanItem& operator =(

@@ -41,7 +41,7 @@
 
 #include <fastdds/publisher/DataWriterHistory.hpp>
 #include <fastdds/publisher/filtering/ReaderFilterCollection.hpp>
-#include <rtps/common/PayloadInfo_t.hpp>
+#include <fastdds/rtps/common/SerializedPayload.h>
 #include <rtps/DataSharing/DataSharingPayloadPool.hpp>
 #include <rtps/history/ITopicPayloadPool.h>
 
@@ -80,7 +80,7 @@ class Publisher;
 class DataWriterImpl : protected rtps::IReaderDataFilter
 {
     using LoanInitializationKind = DataWriter::LoanInitializationKind;
-    using PayloadInfo_t = eprosima::fastrtps::rtps::detail::PayloadInfo_t;
+    using SerializedPayload_t = eprosima::fastrtps::rtps::SerializedPayload_t;
     using CacheChange_t = eprosima::fastrtps::rtps::CacheChange_t;
     class LoanCollection;
 
@@ -669,39 +669,29 @@ protected:
     template<typename SizeFunctor>
     bool get_free_payload_from_pool(
             const SizeFunctor& size_getter,
-            PayloadInfo_t& payload)
+            SerializedPayload_t& payload)
     {
-        CacheChange_t change;
         if (!payload_pool_)
         {
             return false;
         }
 
         uint32_t size = fixed_payload_size_ ? fixed_payload_size_ : size_getter();
-        if (!payload_pool_->get_payload(size, change))
+        if (!payload_pool_->get_payload(size, payload))
         {
             return false;
         }
 
-        payload.move_from_change(change);
         return true;
-    }
-
-    void return_payload_to_pool(
-            PayloadInfo_t& payload)
-    {
-        CacheChange_t change;
-        payload.move_into_change(change);
-        payload_pool_->release_payload(change);
     }
 
     bool add_loan(
             void* data,
-            PayloadInfo_t& payload);
+            SerializedPayload_t& payload);
 
     bool check_and_remove_loan(
             void* data,
-            PayloadInfo_t& payload);
+            SerializedPayload_t& payload);
 
     /**
      * Remove internal filtering information about a reader.

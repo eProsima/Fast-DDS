@@ -39,9 +39,9 @@ public:
 
     bool get_payload(
             uint32_t /* size */,
-            CacheChange_t& cache_change) override
+            SerializedPayload_t& payload) override
     {
-        return do_get_payload(payload_size_, cache_change, false);
+        return do_get_payload(payload_size_, payload, false);
     }
 
     bool reserve_history(

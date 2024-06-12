@@ -193,7 +193,7 @@ CacheChange_t* RTPSWriter::new_change(
     }
 
     uint32_t payload_size = fixed_payload_size_ ? fixed_payload_size_ : dataCdrSerializedSize();
-    if (!payload_pool_->get_payload(payload_size, *reserved_change))
+    if (!payload_pool_->get_payload(payload_size, reserved_change->serializedPayload))
     {
         change_pool_->release_cache(reserved_change);
         EPROSIMA_LOG_WARNING(RTPS_WRITER, "Problem reserving payload from pool");
@@ -251,10 +251,10 @@ bool RTPSWriter::release_change(
 
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
 
-    IPayloadPool* pool = change->payload_owner();
+    IPayloadPool* pool = change->serializedPayload.payload_owner;
     if (pool)
     {
-        pool->release_payload(*change);
+        pool->release_payload(change->serializedPayload);
     }
     return change_pool_->release_cache(change);
 }

@@ -88,6 +88,7 @@ if (FASTDDS_STATISTICS)
         ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesPubSubTypes.cxx
         ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesTypeObjectSupport.cxx
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/LocatorWithMask.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/SerializedPayload.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/network.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
@@ -210,6 +211,7 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/builtin/liveliness/WLPListener.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/GuidPrefix_t.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/LocatorWithMask.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/SerializedPayload.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/DataSharing/DataSharingListener.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/DataSharing/DataSharingNotification.cpp
@@ -385,6 +387,7 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/builtin/liveliness/WLPListener.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/GuidPrefix_t.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/LocatorWithMask.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/SerializedPayload.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/DataSharing/DataSharingListener.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/DataSharing/DataSharingNotification.cpp

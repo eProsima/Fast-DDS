@@ -19,7 +19,7 @@
 #ifndef RTPS_HISTORY_TOPICPAYLOADPOOL_HPP
 #define RTPS_HISTORY_TOPICPAYLOADPOOL_HPP
 
-#include <fastdds/rtps/common/CacheChange.h>
+#include <fastdds/rtps/common/SerializedPayload.h>
 #include <fastdds/rtps/history/IPayloadPool.h>
 #include <fastdds/rtps/resources/ResourceManagement.h>
 #include <fastdds/dds/log/Log.hpp>
@@ -31,6 +31,7 @@
 #include <memory>
 #include <mutex>
 #include <vector>
+#include <cassert>
 
 namespace eprosima {
 namespace fastrtps {
@@ -55,15 +56,14 @@ public:
 
     bool get_payload(
             uint32_t size,
-            CacheChange_t& cache_change) override;
+            SerializedPayload_t& payload) override;
 
     bool get_payload(
-            SerializedPayload_t& data,
-            IPayloadPool*& data_owner,
-            CacheChange_t& cache_change) override;
+            const SerializedPayload_t& data,
+            SerializedPayload_t& payload) override;
 
     bool release_payload(
-            CacheChange_t& cache_change) override;
+            SerializedPayload_t& payload) override;
 
     /**
      * @brief Ensures the pool has capacity to fullfill the requirements of a new history.
@@ -346,7 +346,7 @@ protected:
      */
     virtual bool do_get_payload(
             uint32_t size,
-            CacheChange_t& cache_change,
+            SerializedPayload_t& payload,
             bool resizeable);
 
     virtual MemoryManagementPolicy_t memory_policy() const = 0;

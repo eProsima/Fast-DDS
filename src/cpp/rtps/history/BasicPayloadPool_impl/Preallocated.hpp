@@ -30,25 +30,21 @@ public:
 
     bool get_payload(
             uint32_t /* size */,
-            CacheChange_t& cache_change) override
+            SerializedPayload_t& payload) override
     {
-        cache_change.serializedPayload.reserve(payload_size_);
-        cache_change.payload_owner(this);
+        payload.reserve(payload_size_);
+        payload.payload_owner = this;
         return true;
     }
 
     bool get_payload(
-            SerializedPayload_t& data,
-            IPayloadPool*& /* data_owner */,
-            CacheChange_t& cache_change) override
+            const SerializedPayload_t& data,
+            SerializedPayload_t& payload) override
     {
-        assert(cache_change.writerGUID != GUID_t::unknown());
-        assert(cache_change.sequenceNumber != SequenceNumber_t::unknown());
-
-        cache_change.serializedPayload.reserve(payload_size_);
-        if (cache_change.serializedPayload.copy(&data, true))
+        payload.reserve(payload_size_);
+        if (payload.copy(&data, true))
         {
-            cache_change.payload_owner(this);
+            payload.payload_owner = this;
             return true;
         }
 

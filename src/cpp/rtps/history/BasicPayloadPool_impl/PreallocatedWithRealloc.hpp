@@ -30,10 +30,10 @@ public:
 
     bool get_payload(
             uint32_t size,
-            CacheChange_t& cache_change) override
+            SerializedPayload_t& payload) override
     {
-        cache_change.serializedPayload.reserve(std::max(size, min_payload_size_));
-        cache_change.payload_owner(this);
+        payload.reserve(std::max(size, min_payload_size_));
+        payload.payload_owner = this;
         return true;
     }
 

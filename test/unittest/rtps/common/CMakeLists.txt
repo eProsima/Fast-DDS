@@ -13,6 +13,7 @@
 # limitations under the License.
 
 set(CACHECHANGETESTS_SOURCE CacheChangeTests.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/SerializedPayload.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp)
 set(GUID_UTILS_TESTS_SOURCE GuidUtilsTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/GuidPrefix_t.cpp

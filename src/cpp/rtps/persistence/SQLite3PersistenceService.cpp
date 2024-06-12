@@ -286,7 +286,7 @@ bool SQLite3PersistenceService::load_writer_from_storage(
             SampleIdentity identity;
             identity.writer_guid(writer_guid);
             identity.sequence_number(sn);
-            if (!payload_pool->get_payload(size, *change))
+            if (!payload_pool->get_payload(size, change->serializedPayload))
             {
                 change_pool->release_cache(change);
                 continue;

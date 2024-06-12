@@ -22,11 +22,13 @@
 #include <cstring>
 #include <new>
 #include <stdexcept>
+#include <cassert>
 #include <stdint.h>
 #include <stdlib.h>
 
 #include <fastdds/fastdds_dll.hpp>
 #include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/history/IPayloadPool.h>
 
 /*!
  * @brief Maximum payload is maximum of UDP packet size minus 536bytes (RTPSMESSAGE_COMMON_RTPS_PAYLOAD_SIZE)
@@ -68,6 +70,8 @@ struct FASTDDS_EXPORTED_API SerializedPayload_t
     uint32_t max_size;
     //!Position when reading
     uint32_t pos;
+    //!Pool that created the payload
+    IPayloadPool* payload_owner = nullptr;
 
     //!Default constructor
     SerializedPayload_t()
@@ -89,50 +93,42 @@ struct FASTDDS_EXPORTED_API SerializedPayload_t
         this->reserve(len);
     }
 
-    ~SerializedPayload_t()
+    //!Copy constructor
+    SerializedPayload_t(
+            const SerializedPayload_t& other) = delete;
+    //!Copy operator
+    SerializedPayload_t& operator = (
+            const SerializedPayload_t& other) = delete;
+
+    //!Move constructor
+    SerializedPayload_t(
+            SerializedPayload_t&& other) noexcept
     {
-        this->empty();
+        *this = std::move(other);
     }
 
-    bool operator == (
-            const SerializedPayload_t& other) const
-    {
-        return ((encapsulation == other.encapsulation) &&
-               (length == other.length) &&
-               (0 == memcmp(data, other.data, length)));
-    }
+    //!Move operator
+    SerializedPayload_t& operator = (
+            SerializedPayload_t&& other) noexcept;
 
     /*!
-     * Copy another structure (including allocating new space for the data.)
+     * Destructor
+     * It is expected to release the payload if the payload owner is not nullptr before destruction
+     */
+    ~SerializedPayload_t();
+
+    bool operator == (
+            const SerializedPayload_t& other) const;
+
+    /*!
+     * Copy another structure (including allocating new space for the data).
      * @param[in] serData Pointer to the structure to copy
      * @param with_limit if true, the function will fail when providing a payload too big
      * @return True if correct
      */
     bool copy(
             const SerializedPayload_t* serData,
-            bool with_limit = true)
-    {
-        length = serData->length;
-
-        if (serData->length > max_size)
-        {
-            if (with_limit)
-            {
-                return false;
-            }
-            else
-            {
-                this->reserve(serData->length);
-            }
-        }
-        encapsulation = serData->encapsulation;
-        if (length == 0)
-        {
-            return true;
-        }
-        memcpy(data, serData->data, length);
-        return true;
-    }
+            bool with_limit = true);
 
     /*!
      * Allocate new space for fragmented data
@@ -140,56 +136,16 @@ struct FASTDDS_EXPORTED_API SerializedPayload_t
      * @return True if correct
      */
     bool reserve_fragmented(
-            SerializedPayload_t* serData)
-    {
-        length = serData->length;
-        max_size = serData->length;
-        encapsulation = serData->encapsulation;
-        data = (octet*)calloc(length, sizeof(octet));
-        return true;
-    }
+            SerializedPayload_t* serData);
 
-    //! Empty the payload
-    void empty()
-    {
-        length = 0;
-        encapsulation = CDR_BE;
-        max_size = 0;
-        if (data != nullptr)
-        {
-            free(data);
-        }
-        data = nullptr;
-    }
+    /*!
+     * Empty the payload
+     * @pre payload_owner must be nullptr
+     */
+    void empty();
 
     void reserve(
-            uint32_t new_size)
-    {
-        if (new_size <= this->max_size)
-        {
-            return;
-        }
-        if (data == nullptr)
-        {
-            data = (octet*)calloc(new_size, sizeof(octet));
-            if (!data)
-            {
-                throw std::bad_alloc();
-            }
-        }
-        else
-        {
-            void* old_data = data;
-            data = (octet*)realloc(data, new_size);
-            if (!data)
-            {
-                free(old_data);
-                throw std::bad_alloc();
-            }
-            memset(data + max_size, 0, (new_size - max_size) * sizeof(octet));
-        }
-        max_size = new_size;
-    }
+            uint32_t new_size);
 
 };
 

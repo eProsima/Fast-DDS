@@ -33,21 +33,20 @@ class NoOpPayloadPool : public IPayloadPool
 {
     virtual bool get_payload(
             uint32_t,
-            CacheChange_t&) override
+            SerializedPayload_t&) override
     {
         return true;
     }
 
     virtual bool get_payload(
-            SerializedPayload_t&,
-            IPayloadPool*&,
-            CacheChange_t&) override
+            const SerializedPayload_t&,
+            SerializedPayload_t&) override
     {
         return true;
     }
 
     virtual bool release_payload(
-            CacheChange_t&) override
+            SerializedPayload_t&) override
     {
         return true;
     }

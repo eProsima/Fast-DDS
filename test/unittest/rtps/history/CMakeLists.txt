@@ -14,6 +14,7 @@
 
 set(READERHISTORYTESTS_SOURCE ReaderHistoryTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/LocatorWithMask.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/SerializedPayload.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/CacheChangePool.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/History.cpp
@@ -29,6 +30,7 @@ set(READERHISTORYTESTS_SOURCE ReaderHistoryTests.cpp
 
 set(BASICPOOLSTESTS_SOURCE BasicPoolsTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/LocatorWithMask.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/SerializedPayload.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/CacheChangePool.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/netmask_filter.cpp
@@ -42,6 +44,7 @@ set(BASICPOOLSTESTS_SOURCE BasicPoolsTests.cpp
 
 set(CACHECHANGEPOOLTESTS_SOURCE CacheChangePoolTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/LocatorWithMask.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/SerializedPayload.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/CacheChangePool.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/netmask_filter.cpp
@@ -56,6 +59,7 @@ set(CACHECHANGEPOOLTESTS_SOURCE CacheChangePoolTests.cpp
 set(TOPICPAYLOADPOOLTESTS_SOURCE
     TopicPayloadPoolTests.cpp TopicPayloadPoolRegistryTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/LocatorWithMask.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/SerializedPayload.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/TopicPayloadPool.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/TopicPayloadPoolRegistry.cpp

@@ -41,7 +41,6 @@
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
 #include <fastdds/rtps/writer/WriterListener.h>
 
-#include <rtps/common/PayloadInfo_t.hpp>
 #include <rtps/DataSharing/DataSharingPayloadPool.hpp>
 #include <rtps/history/ITopicPayloadPool.h>
 
@@ -76,7 +75,6 @@ class Publisher;
 class DataWriterImpl : protected rtps::IReaderDataFilter
 {
     using LoanInitializationKind = DataWriter::LoanInitializationKind;
-    using PayloadInfo_t = eprosima::fastrtps::rtps::detail::PayloadInfo_t;
     using CacheChange_t = eprosima::fastrtps::rtps::CacheChange_t;
     class LoanCollection;
 

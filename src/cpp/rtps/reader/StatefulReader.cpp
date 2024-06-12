@@ -625,13 +625,10 @@ bool StatefulReader::process_data_msg(
             // Copy metadata to reserved change
             change_to_add->copy_not_memcpy(change);
 
-            // Ask payload pool to copy the payload
-            IPayloadPool* payload_owner = change->payload_owner();
-
             if (is_datasharing_compatible_ && datasharing_listener_->writer_is_matched(change->writerGUID))
             {
                 // We may receive the change from the listener (with owner a ReaderPool) or intraprocess (with owner a WriterPool)
-                ReaderPool* datasharing_pool = dynamic_cast<ReaderPool*>(payload_owner);
+                ReaderPool* datasharing_pool = dynamic_cast<ReaderPool*>(change->serializedPayload.payload_owner);
                 if (!datasharing_pool)
                 {
                     datasharing_pool = datasharing_listener_->get_pool_for_writer(change->writerGUID).get();
@@ -643,11 +640,14 @@ bool StatefulReader::process_data_msg(
                     change_pool_->release_cache(change_to_add);
                     return false;
                 }
-                datasharing_pool->get_payload(change->serializedPayload, payload_owner, *change_to_add);
+                datasharing_pool->get_datasharing_change(change->serializedPayload, *change_to_add);
             }
-            else if (payload_pool_->get_payload(change->serializedPayload, payload_owner, *change_to_add))
+            else if (payload_pool_->get_payload(change->serializedPayload, change_to_add->serializedPayload))
             {
-                change->payload_owner(payload_owner);
+                if (change->serializedPayload.payload_owner == nullptr)
+                {
+                    payload_pool_->get_payload(change_to_add->serializedPayload, change->serializedPayload);
+                }
             }
             else
             {
@@ -664,7 +664,7 @@ bool StatefulReader::process_data_msg(
             {
                 EPROSIMA_LOG_INFO(RTPS_MSG_IN,
                         IDSTRING "Change " << change_to_add->sequenceNumber << " not added to history");
-                change_to_add->payload_owner()->release_payload(*change_to_add);
+                change_to_add->serializedPayload.payload_owner->release_payload(change_to_add->serializedPayload);
                 change_pool_->release_cache(change_to_add);
                 return false;
             }
@@ -783,10 +783,10 @@ bool StatefulReader::process_data_frag_msg(
                     pWP->received_change_set(work_change->sequenceNumber);
 
                     // Temporarilly assign the inline qos while evaluating the data filter
-                    work_change->inline_qos = incomingChange->inline_qos;
+                    work_change->inline_qos = std::move(incomingChange->inline_qos);
                     bool filtered_out =
                             !fastdds::rtps::change_is_relevant_for_filter(*work_change, m_guid, data_filter_);
-                    work_change->inline_qos = SerializedPayload_t();
+                    incomingChange->inline_qos = std::move(work_change->inline_qos);
 
                     if (filtered_out)
                     {
@@ -1297,7 +1297,7 @@ void StatefulReader::remove_changes_from(
         if (is_payload_pool_lost)
         {
             (*it)->serializedPayload.data = nullptr;
-            (*it)->payload_owner(nullptr);
+            (*it)->serializedPayload.payload_owner = nullptr;
         }
         history_->remove_change(*it);
     }

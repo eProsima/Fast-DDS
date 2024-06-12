@@ -36,6 +36,8 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
+struct CacheChange_t;
+
 /*!
  * Specific information for a writer.
  */
@@ -179,14 +181,7 @@ struct FASTDDS_EXPORTED_API CacheChange_t
         setFragmentSize(ch_ptr->fragment_size_, false);
     }
 
-    virtual ~CacheChange_t()
-    {
-        if (payload_owner_ != nullptr)
-        {
-            payload_owner_->release_payload(*this);
-        }
-        assert(payload_owner_ == nullptr);
-    }
+    virtual ~CacheChange_t() = default;
 
     /*!
      * Get the number of fragments this change is split into.
@@ -326,22 +321,6 @@ struct FASTDDS_EXPORTED_API CacheChange_t
         return is_fully_assembled();
     }
 
-    IPayloadPool const* payload_owner() const
-    {
-        return payload_owner_;
-    }
-
-    IPayloadPool* payload_owner()
-    {
-        return payload_owner_;
-    }
-
-    void payload_owner(
-            IPayloadPool* owner)
-    {
-        payload_owner_ = owner;
-    }
-
 private:
 
     // Fragment size
@@ -352,9 +331,6 @@ private:
 
     // First fragment in missing list
     uint32_t first_missing_fragment_ = 0;
-
-    // Pool that created the payload of this cache change
-    IPayloadPool* payload_owner_ = nullptr;
 
     uint32_t get_next_missing_fragment(
             uint32_t fragment_index)
