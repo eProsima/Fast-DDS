@@ -77,10 +77,10 @@ def test_delivery_mechanisms_timeout(pub_args, sub_args):
         print (e.output)
     except subprocess.TimeoutExpired:
         ret = True
-        subprocess.check_output('@DOCKER_EXECUTABLE@ compose -f configuration.compose.yml down',
+        subprocess.check_output('@DOCKER_EXECUTABLE@ compose -f delivery_mechanisms.compose.yml down',
             stderr=subprocess.STDOUT,
             shell=True,
-            timeout=30
+            timeout=15
         )
 
     assert(ret)
