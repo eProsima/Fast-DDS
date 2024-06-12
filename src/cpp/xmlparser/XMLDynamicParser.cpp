@@ -440,7 +440,8 @@ XMLP_ret XMLParser::parseXMLAliasDynamicType(
                 }
                 catch (const std::exception&)
                 {
-                    EPROSIMA_LOG_ERROR(XMLPARSER, "Error parsing alias type bound: '" << STR_MAXLENGTH << "' out of bounds.");
+                    EPROSIMA_LOG_ERROR(XMLPARSER,
+                            "Error parsing alias type bound: '" << STR_MAXLENGTH << "' out of bounds.");
                     return XMLP_ret::XML_ERROR;
                 }
             }
@@ -556,7 +557,8 @@ XMLP_ret XMLParser::parseXMLBitsetDynamicType(
             }
             catch (const std::exception&)
             {
-                EPROSIMA_LOG_ERROR(XMLPARSER, "Error parsing bitfield type bound: '" << BIT_BOUND << "' out of bounds.");
+                EPROSIMA_LOG_ERROR(XMLPARSER,
+                        "Error parsing bitfield type bound: '" << BIT_BOUND << "' out of bounds.");
                 return XMLP_ret::XML_ERROR;
             }
         }
@@ -892,7 +894,7 @@ XMLP_ret XMLParser::parseXMLEnumDynamicType(
     DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
                                                     enum_descriptor)};
 
-    if(nullptr != type_builder)
+    if (nullptr != type_builder)
     {
         for (tinyxml2::XMLElement* literal = p_root->FirstChildElement(ENUMERATOR);
                 literal != nullptr; literal = literal->NextSiblingElement(ENUMERATOR))
@@ -1616,7 +1618,8 @@ DynamicType::_ref_type XMLParser:: parseXMLMemberDynamicType(
             }
             catch (const std::exception&)
             {
-                EPROSIMA_LOG_ERROR(XMLPARSER, "Error parsing alias type bound: '" << STR_MAXLENGTH << "' out of bounds.");
+                EPROSIMA_LOG_ERROR(XMLPARSER,
+                        "Error parsing alias type bound: '" << STR_MAXLENGTH << "' out of bounds.");
                 return {};
             }
         }
@@ -1649,7 +1652,8 @@ DynamicType::_ref_type XMLParser:: parseXMLMemberDynamicType(
             }
             catch (const std::exception&)
             {
-                EPROSIMA_LOG_ERROR(XMLPARSER, "Error parsing alias type bound: '" << STR_MAXLENGTH << "' out of bounds.");
+                EPROSIMA_LOG_ERROR(XMLPARSER,
+                        "Error parsing alias type bound: '" << STR_MAXLENGTH << "' out of bounds.");
                 return {};
             }
         }
