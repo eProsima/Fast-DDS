@@ -10,7 +10,10 @@ discovery_server_test_cases = [
     ('--connection-port 11500 --samples 10', '--connection-port 11500 --samples 10', '--listening-port 11500 --timeout 5', '--id 2 --listening-port 11400 --timeout 1'),
     ('--transport tcpv4 --samples 10', '--transport tcpv4 --samples 10', '--transport tcpv4 --timeout 5', '--id 2 --listening-port 11400 --timeout 1'),
     ('--connection-ds-id 1 --samples 10', '--connection-ds-id 1 --samples 10', '--id 1 --timeout 5', '--id 2 --listening-port 11400 --timeout 1'),
-    ('--connection-ds-id 1 --samples 10', '--connection-ds-id 2 --connection-port 11400 --samples 10', '--id 1 --timeout 5 --connection-ds-id 2 --connection-port 11400', '--id 2 --listening-port 11400 --timeout 5')
+    ('--connection-ds-id 1 --samples 10', '--connection-ds-id 2 --connection-port 11400 --samples 10', '--id 1 --timeout 5 --connection-ds-id 2 --connection-port 11400', '--id 2 --listening-port 11400 --timeout 5'),
+    ('--transport udpv6 --connection-ds-id 1 --samples 10', '--transport udpv6 --connection-ds-id 2 --connection-port 18000 --samples 10', '--transport udpv6 --id 1 --timeout 5 --connection-ds-id 2 --connection-port 18000', '--transport udpv6 --id 2 --listening-port 18000 --timeout 5'),
+    ('--transport tcpv4 --connection-ds-id 1 --samples 10', '--transport tcpv4 --connection-ds-id 2 --connection-port 18000 --samples 10', '--transport tcpv4 --id 1 --timeout 5 --connection-ds-id 2 --connection-port 18000', '--transport tcpv4 --id 2 --listening-port 18000 --timeout 5'),
+    ('--transport tcpv6 --connection-ds-id 1 --samples 10', '--transport tcpv6  --connection-ds-id 2 --connection-port 18000 --samples 10', '--transport tcpv6 --id 1 --timeout 5 --connection-ds-id 2 --connection-port 18000', '--transport tcpv6 --id 2 --listening-port 18000 --timeout 5')
 ]
 
 @pytest.mark.parametrize("pub_args, sub_args, server1_args, server2_args", discovery_server_test_cases)

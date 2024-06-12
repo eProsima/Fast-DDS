@@ -115,8 +115,6 @@ ClientPublisherApp::ClientPublisherApp(
         case TransportKind::TCPv4:
         {
             auto descriptor_tmp = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
-            // descriptor_tmp->interfaceWhiteList.push_back(ip_server_address);
-            // One listening port must be added either in the pub or the sub
             descriptor_tmp->add_listener_port(0);
             descriptor = descriptor_tmp;
 
@@ -129,8 +127,6 @@ ClientPublisherApp::ClientPublisherApp(
         case TransportKind::TCPv6:
         {
             auto descriptor_tmp = std::make_shared<eprosima::fastdds::rtps::TCPv6TransportDescriptor>();
-            // descriptor_tmp->interfaceWhiteList.push_back(ip_server_address);
-            // One listening port must be added either in the pub or the sub
             descriptor_tmp->add_listener_port(0);
             descriptor = descriptor_tmp;
 

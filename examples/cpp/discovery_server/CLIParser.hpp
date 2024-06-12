@@ -252,6 +252,8 @@ public:
 
         bool uses_ipv6 = false;
         bool listening_address_was_set = false;
+        bool connection_address_was_set = false;
+
         for (int i = 2; i < argc; ++i)
         {
             std::string arg = argv[i];
@@ -323,6 +325,7 @@ public:
                     {
                         config.srv_config.is_also_client = true;
                     }
+                    connection_address_was_set = true;
                 }
                 else
                 {
@@ -687,11 +690,25 @@ public:
             }
         }
 
-        if (uses_ipv6
-                && !listening_address_was_set
-                && config.entity == CLIParser::EntityKind::SERVER)
+        // change default values if IPv6 is used
+        // and user did not specified ones
+        if (uses_ipv6)
         {
-            config.srv_config.listening_address = "::1";
+            if (config.entity == CLIParser::EntityKind::SERVER &&
+                    !listening_address_was_set)
+            {
+                config.srv_config.listening_address = "::1";
+            }
+
+            if (!connection_address_was_set)
+            {
+                config.pub_config.connection_address = "::1";
+                config.sub_config.connection_address = "::1";
+                if (config.srv_config.is_also_client)
+                {
+                    config.srv_config.connection_address = "::1";
+                }
+            }
         }
 
         return config;
