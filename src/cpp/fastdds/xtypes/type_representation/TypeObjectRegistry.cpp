@@ -562,14 +562,15 @@ TypeObjectRegistry::TypeObjectRegistry()
 
 ReturnCode_t TypeObjectRegistry::register_type_object(
         const TypeObject& type_object,
-        TypeIdentifierPair& type_ids)
+        TypeIdentifierPair& type_ids,
+        bool build_minimal)
 {
     uint32_t type_object_serialized_size {0};
     TypeIdentifier type_identifier {calculate_type_identifier(type_object, type_object_serialized_size)};
 
     if (TK_NONE == type_ids.type_identifier1()._d())
     {
-        if (EK_COMPLETE == type_object._d())
+        if (build_minimal && EK_COMPLETE == type_object._d())
         {
             type_ids.type_identifier2(type_identifier);
         }
@@ -583,29 +584,48 @@ ReturnCode_t TypeObjectRegistry::register_type_object(
     {
         return eprosima::fastdds::dds::RETCODE_PRECONDITION_NOT_MET;
     }
-    else if (EK_COMPLETE == type_object._d())
+    else if (build_minimal && EK_COMPLETE == type_object._d())
     {
         type_ids.type_identifier2(type_identifier);
     }
 
-    if (EK_COMPLETE == type_object._d())
+    TypeRegistryEntry complete_entry;
+
+    if (build_minimal && EK_COMPLETE == type_object._d())
     {
-        TypeRegistryEntry entry;
-        entry.type_object = build_minimal_from_complete_type_object(type_object.complete());
-        type_ids.type_identifier1(calculate_type_identifier(entry.type_object, entry.type_object_serialized_size));
-        entry.complementary_type_id = type_ids.type_identifier2();
+        TypeRegistryEntry minimal_entry;
+        minimal_entry.type_object = build_minimal_from_complete_type_object(type_object.complete());
+        type_ids.type_identifier1(calculate_type_identifier(minimal_entry.type_object,
+                minimal_entry.type_object_serialized_size));
+        minimal_entry.complementary_type_id = type_ids.type_identifier2();
+        complete_entry.complementary_type_id = type_ids.type_identifier1();
 
         std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
-        type_registry_entries_.insert({type_ids.type_identifier1(), entry});
+        type_registry_entries_.insert({type_ids.type_identifier1(), minimal_entry});
     }
 
-    TypeRegistryEntry entry;
-    entry.type_object = type_object;
-    entry.type_object_serialized_size = type_object_serialized_size;
-    entry.complementary_type_id = type_ids.type_identifier1();
+    complete_entry.type_object = type_object;
+    complete_entry.type_object_serialized_size = type_object_serialized_size;
 
     std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
-    type_registry_entries_.insert({type_identifier, entry});
+    if (!type_registry_entries_.insert({type_identifier, complete_entry}).second)
+    {
+        if (build_minimal && EK_COMPLETE == type_object._d())
+        {
+            auto it = type_registry_entries_.find(type_identifier);
+            assert(type_registry_entries_.end() != it);
+
+            if (TK_NONE == it->second.complementary_type_id._d())
+            {
+                it->second.complementary_type_id = type_ids.type_identifier1();
+            }
+            else if (type_ids.type_identifier1() != it->second.complementary_type_id)
+            {
+                EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
+                        "Registering an already registered complete type object but with different minimal type identifier");
+            }
+        }
+    }
     return eprosima::fastdds::dds::RETCODE_OK;
 }
 
@@ -1546,7 +1566,7 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_alias_dynamic_type(
     complete_typeobject.alias_type(alias_type);
     TypeObject typeobject;
     typeobject.complete(complete_typeobject);
-    ret_code = register_type_object(typeobject, type_ids);
+    ret_code = register_type_object(typeobject, type_ids, true);
     assert(RETCODE_OK == ret_code);
 
     return ret_code;
@@ -1586,7 +1606,7 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_annotation_dynamic_type(
     complete_typeobject.annotation_type(annotation_type);
     TypeObject typeobject;
     typeobject.complete(complete_typeobject);
-    ret_code = register_type_object(typeobject, type_ids);
+    ret_code = register_type_object(typeobject, type_ids, true);
     assert(RETCODE_OK == ret_code);
 
     return ret_code;
@@ -1646,7 +1666,7 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_struct_dynamic_type(
     complete_typeobject.struct_type(struct_type);
     TypeObject typeobject;
     typeobject.complete(complete_typeobject);
-    ret_code = register_type_object(typeobject, type_ids);
+    ret_code = register_type_object(typeobject, type_ids, true);
     assert(RETCODE_OK == ret_code);
 
     return ret_code;
@@ -1723,7 +1743,7 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_union_dynamic_type(
     complete_typeobject.union_type(union_type);
     TypeObject typeobject;
     typeobject.complete(complete_typeobject);
-    ret_code = register_type_object(typeobject, type_ids);
+    ret_code = register_type_object(typeobject, type_ids, true);
     assert(RETCODE_OK == ret_code);
 
     return ret_code;
@@ -1760,7 +1780,7 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_bitset_dynamic_type(
     complete_typeobject.bitset_type(bitset_type);
     TypeObject typeobject;
     typeobject.complete(complete_typeobject);
-    ret_code = register_type_object(typeobject, type_ids);
+    ret_code = register_type_object(typeobject, type_ids, true);
     assert(RETCODE_OK == ret_code);
 
     return ret_code;
@@ -1805,7 +1825,7 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_sequence_dynamic_type(
     complete_typeobject.sequence_type(sequence_type);
     TypeObject typeobject;
     typeobject.complete(complete_typeobject);
-    ret_code = register_type_object(typeobject, type_ids);
+    ret_code = register_type_object(typeobject, type_ids, true);
     assert(RETCODE_OK == ret_code);
 
     return ret_code;
@@ -1847,7 +1867,7 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_array_dynamic_type(
     complete_typeobject.array_type(array_type);
     TypeObject typeobject;
     typeobject.complete(complete_typeobject);
-    ret_code = register_type_object(typeobject, type_ids);
+    ret_code = register_type_object(typeobject, type_ids, true);
     assert(RETCODE_OK == ret_code);
 
     return ret_code;
@@ -1905,7 +1925,7 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_map_dynamic_type(
     complete_typeobject.map_type(map_type);
     TypeObject typeobject;
     typeobject.complete(complete_typeobject);
-    ret_code = register_type_object(typeobject, type_ids);
+    ret_code = register_type_object(typeobject, type_ids, true);
     assert(RETCODE_OK == ret_code);
 
     return ret_code;
@@ -1963,7 +1983,7 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_enum_dynamic_type(
     complete_typeobject.enumerated_type(enumerated_type);
     TypeObject typeobject;
     typeobject.complete(complete_typeobject);
-    ret_code = register_type_object(typeobject, type_ids);
+    ret_code = register_type_object(typeobject, type_ids, true);
     assert(RETCODE_OK == ret_code);
 
     return ret_code;
@@ -2000,7 +2020,7 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_bitmask_dynamic_type(
     complete_typeobject.bitmask_type(bitmask_type);
     TypeObject typeobject;
     typeobject.complete(complete_typeobject);
-    ret_code = register_type_object(typeobject, type_ids);
+    ret_code = register_type_object(typeobject, type_ids, true);
     assert(RETCODE_OK == ret_code);
 
     return ret_code;

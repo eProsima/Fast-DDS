@@ -132,7 +132,36 @@ public:
      */
     ReturnCode_t register_type_object(
             const TypeObject& type_object,
-            TypeIdentifierPair& type_ids) override;
+            TypeIdentifierPair& type_ids) override
+    {
+        return register_type_object(type_object, type_ids, false);
+    }
+
+    /**
+     * @brief Register a remote TypeObject.
+     *        This auxiliary method might register only the minimal TypeObject and TypeIdentifier or register both
+     *        TypeObjects constructing the minimal from the complete TypeObject information.
+     *        TypeObject consistency is not checked in this method as the order of the dependencies received by the
+     *        TypeLookupService is not guaranteed.
+     *        The consistency is checked by the TypeLookupService after all dependencies are registered.
+     *
+     * @pre @ref TypeIdentifierPair::type_identifier1 discriminator must match TypeObject discriminator or be TK_NONE.
+     *      @ref TypeIdentifierPair::type_identifier1 consistency is only checked in Debug build mode.
+     *
+     * @param[in] type_object Related TypeObject being registered.
+     * @param[in,out] type_ids Returns the registered @ref TypeIdentifierPair.
+     * @param[in] build_minimal Minimal TypeObject should be built.
+     * @ref TypeIdentifierPair::type_identifier1 might be TK_NONE.
+     * In other case this function will check it is consistence with the provided @TypeObject.
+     * @return ReturnCode_t RETCODE_OK if correctly registered.
+     *                      RETCODE_PRECONDITION_NOT_MET if the discriminators differ.
+     *                      RETCODE_PRECONDITION_NOT_MET if the TypeIdentifier is not consistent with the given
+     *                      TypeObject.
+     */
+    ReturnCode_t register_type_object(
+            const TypeObject& type_object,
+            TypeIdentifierPair& type_ids,
+            bool build_minimal);
 
     /**
      * @brief Register an indirect hash TypeIdentifier.

@@ -147,7 +147,7 @@ void TypeLookupReplyListener::check_get_types_reply(
             xtypes::TypeIdentifierPair type_ids;
             type_ids.type_identifier1(pair.type_identifier());
             if (RETCODE_OK != fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
-                            register_type_object(pair.type_object(), type_ids))
+                            register_type_object(pair.type_object(), type_ids, false))
             {
                 // If any of the types is not registered, log error
                 EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE_REPLY_LISTENER,
