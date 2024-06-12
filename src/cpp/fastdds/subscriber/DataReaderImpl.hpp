@@ -570,7 +570,7 @@ protected:
             bool trigger_value);
 
     void update_subscription_matched_status(
-            const fastrtps::rtps::MatchingInfo& status);
+            const fastdds::rtps::MatchingInfo& status);
 
     bool on_data_available(
             const fastdds::rtps::GUID_t& writer_guid,

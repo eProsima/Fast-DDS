@@ -43,7 +43,7 @@
 
 namespace eprosima {
 
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 struct CacheChange_t;
@@ -54,27 +54,21 @@ class RTPSParticipantImpl;
 class WriterProxy;
 class WriterProxyData;
 
-} // namespace rtps
-} // namespace fastrtps
-
-namespace fastdds {
-namespace rtps {
-
 class BaseReader
-    : public fastrtps::rtps::RTPSReader
+    : public fastdds::rtps::RTPSReader
     , public fastdds::statistics::StatisticsReaderImpl
 {
 
 public:
 
-    fastrtps::rtps::ReaderListener* get_listener() const override;
+    fastdds::rtps::ReaderListener* get_listener() const override;
 
     void set_listener(
-            fastrtps::rtps::ReaderListener* listener) override;
+            fastdds::rtps::ReaderListener* listener) override;
 
     bool expects_inline_qos() const override;
 
-    fastrtps::rtps::ReaderHistory* get_history() const override;
+    fastdds::rtps::ReaderHistory* get_history() const override;
 
     IReaderDataFilter* get_content_filter() const override;
 
@@ -87,12 +81,12 @@ public:
             bool mark_as_read) override;
 
     bool wait_for_unread_cache(
-            const fastrtps::Duration_t& timeout) override;
+            const fastdds::Duration_t& timeout) override;
 
     bool is_sample_valid(
             const void* data,
-            const fastrtps::rtps::GUID_t& writer,
-            const fastrtps::rtps::SequenceNumber_t& sn) const override;
+            const fastdds::rtps::GUID_t& writer,
+            const fastdds::rtps::SequenceNumber_t& sn) const override;
 
     /**
      * @brief Get a pointer to a BaseReader object from a RTPSReader pointer.
@@ -102,7 +96,7 @@ public:
      * @return Pointer to the BaseReader object.
      */
     static BaseReader* downcast(
-            fastrtps::rtps::RTPSReader* reader);
+            fastdds::rtps::RTPSReader* reader);
 
     /**
      * @brief Get a pointer to a BaseReader object from a Endpoint pointer.
@@ -112,7 +106,7 @@ public:
      * @return Pointer to the BaseReader object.
      */
     static BaseReader* downcast(
-            fastrtps::rtps::Endpoint* endpoint);
+            fastdds::rtps::Endpoint* endpoint);
 
     /**
      * @brief Set the entity ID of the trusted writer.
@@ -120,7 +114,7 @@ public:
      * @param writer  Entity ID of the trusted writer.
      */
     void set_trusted_writer(
-            const fastrtps::rtps::EntityId_t& writer)
+            const fastdds::rtps::EntityId_t& writer)
     {
         accept_messages_from_unkown_writers_ = false;
         trusted_writer_entity_id_ = writer;
@@ -142,7 +136,7 @@ public:
     /**
      * @return The liveliness lease duration of this reader
      */
-    fastrtps::Duration_t liveliness_lease_duration() const
+    fastdds::Duration_t liveliness_lease_duration() const
     {
         return liveliness_lease_duration_;
     }
@@ -150,7 +144,7 @@ public:
     /**
      * @return the datasharing listener associated with this reader.
      */
-    const std::unique_ptr<fastrtps::rtps::IDataSharingListener>& datasharing_listener() const
+    const std::unique_ptr<fastdds::rtps::IDataSharingListener>& datasharing_listener() const
     {
         return datasharing_listener_;
     }
@@ -165,7 +159,7 @@ public:
      */
     bool reserve_cache(
             uint32_t cdr_payload_size,
-            fastrtps::rtps::CacheChange_t*& change);
+            fastdds::rtps::CacheChange_t*& change);
 
     /**
      * @brief Release a CacheChange_t.
@@ -173,7 +167,7 @@ public:
      * @param change  Pointer to the change to release.
      */
     void release_cache(
-            fastrtps::rtps::CacheChange_t* change);
+            fastdds::rtps::CacheChange_t* change);
 
     /**
      * @brief Method to notify the reader that a change has been removed from its history.
@@ -183,7 +177,7 @@ public:
      * @return True if correctly removed.
      */
     virtual bool change_removed_by_history(
-            fastrtps::rtps::CacheChange_t* change) = 0;
+            fastdds::rtps::CacheChange_t* change) = 0;
 
     /**
      * @brief Called just before a change is going to be deserialized.
@@ -196,8 +190,8 @@ public:
      * @return Whether the change is still valid or not.
      */
     virtual bool begin_sample_access_nts(
-            fastrtps::rtps::CacheChange_t* change,
-            fastrtps::rtps::WriterProxy*& writer,
+            fastdds::rtps::CacheChange_t* change,
+            fastdds::rtps::WriterProxy*& writer,
             bool& is_future_change) = 0;
 
     /**
@@ -208,8 +202,8 @@ public:
      * @param [in] mark_as_read  Whether the @c change should be marked as read or not.
      */
     virtual void end_sample_access_nts(
-            fastrtps::rtps::CacheChange_t* change,
-            fastrtps::rtps::WriterProxy*& writer,
+            fastdds::rtps::CacheChange_t* change,
+            fastdds::rtps::WriterProxy*& writer,
             bool mark_as_read) = 0;
 
     /**
@@ -220,7 +214,7 @@ public:
      * @param not_alive_change  The change requested for not alive count. Should be -1, 0 or +1
      */
     void update_liveliness_changed_status(
-            const fastrtps::rtps::GUID_t& writer,
+            const fastdds::rtps::GUID_t& writer,
             int32_t alive_change,
             int32_t not_alive_change);
 
@@ -232,7 +226,7 @@ public:
      * @return true if the reader accepts message.
      */
     virtual bool process_data_msg(
-            fastrtps::rtps::CacheChange_t* change) = 0;
+            fastdds::rtps::CacheChange_t* change) = 0;
 
     /**
      * @brief Process an incoming DATA_FRAG message.
@@ -245,7 +239,7 @@ public:
      * @return true if the reader accepts message.
      */
     virtual bool process_data_frag_msg(
-            fastrtps::rtps::CacheChange_t* change,
+            fastdds::rtps::CacheChange_t* change,
             uint32_t sampleSize,
             uint32_t fragmentStartingNum,
             uint16_t fragmentsInSubmessage) = 0;
@@ -264,10 +258,10 @@ public:
      * @return true if the reader accepts message.
      */
     virtual bool process_heartbeat_msg(
-            const fastrtps::rtps::GUID_t& writerGUID,
+            const fastdds::rtps::GUID_t& writerGUID,
             uint32_t hbCount,
-            const fastrtps::rtps::SequenceNumber_t& firstSN,
-            const fastrtps::rtps::SequenceNumber_t& lastSN,
+            const fastdds::rtps::SequenceNumber_t& firstSN,
+            const fastdds::rtps::SequenceNumber_t& lastSN,
             bool finalFlag,
             bool livelinessFlag,
             VendorId_t origin_vendor_id = c_VendorId_Unknown) = 0;
@@ -283,9 +277,9 @@ public:
      * @return true if the reader accepts message.
      */
     virtual bool process_gap_msg(
-            const fastrtps::rtps::GUID_t& writerGUID,
-            const fastrtps::rtps::SequenceNumber_t& gapStart,
-            const fastrtps::rtps::SequenceNumberSet_t& gapList,
+            const fastdds::rtps::GUID_t& writerGUID,
+            const fastdds::rtps::SequenceNumber_t& gapStart,
+            const fastdds::rtps::SequenceNumberSet_t& gapList,
             VendorId_t origin_vendor_id = c_VendorId_Unknown) = 0;
 
 #ifdef FASTDDS_STATISTICS
@@ -306,28 +300,28 @@ public:
 protected:
 
     BaseReader(
-            fastrtps::rtps::RTPSParticipantImpl* pimpl,
-            const fastrtps::rtps::GUID_t& guid,
-            const fastrtps::rtps::ReaderAttributes& att,
-            fastrtps::rtps::ReaderHistory* hist,
-            fastrtps::rtps::ReaderListener* listen);
+            fastdds::rtps::RTPSParticipantImpl* pimpl,
+            const fastdds::rtps::GUID_t& guid,
+            const fastdds::rtps::ReaderAttributes& att,
+            fastdds::rtps::ReaderHistory* hist,
+            fastdds::rtps::ReaderListener* listen);
 
     BaseReader(
-            fastrtps::rtps::RTPSParticipantImpl* pimpl,
-            const fastrtps::rtps::GUID_t& guid,
-            const fastrtps::rtps::ReaderAttributes& att,
-            const std::shared_ptr<fastrtps::rtps::IPayloadPool>& payload_pool,
-            fastrtps::rtps::ReaderHistory* hist,
-            fastrtps::rtps::ReaderListener* listen);
+            fastdds::rtps::RTPSParticipantImpl* pimpl,
+            const fastdds::rtps::GUID_t& guid,
+            const fastdds::rtps::ReaderAttributes& att,
+            const std::shared_ptr<fastdds::rtps::IPayloadPool>& payload_pool,
+            fastdds::rtps::ReaderHistory* hist,
+            fastdds::rtps::ReaderListener* listen);
 
     BaseReader(
-            fastrtps::rtps::RTPSParticipantImpl* pimpl,
-            const fastrtps::rtps::GUID_t& guid,
-            const fastrtps::rtps::ReaderAttributes& att,
-            const std::shared_ptr<fastrtps::rtps::IPayloadPool>& payload_pool,
-            const std::shared_ptr<fastrtps::rtps::IChangePool>& change_pool,
-            fastrtps::rtps::ReaderHistory* hist,
-            fastrtps::rtps::ReaderListener* listen);
+            fastdds::rtps::RTPSParticipantImpl* pimpl,
+            const fastdds::rtps::GUID_t& guid,
+            const fastdds::rtps::ReaderAttributes& att,
+            const std::shared_ptr<fastdds::rtps::IPayloadPool>& payload_pool,
+            const std::shared_ptr<fastdds::rtps::IChangePool>& change_pool,
+            fastdds::rtps::ReaderHistory* hist,
+            fastdds::rtps::ReaderListener* listen);
 
     /**
      * @brief Whether a history record may be removed.
@@ -346,8 +340,8 @@ protected:
      * @param persistence_guid  Persistence GUID of the remote writer.
      */
     void add_persistence_guid(
-            const fastrtps::rtps::GUID_t& guid,
-            const fastrtps::rtps::GUID_t& persistence_guid);
+            const fastdds::rtps::GUID_t& guid,
+            const fastdds::rtps::GUID_t& persistence_guid);
 
     /**
      * @brief Remove a remote writer from the persistence_guid map.
@@ -357,8 +351,8 @@ protected:
      * @param removed_by_lease  Whether the GUIDs are being removed due to a participant drop.
      */
     void remove_persistence_guid(
-            const fastrtps::rtps::GUID_t& guid,
-            const fastrtps::rtps::GUID_t& persistence_guid,
+            const fastdds::rtps::GUID_t& guid,
+            const fastdds::rtps::GUID_t& persistence_guid,
             bool removed_by_lease);
 
     /**
@@ -369,8 +363,8 @@ protected:
      * @return Last notified sequence number for input guid.
      * @remarks Takes persistence_guid into consideration.
      */
-    fastrtps::rtps::SequenceNumber_t get_last_notified(
-            const fastrtps::rtps::GUID_t& guid);
+    fastdds::rtps::SequenceNumber_t get_last_notified(
+            const fastdds::rtps::GUID_t& guid);
 
     /**
      * @brief Update the last notified sequence for a writer's GUID.
@@ -381,9 +375,9 @@ protected:
      * @return Previous value of last notified sequence number for input GUID.
      * @remarks Takes persistence_guid into consideration.
      */
-    fastrtps::rtps::SequenceNumber_t update_last_notified(
-            const fastrtps::rtps::GUID_t& guid,
-            const fastrtps::rtps::SequenceNumber_t& seq);
+    fastdds::rtps::SequenceNumber_t update_last_notified(
+            const fastdds::rtps::GUID_t& guid,
+            const fastdds::rtps::SequenceNumber_t& seq);
 
     /**
      * @brief Persist the last notified sequence for a persistence guid.
@@ -394,8 +388,8 @@ protected:
      * @param seq               Sequence number to set for input guid.
      */
     virtual void persist_last_notified_nts(
-            const fastrtps::rtps::GUID_t& persistence_guid,
-            const fastrtps::rtps::SequenceNumber_t& seq);
+            const fastdds::rtps::GUID_t& persistence_guid,
+            const fastdds::rtps::SequenceNumber_t& seq);
 
     /**
      * @brief Check if a writer can communicate with this reader using data-sharing.
@@ -405,10 +399,10 @@ protected:
      * @return Whether the writer is datasharing compatible with this reader or not.
      */
     bool is_datasharing_compatible_with(
-            const fastrtps::rtps::WriterProxyData& wdata);
+            const fastdds::rtps::WriterProxyData& wdata);
 
     /// Pointer to the listener associated with this reader.
-    fastrtps::rtps::ReaderListener* listener_;
+    fastdds::rtps::ReaderListener* listener_;
     /// Whether the reader accepts messages from unmatched writers.
     bool accept_messages_from_unkown_writers_;
     /// Whether the reader expects inline QoS.
@@ -418,28 +412,28 @@ protected:
     IReaderDataFilter* data_filter_ = nullptr;
 
     /// The history record associated with this reader.
-    fastrtps::rtps::ReaderHistoryState* history_state_;
+    fastdds::rtps::ReaderHistoryState* history_state_;
 
     /// Total number of unread samples in the history.
     uint64_t total_unread_ = 0;
     /// Condition variable to wait for unread samples.
-    fastrtps::TimedConditionVariable new_notification_cv_;
+    fastdds::TimedConditionVariable new_notification_cv_;
 
     /// The liveliness kind of this reader.
     fastdds::dds::LivelinessQosPolicyKind liveliness_kind_;
     /// The liveliness lease duration of this reader.
-    fastrtps::Duration_t liveliness_lease_duration_;
+    fastdds::Duration_t liveliness_lease_duration_;
 
     /// Whether the reader is datasharing compatible.
     bool is_datasharing_compatible_ = false;
     /// The listener for the datasharing notifications.
-    std::unique_ptr<fastrtps::rtps::IDataSharingListener> datasharing_listener_;
+    std::unique_ptr<fastdds::rtps::IDataSharingListener> datasharing_listener_;
 
     /// The liveliness changed status struct as defined in the DDS standard.
     fastdds::dds::LivelinessChangedStatus liveliness_changed_status_;
 
     /// Trusted writer (for Builtin)
-    fastrtps::rtps::EntityId_t trusted_writer_entity_id_;
+    fastdds::rtps::EntityId_t trusted_writer_entity_id_;
 
 private:
 
@@ -451,8 +445,8 @@ private:
      * @param change_pool   Change pool to use.
      */
     void init(
-            const std::shared_ptr<fastrtps::rtps::IPayloadPool>& payload_pool,
-            const std::shared_ptr<fastrtps::rtps::IChangePool>& change_pool);
+            const std::shared_ptr<fastdds::rtps::IPayloadPool>& payload_pool,
+            const std::shared_ptr<fastdds::rtps::IChangePool>& change_pool);
 
     /**
      * @brief Perform datasharing related setup.
@@ -463,7 +457,7 @@ private:
      * @param att  Attributes of the reader.
      */
     void setup_datasharing(
-            const fastrtps::rtps::ReaderAttributes& att);
+            const fastdds::rtps::ReaderAttributes& att);
 
 };
 

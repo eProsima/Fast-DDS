@@ -94,7 +94,7 @@ Version 2.12.0
     - Data type source code generated with Fast DDS-Gen v2 should be regenerated using Fast DDS-Gen v3.
     - **API break**. Changed a `MEMBER_INVALID` identifier from a `#define` to a `constexpr`.
       Although this is not a new major version, using a `#define` is a bad conduct which was decided to be changed.
-      Note that new `constexpr` is inside namespace `eprosima::fastrtps::types`.
+      Note that new `constexpr` is inside namespace `eprosima::fastdds::types`.
 
 Version 2.11.0
 --------------
@@ -187,7 +187,7 @@ Version 2.6.0
 * Allow modifying the remote server locator in runtime.
 * Add physical information in DATA[p] using properties
 * Extension of `DISCOVERY_TOPIC` to include physical information about the discovered entity (ABI break)
-* Added methods getting `fastrtps::Time_t` as parameters instead of `fastrtps::rtps::Time_t` (API extension, API
+* Added methods getting `fastdds::Time_t` as parameters instead of `fastdds::rtps::Time_t` (API extension, API
   deprecations).
 * Changed signature of eprosima::fastdds::dds::DataWriter::dispose_w_timestamp (ABI break).
 * Added method getting `std::vector<InstanceHandle_t>&` instead of `std::vector<InstanceHandle_t*>&` (API extension, API
@@ -228,7 +228,7 @@ Version 2.3.0
 * Added support for unique network flows
 * Added reception_timestamp to `eprosima::fastdds::dds::SampleInfo` (ABI break)
 * Added `eprosima::fastdds::dds::DataReader::get_unread_count` (ABI break)
-* Refactor `eprosima::fastrtps::type::ReturnCode_t`. Now the constant global objects are no longer available (ABI break)
+* Refactor `eprosima::fastdds::type::ReturnCode_t`. Now the constant global objects are no longer available (ABI break)
 * Performance tests refactored to use DDS-PIM high-level API
 
 Version 2.2.0
@@ -321,16 +321,16 @@ Version 2.0.0
 This release has the following **API breaks**:
 
 * eClock API, which was deprecated on v1.9.1, has been removed
-* `eprosima::fastrtps::rtps::RTPSDomain::createParticipant` methods now have an additional first argument `domain_id`
-* Data member `domainId` has been removed from `eprosima::fastrtps::rtps::RTPSParticipantAttributes` and added to
-  `eprosima::fastrtps::ParticipantAttributes`
+* `eprosima::fastdds::rtps::RTPSDomain::createParticipant` methods now have an additional first argument `domain_id`
+* Data member `domainId` has been removed from `eprosima::fastdds::rtps::RTPSParticipantAttributes` and added to
+  `eprosima::fastdds::ParticipantAttributes`
 
 Users should also be aware of the following **deprecation announcement**:
 
 * All classes inside the namespace `eprosima::fastrtps` should be considered deprecated.
   Equivalent functionality is offered through namespace `eprosima::fastdds`.
 * Namespaces beneath `eprosima::fastrtps` are not included in this deprecation, i.e.
-  `eprosima::fastrtps::rtps` can still be used)
+  `eprosima::fastdds::rtps` can still be used)
 
 This release adds the following **features**:
 

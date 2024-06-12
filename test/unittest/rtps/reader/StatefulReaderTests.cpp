@@ -56,9 +56,7 @@ namespace dds {
 const InstanceHandle_t HANDLE_NIL;
 
 } // namespace dds
-} // namespace fastdds
 
-namespace fastrtps {
 namespace rtps {
 
 /* Regression Test for improving gaps processing
@@ -114,7 +112,7 @@ TEST(StatefulReaderTests, RTPSCorrectGAPProcessing)
 }
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 int main(

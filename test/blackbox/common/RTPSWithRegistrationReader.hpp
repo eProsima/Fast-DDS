@@ -92,6 +92,11 @@ private:
                 eprosima::fastdds::rtps::RTPSReader* /*reader*/,
                 const eprosima::fastdds::rtps::MatchingInfo& info) override
         {
+            if (info.status == eprosima::fastdds::rtps::MATCHED_MATCHING)
+            {
+                reader_.matched();
+            }
+            else if (info.status == eprosima::fastdds::rtps::REMOVED_MATCHING)
             {
                 reader_.unmatched();
             }
