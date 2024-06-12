@@ -84,6 +84,8 @@ jobs:
 
       - name: Setup CCache
         uses: eProsima/eProsima-CI/external/setup-ccache-action@v0
+        with:
+          api_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up hosts file for DNS testing
         run: |
