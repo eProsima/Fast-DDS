@@ -132,10 +132,10 @@ def update_types_header_file(structs_info, typecode_path):
     new_include_lines = set()
     for _, idl_file_name, _, idls_path in structs_info:
         if idls_path != "BaseCasesIDLs/":
-            include_line = f'#include "{typecode_path}{idl_file_name}PubSubTypes.h"\n'
+            include_line = f'#include "{typecode_path}{idl_file_name}PubSubTypes.hpp"\n'
             new_include_lines.add(include_line)
         else:
-            include_line = f'#include "BaseCasesIDLs/{idl_file_name}PubSubTypes.h"\n'
+            include_line = f'#include "BaseCasesIDLs/{idl_file_name}PubSubTypes.hpp"\n'
             new_include_lines.add(include_line)
 
     content = content[:endif_index].rstrip() + '\n' + '\n' + ''.join(sorted(list(new_include_lines))) + '\n' + content[endif_index:]

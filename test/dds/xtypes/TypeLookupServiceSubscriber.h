@@ -51,7 +51,7 @@ namespace dds {
 
 struct SubKnownType
 {
-    void* type_;
+    void* type_ {nullptr};
     DynamicType::_ref_type dyn_type_;
     TypeSupport type_sup_;
 };
@@ -501,16 +501,19 @@ private:
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(StructAliasInheritanceStruct);
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(StructuresInheritanceStruct);
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(InheritanceKeyedEmptyStruct);
+        SUBSCRIBER_TYPE_CREATOR_FUNCTION(KeyedAppendable);
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(KeyedBooleanStruct);
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(KeyedCharStruct);
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(KeyedDoubleStruct);
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(KeyedEmptyInheritanceStruct);
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(KeyedEmptyStruct);
+        SUBSCRIBER_TYPE_CREATOR_FUNCTION(KeyedFinal);
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(KeyedFloatStruct);
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(KeyedInheritanceStruct);
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(KeyedLongDoubleStruct);
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(KeyedLongLongStruct);
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(KeyedLongStruct);
+        SUBSCRIBER_TYPE_CREATOR_FUNCTION(KeyedMutable);
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(KeyedOctetStruct);
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(KeyedShortStruct);
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(KeyedULongLongStruct);
@@ -923,6 +926,7 @@ private:
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(StructWString);
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(Structures);
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(bar);
+        SUBSCRIBER_TYPE_CREATOR_FUNCTION(root);
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(root1);
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(root2);
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(testing_1::foo);
@@ -959,6 +963,8 @@ private:
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(UnionMap);
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(UnionOctet);
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(UnionSequence);
+        SUBSCRIBER_TYPE_CREATOR_FUNCTION(UnionSeveralFields);
+        SUBSCRIBER_TYPE_CREATOR_FUNCTION(UnionSeveralFieldsWithDefault);
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(UnionShort);
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(UnionString);
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(UnionULong);

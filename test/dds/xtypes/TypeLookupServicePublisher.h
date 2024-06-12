@@ -50,7 +50,7 @@ namespace dds {
 
 struct PubKnownType
 {
-    void* type_;
+    void* type_ {nullptr};
     DynamicType::_ref_type dyn_type_;
     TypeSupport type_sup_;
 
@@ -489,16 +489,19 @@ private:
         PUBLISHER_TYPE_CREATOR_FUNCTION(StructAliasInheritanceStruct);
         PUBLISHER_TYPE_CREATOR_FUNCTION(StructuresInheritanceStruct);
         PUBLISHER_TYPE_CREATOR_FUNCTION(InheritanceKeyedEmptyStruct);
+        PUBLISHER_TYPE_CREATOR_FUNCTION(KeyedAppendable);
         PUBLISHER_TYPE_CREATOR_FUNCTION(KeyedBooleanStruct);
         PUBLISHER_TYPE_CREATOR_FUNCTION(KeyedCharStruct);
         PUBLISHER_TYPE_CREATOR_FUNCTION(KeyedDoubleStruct);
         PUBLISHER_TYPE_CREATOR_FUNCTION(KeyedEmptyInheritanceStruct);
         PUBLISHER_TYPE_CREATOR_FUNCTION(KeyedEmptyStruct);
+        PUBLISHER_TYPE_CREATOR_FUNCTION(KeyedFinal);
         PUBLISHER_TYPE_CREATOR_FUNCTION(KeyedFloatStruct);
         PUBLISHER_TYPE_CREATOR_FUNCTION(KeyedInheritanceStruct);
         PUBLISHER_TYPE_CREATOR_FUNCTION(KeyedLongDoubleStruct);
         PUBLISHER_TYPE_CREATOR_FUNCTION(KeyedLongLongStruct);
         PUBLISHER_TYPE_CREATOR_FUNCTION(KeyedLongStruct);
+        PUBLISHER_TYPE_CREATOR_FUNCTION(KeyedMutable);
         PUBLISHER_TYPE_CREATOR_FUNCTION(KeyedOctetStruct);
         PUBLISHER_TYPE_CREATOR_FUNCTION(KeyedShortStruct);
         PUBLISHER_TYPE_CREATOR_FUNCTION(KeyedULongLongStruct);
@@ -911,6 +914,7 @@ private:
         PUBLISHER_TYPE_CREATOR_FUNCTION(StructWString);
         PUBLISHER_TYPE_CREATOR_FUNCTION(Structures);
         PUBLISHER_TYPE_CREATOR_FUNCTION(bar);
+        PUBLISHER_TYPE_CREATOR_FUNCTION(root);
         PUBLISHER_TYPE_CREATOR_FUNCTION(root1);
         PUBLISHER_TYPE_CREATOR_FUNCTION(root2);
         PUBLISHER_TYPE_CREATOR_FUNCTION(testing_1::foo);
@@ -947,6 +951,8 @@ private:
         PUBLISHER_TYPE_CREATOR_FUNCTION(UnionMap);
         PUBLISHER_TYPE_CREATOR_FUNCTION(UnionOctet);
         PUBLISHER_TYPE_CREATOR_FUNCTION(UnionSequence);
+        PUBLISHER_TYPE_CREATOR_FUNCTION(UnionSeveralFields);
+        PUBLISHER_TYPE_CREATOR_FUNCTION(UnionSeveralFieldsWithDefault);
         PUBLISHER_TYPE_CREATOR_FUNCTION(UnionShort);
         PUBLISHER_TYPE_CREATOR_FUNCTION(UnionString);
         PUBLISHER_TYPE_CREATOR_FUNCTION(UnionULong);

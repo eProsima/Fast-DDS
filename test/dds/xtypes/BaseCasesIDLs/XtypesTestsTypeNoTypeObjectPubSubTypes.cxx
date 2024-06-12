@@ -25,8 +25,6 @@
 #include <fastdds/rtps/common/CdrSerialization.hpp>
 
 #include "XtypesTestsTypeNoTypeObjectCdrAux.hpp"
-#include "XtypesTestsTypeNoTypeObjectTypeObjectSupport.hpp"
-
 using SerializedPayload_t = eprosima::fastdds::rtps::SerializedPayload_t;
 using InstanceHandle_t = eprosima::fastdds::rtps::InstanceHandle_t;
 using DataRepresentationId_t = eprosima::fastdds::dds::DataRepresentationId_t;
@@ -209,7 +207,8 @@ bool TypeNoTypeObjectPubSubType::compute_key(
 
 void TypeNoTypeObjectPubSubType::register_type_object_representation()
 {
-    register_TypeNoTypeObject_type_identifier(type_identifiers_);
+    EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
+        "TypeObject type representation support disabled in generated code");
 }
 
 

@@ -22,6 +22,27 @@
             ]
         },
         {
+            "TestCase": "Case_key_KeyedAppendable",
+            "participants": [
+                {
+                    "kind": "publisher",
+                    "samples": "10",
+                    "timeout": "2",
+                    "expected_matches": "1",
+                    "known_types": [
+                        "KeyedAppendable"
+                    ]
+                },
+                {
+                    "kind": "subscriber",
+                    "samples": "10",
+                    "timeout": "2",
+                    "expected_matches": "1",
+                    "known_types": []
+                }
+            ]
+        },
+        {
             "TestCase": "Case_key_KeyedBooleanStruct",
             "participants": [
                 {
@@ -127,6 +148,27 @@
             ]
         },
         {
+            "TestCase": "Case_key_KeyedFinal",
+            "participants": [
+                {
+                    "kind": "publisher",
+                    "samples": "10",
+                    "timeout": "2",
+                    "expected_matches": "1",
+                    "known_types": [
+                        "KeyedFinal"
+                    ]
+                },
+                {
+                    "kind": "subscriber",
+                    "samples": "10",
+                    "timeout": "2",
+                    "expected_matches": "1",
+                    "known_types": []
+                }
+            ]
+        },
+        {
             "TestCase": "Case_key_KeyedFloatStruct",
             "participants": [
                 {
@@ -220,6 +262,27 @@
                     "expected_matches": "1",
                     "known_types": [
                         "KeyedLongStruct"
+                    ]
+                },
+                {
+                    "kind": "subscriber",
+                    "samples": "10",
+                    "timeout": "2",
+                    "expected_matches": "1",
+                    "known_types": []
+                }
+            ]
+        },
+        {
+            "TestCase": "Case_key_KeyedMutable",
+            "participants": [
+                {
+                    "kind": "publisher",
+                    "samples": "10",
+                    "timeout": "2",
+                    "expected_matches": "1",
+                    "known_types": [
+                        "KeyedMutable"
                     ]
                 },
                 {
