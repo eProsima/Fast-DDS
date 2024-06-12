@@ -434,7 +434,16 @@ XMLP_ret XMLParser::parseXMLAliasDynamicType(
             const char* boundStr = p_root->Attribute(STR_MAXLENGTH);
             if (boundStr != nullptr)
             {
-                bound = static_cast<uint32_t>(std::stoul(boundStr));
+                try
+                {
+                    bound = static_cast<uint32_t>(std::stoul(boundStr));
+                }
+                catch (const std::exception&)
+                {
+                    EPROSIMA_LOG_ERROR(XMLPARSER,
+                            "Error parsing alias type bound: '" << STR_MAXLENGTH << "' out of bounds.");
+                    return XMLP_ret::XML_ERROR;
+                }
             }
             value_type = getDiscriminatorTypeBuilder(type, bound);
         }
@@ -540,10 +549,18 @@ XMLP_ret XMLParser::parseXMLBitsetDynamicType(
             EPROSIMA_LOG_ERROR(XMLPARSER, "Error parsing bitfield bit_bound: Not found.");
             return XMLP_ret::XML_ERROR;
         }
-
         if (nullptr != member_name)
         {
-            bitset_descriptor->bound().push_back(static_cast<uint32_t>(std::stoul(bit_bound)));
+            try
+            {
+                bitset_descriptor->bound().push_back(static_cast<uint32_t>(std::stoul(bit_bound)));
+            }
+            catch (const std::exception&)
+            {
+                EPROSIMA_LOG_ERROR(XMLPARSER,
+                        "Error parsing bitfield type bound: '" << BIT_BOUND << "' out of bounds.");
+                return XMLP_ret::XML_ERROR;
+            }
         }
     }
     //}}}
@@ -569,29 +586,37 @@ XMLP_ret XMLParser::parseXMLBitsetDynamicType(
     DynamicTypeBuilder::_ref_type type_builder =
             DynamicTypeBuilderFactory::get_instance()->create_type(bitset_descriptor);
 
-    const char* element_name {nullptr};
-    MemberId position {0};
-    for (tinyxml2::XMLElement* p_element = p_root->FirstChildElement();
-            p_element != nullptr; p_element = p_element->NextSiblingElement())
+    if (nullptr != type_builder)
     {
-        element_name = p_element->Name();
-        if (strcmp(element_name, BITFIELD) == 0)
+        const char* element_name {nullptr};
+        MemberId position {0};
+        for (tinyxml2::XMLElement* p_element = p_root->FirstChildElement();
+                p_element != nullptr; p_element = p_element->NextSiblingElement())
         {
-            ret = parseXMLBitfieldDynamicType(p_element, type_builder, position);
+            element_name = p_element->Name();
+            if (strcmp(element_name, BITFIELD) == 0)
+            {
+                ret = parseXMLBitfieldDynamicType(p_element, type_builder, position);
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(XMLPARSER, "Invalid element found into 'bitsetDcl'. Name: " << element_name);
+                return XMLP_ret::XML_ERROR;
+            }
         }
-        else
+
+        if (XMLP_ret::XML_OK == ret)
         {
-            EPROSIMA_LOG_ERROR(XMLPARSER, "Invalid element found into 'bitsetDcl'. Name: " << element_name);
-            return XMLP_ret::XML_ERROR;
+            if (false == XMLProfileManager::insertDynamicTypeByName(name, type_builder->build()))
+            {
+                ret = XMLP_ret::XML_ERROR;
+            }
         }
     }
-
-    if (XMLP_ret::XML_OK == ret)
+    else
     {
-        if (false == XMLProfileManager::insertDynamicTypeByName(name, type_builder->build()))
-        {
-            ret = XMLP_ret::XML_ERROR;
-        }
+        EPROSIMA_LOG_ERROR(XMLPARSER, "Error creating bitset type: " << name);
+        ret = XMLP_ret::XML_ERROR;
     }
 
     return ret;
@@ -792,27 +817,35 @@ XMLP_ret XMLParser::parseXMLBitmaskDynamicType(
         DynamicTypeBuilderFactory::get_instance()->create_type(bitmask_descriptor)};
     uint16_t position = 0;
 
-    const char* element_name = nullptr;
-    for (tinyxml2::XMLElement* p_element = p_root->FirstChildElement();
-            p_element != nullptr; p_element = p_element->NextSiblingElement())
+    if (nullptr != type_builder)
     {
-        element_name = p_element->Name();
-        if (strcmp(element_name, BIT_VALUE) == 0)
+        const char* element_name = nullptr;
+        for (tinyxml2::XMLElement* p_element = p_root->FirstChildElement();
+                p_element != nullptr; p_element = p_element->NextSiblingElement())
         {
-            if (parseXMLBitvalueDynamicType(p_element, type_builder, position) != XMLP_ret::XML_OK)
+            element_name = p_element->Name();
+            if (strcmp(element_name, BIT_VALUE) == 0)
             {
+                if (parseXMLBitvalueDynamicType(p_element, type_builder, position) != XMLP_ret::XML_OK)
+                {
+                    return XMLP_ret::XML_ERROR;
+                }
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(XMLPARSER, "Invalid element found into 'bitmaskDcl'. Name: " << element_name);
                 return XMLP_ret::XML_ERROR;
             }
         }
-        else
+
+        if (false == XMLProfileManager::insertDynamicTypeByName(name, type_builder->build()))
         {
-            EPROSIMA_LOG_ERROR(XMLPARSER, "Invalid element found into 'bitmaskDcl'. Name: " << element_name);
-            return XMLP_ret::XML_ERROR;
+            ret = XMLP_ret::XML_ERROR;
         }
     }
-
-    if (false == XMLProfileManager::insertDynamicTypeByName(name, type_builder->build()))
+    else
     {
+        EPROSIMA_LOG_ERROR(XMLPARSER, "Error creating bitmask type: " << name);
         ret = XMLP_ret::XML_ERROR;
     }
 
@@ -861,31 +894,39 @@ XMLP_ret XMLParser::parseXMLEnumDynamicType(
     DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
                                                     enum_descriptor)};
 
-    for (tinyxml2::XMLElement* literal = p_root->FirstChildElement(ENUMERATOR);
-            literal != nullptr; literal = literal->NextSiblingElement(ENUMERATOR))
+    if (nullptr != type_builder)
     {
-        const char* name = literal->Attribute(NAME);
-        if (name == nullptr)
+        for (tinyxml2::XMLElement* literal = p_root->FirstChildElement(ENUMERATOR);
+                literal != nullptr; literal = literal->NextSiblingElement(ENUMERATOR))
         {
-            EPROSIMA_LOG_ERROR(XMLPARSER, "Error parsing enum type: Literals must have name.");
-            return XMLP_ret::XML_ERROR;
+            const char* name = literal->Attribute(NAME);
+            if (name == nullptr)
+            {
+                EPROSIMA_LOG_ERROR(XMLPARSER, "Error parsing enum type: Literals must have name.");
+                return XMLP_ret::XML_ERROR;
+            }
+
+            MemberDescriptor::_ref_type md {traits<MemberDescriptor>::make_shared()};
+            md->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32));
+            md->name(name);
+
+            const char* value = literal->Attribute(VALUE);
+            if (value != nullptr)
+            {
+                md->default_value(value);
+            }
+
+            type_builder->add_member(md);
         }
 
-        MemberDescriptor::_ref_type md {traits<MemberDescriptor>::make_shared()};
-        md->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32));
-        md->name(name);
-
-        const char* value = literal->Attribute(VALUE);
-        if (value != nullptr)
+        if (false == XMLProfileManager::insertDynamicTypeByName(enumName, type_builder->build()))
         {
-            md->default_value(value);
+            ret = XMLP_ret::XML_ERROR;
         }
-
-        type_builder->add_member(md);
     }
-
-    if (false == XMLProfileManager::insertDynamicTypeByName(enumName, type_builder->build()))
+    else
     {
+        EPROSIMA_LOG_ERROR(XMLPARSER, "Error creating enum type: " << enumName);
         ret = XMLP_ret::XML_ERROR;
     }
 
@@ -950,27 +991,35 @@ XMLP_ret XMLParser::parseXMLStructDynamicType(
     DynamicTypeBuilder::_ref_type type_builder = DynamicTypeBuilderFactory::get_instance()->create_type(
         structure_descriptor);
 
-    const char* element_name = nullptr;
-    for (tinyxml2::XMLElement* p_element = p_root->FirstChildElement();
-            p_element != nullptr; p_element = p_element->NextSiblingElement())
+    if (nullptr != type_builder)
     {
-        element_name = p_element->Name();
-        if (strcmp(element_name, MEMBER) == 0)
+        const char* element_name = nullptr;
+        for (tinyxml2::XMLElement* p_element = p_root->FirstChildElement();
+                p_element != nullptr; p_element = p_element->NextSiblingElement())
         {
-            if (!parseXMLMemberDynamicType(p_element, type_builder, mId++))
+            element_name = p_element->Name();
+            if (strcmp(element_name, MEMBER) == 0)
             {
+                if (!parseXMLMemberDynamicType(p_element, type_builder, mId++))
+                {
+                    return XMLP_ret::XML_ERROR;
+                }
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(XMLPARSER, "Invalid element found into 'structDcl'. Name: " << element_name);
                 return XMLP_ret::XML_ERROR;
             }
         }
-        else
+
+        if (false == XMLProfileManager::insertDynamicTypeByName(name, type_builder->build()))
         {
-            EPROSIMA_LOG_ERROR(XMLPARSER, "Invalid element found into 'structDcl'. Name: " << element_name);
-            return XMLP_ret::XML_ERROR;
+            ret = XMLP_ret::XML_ERROR;
         }
     }
-
-    if (false == XMLProfileManager::insertDynamicTypeByName(name, type_builder->build()))
+    else
     {
+        EPROSIMA_LOG_ERROR(XMLPARSER, "Error creating struct type: " << name);
         ret = XMLP_ret::XML_ERROR;
     }
 
@@ -1037,53 +1086,61 @@ XMLP_ret XMLParser::parseXMLUnionDynamicType(
             DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->
                                                                 create_type(union_descriptor)};
 
-            MemberId mId{1};
-            for (p_element = p_root->FirstChildElement(CASE);
-                    p_element != nullptr; p_element = p_element->NextSiblingElement(CASE))
+            if (nullptr != type_builder)
             {
-                std::string valuesStr = "";
-                for (tinyxml2::XMLElement* caseValue = p_element->FirstChildElement(CASE_DISCRIMINATOR);
-                        caseValue != nullptr; caseValue = caseValue->NextSiblingElement(CASE_DISCRIMINATOR))
+                MemberId mId{1};
+                for (p_element = p_root->FirstChildElement(CASE);
+                        p_element != nullptr; p_element = p_element->NextSiblingElement(CASE))
                 {
-                    const char* values = caseValue->Attribute(VALUE);
-                    if (values == nullptr)
+                    std::string valuesStr = "";
+                    for (tinyxml2::XMLElement* caseValue = p_element->FirstChildElement(CASE_DISCRIMINATOR);
+                            caseValue != nullptr; caseValue = caseValue->NextSiblingElement(CASE_DISCRIMINATOR))
                     {
-                        EPROSIMA_LOG_ERROR(XMLPARSER, "Error parsing union case value: Not found.");
-                        return XMLP_ret::XML_ERROR;
+                        const char* values = caseValue->Attribute(VALUE);
+                        if (values == nullptr)
+                        {
+                            EPROSIMA_LOG_ERROR(XMLPARSER, "Error parsing union case value: Not found.");
+                            return XMLP_ret::XML_ERROR;
+                        }
+
+                        if (valuesStr.empty())
+                        {
+                            valuesStr = values;
+                        }
+                        else
+                        {
+                            valuesStr += std::string(",") + values;
+                        }
                     }
 
-                    if (valuesStr.empty())
+                    tinyxml2::XMLElement* caseElement = p_element->FirstChildElement();
+                    while (caseElement != nullptr &&
+                            strncmp(caseElement->Value(), CASE_DISCRIMINATOR, CASE_DISCRIMINATOR_len) == 0)
                     {
-                        valuesStr = values;
+                        caseElement = caseElement->NextSiblingElement();
+                    }
+                    if (caseElement != nullptr)
+                    {
+                        if (!parseXMLMemberDynamicType(caseElement, type_builder, mId++, valuesStr))
+                        {
+                            return XMLP_ret::XML_ERROR;
+                        }
                     }
                     else
                     {
-                        valuesStr += std::string(",") + values;
-                    }
-                }
-
-                tinyxml2::XMLElement* caseElement = p_element->FirstChildElement();
-                while (caseElement != nullptr &&
-                        strncmp(caseElement->Value(), CASE_DISCRIMINATOR, CASE_DISCRIMINATOR_len) == 0)
-                {
-                    caseElement = caseElement->NextSiblingElement();
-                }
-                if (caseElement != nullptr)
-                {
-                    if (!parseXMLMemberDynamicType(caseElement, type_builder, mId++, valuesStr))
-                    {
+                        EPROSIMA_LOG_ERROR(XMLPARSER, "Error parsing union case member: Not found.");
                         return XMLP_ret::XML_ERROR;
                     }
                 }
-                else
+
+                if (false == XMLProfileManager::insertDynamicTypeByName(name, type_builder->build()))
                 {
-                    EPROSIMA_LOG_ERROR(XMLPARSER, "Error parsing union case member: Not found.");
-                    return XMLP_ret::XML_ERROR;
+                    ret = XMLP_ret::XML_ERROR;
                 }
             }
-
-            if (false == XMLProfileManager::insertDynamicTypeByName(name, type_builder->build()))
+            else
             {
+                EPROSIMA_LOG_ERROR(XMLPARSER, "Error creating union type: " << name);
                 ret = XMLP_ret::XML_ERROR;
             }
         }
@@ -1555,7 +1612,16 @@ DynamicType::_ref_type XMLParser:: parseXMLMemberDynamicType(
 
         if (nullptr != boundStr)
         {
-            bound = static_cast<uint32_t>(std::stoul(boundStr));
+            try
+            {
+                bound = static_cast<uint32_t>(std::stoul(boundStr));
+            }
+            catch (const std::exception&)
+            {
+                EPROSIMA_LOG_ERROR(XMLPARSER,
+                        "Error parsing alias type bound: '" << STR_MAXLENGTH << "' out of bounds.");
+                return {};
+            }
         }
 
         DynamicTypeBuilder::_ref_type string_builder = factory->create_string_type(bound);
@@ -1580,7 +1646,16 @@ DynamicType::_ref_type XMLParser:: parseXMLMemberDynamicType(
 
         if (nullptr != boundStr)
         {
-            bound = static_cast<uint32_t>(std::stoul(boundStr));
+            try
+            {
+                bound = static_cast<uint32_t>(std::stoul(boundStr));
+            }
+            catch (const std::exception&)
+            {
+                EPROSIMA_LOG_ERROR(XMLPARSER,
+                        "Error parsing alias type bound: '" << STR_MAXLENGTH << "' out of bounds.");
+                return {};
+            }
         }
 
         DynamicTypeBuilder::_ref_type wstring_builder = factory->create_wstring_type(bound);
