@@ -59,7 +59,6 @@ public:
         {
         }
 
-
         void on_new_cache_change_added(
                 eprosima::fastdds::rtps::RTPSReader* reader,
                 const eprosima::fastdds::rtps::CacheChange_t* const change) override;
