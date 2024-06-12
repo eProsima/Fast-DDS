@@ -1,216 +1,357 @@
+# Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+"""
+Script to analyze and publish flaky tests from JUnit test history files.
+"""
 import argparse
-import logging
+import os
+import re
+from datetime import datetime
 from decimal import getcontext, Decimal, ROUND_UP
-from pathlib import Path
-from typing import Dict, Set
+from typing import Dict
 
-from junitparser import JUnitXml, TestSuite
+from junitparser import TestSuite
 import pandas as pd
-import numpy as np
-import seaborn as sns
 import xml.etree.ElementTree as ET
 
-EWM_ALPHA = 1
-EWM_ADJUST = False
-HEATMAP_FIGSIZE = (100, 50)
 
-def parse_input_files(junit_files: str):
-    df = parse_junit_to_df(Path(junit_files))
-    return df.sort_index()
+class FlakyTestsPublisher:
+    """
+    Class to analyze and publish flaky tests from JUnit test history files.
+    """
+    # Regex pattern to match the timestamp part of the filename
+    _timestamp_rstr = r'\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}'
 
+    def __init__(self, junit_files_dir: str, window_size: int, delete_old_files: bool = True):
+        """
+        Args:
+            junit_files_dir (str): Path to the directory containing the JUnit test history files.
+            window_size (int): Number of test runs to consider for the fliprate calculation.
+            delete_old_files (bool): Whether to delete old files taking window_size into account.
+        """
+        self._flip_rates = {}
+        self._window_size = window_size
+        self._junit_files = FlakyTestsPublisher._find_test_reports(junit_files_dir)
 
-def calc_fliprate(testruns: pd.Series) -> pd.DataFrame:
-    """Calculate test result fliprate from given test results series"""
-    if len(testruns) < 2:
-        return pd.DataFrame({'flip_rate': [0.0], 'consecutive_failures': [0]})
+        if delete_old_files:
+            self._delete_old_files()
 
-    first = True
-    previous = None
-    flips = 0
-    consecutive_failures = 0
-    possible_flips = len(testruns) - 1
+    def analyze(self) -> int:
+        """
+        Analyze the test history files and calculate the fliprate for each test.
 
-    for _, val in testruns.items():
-        if first:
-            first = False
-            previous = val
-            continue
-        if val != previous:
-            flips += 1
-        if val != "pass":
-            consecutive_failures += 1
+        Returns:
+            int: Number of flaky tests found.
+        """
+        df = FlakyTestsPublisher._get_test_results(self._junit_files)
+        fliprate_table = FlakyTestsPublisher._calculate_fliprate_table(df, self._window_size)
+        self._flip_rates = FlakyTestsPublisher._get_top_fliprates(fliprate_table, 0, 4)
+        return len(self._flip_rates)
+
+    def publish_summary(self, output_file: str):
+        """
+        Publish the summary of the flaky tests found to a markdown file.
+
+        Args:
+            output_file (str): Path to the output file.
+        """
+        # Test summary
+        summary = '## Flaky tests\n'
+
+        # Table header
+        # TODO(eduponz): Add a column for the failures/runs ratio
+        summary += '|#|Flaky tests|Fliprate score %|Consecutive failures|Consecutive passes|Total failures|\n'
+        summary += '|-|-|-|-|-|\n'
+
+        i = 1
+        for test_name, (flip_rate, consecutive_failures, consecutive_passes, failures) in self._flip_rates.items():
+            summary += f'| {i} | {test_name} | {round(flip_rate, 2)*100} | {consecutive_failures} | {consecutive_passes} | {failures} |\n'
+            i += 1
+
+        with open(output_file, 'w') as file:
+            file.write(summary)
+
+    @staticmethod
+    def _find_test_reports(directory):
+        """
+        Find all JUnit test history files in the given directory.
+
+        Args:
+            directory (str): Path to the directory containing the JUnit test history files.
+
+        Returns:
+            list: List of paths to the JUnit test history files.
+        """
+        pattern = re.compile(r'^test_report.*' + FlakyTestsPublisher._timestamp_rstr + r'\.xml$')
+
+        files = os.listdir(directory)
+        matched_files = [
+            os.path.join(directory, f) for f in files if pattern.match(f)
+        ]
+        matched_files.sort(key=FlakyTestsPublisher._extract_timestamp)
+
+        return matched_files
+
+    @staticmethod
+    def _extract_timestamp(file_path):
+        """
+        Extract the timestamp from the filename.
+
+        Args:
+            file_path (str): Path to the file.
+
+        Returns:
+            datetime: Timestamp extracted from the filename.
+        """
+        filename = os.path.basename(file_path)
+        timestamp_str = re.search(FlakyTestsPublisher._timestamp_rstr, filename).group()
+        return datetime.strptime(timestamp_str, '%Y-%m-%dT%H-%M-%S')
+
+    def _delete_old_files(self):
+        """
+        Delete old files taking window_size into account.
+        """
+        if len(self._junit_files) > self._window_size:
+            # Calculate the number of files to delete
+            files_to_delete = self._junit_files[:-self._window_size]
+
+            # Update the list of kept files
+            self._junit_files = self._junit_files[-self._window_size:]
+
+            # Delete the older files
+            for file in files_to_delete:
+                print(f'Deleting old file: {file}')
+                os.remove(file)
+
+    @staticmethod
+    def _get_test_results(junit_files: list):
+        """
+        Parse JUnit test history files and return a DataFrame with the test results.
+
+        Args:
+            junit_files (list): List of paths to the JUnit test history files.
+
+        Returns:
+            pd.DataFrame: DataFrame with the test results.
+
+        Raises:
+            RuntimeError: If no valid JUnit files are found.
+        """
+        dataframe_entries = []
+
+        for junit_file in junit_files:
+            xml = ET.parse(junit_file)
+            root = xml.getroot()
+            for suite in root.findall('.//testsuite'):
+                dataframe_entries += FlakyTestsPublisher._junit_suite_to_df(suite)
+
+        if dataframe_entries:
+            df = pd.DataFrame(dataframe_entries)
+            df["timestamp"] = pd.to_datetime(df["timestamp"])
+            df = df.set_index("timestamp")
+            return df.sort_index()
         else:
-            consecutive_failures = 0
-        previous = val
+            raise RuntimeError(f"No Junit files found in {junit_files}")
 
-    flip_rate = flips / possible_flips
+    @staticmethod
+    def _junit_suite_to_df(suite: TestSuite) -> list:
+        """
+        Convert a JUnit test suite to a list of DataFrame entries.
 
-    return pd.DataFrame({'flip_rate': [flip_rate], 'consecutive_failures': [consecutive_failures]})
+        Args:
+            suite (TestSuite): JUnit test suite.
 
+        Returns:
+            list: List of DataFrame entries.
+        """
+        dataframe_entries = []
+        time = suite.attrib.get('timestamp')
 
+        for testcase in suite.findall('.//testcase'):
+            test_identifier = testcase.attrib.get('name')
 
-def non_overlapping_window_fliprate(testruns: pd.Series, window_size: int) -> pd.Series:
-    """Calculate flip rate for non-overlapping run windows"""
-    # Apply calc_fliprate directly to the last <window_size> selected rows
-    testruns_last = testruns.iloc[-window_size:]
-    fliprate_groups = calc_fliprate(testruns_last)
+            status = testcase.attrib.get('status')
 
-    return fliprate_groups.reset_index(drop=True)
+            # Convert status to "pass" if it's "passed"
+            if status == "passed":
+                test_status = "pass"
+            else:
+                test_status = status
+                if test_status == "skipped":
+                    continue
 
-def calculate_n_days_fliprate_table(testrun_table: pd.DataFrame, days: int, window_count: int) -> pd.DataFrame:
-    """Select given history amount and calculate fliprates for given n day windows.
+            dataframe_entries.append(
+                {
+                    "timestamp": time,
+                    "test_identifier": test_identifier,
+                    "test_status": test_status,
+                }
+            )
+        return dataframe_entries
 
-    Return a table containing the results.
-    """
-    data = testrun_table[testrun_table.index >= (testrun_table.index.max() - pd.Timedelta(days=days * window_count))]
+    @staticmethod
+    def _calculate_fliprate_table(testrun_table: pd.DataFrame, window_size: int) -> pd.DataFrame:
+        """
+        Calculate the fliprate for each test in the testrun_table.
 
-    fliprates = data.groupby([pd.Grouper(freq=f"{days}D"), "test_identifier"])["test_status"].apply(calc_fliprate)
+        Args:
+            testrun_table (pd.DataFrame): DataFrame with the test results.
+            window_size (int): Number of test runs to consider for the fliprate calculation.
 
-    fliprate_table = fliprates.rename("flip_rate").reset_index(drop=True)
-    fliprate_table["flip_rate_ewm"] = (
-        fliprate_table.groupby("test_identifier")["flip_rate"]
-        .ewm(alpha=EWM_ALPHA, adjust=EWM_ADJUST)
-        .mean()
-        .droplevel("test_identifier")
-    )
+        Returns:
+            pd.DataFrame: DataFrame with the fliprates for each test.
+        """
+        # Apply non_overlapping_window_fliprate to each group in testrun_table
+        fliprates = testrun_table.groupby("test_identifier")["test_status"].apply(
+            lambda x: FlakyTestsPublisher._non_overlapping_window_fliprate(x, window_size)
+        )
 
-    return fliprate_table[fliprate_table.flip_rate != 0]
+        # Convert fliprates Series of DataFrames to a DataFrame
+        fliprate_table = fliprates.reset_index()
 
-def calculate_n_runs_fliprate_table(testrun_table: pd.DataFrame, window_size: int) -> pd.DataFrame:
-    """Calculate fliprates for given n run window and select m of those windows
-    Return a table containing the results.
-    """
-    # Apply non_overlapping_window_fliprate to each group in testrun_table
-    fliprates = testrun_table.groupby("test_identifier")["test_status"].apply(
-        lambda x: non_overlapping_window_fliprate(x, window_size)
-    )
+        # Rename the index level to "window"
+        fliprate_table = fliprate_table.rename(columns={"level_1": "window"})
 
-    # Convert fliprates Series of DataFrames to a DataFrame
-    fliprate_table = fliprates.reset_index()
+        # Filter out rows where flip_rate is zero
+        # TODO(eduponz): I'm seeing tests with 5 consecutive failures that are not showing here.
+        #                Seems it's because they are not flaky, they are just always failing.
+        fliprate_table = fliprate_table[fliprate_table.flip_rate != 0]
 
-    # Rename the columns in fliprate_table
-    fliprate_table = fliprate_table.rename(columns={"flip_rate": "flip_rate", "consecutive_failures": "consecutive_failures"})
-    print("Fliprate table of all the tests:")
-    print(fliprate_table)
+        return fliprate_table
 
-    # Calculate the EWMA of flip rates for each test identifier
-    fliprate_table["flip_rate_ewm"] = (
-        fliprate_table.groupby("test_identifier")["flip_rate"]
-        .ewm(alpha=EWM_ALPHA, adjust=EWM_ADJUST)
-        .mean()
-        .droplevel("test_identifier")
-    )
+    @staticmethod
+    def _non_overlapping_window_fliprate(testruns: pd.Series, window_size: int) -> pd.Series:
+        """
+        Calculate the fliprate for a test in a non-overlapping window.
 
-    # Rename the index level to "window"
-    fliprate_table = fliprate_table.rename(columns={"level_1": "window"})
+        Args:
+            testruns (pd.Series): Series with the test results.
+            window_size (int): Number of test runs to consider for the fliprate calculation.
 
-    # Filter out rows where flip_rate is not zero
-    fliprate_table = fliprate_table[fliprate_table.flip_rate != 0]
+        Returns:
+            pd.Series: Series with the fliprate for the test.
+        """
+        # Apply _calc_fliprate directly to the last <window_size> selected rows
+        testruns_last = testruns.iloc[-window_size:]
+        fliprate_groups = FlakyTestsPublisher._calc_fliprate(testruns_last)
 
-    return fliprate_table
+        return fliprate_groups.reset_index(drop=True)
 
-def get_top_fliprates(fliprate_table: pd.DataFrame, top_n: int, precision: int) -> Dict[str, tuple[Decimal, int]]:
-    """Return the top n highest scoring test identifiers and their scores
+    @staticmethod
+    def _calc_fliprate(testruns: pd.Series) -> pd.DataFrame:
+        """
+        Calculate the fliprate for a test.
 
-    Look at the last calculation window for each test from the fliprate table
-    and return the top n highest scoring test identifiers along with their scores
-    and corresponding consecutive failures.
-    """
-    context = getcontext()
-    context.prec = precision
-    context.rounding = ROUND_UP
-    last_window_values = fliprate_table.groupby("test_identifier").last()
+        Args:
+            testruns (pd.Series): Series with the test results.
 
-    if top_n != 0:
-        top_fliprates_ewm = last_window_values.nlargest(top_n, "flip_rate_ewm")
-    else :
-        top_fliprates_ewm = last_window_values.nlargest(len(last_window_values), "flip_rate_ewm")
+        Returns:
+            pd.DataFrame: DataFrame with the fliprate, consecutive failures
+                          and consecutive passes for the test.
+        """
+        if len(testruns) < 2:
+            return pd.DataFrame(
+                {
+                    'flip_rate': [0.0],
+                    'consecutive_failures': [0],
+                    'consecutive_passes': [0],
+                    'failures': [0],
+                }
+            )
 
-    # Create a dictionary with test_identifier as keys and a tuple of flip_rate_ewm and consecutive_failures as values
-    results = {}
-    for test_id, row in top_fliprates_ewm.iterrows():
-        results[test_id] = (Decimal(row["flip_rate_ewm"]), row["consecutive_failures"])
+        first = True
+        previous = None
+        flips = 0
+        consecutive_failures = 0
+        consecutive_passes = 0
+        failures = 0
+        possible_flips = len(testruns) - 1
 
-    return results
-
-
-def parse_junit_suite_to_df(suite: TestSuite) -> list:
-    """Parses Junit TestSuite results to a test history dataframe"""
-    dataframe_entries = []
-    time = suite.attrib.get('timestamp')
-
-    for testcase in suite.findall('.//testcase'):
-        test_identifier = testcase.attrib.get('classname') + "::" + testcase.attrib.get('name')
-
-        status = testcase.attrib.get('status')
-
-        # Convert status to "pass" if it's "passed"
-        if status == "passed":
-            test_status = "pass"
-        else:
-            test_status = status
-            if test_status == "skipped":
+        for _, val in testruns.items():
+            if first:
+                first = False
+                previous = val
                 continue
 
-        dataframe_entries.append(
+            if val != previous:
+                flips += 1
+
+            if val != "pass":
+                consecutive_failures += 1
+                consecutive_passes = 0
+                failures += 1
+            else:
+                consecutive_failures = 0
+                consecutive_passes += 1
+
+            previous = val
+
+        flip_rate = flips / possible_flips
+
+        return pd.DataFrame(
             {
-                "timestamp": time,
-                "test_identifier": test_identifier,
-                "test_status": test_status,
+                'flip_rate': [flip_rate],
+                'consecutive_failures': [consecutive_failures],
+                'consecutive_passes': [consecutive_passes],
+                'failures': [failures],
             }
         )
-    return dataframe_entries
 
-def parse_junit_to_df(folderpath: Path) -> pd.DataFrame:
-    """Read JUnit test result files to a test history dataframe"""
-    dataframe_entries = []
+    @staticmethod
+    def _get_top_fliprates(fliprate_table: pd.DataFrame, top_n: int, precision: int) -> Dict[str, tuple[Decimal, int, int, int]]:
+        """
+        Get the top N fliprates from the fliprate_table.
 
-    for filepath in folderpath.glob("*.xml"):
-        xml = ET.parse(filepath)
-        root = xml.getroot()
-        for suite in root.findall('.//testsuite'):
-            dataframe_entries += parse_junit_suite_to_df(suite)
+        Args:
+            fliprate_table (pd.DataFrame): DataFrame with the fliprates.
+            top_n (int): Number of top fliprates to get.
+            precision (int): Number of decimal places to round the fliprates.
+
+        Returns:
+            Dict[str, tuple[Decimal, int, int, int]]: Dictionary with the top fliprates
+                and their consecutive and total failures.
+        """
+        context = getcontext()
+        context.prec = precision
+        context.rounding = ROUND_UP
+        last_window_values = fliprate_table.groupby("test_identifier").last()
+
+        if top_n != 0:
+            top_fliprates = last_window_values.nlargest(top_n, "flip_rate")
+        else :
+            top_fliprates = last_window_values.nlargest(len(last_window_values), "flip_rate")
+
+        # Create a dictionary with test_identifier as keys and a tuple of flip_rate and consecutive_failures as values
+        results = {}
+        for test_id, row in top_fliprates.iterrows():
+            results[test_id] = (
+                Decimal(row["flip_rate"]),
+                int(row["consecutive_failures"]),
+                int(row["consecutive_passes"]),
+                int(row["failures"])
+            )
+
+        return results
 
 
-    if dataframe_entries:
-        df = pd.DataFrame(dataframe_entries)
-        df["timestamp"] = pd.to_datetime(df["timestamp"])
-        df = df.set_index("timestamp")
-        return df
-    else:
-        raise RuntimeError(f"No Junit files found from path {folderpath}")
-
-def create_md_summary(results):
-    """Create Markdown summary from results."""
-    # Test summary
-    summary = '## Flaky tests\n'
-
-    # Table header
-    summary += '|#|Flaky tests|Fliprate score %|Consecutive failures|\n'
-    summary += '|-|-|-|-|\n'
-    i = 1
-    for test_name, (flip_rate_ewm, consecutive_failures) in results.items():
-        summary += f'| {i} | {test_name} | {round(flip_rate_ewm, 2)*100} | {consecutive_failures} |\n'
-        i += 1
-
-    return summary
-
-def main():
-    """Print out top flaky tests and their fliprate scores.
-    Also generate seaborn heatmaps visualizing the results if wanted.
-    """
-
-    logging.basicConfig(format="%(message)s", level=logging.INFO)
-
+if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument("--junit-files", help="Path for a folder with JUnit xml test history files", type=str)
-    group.add_argument("--test-history-csv", help="Path for precomputed test history csv", type=str)
-    parser.add_argument(
-        "--grouping-option",
-        choices=["days", "runs"],
-        help="flip rate calculation method - days or runs",
-        required=True,
+    group.add_argument(
+        "--junit-files",
+        help="Path for a folder with JUnit xml test history files",
+        type=str
     )
     parser.add_argument(
         "--window-size",
@@ -219,68 +360,25 @@ def main():
         required=True,
     )
     parser.add_argument(
-        "--window-count",
-        type=int,
-        help="flip rate calculation window count (history size)",
-        required=True,
-    )
-    parser.add_argument(
-        "--top-n",
-        type=int,
-        help="amount of unique tests and scores to print out",
-        required=False,
-    )
-    parser.add_argument(
-        "--precision, -p",
-        type=int,
-        help="Precision of the flip rate score, default is 4",
-        default=4,
-        dest="decimal_count",
+        '-d',
+        '--delete-old-files',
+        action='store_true',
+        help='Delete old files taking window size into account.'
     )
     parser.add_argument(
         '-o',
         '--output-file',
         type=str,
-        required=True,
+        required=False,
         help='Path to output file.'
     )
     args = parser.parse_args()
-    precision = args.decimal_count
-    if args.top_n :
-        top_n = args.top_n
-    else :
-        top_n = 0
 
-    df = parse_input_files(args.junit_files)
+    publisher = FlakyTestsPublisher(args.junit_files, args.window_size, args.delete_old_files)
+    flaky_test_count = publisher.analyze()
 
-    fliprate_table = calculate_n_runs_fliprate_table(df, args.window_size)
+    if args.output_file:
+        publisher.publish_summary(args.output_file)
 
-    top_flip_rates = get_top_fliprates(fliprate_table, top_n, precision)
-
-    if not top_flip_rates:
-        logging.info("No flaky tests.")
-        return
-
-    logging.info(
-        f"\nTop {top_n} flaky tests based on latest window fliprate score",
-    )
-
-    for test_id, (flip_rate_ewm, consecutive_failures) in top_flip_rates.items():
-        logging.info(f"{test_id} --- flip_rate_ewm: {flip_rate_ewm} --- consecutive failures: {consecutive_failures}")
-
-    print('::set-output name=top_flip_rates::{}'.format(', '.join(top_flip_rates)))
-    # Create a .txt report file
-    with open('flaky_tests_report.txt', 'w') as f:
-        for test in top_flip_rates:
-            f.write('%s\n' % test)
-
-    # Create the summary in Github
-    summary = create_md_summary(top_flip_rates)
-
-    if args.output_file != '':
-        with open(args.output_file, 'a') as file:
-            file.write(summary)
-
-
-if __name__ == "__main__":
-    main()
+    ret = 0 if flaky_test_count == 0 else 1
+    exit(ret)
