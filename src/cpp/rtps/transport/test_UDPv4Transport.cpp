@@ -204,8 +204,8 @@ LocatorList test_UDPv4Transport::NormalizeLocator(
 }
 
 bool test_UDPv4Transport::send(
-        const octet* send_buffer,
-        uint32_t send_buffer_size,
+        const std::vector<NetworkBuffer>& buffers,
+        uint32_t total_bytes,
         eProsimaUDPSocket& socket,
         fastrtps::rtps::LocatorsIterator* destination_locators_begin,
         fastrtps::rtps::LocatorsIterator* destination_locators_end,
@@ -229,8 +229,8 @@ bool test_UDPv4Transport::send(
 
         if (now < max_blocking_time_point)
         {
-            ret &= send(send_buffer,
-                            send_buffer_size,
+            ret &= send(buffers,
+                            total_bytes,
                             socket,
                             *it,
                             only_multicast_purpose,
@@ -250,8 +250,8 @@ bool test_UDPv4Transport::send(
 }
 
 bool test_UDPv4Transport::send(
-        const octet* send_buffer,
-        uint32_t send_buffer_size,
+        const std::vector<NetworkBuffer>& buffers,
+        uint32_t total_bytes,
         eProsimaUDPSocket& socket,
         const Locator& remote_locator,
         bool only_multicast_purpose,
@@ -261,15 +261,15 @@ bool test_UDPv4Transport::send(
     bool is_multicast_remote_address = fastrtps::rtps::IPLocator::IPLocator::isMulticast(remote_locator);
     if (is_multicast_remote_address == only_multicast_purpose || whitelisted)
     {
-        if (packet_should_drop(send_buffer, send_buffer_size) || should_drop_locator(remote_locator))
+        if (packet_should_drop(buffers, total_bytes) || should_drop_locator(remote_locator))
         {
-            statistics_info_.set_statistics_message_data(remote_locator, send_buffer, send_buffer_size);
-            log_drop(send_buffer, send_buffer_size);
+            statistics_info_.set_statistics_message_data(remote_locator, buffers.back(), total_bytes);
+            log_drop(buffers, total_bytes);
             return true;
         }
         else
         {
-            return UDPv4Transport::send(send_buffer, send_buffer_size, socket, remote_locator, only_multicast_purpose,
+            return UDPv4Transport::send(buffers, total_bytes, socket, remote_locator, only_multicast_purpose,
                            whitelisted, timeout);
         }
     }
@@ -323,17 +323,24 @@ bool test_UDPv4Transport::should_drop_locator(
 }
 
 bool test_UDPv4Transport::packet_should_drop(
-        const octet* send_buffer,
-        uint32_t send_buffer_size)
+        const std::vector<NetworkBuffer>& buffers,
+        uint32_t total_bytes)
 {
     if (test_UDPv4Transport_ShutdownAllNetwork)
     {
         return true;
     }
 
-    CDRMessage_t cdrMessage(0);
-    cdrMessage.init(const_cast<octet*>(send_buffer), send_buffer_size);
-    cdrMessage.length = send_buffer_size;
+    // Reconstruction of the CDRMessage_t
+    CDRMessage_t cdrMessage(total_bytes);
+    size_t n_bytes = 0;
+    for (auto it = buffers.begin(); it != buffers.end(); ++it)
+    {
+        memcpy(&cdrMessage.buffer[n_bytes], it->buffer, it->size);
+        n_bytes += it->size;
+    }
+    assert(total_bytes == n_bytes);
+    cdrMessage.length = total_bytes;
 
     if (cdrMessage.length < RTPSMESSAGE_HEADER_SIZE)
     {
@@ -521,13 +528,19 @@ bool test_UDPv4Transport::packet_should_drop(
 }
 
 bool test_UDPv4Transport::log_drop(
-        const octet* buffer,
+        const std::vector<NetworkBuffer>& buffers,
         uint32_t size)
 {
+    static_cast<void>(size);
     if (test_UDPv4Transport_DropLog.size() < test_UDPv4Transport_DropLogLength)
     {
         vector<octet> message;
-        message.assign(buffer, buffer + size);
+        for (const auto& buf: buffers)
+        {
+            auto byte_data = static_cast<const octet*>(buf.buffer);
+            message.insert(message.end(), byte_data, byte_data + buf.size);
+        }
+        assert(message.size() == size);
         test_UDPv4Transport_DropLog.push_back(message);
         return true;
     }

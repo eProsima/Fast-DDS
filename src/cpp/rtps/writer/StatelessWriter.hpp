@@ -21,9 +21,9 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <condition_variable>
-#include <list>
 #include <memory>
 #include <mutex>
+#include <vector>
 
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/rtps/history/IChangePool.h>
@@ -194,13 +194,15 @@ public:
     /**
      * Send a message through this interface.
      *
-     * @param message Pointer to the buffer with the message already serialized.
+     * @param buffers Vector of NetworkBuffers to send with data already serialized.
+     * @param total_bytes Total number of bytes to send. Should be equal to the sum of the @c size field of all buffers.
      * @param locator_selector RTPSMessageSenderInterface reference uses for selecting locators. The reference has to
      * be a member of this RTPSWriter object.
      * @param max_blocking_time_point Future timepoint where blocking send should end.
      */
     bool send_nts(
-            CDRMessage_t* message,
+            const std::vector<eprosima::fastdds::rtps::NetworkBuffer>& buffers,
+            const uint32_t& total_bytes,
             const LocatorSelectorSender& locator_selector,
             std::chrono::steady_clock::time_point& max_blocking_time_point) const override;
 

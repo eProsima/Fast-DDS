@@ -67,7 +67,8 @@ struct SendBuffersAllocationAttributes
             const SendBuffersAllocationAttributes& b) const
     {
         return (this->preallocated_number == b.preallocated_number) &&
-               (this->dynamic == b.dynamic);
+               (this->dynamic == b.dynamic) &&
+               (this->network_buffers_config == b.network_buffers_config);
     }
 
     /** Initial number of send buffers to allocate.
@@ -86,6 +87,15 @@ struct SendBuffersAllocationAttributes
      * buffer to be returned. This is a trade-off between latency and dynamic allocations.
      */
     bool dynamic = false;
+
+    /** Configuration for the network buffers.
+     *
+     * This attribute controls the allocation behavior of the network buffers used by each
+     * send buffer. The default value will use a value of 16 network buffers for both
+     * the preallocated buffers and the dynamic increment allocation, with no maximum limit.
+     */
+    ResourceLimitedContainerConfig network_buffers_config = ResourceLimitedContainerConfig(16u,
+                    std::numeric_limits<size_t>::max dummy_avoid_winmax (), 16u);
 };
 
 /**

@@ -27,6 +27,11 @@
                     <send_buffers>
                         <preallocated_number>127</preallocated_number>
                         <dynamic>true</dynamic>
+                        <network_buffers_config>
+                            <initial>16</initial>
+                            <maximum>0</maximum>
+                            <increment>16</increment>
+                        </network_buffers_config>
                     </send_buffers>
                 </allocation>
                 <defaultUnicastLocatorList>

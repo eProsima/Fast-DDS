@@ -70,12 +70,12 @@ public:
      */
     inline void set_statistics_message_data(
             const eprosima::fastrtps::rtps::Locator_t& locator,
-            const eprosima::fastrtps::rtps::octet* send_buffer,
-            uint32_t send_buffer_size)
+            const eprosima::fastdds::rtps::NetworkBuffer& send_buffer,
+            const uint32_t& total_bytes)
     {
         static_cast<void>(locator);
         static_cast<void>(send_buffer);
-        static_cast<void>(send_buffer_size);
+        static_cast<void>(total_bytes);
 
 #ifdef FASTDDS_STATISTICS
         auto search = [locator](const entry_type& entry) -> bool
@@ -84,7 +84,7 @@ public:
                 };
         auto it = std::find_if(collection_.begin(), collection_.end(), search);
         assert(it != collection_.end());
-        set_statistics_submessage_from_transport(locator, send_buffer, send_buffer_size, it->second);
+        set_statistics_submessage_from_transport(locator, send_buffer, total_bytes, it->second);
 #endif // FASTDDS_STATISTICS
     }
 

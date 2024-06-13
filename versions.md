@@ -51,6 +51,10 @@ Forthcoming
   * `SerializedPayload_t` copies are now forbidden.
   * Refactor of `get_payload` methods.
 * Use `PID_DOMAIN_ID` during PDP.
+* Creation of RTPS messages refactor:
+  * New Gather-send method is now used by default, avoiding an extra copy during the creation of the RTPS message.
+  * New attribute in `SendBuffersAllocationAttributes` to configure allocation of `NetworkBuffer` vector.
+  * `SenderResource` and Transport APIs now receive a collection of `NetworkBuffer` on their `send` method.
 
 Version 2.14.0
 --------------

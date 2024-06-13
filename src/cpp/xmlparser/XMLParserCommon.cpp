@@ -141,6 +141,7 @@ const char* TOTAL_WRITERS = "total_writers";
 const char* SEND_BUFFERS = "send_buffers";
 const char* PREALLOCATED_NUMBER = "preallocated_number";
 const char* DYNAMIC_LC = "dynamic";
+const char* NETWORK_BUFFERS_CONFIG = "network_buffers_config";
 const char* MAX_PROPERTIES = "max_properties";
 const char* MAX_USER_DATA = "max_user_data";
 const char* MAX_PARTITIONS = "max_partitions";

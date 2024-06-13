@@ -143,8 +143,8 @@ uint32_t TCPChannelResourceBasic::read(
 size_t TCPChannelResourceBasic::send(
         const octet* header,
         size_t header_size,
-        const octet* data,
-        size_t size,
+        const std::vector<NetworkBuffer>& buffers,
+        uint32_t total_bytes,
         asio::error_code& ec)
 {
     size_t bytes_sent = 0;
@@ -154,22 +154,19 @@ size_t TCPChannelResourceBasic::send(
         std::lock_guard<std::mutex> send_guard(send_mutex_);
 
         if (parent_->configuration()->non_blocking_send &&
-                !check_socket_send_buffer(header_size + size, socket_->native_handle()))
+                !check_socket_send_buffer(header_size + total_bytes, socket_->native_handle()))
         {
             return 0;
         }
 
+        // Use a list of const_buffers to send the message
+        std::list<asio::const_buffer> asio_buffers;
         if (header_size > 0)
         {
-            std::array<asio::const_buffer, 2> buffers;
-            buffers[0] = asio::buffer(header, header_size);
-            buffers[1] = asio::buffer(data, size);
-            bytes_sent = asio::write(*socket_.get(), buffers, ec);
+            asio_buffers.push_back(asio::buffer(header, header_size));
         }
-        else
-        {
-            bytes_sent = asio::write(*socket_.get(), asio::buffer(data, size), ec);
-        }
+        asio_buffers.insert(asio_buffers.end(), buffers.begin(), buffers.end());
+        bytes_sent = asio::write(*socket_.get(), asio_buffers, ec);
     }
 
     return bytes_sent;

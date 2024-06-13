@@ -347,6 +347,7 @@ XMLP_ret XMLParser::getXMLSendBuffersAllocationAttributes(
             <xs:all minOccurs="0">
                 <xs:element name="preallocated_number" type="uint32Type" minOccurs="0"/>
                 <xs:element name="dynamic" type="boolType" minOccurs="0"/>
+                <xs:element name="network_buffers_config" type="allocationConfigType" minOccurs="0"/>
             </xs:all>
         </xs:complexType>
      */
@@ -375,6 +376,14 @@ XMLP_ret XMLParser::getXMLSendBuffersAllocationAttributes(
                 return XMLP_ret::XML_ERROR;
             }
             allocation.dynamic = tmp_bool;
+        }
+        else if (strcmp(name, NETWORK_BUFFERS_CONFIG) == 0)
+        {
+            // preallocated_network_buffers - uint32Type
+            if (XMLP_ret::XML_OK != getXMLContainerAllocationConfig(p_aux0, allocation.network_buffers_config, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
         }
         else
         {

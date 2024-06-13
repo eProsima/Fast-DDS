@@ -64,7 +64,7 @@ static void direct_send(
         RTPSParticipantImpl* participant,
         LocatorList& locators,
         std::vector<GUID_t>& remote_readers,
-        const CacheChange_t& change,
+        CacheChange_t& change,
         fastrtps::rtps::Endpoint& sender_endpt)
 {
     DirectMessageSender sender(participant, &remote_readers, &locators);
@@ -78,7 +78,7 @@ static void direct_send(
 static void direct_send(
         RTPSParticipantImpl* participant,
         LocatorList& locators,
-        const CacheChange_t& change)
+        CacheChange_t& change)
 {
     FakeWriter writer(participant, c_EntityId_SPDPWriter);
     std::vector<GUID_t> remote_readers;

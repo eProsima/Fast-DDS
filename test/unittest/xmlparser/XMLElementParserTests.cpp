@@ -3356,6 +3356,7 @@ TEST_F(XMLParserTests, getXMLDiscoverySettings_NegativeClauses)
  * 1. Check an invalid tag of:
  *      <preallocated_number>
  *      <dynamic>
+ *      <network_buffers_config>
  * 2. Check invalid element
  */
 TEST_F(XMLParserTests, getXMLSendBuffersAllocationAttributes_NegativeClauses)
@@ -3388,6 +3389,7 @@ TEST_F(XMLParserTests, getXMLSendBuffersAllocationAttributes_NegativeClauses)
     {
         "preallocated_number",
         "dynamic",
+        "network_buffers_config"
     };
 
     for (std::string tag : field_vec)

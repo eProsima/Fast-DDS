@@ -137,11 +137,46 @@ public:
             std::size_t size,
             asio::error_code& ec) = 0;
 
+    /**
+     * Sends the provided TCP header and data over the TCP channel.
+     * Used solely during TCP connection negotiations.
+     *
+     * @param header Pointer to the octet array containing the TCP header.
+     * @param header_size Size of the TCP header array.
+     * @param data Pointer to the octet array containing the data.
+     * @param data_size Size of the data array.
+     * @param ec Reference to the asio::error_code object to store any error that occurs during the send operation.
+     * @return The number of bytes actually sent.
+     */
+    size_t send(
+            const fastrtps::rtps::octet* header,
+            size_t header_size,
+            const fastrtps::rtps::octet* data,
+            uint32_t data_size,
+            asio::error_code& ec)
+    {
+        NetworkBuffer buffers(data, data_size);
+        std::vector<NetworkBuffer> buffer_list;
+        buffer_list.push_back(buffers);
+        return send(header, header_size, buffer_list, data_size, ec);
+    }
+
+    /**
+     * Sends the provided TCP header and data over the TCP channel.
+     * Used for TCP metatraffic and data transmission.
+     *
+     * @param header Pointer to the TCP header data.
+     * @param header_size Size of the TCP header data.
+     * @param buffers Vector of network buffers containing the data to be sent.
+     * @param total_bytes Total number of bytes to be sent.
+     * @param ec Reference to an asio::error_code object to store any error that occurs during the send operation.
+     * @return The number of bytes actually sent.
+     */
     virtual size_t send(
             const fastrtps::rtps::octet* header,
             size_t header_size,
-            const fastrtps::rtps::octet* buffer,
-            size_t size,
+            const std::vector<NetworkBuffer>& buffers,
+            uint32_t total_bytes,
             asio::error_code& ec) = 0;
 
     /**

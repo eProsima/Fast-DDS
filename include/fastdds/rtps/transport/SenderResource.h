@@ -19,10 +19,12 @@
 
 #include <functional>
 #include <vector>
+#include <list>
 #include <chrono>
 
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/common/LocatorsIterator.hpp>
+#include <fastdds/rtps/transport/NetworkBuffer.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -42,10 +44,12 @@ class SenderResource
 {
 public:
 
+    using NetworkBuffer = eprosima::fastdds::rtps::NetworkBuffer;
+
     /**
      * Sends to a destination locator, through the channel managed by this resource.
-     * @param data Raw data slice to be sent.
-     * @param dataLength Length of the data to be sent. Will be used as a boundary for
+     * @param buffers Vector of buffers to send.
+     * @param total_bytes Length of all buffers to be sent. Will be used as a boundary for
      * the previous parameter.
      * @param destination_locators_begin destination endpoint Locators iterator begin.
      * @param destination_locators_end destination endpoint Locators iterator end.
@@ -53,21 +57,14 @@ public:
      * @return Success of the send operation.
      */
     bool send(
-            const octet* data,
-            uint32_t dataLength,
+            const std::vector<NetworkBuffer>& buffers,
+            const uint32_t& total_bytes,
             LocatorsIterator* destination_locators_begin,
             LocatorsIterator* destination_locators_end,
             const std::chrono::steady_clock::time_point& max_blocking_time_point)
     {
-        bool returned_value = false;
-
-        if (send_lambda_)
-        {
-            returned_value = send_lambda_(data, dataLength, destination_locators_begin, destination_locators_end,
-                            max_blocking_time_point);
-        }
-
-        return returned_value;
+        return send_buffers_lambda_(buffers, total_bytes, destination_locators_begin, destination_locators_end,
+                       max_blocking_time_point);
     }
 
     /**
@@ -78,7 +75,7 @@ public:
             SenderResource&& rValueResource)
     {
         clean_up.swap(rValueResource.clean_up);
-        send_lambda_.swap(rValueResource.send_lambda_);
+        send_buffers_lambda_.swap(rValueResource.send_buffers_lambda_);
     }
 
     virtual ~SenderResource() = default;
@@ -110,12 +107,13 @@ protected:
     int32_t transport_kind_;
 
     std::function<void()> clean_up;
+
     std::function<bool(
-                const octet*,
+                const std::vector<NetworkBuffer>&,
                 uint32_t,
                 LocatorsIterator* destination_locators_begin,
                 LocatorsIterator* destination_locators_end,
-                const std::chrono::steady_clock::time_point&)> send_lambda_;
+                const std::chrono::steady_clock::time_point&)> send_buffers_lambda_;
 
 private:
 

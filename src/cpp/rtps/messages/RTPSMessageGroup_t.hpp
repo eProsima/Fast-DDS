@@ -24,6 +24,8 @@
 #include <fastdds/rtps/common/CDRMessage_t.h>
 #include <rtps/messages/CDRMessage.hpp>
 #include <rtps/messages/RTPSMessageCreator.hpp>
+#include <fastdds/rtps/transport/NetworkBuffer.hpp>
+#include <fastdds/utils/collections/ResourceLimitedVector.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -48,6 +50,8 @@ public:
 #if HAVE_SECURITY
         , rtpsmsg_encrypt_(0u)
 #endif // if HAVE_SECURITY
+        , buffers_(ResourceLimitedContainerConfig(16, std::numeric_limits<size_t>::max dummy_avoid_winmax (), 16))
+        , payloads_(ResourceLimitedContainerConfig(16, std::numeric_limits<size_t>::max dummy_avoid_winmax (), 16))
     {
         rtpsmsg_fullmsg_.reserve(payload);
         rtpsmsg_submessage_.reserve(payload);
@@ -68,12 +72,15 @@ public:
             bool has_security,
 #endif // if HAVE_SECURITY
             uint32_t payload,
-            const GuidPrefix_t& participant_guid)
+            const GuidPrefix_t& participant_guid,
+            ResourceLimitedContainerConfig nb_config)
         : rtpsmsg_submessage_(0u)
         , rtpsmsg_fullmsg_(0u)
 #if HAVE_SECURITY
         , rtpsmsg_encrypt_(0u)
 #endif // if HAVE_SECURITY
+        , buffers_(nb_config)
+        , payloads_(nb_config)
     {
         rtpsmsg_fullmsg_.init(buffer_ptr, payload);
         buffer_ptr += payload;
@@ -104,6 +111,12 @@ public:
 #if HAVE_SECURITY
     CDRMessage_t rtpsmsg_encrypt_;
 #endif // if HAVE_SECURITY
+
+    //! Vector to store the NetworkBuffers that will be used to form the RTPS message.
+    eprosima::fastrtps::ResourceLimitedVector<eprosima::fastdds::rtps::NetworkBuffer> buffers_;
+
+    //! Mirror vector of buffers_ to store the serialized payloads.
+    eprosima::fastrtps::ResourceLimitedVector<eprosima::fastrtps::rtps::SerializedPayload_t> payloads_;
 };
 
 } // namespace rtps

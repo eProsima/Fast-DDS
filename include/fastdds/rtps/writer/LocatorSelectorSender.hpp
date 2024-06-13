@@ -1,6 +1,8 @@
 #ifndef _FASTDDS_RTPS_WRITER_LOCATORSELECTORSENDER_HPP_
 #define _FASTDDS_RTPS_WRITER_LOCATORSELECTORSENDER_HPP_
 
+#include <vector>
+
 #include <fastdds/rtps/common/LocatorSelector.hpp>
 #include <fastdds/rtps/messages/RTPSMessageSenderInterface.hpp>
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>
@@ -69,11 +71,13 @@ public:
     /*!
      * Send a message through this interface.
      *
-     * @param message Pointer to the buffer with the message already serialized.
+     * @param buffers Vector of NetworkBuffers to send with data already serialized.
+     * @param total_bytes Total number of bytes to send. Should be equal to the sum of the @c size field of all buffers.
      * @param max_blocking_time_point Future timepoint where blocking send should end.
      */
     bool send(
-            CDRMessage_t* message,
+            const std::vector<fastdds::rtps::NetworkBuffer>& buffers,
+            const uint32_t& total_bytes,
             std::chrono::steady_clock::time_point max_blocking_time_point) const override;
 
     /*!

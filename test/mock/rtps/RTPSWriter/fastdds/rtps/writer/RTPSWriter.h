@@ -20,6 +20,7 @@
 #define _FASTDDS_RTPS_RTPSWRITER_H_
 
 #include <condition_variable>
+#include <vector>
 
 #include <gmock/gmock.h>
 
@@ -151,8 +152,9 @@ public:
             LocatorSelectorSender&,
             const std::chrono::time_point<std::chrono::steady_clock>&));
 
-    MOCK_METHOD3(send_nts, bool(
-            CDRMessage_t*,
+    MOCK_METHOD4(send_nts, bool(
+            const std::vector<eprosima::fastdds::rtps::NetworkBuffer>&,
+            const uint32_t&,
             const LocatorSelectorSender&,
             std::chrono::steady_clock::time_point&));
 

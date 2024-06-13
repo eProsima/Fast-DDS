@@ -1635,10 +1635,12 @@ void StatefulReader::send_acknack(
 }
 
 bool StatefulReader::send_sync_nts(
-        CDRMessage_t* message,
+        const std::vector<eprosima::fastdds::rtps::NetworkBuffer>& buffers,
+        const uint32_t& total_bytes,
         const Locators& locators_begin,
         const Locators& locators_end,
         std::chrono::steady_clock::time_point& max_blocking_time_point)
 {
-    return mp_RTPSParticipant->sendSync(message, m_guid, locators_begin, locators_end, max_blocking_time_point);
+    return mp_RTPSParticipant->sendSync(buffers, total_bytes, m_guid, locators_begin, locators_end,
+                   max_blocking_time_point);
 }

@@ -25,9 +25,12 @@
 #include <chrono>
 #include <cassert>
 #include <memory>
+#include <list>
 
 #include <fastdds/rtps/common/FragmentNumber.h>
 #include <fastdds/rtps/messages/RTPSMessageSenderInterface.hpp>
+#include <fastdds/rtps/transport/NetworkBuffer.hpp>
+#include <fastdds/utils/collections/ResourceLimitedVector.hpp>
 
 #include <rtps/messages/RTPSMessageCreator.hpp>
 
@@ -116,7 +119,7 @@ public:
      * @return True when message was added to the group.
      */
     bool add_data(
-            const CacheChange_t& change,
+            CacheChange_t& change,
             bool expects_inline_qos);
 
     /**
@@ -127,7 +130,7 @@ public:
      * @return True when message was added to the group.
      */
     bool add_data_frag(
-            const CacheChange_t& change,
+            CacheChange_t& change,
             const uint32_t fragment_number,
             bool expects_inline_qos);
 
@@ -242,7 +245,7 @@ public:
 
     inline uint32_t get_current_bytes_processed() const
     {
-        return current_sent_bytes_ + full_msg_->length;
+        return current_sent_bytes_ + buffers_bytes_;
     }
 
 private:
@@ -274,6 +277,35 @@ private:
             const GuidPrefix_t& destination_guid_prefix,
             bool is_big_submessage);
 
+    /**
+     * @brief Checks if there is enough space in the CDRMessage to accommodate the given length.
+     *
+     * @param msg Pointer to the CDRMessage to be checked.
+     * @param length The length to be checked for space availability.
+     * @return True if there is enough space, false otherwise.
+     */
+    bool check_space(
+            CDRMessage_t* msg,
+            const uint32_t length);
+
+    /**
+     * Appends a submessage to the RTPS Message so it can be sent.
+     * The submessage is copied into the header_msg_ buffer. The submessage might contain a data payload
+     * or not, in case it is possible to avoid the copy of the payload.
+     * The payload will be added later to buffers_to_send_ if it exists in pending_buffer_.
+     * The copied submessage in added to buffers_to_send_ through a pointer to its position in header_msg_ and
+     * its length.
+     *
+     * In gather-send operation, the submessage appended only contains the header and pending_buffer_
+     * points to the data payload.
+     *
+     * If gather-send operation is not possible (i.e. Security), the submessage received will contain
+     * the header AND the data payload. The whole submessage will be copied into header_msg_.
+     *
+     * @return True if the submessage was successfully appended, false if the copy operation failed.
+     */
+    bool append_submessage();
+
     bool add_info_dst_in_buffer(
             CDRMessage_t* buffer,
             const GuidPrefix_t& destination_guid_prefix);
@@ -286,11 +318,19 @@ private:
             const SequenceNumberSet_t& gap_bitmap,
             const EntityId_t& reader_id);
 
+    void get_payload(
+            CacheChange_t& change);
+
+#ifdef FASTDDS_STATISTICS
+    //! Append the Statistics message to the header_msg_ and add the corresponding buffer to buffers_to_send_.
+    void add_stats_submsg();
+#endif // FASTDDS_STATISTICS
+
     RTPSMessageSenderInterface* sender_ = nullptr;
 
     Endpoint* endpoint_ = nullptr;
 
-    CDRMessage_t* full_msg_ = nullptr;
+    CDRMessage_t* header_msg_ = nullptr;
 
     CDRMessage_t* submessage_msg_ = nullptr;
 
@@ -313,9 +353,27 @@ private:
     uint32_t sent_bytes_limitation_ = 0;
 
     uint32_t current_sent_bytes_ = 0;
+
+    // Next buffer that will be sent
+    eprosima::fastdds::rtps::NetworkBuffer pending_buffer_;
+
+    // Vector of buffers that will be sent along the header
+    ResourceLimitedVector<eprosima::fastdds::rtps::NetworkBuffer>* buffers_to_send_ = nullptr;
+
+    // Vector of payloads of which the RTPSMessageGroup is the owner
+    ResourceLimitedVector<eprosima::fastrtps::rtps::SerializedPayload_t>* payloads_to_send_ = nullptr;
+
+    // Bytes to send in the next list of buffers
+    uint32_t buffers_bytes_ = 0;
+
+    // Size of the pending padding
+    uint8_t pending_padding_ = 0;
+
+    // Fixed padding to be used whenever needed
+    const octet padding_[3] = {0, 0, 0};
 };
 
-}        /* namespace rtps */
+} /* namespace rtps */
 } /* namespace fastrtps */
 } /* namespace eprosima */
 
