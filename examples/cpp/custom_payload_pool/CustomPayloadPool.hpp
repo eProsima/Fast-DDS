@@ -16,8 +16,8 @@
  * @file CustomPayloadPool.hpp
  */
 
-#ifndef DDS_CUSTOM_PAYLOAD_POOL_DATA_HPP
-#define DDS_CUSTOM_PAYLOAD_POOL_DATA_HPP
+#ifndef _FASTDDS_CUSTOM_PAYLOAD_POOL_HPP_
+#define _FASTDDS_CUSTOM_PAYLOAD_POOL_HPP_
 
 #include <assert.h>
 #include <stdio.h>
@@ -97,4 +97,4 @@ public:
 
 };
 
-#endif  // DDS_CUSTOM_PAYLOAD_POOL_DATA_HPP
+#endif  // _FASTDDS_CUSTOM_PAYLOAD_POOL_HPP_
