@@ -227,7 +227,8 @@ TEST(DDSDiscovery, AddDiscoveryServerToListTCP)
     descriptor_1->add_listener_port(server_1_port);
 
     // Init server
-    ASSERT_TRUE(server_1.fill_server_qos(server_1_qos, server_1_prefix, locator_server_1, server_1_port, LOCATOR_KIND_TCPv4)
+    ASSERT_TRUE(server_1.fill_server_qos(server_1_qos, server_1_prefix, locator_server_1, server_1_port,
+            LOCATOR_KIND_TCPv4)
                     .disable_builtin_transport()
                     .add_user_transport_to_pparams(descriptor_1)
                     .init_participant());
@@ -245,7 +246,8 @@ TEST(DDSDiscovery, AddDiscoveryServerToListTCP)
     descriptor_2->add_listener_port(server_2_port);
 
     // Init server
-    ASSERT_TRUE(server_2.fill_server_qos(server_2_qos, server_2_prefix, locator_server_2, server_2_port, LOCATOR_KIND_TCPv4)
+    ASSERT_TRUE(server_2.fill_server_qos(server_2_qos, server_2_prefix, locator_server_2, server_2_port,
+            LOCATOR_KIND_TCPv4)
                     .disable_builtin_transport()
                     .add_user_transport_to_pparams(descriptor_2)
                     .init_participant());
@@ -340,7 +342,8 @@ TEST(DDSDiscovery, ServersConnectionTCP)
     auto descriptor_1 = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
     descriptor_1->add_listener_port(server_1_port);
     // Init server
-    ASSERT_TRUE(server_1.fill_server_qos(server_1_qos, server_1_prefix, locator_server_1, server_1_port, LOCATOR_KIND_TCPv4)
+    ASSERT_TRUE(server_1.fill_server_qos(server_1_qos, server_1_prefix, locator_server_1, server_1_port,
+            LOCATOR_KIND_TCPv4)
                     .disable_builtin_transport()
                     .add_user_transport_to_pparams(descriptor_1)
                     .init_participant());
@@ -364,7 +367,8 @@ TEST(DDSDiscovery, ServersConnectionTCP)
     server_2_qos.builtin.discovery_config.m_DiscoveryServers.push_back(server_1_att);
 
     // Init server
-    ASSERT_TRUE(server_2.fill_server_qos(server_2_qos, server_2_prefix, locator_server_2, server_2_port, LOCATOR_KIND_TCPv4)
+    ASSERT_TRUE(server_2.fill_server_qos(server_2_qos, server_2_prefix, locator_server_2, server_2_port,
+            LOCATOR_KIND_TCPv4)
                     .disable_builtin_transport()
                     .add_user_transport_to_pparams(descriptor_2)
                     .init_participant());
@@ -384,7 +388,8 @@ TEST(DDSDiscovery, ServersConnectionTCP)
     server_3_qos.builtin.discovery_config.m_DiscoveryServers.push_back(server_1_att);
 
     // Init server
-    ASSERT_TRUE(server_3.fill_server_qos(server_3_qos, server_3_prefix, locator_server_3, server_3_port, LOCATOR_KIND_TCPv4)
+    ASSERT_TRUE(server_3.fill_server_qos(server_3_qos, server_3_prefix, locator_server_3, server_3_port,
+            LOCATOR_KIND_TCPv4)
                     .disable_builtin_transport()
                     .add_user_transport_to_pparams(descriptor_3)
                     .init_participant());
