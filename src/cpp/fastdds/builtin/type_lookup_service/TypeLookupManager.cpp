@@ -707,15 +707,7 @@ bool TypeLookupManager::send_impl(
         fastdds::rtps::WriterHistory* writer_history) const
 {
     // Create a new CacheChange_t using the provided StatefulWriter
-    CacheChange_t* change = writer->new_change(
-        [&msg]()
-        {
-            // Calculate the serialized size of the message using a CdrSizeCalculator
-            eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
-            size_t current_alignment {0};
-            return static_cast<uint32_t>(calculator.calculate_serialized_size(msg, current_alignment) + 4);
-        },
-        ALIVE);
+    CacheChange_t* change = writer->new_change(ALIVE);
 
     // Check if the creation of CacheChange_t was successful
     if (!change)
@@ -723,23 +715,19 @@ bool TypeLookupManager::send_impl(
         return false;
     }
 
-    // Prepare the payload for sending the message
-    SerializedPayload_t payload;
-    payload.max_size = change->serializedPayload.max_size;
-    payload.data = change->serializedPayload.data;
+    // Calculate the serialized size of the message using a CdrSizeCalculator
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    size_t current_alignment {0};
+    uint32_t payload_size = static_cast<uint32_t>(calculator.calculate_serialized_size(msg, current_alignment) + 4);
 
     // Serialize the message using the provided PubSubType
-    bool result = pubsubtype->serialize(&msg, &payload, DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+    change->serializedPayload.reserve(payload_size);
+    bool result = pubsubtype->serialize(&msg, &change->serializedPayload, DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
     // If serialization was successful, update the change and add it to the WriterHistory
     if (result)
     {
-        change->serializedPayload.length += payload.length;
-        change->serializedPayload.pos += payload.pos;
         result = writer_history->add_change(change);
     }
-    // Release the payload data
-    payload.data = nullptr;
-
     // If adding the change to WriterHistory failed, remove the change
     if (!result)
     {
