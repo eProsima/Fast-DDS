@@ -804,7 +804,7 @@ TEST(DDSBasic, endpoint_custom_payload_pools)
     ASSERT_EQ(reader_payload_pool->requested_payload_count, 2u);
     // 2. Writer:
     //      a. Payload requested to the pool when creating the change
-    //      b. Extra call using gather-send to avoid reusing the payload that contains the data before sending it
+    //      b. Extra call using gather-send to avoid releasing the payload that contains the data before sending it
     ASSERT_EQ(writer_payload_pool->requested_payload_count, 2u);
 
     participant->delete_contained_entities();
