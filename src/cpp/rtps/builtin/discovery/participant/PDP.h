@@ -132,6 +132,11 @@ public:
     bool enable();
 
     /**
+     * @brief Perform actions before enabling the Participant Discovery Protocol if needed
+     */
+    virtual void pre_enable_actions();
+
+    /**
      * @brief Disable the Participant Discovery Protocol
      */
     void disable();
