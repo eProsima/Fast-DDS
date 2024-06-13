@@ -2783,8 +2783,8 @@ void RTPSParticipantImpl::environment_file_has_changed()
 {
     RTPSParticipantAttributes patt = m_att;
     // Only if it is a server/backup or a client override
-    if (DiscoveryProtocol_t::SERVER == m_att.builtin.discovery_config.discoveryProtocol ||
-            DiscoveryProtocol_t::BACKUP == m_att.builtin.discovery_config.discoveryProtocol ||
+    if (DiscoveryProtocol::SERVER == m_att.builtin.discovery_config.discoveryProtocol ||
+            DiscoveryProtocol::BACKUP == m_att.builtin.discovery_config.discoveryProtocol ||
             client_override_)
     {
         if (load_environment_server_info(patt.builtin.discovery_config.m_DiscoveryServers))

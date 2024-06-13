@@ -3472,7 +3472,7 @@ TEST_F(XMLParserTests, getXMLRemoteLocatorsAllocationAttributes_NegativeClauses)
  *      1. null input
  *      2. empty input
  *      3. invalid input
- * 2. Check XMLEnum with arg DiscoveryProtocol_t
+ * 2. Check XMLEnum with arg DiscoveryProtocol
  *      1. null input
  *      2. empty input
  *      3. invalid input
@@ -3518,7 +3518,7 @@ TEST_F(XMLParserTests, getXMLEnum_NegativeClauses)
 
     // DiscoveryProtocol Enum
     {
-        DiscoveryProtocol_t e;
+        DiscoveryProtocol e;
         const char* enum_p =
                 "\
                 <DiscoveryProtocol>\
@@ -3573,7 +3573,7 @@ TEST_F(XMLParserTests, getXMLEnum_NegativeClauses)
  * This test checks the positive cases in the xml child element of <XMLEnum>
  * 1. Check XMLEnum with arg IntraprocessDeliveryType
  *      1. INTRAPROCESS_OFF
- * 2. Check XMLEnum with arg DiscoveryProtocol_t
+ * 2. Check XMLEnum with arg DiscoveryProtocol
  *      1. NONE
  *      2. CLIENT
  *      3. SERVER
@@ -3622,7 +3622,7 @@ TEST_F(XMLParserTests, getXMLEnum_positive)
 
     // DiscoveryProtocol Enum
     {
-        DiscoveryProtocol_t e;
+        DiscoveryProtocol e;
         const char* enum_p =
                 "\
                 <DiscoveryProtocol>%s</DiscoveryProtocol>\
@@ -3633,35 +3633,35 @@ TEST_F(XMLParserTests, getXMLEnum_positive)
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLEnum_wrapper(titleElement, &e, ident));
-        EXPECT_EQ(DiscoveryProtocol_t::NONE, e);
+        EXPECT_EQ(DiscoveryProtocol::NONE, e);
 
         // CLIENT case
         snprintf(xml, xml_len, enum_p, "CLIENT");
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLEnum_wrapper(titleElement, &e, ident));
-        EXPECT_EQ(DiscoveryProtocol_t::CLIENT, e);
+        EXPECT_EQ(DiscoveryProtocol::CLIENT, e);
 
         // SERVER case
         snprintf(xml, xml_len, enum_p, "SERVER");
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLEnum_wrapper(titleElement, &e, ident));
-        EXPECT_EQ(DiscoveryProtocol_t::SERVER, e);
+        EXPECT_EQ(DiscoveryProtocol::SERVER, e);
 
         // BACKUP case
         snprintf(xml, xml_len, enum_p, "BACKUP");
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLEnum_wrapper(titleElement, &e, ident));
-        EXPECT_EQ(DiscoveryProtocol_t::BACKUP, e);
+        EXPECT_EQ(DiscoveryProtocol::BACKUP, e);
 
         // SUPER_CLIENT case
         snprintf(xml, xml_len, enum_p, "SUPER_CLIENT");
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLEnum_wrapper(titleElement, &e, ident));
-        EXPECT_EQ(DiscoveryProtocol_t::SUPER_CLIENT, e);
+        EXPECT_EQ(DiscoveryProtocol::SUPER_CLIENT, e);
     }
 
     // ParticipantFilteringFlags_t Enum

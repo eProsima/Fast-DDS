@@ -1649,7 +1649,7 @@ TEST(ParticipantTests, ChangeWireProtocolQos)
 
     // Check changing wire_protocol().builtin.discovery_config.discoveryProtocol is NOT OK
     participant->get_qos(qos);
-    qos.wire_protocol().builtin.discovery_config.discoveryProtocol = fastdds::rtps::DiscoveryProtocol_t::NONE;
+    qos.wire_protocol().builtin.discovery_config.discoveryProtocol = fastdds::rtps::DiscoveryProtocol::NONE;
     ASSERT_TRUE(participant->set_qos(qos) == RETCODE_IMMUTABLE_POLICY);
     participant->get_qos(set_qos);
     ASSERT_FALSE(set_qos == qos);

@@ -620,7 +620,7 @@ protected:
 
     static XMLP_ret getXMLEnum(
             tinyxml2::XMLElement* elem,
-            rtps::DiscoveryProtocol_t* e,
+            rtps::DiscoveryProtocol* e,
             uint8_t ident);
 
     static XMLP_ret getXMLList(

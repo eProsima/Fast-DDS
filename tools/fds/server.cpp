@@ -57,7 +57,7 @@ int fastdds_discovery_server(
 {
     // Convenience aliases
     using Locator = fastdds::rtps::Locator_t;
-    using DiscoveryProtocol = fastdds::rtps::DiscoveryProtocol_t;
+    using DiscoveryProtocol = fastdds::rtps::DiscoveryProtocol;
     using IPLocator = fastdds::rtps::IPLocator;
 
     // Skip program name argv[0] if present

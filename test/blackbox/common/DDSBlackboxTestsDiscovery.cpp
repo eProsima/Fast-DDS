@@ -112,7 +112,7 @@ TEST(DDSDiscovery, AddDiscoveryServerToListUDP)
     PubSubParticipant<HelloWorldPubSubType> server_1(0u, 0u, 0u, 0u);
     // Set participant as server
     WireProtocolConfigQos server_1_qos;
-    server_1_qos.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::SERVER;
+    server_1_qos.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol::SERVER;
     // Generate random GUID prefix
     srand(static_cast<unsigned>(time(nullptr)));
     GuidPrefix_t server_1_prefix;
@@ -134,7 +134,7 @@ TEST(DDSDiscovery, AddDiscoveryServerToListUDP)
     PubSubParticipant<HelloWorldPubSubType> server_2(0u, 0u, 0u, 0u);
     // Set participant as server
     WireProtocolConfigQos server_2_qos;
-    server_2_qos.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::SERVER;
+    server_2_qos.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol::SERVER;
     // Generate random GUID prefix
     GuidPrefix_t server_2_prefix = server_1_prefix;
     server_2_prefix.value[11]++;
@@ -152,7 +152,7 @@ TEST(DDSDiscovery, AddDiscoveryServerToListUDP)
     PubSubParticipant<HelloWorldPubSubType> client(0u, 0u, 0u, 0u);
     // Set participant as client
     WireProtocolConfigQos client_qos;
-    client_qos.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::CLIENT;
+    client_qos.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol::CLIENT;
     // Connect to first server
     RemoteServerAttributes server_1_att;
     server_1_att.guidPrefix = server_1_prefix;
@@ -257,7 +257,7 @@ TEST(DDSDiscovery, AddDiscoveryServerToListTCP)
     PubSubParticipant<HelloWorldPubSubType> client_1(0u, 0u, 0u, 0u);
     // Set participant as client
     WireProtocolConfigQos client_qos_1;
-    client_qos_1.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::CLIENT;
+    client_qos_1.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol::CLIENT;
     // Connect to first server
     RemoteServerAttributes server_1_att;
     server_1_att.guidPrefix = server_1_prefix;
@@ -276,7 +276,7 @@ TEST(DDSDiscovery, AddDiscoveryServerToListTCP)
     PubSubParticipant<HelloWorldPubSubType> client_2(0u, 0u, 0u, 0u);
     // Set participant as client
     WireProtocolConfigQos client_qos_2;
-    client_qos_2.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::CLIENT;
+    client_qos_2.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol::CLIENT;
     // Connect to first server
     client_qos_2.builtin.discovery_config.m_DiscoveryServers.push_back(server_1_att);
     auto descriptor_4 = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();

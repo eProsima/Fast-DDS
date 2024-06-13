@@ -415,7 +415,7 @@ public:
 
     static XMLP_ret getXMLEnum_wrapper(
             tinyxml2::XMLElement* elem,
-            DiscoveryProtocol_t* e,
+            DiscoveryProtocol* e,
             uint8_t ident)
     {
         return getXMLEnum(elem, e, ident);

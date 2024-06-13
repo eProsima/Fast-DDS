@@ -179,7 +179,7 @@ bool DiscoveryServer::init(
 
     // Set participant as SERVER
     pqos.wire_protocol().builtin.discovery_config.discoveryProtocol =
-            eprosima::fastdds::rtps::DiscoveryProtocol_t::SERVER;
+            eprosima::fastdds::rtps::DiscoveryProtocol::SERVER;
 
     // Set SERVER's GUID prefix
     pqos.wire_protocol().prefix = get_discovery_server_guid_from_id(server_id);

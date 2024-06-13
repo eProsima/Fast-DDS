@@ -87,38 +87,38 @@ bool BuiltinProtocols::initBuiltinProtocols(
     // PDP
     switch (m_att.discovery_config.discoveryProtocol)
     {
-        case DiscoveryProtocol_t::NONE:
+        case DiscoveryProtocol::NONE:
             EPROSIMA_LOG_WARNING(RTPS_PDP, "No participant discovery protocol specified");
             return true;
 
-        case DiscoveryProtocol_t::SIMPLE:
+        case DiscoveryProtocol::SIMPLE:
             mp_PDP = new PDPSimple(this, allocation);
             break;
 
-        case DiscoveryProtocol_t::EXTERNAL:
+        case DiscoveryProtocol::EXTERNAL:
             EPROSIMA_LOG_ERROR(RTPS_PDP, "Flag only present for debugging purposes");
             return false;
 
-        case DiscoveryProtocol_t::CLIENT:
+        case DiscoveryProtocol::CLIENT:
             mp_PDP = new fastdds::rtps::PDPClient(this, allocation);
             break;
 
-        case DiscoveryProtocol_t::SERVER:
+        case DiscoveryProtocol::SERVER:
             mp_PDP = new fastdds::rtps::PDPServer(this, allocation, DurabilityKind_t::TRANSIENT_LOCAL);
             break;
 
 #if HAVE_SQLITE3
-        case DiscoveryProtocol_t::BACKUP:
+        case DiscoveryProtocol::BACKUP:
             mp_PDP = new fastdds::rtps::PDPServer(this, allocation, DurabilityKind_t::TRANSIENT);
             break;
 #endif // if HAVE_SQLITE3
 
-        case DiscoveryProtocol_t::SUPER_CLIENT:
+        case DiscoveryProtocol::SUPER_CLIENT:
             mp_PDP = new fastdds::rtps::PDPClient(this, allocation, true);
             break;
 
         default:
-            EPROSIMA_LOG_ERROR(RTPS_PDP, "Unknown DiscoveryProtocol_t specified.");
+            EPROSIMA_LOG_ERROR(RTPS_PDP, "Unknown DiscoveryProtocol specified.");
             return false;
     }
 
@@ -314,7 +314,7 @@ void BuiltinProtocols::announceRTPSParticipantState()
     {
         mp_PDP->announceParticipantState(false);
     }
-    else if (m_att.discovery_config.discoveryProtocol != DiscoveryProtocol_t::NONE)
+    else if (m_att.discovery_config.discoveryProtocol != DiscoveryProtocol::NONE)
     {
         EPROSIMA_LOG_ERROR(RTPS_EDP, "Trying to use BuiltinProtocols interfaces before initBuiltinProtocols call");
     }
@@ -329,7 +329,7 @@ void BuiltinProtocols::stopRTPSParticipantAnnouncement()
     {
         mp_PDP->stopParticipantAnnouncement();
     }
-    else if (m_att.discovery_config.discoveryProtocol != DiscoveryProtocol_t::NONE)
+    else if (m_att.discovery_config.discoveryProtocol != DiscoveryProtocol::NONE)
     {
         EPROSIMA_LOG_ERROR(RTPS_EDP, "Trying to use BuiltinProtocols interfaces before initBuiltinProtocols call");
     }
@@ -343,7 +343,7 @@ void BuiltinProtocols::resetRTPSParticipantAnnouncement()
     {
         mp_PDP->resetParticipantAnnouncement();
     }
-    else if (m_att.discovery_config.discoveryProtocol != DiscoveryProtocol_t::NONE)
+    else if (m_att.discovery_config.discoveryProtocol != DiscoveryProtocol::NONE)
     {
         EPROSIMA_LOG_ERROR(RTPS_EDP, "Trying to use BuiltinProtocols interfaces before initBuiltinProtocols call");
     }

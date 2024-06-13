@@ -66,7 +66,7 @@ struct ParticipantType
 namespace rtps {
 
 //! PDP subclass choice
-typedef enum DiscoveryProtocol
+enum class DiscoveryProtocol
 {
     NONE,
     /*!<
@@ -93,7 +93,7 @@ typedef enum DiscoveryProtocol
     SUPER_CLIENT  /*!< The participant will behave as a client concerning all internal behaviour.
                      Remote servers will treat it as a server and will share every discovery information. */
 
-} DiscoveryProtocol_t;
+};
 
 inline std::ostream& operator <<(
         std::ostream& output,
@@ -235,7 +235,7 @@ class DiscoverySettings
 public:
 
     //! Chosen discovery protocol
-    DiscoveryProtocol_t discoveryProtocol = DiscoveryProtocol_t::SIMPLE;
+    DiscoveryProtocol discoveryProtocol = DiscoveryProtocol::SIMPLE;
 
     /**
      * If set to true, SimpleEDP would be used.

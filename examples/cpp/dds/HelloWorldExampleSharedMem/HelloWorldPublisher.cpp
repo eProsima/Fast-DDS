@@ -46,7 +46,7 @@ bool HelloWorldPublisher::init()
 
     //CREATE THE PARTICIPANT
     DomainParticipantQos pqos;
-    pqos.wire_protocol().builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::SIMPLE;
+    pqos.wire_protocol().builtin.discovery_config.discoveryProtocol = DiscoveryProtocol::SIMPLE;
     pqos.wire_protocol().builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol = true;
     pqos.wire_protocol().builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
     pqos.wire_protocol().builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;

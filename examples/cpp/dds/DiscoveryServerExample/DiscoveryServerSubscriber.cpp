@@ -155,7 +155,7 @@ bool HelloWorldSubscriber::init(
 
     // Set participant as DS CLIENT
     pqos.wire_protocol().builtin.discovery_config.discoveryProtocol =
-            eprosima::fastdds::rtps::DiscoveryProtocol_t::CLIENT;
+            eprosima::fastdds::rtps::DiscoveryProtocol::CLIENT;
 
     // Set SERVER's GUID prefix
     RemoteServerAttributes remote_server_att;

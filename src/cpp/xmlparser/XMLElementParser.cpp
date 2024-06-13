@@ -3922,7 +3922,7 @@ XMLP_ret XMLParser::getXMLEnum(
 
 XMLP_ret XMLParser::getXMLEnum(
         tinyxml2::XMLElement* elem,
-        DiscoveryProtocol_t* e,
+        DiscoveryProtocol* e,
         uint8_t /*ident*/)
 {
     /*
@@ -3953,12 +3953,12 @@ XMLP_ret XMLParser::getXMLEnum(
     }
 
     if (!get_element_enum_value(text.c_str(), *e,
-            NONE, DiscoveryProtocol_t::NONE,
-            SIMPLE, DiscoveryProtocol_t::SIMPLE,
-            CLIENT, DiscoveryProtocol_t::CLIENT,
-            SERVER, DiscoveryProtocol_t::SERVER,
-            BACKUP, DiscoveryProtocol_t::BACKUP,
-            SUPER_CLIENT, DiscoveryProtocol_t::SUPER_CLIENT))
+            NONE, DiscoveryProtocol::NONE,
+            SIMPLE, DiscoveryProtocol::SIMPLE,
+            CLIENT, DiscoveryProtocol::CLIENT,
+            SERVER, DiscoveryProtocol::SERVER,
+            BACKUP, DiscoveryProtocol::BACKUP,
+            SUPER_CLIENT, DiscoveryProtocol::SUPER_CLIENT))
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << RTPS_PDP_TYPE << "' with bad content");
         return XMLP_ret::XML_ERROR;

@@ -107,10 +107,10 @@ void PDPClient::initializeParticipantProxyData(
 
     if (
         getRTPSParticipant()->getAttributes().builtin.discovery_config.discoveryProtocol
-        != DiscoveryProtocol_t::CLIENT
+        != DiscoveryProtocol::CLIENT
         &&
         getRTPSParticipant()->getAttributes().builtin.discovery_config.discoveryProtocol
-        != DiscoveryProtocol_t::SUPER_CLIENT    )
+        != DiscoveryProtocol::SUPER_CLIENT    )
     {
         EPROSIMA_LOG_ERROR(RTPS_PDP, "Using a PDP client object with another user's settings");
     }

@@ -224,8 +224,8 @@ RTPSParticipant* RTPSDomainImpl::createParticipant(
     // Above constructors create the sender resources. If a given listening port cannot be allocated an iterative
     // mechanism will allocate another by default. Change the default listening port is unacceptable for
     // discovery server Participant.
-    if ((PParam.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol_t::SERVER
-            || PParam.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol_t::BACKUP)
+    if ((PParam.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::SERVER
+            || PParam.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::BACKUP)
             && pimpl->did_mutation_took_place_on_meta(
                 PParam.builtin.metatrafficMulticastLocatorList,
                 PParam.builtin.metatrafficUnicastLocatorList))
@@ -261,7 +261,7 @@ RTPSParticipant* RTPSDomainImpl::createParticipant(
     }
 
     // Check the environment file in case it was modified during participant creation leading to a missed callback.
-    if ((PParam.builtin.discovery_config.discoveryProtocol != DiscoveryProtocol_t::CLIENT) &&
+    if ((PParam.builtin.discovery_config.discoveryProtocol != DiscoveryProtocol::CLIENT) &&
             instance->file_watch_handle_)
     {
         pimpl->environment_file_has_changed();
@@ -543,7 +543,7 @@ RTPSParticipant* RTPSDomainImpl::clientServerEnvironmentCreationOverride(
         RTPSParticipantListener* listen)
 {
     // Check the specified discovery protocol: if other than simple it has priority over ros environment variable
-    if (att.builtin.discovery_config.discoveryProtocol != DiscoveryProtocol_t::SIMPLE)
+    if (att.builtin.discovery_config.discoveryProtocol != DiscoveryProtocol::SIMPLE)
     {
         EPROSIMA_LOG_INFO(DOMAIN, "Detected non simple discovery protocol attributes."
                 << " Ignoring auto default client-server setup.");
@@ -653,13 +653,13 @@ RTPSParticipant* RTPSDomainImpl::clientServerEnvironmentCreationOverride(
             << "Trying to create client with the default server setup: "
             << client_att.builtin.discovery_config.m_DiscoveryServers);
 
-    client_att.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::CLIENT;
+    client_att.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol::CLIENT;
     // RemoteServerAttributes already fill in above
 
     // Check if the client must become a super client
     if (ros_super_client_env())
     {
-        client_att.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::SUPER_CLIENT;
+        client_att.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol::SUPER_CLIENT;
     }
 
     RTPSParticipant* part = createParticipant(domain_id, enabled, client_att, listen);

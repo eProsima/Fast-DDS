@@ -81,7 +81,7 @@ public:
 
     /**
      * @brief Checks if a backup file needs to be restored for
-     * DiscoveryProtocol_t::BACKUP before enabling the Participant Discovery Protocol
+     * DiscoveryProtocol::BACKUP before enabling the Participant Discovery Protocol
      */
     void pre_enable_actions() override;
 
