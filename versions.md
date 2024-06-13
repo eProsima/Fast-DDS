@@ -327,9 +327,9 @@ This release has the following **API breaks**:
 
 Users should also be aware of the following **deprecation announcement**:
 
-* All classes inside the namespace `eprosima::fastrtps` should be considered deprecated.
+* All classes inside the namespace `eprosima::fastdds` should be considered deprecated.
   Equivalent functionality is offered through namespace `eprosima::fastdds`.
-* Namespaces beneath `eprosima::fastrtps` are not included in this deprecation, i.e.
+* Namespaces beneath `eprosima::fastdds` are not included in this deprecation, i.e.
   `eprosima::fastdds::rtps` can still be used)
 
 This release adds the following **features**:

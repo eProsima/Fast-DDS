@@ -204,8 +204,8 @@ inline void set_statistics_submessage_from_transport(
 
         // Set current timestamp and sequence
         auto current_pos = &static_cast<const octet*>(send_buffer.buffer)[statistics_pos];
-        Time_t ts;
-        Time_t::now(ts);
+        eprosima::fastdds::rtps::Time_t ts;
+        eprosima::fastdds::rtps::Time_t::now(ts);
 
         /*
          * This set of memcpy blocks is intended to prevent an undefined behavior caused when casting from an octet* to a StatisticsSubmessageData*

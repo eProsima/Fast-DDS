@@ -2020,7 +2020,7 @@ TEST(DDSDiscovery, pdp_simple_participants_exchange_same_pid_domain_id_and_disco
 {
     using namespace eprosima::fastdds::dds;
     using namespace eprosima::fastdds::rtps;
-    using namespace eprosima::fastrtps::rtps;
+    using namespace eprosima::fastdds::rtps;
 
     PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
@@ -2045,8 +2045,8 @@ TEST(DDSDiscovery, pdp_simple_participants_exchange_same_pid_domain_id_and_disco
                     uint16_t plength = 0;
                     bool valid = true;
 
-                    valid &= eprosima::fastrtps::rtps::CDRMessage::readUInt16(&msg, (uint16_t*)&pid);
-                    valid &= eprosima::fastrtps::rtps::CDRMessage::readUInt16(&msg, &plength);
+                    valid &= eprosima::fastdds::rtps::CDRMessage::readUInt16(&msg, (uint16_t*)&pid);
+                    valid &= eprosima::fastdds::rtps::CDRMessage::readUInt16(&msg, &plength);
 
                     if (pid == eprosima::fastdds::dds::PID_SENTINEL)
                     {
@@ -2069,7 +2069,7 @@ TEST(DDSDiscovery, pdp_simple_participants_exchange_same_pid_domain_id_and_disco
                         if (pid == eprosima::fastdds::dds::PID_DOMAIN_ID)
                         {
                             uint32_t domain_id = 0;
-                            eprosima::fastrtps::rtps::CDRMessage::readUInt32(&msg, &domain_id);
+                            eprosima::fastdds::rtps::CDRMessage::readUInt32(&msg, &domain_id);
                             if (domain_id == (uint32_t)GET_PID() % 230)
                             {
                                 pid_was_found = true;

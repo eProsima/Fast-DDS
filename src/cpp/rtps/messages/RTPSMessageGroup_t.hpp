@@ -113,10 +113,10 @@ public:
 #endif // if HAVE_SECURITY
 
     //! Vector to store the NetworkBuffers that will be used to form the RTPS message.
-    eprosima::fastrtps::ResourceLimitedVector<eprosima::fastdds::rtps::NetworkBuffer> buffers_;
+    eprosima::fastdds::ResourceLimitedVector<eprosima::fastdds::rtps::NetworkBuffer> buffers_;
 
     //! Mirror vector of buffers_ to store the serialized payloads.
-    eprosima::fastrtps::ResourceLimitedVector<eprosima::fastrtps::rtps::SerializedPayload_t> payloads_;
+    eprosima::fastdds::ResourceLimitedVector<eprosima::fastdds::rtps::SerializedPayload_t> payloads_;
 };
 
 } // namespace rtps

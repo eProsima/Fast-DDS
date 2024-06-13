@@ -32,7 +32,7 @@
 
 namespace eprosima {
 
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 struct CacheChange_t;
@@ -44,7 +44,7 @@ class WriterProxy;
 class WriterProxyData;
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 
 namespace fastdds {
 namespace rtps {
