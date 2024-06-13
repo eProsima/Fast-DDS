@@ -521,8 +521,8 @@ TEST_P(XMLProfileParserTests, XMLParserParticipant)
     EXPECT_EQ(rtps_atts.listenSocketBufferSize, 1000u);
     EXPECT_EQ(builtin.discovery_config.discoveryProtocol, eprosima::fastdds::rtps::DiscoveryProtocol::SIMPLE);
     EXPECT_EQ(builtin.discovery_config.ignoreParticipantFlags,
-            eprosima::fastdds::rtps::ParticipantFilteringFlags_t::FILTER_SAME_PROCESS |
-            eprosima::fastdds::rtps::ParticipantFilteringFlags_t::FILTER_DIFFERENT_HOST);
+            eprosima::fastdds::rtps::ParticipantFilteringFlags::FILTER_SAME_PROCESS |
+            eprosima::fastdds::rtps::ParticipantFilteringFlags::FILTER_DIFFERENT_HOST);
     EXPECT_EQ(builtin.use_WriterLivelinessProtocol, false);
     EXPECT_EQ(builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol, true);
     EXPECT_EQ(builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol, false);
@@ -621,8 +621,8 @@ TEST_F(XMLProfileParserBasicTests, XMLParserParticipantDeprecated)
     EXPECT_EQ(rtps_atts.listenSocketBufferSize, 1000u);
     EXPECT_EQ(builtin.discovery_config.discoveryProtocol, eprosima::fastdds::rtps::DiscoveryProtocol::SIMPLE);
     EXPECT_EQ(builtin.discovery_config.ignoreParticipantFlags,
-            eprosima::fastdds::rtps::ParticipantFilteringFlags_t::FILTER_SAME_PROCESS |
-            eprosima::fastdds::rtps::ParticipantFilteringFlags_t::FILTER_DIFFERENT_HOST);
+            eprosima::fastdds::rtps::ParticipantFilteringFlags::FILTER_SAME_PROCESS |
+            eprosima::fastdds::rtps::ParticipantFilteringFlags::FILTER_DIFFERENT_HOST);
     EXPECT_EQ(builtin.use_WriterLivelinessProtocol, false);
     EXPECT_EQ(builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol, true);
     EXPECT_EQ(builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol, false);
@@ -704,8 +704,8 @@ TEST_P(XMLProfileParserTests, XMLParserDefaultParticipantProfile)
     EXPECT_EQ(rtps_atts.listenSocketBufferSize, 1000u);
     EXPECT_EQ(builtin.discovery_config.discoveryProtocol, eprosima::fastdds::rtps::DiscoveryProtocol::SIMPLE);
     EXPECT_EQ(builtin.discovery_config.ignoreParticipantFlags,
-            eprosima::fastdds::rtps::ParticipantFilteringFlags_t::FILTER_SAME_PROCESS |
-            eprosima::fastdds::rtps::ParticipantFilteringFlags_t::FILTER_DIFFERENT_HOST);
+            eprosima::fastdds::rtps::ParticipantFilteringFlags::FILTER_SAME_PROCESS |
+            eprosima::fastdds::rtps::ParticipantFilteringFlags::FILTER_DIFFERENT_HOST);
     EXPECT_EQ(builtin.use_WriterLivelinessProtocol, false);
     EXPECT_EQ(builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol, true);
     EXPECT_EQ(builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol, false);
@@ -787,8 +787,8 @@ TEST_F(XMLProfileParserBasicTests, XMLParserDefaultParticipantProfileDeprecated)
     EXPECT_EQ(rtps_atts.listenSocketBufferSize, 1000u);
     EXPECT_EQ(builtin.discovery_config.discoveryProtocol, eprosima::fastdds::rtps::DiscoveryProtocol::SIMPLE);
     EXPECT_EQ(builtin.discovery_config.ignoreParticipantFlags,
-            eprosima::fastdds::rtps::ParticipantFilteringFlags_t::FILTER_SAME_PROCESS |
-            eprosima::fastdds::rtps::ParticipantFilteringFlags_t::FILTER_DIFFERENT_HOST);
+            eprosima::fastdds::rtps::ParticipantFilteringFlags::FILTER_SAME_PROCESS |
+            eprosima::fastdds::rtps::ParticipantFilteringFlags::FILTER_DIFFERENT_HOST);
     EXPECT_EQ(builtin.use_WriterLivelinessProtocol, false);
     EXPECT_EQ(builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol, true);
     EXPECT_EQ(builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol, false);

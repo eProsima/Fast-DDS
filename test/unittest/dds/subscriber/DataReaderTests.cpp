@@ -618,9 +618,9 @@ TEST_F(DataReaderTests, get_guid)
 
     DomainParticipantQos participant_qos = PARTICIPANT_QOS_DEFAULT;
     participant_qos.wire_protocol().builtin.discovery_config.ignoreParticipantFlags =
-            static_cast<ParticipantFilteringFlags_t>(
-        ParticipantFilteringFlags_t::FILTER_DIFFERENT_HOST |
-        ParticipantFilteringFlags_t::FILTER_DIFFERENT_PROCESS);
+            static_cast<ParticipantFilteringFlags>(
+        ParticipantFilteringFlags::FILTER_DIFFERENT_HOST |
+        ParticipantFilteringFlags::FILTER_DIFFERENT_PROCESS);
 
     DomainParticipant* listener_participant =
             DomainParticipantFactory::get_instance()->create_participant(

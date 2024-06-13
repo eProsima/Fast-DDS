@@ -129,13 +129,13 @@ inline std::ostream& operator <<(
 }
 
 //! Filtering flags when discovering participants
-typedef enum ParticipantFilteringFlags : uint32_t
+enum ParticipantFilteringFlags : uint32_t
 {
     NO_FILTER = 0,
     FILTER_DIFFERENT_HOST = 0x1,
     FILTER_DIFFERENT_PROCESS = 0x2,
     FILTER_SAME_PROCESS = 0x4
-} ParticipantFilteringFlags_t;
+};
 
 #define BUILTIN_DATA_MAX_SIZE 512
 
@@ -279,7 +279,7 @@ public:
     eprosima::fastdds::rtps::RemoteServerList_t m_DiscoveryServers;
 
     //! Filtering participants out depending on location
-    ParticipantFilteringFlags_t ignoreParticipantFlags = ParticipantFilteringFlags::NO_FILTER;
+    ParticipantFilteringFlags ignoreParticipantFlags = ParticipantFilteringFlags::NO_FILTER;
 
     DiscoverySettings() = default;
 

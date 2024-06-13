@@ -1358,7 +1358,7 @@ public:
     }
 
     PubSubReader& ignore_participant_flags(
-            eprosima::fastdds::rtps::ParticipantFilteringFlags_t flags)
+            eprosima::fastdds::rtps::ParticipantFilteringFlags flags)
     {
         participant_qos_.wire_protocol().builtin.discovery_config.ignoreParticipantFlags = flags;
         return *this;

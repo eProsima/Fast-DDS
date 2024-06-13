@@ -423,7 +423,7 @@ public:
 
     static XMLP_ret getXMLEnum_wrapper(
             tinyxml2::XMLElement* elem,
-            ParticipantFilteringFlags_t* e,
+            ParticipantFilteringFlags* e,
             uint8_t ident)
     {
         return getXMLEnum(elem, e, ident);

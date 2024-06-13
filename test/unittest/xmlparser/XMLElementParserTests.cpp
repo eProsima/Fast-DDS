@@ -3476,7 +3476,7 @@ TEST_F(XMLParserTests, getXMLRemoteLocatorsAllocationAttributes_NegativeClauses)
  *      1. null input
  *      2. empty input
  *      3. invalid input
- * 3. Check XMLEnum with arg ParticipantFilteringFlags_t
+ * 3. Check XMLEnum with arg ParticipantFilteringFlags
  *      1. null input
  *      2. empty input
  *      3. invalid input
@@ -3543,9 +3543,9 @@ TEST_F(XMLParserTests, getXMLEnum_NegativeClauses)
         EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLEnum_wrapper(titleElement, &e, ident));
     }
 
-    // ParticipantFilteringFlags_t Enum
+    // ParticipantFilteringFlags Enum
     {
-        ParticipantFilteringFlags_t e;
+        ParticipantFilteringFlags e;
         const char* enum_p =
                 "\
                 <ParticipantFilteringFlags>%s</ParticipantFilteringFlags>\
@@ -3579,7 +3579,7 @@ TEST_F(XMLParserTests, getXMLEnum_NegativeClauses)
  *      3. SERVER
  *      4. BACKUP
  *      5. SUPER_CLIENT
- * 3. Check XMLEnum with arg ParticipantFilteringFlags_t
+ * 3. Check XMLEnum with arg ParticipantFilteringFlags
  *      1. FILTER_DIFFERENT_PROCESS
  */
 TEST_F(XMLParserTests, getXMLEnum_positive)
@@ -3664,9 +3664,9 @@ TEST_F(XMLParserTests, getXMLEnum_positive)
         EXPECT_EQ(DiscoveryProtocol::SUPER_CLIENT, e);
     }
 
-    // ParticipantFilteringFlags_t Enum
+    // ParticipantFilteringFlags Enum
     {
-        ParticipantFilteringFlags_t e(ParticipantFilteringFlags_t::NO_FILTER);
+        ParticipantFilteringFlags e(ParticipantFilteringFlags::NO_FILTER);
         const char* enum_p =
                 "\
                 <ParticipantFilteringFlags>FILTER_DIFFERENT_PROCESS</ParticipantFilteringFlags>\
@@ -3676,7 +3676,7 @@ TEST_F(XMLParserTests, getXMLEnum_positive)
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(enum_p));
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLEnum_wrapper(titleElement, &e, ident));
-        EXPECT_EQ(ParticipantFilteringFlags_t::FILTER_DIFFERENT_PROCESS, e);
+        EXPECT_EQ(ParticipantFilteringFlags::FILTER_DIFFERENT_PROCESS, e);
     }
 }
 

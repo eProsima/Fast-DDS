@@ -3969,7 +3969,7 @@ XMLP_ret XMLParser::getXMLEnum(
 
 XMLP_ret XMLParser::getXMLEnum(
         tinyxml2::XMLElement* elem,
-        ParticipantFilteringFlags_t* e,
+        ParticipantFilteringFlags* e,
         uint8_t /*ident*/)
 {
     /*
@@ -4013,19 +4013,19 @@ XMLP_ret XMLParser::getXMLEnum(
 
         if (flag == FILTER_DIFFERENT_HOST )
         {
-            newflags |= ParticipantFilteringFlags_t::FILTER_DIFFERENT_HOST;
+            newflags |= ParticipantFilteringFlags::FILTER_DIFFERENT_HOST;
         }
         else if (flag == FILTER_DIFFERENT_PROCESS )
         {
-            newflags |= ParticipantFilteringFlags_t::FILTER_DIFFERENT_PROCESS;
+            newflags |= ParticipantFilteringFlags::FILTER_DIFFERENT_PROCESS;
         }
         else if (flag == FILTER_SAME_PROCESS )
         {
-            newflags |= ParticipantFilteringFlags_t::FILTER_SAME_PROCESS;
+            newflags |= ParticipantFilteringFlags::FILTER_SAME_PROCESS;
         }
     }
 
-    *e = static_cast<ParticipantFilteringFlags_t>(newflags);
+    *e = static_cast<ParticipantFilteringFlags>(newflags);
 
     return XMLP_ret::XML_OK;
 }

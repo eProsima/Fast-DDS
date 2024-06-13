@@ -630,7 +630,7 @@ protected:
 
     static XMLP_ret getXMLEnum(
             tinyxml2::XMLElement* elem,
-            rtps::ParticipantFilteringFlags_t* e,
+            rtps::ParticipantFilteringFlags* e,
             uint8_t ident);
 
     static XMLP_ret getXMLRemoteServer(

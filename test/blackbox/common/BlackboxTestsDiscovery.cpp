@@ -1306,9 +1306,9 @@ TEST_P(Discovery, AsymmeticIgnoreParticipantFlags)
     // When the announcements of this participant arrive to p2, a single DATA(p) should be sent back.
     // No other traffic is expected, since it will take place through intraprocess.
     PubSubReader<HelloWorldPubSubType> p1(TEST_TOPIC_NAME);
-    p1.ignore_participant_flags(static_cast<eprosima::fastdds::rtps::ParticipantFilteringFlags_t>(
-                eprosima::fastdds::rtps::ParticipantFilteringFlags_t::FILTER_DIFFERENT_HOST |
-                eprosima::fastdds::rtps::ParticipantFilteringFlags_t::FILTER_DIFFERENT_PROCESS));
+    p1.ignore_participant_flags(static_cast<eprosima::fastdds::rtps::ParticipantFilteringFlags>(
+                eprosima::fastdds::rtps::ParticipantFilteringFlags::FILTER_DIFFERENT_HOST |
+                eprosima::fastdds::rtps::ParticipantFilteringFlags::FILTER_DIFFERENT_PROCESS));
     p1.init();
     EXPECT_TRUE(p1.isInitialized());
 
