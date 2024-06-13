@@ -356,7 +356,6 @@ void RTPSMessageGroup::send()
 {
     if (endpoint_ && sender_)
     {
-
         if (header_msg_->length > RTPSMESSAGE_HEADER_SIZE)
         {
             std::lock_guard<RTPSMessageSenderInterface> lock(*sender_);
