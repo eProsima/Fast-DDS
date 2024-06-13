@@ -207,13 +207,12 @@ TEST(DDSDiscovery, AddDiscoveryServerToListTCP)
     using namespace eprosima::fastrtps::rtps;
 
     // TCP default DS port
-    std::string W_UNICAST_PORT_RANDOM_NUMBER_STR = "42100";
+    constexpr uint16_t W_UNICAST_PORT_RANDOM_NUMBER_STR = 42100;
 
     /* Create first server */
     PubSubParticipant<HelloWorldPubSubType> server_1(0u, 0u, 0u, 0u);
     // Set participant as server
     WireProtocolConfigQos server_1_qos;
-    server_1_qos.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::SERVER;
     // Generate random GUID prefix
     srand(static_cast<unsigned>(time(nullptr)));
     GuidPrefix_t server_1_prefix;
@@ -221,20 +220,14 @@ TEST(DDSDiscovery, AddDiscoveryServerToListTCP)
     {
         server_1_prefix.value[i] = eprosima::fastrtps::rtps::octet(rand() % 254);
     }
-    server_1_qos.prefix = server_1_prefix;
-    // Generate server's listening locator
+    uint16_t server_1_port = W_UNICAST_PORT_RANDOM_NUMBER_STR;
     Locator_t locator_server_1;
-    IPLocator::setIPv4(locator_server_1, 127, 0, 0, 1);
-    uint16_t server_1_port = static_cast<uint16_t>(stoi(W_UNICAST_PORT_RANDOM_NUMBER_STR));
-    IPLocator::setPhysicalPort(locator_server_1, server_1_port);
-    locator_server_1.kind = LOCATOR_KIND_TCPv4;
-    // Leave logical port as 0 to use TCP DS default logical port
-    server_1_qos.builtin.metatrafficUnicastLocatorList.push_back(locator_server_1);
     // Add TCP transport
     auto descriptor_1 = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
     descriptor_1->add_listener_port(server_1_port);
+
     // Init server
-    ASSERT_TRUE(server_1.wire_protocol(server_1_qos)
+    ASSERT_TRUE(server_1.fill_server_qos(server_1_qos, server_1_prefix, locator_server_1, server_1_port, LOCATOR_KIND_TCPv4)
                     .disable_builtin_transport()
                     .add_user_transport_to_pparams(descriptor_1)
                     .init_participant());
@@ -243,25 +236,16 @@ TEST(DDSDiscovery, AddDiscoveryServerToListTCP)
     PubSubParticipant<HelloWorldPubSubType> server_2(0u, 0u, 0u, 0u);
     // Set participant as server
     WireProtocolConfigQos server_2_qos;
-    server_2_qos.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::SERVER;
-    // Generate random GUID prefix
     GuidPrefix_t server_2_prefix = server_1_prefix;
     server_2_prefix.value[11]++;
-    server_2_qos.prefix = server_2_prefix;
-    // Generate server's listening locator
     Locator_t locator_server_2;
-    IPLocator::setIPv4(locator_server_2, 127, 0, 0, 1);
     uint16_t server_2_port = server_1_port + 1;
-    IPLocator::setPhysicalPort(locator_server_2, server_2_port);
-    locator_server_2.kind = LOCATOR_KIND_TCPv4;
-    // Leave logical port as 0 to use TCP DS default logical port
-    server_2_qos.builtin.metatrafficUnicastLocatorList.push_back(locator_server_2);
     // Add TCP transport
     auto descriptor_2 = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
     descriptor_2->add_listener_port(server_2_port);
 
     // Init server
-    ASSERT_TRUE(server_2.wire_protocol(server_2_qos)
+    ASSERT_TRUE(server_2.fill_server_qos(server_2_qos, server_2_prefix, locator_server_2, server_2_port, LOCATOR_KIND_TCPv4)
                     .disable_builtin_transport()
                     .add_user_transport_to_pparams(descriptor_2)
                     .init_participant());
@@ -337,13 +321,12 @@ TEST(DDSDiscovery, ServersConnectionTCP)
     using namespace eprosima::fastrtps::rtps;
 
     // TCP default DS port
-    std::string W_UNICAST_PORT_RANDOM_NUMBER_STR = "42100";
+    constexpr uint16_t W_UNICAST_PORT_RANDOM_NUMBER_STR = 41100;
 
     /* Create first server */
     PubSubParticipant<HelloWorldPubSubType> server_1(0u, 0u, 0u, 0u);
     // Set participant as server
     WireProtocolConfigQos server_1_qos;
-    server_1_qos.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::SERVER;
     // Generate random GUID prefix
     srand(static_cast<unsigned>(time(nullptr)));
     GuidPrefix_t server_1_prefix;
@@ -351,20 +334,13 @@ TEST(DDSDiscovery, ServersConnectionTCP)
     {
         server_1_prefix.value[i] = eprosima::fastrtps::rtps::octet(rand() % 254);
     }
-    server_1_qos.prefix = server_1_prefix;
-    // Generate server's listening locator
     Locator_t locator_server_1;
-    IPLocator::setIPv4(locator_server_1, 127, 0, 0, 1);
-    uint16_t server_1_port = static_cast<uint16_t>(stoi(W_UNICAST_PORT_RANDOM_NUMBER_STR));
-    IPLocator::setPhysicalPort(locator_server_1, server_1_port);
-    locator_server_1.kind = LOCATOR_KIND_TCPv4;
-    // Leave logical port as 0 to use TCP DS default logical port
-    server_1_qos.builtin.metatrafficUnicastLocatorList.push_back(locator_server_1);
+    uint16_t server_1_port = W_UNICAST_PORT_RANDOM_NUMBER_STR;
     // Add TCP transport
     auto descriptor_1 = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
     descriptor_1->add_listener_port(server_1_port);
     // Init server
-    ASSERT_TRUE(server_1.wire_protocol(server_1_qos)
+    ASSERT_TRUE(server_1.fill_server_qos(server_1_qos, server_1_prefix, locator_server_1, server_1_port, LOCATOR_KIND_TCPv4)
                     .disable_builtin_transport()
                     .add_user_transport_to_pparams(descriptor_1)
                     .init_participant());
@@ -373,22 +349,14 @@ TEST(DDSDiscovery, ServersConnectionTCP)
     PubSubParticipant<HelloWorldPubSubType> server_2(0u, 0u, 0u, 0u);
     // Set participant as server
     WireProtocolConfigQos server_2_qos;
-    server_2_qos.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::SERVER;
-    // Generate random GUID prefix
     GuidPrefix_t server_2_prefix = server_1_prefix;
     server_2_prefix.value[11]++;
-    server_2_qos.prefix = server_2_prefix;
-    // Generate server's listening locator
     Locator_t locator_server_2;
-    IPLocator::setIPv4(locator_server_2, 127, 0, 0, 1);
     uint16_t server_2_port = server_1_port + 1;
-    IPLocator::setPhysicalPort(locator_server_2, server_2_port);
-    locator_server_2.kind = LOCATOR_KIND_TCPv4;
-    // Leave logical port as 0 to use TCP DS default logical port
-    server_2_qos.builtin.metatrafficUnicastLocatorList.push_back(locator_server_2);
     // Add TCP transport
     auto descriptor_2 = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
     descriptor_2->add_listener_port(server_2_port);
+
     // Connect to first server
     RemoteServerAttributes server_1_att;
     server_1_att.guidPrefix = server_1_prefix;
@@ -396,7 +364,7 @@ TEST(DDSDiscovery, ServersConnectionTCP)
     server_2_qos.builtin.discovery_config.m_DiscoveryServers.push_back(server_1_att);
 
     // Init server
-    ASSERT_TRUE(server_2.wire_protocol(server_2_qos)
+    ASSERT_TRUE(server_2.fill_server_qos(server_2_qos, server_2_prefix, locator_server_2, server_2_port, LOCATOR_KIND_TCPv4)
                     .disable_builtin_transport()
                     .add_user_transport_to_pparams(descriptor_2)
                     .init_participant());
@@ -405,19 +373,10 @@ TEST(DDSDiscovery, ServersConnectionTCP)
     PubSubParticipant<HelloWorldPubSubType> server_3(0u, 0u, 0u, 0u);
     // Set participant as server
     WireProtocolConfigQos server_3_qos;
-    server_3_qos.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::SERVER;
-    // Generate random GUID prefix
     GuidPrefix_t server_3_prefix = server_1_prefix;
     server_3_prefix.value[11]--;
-    server_3_qos.prefix = server_3_prefix;
-    // Generate server's listening locator
     Locator_t locator_server_3;
-    IPLocator::setIPv4(locator_server_3, 127, 0, 0, 1);
     uint16_t server_3_port = server_1_port - 1;
-    IPLocator::setPhysicalPort(locator_server_3, server_3_port);
-    locator_server_3.kind = LOCATOR_KIND_TCPv4;
-    // Leave logical port as 0 to use TCP DS default logical port
-    server_3_qos.builtin.metatrafficUnicastLocatorList.push_back(locator_server_3);
     // Add TCP transport
     auto descriptor_3 = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
     descriptor_3->add_listener_port(server_3_port);
@@ -425,7 +384,7 @@ TEST(DDSDiscovery, ServersConnectionTCP)
     server_3_qos.builtin.discovery_config.m_DiscoveryServers.push_back(server_1_att);
 
     // Init server
-    ASSERT_TRUE(server_3.wire_protocol(server_3_qos)
+    ASSERT_TRUE(server_3.fill_server_qos(server_3_qos, server_3_prefix, locator_server_3, server_3_port, LOCATOR_KIND_TCPv4)
                     .disable_builtin_transport()
                     .add_user_transport_to_pparams(descriptor_3)
                     .init_participant());
