@@ -45,7 +45,12 @@ class EDPUtils
 {
 public:
 
-    using WriterHistoryPair = std::pair<StatefulWriter*, WriterHistory*>;
+    struct WriterHistoryPair
+    {
+        StatefulWriter* first = nullptr;
+        WriterHistory* second = nullptr;
+        std::shared_ptr<ITopicPayloadPool> payload_pool {};
+    };
     using ReaderHistoryPair = std::pair<StatefulReader*, ReaderHistory*>;
 
     static std::shared_ptr<ITopicPayloadPool> create_payload_pool(
@@ -111,15 +116,14 @@ public:
             const HistoryAttributes& history_att,
             WriterAttributes& watt,
             WriterListener* listener,
-            std::shared_ptr<ITopicPayloadPool>& payload_pool,
             WriterHistoryPair& edp_writer)
     {
         RTPSWriter* waux = nullptr;
 
-        payload_pool = create_payload_pool(topic_name, history_att, false);
+        edp_writer.payload_pool = create_payload_pool(topic_name, history_att, false);
         edp_writer.second = new WriterHistory(history_att);
         bool created =
-                participant->createWriter(&waux, watt, payload_pool, edp_writer.second, listener, entity_id,
+                participant->createWriter(&waux, watt, edp_writer.payload_pool, edp_writer.second, listener, entity_id,
                         true);
 
         if (created)
@@ -130,10 +134,29 @@ public:
         {
             delete(edp_writer.second);
             edp_writer.second = nullptr;
-            release_payload_pool(payload_pool, history_att, false);
+            release_payload_pool(edp_writer.payload_pool, history_att, false);
         }
 
         return created;
+    }
+
+    static CacheChange_t* create_change(
+            const WriterHistoryPair& writer,
+            ChangeKind_t change_kind,
+            InstanceHandle_t handle,
+            uint32_t cdr_size)
+    {
+        CacheChange_t* change = writer.first->new_change(change_kind, handle);
+        if (nullptr != change)
+        {
+            if (!writer.payload_pool->get_payload(cdr_size, change->serializedPayload))
+            {
+                writer.first->release_change(change);
+                change = nullptr;
+            }
+        }
+
+        return change;
     }
 
 };

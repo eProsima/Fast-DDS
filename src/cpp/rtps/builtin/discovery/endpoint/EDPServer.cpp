@@ -237,12 +237,8 @@ bool EDPServer::removeLocalReader(
     {
         // We need to create a DATA(Ur) here to added it to the discovery database, so that the disposal can be
         // propagated to remote clients
-        CacheChange_t* change = writer->first->new_change(
-            [this]() -> uint32_t
-            {
-                return mp_PDP->builtin_attributes().readerPayloadSize;
-            },
-            NOT_ALIVE_DISPOSED_UNREGISTERED, guid);
+        CacheChange_t* change = EDPUtils::create_change(*writer, NOT_ALIVE_DISPOSED_UNREGISTERED, guid,
+                        mp_PDP->builtin_attributes().readerPayloadSize);
 
         // Populate the DATA(Ur)
         if (change != nullptr)
@@ -297,12 +293,8 @@ bool EDPServer::removeLocalWriter(
     {
         // We need to create a DATA(Uw) here to added it to the discovery database, so that the disposal can be
         // propagated to remote clients
-        CacheChange_t* change = writer->first->new_change(
-            [this]() -> uint32_t
-            {
-                return mp_PDP->builtin_attributes().writerPayloadSize;
-            },
-            NOT_ALIVE_DISPOSED_UNREGISTERED, guid);
+        CacheChange_t* change = EDPUtils::create_change(*writer, NOT_ALIVE_DISPOSED_UNREGISTERED, guid,
+                        mp_PDP->builtin_attributes().writerPayloadSize);
 
         // Populate the DATA(Uw)
         if (change != nullptr)

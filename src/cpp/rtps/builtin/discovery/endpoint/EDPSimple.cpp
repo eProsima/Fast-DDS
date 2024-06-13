@@ -78,13 +78,12 @@ static void delete_reader(
 
 static void delete_writer(
         RTPSParticipantImpl* participant,
-        std::pair<StatefulWriter*, WriterHistory*>& writer_pair,
-        std::shared_ptr<ITopicPayloadPool>& pool)
+        EDPUtils::WriterHistoryPair& writer_pair)
 {
     if (nullptr != writer_pair.first)
     {
         participant->deleteUserEndpoint(writer_pair.first->getGuid());
-        EDPUtils::release_payload_pool(pool, writer_pair.second->m_att, false);
+        EDPUtils::release_payload_pool(writer_pair.payload_pool, writer_pair.second->m_att, false);
         delete(writer_pair.second);
     }
 }
@@ -104,15 +103,15 @@ EDPSimple::~EDPSimple()
     delete_reader(mp_RTPSParticipant, publications_secure_reader_, sec_pub_reader_payload_pool_);
     delete_reader(mp_RTPSParticipant, subscriptions_secure_reader_, sec_sub_reader_payload_pool_);
 
-    delete_writer(mp_RTPSParticipant, publications_secure_writer_, sec_pub_writer_payload_pool_);
-    delete_writer(mp_RTPSParticipant, subscriptions_secure_writer_, sec_sub_writer_payload_pool_);
+    delete_writer(mp_RTPSParticipant, publications_secure_writer_);
+    delete_writer(mp_RTPSParticipant, subscriptions_secure_writer_);
 #endif // if HAVE_SECURITY
 
     delete_reader(mp_RTPSParticipant, publications_reader_, pub_reader_payload_pool_);
     delete_reader(mp_RTPSParticipant, subscriptions_reader_, sub_reader_payload_pool_);
 
-    delete_writer(mp_RTPSParticipant, publications_writer_, pub_writer_payload_pool_);
-    delete_writer(mp_RTPSParticipant, subscriptions_writer_, sub_writer_payload_pool_);
+    delete_writer(mp_RTPSParticipant, publications_writer_);
+    delete_writer(mp_RTPSParticipant, subscriptions_writer_);
 
     if (nullptr != publications_listener_)
     {
@@ -305,7 +304,7 @@ void EDPSimple::processPersistentData(
 EDPSimple::t_p_StatefulWriter EDPSimple::get_builtin_writer_history_pair_by_entity(
         const EntityId_t& entity_id)
 {
-    t_p_StatefulWriter ret{nullptr, nullptr};
+    t_p_StatefulWriter ret{};
 
     if (entity_id == c_EntityId_SEDPPubWriter)
     {
@@ -421,7 +420,7 @@ bool EDPSimple::createSEDPEndpoints()
     if (m_discovery.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader)
     {
         if (!EDPUtils::create_edp_writer(mp_RTPSParticipant, "DCPSPublications", c_EntityId_SEDPPubWriter,
-                writer_history_att, watt, publications_listener_, pub_writer_payload_pool_, publications_writer_))
+                writer_history_att, watt, publications_listener_, publications_writer_))
         {
             return false;
         }
@@ -448,7 +447,7 @@ bool EDPSimple::createSEDPEndpoints()
         EPROSIMA_LOG_INFO(RTPS_EDP, "SEDP Publication Reader created");
 
         if (!EDPUtils::create_edp_writer(mp_RTPSParticipant, "DCPSSubscriptions", c_EntityId_SEDPSubWriter,
-                writer_history_att, watt, subscriptions_listener_, sub_writer_payload_pool_, subscriptions_writer_))
+                writer_history_att, watt, subscriptions_listener_, subscriptions_writer_))
         {
             return false;
         }
@@ -478,7 +477,7 @@ bool EDPSimple::create_sedp_secure_endpoints()
     {
         if (!EDPUtils::create_edp_writer(mp_RTPSParticipant, "DCPSPublicationsSecure",
                 sedp_builtin_publications_secure_writer, writer_history_att, watt, publications_listener_,
-                sec_pub_writer_payload_pool_, publications_secure_writer_))
+                publications_secure_writer_))
         {
             return false;
         }
@@ -508,7 +507,7 @@ bool EDPSimple::create_sedp_secure_endpoints()
 
         if (!EDPUtils::create_edp_writer(mp_RTPSParticipant, "DCPSSubscriptionsSecure",
                 sedp_builtin_subscriptions_secure_writer, writer_history_att, watt, subscriptions_listener_,
-                sec_sub_writer_payload_pool_, subscriptions_secure_writer_))
+                subscriptions_secure_writer_))
         {
             return false;
         }
@@ -602,13 +601,8 @@ bool EDPSimple::serialize_proxy_data(
     if (writer.first != nullptr)
     {
         uint32_t cdr_size = data.get_serialized_size(true);
-        CacheChange_t* change = writer.first->new_change(
-            [cdr_size]() -> uint32_t
-            {
-                return cdr_size;
-            },
-            ALIVE, data.key());
-        if (change != nullptr)
+        CacheChange_t* change = EDPUtils::create_change(writer, ALIVE, data.key(), cdr_size);
+        if (nullptr != change)
         {
             CDRMessage_t aux_msg(change->serializedPayload);
 
@@ -661,12 +655,8 @@ bool EDPSimple::removeLocalWriter(
     {
         InstanceHandle_t iH;
         iH = W->getGuid();
-        CacheChange_t* change = writer->first->new_change(
-            [this]() -> uint32_t
-            {
-                return mp_PDP->builtin_attributes().writerPayloadSize;
-            },
-            NOT_ALIVE_DISPOSED_UNREGISTERED, iH);
+        CacheChange_t* change = EDPUtils::create_change(*writer, NOT_ALIVE_DISPOSED_UNREGISTERED, iH,
+                        mp_PDP->builtin_attributes().writerPayloadSize);
         if (change != nullptr)
         {
             {
@@ -715,12 +705,8 @@ bool EDPSimple::removeLocalReader(
     {
         InstanceHandle_t iH;
         iH = (R->getGuid());
-        CacheChange_t* change = writer->first->new_change(
-            [this]() -> uint32_t
-            {
-                return mp_PDP->builtin_attributes().writerPayloadSize;
-            },
-            NOT_ALIVE_DISPOSED_UNREGISTERED, iH);
+        CacheChange_t* change = EDPUtils::create_change(*writer, NOT_ALIVE_DISPOSED_UNREGISTERED, iH,
+                        mp_PDP->builtin_attributes().writerPayloadSize);
         if (change != nullptr)
         {
             {
