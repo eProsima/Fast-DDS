@@ -6,8 +6,8 @@ delivery_test_cases = [
     ('--mechanism shm --ignore-local-endpoints', '--mechanism shm', 2),
     ('--mechanism udp', '--mechanism udp', 3),
     ('--mechanism udp --ignore-local-endpoints', '--mechanism udp', 2),
-    ('--mechanism tcp', '--mechanism tcp', 3),
-    ('--mechanism tcp --ignore-local-endpoints', '--mechanism tcp', 2),
+    ('--mechanism tcp -s 250', '--mechanism tcp -s 250', 3),    # tcp takes longer to match, so expect much more samples
+    ('--mechanism tcp --ignore-local-endpoints -s 250', '--mechanism tcp -s 250', 2),
     ('--mechanism data-sharing', '--mechanism data-sharing', 3),
     ('--mechanism data-sharing --ignore-local-endpoints', '--mechanism data-sharing', 2),
     ('--mechanism intra-process', '--unknown-argument', 1)      # force subscribers to fail
@@ -24,7 +24,7 @@ def test_delivery_mechanisms(pub_args, sub_args, repetitions):
         out = subprocess.check_output(command_prerequisites + '@DOCKER_EXECUTABLE@ compose -f delivery_mechanisms.compose.yml up',
             stderr=subprocess.STDOUT,
             shell=True,
-            timeout=20
+            timeout=30
         ).decode().split('\n')
 
         sent = 0
@@ -50,6 +50,8 @@ def test_delivery_mechanisms(pub_args, sub_args, repetitions):
     except subprocess.TimeoutExpired:
         print('TIMEOUT')
         print(out)
+
+    assert(ret)
 
 delivery_timeout_test_cases = [
     ('--mechanism shm --ignore-local-endpoints', '--mechanism udp'),
