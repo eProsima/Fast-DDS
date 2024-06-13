@@ -92,14 +92,14 @@ SubscriberApp::SubscriberApp(
         }
         case CLIParser::DeliveryMechanismKind::TCP:
         {
-            std::shared_ptr<TCPv4TransportDescriptor> tcp_transport_ = std::make_shared<TCPv4TransportDescriptor>();
+            Locator tcp_initial_peers_locator_;
+            tcp_initial_peers_locator_.kind = LOCATOR_KIND_TCPv4;
+            tcp_initial_peers_locator_.port = 5100;
+            eprosima::fastrtps::rtps::IPLocator::setIPv4(tcp_initial_peers_locator_, "127.0.0.1");
+            pqos.wire_protocol().builtin.initialPeersList.push_back(tcp_initial_peers_locator_);
             pqos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastrtps::c_TimeInfinite;
             pqos.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod = Duration_t(5, 0);
-            tcp_transport_->sendBufferSize = 0;
-            tcp_transport_->receiveBufferSize = 0;
-            tcp_transport_->set_WAN_address("127.0.0.1");
-            tcp_transport_->add_listener_port(5100);
-            pqos.transport().user_transports.push_back(tcp_transport_);
+            pqos.transport().user_transports.push_back(std::make_shared<TCPv4TransportDescriptor>());
             break;
         }
         case CLIParser::DeliveryMechanismKind::UDP:

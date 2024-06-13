@@ -116,6 +116,11 @@ PubSubApp::PubSubApp(
             tcp_transport_->set_WAN_address("127.0.0.1");
             tcp_transport_->add_listener_port(5100);
             pqos.transport().user_transports.push_back(tcp_transport_);
+            Locator tcp_initial_peers_locator_;
+            tcp_initial_peers_locator_.kind = LOCATOR_KIND_TCPv4;
+            tcp_initial_peers_locator_.port = 5100;
+            eprosima::fastrtps::rtps::IPLocator::setIPv4(tcp_initial_peers_locator_, "127.0.0.1");
+            pqos.wire_protocol().builtin.initialPeersList.push_back(tcp_initial_peers_locator_);
             break;
         }
         case CLIParser::DeliveryMechanismKind::UDP:
