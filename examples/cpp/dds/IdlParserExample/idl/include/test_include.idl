@@ -1,0 +1,9 @@
+#pragma once
+
+module include
+{
+    struct TestInclude
+    {
+        string my_string;
+    };
+};
