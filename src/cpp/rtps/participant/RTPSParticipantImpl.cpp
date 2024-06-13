@@ -279,15 +279,78 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         return;
     }
 
+    mp_userParticipant->mp_impl = this;
+
+    setup_guids(persistence_guid);
+
+    if (!setup_transports())
+    {
+        return;
+    }
+
+    setup_timed_events();
+
+#if HAVE_SECURITY
+    // Start security
+    if (!m_security_manager.init(security_attributes_, m_att.properties))
+    {
+        // Participant will be deleted, no need to allocate buffers or create builtin endpoints
+        return;
+    }
+#endif // if HAVE_SECURITY
+
+    setup_meta_traffic();
+    setup_user_traffic();
+    setup_initial_peers();
+    setup_output_traffic();
+
+#if HAVE_SECURITY
+    if (m_security_manager.is_security_active())
+    {
+        if (!m_security_manager.create_entities())
+        {
+            return;
+        }
+    }
+#endif // if HAVE_SECURITY
+
+    // Initialize builtin protocols
+    if (!setup_builtin_protocols())
+    {
+        return;
+    }
+
+    if (c_GuidPrefix_Unknown != persistence_guid)
+    {
+        EPROSIMA_LOG_INFO(RTPS_PARTICIPANT,
+                "RTPSParticipant \"" << m_att.getName() << "\" with guidPrefix: " << m_guid.guidPrefix
+                                     << " and persistence guid: " << persistence_guid);
+    }
+    else
+    {
+        EPROSIMA_LOG_INFO(RTPS_PARTICIPANT,
+                "RTPSParticipant \"" << m_att.getName() << "\" with guidPrefix: " << m_guid.guidPrefix);
+    }
+
+    initialized_ = true;
+}
+
+RTPSParticipantImpl::RTPSParticipantImpl(
+        uint32_t domain_id,
+        const RTPSParticipantAttributes& PParam,
+        const GuidPrefix_t& guidP,
+        RTPSParticipant* par,
+        RTPSParticipantListener* plisten)
+    : RTPSParticipantImpl(domain_id, PParam, guidP, c_GuidPrefix_Unknown, par, plisten)
+{
+}
+
+void RTPSParticipantImpl::setup_guids(
+        const GuidPrefix_t& persistence_guid)
+{
     if (c_GuidPrefix_Unknown != persistence_guid)
     {
         m_persistence_guid = GUID_t(persistence_guid, c_EntityId_RTPSParticipant);
-    }
-
-    // Setup builtin transports
-    if (m_att.useBuiltinTransports)
-    {
-        set_builtin_transports_from_env_var(m_att);
     }
 
     // BACKUP servers guid is its persistence one
@@ -300,6 +363,15 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     std::stringstream guid_sstr;
     guid_sstr << m_guid;
     guid_str_ = guid_sstr.str();
+}
+
+bool RTPSParticipantImpl::setup_transports()
+{
+    // Setup builtin transports
+    if (m_att.useBuiltinTransports)
+    {
+        set_builtin_transports_from_env_var(m_att);
+    }
 
     // Client-server discovery protocol requires that every TCP transport has a listening port
     switch (m_att.builtin.discovery_config.discoveryProtocol)
@@ -317,7 +389,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
                         EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT,
                                 "Participant " << m_att.getName() << " with GUID " << m_guid <<
                                 " tries to create a TCP server for discovery server without providing a proper listening port.");
-                        break;
+                        return false;
                     }
                     if (!m_att.builtin.metatrafficUnicastLocatorList.empty())
                     {
@@ -442,14 +514,9 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         }
     }
 
-    mp_userParticipant->mp_impl = this;
-    uint32_t id_for_thread = static_cast<uint32_t>(m_att.participantID);
-    const fastdds::rtps::ThreadSettings& thr_config = m_att.timed_events_thread;
-    mp_event_thr.init_thread(thr_config, "dds.ev.%u", id_for_thread);
-
     if (!networkFactoryHasRegisteredTransports())
     {
-        return;
+        return false;
     }
 
     // Check netmask filtering preconditions
@@ -466,71 +533,21 @@ RTPSParticipantImpl::RTPSParticipantImpl(
             m_att.default_external_unicast_locators, error_msg))
     {
         EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, error_msg);
-        return;
+        return false;
     }
-
-#if HAVE_SECURITY
-    // Start security
-    if (!m_security_manager.init(
-                security_attributes_,
-                m_att.properties))
-    {
-        // Participant will be deleted, no need to allocate buffers or create builtin endpoints
-        return;
-    }
-#endif // if HAVE_SECURITY
-
-    setup_meta_traffic();
-    setup_user_traffic();
-    setup_initial_peers();
-    setup_output_traffic();
-
-#if HAVE_SECURITY
-    if (m_security_manager.is_security_active())
-    {
-        if (!m_security_manager.create_entities())
-        {
-            return;
-        }
-    }
-#endif // if HAVE_SECURITY
 
     // Copy NetworkFactory network_configuration to participant attributes prior to proxy creation
     // NOTE: all transports already registered before
     m_att.builtin.network_configuration = m_network_Factory.network_configuration();
 
-    mp_builtinProtocols = new BuiltinProtocols();
-
-    // Initialize builtin protocols
-    if (!mp_builtinProtocols->initBuiltinProtocols(this, m_att.builtin))
-    {
-        EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "The builtin protocols were not correctly initialized");
-        return;
-    }
-
-    if (c_GuidPrefix_Unknown != persistence_guid)
-    {
-        EPROSIMA_LOG_INFO(RTPS_PARTICIPANT,
-                "RTPSParticipant \"" << m_att.getName() << "\" with guidPrefix: " << m_guid.guidPrefix
-                                     << " and persistence guid: " << persistence_guid);
-    }
-    else
-    {
-        EPROSIMA_LOG_INFO(RTPS_PARTICIPANT,
-                "RTPSParticipant \"" << m_att.getName() << "\" with guidPrefix: " << m_guid.guidPrefix);
-    }
-
-    initialized_ = true;
+    return true;
 }
 
-RTPSParticipantImpl::RTPSParticipantImpl(
-        uint32_t domain_id,
-        const RTPSParticipantAttributes& PParam,
-        const GuidPrefix_t& guidP,
-        RTPSParticipant* par,
-        RTPSParticipantListener* plisten)
-    : RTPSParticipantImpl(domain_id, PParam, guidP, c_GuidPrefix_Unknown, par, plisten)
+void RTPSParticipantImpl::setup_timed_events()
 {
+    uint32_t id_for_thread = static_cast<uint32_t>(m_att.participantID);
+    const fastdds::rtps::ThreadSettings& thr_config = m_att.timed_events_thread;
+    mp_event_thr.init_thread(thr_config, "dds.ev.%u", id_for_thread);
 }
 
 void RTPSParticipantImpl::setup_meta_traffic()
@@ -709,6 +726,18 @@ void RTPSParticipantImpl::setup_output_traffic()
     {
         flow_controller_factory_.register_flow_controller(*flow_controller_desc.get());
     }
+}
+
+bool RTPSParticipantImpl::setup_builtin_protocols()
+{
+    mp_builtinProtocols = new BuiltinProtocols();
+    if (!mp_builtinProtocols->initBuiltinProtocols(this, m_att.builtin))
+    {
+        EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "The builtin protocols were not correctly initialized");
+        return false;
+    }
+
+    return true;
 }
 
 void RTPSParticipantImpl::enable()
