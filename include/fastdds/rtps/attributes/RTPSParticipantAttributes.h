@@ -144,7 +144,7 @@ enum ParticipantFilteringFlags : uint32_t
 class PDP;
 class BuiltinProtocols;
 
-typedef struct _PDPFactory
+typedef struct PDPFactory
 {
     // Pointer to the PDP creator
     PDP* (*CreatePDPInstance)(BuiltinProtocols*);
@@ -153,7 +153,7 @@ typedef struct _PDPFactory
             PDP*);
 
     bool operator ==(
-            const struct _PDPFactory& e) const
+            const struct PDPFactory& e) const
     {
         return (CreatePDPInstance == e.CreatePDPInstance)
                && (ReleasePDPInstance == e.ReleasePDPInstance);
