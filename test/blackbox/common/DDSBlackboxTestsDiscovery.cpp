@@ -399,7 +399,7 @@ TEST(DDSDiscovery, ServersConnectionTCP)
     server_2.wait_discovery(std::chrono::seconds::zero(), 1, true); // Knows server1
     server_3.wait_discovery(std::chrono::seconds::zero(), 1, true); // Knows server1
 
-    /* Add server_2 to server_1 */
+    /* Add server_3 to server_2 */
     RemoteServerAttributes server_3_att;
     server_3_att.guidPrefix = server_3_prefix;
     server_3_att.metatrafficUnicastLocatorList.push_back(Locator_t(locator_server_3));

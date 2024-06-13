@@ -888,7 +888,7 @@ public:
             eprosima::fastdds::dds::WireProtocolConfigQos& qos,
             eprosima::fastrtps::rtps::GuidPrefix_t& guid,
             eprosima::fastrtps::rtps::Locator_t& locator_server,
-            uint32_t port,
+            uint16_t port,
             uint32_t kind)
     {
         qos.builtin.discovery_config.discoveryProtocol = eprosima::fastrtps::rtps::DiscoveryProtocol_t::SERVER;
