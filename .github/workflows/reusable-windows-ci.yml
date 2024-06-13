@@ -140,12 +140,30 @@ jobs:
           destination_workspace: src
           skip_existing: 'true'
 
+      - name: Prepare build meta file
+        run: |
+            $build_meta_file = '${{ github.workspace }}\src\fastdds\.github\workflows\config\fastdds_build.meta'
+            $test_meta_file = '${{ github.workspace }}\src\fastdds\.github\workflows\config\fastdds_test.meta'
+            $build_test_meta_file = '${{ github.workspace }}\src\fastdds\.github\workflows\config\fastdds_build_test.meta'
+
+            # Read the content of the build meta file
+            $build_meta_content = Get-Content -Path $build_meta_file
+
+            # Read the content of the test meta file, starting from line 4
+            $test_meta_content = Get-Content -Path $test_meta_file | Select-Object -Skip 3
+
+            # Combine the content of the build meta file and the test meta file
+            $combined_content = $build_meta_content + $test_meta_content
+
+            # Write the combined content to the build test meta file
+            $combined_content | Out-File -FilePath $build_test_meta_file -Encoding UTF8
+
       - name: Build
         id: build
         continue-on-error: false
         uses: eProsima/eProsima-CI/windows/colcon_build@v0
         with:
-          colcon_meta_file: ${{ github.workspace }}\src\fastdds\.github\workflows\config\fastdds_build.meta ${{ github.workspace }}\src\fastdds\.github\workflows\config\fastdds_test.meta
+          colcon_meta_file: ${{ github.workspace }}\src\fastdds\.github\workflows\config\fastdds_build_test.meta
           colcon_build_args: ${{ inputs.colcon-args }}
           # The following Fast DDS CMake options need to be specified here instead of in the meta files
           # because they vary from platform to platform
