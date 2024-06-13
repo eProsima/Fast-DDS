@@ -1,0 +1,6 @@
+#include <test_include.idl>
+
+struct Test03
+{
+    include::TestInclude my_include;
+};
