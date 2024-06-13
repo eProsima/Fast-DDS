@@ -24,7 +24,7 @@ def test_delivery_mechanisms(pub_args, sub_args, repetitions):
         out = subprocess.check_output(command_prerequisites + '@DOCKER_EXECUTABLE@ compose -f delivery_mechanisms.compose.yml up',
             stderr=subprocess.STDOUT,
             shell=True,
-            timeout=60 # TCP requires higher timeout
+            timeout=20
         ).decode().split('\n')
 
         sent = 0
