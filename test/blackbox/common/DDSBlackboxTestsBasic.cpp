@@ -797,9 +797,15 @@ TEST(DDSBasic, endpoint_custom_payload_pools)
 
     std::this_thread::sleep_for(std::chrono::seconds(2));
 
-    // Two consecutive calls to get_payload are expected
+    // There are 4 calls to get_payload, two for the reader and two for the writer:
+    // 1. Reader:
+    //      a. The first time the payload allocated in stack is processed (no payload_owner)
+    //      b. Payload used to add the change in reception
     ASSERT_EQ(reader_payload_pool->requested_payload_count, 2u);
-    ASSERT_EQ(writer_payload_pool->requested_payload_count, 1u);
+    // 2. Writer:
+    //      a. Payload requested to the pool when creating the change
+    //      b. Extra call using gather-send to avoid reusing the payload that contains the data before sending it
+    ASSERT_EQ(writer_payload_pool->requested_payload_count, 2u);
 
     participant->delete_contained_entities();
 }
