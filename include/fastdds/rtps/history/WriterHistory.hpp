@@ -20,7 +20,10 @@
 #ifndef FASTDDS_RTPS_HISTORY__WRITERHISTORY_HPP
 #define FASTDDS_RTPS_HISTORY__WRITERHISTORY_HPP
 
+#include <memory>
+
 #include <fastdds/rtps/history/History.hpp>
+#include <fastdds/rtps/history/IChangePool.hpp>
 #include <fastdds/dds/log/Log.hpp>
 
 namespace eprosima {
@@ -51,7 +54,12 @@ public:
      * Constructor of the WriterHistory.
      */
     FASTDDS_EXPORTED_API WriterHistory(
-            const HistoryAttributes&  att);
+            const HistoryAttributes& att);
+
+    FASTDDS_EXPORTED_API WriterHistory(
+            const HistoryAttributes& att,
+            const std::shared_ptr<IChangePool>& change_pool);
+
     FASTDDS_EXPORTED_API virtual ~WriterHistory() override;
 
     /**
@@ -207,9 +215,9 @@ protected:
     }
 
     //!Last CacheChange Sequence Number added to the History.
-    SequenceNumber_t m_lastCacheChangeSeqNum;
+    SequenceNumber_t m_lastCacheChangeSeqNum {};
     //!Pointer to the associated RTPSWriter;
-    RTPSWriter* mp_writer;
+    RTPSWriter* mp_writer = nullptr;
 
     uint32_t high_mark_for_frag_ = 0;
 
@@ -244,6 +252,8 @@ private:
 
     void set_fragments(
             CacheChange_t* change);
+
+    std::shared_ptr<IChangePool> change_pool_;
 };
 
 } // namespace rtps

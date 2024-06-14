@@ -24,6 +24,9 @@
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
 #include <fastdds/rtps/common/WriteParams.hpp>
 #include <fastdds/core/policy//ParameterSerializer.hpp>
+
+#include <rtps/history/CacheChangePool.h>
+#include <rtps/history/PoolConfig.h>
 #include <rtps/messages/RTPSMessageGroup.hpp>
 
 namespace eprosima {
@@ -35,9 +38,16 @@ WriteParams WriteParams::WRITE_PARAM_DEFAULT;
 WriterHistory::WriterHistory(
         const HistoryAttributes& att)
     : History(att)
-    , mp_writer(nullptr)
+    , change_pool_(new CacheChangePool(PoolConfig::from_history_attributes(att)))
 {
+}
 
+WriterHistory::WriterHistory(
+        const HistoryAttributes& att,
+        const std::shared_ptr<IChangePool>& change_pool)
+    : History(att)
+    , change_pool_(change_pool)
+{
 }
 
 WriterHistory::~WriterHistory()
