@@ -136,10 +136,10 @@ jobs:
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') }}
         uses: eProsima/eProsima-CI/multiplatform/colcon_test@v0
         with:
+          colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_test.meta
           colcon_test_args: ${{ inputs.colcon-args }}
           colcon_test_args_default: --event-handlers=console_direct+
           ctest_args: ${{ inputs.ctest-args }}
-          ctest_args_default: --repeat until-pass:3 --timeout 300 --label-exclude "xfail"
           packages_names: fastdds
           workspace: ${{ github.workspace }}
           test_report_artifact: ${{ format('test_report_{0}_{1}_{2}', inputs.label, github.job, join(matrix.*, '_')) }}
