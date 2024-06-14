@@ -30,7 +30,7 @@ namespace fastdds {
 
 /**
  * Class TopicAttributes, used by the user to define the attributes of the topic associated with a Publisher or Subscriber.
- * @ingroup FASTRTPS_ATTRIBUTES_MODULE
+ * @ingroup FASTDDS_ATTRIBUTES_MODULE
  */
 class TopicAttributes
 {

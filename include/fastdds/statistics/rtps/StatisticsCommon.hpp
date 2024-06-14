@@ -37,9 +37,7 @@ namespace rtps {
 class RTPSMessageGroup;
 
 } // rtps
-} // fastrtps
 
-namespace fastdds {
 namespace statistics {
 
 #ifdef FASTDDS_STATISTICS

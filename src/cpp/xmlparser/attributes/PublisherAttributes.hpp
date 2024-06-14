@@ -34,7 +34,7 @@ namespace fastdds {
 
 /**
  * Class PublisherAttributes, used by the user to define the attributes of a Publisher.
- * @ingroup FASTRTPS_ATTRIBUTES_MODULE
+ * @ingroup FASTDDS_ATTRIBUTES_MODULE
  */
 class PublisherAttributes
 {

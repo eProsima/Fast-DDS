@@ -33,7 +33,7 @@ namespace fastdds {
 
 /**
  * Class SubscriberAttributes, used by the user to define the attributes of a Subscriber.
- * @ingroup FASTRTPS_ATTRIBUTES_MODULE
+ * @ingroup FASTDDS_ATTRIBUTES_MODULE
  */
 class SubscriberAttributes
 {

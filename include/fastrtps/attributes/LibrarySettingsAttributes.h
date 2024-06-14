@@ -31,8 +31,8 @@ enum IntraprocessDeliveryType
 };
 
 /**
- * Class LibraySettingsAttributes, used by the user to define the FastRTPS library behaviour
- * @ingroup FASTRTPS_ATTRIBUTES_MODULE
+ * Class LibraySettingsAttributes, used by the user to define the Fast DDS library behaviour
+ * @ingroup FASTDDS_ATTRIBUTES_MODULE
  */
 class LibrarySettingsAttributes
 {

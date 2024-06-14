@@ -48,7 +48,6 @@ namespace dds {
 using xmlparser::XMLProfileManager;
 using xmlparser::XMLP_ret;
 using rtps::InstanceHandle_t;
-using fastdds::Duration_t;
 
 PublisherImpl::PublisherImpl(
         DomainParticipantImpl* p,

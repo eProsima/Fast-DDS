@@ -43,9 +43,7 @@ class MessageReceiver;
 class PDP;
 
 } // rtps
-} // fastrtps
 
-namespace fastdds {
 namespace statistics {
 
 #ifdef FASTDDS_STATISTICS

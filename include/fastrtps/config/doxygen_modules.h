@@ -77,12 +77,12 @@
 
 /** @defgroup TYPES_MODULE Contains the builtin generated types
  * @namespace eprosima::fastdds::types
- * @ingroup FASTRTPS_MODULE
+ * @ingroup FASTDDS_MODULE
  */
 
 /** @defgroup XMLPARSER_MODULE Contains all the modules related with the XMLParser
  * @namespace eprosima::fastdds::xmlparser
- * @ingroup FASTRTPS_MODULE
+ * @ingroup FASTDDS_MODULE
  */
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC

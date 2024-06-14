@@ -40,7 +40,6 @@
 #endif // if HAVE_SECURITY
 
 namespace eprosima {
-
 namespace fastdds {
 namespace rtps {
 struct CDRMessage_t;

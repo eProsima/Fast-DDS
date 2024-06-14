@@ -28,7 +28,7 @@ namespace fastdds {
 
 /**
  * @brief A struct storing a vector of cache changes and the next deadline in the group
- * @ingroup FASTRTPS_MODULE
+ * @ingroup FASTDDS_MODULE
  */
 struct KeyedChanges
 {

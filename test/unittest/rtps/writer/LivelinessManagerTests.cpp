@@ -112,10 +112,10 @@ public:
 namespace  eprosima {
 namespace fastdds {
 
-using eprosima::fastdds::rtps::LivelinessData;
-using eprosima::fastdds::rtps::LivelinessManager;
-using eprosima::fastdds::rtps::GuidPrefix_t;
-using eprosima::fastdds::rtps::GUID_t;
+using rtps::LivelinessData;
+using rtps::LivelinessManager;
+using rtps::GuidPrefix_t;
+using rtps::GUID_t;
 
 TEST_F(LivelinessManagerTests, WriterCanAlwaysBeAdded)
 {

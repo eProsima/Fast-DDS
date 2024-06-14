@@ -27,7 +27,6 @@
 
 using eprosima::fastdds::rtps::RTPSReader;
 using eprosima::fastdds::rtps::CacheChange_t;
-using eprosima::fastdds::dds::Log;
 using eprosima::fastdds::rtps::c_EntityId_TypeLookup_reply_writer;
 
 namespace eprosima {
