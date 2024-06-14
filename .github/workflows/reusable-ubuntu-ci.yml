@@ -33,7 +33,7 @@ on:
         type: boolean
         default: true
       run-tests:
-        description: 'Run suite of tests of Fast DDS, Fast DDS python, and Fast DDS Discovery Server'
+        description: 'Run test suite of Fast DDS, Fast DDS python, and Fast DDS Discovery Server'
         required: false
         type: boolean
         default: true
@@ -753,14 +753,15 @@ jobs:
           cd ${{ github.workspace }}
           rm -rf build install log
 
+      # No .metas file, so FASTDDS_ENFORCE_LOG_INFO is set OFF by default. Missed important args are manually included
       - name: No enforcing log info colcon build
         continue-on-error: false
         if: ${{ always() }}
         uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
         with:
-          colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta
+          colcon_meta_file: ''
           colcon_build_args: ${{ inputs.colcon-args }}
-          cmake_args: '-DFASTDDS_ENFORCE_LOG_INFO=OFF ${{ env.security-cmake-flag }} ${{ inputs.cmake-args }}'
+          cmake_args: '-DCOMPILE_EXAMPLES=ON ${{ env.security-cmake-flag }} ${{ inputs.cmake-args }}'
           cmake_args_default: ${{ env.colcon-build-default-cmake-args }}
           cmake_build_type: ${{ matrix.cmake-build-type }}
           workspace: ${{ github.workspace }}

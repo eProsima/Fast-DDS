@@ -2,10 +2,8 @@ names:
     fastdds:
         cmake-args:
             - "-DBUILD_DOCUMENTATION=OFF"
-            - "-DBUILD_SHARED_LIBS=ON"
             - "-DCOMPILE_EXAMPLES=ON"
             - "-DFASTDDS_ENFORCE_LOG_INFO=ON"
-            - "-DFASTDDS_STATISTICS=ON"
             - "-DINSTALL_EXAMPLES=ON"
             - "-DINSTALL_TOOLS=ON"
             - "-DINTERNAL_DEBUG=ON"
