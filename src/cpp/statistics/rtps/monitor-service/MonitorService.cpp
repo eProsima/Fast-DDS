@@ -376,9 +376,17 @@ bool MonitorService::add_change(
     type_.getKey(&status_data, &handle, false);
 
     CacheChange_t* change = status_writer_->new_change(
-        type_.getSerializedSizeProvider(&status_data),
         (disposed ? fastdds::rtps::NOT_ALIVE_DISPOSED_UNREGISTERED : fastdds::rtps::ALIVE),
         handle);
+    if (nullptr != change)
+    {
+        uint32_t cdr_size = type_.getSerializedSizeProvider(&status_data)();
+        if (!status_writer_payload_pool_->get_payload(cdr_size, change->serializedPayload))
+        {
+            status_writer_->release_change(change);
+            change = nullptr;
+        }
+    }
 
     if (nullptr != change)
     {
