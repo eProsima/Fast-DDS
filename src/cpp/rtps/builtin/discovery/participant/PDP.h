@@ -32,6 +32,7 @@
 #include <fastdds/rtps/builtin/data/WriterProxyData.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/WriteParams.hpp>
+#include <fastdds/rtps/history/IPayloadPool.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.hpp>
 #include <fastdds/rtps/reader/ReaderDiscoveryInfo.hpp>
 #include <fastdds/rtps/writer/WriterDiscoveryInfo.hpp>
@@ -594,6 +595,7 @@ protected:
     void announceParticipantState(
             RTPSWriter& writer,
             WriterHistory& history,
+            const std::shared_ptr<IPayloadPool>& payload_pool,
             bool new_change,
             bool dispose = false,
             WriteParams& wparams = WriteParams::WRITE_PARAM_DEFAULT);

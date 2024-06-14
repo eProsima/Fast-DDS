@@ -481,6 +481,7 @@ void PDP::announceParticipantState(
 void PDP::announceParticipantState(
         RTPSWriter& writer,
         WriterHistory& history,
+        const std::shared_ptr<IPayloadPool>& payload_pool,
         bool new_change,
         bool dispose,
         WriteParams& wparams)
@@ -505,12 +506,15 @@ void PDP::announceParticipantState(
                     history.remove_min_change();
                 }
                 uint32_t cdr_size = proxy_data_copy.get_serialized_size(true);
-                change = writer.new_change(
-                    [cdr_size]() -> uint32_t
+                change = writer.new_change(ALIVE, key);
+                if (nullptr != change)
+                {
+                    if (!payload_pool->get_payload(cdr_size, change->serializedPayload))
                     {
-                        return cdr_size;
-                    },
-                    ALIVE, key);
+                        writer.release_change(change);
+                        change = nullptr;
+                    }
+                }
 
                 if (nullptr != change)
                 {
@@ -551,11 +555,15 @@ void PDP::announceParticipantState(
                 history.remove_min_change();
             }
             uint32_t cdr_size = proxy_data_copy.get_serialized_size(true);
-            change = writer.new_change([cdr_size]() -> uint32_t
-                            {
-                                return cdr_size;
-                            },
-                            NOT_ALIVE_DISPOSED_UNREGISTERED, key);
+            change = writer.new_change(NOT_ALIVE_DISPOSED_UNREGISTERED, key);
+            if (nullptr != change)
+            {
+                if (!payload_pool->get_payload(cdr_size, change->serializedPayload))
+                {
+                    writer.release_change(change);
+                    change = nullptr;
+                }
+            }
 
             if (nullptr != change)
             {

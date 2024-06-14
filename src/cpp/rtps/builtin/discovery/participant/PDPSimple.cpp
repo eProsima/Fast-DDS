@@ -279,14 +279,16 @@ void PDPSimple::announceParticipantState(
 
             RTPSWriter& writer = *(secure->secure_writer.writer_);
             WriterHistory& history = *(secure->secure_writer.history_);
-            PDP::announceParticipantState(writer, history, new_change, dispose, wp);
+            const auto& pool = secure->secure_writer.payload_pool_;
+            PDP::announceParticipantState(writer, history, pool, new_change, dispose, wp);
         }
 #endif // HAVE_SECURITY
 
         auto endpoints = dynamic_cast<fastdds::rtps::SimplePDPEndpoints*>(builtin_endpoints_.get());
         RTPSWriter& writer = *(endpoints->writer.writer_);
         WriterHistory& history = *(endpoints->writer.history_);
-        PDP::announceParticipantState(writer, history, new_change, dispose, wp);
+        const auto& pool = endpoints->writer.payload_pool_;
+        PDP::announceParticipantState(writer, history, pool, new_change, dispose, wp);
 
         if (!(dispose || new_change))
         {
