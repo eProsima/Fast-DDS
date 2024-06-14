@@ -126,10 +126,6 @@ public:
             ChangeKind_t,
             InstanceHandle_t));
 
-    MOCK_METHOD2(new_change, CacheChange_t* (
-            const std::function<uint32_t()>&,
-            ChangeKind_t));
-
     MOCK_METHOD1(release_change, void(CacheChange_t*));
 
     MOCK_METHOD1(set_separate_sending, void(bool));

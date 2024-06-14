@@ -86,7 +86,7 @@ void SecurityTest::request_process_ok(
             Ref(remote_identity_handle_), _, _)).Times(1).
             WillOnce(DoAll(SetArgPointee<0>(&handshake_handle_),
             SetArgPointee<1>(&handshake_message), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE)));
-    EXPECT_CALL(*stateless_writer_, new_change(_, _, _)).Times(1).
+    EXPECT_CALL(*stateless_writer_, new_change(_, _)).Times(1).
             WillOnce(Return(change));
     EXPECT_CALL(*stateless_writer_->history_, add_change_mock(change)).Times(1).
             WillOnce(Return(true));
@@ -149,7 +149,7 @@ void SecurityTest::reply_process_ok(
             Ref(local_identity_handle_), _, _)).Times(1).
             WillOnce(DoAll(SetArgPointee<0>(&handshake_handle_),
             SetArgPointee<1>(&handshake_message), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE)));
-    EXPECT_CALL(*stateless_writer_, new_change(_, _, _)).Times(1).
+    EXPECT_CALL(*stateless_writer_, new_change(_, _)).Times(1).
             WillOnce(Return(change2));
     EXPECT_CALL(*stateless_writer_->history_, add_change_mock(change2)).Times(1).
             WillOnce(Return(true));
@@ -217,7 +217,7 @@ void SecurityTest::final_message_process_ok(
     EXPECT_CALL(*auth_plugin_, process_handshake_rvr(_, _, Ref(handshake_handle_), _)).Times(1).
             WillOnce(DoAll(SetArgPointee<0>(&handshake_message),
             Return(ValidationResult_t::VALIDATION_OK_WITH_FINAL_MESSAGE)));
-    EXPECT_CALL(*stateless_writer_, new_change(_, _, _)).Times(1).
+    EXPECT_CALL(*stateless_writer_, new_change(_, _)).Times(1).
             WillOnce(Return(change2));
     EXPECT_CALL(*stateless_writer_->history_, add_change_mock(change2)).Times(1).
             WillOnce(Return(true));
@@ -267,10 +267,10 @@ void SecurityTest::expect_kx_exchange(
         CacheChange_t& kx_change_to_add,
         CacheChange_t* kx_change_to_remove)
 {
-    EXPECT_CALL(*volatile_writer_, new_change(_, _, _)).Times(1).WillOnce(
-        DoAll(Invoke([&kx_change_to_add](const std::function<uint32_t()>& f, ChangeKind_t, InstanceHandle_t)
+    EXPECT_CALL(*volatile_writer_, new_change(_, _)).Times(1).WillOnce(
+        DoAll(Invoke([&kx_change_to_add](ChangeKind_t, InstanceHandle_t)
         {
-            kx_change_to_add.serializedPayload.reserve(f());
+            kx_change_to_add.serializedPayload.reserve(16 * 1024);
         }),
         Return(&kx_change_to_add)));
     EXPECT_CALL(*volatile_writer_->history_, add_change_mock(&kx_change_to_add)).Times(1).

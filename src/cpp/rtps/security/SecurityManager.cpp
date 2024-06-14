@@ -76,6 +76,26 @@ inline bool usleep_bool()
     return true;
 }
 
+static CacheChange_t* create_change_for_message(
+        const ParticipantGenericMessage& message,
+        RTPSWriter* writer,
+        const std::shared_ptr<IPayloadPool>& payload_pool)
+{
+    CacheChange_t* change = writer->new_change(ALIVE, c_InstanceHandle_Unknown);
+    if (nullptr != change)
+    {
+        uint32_t cdr_size = static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message));
+        cdr_size += 4; // Encapsulation
+        if (!payload_pool->get_payload(cdr_size, change->serializedPayload))
+        {
+            writer->release_change(change);
+            change = nullptr;
+        }
+    }
+
+    return change;
+}
+
 SecurityManager::SecurityManager(
         RTPSParticipantImpl* participant,
         ISecurityPluginFactory& plugin_factory)
@@ -899,12 +919,10 @@ bool SecurityManager::on_process_handshake(
         ParticipantGenericMessage message = generate_authentication_message(std::move(message_identity),
                         participant_data.m_guid, *handshake_message);
 
-        CacheChange_t* change = participant_stateless_message_writer_->new_change([&message]() -> uint32_t
-                        {
-                            return static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message)
-                            + 4 /*encapsulation*/);
-                        }
-                        , ALIVE, c_InstanceHandle_Unknown);
+        CacheChange_t* change = create_change_for_message(
+            message,
+            participant_stateless_message_writer_,
+            participant_stateless_message_pool_);
 
         if (change != nullptr)
         {
@@ -2212,13 +2230,10 @@ void SecurityManager::exchange_participant_crypto(
         ParticipantGenericMessage message = generate_participant_crypto_token_message(remote_participant_guid,
                         local_participant_crypto_tokens);
 
-        CacheChange_t* change = participant_volatile_message_secure_writer_->new_change(
-            [&message]() -> uint32_t
-            {
-                return static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message)
-                + 4 /*encapsulation*/);
-            }
-            , ALIVE, c_InstanceHandle_Unknown);
+        CacheChange_t* change = create_change_for_message(
+            message,
+            participant_volatile_message_secure_writer_,
+            participant_volatile_message_secure_pool_);
 
         if (change != nullptr)
         {
@@ -3031,14 +3046,10 @@ bool SecurityManager::discovered_reader(
                                         std::make_tuple(remote_reader_data, remote_reader_handle));
                                 lock.unlock();
 
-                                CacheChange_t* change = participant_volatile_message_secure_writer_->new_change(
-                                    [&message]() -> uint32_t
-                                    {
-                                        return static_cast<uint32_t>(
-                                            ParticipantGenericMessageHelper::serialized_size(message)
-                                            + 4 /*encapsulation*/);
-                                    }
-                                    , ALIVE, c_InstanceHandle_Unknown);
+                                CacheChange_t* change = create_change_for_message(
+                                    message,
+                                    participant_volatile_message_secure_writer_,
+                                    participant_volatile_message_secure_pool_);
 
                                 if (change != nullptr)
                                 {
@@ -3395,14 +3406,10 @@ bool SecurityManager::discovered_writer(
                                         std::make_tuple(remote_writer_data, remote_writer_handle));
                                 lock.unlock();
 
-                                CacheChange_t* change = participant_volatile_message_secure_writer_->new_change(
-                                    [&message]() -> uint32_t
-                                    {
-                                        return static_cast<uint32_t>(
-                                            ParticipantGenericMessageHelper::serialized_size(message)
-                                            + 4 /*encapsulation*/);
-                                    }
-                                    , ALIVE, c_InstanceHandle_Unknown);
+                                CacheChange_t* change = create_change_for_message(
+                                    message,
+                                    participant_volatile_message_secure_writer_,
+                                    participant_volatile_message_secure_pool_);
 
                                 if (change != nullptr)
                                 {
