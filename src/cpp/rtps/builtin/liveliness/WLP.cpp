@@ -899,16 +899,19 @@ bool WLP::send_liveliness_message(
 {
     StatefulWriter* writer = builtin_writer();
     WriterHistory* history = builtin_writer_history();
+    std::shared_ptr<IPayloadPool> pool = builtin_writer_pool();
 
     std::lock_guard<RecursiveTimedMutex> wguard(writer->getMutex());
 
-    CacheChange_t* change = writer->new_change(
-        []() -> uint32_t
+    CacheChange_t* change = writer->new_change(ALIVE, instance);
+    if (nullptr != change)
+    {
+        if (!pool->get_payload(WLP::builtin_participant_data_max_size, change->serializedPayload))
         {
-            return WLP::builtin_participant_data_max_size;
-        },
-        ALIVE,
-        instance);
+            writer->release_change(change);
+            change = nullptr;
+        }
+    }
 
     if (change != nullptr)
     {
@@ -969,6 +972,18 @@ WriterHistory* WLP::builtin_writer_history()
 #endif // if HAVE_SECURITY
 
     return ret_val;
+}
+
+std::shared_ptr<IPayloadPool> WLP::builtin_writer_pool()
+{
+#if HAVE_SECURITY
+    if (mp_participant->security_attributes().is_liveliness_protected)
+    {
+        return secure_payload_pool_;
+    }
+#endif // if HAVE_SECURITY
+
+    return payload_pool_;
 }
 
 bool WLP::assert_liveliness(
