@@ -233,10 +233,6 @@ public:
 
 protected:
 
-    FASTDDS_EXPORTED_API bool do_reserve_cache(
-            CacheChange_t** change,
-            uint32_t size) override;
-
     FASTDDS_EXPORTED_API void do_release_cache(
             CacheChange_t* ch) override;
 
