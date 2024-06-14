@@ -356,13 +356,13 @@ void RTPSMessageGroup::send()
 {
     if (endpoint_ && sender_)
     {
-        CDRMessage_t* msgToSend = header_msg_;
 
         if (header_msg_->length > RTPSMESSAGE_HEADER_SIZE)
         {
             std::lock_guard<RTPSMessageSenderInterface> lock(*sender_);
 
 #if HAVE_SECURITY
+            CDRMessage_t* msgToSend = header_msg_;
             // TODO(Ricardo) Control message size if it will be encrypted.
             if (participant_->security_attributes().is_rtps_protected && endpoint_->supports_rtps_protection())
             {
