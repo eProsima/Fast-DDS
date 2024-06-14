@@ -1657,7 +1657,7 @@ fastdds::TopicAttributes DataWriterImpl::get_topic_attributes(
     if (type->auto_fill_type_information() && xtypes::TK_NONE != type->type_identifiers().type_identifier1()._d())
     {
         if (RETCODE_OK ==
-                fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().get_type_information(
+                fastdds::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().get_type_information(
                     type->type_identifiers(), topic_att.type_information.type_information))
         {
             topic_att.type_information.assigned(true);
