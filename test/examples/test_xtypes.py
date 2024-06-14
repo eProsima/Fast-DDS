@@ -14,13 +14,13 @@
 
 import subprocess
 
-def test_hello_world():
+def test_xtypes():
     """."""
     ret = False
     out = ''
     try:
         out = subprocess.check_output(
-            '@DOCKER_EXECUTABLE@ compose -f hello_world.compose.yml up',
+            '@DOCKER_EXECUTABLE@ compose -f xtypes.compose.yml up',
             stderr=subprocess.STDOUT,
             shell=True,
             timeout=30
@@ -29,19 +29,19 @@ def test_hello_world():
         sent = 0
         received = 0
         for line in out:
-            if 'SENT' in line:
+            if 'sent' in line or 'SENT' in line:
                 sent += 1
                 continue
 
-            if 'RECEIVED' in line:
+            if 'received' in line or 'RECEIVED' in line:
                 received += 1
                 continue
 
-        if sent != 0 and received != 0 and sent * 2 == received:
+        if sent != 0 and received != 0 and sent * 3 == received:
             ret = True
         else:
             print('ERROR: sent: ' + str(sent) + ', but received: ' + str(received) +
-                  ' (expected: ' + str(sent * 2) + ')')
+                  ' (expected: ' + str(sent * 3) + ')')
             raise subprocess.CalledProcessError(1, '')
 
     except subprocess.CalledProcessError:
