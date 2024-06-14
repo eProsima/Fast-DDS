@@ -106,13 +106,16 @@ jobs:
           destination_workspace: src
           skip_existing: 'true'
 
+      # Compiling Fast DDS tools has a problem with the symbolic link when the artifact is uploaded
+      # and downloaded, as it loses its permissions and then the tests fail. To work around this issue,
+      # we disable the compilation of the tools here and enable it in the Fast DDS test job.
       - name: Colcon build
         continue-on-error: false
         uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta
           colcon_build_args: ${{ inputs.colcon-args }}
-          cmake_args: '${{ env.security-cmake-flag }} ${{ inputs.cmake-args }}'
+          cmake_args: '-DCOMPILE_TOOLS=OFF ${{ env.security-cmake-flag }} ${{ inputs.cmake-args }}'
           cmake_args_default: ${{ env.colcon-build-default-cmake-args }}
           cmake_build_type: ${{ matrix.cmake-build-type }}
           workspace: ${{ github.workspace }}
@@ -636,7 +639,7 @@ jobs:
         continue-on-error: false
         uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
         with:
-          colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta
+          colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta ${{ github.workspace }}/src/fastdds/.github/workflows/config/discovery_server_test.meta
           colcon_build_args: ${{ inputs.colcon-args }}
           cmake_args: '${{ env.security-cmake-flag }} ${{ inputs.cmake-args }}'
           cmake_args_default: ${{ env.colcon-build-default-cmake-args }}

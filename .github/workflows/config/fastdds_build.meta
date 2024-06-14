@@ -5,7 +5,6 @@ names:
             - "-DCOMPILE_EXAMPLES=ON"
             - "-DFASTDDS_ENFORCE_LOG_INFO=ON"
             - "-DINSTALL_EXAMPLES=ON"
-            - "-DINSTALL_TOOLS=ON"
             - "-DINTERNAL_DEBUG=ON"
             - "-DNO_TLS=OFF"
             - "-DSHM_TRANSPORT_DEFAULT=ON"
