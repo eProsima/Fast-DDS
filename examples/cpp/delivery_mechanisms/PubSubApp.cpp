@@ -118,11 +118,8 @@ PubSubApp::PubSubApp(
             Locator tcp_initial_peers_locator_;
             tcp_initial_peers_locator_.kind = LOCATOR_KIND_TCPv4;
             tcp_initial_peers_locator_.port = 5100;
-            //eprosima::fastrtps::rtps::IPLocator::setIPv4(tcp_initial_peers_locator_, "192.168.1.152");
             eprosima::fastrtps::rtps::IPLocator::setIPv4(tcp_initial_peers_locator_, "127.0.0.1");
             pqos.wire_protocol().builtin.initialPeersList.push_back(tcp_initial_peers_locator_);
-            // Allow transforming the localhost address to the external address
-            //pqos.wire_protocol().builtin.network_configuration = LOCATOR_KIND_TCPv4;
             break;
         }
         case CLIParser::DeliveryMechanismKind::UDP:

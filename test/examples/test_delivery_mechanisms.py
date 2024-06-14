@@ -6,7 +6,7 @@ delivery_test_cases = [
     ('--mechanism shm --ignore-local-endpoints', '--mechanism shm', 2),
     ('--mechanism udp', '--mechanism udp', 3),
     ('--mechanism udp --ignore-local-endpoints', '--mechanism udp', 2),
-    ('--mechanism tcp -s 250', '--mechanism tcp -s 250', 3),    # tcp takes longer to match, so expect much more samples
+    # tcp takes longer to match, so expect much more samples in this case
     ('--mechanism tcp --ignore-local-endpoints -s 250', '--mechanism tcp -s 250', 2),
     ('--mechanism data-sharing', '--mechanism data-sharing', 3),
     ('--mechanism data-sharing --ignore-local-endpoints', '--mechanism data-sharing', 2),
@@ -53,7 +53,7 @@ def test_delivery_mechanisms(pub_args, sub_args, repetitions):
 
     assert(ret)
 
-delivery_timeout_test_cases = [
+timeout_test_cases = [
     ('--mechanism shm --ignore-local-endpoints', '--mechanism udp'),
     ('--mechanism shm --ignore-local-endpoints', '--mechanism tcp'),
     ('--mechanism udp --ignore-local-endpoints', '--mechanism tcp'),
@@ -62,7 +62,7 @@ delivery_timeout_test_cases = [
     ('--mechanism intra-process --ignore-local-endpoints', '--unknown-argument')    # force subscribers to fail
 ]
 
-@pytest.mark.parametrize("pub_args, sub_args", delivery_timeout_test_cases)
+@pytest.mark.parametrize("pub_args, sub_args", timeout_test_cases)
 def test_delivery_mechanisms_timeout(pub_args, sub_args):
     """."""
     ret = False
@@ -84,5 +84,45 @@ def test_delivery_mechanisms_timeout(pub_args, sub_args):
             shell=True,
             timeout=15
         )
+
+    assert(ret)
+
+expected_output_test_cases = [
+    ('--mechanism tcp', '--unknown-argument', 'Unsupported', 1)
+]
+
+@pytest.mark.parametrize("pub_args, sub_args, expected_message, n_messages", expected_output_test_cases)
+def test_delivery_mechanisms_expected_output(pub_args, sub_args, expected_message, n_messages):
+    """."""
+    ret = False
+    out = ''
+    render_out = ''
+
+    command_prerequisites = 'PUB_ARGS="' + pub_args + '" SUB_ARGS="' + sub_args + '" '
+    try:
+        out = subprocess.check_output(command_prerequisites + '@DOCKER_EXECUTABLE@ compose -f delivery_mechanisms.compose.yml up',
+            stderr=subprocess.STDOUT,
+            shell=True,
+            timeout=20
+        )
+        render_out = out.decode().split('\n')
+
+        count = 0
+        for line in render_out:
+            if expected_message in line:
+                count += 1
+                continue
+
+        if count >= int(n_messages):
+            ret = True
+        else:
+            print ('ERROR: expected at least: ' + n_messages +' "' + expected_message + '" messages, but received ' + str(count))
+            raise subprocess.CalledProcessError(1, render_out)
+
+    except subprocess.CalledProcessError as e:
+        print (render_out)
+    except subprocess.TimeoutExpired:
+        print('TIMEOUT')
+        print(out)
 
     assert(ret)

@@ -141,6 +141,7 @@ def test_configuration_expected_output(pub_args, sub_args, expected_message, n_m
     """."""
     ret = False
     out = ''
+    render_out = ''
     pub_requirements = '--reliable --transient-local --keep-last 10'
     sub_requirements = '--reliable --transient-local --keep-last 10'
 
