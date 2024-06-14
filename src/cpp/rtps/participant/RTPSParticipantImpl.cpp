@@ -50,6 +50,7 @@
 #include <rtps/builtin/discovery/participant/PDPServer.hpp>
 #include <rtps/builtin/discovery/participant/PDPSimple.h>
 #include <rtps/builtin/liveliness/WLP.hpp>
+#include <rtps/DataSharing/WriterPool.hpp>
 #include <rtps/history/BasicPayloadPool.hpp>
 #include <rtps/messages/MessageReceiver.h>
 #include <rtps/network/utils/external_locators.hpp>
@@ -60,8 +61,8 @@
 #include <rtps/reader/StatefulReader.hpp>
 #include <rtps/reader/StatelessPersistentReader.hpp>
 #include <rtps/reader/StatelessReader.hpp>
-#include <rtps/writer/StatefulWriter.hpp>
 #include <rtps/writer/StatefulPersistentWriter.hpp>
+#include <rtps/writer/StatefulWriter.hpp>
 #include <rtps/writer/StatelessPersistentWriter.hpp>
 #include <rtps/writer/StatelessWriter.hpp>
 #include <statistics/rtps/GuidUtils.hpp>
@@ -948,12 +949,6 @@ bool RTPSParticipantImpl::create_writer(
         return false;
     }
 
-    if (!SWriter->is_pool_initialized())
-    {
-        delete(SWriter);
-        return false;
-    }
-
     // Use participant's external locators if writer has none
     // WARNING: call before createAndAssociateReceiverswithEndpoint, as the latter intentionally clears external
     // locators list when using unique_flows feature
@@ -1181,6 +1176,14 @@ bool RTPSParticipantImpl::createWriter(
         const EntityId_t& entityId,
         bool isBuiltin)
 {
+    *WriterOut = nullptr;
+
+    if (param.endpoint.data_sharing_configuration().kind() != DataSharingKind::OFF)
+    {
+        EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Data sharing needs a DataSharing payload pool");
+        return false;
+    }
+
     auto callback = [hist, listen, this]
                 (const GUID_t& guid, WriterAttributes& param, fastdds::rtps::FlowController* flow_controller,
                     IPersistenceService* persistence, bool is_reliable) -> RTPSWriter*
@@ -1224,42 +1227,70 @@ bool RTPSParticipantImpl::createWriter(
         const EntityId_t& entityId,
         bool isBuiltin)
 {
+    *WriterOut = nullptr;
+
     if (!payload_pool)
     {
         EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Trying to create writer with null payload pool");
         return false;
     }
 
+    if (param.endpoint.data_sharing_configuration().kind() != DataSharingKind::OFF)
+    {
+        auto data_sharing_pool = std::dynamic_pointer_cast<WriterPool>(payload_pool);
+        if (!data_sharing_pool)
+        {
+            EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Data sharing needs a DataSharing payload pool");
+            return false;
+        }
+    }
+
     auto callback = [hist, listen, &payload_pool, this]
                 (const GUID_t& guid, WriterAttributes& param, fastdds::rtps::FlowController* flow_controller,
                     IPersistenceService* persistence, bool is_reliable) -> RTPSWriter*
             {
+                RTPSWriter* writer = nullptr;
+
                 if (is_reliable)
                 {
                     if (persistence != nullptr)
                     {
-                        return new StatefulPersistentWriter(this, guid, param, payload_pool, flow_controller,
-                                       hist, listen, persistence);
+                        writer = new StatefulPersistentWriter(this, guid, param, payload_pool, flow_controller,
+                                        hist, listen, persistence);
                     }
                     else
                     {
-                        return new StatefulWriter(this, guid, param, payload_pool, flow_controller,
-                                       hist, listen);
+                        writer = new StatefulWriter(this, guid, param, payload_pool, flow_controller,
+                                        hist, listen);
                     }
                 }
                 else
                 {
                     if (persistence != nullptr)
                     {
-                        return new StatelessPersistentWriter(this, guid, param, payload_pool, flow_controller,
-                                       hist, listen, persistence);
+                        writer = new StatelessPersistentWriter(this, guid, param, payload_pool, flow_controller,
+                                        hist, listen, persistence);
                     }
                     else
                     {
-                        return new StatelessWriter(this, guid, param, payload_pool, flow_controller,
-                                       hist, listen);
+                        writer = new StatelessWriter(this, guid, param, payload_pool, flow_controller,
+                                        hist, listen);
                     }
                 }
+
+                if ((nullptr != writer) && (param.endpoint.data_sharing_configuration().kind() != OFF))
+                {
+                    std::shared_ptr<WriterPool> pool = std::dynamic_pointer_cast<WriterPool>(payload_pool);
+                    if (!pool || !pool->init_shared_memory(
+                                writer, param.endpoint.data_sharing_configuration().shm_directory()))
+                    {
+                        EPROSIMA_LOG_ERROR(RTPS_WRITER, "Could not initialize DataSharing writer pool");
+                        delete writer;
+                        writer = nullptr;
+                    }
+                }
+
+                return writer;
             };
     return create_writer(WriterOut, param, entityId, isBuiltin, callback);
 }
@@ -1274,42 +1305,70 @@ bool RTPSParticipantImpl::create_writer(
         const EntityId_t& entityId,
         bool isBuiltin)
 {
+    *WriterOut = nullptr;
+
     if (!payload_pool)
     {
         EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Trying to create writer with null payload pool");
         return false;
     }
 
+    if (watt.endpoint.data_sharing_configuration().kind() != DataSharingKind::OFF)
+    {
+        auto data_sharing_pool = std::dynamic_pointer_cast<WriterPool>(payload_pool);
+        if (!data_sharing_pool)
+        {
+            EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Data sharing needs an initialized DataSharing payload pool");
+            return false;
+        }
+    }
+
     auto callback = [hist, listen, &payload_pool, &change_pool, this]
                 (const GUID_t& guid, WriterAttributes& watt, fastdds::rtps::FlowController* flow_controller,
                     IPersistenceService* persistence, bool is_reliable) -> RTPSWriter*
             {
+                RTPSWriter* writer = nullptr;
+
                 if (is_reliable)
                 {
                     if (persistence != nullptr)
                     {
-                        return new StatefulPersistentWriter(this, guid, watt, payload_pool, change_pool,
-                                       flow_controller, hist, listen, persistence);
+                        writer = new StatefulPersistentWriter(this, guid, watt, payload_pool, change_pool,
+                                        flow_controller, hist, listen, persistence);
                     }
                     else
                     {
-                        return new StatefulWriter(this, guid, watt, payload_pool, change_pool,
-                                       flow_controller, hist, listen);
+                        writer = new StatefulWriter(this, guid, watt, payload_pool, change_pool,
+                                        flow_controller, hist, listen);
                     }
                 }
                 else
                 {
                     if (persistence != nullptr)
                     {
-                        return new StatelessPersistentWriter(this, guid, watt, payload_pool, change_pool,
-                                       flow_controller, hist, listen, persistence);
+                        writer = new StatelessPersistentWriter(this, guid, watt, payload_pool, change_pool,
+                                        flow_controller, hist, listen, persistence);
                     }
                     else
                     {
-                        return new StatelessWriter(this, guid, watt, payload_pool, change_pool,
-                                       flow_controller, hist, listen);
+                        writer = new StatelessWriter(this, guid, watt, payload_pool, change_pool,
+                                        flow_controller, hist, listen);
                     }
                 }
+
+                if ((nullptr != writer) && (watt.endpoint.data_sharing_configuration().kind() != OFF))
+                {
+                    std::shared_ptr<WriterPool> pool = std::dynamic_pointer_cast<WriterPool>(payload_pool);
+                    if (!pool || !pool->init_shared_memory(
+                                writer, watt.endpoint.data_sharing_configuration().shm_directory()))
+                    {
+                        EPROSIMA_LOG_ERROR(RTPS_WRITER, "Could not initialize DataSharing writer pool");
+                        delete writer;
+                        writer = nullptr;
+                    }
+                }
+
+                return writer;
             };
     return create_writer(WriterOut, watt, entityId, isBuiltin, callback);
 }

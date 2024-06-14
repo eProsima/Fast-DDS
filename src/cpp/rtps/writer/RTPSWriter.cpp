@@ -129,15 +129,6 @@ void RTPSWriter::init(
         fixed_payload_size_ = mp_history->m_att.payloadMaxSize;
     }
 
-    if (att.endpoint.data_sharing_configuration().kind() != dds::OFF)
-    {
-        std::shared_ptr<WriterPool> pool = std::dynamic_pointer_cast<WriterPool>(payload_pool);
-        if (!pool || !pool->init_shared_memory(this, att.endpoint.data_sharing_configuration().shm_directory()))
-        {
-            EPROSIMA_LOG_ERROR(RTPS_WRITER, "Could not initialize DataSharing writer pool");
-        }
-    }
-
     mp_history->mp_writer = this;
     mp_history->mp_mutex = &mp_mutex;
 
@@ -398,17 +389,6 @@ bool RTPSWriter::is_datasharing_compatible_with(
         }
     }
     return false;
-}
-
-bool RTPSWriter::is_pool_initialized() const
-{
-    if (is_datasharing_compatible())
-    {
-        auto pool = std::dynamic_pointer_cast<WriterPool>(payload_pool_);
-        assert (pool != nullptr);
-        return pool->is_initialized();
-    }
-    return true;
 }
 
 bool RTPSWriter::send_nts(

@@ -557,8 +557,6 @@ protected:
     bool is_datasharing_compatible_with(
             const ReaderProxyData& rdata) const;
 
-    bool is_pool_initialized() const;
-
     void add_statistics_sent_submessage(
             CacheChange_t* change,
             size_t num_locators);
