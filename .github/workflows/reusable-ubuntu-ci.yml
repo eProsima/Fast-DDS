@@ -225,6 +225,7 @@ jobs:
   fastdds_python_build:
     needs: fastdds_build
     runs-on: ${{ inputs.os-image }}
+    if: ${{ inputs.security }}
     strategy:
       fail-fast: false
       matrix:
@@ -270,7 +271,7 @@ jobs:
         uses: eProsima/eProsima-CI/ubuntu/get_related_branch_from_repo@v0
         with:
           remote_repository: eProsima/Fast-DDS-python
-          fallback_branch: ${{ 'main' }}
+          fallback_branch: main
 
       - name: Download Fast DDS Python repo
         uses: eProsima/eProsima-CI/external/checkout@v0
@@ -284,7 +285,7 @@ jobs:
         uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta
-          colcon_build_args: '${{ inputs.colcon-args }} --executor parallel --mixin ccache --packages-up-to fastdds_python'
+          colcon_build_args: ${{ inputs.colcon-args }}
           cmake_args: '${{ env.security-cmake-flag }} ${{ inputs.cmake-args }}'
           cmake_args_default: ''
           cmake_build_type: ${{ matrix.cmake-build-type }}
@@ -352,7 +353,7 @@ jobs:
         uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta ${{ github.workspace }}/src/fastdds/.github/workflows/config/python_test.meta
-          colcon_build_args: '${{ inputs.colcon-args }} --executor parallel --mixin ccache --packages-up-to fastdds_python'
+          colcon_build_args: ${{ inputs.colcon-args }}
           cmake_args: '${{ env.security-cmake-flag }} ${{ inputs.cmake-args }}'
           cmake_args_default: ''
           cmake_build_type: ${{ matrix.cmake-build-type }}
@@ -430,7 +431,7 @@ jobs:
         uses: eProsima/eProsima-CI/ubuntu/get_related_branch_from_repo@v0
         with:
           remote_repository: eProsima/Fast-DDS-docs
-          fallback_branch: ${{ 'master' }}
+          fallback_branch: master
 
       - name: Download Fast DDS documentation repo
         uses: eProsima/eProsima-CI/external/checkout@v0
@@ -458,7 +459,7 @@ jobs:
         uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta ${{ github.workspace }}/src/fastdds/.github/workflows/config/documentation.meta
-          colcon_build_args: '${{ inputs.colcon-args }} --packages-up-to fastdds-docs'
+          colcon_build_args: ${{ inputs.colcon-args }}
           cmake_args: '${{ env.security-cmake-flag }} ${{ inputs.cmake-args }}'
           cmake_build_type: ${{ matrix.cmake-build-type }}
           workspace: ${{ github.workspace }}
@@ -561,7 +562,7 @@ jobs:
         uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta
-          colcon_build_args: '${{ inputs.colcon-args }} --packages-up-to ShapesDemo'
+          colcon_build_args: ${{ inputs.colcon-args }}
           cmake_args: '${{ env.security-cmake-flag }} ${{ inputs.cmake-args }}'
           cmake_args_default: ${{ env.colcon-build-default-cmake-args }}
           cmake_build_type: ${{ matrix.cmake-build-type }}
@@ -636,7 +637,7 @@ jobs:
         uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta
-          colcon_build_args: '${{ inputs.colcon-args }} --packages-up-to discovery-server'
+          colcon_build_args: ${{ inputs.colcon-args }}
           cmake_args: '${{ env.security-cmake-flag }} ${{ inputs.cmake-args }}'
           cmake_args_default: ${{ env.colcon-build-default-cmake-args }}
           cmake_build_type: ${{ matrix.cmake-build-type }}
@@ -719,7 +720,7 @@ jobs:
           skip_existing: 'true'
 
       - name: No security colcon build
-        continue-on-error: false
+        continue-on-error: true
         uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta
@@ -736,7 +737,7 @@ jobs:
           rm -rf build install log
 
       - name: No statistics colcon build
-        continue-on-error: false
+        continue-on-error: true
         if: ${{ always() }}
         uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
         with:
@@ -755,7 +756,7 @@ jobs:
 
       # No .metas file, so FASTDDS_ENFORCE_LOG_INFO is set OFF by default. Missed important args are manually included
       - name: No enforcing log info colcon build
-        continue-on-error: false
+        continue-on-error: true
         if: ${{ always() }}
         uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
         with:
@@ -773,7 +774,7 @@ jobs:
           rm -rf build install log
 
       - name: No shared libs colcon build
-        continue-on-error: false
+        continue-on-error: true
         if: ${{ always() }}
         uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
         with:

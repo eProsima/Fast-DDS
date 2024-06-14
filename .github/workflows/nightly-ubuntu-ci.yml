@@ -22,6 +22,7 @@ jobs:
       ctest-args: "-LE xfail"
       fastdds-branch: 'master'
       security: ${{ matrix.security }}
+      run-tests: true
 
   nightly-ubuntu-ci-2_14_x:
     strategy:
@@ -39,6 +40,7 @@ jobs:
       ctest-args: "-LE xfail"
       fastdds-branch: '2.14.x'
       security: ${{ matrix.security }}
+      run-tests: true
 
   nightly-ubuntu-ci-2_13_x:
     strategy:
@@ -56,6 +58,7 @@ jobs:
       ctest-args: "-LE xfail"
       fastdds-branch: '2.13.x'
       security: ${{ matrix.security }}
+      run-tests: true
 
   nightly-ubuntu-ci-2_10_x:
     strategy:
@@ -73,6 +76,7 @@ jobs:
       ctest-args: "-LE xfail"
       fastdds-branch: '2.10.x'
       security: ${{ matrix.security }}
+      run-tests: true
 
   nightly-ubuntu-ci-2_6_x:
     strategy:
@@ -90,3 +94,4 @@ jobs:
       ctest-args: "-LE xfail"
       fastdds-branch: '2.6.x'
       security: ${{ matrix.security }}
+      run-tests: true
