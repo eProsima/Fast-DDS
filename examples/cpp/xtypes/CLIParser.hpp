@@ -26,8 +26,6 @@ namespace fastdds {
 namespace examples {
 namespace xtypes {
 
-// using dds::Log;
-
 class CLIParser
 {
 public:
@@ -59,7 +57,7 @@ public:
     static void print_help(
             uint8_t return_code)
     {
-        std::cout << "Usage: xtypes <entity> [options]"                                    << std::endl;
+        std::cout << "Usage: xtypes <entity> [options]"                                         << std::endl;
         std::cout << ""                                                                         << std::endl;
         std::cout << "Entities:"                                                                << std::endl;
         std::cout << "  publisher                       Run a publisher entity"                 << std::endl;

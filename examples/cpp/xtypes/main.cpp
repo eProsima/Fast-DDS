@@ -19,6 +19,7 @@
 
 #include <csignal>
 #include <cstdlib>
+#include <functional>
 #include <stdexcept>
 #include <thread>
 
