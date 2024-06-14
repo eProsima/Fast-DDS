@@ -52,7 +52,7 @@ defaults:
 
 jobs:
   asan_fastdds_build:
-    if: ${{ inputs.run_asan_fastdds }}
+    if: ${{ inputs.run_asan_fastdds == true }}
     runs-on: ubuntu-22.04
     steps:
       - name: Add ci-pending label if PR
@@ -192,7 +192,7 @@ jobs:
           workspace_dependencies: ''
 
       - name: Colcon test
-        if: ${{ inputs.run_asan_fastdds }}
+        if: ${{ inputs.run_asan_fastdds == true }}
         id: test
         continue-on-error: true
         uses: eProsima/eProsima-CI/multiplatform/colcon_test@v0
@@ -207,7 +207,7 @@ jobs:
           test_report_artifact: ${{ format('test_report_{0}_{1}', inputs.label, github.job) }}
 
       - name: Report sanitizer errors
-        if: ${{ inputs.run_asan_fastdds }}
+        if: ${{ inputs.run_asan_fastdds == true }}
         run: |
           bash src/fastdds/.github/workflows/utils/specific_errors_filter.sh \
             "==ERROR:" \
@@ -221,7 +221,7 @@ jobs:
             --sanitizer asan
 
   asan_discovery_server_test:
-    if: ${{ inputs.run_asan_discovery_server }}
+    if: ${{ inputs.run_asan_discovery_server == true }}
     needs: asan_fastdds_build
     runs-on: ubuntu-22.04
     steps:
@@ -286,7 +286,7 @@ jobs:
           workspace_dependencies: ''
 
       - name: Colcon test
-        if: ${{ inputs.run_asan_fastdds }}
+        if: ${{ inputs.run_asan_fastdds == true }}
         id: test
         continue-on-error: true
         uses: eProsima/eProsima-CI/multiplatform/colcon_test@v0
@@ -301,7 +301,7 @@ jobs:
           test_report_artifact: ${{ format('test_report_{0}_{1}', inputs.label, github.job) }}
 
       - name: Report sanitizer errors
-        if: ${{ inputs.run_asan_discovery_server }}
+        if: ${{ inputs.run_asan_discovery_server == true }}
         run: |
           bash src/fastdds/.github/workflows/utils/specific_errors_filter.sh \
             "==ERROR:" \
@@ -315,7 +315,7 @@ jobs:
             --sanitizer=asan
 
   tsan_fastdds_test:
-    if: ${{ inputs.run_tsan_fastdds }}
+    if: ${{ inputs.run_tsan_fastdds == true }}
     runs-on: ubuntu-22.04
     env:
       TSAN_OPTIONS: second_deadlock_stack=1 history_size=7 memory_limit_mb=5000
@@ -405,7 +405,7 @@ jobs:
           workspace_dependencies: ''
 
       - name: Colcon test
-        if: ${{ inputs.run_asan_fastdds }}
+        if: ${{ inputs.run_asan_fastdds == true }}
         id: test
         continue-on-error: true
         uses: eProsima/eProsima-CI/multiplatform/colcon_test@v0
