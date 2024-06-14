@@ -25,6 +25,7 @@
 #include <fastdds/dds/xtypes/dynamic_types/MemberDescriptor.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/TypeDescriptor.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/Types.hpp>
+#include <fastdds/dds/xtypes/type_representation/TypeObjectUtils.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -45,16 +46,19 @@ void DynamicTypesDDSTypesTest::TearDown()
 
 void DynamicTypesDDSTypesTest::check_typeobject_registry(
         const DynamicType::_ref_type& dyn_type,
-        const xtypes::TypeIdentifier& static_type_id)
+        const xtypes::TypeIdentifierPair& static_type_ids)
 {
-    EXPECT_NE(static_type_id, xtypes::TypeIdentifier());
-    xtypes::TypeIdentifier dynamic_type_id;
+    EXPECT_NE(static_type_ids.type_identifier1(), xtypes::TypeIdentifier());
+    EXPECT_NE(static_type_ids.type_identifier2(), xtypes::TypeIdentifier());
+    xtypes::TypeIdentifierPair dynamic_type_ids;
     EXPECT_EQ(RETCODE_OK, DomainParticipantFactory::get_instance()->type_object_registry().
-                    register_typeobject_w_dynamic_type(dyn_type, dynamic_type_id));
-    EXPECT_EQ(static_type_id, dynamic_type_id);
+                    register_typeobject_w_dynamic_type(dyn_type, dynamic_type_ids));
+    EXPECT_EQ(static_type_ids.type_identifier1(), dynamic_type_ids.type_identifier1());
+    EXPECT_EQ(static_type_ids.type_identifier2(), dynamic_type_ids.type_identifier2());
     xtypes::TypeObject type_object;
+    bool ec {false};
     EXPECT_EQ(RETCODE_OK, DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(
-                dynamic_type_id, type_object));
+                xtypes::TypeObjectUtils::retrieve_complete_type_identifier(dynamic_type_ids, ec), type_object));
     DynamicTypeBuilder::_ref_type builder = DynamicTypeBuilderFactory::get_instance()->create_type_w_type_object(
         type_object);
     ASSERT_NE(builder, nullptr);

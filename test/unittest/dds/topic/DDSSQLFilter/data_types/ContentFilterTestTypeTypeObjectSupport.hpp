@@ -35,13 +35,32 @@
 #define eProsima_user_DllExport
 #endif  // _WIN32
 
-/**
- * @brief Register every TypeObject representation defined in the IDL file in Fast DDS TypeObjectRegistry.
- */
-eProsima_user_DllExport void register_ContentFilterTestType_type_objects();
-
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
+/**
+ * @brief Register Color related TypeIdentifier.
+ *        Fully-descriptive TypeIdentifiers are directly registered.
+ *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
+ *        indirectly registered as well.
+ *
+ * @param[out] TypeIdentifier of the registered type.
+ *             The returned TypeIdentifier corresponds to the complete TypeIdentifier in case of hashed TypeIdentifiers.
+ *             Invalid TypeIdentifier is returned in case of error.
+ */
+eProsima_user_DllExport void register_Color_type_identifier(
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
+/**
+ * @brief Register Material related TypeIdentifier.
+ *        Fully-descriptive TypeIdentifiers are directly registered.
+ *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
+ *        indirectly registered as well.
+ *
+ * @param[out] TypeIdentifier of the registered type.
+ *             The returned TypeIdentifier corresponds to the complete TypeIdentifier in case of hashed TypeIdentifiers.
+ *             Invalid TypeIdentifier is returned in case of error.
+ */
+eProsima_user_DllExport void register_Material_type_identifier(
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register StructType related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -53,7 +72,7 @@ eProsima_user_DllExport void register_ContentFilterTestType_type_objects();
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_StructType_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 /**
  * @brief Register ContentFilterTestType related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
@@ -65,7 +84,7 @@ eProsima_user_DllExport void register_StructType_type_identifier(
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_ContentFilterTestType_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 
 
 #endif // DOXYGEN_SHOULD_SKIP_THIS_PUBLIC

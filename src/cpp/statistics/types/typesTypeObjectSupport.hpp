@@ -35,11 +35,6 @@
 #define eProsima_user_DllExport
 #endif  // _WIN32
 
-/**
- * @brief Register every TypeObject representation defined in the IDL file in Fast DDS TypeObjectRegistry.
- */
-eProsima_user_DllExport void register_types_type_objects();
-
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 namespace eprosima {
@@ -47,7 +42,7 @@ namespace fastdds {
 namespace statistics {
 namespace detail {
 /**
- * @brief Register eprosima_fastdds_statistics_detail_EntityId_s related TypeIdentifier.
+ * @brief Register EntityId_s related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
@@ -56,11 +51,11 @@ namespace detail {
  *             The returned TypeIdentifier corresponds to the complete TypeIdentifier in case of hashed TypeIdentifiers.
  *             Invalid TypeIdentifier is returned in case of error.
  */
-eProsima_user_DllExport void register_eprosima_fastdds_statistics_detail_EntityId_s_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+eProsima_user_DllExport void register_EntityId_s_type_identifier(
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 
 /**
- * @brief Register eprosima_fastdds_statistics_detail_GuidPrefix_s related TypeIdentifier.
+ * @brief Register GuidPrefix_s related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
@@ -69,11 +64,11 @@ eProsima_user_DllExport void register_eprosima_fastdds_statistics_detail_EntityI
  *             The returned TypeIdentifier corresponds to the complete TypeIdentifier in case of hashed TypeIdentifiers.
  *             Invalid TypeIdentifier is returned in case of error.
  */
-eProsima_user_DllExport void register_eprosima_fastdds_statistics_detail_GuidPrefix_s_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+eProsima_user_DllExport void register_GuidPrefix_s_type_identifier(
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 
 /**
- * @brief Register eprosima_fastdds_statistics_detail_GUID_s related TypeIdentifier.
+ * @brief Register GUID_s related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
@@ -82,11 +77,11 @@ eProsima_user_DllExport void register_eprosima_fastdds_statistics_detail_GuidPre
  *             The returned TypeIdentifier corresponds to the complete TypeIdentifier in case of hashed TypeIdentifiers.
  *             Invalid TypeIdentifier is returned in case of error.
  */
-eProsima_user_DllExport void register_eprosima_fastdds_statistics_detail_GUID_s_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+eProsima_user_DllExport void register_GUID_s_type_identifier(
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 
 /**
- * @brief Register eprosima_fastdds_statistics_detail_SequenceNumber_s related TypeIdentifier.
+ * @brief Register SequenceNumber_s related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
@@ -95,11 +90,11 @@ eProsima_user_DllExport void register_eprosima_fastdds_statistics_detail_GUID_s_
  *             The returned TypeIdentifier corresponds to the complete TypeIdentifier in case of hashed TypeIdentifiers.
  *             Invalid TypeIdentifier is returned in case of error.
  */
-eProsima_user_DllExport void register_eprosima_fastdds_statistics_detail_SequenceNumber_s_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+eProsima_user_DllExport void register_SequenceNumber_s_type_identifier(
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 
 /**
- * @brief Register eprosima_fastdds_statistics_detail_SampleIdentity_s related TypeIdentifier.
+ * @brief Register SampleIdentity_s related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
@@ -108,11 +103,11 @@ eProsima_user_DllExport void register_eprosima_fastdds_statistics_detail_Sequenc
  *             The returned TypeIdentifier corresponds to the complete TypeIdentifier in case of hashed TypeIdentifiers.
  *             Invalid TypeIdentifier is returned in case of error.
  */
-eProsima_user_DllExport void register_eprosima_fastdds_statistics_detail_SampleIdentity_s_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+eProsima_user_DllExport void register_SampleIdentity_s_type_identifier(
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 
 /**
- * @brief Register eprosima_fastdds_statistics_detail_Locator_s related TypeIdentifier.
+ * @brief Register Locator_s related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
@@ -121,13 +116,13 @@ eProsima_user_DllExport void register_eprosima_fastdds_statistics_detail_SampleI
  *             The returned TypeIdentifier corresponds to the complete TypeIdentifier in case of hashed TypeIdentifiers.
  *             Invalid TypeIdentifier is returned in case of error.
  */
-eProsima_user_DllExport void register_eprosima_fastdds_statistics_detail_Locator_s_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+eProsima_user_DllExport void register_Locator_s_type_identifier(
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 
 } // namespace detail
 
 /**
- * @brief Register eprosima_fastdds_statistics_DiscoveryTime related TypeIdentifier.
+ * @brief Register DiscoveryTime related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
@@ -136,11 +131,11 @@ eProsima_user_DllExport void register_eprosima_fastdds_statistics_detail_Locator
  *             The returned TypeIdentifier corresponds to the complete TypeIdentifier in case of hashed TypeIdentifiers.
  *             Invalid TypeIdentifier is returned in case of error.
  */
-eProsima_user_DllExport void register_eprosima_fastdds_statistics_DiscoveryTime_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+eProsima_user_DllExport void register_DiscoveryTime_type_identifier(
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 
 /**
- * @brief Register eprosima_fastdds_statistics_EntityCount related TypeIdentifier.
+ * @brief Register EntityCount related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
@@ -149,11 +144,11 @@ eProsima_user_DllExport void register_eprosima_fastdds_statistics_DiscoveryTime_
  *             The returned TypeIdentifier corresponds to the complete TypeIdentifier in case of hashed TypeIdentifiers.
  *             Invalid TypeIdentifier is returned in case of error.
  */
-eProsima_user_DllExport void register_eprosima_fastdds_statistics_EntityCount_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+eProsima_user_DllExport void register_EntityCount_type_identifier(
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 
 /**
- * @brief Register eprosima_fastdds_statistics_SampleIdentityCount related TypeIdentifier.
+ * @brief Register SampleIdentityCount related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
@@ -162,11 +157,11 @@ eProsima_user_DllExport void register_eprosima_fastdds_statistics_EntityCount_ty
  *             The returned TypeIdentifier corresponds to the complete TypeIdentifier in case of hashed TypeIdentifiers.
  *             Invalid TypeIdentifier is returned in case of error.
  */
-eProsima_user_DllExport void register_eprosima_fastdds_statistics_SampleIdentityCount_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+eProsima_user_DllExport void register_SampleIdentityCount_type_identifier(
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 
 /**
- * @brief Register eprosima_fastdds_statistics_Entity2LocatorTraffic related TypeIdentifier.
+ * @brief Register Entity2LocatorTraffic related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
@@ -175,11 +170,11 @@ eProsima_user_DllExport void register_eprosima_fastdds_statistics_SampleIdentity
  *             The returned TypeIdentifier corresponds to the complete TypeIdentifier in case of hashed TypeIdentifiers.
  *             Invalid TypeIdentifier is returned in case of error.
  */
-eProsima_user_DllExport void register_eprosima_fastdds_statistics_Entity2LocatorTraffic_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+eProsima_user_DllExport void register_Entity2LocatorTraffic_type_identifier(
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 
 /**
- * @brief Register eprosima_fastdds_statistics_WriterReaderData related TypeIdentifier.
+ * @brief Register WriterReaderData related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
@@ -188,11 +183,11 @@ eProsima_user_DllExport void register_eprosima_fastdds_statistics_Entity2Locator
  *             The returned TypeIdentifier corresponds to the complete TypeIdentifier in case of hashed TypeIdentifiers.
  *             Invalid TypeIdentifier is returned in case of error.
  */
-eProsima_user_DllExport void register_eprosima_fastdds_statistics_WriterReaderData_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+eProsima_user_DllExport void register_WriterReaderData_type_identifier(
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 
 /**
- * @brief Register eprosima_fastdds_statistics_Locator2LocatorData related TypeIdentifier.
+ * @brief Register Locator2LocatorData related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
@@ -201,11 +196,11 @@ eProsima_user_DllExport void register_eprosima_fastdds_statistics_WriterReaderDa
  *             The returned TypeIdentifier corresponds to the complete TypeIdentifier in case of hashed TypeIdentifiers.
  *             Invalid TypeIdentifier is returned in case of error.
  */
-eProsima_user_DllExport void register_eprosima_fastdds_statistics_Locator2LocatorData_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+eProsima_user_DllExport void register_Locator2LocatorData_type_identifier(
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 
 /**
- * @brief Register eprosima_fastdds_statistics_EntityData related TypeIdentifier.
+ * @brief Register EntityData related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
@@ -214,11 +209,11 @@ eProsima_user_DllExport void register_eprosima_fastdds_statistics_Locator2Locato
  *             The returned TypeIdentifier corresponds to the complete TypeIdentifier in case of hashed TypeIdentifiers.
  *             Invalid TypeIdentifier is returned in case of error.
  */
-eProsima_user_DllExport void register_eprosima_fastdds_statistics_EntityData_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+eProsima_user_DllExport void register_EntityData_type_identifier(
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 
 /**
- * @brief Register eprosima_fastdds_statistics_PhysicalData related TypeIdentifier.
+ * @brief Register PhysicalData related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
@@ -227,14 +222,14 @@ eProsima_user_DllExport void register_eprosima_fastdds_statistics_EntityData_typ
  *             The returned TypeIdentifier corresponds to the complete TypeIdentifier in case of hashed TypeIdentifiers.
  *             Invalid TypeIdentifier is returned in case of error.
  */
-eProsima_user_DllExport void register_eprosima_fastdds_statistics_PhysicalData_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+eProsima_user_DllExport void register_PhysicalData_type_identifier(
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 
 namespace EventKind {
 } // namespace EventKind
 
 /**
- * @brief Register eprosima_fastdds_statistics_Data related TypeIdentifier.
+ * @brief Register Data related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
@@ -243,8 +238,8 @@ namespace EventKind {
  *             The returned TypeIdentifier corresponds to the complete TypeIdentifier in case of hashed TypeIdentifiers.
  *             Invalid TypeIdentifier is returned in case of error.
  */
-eProsima_user_DllExport void register_eprosima_fastdds_statistics_Data_type_identifier(
-        eprosima::fastdds::dds::xtypes::TypeIdentifier& type_id);
+eProsima_user_DllExport void register_Data_type_identifier(
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 
 } // namespace statistics
 

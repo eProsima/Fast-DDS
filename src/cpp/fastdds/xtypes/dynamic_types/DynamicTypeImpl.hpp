@@ -72,6 +72,11 @@ public:
             traits<AnnotationDescriptor>::ref_type& descriptor,
             uint32_t idx) noexcept override;
 
+    const std::vector<AnnotationDescriptorImpl> get_annotations() const
+    {
+        return annotation_;
+    }
+
     uint32_t get_verbatim_text_count() noexcept override;
 
     ReturnCode_t get_verbatim_text(

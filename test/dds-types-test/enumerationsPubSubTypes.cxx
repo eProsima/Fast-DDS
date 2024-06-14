@@ -222,9 +222,9 @@ bool EnumStructurePubSubType::getKey(
     return true;
 }
 
-void EnumStructurePubSubType::register_type_object_representation() const
+void EnumStructurePubSubType::register_type_object_representation()
 {
-    register_enumerations_type_objects();
+    register_EnumStructure_type_identifier(type_identifiers_);
 }
 
 BitMaskStructurePubSubType::BitMaskStructurePubSubType()
@@ -415,9 +415,9 @@ bool BitMaskStructurePubSubType::getKey(
     return true;
 }
 
-void BitMaskStructurePubSubType::register_type_object_representation() const
+void BitMaskStructurePubSubType::register_type_object_representation()
 {
-    register_enumerations_type_objects();
+    register_BitMaskStructure_type_identifier(type_identifiers_);
 }
 
 BoundedBitMaskStructurePubSubType::BoundedBitMaskStructurePubSubType()
@@ -608,9 +608,9 @@ bool BoundedBitMaskStructurePubSubType::getKey(
     return true;
 }
 
-void BoundedBitMaskStructurePubSubType::register_type_object_representation() const
+void BoundedBitMaskStructurePubSubType::register_type_object_representation()
 {
-    register_enumerations_type_objects();
+    register_BoundedBitMaskStructure_type_identifier(type_identifiers_);
 }
 
 

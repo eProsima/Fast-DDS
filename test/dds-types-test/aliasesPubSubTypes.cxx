@@ -219,9 +219,9 @@ bool AliasInt16PubSubType::getKey(
     return true;
 }
 
-void AliasInt16PubSubType::register_type_object_representation() const
+void AliasInt16PubSubType::register_type_object_representation()
 {
-    register_aliases_type_objects();
+    register_AliasInt16_type_identifier(type_identifiers_);
 }
 
 AliasUint16PubSubType::AliasUint16PubSubType()
@@ -412,9 +412,9 @@ bool AliasUint16PubSubType::getKey(
     return true;
 }
 
-void AliasUint16PubSubType::register_type_object_representation() const
+void AliasUint16PubSubType::register_type_object_representation()
 {
-    register_aliases_type_objects();
+    register_AliasUint16_type_identifier(type_identifiers_);
 }
 
 AliasInt32PubSubType::AliasInt32PubSubType()
@@ -605,9 +605,9 @@ bool AliasInt32PubSubType::getKey(
     return true;
 }
 
-void AliasInt32PubSubType::register_type_object_representation() const
+void AliasInt32PubSubType::register_type_object_representation()
 {
-    register_aliases_type_objects();
+    register_AliasInt32_type_identifier(type_identifiers_);
 }
 
 AliasUInt32PubSubType::AliasUInt32PubSubType()
@@ -798,9 +798,9 @@ bool AliasUInt32PubSubType::getKey(
     return true;
 }
 
-void AliasUInt32PubSubType::register_type_object_representation() const
+void AliasUInt32PubSubType::register_type_object_representation()
 {
-    register_aliases_type_objects();
+    register_AliasUInt32_type_identifier(type_identifiers_);
 }
 
 AliasInt64PubSubType::AliasInt64PubSubType()
@@ -991,9 +991,9 @@ bool AliasInt64PubSubType::getKey(
     return true;
 }
 
-void AliasInt64PubSubType::register_type_object_representation() const
+void AliasInt64PubSubType::register_type_object_representation()
 {
-    register_aliases_type_objects();
+    register_AliasInt64_type_identifier(type_identifiers_);
 }
 
 AliasUInt64PubSubType::AliasUInt64PubSubType()
@@ -1184,9 +1184,9 @@ bool AliasUInt64PubSubType::getKey(
     return true;
 }
 
-void AliasUInt64PubSubType::register_type_object_representation() const
+void AliasUInt64PubSubType::register_type_object_representation()
 {
-    register_aliases_type_objects();
+    register_AliasUInt64_type_identifier(type_identifiers_);
 }
 
 AliasFloat32PubSubType::AliasFloat32PubSubType()
@@ -1377,9 +1377,9 @@ bool AliasFloat32PubSubType::getKey(
     return true;
 }
 
-void AliasFloat32PubSubType::register_type_object_representation() const
+void AliasFloat32PubSubType::register_type_object_representation()
 {
-    register_aliases_type_objects();
+    register_AliasFloat32_type_identifier(type_identifiers_);
 }
 
 AliasFloat64PubSubType::AliasFloat64PubSubType()
@@ -1570,9 +1570,9 @@ bool AliasFloat64PubSubType::getKey(
     return true;
 }
 
-void AliasFloat64PubSubType::register_type_object_representation() const
+void AliasFloat64PubSubType::register_type_object_representation()
 {
-    register_aliases_type_objects();
+    register_AliasFloat64_type_identifier(type_identifiers_);
 }
 
 AliasFloat128PubSubType::AliasFloat128PubSubType()
@@ -1763,9 +1763,9 @@ bool AliasFloat128PubSubType::getKey(
     return true;
 }
 
-void AliasFloat128PubSubType::register_type_object_representation() const
+void AliasFloat128PubSubType::register_type_object_representation()
 {
-    register_aliases_type_objects();
+    register_AliasFloat128_type_identifier(type_identifiers_);
 }
 
 AliasBoolPubSubType::AliasBoolPubSubType()
@@ -1956,9 +1956,9 @@ bool AliasBoolPubSubType::getKey(
     return true;
 }
 
-void AliasBoolPubSubType::register_type_object_representation() const
+void AliasBoolPubSubType::register_type_object_representation()
 {
-    register_aliases_type_objects();
+    register_AliasBool_type_identifier(type_identifiers_);
 }
 
 AliasOctetPubSubType::AliasOctetPubSubType()
@@ -2149,9 +2149,9 @@ bool AliasOctetPubSubType::getKey(
     return true;
 }
 
-void AliasOctetPubSubType::register_type_object_representation() const
+void AliasOctetPubSubType::register_type_object_representation()
 {
-    register_aliases_type_objects();
+    register_AliasOctet_type_identifier(type_identifiers_);
 }
 
 AliasChar8PubSubType::AliasChar8PubSubType()
@@ -2342,9 +2342,9 @@ bool AliasChar8PubSubType::getKey(
     return true;
 }
 
-void AliasChar8PubSubType::register_type_object_representation() const
+void AliasChar8PubSubType::register_type_object_representation()
 {
-    register_aliases_type_objects();
+    register_AliasChar8_type_identifier(type_identifiers_);
 }
 
 AliasChar16PubSubType::AliasChar16PubSubType()
@@ -2535,9 +2535,9 @@ bool AliasChar16PubSubType::getKey(
     return true;
 }
 
-void AliasChar16PubSubType::register_type_object_representation() const
+void AliasChar16PubSubType::register_type_object_representation()
 {
-    register_aliases_type_objects();
+    register_AliasChar16_type_identifier(type_identifiers_);
 }
 
 AliasString8PubSubType::AliasString8PubSubType()
@@ -2728,9 +2728,9 @@ bool AliasString8PubSubType::getKey(
     return true;
 }
 
-void AliasString8PubSubType::register_type_object_representation() const
+void AliasString8PubSubType::register_type_object_representation()
 {
-    register_aliases_type_objects();
+    register_AliasString8_type_identifier(type_identifiers_);
 }
 
 AliasString16PubSubType::AliasString16PubSubType()
@@ -2921,9 +2921,9 @@ bool AliasString16PubSubType::getKey(
     return true;
 }
 
-void AliasString16PubSubType::register_type_object_representation() const
+void AliasString16PubSubType::register_type_object_representation()
 {
-    register_aliases_type_objects();
+    register_AliasString16_type_identifier(type_identifiers_);
 }
 
 AliasEnumPubSubType::AliasEnumPubSubType()
@@ -3114,9 +3114,9 @@ bool AliasEnumPubSubType::getKey(
     return true;
 }
 
-void AliasEnumPubSubType::register_type_object_representation() const
+void AliasEnumPubSubType::register_type_object_representation()
 {
-    register_aliases_type_objects();
+    register_AliasEnum_type_identifier(type_identifiers_);
 }
 
 AliasBitmaskPubSubType::AliasBitmaskPubSubType()
@@ -3307,9 +3307,9 @@ bool AliasBitmaskPubSubType::getKey(
     return true;
 }
 
-void AliasBitmaskPubSubType::register_type_object_representation() const
+void AliasBitmaskPubSubType::register_type_object_representation()
 {
-    register_aliases_type_objects();
+    register_AliasBitmask_type_identifier(type_identifiers_);
 }
 
 AliasAliasPubSubType::AliasAliasPubSubType()
@@ -3500,9 +3500,9 @@ bool AliasAliasPubSubType::getKey(
     return true;
 }
 
-void AliasAliasPubSubType::register_type_object_representation() const
+void AliasAliasPubSubType::register_type_object_representation()
 {
-    register_aliases_type_objects();
+    register_AliasAlias_type_identifier(type_identifiers_);
 }
 
 AliasArrayPubSubType::AliasArrayPubSubType()
@@ -3693,9 +3693,9 @@ bool AliasArrayPubSubType::getKey(
     return true;
 }
 
-void AliasArrayPubSubType::register_type_object_representation() const
+void AliasArrayPubSubType::register_type_object_representation()
 {
-    register_aliases_type_objects();
+    register_AliasArray_type_identifier(type_identifiers_);
 }
 
 AliasMultiArrayPubSubType::AliasMultiArrayPubSubType()
@@ -3886,9 +3886,9 @@ bool AliasMultiArrayPubSubType::getKey(
     return true;
 }
 
-void AliasMultiArrayPubSubType::register_type_object_representation() const
+void AliasMultiArrayPubSubType::register_type_object_representation()
 {
-    register_aliases_type_objects();
+    register_AliasMultiArray_type_identifier(type_identifiers_);
 }
 
 AliasSequencePubSubType::AliasSequencePubSubType()
@@ -4079,9 +4079,9 @@ bool AliasSequencePubSubType::getKey(
     return true;
 }
 
-void AliasSequencePubSubType::register_type_object_representation() const
+void AliasSequencePubSubType::register_type_object_representation()
 {
-    register_aliases_type_objects();
+    register_AliasSequence_type_identifier(type_identifiers_);
 }
 
 AliasMapPubSubType::AliasMapPubSubType()
@@ -4272,9 +4272,9 @@ bool AliasMapPubSubType::getKey(
     return true;
 }
 
-void AliasMapPubSubType::register_type_object_representation() const
+void AliasMapPubSubType::register_type_object_representation()
 {
-    register_aliases_type_objects();
+    register_AliasMap_type_identifier(type_identifiers_);
 }
 
 AliasUnionPubSubType::AliasUnionPubSubType()
@@ -4465,9 +4465,9 @@ bool AliasUnionPubSubType::getKey(
     return true;
 }
 
-void AliasUnionPubSubType::register_type_object_representation() const
+void AliasUnionPubSubType::register_type_object_representation()
 {
-    register_aliases_type_objects();
+    register_AliasUnion_type_identifier(type_identifiers_);
 }
 
 AliasStructPubSubType::AliasStructPubSubType()
@@ -4658,9 +4658,9 @@ bool AliasStructPubSubType::getKey(
     return true;
 }
 
-void AliasStructPubSubType::register_type_object_representation() const
+void AliasStructPubSubType::register_type_object_representation()
 {
-    register_aliases_type_objects();
+    register_AliasStruct_type_identifier(type_identifiers_);
 }
 
 AliasBitsetPubSubType::AliasBitsetPubSubType()
@@ -4851,9 +4851,9 @@ bool AliasBitsetPubSubType::getKey(
     return true;
 }
 
-void AliasBitsetPubSubType::register_type_object_representation() const
+void AliasBitsetPubSubType::register_type_object_representation()
 {
-    register_aliases_type_objects();
+    register_AliasBitset_type_identifier(type_identifiers_);
 }
 
 

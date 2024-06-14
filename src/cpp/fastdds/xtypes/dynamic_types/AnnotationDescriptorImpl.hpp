@@ -61,8 +61,15 @@ public:
             ObjectName& value,
             const ObjectName& key) noexcept override;
 
+    ReturnCode_t get_value(
+            ObjectName& value,
+            const ObjectName& key) const noexcept;
+
     ReturnCode_t get_all_value(
             Parameters& value) noexcept override;
+
+    ReturnCode_t get_all_value(
+            Parameters& value) const noexcept;
 
     ReturnCode_t set_value(
             const ObjectName& key,

@@ -219,9 +219,9 @@ bool StructTypePubSubType::getKey(
     return true;
 }
 
-void StructTypePubSubType::register_type_object_representation() const
+void StructTypePubSubType::register_type_object_representation()
 {
-    register_ContentFilterTestType_type_objects();
+    register_StructType_type_identifier(type_identifiers_);
 }
 
 
@@ -414,9 +414,9 @@ bool ContentFilterTestTypePubSubType::getKey(
     return true;
 }
 
-void ContentFilterTestTypePubSubType::register_type_object_representation() const
+void ContentFilterTestTypePubSubType::register_type_object_representation()
 {
-    register_ContentFilterTestType_type_objects();
+    register_ContentFilterTestType_type_identifier(type_identifiers_);
 }
 
 

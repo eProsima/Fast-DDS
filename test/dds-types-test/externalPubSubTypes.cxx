@@ -217,7 +217,7 @@ bool short_externalPubSubType::getKey(
     return true;
 }
 
-void short_externalPubSubType::register_type_object_representation() const
+void short_externalPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
         "TypeObject type representation support disabled in generated code");
@@ -411,7 +411,7 @@ bool ushort_externalPubSubType::getKey(
     return true;
 }
 
-void ushort_externalPubSubType::register_type_object_representation() const
+void ushort_externalPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
         "TypeObject type representation support disabled in generated code");
@@ -605,7 +605,7 @@ bool long_externalPubSubType::getKey(
     return true;
 }
 
-void long_externalPubSubType::register_type_object_representation() const
+void long_externalPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
         "TypeObject type representation support disabled in generated code");
@@ -799,7 +799,7 @@ bool ulong_externalPubSubType::getKey(
     return true;
 }
 
-void ulong_externalPubSubType::register_type_object_representation() const
+void ulong_externalPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
         "TypeObject type representation support disabled in generated code");
@@ -993,7 +993,7 @@ bool longlong_externalPubSubType::getKey(
     return true;
 }
 
-void longlong_externalPubSubType::register_type_object_representation() const
+void longlong_externalPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
         "TypeObject type representation support disabled in generated code");
@@ -1187,7 +1187,7 @@ bool ulonglong_externalPubSubType::getKey(
     return true;
 }
 
-void ulonglong_externalPubSubType::register_type_object_representation() const
+void ulonglong_externalPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
         "TypeObject type representation support disabled in generated code");
@@ -1381,7 +1381,7 @@ bool float_externalPubSubType::getKey(
     return true;
 }
 
-void float_externalPubSubType::register_type_object_representation() const
+void float_externalPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
         "TypeObject type representation support disabled in generated code");
@@ -1575,7 +1575,7 @@ bool double_externalPubSubType::getKey(
     return true;
 }
 
-void double_externalPubSubType::register_type_object_representation() const
+void double_externalPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
         "TypeObject type representation support disabled in generated code");
@@ -1769,7 +1769,7 @@ bool longdouble_externalPubSubType::getKey(
     return true;
 }
 
-void longdouble_externalPubSubType::register_type_object_representation() const
+void longdouble_externalPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
         "TypeObject type representation support disabled in generated code");
@@ -1963,7 +1963,7 @@ bool boolean_externalPubSubType::getKey(
     return true;
 }
 
-void boolean_externalPubSubType::register_type_object_representation() const
+void boolean_externalPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
         "TypeObject type representation support disabled in generated code");
@@ -2157,7 +2157,7 @@ bool octet_externalPubSubType::getKey(
     return true;
 }
 
-void octet_externalPubSubType::register_type_object_representation() const
+void octet_externalPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
         "TypeObject type representation support disabled in generated code");
@@ -2351,7 +2351,7 @@ bool char_externalPubSubType::getKey(
     return true;
 }
 
-void char_externalPubSubType::register_type_object_representation() const
+void char_externalPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
         "TypeObject type representation support disabled in generated code");
@@ -2545,7 +2545,7 @@ bool wchar_externalPubSubType::getKey(
     return true;
 }
 
-void wchar_externalPubSubType::register_type_object_representation() const
+void wchar_externalPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
         "TypeObject type representation support disabled in generated code");
@@ -2739,7 +2739,7 @@ bool sequence_short_externalPubSubType::getKey(
     return true;
 }
 
-void sequence_short_externalPubSubType::register_type_object_representation() const
+void sequence_short_externalPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
         "TypeObject type representation support disabled in generated code");
@@ -2933,7 +2933,7 @@ bool string_unbounded_externalPubSubType::getKey(
     return true;
 }
 
-void string_unbounded_externalPubSubType::register_type_object_representation() const
+void string_unbounded_externalPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
         "TypeObject type representation support disabled in generated code");
@@ -3127,7 +3127,7 @@ bool string_bounded_externalPubSubType::getKey(
     return true;
 }
 
-void string_bounded_externalPubSubType::register_type_object_representation() const
+void string_bounded_externalPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
         "TypeObject type representation support disabled in generated code");
@@ -3321,7 +3321,7 @@ bool map_short_externalPubSubType::getKey(
     return true;
 }
 
-void map_short_externalPubSubType::register_type_object_representation() const
+void map_short_externalPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
         "TypeObject type representation support disabled in generated code");
@@ -3515,7 +3515,7 @@ bool array_short_externalPubSubType::getKey(
     return true;
 }
 
-void array_short_externalPubSubType::register_type_object_representation() const
+void array_short_externalPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
         "TypeObject type representation support disabled in generated code");
@@ -3709,7 +3709,7 @@ bool struct_externalPubSubType::getKey(
     return true;
 }
 
-void struct_externalPubSubType::register_type_object_representation() const
+void struct_externalPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
         "TypeObject type representation support disabled in generated code");
@@ -3903,7 +3903,7 @@ bool InnerStructExternalPubSubType::getKey(
     return true;
 }
 
-void InnerStructExternalPubSubType::register_type_object_representation() const
+void InnerStructExternalPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
         "TypeObject type representation support disabled in generated code");
@@ -4097,7 +4097,7 @@ bool ext_struct_externalPubSubType::getKey(
     return true;
 }
 
-void ext_struct_externalPubSubType::register_type_object_representation() const
+void ext_struct_externalPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
         "TypeObject type representation support disabled in generated code");
@@ -4291,7 +4291,7 @@ bool ext_and_inner_struct_externalPubSubType::getKey(
     return true;
 }
 
-void ext_and_inner_struct_externalPubSubType::register_type_object_representation() const
+void ext_and_inner_struct_externalPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
         "TypeObject type representation support disabled in generated code");
@@ -4485,7 +4485,7 @@ bool struct_external_optionalPubSubType::getKey(
     return true;
 }
 
-void struct_external_optionalPubSubType::register_type_object_representation() const
+void struct_external_optionalPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
         "TypeObject type representation support disabled in generated code");
@@ -4680,7 +4680,7 @@ bool recursive_union_containerPubSubType::getKey(
     return true;
 }
 
-void recursive_union_containerPubSubType::register_type_object_representation() const
+void recursive_union_containerPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
         "TypeObject type representation support disabled in generated code");
@@ -4875,7 +4875,7 @@ bool recursive_test_1PubSubType::getKey(
     return true;
 }
 
-void recursive_test_1PubSubType::register_type_object_representation() const
+void recursive_test_1PubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
         "TypeObject type representation support disabled in generated code");
@@ -5071,7 +5071,7 @@ bool recursive_structurePubSubType::getKey(
     return true;
 }
 
-void recursive_structurePubSubType::register_type_object_representation() const
+void recursive_structurePubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
         "TypeObject type representation support disabled in generated code");
@@ -5265,7 +5265,7 @@ bool recursive_test_2PubSubType::getKey(
     return true;
 }
 
-void recursive_test_2PubSubType::register_type_object_representation() const
+void recursive_test_2PubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
         "TypeObject type representation support disabled in generated code");

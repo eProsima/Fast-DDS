@@ -141,7 +141,7 @@ public:
             traits<DynamicType>::ref_type type);
 
     //Register TypeObject representation in Fast DDS TypeObjectRegistry
-    FASTDDS_EXPORTED_API void register_type_object_representation() const override;
+    FASTDDS_EXPORTED_API void register_type_object_representation() override;
 
     //}}}
 

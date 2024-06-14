@@ -219,9 +219,9 @@ bool RelativePathIncludeStructPubSubType::getKey(
     return true;
 }
 
-void RelativePathIncludeStructPubSubType::register_type_object_representation() const
+void RelativePathIncludeStructPubSubType::register_type_object_representation()
 {
-    register_relative_path_include_type_objects();
+    register_RelativePathIncludeStruct_type_identifier(type_identifiers_);
 }
 
 

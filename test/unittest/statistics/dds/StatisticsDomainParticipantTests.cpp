@@ -247,13 +247,21 @@ TEST_F(StatisticsDomainParticipantTests, EnableDisableStatisticsDataWriterTest)
 
     // 3. Create TypeSupports for the different DataTypes
     eprosima::fastdds::dds::TypeSupport history_latency_type(new WriterReaderDataPubSubType);
+    history_latency_type->register_type_object_representation();
     eprosima::fastdds::dds::TypeSupport network_latency_type(new Locator2LocatorDataPubSubType);
+    network_latency_type->register_type_object_representation();
     eprosima::fastdds::dds::TypeSupport throughput_type(new EntityDataPubSubType);
+    throughput_type->register_type_object_representation();
     eprosima::fastdds::dds::TypeSupport rtps_traffic_type(new Entity2LocatorTrafficPubSubType);
+    rtps_traffic_type->register_type_object_representation();
     eprosima::fastdds::dds::TypeSupport count_type(new EntityCountPubSubType);
+    count_type->register_type_object_representation();
     eprosima::fastdds::dds::TypeSupport discovery_type(new DiscoveryTimePubSubType);
+    discovery_type->register_type_object_representation();
     eprosima::fastdds::dds::TypeSupport sample_identity_count_type(new SampleIdentityCountPubSubType);
+    sample_identity_count_type->register_type_object_representation();
     eprosima::fastdds::dds::TypeSupport physical_data_type(new PhysicalDataPubSubType);
+    physical_data_type->register_type_object_representation();
     eprosima::fastdds::dds::TypeSupport null_type(nullptr);
 
     // 4. Check that the types are not registered yet
@@ -514,13 +522,21 @@ TEST_F(StatisticsDomainParticipantTests, CreateParticipantWithInvalidTopicName)
     // 2. Check topics/types
     // Create TypeSupports
     eprosima::fastdds::dds::TypeSupport history_latency_type(new WriterReaderDataPubSubType);
+    history_latency_type->register_type_object_representation();
     eprosima::fastdds::dds::TypeSupport network_latency_type(new Locator2LocatorDataPubSubType);
+    network_latency_type->register_type_object_representation();
     eprosima::fastdds::dds::TypeSupport throughput_type(new EntityDataPubSubType);
+    throughput_type->register_type_object_representation();
     eprosima::fastdds::dds::TypeSupport rtps_traffic_type(new Entity2LocatorTrafficPubSubType);
+    rtps_traffic_type->register_type_object_representation();
     eprosima::fastdds::dds::TypeSupport count_type(new EntityCountPubSubType);
+    count_type->register_type_object_representation();
     eprosima::fastdds::dds::TypeSupport discovery_type(new DiscoveryTimePubSubType);
+    discovery_type->register_type_object_representation();
     eprosima::fastdds::dds::TypeSupport sample_identity_count_type(new SampleIdentityCountPubSubType);
+    sample_identity_count_type->register_type_object_representation();
     eprosima::fastdds::dds::TypeSupport physical_data_type(new PhysicalDataPubSubType);
+    physical_data_type->register_type_object_representation();
     eprosima::fastdds::dds::TypeSupport null_type(nullptr);
 
     EXPECT_EQ(null_type, participant->find_type(history_latency_type.get_type_name()));

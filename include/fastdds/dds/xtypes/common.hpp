@@ -29,17 +29,15 @@ namespace xtypes {
 
 enum class ExtensibilityKind : uint32_t
 {
-    NOT_APPLIED,
     FINAL,
     APPENDABLE,
     MUTABLE
 };
 
-enum class TryConstructKind : uint32_t
+enum class TryConstructFailAction : uint32_t
 {
-    NOT_APPLIED,
-    USE_DEFAULT,
     DISCARD,
+    USE_DEFAULT,
     TRIM
 };
 

@@ -237,11 +237,6 @@ public:
 
     bool is_consistent() noexcept override;
 
-    bool is_extensibility_set() const noexcept
-    {
-        return is_extensibility_set_;
-    }
-
 };
 
 } // namespace dds

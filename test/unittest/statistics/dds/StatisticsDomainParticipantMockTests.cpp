@@ -143,6 +143,7 @@ TEST_F(StatisticsDomainParticipantMockTests, DisableStatisticsDataWriterFailureD
 #ifdef FASTDDS_STATISTICS
     eprosima::fastdds::dds::TypeSupport null_type(nullptr);
     eprosima::fastdds::dds::TypeSupport count_type(new EntityCountPubSubType);
+    count_type->register_type_object_representation();
 
     // 1. Create DomainParticipant
     eprosima::fastdds::dds::DomainParticipant* participant =

@@ -220,9 +220,9 @@ namespace const_module1 {
         return true;
     }
 
-    void ModuleConstsLiteralsStructPubSubType::register_type_object_representation() const
+    void ModuleConstsLiteralsStructPubSubType::register_type_object_representation()
     {
-        register_constants_type_objects();
+        register_ModuleConstsLiteralsStruct_type_identifier(type_identifiers_);
     }
 
 } // namespace const_module1
@@ -416,9 +416,9 @@ namespace const_module2 {
         return true;
     }
 
-    void Module2ConstsLiteralsStructPubSubType::register_type_object_representation() const
+    void Module2ConstsLiteralsStructPubSubType::register_type_object_representation()
     {
-        register_constants_type_objects();
+        register_Module2ConstsLiteralsStruct_type_identifier(type_identifiers_);
     }
 
 } // namespace const_module2
@@ -611,9 +611,9 @@ bool ConstsLiteralsStructPubSubType::getKey(
     return true;
 }
 
-void ConstsLiteralsStructPubSubType::register_type_object_representation() const
+void ConstsLiteralsStructPubSubType::register_type_object_representation()
 {
-    register_constants_type_objects();
+    register_ConstsLiteralsStruct_type_identifier(type_identifiers_);
 }
 
 

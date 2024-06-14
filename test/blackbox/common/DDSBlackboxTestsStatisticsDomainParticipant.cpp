@@ -260,20 +260,28 @@ TEST(StatisticsDomainParticipant, CreateParticipant)
     // Create TypeSupports
     eprosima::fastdds::dds::TypeSupport history_latency_type(
         new eprosima::fastdds::statistics::WriterReaderDataPubSubType);
+    history_latency_type->register_type_object_representation();
     eprosima::fastdds::dds::TypeSupport network_latency_type(
         new eprosima::fastdds::statistics::Locator2LocatorDataPubSubType);
+    network_latency_type->register_type_object_representation();
     eprosima::fastdds::dds::TypeSupport throughput_type(
         new eprosima::fastdds::statistics::EntityDataPubSubType);
+    throughput_type->register_type_object_representation();
     eprosima::fastdds::dds::TypeSupport rtps_traffic_type(
         new eprosima::fastdds::statistics::Entity2LocatorTrafficPubSubType);
+    rtps_traffic_type->register_type_object_representation();
     eprosima::fastdds::dds::TypeSupport count_type(
         new eprosima::fastdds::statistics::EntityCountPubSubType);
+    count_type->register_type_object_representation();
     eprosima::fastdds::dds::TypeSupport discovery_type(
         new eprosima::fastdds::statistics::DiscoveryTimePubSubType);
+    discovery_type->register_type_object_representation();
     eprosima::fastdds::dds::TypeSupport sample_identity_count_type(
         new eprosima::fastdds::statistics::SampleIdentityCountPubSubType);
+    sample_identity_count_type->register_type_object_representation();
     eprosima::fastdds::dds::TypeSupport physical_data_type(
         new eprosima::fastdds::statistics::PhysicalDataPubSubType);
+    physical_data_type->register_type_object_representation();
     eprosima::fastdds::dds::TypeSupport null_type(nullptr);
 
     // Create statistics DataReaders
@@ -436,20 +444,28 @@ TEST(StatisticsDomainParticipant, CreateParticipantUsingXML)
     // Create TypeSupports
     eprosima::fastdds::dds::TypeSupport history_latency_type(
         new eprosima::fastdds::statistics::WriterReaderDataPubSubType);
+    history_latency_type->register_type_object_representation();
     eprosima::fastdds::dds::TypeSupport network_latency_type(
         new eprosima::fastdds::statistics::Locator2LocatorDataPubSubType);
+    network_latency_type->register_type_object_representation();
     eprosima::fastdds::dds::TypeSupport throughput_type(
         new eprosima::fastdds::statistics::EntityDataPubSubType);
+    throughput_type->register_type_object_representation();
     eprosima::fastdds::dds::TypeSupport rtps_traffic_type(
         new eprosima::fastdds::statistics::Entity2LocatorTrafficPubSubType);
+    rtps_traffic_type->register_type_object_representation();
     eprosima::fastdds::dds::TypeSupport count_type(
         new eprosima::fastdds::statistics::EntityCountPubSubType);
+    count_type->register_type_object_representation();
     eprosima::fastdds::dds::TypeSupport discovery_type(
         new eprosima::fastdds::statistics::DiscoveryTimePubSubType);
+    discovery_type->register_type_object_representation();
     eprosima::fastdds::dds::TypeSupport sample_identity_count_type(
         new eprosima::fastdds::statistics::SampleIdentityCountPubSubType);
+    sample_identity_count_type->register_type_object_representation();
     eprosima::fastdds::dds::TypeSupport physical_data_type(
         new eprosima::fastdds::statistics::PhysicalDataPubSubType);
+    physical_data_type->register_type_object_representation();
     eprosima::fastdds::dds::TypeSupport null_type(nullptr);
 
     // Create statistics DataReaders

@@ -219,9 +219,9 @@ bool RequestTypePubSubType::getKey(
     return true;
 }
 
-void RequestTypePubSubType::register_type_object_representation() const
+void RequestTypePubSubType::register_type_object_representation()
 {
-    register_Calculator_type_objects();
+    register_RequestType_type_identifier(type_identifiers_);
 }
 
 ReplyTypePubSubType::ReplyTypePubSubType()
@@ -412,9 +412,9 @@ bool ReplyTypePubSubType::getKey(
     return true;
 }
 
-void ReplyTypePubSubType::register_type_object_representation() const
+void ReplyTypePubSubType::register_type_object_representation()
 {
-    register_Calculator_type_objects();
+    register_ReplyType_type_identifier(type_identifiers_);
 }
 
 

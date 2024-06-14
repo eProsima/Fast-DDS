@@ -219,9 +219,9 @@ bool KeyedShortStructPubSubType::getKey(
     return true;
 }
 
-void KeyedShortStructPubSubType::register_type_object_representation() const
+void KeyedShortStructPubSubType::register_type_object_representation()
 {
-    register_key_type_objects();
+    register_KeyedShortStruct_type_identifier(type_identifiers_);
 }
 
 KeyedUShortStructPubSubType::KeyedUShortStructPubSubType()
@@ -412,9 +412,9 @@ bool KeyedUShortStructPubSubType::getKey(
     return true;
 }
 
-void KeyedUShortStructPubSubType::register_type_object_representation() const
+void KeyedUShortStructPubSubType::register_type_object_representation()
 {
-    register_key_type_objects();
+    register_KeyedUShortStruct_type_identifier(type_identifiers_);
 }
 
 KeyedLongStructPubSubType::KeyedLongStructPubSubType()
@@ -605,9 +605,9 @@ bool KeyedLongStructPubSubType::getKey(
     return true;
 }
 
-void KeyedLongStructPubSubType::register_type_object_representation() const
+void KeyedLongStructPubSubType::register_type_object_representation()
 {
-    register_key_type_objects();
+    register_KeyedLongStruct_type_identifier(type_identifiers_);
 }
 
 KeyedULongStructPubSubType::KeyedULongStructPubSubType()
@@ -798,9 +798,9 @@ bool KeyedULongStructPubSubType::getKey(
     return true;
 }
 
-void KeyedULongStructPubSubType::register_type_object_representation() const
+void KeyedULongStructPubSubType::register_type_object_representation()
 {
-    register_key_type_objects();
+    register_KeyedULongStruct_type_identifier(type_identifiers_);
 }
 
 KeyedLongLongStructPubSubType::KeyedLongLongStructPubSubType()
@@ -991,9 +991,9 @@ bool KeyedLongLongStructPubSubType::getKey(
     return true;
 }
 
-void KeyedLongLongStructPubSubType::register_type_object_representation() const
+void KeyedLongLongStructPubSubType::register_type_object_representation()
 {
-    register_key_type_objects();
+    register_KeyedLongLongStruct_type_identifier(type_identifiers_);
 }
 
 KeyedULongLongStructPubSubType::KeyedULongLongStructPubSubType()
@@ -1184,9 +1184,9 @@ bool KeyedULongLongStructPubSubType::getKey(
     return true;
 }
 
-void KeyedULongLongStructPubSubType::register_type_object_representation() const
+void KeyedULongLongStructPubSubType::register_type_object_representation()
 {
-    register_key_type_objects();
+    register_KeyedULongLongStruct_type_identifier(type_identifiers_);
 }
 
 KeyedFloatStructPubSubType::KeyedFloatStructPubSubType()
@@ -1377,9 +1377,9 @@ bool KeyedFloatStructPubSubType::getKey(
     return true;
 }
 
-void KeyedFloatStructPubSubType::register_type_object_representation() const
+void KeyedFloatStructPubSubType::register_type_object_representation()
 {
-    register_key_type_objects();
+    register_KeyedFloatStruct_type_identifier(type_identifiers_);
 }
 
 KeyedDoubleStructPubSubType::KeyedDoubleStructPubSubType()
@@ -1570,9 +1570,9 @@ bool KeyedDoubleStructPubSubType::getKey(
     return true;
 }
 
-void KeyedDoubleStructPubSubType::register_type_object_representation() const
+void KeyedDoubleStructPubSubType::register_type_object_representation()
 {
-    register_key_type_objects();
+    register_KeyedDoubleStruct_type_identifier(type_identifiers_);
 }
 
 KeyedLongDoubleStructPubSubType::KeyedLongDoubleStructPubSubType()
@@ -1763,9 +1763,9 @@ bool KeyedLongDoubleStructPubSubType::getKey(
     return true;
 }
 
-void KeyedLongDoubleStructPubSubType::register_type_object_representation() const
+void KeyedLongDoubleStructPubSubType::register_type_object_representation()
 {
-    register_key_type_objects();
+    register_KeyedLongDoubleStruct_type_identifier(type_identifiers_);
 }
 
 KeyedBooleanStructPubSubType::KeyedBooleanStructPubSubType()
@@ -1956,9 +1956,9 @@ bool KeyedBooleanStructPubSubType::getKey(
     return true;
 }
 
-void KeyedBooleanStructPubSubType::register_type_object_representation() const
+void KeyedBooleanStructPubSubType::register_type_object_representation()
 {
-    register_key_type_objects();
+    register_KeyedBooleanStruct_type_identifier(type_identifiers_);
 }
 
 KeyedOctetStructPubSubType::KeyedOctetStructPubSubType()
@@ -2149,9 +2149,9 @@ bool KeyedOctetStructPubSubType::getKey(
     return true;
 }
 
-void KeyedOctetStructPubSubType::register_type_object_representation() const
+void KeyedOctetStructPubSubType::register_type_object_representation()
 {
-    register_key_type_objects();
+    register_KeyedOctetStruct_type_identifier(type_identifiers_);
 }
 
 KeyedCharStructPubSubType::KeyedCharStructPubSubType()
@@ -2342,9 +2342,9 @@ bool KeyedCharStructPubSubType::getKey(
     return true;
 }
 
-void KeyedCharStructPubSubType::register_type_object_representation() const
+void KeyedCharStructPubSubType::register_type_object_representation()
 {
-    register_key_type_objects();
+    register_KeyedCharStruct_type_identifier(type_identifiers_);
 }
 
 KeyedWCharStructPubSubType::KeyedWCharStructPubSubType()
@@ -2535,9 +2535,9 @@ bool KeyedWCharStructPubSubType::getKey(
     return true;
 }
 
-void KeyedWCharStructPubSubType::register_type_object_representation() const
+void KeyedWCharStructPubSubType::register_type_object_representation()
 {
-    register_key_type_objects();
+    register_KeyedWCharStruct_type_identifier(type_identifiers_);
 }
 
 KeyedEmptyStructPubSubType::KeyedEmptyStructPubSubType()
@@ -2728,9 +2728,9 @@ bool KeyedEmptyStructPubSubType::getKey(
     return true;
 }
 
-void KeyedEmptyStructPubSubType::register_type_object_representation() const
+void KeyedEmptyStructPubSubType::register_type_object_representation()
 {
-    register_key_type_objects();
+    register_KeyedEmptyStruct_type_identifier(type_identifiers_);
 }
 
 KeyedEmptyInheritanceStructPubSubType::KeyedEmptyInheritanceStructPubSubType()
@@ -2921,9 +2921,9 @@ bool KeyedEmptyInheritanceStructPubSubType::getKey(
     return true;
 }
 
-void KeyedEmptyInheritanceStructPubSubType::register_type_object_representation() const
+void KeyedEmptyInheritanceStructPubSubType::register_type_object_representation()
 {
-    register_key_type_objects();
+    register_KeyedEmptyInheritanceStruct_type_identifier(type_identifiers_);
 }
 
 KeyedInheritanceStructPubSubType::KeyedInheritanceStructPubSubType()
@@ -3114,9 +3114,9 @@ bool KeyedInheritanceStructPubSubType::getKey(
     return true;
 }
 
-void KeyedInheritanceStructPubSubType::register_type_object_representation() const
+void KeyedInheritanceStructPubSubType::register_type_object_representation()
 {
-    register_key_type_objects();
+    register_KeyedInheritanceStruct_type_identifier(type_identifiers_);
 }
 
 InheritanceKeyedEmptyStructPubSubType::InheritanceKeyedEmptyStructPubSubType()
@@ -3307,9 +3307,9 @@ bool InheritanceKeyedEmptyStructPubSubType::getKey(
     return true;
 }
 
-void InheritanceKeyedEmptyStructPubSubType::register_type_object_representation() const
+void InheritanceKeyedEmptyStructPubSubType::register_type_object_representation()
 {
-    register_key_type_objects();
+    register_InheritanceKeyedEmptyStruct_type_identifier(type_identifiers_);
 }
 
 
