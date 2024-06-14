@@ -186,9 +186,6 @@ bool DiscoveryServer::init(
     pqos.wire_protocol().builtin.discovery_config.discoveryProtocol =
             eprosima::fastdds::rtps::DiscoveryProtocol::SERVER;
 
-    // Set SERVER's GUID prefix
-    set_server_client_random_guidPrefix(pqos.wire_protocol().prefix);
-
     // Set SERVER's listening locator for PDP
     pqos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(listening_locator);
 

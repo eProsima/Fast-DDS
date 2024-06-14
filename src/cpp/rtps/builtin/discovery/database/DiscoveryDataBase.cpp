@@ -37,7 +37,7 @@ namespace rtps {
 namespace ddb {
 
 DiscoveryDataBase::DiscoveryDataBase(
-        fastdds::rtps::GuidPrefix_t server_guid_prefix)
+        const fastdds::rtps::GuidPrefix_t& server_guid_prefix)
     : server_guid_prefix_(server_guid_prefix)
     , server_acked_by_all_(true)
     , enabled_(true)
@@ -65,21 +65,16 @@ void DiscoveryDataBase::add_server(
 {
     std::lock_guard<std::recursive_mutex> guard(mutex_);
     EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "Server " << server << " added");
-    if (std::find(servers_.begin(), servers_.end(), server) == servers_.end())
-    {
-        servers_.push_back(server);
-    }
+    servers_.insert(server);
 }
 
 void DiscoveryDataBase::remove_server(
         fastrtps::rtps::GuidPrefix_t server)
 {
     std::lock_guard<std::recursive_mutex> guard(mutex_);
-    auto remove_it = std::find(servers_.begin(), servers_.end(), server);
-    if (remove_it != servers_.end())
+    if (servers_.erase(server) == 1)
     {
         EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "Removing server " << server);
-        servers_.erase(remove_it);
     }
     else
     {

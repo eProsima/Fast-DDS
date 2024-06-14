@@ -126,16 +126,9 @@ struct LocatorSelectorEntry
     static LocatorSelectorEntry create_fully_selected_entry(
             const LocatorList_t& unicast_locators)
     {
-        // Create an entry with space for all locators
-        LocatorSelectorEntry entry(unicast_locators.size(), 0);
-        // Add and select unicast locators
-        for (const Locator_t& locator : unicast_locators)
-        {
-            entry.state.unicast.push_back(entry.unicast.size());
-            entry.unicast.push_back(locator);
-        }
-        // Return created entry
-        return entry;
+        // Use previous overload with an empty multicast list
+        LocatorList_t empty_list {};
+        return create_fully_selected_entry(unicast_locators, empty_list);
     }
 
     //! GUID of the remote entity.

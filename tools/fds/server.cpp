@@ -181,18 +181,23 @@ int fastdds_discovery_server(
     if (nullptr == pOp)
     {
         fastdds::rtps::GuidPrefix_t prefix_cero;
-        if (participantQos.wire_protocol().prefix == prefix_cero)
-        {
-            eprosima::fastdds::rtps::set_server_client_random_guidPrefix(participantQos.wire_protocol().prefix);
-        }
-        else if (!(participantQos.wire_protocol().builtin.discovery_config.discoveryProtocol ==
+        if (!(participantQos.wire_protocol().builtin.discovery_config.discoveryProtocol ==
                 eprosima::fastdds::rtps::DiscoveryProtocol::SERVER ||
                 participantQos.wire_protocol().builtin.discovery_config.discoveryProtocol ==
-                eprosima::fastdds::rtps::DiscoveryProtocol::BACKUP))
+                eprosima::fastdds::rtps::DiscoveryProtocol::BACKUP) && nullptr != options[XML_FILE])
         {
+            // Discovery protocol specified in XML file is not SERVER nor BACKUP
             std::cout << "The provided configuration is not valid. Participant must be either SERVER or BACKUP. " <<
                 std::endl;
             return 1;
+        }
+        else if (participantQos.wire_protocol().prefix == prefix_cero &&
+                participantQos.wire_protocol().builtin.discovery_config.discoveryProtocol ==
+                eprosima::fastrtps::rtps::DiscoveryProtocol::BACKUP)
+        {
+            // Discovery protocol specified in XML is BACKUP, but no GUID was specified
+            std::cout << "Specifying a GUID prefix is mandatory for BACKUP Discovery Servers." <<
+                "Update the XML file or use the -i argument." << std::endl;
         }
     }
     else if (pOp->count() != 1)
@@ -228,6 +233,14 @@ int fastdds_discovery_server(
     pOp = options[BACKUP];
     if (nullptr != pOp)
     {
+        fastrtps::rtps::GuidPrefix_t prefix_cero;
+        if (participantQos.wire_protocol().prefix == prefix_cero && server_id == -1)
+        {
+            // BACKUP argument used, but no GUID was specified either in the XML nor in the CLI
+            std::cout << "Specifying a GUID prefix is mandatory for BACKUP Discovery Servers. Use the -i argument." <<
+                std::endl;
+            return 1;
+        }
         participantQos.wire_protocol().builtin.discovery_config.discoveryProtocol = DiscoveryProtocol::BACKUP;
     }
     else if (nullptr == options[XML_FILE])
@@ -590,9 +603,7 @@ int fastdds_discovery_server(
             participantQos.wire_protocol().builtin.discovery_config.discoveryProtocol <<
             std::endl;
         std::cout << "  Security:           " << (has_security ? "YES" : "NO") << std::endl;
-        std::cout << "  Server GUID prefix: " <<
-            (has_security ? participantQos.wire_protocol().prefix : pServer->guid().guidPrefix) <<
-            std::endl;
+        std::cout << "  Server GUID prefix: " << pServer->guid().guidPrefix << std::endl;
         std::cout << "  Server Addresses:   ";
         for (auto locator_it = participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.begin();
                 locator_it != participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.end();)

@@ -1498,9 +1498,10 @@ void PDP::resend_ininitial_announcements()
 {
     if (enabled_)
     {
-        this->mp_mutex->lock();
-        initial_announcements_ = m_discovery.discovery_config.initial_announcements;
-        this->mp_mutex->unlock();
+        {
+            std::lock_guard<std::recursive_mutex> guardPDP(*mp_mutex);
+            initial_announcements_ = m_discovery.discovery_config.initial_announcements;
+        }
         set_next_announcement_interval();
         resetParticipantAnnouncement();
     }

@@ -368,7 +368,7 @@ void PDPServerListener::on_new_cache_change_added(
 }
 
 std::pair<bool, bool> PDPServerListener::check_server_discovery_conditions(
-        ParticipantProxyData& participant_data,
+        const ParticipantProxyData& participant_data,
         std::string& participant_type_str)
 {
     // is_valid, is_client
