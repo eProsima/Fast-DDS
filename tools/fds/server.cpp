@@ -441,7 +441,7 @@ int fastdds_discovery_server(
     {
         if (nullptr == pO_tcp)
         {
-            // Only the TCP port has been specified. Use localhost as default interface for TCP
+            // Only the TCP port has been specified. Use "any" as interface for TCP to listen on all interfaces
             IPLocator::setIPv4(locator_tcp_4, "0.0.0.0");
             participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(locator_tcp_4);
             auto tcp_descriptor = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();

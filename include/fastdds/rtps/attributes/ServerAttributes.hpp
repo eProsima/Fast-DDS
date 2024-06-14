@@ -140,14 +140,10 @@ const char* const DEFAULT_ROS2_SERVER_GUIDPREFIX = "44.53.00.5f.45.50.52.4f.53.4
 // port used by default for tcp transport
 constexpr uint16_t DEFAULT_TCP_SERVER_PORT = 42100;
 
-/* Environment variable to specify a semicolon-separated list of UDPv4 locators (ip:port) that define remote server
- * locators.
- * The position in the list is used as a "server id" to extrapolate the server's GUID prefix.
- * For the variable to take any effect, the following pre-conditions must be met:
- *    1. The server's GUID prefix must be compliant with the schema
- *       "44.53.<server_id_in_hex>.5f.45.50.52.4f.53.49.4d.41", which is the schema followed by the prefixes generated
- *        when creating server using fastdds cli, being DEFAULT_ROS2_SERVER_GUIDPREFIX the prefix for ID=0.
- *    2. The discovery protocol must be either SIMPLE or SERVER.
+/* Environment variable to specify a semicolon-separated list of locators ([transport]ip:port) that define remote server
+ * locators. The [transport] specification is optional. The default transport is UDPv4.
+ * For the variable to take any effect, the following pre-condition must be met:
+ *    - The discovery protocol must be either SIMPLE or SERVER.
  *       a. In the case of SIMPLE, the participant is created as a CLIENT instead.
  *       b. In the case of SERVER, the participant is created as a SERVER, using the DEFAULT_ROS2_MASTER_URI list to
  *          expand the list of remote servers.

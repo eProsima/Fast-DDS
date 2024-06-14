@@ -125,7 +125,7 @@ std::string EDPServerPUBListener::get_writer_proxy_topic_name(
     }
     else
     {
-        // This is a normal case in in server redudancy scenarios
+        // This is a normal case in server redundancy scenarios
         EPROSIMA_LOG_INFO(RTPS_EDP_LISTENER, "Writer Proxy Data missing for change " << auxGUID);
     }
     return topic_name;

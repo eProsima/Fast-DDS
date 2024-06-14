@@ -268,7 +268,7 @@ bool PDPClient::create_ds_pdp_best_effort_reader(
     ratt.endpoint.ignore_non_matching_locators = pattr.ignore_non_matching_locators;
     ratt.endpoint.topicKind = WITH_KEY;
 
-    // Change depending of backup mode
+    // Change depending on backup mode
     ratt.endpoint.durabilityKind = VOLATILE;
     ratt.endpoint.reliabilityKind = BEST_EFFORT;
 
@@ -738,7 +738,7 @@ void PDPClient::announceParticipantState(
         // Add the write params to the sample
         if (dispose)
         {
-            // We must assure when the server is dying that all client are send at least a DATA(p).
+            // When the server is dying we must ensure that every client is sent at least a DATA(p).
             // Note here we can no longer receive and DATA or ACKNACK from clients.
             // In order to avoid that we send the message directly as in the standard stateless PDP.
 
@@ -1046,7 +1046,7 @@ bool load_environment_server_info(
 
                 if (locator.empty())
                 {
-                    // It's intencionally empty to hint us to ignore this server
+                    // It's intentionally empty to hint us to ignore this server
                 }
                 // Try first with IPv4
                 else if (std::regex_match(locator, mr, ROS2_IPV4_ADDRESSPORT_PATTERN,
@@ -1126,7 +1126,7 @@ bool load_environment_server_info(
                     // Add server to the list
                     add_server2qos(std::forward_list<Locator>{server_locator}, servers_list);
                 }
-                // Try resolve DNS
+                // Try to resolve DNS
                 else if (std::regex_match(locator, mr, ROS2_DNS_DOMAINPORT_PATTERN,
                         std::regex_constants::match_not_null))
                 {
@@ -1217,7 +1217,7 @@ bool load_environment_server_info(
                     // Add server to the list
                     add_server2qos(std::move(flist), servers_list);
                 }
-                // Try resolve TCP DNS
+                // Try to resolve TCP DNS
                 else if (std::regex_match(locator, mr, ROS2_DNS_DOMAINPORT_PATTERN_TCP,
                         std::regex_constants::match_not_null))
                 {

@@ -64,8 +64,8 @@ protected:
     /**
      * Checks discovery conditions on a discovery server entity.
      * Essentially, it checks for incoming PIDS of remote proxy datas.
-     * @param participant_data Remote participant data to check.
-     * @param participant_type_str Type of the remote participant.
+     * @param [in]  participant_data Remote participant data to check.
+     * @param [out] participant_type_str Type of the remote participant.
      * @return A pair of booleans.
      * The first one indicates if the remote participant data is valid.
      * The second one indicates if the remote participant data is a client.

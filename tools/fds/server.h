@@ -44,10 +44,6 @@ struct Arg : public option::Arg
             const option::Option& option,
             bool msg);
 
-    // static option::ArgStatus optional_ip(
-    //     const option::Option& option,
-    //     bool msg);
-
     static option::ArgStatus check_udp_port(
             const option::Option& option,
             bool msg);

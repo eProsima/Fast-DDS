@@ -432,7 +432,7 @@ public:
             const GuidPrefix_t& guid_prefix);
 
     /**
-     * Get the list of remote servers' locators to which the client should connect
+     * Get the list of remote servers' locators to which the participant should connect
      * @return A reference to the LocatorList
      */
     fastdds::rtps::LocatorList& remote_server_locators();
@@ -577,7 +577,7 @@ protected:
      *
      * @param properties Parameter Properties list to check
      *
-     * @return struct of ParticipantType indicating the type.
+     * @return a string indicating the participant type.
      */
     std::string check_participant_type(
             const eprosima::fastrtps::ParameterPropertyList_t properties);
