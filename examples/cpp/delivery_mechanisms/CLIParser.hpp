@@ -297,6 +297,16 @@ public:
                 print_help(EXIT_FAILURE);
             }
         }
+
+        // Pubsub entity does not support TCP transport without ignore-local-endpoints option
+        if (config.entity == CLIParser::EntityKind::PUBSUB &&
+                config.delivery_mechanism == DeliveryMechanismKind::TCP &&
+                !config.ignore_local_endpoints)
+        {
+            EPROSIMA_LOG_ERROR(CLI_PARSER,
+                    "Unsupported corner case: TCP delivery mechanism is not allowed for \"pubsub\" without ignore-local-endpoints option");
+            print_help(EXIT_FAILURE);
+        }
         return config;
     }
 
