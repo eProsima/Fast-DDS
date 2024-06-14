@@ -149,6 +149,23 @@ public:
         return m_lastCacheChangeSeqNum + 1;
     }
 
+    /**
+     * Release a change when it is not being used anymore.
+     *
+     * @param change Pointer to the cache change to be released.
+     *
+     * @returns whether the operation succeeded or not
+     *
+     * @pre
+     *     @li A writer has been associated with this history
+     *     @li @c change is not @c nullptr
+     *     @li @c change points to a cache change obtained from a call to @c this->create_change
+     *
+     * @post memory pointed to by @c change is not accessed
+     */
+    FASTDDS_EXPORTED_API bool release_change(
+            CacheChange_t* ch);
+
 protected:
 
     FASTDDS_EXPORTED_API void do_release_cache(

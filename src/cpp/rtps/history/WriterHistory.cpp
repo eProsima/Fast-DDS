@@ -18,12 +18,14 @@
 
 #include <fastdds/rtps/history/WriterHistory.hpp>
 
+#include <cassert>
 #include <mutex>
 
+#include <fastdds/core/policy/ParameterSerializer.hpp>
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/rtps/writer/RTPSWriter.hpp>
 #include <fastdds/rtps/common/WriteParams.hpp>
-#include <fastdds/core/policy//ParameterSerializer.hpp>
+#include <fastdds/rtps/history/IPayloadPool.hpp>
+#include <fastdds/rtps/writer/RTPSWriter.hpp>
 
 #include <rtps/history/CacheChangePool.h>
 #include <rtps/history/PoolConfig.h>
@@ -323,10 +325,27 @@ bool WriterHistory::remove_min_change(
 
 //TODO Hacer metodos de remove_all_changes. y hacer los metodos correspondientes en los writers y publishers.
 
+bool WriterHistory::release_change(
+        CacheChange_t* ch)
+{
+    // Asserting preconditions
+    assert(ch != nullptr);
+    assert(ch->writerGUID == mp_writer->getGuid());
+
+    std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
+
+    IPayloadPool* pool = ch->serializedPayload.payload_owner;
+    if (pool)
+    {
+        pool->release_payload(ch->serializedPayload);
+    }
+    return change_pool_->release_cache(ch);
+}
+
 void WriterHistory::do_release_cache(
         CacheChange_t* ch)
 {
-    mp_writer->release_change(ch);
+    release_change(ch);
 }
 
 void WriterHistory::set_fragments(
