@@ -161,7 +161,7 @@ void RTPSWriter::deinit()
 
         for (auto it = mp_history->changesBegin(); it != mp_history->changesEnd(); ++it)
         {
-            release_change(*it);
+            mp_history->release_change(*it);
         }
 
         mp_history->m_changes.clear();
@@ -195,12 +195,6 @@ CacheChange_t* RTPSWriter::new_change(
     reserved_change->writer_info.num_sent_submessages = 0;
     reserved_change->vendor_id = c_VendorId_eProsima;
     return reserved_change;
-}
-
-bool RTPSWriter::release_change(
-        CacheChange_t* change)
-{
-    return mp_history->release_change(change);
 }
 
 SequenceNumber_t RTPSWriter::get_seq_num_min()

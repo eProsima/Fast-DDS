@@ -219,7 +219,7 @@ History::iterator WriterHistory::remove_change_nts(
         // Release from pools
         if ( release )
         {
-            mp_writer->release_change(change);
+            release_change(change);
         }
 
         return ret_val;
@@ -250,7 +250,7 @@ bool WriterHistory::remove_change(
 
     if (nullptr != p )
     {
-        mp_writer->release_change(p);
+        release_change(p);
         return true;
     }
 
@@ -329,6 +329,7 @@ bool WriterHistory::release_change(
         CacheChange_t* ch)
 {
     // Asserting preconditions
+    assert(mp_writer != nullptr);
     assert(ch != nullptr);
     assert(ch->writerGUID == mp_writer->getGuid());
 

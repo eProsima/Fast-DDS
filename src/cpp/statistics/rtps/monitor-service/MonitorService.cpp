@@ -383,7 +383,7 @@ bool MonitorService::add_change(
         uint32_t cdr_size = type_.getSerializedSizeProvider(&status_data)();
         if (!status_writer_payload_pool_->get_payload(cdr_size, change->serializedPayload))
         {
-            status_writer_->release_change(change);
+            status_writer_history_->release_change(change);
             change = nullptr;
         }
     }
@@ -395,7 +395,7 @@ bool MonitorService::add_change(
         if (!type_.serialize(&status_data, &change->serializedPayload))
         {
             EPROSIMA_LOG_ERROR(MONITOR_SERVICE, "Serialization failed");
-            status_writer_->release_change(change);
+            status_writer_history_->release_change(change);
             return false;
         }
 

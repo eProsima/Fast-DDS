@@ -745,7 +745,7 @@ void PDPClient::announceParticipantState(
             {
                 if (!pool->get_payload(mp_builtin->m_att.writerPayloadSize, change->serializedPayload))
                 {
-                    writer.release_change(change);
+                    history.release_change(change);
                     change = nullptr;
                 }
             }
@@ -793,7 +793,7 @@ void PDPClient::announceParticipantState(
             }
 
             // free change
-            writer.release_change(change);
+            history.release_change(change);
         }
         else
         {

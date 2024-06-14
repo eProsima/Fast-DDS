@@ -79,6 +79,7 @@ inline bool usleep_bool()
 static CacheChange_t* create_change_for_message(
         const ParticipantGenericMessage& message,
         RTPSWriter* writer,
+        WriterHistory* history,
         const std::shared_ptr<IPayloadPool>& payload_pool)
 {
     CacheChange_t* change = writer->new_change(ALIVE, c_InstanceHandle_Unknown);
@@ -88,7 +89,7 @@ static CacheChange_t* create_change_for_message(
         cdr_size += 4; // Encapsulation
         if (!payload_pool->get_payload(cdr_size, change->serializedPayload))
         {
-            writer->release_change(change);
+            history->release_change(change);
             change = nullptr;
         }
     }
@@ -922,6 +923,7 @@ bool SecurityManager::on_process_handshake(
         CacheChange_t* change = create_change_for_message(
             message,
             participant_stateless_message_writer_,
+            participant_stateless_message_writer_history_,
             participant_stateless_message_pool_);
 
         if (change != nullptr)
@@ -2233,6 +2235,7 @@ void SecurityManager::exchange_participant_crypto(
         CacheChange_t* change = create_change_for_message(
             message,
             participant_volatile_message_secure_writer_,
+            participant_volatile_message_secure_writer_history_,
             participant_volatile_message_secure_pool_);
 
         if (change != nullptr)
@@ -2258,13 +2261,13 @@ void SecurityManager::exchange_participant_crypto(
                 // Send
                 if (!participant_volatile_message_secure_writer_history_->add_change(change))
                 {
-                    participant_volatile_message_secure_writer_->release_change(change);
+                    participant_volatile_message_secure_writer_history_->release_change(change);
                     EPROSIMA_LOG_ERROR(SECURITY, "WriterHistory cannot add the CacheChange_t");
                 }
             }
             else
             {
-                participant_volatile_message_secure_writer_->release_change(change);
+                participant_volatile_message_secure_writer_history_->release_change(change);
                 EPROSIMA_LOG_ERROR(SECURITY, "Cannot serialize ParticipantGenericMessage");
             }
         }
@@ -3049,6 +3052,7 @@ bool SecurityManager::discovered_reader(
                                 CacheChange_t* change = create_change_for_message(
                                     message,
                                     participant_volatile_message_secure_writer_,
+                                    participant_volatile_message_secure_writer_history_,
                                     participant_volatile_message_secure_pool_);
 
                                 if (change != nullptr)
@@ -3080,13 +3084,13 @@ bool SecurityManager::discovered_reader(
                                         }
                                         else
                                         {
-                                            participant_volatile_message_secure_writer_->release_change(change);
+                                            participant_volatile_message_secure_writer_history_->release_change(change);
                                             EPROSIMA_LOG_ERROR(SECURITY, "WriterHistory cannot add the CacheChange_t");
                                         }
                                     }
                                     else
                                     {
-                                        participant_volatile_message_secure_writer_->release_change(change);
+                                        participant_volatile_message_secure_writer_history_->release_change(change);
                                         EPROSIMA_LOG_ERROR(SECURITY, "Cannot serialize ParticipantGenericMessage");
                                     }
                                 }
@@ -3409,6 +3413,7 @@ bool SecurityManager::discovered_writer(
                                 CacheChange_t* change = create_change_for_message(
                                     message,
                                     participant_volatile_message_secure_writer_,
+                                    participant_volatile_message_secure_writer_history_,
                                     participant_volatile_message_secure_pool_);
 
                                 if (change != nullptr)
@@ -3440,13 +3445,13 @@ bool SecurityManager::discovered_writer(
                                         }
                                         else
                                         {
-                                            participant_volatile_message_secure_writer_->release_change(change);
+                                            participant_volatile_message_secure_writer_history_->release_change(change);
                                             EPROSIMA_LOG_ERROR(SECURITY, "WriterHistory cannot add the CacheChange_t");
                                         }
                                     }
                                     else
                                     {
-                                        participant_volatile_message_secure_writer_->release_change(change);
+                                        participant_volatile_message_secure_writer_history_->release_change(change);
                                         EPROSIMA_LOG_ERROR(SECURITY, "Cannot serialize ParticipantGenericMessage");
                                     }
                                 }

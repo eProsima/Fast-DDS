@@ -150,7 +150,7 @@ void pool_initialization_test (
             .Times(1)
             .WillOnce(Return(true));
 
-    writer->release_change(ch);
+    history->release_change(ch);
 
     RTPSDomain::removeRTPSWriter(writer);
     RTPSDomain::removeRTPSParticipant(participant);

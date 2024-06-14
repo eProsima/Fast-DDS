@@ -511,7 +511,7 @@ void PDP::announceParticipantState(
                 {
                     if (!payload_pool->get_payload(cdr_size, change->serializedPayload))
                     {
-                        writer.release_change(change);
+                        history.release_change(change);
                         change = nullptr;
                     }
                 }
@@ -560,7 +560,7 @@ void PDP::announceParticipantState(
             {
                 if (!payload_pool->get_payload(cdr_size, change->serializedPayload))
                 {
-                    writer.release_change(change);
+                    history.release_change(change);
                     change = nullptr;
                 }
             }

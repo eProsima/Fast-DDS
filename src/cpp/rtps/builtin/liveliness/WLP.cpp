@@ -908,7 +908,7 @@ bool WLP::send_liveliness_message(
     {
         if (!pool->get_payload(WLP::builtin_participant_data_max_size, change->serializedPayload))
         {
-            writer->release_change(change);
+            history->release_change(change);
             change = nullptr;
         }
     }

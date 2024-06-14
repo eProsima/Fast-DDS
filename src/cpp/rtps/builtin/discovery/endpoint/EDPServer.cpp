@@ -496,7 +496,7 @@ bool EDPServer::process_and_release_change(
         {
             auto builtin_to_release = builtin_to_remove_from;
 
-            builtin_to_release.first->release_change(change);
+            builtin_to_release.second->release_change(change);
             ret_val = true;
         }
     }

@@ -151,7 +151,7 @@ public:
         {
             if (!writer.payload_pool->get_payload(cdr_size, change->serializedPayload))
             {
-                writer.first->release_change(change);
+                writer.second->release_change(change);
                 change = nullptr;
             }
         }

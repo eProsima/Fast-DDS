@@ -1025,7 +1025,7 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
                 payload = std::move(ch->serializedPayload);
                 add_loan(data, payload);
             }
-            writer_->release_change(ch);
+            history_.release_change(ch);
             return RETCODE_TIMEOUT;
         }
 

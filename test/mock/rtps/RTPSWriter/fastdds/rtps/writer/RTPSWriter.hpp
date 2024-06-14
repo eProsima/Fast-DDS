@@ -121,8 +121,6 @@ public:
             ChangeKind_t,
             InstanceHandle_t));
 
-    MOCK_METHOD1(release_change, void(CacheChange_t*));
-
     MOCK_METHOD1(set_separate_sending, void(bool));
 
     MOCK_METHOD0(getRTPSParticipant, RTPSParticipantImpl* ());
