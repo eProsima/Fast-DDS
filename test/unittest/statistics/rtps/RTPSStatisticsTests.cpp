@@ -409,14 +409,10 @@ public:
 
         ASSERT_NE(nullptr, writer_);
 
-        auto writer_change = writer_->new_change(
-            [length]() -> uint32_t
-            {
-                return length;
-            },
-            ALIVE);
-
+        auto writer_change = writer_->new_change(ALIVE);
         ASSERT_NE(nullptr, writer_change);
+
+        writer_change->serializedPayload.reserve(length);
 
         std::string str("https://github.com/eProsima/Fast-DDS.git");
         uint32_t change_length = std::min(length, static_cast<uint32_t>(str.length()));
@@ -434,14 +430,10 @@ public:
 
         ASSERT_NE(nullptr, writer_);
 
-        auto writer_change = writer_->new_change(
-            [length]() -> uint32_t
-            {
-                return length;
-            },
-            ALIVE);
-
+        auto writer_change = writer_->new_change(ALIVE);
         ASSERT_NE(nullptr, writer_change);
+
+        writer_change->serializedPayload.reserve(length);
 
         {
             memset(writer_change->serializedPayload.data, 'e', length);
