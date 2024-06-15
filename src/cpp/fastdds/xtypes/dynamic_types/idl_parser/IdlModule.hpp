@@ -365,39 +365,33 @@ public:
     //     return std::find(from_enum_.begin(), from_enum_.end(), name) != from_enum_.end();
     // }
 
-    // bool create_constant(
-    //         const std::string& name,
-    //         v1_3::DynamicData_ptr value,
-    //         bool replace = false,
-    //         bool from_enumeration = false)
-    // {
-    //     if (name.find("::") != std::string::npos)
-    //     {
-    //         return false; // Cannot add a symbol with scoped name.
-    //     }
+    bool create_constant(
+            const std::string& name,
+            DynamicData::_ref_type xdata,
+            bool replace = false,
+            bool from_enumeration = false)
+    {
+        if (name.find("::") != std::string::npos)
+        {
+            return false; // Cannot add a symbol with scoped name.
+        }
 
-    //     if (replace)
-    //     {
-    //         auto it = constants_.find(name);
-    //         if (it != constants_.end())
-    //         {
-    //             constants_.erase(it);
-    //             constants_types_.erase(constants_types_.find(name));
-    //         }
-    //     }
+        if (replace)
+        {
+            auto it = constants_.find(name);
+            if (it != constants_.end())
+            {
+                constants_.erase(it);
+            }
+        }
 
-    //     auto inserted = constants_types_.emplace(name, Type(*this, *value->get_type()));
-    //     if (inserted.second)
-    //     {
-    //         auto result = constants_.emplace(name, value);
-    //         if (result.second && from_enumeration)
-    //         {
-    //             from_enum_.push_back(name);
-    //         }
-    //         return result.second;
-    //     }
-    //     return false;
-    // }
+        auto result = constants_.emplace(name, xdata);
+        if (result.second && from_enumeration)
+        {
+            from_enum_.push_back(name);
+        }
+        return result.second;
+    }
 
     // bool has_enum_32(
     //         const std::string& name) const
@@ -533,8 +527,8 @@ protected:
 
     std::map<std::string, DynamicTypeBuilder::_ref_type> aliases_;
     // std::map<std::string, Type> constants_types_;
-    // std::map<std::string, v1_3::DynamicData_ptr> constants_;
-    // std::vector<std::string> from_enum_;
+    std::map<std::string, DynamicData::_ref_type> constants_;
+    std::vector<std::string> from_enum_;
     std::map<std::string, DynamicTypeBuilder::_ref_type> enumerations_32_;
     std::map<std::string, DynamicTypeBuilder::_ref_type> structs_;
     std::map<std::string, DynamicTypeBuilder::_ref_type> unions_;
