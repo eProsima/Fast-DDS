@@ -50,22 +50,22 @@ int main(
          EPROSIMA_LOG_ERROR(IDLPARSER, "Failed to create DynamicType from IDL: " << test00);
      }
 
-    // std::cout << "Processing literals, expressions, and consts:" << std::endl;
-    // std::string test01 =
-    //         R"(
-    //     // boolean literals in IDL are case sensitive and should be exactly TRUE or FALSE
-    //     const boolean C_BOOL = TRUE;
-    //     const string<100> C_STR = "hello";
-    //     const int32 C_LITERALS1 = (0x5 | (4 + 3)) + (4 << 1) * 2; // 23
-    //     const int32 C_LITERALS2 = (02 + 0x1) * 2; // 6
-    //     const int32 C_LITERALS3 = 4 / ( 07 & 0x2 ); // 2
-    //     const int32 C_LITERALS4 = -(5 * ( 03 + 0xF )); // -90
-    //     const int32 C_LITERALS5 = 0xf0 & ~(4 * ( 0x7 - 02 )); // 224
-    //     const int32 C_LITERALS6 = (0x7 | 0x9) & ~(6 * ( 024 - 5 )); // 5
-    //     const float C_LITERALS7 = (2 + 4) / 3.0d; /* 2.0 */
-    //     const float C_LITERALS8 = (2e0 + 4) / 3.0d; /* 2.0 */
-    // )";
-    // idl::Context context01 = idl::parse(test01);
+     std::cout << "Processing literals, expressions, and consts:" << std::endl;
+     std::string test01 =
+             R"(
+         // boolean literals in IDL are case sensitive and should be exactly TRUE or FALSE
+         const boolean C_BOOL = TRUE;
+         const string<100> C_STR = "hello";
+         const int32 C_LITERALS1 = (0x5 | (4 + 3)) + (4 << 1) * 2; // 23
+         const int32 C_LITERALS2 = (02 + 0x1) * 2; // 6
+         const int32 C_LITERALS3 = 4 / ( 07 & 0x2 ); // 2
+         const int32 C_LITERALS4 = -(5 * ( 03 + 0xF )); // -90
+         const int32 C_LITERALS5 = 0xf0 & ~(4 * ( 0x7 - 02 )); // 224
+         const int32 C_LITERALS6 = (0x7 | 0x9) & ~(6 * ( 024 - 5 )); // 5
+         const float C_LITERALS7 = (2 + 4) / 3.0d; /* 2.0 */
+         const float C_LITERALS8 = (2e0 + 4) / 3.0d; /* 2.0 */
+     )";
+     DynamicTypeBuilder::_ref_type literal_type = DynamicTypeBuilderFactory::get_instance()->create_type_w_idl(test01);
 
     // std::cout << "Processing IDL string:" << std::endl;
     // std::string test02 =
