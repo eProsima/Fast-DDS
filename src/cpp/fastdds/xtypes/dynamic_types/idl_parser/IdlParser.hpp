@@ -40,6 +40,7 @@
 #include <fastdds/dds/log/Log.hpp>
 
 #include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilder.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilderFactory.hpp>
@@ -474,497 +475,489 @@ load_type_action(long_double_type, long double)
 load_type_action(string_type, string)
 load_type_action(wide_string_type, wstring)
 
-// template<>
-// struct action<char_type>
-// {
-//     template<typename Input>
-//     static void apply(
-//             const Input& in,
-//             Context* ctx,
-//             std::map<std::string, std::string>& state,
-//             std::vector<v1_3::DynamicData_ptr>& operands)
-//     {
-//         switch (ctx->char_translation)
-//         {
-//             case Context::CHAR:
-//                 state["type"] = "char";
-//             case Context::UINT8:
-//                 state["type"] = "uint8";
-//             case Context::INT8:
-//                 state["type"] = "int8";
-//             default:
-//                 EPROSIMA_LOG_ERROR(IDLPARSER, "Invalid char type " << ctx->char_translation);
-//                 state["type"] = "char";
-//         }
-//     }
+template<>
+struct action<char_type>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state,
+            std::vector<traits<DynamicData>::ref_type>& operands)
+    {
+        switch (ctx->char_translation)
+        {
+            case Context::CHAR:
+                state["type"] = "char";
+            case Context::UINT8:
+                state["type"] = "uint8";
+            case Context::INT8:
+                state["type"] = "int8";
+            default:
+                EPROSIMA_LOG_ERROR(IDLPARSER, "Invalid char type " << ctx->char_translation);
+                state["type"] = "char";
+        }
+    }
 
-// };
+};
 
-// template<>
-// struct action<wide_char_type>
-// {
-//     template<typename Input>
-//     static void apply(
-//             const Input& in,
-//             Context* ctx,
-//             std::map<std::string, std::string>& state,
-//             std::vector<v1_3::DynamicData_ptr>& operands)
-//     {
-//         switch (ctx->wchar_type)
-//         {
-//             case Context::WCHAR_T:
-//                 state["type"] = "wchar";
-//             case Context::CHAR16_T:
-//                 state["type"] = "char16";
-//             default:
-//                 EPROSIMA_LOG_ERROR(IDLPARSER, "Invalid wchar type " << ctx->char_translation);
-//                 state["type"] = "wchar";
-//         }
-//     }
+template<>
+struct action<wide_char_type>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state,
+            std::vector<traits<DynamicData>::ref_type>& operands)
+    {
+        switch (ctx->wchar_type)
+        {
+            case Context::WCHAR_T:
+                state["type"] = "wchar";
+            case Context::CHAR16_T:
+                state["type"] = "char16";
+            default:
+                EPROSIMA_LOG_ERROR(IDLPARSER, "Invalid wchar type " << ctx->char_translation);
+                state["type"] = "wchar";
+        }
+    }
 
-// };
+};
 
-// template<>
-// struct action<positive_int_const>
-// {
-//     template<typename Input>
-//     static void apply(
-//             const Input& in,
-//             Context* ctx,
-//             std::map<std::string, std::string>& state,
-//             std::vector<v1_3::DynamicData_ptr>& operands)
-//     {
-//         state["positive_int_const"] = in.string();
-//     }
+template<>
+struct action<positive_int_const>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state,
+            std::vector<traits<DynamicData>::ref_type>& operands)
+    {
+        state["positive_int_const"] = in.string();
+    }
 
-// };
+};
 
-// #define load_stringsize_action(Rule, id) \
-//     template<> \
-//     struct action<Rule> \
-//     { \
-//         template<typename Input> \
-//         static void apply( \
-//             const Input& in, \
-//             Context * ctx, \
-//             std::map<std::string, std::string>& state, \
-//             std::vector<v1_3::DynamicData_ptr>& operands) \
-//         { \
-//             std::cout << "load_stringsize_action: " << typeid(Rule).name() << " " \
-//                       << in.string() << std::endl; \
-//             if (state.count("positive_int_const")) \
-//             { \
-//                 state[#id] = state["positive_int_const"]; \
-//                 state.erase("positive_int_const"); \
-//             } \
-//         } \
-//     };
+#define load_stringsize_action(Rule, id) \
+    template<> \
+    struct action<Rule> \
+    { \
+        template<typename Input> \
+        static void apply( \
+            const Input& in, \
+            Context * ctx, \
+            std::map<std::string, std::string>& state, \
+            std::vector<traits<DynamicData>::ref_type>& operands) \
+        { \
+            std::cout << "load_stringsize_action: " << typeid(Rule).name() << " " \
+                      << in.string() << std::endl; \
+            if (state.count("positive_int_const")) \
+            { \
+                state[#id] = state["positive_int_const"]; \
+                state.erase("positive_int_const"); \
+            } \
+        } \
+    };
 
-// load_stringsize_action(string_size, string_size)
-// load_stringsize_action(wstring_size, wstring_size)
+load_stringsize_action(string_size, string_size)
+load_stringsize_action(wstring_size, wstring_size)
 
 // // TODO sequence type, map type
 
-// template<typename T> T promote(
-//         v1_3::DynamicData_ptr x)
-// {
-//     if (TypeKind::TK_UINT64 == x->get_kind())
-//     {
-//         long long value = x->get_uint64_value();
-//         return static_cast<T>(value);
-//     }
-//     else if (TypeKind::TK_FLOAT128 == x->get_kind())
-//     {
-//         long double value = x->get_float128_value();
-//         return static_cast<T>(value);
-//     }
-//     else if (TypeKind::TK_BOOLEAN == x->get_kind())
-//     {
-//         bool value = x->get_bool_value();
-//         return static_cast<T>(value);
-//     }
-//     else
-//     {
-//         throw std::runtime_error("bad promote");
-//     }
-// }
+template<typename T> T promote(
+        DynamicData::_ref_type xdata)
+{
+    DynamicType::_ref_type xtype = xdata->type();
+    if (TK_UINT64 == xtype->get_kind())
+    {
+        uint64_t value;
+        xdata->get_uint64_value(value, MEMBER_ID_INVALID);
+        return static_cast<T>(value);
+    }
+    else if (TK_FLOAT128 == xtype->get_kind())
+    {
+        long double value;
+        xdata->get_float128_value(value, MEMBER_ID_INVALID);
+        return static_cast<T>(value);
+    }
+    else if (TK_BOOLEAN == xtype->get_kind())
+    {
+        bool value;
+        xdata->get_boolean_value(value, MEMBER_ID_INVALID);
+        return static_cast<T>(value);
+    }
+    else
+    {
+        throw std::runtime_error("bad promote");
+    }
+}
 
-// const TypeKind promotion_type(
-//         v1_3::DynamicData_ptr a,
-//         v1_3::DynamicData_ptr b)
-// {
-//     static std::map<TypeKind, int> priorities = {
-//         {TypeKind::TK_FLOAT128, 2},
-//         {TypeKind::TK_UINT64, 1},
-//         {TypeKind::TK_BOOLEAN, 0},
-//     };
+const TypeKind promotion_type(
+        DynamicData::_ref_type a,
+        DynamicData::_ref_type b)
+{
+    static std::map<TypeKind, int> priorities = {
+        {TK_FLOAT128, 2},
+        {TK_UINT64, 1},
+        {TK_BOOLEAN, 0},
+    };
 
-//     static std::array<TypeKind, 3> infos = {
-//         TypeKind::TK_BOOLEAN,
-//         TypeKind::TK_UINT64,
-//         TypeKind::TK_FLOAT128
-//     };
+    static std::array<TypeKind, 3> infos = {
+        TK_BOOLEAN,
+        TK_UINT64,
+        TK_FLOAT128
+    };
 
-//     if (a->get_kind() == b->get_kind())
-//     {
-//         return a->get_kind();
-//     }
-//     else
-//     {
-//         return infos[std::max(priorities.at(a->get_kind()), priorities.at(b->get_kind()))];
-//     }
-// }
+    DynamicType::_ref_type atype = a->type();
+    DynamicType::_ref_type btype = b->type();
+    if (atype->get_kind() == btype->get_kind())
+    {
+        return atype->get_kind();
+    }
+    else
+    {
+        return infos[std::max(priorities.at(atype->get_kind()), priorities.at(btype->get_kind()))];
+    }
+}
 
-// template<>
-// struct action<boolean_literal>
-// {
-//     template<typename Input>
-//     static void apply(
-//             const Input& in,
-//             Context* ctx,
-//             std::map<std::string, std::string>& state,
-//             std::vector<v1_3::DynamicData_ptr>& operands)
-//     {
-//         std::cout << "boolean_literal: " << typeid(boolean_literal).name()
-//                   << " " << in.string() << std::endl;
+template<>
+struct action<boolean_literal>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state,
+            std::vector<traits<DynamicData>::ref_type>& operands)
+    {
+        std::cout << "boolean_literal: " << typeid(boolean_literal).name()
+                  << " " << in.string() << std::endl;
 
-//         state["evaluated_expr"] += (state["evaluated_expr"].empty() ? "" : ";") + std::string{"bool"};
+        state["evaluated_expr"] += (state["evaluated_expr"].empty() ? "" : ";") + std::string{"bool"};
 
-//         struct custom_tf : std::numpunct<char>
-//         {
-//             std::string do_truename()  const
-//             {
-//                 return "TRUE";
-//             }
+        // Interpret boolean values from strings
+        struct custom_tf : std::numpunct<char>
+        {
+            std::string do_truename()  const
+            {
+                return "TRUE";
+            }
 
-//             std::string do_falsename() const
-//             {
-//                 return "FALSE";
-//             }
+            std::string do_falsename() const
+            {
+                return "FALSE";
+            }
 
-//         };
+        };
+        std::istringstream ss(in.string());
+        ss.imbue(std::locale(ss.getloc(), new custom_tf));
+        bool value;
+        ss >> std::boolalpha >> value;
 
-//         std::istringstream ss(in.string());
-//         ss.imbue(std::locale(ss.getloc(), new custom_tf));
+        DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+        DynamicType::_ref_type xtype {factory->get_primitive_type(TK_BOOLEAN)};
+        DynamicData::_ref_type xdata {DynamicDataFactory::get_instance()->create_data(xtype)};
+        xdata->set_boolean_value(MEMBER_ID_INVALID, value);
 
-//         bool res;
-//         ss >> std::boolalpha >> res;
-//         v1_3::DynamicTypeBuilderFactory& factory = v1_3::DynamicTypeBuilderFactory::get_instance();
-//         v1_3::DynamicTypeBuilder_cptr builder = factory.create_bool_type();
-//         auto type = builder->build();
-//         v1_3::DynamicData_ptr data(v1_3::DynamicDataFactory::get_instance()->create_data(type));
-//         data->set_bool_value(res);
+        operands.push_back(xdata);
+    }
 
-//         operands.push_back(data);
-//     }
+};
 
-// };
+#define load_literal_action(Rule, id, type, type_kind, set_value) \
+    template<> \
+    struct action<Rule> \
+    { \
+        template<typename Input> \
+        static void apply( \
+            const Input& in, \
+            Context * ctx, \
+            std::map<std::string, std::string>& state, \
+            std::vector<traits<DynamicData>::ref_type>& operands) \
+        { \
+            std::cout << "load_literal_action: " << typeid(Rule).name() << " " \
+                      << in.string() << std::endl; \
+ \
+            state["evaluated_expr"] += (state["evaluated_expr"].empty() ? "" : ";") + std::string{#id}; \
+ \
+            std::istringstream ss(in.string()); \
+            type value; \
+            if (#id == "octal") ss >> std::setbase(std::ios_base::oct) >> value; \
+            else if (#id == "hexa") ss >> std::setbase(std::ios_base::hex) >> value; \
+            else ss >> value; \
+ \
+            DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()}; \
+            DynamicType::_ref_type xtype {factory->get_primitive_type(type_kind)}; \
+            DynamicData::_ref_type xdata {DynamicDataFactory::get_instance()->create_data(xtype)}; \
+            xdata->set_value(MEMBER_ID_INVALID, value); \
+            operands.push_back(xdata); \
+        } \
+    };
 
-// #define load_literal_action(Rule, id, type, create_type, set_value) \
-//     template<> \
-//     struct action<Rule> \
-//     { \
-//         template<typename Input> \
-//         static void apply( \
-//             const Input& in, \
-//             Context * ctx, \
-//             std::map<std::string, std::string>& state, \
-//             std::vector<v1_3::DynamicData_ptr>& operands) \
-//         { \
-//             std::cout << "load_literal_action: " << typeid(Rule).name() << " " \
-//                       << in.string() << std::endl; \
-//  \
-//             state["evaluated_expr"] += (state["evaluated_expr"].empty() ? "" : ";") + std::string{#id}; \
-//  \
-//             std::istringstream ss(in.string()); \
-//             type res; \
-//             if (#id == "octal") ss >> std::setbase(std::ios_base::oct) >> res; \
-//             else if (#id == "hexa") ss >> std::setbase(std::ios_base::hex) >> res; \
-//             else ss >> res; \
-//  \
-//             v1_3::DynamicTypeBuilderFactory& factory = v1_3::DynamicTypeBuilderFactory::get_instance(); \
-//             v1_3::DynamicTypeBuilder_cptr builder = factory.create_type; \
-//             auto xtype = builder->build(); \
-//             v1_3::DynamicData_ptr data(v1_3::DynamicDataFactory::get_instance()->create_data(xtype)); \
-//             data->set_value(res); \
-//             operands.push_back(data); \
-//         } \
-//     };
+load_literal_action(dec_literal, decimal, uint64_t, TK_UINT64, set_uint64_value)
+load_literal_action(oct_literal, octal, uint64_t, TK_UINT64, set_uint64_value)
+load_literal_action(hex_literal, hexa, uint64_t, TK_UINT64, set_uint64_value)
+load_literal_action(float_literal, float, long double, TK_FLOAT128, set_float128_value)
+load_literal_action(fixed_pt_literal, fixed, long double, TK_FLOAT128, set_float128_value)
 
-// load_literal_action(dec_literal, decimal, long long, create_uint64_type(), set_uint64_value)
-// load_literal_action(oct_literal, octal, long long, create_uint64_type(), set_uint64_value)
-// load_literal_action(hex_literal, hexa, long long, create_uint64_type(), set_uint64_value)
-// load_literal_action(float_literal, float, long double, create_float128_type(), set_float128_value)
-// load_literal_action(fixed_pt_literal, fixed, long double, create_float128_type(), set_float128_value)
+#define float_op_action(Rule, id, operation) \
+    template<> \
+    struct action<Rule> \
+    { \
+        template<typename Input> \
+        static void apply( \
+            const Input& in, \
+            Context * ctx, \
+            std::map<std::string, std::string>& state, \
+            std::vector<traits<DynamicData>::ref_type>& operands) \
+        { \
+            std::cout << "float_op_action: " << typeid(Rule).name() << " " \
+                      << in.string() << std::endl; \
+ \
+            state["evaluated_expr"] += (state["evaluated_expr"].empty() ? "" : ";") + std::string{#id}; \
+ \
+            /* calculate the result */ \
+            auto it = operands.rbegin(); \
+            DynamicData::_ref_type s1 = *it++, s2 = *it; \
+            DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()}; \
+ \
+            TypeKind pt = promotion_type(s1, s2); \
+            DynamicType::_ref_type xtype {factory->get_primitive_type(pt)}; \
+            DynamicData::_ref_type xdata {DynamicDataFactory::get_instance()->create_data(xtype)}; \
+ \
+            if (TK_UINT64 == pt) \
+            { \
+                uint64_t value = promote<uint64_t>(s2) operation promote<uint64_t>(s1); \
+                xdata->set_uint64_value(MEMBER_ID_INVALID, value); \
+                std::cout << "=========" << std::endl; \
+                std::cout << #operation << ": " << value << std::endl; \
+                std::cout << "=========" << std::endl; \
+            } \
+            else if (TK_FLOAT128 == pt) \
+            { \
+                long double value = promote<long double>(s2) operation promote<long double>(s1); \
+                xdata->set_float128_value(MEMBER_ID_INVALID, value); \
+                std::cout << "=========" << std::endl; \
+                std::cout << #operation << ": " << value << std::endl; \
+                std::cout << "=========" << std::endl; \
+            } \
+            else \
+            { \
+                throw std::runtime_error("invalid arguments for the operation " #operation ); \
+            } \
+ \
+            /* update the stack */ \
+            operands.pop_back(); \
+            operands.pop_back(); \
+            operands.push_back(xdata); \
+ \
+        } \
+    };
 
-// #define float_op_action(Rule, id, operation) \
-//     template<> \
-//     struct action<Rule> \
-//     { \
-//         template<typename Input> \
-//         static void apply( \
-//             const Input& in, \
-//             Context * ctx, \
-//             std::map<std::string, std::string>& state, \
-//             std::vector<v1_3::DynamicData_ptr>& operands) \
-//         { \
-//             std::cout << "float_op_action: " << typeid(Rule).name() << " " \
-//                       << in.string() << std::endl; \
-//  \
-//             state["evaluated_expr"] += (state["evaluated_expr"].empty() ? "" : ";") + std::string{#id}; \
-//  \
-//             /* calculate the result */ \
-//             auto it = operands.rbegin(); \
-//             v1_3::DynamicData_ptr s1 = *it++, s2 = *it, res; \
-//             v1_3::DynamicTypeBuilderFactory& factory = v1_3::DynamicTypeBuilderFactory::get_instance(); \
-//             v1_3::DynamicTypeBuilder_cptr builder; \
-//             v1_3::DynamicType_ptr xtype; \
-//  \
-//             TypeKind pt = promotion_type(s1, s2); \
-//  \
-//             if (TypeKind::TK_UINT64 == pt) \
-//             { \
-//                 long long value = promote<long long>(s2) operation promote<long long>(s1); \
-//                 builder = factory.create_uint64_type(); \
-//                 xtype = builder->build(); \
-//                 v1_3::DynamicData_ptr data(v1_3::DynamicDataFactory::get_instance()->create_data(xtype)); \
-//                 data->set_uint64_value(value); \
-//                 std::cout << "=========" << std::endl; \
-//                 std::cout << #operation << ": " << value << std::endl; \
-//                 std::cout << "=========" << std::endl; \
-//                 res = data; \
-//             } \
-//             else if (TypeKind::TK_FLOAT128 == pt) \
-//             { \
-//                 long double value = promote<long double>(s2) operation promote<long double>(s1); \
-//                 builder = factory.create_float128_type(); \
-//                 xtype = builder->build(); \
-//                 v1_3::DynamicData_ptr data(v1_3::DynamicDataFactory::get_instance()->create_data(xtype)); \
-//                 data->set_float128_value(value); \
-//                 std::cout << "=========" << std::endl; \
-//                 std::cout << #operation << ": " << value << std::endl; \
-//                 std::cout << "=========" << std::endl; \
-//                 res = data; \
-//             } \
-//             else \
-//             { \
-//                 throw std::runtime_error("invalid arguments for the operation " #operation ); \
-//             } \
-//  \
-//             /* update the stack */ \
-//             operands.pop_back(); \
-//             operands.pop_back(); \
-//             operands.push_back(res); \
-//  \
-//         } \
-//     };
+#define int_op_action(Rule, id, operation) \
+    template<> \
+    struct action<Rule> \
+    { \
+        template<typename Input> \
+        static void apply( \
+            const Input& in, \
+            Context * ctx, \
+            std::map<std::string, std::string>& state, \
+            std::vector<traits<DynamicData>::ref_type>& operands) \
+        { \
+            std::cout << "int_op_action: " << typeid(Rule).name() << " " \
+                      << in.string() << std::endl; \
+ \
+            state["evaluated_expr"] += (state["evaluated_expr"].empty() ? "" : ";") + std::string{#id}; \
+ \
+            /* calculate the result */ \
+            auto it = operands.rbegin(); \
+            DynamicData::_ref_type s1 = *it++, s2 = *it; \
+            DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()}; \
+ \
+            TypeKind pt = promotion_type(s1, s2); \
+            DynamicType::_ref_type xtype {factory->get_primitive_type(pt)}; \
+            DynamicData::_ref_type xdata {DynamicDataFactory::get_instance()->create_data(xtype)}; \
+ \
+            if (TK_UINT64 == pt) \
+            { \
+                uint64_t value = promote<uint64_t>(s2) operation promote<uint64_t>(s1); \
+                xdata->set_uint64_value(MEMBER_ID_INVALID, value); \
+                std::cout << "=========" << std::endl; \
+                std::cout << #operation << ": " << value << std::endl; \
+                std::cout << "=========" << std::endl; \
+            } \
+            else \
+            { \
+                throw std::runtime_error("invalid arguments for the operation " #operation ); \
+            } \
+ \
+            /* update the stack */ \
+            operands.pop_back(); \
+            operands.pop_back(); \
+            operands.push_back(xdata); \
+ \
+        } \
+    };
 
-// #define int_op_action(Rule, id, operation) \
-//     template<> \
-//     struct action<Rule> \
-//     { \
-//         template<typename Input> \
-//         static void apply( \
-//             const Input& in, \
-//             Context * ctx, \
-//             std::map<std::string, std::string>& state, \
-//             std::vector<v1_3::DynamicData_ptr>& operands) \
-//         { \
-//             std::cout << "int_op_action: " << typeid(Rule).name() << " " \
-//                       << in.string() << std::endl; \
-//  \
-//             state["evaluated_expr"] += (state["evaluated_expr"].empty() ? "" : ";") + std::string{#id}; \
-//  \
-//             /* calculate the result */ \
-//             auto it = operands.rbegin(); \
-//             v1_3::DynamicData_ptr s1 = *it++, s2 = *it, res; \
-//             v1_3::DynamicTypeBuilderFactory& factory = v1_3::DynamicTypeBuilderFactory::get_instance(); \
-//             v1_3::DynamicTypeBuilder_cptr builder; \
-//             v1_3::DynamicType_ptr xtype; \
-//  \
-//             TypeKind pt = promotion_type(s1, s2); \
-//  \
-//             if (TypeKind::TK_UINT64 == pt) \
-//             { \
-//                 long long value = promote<long long>(s2) operation promote<long long>(s1); \
-//                 builder = factory.create_uint64_type(); \
-//                 xtype = builder->build(); \
-//                 v1_3::DynamicData_ptr data(v1_3::DynamicDataFactory::get_instance()->create_data(xtype)); \
-//                 data->set_uint64_value(value); \
-//                 std::cout << "=========" << std::endl; \
-//                 std::cout << #operation << ": " << value << std::endl; \
-//                 std::cout << "=========" << std::endl; \
-//                 res = data; \
-//             } \
-//             else \
-//             { \
-//                 throw std::runtime_error("invalid arguments for the operation " #operation ); \
-//             } \
-//  \
-//             /* update the stack */ \
-//             operands.pop_back(); \
-//             operands.pop_back(); \
-//             operands.push_back(res); \
-//  \
-//         } \
-//     };
+#define bool_op_action(Rule, id, operation) \
+    template<> \
+    struct action<Rule> \
+    { \
+        template<typename Input> \
+        static void apply( \
+            const Input& in, \
+            Context * ctx, \
+            std::map<std::string, std::string>& state, \
+            std::vector<traits<DynamicData>::ref_type>& operands) \
+        { \
+            std::cout << "bool_op_action: " << typeid(Rule).name() << " " \
+                      << in.string() << std::endl; \
+ \
+            state["evaluated_expr"] += (state["evaluated_expr"].empty() ? "" : ";") + std::string{#id}; \
+ \
+            /* calculate the result */ \
+            auto it = operands.rbegin(); \
+            DynamicData::_ref_type s1 = *it++, s2 = *it; \
+            DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()}; \
+ \
+            TypeKind pt = promotion_type(s1, s2); \
+            DynamicType::_ref_type xtype {factory->get_primitive_type(pt)}; \
+            DynamicData::_ref_type xdata {DynamicDataFactory::get_instance()->create_data(xtype)}; \
+ \
+            if (TK_UINT64 == pt) \
+            { \
+                uint64_t value = promote<uint64_t>(s2) operation promote<uint64_t>(s1); \
+                xdata->set_uint64_value(MEMBER_ID_INVALID, value); \
+                std::cout << "=========" << std::endl; \
+                std::cout << #operation << ": " << value << std::endl; \
+                std::cout << "=========" << std::endl; \
+            } \
+            else if (TK_BOOLEAN == pt) \
+            { \
+                bool value = promote<bool>(s2) operation promote<bool>(s1); \
+                xdata->set_boolean_value(MEMBER_ID_INVALID, value); \
+                std::cout << "=========" << std::endl; \
+                std::cout << #operation << ": " << value << std::endl; \
+                std::cout << "=========" << std::endl; \
+            } \
+            else \
+            { \
+                throw std::runtime_error("invalid arguments for the operation " #operation ); \
+            } \
+ \
+            /* update the stack */ \
+            operands.pop_back(); \
+            operands.pop_back(); \
+            operands.push_back(xdata); \
+ \
+        } \
+    };
 
-// #define bool_op_action(Rule, id, operation) \
-//     template<> \
-//     struct action<Rule> \
-//     { \
-//         template<typename Input> \
-//         static void apply( \
-//             const Input& in, \
-//             Context * ctx, \
-//             std::map<std::string, std::string>& state, \
-//             std::vector<v1_3::DynamicData_ptr>& operands) \
-//         { \
-//             std::cout << "bool_op_action: " << typeid(Rule).name() << " " \
-//                       << in.string() << std::endl; \
-//  \
-//             state["evaluated_expr"] += (state["evaluated_expr"].empty() ? "" : ";") + std::string{#id}; \
-//  \
-//             /* calculate the result */ \
-//             auto it = operands.rbegin(); \
-//             v1_3::DynamicData_ptr s1 = *it++, s2 = *it, res; \
-//             v1_3::DynamicTypeBuilderFactory& factory = v1_3::DynamicTypeBuilderFactory::get_instance(); \
-//             v1_3::DynamicTypeBuilder_cptr builder; \
-//             v1_3::DynamicType_ptr xtype; \
-//  \
-//             TypeKind pt = promotion_type(s1, s2); \
-//  \
-//             if (TypeKind::TK_UINT64 == pt) \
-//             { \
-//                 long long value = promote<long long>(s2) operation promote<long long>(s1); \
-//                 builder = factory.create_uint64_type(); \
-//                 xtype = builder->build(); \
-//                 v1_3::DynamicData_ptr data(v1_3::DynamicDataFactory::get_instance()->create_data(xtype)); \
-//                 data->set_uint64_value(value); \
-//                 std::cout << "=========" << std::endl; \
-//                 std::cout << #operation << ": " << value << std::endl; \
-//                 std::cout << "=========" << std::endl; \
-//                 res = data; \
-//             } \
-//             else if (TypeKind::TK_BOOLEAN == pt) \
-//             { \
-//                 bool value = promote<bool>(s2) operation promote<bool>(s1); \
-//                 builder = factory.create_bool_type(); \
-//                 xtype = builder->build(); \
-//                 v1_3::DynamicData_ptr data(v1_3::DynamicDataFactory::get_instance()->create_data(xtype)); \
-//                 data->set_bool_value(value); \
-//                 std::cout << "=========" << std::endl; \
-//                 std::cout << #operation << ": " << value << std::endl; \
-//                 std::cout << "=========" << std::endl; \
-//                 res = data; \
-//             } \
-//             else \
-//             { \
-//                 throw std::runtime_error("invalid arguments for the operation " #operation ); \
-//             } \
-//  \
-//             /* update the stack */ \
-//             operands.pop_back(); \
-//             operands.pop_back(); \
-//             operands.push_back(res); \
-//  \
-//         } \
-//     };
+bool_op_action(or_exec, or, |)
+bool_op_action(xor_exec, xor, ^)
+bool_op_action(and_exec, and, &)
+int_op_action(rshift_exec, >>, >>)
+int_op_action(lshift_exec, <<, <<)
+int_op_action(mod_exec, mod, %)
+float_op_action(add_exec, add, +)
+float_op_action(sub_exec, sub, -)
+float_op_action(mult_exec, mult, *)
+float_op_action(div_exec, div, / )
 
-// bool_op_action(or_exec, or, |)
-// bool_op_action(xor_exec, xor, ^)
-// bool_op_action(and_exec, and, &)
-// int_op_action(rshift_exec, >>, >>)
-// int_op_action(lshift_exec, <<, <<)
-// int_op_action(mod_exec, mod, %)
-// float_op_action(add_exec, add, +)
-// float_op_action(sub_exec, sub, -)
-// float_op_action(mult_exec, mult, *)
-// float_op_action(div_exec, div, / )
+template<>
+struct action<minus_exec>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state,
+            std::vector<traits<DynamicData>::ref_type>& operands)
+    {
+        std::cout << "minus_exec: " << typeid(minus_exec).name() << " "
+                  << in.string() << std::endl;
 
-// template<>
-// struct action<minus_exec>
-// {
-//     template<typename Input>
-//     static void apply(
-//             const Input& in,
-//             Context* ctx,
-//             std::map<std::string, std::string>& state,
-//             std::vector<v1_3::DynamicData_ptr>& operands)
-//     {
-//         std::cout << "minus_exec: " << typeid(minus_exec).name() << " "
-//                   << in.string() << std::endl;
+        state["evaluated_expr"] += (state["evaluated_expr"].empty() ? "" : ";") + std::string{"minus"};
 
-//         state["evaluated_expr"] += (state["evaluated_expr"].empty() ? "" : ";") + std::string{"minus"};
+        DynamicData::_ref_type xdata = operands.back();
+        DynamicType::_ref_type xtype = xdata->type();
+        if (TK_UINT64 == xtype->get_kind())
+        {
+            uint64_t value;
+            xdata->get_uint64_value(value, MEMBER_ID_INVALID);
+            xdata->set_uint64_value(MEMBER_ID_INVALID, -value);
+        }
+        else if (TK_FLOAT128 == xtype->get_kind())
+        {
+            long double value;
+            xdata->get_float128_value(value, MEMBER_ID_INVALID);
+            xdata->set_float128_value(MEMBER_ID_INVALID, -value);
+        }
+        else
+        {
+            throw std::runtime_error("invalid argument for the minus unary operator");
+        }
+    }
 
-//         if (TypeKind::TK_UINT64 == operands.back()->get_kind())
-//         {
-//             long long value = operands.back()->get_uint64_value();
-//             operands.back()->set_uint64_value(-value);
-//         }
-//         else if (TypeKind::TK_FLOAT128 == operands.back()->get_kind())
-//         {
-//             long double value = operands.back()->get_float128_value();
-//             operands.back()->set_float128_value(-value);
-//         }
-//         else
-//         {
-//             throw std::runtime_error("invalid argument for the minus unary operator");
-//         }
-//     }
+};
 
-// };
+template<>
+struct action<plus_exec>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state,
+            std::vector<traits<DynamicData>::ref_type>& operands)
+    {
+        // noop
+        std::cout << "plus_exec: " << typeid(plus_exec).name() << " "
+                  << in.string() << std::endl;
+        state["evaluated_expr"] += (state["evaluated_expr"].empty() ? "" : ";") + std::string{"plus"};
+    }
 
-// template<>
-// struct action<plus_exec>
-// {
-//     template<typename Input>
-//     static void apply(
-//             const Input& in,
-//             Context* ctx,
-//             std::map<std::string, std::string>& state,
-//             std::vector<v1_3::DynamicData_ptr>& operands)
-//     {
-//         // noop
-//         std::cout << "plus_exec: " << typeid(plus_exec).name() << " "
-//                   << in.string() << std::endl;
-//         state["evaluated_expr"] += (state["evaluated_expr"].empty() ? "" : ";") + std::string{"plus"};
-//     }
+};
 
-// };
+template<>
+struct action<inv_exec>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state,
+            std::vector<traits<DynamicData>::ref_type>& operands)
+    {
+        std::cout << "inv_exec: " << typeid(inv_exec).name() << " "
+                  << in.string() << std::endl;
 
-// template<>
-// struct action<inv_exec>
-// {
-//     template<typename Input>
-//     static void apply(
-//             const Input& in,
-//             Context* ctx,
-//             std::map<std::string, std::string>& state,
-//             std::vector<v1_3::DynamicData_ptr>& operands)
-//     {
-//         std::cout << "inv_exec: " << typeid(inv_exec).name() << " "
-//                   << in.string() << std::endl;
+        state["evaluated_expr"] += (state["evaluated_expr"].empty() ? "" : ";") + std::string{"inv"};
 
-//         state["evaluated_expr"] += (state["evaluated_expr"].empty() ? "" : ";") + std::string{"inv"};
+        DynamicData::_ref_type xdata = operands.back();
+        DynamicType::_ref_type xtype = xdata->type();
+        if (TK_UINT64 == xtype->get_kind())
+        {
+            uint64_t value;
+            xdata->get_uint64_value(value, MEMBER_ID_INVALID);
+            xdata->set_uint64_value(MEMBER_ID_INVALID, ~value);
+        }
+        else if (TK_BOOLEAN == xtype->get_kind())
+        {
+            bool value;
+            xdata->get_boolean_value(value, MEMBER_ID_INVALID);
+            xdata->set_boolean_value(MEMBER_ID_INVALID, !value);
+        }
+        else
+        {
+            throw std::runtime_error("invalid argument for the inverse unary operator");
+        }
+    }
 
-//         if (TypeKind::TK_UINT64 == operands.back()->get_kind())
-//         {
-//             long long value = operands.back()->get_uint64_value();
-//             operands.back()->set_uint64_value(~value);
-//         }
-//         else if (TypeKind::TK_BOOLEAN == operands.back()->get_kind())
-//         {
-//             bool value = operands.back()->get_bool_value();
-//             operands.back()->set_bool_value(!value);
-//         }
-//         else
-//         {
-//             throw std::runtime_error("invalid argument for the inverse unary operator");
-//         }
-//     }
-
-// };
+};
 
 template<>
 struct action<struct_forward_dcl>
@@ -1038,29 +1031,30 @@ struct action<struct_forward_dcl>
 
 // };
 
-// template<>
-// struct action<const_dcl>
-// {
-//     template<typename Input>
-//     static void apply(
-//             const Input& in,
-//             Context* ctx,
-//             std::map<std::string, std::string>& state,
-//             std::vector<v1_3::DynamicData_ptr>& operands)
-//     {
-//         Module& module = ctx->module();
+template<>
+struct action<const_dcl>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state,
+            std::vector<traits<DynamicData>::ref_type>& operands)
+    {
+        Module& module = ctx->module();
+        const std::string& const_name = state["identifier"];
 
-//         const std::string& const_name = state["identifier"];
-//         EPROSIMA_LOG_INFO(IDLPARSER, "Found const: " << const_name);
-//         module.create_constant(const_name, operands.back());
-//         operands.pop_back();
-//         if (operands.empty())
-//         {
-//             state["evaluated_expr"].clear();
-//         }
-//     }
+        EPROSIMA_LOG_INFO(IDLPARSER, "Found const: " << const_name);
 
-// };
+        module.create_constant(const_name, operands.back());
+        operands.pop_back();
+        if (operands.empty())
+        {
+            state["evaluated_expr"].clear();
+        }
+    }
+
+};
 
 // template<>
 // struct action<kw_enum>
