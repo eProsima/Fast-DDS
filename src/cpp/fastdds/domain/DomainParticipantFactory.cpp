@@ -26,7 +26,7 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilderFactory.hpp>
-#include <fastdds/rtps/participant/RTPSParticipant.h>
+#include <fastdds/rtps/participant/RTPSParticipant.hpp>
 #include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/utils/QosConverters.hpp>
 

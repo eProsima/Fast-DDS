@@ -35,7 +35,7 @@
 #include <fastdds/dds/topic/TopicDescription.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/rtps/attributes/PropertyPolicy.hpp>
-#include <fastdds/rtps/participant/RTPSParticipant.h>
+#include <fastdds/rtps/participant/RTPSParticipant.hpp>
 #include <fastdds/statistics/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/statistics/topic_names.hpp>
 

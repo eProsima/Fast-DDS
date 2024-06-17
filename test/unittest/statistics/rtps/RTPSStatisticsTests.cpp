@@ -36,7 +36,7 @@
 #include <fastdds/rtps/common/Time_t.hpp>
 #include <fastdds/rtps/history/ReaderHistory.hpp>
 #include <fastdds/rtps/history/WriterHistory.hpp>
-#include <fastdds/rtps/participant/RTPSParticipant.h>
+#include <fastdds/rtps/participant/RTPSParticipant.hpp>
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>

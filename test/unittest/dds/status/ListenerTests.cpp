@@ -34,7 +34,7 @@
 #include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
-#include <fastdds/rtps/participant/RTPSParticipant.h>
+#include <fastdds/rtps/participant/RTPSParticipant.hpp>
 
 
 using ::testing::StrictMock;

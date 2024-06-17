@@ -16,7 +16,7 @@
 #include <gtest/gtest.h>
 
 #include <fastdds/rtps/RTPSDomain.h>
-#include <fastdds/rtps/participant/RTPSParticipant.h>
+#include <fastdds/rtps/participant/RTPSParticipant.hpp>
 #include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastdds/rtps/history/IPayloadPool.hpp>
 #include <fastdds/rtps/history/WriterHistory.hpp>

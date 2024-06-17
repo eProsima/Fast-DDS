@@ -18,7 +18,7 @@
 #include "fastdds/rtps/common/Types.h"
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/rtps/history/WriterHistory.hpp>
-#include <fastdds/rtps/participant/RTPSParticipant.h>
+#include <fastdds/rtps/participant/RTPSParticipant.hpp>
 #include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
 

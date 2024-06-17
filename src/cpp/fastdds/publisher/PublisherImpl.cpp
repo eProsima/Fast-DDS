@@ -30,7 +30,7 @@
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/domain/DomainParticipantImpl.hpp>
 #include <fastdds/publisher/DataWriterImpl.hpp>
-#include <fastdds/rtps/participant/RTPSParticipant.h>
+#include <fastdds/rtps/participant/RTPSParticipant.hpp>
 #include <fastdds/topic/TopicDescriptionImpl.hpp>
 #include <fastdds/utils/QosConverters.hpp>
 

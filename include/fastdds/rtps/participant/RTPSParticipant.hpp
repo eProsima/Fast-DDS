@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * @file RTPSParticipant.h
+ * @file RTPSParticipant.hpp
  */
 
-#ifndef _FASTDDS_RTPS_RTPSParticipant_H_
-#define _FASTDDS_RTPS_RTPSParticipant_H_
+#ifndef FASTDDS_RTPS_PARTICIPANT__RTPSParticipant_HPP
+#define FASTDDS_RTPS_PARTICIPANT__RTPSParticipant_HPP
 
 #include <cstdint>
 #include <cstdlib>
@@ -440,7 +440,7 @@ protected:
 };
 
 } // namespace rtps
-} /* namespace rtps */
-} /* namespace eprosima */
+} // namespace rtps
+} // namespace eprosima
 
-#endif /* _FASTDDS_RTPS_RTPSParticipant_H_ */
+#endif // FASTDDS_RTPS_PARTICIPANT__RTPSParticipant_HPP

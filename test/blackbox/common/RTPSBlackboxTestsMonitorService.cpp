@@ -16,7 +16,7 @@
 
 #include "BlackboxTests.hpp"
 
-#include <fastdds/rtps/participant/RTPSParticipant.h>
+#include <fastdds/rtps/participant/RTPSParticipant.hpp>
 #include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
 
