@@ -19,7 +19,7 @@
 #ifndef _SECURITY_MOCKACCESSCONTROLPLUGIN_H_
 #define _SECURITY_MOCKACCESSCONTROLPLUGIN_H_
 
-#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
+#include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
 

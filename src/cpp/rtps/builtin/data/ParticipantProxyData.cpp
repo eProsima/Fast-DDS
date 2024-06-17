@@ -25,7 +25,7 @@
 #include <fastdds/core/policy/ParameterList.hpp>
 #include <fastdds/core/policy/QosPoliciesSerializer.hpp>
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
+#include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/common/VendorId_t.hpp>
 

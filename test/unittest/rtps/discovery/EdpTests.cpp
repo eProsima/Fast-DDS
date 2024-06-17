@@ -15,7 +15,7 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
+#include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 
 #include <rtps/builtin/discovery/endpoint/EDP.h>

@@ -27,7 +27,7 @@
 #include <fastdds/rtps/attributes/EndpointSecurityAttributes.hpp>
 #include <fastdds/rtps/attributes/HistoryAttributes.hpp>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
-#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
+#include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/history/WriterHistory.h>

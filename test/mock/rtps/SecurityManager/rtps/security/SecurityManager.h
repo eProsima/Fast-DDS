@@ -20,7 +20,7 @@
 
 #include <gmock/gmock.h>
 
-#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
+#include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 
 namespace eprosima {

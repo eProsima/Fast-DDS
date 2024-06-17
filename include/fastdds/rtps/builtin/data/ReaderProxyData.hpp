@@ -13,12 +13,12 @@
 // limitations under the License.
 
 /**
- * @file ReaderProxyData.h
+ * @file ReaderProxyData.hpp
  *
  */
 
-#ifndef _FASTDDS_RTPS_BUILTIN_DATA_READERPROXYDATA_H_
-#define _FASTDDS_RTPS_BUILTIN_DATA_READERPROXYDATA_H_
+#ifndef FASTDDS_RTPS_BUILTIN_DATA__READERPROXYDATA_HPP
+#define FASTDDS_RTPS_BUILTIN_DATA__READERPROXYDATA_HPP
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <fastdds/dds/subscriber/qos/ReaderQos.hpp>
@@ -514,8 +514,8 @@ private:
 };
 
 } // namespace rtps
-} /* namespace rtps */
-} /* namespace eprosima */
+} // namespace rtps
+} // namespace eprosima
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#endif // _FASTDDS_RTPS_BUILTIN_DATA_READERPROXYDATA_H_
+#endif // FASTDDS_RTPS_BUILTIN_DATA__READERPROXYDATA_HPP

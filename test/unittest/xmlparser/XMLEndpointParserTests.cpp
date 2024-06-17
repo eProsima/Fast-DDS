@@ -24,7 +24,7 @@
 #include <fastdds/dds/log/OStreamConsumer.hpp>
 #include <fastdds/dds/log/StdoutConsumer.hpp>
 #include <fastdds/dds/log/StdoutErrConsumer.hpp>
-#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
+#include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 
 #include <xmlparser/XMLEndpointParser.h>

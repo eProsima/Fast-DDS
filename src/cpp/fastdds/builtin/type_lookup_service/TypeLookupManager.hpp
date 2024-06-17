@@ -25,7 +25,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
+#include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 
 #include <fastdds/builtin/type_lookup_service/detail/TypeLookupTypes.hpp>

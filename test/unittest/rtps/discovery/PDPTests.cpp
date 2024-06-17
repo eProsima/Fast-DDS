@@ -27,7 +27,7 @@
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/rtps/builtin/data/BuiltinEndpoints.hpp>
-#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
+#include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/reader/ReaderListener.h>
 

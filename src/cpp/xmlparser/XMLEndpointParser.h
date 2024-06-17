@@ -28,7 +28,7 @@
 
 #include <tinyxml2.h>
 
-#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
+#include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 
 #include <xmlparser/XMLParserCommon.h>
