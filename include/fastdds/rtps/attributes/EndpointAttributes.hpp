@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * @file fastdds/rtps/attributes/EndpointAttributes.h
+ * @file EndpointAttributes.hpp
  */
 
-#ifndef _FASTDDS_ENDPOINTATTRIBUTES_H_
-#define _FASTDDS_ENDPOINTATTRIBUTES_H_
+#ifndef FASTDDS_RTPS_ATTRIBUTES__ENDPOINTATTRIBUTES_HPP
+#define FASTDDS_RTPS_ATTRIBUTES__ENDPOINTATTRIBUTES_HPP
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/rtps/attributes/ExternalLocators.hpp>
@@ -170,8 +170,8 @@ private:
     fastdds::dds::DataSharingQosPolicy datasharing_;
 };
 
-} /* namespace rtps */
-} /* namespace fastdds */
-} /* namespace eprosima */
+} // namespace rtps
+} // namespace fastdds
+} // namespace eprosima
 
-#endif /* _FASTDDS_ENDPOINTATTRIBUTES_H_ */
+#endif // ifndef FASTDDS_RTPS_ATTRIBUTES__ENDPOINTATTRIBUTES_HPP

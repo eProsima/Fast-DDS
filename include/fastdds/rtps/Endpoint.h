@@ -19,7 +19,7 @@
 #ifndef _FASTDDS_RTPS_ENDPOINT_H_
 #define _FASTDDS_RTPS_ENDPOINT_H_
 
-#include <fastdds/rtps/attributes/EndpointAttributes.h>
+#include <fastdds/rtps/attributes/EndpointAttributes.hpp>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/common/Types.h>

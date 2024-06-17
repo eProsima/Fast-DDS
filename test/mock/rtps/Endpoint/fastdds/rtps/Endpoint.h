@@ -20,7 +20,7 @@
 #define _FASTDDS_RTPS_ENDPOINT_H_
 
 #include <fastdds/utils/TimedMutex.hpp>
-#include <fastdds/rtps/attributes/EndpointAttributes.h>
+#include <fastdds/rtps/attributes/EndpointAttributes.hpp>
 
 namespace eprosima {
 namespace fastdds {
