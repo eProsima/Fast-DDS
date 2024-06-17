@@ -26,7 +26,7 @@
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastdds/rtps/common/InstanceHandle.hpp>
-#include <fastdds/rtps/common/SerializedPayload.h>
+#include <fastdds/rtps/common/SerializedPayload.hpp>
 #include <fastdds/utils/md5.h>
 
 #include "optional.hpp"

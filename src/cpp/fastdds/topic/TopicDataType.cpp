@@ -24,7 +24,7 @@
 
 #include <fastdds/fastdds_dll.hpp>
 #include <fastdds/rtps/common/CdrSerialization.hpp>
-#include <fastdds/rtps/common/SerializedPayload.h>
+#include <fastdds/rtps/common/SerializedPayload.hpp>
 #include <fastdds/utils/md5.h>
 
 namespace eprosima {

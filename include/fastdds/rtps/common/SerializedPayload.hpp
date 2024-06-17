@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * @file SerializedPayload.h
+ * @file SerializedPayload.hpp
  */
 
-#ifndef _FASTDDS_RTPS_SERIALIZEDPAYLOAD_H_
-#define _FASTDDS_RTPS_SERIALIZEDPAYLOAD_H_
+#ifndef FASTDDS_RTPS_COMMON__SERIALIZEDPAYLOAD_HPP
+#define FASTDDS_RTPS_COMMON__SERIALIZEDPAYLOAD_HPP
 
 #include <cstring>
 #include <new>
@@ -149,8 +149,8 @@ struct FASTDDS_EXPORTED_API SerializedPayload_t
 
 };
 
-} /* namespace rtps */
-} /* namespace fastdds */
-} /* namespace eprosima */
+} // namespace rtps
+} // namespace fastdds
+} // namespace eprosima
 
-#endif /* _FASTDDS_RTPS_SERIALIZEDPAYLOAD_H_ */
+#endif // FASTDDS_RTPS_COMMON__SERIALIZEDPAYLOAD_HPP

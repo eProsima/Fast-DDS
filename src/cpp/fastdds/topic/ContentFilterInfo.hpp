@@ -24,7 +24,7 @@
 #include <limits>
 
 #include <fastdds/dds/core/policy/ParameterTypes.hpp>
-#include <fastdds/rtps/common/SerializedPayload.h>
+#include <fastdds/rtps/common/SerializedPayload.hpp>
 #include <fastdds/rtps/common/CDRMessage_t.hpp>
 #include <rtps/messages/CDRMessage.hpp>
 

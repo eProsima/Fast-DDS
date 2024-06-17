@@ -20,7 +20,7 @@
 #define FASTDDS_RTPS_COMMON__CDRMESSAGE_T_HPP
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <fastdds/rtps/common/SerializedPayload.h>
+#include <fastdds/rtps/common/SerializedPayload.hpp>
 #include <fastdds/rtps/common/Types.h>
 #include <cassert>
 #include <cstdlib>

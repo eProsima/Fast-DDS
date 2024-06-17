@@ -23,7 +23,7 @@
 #include <fastdds/dds/xtypes/dynamic_types/DynamicPubSubType.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilderFactory.hpp>
-#include <fastdds/rtps/common/SerializedPayload.h>
+#include <fastdds/rtps/common/SerializedPayload.hpp>
 
 namespace eprosima {
 namespace fastdds {

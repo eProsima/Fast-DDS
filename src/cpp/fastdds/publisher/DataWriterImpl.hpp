@@ -41,7 +41,7 @@
 
 #include <fastdds/publisher/DataWriterHistory.hpp>
 #include <fastdds/publisher/filtering/ReaderFilterCollection.hpp>
-#include <fastdds/rtps/common/SerializedPayload.h>
+#include <fastdds/rtps/common/SerializedPayload.hpp>
 #include <rtps/DataSharing/DataSharingPayloadPool.hpp>
 #include <rtps/history/ITopicPayloadPool.h>
 

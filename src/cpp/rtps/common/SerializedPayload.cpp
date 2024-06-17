@@ -16,7 +16,7 @@
  * @file SerializedPayload.cpp
  */
 
-#include <fastdds/rtps/common/SerializedPayload.h>
+#include <fastdds/rtps/common/SerializedPayload.hpp>
 
 namespace eprosima {
 namespace fastdds {

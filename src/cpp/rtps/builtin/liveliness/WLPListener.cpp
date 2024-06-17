@@ -29,7 +29,7 @@
 #include <fastdds/rtps/common/CDRMessage_t.hpp>
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
 #include <fastdds/rtps/common/InstanceHandle.hpp>
-#include <fastdds/rtps/common/SerializedPayload.h>
+#include <fastdds/rtps/common/SerializedPayload.hpp>
 #include <fastdds/rtps/common/Types.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/reader/RTPSReader.h>

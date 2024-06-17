@@ -25,7 +25,7 @@
 #include <fastdds/rtps/common/ChangeKind_t.hpp>
 #include <fastdds/rtps/common/FragmentNumber.hpp>
 #include <fastdds/rtps/common/InstanceHandle.hpp>
-#include <fastdds/rtps/common/SerializedPayload.h>
+#include <fastdds/rtps/common/SerializedPayload.hpp>
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/rtps/common/Types.h>
 #include <fastdds/rtps/common/VendorId_t.hpp>

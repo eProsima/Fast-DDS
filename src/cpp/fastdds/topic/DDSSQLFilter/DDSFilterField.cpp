@@ -25,7 +25,7 @@
 #include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
 #include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
-#include <fastdds/rtps/common/SerializedPayload.h>
+#include <fastdds/rtps/common/SerializedPayload.hpp>
 
 #include "DDSFilterPredicate.hpp"
 #include "DDSFilterValue.hpp"

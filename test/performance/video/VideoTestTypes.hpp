@@ -40,7 +40,7 @@
 
 #include <fastdds/rtps/attributes/PropertyPolicy.hpp>
 #include <fastdds/rtps/common/Types.h>
-#include <fastdds/rtps/common/SerializedPayload.h>
+#include <fastdds/rtps/common/SerializedPayload.hpp>
 
 #include <fastdds/utils/IPFinder.h>
 
