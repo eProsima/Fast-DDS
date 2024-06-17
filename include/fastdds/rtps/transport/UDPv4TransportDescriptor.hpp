@@ -12,8 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef _FASTDDS_UDPV4_TRANSPORT_DESCRIPTOR
-#define _FASTDDS_UDPV4_TRANSPORT_DESCRIPTOR
+/**
+ * @file UDPv4TransportDescriptor.hpp
+ *
+ */
+
+#ifndef FASTDDS_RTPS_TRANSPORT__UDPV4TRANSPORTDESCRIPTOR_HPP
+#define FASTDDS_RTPS_TRANSPORT__UDPV4TRANSPORTDESCRIPTOR_HPP
 
 #include <fastdds/rtps/transport/UDPTransportDescriptor.hpp>
 
@@ -53,4 +58,4 @@ struct UDPv4TransportDescriptor : public UDPTransportDescriptor
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_UDPV4_TRANSPORT_DESCRIPTOR
+#endif // FASTDDS_RTPS_TRANSPORT__UDPV4TRANSPORTDESCRIPTOR_HPP
