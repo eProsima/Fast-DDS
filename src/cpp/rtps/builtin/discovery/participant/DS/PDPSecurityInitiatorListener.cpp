@@ -26,7 +26,7 @@
 #include <fastdds/rtps/history/ReaderHistory.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.hpp>
 #include <fastdds/rtps/participant/RTPSParticipantListener.hpp>
-#include <fastdds/rtps/reader/RTPSReader.h>
+#include <fastdds/rtps/reader/RTPSReader.hpp>
 
 #include <rtps/builtin/discovery/endpoint/EDP.h>
 #include <rtps/builtin/discovery/participant/PDP.h>

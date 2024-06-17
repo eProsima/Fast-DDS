@@ -20,7 +20,7 @@
 #include <fastdds/rtps/history/ReaderHistory.hpp>
 
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/rtps/reader/RTPSReader.h>
+#include <fastdds/rtps/reader/RTPSReader.hpp>
 #include <fastdds/rtps/reader/ReaderListener.hpp>
 
 #include <rtps/common/ChangeComparison.hpp>

@@ -33,7 +33,7 @@
 #include <fastdds/rtps/common/CdrSerialization.hpp>
 #include <fastdds/rtps/history/ReaderHistory.hpp>
 #include <fastdds/rtps/history/WriterHistory.hpp>
-#include <fastdds/rtps/reader/RTPSReader.h>
+#include <fastdds/rtps/reader/RTPSReader.hpp>
 #include <fastdds/rtps/writer/RTPSWriter.h>
 
 #include <rtps/builtin/BuiltinProtocols.h>

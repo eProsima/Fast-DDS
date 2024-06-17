@@ -26,7 +26,7 @@
 
 #include <fastdds/rtps/common/CDRMessage_t.hpp>
 #include <fastdds/rtps/common/VendorId_t.hpp>
-#include <fastdds/rtps/reader/RTPSReader.h>
+#include <fastdds/rtps/reader/RTPSReader.hpp>
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>
 
 #include <rtps/reader/BaseReader.hpp>

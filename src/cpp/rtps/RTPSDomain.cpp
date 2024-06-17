@@ -30,7 +30,7 @@
 #include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/history/WriterHistory.hpp>
 #include <fastdds/rtps/participant/RTPSParticipant.hpp>
-#include <fastdds/rtps/reader/RTPSReader.h>
+#include <fastdds/rtps/reader/RTPSReader.hpp>
 #include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastdds/utils/IPFinder.h>
 #include <fastdds/utils/IPLocator.h>

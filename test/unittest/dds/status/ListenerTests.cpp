@@ -32,7 +32,7 @@
 #include <fastdds/dds/topic/TopicListener.hpp>
 
 #include <fastdds/rtps/RTPSDomain.h>
-#include <fastdds/rtps/reader/RTPSReader.h>
+#include <fastdds/rtps/reader/RTPSReader.hpp>
 #include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastdds/rtps/participant/RTPSParticipant.hpp>
 

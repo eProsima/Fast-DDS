@@ -36,7 +36,7 @@
 #include <fastdds/subscriber/history/DataReaderHistory.hpp>
 
 #include <fastdds/rtps/common/CacheChange.hpp>
-#include <fastdds/rtps/reader/RTPSReader.h>
+#include <fastdds/rtps/reader/RTPSReader.hpp>
 
 #include <rtps/reader/BaseReader.hpp>
 #include <rtps/reader/WriterProxy.h>

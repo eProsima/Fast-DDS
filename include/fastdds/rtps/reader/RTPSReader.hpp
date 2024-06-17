@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * @file RTPSReader.h
+ * @file RTPSReader.hpp
  */
 
-#ifndef _FASTDDS_RTPS_READER_RTPSREADER_H_
-#define _FASTDDS_RTPS_READER_RTPSREADER_H_
+#ifndef FASTDDS_RTPS_READER__RTPSREADER_HPP
+#define FASTDDS_RTPS_READER__RTPSREADER_HPP
 
 #include <cstdint>
 #include <memory>
@@ -254,8 +254,8 @@ private:
 
 };
 
-} /* namespace rtps */
-} /* namespace fastdds */
-} /* namespace eprosima */
+} // namespace rtps
+} // namespace fastdds
+} // namespace eprosima
 
-#endif /* _FASTDDS_RTPS_READER_RTPSREADER_H_ */
+#endif // FASTDDS_RTPS_READER__RTPSREADER_HPP
