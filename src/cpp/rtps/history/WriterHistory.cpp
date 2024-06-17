@@ -19,13 +19,30 @@
 #include <fastdds/rtps/history/WriterHistory.hpp>
 
 #include <cassert>
+#include <chrono>
+#include <cstdint>
+#include <memory>
 #include <mutex>
+#include <utility>
 
 #include <fastdds/core/policy/ParameterSerializer.hpp>
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/attributes/HistoryAttributes.hpp>
+#include <fastdds/rtps/common/CacheChange.hpp>
+#include <fastdds/rtps/common/ChangeKind_t.hpp>
+#include <fastdds/rtps/common/InstanceHandle.hpp>
+#include <fastdds/rtps/common/SampleIdentity.hpp>
+#include <fastdds/rtps/common/SequenceNumber.hpp>
+#include <fastdds/rtps/common/Time_t.hpp>
+#include <fastdds/rtps/common/Types.hpp>
+#include <fastdds/rtps/common/VendorId_t.hpp>
 #include <fastdds/rtps/common/WriteParams.hpp>
+#include <fastdds/rtps/history/History.hpp>
+#include <fastdds/rtps/history/IChangePool.hpp>
 #include <fastdds/rtps/history/IPayloadPool.hpp>
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
+#include <fastdds/utils/TimedMutex.hpp>
+#include <fastrtps/qos/ParameterTypes.h>
 
 #include <rtps/history/CacheChangePool.h>
 #include <rtps/history/PoolConfig.h>
@@ -324,6 +341,34 @@ bool WriterHistory::remove_min_change(
 }
 
 //TODO Hacer metodos de remove_all_changes. y hacer los metodos correspondientes en los writers y publishers.
+
+CacheChange_t* WriterHistory::create_change(
+        ChangeKind_t changeKind,
+        InstanceHandle_t handle)
+{
+    EPROSIMA_LOG_INFO(RTPS_WRITER, "Creating new change");
+
+    std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
+    CacheChange_t* reserved_change = nullptr;
+    if (!change_pool_->reserve_cache(reserved_change))
+    {
+        EPROSIMA_LOG_WARNING(RTPS_WRITER, "Problem reserving cache from pool");
+        return nullptr;
+    }
+
+    reserved_change->kind = changeKind;
+    if ((WITH_KEY == mp_writer->getAttributes().topicKind) && !handle.isDefined())
+    {
+        EPROSIMA_LOG_WARNING(RTPS_WRITER, "Changes in KEYED Writers need a valid instanceHandle");
+    }
+    reserved_change->instanceHandle = handle;
+    reserved_change->writerGUID = mp_writer->getGuid();
+    reserved_change->writer_info.previous = nullptr;
+    reserved_change->writer_info.next = nullptr;
+    reserved_change->writer_info.num_sent_submessages = 0;
+    reserved_change->vendor_id = c_VendorId_eProsima;
+    return reserved_change;
+}
 
 bool WriterHistory::release_change(
         CacheChange_t* ch)

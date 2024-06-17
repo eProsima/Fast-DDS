@@ -22,14 +22,19 @@
 
 #include <memory>
 
+#include <fastdds/fastdds_dll.hpp>
+#include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/common/CacheChange.hpp>
+#include <fastdds/rtps/common/ChangeKind_t.hpp>
+#include <fastdds/rtps/common/InstanceHandle.hpp>
 #include <fastdds/rtps/history/History.hpp>
 #include <fastdds/rtps/history/IChangePool.hpp>
-#include <fastdds/dds/log/Log.hpp>
 
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
+class HistoryAttributes;
 class RTPSWriter;
 class WriteParams;
 
@@ -61,6 +66,20 @@ public:
             const std::shared_ptr<IChangePool>& change_pool);
 
     FASTDDS_EXPORTED_API virtual ~WriterHistory() override;
+
+    /**
+     * @brief Create a new CacheChange_t object.
+     *
+     * @param change_kind  Kind of the change.
+     * @param handle       InstanceHandle_t of the change.
+     *
+     * @return Pointer to the new CacheChange_t object.
+     *
+     * @pre A writer has been associated with this history
+     */
+    FASTDDS_EXPORTED_API CacheChange_t* create_change(
+            ChangeKind_t change_kind,
+            InstanceHandle_t handle = c_InstanceHandle_Unknown);
 
     /**
      * Add a CacheChange_t to the WriterHistory.
