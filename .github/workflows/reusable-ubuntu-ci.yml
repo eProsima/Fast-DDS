@@ -238,6 +238,12 @@ jobs:
           fail_on_flaky_tests: 'False'
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Download Flakiness report
+        uses: eProsima/eProsima-CI/external/download-artifact@feature/detect_flaky_tests
+        with:
+          name: ${{ format('flakiness_archive_{0}_{1}_{2}_json', inputs.label, github.job, join(matrix.*, '_')) }}
+          path: ${{ github.workspace }}/flakiness_report.json
+
       - name: Fast DDS test summary
         uses: eProsima/eProsima-CI/multiplatform/junit_summary@feature/detect_flaky_tests
         if: ${{ !cancelled() }}
@@ -247,6 +253,7 @@ jobs:
           show_failed: 'True'
           show_disabled: 'False'
           show_skipped: 'False'
+          flaky_json_report: "${{ github.workspace }}/flakiness_report.json"
 
   fastdds_python_build:
     needs: fastdds_build
@@ -411,6 +418,12 @@ jobs:
           fail_on_flaky_tests: 'False'
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Download Flakiness report
+        uses: eProsima/eProsima-CI/external/download-artifact@feature/detect_flaky_tests
+        with:
+          name: ${{ format('flakiness_archive_{0}_{1}_{2}_json', inputs.label, github.job, join(matrix.*, '_')) }}
+          path: ${{ github.workspace }}/flakiness_report.json
+
       - name: Fast DDS Python test summary
         uses: eProsima/eProsima-CI/multiplatform/junit_summary@feature/detect_flaky_tests
         if: ${{ !cancelled() }}
@@ -420,6 +433,7 @@ jobs:
           show_failed: 'True'
           show_disabled: 'False'
           show_skipped: 'False'
+          flaky_json_report: "${{ github.workspace }}/flakiness_report.json"
 
   fastdds_docs_test:
     needs: fastdds_python_build
@@ -529,6 +543,12 @@ jobs:
           fail_on_flaky_tests: 'False'
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Download Flakiness report
+        uses: eProsima/eProsima-CI/external/download-artifact@feature/detect_flaky_tests
+        with:
+          name: ${{ format('flakiness_archive_{0}_{1}_{2}_json', inputs.label, github.job, join(matrix.*, '_')) }}
+          path: ${{ github.workspace }}/flakiness_report.json
+
       - name: Fast DDS Docs test summary
         uses: eProsima/eProsima-CI/multiplatform/junit_summary@feature/detect_flaky_tests
         if: ${{ !cancelled() && inputs.run-tests == true }}
@@ -538,6 +558,7 @@ jobs:
           show_failed: 'True'
           show_disabled: 'False'
           show_skipped: 'False'
+          flaky_json_report: "${{ github.workspace }}/flakiness_report.json"
 
   fastdds_shapesdemo_build:
     needs: fastdds_build
@@ -721,6 +742,12 @@ jobs:
           fail_on_flaky_tests: 'False'
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Download Flakiness report
+        uses: eProsima/eProsima-CI/external/download-artifact@feature/detect_flaky_tests
+        with:
+          name: ${{ format('flakiness_archive_{0}_{1}_{2}_json', inputs.label, github.job, join(matrix.*, '_')) }}
+          path: ${{ github.workspace }}/flakiness_report.json
+
       - name: Discovery server test summary
         uses: eProsima/eProsima-CI/multiplatform/junit_summary@feature/detect_flaky_tests
         if: ${{ !cancelled() && inputs.run-tests == true }}
@@ -730,6 +757,7 @@ jobs:
           show_failed: 'True'
           show_disabled: 'False'
           show_skipped: 'False'
+          flaky_json_report: "${{ github.workspace }}/flakiness_report.json"
 
   fastdds_alternative_builds:
     runs-on: ${{ inputs.os-image }}

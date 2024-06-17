@@ -200,6 +200,12 @@ jobs:
           fail_on_flaky_tests: 'False'
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Download Flakiness report
+        uses: eProsima/eProsima-CI/external/download-artifact@feature/detect_flaky_tests
+        with:
+          name: ${{ format('flakiness_archive_{0}_{1}_{2}_json', inputs.label, github.job, join(matrix.*, '_')) }}
+          path: ${{ github.workspace }}/flakiness_report.json
+
       - name: Test summary
         uses: eProsima/eProsima-CI/windows/junit_summary@feature/detect_flaky_tests
         if: ${{ !cancelled() && !contains(github.event.pull_request.labels.*.name, 'no-test') }}
@@ -209,3 +215,4 @@ jobs:
           show_failed: 'True'
           show_disabled: 'False'
           show_skipped: 'False'
+          flaky_json_report: "${{ github.workspace }}/flakiness_report.json"
