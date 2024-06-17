@@ -22,7 +22,7 @@
 #include <fastdds/fastdds_dll.hpp>
 
 #include <fastdds/rtps/common/Guid.hpp>
-#include <fastdds/rtps/common/SampleIdentity.h>
+#include <fastdds/rtps/common/SampleIdentity.hpp>
 #include <fastdds/rtps/common/SerializedPayload.h>
 
 namespace eprosima {

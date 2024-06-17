@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * @file SampleIdentity.h
+ * @file SampleIdentity.hpp
  */
 
-#ifndef _FASTDDS_RTPS_COMMON_SAMPLEIDENTITY_H_
-#define _FASTDDS_RTPS_COMMON_SAMPLEIDENTITY_H_
+#ifndef FASTDDS_RTPS_COMMON__SAMPLEIDENTITY_HPP
+#define FASTDDS_RTPS_COMMON__SAMPLEIDENTITY_HPP
 
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/SequenceNumber.h>
@@ -247,4 +247,4 @@ inline std::ostream& operator <<(
 } //namespace fastdds
 } //namespace eprosima
 
-#endif // _FASTDDS_RTPS_COMMON_SAMPLEIDENTITY_H_
+#endif // FASTDDS_RTPS_COMMON__SAMPLEIDENTITY_HPP

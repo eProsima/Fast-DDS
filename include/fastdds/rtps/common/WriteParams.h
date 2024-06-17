@@ -18,7 +18,7 @@
 #ifndef _FASTDDS_RTPS_COMMON_WRITEPARAMS_H_
 #define _FASTDDS_RTPS_COMMON_WRITEPARAMS_H_
 
-#include <fastdds/rtps/common/SampleIdentity.h>
+#include <fastdds/rtps/common/SampleIdentity.hpp>
 #include <fastdds/rtps/common/Time_t.h>
 
 namespace eprosima {
