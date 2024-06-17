@@ -19,7 +19,7 @@
 #include <gtest/gtest.h>
 
 #include <fastdds/rtps/transport/ChainingTransportDescriptor.h>
-#include <fastdds/rtps/transport/ChainingTransport.h>
+#include <fastdds/rtps/transport/ChainingTransport.hpp>
 #include <fastdds/rtps/attributes/PropertyPolicy.hpp>
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
 #include <fastdds/rtps/transport/NetworkBuffer.hpp>
