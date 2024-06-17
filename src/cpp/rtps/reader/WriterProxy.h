@@ -23,7 +23,7 @@
 #include <fastdds/rtps/common/Types.h>
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/common/CacheChange.h>
-#include <fastdds/rtps/attributes/ReaderAttributes.h>
+#include <fastdds/rtps/attributes/ReaderAttributes.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
 #include <fastdds/rtps/messages/RTPSMessageSenderInterface.hpp>
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>

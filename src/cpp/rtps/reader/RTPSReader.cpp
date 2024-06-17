@@ -19,7 +19,7 @@
 #include <fastdds/rtps/reader/RTPSReader.h>
 
 #include <fastdds/rtps/Endpoint.h>
-#include <fastdds/rtps/attributes/ReaderAttributes.h>
+#include <fastdds/rtps/attributes/ReaderAttributes.hpp>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
 

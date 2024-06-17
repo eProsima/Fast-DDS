@@ -24,7 +24,7 @@
 #include <fastdds/dds/core/policy/ReaderDataLifecycleQosPolicy.hpp>
 #include <fastdds/dds/subscriber/qos/ReaderQos.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
-#include <fastdds/rtps/attributes/ReaderAttributes.h>
+#include <fastdds/rtps/attributes/ReaderAttributes.hpp>
 #include <fastdds/rtps/attributes/TopicAttributes.h>
 #include <fastdds/fastdds_dll.hpp>
 

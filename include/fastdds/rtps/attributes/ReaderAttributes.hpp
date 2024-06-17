@@ -13,12 +13,12 @@
 // limitations under the License.
 
 /**
- * @file ReaderAttributes.h
+ * @file ReaderAttributes.hpp
  *
  */
 
-#ifndef _FASTDDS_RTPS_ATTRIBUTES_READERATTRIBUTES_H_
-#define _FASTDDS_RTPS_ATTRIBUTES_READERATTRIBUTES_H_
+#ifndef FASTDDS_RTPS_ATTRIBUTES__READERATTRIBUTES_HPP
+#define FASTDDS_RTPS_ATTRIBUTES__READERATTRIBUTES_HPP
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/rtps/attributes/EndpointAttributes.hpp>
@@ -95,8 +95,8 @@ public:
     fastdds::rtps::ThreadSettings data_sharing_listener_thread {};
 };
 
-} /* namespace rtps */
-} /* namespace fastdds */
-} /* namespace eprosima */
+} // namespace rtps
+} // namespace fastdds
+} // namespace eprosima
 
-#endif /* _FASTDDS_RTPS_ATTRIBUTES_READERATTRIBUTES_H_ */
+#endif // FASTDDS_RTPS_ATTRIBUTES__READERATTRIBUTES_HPP
