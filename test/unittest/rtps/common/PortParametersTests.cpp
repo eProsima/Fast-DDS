@@ -16,7 +16,7 @@
 
 #include <gtest/gtest.h>
 
-#include <fastdds/rtps/common/PortParameters.h>
+#include <fastdds/rtps/common/PortParameters.hpp>
 
 using namespace eprosima::fastdds::rtps;
 

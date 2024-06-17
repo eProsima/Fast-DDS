@@ -45,7 +45,7 @@
 #include <fastdds/rtps/common/CDRMessage_t.hpp>
 #include <fastdds/rtps/common/LocatorSelector.hpp>
 #include <fastdds/rtps/common/LocatorSelectorEntry.hpp>
-#include <fastdds/rtps/common/PortParameters.h>
+#include <fastdds/rtps/common/PortParameters.hpp>
 #include <fastdds/rtps/common/Types.h>
 #include <fastdds/rtps/transport/SenderResource.h>
 #include <fastdds/rtps/transport/SocketTransportDescriptor.h>

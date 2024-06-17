@@ -31,7 +31,7 @@
 #include <fastdds/rtps/attributes/ServerAttributes.hpp>
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastdds/rtps/common/Locator.hpp>
-#include <fastdds/rtps/common/PortParameters.h>
+#include <fastdds/rtps/common/PortParameters.hpp>
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/rtps/common/Types.h>
 #include <fastdds/rtps/flowcontrol/FlowControllerDescriptor.hpp>

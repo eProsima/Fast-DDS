@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * @file PortParameters.h
+ * @file PortParameters.hpp
  */
 
-#ifndef _FASTDDS_RTPS_PORT_PARAMETERS_H_
-#define _FASTDDS_RTPS_PORT_PARAMETERS_H_
+#ifndef FASTDDS_RTPS_COMMON_PORTPARAMETERS_HPP
+#define FASTDDS_RTPS_COMMON_PORTPARAMETERS_HPP
 
 #include <fastdds/rtps/common/Types.h>
 #include <fastdds/dds/log/Log.hpp>
@@ -130,7 +130,7 @@ public:
 };
 
 } // namespace rtps
-} /* namespace rtps */
-} /* namespace eprosima */
+} // namespace rtps
+} // namespace eprosima
 
-#endif /* _FASTDDS_RTPS_PORT_PARAMETERS_H_ */
+#endif // FASTDDS_RTPS_COMMON_PORTPARAMETERS_HPP
