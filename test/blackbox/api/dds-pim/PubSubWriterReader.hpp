@@ -34,7 +34,7 @@
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
-#include <fastdds/rtps/transport/TransportDescriptorInterface.h>
+#include <fastdds/rtps/transport/TransportDescriptorInterface.hpp>
 
 #include <string>
 #include <list>

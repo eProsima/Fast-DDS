@@ -12,8 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef _FASTDDS_TRANSPORT_DESCRIPTOR_INTERFACE_H_
-#define _FASTDDS_TRANSPORT_DESCRIPTOR_INTERFACE_H_
+/**
+ * @file TransportDescriptorInterface.hpp
+ *
+ */
+
+#ifndef FASTDDS_RTPS_TRANSPORT__TRANSPORTDESCRIPTORINTERFACE_HPP
+#define FASTDDS_RTPS_TRANSPORT__TRANSPORTDESCRIPTORINTERFACE_HPP
 
 #include <cstdint>
 #include <mutex>
@@ -129,4 +134,4 @@ private:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_TRANSPORT_DESCRIPTOR_INTERFACE_H_
+#endif // FASTDDS_RTPS_TRANSPORT__TRANSPORTDESCRIPTORINTERFACE_HPP

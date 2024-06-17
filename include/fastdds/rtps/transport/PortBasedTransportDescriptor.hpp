@@ -19,7 +19,7 @@
 #include <map>
 
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
-#include <fastdds/rtps/transport/TransportDescriptorInterface.h>
+#include <fastdds/rtps/transport/TransportDescriptorInterface.hpp>
 #include <fastdds/fastdds_dll.hpp>
 
 namespace eprosima {
