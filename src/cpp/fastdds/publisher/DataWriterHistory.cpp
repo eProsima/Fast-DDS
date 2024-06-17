@@ -23,7 +23,7 @@
 
 #include <fastdds/dds/common/InstanceHandle.hpp>
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/rtps/common/Time_t.h>
+#include <fastdds/rtps/common/Time_t.hpp>
 #include <fastdds/rtps/writer/RTPSWriter.h>
 
 namespace eprosima {

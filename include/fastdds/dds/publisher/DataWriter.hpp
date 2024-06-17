@@ -29,7 +29,7 @@
 #include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/rtps/common/LocatorList.hpp>
-#include <fastdds/rtps/common/Time_t.h>
+#include <fastdds/rtps/common/Time_t.hpp>
 #include <fastdds/fastdds_dll.hpp>
 
 namespace eprosima {

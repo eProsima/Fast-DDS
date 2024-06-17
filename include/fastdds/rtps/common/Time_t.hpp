@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * @file Time_t.h
+ * @file Time_t.hpp
  */
 
-#ifndef _FASTDDS_RTPS_TIME_T_H_
-#define _FASTDDS_RTPS_TIME_T_H_
+#ifndef FASTDDS_RTPS_COMMON__TIME_T_HPP
+#define FASTDDS_RTPS_COMMON__TIME_T_HPP
 
 #include <fastdds/fastdds_dll.hpp>
 
@@ -694,4 +694,4 @@ const Time_t c_TimeInvalid{-1, Time_t::INFINITE_NANOSECONDS};
 #define TIME_T_INFINITE_SECONDS (eprosima::fastdds::Time_t::INFINITE_SECONDS)
 #define TIME_T_INFINITE_NANOSECONDS (eprosima::fastdds::Time_t::INFINITE_NANOSECONDS)
 
-#endif /* _FASTDDS_RTPS_TIME_T_H_ */
+#endif // FASTDDS_RTPS_COMMON__TIME_T_HPP

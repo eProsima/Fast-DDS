@@ -24,7 +24,7 @@
 #include <vector>
 
 #include <fastdds/dds/core/policy/ParameterTypes.hpp>
-#include <fastdds/rtps/common/Time_t.h>
+#include <fastdds/rtps/common/Time_t.hpp>
 #include <fastdds/rtps/common/Types.h>
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>
 

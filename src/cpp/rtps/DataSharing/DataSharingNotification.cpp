@@ -17,7 +17,7 @@
  */
 
 #include <rtps/DataSharing/DataSharingNotification.hpp>
-#include <fastdds/rtps/common/Time_t.h>
+#include <fastdds/rtps/common/Time_t.hpp>
 
 #include <memory>
 #include <mutex>

@@ -20,7 +20,7 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include <fastdds/rtps/common/Time_t.h>
+#include <fastdds/rtps/common/Time_t.hpp>
 #include <rtps/resources/ResourceEvent.h>
 #include <rtps/writer/LivelinessManager.hpp>
 

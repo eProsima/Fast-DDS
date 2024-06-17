@@ -27,7 +27,7 @@
 #include <fastdds/rtps/attributes/TopicAttributes.hpp>
 #include <fastdds/rtps/attributes/WriterAttributes.hpp>
 #include <fastdds/rtps/common/Locator.hpp>
-#include <fastdds/rtps/common/Time_t.h>
+#include <fastdds/rtps/common/Time_t.hpp>
 
 namespace eprosima {
 namespace fastdds {

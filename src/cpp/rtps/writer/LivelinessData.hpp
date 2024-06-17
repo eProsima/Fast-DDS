@@ -21,7 +21,7 @@
 #include <chrono>
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
-#include <fastdds/rtps/common/Time_t.h>
+#include <fastdds/rtps/common/Time_t.hpp>
 
 namespace eprosima {
 namespace fastdds {

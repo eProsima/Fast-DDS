@@ -21,7 +21,7 @@
 #include <fastdds/dds/core/condition/StatusCondition.hpp>
 #include <fastdds/dds/core/condition/WaitSet.hpp>
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/rtps/common/Time_t.h>
+#include <fastdds/rtps/common/Time_t.hpp>
 
 #include "../../../logging/mock/MockConsumer.h"
 #include "mock/MockEntity.hpp"

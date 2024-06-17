@@ -32,7 +32,7 @@
 #include <fastdds/rtps/common/Locator.hpp>
 #include <fastdds/rtps/common/SampleIdentity.hpp>
 #include <fastdds/rtps/common/SerializedPayload.hpp>
-#include <fastdds/rtps/common/Time_t.h>
+#include <fastdds/rtps/common/Time_t.hpp>
 #include <fastdds/rtps/common/Token.h>
 
 #if HAVE_SECURITY

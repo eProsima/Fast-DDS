@@ -29,7 +29,7 @@
 #include <fastdds/rtps/common/EntityId_t.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/SequenceNumber.hpp>
-#include <fastdds/rtps/common/Time_t.h>
+#include <fastdds/rtps/common/Time_t.hpp>
 #include <fastdds/rtps/common/VendorId_t.hpp>
 #include <fastdds/rtps/history/History.h>
 #include <fastdds/rtps/history/IChangePool.h>

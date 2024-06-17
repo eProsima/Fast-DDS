@@ -26,7 +26,7 @@
 #include <fastdds/rtps/common/ChangeKind_t.hpp>
 #include <fastdds/rtps/common/InstanceHandle.hpp>
 #include <fastdds/rtps/common/SequenceNumber.hpp>
-#include <fastdds/rtps/common/Time_t.h>
+#include <fastdds/rtps/common/Time_t.hpp>
 #include <fastdds/rtps/common/Types.h>
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/attributes/ResourceManagement.hpp>

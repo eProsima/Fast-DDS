@@ -24,7 +24,7 @@
 
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/SampleIdentity.hpp>
-#include <fastdds/rtps/common/Time_t.h>
+#include <fastdds/rtps/common/Time_t.hpp>
 #include <fastdds/statistics/IListeners.hpp>
 #include <fastdds/utils/TimedMutex.hpp>
 

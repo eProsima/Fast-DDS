@@ -21,7 +21,7 @@
 #define _FASTDDS_TIMECONVERSION_H_
 
 #include <cstdint>
-#include <fastdds/rtps/common/Time_t.h>
+#include <fastdds/rtps/common/Time_t.hpp>
 
 namespace eprosima {
 namespace fastdds {

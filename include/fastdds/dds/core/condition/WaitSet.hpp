@@ -24,7 +24,7 @@
 
 #include <fastdds/dds/core/condition/Condition.hpp>
 #include <fastdds/dds/core/ReturnCode.hpp>
-#include <fastdds/rtps/common/Time_t.h>
+#include <fastdds/rtps/common/Time_t.hpp>
 #include <fastdds/fastdds_dll.hpp>
 
 namespace eprosima {

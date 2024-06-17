@@ -19,7 +19,7 @@
 
 #include <gmock/gmock.h>
 
-#include <fastdds/rtps/common/Time_t.h>
+#include <fastdds/rtps/common/Time_t.hpp>
 
 namespace eprosima {
 namespace fastdds {
