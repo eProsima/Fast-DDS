@@ -15,11 +15,9 @@
 #include <thread>
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/LibrarySettings.hpp>
-
-// TODO(jlbueno): remove private header
-#include <rtps/transport/test_UDPv4Transport.h>
 
 #include "BlackboxTests.hpp"
 #include "PubSubReader.hpp"
@@ -480,7 +478,7 @@ TEST_P(PubSubFragmentsLimited, AsyncPubSubAsReliableData300kbInLossyConditions)
 
     // Sanity check. Make sure we have dropped a few packets
     ASSERT_EQ(
-        test_UDPv4Transport::test_UDPv4Transport_DropLog.size(),
+        testTransport->test_transport_options->test_UDPv4Transport_DropLog.size(),
         testTransport->dropLogLength);
 }
 
@@ -535,7 +533,7 @@ TEST_P(PubSubFragmentsLimited, AsyncPubSubAsReliableVolatileData300kbInLossyCond
 
     // Sanity check. Make sure we have dropped a few packets
     ASSERT_EQ(
-        test_UDPv4Transport::test_UDPv4Transport_DropLog.size(),
+        testTransport->test_transport_options->test_UDPv4Transport_DropLog.size(),
         testTransport->dropLogLength);
 }
 
@@ -591,7 +589,7 @@ TEST_P(PubSubFragmentsLimited, AsyncPubSubAsReliableData300kbInLossyConditionsSm
 
     // Sanity check. Make sure we have dropped a few packets
     ASSERT_EQ(
-        test_UDPv4Transport::test_UDPv4Transport_DropLog.size(),
+        testTransport->test_transport_options->test_UDPv4Transport_DropLog.size(),
         testTransport->dropLogLength);
 }
 
@@ -646,7 +644,7 @@ TEST_P(PubSubFragmentsLimited, AsyncPubSubAsReliableKeyedData300kbKeepLast1InLos
 
     // Sanity check. Make sure we have dropped a few packets
     ASSERT_EQ(
-        test_UDPv4Transport::test_UDPv4Transport_DropLog.size(),
+        testTransport->test_transport_options->test_UDPv4Transport_DropLog.size(),
         testTransport->dropLogLength);
 }
 
@@ -706,7 +704,7 @@ TEST(PubSubFragmentsLimited,
 
     // Sanity check. Make sure we have dropped a few packets
     ASSERT_EQ(
-        test_UDPv4Transport::test_UDPv4Transport_DropLog.size(),
+        testTransport->test_transport_options->test_UDPv4Transport_DropLog.size(),
         testTransport->dropLogLength);
 }
 
@@ -763,7 +761,7 @@ TEST_P(PubSubFragmentsLimited, AsyncPubSubAsReliableVolatileData300kbInLossyCond
 
     // Sanity check. Make sure we have dropped a few packets
     ASSERT_EQ(
-        test_UDPv4Transport::test_UDPv4Transport_DropLog.size(),
+        testTransport->test_transport_options->test_UDPv4Transport_DropLog.size(),
         testTransport->dropLogLength);
 }
 

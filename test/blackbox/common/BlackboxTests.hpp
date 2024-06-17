@@ -37,6 +37,7 @@
 #include "../types/HelloWorldPubSubTypes.h"
 #include "../types/KeyedData1mbPubSubTypes.h"
 #include "../types/KeyedHelloWorldPubSubTypes.h"
+#include "../types/rtps/core_typesPubSubTypes.h"
 #include "../types/StringTestPubSubTypes.h"
 #include "../types/UnboundedHelloWorldPubSubTypes.h"
 

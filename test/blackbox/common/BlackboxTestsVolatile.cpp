@@ -15,10 +15,8 @@
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/common/CDRMessage_t.h>
+#include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
 #include <gtest/gtest.h>
-
-// TODO(jlbueno): remove private header
-#include <rtps/transport/test_UDPv4Transport.h>
 
 #include "BlackboxTests.hpp"
 #include "PubSubReader.hpp"

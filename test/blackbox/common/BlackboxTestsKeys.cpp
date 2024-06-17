@@ -14,11 +14,12 @@
 
 #include "BlackboxTests.hpp"
 
+#include <fastdds/rtps/common/CDRMessage_t.h>
+#include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
+
+#include "../utils/filter_helpers.hpp"
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
-
-#include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
-#include <rtps/messages/CDRMessage.hpp>
 
 TEST(KeyedTopic, RegistrationNonKeyedFail)
 {
@@ -190,12 +191,12 @@ TEST(KeyedTopic, DataWriterAlwaysSendTheSerializedKeyViaInlineQoS)
     PubSubWriter<KeyedHelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     PubSubReader<KeyedHelloWorldPubSubType> reader(TEST_TOPIC_NAME);
 
-    auto testTransport = std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
+    auto test_transport = std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
 
     bool writer_sends_inline_qos = true;
     bool writer_sends_pid_key_hash = true;
 
-    testTransport->drop_data_messages_filter_ = [&writer_sends_inline_qos,
+    test_transport->drop_data_messages_filter_ = [&writer_sends_inline_qos,
                     &writer_sends_pid_key_hash](eprosima::fastdds::rtps::CDRMessage_t& msg) -> bool
             {
                 // Check for inline_qos
@@ -204,8 +205,10 @@ TEST(KeyedTopic, DataWriterAlwaysSendTheSerializedKeyViaInlineQoS)
 
                 // Skip extraFlags, read octetsToInlineQos, and calculate inline qos position.
                 msg.pos += 2;
-                uint16_t to_inline_qos = 0;
-                eprosima::fastdds::rtps::CDRMessage::readUInt16(&msg, &to_inline_qos);
+                uint16_t to_inline_qos = eprosima::fastdds::helpers::cdr_parse_u16(
+                    (char*)&msg.buffer[msg.pos]);
+                msg.pos += 2;
+
                 uint32_t inline_qos_pos = msg.pos + to_inline_qos;
 
                 // Filters are only applied to user data
@@ -226,11 +229,12 @@ TEST(KeyedTopic, DataWriterAlwaysSendTheSerializedKeyViaInlineQoS)
                     bool key_hash_was_found = false;
                     while (msg.pos < msg.length)
                     {
-                        uint16_t pid = 0;
-                        uint16_t plen = 0;
-
-                        eprosima::fastdds::rtps::CDRMessage::readUInt16(&msg, &pid);
-                        eprosima::fastdds::rtps::CDRMessage::readUInt16(&msg, &plen);
+                        uint16_t pid = eprosima::fastdds::helpers::cdr_parse_u16(
+                            (char*)&msg.buffer[msg.pos]);
+                        msg.pos += 2;
+                        uint16_t plen = eprosima::fastdds::helpers::cdr_parse_u16(
+                            (char*)&msg.buffer[msg.pos]);
+                        msg.pos += 2;
                         uint32_t next_pos = msg.pos + plen;
 
                         if (pid == eprosima::fastdds::dds::PID_KEY_HASH)
@@ -255,7 +259,7 @@ TEST(KeyedTopic, DataWriterAlwaysSendTheSerializedKeyViaInlineQoS)
 
     writer.
             disable_builtin_transport().
-            add_user_transport_to_pparams(testTransport).
+            add_user_transport_to_pparams(test_transport).
             init();
 
     ASSERT_TRUE(writer.isInitialized());

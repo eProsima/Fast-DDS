@@ -26,11 +26,10 @@
 #include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/common/EntityId_t.hpp>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
+#include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
 #include <gtest/gtest.h>
 
-// TODO(jlbueno): remove private header
-#include <rtps/transport/test_UDPv4Transport.h>
-
+#include "../utils/filter_helpers.hpp"
 #include "PubSubParticipant.hpp"
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
@@ -523,7 +522,8 @@ TEST(Security, BuiltinAuthenticationPlugin_second_participant_creation_loop)
 
                 // Read writer entity id
                 eprosima::fastdds::rtps::GUID_t writer_guid;
-                eprosima::fastdds::rtps::CDRMessage::readEntityId(&msg, &writer_guid.entityId);
+                writer_guid.entityId = eprosima::fastdds::helpers::cdr_parse_entity_id(
+                        (char*)&msg.buffer[msg.pos]);
                 msg.pos = old_pos;
 
                 if (writer_guid.entityId == eprosima::fastdds::rtps::participant_stateless_message_writer_entity_id)
@@ -3732,7 +3732,7 @@ TEST_P(Security, RemoveParticipantProxyDataonSecurityManagerLeaseExpired_validat
     std::cout << "Reader received at least two samples, shutting down publisher " << std::endl;
 
     //! 7.Simulate a force-quit (cntrl+c) on the publisher by dropping connection
-    test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = true;
+    test_udptransport->test_transport_options->test_UDPv4Transport_ShutdownAllNetwork = true;
 
     bool pubsub_writer_undiscovered;
 

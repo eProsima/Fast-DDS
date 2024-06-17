@@ -13,6 +13,7 @@
 // limitations under the License.
 
 
+#include "fastdds/rtps/messages/RTPS_messages.h"
 #include <atomic>
 #include <thread>
 
@@ -22,17 +23,19 @@
 
 #include <gtest/gtest.h>
 
+#include <fastcdr/Cdr.h>
+#include <fastcdr/FastBuffer.h>
+
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
-// #include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/attributes/ServerAttributes.h>
 #include <fastdds/rtps/common/CDRMessage_t.h>
+#include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
 
-#include <rtps/transport/test_UDPv4Transport.h>
-
+#include "../utils/filter_helpers.hpp"
 #include "BlackboxTests.hpp"
 #include "DatagramInjectionTransport.hpp"
 #include "PubSubReader.hpp"
@@ -431,9 +434,9 @@ TEST(Discovery, EndpointRediscovery)
     PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
-    auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
+    auto test_transport_reader = std::make_shared<test_UDPv4TransportDescriptor>();
     reader.disable_builtin_transport();
-    reader.add_user_transport_to_pparams(testTransport);
+    reader.add_user_transport_to_pparams(test_transport_reader);
 
     reader.lease_duration({ 3, 0 }, { 1, 0 }).reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).init();
 
@@ -441,10 +444,10 @@ TEST(Discovery, EndpointRediscovery)
 
     // To simulate lossy conditions, we are going to remove the default
     // bultin transport, and instead use a lossy shim layer variant.
-    testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
+    auto test_transport_writer = std::make_shared<test_UDPv4TransportDescriptor>();
     // We drop 20% of all data frags
     writer.disable_builtin_transport();
-    writer.add_user_transport_to_pparams(testTransport);
+    writer.add_user_transport_to_pparams(test_transport_writer);
 
     writer.lease_duration({ 6, 0 }, { 2, 0 }).init();
 
@@ -455,11 +458,13 @@ TEST(Discovery, EndpointRediscovery)
     writer.wait_discovery();
     reader.wait_discovery();
 
-    test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = true;
+    test_transport_writer->test_transport_options->test_UDPv4Transport_ShutdownAllNetwork = true;
+    test_transport_reader->test_transport_options->test_UDPv4Transport_ShutdownAllNetwork = true;
 
     writer.wait_reader_undiscovery();
 
-    test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = false;
+    test_transport_writer->test_transport_options->test_UDPv4Transport_ShutdownAllNetwork = false;
+    test_transport_reader->test_transport_options->test_UDPv4Transport_ShutdownAllNetwork = false;
 
     writer.wait_discovery();
 }
@@ -470,14 +475,14 @@ TEST(Discovery, EndpointRediscovery_2)
     PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
-    auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
+    auto test_transport = std::make_shared<test_UDPv4TransportDescriptor>();
 
     reader.lease_duration({ 120, 0 }, { 1, 0 }).reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     writer.disable_builtin_transport();
-    writer.add_user_transport_to_pparams(testTransport);
+    writer.add_user_transport_to_pparams(test_transport);
 
     writer.lease_duration({ 2, 0 }, { 1, 0 }).init();
 
@@ -487,11 +492,11 @@ TEST(Discovery, EndpointRediscovery_2)
     writer.wait_discovery();
     reader.wait_discovery();
 
-    test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = true;
+    test_transport->test_transport_options->test_UDPv4Transport_ShutdownAllNetwork = true;
 
     reader.wait_participant_undiscovery();
 
-    test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = false;
+    test_transport->test_transport_options->test_UDPv4Transport_ShutdownAllNetwork = false;
 
     reader.wait_discovery();
 }
@@ -502,7 +507,7 @@ TEST(Discovery, EndpointRediscoveryWithTransientLocalData)
     PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
-    auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
+    auto test_transport = std::make_shared<test_UDPv4TransportDescriptor>();
 
     reader
             .lease_duration({ 120, 0 }, { 1, 0 })
@@ -513,7 +518,7 @@ TEST(Discovery, EndpointRediscoveryWithTransientLocalData)
     ASSERT_TRUE(reader.isInitialized());
 
     writer.disable_builtin_transport();
-    writer.add_user_transport_to_pparams(testTransport);
+    writer.add_user_transport_to_pparams(test_transport);
 
     writer
             .lease_duration({ 2, 0 }, { 1, 0 })
@@ -536,11 +541,11 @@ TEST(Discovery, EndpointRediscoveryWithTransientLocalData)
     reader.block_for_all();
     EXPECT_TRUE(writer.waitForAllAcked(std::chrono::seconds(1)));
 
-    test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = true;
+    test_transport->test_transport_options->test_UDPv4Transport_ShutdownAllNetwork = true;
 
     reader.wait_participant_undiscovery();
 
-    test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = false;
+    test_transport->test_transport_options->test_UDPv4Transport_ShutdownAllNetwork = false;
 
     reader.wait_discovery();
 
@@ -583,7 +588,7 @@ TEST(Discovery, ParticipantLivelinessAssertion)
     writer.wait_discovery();
     reader.wait_discovery();
 
-    test_UDPv4Transport::always_drop_participant_builtin_topic_data = true;
+    test_transport->test_transport_options->always_drop_participant_builtin_topic_data = true;
 
     std::thread thread([&writer]()
             {
@@ -598,7 +603,7 @@ TEST(Discovery, ParticipantLivelinessAssertion)
     EXPECT_FALSE(reader.wait_participant_undiscovery(std::chrono::seconds(1)));
     EXPECT_FALSE(writer.wait_participant_undiscovery(std::chrono::seconds(1)));
 
-    test_UDPv4Transport::always_drop_participant_builtin_topic_data = false;
+    test_transport->test_transport_options->always_drop_participant_builtin_topic_data = false;
 
     thread.join();
 }
@@ -804,16 +809,14 @@ TEST(Discovery, LocalInitialPeersDiferrentLocators)
                 return false;
             };
 
-    auto old_locator_filter = test_UDPv4Transport::locator_filter;
-    test_UDPv4Transport::locator_filter = locator_printer;
+    auto test_transport = std::make_shared<test_UDPv4TransportDescriptor>();
+    test_transport->test_transport_options->locator_filter = locator_printer;
 
     // Configure writer participant:
     // - Uses the test transport, to check destination behavior
     // - Listens for metatraffic on `writer_port`
     // - Has no automatic announcements
     {
-        auto test_transport = std::make_shared<test_UDPv4TransportDescriptor>();
-
         LocatorList_t writer_metatraffic_unicast;
         Locator_t locator;
         locator.port = static_cast<uint16_t>(writer_port);
@@ -875,9 +878,6 @@ TEST(Discovery, LocalInitialPeersDiferrentLocators)
     readers[1].init();
     ASSERT_TRUE(readers[1].isInitialized());
     readers[1].wait_discovery();
-
-    // Restore filter before deleting the participants
-    test_UDPv4Transport::locator_filter = old_locator_filter;
 }
 
 TEST_P(Discovery, PubSubAsReliableHelloworldParticipantDiscovery)
@@ -1089,7 +1089,7 @@ TEST(Discovery, TwentyParticipantsMulticastLocalhostOnly)
                 part->disable_builtin_transport().add_user_transport_to_pparams(test_transport);
             };
 
-    test_UDPv4Transport::simulate_no_interfaces = true;
+    test_transport->test_transport_options->simulate_no_interfaces = true;
     discoverParticipantsTest(false, 20, 20, TEST_TOPIC_NAME, participant_config);
 }
 
@@ -1966,13 +1966,15 @@ TEST(Discovery, RemoteBuiltinEndpointHonoring)
 
     reader_test_transport->drop_heartbeat_messages_filter_ = [&num_wlp_reader_heartbeat](CDRMessage_t& msg)
             {
-                auto old_pos = msg.pos;
-                msg.pos += 4;
-                eprosima::fastdds::rtps::EntityId_t writer_entity_id;
-                eprosima::fastdds::rtps::CDRMessage::readEntityId(&msg, &writer_entity_id);
-                msg.pos = old_pos;
+                // Go back to submsgkind
+                auto submsgkind_pos = msg.pos - 4;
+                auto hb_submsg = eprosima::fastdds::helpers::cdr_parse_heartbeat_submsg(
+                    (char*)&msg.buffer[submsgkind_pos],
+                    msg.length - submsgkind_pos);
 
-                if (eprosima::fastdds::rtps::c_EntityId_WriterLiveliness == writer_entity_id)
+                assert(hb_submsg.submsgHeader().submessageId() == HEARTBEAT);
+
+                if (eprosima::fastdds::rtps::c_EntityId_WriterLiveliness == *reinterpret_cast<EntityId_t*>(&hb_submsg.writerId()))
                 {
                     num_wlp_reader_heartbeat++;
                 }
@@ -1981,13 +1983,15 @@ TEST(Discovery, RemoteBuiltinEndpointHonoring)
 
     reader_test_transport->drop_ack_nack_messages_filter_ = [&num_wlp_reader_acknack](CDRMessage_t& msg)
             {
-                auto old_pos = msg.pos;
-                msg.pos += 4;
-                eprosima::fastdds::rtps::EntityId_t writer_entity_id;
-                eprosima::fastdds::rtps::CDRMessage::readEntityId(&msg, &writer_entity_id);
-                msg.pos = old_pos;
+                // Go back to submsgkind
+                auto submsgkind_pos = msg.pos - 4;
+                auto acknack_submsg = eprosima::fastdds::helpers::cdr_parse_acknack_submsg(
+                    (char*)&msg.buffer[submsgkind_pos],
+                    msg.length - submsgkind_pos);
 
-                if (eprosima::fastdds::rtps::c_EntityId_WriterLiveliness == writer_entity_id)
+                assert(acknack_submsg.submsgHeader().submessageId() == ACKNACK);
+
+                if (eprosima::fastdds::rtps::c_EntityId_WriterLiveliness == *reinterpret_cast<EntityId_t*>(&acknack_submsg.writerId()))
                 {
                     num_wlp_reader_acknack++;
                 }
@@ -1999,15 +2003,17 @@ TEST(Discovery, RemoteBuiltinEndpointHonoring)
     uint32_t num_wlp_writer_heartbeat = 0;
     uint32_t num_wlp_writer_acknack = 0;
 
-    writer_test_transport->drop_heartbeat_messages_filter_ = [&num_wlp_writer_heartbeat](CDRMessage_t& msg)
+    writer_test_transport->drop_heartbeat_messages_filter_ = [&](CDRMessage_t& msg)
             {
-                auto old_pos = msg.pos;
-                msg.pos += 4;
-                eprosima::fastdds::rtps::EntityId_t writer_entity_id;
-                eprosima::fastdds::rtps::CDRMessage::readEntityId(&msg, &writer_entity_id);
-                msg.pos = old_pos;
+                // Go back to submsgkind
+                auto submsgkind_pos = msg.pos - 4;
+                auto hb_submsg = eprosima::fastdds::helpers::cdr_parse_heartbeat_submsg(
+                    (char*)&msg.buffer[submsgkind_pos],
+                    msg.length - submsgkind_pos);
 
-                if (eprosima::fastdds::rtps::c_EntityId_WriterLiveliness == writer_entity_id)
+                assert(hb_submsg.submsgHeader().submessageId() == HEARTBEAT);
+
+                if (eprosima::fastdds::rtps::c_EntityId_WriterLiveliness == *reinterpret_cast<EntityId_t*>(&hb_submsg.writerId()))
                 {
                     num_wlp_writer_heartbeat++;
                 }
@@ -2016,13 +2022,15 @@ TEST(Discovery, RemoteBuiltinEndpointHonoring)
 
     writer_test_transport->drop_ack_nack_messages_filter_ = [&num_wlp_writer_acknack](CDRMessage_t& msg)
             {
-                auto old_pos = msg.pos;
-                msg.pos += 4;
-                eprosima::fastdds::rtps::EntityId_t writer_entity_id;
-                eprosima::fastdds::rtps::CDRMessage::readEntityId(&msg, &writer_entity_id);
-                msg.pos = old_pos;
+                // Go back to submsgkind
+                auto submsgkind_pos = msg.pos - 4;
+                auto acknack_submsg = eprosima::fastdds::helpers::cdr_parse_acknack_submsg(
+                    (char*)&msg.buffer[submsgkind_pos],
+                    msg.length - submsgkind_pos);
 
-                if (eprosima::fastdds::rtps::c_EntityId_WriterLiveliness == writer_entity_id)
+                assert(acknack_submsg.submsgHeader().submessageId() == ACKNACK);
+
+                if (eprosima::fastdds::rtps::c_EntityId_WriterLiveliness == *reinterpret_cast<EntityId_t*>(&acknack_submsg.writerId()))
                 {
                     num_wlp_writer_acknack++;
                 }
