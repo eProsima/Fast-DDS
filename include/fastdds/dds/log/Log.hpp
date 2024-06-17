@@ -393,4 +393,4 @@ protected:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // ifndef FASTDDS_DDS_LOG__LOG_HPP
+#endif // FASTDDS_DDS_LOG__LOG_HPP

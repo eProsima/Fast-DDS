@@ -110,4 +110,4 @@ protected:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // ifndef FASTDDS_RTPS_TRANSPORT__PORTBASEDTRANSPORTDESCRIPTOR_HPP
+#endif // FASTDDS_RTPS_TRANSPORT__PORTBASEDTRANSPORTDESCRIPTOR_HPP

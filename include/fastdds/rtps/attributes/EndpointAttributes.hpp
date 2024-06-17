@@ -174,4 +174,4 @@ private:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // ifndef FASTDDS_RTPS_ATTRIBUTES__ENDPOINTATTRIBUTES_HPP
+#endif // FASTDDS_RTPS_ATTRIBUTES__ENDPOINTATTRIBUTES_HPP

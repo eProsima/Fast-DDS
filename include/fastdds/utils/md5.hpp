@@ -168,5 +168,5 @@ std::string md5(
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // ifndef FASTDDS_UTILS__MD5_HPP
+#endif // FASTDDS_UTILS__MD5_HPP
 

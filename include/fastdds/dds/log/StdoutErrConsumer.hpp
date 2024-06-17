@@ -77,4 +77,4 @@ private:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // ifndef FASTDDS_DDS_LOG__STDOUTERRCONSUMER_HPP
+#endif // FASTDDS_DDS_LOG__STDOUTERRCONSUMER_HPP
