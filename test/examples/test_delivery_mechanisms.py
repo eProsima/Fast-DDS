@@ -2,24 +2,34 @@ import subprocess
 import pytest
 
 delivery_test_cases = [
-    ('--mechanism shm', '--mechanism shm', 3),
-    ('--mechanism shm --ignore-local-endpoints', '--mechanism shm', 2),
-    ('--mechanism udp', '--mechanism udp', 3),
-    ('--mechanism udp --ignore-local-endpoints', '--mechanism udp', 2),
-    # tcp takes longer to match, so expect much more samples in this case
-    ('--mechanism tcp --ignore-local-endpoints -s 250', '--mechanism tcp -s 250', 2),
-    ('--mechanism data-sharing', '--mechanism data-sharing', 3),
-    ('--mechanism data-sharing --ignore-local-endpoints', '--mechanism data-sharing', 2),
-    ('--mechanism intra-process', '--unknown-argument', 1)      # force subscribers to fail
+    ('', '', '--unknown-command', 2),
+    ('--unknown-command', '', '', 3),
+    ('--unknown-command', '', ' --ignore-local-endpoints', 2),
+    ('--mechanism shm', '--mechanism shm', '--unknown-command', 2),
+    ('--unknown-command', '--mechanism shm', '--mechanism shm', 3),
+    ('--unknown-command', '--mechanism shm', '--mechanism shm --ignore-local-endpoints', 2),
+    ('--mechanism udp', '--mechanism udp', '--unknown-command', 2),
+    ('--unknown-command', '--mechanism udp', '--mechanism udp', 3),
+    ('--unknown-command', '--mechanism udp', '--mechanism udp --ignore-local-endpoints', 2),
+    # tcp takes longer to match, so explicitly expect much more samples in this case
+    #  Note: pubsub with TCP and ignore-local-endpoints NOT set is not supported, tested in  below tests
+    ('--mechanism tcp -s 220', '--mechanism tcp -s 220', '--unknown-command', 2),
+    ('--unknown-command', '--mechanism tcp -s 220', '--mechanism tcp -s 220 --ignore-local-endpoints', 2),
+    ('--mechanism data-sharing', '--mechanism data-sharing', '--unknown-command', 2),
+    ('--unknown-command', '--mechanism data-sharing', '--mechanism data-sharing', 3),
+    ('--unknown-command', '--mechanism data-sharing', '--mechanism data-sharing --ignore-local-endpoints', 2),
+#    # Intra-process only makes sense for pubsub entities. This test forces entities != pubsub  to fail, so
+#    #  only 1 message is expected per sample (the local one)
+    ('--unknown-argument', '--unknown-argument', '--mechanism intra-process', 1)
 ]
 
-@pytest.mark.parametrize("pub_args, sub_args, repetitions", delivery_test_cases)
-def test_delivery_mechanisms(pub_args, sub_args, repetitions):
+@pytest.mark.parametrize("pub_args, sub_args, pubsub_args, repetitions", delivery_test_cases)
+def test_delivery_mechanisms(pub_args, sub_args, pubsub_args, repetitions):
     """."""
     ret = False
     out = ''
 
-    command_prerequisites = 'PUB_ARGS="' + pub_args + '" SUB_ARGS="' + sub_args + '" '
+    command_prerequisites = 'PUB_ARGS="' + pub_args + '" SUB_ARGS="' + sub_args + '" PUBSUB_ARGS="' + pubsub_args + '" '
     try:
         out = subprocess.check_output(command_prerequisites + '@DOCKER_EXECUTABLE@ compose -f delivery_mechanisms.compose.yml up',
             stderr=subprocess.STDOUT,
@@ -54,21 +64,17 @@ def test_delivery_mechanisms(pub_args, sub_args, repetitions):
     assert(ret)
 
 timeout_test_cases = [
-    ('--mechanism shm --ignore-local-endpoints', '--mechanism udp'),
-    ('--mechanism shm --ignore-local-endpoints', '--mechanism tcp'),
-    ('--mechanism udp --ignore-local-endpoints', '--mechanism tcp'),
-    ('--mechanism udp --ignore-local-endpoints', '--mechanism data-sharing'),
-    ('--mechanism tcp --ignore-local-endpoints', '--mechanism data-sharing'),
-    ('--mechanism intra-process --ignore-local-endpoints', '--unknown-argument')    # force subscribers to fail
+    ('--mechanism tcp', '--mechanism udp', '--mechanism shm -i'),
+    ('--mechanism shm', '--mechanism data-sharing', '--mechanism intra-process -i')
 ]
 
-@pytest.mark.parametrize("pub_args, sub_args", timeout_test_cases)
-def test_delivery_mechanisms_timeout(pub_args, sub_args):
+@pytest.mark.parametrize("pub_args, sub_args, pubsub_args", timeout_test_cases)
+def test_delivery_mechanisms_timeout(pub_args, sub_args, pubsub_args):
     """."""
     ret = False
     out = ''
 
-    command_prerequisites = 'PUB_ARGS="' + pub_args + '" SUB_ARGS="' + sub_args + '" '
+    command_prerequisites = 'PUB_ARGS="' + pub_args + '" SUB_ARGS="' + sub_args + '" PUBSUB_ARGS="' + pubsub_args + '" '
     try:
         out = subprocess.check_output(command_prerequisites + '@DOCKER_EXECUTABLE@ compose -f delivery_mechanisms.compose.yml up',
             stderr=subprocess.STDOUT,
@@ -88,17 +94,17 @@ def test_delivery_mechanisms_timeout(pub_args, sub_args):
     assert(ret)
 
 expected_output_test_cases = [
-    ('--mechanism tcp', '--unknown-argument', 'Unsupported', 1)
+    ('--unknown-argument', '--unknown-argument', '--mechanism tcp', 'Unsupported', 1)
 ]
 
-@pytest.mark.parametrize("pub_args, sub_args, expected_message, n_messages", expected_output_test_cases)
-def test_delivery_mechanisms_expected_output(pub_args, sub_args, expected_message, n_messages):
+@pytest.mark.parametrize("pub_args, sub_args, pubsub_args, expected_message, n_messages", expected_output_test_cases)
+def test_delivery_mechanisms_expected_output(pub_args, sub_args, pubsub_args, expected_message, n_messages):
     """."""
     ret = False
     out = ''
     render_out = ''
 
-    command_prerequisites = 'PUB_ARGS="' + pub_args + '" SUB_ARGS="' + sub_args + '" '
+    command_prerequisites = 'PUB_ARGS="' + pub_args + '" SUB_ARGS="' + sub_args + '" PUBSUB_ARGS="' + pubsub_args + '" '
     try:
         out = subprocess.check_output(command_prerequisites + '@DOCKER_EXECUTABLE@ compose -f delivery_mechanisms.compose.yml up',
             stderr=subprocess.STDOUT,
