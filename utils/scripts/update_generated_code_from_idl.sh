@@ -41,6 +41,7 @@ files_needing_output_dir=(
     './thirdparty/dds-types-test/IDL/strings.idl|../../../test/dds-types-test'
     './thirdparty/dds-types-test/IDL/structures.idl|../../../test/dds-types-test'
     './thirdparty/dds-types-test/IDL/unions.idl|../../../test/dds-types-test'
+    './test/blackbox/types/rtps/core_types.idl|.'
     )
 
 files_needing_no_typesupport=(
