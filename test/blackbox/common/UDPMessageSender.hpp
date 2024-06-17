@@ -2,7 +2,7 @@
 #include <asio/ip/udp.hpp>
 
 #include <fastdds/rtps/common/CDRMessage_t.hpp>
-#include <fastdds/utils/IPLocator.h>
+#include <fastdds/utils/IPLocator.hpp>
 
 using namespace eprosima::fastdds;
 using namespace eprosima::fastdds::rtps;

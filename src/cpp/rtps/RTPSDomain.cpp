@@ -33,7 +33,7 @@
 #include <fastdds/rtps/reader/RTPSReader.hpp>
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
 #include <fastdds/utils/IPFinder.hpp>
-#include <fastdds/utils/IPLocator.h>
+#include <fastdds/utils/IPLocator.hpp>
 #include <fastdds/utils/md5.h>
 
 #include <rtps/common/GuidUtils.hpp>

@@ -21,7 +21,7 @@
 #include <fastdds/rtps/common/LocatorListComparisons.hpp>
 #include <fastdds/rtps/common/RemoteLocators.hpp>
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>
-#include <fastdds/utils/IPLocator.h>
+#include <fastdds/utils/IPLocator.hpp>
 
 using namespace eprosima::fastdds::rtps;
 

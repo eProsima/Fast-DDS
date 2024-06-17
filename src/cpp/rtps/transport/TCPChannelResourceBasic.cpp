@@ -18,7 +18,7 @@
 #include <array>
 
 #include <asio.hpp>
-#include <fastdds/utils/IPLocator.h>
+#include <fastdds/utils/IPLocator.hpp>
 #include <rtps/transport/TCPTransportInterface.h>
 
 using namespace asio;

@@ -42,7 +42,7 @@
 #include <fastdds/rtps/RTPSDomain.hpp>
 
 #include <fastdds/utils/IPFinder.hpp>
-#include <fastdds/utils/IPLocator.h>
+#include <fastdds/utils/IPLocator.hpp>
 #include <fastdds/utils/TimedMutex.hpp>
 #include <gtest/gtest.h>
 

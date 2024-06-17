@@ -25,7 +25,7 @@
 #include <string>
 
 #include <optionparser.hpp>
-#include <fastdds/utils/IPLocator.h>
+#include <fastdds/utils/IPLocator.hpp>
 
 #include "common.h"
 

@@ -21,7 +21,7 @@
 #define _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_DISCOVERYSERVEREXAMPLE_COMMON_H_
 
 #include <fastdds/rtps/attributes/ServerAttributes.hpp>
-#include <fastdds/utils/IPLocator.h>
+#include <fastdds/utils/IPLocator.hpp>
 
 enum class TransportKind
 {

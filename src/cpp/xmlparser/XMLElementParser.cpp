@@ -26,7 +26,7 @@
 #include <tinyxml2.h>
 
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/utils/IPLocator.h>
+#include <fastdds/utils/IPLocator.hpp>
 
 #include <utils/string_utilities.hpp>
 #include <utils/SystemInfo.hpp>

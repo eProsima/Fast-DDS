@@ -14,7 +14,7 @@
 
 #include <rtps/transport/TCPAcceptorSecure.h>
 
-#include <fastdds/utils/IPLocator.h>
+#include <fastdds/utils/IPLocator.hpp>
 #include <rtps/transport/TCPTransportInterface.h>
 
 namespace eprosima {

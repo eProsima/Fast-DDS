@@ -13,12 +13,12 @@
 // limitations under the License.
 
 /**
- * @file IPLocator.h
+ * @file IPLocator.hpp
  *
  */
 
-#ifndef IP_LOCATOR_H_
-#define IP_LOCATOR_H_
+#ifndef FASTDDS_UTILS__IPLOCATOR_HPP
+#define FASTDDS_UTILS__IPLOCATOR_HPP
 
 #include <fastdds/rtps/common/Types.hpp>
 #include <fastdds/dds/log/Log.hpp>
@@ -301,6 +301,6 @@ private:
 
 } // namespace rtps
 } // namespace fastdds
-} /* namespace eprosima */
+} // namespace eprosima
 
-#endif /* IP_LOCATOR_H_ */
+#endif // FASTDDS_UTILS__IPLOCATOR_HPP

@@ -49,7 +49,7 @@
 #include <fastdds/rtps/reader/RTPSReader.hpp>
 #include <fastdds/rtps/RTPSDomain.hpp>
 
-#include <fastdds/utils/IPLocator.h>
+#include <fastdds/utils/IPLocator.hpp>
 #include <fastdds/utils/TimedMutex.hpp>
 #include <gtest/gtest.h>
 

@@ -28,7 +28,7 @@
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/common/LocatorSelectorEntry.hpp>
 #include <fastdds/rtps/common/LocatorWithMask.hpp>
-#include <fastdds/utils/IPLocator.h>
+#include <fastdds/utils/IPLocator.hpp>
 #include <utils/SystemInfo.hpp>
 
 #include <rtps/network/utils/external_locators.hpp>

@@ -21,7 +21,7 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/transport/SenderResource.hpp>
 #include <fastdds/rtps/transport/TransportInterface.hpp>
-#include <fastdds/utils/IPLocator.h>
+#include <fastdds/utils/IPLocator.hpp>
 
 #include <rtps/messages/MessageReceiver.h>
 #include <rtps/network/utils/netmask_filter.hpp>

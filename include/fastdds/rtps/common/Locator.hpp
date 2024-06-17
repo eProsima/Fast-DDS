@@ -22,7 +22,7 @@
 #include <fastdds/fastdds_dll.hpp>
 
 #include <fastdds/rtps/common/Types.hpp>
-#include <fastdds/utils/IPLocator.h>
+#include <fastdds/utils/IPLocator.hpp>
 
 #include <fastdds/dds/log/Log.hpp>
 

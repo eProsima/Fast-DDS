@@ -22,7 +22,7 @@
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/transport/TransportInterface.hpp>
-#include <fastdds/utils/IPLocator.h>
+#include <fastdds/utils/IPLocator.hpp>
 #include <rtps/messages/CDRMessage.hpp>
 #include <rtps/transport/asio_helpers.hpp>
 #include <rtps/transport/UDPSenderResource.hpp>

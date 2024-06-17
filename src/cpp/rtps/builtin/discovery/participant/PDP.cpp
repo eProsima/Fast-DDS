@@ -36,7 +36,7 @@
 #include <fastdds/rtps/participant/RTPSParticipantListener.hpp>
 
 #include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
-#include <fastdds/utils/IPLocator.h>
+#include <fastdds/utils/IPLocator.hpp>
 #include <rtps/builtin/BuiltinProtocols.h>
 #include <rtps/builtin/data/ProxyHashTables.hpp>
 #include <rtps/builtin/discovery/endpoint/EDPSimple.h>

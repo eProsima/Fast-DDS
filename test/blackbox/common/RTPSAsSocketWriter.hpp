@@ -40,7 +40,7 @@
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
 #include <fastdds/rtps/writer/WriterListener.hpp>
 
-#include <fastdds/utils/IPLocator.h>
+#include <fastdds/utils/IPLocator.hpp>
 
 using eprosima::fastdds::rtps::IPLocator;
 
