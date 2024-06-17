@@ -156,10 +156,12 @@ public:
         attr.accept_messages_from_unkown_writers =
                 eprosima::fastdds::rtps::RELIABLE != reader_attr_.endpoint.reliabilityKind;
         reader_ = eprosima::fastdds::rtps::RTPSDomain::createRTPSReader(participant_, attr, history_,
-
                         &listener_);
         ASSERT_NE(reader_, nullptr);
 
+        register_writer();
+        
+        initialized_ = true;
     }
 
     bool isInitialized() const
