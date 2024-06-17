@@ -489,16 +489,6 @@ bool PDPServer::create_ds_pdp_reliable_endpoints(
         wout->reader_data_filter(pdp_filter);
         // Enable separate sending so the filter can be called for each change and reader proxy
         wout->set_separate_sending(true);
-
-        if (!secure)
-        {
-            eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
-
-            for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
-            {
-                match_pdp_reader_nts_(it);
-            }
-        }
     }
     // Could not create PDP Writer, so return false
     else
