@@ -20,7 +20,7 @@
 #include <sstream>
 #include <stdio.h>
 
-#include <fastdds/rtps/RTPSDomain.h>
+#include <fastdds/rtps/RTPSDomain.hpp>
 
 #include "TestReaderPersistent.h"
 #include "TestWriterPersistent.h"

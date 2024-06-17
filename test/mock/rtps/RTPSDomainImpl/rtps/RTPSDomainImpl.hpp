@@ -18,7 +18,7 @@
 #include <memory>
 
 #include <fastdds/LibrarySettings.hpp>
-#include <fastdds/rtps/RTPSDomain.h>
+#include <fastdds/rtps/RTPSDomain.hpp>
 #include <fastdds/xtypes/type_representation/TypeObjectRegistry.hpp>
 
 namespace eprosima {

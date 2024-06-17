@@ -16,7 +16,7 @@
  * @file RTPSDomain.cpp
  */
 
-#include <fastdds/rtps/RTPSDomain.h>
+#include <fastdds/rtps/RTPSDomain.hpp>
 
 #include <chrono>
 #include <cstdlib>

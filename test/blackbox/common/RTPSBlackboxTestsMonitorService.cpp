@@ -17,7 +17,7 @@
 #include "BlackboxTests.hpp"
 
 #include <fastdds/rtps/participant/RTPSParticipant.hpp>
-#include <fastdds/rtps/RTPSDomain.h>
+#include <fastdds/rtps/RTPSDomain.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
 
 using namespace eprosima::fastdds::rtps;

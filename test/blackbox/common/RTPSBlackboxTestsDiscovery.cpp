@@ -15,7 +15,7 @@
 #include "BlackboxTests.hpp"
 
 #include <fastdds/LibrarySettings.hpp>
-#include <fastdds/rtps/RTPSDomain.h>
+#include <fastdds/rtps/RTPSDomain.hpp>
 #include <gtest/gtest.h>
 
 #include "RTPSWithRegistrationReader.hpp"

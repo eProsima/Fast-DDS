@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * @file RTPSDomain.h
+ * @file RTPSDomain.hpp
  */
 
-#ifndef _FASTDDS_RTPS_DOMAIN_H_
-#define _FASTDDS_RTPS_DOMAIN_H_
+#ifndef FASTDDS_RTPS__RTPSDOMAIN_HPP
+#define FASTDDS_RTPS__RTPSDOMAIN_HPP
 
 #include <atomic>
 #include <mutex>
@@ -335,7 +335,7 @@ private:
 };
 
 } // namespace rtps
-} /* namespace fastdds  */
-} /* namespace eprosima */
+} // namespace fastdds
+} // namespace eprosima
 
-#endif /* _FASTDDS_RTPS_DOMAIN_H_*/
+#endif // FASTDDS_RTPS__RTPSDOMAIN_HPP
