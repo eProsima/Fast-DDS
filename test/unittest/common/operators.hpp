@@ -15,7 +15,7 @@
 #include <algorithm>
 #include <cstdint>
 
-#include <fastdds/rtps/common/SequenceNumber.h>
+#include <fastdds/rtps/common/SequenceNumber.hpp>
 
 namespace eprosima {
 namespace fastdds {

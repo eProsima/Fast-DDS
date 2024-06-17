@@ -38,7 +38,7 @@
 #include <fastdds/rtps/common/CacheChange.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/InstanceHandle.hpp>
-#include <fastdds/rtps/common/SequenceNumber.h>
+#include <fastdds/rtps/common/SequenceNumber.hpp>
 #include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/attributes/ResourceManagement.hpp>
 

@@ -21,7 +21,7 @@
 
 #include <fastdds/rtps/common/CacheChange.hpp>
 #include <fastdds/rtps/common/FragmentNumber.hpp>
-#include <fastdds/rtps/common/SequenceNumber.h>
+#include <fastdds/rtps/common/SequenceNumber.hpp>
 
 #include <cassert>
 

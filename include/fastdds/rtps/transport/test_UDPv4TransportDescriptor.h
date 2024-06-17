@@ -19,7 +19,7 @@
 #include <atomic>
 
 #include <fastdds/rtps/transport/SocketTransportDescriptor.h>
-#include <fastdds/rtps/common/SequenceNumber.h>
+#include <fastdds/rtps/common/SequenceNumber.hpp>
 
 namespace eprosima {
 namespace fastdds {

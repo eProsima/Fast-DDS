@@ -20,7 +20,7 @@
 #define FASTDDS_RTPS_COMMON__SAMPLEIDENTITY_HPP
 
 #include <fastdds/rtps/common/Guid.hpp>
-#include <fastdds/rtps/common/SequenceNumber.h>
+#include <fastdds/rtps/common/SequenceNumber.hpp>
 
 namespace eprosima {
 namespace fastdds {

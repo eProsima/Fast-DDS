@@ -25,7 +25,7 @@
 #include <fastdds/rtps/common/CDRMessage_t.hpp>
 #include <fastdds/rtps/common/Property.hpp>
 #include <fastdds/rtps/common/BinaryProperty.hpp>
-#include <fastdds/rtps/common/SequenceNumber.h>
+#include <fastdds/rtps/common/SequenceNumber.hpp>
 #include <fastdds/rtps/common/FragmentNumber.hpp>
 #include <fastdds/rtps/common/SampleIdentity.hpp>
 #include <fastdds/rtps/common/Time_t.h>

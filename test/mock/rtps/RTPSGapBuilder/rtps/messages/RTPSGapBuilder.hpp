@@ -20,7 +20,7 @@
 #ifndef RTPSGAPBUILDER_HPP
 #define RTPSGAPBUILDER_HPP
 
-#include <fastdds/rtps/common/SequenceNumber.h>
+#include <fastdds/rtps/common/SequenceNumber.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
 
 #include <rtps/messages/RTPSMessageGroup.hpp>

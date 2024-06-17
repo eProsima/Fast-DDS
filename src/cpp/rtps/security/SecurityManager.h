@@ -29,7 +29,7 @@
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
 #include <fastdds/rtps/builtin/data/WriterProxyData.hpp>
-#include <fastdds/rtps/common/SequenceNumber.h>
+#include <fastdds/rtps/common/SequenceNumber.hpp>
 #include <fastdds/rtps/common/SerializedPayload.h>
 #include <fastdds/rtps/reader/ReaderListener.h>
 #include <fastdds/rtps/writer/WriterListener.h>
