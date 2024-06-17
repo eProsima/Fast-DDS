@@ -1114,7 +1114,9 @@ void SecurityManager::delete_participant_stateless_message_pool()
 
 bool SecurityManager::create_participant_stateless_message_writer()
 {
-    participant_stateless_message_writer_history_ = new WriterHistory(participant_stateless_message_writer_hattr_);
+    participant_stateless_message_writer_history_ = new WriterHistory(
+        participant_stateless_message_writer_hattr_,
+        participant_stateless_message_pool_);
 
     const RTPSParticipantAttributes& pattr = participant_->getRTPSParticipantAttributes();
 
@@ -1127,7 +1129,7 @@ bool SecurityManager::create_participant_stateless_message_writer()
     watt.matched_readers_allocation = pattr.allocation.participants;
 
     RTPSWriter* wout = nullptr;
-    if (participant_->createWriter(&wout, watt, participant_stateless_message_pool_,
+    if (participant_->createWriter(&wout, watt,
             participant_stateless_message_writer_history_, nullptr,
             participant_stateless_message_writer_entity_id, true))
     {
@@ -1263,7 +1265,7 @@ void SecurityManager::delete_participant_volatile_message_secure_pool()
 bool SecurityManager::create_participant_volatile_message_secure_writer()
 {
     participant_volatile_message_secure_writer_history_ =
-            new WriterHistory(participant_volatile_message_secure_hattr_);
+            new WriterHistory(participant_volatile_message_secure_hattr_, participant_volatile_message_secure_pool_);
 
     const RTPSParticipantAttributes& pattr = participant_->getRTPSParticipantAttributes();
 
@@ -1282,7 +1284,7 @@ bool SecurityManager::create_participant_volatile_message_secure_writer()
     watt.matched_readers_allocation = pattr.allocation.participants;
 
     RTPSWriter* wout = nullptr;
-    if (participant_->createWriter(&wout, watt, participant_volatile_message_secure_pool_,
+    if (participant_->createWriter(&wout, watt,
             participant_volatile_message_secure_writer_history_,
             this, participant_volatile_message_secure_writer_entity_id, true))
     {

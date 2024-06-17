@@ -95,7 +95,8 @@ public:
             WriterListener* listen = nullptr)
     {
         static_cast<void>(change_pool);
-        return RTPSDomain::createRTPSWriter(p, entity_id, watt, payload_pool, hist, listen);
+        static_cast<void>(payload_pool);
+        return RTPSDomain::createRTPSWriter(p, entity_id, watt, hist, listen);
     }
 
     static RTPSParticipant* clientServerEnvironmentCreationOverride(

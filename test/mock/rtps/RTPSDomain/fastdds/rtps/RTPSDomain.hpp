@@ -93,18 +93,6 @@ public:
             RTPSParticipant*,
             const EntityId_t&,
             WriterAttributes&,
-            const std::shared_ptr<IPayloadPool>&,
-            WriterHistory*,
-            WriterListener* listen = nullptr)
-    {
-        writer_->set_listener(listen);
-        return writer_;
-    }
-
-    static RTPSWriter* createRTPSWriter(
-            RTPSParticipant*,
-            WriterAttributes&,
-            const std::shared_ptr<IPayloadPool>&,
             WriterHistory*,
             WriterListener* listen = nullptr)
     {

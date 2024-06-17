@@ -121,10 +121,8 @@ public:
         RTPSWriter* waux = nullptr;
 
         edp_writer.payload_pool = create_payload_pool(topic_name, history_att, false);
-        edp_writer.second = new WriterHistory(history_att);
-        bool created =
-                participant->createWriter(&waux, watt, edp_writer.payload_pool, edp_writer.second, listener, entity_id,
-                        true);
+        edp_writer.second = new WriterHistory(history_att, edp_writer.payload_pool);
+        bool created = participant->createWriter(&waux, watt, edp_writer.second, listener, entity_id, true);
 
         if (created)
         {

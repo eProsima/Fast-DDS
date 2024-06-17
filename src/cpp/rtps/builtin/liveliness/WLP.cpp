@@ -241,11 +241,10 @@ bool WLP::createEndpoints()
     // Built-in writer history
     HistoryAttributes hatt;
     set_builtin_writer_history_attributes(hatt, false);
-    mp_builtinWriterHistory = new WriterHistory(hatt);
-
     PoolConfig writer_pool_cfg = PoolConfig::from_history_attributes(hatt);
     payload_pool_ = TopicPayloadPoolRegistry::get("DCPSParticipantMessage", writer_pool_cfg);
     payload_pool_->reserve_history(writer_pool_cfg, false);
+    mp_builtinWriterHistory = new WriterHistory(hatt, payload_pool_);
 
     // Built-in writer
     WriterAttributes watt;
@@ -262,7 +261,6 @@ bool WLP::createEndpoints()
     if (mp_participant->createWriter(
                 &wout,
                 watt,
-                payload_pool_,
                 mp_builtinWriterHistory,
                 nullptr,
                 c_EntityId_WriterLiveliness,
@@ -342,11 +340,10 @@ bool WLP::createSecureEndpoints()
     //CREATE WRITER
     HistoryAttributes hatt;
     set_builtin_writer_history_attributes(hatt, true);
-    mp_builtinWriterSecureHistory = new WriterHistory(hatt);
-
     PoolConfig writer_pool_cfg = PoolConfig::from_history_attributes(hatt);
     secure_payload_pool_ = TopicPayloadPoolRegistry::get("DCPSParticipantMessageSecure", writer_pool_cfg);
     secure_payload_pool_->reserve_history(writer_pool_cfg, false);
+    mp_builtinWriterSecureHistory = new WriterHistory(hatt, secure_payload_pool_);
 
     WriterAttributes watt;
     watt.endpoint.unicastLocatorList = mp_builtinProtocols->m_metatrafficUnicastLocatorList;
@@ -379,7 +376,7 @@ bool WLP::createSecureEndpoints()
     }
 
     RTPSWriter* wout;
-    if (mp_participant->createWriter(&wout, watt, secure_payload_pool_, mp_builtinWriterSecureHistory, nullptr,
+    if (mp_participant->createWriter(&wout, watt, mp_builtinWriterSecureHistory, nullptr,
             c_EntityId_WriterLivelinessSecure, true))
     {
         mp_builtinWriterSecure = dynamic_cast<StatefulWriter*>(wout);

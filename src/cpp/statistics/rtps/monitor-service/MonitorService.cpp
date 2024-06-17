@@ -471,7 +471,6 @@ bool MonitorService::create_endpoint()
 
     created = endpoint_creator_(&tmp_writer,
                     watts,
-                    status_writer_payload_pool_,
                     status_writer_history_.get(),
                     listener_,
                     monitor_service_status_writer,
