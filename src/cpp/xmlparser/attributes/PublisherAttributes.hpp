@@ -19,11 +19,11 @@
 #ifndef _FASTDDS_PUBLISHERATTRIBUTES_H_
 #define _FASTDDS_PUBLISHERATTRIBUTES_H_
 
-#include <fastdds/rtps/attributes/ResourceManagement.hpp>
 
 #include <fastdds/dds/publisher/qos/WriterQos.hpp>
 #include <fastdds/rtps/attributes/ExternalLocators.hpp>
 #include <fastdds/rtps/attributes/PropertyPolicy.hpp>
+#include <fastdds/rtps/attributes/ResourceManagement.hpp>
 #include <fastdds/rtps/attributes/TopicAttributes.hpp>
 #include <fastdds/rtps/attributes/WriterAttributes.hpp>
 #include <fastdds/rtps/common/Locator.hpp>
