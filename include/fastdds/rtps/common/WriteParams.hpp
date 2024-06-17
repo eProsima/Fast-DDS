@@ -13,10 +13,10 @@
 // limitations under the License.
 
 /**
- * @file WriteParams.h
+ * @file WriteParams.hpp
  */
-#ifndef _FASTDDS_RTPS_COMMON_WRITEPARAMS_H_
-#define _FASTDDS_RTPS_COMMON_WRITEPARAMS_H_
+#ifndef FASTDDS_RTPS_COMMON__WRITEPARAMS_HPP
+#define FASTDDS_RTPS_COMMON__WRITEPARAMS_HPP
 
 #include <fastdds/rtps/common/SampleIdentity.hpp>
 #include <fastdds/rtps/common/Time_t.hpp>
@@ -210,4 +210,4 @@ private:
 }  // namespace fastdds
 }  // namespace eprosima
 
-#endif //_FASTDDS_RTPS_COMMON_WRITEPARAMS_H_
+#endif //FASTDDS_RTPS_COMMON__WRITEPARAMS_HPP

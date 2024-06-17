@@ -35,7 +35,7 @@
 #include <fastdds/rtps/attributes/WriterAttributes.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/LocatorList.hpp>
-#include <fastdds/rtps/common/WriteParams.h>
+#include <fastdds/rtps/common/WriteParams.hpp>
 #include <fastdds/rtps/history/IChangePool.h>
 #include <fastdds/rtps/history/IPayloadPool.h>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>

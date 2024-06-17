@@ -29,7 +29,7 @@
 #include <fastdds/rtps/common/Time_t.hpp>
 #include <fastdds/rtps/common/Types.hpp>
 #include <fastdds/rtps/common/VendorId_t.hpp>
-#include <fastdds/rtps/common/WriteParams.h>
+#include <fastdds/rtps/common/WriteParams.hpp>
 #include <fastdds/rtps/history/IPayloadPool.h>
 
 namespace eprosima {

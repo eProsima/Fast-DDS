@@ -22,7 +22,7 @@
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/writer/RTPSWriter.h>
-#include <fastdds/rtps/common/WriteParams.h>
+#include <fastdds/rtps/common/WriteParams.hpp>
 #include <fastdds/core/policy//ParameterSerializer.hpp>
 #include <rtps/messages/RTPSMessageGroup.hpp>
 
