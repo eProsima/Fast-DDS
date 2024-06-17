@@ -38,7 +38,7 @@
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/history/IPayloadPool.hpp>
-#include <fastdds/rtps/reader/ReaderListener.h>
+#include <fastdds/rtps/reader/ReaderListener.hpp>
 
 #include <fastdds/subscriber/DataReaderImpl/DataReaderLoanManager.hpp>
 #include <fastdds/subscriber/DataReaderImpl/SampleInfoPool.hpp>

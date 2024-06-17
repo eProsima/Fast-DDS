@@ -25,7 +25,7 @@
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
 #include <fastdds/rtps/common/InstanceHandle.hpp>
 #include <fastdds/rtps/common/Types.hpp>
-#include <fastdds/rtps/reader/ReaderListener.h>
+#include <fastdds/rtps/reader/ReaderListener.hpp>
 
 namespace eprosima {
 namespace fastdds {

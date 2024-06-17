@@ -27,7 +27,7 @@
 #include <fastdds/rtps/Endpoint.h>
 #include <fastdds/rtps/history/ReaderHistory.hpp>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
-#include <fastdds/rtps/reader/ReaderListener.h>
+#include <fastdds/rtps/reader/ReaderListener.hpp>
 
 namespace eprosima {
 namespace fastdds {

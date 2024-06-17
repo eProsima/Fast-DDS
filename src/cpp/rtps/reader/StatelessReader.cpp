@@ -25,7 +25,7 @@
 #include <fastdds/rtps/common/CacheChange.hpp>
 #include <fastdds/rtps/common/VendorId_t.hpp>
 #include <fastdds/rtps/history/ReaderHistory.hpp>
-#include <fastdds/rtps/reader/ReaderListener.h>
+#include <fastdds/rtps/reader/ReaderListener.hpp>
 
 #include "reader_utils.hpp"
 #include "rtps/RTPSDomainImpl.hpp"

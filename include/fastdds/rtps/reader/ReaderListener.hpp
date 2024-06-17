@@ -13,12 +13,12 @@
 // limitations under the License.
 
 /**
- * @file ReaderListener.h
+ * @file ReaderListener.hpp
  *
  */
 
-#ifndef _FASTDDS_RTPS_READERLISTENER_H_
-#define _FASTDDS_RTPS_READERLISTENER_H_
+#ifndef FASTDDS_RTPS_READER__READERLISTENER_HPP
+#define FASTDDS_RTPS_READER__READERLISTENER_HPP
 
 #include <fastdds/dds/core/status/LivelinessChangedStatus.hpp>
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
@@ -203,4 +203,4 @@ public:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif /* _FASTDDS_RTPS_READERLISTENER_H_ */
+#endif // FASTDDS_RTPS_READER__READERLISTENER_HPP

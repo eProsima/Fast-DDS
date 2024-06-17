@@ -31,7 +31,7 @@
 #include <fastdds/rtps/builtin/data/WriterProxyData.hpp>
 #include <fastdds/rtps/common/SequenceNumber.hpp>
 #include <fastdds/rtps/common/SerializedPayload.hpp>
-#include <fastdds/rtps/reader/ReaderListener.h>
+#include <fastdds/rtps/reader/ReaderListener.hpp>
 #include <fastdds/rtps/writer/WriterListener.h>
 
 #include <rtps/resources/TimedEvent.h>
