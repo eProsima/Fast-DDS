@@ -21,7 +21,7 @@
 #define TEST_FRIENDS \
     FRIEND_TEST(WriterProxyAcknackTests, AcknackBackoff);
 
-#include <fastdds/rtps/builtin/data/WriterProxyData.h>
+#include <fastdds/rtps/builtin/data/WriterProxyData.hpp>
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/reader/StatefulReader.hpp>

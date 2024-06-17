@@ -27,7 +27,7 @@
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
 #include <fastdds/rtps/messages/RTPSMessageSenderInterface.hpp>
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>
-#include <fastdds/rtps/builtin/data/WriterProxyData.h>
+#include <fastdds/rtps/builtin/data/WriterProxyData.hpp>
 #include <fastdds/rtps/common/LocatorSelectorEntry.hpp>
 
 #include <foonathan/memory/container.hpp>

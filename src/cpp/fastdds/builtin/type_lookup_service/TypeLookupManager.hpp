@@ -26,7 +26,7 @@
 #include <vector>
 
 #include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
-#include <fastdds/rtps/builtin/data/WriterProxyData.h>
+#include <fastdds/rtps/builtin/data/WriterProxyData.hpp>
 
 #include <fastdds/builtin/type_lookup_service/detail/TypeLookupTypes.hpp>
 #include <fastdds/builtin/type_lookup_service/detail/TypeLookupTypesPubSubTypes.h>

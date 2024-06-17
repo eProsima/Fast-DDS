@@ -13,12 +13,12 @@
 // limitations under the License.
 
 /**
- * @file WriterProxyData.h
+ * @file WriterProxyData.hpp
  *
  */
 
-#ifndef _FASTDDS_RTPS_BUILTIN_DATA_WRITERPROXYDATA_H_
-#define _FASTDDS_RTPS_BUILTIN_DATA_WRITERPROXYDATA_H_
+#ifndef FASTDDS_RTPS_BUILTIN_DATA__WRITERPROXYDATA_HPP
+#define FASTDDS_RTPS_BUILTIN_DATA__WRITERPROXYDATA_HPP
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <fastcdr/cdr/fixed_size_string.hpp>
@@ -508,9 +508,9 @@ private:
     ParameterPropertyList_t m_properties;
 };
 
-} /* namespace rtps */
-} /* namespace fastdds */
-} /* namespace eprosima */
+} // namespace rtps
+} // namespace fastdds
+} // namespace eprosima
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#endif // _FASTDDS_RTPS_BUILTIN_DATA_WRITERPROXYDATA_H_
+#endif // FASTDDS_RTPS_BUILTIN_DATA__WRITERPROXYDATA_HPP

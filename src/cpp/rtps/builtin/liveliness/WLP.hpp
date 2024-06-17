@@ -27,7 +27,7 @@
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
-#include <fastdds/rtps/builtin/data/WriterProxyData.h>
+#include <fastdds/rtps/builtin/data/WriterProxyData.hpp>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/common/Time_t.h>

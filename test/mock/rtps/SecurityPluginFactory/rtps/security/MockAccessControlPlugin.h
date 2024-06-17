@@ -20,7 +20,7 @@
 #define _SECURITY_MOCKACCESSCONTROLPLUGIN_H_
 
 #include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
-#include <fastdds/rtps/builtin/data/WriterProxyData.h>
+#include <fastdds/rtps/builtin/data/WriterProxyData.hpp>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
 
 #include <rtps/security/accesscontrol/AccessControl.h>

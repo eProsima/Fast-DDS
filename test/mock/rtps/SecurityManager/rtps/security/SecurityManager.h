@@ -21,7 +21,7 @@
 #include <gmock/gmock.h>
 
 #include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
-#include <fastdds/rtps/builtin/data/WriterProxyData.h>
+#include <fastdds/rtps/builtin/data/WriterProxyData.hpp>
 
 namespace eprosima {
 namespace fastdds {
