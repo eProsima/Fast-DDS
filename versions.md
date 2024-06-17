@@ -43,6 +43,7 @@ Forthcoming
   * Configuration example that condenses multiple QoS examples. Multiple configurations allowed through argument parsing.
   * Custom payload pool example that uses a user-defined payload pool instead of the default
   * X-Types example with dynamic type discovery and Hello world example compatibility.
+  * Custom Content filter example
 * Removed `TypeConsistencyQos` from DataReader, and included `TypeConsistencyEnforcementQosPolicy` and `DataRepresentationQosPolicy`
 * Added new `flow_controller_descriptor_list` XML configuration, remove `ThroughtputController`.
 * Migrate `#define`s within `BuiltinEndpoints.hpp` to namespaced `constexpr` variables.

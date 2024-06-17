@@ -14,6 +14,7 @@
 
 import subprocess
 import pytest
+import re
 
 config_test_cases = [
     ('--keep-last 10 --transport DEFAULT', '--keep-last 10 --transport DEFAULT'),           # Builtin transports
