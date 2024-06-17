@@ -26,7 +26,7 @@
 #include <fastdds/rtps/common/Property.h>
 #include <fastdds/rtps/common/BinaryProperty.hpp>
 #include <fastdds/rtps/common/SequenceNumber.h>
-#include <fastdds/rtps/common/FragmentNumber.h>
+#include <fastdds/rtps/common/FragmentNumber.hpp>
 #include <fastdds/rtps/common/SampleIdentity.h>
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/rtps/common/Locator.h>

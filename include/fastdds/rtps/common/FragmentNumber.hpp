@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * @file FragmentNumber.h
+ * @file FragmentNumber.hpp
  */
 
-#ifndef _FASTDDS_RTPS_RPTS_ELEM_FRAGNUM_H_
-#define _FASTDDS_RTPS_RPTS_ELEM_FRAGNUM_H_
+#ifndef FASTDDS_RTPS_COMMON__FRAGMENTNUMBER_HPP
+#define FASTDDS_RTPS_COMMON__FRAGMENTNUMBER_HPP
 
 #include <fastdds/fastdds_dll.hpp>
 #include <fastdds/rtps/common/Types.h>
@@ -54,4 +54,4 @@ inline std::ostream& operator <<(
 } // namespace fastdds
 } // namespace eprosima
 
-#endif /* _FASTDDS_RTPS_RPTS_ELEM_FRAGNUM_H_ */
+#endif // FASTDDS_RTPS_COMMON__FRAGMENTNUMBER_HPP

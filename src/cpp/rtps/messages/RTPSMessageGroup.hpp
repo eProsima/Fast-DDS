@@ -27,7 +27,7 @@
 #include <memory>
 #include <list>
 
-#include <fastdds/rtps/common/FragmentNumber.h>
+#include <fastdds/rtps/common/FragmentNumber.hpp>
 #include <fastdds/rtps/messages/RTPSMessageSenderInterface.hpp>
 #include <fastdds/rtps/transport/NetworkBuffer.hpp>
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>

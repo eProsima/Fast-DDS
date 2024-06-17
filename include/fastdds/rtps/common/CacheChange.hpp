@@ -23,7 +23,7 @@
 #include <cassert>
 
 #include <fastdds/rtps/common/ChangeKind_t.hpp>
-#include <fastdds/rtps/common/FragmentNumber.h>
+#include <fastdds/rtps/common/FragmentNumber.hpp>
 #include <fastdds/rtps/common/InstanceHandle.h>
 #include <fastdds/rtps/common/SerializedPayload.h>
 #include <fastdds/rtps/common/Time_t.h>
