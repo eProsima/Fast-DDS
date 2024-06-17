@@ -18,7 +18,7 @@
 #ifndef _FASTDDS_RTPS_SECURITY_LOGGING_BUILTINLOGGINGTYPE_H_
 #define _FASTDDS_RTPS_SECURITY_LOGGING_BUILTINLOGGINGTYPE_H_
 
-#include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/common/Types.hpp>
 #include <fastdds/rtps/common/Time_t.hpp>
 #include <rtps/security/logging/LoggingLevel.h>
 #include <rtps/security/logging/NameValuePair.h>

@@ -25,7 +25,7 @@
 #include <vector>
 
 #include <fastdds/fastdds_dll.hpp>
-#include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/common/Types.hpp>
 #include <fastdds/utils/fixed_size_bitmap.hpp>
 
 namespace eprosima {

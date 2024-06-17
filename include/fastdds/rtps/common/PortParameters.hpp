@@ -19,7 +19,7 @@
 #ifndef FASTDDS_RTPS_COMMON_PORTPARAMETERS_HPP
 #define FASTDDS_RTPS_COMMON_PORTPARAMETERS_HPP
 
-#include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/common/Types.hpp>
 #include <fastdds/dds/log/Log.hpp>
 
 namespace eprosima {

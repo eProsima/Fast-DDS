@@ -30,7 +30,7 @@
 #include <fastdds/rtps/common/FragmentNumber.hpp>
 #include <fastdds/rtps/common/Locator.hpp>
 #include <fastdds/rtps/common/SequenceNumber.hpp>
-#include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/common/Types.hpp>
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>
 
 #include <rtps/writer/ChangeForReader.hpp>

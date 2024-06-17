@@ -22,7 +22,7 @@
 #include <array>
 
 #include <fastdds/fastdds_dll.hpp>
-#include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/common/Types.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
 
 namespace eprosima {

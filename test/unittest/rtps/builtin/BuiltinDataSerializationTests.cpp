@@ -27,7 +27,7 @@
 #include <fastdds/rtps/common/CacheChange.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/SequenceNumber.hpp>
-#include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/common/Types.hpp>
 #include <fastdds/rtps/common/VendorId_t.hpp>
 
 #include <rtps/messages/CDRMessage.hpp>

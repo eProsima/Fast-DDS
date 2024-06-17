@@ -24,7 +24,7 @@
 #include <fastdds/rtps/attributes/PropertyPolicy.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/LocatorList.hpp>
-#include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/common/Types.hpp>
 #if HAVE_SECURITY
 #include <fastdds/rtps/attributes/EndpointSecurityAttributes.hpp>
 #endif // if HAVE_SECURITY

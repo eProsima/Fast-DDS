@@ -20,7 +20,7 @@
 #define _FASTDDS_RTPS_COMMON_GUIDPREFIX_T_HPP_
 
 #include <fastdds/fastdds_dll.hpp>
-#include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/common/Types.hpp>
 
 #include <cstdint>
 #include <cstring>

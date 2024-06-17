@@ -18,7 +18,7 @@
 #include <type_traits>
 
 #include <fastdds/dds/xtypes/dynamic_types/detail/dynamic_language_binding.hpp>
-#include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/common/Types.hpp>
 
 namespace eprosima {
 namespace fastdds {

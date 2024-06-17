@@ -19,7 +19,7 @@
 #ifndef _FASTDDS_DATAWRITERLISTENER_HPP_
 #define _FASTDDS_DATAWRITERLISTENER_HPP_
 
-#include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/common/Types.hpp>
 #include <fastdds/dds/core/status/BaseStatus.hpp>
 #include <fastdds/dds/core/status/PublicationMatchedStatus.hpp>
 #include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>

@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * @file Types.h
+ * @file Types.hpp
  */
 
-#ifndef _FASTDDS_RTPS_COMMON_TYPES_H_
-#define _FASTDDS_RTPS_COMMON_TYPES_H_
+#ifndef FASTDDS_RTPS_COMMON__TYPES_HPP
+#define FASTDDS_RTPS_COMMON__TYPES_HPP
 
 #include <stddef.h>
 #include <iostream>
@@ -170,4 +170,4 @@ using VendorId_t = eprosima::fastdds::rtps::VendorId_t;
 } // namespace fastdds
 } // namespace eprosima
 
-#endif /* _FASTDDS_RTPS_COMMON_TYPES_H_ */
+#endif // FASTDDS_RTPS_COMMON__TYPES_HPP

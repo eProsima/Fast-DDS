@@ -18,7 +18,7 @@
 #include <sstream>
 
 #include <fastdds/rtps/transport/TCPTransportDescriptor.h>
-#include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/common/Types.hpp>
 
 namespace eprosima {
 namespace fastdds {

@@ -24,7 +24,7 @@
 #include <bitset>
 
 #include <fastdds/rtps/common/Guid.hpp>
-#include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/common/Types.hpp>
 #include <fastdds/rtps/common/VendorId_t.hpp>
 
 namespace eprosima {

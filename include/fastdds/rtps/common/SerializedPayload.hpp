@@ -27,7 +27,7 @@
 #include <stdlib.h>
 
 #include <fastdds/fastdds_dll.hpp>
-#include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/common/Types.hpp>
 #include <fastdds/rtps/history/IPayloadPool.h>
 
 /*!

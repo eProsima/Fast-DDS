@@ -20,7 +20,7 @@
 #ifndef IP_LOCATOR_H_
 #define IP_LOCATOR_H_
 
-#include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/common/Types.hpp>
 #include <fastdds/dds/log/Log.hpp>
 
 #include <regex>

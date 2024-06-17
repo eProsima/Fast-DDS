@@ -26,7 +26,7 @@
 #include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
-#include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/common/Types.hpp>
 #include <fastdds/rtps/history/IPayloadPool.h>
 #include <fastdds/rtps/history/IChangePool.h>
 #include <fastdds/rtps/attributes/TopicAttributes.hpp>

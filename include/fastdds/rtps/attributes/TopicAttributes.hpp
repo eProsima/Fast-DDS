@@ -22,7 +22,7 @@
 #include <string>
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
-#include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/common/Types.hpp>
 
 namespace eprosima {
 namespace fastdds {
