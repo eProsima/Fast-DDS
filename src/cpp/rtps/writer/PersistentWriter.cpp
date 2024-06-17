@@ -39,14 +39,15 @@ PersistentWriter::PersistentWriter(
     : persistence_(persistence)
     , persistence_guid_()
 {
+    static_cast<void>(change_pool);
+
     // When persistence GUID is unknown, create from rtps GUID
     GUID_t p_guid = att.endpoint.persistence_guid == c_Guid_Unknown ? guid : att.endpoint.persistence_guid;
     std::ostringstream ss;
     ss << p_guid;
     persistence_guid_ = ss.str();
 
-    persistence_->load_writer_from_storage(persistence_guid_, guid, hist,
-            change_pool, payload_pool, hist->m_lastCacheChangeSeqNum);
+    persistence_->load_writer_from_storage(persistence_guid_, guid, hist, hist->m_lastCacheChangeSeqNum);
 
     // Update history state after loading from DB
     hist->m_isHistoryFull =

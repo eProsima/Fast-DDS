@@ -76,10 +76,17 @@ public:
             ChangeKind_t,
             InstanceHandle_t));
 
+    CacheChange_t* create_change(
+            uint32_t size,
+            ChangeKind_t kind)
+    {
+        return create_change(size, kind, InstanceHandle_t{});
+    }
+
     MOCK_METHOD3(create_change, CacheChange_t* (
             uint32_t,
             ChangeKind_t,
-            InstanceHandle_t));
+            InstanceHandle_t handle));
 
     MOCK_METHOD1(release_change, bool(CacheChange_t*));
 
