@@ -245,14 +245,6 @@ public:
     }
 
     /**
-     * Remove an specified max number of changes
-     * @param max Maximum number of changes to remove.
-     * @return at least one change has been removed
-     */
-    FASTDDS_EXPORTED_API bool remove_older_changes(
-            unsigned int max = 0);
-
-    /**
      * @brief Returns if disable positive ACKs QoS is enabled.
      *
      * @return Best effort writers always return false.

@@ -107,7 +107,7 @@ void TestWriterRegistered::run(
         if (!ch)     // In the case history is full, remove some old changes
         {
             std::cout << "cleaning history...";
-            mp_writer->remove_older_changes(20);
+            mp_history->remove_min_change();
             ch = mp_history->create_change(ALIVE);
         }
 

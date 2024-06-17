@@ -200,26 +200,6 @@ uint32_t RTPSWriter::getTypeMaxSerialized()
     return mp_history->getTypeMaxSerialized();
 }
 
-bool RTPSWriter::remove_older_changes(
-        unsigned int max)
-{
-    EPROSIMA_LOG_INFO(RTPS_WRITER, "Starting process clean_history for writer " << getGuid());
-    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
-    bool limit = (max != 0);
-
-    bool remove_ret = mp_history->remove_min_change();
-    bool at_least_one = remove_ret;
-    unsigned int count = 1;
-
-    while (remove_ret && (!limit || count < max))
-    {
-        remove_ret = mp_history->remove_min_change();
-        ++count;
-    }
-
-    return at_least_one;
-}
-
 constexpr uint32_t info_dst_message_length = 16;
 constexpr uint32_t info_ts_message_length = 12;
 constexpr uint32_t data_frag_submessage_header_length = 36;
