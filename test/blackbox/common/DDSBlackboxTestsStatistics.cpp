@@ -686,3 +686,97 @@ TEST(DDSStatistics, discovery_topic_physical_data_delete_physical_properties)
     test_discovery_topic_physical_data(DiscoveryTopicPhysicalDataTest::NO_PHYSICAL_DATA);
 #endif // FASTDDS_STATISTICS
 }
+
+class CustomStatisticsParticipantSubscriber : public PubSubReader<HelloWorldPubSubType>
+{
+public:
+
+    CustomStatisticsParticipantSubscriber(
+            const std::string& topic_name)
+        : PubSubReader<HelloWorldPubSubType>(topic_name)
+    {
+    }
+
+    void destroy() override
+    {
+        participant_->delete_contained_entities();
+        DomainParticipantFactory::get_instance()->delete_participant(participant_);
+        participant_ = nullptr;
+    }
+
+};
+
+// Regression test for #20816. When an application is terminated with delete_contained_entities()
+// it has to properly finish. The test creates a number of participants with some of them sharing the same topic.
+// Each participant asynchronously sends and receive a number of samples. In the readers, when a minumm number of samples
+// is received the destroy() method is called (abruptly). The test checks that the application finishes successfully
+TEST(DDSStatistics, correct_deletion_upon_delete_contained_entities)
+{
+#ifdef FASTDDS_STATISTICS
+
+    //! Set environment variable and create participant using Qos set by code
+    const char* value = "HISTORY_LATENCY_TOPIC;NETWORK_LATENCY_TOPIC;"
+            "PUBLICATION_THROUGHPUT_TOPIC;SUBSCRIPTION_THROUGHPUT_TOPIC;RTPS_SENT_TOPIC;"
+            "RTPS_LOST_TOPIC;HEARTBEAT_COUNT_TOPIC;ACKNACK_COUNT_TOPIC;NACKFRAG_COUNT_TOPIC;"
+            "GAP_COUNT_TOPIC;DATA_COUNT_TOPIC;RESENT_DATAS_TOPIC;SAMPLE_DATAS_TOPIC;"
+            "PDP_PACKETS_TOPIC;EDP_PACKETS_TOPIC;DISCOVERY_TOPIC;PHYSICAL_DATA_TOPIC;";
+
+    #ifdef _WIN32
+    ASSERT_EQ(0, _putenv_s("FASTDDS_STATISTICS", value));
+    #else
+    ASSERT_EQ(0, setenv("FASTDDS_STATISTICS", value, 1));
+    #endif // ifdef _WIN32
+
+    size_t n_participants = 5;
+    size_t n_participants_same_topic = 2;
+
+    std::vector<std::shared_ptr<PubSubWriter<HelloWorldPubSubType>>> writers;
+    std::vector<std::shared_ptr<CustomStatisticsParticipantSubscriber>> readers;
+
+    readers.reserve(n_participants);
+    writers.reserve(n_participants);
+
+    std::vector<std::shared_ptr<std::thread>> threads;
+    threads.reserve(2 * n_participants);
+
+    for (size_t i = 0; i < n_participants; ++i)
+    {
+        size_t topic_number = (i < n_participants_same_topic) ? 0 : i;
+
+        auto writer = std::make_shared<PubSubWriter<HelloWorldPubSubType>>(TEST_TOPIC_NAME + std::to_string(
+                            topic_number));
+        auto reader =
+                std::make_shared<CustomStatisticsParticipantSubscriber>(TEST_TOPIC_NAME + std::to_string(topic_number));
+
+        std::shared_ptr<std::list<HelloWorld>> data = std::make_shared<std::list<HelloWorld>>(default_helloworld_data_generator(
+                            10));
+
+        threads.emplace_back(std::make_shared<std::thread>([reader, data]()
+                {
+                    reader->init();
+                    ASSERT_TRUE(reader->isInitialized());
+                    reader->startReception(data->size());
+                    reader->block_for_at_least(3);
+                    reader->destroy();
+                }));
+
+        threads.emplace_back(std::make_shared<std::thread>([writer, data]()
+                {
+                    writer->init();
+                    ASSERT_TRUE(writer->isInitialized());
+                    writer->wait_discovery();
+                    writer->send(*data, 10);
+                    writer->destroy();
+                }));
+
+        writers.push_back(writer);
+        readers.push_back(reader);
+    }
+
+    for (auto& thread : threads)
+    {
+        thread->join();
+    }
+
+#endif // FASTDDS_STATISTICS
+}

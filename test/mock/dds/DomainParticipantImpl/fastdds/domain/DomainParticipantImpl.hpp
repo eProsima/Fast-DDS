@@ -573,7 +573,7 @@ public:
         return false;
     }
 
-    ReturnCode_t delete_contained_entities()
+    virtual ReturnCode_t delete_contained_entities()
     {
         bool can_be_deleted = true;
 

@@ -491,6 +491,18 @@ public:
         return get_last_sequence_received();
     }
 
+    void startReception(
+            size_t expected_samples)
+    {
+        {
+            std::unique_lock<std::mutex> lock(mutex_);
+            current_processed_count_ = 0;
+            number_samples_expected_ = expected_samples;
+            last_seq.clear();
+        }
+        receiving_.store(true);
+    }
+
     void stopReception()
     {
         receiving_.store(false);
@@ -1790,9 +1802,12 @@ private:
             if (info.valid_data
                     && info.instance_state == eprosima::fastdds::dds::ALIVE_INSTANCE_STATE)
             {
-                auto it = std::find(total_msgs_.begin(), total_msgs_.end(), data);
-                ASSERT_NE(it, total_msgs_.end());
-                total_msgs_.erase(it);
+                if (!total_msgs_.empty())
+                {
+                    auto it = std::find(total_msgs_.begin(), total_msgs_.end(), data);
+                    ASSERT_NE(it, total_msgs_.end());
+                    total_msgs_.erase(it);
+                }
                 ++current_processed_count_;
                 default_receive_print<type>(data);
                 cv_.notify_one();

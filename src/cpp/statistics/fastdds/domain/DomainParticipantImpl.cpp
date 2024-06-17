@@ -222,6 +222,12 @@ void DomainParticipantImpl::disable()
     efd::DomainParticipantImpl::disable();
 }
 
+ReturnCode_t DomainParticipantImpl::delete_contained_entities()
+{
+    delete_statistics_builtin_entities();
+    return efd::DomainParticipantImpl::delete_contained_entities();
+}
+
 efd::PublisherImpl* DomainParticipantImpl::create_publisher_impl(
         const efd::PublisherQos& qos,
         efd::PublisherListener* listener)
