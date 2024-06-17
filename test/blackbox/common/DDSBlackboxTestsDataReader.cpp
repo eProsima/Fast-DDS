@@ -28,9 +28,10 @@
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/LibrarySettings.hpp>
+#include <fastdds/rtps/common/CDRMessage_t.h>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
-#include <rtps/messages/CDRMessage.hpp>
 
+#include "../utils/filter_helpers.hpp"
 #include "BlackboxTests.hpp"
 #include "PubSubParticipant.hpp"
 #include "PubSubReader.hpp"
@@ -273,9 +274,17 @@ TEST(DDSDataReader, GetFirstUntakenInfoReturnsTheFirstValidChange)
 
                 msg.pos += 2; // flags
                 msg.pos += 2; // octets to inline quos
-                CDRMessage::readEntityId(&msg, &readerID);
-                CDRMessage::readEntityId(&msg, &writerID);
-                CDRMessage::readSequenceNumber(&msg, &sn);
+                readerID = eprosima::fastdds::helpers::cdr_parse_entity_id(
+                        (char*)&msg.buffer[msg.pos]);
+                msg.pos += 4;
+                writerID = eprosima::fastdds::helpers::cdr_parse_entity_id(
+                        (char*)&msg.buffer[msg.pos]);
+                msg.pos += 4;
+                sn.high = (int32_t)eprosima::fastdds::helpers::cdr_parse_u32(
+                        (char*)&msg.buffer[msg.pos]);
+                msg.pos += 4;
+                sn.low = eprosima::fastdds::helpers::cdr_parse_u32(
+                        (char*)&msg.buffer[msg.pos]);
 
                 // restore buffer pos
                 msg.pos = old_pos;

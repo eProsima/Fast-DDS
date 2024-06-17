@@ -30,14 +30,14 @@
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
+#include <fastdds/rtps/common/CDRMessage_t.h>
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
 #include <gtest/gtest.h>
 
-// TODO(jlbueno): remove private header
-#include <rtps/transport/test_UDPv4Transport.h>
-
+#include "../utils/filter_helpers.hpp"
 #include "BlackboxTests.hpp"
 #include "PubSubParticipant.hpp"
 #include "PubSubReader.hpp"
@@ -437,8 +437,8 @@ TEST(DDSDiscovery, DDSNetworkInterfaceChangesAtRunTime)
     ASSERT_TRUE(datareader.isInitialized());
 
     // datawriter: launch without interfaces
-    test_UDPv4Transport::simulate_no_interfaces = true;
     auto test_transport = std::make_shared<test_UDPv4TransportDescriptor>();
+    test_transport->test_transport_options->simulate_no_interfaces = true;
     datawriter.disable_builtin_transport().add_user_transport_to_pparams(test_transport).history_depth(100).init();
     ASSERT_TRUE(datawriter.isInitialized());
 
@@ -461,7 +461,7 @@ TEST(DDSDiscovery, DDSNetworkInterfaceChangesAtRunTime)
     EXPECT_EQ(datareader.block_for_all(std::chrono::seconds(3)), 0u);
 
     // enable interfaces
-    test_UDPv4Transport::simulate_no_interfaces = false;
+    test_transport->test_transport_options->simulate_no_interfaces = false;
     datawriter.participant_set_qos();
 
     // Wait for discovery
@@ -1975,7 +1975,7 @@ TEST(DDSDiscovery, DataracePDP)
         participant_listener.discovery_future.wait();
 
         // Shutdown auxiliary participant's network, so it will be removed after lease duration
-        test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = true;
+        aux_udp_transport->test_transport_options->test_UDPv4Transport_ShutdownAllNetwork = true;
         DomainParticipantFactory::get_instance()->delete_participant(aux_participant);
         std::this_thread::sleep_for(std::chrono::milliseconds(1500)); // Wait for longer than lease duration
 
@@ -2041,12 +2041,13 @@ TEST(DDSDiscovery, pdp_simple_participants_exchange_same_pid_domain_id_and_disco
                 {
                     msg.pos = original_pos + qos_size;
 
-                    ParameterId_t pid{eprosima::fastdds::dds::PID_SENTINEL};
-                    uint16_t plength = 0;
+                    uint16_t pid = eprosima::fastdds::helpers::cdr_parse_u16(
+                        (char*)&msg.buffer[msg.pos]);
+                    msg.pos += 2;
+                    uint16_t plength = eprosima::fastdds::helpers::cdr_parse_u16(
+                        (char*)&msg.buffer[msg.pos]);
+                    msg.pos += 2;
                     bool valid = true;
-
-                    valid &= eprosima::fastdds::rtps::CDRMessage::readUInt16(&msg, (uint16_t*)&pid);
-                    valid &= eprosima::fastdds::rtps::CDRMessage::readUInt16(&msg, &plength);
 
                     if (pid == eprosima::fastdds::dds::PID_SENTINEL)
                     {
@@ -2068,8 +2069,8 @@ TEST(DDSDiscovery, pdp_simple_participants_exchange_same_pid_domain_id_and_disco
                     {
                         if (pid == eprosima::fastdds::dds::PID_DOMAIN_ID)
                         {
-                            uint32_t domain_id = 0;
-                            eprosima::fastdds::rtps::CDRMessage::readUInt32(&msg, &domain_id);
+                            uint32_t domain_id = eprosima::fastdds::helpers::cdr_parse_u32(
+                                (char*)&msg.buffer[msg.pos]);
                             if (domain_id == (uint32_t)GET_PID() % 230)
                             {
                                 pid_was_found = true;

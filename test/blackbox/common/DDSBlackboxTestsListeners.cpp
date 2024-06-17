@@ -21,10 +21,11 @@
 #include <fastdds/dds/core/condition/WaitSet.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/LibrarySettings.hpp>
+#include <fastdds/rtps/common/CDRMessage_t.h>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
-#include <rtps/messages/CDRMessage.hpp>
 
+#include "../utils/filter_helpers.hpp"
 #include "BlackboxTests.hpp"
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
@@ -701,9 +702,17 @@ void sample_lost_test_dw_init(
 
                 msg.pos += 2; // flags
                 msg.pos += 2; // octets to inline quos
-                CDRMessage::readEntityId(&msg, &readerID);
-                CDRMessage::readEntityId(&msg, &writerID);
-                CDRMessage::readSequenceNumber(&msg, &sn);
+                readerID = eprosima::fastdds::helpers::cdr_parse_entity_id(
+                        (char*)&msg.buffer[msg.pos]);
+                msg.pos += 4;
+                writerID = eprosima::fastdds::helpers::cdr_parse_entity_id(
+                        (char*)&msg.buffer[msg.pos]);
+                msg.pos += 4;
+                sn.high = (int32_t)eprosima::fastdds::helpers::cdr_parse_u32(
+                        (char*)&msg.buffer[msg.pos]);
+                msg.pos += 4;
+                sn.low = eprosima::fastdds::helpers::cdr_parse_u32(
+                        (char*)&msg.buffer[msg.pos]);
 
                 // restore buffer pos
                 msg.pos = old_pos;
@@ -736,10 +745,21 @@ void sample_lost_test_dw_init(
 
                 msg.pos += 2; // flags
                 msg.pos += 2; // octets to inline quos
-                CDRMessage::readEntityId(&msg, &readerID);
-                CDRMessage::readEntityId(&msg, &writerID);
-                CDRMessage::readSequenceNumber(&msg, &sn);
-                CDRMessage::readUInt32(&msg, &first_fragment);
+                readerID = eprosima::fastdds::helpers::cdr_parse_entity_id(
+                        (char*)&msg.buffer[msg.pos]);
+                msg.pos += 4;
+                writerID = eprosima::fastdds::helpers::cdr_parse_entity_id(
+                        (char*)&msg.buffer[msg.pos]);
+                msg.pos += 4;
+                sn.high = (int32_t)eprosima::fastdds::helpers::cdr_parse_u32(
+                        (char*)&msg.buffer[msg.pos]);
+                msg.pos += 4;
+                sn.low = eprosima::fastdds::helpers::cdr_parse_u32(
+                        (char*)&msg.buffer[msg.pos]);
+                msg.pos += 4;
+
+                first_fragment = eprosima::fastdds::helpers::cdr_parse_u32(
+                        (char*)&msg.buffer[msg.pos]);
 
                 // restore buffer pos
                 msg.pos = old_pos;
@@ -1708,9 +1728,17 @@ void sample_rejected_test_dw_init(
 
                 msg.pos += 2; // flags
                 msg.pos += 2; // octets to inline quos
-                CDRMessage::readEntityId(&msg, &readerID);
-                CDRMessage::readEntityId(&msg, &writerID);
-                CDRMessage::readSequenceNumber(&msg, &sn);
+                readerID = eprosima::fastdds::helpers::cdr_parse_entity_id(
+                        (char*)&msg.buffer[msg.pos]);
+                msg.pos += 4;
+                writerID = eprosima::fastdds::helpers::cdr_parse_entity_id(
+                        (char*)&msg.buffer[msg.pos]);
+                msg.pos += 4;
+                sn.high = (int32_t)eprosima::fastdds::helpers::cdr_parse_u32(
+                        (char*)&msg.buffer[msg.pos]);
+                msg.pos += 4;
+                sn.low = eprosima::fastdds::helpers::cdr_parse_u32(
+                        (char*)&msg.buffer[msg.pos]);
 
                 // restore buffer pos
                 msg.pos = old_pos;
@@ -2901,9 +2929,17 @@ TEST(DDSStatus, sample_rejected_waitset)
 
                 msg.pos += 2; // flags
                 msg.pos += 2; // octets to inline quos
-                CDRMessage::readEntityId(&msg, &readerID);
-                CDRMessage::readEntityId(&msg, &writerID);
-                CDRMessage::readSequenceNumber(&msg, &sn);
+                readerID = eprosima::fastdds::helpers::cdr_parse_entity_id(
+                        (char*)&msg.buffer[msg.pos]);
+                msg.pos += 4;
+                writerID = eprosima::fastdds::helpers::cdr_parse_entity_id(
+                        (char*)&msg.buffer[msg.pos]);
+                msg.pos += 4;
+                sn.high = (int32_t)eprosima::fastdds::helpers::cdr_parse_u32(
+                        (char*)&msg.buffer[msg.pos]);
+                msg.pos += 4;
+                sn.low = eprosima::fastdds::helpers::cdr_parse_u32(
+                        (char*)&msg.buffer[msg.pos]);
 
                 // restore buffer pos
                 msg.pos = old_pos;
@@ -3088,8 +3124,14 @@ void reliable_on_unack_test_init(
                 msg.pos += 2; // flags
                 msg.pos += 2; // inline QoS
                 msg.pos += 4; // readerID
-                CDRMessage::readEntityId(&msg, &writerID);
-                CDRMessage::readSequenceNumber(&msg, &sn);
+                writerID = eprosima::fastdds::helpers::cdr_parse_entity_id(
+                        (char*)&msg.buffer[msg.pos]);
+                msg.pos += 4;
+                sn.high = (int32_t)eprosima::fastdds::helpers::cdr_parse_u32(
+                        (char*)&msg.buffer[msg.pos]);
+                msg.pos += 4;
+                sn.low = eprosima::fastdds::helpers::cdr_parse_u32(
+                        (char*)&msg.buffer[msg.pos]);
 
                 // restore buffer pos
                 msg.pos = old_pos;
