@@ -203,6 +203,7 @@ protected:
     fastdds::rtps::RTPSParticipant* participant_ = nullptr;
     fastdds::rtps::RTPSWriter* writer_ = nullptr;
     fastdds::rtps::RTPSReader* reader_ = nullptr;
+    std::shared_ptr<test_Descriptor> test_transport_descriptor_;
 
     // Getters and setters for the transport filter
     using filter = fastdds::rtps::test_UDPv4TransportDescriptor::filter;
@@ -239,17 +240,17 @@ public:
 
         // use leaky transport
         // as filter use a fixture provided functor
-        auto descriptor = std::make_shared<test_Descriptor>();
+        test_transport_descriptor_ = std::make_shared<test_Descriptor>();
 
         // initialize filters
-        descriptor->drop_data_messages_filter_  = std::ref(filters_[DATA]);
-        descriptor->drop_heartbeat_messages_filter_ = std::ref(filters_[HEARTBEAT]);
-        descriptor->drop_ack_nack_messages_filter_ = std::ref(filters_[ACKNACK]);
-        descriptor->drop_gap_messages_filter_ = std::ref(filters_[GAP]);
-        descriptor->drop_data_frag_messages_filter_ = std::ref(filters_[DATA_FRAG]);
+        test_transport_descriptor_->drop_data_messages_filter_  = std::ref(filters_[DATA]);
+        test_transport_descriptor_->drop_heartbeat_messages_filter_ = std::ref(filters_[HEARTBEAT]);
+        test_transport_descriptor_->drop_ack_nack_messages_filter_ = std::ref(filters_[ACKNACK]);
+        test_transport_descriptor_->drop_gap_messages_filter_ = std::ref(filters_[GAP]);
+        test_transport_descriptor_->drop_data_frag_messages_filter_ = std::ref(filters_[DATA_FRAG]);
 
         p_attr.useBuiltinTransports = false;
-        p_attr.userTransports.push_back(descriptor);
+        p_attr.userTransports.push_back(test_transport_descriptor_);
 
         // random domain_id
 #if defined(__cplusplus_winrt)
@@ -1283,8 +1284,6 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_unordered_datagrams)
     using namespace fastdds::rtps;
     using namespace std;
 
-    using test_UDPv4Transport = eprosima::fastdds::rtps::test_UDPv4Transport;
-
     constexpr uint16_t num_messages = 10;
     constexpr std::array<size_t, num_messages> message_order {
         2, 5, 1, 3, 4, 7, 8, 6, 9, 0
@@ -1310,7 +1309,7 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_unordered_datagrams)
     };
 
     // A filter to add the first `num_messages` user DATA_FRAG into `user_data`
-    test_UDPv4Transport::test_UDPv4Transport_DropLogLength = num_messages;
+    test_transport_descriptor_->test_transport_options->test_UDPv4Transport_DropLogLength = num_messages;
     set_transport_filter(
         DATA_FRAG,
         [](fastdds::rtps::CDRMessage_t& msg)-> bool
@@ -1375,7 +1374,7 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_unordered_datagrams)
     // Send messages in different order
     for (size_t idx : message_order)
     {
-        const std::vector<octet>& msg = test_UDPv4Transport::test_UDPv4Transport_DropLog[idx];
+        const std::vector<octet>& msg = test_transport_descriptor_->test_transport_options->test_UDPv4Transport_DropLog[idx];
         EXPECT_EQ(msg.size(), sender.send_to(asio::buffer(msg.data(), msg.size()), destination, 0, ec)) << ec;
     }
 
