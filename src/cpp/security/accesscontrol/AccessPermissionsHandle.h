@@ -18,7 +18,7 @@
 #ifndef __SECURITY_ACCESSCONTROL_ACCESSPERMISSIONSHANDLE_H__
 #define __SECURITY_ACCESSCONTROL_ACCESSPERMISSIONSHANDLE_H__
 
-#include <fastdds/rtps/common/Token.h>
+#include <fastdds/rtps/common/Token.hpp>
 #include <fastdds/rtps/attributes/EndpointSecurityAttributes.hpp>
 #include <rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
 #include <rtps/security/common/Handle.h>

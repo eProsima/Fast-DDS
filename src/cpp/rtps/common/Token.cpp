@@ -16,7 +16,7 @@
  * @file Token.cpp
  */
 
-#include <fastdds/rtps/common/Token.h>
+#include <fastdds/rtps/common/Token.hpp>
 
 namespace eprosima {
 namespace fastdds {

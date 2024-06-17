@@ -33,7 +33,7 @@
 #include <fastdds/rtps/common/SampleIdentity.hpp>
 #include <fastdds/rtps/common/SerializedPayload.hpp>
 #include <fastdds/rtps/common/Time_t.hpp>
-#include <fastdds/rtps/common/Token.h>
+#include <fastdds/rtps/common/Token.hpp>
 
 #if HAVE_SECURITY
 #include <fastdds/rtps/attributes/EndpointSecurityAttributes.hpp>

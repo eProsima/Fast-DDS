@@ -19,7 +19,7 @@
 #define _SECURITY_AUTHENTICATION_PKIIDENTITYHANDLE_H_
 
 #include <fastdds/rtps/common/Guid.hpp>
-#include <fastdds/rtps/common/Token.h>
+#include <fastdds/rtps/common/Token.hpp>
 #include <rtps/security/common/Handle.h>
 
 #include <openssl/x509.h>

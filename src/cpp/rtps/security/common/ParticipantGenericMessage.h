@@ -19,7 +19,7 @@
 #define _FASTDDS_RTPS_SECURITY_COMMON_PARTICIPANTGENERICMESSAGE_H_
 
 #include <fastdds/rtps/common/Guid.hpp>
-#include <fastdds/rtps/common/Token.h>
+#include <fastdds/rtps/common/Token.hpp>
 
 namespace eprosima {
 namespace fastdds {

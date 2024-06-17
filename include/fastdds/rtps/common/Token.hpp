@@ -15,8 +15,8 @@
 /*!
  * @file Token.h
  */
-#ifndef _FASTDDS_RTPS_COMMON_TOKEN_H_
-#define _FASTDDS_RTPS_COMMON_TOKEN_H_
+#ifndef FASTDDS_RTPS_COMMON__TOKEN_HPP
+#define FASTDDS_RTPS_COMMON__TOKEN_HPP
 
 #include <fastdds/fastdds_dll.hpp>
 #include <fastdds/rtps/common/Property.hpp>
@@ -193,4 +193,4 @@ private:
 } //namespace fastdds
 } //namespace eprosima
 
-#endif // _FASTDDS_RTPS_COMMON_TOKEN_H_
+#endif // FASTDDS_RTPS_COMMON__TOKEN_HPP

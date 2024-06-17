@@ -31,7 +31,7 @@
 #include <fastdds/rtps/attributes/WriterAttributes.hpp>
 #include <fastdds/rtps/builtin/data/BuiltinEndpoints.hpp>
 #include <fastdds/rtps/common/RemoteLocators.hpp>
-#include <fastdds/rtps/common/Token.h>
+#include <fastdds/rtps/common/Token.hpp>
 #include <fastdds/rtps/common/VendorId_t.hpp>
 
 namespace eprosima {
