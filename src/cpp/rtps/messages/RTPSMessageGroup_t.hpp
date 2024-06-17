@@ -21,7 +21,7 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <fastdds/rtps/common/CDRMessage_t.h>
+#include <fastdds/rtps/common/CDRMessage_t.hpp>
 #include <rtps/messages/CDRMessage.hpp>
 #include <rtps/messages/RTPSMessageCreator.hpp>
 #include <fastdds/rtps/transport/NetworkBuffer.hpp>

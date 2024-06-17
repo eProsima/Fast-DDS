@@ -22,7 +22,7 @@
 #define _FASTDDS_RTPS_MESSAGERECEIVER_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <fastdds/rtps/common/CDRMessage_t.h>
+#include <fastdds/rtps/common/CDRMessage_t.hpp>
 #include <fastdds/rtps/common/Locator.h>
 
 #include <rtps/writer/StatefulWriter.hpp>

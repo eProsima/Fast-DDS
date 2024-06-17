@@ -24,7 +24,7 @@
 #include <mutex>
 #include <vector>
 
-#include <fastdds/rtps/common/CDRMessage_t.h>
+#include <fastdds/rtps/common/CDRMessage_t.hpp>
 #include <fastdds/rtps/common/VendorId_t.hpp>
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>

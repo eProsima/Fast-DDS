@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * @file CDRMessage_t.h
+ * @file CDRMessage_t.hpp
  */
 
-#ifndef _FASTDDS_RTPS_CDRMESSAGE_T_H_
-#define _FASTDDS_RTPS_CDRMESSAGE_T_H_
+#ifndef FASTDDS_RTPS_COMMON__CDRMESSAGE_T_HPP
+#define FASTDDS_RTPS_COMMON__CDRMESSAGE_T_HPP
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <fastdds/rtps/common/SerializedPayload.h>
@@ -224,5 +224,5 @@ struct FASTDDS_EXPORTED_API CDRMessage_t final
 }  // namespace fastdds
 }  // namespace eprosima
 
-#endif /* DOXYGEN_SHOULD_SKIP_THIS_PUBLIC */
-#endif /* _FASTDDS_RTPS_CDRMESSAGE_T_H_ */
+#endif // DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+#endif // FASTDDS_RTPS_COMMON__CDRMESSAGE_T_HPP

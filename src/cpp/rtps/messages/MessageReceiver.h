@@ -23,7 +23,7 @@
 #include <functional>
 #include <unordered_map>
 
-#include <fastdds/rtps/common/CDRMessage_t.h>
+#include <fastdds/rtps/common/CDRMessage_t.hpp>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/common/CacheChange.hpp>

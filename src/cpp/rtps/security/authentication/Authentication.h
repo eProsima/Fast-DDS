@@ -19,7 +19,7 @@
 #define _FASTDDS_RTPS_SECURITY_AUTHENTICATION_AUTHENTICATION_H_
 
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
-#include <fastdds/rtps/common/CDRMessage_t.h>
+#include <fastdds/rtps/common/CDRMessage_t.hpp>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/common/Token.h>
 #include <rtps/security/authentication/Handshake.h>

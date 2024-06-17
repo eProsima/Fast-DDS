@@ -21,7 +21,7 @@
 #include <gtest/gtest.h>
 #include <openssl/rand.h>
 
-#include <fastdds/rtps/common/CDRMessage_t.h>
+#include <fastdds/rtps/common/CDRMessage_t.hpp>
 
 #include <security/accesscontrol/AccessPermissionsHandle.h>
 #include <security/authentication/PKIIdentityHandle.h>

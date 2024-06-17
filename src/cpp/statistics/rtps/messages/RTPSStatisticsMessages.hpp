@@ -23,7 +23,7 @@
 #include <cstdint>
 #include <cstring>
 
-#include <fastdds/rtps/common/CDRMessage_t.h>
+#include <fastdds/rtps/common/CDRMessage_t.hpp>
 #include <fastdds/rtps/common/Types.h>
 #include <rtps/messages/CDRMessage.hpp>
 #include <rtps/messages/RTPSMessageCreator.hpp>

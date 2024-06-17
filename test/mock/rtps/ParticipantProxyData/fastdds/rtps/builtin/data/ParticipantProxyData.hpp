@@ -19,7 +19,7 @@
 #define _FASTDDS_RTPS_BUILTIN_DATA_PARTICIPANTPROXYDATA_HPP_
 
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
-#include <fastdds/rtps/common/CDRMessage_t.h>
+#include <fastdds/rtps/common/CDRMessage_t.hpp>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/common/RemoteLocators.hpp>
