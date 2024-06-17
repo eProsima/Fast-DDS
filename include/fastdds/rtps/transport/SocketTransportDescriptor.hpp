@@ -12,8 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef _FASTDDS_SOCKET_TRANSPORT_DESCRIPTOR_H_
-#define _FASTDDS_SOCKET_TRANSPORT_DESCRIPTOR_H_
+/**
+ * @file SocketTransportDescriptor.hpp
+ *
+ */
+
+#ifndef FASTDDS_RTPS_TRANSPORT__SOCKETTRANSPORTDESCRIPTOR_HPP
+#define FASTDDS_RTPS_TRANSPORT__SOCKETTRANSPORTDESCRIPTOR_HPP
 
 #include <cstdint>
 #include <vector>
@@ -108,4 +113,4 @@ struct SocketTransportDescriptor : public PortBasedTransportDescriptor
 } // namespace fastdds
 } // namespace eprosima
 
-#endif //_FASTDDS_SOCKET_TRANSPORT_DESCRIPTOR_H_
+#endif //FASTDDS_RTPS_TRANSPORT__SOCKETTRANSPORTDESCRIPTOR_HPP

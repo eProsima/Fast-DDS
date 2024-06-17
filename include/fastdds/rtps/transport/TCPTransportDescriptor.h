@@ -21,7 +21,7 @@
 #include <vector>
 
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
-#include <fastdds/rtps/transport/SocketTransportDescriptor.h>
+#include <fastdds/rtps/transport/SocketTransportDescriptor.hpp>
 #include <fastdds/fastdds_dll.hpp>
 
 namespace eprosima {

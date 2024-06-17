@@ -20,7 +20,7 @@
 
 #include <fastdds/rtps/common/Locator.hpp>
 #include <fastdds/rtps/common/LocatorList.hpp>
-#include <fastdds/rtps/transport/SocketTransportDescriptor.h>
+#include <fastdds/rtps/transport/SocketTransportDescriptor.hpp>
 #include <fastdds/rtps/transport/TransportInterface.h>
 
 namespace eprosima {
