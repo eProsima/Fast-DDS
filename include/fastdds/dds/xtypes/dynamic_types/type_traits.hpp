@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef _FASTDDS_DDS_XTYPES_DYNAMIC_TYPES_TYPE_TRAITS_HPP_
-#define _FASTDDS_DDS_XTYPES_DYNAMIC_TYPES_TYPE_TRAITS_HPP_
+#ifndef FASTDDS_DDS_XTYPES_DYNAMIC_TYPES__TYPETRAITS_HPP
+#define FASTDDS_DDS_XTYPES_DYNAMIC_TYPES__TYPETRAITS_HPP
 
 namespace eprosima {
 namespace fastdds {
@@ -31,4 +31,4 @@ struct object_traits;
 
 #include "detail/type_traits.hpp"
 
-#endif // _FASTDDS_DDS_XTYPES_DYNAMIC_TYPES_TYPE_TRAITS_HPP_
+#endif // FASTDDS_DDS_XTYPES_DYNAMIC_TYPES__TYPETRAITS_HPP

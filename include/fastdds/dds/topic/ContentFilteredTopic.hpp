@@ -16,8 +16,8 @@
  * @file ContentFilteredTopic.hpp
  */
 
-#ifndef _FASTDDS_DDS_TOPIC_CONTENTFILTEREDTOPIC_HPP_
-#define _FASTDDS_DDS_TOPIC_CONTENTFILTEREDTOPIC_HPP_
+#ifndef FASTDDS_DDS_TOPIC__CONTENTFILTEREDTOPIC_HPP
+#define FASTDDS_DDS_TOPIC__CONTENTFILTEREDTOPIC_HPP
 
 #include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/topic/TopicDescription.hpp>
@@ -141,4 +141,4 @@ protected:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif  // _FASTDDS_DDS_TOPIC_CONTENTFILTEREDTOPIC_HPP_
+#endif  // FASTDDS_DDS_TOPIC__CONTENTFILTEREDTOPIC_HPP

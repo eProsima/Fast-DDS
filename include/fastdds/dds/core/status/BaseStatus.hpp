@@ -16,8 +16,8 @@
  * @file BaseStatus.hpp
  */
 
-#ifndef _FASTDDS_BASE_STATUS_HPP_
-#define _FASTDDS_BASE_STATUS_HPP_
+#ifndef FASTDDS_DDS_CORE_STATUS__BASESTATUS_HPP
+#define FASTDDS_DDS_CORE_STATUS__BASESTATUS_HPP
 
 #include <cstdint>
 
@@ -49,4 +49,4 @@ using LivelinessLostStatus = fastdds::dds::BaseStatus;
 } //namespace fastdds
 } //namespace eprosima
 
-#endif // _FASTDDS_BASE_STATUS_HPP_
+#endif // FASTDDS_DDS_CORE_STATUS__BASESTATUS_HPP

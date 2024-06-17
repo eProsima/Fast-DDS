@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef FASTDDS_DDS_XTYPES_DYNAMIC_TYPES_ANNOTATION_DESCRIPTOR_HPP
-#define FASTDDS_DDS_XTYPES_DYNAMIC_TYPES_ANNOTATION_DESCRIPTOR_HPP
+#ifndef FASTDDS_DDS_XTYPES_DYNAMIC_TYPES__ANNOTATIONDESCRIPTOR_HPP
+#define FASTDDS_DDS_XTYPES_DYNAMIC_TYPES__ANNOTATIONDESCRIPTOR_HPP
 
 #include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/Types.hpp>
@@ -128,4 +128,4 @@ private:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // FASTDDS_DDS_XTYPES_DYNAMIC_TYPES_ANNOTATION_DESCRIPTOR_HPP
+#endif // FASTDDS_DDS_XTYPES_DYNAMIC_TYPES__ANNOTATIONDESCRIPTOR_HPP

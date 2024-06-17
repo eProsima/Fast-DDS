@@ -17,8 +17,8 @@
  * This file contains common definitions for the different XTypes modules.
  */
 
-#ifndef _FASTDDS_DDS_XTYPES_COMMON_HPP_
-#define _FASTDDS_DDS_XTYPES_COMMON_HPP_
+#ifndef FASTDDS_DDS_XTYPES__COMMON_HPP
+#define FASTDDS_DDS_XTYPES__COMMON_HPP
 
 #include <cstdint>
 
@@ -119,4 +119,4 @@ constexpr const char* topic_annotation_name = "topic";
 } // fastdds
 } // eprosima
 
-#endif // _FASTDDS_DDS_XTYPES_COMMON_HPP_
+#endif // FASTDDS_DDS_XTYPES__COMMON_HPP

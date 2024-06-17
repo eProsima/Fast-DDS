@@ -16,8 +16,8 @@
  * @file ViewState.hpp
  */
 
-#ifndef _FASTDDS_DDS_SUBSCRIBER_VIEWSTATE_HPP_
-#define _FASTDDS_DDS_SUBSCRIBER_VIEWSTATE_HPP_
+#ifndef FASTDDS_DDS_SUBSCRIBER__VIEWSTATE_HPP
+#define FASTDDS_DDS_SUBSCRIBER__VIEWSTATE_HPP
 
 #include <cstdint>
 
@@ -68,4 +68,4 @@ constexpr ViewStateMask ANY_VIEW_STATE = NEW_VIEW_STATE | NOT_NEW_VIEW_STATE;
 }  // namespace fastdds
 }  // namespace eprosima
 
-#endif  // _FASTDDS_DDS_SUBSCRIBER_VIEWSTATE_HPP_
+#endif  // FASTDDS_DDS_SUBSCRIBER__VIEWSTATE_HPP

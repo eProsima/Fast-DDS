@@ -16,8 +16,8 @@
  * @file TypeSupport.hpp
  */
 
-#ifndef _FASTDDS_TYPE_SUPPORT_HPP_
-#define _FASTDDS_TYPE_SUPPORT_HPP_
+#ifndef FASTDDS_DDS_TOPIC__TYPESUPPORT_HPP
+#define FASTDDS_DDS_TOPIC__TYPESUPPORT_HPP
 
 #include <string>
 #include <functional>
@@ -291,8 +291,8 @@ public:
 
 };
 
-} /* namespace dds */
-} /* namespace fastdds */
-} /* namespace eprosima */
+} // namespace dds
+} // namespace fastdds
+} // namespace eprosima
 
-#endif /* _FASTDDS_TYPE_SUPPORT_HPP_ */
+#endif // FASTDDS_DDS_TOPIC__TYPESUPPORT_HPP

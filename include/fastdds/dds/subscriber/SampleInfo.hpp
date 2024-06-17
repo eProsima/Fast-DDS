@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _FASTDDS_DDS_SUBSCRIBER_SAMPLEINFO_HPP_
-#define _FASTDDS_DDS_SUBSCRIBER_SAMPLEINFO_HPP_
+#ifndef FASTDDS_DDS_SUBSCRIBER__SAMPLEINFO_HPP
+#define FASTDDS_DDS_SUBSCRIBER__SAMPLEINFO_HPP
 
 #include <fastdds/dds/subscriber/InstanceState.hpp>
 #include <fastdds/dds/subscriber/SampleState.hpp>
@@ -93,4 +93,4 @@ struct SampleInfo
 }  // namespace fastdds
 }  // namespace eprosima
 
-#endif /* _FASTDDS_DDS_SUBSCRIBER_SAMPLEINFO_HPP_*/
+#endif // FASTDDS_DDS_SUBSCRIBER__SAMPLEINFO_HPP

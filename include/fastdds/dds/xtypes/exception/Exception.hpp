@@ -17,8 +17,8 @@
  * This file is based on the DDS-PSM-CXX Exception.hpp file.
  */
 
-#ifndef _FASTDDS_DDS_XTYPES_EXCEPTION_EXCEPTION_HPP_
-#define _FASTDDS_DDS_XTYPES_EXCEPTION_EXCEPTION_HPP_
+#ifndef FASTDDS_DDS_XTYPES_EXCEPTION__EXCEPTION_HPP
+#define FASTDDS_DDS_XTYPES_EXCEPTION__EXCEPTION_HPP
 
 #include <stdexcept>
 #include <string>
@@ -76,4 +76,4 @@ public:
 } // fastdds
 } // eprosima
 
-#endif // _FASTDDS_DDS_XTYPES_EXCEPTION_EXCEPTION_HPP_
+#endif // FASTDDS_DDS_XTYPES_EXCEPTION__EXCEPTION_HPP

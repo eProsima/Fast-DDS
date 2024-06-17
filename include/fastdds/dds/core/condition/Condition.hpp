@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _FASTDDS_CONDITION_HPP_
-#define _FASTDDS_CONDITION_HPP_
+#ifndef FASTDDS_DDS_CORE_CONDITION__CONDITION_HPP
+#define FASTDDS_DDS_CORE_CONDITION__CONDITION_HPP
 
 #include <memory>
 #include <vector>
@@ -71,4 +71,4 @@ using ConditionSeq = std::vector<Condition*>;
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_CONDITION_HPP_
+#endif // FASTDDS_DDS_CORE_CONDITION__CONDITION_HPP

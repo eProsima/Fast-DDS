@@ -16,8 +16,8 @@
  * @file TopicDataType.hpp
  */
 
-#ifndef _FASTDDS_TOPICDATATYPE_HPP_
-#define _FASTDDS_TOPICDATATYPE_HPP_
+#ifndef FASTDDS_DDS_TOPIC__TOPICDATATYPE_HPP
+#define FASTDDS_DDS_TOPIC__TOPICDATATYPE_HPP
 
 #include <functional>
 #include <memory>
@@ -279,8 +279,8 @@ private:
 
 };
 
-} /* namespace dds */
-} /* namespace fastdds */
-} /* namespace eprosima */
+} // namespace dds
+} // namespace fastdds
+} // namespace eprosima
 
-#endif /* _FASTDDS_TOPICDATATYPE_HPP_ */
+#endif // FASTDDS_DDS_TOPIC__TOPICDATATYPE_HPP

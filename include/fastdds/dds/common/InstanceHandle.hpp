@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _FASTDDS_DDS_COMMON_INSTANCEHANDLE_HPP_
-#define _FASTDDS_DDS_COMMON_INSTANCEHANDLE_HPP_
+#ifndef FASTDDS_DDS_COMMON__INSTANCEHANDLE_HPP
+#define FASTDDS_DDS_COMMON__INSTANCEHANDLE_HPP
 
 #include <fastdds/rtps/common/InstanceHandle.hpp>
 #include <fastdds/fastdds_dll.hpp>
@@ -36,4 +36,4 @@ extern FASTDDS_EXPORTED_API const InstanceHandle_t HANDLE_NIL;
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_DDS_COMMON_INSTANCEHANDLE_HPP_
+#endif // FASTDDS_DDS_COMMON__INSTANCEHANDLE_HPP

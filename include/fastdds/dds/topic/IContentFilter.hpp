@@ -16,8 +16,8 @@
  * @file IContentFilter.hpp
  */
 
-#ifndef _FASTDDS_DDS_TOPIC_ICONTENTFILTER_HPP_
-#define _FASTDDS_DDS_TOPIC_ICONTENTFILTER_HPP_
+#ifndef FASTDDS_DDS_TOPIC__ICONTENTFILTER_HPP
+#define FASTDDS_DDS_TOPIC__ICONTENTFILTER_HPP
 
 #include <fastdds/fastdds_dll.hpp>
 
@@ -70,4 +70,4 @@ struct IContentFilter
 } // namespace fastdds
 } // namespace eprosima
 
-#endif  // _FASTDDS_DDS_TOPIC_ICONTENTFILTER_HPP_
+#endif  // FASTDDS_DDS_TOPIC__ICONTENTFILTER_HPP

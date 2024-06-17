@@ -16,11 +16,11 @@
  * @file ReturnCode.hpp
  */
 
-#ifndef _FASTDDS_DDS_CORE_RETURNCODE_HPP_
-#define _FASTDDS_DDS_CORE_RETURNCODE_HPP_
+#ifndef FASTDDS_DDS_CORE__RETURNCODE_HPP
+#define FASTDDS_DDS_CORE__RETURNCODE_HPP
 
 #include "detail/DDSReturnCode.hpp"
 #include "detail/DDSSecurityReturnCode.hpp"
 
-#endif // _FASTDDS_DDS_CORE_RETURNCODE_HPP_
+#endif // FASTDDS_DDS_CORE__RETURNCODE_HPP
 

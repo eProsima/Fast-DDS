@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef _FASTDDS_DDS_LOG_STDOUTERRCONSUMER_HPP_
-#define _FASTDDS_DDS_LOG_STDOUTERRCONSUMER_HPP_
+#ifndef FASTDDS_DDS_LOG__STDOUTERRCONSUMER_HPP
+#define FASTDDS_DDS_LOG__STDOUTERRCONSUMER_HPP
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/log/OStreamConsumer.hpp>
@@ -77,4 +77,4 @@ private:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // ifndef _FASTDDS_DDS_LOG_STDOUTERRCONSUMER_HPP_
+#endif // ifndef FASTDDS_DDS_LOG__STDOUTERRCONSUMER_HPP

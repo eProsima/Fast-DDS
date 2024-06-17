@@ -16,8 +16,8 @@
  * @file IncompatibleQosStatus.hpp
  */
 
-#ifndef _FASTDDS_INCOMPATIBLE_QOS_STATUS_HPP_
-#define _FASTDDS_INCOMPATIBLE_QOS_STATUS_HPP_
+#ifndef FASTDDS_DDS_CORE_STATUS__INCOMPATIBLEQOSSTATUS_HPP
+#define FASTDDS_DDS_CORE_STATUS__INCOMPATIBLEQOSSTATUS_HPP
 
 #include <cstdint>
 #include <vector>
@@ -93,4 +93,4 @@ using OfferedIncompatibleQosStatus = IncompatibleQosStatus;
 } //end of namespace fastdds
 } //end of namespace eprosima
 
-#endif // _FASTDDS_INCOMPATIBLE_QOS_STATUS_HPP_
+#endif // FASTDDS_DDS_CORE_STATUS__INCOMPATIBLEQOSSTATUS_HPP

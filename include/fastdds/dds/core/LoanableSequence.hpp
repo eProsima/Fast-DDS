@@ -16,8 +16,8 @@
  * @file LoanableSequence.hpp
  */
 
-#ifndef _FASTDDS_DDS_CORE_LOANABLESEQUENCE_HPP_
-#define _FASTDDS_DDS_CORE_LOANABLESEQUENCE_HPP_
+#ifndef FASTDDS_DDS_CORE__LOANABLESEQUENCE_HPP
+#define FASTDDS_DDS_CORE__LOANABLESEQUENCE_HPP
 
 #include <cassert>
 #include <cstdint>
@@ -230,4 +230,4 @@ private:
 #define FASTDDS_CONST_SEQUENCE(FooSeq, Foo) using FooSeq = eprosima::fastdds::dds::LoanableSequence<Foo, \
                     std::false_type>
 
-#endif // _FASTDDS_DDS_CORE_LOANABLESEQUENCE_HPP_
+#endif // FASTDDS_DDS_CORE__LOANABLESEQUENCE_HPP

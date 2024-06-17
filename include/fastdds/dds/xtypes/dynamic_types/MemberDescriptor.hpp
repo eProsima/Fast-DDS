@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef FASTDDS_DDS_XTYPES_DYNAMIC_TYPES_MEMBER_DESCRIPTOR_HPP
-#define FASTDDS_DDS_XTYPES_DYNAMIC_TYPES_MEMBER_DESCRIPTOR_HPP
+#ifndef FASTDDS_DDS_XTYPES_DYNAMIC_TYPES__MEMBERDESCRIPTOR_HPP
+#define FASTDDS_DDS_XTYPES_DYNAMIC_TYPES__MEMBERDESCRIPTOR_HPP
 
 #include <cstdint>
 #include <string>
@@ -328,4 +328,4 @@ private:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // FASTDDS_DDS_XTYPES_DYNAMIC_TYPES_MEMBER_DESCRIPTOR_HPP
+#endif // FASTDDS_DDS_XTYPES_DYNAMIC_TYPES__MEMBERDESCRIPTOR_HPP

@@ -16,8 +16,8 @@
  * @file ParameterTypes.hpp
  */
 
-#ifndef _FASTDDS_DDS_QOS_PARAMETERTYPES_HPP_
-#define _FASTDDS_DDS_QOS_PARAMETERTYPES_HPP_
+#ifndef FASTDDS_DDS_CORE_POLICY__PARAMETERTYPES_HPP
+#define FASTDDS_DDS_CORE_POLICY__PARAMETERTYPES_HPP
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
@@ -1897,4 +1897,4 @@ using ParameterEndpointSecurityInfo_t = fastdds::dds::ParameterEndpointSecurityI
 } //namespace eprosima
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#endif // _FASTDDS_DDS_QOS_PARAMETERTYPES_HPP_
+#endif // FASTDDS_DDS_CORE_POLICY__PARAMETERTYPES_HPP

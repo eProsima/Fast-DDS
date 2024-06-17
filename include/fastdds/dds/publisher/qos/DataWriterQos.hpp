@@ -17,8 +17,8 @@
  */
 
 
-#ifndef _FASTDDS_DATAWRITERQOS_HPP
-#define _FASTDDS_DATAWRITERQOS_HPP
+#ifndef FASTDDS_DDS_PUBLISHER_QOS__DATAWRITERQOS_HPP
+#define FASTDDS_DDS_PUBLISHER_QOS__DATAWRITERQOS_HPP
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/publisher/qos/WriterQos.hpp>
@@ -883,4 +883,4 @@ FASTDDS_EXPORTED_API extern const DataWriterQos DATAWRITER_QOS_USE_TOPIC_QOS;
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_DATAWRITERQOS_HPP
+#endif // FASTDDS_DDS_PUBLISHER_QOS__DATAWRITERQOS_HPP

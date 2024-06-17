@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef __FASTDDS__PARTICIPANT_PARTICIPANTLISTENER_HPP__
-#define __FASTDDS__PARTICIPANT_PARTICIPANTLISTENER_HPP__
+#ifndef FASTDDS_DDS_DOMAIN__DOMAINPARTICIPANTLISTENER_HPP
+#define FASTDDS_DDS_DOMAIN__DOMAINPARTICIPANTLISTENER_HPP
 
 #include <fastdds/dds/publisher/PublisherListener.hpp>
 #include <fastdds/dds/subscriber/SubscriberListener.hpp>
@@ -137,4 +137,4 @@ public:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // __FASTDDS__PARTICIPANT_PARTICIPANTLISTENER_HPP__
+#endif // FASTDDS_DDS_DOMAIN__DOMAINPARTICIPANTLISTENER_HPP

@@ -16,8 +16,8 @@
  * @file DeadlineMissedStatus.hpp
  */
 
-#ifndef _FASTDDS_DDS_QOS_DEADLINEMISSEDSTATUS_HPP_
-#define _FASTDDS_DDS_QOS_DEADLINEMISSEDSTATUS_HPP_
+#ifndef FASTDDS_DDS_CORE_STATUS__DEADLINEMISSEDSTATUS_HPP
+#define FASTDDS_DDS_CORE_STATUS__DEADLINEMISSEDSTATUS_HPP
 
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
@@ -62,4 +62,4 @@ typedef DeadlineMissedStatus RequestedDeadlineMissedStatus;
 } //namespace fastdds
 } //namespace eprosima
 
-#endif // _FASTDDS_DDS_QOS_DEADLINEMISSEDSTATUS_HPP_
+#endif // FASTDDS_DDS_CORE_STATUS__DEADLINEMISSEDSTATUS_HPP

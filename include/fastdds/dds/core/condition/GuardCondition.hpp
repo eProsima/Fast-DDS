@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _FASTDDS_GUARD_CONDITION_HPP_
-#define _FASTDDS_GUARD_CONDITION_HPP_
+#ifndef FASTDDS_DDS_CORE_CONDITION__GUARDCONDITION_HPP
+#define FASTDDS_DDS_CORE_CONDITION__GUARDCONDITION_HPP
 
 #include <atomic>
 
@@ -67,4 +67,4 @@ private:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_GUARD_CONDITION_HPP_
+#endif // FASTDDS_DDS_CORE_CONDITION__GUARDCONDITION_HPP

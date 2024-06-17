@@ -16,8 +16,8 @@
  * @file SampleRejectedStatus.hpp
  */
 
-#ifndef _FASTDDS_DDS_QOS_SAMPLEREJECTEDSTATUS_HPP_
-#define _FASTDDS_DDS_QOS_SAMPLEREJECTEDSTATUS_HPP_
+#ifndef FASTDDS_DDS_CORE_STATUS__SAMPLEREJECTEDSTATUS_HPP
+#define FASTDDS_DDS_CORE_STATUS__SAMPLEREJECTEDSTATUS_HPP
 
 #include <cstdint>
 
@@ -69,4 +69,4 @@ struct SampleRejectedStatus
 } //namespace fastdds
 } //namespace eprosima
 
-#endif // _FASTDDS_DDS_QOS_SAMPLEREJECTEDSTATUS_HPP_
+#endif // FASTDDS_DDS_CORE_STATUS__SAMPLEREJECTEDSTATUS_HPP

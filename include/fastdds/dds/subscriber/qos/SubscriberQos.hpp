@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _FASTDDS_SUBSCRIBERQOS_HPP_
-#define _FASTDDS_SUBSCRIBERQOS_HPP_
+#ifndef FASTDDS_DDS_SUBSCRIBER_QOS__SUBSCRIBERQOS_HPP
+#define FASTDDS_DDS_SUBSCRIBER_QOS__SUBSCRIBERQOS_HPP
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 
@@ -203,8 +203,8 @@ private:
 FASTDDS_EXPORTED_API extern const SubscriberQos SUBSCRIBER_QOS_DEFAULT;
 
 
-} /* namespace dds */
-} /* namespace fastdds */
-} /* namespace eprosima */
+} // namespace dds
+} // namespace fastdds
+} // namespace eprosima
 
-#endif /* _FASTDDS_SUBSCRIBERQOS_HPP_ */
+#endif // FASTDDS_DDS_SUBSCRIBER_QOS__SUBSCRIBERQOS_HPP

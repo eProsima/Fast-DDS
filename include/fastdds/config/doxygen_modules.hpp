@@ -16,8 +16,8 @@
  * @file doxygen_modules.hpp
  */
 
-#ifndef _FASTDDS_DOXYGEN_MODULES_HPP_
-#define _FASTDDS_DOXYGEN_MODULES_HPP_
+#ifndef FASTDDS_CONFIG__DOXYGEN_MODULES_HPP
+#define FASTDDS_CONFIG__DOXYGEN_MODULES_HPP
 
 //Description of doxygen modules, not used in actual code.
 
@@ -141,4 +141,4 @@
  *  @ingroup UTILITIES_MODULE
  */
 
-#endif /* _FASTDDS_DOXYGEN_MODULES_HPP_ */
+#endif // FASTDDS_CONFIG__DOXYGEN_MODULES_HPP

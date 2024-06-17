@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _FASTDDS_DDS_LOG_FILECONSUMER_HPP_
-#define _FASTDDS_DDS_LOG_FILECONSUMER_HPP_
+#ifndef FASTDDS_DDS_LOG__FILECONSUMER_HPP
+#define FASTDDS_DDS_LOG__FILECONSUMER_HPP
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/log/OStreamConsumer.hpp>
@@ -69,4 +69,4 @@ private:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_DDS_LOG_FILECONSUMER_HPP_
+#endif // FASTDDS_DDS_LOG__FILECONSUMER_HPP

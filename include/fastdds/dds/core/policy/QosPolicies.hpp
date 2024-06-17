@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _FASTDDS_DDS_QOS_QOSPOLICIES_HPP_
-#define _FASTDDS_DDS_QOS_QOSPOLICIES_HPP_
+#ifndef FASTDDS_DDS_CORE_POLICY__QOSPOLICIES_HPP
+#define FASTDDS_DDS_CORE_POLICY__QOSPOLICIES_HPP
 
 #include <bitset>
 #include <vector>
@@ -3216,4 +3216,4 @@ private:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_DDS_QOS_QOSPOLICIES_HPP_
+#endif // FASTDDS_DDS_CORE_POLICY__QOSPOLICIES_HPP

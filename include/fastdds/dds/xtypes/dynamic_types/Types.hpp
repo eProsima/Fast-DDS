@@ -16,8 +16,8 @@
  * @file Types.hpp
  */
 
-#ifndef _FASTDDS_DDS_XTYPES_DYNAMIC_TYPES_TYPES_HPP_
-#define _FASTDDS_DDS_XTYPES_DYNAMIC_TYPES_TYPES_HPP_
+#ifndef FASTDDS_DDS_XTYPES_DYNAMIC_TYPES__TYPES_HPP
+#define FASTDDS_DDS_XTYPES_DYNAMIC_TYPES__TYPES_HPP
 
 #include "detail/dynamic_language_binding.hpp"
 #include "type_traits.hpp"
@@ -80,4 +80,4 @@ struct traits<DynamicTypeMember> : public object_traits<DynamicTypeMember>
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_DDS_XTYPES_DYNAMIC_TYPES_TYPES_HPP_
+#endif // FASTDDS_DDS_XTYPES_DYNAMIC_TYPES__TYPES_HPP

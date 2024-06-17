@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _FASTDDS_WAIT_SET_HPP_
-#define _FASTDDS_WAIT_SET_HPP_
+#ifndef FASTDDS_DDS_CORE_CONDITION__WAITSET_HPP
+#define FASTDDS_DDS_CORE_CONDITION__WAITSET_HPP
 
 #include <memory>
 
@@ -105,4 +105,4 @@ private:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_WAIT_SET_HPP_
+#endif // FASTDDS_DDS_CORE_CONDITION__WAITSET_HPP

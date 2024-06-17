@@ -16,8 +16,8 @@
  * @file RequesterQos.hpp
  */
 
-#ifndef _FASTDDS_REQUESTERQOS_HPP_
-#define _FASTDDS_REQUESTERQOS_HPP_
+#ifndef FASTDDS_DDS_DOMAIN_QOS__REQUESTERQOS_HPP
+#define FASTDDS_DDS_DOMAIN_QOS__REQUESTERQOS_HPP
 
 #include <string>
 
@@ -73,8 +73,8 @@ public:
     DataReaderQos reader_qos;
 };
 
-} /* namespace dds */
-} /* namespace fastdds */
-} /* namespace eprosima */
+} // namespace dds 
+} // namespace fastdds 
+} // namespace eprosima 
 
-#endif /* _FASTDDS_REQUESTERQOS_HPP_ */
+#endif // FASTDDS_DDS_DOMAIN_QOS__REQUESTERQOS_HPP 
