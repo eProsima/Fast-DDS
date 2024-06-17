@@ -49,7 +49,7 @@ class NetworkFactory;
 #if HAVE_SECURITY
 namespace security {
 struct ParticipantSecurityAttributes;
-} /* namespace security */
+} // namespace security
 #endif // if HAVE_SECURITY
 
 // proxy specific declarations
@@ -231,9 +231,9 @@ private:
     std::chrono::microseconds lease_duration_;
 };
 
-} // namespace rtps 
-} // namespace fastdds 
-} // namespace eprosima 
+} // namespace rtps
+} // namespace fastdds
+} // namespace eprosima
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
