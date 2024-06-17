@@ -25,7 +25,7 @@
 #include <mutex>
 #include <set>
 
-#include <fastdds/config.h>
+#include <fastdds/config.hpp>
 #include <fastdds/dds/core/policy/ParameterTypes.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/Locator.hpp>

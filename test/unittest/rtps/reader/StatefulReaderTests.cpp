@@ -18,7 +18,7 @@
 // Header for the unit we are testing
 #include <rtps/reader/StatefulReader.hpp>
 
-#include <fastdds/config.h>
+#include <fastdds/config.hpp>
 #include <fastdds/dds/common/InstanceHandle.hpp>
 
 #include <fastdds/rtps/RTPSDomain.hpp>

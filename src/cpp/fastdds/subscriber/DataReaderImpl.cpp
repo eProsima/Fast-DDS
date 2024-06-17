@@ -23,7 +23,7 @@
 #   include <version>
 #endif // if defined(__has_include) && __has_include(<version>)
 
-#include <fastdds/config.h>
+#include <fastdds/config.hpp>
 #include <fastdds/core/condition/StatusConditionImpl.hpp>
 #include <fastdds/core/policy/QosPolicyUtils.hpp>
 #include <fastdds/dds/core/StackAllocatedSequence.hpp>

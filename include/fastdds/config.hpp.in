@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef _FASTDDS_CONFIG_H_
-#define _FASTDDS_CONFIG_H_
+#ifndef FASTDDS__CONFIG_H
+#define FASTDDS__CONFIG_H
 
 #define FASTDDS_VERSION_MAJOR @PROJECT_VERSION_MAJOR@
 #define FASTDDS_VERSION_MINOR @PROJECT_VERSION_MINOR@
@@ -130,4 +130,4 @@
 #define FASTDDS_SER_METHOD_DEPRECATED(major, entity_name, msg)
 #endif // if FASTCDR_VERSION_MAJOR > 1
 
-#endif // _FASTDDS_CONFIG_H_
+#endif // FASTDDS__CONFIG_H

@@ -15,7 +15,7 @@
 #ifndef _FASTDDS_FASTDDS_DLL_H_
 #define _FASTDDS_FASTDDS_DLL_H_
 
-#include <fastdds/config.h>
+#include <fastdds/config.hpp>
 
 // normalize macros
 #if !defined(FASTDDS_DYN_LINK) && !defined(FASTDDS_STATIC_LINK) \

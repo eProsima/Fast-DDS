@@ -19,7 +19,7 @@
 #ifndef FASTDDS_UTILS__TIMEDCONDITIONVARIABLE_HPP
 #define FASTDDS_UTILS__TIMEDCONDITIONVARIABLE_HPP
 
-#include <fastdds/config.h>
+#include <fastdds/config.hpp>
 
 /*
    NOTE: Windows implementation temporary disabled due to aleatory high CPU consumption when

@@ -21,7 +21,7 @@
 #include <functional>
 #include <iostream>
 
-#include <fastdds/config.h>
+#include <fastdds/config.hpp>
 #include <fastdds/core/condition/StatusConditionImpl.hpp>
 #include <fastdds/core/policy/ParameterSerializer.hpp>
 #include <fastdds/core/policy/QosPolicyUtils.hpp>

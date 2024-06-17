@@ -38,7 +38,7 @@
 #include <asio/ssl/verify_context.hpp>
 #endif // if TLS_FOUND
 
-#include <fastdds/config.h>
+#include <fastdds/config.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/attributes/PropertyPolicy.hpp>
