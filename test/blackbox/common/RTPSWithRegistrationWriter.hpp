@@ -232,7 +232,14 @@ public:
                 size_t current_alignment{ 0 };
                 uint32_t cdr_size = static_cast<uint32_t>(
                     calculator.calculate_serialized_size(*it, current_alignment));
-                ch->serializedPayload.reserve(cdr_size);
+                if (has_payload_pool_)
+                {
+                    payload_pool_->get_payload(cdr_size, ch->serializedPayload);
+                }
+                else
+                {
+                    ch->serializedPayload.reserve(cdr_size);
+                }
             }
 
             eprosima::fastcdr::FastBuffer buffer((char*)ch->serializedPayload.data, ch->serializedPayload.max_size);
@@ -261,7 +268,14 @@ public:
             eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastdds::rtps::DEFAULT_XCDR_VERSION);
             size_t current_alignment{ 0 };
             uint32_t cdr_size = static_cast<uint32_t>(calculator.calculate_serialized_size(msg, current_alignment));
-            ch->serializedPayload.reserve(cdr_size);
+            if (has_payload_pool_)
+            {
+                payload_pool_->get_payload(cdr_size, ch->serializedPayload);
+            }
+            else
+            {
+                ch->serializedPayload.reserve(cdr_size);
+            }
         }
 
         eprosima::fastcdr::FastBuffer buffer((char*)ch->serializedPayload.data, ch->serializedPayload.max_size);

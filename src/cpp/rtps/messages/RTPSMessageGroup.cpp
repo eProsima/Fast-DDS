@@ -575,13 +575,13 @@ bool RTPSMessageGroup::add_data(
     InlineQosWriter* inline_qos;
     inline_qos = (change.inline_qos.length > 0 && nullptr != change.inline_qos.data) ? &qos_writer : nullptr;
 
-    bool copy_data = false;
+    bool copy_data = (nullptr == change.serializedPayload.payload_owner);
 #if HAVE_SECURITY
     uint32_t from_buffer_position = submessage_msg_->pos;
     bool protect_payload = endpoint_->getAttributes().security_attributes().is_payload_protected;
     bool protect_submessage = endpoint_->getAttributes().security_attributes().is_submessage_protected;
     bool protect_rtps = participant_->security_attributes().is_rtps_protected;
-    copy_data = protect_payload || protect_submessage || protect_rtps;
+    copy_data = copy_data || protect_payload || protect_submessage || protect_rtps;
 #endif // if HAVE_SECURITY
     const EntityId_t& readerId = get_entity_id(sender_->remote_guids());
 
@@ -694,13 +694,13 @@ bool RTPSMessageGroup::add_data_frag(
     InlineQosWriter* inline_qos;
     inline_qos = (change.inline_qos.length > 0 && nullptr != change.inline_qos.data) ? &qos_writer : nullptr;
 
-    bool copy_data = false;
+    bool copy_data = (nullptr == change.serializedPayload.payload_owner);
 #if HAVE_SECURITY
     uint32_t from_buffer_position = submessage_msg_->pos;
     bool protect_payload = endpoint_->getAttributes().security_attributes().is_payload_protected;
     bool protect_submessage = endpoint_->getAttributes().security_attributes().is_submessage_protected;
     bool protect_rtps = participant_->security_attributes().is_rtps_protected;
-    copy_data = protect_payload || protect_submessage || protect_rtps;
+    copy_data = copy_data || protect_payload || protect_submessage || protect_rtps;
 #endif // if HAVE_SECURITY
     const EntityId_t& readerId = get_entity_id(sender_->remote_guids());
 
