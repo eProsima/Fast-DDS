@@ -12,8 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef _FASTDDS_RTPS_TRANSPORT_CHAININGTRANSPORTDESCRIPTOR_H_
-#define _FASTDDS_RTPS_TRANSPORT_CHAININGTRANSPORTDESCRIPTOR_H_
+/**
+ * @file ChainingTransportDescriptor.hpp
+ *
+ */
+
+#ifndef FASTDDS_RTPS_TRANSPORT__CHAININGTRANSPORTDESCRIPTOR_HPP
+#define FASTDDS_RTPS_TRANSPORT__CHAININGTRANSPORTDESCRIPTOR_HPP
 
 #include <memory>
 #include <vector>
@@ -72,4 +77,4 @@ typedef struct ChainingTransportDescriptor : public TransportDescriptorInterface
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_RTPS_TRANSPORT_CHAININGTRANSPORTDESCRIPTOR_H_
+#endif // FASTDDS_RTPS_TRANSPORT__CHAININGTRANSPORTDESCRIPTOR_HPP

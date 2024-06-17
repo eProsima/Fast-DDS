@@ -17,7 +17,7 @@
 #include <set>
 
 #include <fastdds/rtps/transport/ChainingTransport.hpp>
-#include <fastdds/rtps/transport/ChainingTransportDescriptor.h>
+#include <fastdds/rtps/transport/ChainingTransportDescriptor.hpp>
 #include <fastdds/rtps/transport/SenderResource.h>
 #include <fastdds/rtps/transport/TransportReceiverInterface.h>
 
