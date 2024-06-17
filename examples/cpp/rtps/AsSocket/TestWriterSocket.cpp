@@ -89,7 +89,7 @@ void TestWriterSocket::run(
 {
     for (int i = 0; i < nmsgs; ++i )
     {
-        CacheChange_t* ch = mp_writer->new_change(ALIVE);
+        CacheChange_t* ch = mp_history->create_change(ALIVE);
         ch->serializedPayload.reserve(255);
 #if defined(_WIN32)
         ch->serializedPayload.length =

@@ -78,11 +78,10 @@ inline bool usleep_bool()
 
 static CacheChange_t* create_change_for_message(
         const ParticipantGenericMessage& message,
-        RTPSWriter* writer,
         WriterHistory* history,
         const std::shared_ptr<IPayloadPool>& payload_pool)
 {
-    CacheChange_t* change = writer->new_change(ALIVE, c_InstanceHandle_Unknown);
+    CacheChange_t* change = history->create_change(ALIVE, c_InstanceHandle_Unknown);
     if (nullptr != change)
     {
         uint32_t cdr_size = static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message));
@@ -922,7 +921,6 @@ bool SecurityManager::on_process_handshake(
 
         CacheChange_t* change = create_change_for_message(
             message,
-            participant_stateless_message_writer_,
             participant_stateless_message_writer_history_,
             participant_stateless_message_pool_);
 
@@ -2234,7 +2232,6 @@ void SecurityManager::exchange_participant_crypto(
 
         CacheChange_t* change = create_change_for_message(
             message,
-            participant_volatile_message_secure_writer_,
             participant_volatile_message_secure_writer_history_,
             participant_volatile_message_secure_pool_);
 
@@ -3051,7 +3048,6 @@ bool SecurityManager::discovered_reader(
 
                                 CacheChange_t* change = create_change_for_message(
                                     message,
-                                    participant_volatile_message_secure_writer_,
                                     participant_volatile_message_secure_writer_history_,
                                     participant_volatile_message_secure_pool_);
 
@@ -3412,7 +3408,6 @@ bool SecurityManager::discovered_writer(
 
                                 CacheChange_t* change = create_change_for_message(
                                     message,
-                                    participant_volatile_message_secure_writer_,
                                     participant_volatile_message_secure_writer_history_,
                                     participant_volatile_message_secure_pool_);
 

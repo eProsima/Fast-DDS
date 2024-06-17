@@ -851,7 +851,7 @@ void PDPServer::announceParticipantState(
                 getMutex()->unlock();
 
                 uint32_t cdr_size = proxy_data_copy.get_serialized_size(true);
-                change = writer.new_change(ALIVE, proxy_data_copy.m_key);
+                change = history.create_change(ALIVE, proxy_data_copy.m_key);
                 if (nullptr != change)
                 {
                     if (!pool->get_payload(cdr_size, change->serializedPayload))
@@ -967,7 +967,7 @@ void PDPServer::announceParticipantState(
             // Unlock PDP mutex since it's no longer needed.
             getMutex()->unlock();
 
-            change = writer.new_change(NOT_ALIVE_DISPOSED_UNREGISTERED, key);
+            change = history.create_change(NOT_ALIVE_DISPOSED_UNREGISTERED, key);
             if (nullptr != change)
             {
                 if (!pool->get_payload(cdr_size, change->serializedPayload))

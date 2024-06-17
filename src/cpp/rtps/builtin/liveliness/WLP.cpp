@@ -903,7 +903,7 @@ bool WLP::send_liveliness_message(
 
     std::lock_guard<RecursiveTimedMutex> wguard(writer->getMutex());
 
-    CacheChange_t* change = writer->new_change(ALIVE, instance);
+    CacheChange_t* change = history->create_change(ALIVE, instance);
     if (nullptr != change)
     {
         if (!pool->get_payload(WLP::builtin_participant_data_max_size, change->serializedPayload))

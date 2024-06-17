@@ -136,7 +136,7 @@ public:
 
         while (it != msgs.end())
         {
-            eprosima::fastdds::rtps::CacheChange_t* ch = writer_->new_change(eprosima::fastrtps::rtps::ALIVE);
+            eprosima::fastdds::rtps::CacheChange_t* ch = history_->create_change(eprosima::fastdds::rtps::ALIVE);
             {
                 size_t current_alignment =  4 + magicword_.size() + 1;
                 eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastdds::rtps::DEFAULT_XCDR_VERSION);

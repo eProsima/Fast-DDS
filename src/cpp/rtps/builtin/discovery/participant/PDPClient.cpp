@@ -740,7 +740,7 @@ void PDPClient::announceParticipantState(
             // In order to avoid that we send the message directly as in the standard stateless PDP
 
             CacheChange_t* change = nullptr;
-            change = writer.new_change(NOT_ALIVE_DISPOSED_UNREGISTERED, getLocalParticipantProxyData()->m_key);
+            change = history.create_change(NOT_ALIVE_DISPOSED_UNREGISTERED, getLocalParticipantProxyData()->m_key);
             if (nullptr != change)
             {
                 if (!pool->get_payload(mp_builtin->m_att.writerPayloadSize, change->serializedPayload))
@@ -797,7 +797,7 @@ void PDPClient::announceParticipantState(
         }
         else
         {
-            PDP::announceParticipantState(writer, history, pool, new_change, dispose, wp);
+            PDP::announceParticipantState(history, pool, new_change, dispose, wp);
 
             if (!new_change)
             {

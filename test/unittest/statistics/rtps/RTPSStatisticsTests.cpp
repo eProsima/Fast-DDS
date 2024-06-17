@@ -409,7 +409,7 @@ public:
 
         ASSERT_NE(nullptr, writer_);
 
-        auto writer_change = writer_->new_change(ALIVE);
+        auto writer_change = writer_history_->create_change(ALIVE);
         ASSERT_NE(nullptr, writer_change);
 
         writer_change->serializedPayload.reserve(length);
@@ -430,7 +430,7 @@ public:
 
         ASSERT_NE(nullptr, writer_);
 
-        auto writer_change = writer_->new_change(ALIVE);
+        auto writer_change = writer_history_->create_change(ALIVE);
         ASSERT_NE(nullptr, writer_change);
 
         writer_change->serializedPayload.reserve(length);

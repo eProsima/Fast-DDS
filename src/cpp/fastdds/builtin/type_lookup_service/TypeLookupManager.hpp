@@ -284,7 +284,6 @@ protected:
     bool send_impl(
             Type& msg,
             PubSubType* pubsubtype,
-            fastdds::rtps::StatefulWriter* writer,
             fastdds::rtps::WriterHistory* writer_history) const;
 
     /**

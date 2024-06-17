@@ -138,7 +138,7 @@ void pool_initialization_test (
             .WillOnce(Return(true));
 
     TestDataType data;
-    CacheChange_t* ch = writer->new_change(ALIVE);
+    CacheChange_t* ch = history->create_change(ALIVE);
     ASSERT_NE(ch, nullptr);
     eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastdds::rtps::DEFAULT_XCDR_VERSION);
     size_t current_alignment{ 0 };

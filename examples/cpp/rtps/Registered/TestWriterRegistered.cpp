@@ -103,12 +103,12 @@ void TestWriterRegistered::run(
 
     for (int i = 0; i < samples; ++i )
     {
-        CacheChange_t* ch = mp_writer->new_change(ALIVE);
+        CacheChange_t* ch = mp_history->create_change(ALIVE);
         if (!ch)     // In the case history is full, remove some old changes
         {
             std::cout << "cleaning history...";
             mp_writer->remove_older_changes(20);
-            ch = mp_writer->new_change(ALIVE);
+            ch = mp_history->create_change(ALIVE);
         }
 
         ch->serializedPayload.reserve(255);

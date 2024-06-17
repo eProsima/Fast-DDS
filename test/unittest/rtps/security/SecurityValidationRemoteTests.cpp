@@ -185,7 +185,7 @@ TEST_F(SecurityTest, discovered_participant_validation_remote_identity_new_chang
             Ref(remote_identity_handle), _, _)).Times(1).
             WillOnce(DoAll(SetArgPointee<0>(&handshake_handle),
             SetArgPointee<1>(&handshake_message), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE)));
-    EXPECT_CALL(*stateless_writer_, new_change(_, _)).Times(1).
+    EXPECT_CALL(*stateless_writer_->history_, create_change(_, _)).Times(1).
             WillOnce(Return(nullptr));
     EXPECT_CALL(*auth_plugin_, return_identity_handle(&local_identity_handle_, _)).Times(1).
             WillRepeatedly(Return(true));
@@ -220,7 +220,7 @@ TEST_F(SecurityTest, discovered_participant_validation_remote_identity_add_chang
             Ref(remote_identity_handle), _, _)).Times(1).
             WillOnce(DoAll(SetArgPointee<0>(&handshake_handle),
             SetArgPointee<1>(&handshake_message), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE)));
-    EXPECT_CALL(*stateless_writer_, new_change(_, _)).Times(1).
+    EXPECT_CALL(*stateless_writer_->history_, create_change(_, _)).Times(1).
             WillOnce(Return(change));
     EXPECT_CALL(*stateless_writer_->history_, add_change_mock(change)).Times(1).
             WillOnce(Return(false));
@@ -299,7 +299,7 @@ TEST_F(SecurityTest, discovered_participant_validation_remote_identity_pending_h
             Ref(remote_identity_handle), _, _)).Times(1).
             WillOnce(DoAll(SetArgPointee<0>(&handshake_handle),
             SetArgPointee<1>(&handshake_message), Return(ValidationResult_t::VALIDATION_OK_WITH_FINAL_MESSAGE)));
-    EXPECT_CALL(*stateless_writer_, new_change(_, _)).Times(1).
+    EXPECT_CALL(*stateless_writer_->history_, create_change(_, _)).Times(1).
             WillOnce(Return(change));
     EXPECT_CALL(*stateless_writer_->history_, add_change_mock(change)).Times(1).
             WillOnce(Return(true));
@@ -361,7 +361,7 @@ TEST_F(SecurityTest, discovered_participant_ok)
             Ref(remote_identity_handle), _, _)).Times(1).
             WillOnce(DoAll(SetArgPointee<0>(&handshake_handle),
             SetArgPointee<1>(&handshake_message), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE)));
-    EXPECT_CALL(*stateless_writer_, new_change(_, _)).Times(1).
+    EXPECT_CALL(*stateless_writer_->history_, create_change(_, _)).Times(1).
             WillOnce(Return(change));
     EXPECT_CALL(*stateless_writer_->history_, add_change_mock(change)).Times(1).
             WillOnce(Return(true));
@@ -412,7 +412,7 @@ TEST_F(SecurityTest, discovered_participant_validate_remote_fail_and_then_ok)
             Ref(remote_identity_handle), _, _)).Times(1).
             WillOnce(DoAll(SetArgPointee<0>(&handshake_handle),
             SetArgPointee<1>(&handshake_message), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE)));
-    EXPECT_CALL(*stateless_writer_, new_change(_, _)).Times(1).
+    EXPECT_CALL(*stateless_writer_->history_, create_change(_, _)).Times(1).
             WillOnce(Return(change));
     EXPECT_CALL(*stateless_writer_->history_, add_change_mock(change)).Times(1).
             WillOnce(Return(true));

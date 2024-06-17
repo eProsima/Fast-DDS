@@ -375,7 +375,7 @@ bool MonitorService::add_change(
     InstanceHandle_t handle;
     type_.getKey(&status_data, &handle, false);
 
-    CacheChange_t* change = status_writer_->new_change(
+    CacheChange_t* change = status_writer_history_->create_change(
         (disposed ? fastdds::rtps::NOT_ALIVE_DISPOSED_UNREGISTERED : fastdds::rtps::ALIVE),
         handle);
     if (nullptr != change)

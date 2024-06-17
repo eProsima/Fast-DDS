@@ -586,14 +586,12 @@ protected:
 
     /**
      * Force the sending of our local DPD to all remote RTPSParticipants and multicast Locators.
-     * @param writer RTPSWriter to use for sending the announcement
      * @param history history where the change should be added
      * @param new_change If true a new change (with new seqNum) is created and sent;If false the last change is re-sent
      * @param dispose sets change kind to NOT_ALIVE_DISPOSED_UNREGISTERED
      * @param wparams allows to identify the change
      */
     void announceParticipantState(
-            RTPSWriter& writer,
             WriterHistory& history,
             const std::shared_ptr<IPayloadPool>& payload_pool,
             bool new_change,

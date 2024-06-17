@@ -997,7 +997,7 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
         }
     }
 
-    CacheChange_t* ch = writer_->new_change(change_kind, handle);
+    CacheChange_t* ch = history_.create_change(change_kind, handle);
     if (ch != nullptr)
     {
         ch->serializedPayload = std::move(payload);

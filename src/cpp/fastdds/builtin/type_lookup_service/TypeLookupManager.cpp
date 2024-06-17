@@ -680,7 +680,7 @@ TypeLookup_Request* TypeLookupManager::create_request(
 bool TypeLookupManager::send(
         TypeLookup_Request& request) const
 {
-    if (!send_impl(request, &request_type_, builtin_request_writer_, builtin_request_writer_history_))
+    if (!send_impl(request, &request_type_, builtin_request_writer_history_))
     {
         EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE, "Error sending request.");
         return false;
@@ -691,7 +691,7 @@ bool TypeLookupManager::send(
 bool TypeLookupManager::send(
         TypeLookup_Reply& reply) const
 {
-    if (!send_impl(reply, &reply_type_, builtin_reply_writer_, builtin_reply_writer_history_))
+    if (!send_impl(reply, &reply_type_, builtin_reply_writer_history_))
     {
         EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE, "Error sending reply.");
         return false;
@@ -703,11 +703,10 @@ template <typename Type, typename PubSubType>
 bool TypeLookupManager::send_impl(
         Type& msg,
         PubSubType* pubsubtype,
-        fastdds::rtps::StatefulWriter* writer,
         fastdds::rtps::WriterHistory* writer_history) const
 {
     // Create a new CacheChange_t using the provided StatefulWriter
-    CacheChange_t* change = writer->new_change(ALIVE);
+    CacheChange_t* change = writer_history->create_change(ALIVE);
 
     // Check if the creation of CacheChange_t was successful
     if (!change)

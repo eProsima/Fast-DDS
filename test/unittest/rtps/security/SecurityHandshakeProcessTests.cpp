@@ -46,7 +46,7 @@ TEST_F(SecurityTest, discovered_participant_begin_handshake_request_fail_and_the
             Ref(remote_identity_handle), _, _)).Times(1).
             WillOnce(DoAll(SetArgPointee<0>(&handshake_handle),
             SetArgPointee<1>(&handshake_message), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE)));
-    EXPECT_CALL(*stateless_writer_, new_change(_, _)).Times(1).
+    EXPECT_CALL(*stateless_writer_->history_, create_change(_, _)).Times(1).
             WillOnce(Return(change));
     EXPECT_CALL(*stateless_writer_->history_, add_change_mock(change)).Times(1).
             WillOnce(Return(true));
@@ -398,7 +398,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_new_change_fail)
             WillRepeatedly(Return(true));
     EXPECT_CALL(*auth_plugin_, return_identity_handle(&remote_identity_handle, _)).Times(1).
             WillRepeatedly(Return(true));
-    EXPECT_CALL(*stateless_writer_, new_change(_, _)).Times(1).
+    EXPECT_CALL(*stateless_writer_->history_, create_change(_, _)).Times(1).
             WillOnce(Return(nullptr));
     EXPECT_CALL(*auth_plugin_, return_handshake_handle(&handshake_handle, _)).Times(1).
             WillOnce(Return(true));
@@ -463,7 +463,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_add_change_fail)
             WillRepeatedly(Return(true));
     EXPECT_CALL(*auth_plugin_, return_identity_handle(&remote_identity_handle, _)).Times(1).
             WillRepeatedly(Return(true));
-    EXPECT_CALL(*stateless_writer_, new_change(_, _)).Times(1).
+    EXPECT_CALL(*stateless_writer_->history_, create_change(_, _)).Times(1).
             WillOnce(Return(change2));
     EXPECT_CALL(*stateless_writer_->history_, add_change_mock(change2)).Times(1).
             WillOnce(Return(false));
@@ -576,7 +576,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_pending_handshake_re
             WillRepeatedly(Return(true));
     EXPECT_CALL(*auth_plugin_, return_identity_handle(&remote_identity_handle, _)).Times(1).
             WillRepeatedly(Return(true));
-    EXPECT_CALL(*stateless_writer_, new_change(_, _)).Times(1).
+    EXPECT_CALL(*stateless_writer_->history_, create_change(_, _)).Times(1).
             WillOnce(Return(change2));
     EXPECT_CALL(*stateless_writer_->history_, add_change_mock(change2)).Times(1).
             WillOnce(Return(true));
@@ -787,7 +787,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_process_handshake_re
             WillRepeatedly(Return(true));
     EXPECT_CALL(*auth_plugin_, return_identity_handle(&remote_identity_handle_, _)).Times(1).
             WillRepeatedly(Return(true));
-    EXPECT_CALL(*stateless_writer_, new_change(_, _)).Times(1).
+    EXPECT_CALL(*stateless_writer_->history_, create_change(_, _)).Times(1).
             WillOnce(Return(nullptr));
     EXPECT_CALL(*auth_plugin_, return_handshake_handle(&handshake_handle_, _)).Times(1).
             WillOnce(Return(true));
@@ -842,7 +842,7 @@ TEST_F(SecurityTest, discovered_participant_process_message_process_handshake_re
             WillRepeatedly(Return(true));
     EXPECT_CALL(*auth_plugin_, return_identity_handle(&remote_identity_handle_, _)).Times(1).
             WillRepeatedly(Return(true));
-    EXPECT_CALL(*stateless_writer_, new_change(_, _)).Times(1).
+    EXPECT_CALL(*stateless_writer_->history_, create_change(_, _)).Times(1).
             WillOnce(Return(change2));
     EXPECT_CALL(*stateless_writer_->history_, add_change_mock(change2)).Times(1).
             WillOnce(Return(false));
