@@ -38,7 +38,7 @@
 #include <fastdds/rtps/attributes/TopicAttributes.hpp>
 #include <fastdds/rtps/participant/RTPSParticipant.hpp>
 #include <fastdds/rtps/RTPSDomain.h>
-#include <fastdds/rtps/writer/RTPSWriter.h>
+#include <fastdds/rtps/writer/RTPSWriter.hpp>
 
 #include <rtps/builtin/liveliness/WLP.hpp>
 #include <rtps/DataSharing/DataSharingPayloadPool.hpp>

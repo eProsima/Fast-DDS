@@ -19,7 +19,7 @@
 #ifndef RTPS_WRITER__STATELESSWRITER_HPP
 #define RTPS_WRITER__STATELESSWRITER_HPP
 
-#include <fastdds/rtps/writer/RTPSWriter.h>
+#include <fastdds/rtps/writer/RTPSWriter.hpp>
 
 namespace eprosima {
 namespace fastdds {

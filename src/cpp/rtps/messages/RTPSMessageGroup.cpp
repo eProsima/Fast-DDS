@@ -24,7 +24,7 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <rtps/messages/RTPSMessageCreator.hpp>
 #include <fastdds/rtps/reader/RTPSReader.hpp>
-#include <fastdds/rtps/writer/RTPSWriter.h>
+#include <fastdds/rtps/writer/RTPSWriter.hpp>
 
 #include <rtps/messages/RTPSGapBuilder.hpp>
 #include <rtps/messages/RTPSMessageGroup_t.hpp>

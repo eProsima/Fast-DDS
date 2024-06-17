@@ -31,7 +31,7 @@
 #include <fastdds/rtps/history/IChangePool.hpp>
 #include <fastdds/rtps/participant/RTPSParticipantListener.hpp>
 #include <fastdds/rtps/reader/RTPSReader.hpp>
-#include <fastdds/rtps/writer/RTPSWriter.h>
+#include <fastdds/rtps/writer/RTPSWriter.hpp>
 
 #include <rtps/network/NetworkFactory.h>
 #include <rtps/reader/BaseReader.hpp>

@@ -21,7 +21,7 @@
 
 #include <fastdds/rtps/participant/RTPSParticipant.hpp>
 #include <fastdds/rtps/reader/RTPSReader.hpp>
-#include <fastdds/rtps/writer/RTPSWriter.h>
+#include <fastdds/rtps/writer/RTPSWriter.hpp>
 
 #include <gmock/gmock.h>
 

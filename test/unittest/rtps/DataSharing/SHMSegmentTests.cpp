@@ -20,7 +20,7 @@
 #include <fastdds/rtps/history/WriterHistory.hpp>
 #include <fastdds/rtps/participant/RTPSParticipant.hpp>
 #include <fastdds/rtps/RTPSDomain.h>
-#include <fastdds/rtps/writer/RTPSWriter.h>
+#include <fastdds/rtps/writer/RTPSWriter.hpp>
 
 #include <rtps/DataSharing/WriterPool.hpp>
 #include <rtps/history/BasicPayloadPool.hpp>

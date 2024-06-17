@@ -40,7 +40,7 @@
 #include <fastdds/rtps/reader/RTPSReader.hpp>
 #include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.hpp>
-#include <fastdds/rtps/writer/RTPSWriter.h>
+#include <fastdds/rtps/writer/RTPSWriter.hpp>
 #include <fastdds/statistics/IListeners.hpp>
 
 #include <rtps/participant/RTPSParticipantImpl.h>

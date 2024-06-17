@@ -27,7 +27,7 @@
 #include <fastdds/core/policy/ParameterList.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/reader/RTPSReader.hpp>
-#include <fastdds/rtps/writer/RTPSWriter.h>
+#include <fastdds/rtps/writer/RTPSWriter.hpp>
 
 #include <rtps/messages/MessageReceiver.h>
 #include <rtps/participant/RTPSParticipantImpl.h>

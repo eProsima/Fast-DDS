@@ -21,7 +21,7 @@
 
 #include <fastdds/rtps/history/WriterHistory.hpp>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
-#include <fastdds/rtps/writer/RTPSWriter.h>
+#include <fastdds/rtps/writer/RTPSWriter.hpp>
 
 namespace eprosima {
 namespace fastdds {

@@ -39,7 +39,7 @@
 #include <fastdds/rtps/participant/RTPSParticipant.hpp>
 #include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/rtps/transport/TransportDescriptorInterface.hpp>
-#include <fastdds/rtps/writer/RTPSWriter.h>
+#include <fastdds/rtps/writer/RTPSWriter.hpp>
 #include <fastdds/rtps/writer/WriterListener.h>
 
 template<class TypeSupport>

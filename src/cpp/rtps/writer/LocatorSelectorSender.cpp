@@ -1,5 +1,5 @@
 #include <fastdds/rtps/writer/LocatorSelectorSender.hpp>
-#include <fastdds/rtps/writer/RTPSWriter.h>
+#include <fastdds/rtps/writer/RTPSWriter.hpp>
 
 namespace eprosima {
 namespace fastdds {

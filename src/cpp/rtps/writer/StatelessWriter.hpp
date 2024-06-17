@@ -29,7 +29,7 @@
 #include <fastdds/rtps/history/IChangePool.hpp>
 #include <fastdds/rtps/history/IPayloadPool.hpp>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
-#include <fastdds/rtps/writer/RTPSWriter.h>
+#include <fastdds/rtps/writer/RTPSWriter.hpp>
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>
 
 #include <rtps/writer/ChangeForReader.hpp>

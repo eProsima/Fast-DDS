@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * @file RTPSWriter.h
+ * @file RTPSWriter.hpp
  */
 
-#ifndef _FASTDDS_RTPS_RTPSWRITER_H_
-#define _FASTDDS_RTPS_RTPSWRITER_H_
+#ifndef FASTDDS_RTPS_WRITER__RTPSWRITER_HPP
+#define FASTDDS_RTPS_WRITER__RTPSWRITER_HPP
 
 #include <chrono>
 #include <functional>
@@ -615,8 +615,8 @@ private:
     RTPSWriter* next_[2] = { nullptr, nullptr };
 };
 
-} /* namespace rtps */
-} /* namespace fastdds */
-} /* namespace eprosima */
+} // namespace rtps
+} // namespace fastdds
+} // namespace eprosima
 
-#endif /* _FASTDDS_RTPS_RTPSWRITER_H_ */
+#endif // FASTDDS_RTPS_WRITER__RTPSWRITER_HPP

@@ -32,7 +32,7 @@
 #include <fastdds/rtps/builtin/data/WriterProxyData.hpp>
 #include <fastdds/rtps/reader/ReaderListener.hpp>
 #include <fastdds/rtps/reader/RTPSReader.hpp>
-#include <fastdds/rtps/writer/RTPSWriter.h>
+#include <fastdds/rtps/writer/RTPSWriter.hpp>
 #include <fastdds/rtps/writer/WriterListener.h>
 
 #include <rtps/builtin/data/ProxyHashTables.hpp>

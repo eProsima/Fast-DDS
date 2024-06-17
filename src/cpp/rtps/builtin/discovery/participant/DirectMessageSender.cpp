@@ -20,7 +20,7 @@
 #include <rtps/builtin/discovery/participant/DirectMessageSender.hpp>
 
 
-#include <fastdds/rtps/writer/RTPSWriter.h>
+#include <fastdds/rtps/writer/RTPSWriter.hpp>
 #include <fastdds/utils/IPLocator.h>
 
 #include <rtps/participant/RTPSParticipantImpl.h>

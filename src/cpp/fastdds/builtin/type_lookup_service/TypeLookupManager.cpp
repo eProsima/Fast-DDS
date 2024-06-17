@@ -34,7 +34,7 @@
 #include <fastdds/rtps/history/ReaderHistory.hpp>
 #include <fastdds/rtps/history/WriterHistory.hpp>
 #include <fastdds/rtps/reader/RTPSReader.hpp>
-#include <fastdds/rtps/writer/RTPSWriter.h>
+#include <fastdds/rtps/writer/RTPSWriter.hpp>
 
 #include <rtps/builtin/BuiltinProtocols.h>
 #include <rtps/participant/RTPSParticipantImpl.h>

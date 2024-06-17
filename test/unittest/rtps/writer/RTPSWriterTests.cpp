@@ -17,7 +17,7 @@
 
 #include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/rtps/participant/RTPSParticipant.hpp>
-#include <fastdds/rtps/writer/RTPSWriter.h>
+#include <fastdds/rtps/writer/RTPSWriter.hpp>
 #include <fastdds/rtps/history/IPayloadPool.hpp>
 #include <fastdds/rtps/history/WriterHistory.hpp>
 

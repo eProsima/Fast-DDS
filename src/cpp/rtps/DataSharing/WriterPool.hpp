@@ -21,7 +21,7 @@
 
 #include <fastdds/rtps/attributes/ResourceManagement.hpp>
 #include <fastdds/rtps/common/CacheChange.hpp>
-#include <fastdds/rtps/writer/RTPSWriter.h>
+#include <fastdds/rtps/writer/RTPSWriter.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <rtps/DataSharing/DataSharingPayloadPool.hpp>
 #include <utils/collections/FixedSizeQueue.hpp>

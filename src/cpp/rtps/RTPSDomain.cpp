@@ -31,7 +31,7 @@
 #include <fastdds/rtps/history/WriterHistory.hpp>
 #include <fastdds/rtps/participant/RTPSParticipant.hpp>
 #include <fastdds/rtps/reader/RTPSReader.hpp>
-#include <fastdds/rtps/writer/RTPSWriter.h>
+#include <fastdds/rtps/writer/RTPSWriter.hpp>
 #include <fastdds/utils/IPFinder.h>
 #include <fastdds/utils/IPLocator.h>
 #include <fastdds/utils/md5.h>
