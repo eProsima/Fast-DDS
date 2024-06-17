@@ -27,7 +27,7 @@
 
 #include <fastdds/rtps/common/CacheChange.hpp>
 #include <fastdds/rtps/common/SerializedPayload.hpp>
-#include <fastdds/rtps/history/IPayloadPool.h>
+#include <fastdds/rtps/history/IPayloadPool.hpp>
 
 #include <fastdds/utils/collections/ResourceLimitedContainerConfig.hpp>
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>

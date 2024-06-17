@@ -23,7 +23,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <fastdds/rtps/history/IPayloadPool.h>
+#include <fastdds/rtps/history/IPayloadPool.hpp>
 #include <fastdds/rtps/common/SerializedPayload.hpp>
 
 class CustomPayloadPool : public eprosima::fastdds::rtps::IPayloadPool

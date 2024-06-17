@@ -22,7 +22,7 @@
 
 #include <fastdds/fastdds_dll.hpp>
 #include <fastdds/rtps/history/IChangePool.hpp>
-#include <fastdds/rtps/history/IPayloadPool.h>
+#include <fastdds/rtps/history/IPayloadPool.hpp>
 #include <fastdds/rtps/common/SequenceNumber.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/attributes/HistoryAttributes.hpp>

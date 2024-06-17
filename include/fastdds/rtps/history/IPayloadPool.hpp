@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * @file IPayloadPool.h
+ * @file IPayloadPool.hpp
  */
 
-#ifndef _FASTDDS_RTPS_HISTORY_IPAYLOADPOOL_H_
-#define _FASTDDS_RTPS_HISTORY_IPAYLOADPOOL_H_
+#ifndef FASTDDS_RTPS_HISTORY__IPAYLOADPOOL_HPP
+#define FASTDDS_RTPS_HISTORY__IPAYLOADPOOL_HPP
 
 #include <cstdint>
 #include <memory>
@@ -103,9 +103,9 @@ public:
             SerializedPayload_t& payload) = 0;
 };
 
-} /* namespace rtps */
-} /* namespace fastdds */
-} /* namespace eprosima */
+} // namespace rtps
+} // namespace fastdds
+} // namespace eprosima
 
 
-#endif /* _FASTDDS_RTPS_HISTORY_IPAYLOADPOOL_H_ */
+#endif // FASTDDS_RTPS_HISTORY__IPAYLOADPOOL_HPP

@@ -28,7 +28,7 @@
 
 #include <fastdds/fastdds_dll.hpp>
 #include <fastdds/rtps/common/Types.hpp>
-#include <fastdds/rtps/history/IPayloadPool.h>
+#include <fastdds/rtps/history/IPayloadPool.hpp>
 
 /*!
  * @brief Maximum payload is maximum of UDP packet size minus 536bytes (RTPSMESSAGE_COMMON_RTPS_PAYLOAD_SIZE)

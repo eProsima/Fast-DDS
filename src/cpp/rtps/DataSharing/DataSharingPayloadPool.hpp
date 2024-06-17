@@ -20,7 +20,7 @@
 #define RTPS_DATASHARING_DATASHARINGPAYLOADPOOL_HPP
 
 #include <fastdds/rtps/common/CacheChange.hpp>
-#include <fastdds/rtps/history/IPayloadPool.h>
+#include <fastdds/rtps/history/IPayloadPool.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <rtps/history/PoolConfig.h>
 #include <utils/shared_memory/SharedDir.hpp>
