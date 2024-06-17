@@ -32,7 +32,7 @@
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/publisher/DataWriterHistory.hpp>
 #include <fastdds/publisher/filtering/ReaderFilterCollection.hpp>
-#include <fastdds/rtps/attributes/WriterAttributes.h>
+#include <fastdds/rtps/attributes/WriterAttributes.hpp>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/common/WriteParams.h>

@@ -22,7 +22,7 @@
 #include <gmock/gmock.h>
 
 #include <fastdds/rtps/attributes/ReaderAttributes.hpp>
-#include <fastdds/rtps/attributes/WriterAttributes.h>
+#include <fastdds/rtps/attributes/WriterAttributes.hpp>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/Endpoint.h>
 #include <fastdds/rtps/history/ReaderHistory.h>

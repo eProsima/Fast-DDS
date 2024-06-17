@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * @file WriterAttributes.h
+ * @file WriterAttributes.hpp
  *
  */
-#ifndef _FASTDDS_WRITERATTRIBUTES_H_
-#define _FASTDDS_WRITERATTRIBUTES_H_
+#ifndef FASTDDS_RTPS_ATTRIBUTES__WRITERATTRIBUTES_HPP
+#define FASTDDS_RTPS_ATTRIBUTES__WRITERATTRIBUTES_HPP
 
 #include <functional>
 
@@ -138,8 +138,8 @@ public:
     std::string flow_controller_name = fastdds::rtps::FASTDDS_FLOW_CONTROLLER_DEFAULT;
 };
 
-} /* namespace rtps */
-} /* namespace fastdds */
-} /* namespace eprosima */
+} // namespace rtps
+} // namespace fastdds
+} // namespace eprosima
 
-#endif /* _FASTDDS_WRITERATTRIBUTES_H_ */
+#endif // FASTDDS_RTPS_ATTRIBUTES__WRITERATTRIBUTES_HPP

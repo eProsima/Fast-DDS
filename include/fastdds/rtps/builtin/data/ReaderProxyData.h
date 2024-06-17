@@ -26,7 +26,7 @@
 #include <fastdds/rtps/attributes/EndpointSecurityAttributes.hpp>
 #endif // if HAVE_SECURITY
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
-#include <fastdds/rtps/attributes/WriterAttributes.h>
+#include <fastdds/rtps/attributes/WriterAttributes.hpp>
 #include <fastdds/rtps/builtin/data/ContentFilterProperty.hpp>
 #include <fastdds/rtps/common/RemoteLocators.hpp>
 #include <fastdds/rtps/common/VendorId_t.hpp>

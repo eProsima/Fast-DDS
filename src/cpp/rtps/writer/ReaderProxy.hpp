@@ -24,7 +24,7 @@
 #include <set>
 
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
-#include <fastdds/rtps/attributes/WriterAttributes.h>
+#include <fastdds/rtps/attributes/WriterAttributes.hpp>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/common/CacheChange.h>
 #include <fastdds/rtps/common/FragmentNumber.h>
