@@ -16,7 +16,7 @@
 #define _FASTDDS_SHAREDMEM_TRANSPORT_H_
 
 #include <fastdds/rtps/transport/TransportInterface.h>
-#include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
+#include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.hpp>
 
 #include <rtps/transport/shared_mem/SharedMemManager.hpp>
 #include <rtps/transport/shared_mem/SharedMemLog.hpp>
