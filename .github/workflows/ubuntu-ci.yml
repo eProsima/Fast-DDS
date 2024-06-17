@@ -33,6 +33,11 @@ on:
         required: false
         type: boolean
         default: true
+      use-ccache:
+        description: 'Use CCache to speed up the build'
+        required: false
+        type: boolean
+        default: false
 
   pull_request:
     types:
@@ -65,3 +70,4 @@ jobs:
       fastdds-branch: ${{ inputs.fastdds_branch || github.ref || 'master' }}
       security: ${{ ((inputs.security == true) && true) || github.event_name == 'pull_request' }}
       run-tests: ${{ ((inputs.run-tests == true) && true) || (github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'no-test')) }}
+      use-ccache: ${{ ((inputs.use-ccache == true) && true) || false }}
