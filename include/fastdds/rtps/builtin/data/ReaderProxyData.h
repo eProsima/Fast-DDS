@@ -23,7 +23,7 @@
 
 #include <fastdds/dds/subscriber/qos/ReaderQos.hpp>
 #if HAVE_SECURITY
-#include <fastdds/rtps/attributes/EndpointSecurityAttributes.h>
+#include <fastdds/rtps/attributes/EndpointSecurityAttributes.hpp>
 #endif // if HAVE_SECURITY
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
 #include <fastdds/rtps/attributes/WriterAttributes.h>

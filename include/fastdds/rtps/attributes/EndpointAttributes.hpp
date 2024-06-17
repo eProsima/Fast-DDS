@@ -26,7 +26,7 @@
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/common/Types.h>
 #if HAVE_SECURITY
-#include <fastdds/rtps/attributes/EndpointSecurityAttributes.h>
+#include <fastdds/rtps/attributes/EndpointSecurityAttributes.hpp>
 #endif // if HAVE_SECURITY
 namespace eprosima {
 namespace fastdds {

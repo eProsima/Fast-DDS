@@ -16,7 +16,7 @@
  * @file EndpointSecurityAttributes.cpp
  */
 
-#include <fastdds/rtps/attributes/EndpointSecurityAttributes.h>
+#include <fastdds/rtps/attributes/EndpointSecurityAttributes.hpp>
 
 #include <rtps/security/accesscontrol/SecurityMaskUtilities.h>
 

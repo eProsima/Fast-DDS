@@ -36,7 +36,7 @@
 #include <fastdds/rtps/common/Token.h>
 
 #if HAVE_SECURITY
-#include <fastdds/rtps/attributes/EndpointSecurityAttributes.h>
+#include <fastdds/rtps/attributes/EndpointSecurityAttributes.hpp>
 #endif // if HAVE_SECURITY
 
 namespace eprosima {

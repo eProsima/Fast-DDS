@@ -20,7 +20,7 @@
 
 #include <memory>
 
-#include <fastdds/rtps/attributes/EndpointSecurityAttributes.h>
+#include <fastdds/rtps/attributes/EndpointSecurityAttributes.hpp>
 
 #include <rtps/security/cryptography/CryptoTypes.h>
 #include <rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
