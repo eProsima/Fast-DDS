@@ -12,31 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "fuzz_utils.hpp"
+/**
+ * @file fuzz_utils.hpp
+ *
+ */
 
-#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+// Helpers functions for fuzz targets.
+#ifndef FASTDDS_FUZZ__FUZZ_UTILS_HPP
+#define FASTDDS_FUZZ__FUZZ_UTILS_HPP
 
-using namespace eprosima;
-using namespace eprosima::fastdds;
+#include <stddef.h>
+#include <stdint.h>
 
-static bool initialized = false;
+// Redirect stdout to /dev/null. Useful to ignore output from verbose fuzz
+// target functions.
+//
+// Return 0 on success, -1 otherwise.
+extern "C" int ignore_stdout(
+        void);
 
-extern "C" int LLVMFuzzerTestOneInput(
-        const uint8_t* data,
-        size_t size)
-{
-    if (!initialized)
-    {
-        ignore_stdout();
-        initialized = true;
-    }
 
-    if (!size)
-    {
-        return EXIT_FAILURE;
-    }
-
-    fastdds::dds::DomainParticipantFactory::get_instance()->load_XML_profiles_string(reinterpret_cast<const char*>(data), size);
-
-    return 0;
-}
+#endif  // FASTDDS_FUZZ__FUZZ_UTILS_HPP
