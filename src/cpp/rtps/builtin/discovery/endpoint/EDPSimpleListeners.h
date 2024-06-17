@@ -24,7 +24,7 @@
 #include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
 #include <fastdds/rtps/builtin/data/WriterProxyData.hpp>
 #include <fastdds/rtps/reader/ReaderListener.hpp>
-#include <fastdds/rtps/writer/WriterListener.h>
+#include <fastdds/rtps/writer/WriterListener.hpp>
 
 #include <rtps/builtin/discovery/endpoint/EDPSimple.h>
 #include <rtps/participant/RTPSParticipantImpl.h>

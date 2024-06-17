@@ -38,7 +38,7 @@
 #include <fastdds/rtps/participant/RTPSParticipant.hpp>
 #include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
-#include <fastdds/rtps/writer/WriterListener.h>
+#include <fastdds/rtps/writer/WriterListener.hpp>
 
 #include <fastdds/utils/IPLocator.h>
 

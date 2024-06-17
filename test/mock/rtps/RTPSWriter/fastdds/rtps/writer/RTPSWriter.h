@@ -32,7 +32,7 @@
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
 #include <fastdds/rtps/writer/DeliveryRetCode.hpp>
 #include <fastdds/rtps/writer/LocatorSelectorSender.hpp>
-#include <fastdds/rtps/writer/WriterListener.h>
+#include <fastdds/rtps/writer/WriterListener.hpp>
 #include <rtps/messages/RTPSMessageGroup.hpp>
 
 namespace eprosima {

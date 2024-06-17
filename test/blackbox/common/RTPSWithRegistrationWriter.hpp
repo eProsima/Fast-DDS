@@ -40,7 +40,7 @@
 #include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/rtps/transport/TransportDescriptorInterface.hpp>
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
-#include <fastdds/rtps/writer/WriterListener.h>
+#include <fastdds/rtps/writer/WriterListener.hpp>
 
 template<class TypeSupport>
 class RTPSWithRegistrationWriter

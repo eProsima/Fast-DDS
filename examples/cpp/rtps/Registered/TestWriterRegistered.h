@@ -20,7 +20,7 @@
 #ifndef TESTWRITERREGISTERED_H_
 #define TESTWRITERREGISTERED_H_
 
-#include <fastdds/rtps/writer/WriterListener.h>
+#include <fastdds/rtps/writer/WriterListener.hpp>
 
 namespace eprosima {
 namespace fastdds {

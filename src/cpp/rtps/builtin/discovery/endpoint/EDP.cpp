@@ -33,7 +33,7 @@
 #include <fastdds/rtps/reader/ReaderListener.hpp>
 #include <fastdds/rtps/reader/RTPSReader.hpp>
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
-#include <fastdds/rtps/writer/WriterListener.h>
+#include <fastdds/rtps/writer/WriterListener.hpp>
 
 #include <rtps/builtin/data/ProxyHashTables.hpp>
 #include <rtps/builtin/discovery/participant/PDP.h>

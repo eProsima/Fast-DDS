@@ -32,7 +32,7 @@
 #include <fastdds/rtps/common/SequenceNumber.hpp>
 #include <fastdds/rtps/common/SerializedPayload.hpp>
 #include <fastdds/rtps/reader/ReaderListener.hpp>
-#include <fastdds/rtps/writer/WriterListener.h>
+#include <fastdds/rtps/writer/WriterListener.hpp>
 
 #include <rtps/resources/TimedEvent.h>
 #include <rtps/security/authentication/Handshake.h>

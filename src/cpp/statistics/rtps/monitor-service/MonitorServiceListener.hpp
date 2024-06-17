@@ -20,7 +20,7 @@
 #define _STATISTICS_RTPS_MONITOR_SERVICE_MONITORSERVICELISTENER_HPP_
 
 
-#include <fastdds/rtps/writer/WriterListener.h>
+#include <fastdds/rtps/writer/WriterListener.hpp>
 
 #include "Interfaces.hpp"
 

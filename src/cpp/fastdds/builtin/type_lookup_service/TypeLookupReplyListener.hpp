@@ -29,7 +29,7 @@
 #include <fastdds/builtin/type_lookup_service/detail/TypeLookupTypes.hpp>
 #include <fastdds/dds/xtypes/type_representation/TypeObjectUtils.hpp>
 #include <fastdds/rtps/reader/ReaderListener.hpp>
-#include <fastdds/rtps/writer/WriterListener.h>
+#include <fastdds/rtps/writer/WriterListener.hpp>
 
 #include <utils/thread.hpp>
 #include <utils/threading.hpp>

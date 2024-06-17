@@ -13,10 +13,10 @@
 // limitations under the License.
 
 /**
- * @file WriterListener.h
+ * @file WriterListener.hpp
  */
-#ifndef _FASTDDS_RTPS_WRITERLISTENER_H_
-#define _FASTDDS_RTPS_WRITERLISTENER_H_
+#ifndef FASTDDS_RTPS_WRITER__WRITERLISTENER_HPP
+#define FASTDDS_RTPS_WRITER__WRITERLISTENER_HPP
 
 #include <fastdds/dds/core/status/BaseStatus.hpp>
 #include <fastdds/dds/core/status/PublicationMatchedStatus.hpp>
@@ -148,10 +148,10 @@ public:
 
 };
 
-}  /* namespace rtps */
-}  /* namespace fastdds */
-}  /* namespace eprosima */
+}  // namespace rtps
+}  // namespace fastdds
+}  // namespace eprosima
 
 
 
-#endif /* _FASTDDS_RTPS_WRITERLISTENER_H_ */
+#endif // FASTDDS_RTPS_WRITER__WRITERLISTENER_HPP
