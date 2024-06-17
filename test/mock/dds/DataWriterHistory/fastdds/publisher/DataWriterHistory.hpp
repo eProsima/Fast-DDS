@@ -20,7 +20,7 @@
 
 #include <gmock/gmock.h>
 
-#include <fastdds/rtps/attributes/HistoryAttributes.h>
+#include <fastdds/rtps/attributes/HistoryAttributes.hpp>
 #include <fastdds/rtps/attributes/TopicAttributes.h>
 #include <fastdds/rtps/common/CacheChange.h>
 #include <fastdds/rtps/common/ChangeKind_t.hpp>

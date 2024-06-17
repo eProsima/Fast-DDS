@@ -27,7 +27,7 @@
 #include <vector>
 
 #include <fastdds/dds/core/status/BaseStatus.hpp>
-#include <fastdds/rtps/attributes/HistoryAttributes.h>
+#include <fastdds/rtps/attributes/HistoryAttributes.hpp>
 #include <fastdds/rtps/attributes/WriterAttributes.h>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/common/CdrSerialization.hpp>

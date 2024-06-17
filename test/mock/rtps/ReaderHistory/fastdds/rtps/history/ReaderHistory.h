@@ -24,7 +24,7 @@
 #include <gmock/gmock.h>
 
 #include <fastdds/dds/core/status/SampleRejectedStatus.hpp>
-#include <fastdds/rtps/attributes/HistoryAttributes.h>
+#include <fastdds/rtps/attributes/HistoryAttributes.hpp>
 #include <fastdds/rtps/common/CacheChange.h>
 #include <fastdds/utils/TimedMutex.hpp>
 

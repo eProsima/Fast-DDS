@@ -20,7 +20,7 @@
 #include <rtps/builtin/discovery/endpoint/EDPServerListeners.hpp>
 
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/rtps/attributes/HistoryAttributes.h>
+#include <fastdds/rtps/attributes/HistoryAttributes.hpp>
 #include <fastdds/rtps/attributes/ReaderAttributes.h>
 #include <fastdds/rtps/history/WriterHistory.h>
 

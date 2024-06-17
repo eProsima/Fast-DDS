@@ -13,12 +13,12 @@
 // limitations under the License.
 
 /**
- * @file HistoryAttributes.h
+ * @file HistoryAttributes.hpp
  *
  */
 
-#ifndef _FASTDDS_HISTORYATTRIBUTES_H_
-#define _FASTDDS_HISTORYATTRIBUTES_H_
+#ifndef FASTDDS_RTPS_ATTRIBUTES__HISTORYATTRIBUTES_HPP
+#define FASTDDS_RTPS_ATTRIBUTES__HISTORYATTRIBUTES_HPP
 
 #include <fastdds/rtps/attributes/ResourceManagement.hpp>
 #include <fastdds/fastdds_dll.hpp>
@@ -127,4 +127,4 @@ public:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif /* _FASTDDS_HISTORYATTRIBUTES_H_ */
+#endif // FASTDDS_RTPS_ATTRIBUTES__HISTORYATTRIBUTES_HPP

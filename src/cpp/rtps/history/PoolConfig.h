@@ -19,7 +19,7 @@
 #ifndef RTPS_HISTORY_POOLCONFIG_H_
 #define RTPS_HISTORY_POOLCONFIG_H_
 
-#include <fastdds/rtps/attributes/HistoryAttributes.h>
+#include <fastdds/rtps/attributes/HistoryAttributes.hpp>
 #include <fastdds/rtps/attributes/ResourceManagement.hpp>
 
 namespace eprosima {

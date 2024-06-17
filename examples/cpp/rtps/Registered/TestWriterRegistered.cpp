@@ -23,7 +23,7 @@
 #include <thread>
 
 #include <fastdds/dds/publisher/qos/WriterQos.hpp>
-#include <fastdds/rtps/attributes/HistoryAttributes.h>
+#include <fastdds/rtps/attributes/HistoryAttributes.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/attributes/TopicAttributes.h>
 #include <fastdds/rtps/attributes/WriterAttributes.h>
