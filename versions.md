@@ -61,6 +61,7 @@ Forthcoming
 * Migrate fastrtps `ResourceManagement` API from `rtps/resources` to `rtps/attributes`.
 * `const` qualify all data related inputs in DataWriter APIs
 * New `DomainParticipantExtendedQos` that includes both `DomainId` and `DomainParticipantQos` (extends `DomainParticipantFactory` API).
+* Make Blackbox tests not include any private API.
 
 Version 2.14.0
 --------------
