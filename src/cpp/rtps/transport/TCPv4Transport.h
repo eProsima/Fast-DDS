@@ -21,7 +21,7 @@
 
 #include <asio.hpp>
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.hpp>
-#include <fastdds/utils/IPFinder.h>
+#include <fastdds/utils/IPFinder.hpp>
 #include <rtps/transport/TCPTransportInterface.h>
 #include <rtps/transport/tcp/RTCPHeader.h>
 

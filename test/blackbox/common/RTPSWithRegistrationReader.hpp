@@ -41,7 +41,7 @@
 #include <fastdds/rtps/reader/RTPSReader.hpp>
 #include <fastdds/rtps/RTPSDomain.hpp>
 
-#include <fastdds/utils/IPFinder.h>
+#include <fastdds/utils/IPFinder.hpp>
 #include <fastdds/utils/IPLocator.h>
 #include <fastdds/utils/TimedMutex.hpp>
 #include <gtest/gtest.h>

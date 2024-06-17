@@ -42,7 +42,7 @@
 #include <fastdds/rtps/common/Types.hpp>
 #include <fastdds/rtps/common/SerializedPayload.hpp>
 
-#include <fastdds/utils/IPFinder.h>
+#include <fastdds/utils/IPFinder.hpp>
 
 
 

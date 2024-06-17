@@ -21,7 +21,7 @@
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.hpp>
-#include <fastdds/utils/IPFinder.h>
+#include <fastdds/utils/IPFinder.hpp>
 #include <fastdds/utils/IPLocator.h>
 
 #include <utils/Semaphore.hpp>

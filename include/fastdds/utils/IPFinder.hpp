@@ -13,12 +13,12 @@
 // limitations under the License.
 
 /**
- * @file IPFinder.h
+ * @file IPFinder.hpp
  *
  */
 
-#ifndef IPFINDER_H_
-#define IPFINDER_H_
+#ifndef FASTDDS_UTILS__IPFINDER_HPP
+#define FASTDDS_UTILS__IPFINDER_HPP
 
 #include <string>
 #include <vector>
@@ -131,6 +131,6 @@ public:
 
 } // namespace rtps
 } // namespace fastdds
-} /* namespace eprosima */
+} // namespace eprosima
 
-#endif /* IPFINDER_H_ */
+#endif // FASTDDS_UTILS__IPFINDER_HPP
