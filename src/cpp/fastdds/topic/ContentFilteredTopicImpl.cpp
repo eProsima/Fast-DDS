@@ -28,7 +28,7 @@
 #include <fastdds/subscriber/DataReaderImpl.hpp>
 #include <fastdds/topic/ContentFilterUtils.hpp>
 #include <fastdds/topic/TopicProxy.hpp>
-#include <fastdds/utils/md5.h>
+#include <fastdds/utils/md5.hpp>
 #include <rtps/messages/CDRMessage.hpp>
 
 namespace eprosima {

@@ -30,13 +30,22 @@
 
  */
 
-#ifndef BZF_MD5_H
-#define BZF_MD5_H
+/**
+ * @file md5.hpp
+ *
+ */
+
+#ifndef FASTDDS_UTILS__MD5_HPP
+#define FASTDDS_UTILS__MD5_HPP
 
 #include <cstring>
 #include <iostream>
 
 #include <fastdds/fastdds_dll.hpp>
+
+namespace eprosima {
+namespace fastdds {
+
 /**
  * Class MD5, for calculating MD5 hashes of strings or byte arrays
  * it is not meant to be fast or secure
@@ -156,5 +165,8 @@ private:
 std::string md5(
         const std::string str);
 
-#endif // ifndef BZF_MD5_H
+} // namespace fastdds
+} // namespace eprosima
+
+#endif // ifndef FASTDDS_UTILS__MD5_HPP
 
