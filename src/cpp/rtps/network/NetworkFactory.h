@@ -21,7 +21,7 @@
 #include <fastdds/rtps/common/Locator.hpp>
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/common/LocatorSelector.hpp>
-#include <fastdds/rtps/transport/SenderResource.h>
+#include <fastdds/rtps/transport/SenderResource.hpp>
 #include <fastdds/rtps/transport/TransportInterface.h>
 
 #include <rtps/messages/MessageReceiver.h>

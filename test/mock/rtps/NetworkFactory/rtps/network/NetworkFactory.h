@@ -19,7 +19,7 @@
 #include <vector>
 
 #include <fastdds/rtps/common/LocatorSelector.hpp>
-#include <fastdds/rtps/transport/SenderResource.h>
+#include <fastdds/rtps/transport/SenderResource.hpp>
 #include <fastdds/rtps/transport/TransportInterface.h>
 
 #include <rtps/messages/MessageReceiver.h>
