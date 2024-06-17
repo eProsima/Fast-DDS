@@ -27,7 +27,6 @@
 #include <rtps/transport/TCPTransportInterface.h>
 
 using namespace std;
-using namespace eprosima::fastdds::rtps;
 
 namespace eprosima {
 namespace fastdds {

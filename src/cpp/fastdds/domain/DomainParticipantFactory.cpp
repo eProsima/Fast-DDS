@@ -42,8 +42,6 @@
 
 using namespace eprosima::fastdds::xmlparser;
 
-using eprosima::fastdds::dds::Log;
-
 using eprosima::fastdds::rtps::RTPSDomain;
 using eprosima::fastdds::rtps::RTPSParticipant;
 
@@ -55,8 +53,8 @@ DomainParticipantFactory::DomainParticipantFactory()
     : default_xml_profiles_loaded(false)
     , default_domain_id_(0)
     , default_participant_qos_(PARTICIPANT_QOS_DEFAULT)
-    , topic_pool_(fastdds::rtps::TopicPayloadPoolRegistry::instance())
-    , rtps_domain_(fastdds::rtps::RTPSDomainImpl::get_instance())
+    , topic_pool_(rtps::TopicPayloadPoolRegistry::instance())
+    , rtps_domain_(rtps::RTPSDomainImpl::get_instance())
     , log_resources_(detail::get_log_resources())
 {
 }
@@ -77,11 +75,11 @@ DomainParticipantFactory::~DomainParticipantFactory()
     }
 
     // Deletes DynamicTypes and TypeObject factories
-    fastdds::dds::DynamicDataFactory::delete_instance();
-    fastdds::dds::DynamicTypeBuilderFactory::delete_instance();
+    dds::DynamicDataFactory::delete_instance();
+    dds::DynamicTypeBuilderFactory::delete_instance();
 
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    eprosima::fastdds::dds::Log::KillThread();
+    Log::KillThread();
 }
 
 DomainParticipantFactory* DomainParticipantFactory::get_instance()
@@ -112,8 +110,8 @@ ReturnCode_t DomainParticipantFactory::delete_participant(
         std::lock_guard<std::mutex> guard(mtx_participants_);
 #ifdef FASTDDS_STATISTICS
         // Delete builtin statistics entities
-        eprosima::fastdds::statistics::dds::DomainParticipantImpl* stat_part_impl =
-                static_cast<eprosima::fastdds::statistics::dds::DomainParticipantImpl*>(part->impl_);
+        statistics::dds::DomainParticipantImpl* stat_part_impl =
+                static_cast<statistics::dds::DomainParticipantImpl*>(part->impl_);
         stat_part_impl->delete_statistics_builtin_entities();
 #endif // ifdef FASTDDS_STATISTICS
         if (part->has_active_entities())
@@ -165,8 +163,8 @@ DomainParticipant* DomainParticipantFactory::create_participant(
 #ifndef FASTDDS_STATISTICS
     DomainParticipantImpl* dom_part_impl = new DomainParticipantImpl(dom_part, did, pqos, listener);
 #else
-    eprosima::fastdds::statistics::dds::DomainParticipantImpl* dom_part_impl =
-            new eprosima::fastdds::statistics::dds::DomainParticipantImpl(dom_part, did, pqos, listener);
+    statistics::dds::DomainParticipantImpl* dom_part_impl =
+            new statistics::dds::DomainParticipantImpl(dom_part, did, pqos, listener);
 #endif // FASTDDS_STATISTICS
 
     if (fastdds::rtps::GUID_t::unknown() != dom_part_impl->guid())
@@ -362,7 +360,7 @@ ReturnCode_t DomainParticipantFactory::load_profiles()
             reset_default_participant_qos();
         }
         // Take the default domain id from the default participant profile
-        eprosima::fastdds::ParticipantAttributes attr;
+        ParticipantAttributes attr;
         XMLProfileManager::getDefaultParticipantAttributes(attr);
         default_domain_id_ = attr.domainId;
 
@@ -398,7 +396,7 @@ ReturnCode_t DomainParticipantFactory::load_XML_profiles_string(
 ReturnCode_t DomainParticipantFactory::check_xml_static_discovery(
         std::string& xml_file)
 {
-    eprosima::fastdds::xmlparser::XMLEndpointParser parser;
+    xmlparser::XMLEndpointParser parser;
     if (XMLP_ret::XML_OK != parser.loadXMLFile(xml_file))
     {
         EPROSIMA_LOG_ERROR(DOMAIN, "Error parsing xml file");

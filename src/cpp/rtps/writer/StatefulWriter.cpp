@@ -1023,7 +1023,7 @@ void StatefulWriter::select_all_readers_nts(
 bool StatefulWriter::matched_reader_add(
         const ReaderProxyData& rdata)
 {
-    using fastdds::rtps::network::external_locators::filter_remote_locators;
+    using network::external_locators::filter_remote_locators;
 
     if (rdata.guid() == c_Guid_Unknown)
     {

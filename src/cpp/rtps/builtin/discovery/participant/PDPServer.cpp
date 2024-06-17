@@ -54,8 +54,6 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-using namespace eprosima::fastdds::rtps;
-
 PDPServer::PDPServer(
         BuiltinProtocols* builtin,
         const RTPSParticipantAllocationAttributes& allocation,

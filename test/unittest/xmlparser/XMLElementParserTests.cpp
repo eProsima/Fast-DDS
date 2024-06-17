@@ -43,17 +43,17 @@ using namespace eprosima::fastdds::rtps;
 using namespace eprosima::fastdds;
 using namespace eprosima::testing;
 
-using eprosima::fastdds::xmlparser::BaseNode;
-using eprosima::fastdds::xmlparser::DataNode;
-using eprosima::fastdds::xmlparser::NodeType;
-using eprosima::fastdds::xmlparser::XMLP_ret;
-using eprosima::fastdds::xmlparser::XMLParser;
-using eprosima::fastdds::xmlparser::up_participant_t;
-using eprosima::fastdds::xmlparser::up_node_participant_t;
-using eprosima::fastdds::xmlparser::node_participant_t;
-using eprosima::fastdds::xmlparser::sp_transport_t;
+using xmlparser::BaseNode;
+using xmlparser::DataNode;
+using xmlparser::NodeType;
+using xmlparser::XMLP_ret;
+using xmlparser::XMLParser;
+using xmlparser::up_participant_t;
+using xmlparser::up_node_participant_t;
+using xmlparser::node_participant_t;
+using xmlparser::sp_transport_t;
 
-using eprosima::fastdds::xmlparser::XMLProfileManager;
+using xmlparser::XMLProfileManager;
 
 class XMLParserTests : public ::testing::Test
 {

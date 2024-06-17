@@ -83,9 +83,6 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-using fastdds::PublisherAttributes;
-using fastdds::SubscriberAttributes;
-
 // Mocked TopicDataType for Topic creation tests
 class TopicDataTypeMock : public TopicDataType
 {

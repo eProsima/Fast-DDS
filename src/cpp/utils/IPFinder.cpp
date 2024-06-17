@@ -70,8 +70,10 @@
 #include <cstring>
 #include <algorithm>
 
-using namespace eprosima::fastdds::rtps;
-
+namespace eprosima {
+namespace fastdds {
+namespace rtps {
+    
 IPFinder::IPFinder()
 {
 }
@@ -651,3 +653,7 @@ std::string IPFinder::getIPv6Address(
     freeaddrinfo(result);
     return "";
 }
+
+} // namespace rtps
+} // namespace fastdds
+} // namespace eprosima

@@ -33,8 +33,6 @@
 
 #define IDSTRING "(ID:" << std::this_thread::get_id() << ") " <<
 
-//using namespace eprosima::fastdds;
-
 namespace eprosima {
 namespace fastdds {
 namespace rtps {

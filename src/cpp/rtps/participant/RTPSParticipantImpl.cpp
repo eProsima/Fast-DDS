@@ -2599,7 +2599,6 @@ bool RTPSParticipantImpl::did_mutation_took_place_on_meta(
         const LocatorList_t& UnicastLocatorList) const
 {
     using namespace std;
-    using namespace eprosima::fastdds::rtps;
 
     if (m_att.builtin.metatrafficMulticastLocatorList == MulticastLocatorList
             && m_att.builtin.metatrafficUnicastLocatorList == UnicastLocatorList)

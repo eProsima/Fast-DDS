@@ -485,7 +485,6 @@ void BaseReader::init(
 void BaseReader::setup_datasharing(
         const fastdds::rtps::ReaderAttributes& att)
 {
-    using namespace fastdds::rtps;
 
     if (att.endpoint.data_sharing_configuration().kind() != fastdds::dds::DataSharingKind::OFF)
     {

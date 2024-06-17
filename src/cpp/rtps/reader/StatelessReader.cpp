@@ -42,7 +42,10 @@
 
 #define IDSTRING "(ID:" << std::this_thread::get_id() << ") " <<
 
-using namespace eprosima::fastdds::rtps;
+namespace eprosima {
+namespace fastdds {
+namespace rtps {
+    
 using BaseReader = eprosima::fastdds::rtps::BaseReader;
 
 StatelessReader::~StatelessReader()
@@ -910,3 +913,7 @@ bool StatelessReader::writer_has_manual_liveliness(
     }
     return false;
 }
+
+} // namespace rtps
+} // namespace fastdds
+} // namespace eprosima

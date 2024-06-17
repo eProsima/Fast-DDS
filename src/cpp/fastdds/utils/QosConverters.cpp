@@ -27,7 +27,7 @@ namespace fastdds {
 namespace dds {
 namespace utils {
 
-using fastdds::rtps::Property;
+using rtps::Property;
 using std::string;
 
 void set_qos_from_attributes(

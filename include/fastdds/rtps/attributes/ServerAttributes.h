@@ -216,17 +216,6 @@ FASTDDS_EXPORTED_API bool get_server_client_default_guidPrefix(
         int id,
         fastdds::rtps::GuidPrefix_t& guid);
 
-using fastdds::rtps::RemoteServerAttributes;
-using fastdds::rtps::RemoteServerList_t;
-using fastdds::rtps::DEFAULT_ROS2_SERVER_PORT;
-using fastdds::rtps::DEFAULT_ROS2_SERVER_GUIDPREFIX;
-using fastdds::rtps::DEFAULT_ROS2_MASTER_URI;
-using fastdds::rtps::ROS_SUPER_CLIENT;
-using fastdds::rtps::load_environment_server_info;
-using fastdds::rtps::ros_discovery_server_env;
-using fastdds::rtps::get_server_client_default_guidPrefix;
-using fastdds::rtps::ros_super_client_env;
-
 } // rtps
 } // fastdds
 

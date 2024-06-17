@@ -23,8 +23,9 @@
 
 #include <fastdds/dds/log/Log.hpp>
 
-using namespace eprosima;
-using namespace eprosima::fastdds::dds;
+namespace eprosima {
+namespace fastdds {
+namespace dds{
 
 Publisher::Publisher(
         PublisherImpl* p,
@@ -235,3 +236,7 @@ ReturnCode_t Publisher::get_datawriter_qos_from_profile(
 {
     return impl_->get_datawriter_qos_from_profile(profile_name, qos);
 }
+
+} // namespace dds
+} // namespace fastdds
+} // namespace eprosima

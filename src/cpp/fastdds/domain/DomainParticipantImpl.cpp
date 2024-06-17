@@ -71,26 +71,23 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-using fastdds::xmlparser::XMLProfileManager;
-using fastdds::xmlparser::XMLP_ret;
-using fastdds::TopicAttributes;
-using fastdds::rtps::ParticipantDiscoveryInfo;
-using fastdds::rtps::RTPSDomain;
-using fastdds::rtps::RTPSDomainImpl;
-using fastdds::rtps::RTPSParticipant;
-using fastdds::TopicAttributes;
-using fastdds::xmlparser::XMLP_ret;
-using fastdds::xmlparser::XMLProfileManager;
+using xmlparser::XMLProfileManager;
+using xmlparser::XMLP_ret;
+using rtps::ParticipantDiscoveryInfo;
+using rtps::RTPSDomain;
+using rtps::RTPSDomainImpl;
+using rtps::RTPSParticipant;
+using xmlparser::XMLP_ret;
+using xmlparser::XMLProfileManager;
 #if HAVE_SECURITY
-using fastdds::rtps::ParticipantAuthenticationInfo;
+using rtps::ParticipantAuthenticationInfo;
 #endif // if HAVE_SECURITY
-using eprosima::fastdds::dds::Log;
-using fastdds::rtps::EndpointKind_t;
-using fastdds::rtps::ReaderDiscoveryInfo;
-using fastdds::rtps::ReaderProxyData;
-using fastdds::rtps::ResourceEvent;
-using fastdds::rtps::WriterDiscoveryInfo;
-using fastdds::rtps::WriterProxyData;
+using rtps::EndpointKind_t;
+using rtps::ReaderDiscoveryInfo;
+using rtps::ReaderProxyData;
+using rtps::ResourceEvent;
+using rtps::WriterDiscoveryInfo;
+using rtps::WriterProxyData;
 
 DomainParticipantImpl::DomainParticipantImpl(
         DomainParticipant* dp,
@@ -1858,7 +1855,7 @@ bool DomainParticipantImpl::can_qos_be_updated(
 void DomainParticipantImpl::create_instance_handle(
         InstanceHandle_t& handle)
 {
-    using eprosima::fastdds::rtps::octet;
+    using rtps::octet;
 
     uint32_t id = ++next_instance_id_;
     handle = guid_;

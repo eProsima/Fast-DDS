@@ -121,7 +121,7 @@ void WriterProxy::start(
         const SequenceNumber_t& initial_sequence,
         bool is_datasharing)
 {
-    using fastdds::rtps::network::external_locators::filter_remote_locators;
+    using network::external_locators::filter_remote_locators;
 
 #ifdef SHOULD_DEBUG_LINUX
     assert(get_mutex_owner() == get_thread_id());
@@ -152,7 +152,7 @@ void WriterProxy::start(
 void WriterProxy::update(
         const WriterProxyData& attributes)
 {
-    using fastdds::rtps::network::external_locators::filter_remote_locators;
+    using network::external_locators::filter_remote_locators;
 
 #ifdef SHOULD_DEBUG_LINUX
     assert(get_mutex_owner() == get_thread_id());

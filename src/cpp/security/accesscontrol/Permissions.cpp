@@ -53,9 +53,11 @@
 #define LOCATION " (" __FILE__ ":" S2(__LINE__) ")"
 #define _SecurityException_(str) SecurityException(std::string(str) + LOCATION)
 
-using namespace eprosima::fastdds;
-using namespace eprosima::fastdds::rtps;
-using namespace eprosima::fastdds::rtps::security;
+namespace eprosima {
+namespace fastdds {
+namespace rtps {
+
+using namespace security;
 
 static bool is_domain_in_set(
         const uint32_t domain_id,
@@ -1381,3 +1383,7 @@ bool Permissions::get_datareader_sec_attributes(
 
     return false;
 }
+
+} // namespace rtps
+} // namespace fastdds
+} // namespace eprosima

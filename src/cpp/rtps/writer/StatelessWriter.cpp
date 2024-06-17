@@ -465,7 +465,7 @@ bool StatelessWriter::wait_for_acknowledgement(
 bool StatelessWriter::matched_reader_add(
         const ReaderProxyData& data)
 {
-    using fastdds::rtps::network::external_locators::filter_remote_locators;
+    using network::external_locators::filter_remote_locators;
 
     std::unique_lock<RecursiveTimedMutex> guard(mp_mutex);
     std::unique_lock<LocatorSelectorSender> locator_selector_guard(locator_selector_);

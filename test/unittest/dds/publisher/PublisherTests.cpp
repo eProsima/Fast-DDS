@@ -31,7 +31,7 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-using fastdds::rtps::PropertyPolicyHelper;
+using rtps::PropertyPolicyHelper;
 
 class TopicDataTypeMock : public TopicDataType
 {

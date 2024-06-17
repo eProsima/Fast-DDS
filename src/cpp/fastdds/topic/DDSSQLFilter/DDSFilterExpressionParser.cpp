@@ -38,7 +38,7 @@ namespace DDSSQLFilter {
 namespace parser {
 
 using namespace tao::TAO_PEGTL_NAMESPACE;
-using namespace eprosima::fastdds::dds::xtypes;
+using namespace xtypes;
 
 #include "DDSFilterExpressionParserImpl/rearrange.hpp"
 #include "DDSFilterExpressionParserImpl/literal_values.hpp"

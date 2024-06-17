@@ -42,7 +42,7 @@ namespace fastdds {
 namespace dds {
 namespace detail {
 
-using eprosima::fastdds::RecursiveTimedMutex;
+using fastdds::RecursiveTimedMutex;
 
 static HistoryAttributes to_history_attributes(
         const TypeSupport& type,

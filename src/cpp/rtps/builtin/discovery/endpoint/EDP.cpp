@@ -53,7 +53,6 @@
 using eprosima::fastdds::dds::PublicationMatchedStatus;
 using eprosima::fastdds::dds::SubscriptionMatchedStatus;
 using ParameterList = eprosima::fastdds::dds::ParameterList;
-using BaseReader = eprosima::fastdds::rtps::BaseReader;
 
 namespace eprosima {
 namespace fastdds {
@@ -1365,6 +1364,5 @@ const fastdds::dds::PublicationMatchedStatus& EDP::update_publication_matched_st
 }
 
 } // namespace rtps
-
 } // namespace fastdds
 } // namespace eprosima

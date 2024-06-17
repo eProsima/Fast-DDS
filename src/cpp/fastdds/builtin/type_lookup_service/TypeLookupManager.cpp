@@ -45,7 +45,6 @@
 namespace eprosima {
 
 using namespace fastdds::rtps;
-using eprosima::fastdds::dds::Log;
 
 namespace fastdds {
 namespace dds {

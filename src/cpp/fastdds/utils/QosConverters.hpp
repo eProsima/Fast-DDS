@@ -39,8 +39,6 @@ namespace fastdds {
 namespace dds {
 namespace utils {
 
-using fastdds::TopicAttributes;
-
 /**
  * Obtains the DataWriterQos from the PublisherAttributes provided.
  *

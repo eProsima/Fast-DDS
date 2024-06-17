@@ -22,8 +22,9 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/domain/DomainParticipantImpl.hpp>
 
-using namespace eprosima;
-using namespace eprosima::fastdds::dds;
+namespace eprosima {
+namespace fastdds {
+namespace dds{
 
 DomainParticipant::DomainParticipant(
         const StatusMask& mask)
@@ -496,3 +497,7 @@ bool DomainParticipant::has_active_entities()
 {
     return impl_->has_active_entities();
 }
+
+} // namespace dds
+} // namespace fastdds
+} // namespace eprosima

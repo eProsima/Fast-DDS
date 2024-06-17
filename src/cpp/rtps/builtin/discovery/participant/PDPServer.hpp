@@ -324,7 +324,7 @@ protected:
 
 private:
 
-    using fastdds::rtps::PDP::announceParticipantState;
+    using PDP::announceParticipantState;
 
 #if HAVE_SECURITY
     /**

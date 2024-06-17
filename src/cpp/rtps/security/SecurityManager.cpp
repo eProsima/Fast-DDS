@@ -64,9 +64,11 @@
 
 // TODO(Ricardo) Add event because stateless messages can be not received.
 
-using namespace eprosima::fastdds;
-using namespace eprosima::fastdds::rtps;
-using namespace eprosima::fastdds::rtps::security;
+namespace eprosima {
+namespace fastdds {
+namespace rtps {
+
+using namespace security;
 
 inline bool usleep_bool()
 {
@@ -4357,3 +4359,7 @@ void SecurityManager::onWriterChangeReceivedByAll(
         participant_volatile_message_secure_writer_history_->remove_change(change);
     }
 }
+
+} // namespace rtps
+} // namespace fastdds
+} // namespace eprosima

@@ -56,9 +56,9 @@ namespace fastdds {
 namespace statistics {
 namespace dds {
 
-using fastdds::xmlparser::XMLProfileManager;
-using fastdds::xmlparser::XMLP_ret;
-using fastdds::xmlparser::DEFAULT_STATISTICS_DATAWRITER_PROFILE;
+using xmlparser::XMLProfileManager;
+using xmlparser::XMLP_ret;
+using xmlparser::DEFAULT_STATISTICS_DATAWRITER_PROFILE;
 
 constexpr const char* HISTORY_LATENCY_TOPIC_ALIAS = "HISTORY_LATENCY_TOPIC";
 constexpr const char* NETWORK_LATENCY_TOPIC_ALIAS = "NETWORK_LATENCY_TOPIC";

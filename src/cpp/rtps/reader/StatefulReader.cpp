@@ -45,7 +45,10 @@
 
 #define IDSTRING "(ID:" << std::this_thread::get_id() << ") " <<
 
-using namespace eprosima::fastdds::rtps;
+namespace eprosima {
+namespace fastdds {
+namespace rtps {
+
 using BaseReader = eprosima::fastdds::rtps::BaseReader;
 
 static void send_datasharing_ack(
@@ -1644,3 +1647,7 @@ bool StatefulReader::send_sync_nts(
     return mp_RTPSParticipant->sendSync(buffers, total_bytes, m_guid, locators_begin, locators_end,
                    max_blocking_time_point);
 }
+
+} // namespace rtps
+} // namespace fastdds
+} // namespace eprosima

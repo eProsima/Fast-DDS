@@ -451,7 +451,7 @@ protected:
 
     private:
 
-        using fastdds::rtps::WriterListener::onWriterMatched;
+        using rtps::WriterListener::onWriterMatched;
     }
     writer_listener_;
 

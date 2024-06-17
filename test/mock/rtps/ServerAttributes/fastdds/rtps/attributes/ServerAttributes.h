@@ -75,9 +75,6 @@ std::basic_ostream<charT>& operator <<(
     return output;
 }
 
-using fastdds::rtps::RemoteServerList_t;
-using fastdds::rtps::ros_super_client_env;
-
 } // namespace rtps
 } // namespace fastdds
 } // namespace eprosima

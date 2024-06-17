@@ -21,8 +21,9 @@
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/subscriber/SubscriberImpl.hpp>
 
-using namespace eprosima;
-using namespace eprosima::fastdds::dds;
+namespace eprosima {
+namespace fastdds {
+namespace dds{
 
 Subscriber::Subscriber(
         SubscriberImpl* pimpl,
@@ -233,3 +234,7 @@ const fastdds::rtps::InstanceHandle_t& Subscriber::get_instance_handle() const
 {
     return impl_->get_instance_handle();
 }
+
+} // namespace dds
+} // namespace fastdds
+} // namespace eprosima
