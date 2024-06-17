@@ -13,12 +13,12 @@
 // limitations under the License.
 
 /**
- * @file ParticipantDiscoveryInfo.h
+ * @file ParticipantDiscoveryInfo.hpp
  *
  */
 
-#ifndef _FASTDDS_RTPS_PARTICIPANT_PARTICIPANTDISCOVERYINFO_H__
-#define _FASTDDS_RTPS_PARTICIPANT_PARTICIPANTDISCOVERYINFO_H__
+#ifndef FASTDDS_RTPS_PARTICIPANT__PARTICIPANTDISCOVERYINFO_HPP
+#define FASTDDS_RTPS_PARTICIPANT__PARTICIPANTDISCOVERYINFO_HPP
 
 #include <fastdds/fastdds_dll.hpp>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
@@ -113,4 +113,4 @@ inline bool operator ==(
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_RTPS_PARTICIPANT_PARTICIPANTDISCOVERYINFO_H__
+#endif // FASTDDS_RTPS_PARTICIPANT__PARTICIPANTDISCOVERYINFO_HPP
