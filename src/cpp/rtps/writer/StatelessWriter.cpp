@@ -25,7 +25,7 @@
 #include <vector>
 
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/rtps/history/WriterHistory.h>
+#include <fastdds/rtps/history/WriterHistory.hpp>
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/writer/WriterListener.h>
 

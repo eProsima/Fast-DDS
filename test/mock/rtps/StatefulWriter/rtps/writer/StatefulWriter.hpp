@@ -19,7 +19,7 @@
 #ifndef RTPS_WRITER__STATEFULWRITER_HPP
 #define RTPS_WRITER__STATEFULWRITER_HPP
 
-#include <fastdds/rtps/history/WriterHistory.h>
+#include <fastdds/rtps/history/WriterHistory.hpp>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
 #include <fastdds/rtps/writer/RTPSWriter.h>
 

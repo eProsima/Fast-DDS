@@ -27,7 +27,7 @@
 #include <fastdds/rtps/attributes/WriterAttributes.hpp>
 #include <fastdds/rtps/common/EntityId_t.hpp>
 #include <fastdds/rtps/history/ReaderHistory.hpp>
-#include <fastdds/rtps/history/WriterHistory.h>
+#include <fastdds/rtps/history/WriterHistory.hpp>
 
 #include <rtps/history/ITopicPayloadPool.h>
 #include <rtps/history/PoolConfig.h>

@@ -19,7 +19,7 @@
 
 #include <rtps/writer/PersistentWriter.hpp>
 
-#include <fastdds/rtps/history/WriterHistory.h>
+#include <fastdds/rtps/history/WriterHistory.hpp>
 
 #include <rtps/DataSharing/WriterPool.hpp>
 #include <rtps/persistence/PersistenceService.h>

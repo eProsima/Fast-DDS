@@ -13,12 +13,12 @@
 // limitations under the License.
 
 /**
- * @file WriterHistory.h
+ * @file WriterHistory.hpp
  *
  */
 
-#ifndef _FASTDDS_RTPS_WRITERHISTORY_H_
-#define _FASTDDS_RTPS_WRITERHISTORY_H_
+#ifndef FASTDDS_RTPS_HISTORY__WRITERHISTORY_HPP
+#define FASTDDS_RTPS_HISTORY__WRITERHISTORY_HPP
 
 #include <fastdds/rtps/history/History.hpp>
 #include <fastdds/dds/log/Log.hpp>
@@ -251,7 +251,7 @@ private:
 };
 
 } // namespace rtps
-} /* namespace fastdds */
-} /* namespace eprosima */
+} // namespace fastdds
+} // namespace eprosima
 
-#endif /* _FASTDDS_RTPS_WRITERHISTORY_H_ */
+#endif // FASTDDS_RTPS_HISTORY__WRITERHISTORY_HPP

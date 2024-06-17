@@ -23,7 +23,7 @@
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/attributes/PropertyPolicy.hpp>
-#include <fastdds/rtps/history/WriterHistory.h>
+#include <fastdds/rtps/history/WriterHistory.hpp>
 
 #include <rtps/DataSharing/DataSharingNotifier.hpp>
 #include <rtps/DataSharing/WriterPool.hpp>

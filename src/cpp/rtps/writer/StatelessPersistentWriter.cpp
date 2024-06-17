@@ -19,7 +19,7 @@
 
 #include "StatelessPersistentWriter.hpp"
 
-#include <fastdds/rtps/history/WriterHistory.h>
+#include <fastdds/rtps/history/WriterHistory.hpp>
 
 #include <rtps/persistence/PersistenceService.h>
 

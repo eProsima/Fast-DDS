@@ -23,11 +23,11 @@
 #include <mutex>
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/rtps/attributes/ResourceManagement.hpp>
 #include <fastdds/rtps/attributes/TopicAttributes.hpp>
 #include <fastdds/rtps/common/InstanceHandle.hpp>
 #include <fastdds/rtps/common/Time_t.hpp>
-#include <fastdds/rtps/history/WriterHistory.h>
-#include <fastdds/rtps/attributes/ResourceManagement.hpp>
+#include <fastdds/rtps/history/WriterHistory.hpp>
 
 #include <fastdds/publisher/history/DataWriterInstance.hpp>
 

@@ -25,8 +25,8 @@
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/common/VendorId_t.hpp>
-#include <fastdds/rtps/history/WriterHistory.h>
-#include <fastdds/rtps/history/WriterHistory.h>
+#include <fastdds/rtps/history/WriterHistory.hpp>
+#include <fastdds/rtps/history/WriterHistory.hpp>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
 #include <rtps/messages/RTPSMessageCreator.hpp>
 #include <fastdds/rtps/participant/RTPSParticipant.h>

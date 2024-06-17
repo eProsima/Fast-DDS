@@ -29,7 +29,7 @@
 
 #include <fastdds/dds/publisher/qos/WriterQos.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
-#include <fastdds/rtps/history/WriterHistory.h>
+#include <fastdds/rtps/history/WriterHistory.hpp>
 
 #include <rtps/history/ITopicPayloadPool.h>
 #include <rtps/resources/TimedEvent.h>

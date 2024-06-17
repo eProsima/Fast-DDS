@@ -24,7 +24,7 @@
 #include <algorithm>
 
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/rtps/history/WriterHistory.h>
+#include <fastdds/rtps/history/WriterHistory.hpp>
 #include <fastdds/rtps/common/LocatorListComparisons.hpp>
 
 #include <rtps/DataSharing/DataSharingNotifier.hpp>

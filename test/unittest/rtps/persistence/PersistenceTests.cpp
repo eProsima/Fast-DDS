@@ -18,7 +18,7 @@
 #include <gtest/gtest.h>
 
 #include <fastdds/rtps/attributes/PropertyPolicy.hpp>
-#include <fastdds/rtps/history/WriterHistory.h>
+#include <fastdds/rtps/history/WriterHistory.hpp>
 
 #include <rtps/common/GuidUtils.hpp>
 #include <rtps/history/CacheChangePool.h>

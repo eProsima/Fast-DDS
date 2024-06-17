@@ -20,7 +20,7 @@
 #include <rtps/persistence/SQLite3PersistenceService.h>
 #include <rtps/persistence/SQLite3PersistenceServiceStatements.h>
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/rtps/history/WriterHistory.h>
+#include <fastdds/rtps/history/WriterHistory.hpp>
 
 #include <rtps/persistence/sqlite3.h>
 

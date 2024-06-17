@@ -31,7 +31,7 @@
 #include <fastdds/rtps/common/SequenceNumber.hpp>
 #include <fastdds/rtps/common/Types.hpp>
 #include <fastdds/rtps/history/ReaderHistory.hpp>
-#include <fastdds/rtps/history/WriterHistory.h>
+#include <fastdds/rtps/history/WriterHistory.hpp>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
