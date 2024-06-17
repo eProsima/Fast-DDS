@@ -20,7 +20,7 @@
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.hpp>
 #include <fastdds/rtps/transport/TCPv6TransportDescriptor.hpp>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.hpp>
-#include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
+#include <fastdds/rtps/transport/UDPv6TransportDescriptor.hpp>
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>
 #include <fastdds/utils/IPLocator.h>
 

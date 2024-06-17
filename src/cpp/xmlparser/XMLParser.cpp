@@ -36,7 +36,7 @@
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.hpp>
 #include <fastdds/rtps/transport/TCPv6TransportDescriptor.hpp>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.hpp>
-#include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
+#include <fastdds/rtps/transport/UDPv6TransportDescriptor.hpp>
 
 #include <rtps/network/utils/netmask_filter.hpp>
 #include <xmlparser/XMLParserUtils.hpp>

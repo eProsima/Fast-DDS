@@ -33,7 +33,7 @@
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.hpp>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.hpp>
-#include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
+#include <fastdds/rtps/transport/UDPv6TransportDescriptor.hpp>
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;

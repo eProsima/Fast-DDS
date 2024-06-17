@@ -20,7 +20,7 @@
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.hpp>
-#include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
+#include <fastdds/rtps/transport/UDPv6TransportDescriptor.hpp>
 #include <fastdds/utils/IPFinder.h>
 
 #include "BlackboxTests.hpp"

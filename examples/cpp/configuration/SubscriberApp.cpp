@@ -31,7 +31,7 @@
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.hpp>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.hpp>
-#include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
+#include <fastdds/rtps/transport/UDPv6TransportDescriptor.hpp>
 
 #include "Application.hpp"
 #include "CLIParser.hpp"

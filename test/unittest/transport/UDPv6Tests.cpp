@@ -20,7 +20,7 @@
 #include <gtest/gtest.h>
 
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
+#include <fastdds/rtps/transport/UDPv6TransportDescriptor.hpp>
 #include <fastdds/utils/IPLocator.h>
 
 #include <rtps/transport/UDPv6Transport.h>
