@@ -25,7 +25,7 @@
 #include <mutex>
 
 #include <fastdds/rtps/common/VendorId_t.hpp>
-#include <fastdds/rtps/history/IChangePool.h>
+#include <fastdds/rtps/history/IChangePool.hpp>
 #include <fastdds/rtps/history/IPayloadPool.h>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
 #include <fastdds/rtps/writer/RTPSWriter.h>

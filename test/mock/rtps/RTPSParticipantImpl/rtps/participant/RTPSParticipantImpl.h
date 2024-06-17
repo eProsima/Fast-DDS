@@ -28,7 +28,7 @@
 // Include first possible mocks (depending on include on CMakeLists.txt)
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
 #include <fastdds/rtps/common/LocatorList.hpp>
-#include <fastdds/rtps/history/IChangePool.h>
+#include <fastdds/rtps/history/IChangePool.hpp>
 #include <fastdds/rtps/participant/RTPSParticipantListener.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>

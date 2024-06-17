@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * @file IChangePool.h
+ * @file IChangePool.hpp
  */
 
-#ifndef _FASTDDS_RTPS_HISTORY_ICHANGEPOOL_H_
-#define _FASTDDS_RTPS_HISTORY_ICHANGEPOOL_H_
+#ifndef FASTDDS_RTPS_HISTORY__ICHANGEPOOL_HPP
+#define FASTDDS_RTPS_HISTORY__ICHANGEPOOL_HPP
 
 namespace eprosima {
 namespace fastdds {
@@ -65,9 +65,9 @@ public:
             CacheChange_t* cache_change) = 0;
 };
 
-} /* namespace rtps */
-} /* namespace fastdds */
-} /* namespace eprosima */
+} // namespace rtps
+} // namespace fastdds
+} // namespace eprosima
 
 
-#endif /* _FASTDDS_RTPS_HISTORY_ICHANGEPOOL_H_ */
+#endif // FASTDDS_RTPS_HISTORY__ICHANGEPOOL_HPP

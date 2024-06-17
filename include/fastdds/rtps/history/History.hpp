@@ -21,7 +21,7 @@
 #define FASTDDS_RTPS_HISTORY__HISTORY_HPP
 
 #include <fastdds/fastdds_dll.hpp>
-#include <fastdds/rtps/history/IChangePool.h>
+#include <fastdds/rtps/history/IChangePool.hpp>
 #include <fastdds/rtps/history/IPayloadPool.h>
 #include <fastdds/rtps/common/SequenceNumber.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
