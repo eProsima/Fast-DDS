@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _FASTDDS_RTPS_BUILTIN_DATA_PARTICIPANTPROXYDATA_HPP_
-#define _FASTDDS_RTPS_BUILTIN_DATA_PARTICIPANTPROXYDATA_HPP_
+#ifndef FASTDDS_RTPS_BUILTIN_DATA__PARTICIPANTPROXYDATA_HPP
+#define FASTDDS_RTPS_BUILTIN_DATA__PARTICIPANTPROXYDATA_HPP
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
@@ -231,10 +231,10 @@ private:
     std::chrono::microseconds lease_duration_;
 };
 
-} /* namespace rtps */
-} /* namespace fastdds */
-} /* namespace eprosima */
+} // namespace rtps 
+} // namespace fastdds 
+} // namespace eprosima 
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#endif // _FASTDDS_RTPS_BUILTIN_DATA_PARTICIPANTPROXYDATA_HPP_
+#endif // FASTDDS_RTPS_BUILTIN_DATA__PARTICIPANTPROXYDATA_HPP

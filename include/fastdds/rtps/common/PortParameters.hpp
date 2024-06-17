@@ -16,8 +16,8 @@
  * @file PortParameters.hpp
  */
 
-#ifndef FASTDDS_RTPS_COMMON_PORTPARAMETERS_HPP
-#define FASTDDS_RTPS_COMMON_PORTPARAMETERS_HPP
+#ifndef FASTDDS_RTPS_COMMON__PORTPARAMETERS_HPP
+#define FASTDDS_RTPS_COMMON__PORTPARAMETERS_HPP
 
 #include <fastdds/rtps/common/Types.hpp>
 #include <fastdds/dds/log/Log.hpp>
@@ -133,4 +133,4 @@ public:
 } // namespace rtps
 } // namespace eprosima
 
-#endif // FASTDDS_RTPS_COMMON_PORTPARAMETERS_HPP
+#endif // FASTDDS_RTPS_COMMON__PORTPARAMETERS_HPP

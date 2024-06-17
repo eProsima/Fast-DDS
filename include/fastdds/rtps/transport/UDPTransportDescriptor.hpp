@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef FASTDDS_RTPS_TRANSPORT_UDPTRANSPORTDESCRIPTOR_HPP
-#define FASTDDS_RTPS_TRANSPORT_UDPTRANSPORTDESCRIPTOR_HPP
+#ifndef FASTDDS_RTPS_TRANSPORT__UDPTRANSPORTDESCRIPTOR_HPP
+#define FASTDDS_RTPS_TRANSPORT__UDPTRANSPORTDESCRIPTOR_HPP
 
 #include <fastdds/rtps/transport/SocketTransportDescriptor.hpp>
 #include <fastdds/fastdds_dll.hpp>
@@ -79,4 +79,4 @@ struct UDPTransportDescriptor : public SocketTransportDescriptor
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // FASTDDS_RTPS_TRANSPORT_UDPTRANSPORTDESCRIPTOR_HPP
+#endif // FASTDDS_RTPS_TRANSPORT__UDPTRANSPORTDESCRIPTOR_HPP

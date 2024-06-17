@@ -16,8 +16,8 @@
  * @file LocatorListComparisons.hpp
  */
 
-#ifndef _FASTDDS_RTPS_COMMON_LOCATORLISTCOMPARISONS_HPP_
-#define _FASTDDS_RTPS_COMMON_LOCATORLISTCOMPARISONS_HPP_
+#ifndef FASTDDS_RTPS_COMMON__LOCATORLISTCOMPARISONS_HPP
+#define FASTDDS_RTPS_COMMON__LOCATORLISTCOMPARISONS_HPP
 
 #include <fastdds/rtps/common/Locator.hpp>
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>
@@ -55,8 +55,8 @@ static inline bool operator == (
     return false;
 }
 
-} /* namespace rtps */
-} /* namespace fastdds */
-} /* namespace eprosima */
+} // namespace rtps
+} // namespace fastdds
+} // namespace eprosima
 
-#endif /* _FASTDDS_RTPS_COMMON_LOCATORLISTCOMPARISONS_HPP_ */
+#endif // FASTDDS_RTPS_COMMON__LOCATORLISTCOMPARISONS_HPP

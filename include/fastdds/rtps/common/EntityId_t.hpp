@@ -16,8 +16,8 @@
  * @file EntityId_t.hpp
  */
 
-#ifndef _FASTDDS_RTPS_COMMON_ENTITYID_T_HPP_
-#define _FASTDDS_RTPS_COMMON_ENTITYID_T_HPP_
+#ifndef FASTDDS_RTPS_COMMON__ENTITYID_T_HPP
+#define FASTDDS_RTPS_COMMON__ENTITYID_T_HPP
 
 #include <fastdds/fastdds_dll.hpp>
 #include <fastdds/rtps/common/Types.hpp>
@@ -402,4 +402,4 @@ struct hash<eprosima::fastdds::rtps::EntityId_t>
 } // namespace std
 
 
-#endif /* _FASTDDS_RTPS_COMMON_ENTITYID_T_HPP_ */
+#endif // FASTDDS_RTPS_COMMON__ENTITYID_T_HPP

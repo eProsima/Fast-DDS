@@ -16,8 +16,8 @@
  * @file RTPSParticipantAllocationAttributes.hpp
  */
 
-#ifndef _FASTDDS_RTPS_RTPSPARTICIPANTALLOCATIONATTRIBUTES_HPP_
-#define _FASTDDS_RTPS_RTPSPARTICIPANTALLOCATIONATTRIBUTES_HPP_
+#ifndef FASTDDS_RTPS_ATTRIBUTES__RTPSPARTICIPANTALLOCATIONATTRIBUTES_HPP
+#define FASTDDS_RTPS_ATTRIBUTES__RTPSPARTICIPANTALLOCATIONATTRIBUTES_HPP
 
 #include <fastdds/rtps/builtin/data/ContentFilterProperty.hpp>
 
@@ -188,8 +188,8 @@ private:
 const RTPSParticipantAllocationAttributes c_default_RTPSParticipantAllocationAttributes
     = RTPSParticipantAllocationAttributes();
 
-} /* namespace rtps */
-} /* namespace fastdds */
-} /* namespace eprosima */
+} // namespace rtps
+} // namespace fastdds
+} // namespace eprosima
 
-#endif /* _FASTDDS_RTPS_RTPSPARTICIPANTALLOCATIONATTRIBUTES_HPP_ */
+#endif // FASTDDS_RTPS_ATTRIBUTES__RTPSPARTICIPANTALLOCATIONATTRIBUTES_HPP

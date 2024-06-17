@@ -16,8 +16,8 @@
  * @file LocatorsIterator.hpp
  */
 
-#ifndef _FASTDDS_RTPS_COMMON_LOCATORSITERATOR_HPP_
-#define _FASTDDS_RTPS_COMMON_LOCATORSITERATOR_HPP_
+#ifndef FASTDDS_RTPS_COMMON__LOCATORSITERATOR_HPP
+#define FASTDDS_RTPS_COMMON__LOCATORSITERATOR_HPP
 
 #include <fastdds/rtps/common/Locator.hpp>
 
@@ -69,4 +69,4 @@ using LocatorsIterator = eprosima::fastdds::rtps::LocatorsIterator;
 } // namespace fastdds
 } // namespace eprosima
 
-#endif /* _FASTDDS_RTPS_COMMON_LOCATORSITERATOR_HPP_ */
+#endif // FASTDDS_RTPS_COMMON__LOCATORSITERATOR_HPP 

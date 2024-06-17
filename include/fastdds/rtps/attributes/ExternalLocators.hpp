@@ -16,8 +16,8 @@
  * @file ExternalLocators.hpp
  */
 
-#ifndef _FASTDDS_RTPS_ATTRIBUTES_EXTERNALLOCATORS_HPP_
-#define _FASTDDS_RTPS_ATTRIBUTES_EXTERNALLOCATORS_HPP_
+#ifndef FASTDDS_RTPS_ATTRIBUTES__EXTERNALLOCATORS_HPP
+#define FASTDDS_RTPS_ATTRIBUTES__EXTERNALLOCATORS_HPP
 
 #include <map>
 #include <vector>
@@ -45,4 +45,4 @@ using ExternalLocators = std::map<
 } // namespace fastdds
 } // namespace eprosima
 
-#endif /* _FASTDDS_RTPS_ATTRIBUTES_EXTERNALLOCATORS_HPP_ */
+#endif // FASTDDS_RTPS_ATTRIBUTES__EXTERNALLOCATORS_HPP

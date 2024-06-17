@@ -21,8 +21,8 @@
 
 #include <fastdds/fastdds_dll.hpp>
 
-#ifndef _FASTDDS_THREADSETTINGS_HPP_
-#define _FASTDDS_THREADSETTINGS_HPP_
+#ifndef FASTDDS_RTPS_ATTRIBUTES_THREADSETTINGS_HPP
+#define FASTDDS_RTPS_ATTRIBUTES_THREADSETTINGS_HPP
 
 namespace eprosima {
 namespace fastdds {
@@ -108,4 +108,4 @@ struct FASTDDS_EXPORTED_API ThreadSettings
 } // namespace fastdds
 } // namespace eprosima
 
-#endif /* _FASTDDS_THREADSETTINGS_HPP_ */
+#endif // FASTDDS_RTPS_ATTRIBUTES_THREADSETTINGS_HPP

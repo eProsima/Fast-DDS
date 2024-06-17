@@ -16,8 +16,8 @@
  * @file BuiltinTransports.hpp
  */
 
-#ifndef _FASTDDS_RTPS_ATTRIBUTES__BUILTINTRANSPORTS_HPP_
-#define _FASTDDS_RTPS_ATTRIBUTES__BUILTINTRANSPORTS_HPP_
+#ifndef FASTDDS_RTPS_ATTRIBUTES__BUILTINTRANSPORTS_HPP
+#define FASTDDS_RTPS_ATTRIBUTES__BUILTINTRANSPORTS_HPP
 
 #include <ostream>
 #include <cstdint>
@@ -155,4 +155,4 @@ inline std::ostream& operator <<(
 }  // namespace fastdds
 }  // namespace eprosima
 
-#endif  // _FASTDDS_RTPS_ATTRIBUTES__BUILTINTRANSPORTS_HPP_
+#endif  // FASTDDS_RTPS_ATTRIBUTES__BUILTINTRANSPORTS_HPP

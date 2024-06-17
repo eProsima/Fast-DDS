@@ -16,8 +16,8 @@
  * @file RemoteLocators.hpp
  */
 
-#ifndef _FASTDDS_RTPS_COMMON_REMOTELOCATORS_HPP_
-#define _FASTDDS_RTPS_COMMON_REMOTELOCATORS_HPP_
+#ifndef FASTDDS_RTPS_COMMON__REMOTELOCATORS_HPP
+#define FASTDDS_RTPS_COMMON__REMOTELOCATORS_HPP
 
 #include <fastdds/rtps/common/Locator.hpp>
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>
@@ -233,8 +233,8 @@ inline std::istream& operator >>(
     return input;
 }
 
-} /* namespace rtps */
-} /* namespace fastdds */
-} /* namespace eprosima */
+} // namespace rtps 
+} // namespace fastdds 
+} // namespace eprosima 
 
-#endif /* _FASTDDS_RTPS_COMMON_REMOTELOCATORS_HPP_ */
+#endif // FASTDDS_RTPS_COMMON__REMOTELOCATORS_HPP 

@@ -16,8 +16,8 @@
  * @file NetworkBuffer.hpp
  */
 
-#ifndef _FASTDDS_RTPS_NETWORK_NETWORKBUFFER_HPP
-#define _FASTDDS_RTPS_NETWORK_NETWORKBUFFER_HPP
+#ifndef FASTDDS_RTPS_TRANSPORT__NETWORKBUFFER_HPP
+#define FASTDDS_RTPS_TRANSPORT__NETWORKBUFFER_HPP
 
 #include <cstdint>
 
@@ -59,4 +59,4 @@ struct NetworkBuffer final
 }  // namespace fastdds
 }  // namespace eprosima
 
-#endif  // _FASTDDS_RTPS_NETWORK_NETWORKBUFFER_HPP
+#endif  // FASTDDS_RTPS_TRANSPORT__NETWORKBUFFER_HPP

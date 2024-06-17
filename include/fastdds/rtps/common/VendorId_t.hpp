@@ -16,8 +16,8 @@
  * @file VendorId_t.hpp
  */
 
-#ifndef _FASTDDS_RTPS_COMMON_VENDORIDT_HPP_
-#define _FASTDDS_RTPS_COMMON_VENDORIDT_HPP_
+#ifndef FASTDDS_RTPS_COMMON__VENDORID_T_HPP
+#define FASTDDS_RTPS_COMMON__VENDORID_T_HPP
 
 #include <array>
 #include <cstdint>
@@ -54,4 +54,4 @@ inline std::ostream& operator <<(
     return output;
 }
 
-#endif /* _FASTDDS_RTPS_COMMON_VENDORIDT_HPP_ */
+#endif // FASTDDS_RTPS_COMMON__VENDORID_T_HPP 

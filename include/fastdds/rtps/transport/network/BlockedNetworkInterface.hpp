@@ -16,8 +16,8 @@
  * @file BlockedNetworkInterface.hpp
  */
 
-#ifndef _FASTDDS_RTPS_TRANSPORT_NETWORK_BLOCKEDNETWORKINTERFACE_HPP_
-#define _FASTDDS_RTPS_TRANSPORT_NETWORK_BLOCKEDNETWORKINTERFACE_HPP_
+#ifndef FASTDDS_RTPS_TRANSPORT_NETWORK__BLOCKEDNETWORKINTERFACE_HPP
+#define FASTDDS_RTPS_TRANSPORT_NETWORK__BLOCKEDNETWORKINTERFACE_HPP
 
 #include <fastdds/rtps/transport/network/NetworkInterface.hpp>
 #include <fastdds/fastdds_dll.hpp>
@@ -60,4 +60,4 @@ struct BlockedNetworkInterface : public NetworkInterface
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_RTPS_TRANSPORT_NETWORK_BLOCKEDNETWORKINTERFACE_HPP_
+#endif // FASTDDS_RTPS_TRANSPORT_NETWORK__BLOCKEDNETWORKINTERFACE_HPP

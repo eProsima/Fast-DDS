@@ -15,8 +15,8 @@
 /**
  * @file WriterDiscoveryInfo.hpp
  */
-#ifndef FASTDDS_RTPS_WRITER_WRITERDISCOVERYINFO_HPP
-#define FASTDDS_RTPS_WRITER_WRITERDISCOVERYINFO_HPP
+#ifndef FASTDDS_RTPS_WRITER__WRITERDISCOVERYINFO_HPP
+#define FASTDDS_RTPS_WRITER__WRITERDISCOVERYINFO_HPP
 
 #include <fastdds/fastdds_dll.hpp>
 #include <fastdds/rtps/builtin/data/WriterProxyData.hpp>
@@ -71,4 +71,4 @@ public:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // FASTDDS_RTPS_WRITER_WRITERDISCOVERYINFO_HPP
+#endif // FASTDDS_RTPS_WRITER__WRITERDISCOVERYINFO_HPP

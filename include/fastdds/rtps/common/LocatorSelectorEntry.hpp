@@ -16,8 +16,8 @@
  * @file LocatorSelectorEntry.hpp
  */
 
-#ifndef _FASTDDS_RTPS_COMMON_LOCATORSELECTORENTRY_HPP_
-#define _FASTDDS_RTPS_COMMON_LOCATORSELECTORENTRY_HPP_
+#ifndef FASTDDS_RTPS_COMMON__LOCATORSELECTORENTRY_HPP
+#define FASTDDS_RTPS_COMMON__LOCATORSELECTORENTRY_HPP
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
@@ -137,9 +137,9 @@ struct LocatorSelectorEntry
     bool transport_should_process;
 };
 
-} /* namespace rtps */
-} /* namespace fastdds */
-} /* namespace eprosima */
+} // namespace rtps
+} // namespace fastdds
+} // namespace eprosima
 
-#endif /* DOXYGEN_SHOULD_SKIP_THIS_PUBLIC */
-#endif /* _FASTDDS_RTPS_COMMON_LOCATORSELECTORENTRY_HPP_ */
+#endif // DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+#endif // FASTDDS_RTPS_COMMON__LOCATORSELECTORENTRY_HPP

@@ -16,8 +16,8 @@
  * @file LocatorList.hpp
  */
 
-#ifndef _FASTDDS_RTPS_COMMON_LOCATORLIST_HPP_
-#define _FASTDDS_RTPS_COMMON_LOCATORLIST_HPP_
+#ifndef FASTDDS_RTPS_COMMON__LOCATORLIST_HPP
+#define FASTDDS_RTPS_COMMON__LOCATORLIST_HPP
 
 #include <fastdds/fastdds_dll.hpp>
 
@@ -463,4 +463,4 @@ using LocatorList_t = eprosima::fastdds::rtps::LocatorList;
 } // namespace fastdds
 } // namespace eprosima
 
-#endif /* _FASTDDS_RTPS_COMMON_LOCATORLIST_HPP_ */
+#endif // FASTDDS_RTPS_COMMON__LOCATORLIST_HPP
