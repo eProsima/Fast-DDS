@@ -57,4 +57,4 @@
 #endif // if defined(_WIN32)
 
 
-#endif // FASTDDS_DDS_LOG__COLORS_HPP 
+#endif // FASTDDS_DDS_LOG__COLORS_HPP

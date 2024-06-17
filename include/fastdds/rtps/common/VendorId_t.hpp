@@ -54,4 +54,4 @@ inline std::ostream& operator <<(
     return output;
 }
 
-#endif // FASTDDS_RTPS_COMMON__VENDORID_T_HPP 
+#endif // FASTDDS_RTPS_COMMON__VENDORID_T_HPP

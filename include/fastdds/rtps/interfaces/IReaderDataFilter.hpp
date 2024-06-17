@@ -48,8 +48,8 @@ public:
             const fastdds::rtps::GUID_t& reader_guid) const = 0;
 };
 
-} // namespace rtps 
-} // namespace fastdds 
-} // namespace eprosima 
+} // namespace rtps
+} // namespace fastdds
+} // namespace eprosima
 
-#endif // FASTDDS_RTPS_INTERFACES__IREADERDATAFILTER_HPP 
+#endif // FASTDDS_RTPS_INTERFACES__IREADERDATAFILTER_HPP

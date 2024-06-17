@@ -233,8 +233,8 @@ inline std::istream& operator >>(
     return input;
 }
 
-} // namespace rtps 
-} // namespace fastdds 
-} // namespace eprosima 
+} // namespace rtps
+} // namespace fastdds
+} // namespace eprosima
 
-#endif // FASTDDS_RTPS_COMMON__REMOTELOCATORS_HPP 
+#endif // FASTDDS_RTPS_COMMON__REMOTELOCATORS_HPP

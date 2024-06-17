@@ -219,4 +219,4 @@ public:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // FASTDDS_STATISTICS_DDS_DOMAIN__DOMAINPARTICIPANT_HPP 
+#endif // FASTDDS_STATISTICS_DDS_DOMAIN__DOMAINPARTICIPANT_HPP

@@ -212,4 +212,4 @@ inline std::istream& operator >>(
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // FASTDDS_RTPS_COMMON__GUIDPREFIX_T_HPP 
+#endif // FASTDDS_RTPS_COMMON__GUIDPREFIX_T_HPP

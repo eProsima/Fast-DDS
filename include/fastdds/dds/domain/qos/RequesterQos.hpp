@@ -73,8 +73,8 @@ public:
     DataReaderQos reader_qos;
 };
 
-} // namespace dds 
-} // namespace fastdds 
-} // namespace eprosima 
+} // namespace dds
+} // namespace fastdds
+} // namespace eprosima
 
-#endif // FASTDDS_DDS_DOMAIN_QOS__REQUESTERQOS_HPP 
+#endif // FASTDDS_DDS_DOMAIN_QOS__REQUESTERQOS_HPP

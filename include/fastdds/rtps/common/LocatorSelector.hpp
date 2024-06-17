@@ -472,8 +472,8 @@ private:
     ResourceLimitedVector<int> last_state_;
 };
 
-} // namespace rtps 
-} // namespace fastdds 
-} // namespace eprosima 
+} // namespace rtps
+} // namespace fastdds
+} // namespace eprosima
 
 #endif // FASTDDS_RTPS_COMMON__LOCATORSELECTOR_HPP

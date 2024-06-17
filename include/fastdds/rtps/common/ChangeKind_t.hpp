@@ -41,4 +41,4 @@ enum FASTDDS_EXPORTED_API ChangeKind_t
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // FASTDDS_RTPS_COMMON__CHANGEKIND_T_HPP 
+#endif // FASTDDS_RTPS_COMMON__CHANGEKIND_T_HPP
