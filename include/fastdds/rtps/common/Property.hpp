@@ -13,10 +13,10 @@
 // limitations under the License.
 
 /*!
- * @file Property.h
+ * @file Property.hpp
  */
-#ifndef _FASTDDS_RTPS_COMMON_PROPERTYQOS_H_
-#define _FASTDDS_RTPS_COMMON_PROPERTYQOS_H_
+#ifndef FASTDDS_RTPS_COMMON__PROPERTY_HPP
+#define FASTDDS_RTPS_COMMON__PROPERTY_HPP
 
 #include <functional>
 #include <stdexcept>
@@ -342,4 +342,4 @@ private:
 } //namespace fastdds
 } //namespace rtps
 
-#endif // _FASTDDS_RTPS_COMMON_PROPERTYQOS_H_
+#endif // FASTDDS_RTPS_COMMON__PROPERTY_HPP

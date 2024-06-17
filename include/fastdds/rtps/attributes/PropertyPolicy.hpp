@@ -18,7 +18,7 @@
 #ifndef FASTDDS_RTPS_ATTRIBUTES__PROPERTYPOLICY_HPP
 #define FASTDDS_RTPS_ATTRIBUTES__PROPERTYPOLICY_HPP
 
-#include <fastdds/rtps/common/Property.h>
+#include <fastdds/rtps/common/Property.hpp>
 #include <fastdds/rtps/common/BinaryProperty.hpp>
 #include <fastdds/fastdds_dll.hpp>
 

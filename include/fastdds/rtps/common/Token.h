@@ -19,7 +19,7 @@
 #define _FASTDDS_RTPS_COMMON_TOKEN_H_
 
 #include <fastdds/fastdds_dll.hpp>
-#include <fastdds/rtps/common/Property.h>
+#include <fastdds/rtps/common/Property.hpp>
 #include <fastdds/rtps/common/BinaryProperty.hpp>
 
 namespace eprosima {
