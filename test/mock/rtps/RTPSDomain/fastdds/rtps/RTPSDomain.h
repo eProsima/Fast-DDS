@@ -17,7 +17,7 @@
 
 #include <fastdds/rtps/common/Types.h>
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
-#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
 
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/rtps/reader/RTPSReader.h>

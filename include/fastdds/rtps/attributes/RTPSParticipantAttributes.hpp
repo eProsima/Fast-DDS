@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * @file RTPSParticipantAttributes.h
+ * @file RTPSParticipantAttributes.hpp
  */
 
-#ifndef _FASTDDS_RTPSPARTICIPANTPARAMETERS_H_
-#define _FASTDDS_RTPSPARTICIPANTPARAMETERS_H_
+#ifndef FASTDDS_RTPS_ATTRIBUTES__RTPSPARTICIPANTATTRIBUTES_HPP
+#define FASTDDS_RTPS_ATTRIBUTES__RTPSPARTICIPANTATTRIBUTES_HPP
 
 #include <memory>
 #include <sstream>
@@ -578,4 +578,4 @@ private:
 }  // namespace fastdds
 }  // namespace eprosima
 
-#endif  // _FASTDDS_RTPSPARTICIPANTPARAMETERS_H_
+#endif  // FASTDDS_RTPS_ATTRIBUTES__RTPSPARTICIPANTATTRIBUTES_HPP

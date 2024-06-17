@@ -23,7 +23,7 @@
 
 #include <list>
 
-#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
 #include <fastdds/rtps/builtin/data/ContentFilterProperty.hpp>
 
 #include <utils/shared_mutex.hpp>

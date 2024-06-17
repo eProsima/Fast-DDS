@@ -20,7 +20,7 @@
 #include "TestWriterSocket.h"
 
 #include <fastdds/rtps/attributes/HistoryAttributes.hpp>
-#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
 #include <fastdds/rtps/attributes/WriterAttributes.h>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/history/WriterHistory.h>

@@ -4,7 +4,7 @@
 #include <stdarg.h>
 #include <string.h>
 
-#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
 
 #include <MessageReceiver.h>
 
