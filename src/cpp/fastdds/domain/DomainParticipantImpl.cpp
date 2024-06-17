@@ -1663,7 +1663,7 @@ bool DomainParticipantImpl::set_qos(
     {
         to.allocation() = from.allocation();
     }
-    if (first_time && !(to.properties() == from.properties()))
+    if (first_time && (to.properties() != from.properties()))
     {
         to.properties() = from.properties();
     }
@@ -1710,7 +1710,7 @@ bool DomainParticipantImpl::can_qos_be_updated(
         EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK,
                 "ParticipantResourceLimitsQos cannot be changed after the participant is enabled");
     }
-    if (!(to.properties() == from.properties()))
+    if ((to.properties() != from.properties()))
     {
         updatable = false;
         EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK, "PropertyPolicyQos cannot be changed after the participant is enabled");

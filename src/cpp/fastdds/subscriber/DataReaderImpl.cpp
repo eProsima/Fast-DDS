@@ -1646,7 +1646,7 @@ bool DataReaderImpl::can_qos_be_updated(
         EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK,
                 "data_sharing_listener_thread cannot be changed after the DataReader is enabled.");
     }
-    if (!(to.properties() == from.properties()))
+    if (to.properties() != from.properties())
     {
         updatable = false;
         EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK, "PropertyPolicyQos cannot be changed after the DataReader is enabled.");
@@ -1749,7 +1749,7 @@ void DataReaderImpl::set_qos(
         to.expects_inline_qos(from.expects_inline_qos());
     }
 
-    if (first_time && !(to.properties() == from.properties()))
+    if (first_time && (to.properties() != from.properties()))
     {
         to.properties() = from.properties();
     }
