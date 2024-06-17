@@ -20,7 +20,7 @@
 #include <memory>
 #include <vector>
 
-#include <fastdds/rtps/transport/TransportInterface.h>
+#include <fastdds/rtps/transport/TransportInterface.hpp>
 
 #include <rtps/messages/MessageReceiver.h>
 

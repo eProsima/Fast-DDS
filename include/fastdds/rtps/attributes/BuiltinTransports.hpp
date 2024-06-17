@@ -23,7 +23,7 @@
 #include <cstdint>
 
 #include <fastdds/fastdds_dll.hpp>
-#include <fastdds/rtps/transport/TransportInterface.h>
+#include <fastdds/rtps/transport/TransportInterface.hpp>
 
 namespace eprosima {
 namespace fastdds {

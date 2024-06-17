@@ -20,7 +20,7 @@
 
 #include <fastdds/rtps/common/LocatorSelector.hpp>
 #include <fastdds/rtps/transport/SenderResource.hpp>
-#include <fastdds/rtps/transport/TransportInterface.h>
+#include <fastdds/rtps/transport/TransportInterface.hpp>
 
 #include <rtps/messages/MessageReceiver.h>
 #include <rtps/network/ReceiverResource.h>

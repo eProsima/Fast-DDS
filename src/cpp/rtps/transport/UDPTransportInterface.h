@@ -25,7 +25,7 @@
 #include <fastdds/rtps/common/LocatorWithMask.hpp>
 #include <fastdds/rtps/transport/network/AllowedNetworkInterface.hpp>
 #include <fastdds/rtps/transport/network/NetmaskFilterKind.hpp>
-#include <fastdds/rtps/transport/TransportInterface.h>
+#include <fastdds/rtps/transport/TransportInterface.hpp>
 #include <fastdds/rtps/transport/UDPTransportDescriptor.h>
 #include <fastdds/utils/IPFinder.h>
 

@@ -37,7 +37,7 @@
 #include <fastdds/rtps/common/Types.hpp>
 #include <fastdds/rtps/flowcontrol/FlowControllerDescriptor.hpp>
 #include <fastdds/rtps/transport/network/NetmaskFilterKind.hpp>
-#include <fastdds/rtps/transport/TransportInterface.h>
+#include <fastdds/rtps/transport/TransportInterface.hpp>
 #include <fastdds/fastdds_dll.hpp>
 
 namespace eprosima {

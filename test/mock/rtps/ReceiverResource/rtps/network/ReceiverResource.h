@@ -20,7 +20,7 @@
 #include <vector>
 
 #include <fastdds/rtps/Endpoint.h>
-#include <fastdds/rtps/transport/TransportInterface.h>
+#include <fastdds/rtps/transport/TransportInterface.hpp>
 
 namespace eprosima {
 namespace fastdds {

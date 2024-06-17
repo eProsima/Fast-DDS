@@ -15,7 +15,7 @@
 #ifndef _FASTDDS_SHAREDMEM_TRANSPORT_H_
 #define _FASTDDS_SHAREDMEM_TRANSPORT_H_
 
-#include <fastdds/rtps/transport/TransportInterface.h>
+#include <fastdds/rtps/transport/TransportInterface.hpp>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.hpp>
 
 #include <rtps/transport/shared_mem/SharedMemManager.hpp>
