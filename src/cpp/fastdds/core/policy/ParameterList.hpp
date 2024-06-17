@@ -24,7 +24,7 @@
 
 #include <fastdds/dds/core/policy/ParameterTypes.hpp>
 #include <fastdds/rtps/common/CacheChange.hpp>
-#include <fastdds/rtps/messages/RTPS_messages.h>
+#include <fastdds/rtps/messages/RTPS_messages.hpp>
 
 #include <rtps/messages/CDRMessage.hpp>
 

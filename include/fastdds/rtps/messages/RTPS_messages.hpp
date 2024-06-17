@@ -16,8 +16,8 @@
  * @file RTPS_messages.h
  */
 
-#ifndef _FASTDDS_RTPS_RTPS_MESSAGES_H_
-#define _FASTDDS_RTPS_RTPS_MESSAGES_H_
+#ifndef FASTDDS_RTPS_MESSAGES__RTPS_MESSAGES_HPP
+#define FASTDDS_RTPS_MESSAGES__RTPS_MESSAGES_HPP
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <iostream>
@@ -128,4 +128,4 @@ inline std::ostream& operator <<(
 
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#endif /* _FASTDDS_RTPS_MESSAGES_H_ */
+#endif // FASTDDS_RTPS_MESSAGES__RTPS_MESSAGES_HPP
