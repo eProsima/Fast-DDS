@@ -27,7 +27,7 @@
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.hpp>
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.hpp>
-#include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPv6TransportDescriptor.hpp>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
 #include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
 

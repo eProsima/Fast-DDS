@@ -32,7 +32,7 @@
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/rtps/common/WriteParams.hpp>
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.hpp>
-#include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPv6TransportDescriptor.hpp>
 #include <fastdds/utils/IPLocator.h>
 
 #include "../../common/BlackboxTests.hpp"

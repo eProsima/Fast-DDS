@@ -31,7 +31,7 @@
 #include <fastdds/rtps/attributes/ServerAttributes.hpp>
 #include <fastdds/rtps/common/Locator.hpp>
 #include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
-#include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPv6TransportDescriptor.hpp>
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.hpp>
 #include <fastdds/utils/IPLocator.h>
 
