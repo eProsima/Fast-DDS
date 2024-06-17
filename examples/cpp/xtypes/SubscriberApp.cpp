@@ -189,7 +189,7 @@ void SubscriberApp::on_data_available(
 
 void SubscriberApp::on_data_writer_discovery(
         DomainParticipant* /*participant*/,
-        eprosima::fastrtps::rtps::WriterDiscoveryInfo&& info,
+        eprosima::fastdds::rtps::WriterDiscoveryInfo&& info,
         bool& should_be_ignored)
 {
     // We don't want to ignore the writer

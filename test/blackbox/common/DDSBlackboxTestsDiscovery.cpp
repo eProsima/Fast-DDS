@@ -320,7 +320,7 @@ TEST(DDSDiscovery, ServersConnectionTCP)
 {
     using namespace eprosima;
     using namespace eprosima::fastdds::dds;
-    using namespace eprosima::fastrtps::rtps;
+    using namespace eprosima::fastdds::rtps;
 
     // TCP default DS port
     constexpr uint16_t W_UNICAST_PORT_RANDOM_NUMBER_STR = 41100;
@@ -334,7 +334,7 @@ TEST(DDSDiscovery, ServersConnectionTCP)
     GuidPrefix_t server_1_prefix;
     for (auto i = 0; i < 12; i++)
     {
-        server_1_prefix.value[i] = eprosima::fastrtps::rtps::octet(rand() % 254);
+        server_1_prefix.value[i] = eprosima::fastdds::rtps::octet(rand() % 254);
     }
     Locator_t locator_server_1;
     uint16_t server_1_port = W_UNICAST_PORT_RANDOM_NUMBER_STR;
