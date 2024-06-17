@@ -20,7 +20,7 @@
 #ifndef _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_DISCOVERYSERVEREXAMPLE_COMMON_H_
 #define _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_DISCOVERYSERVEREXAMPLE_COMMON_H_
 
-#include <fastdds/rtps/attributes/ServerAttributes.h>
+#include <fastdds/rtps/attributes/ServerAttributes.hpp>
 #include <fastdds/utils/IPLocator.h>
 
 enum class TransportKind

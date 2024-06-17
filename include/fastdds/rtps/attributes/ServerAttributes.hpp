@@ -13,12 +13,12 @@
 // limitations under the License.
 
 /**
- * @file ServerAttributes.h
+ * @file ServerAttributes.hpp
  *
  */
 
-#ifndef _FASTDDS_SERVERATTRIBUTES_H_
-#define _FASTDDS_SERVERATTRIBUTES_H_
+#ifndef FASTDDS_RTPS_ATTRIBUTES__SERVERATTRIBUTES_HPP
+#define FASTDDS_RTPS_ATTRIBUTES__SERVERATTRIBUTES_HPP
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <fastdds/rtps/common/Guid.h>
@@ -218,8 +218,7 @@ FASTDDS_EXPORTED_API bool get_server_client_default_guidPrefix(
 
 } // rtps
 } // fastdds
-
 } // namespace eprosima
 
 #endif // DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#endif /* _FASTDDS_SERVERATTRIBUTES_H_ */
+#endif // FASTDDS_RTPS_ATTRIBUTES__SERVERATTRIBUTES_HPP
