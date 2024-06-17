@@ -83,12 +83,7 @@ protected:
 #endif // FASTDDS_STATISTICS
 
     DataWriterImpl()
-        : history_(atts_,
-                500,
-                fastdds::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE,
-                [](const InstanceHandle_t&)
-                {
-                })
+        : history_()
     {
         gen_guid();
     }
@@ -100,12 +95,7 @@ protected:
             const DataWriterQos&,
             DataWriterListener* listener = nullptr,
             std::shared_ptr<fastdds::rtps::IPayloadPool> payload_pool = nullptr)
-        : history_(atts_,
-                500,
-                fastdds::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE,
-                [](const InstanceHandle_t&)
-                {
-                })
+        : history_()
     {
         gen_guid();
         static_cast<void>(listener);
@@ -119,12 +109,7 @@ protected:
             const DataWriterQos&,
             const fastdds::rtps::EntityId_t&,
             DataWriterListener* listener = nullptr)
-        : history_(atts_,
-                500,
-                fastdds::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE,
-                [](const InstanceHandle_t&)
-                {
-                })
+        : history_()
     {
         gen_guid();
         static_cast<void>(listener);
@@ -139,6 +124,16 @@ public:
 
     virtual ReturnCode_t enable()
     {
+        std::shared_ptr<fastdds::rtps::IPayloadPool> payload_pool;
+        std::shared_ptr<fastdds::rtps::IChangePool> change_pool;
+
+        history_.reset(new DataWriterHistory(
+            payload_pool,
+            change_pool,
+            atts_,
+            500,
+            fastdds::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE,
+            [](const InstanceHandle_t&) {}));
         return RETCODE_OK;
     }
 
@@ -430,7 +425,7 @@ public:
     LivelinessLostStatus liveliness_lost_status_;
     OfferedIncompatibleQosStatus offered_incompatible_qos_status_;
     std::chrono::duration<double, std::ratio<1, 1000000>> lifespan_duration_us_;
-    DataWriterHistory history_;
+    std::unique_ptr<DataWriterHistory> history_;
     fastdds::TopicAttributes atts_;
 
 };

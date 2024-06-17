@@ -21,6 +21,7 @@
 #include <fastdds/publisher/DataWriterHistory.hpp>
 #include <fastdds/statistics/topic_names.hpp>
 
+#include <rtps/history/CacheChangePool.h>
 #include <rtps/history/PoolConfig.h>
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <statistics/rtps/StatisticsBase.hpp>
@@ -452,16 +453,19 @@ bool MonitorService::create_endpoint()
     tatt.resourceLimitsQos.max_instances = 0;
     tatt.resourceLimitsQos.max_samples_per_instance = 1;
 
-    status_writer_history_.reset(new eprosima::fastdds::dds::DataWriterHistory(tatt, type_.m_typeSize,
+    PoolConfig writer_pool_cfg = PoolConfig::from_history_attributes(hatt);
+    status_writer_payload_pool_ = TopicPayloadPoolRegistry::get(MONITOR_SERVICE_TOPIC, writer_pool_cfg);
+    status_writer_payload_pool_->reserve_history(writer_pool_cfg, false);
+
+    status_writer_history_.reset(new eprosima::fastdds::dds::DataWriterHistory(
+            status_writer_payload_pool_,
+            std::make_shared<fastdds::rtps::CacheChangePool>(writer_pool_cfg),
+            tatt, type_.m_typeSize,
             MemoryManagementPolicy_t::PREALLOCATED_WITH_REALLOC_MEMORY_MODE,
             [](
                 const InstanceHandle_t& ) -> void
             {
             }));
-
-    PoolConfig writer_pool_cfg = PoolConfig::from_history_attributes(hatt);
-    status_writer_payload_pool_ = TopicPayloadPoolRegistry::get(MONITOR_SERVICE_TOPIC, writer_pool_cfg);
-    status_writer_payload_pool_->reserve_history(writer_pool_cfg, false);
 
     listener_ = new MonitorServiceListener(this);
 

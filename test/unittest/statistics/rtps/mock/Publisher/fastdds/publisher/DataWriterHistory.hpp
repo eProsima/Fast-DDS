@@ -24,6 +24,8 @@
 #include <fastdds/rtps/attributes/ResourceManagement.hpp>
 #include <fastdds/rtps/history/WriterHistory.hpp>
 #include <fastdds/utils/TimedMutex.hpp>
+#include <fastdds/rtps/history/IPayloadPool.hpp>
+#include <fastdds/rtps/history/IChangePool.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -59,11 +61,13 @@ class DataWriterHistory : public fastdds::rtps::WriterHistory
 public:
 
     DataWriterHistory(
-            const fastdds::TopicAttributes& topic_att,
+            const std::shared_ptr<rtps::IPayloadPool>& payload_pool,
+            const std::shared_ptr<rtps::IChangePool>& change_pool,
+            const TopicAttributes& topic_att,
             uint32_t payloadMaxSize,
-            fastdds::rtps::MemoryManagementPolicy_t mempolicy,
-            std::function<void (const fastdds::rtps::InstanceHandle_t&)>)
-        : WriterHistory(to_history_attributes(topic_att, payloadMaxSize, mempolicy))
+            rtps::MemoryManagementPolicy_t mempolicy,
+            std::function<void (const rtps::InstanceHandle_t&)>)
+        : WriterHistory(to_history_attributes(topic_att, payloadMaxSize, mempolicy), payload_pool, change_pool)
     {
     }
 

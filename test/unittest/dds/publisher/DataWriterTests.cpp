@@ -1600,7 +1600,7 @@ public:
 
     DataWriterHistory* get_history()
     {
-        return &history_;
+        return history_.get();
     }
 
 };

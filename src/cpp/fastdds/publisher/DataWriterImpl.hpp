@@ -403,7 +403,7 @@ protected:
     std::mutex listener_mutex_;
 
     //!History
-    DataWriterHistory history_;
+    std::unique_ptr<DataWriterHistory> history_;
 
     //!Listener to capture the events of the Writer
     class InnerDataWriterListener : public fastdds::rtps::WriterListener
@@ -714,6 +714,10 @@ protected:
             const fastdds::rtps::GUID_t& reader_guid) const override;
 
 private:
+
+    void create_history(
+            const std::shared_ptr<IPayloadPool>& payload_pool,
+            const std::shared_ptr<IChangePool>& change_pool);
 
     DataWriterQos get_datawriter_qos_from_settings(
             const DataWriterQos& qos);
