@@ -20,7 +20,7 @@
 #ifndef _FASTDDS_RTPS_IREADERDATAFILTER_HPP_
 #define _FASTDDS_RTPS_IREADERDATAFILTER_HPP_
 
-#include <fastdds/rtps/common/CacheChange.h>
+#include <fastdds/rtps/common/CacheChange.hpp>
 #include <fastdds/rtps/common/Guid.h>
 
 

@@ -24,7 +24,7 @@
 
 #include <fastcdr/cdr/fixed_size_string.hpp>
 
-#include <fastdds/rtps/common/CacheChange.h>
+#include <fastdds/rtps/common/CacheChange.hpp>
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
 
 #include <nlohmann/json.hpp>

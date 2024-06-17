@@ -35,7 +35,7 @@
 #include <fastdds/subscriber/DataReaderImpl/SampleLoanManager.hpp>
 #include <fastdds/subscriber/history/DataReaderHistory.hpp>
 
-#include <fastdds/rtps/common/CacheChange.h>
+#include <fastdds/rtps/common/CacheChange.hpp>
 #include <fastdds/rtps/reader/RTPSReader.h>
 
 #include <rtps/reader/BaseReader.hpp>

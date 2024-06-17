@@ -22,7 +22,7 @@
 
 #include <vector>
 
-#include <fastdds/rtps/common/CacheChange.h>
+#include <fastdds/rtps/common/CacheChange.hpp>
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
 
 #include <rtps/builtin/discovery/database/DiscoverySharedInfo.hpp>

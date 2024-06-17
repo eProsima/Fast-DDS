@@ -17,7 +17,7 @@
 
 #include <gtest/gtest.h>
 
-#include <fastdds/rtps/common/CacheChange.h>
+#include <fastdds/rtps/common/CacheChange.hpp>
 
 using namespace eprosima::fastdds::rtps;
 

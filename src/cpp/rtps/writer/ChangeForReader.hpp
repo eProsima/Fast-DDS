@@ -19,7 +19,7 @@
 #ifndef RTPS_WRITER__CHANGEFORREADER_HPP
 #define RTPS_WRITER__CHANGEFORREADER_HPP
 
-#include <fastdds/rtps/common/CacheChange.h>
+#include <fastdds/rtps/common/CacheChange.hpp>
 #include <fastdds/rtps/common/FragmentNumber.h>
 #include <fastdds/rtps/common/SequenceNumber.h>
 

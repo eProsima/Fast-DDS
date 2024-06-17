@@ -21,7 +21,7 @@
 #define _FASTDDS_RTPS_READERHISTORY_H_
 
 #include <fastdds/rtps/history/History.h>
-#include <fastdds/rtps/common/CacheChange.h>
+#include <fastdds/rtps/common/CacheChange.hpp>
 #include <fastdds/dds/core/status/SampleRejectedStatus.hpp>
 
 namespace eprosima {

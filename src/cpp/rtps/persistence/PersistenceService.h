@@ -20,7 +20,7 @@
 #define PERSISTENCESERVICE_H_
 
 #include <fastdds/rtps/common/Guid.h>
-#include <fastdds/rtps/common/CacheChange.h>
+#include <fastdds/rtps/common/CacheChange.hpp>
 #include <fastdds/rtps/attributes/PropertyPolicy.hpp>
 #include <fastdds/rtps/history/IChangePool.h>
 #include <fastdds/rtps/history/IPayloadPool.h>

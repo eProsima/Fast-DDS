@@ -19,7 +19,7 @@
 #ifndef RTPS_HISTORY_DATASHARINGPAYLOADPOOL_HPP
 #define RTPS_HISTORY_DATASHARINGPAYLOADPOOL_HPP
 
-#include <fastdds/rtps/common/CacheChange.h>
+#include <fastdds/rtps/common/CacheChange.hpp>
 #include <fastdds/rtps/history/IPayloadPool.h>
 #include <rtps/history/PoolConfig.h>
 

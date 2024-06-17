@@ -25,7 +25,7 @@
 
 #include <fastdds/dds/core/status/SampleRejectedStatus.hpp>
 #include <fastdds/rtps/attributes/HistoryAttributes.hpp>
-#include <fastdds/rtps/common/CacheChange.h>
+#include <fastdds/rtps/common/CacheChange.hpp>
 #include <fastdds/utils/TimedMutex.hpp>
 
 namespace eprosima {

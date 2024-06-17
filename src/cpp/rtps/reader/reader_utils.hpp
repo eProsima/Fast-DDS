@@ -19,7 +19,7 @@
 #ifndef _FASTDDS_RTPS_READER_READERUTILS_H_
 #define _FASTDDS_RTPS_READER_READERUTILS_H_
 
-#include <fastdds/rtps/common/CacheChange.h>
+#include <fastdds/rtps/common/CacheChange.hpp>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
 #include <fastdds/rtps/common/ChangeKind_t.hpp>

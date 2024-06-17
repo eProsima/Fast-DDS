@@ -19,7 +19,7 @@
 #ifndef _FASTDDS_PUBLISHER_FILTERING_DATAWRITERFILTEREDCHANGE_HPP_
 #define _FASTDDS_PUBLISHER_FILTERING_DATAWRITERFILTEREDCHANGE_HPP_
 
-#include <fastdds/rtps/common/CacheChange.h>
+#include <fastdds/rtps/common/CacheChange.hpp>
 
 #include <fastdds/utils/collections/ResourceLimitedContainerConfig.hpp>
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>

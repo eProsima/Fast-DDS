@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * @file CacheChange.h
+ * @file CacheChange.hpp
  */
 
-#ifndef _FASTDDS_RTPS_CACHECHANGE_H_
-#define _FASTDDS_RTPS_CACHECHANGE_H_
+#ifndef FASTDDS_RTPS_COMMON__CACHECHANGE_HPP
+#define FASTDDS_RTPS_COMMON__CACHECHANGE_HPP
 
 #include <atomic>
 #include <cassert>
@@ -427,4 +427,4 @@ private:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif /* _FASTDDS_RTPS_CACHECHANGE_H_ */
+#endif // FASTDDS_RTPS_COMMON__CACHECHANGE_HPP

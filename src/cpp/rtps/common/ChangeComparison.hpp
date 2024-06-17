@@ -19,7 +19,7 @@
 #ifndef _RTPS_COMMON_CHANGECOMPARISON_HPP
 #define _RTPS_COMMON_CHANGECOMPARISON_HPP
 
-#include <fastdds/rtps/common/CacheChange.h>
+#include <fastdds/rtps/common/CacheChange.hpp>
 
 namespace eprosima {
 namespace fastdds {
