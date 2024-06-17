@@ -117,10 +117,6 @@ public:
 #endif // FASTDDS_STATISTICS
 
     // *INDENT-OFF* Uncrustify makes a mess with MOCK_METHOD macros
-    MOCK_METHOD2(new_change, CacheChange_t* (
-            ChangeKind_t,
-            InstanceHandle_t));
-
     MOCK_METHOD1(set_separate_sending, void(bool));
 
     MOCK_METHOD0(getRTPSParticipant, RTPSParticipantImpl* ());

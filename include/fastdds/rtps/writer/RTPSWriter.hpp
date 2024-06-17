@@ -109,10 +109,6 @@ protected:
 
 public:
 
-    FASTDDS_EXPORTED_API CacheChange_t* new_change(
-            ChangeKind_t changeKind,
-            InstanceHandle_t handle = c_InstanceHandle_Unknown);
-
     /**
      * Add a matched reader.
      * @param data Pointer to the ReaderProxyData object added.

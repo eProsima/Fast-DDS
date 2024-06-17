@@ -169,34 +169,6 @@ void RTPSWriter::deinit()
     flow_controller_->unregister_writer(this);
 }
 
-CacheChange_t* RTPSWriter::new_change(
-        ChangeKind_t changeKind,
-        InstanceHandle_t handle)
-{
-    EPROSIMA_LOG_INFO(RTPS_WRITER, "Creating new change");
-
-    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
-    CacheChange_t* reserved_change = nullptr;
-    if (!change_pool_->reserve_cache(reserved_change))
-    {
-        EPROSIMA_LOG_WARNING(RTPS_WRITER, "Problem reserving cache from pool");
-        return nullptr;
-    }
-
-    reserved_change->kind = changeKind;
-    if (m_att.topicKind == WITH_KEY && !handle.isDefined())
-    {
-        EPROSIMA_LOG_WARNING(RTPS_WRITER, "Changes in KEYED Writers need a valid instanceHandle");
-    }
-    reserved_change->instanceHandle = handle;
-    reserved_change->writerGUID = m_guid;
-    reserved_change->writer_info.previous = nullptr;
-    reserved_change->writer_info.next = nullptr;
-    reserved_change->writer_info.num_sent_submessages = 0;
-    reserved_change->vendor_id = c_VendorId_eProsima;
-    return reserved_change;
-}
-
 SequenceNumber_t RTPSWriter::get_seq_num_min()
 {
     CacheChange_t* change;
