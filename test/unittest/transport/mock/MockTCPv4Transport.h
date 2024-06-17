@@ -17,7 +17,7 @@
 
 #include <vector>
 
-#include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPv4TransportDescriptor.hpp>
 
 #include <rtps/transport/TCPv4Transport.h>
 
