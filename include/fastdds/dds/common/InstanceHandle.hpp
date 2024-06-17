@@ -20,7 +20,7 @@
 #ifndef _FASTDDS_DDS_COMMON_INSTANCEHANDLE_HPP_
 #define _FASTDDS_DDS_COMMON_INSTANCEHANDLE_HPP_
 
-#include <fastdds/rtps/common/InstanceHandle.h>
+#include <fastdds/rtps/common/InstanceHandle.hpp>
 #include <fastdds/fastdds_dll.hpp>
 
 

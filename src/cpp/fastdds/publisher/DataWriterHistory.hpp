@@ -24,7 +24,7 @@
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/rtps/attributes/TopicAttributes.hpp>
-#include <fastdds/rtps/common/InstanceHandle.h>
+#include <fastdds/rtps/common/InstanceHandle.hpp>
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/attributes/ResourceManagement.hpp>
