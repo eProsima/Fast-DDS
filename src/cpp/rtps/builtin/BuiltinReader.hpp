@@ -21,7 +21,7 @@
 
 #include <memory>
 
-#include <fastdds/rtps/history/ReaderHistory.h>
+#include <fastdds/rtps/history/ReaderHistory.hpp>
 #include <fastdds/rtps/reader/ReaderListener.h>
 
 #include <rtps/history/ITopicPayloadPool.h>
