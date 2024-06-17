@@ -21,7 +21,7 @@
 
 #include <fastdds/fastdds_dll.hpp>
 
-#include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/Locator.hpp>
 #include <fastdds/rtps/common/LocatorsIterator.hpp>
 
 #include <vector>

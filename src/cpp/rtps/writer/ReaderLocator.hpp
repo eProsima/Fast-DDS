@@ -19,7 +19,7 @@
 #define RTPS_WRITER__READERLOCATOR_HPP
 
 #include <vector>
-#include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/Locator.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/SequenceNumber.h>
 #include <fastdds/rtps/messages/RTPSMessageSenderInterface.hpp>

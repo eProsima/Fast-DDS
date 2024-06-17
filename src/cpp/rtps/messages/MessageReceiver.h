@@ -25,7 +25,7 @@
 
 #include <fastdds/rtps/common/CDRMessage_t.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
-#include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/Locator.hpp>
 #include <fastdds/rtps/common/CacheChange.hpp>
 #include <fastdds/rtps/common/MatchingInfo.h>
 #include <fastdds/rtps/common/Time_t.h>

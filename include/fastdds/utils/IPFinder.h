@@ -23,7 +23,7 @@
 #include <string>
 #include <vector>
 
-#include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/Locator.hpp>
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/common/LocatorWithMask.hpp>
 

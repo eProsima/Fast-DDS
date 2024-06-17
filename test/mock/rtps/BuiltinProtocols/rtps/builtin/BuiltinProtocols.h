@@ -20,7 +20,7 @@
 #define _FASTDDS_RTPS_BUILTINPROTOCOLS_H_
 
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
-#include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/Locator.hpp>
 
 #include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
 

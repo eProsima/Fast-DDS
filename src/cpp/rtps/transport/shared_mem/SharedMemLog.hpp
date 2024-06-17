@@ -18,7 +18,7 @@
 #include <thread>
 
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
-#include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/Locator.hpp>
 
 #include <rtps/transport/shared_mem/SharedMemManager.hpp>
 #include <utils/DBQueue.hpp>

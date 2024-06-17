@@ -15,7 +15,7 @@
 #ifndef _FASTDDS_SHMLOCATOR_H_
 #define _FASTDDS_SHMLOCATOR_H_
 
-#include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/Locator.hpp>
 #include <utils/Host.hpp>
 
 namespace eprosima {

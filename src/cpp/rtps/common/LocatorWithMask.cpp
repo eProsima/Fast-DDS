@@ -19,7 +19,7 @@
 #include <cassert>
 #include <string>
 
-#include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/Locator.hpp>
 #include <fastdds/rtps/common/Types.h>
 #include <rtps/network/utils/network.hpp>
 

@@ -19,7 +19,7 @@
 #ifndef _FASTDDS_RTPS_COMMON_LOCATORSITERATOR_HPP_
 #define _FASTDDS_RTPS_COMMON_LOCATORSITERATOR_HPP_
 
-#include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/Locator.hpp>
 
 namespace eprosima {
 namespace fastdds {

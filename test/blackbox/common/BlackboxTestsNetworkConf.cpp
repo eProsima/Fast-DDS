@@ -16,7 +16,7 @@
 #include <string>
 
 #include <gtest/gtest.h>
-#include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/Locator.hpp>
 #include <fastdds/utils/IPFinder.h>
 
 #include "BlackboxTests.hpp"

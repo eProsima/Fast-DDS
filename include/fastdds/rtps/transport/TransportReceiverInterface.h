@@ -15,7 +15,7 @@
 #ifndef _FASTDDS_TRANSPORT_RECEIVER_INTERFACE_H
 #define _FASTDDS_TRANSPORT_RECEIVER_INTERFACE_H
 
-#include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/Locator.hpp>
 
 namespace eprosima {
 namespace fastdds {

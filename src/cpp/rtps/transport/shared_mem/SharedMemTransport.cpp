@@ -23,7 +23,7 @@
 #endif // ifdef ANDROID
 
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/Locator.hpp>
 #include <fastdds/rtps/transport/SenderResource.h>
 #include <fastdds/rtps/transport/TransportInterface.h>
 

@@ -23,7 +23,7 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <fastdds/rtps/common/CDRMessage_t.hpp>
-#include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/Locator.hpp>
 
 #include <rtps/writer/StatefulWriter.hpp>
 #include <rtps/writer/StatelessWriter.hpp>

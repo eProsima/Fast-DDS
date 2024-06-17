@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * @file Locator.h
+ * @file Locator.hpp
  */
 
-#ifndef _FASTDDS_RTPS_ELEM_LOCATOR_H_
-#define _FASTDDS_RTPS_ELEM_LOCATOR_H_
+#ifndef FASTDDS_RTPS_COMMON__LOCATOR_HPP
+#define FASTDDS_RTPS_COMMON__LOCATOR_HPP
 
 #include <fastdds/fastdds_dll.hpp>
 
@@ -523,4 +523,4 @@ using Locator = eprosima::fastdds::rtps::Locator_t;
 } // namespace fastdds
 } // namespace eprosima
 
-#endif /* _FASTDDS_RTPS_ELEM_LOCATOR_H_ */
+#endif // FASTDDS_RTPS_COMMON__LOCATOR_HPP
