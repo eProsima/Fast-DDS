@@ -13,12 +13,12 @@
 // limitations under the License.
 
 /**
- * @file RTPSParticipantListener.h
+ * @file RTPSParticipantListener.hpp
  *
  */
 
-#ifndef _FASTDDS_RTPS_PARTICIPANT_RTPSPARTICIPANTLISTENER_H__
-#define _FASTDDS_RTPS_PARTICIPANT_RTPSPARTICIPANTLISTENER_H__
+#ifndef FASTDDS_RTPS_PARTICIPANT__RTPSPARTICIPANTLISTENER_HPP
+#define FASTDDS_RTPS_PARTICIPANT__RTPSPARTICIPANTLISTENER_HPP
 
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.hpp>
 #include <fastdds/rtps/reader/ReaderDiscoveryInfo.h>
@@ -118,4 +118,4 @@ public:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif //_FASTDDS_RTPS_PARTICIPANT_RTPSPARTICIPANTLISTENER_H__
+#endif //FASTDDS_RTPS_PARTICIPANT__RTPSPARTICIPANTLISTENER_HPP

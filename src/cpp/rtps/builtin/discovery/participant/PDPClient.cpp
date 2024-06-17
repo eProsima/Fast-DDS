@@ -32,7 +32,7 @@
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
 #include <fastdds/rtps/history/ReaderHistory.hpp>
 #include <fastdds/rtps/history/WriterHistory.hpp>
-#include <fastdds/rtps/participant/RTPSParticipantListener.h>
+#include <fastdds/rtps/participant/RTPSParticipantListener.hpp>
 #include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
 
 #include <rtps/builtin/BuiltinProtocols.h>

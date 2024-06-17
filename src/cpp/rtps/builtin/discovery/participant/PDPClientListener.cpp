@@ -25,7 +25,7 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/history/ReaderHistory.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.hpp>
-#include <fastdds/rtps/participant/RTPSParticipantListener.h>
+#include <fastdds/rtps/participant/RTPSParticipantListener.hpp>
 #include <fastdds/rtps/reader/RTPSReader.h>
 
 #include <rtps/builtin/discovery/endpoint/EDP.h>

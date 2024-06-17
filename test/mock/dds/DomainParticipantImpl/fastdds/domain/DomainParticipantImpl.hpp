@@ -41,7 +41,7 @@
 #include <fastdds/rtps/common/InstanceHandle.hpp>
 #include <fastdds/rtps/common/Types.hpp>
 #include <fastdds/rtps/participant/RTPSParticipant.hpp>
-#include <fastdds/rtps/participant/RTPSParticipantListener.h>
+#include <fastdds/rtps/participant/RTPSParticipantListener.hpp>
 #include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/subscriber/SubscriberImpl.hpp>
 #include <fastdds/topic/TopicImpl.hpp>

@@ -38,7 +38,7 @@
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
-#include <fastdds/rtps/participant/RTPSParticipantListener.h>
+#include <fastdds/rtps/participant/RTPSParticipantListener.hpp>
 #include "fastdds/topic/DDSSQLFilter/DDSFilterFactory.hpp"
 #include <fastdds/topic/TopicProxyFactory.hpp>
 #include <rtps/reader/StatefulReader.hpp>
