@@ -15,7 +15,7 @@
 #ifndef _FASTDDS_UDPV4_TRANSPORT_DESCRIPTOR
 #define _FASTDDS_UDPV4_TRANSPORT_DESCRIPTOR
 
-#include <fastdds/rtps/transport/UDPTransportDescriptor.h>
+#include <fastdds/rtps/transport/UDPTransportDescriptor.hpp>
 
 namespace eprosima {
 namespace fastdds {

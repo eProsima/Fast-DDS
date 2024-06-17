@@ -50,7 +50,7 @@
 #include <fastdds/rtps/flowcontrol/FlowControllerSchedulerPolicy.hpp>
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.hpp>
 #include <fastdds/rtps/transport/TCPv6TransportDescriptor.hpp>
-#include <fastdds/rtps/transport/UDPTransportDescriptor.h>
+#include <fastdds/rtps/transport/UDPTransportDescriptor.hpp>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
 #include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
 #include <fastdds/utils/IPLocator.h>
