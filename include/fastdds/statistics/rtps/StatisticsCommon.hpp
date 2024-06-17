@@ -16,8 +16,8 @@
  * @file StatisticsCommon.hpp
  */
 
-#ifndef _FASTDDS_STATISTICS_RTPS_STATISTICSCOMMON_HPP_
-#define _FASTDDS_STATISTICS_RTPS_STATISTICSCOMMON_HPP_
+#ifndef FASTDDS_STATISTICS_RTPS__STATISTICSCOMMON_HPP
+#define FASTDDS_STATISTICS_RTPS__STATISTICSCOMMON_HPP
 
 #include <memory>
 #include <type_traits>
@@ -394,4 +394,4 @@ protected:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_STATISTICS_RTPS_STATISTICSCOMMON_HPP_
+#endif // FASTDDS_STATISTICS_RTPS__STATISTICSCOMMON_HPP

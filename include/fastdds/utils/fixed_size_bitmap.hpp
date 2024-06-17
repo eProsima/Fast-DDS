@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef FASTDDS_UTILS_FIXED_SIZE_BITMAP_HPP_
-#define FASTDDS_UTILS_FIXED_SIZE_BITMAP_HPP_
+#ifndef FASTDDS_UTILS__FIXED_SIZE_BITMAP_HPP
+#define FASTDDS_UTILS__FIXED_SIZE_BITMAP_HPP
 
 #include <array>
 #include <cstdint>
@@ -634,4 +634,4 @@ private:
 
 #endif // if _MSC_VER
 
-#endif   // FASTDDS_UTILS_FIXED_SIZE_BITMAP_HPP_
+#endif   // FASTDDS_UTILS__FIXED_SIZE_BITMAP_HPP

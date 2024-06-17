@@ -16,8 +16,8 @@
  * @file topic_names.hpp
  */
 
-#ifndef _FASTDDS_STATISTICS_TOPIC_NAMES_HPP_
-#define _FASTDDS_STATISTICS_TOPIC_NAMES_HPP_
+#ifndef FASTDDS_STATISTICS__TOPIC_NAMES_HPP
+#define FASTDDS_STATISTICS__TOPIC_NAMES_HPP
 
 namespace eprosima {
 namespace fastdds {
@@ -66,4 +66,4 @@ constexpr const char* MONITOR_SERVICE_TOPIC = "_fastdds_monitor_service_status";
 } // fastdds
 } // eprosima
 
-#endif /* _FASTDDS_STATISTICS_TOPIC_NAMES_HPP_ */
+#endif // FASTDDS_STATISTICS__TOPIC_NAMES_HPP
