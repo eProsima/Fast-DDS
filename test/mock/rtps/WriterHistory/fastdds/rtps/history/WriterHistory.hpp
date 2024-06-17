@@ -76,6 +76,11 @@ public:
             ChangeKind_t,
             InstanceHandle_t));
 
+    MOCK_METHOD3(create_change, CacheChange_t* (
+            uint32_t,
+            ChangeKind_t,
+            InstanceHandle_t));
+
     MOCK_METHOD1(release_change, bool(CacheChange_t*));
 
     MOCK_METHOD1(add_change_mock, bool(CacheChange_t*));

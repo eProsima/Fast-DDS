@@ -20,6 +20,7 @@
 #ifndef FASTDDS_RTPS_HISTORY__WRITERHISTORY_HPP
 #define FASTDDS_RTPS_HISTORY__WRITERHISTORY_HPP
 
+#include <cstdint>
 #include <memory>
 
 #include <fastdds/fastdds_dll.hpp>
@@ -84,6 +85,22 @@ public:
      * @pre A writer has been associated with this history
      */
     FASTDDS_EXPORTED_API CacheChange_t* create_change(
+            ChangeKind_t change_kind,
+            InstanceHandle_t handle = c_InstanceHandle_Unknown);
+
+    /**
+     * @brief Create a new CacheChange_t object with a specific payload size.
+     *
+     * @param payload_size  Size of the payload.
+     * @param change_kind   Kind of the change.
+     * @param handle        InstanceHandle_t of the change.
+     *
+     * @return Pointer to the new CacheChange_t object.
+     *
+     * @pre A writer has been associated with this history
+     */
+    FASTDDS_EXPORTED_API CacheChange_t* create_change(
+            uint32_t payload_size,
             ChangeKind_t change_kind,
             InstanceHandle_t handle = c_InstanceHandle_Unknown);
 
