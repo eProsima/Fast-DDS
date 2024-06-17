@@ -16,7 +16,7 @@
 #define _FASTDDS_TCP_CHANNEL_RESOURCE_BASE_
 
 #include <asio.hpp>
-#include <fastdds/rtps/transport/TCPTransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPTransportDescriptor.hpp>
 #include <fastdds/rtps/transport/TransportReceiverInterface.h>
 #include <fastdds/rtps/common/Locator.hpp>
 #include <rtps/transport/ChannelResource.h>

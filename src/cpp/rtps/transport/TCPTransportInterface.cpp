@@ -49,7 +49,7 @@
 #include <fastdds/rtps/common/Types.hpp>
 #include <fastdds/rtps/transport/SenderResource.hpp>
 #include <fastdds/rtps/transport/SocketTransportDescriptor.hpp>
-#include <fastdds/rtps/transport/TCPTransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPTransportDescriptor.hpp>
 #include <fastdds/rtps/transport/TransportReceiverInterface.h>
 #include <fastdds/utils/IPLocator.h>
 

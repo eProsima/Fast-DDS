@@ -16,7 +16,7 @@
 #define _FASTDDS_TCPV4_TRANSPORT_DESCRIPTOR_
 
 #include <fastdds/rtps/common/Types.hpp>
-#include <fastdds/rtps/transport/TCPTransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPTransportDescriptor.hpp>
 
 namespace eprosima {
 namespace fastdds {
