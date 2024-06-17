@@ -13,12 +13,12 @@
 // limitations under the License.
 
 /**
- * @file History.h
+ * @file History.hpp
  *
  */
 
-#ifndef _FASTDDS_RTPS_HISTORY_H_
-#define _FASTDDS_RTPS_HISTORY_H_
+#ifndef FASTDDS_RTPS_HISTORY__HISTORY_HPP
+#define FASTDDS_RTPS_HISTORY__HISTORY_HPP
 
 #include <fastdds/fastdds_dll.hpp>
 #include <fastdds/rtps/history/IChangePool.h>
@@ -296,4 +296,4 @@ protected:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif /* _FASTDDS_RTPS_HISTORY_H_ */
+#endif // FASTDDS_RTPS_HISTORY__HISTORY_HPP

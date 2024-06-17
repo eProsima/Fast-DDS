@@ -20,7 +20,7 @@
 #ifndef _FASTDDS_RTPS_WRITERHISTORY_H_
 #define _FASTDDS_RTPS_WRITERHISTORY_H_
 
-#include <fastdds/rtps/history/History.h>
+#include <fastdds/rtps/history/History.hpp>
 #include <fastdds/dds/log/Log.hpp>
 
 namespace eprosima {

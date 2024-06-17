@@ -29,7 +29,7 @@
 #include <vector>
 
 #include <fastdds/rtps/attributes/ServerAttributes.hpp>
-#include <fastdds/rtps/history/History.h>
+#include <fastdds/rtps/history/History.hpp>
 #include <rtps/builtin/discovery/database/DiscoveryDataBase.hpp>
 #include <rtps/builtin/discovery/database/DiscoveryDataFilter.hpp>
 #include <rtps/builtin/discovery/participant/DS/DiscoveryServerPDPEndpointsSecure.hpp>

@@ -20,7 +20,7 @@
 #ifndef _FASTDDS_RTPS_READERHISTORY_H_
 #define _FASTDDS_RTPS_READERHISTORY_H_
 
-#include <fastdds/rtps/history/History.h>
+#include <fastdds/rtps/history/History.hpp>
 #include <fastdds/rtps/common/CacheChange.hpp>
 #include <fastdds/dds/core/status/SampleRejectedStatus.hpp>
 
