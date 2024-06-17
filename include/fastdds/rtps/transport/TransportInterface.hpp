@@ -34,7 +34,7 @@
 #include <fastdds/rtps/transport/network/NetmaskFilterKind.hpp>
 #include <fastdds/rtps/transport/SenderResource.hpp>
 #include <fastdds/rtps/transport/TransportDescriptorInterface.hpp>
-#include <fastdds/rtps/transport/TransportReceiverInterface.h>
+#include <fastdds/rtps/transport/TransportReceiverInterface.hpp>
 
 namespace eprosima {
 namespace fastdds {

@@ -50,7 +50,7 @@
 #include <fastdds/rtps/transport/SenderResource.hpp>
 #include <fastdds/rtps/transport/SocketTransportDescriptor.hpp>
 #include <fastdds/rtps/transport/TCPTransportDescriptor.hpp>
-#include <fastdds/rtps/transport/TransportReceiverInterface.h>
+#include <fastdds/rtps/transport/TransportReceiverInterface.hpp>
 #include <fastdds/utils/IPLocator.h>
 
 #include <rtps/transport/asio_helpers.hpp>

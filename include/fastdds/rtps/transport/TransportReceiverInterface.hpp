@@ -12,8 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef _FASTDDS_TRANSPORT_RECEIVER_INTERFACE_H
-#define _FASTDDS_TRANSPORT_RECEIVER_INTERFACE_H
+/**
+ * @file TransportReceiverInterface.hpp
+ *
+ */
+
+#ifndef FASTDDS_RTPS_TRANSPORT_TRANSPORTRECEIVERINTERFACE_HPP
+#define FASTDDS_RTPS_TRANSPORT_TRANSPORTRECEIVERINTERFACE_HPP
 
 #include <fastdds/rtps/common/Locator.hpp>
 
@@ -50,4 +55,4 @@ public:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_TRANSPORT_RECEIVER_INTERFACE_H
+#endif // FASTDDS_RTPS_TRANSPORT_TRANSPORTRECEIVERINTERFACE_HPP

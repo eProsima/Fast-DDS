@@ -17,7 +17,7 @@
 
 #include <asio.hpp>
 #include <fastdds/rtps/transport/TCPTransportDescriptor.hpp>
-#include <fastdds/rtps/transport/TransportReceiverInterface.h>
+#include <fastdds/rtps/transport/TransportReceiverInterface.hpp>
 #include <fastdds/rtps/common/Locator.hpp>
 #include <rtps/transport/ChannelResource.h>
 #include <rtps/transport/tcp/RTCPMessageManager.h>

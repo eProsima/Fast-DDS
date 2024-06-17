@@ -19,7 +19,7 @@
 #include <fastdds/rtps/transport/ChainingTransport.hpp>
 #include <fastdds/rtps/transport/ChainingTransportDescriptor.hpp>
 #include <fastdds/rtps/transport/SenderResource.hpp>
-#include <fastdds/rtps/transport/TransportReceiverInterface.h>
+#include <fastdds/rtps/transport/TransportReceiverInterface.hpp>
 
 namespace eprosima {
 namespace fastdds {
