@@ -21,7 +21,7 @@
 
 #include <fastdds/dds/subscriber/qos/ReaderQos.hpp>
 #include <fastdds/rtps/attributes/ExternalLocators.hpp>
-#include <fastdds/rtps/attributes/PropertyPolicy.h>
+#include <fastdds/rtps/attributes/PropertyPolicy.hpp>
 #include <fastdds/rtps/attributes/ReaderAttributes.h>
 #include <fastdds/rtps/attributes/TopicAttributes.h>
 #include <fastdds/rtps/common/Locator.h>

@@ -19,7 +19,7 @@
 #ifndef _SECURITY_AUTHENTICATION_PKIDH_H_
 #define _SECURITY_AUTHENTICATION_PKIDH_H_
 
-#include <fastdds/rtps/attributes/PropertyPolicy.h>
+#include <fastdds/rtps/attributes/PropertyPolicy.hpp>
 #include <rtps/security/authentication/Authentication.h>
 #include <security/artifact_providers/Pkcs11Provider.hpp>
 #include <security/authentication/PKIHandshakeHandle.h>

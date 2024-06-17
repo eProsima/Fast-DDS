@@ -24,7 +24,7 @@
 #include <limits>
 #include <mutex>
 
-#include <fastdds/rtps/attributes/PropertyPolicy.h>
+#include <fastdds/rtps/attributes/PropertyPolicy.hpp>
 #include <fastdds/rtps/attributes/EndpointSecurityAttributes.hpp>
 
 #include <rtps/security/accesscontrol/ParticipantSecurityAttributes.h>

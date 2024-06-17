@@ -18,7 +18,7 @@
 #ifndef _RTPS_SECURITY_SECURITYPLUGINFACTORY_H_
 #define _RTPS_SECURITY_SECURITYPLUGINFACTORY_H_
 
-#include <fastdds/rtps/attributes/PropertyPolicy.h>
+#include <fastdds/rtps/attributes/PropertyPolicy.hpp>
 #include <rtps/security/accesscontrol/AccessControl.h>
 #include <rtps/security/authentication/Authentication.h>
 #include <rtps/security/cryptography/Cryptography.h>

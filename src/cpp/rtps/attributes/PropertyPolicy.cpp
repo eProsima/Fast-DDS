@@ -16,7 +16,7 @@
  * @file PropertyPolicy.cpp
  */
 
-#include <fastdds/rtps/attributes/PropertyPolicy.h>
+#include <fastdds/rtps/attributes/PropertyPolicy.hpp>
 
 #include <algorithm>
 

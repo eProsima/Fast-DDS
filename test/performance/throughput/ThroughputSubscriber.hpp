@@ -33,7 +33,7 @@
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
-#include <fastdds/rtps/attributes/PropertyPolicy.h>
+#include <fastdds/rtps/attributes/PropertyPolicy.hpp>
 #include "ThroughputTypes.hpp"
 
 #include "../optionarg.hpp"

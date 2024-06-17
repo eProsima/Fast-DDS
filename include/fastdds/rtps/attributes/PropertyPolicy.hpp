@@ -13,10 +13,10 @@
 // limitations under the License.
 
 /*!
- * @file PropertyPolicy.h
+ * @file PropertyPolicy.hpp
  */
-#ifndef _FASTDDS_RTPS_ATTRIBUTES_PROPERTYPOLICY_H_
-#define _FASTDDS_RTPS_ATTRIBUTES_PROPERTYPOLICY_H_
+#ifndef FASTDDS_RTPS_ATTRIBUTES__PROPERTYPOLICY_HPP
+#define FASTDDS_RTPS_ATTRIBUTES__PROPERTYPOLICY_HPP
 
 #include <fastdds/rtps/common/Property.h>
 #include <fastdds/rtps/common/BinaryProperty.h>
@@ -152,4 +152,4 @@ public:
 } //namespace fastdds
 } //namespace eprosima
 
-#endif // _FASTDDS_RTPS_ATTRIBUTES_PROPERTYPOLICY_H_
+#endif // FASTDDS_RTPS_ATTRIBUTES__PROPERTYPOLICY_HPP

@@ -22,7 +22,7 @@
 #include <mutex>
 
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/rtps/attributes/PropertyPolicy.h>
+#include <fastdds/rtps/attributes/PropertyPolicy.hpp>
 #include <fastdds/rtps/history/WriterHistory.h>
 
 #include <rtps/DataSharing/DataSharingNotifier.hpp>
