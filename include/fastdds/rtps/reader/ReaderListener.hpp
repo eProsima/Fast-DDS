@@ -26,7 +26,7 @@
 #include <fastdds/rtps/builtin/data/WriterProxyData.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/MatchingInfo.hpp>
-#include <fastdds/rtps/writer/WriterDiscoveryInfo.h>
+#include <fastdds/rtps/writer/WriterDiscoveryInfo.hpp>
 
 namespace eprosima {
 namespace fastdds {

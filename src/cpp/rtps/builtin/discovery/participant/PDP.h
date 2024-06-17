@@ -34,7 +34,7 @@
 #include <fastdds/rtps/common/WriteParams.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.hpp>
 #include <fastdds/rtps/reader/ReaderDiscoveryInfo.hpp>
-#include <fastdds/rtps/writer/WriterDiscoveryInfo.h>
+#include <fastdds/rtps/writer/WriterDiscoveryInfo.hpp>
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>
 
 #include <statistics/rtps/monitor-service/interfaces/IProxyObserver.hpp>

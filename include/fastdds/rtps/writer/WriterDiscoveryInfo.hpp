@@ -13,10 +13,10 @@
 // limitations under the License.
 
 /**
- * @file WriterDiscoveryInfo.h
+ * @file WriterDiscoveryInfo.hpp
  */
-#ifndef _RTPS_WRITER_WRITERDISCOVERYINFO_H_
-#define _RTPS_WRITER_WRITERDISCOVERYINFO_H_
+#ifndef FASTDDS_RTPS_WRITER_WRITERDISCOVERYINFO_HPP
+#define FASTDDS_RTPS_WRITER_WRITERDISCOVERYINFO_HPP
 
 #include <fastdds/fastdds_dll.hpp>
 #include <fastdds/rtps/builtin/data/WriterProxyData.hpp>
@@ -71,4 +71,4 @@ public:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _RTPS_WRITER_WRITERDISCOVERYINFO_H_
+#endif // FASTDDS_RTPS_WRITER_WRITERDISCOVERYINFO_HPP
