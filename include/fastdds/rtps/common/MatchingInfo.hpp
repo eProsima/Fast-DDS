@@ -13,12 +13,12 @@
 // limitations under the License.
 
 /**
- * @file MatchingInfo.h
+ * @file MatchingInfo.hpp
  *
  */
 
-#ifndef _FASTDDS_RTPS_MATCHINGINFO_H_
-#define _FASTDDS_RTPS_MATCHINGINFO_H_
+#ifndef FASTDDS_RTPS_COMMON__MATCHINGINFO_HPP
+#define FASTDDS_RTPS_COMMON__MATCHINGINFO_HPP
 
 #include <fastdds/rtps/common/Guid.hpp>
 
@@ -82,4 +82,4 @@ public:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif /* _FASTDDS_RTPS_MATCHINGINFO_H_ */
+#endif // FASTDDS_RTPS_COMMON__MATCHINGINFO_HPP
