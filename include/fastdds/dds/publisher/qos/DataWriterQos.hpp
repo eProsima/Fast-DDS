@@ -60,8 +60,7 @@ public:
 
     inline void clear()
     {
-        RTPSReliableWriterQos reset = RTPSReliableWriterQos();
-        std::swap(*this, reset);
+        *this = RTPSReliableWriterQos();
     }
 
     //!Writer Timing Attributes

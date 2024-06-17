@@ -60,8 +60,7 @@ public:
 
     inline void clear()
     {
-        RTPSReliableReaderQos reset = RTPSReliableReaderQos();
-        std::swap(*this, reset);
+        *this = RTPSReliableReaderQos();
     }
 
     /*!
