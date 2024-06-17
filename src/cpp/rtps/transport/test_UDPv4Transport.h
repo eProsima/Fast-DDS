@@ -53,14 +53,7 @@ public:
     virtual LocatorList NormalizeLocator(
             const Locator& locator) override;
 
-    FASTDDS_EXPORTED_API static std::atomic<bool> test_UDPv4Transport_ShutdownAllNetwork;
-    // Handle to a persistent log of dropped packets. Defaults to length 0 (no logging) to prevent wasted resources.
-    FASTDDS_EXPORTED_API static std::vector<std::vector<fastdds::rtps::octet>> test_UDPv4Transport_DropLog;
-    FASTDDS_EXPORTED_API static std::atomic<uint32_t> test_UDPv4Transport_DropLogLength;
-    FASTDDS_EXPORTED_API static std::atomic<bool> always_drop_participant_builtin_topic_data;
-    FASTDDS_EXPORTED_API static std::atomic<bool> simulate_no_interfaces;
-
-    FASTDDS_EXPORTED_API static test_UDPv4TransportDescriptor::DestinationLocatorFilter locator_filter;
+    std::shared_ptr<TestTransportOptions> test_transport_options;
 
 protected:
 

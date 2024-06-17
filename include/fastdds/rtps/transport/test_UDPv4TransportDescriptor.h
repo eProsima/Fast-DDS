@@ -21,13 +21,13 @@
 #include <fastdds/rtps/transport/SocketTransportDescriptor.h>
 #include <fastdds/rtps/common/SequenceNumber.h>
 
-
-
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
 struct CDRMessage_t;
+
+struct TestTransportOptions;
 
 /**
  * UDP v4 Test Transport configuration
@@ -40,57 +40,87 @@ struct test_UDPv4TransportDescriptor : public SocketTransportDescriptor
     //! Locator filtering function
     typedef std::function<bool (const Locator& destination)> DestinationLocatorFilter;
 
+    //! Test transport options
+    std::shared_ptr<TestTransportOptions> test_transport_options = std::make_shared<TestTransportOptions>();
+
     //! Test shim parameters
     //! Percentage of data messages being dropped
-    mutable std::atomic<uint8_t> dropDataMessagesPercentage;
+    mutable std::atomic<uint8_t> dropDataMessagesPercentage{0};
     //! Percentage of Data[P] messages being dropped
-    mutable std::atomic<uint8_t> dropParticipantBuiltinDataMessagesPercentage;
+    mutable std::atomic<uint8_t> dropParticipantBuiltinDataMessagesPercentage{0};
     //! Percentage of Data[W] messages being dropped
-    mutable std::atomic<uint8_t> dropPublicationBuiltinDataMessagesPercentage;
+    mutable std::atomic<uint8_t> dropPublicationBuiltinDataMessagesPercentage{0};
     //! Percentage of Data[R] messages being dropped
-    mutable std::atomic<uint8_t> dropSubscriptionBuiltinDataMessagesPercentage;
+    mutable std::atomic<uint8_t> dropSubscriptionBuiltinDataMessagesPercentage{0};
     //! Filtering function for dropping data messages
-    filter drop_data_messages_filter_;
+    filter drop_data_messages_filter_ = [](fastdds::rtps::CDRMessage_t&)
+            {
+                return false;
+            };
     //! Filtering function for dropping builtin data messages
-    filter drop_builtin_data_messages_filter_;
+    filter drop_builtin_data_messages_filter_ = [](fastdds::rtps::CDRMessage_t&)
+            {
+                return false;
+            };
     //! Flag to enable dropping of discovery Participant DATA(P) messages
-    bool dropParticipantBuiltinTopicData;
+    bool dropParticipantBuiltinTopicData = false;
     //! Flag to enable dropping of discovery Writer DATA(W) messages
-    bool dropPublicationBuiltinTopicData;
+    bool dropPublicationBuiltinTopicData = false;
     //! Flag to enable dropping of discovery Reader DATA(R) messages
-    bool dropSubscriptionBuiltinTopicData;
+    bool dropSubscriptionBuiltinTopicData = false;
     //! Percentage of data fragments being dropped
-    mutable std::atomic<uint8_t> dropDataFragMessagesPercentage;
+    mutable std::atomic<uint8_t> dropDataFragMessagesPercentage{0};
     //! Filtering function for dropping data fragments messages
-    filter drop_data_frag_messages_filter_;
+    filter drop_data_frag_messages_filter_ = [](fastdds::rtps::CDRMessage_t&)
+            {
+                return false;
+            };
     //! Percentage of heartbeats being dropped
-    mutable std::atomic<uint8_t> dropHeartbeatMessagesPercentage;
+    mutable std::atomic<uint8_t> dropHeartbeatMessagesPercentage{0};
     //! Filtering function for dropping heartbeat messages
-    filter drop_heartbeat_messages_filter_;
+    filter drop_heartbeat_messages_filter_ = [](fastdds::rtps::CDRMessage_t&)
+            {
+                return false;
+            };
     //! Percentage of AckNacks being dropped
-    mutable std::atomic<uint8_t> dropAckNackMessagesPercentage;
+    mutable std::atomic<uint8_t> dropAckNackMessagesPercentage{0};
     //! Filtering function for dropping AckNacks
-    filter drop_ack_nack_messages_filter_;
+    filter drop_ack_nack_messages_filter_ = [](fastdds::rtps::CDRMessage_t&)
+            {
+                return false;
+            };
     //! Percentage of gap messages being dropped
-    mutable std::atomic<uint8_t> dropGapMessagesPercentage;
+    mutable std::atomic<uint8_t> dropGapMessagesPercentage{0};
     //! Filtering function for dropping gap messages
-    filter drop_gap_messages_filter_;
+    filter drop_gap_messages_filter_ = [](fastdds::rtps::CDRMessage_t&)
+            {
+                return false;
+            };
     // General filtering function for all kind of sub-messages (indiscriminate)
-    filter sub_messages_filter_;
+    filter sub_messages_filter_ = [](fastdds::rtps::CDRMessage_t&)
+            {
+                return false;
+            };
 
     // General drop percentage (indiscriminate)
-    mutable std::atomic<uint8_t> percentageOfMessagesToDrop;
+    mutable std::atomic<uint8_t> percentageOfMessagesToDrop{0};
     // General filtering function for all kind of messages (indiscriminate)
-    filter messages_filter_;
+    filter messages_filter_ = [](fastdds::rtps::CDRMessage_t&)
+            {
+                return false;
+            };
 
     //! Filtering function for dropping messages to specific destinations
-    DestinationLocatorFilter locator_filter_;
+    DestinationLocatorFilter locator_filter_ = [](const Locator&)
+            {
+                return false;
+            };
 
     //! Vector containing the message's sequence numbers being dropped
-    std::vector<fastdds::rtps::SequenceNumber_t> sequenceNumberDataMessagesToDrop;
+    std::vector<fastdds::rtps::SequenceNumber_t> sequenceNumberDataMessagesToDrop{};
 
     //! Log dropped packets
-    uint32_t dropLogLength;
+    uint32_t dropLogLength = 0;
 
     //! Constructor
     FASTDDS_EXPORTED_API test_UDPv4TransportDescriptor();
@@ -121,6 +151,23 @@ struct test_UDPv4TransportDescriptor : public SocketTransportDescriptor
     // Filters are not included
     FASTDDS_EXPORTED_API bool operator ==(
             const test_UDPv4TransportDescriptor& t) const;
+};
+
+struct TestTransportOptions
+{
+    FASTDDS_EXPORTED_API TestTransportOptions() = default;
+    ~TestTransportOptions() = default;
+
+    std::atomic<bool> test_UDPv4Transport_ShutdownAllNetwork{false};
+    // Handle to a persistent log of dropped packets. Defaults to length 0 (no logging) to prevent wasted resources.
+    std::vector<std::vector<fastdds::rtps::octet>> test_UDPv4Transport_DropLog{};
+    std::atomic<uint32_t> test_UDPv4Transport_DropLogLength{0};
+    std::atomic<bool> always_drop_participant_builtin_topic_data{false};
+    std::atomic<bool> simulate_no_interfaces{false};
+    test_UDPv4TransportDescriptor::DestinationLocatorFilter locator_filter = [](const Locator&)
+            {
+                return false;
+            };
 };
 
 } // namespace rtps
