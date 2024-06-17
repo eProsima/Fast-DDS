@@ -32,6 +32,7 @@ Forthcoming
   * ReaderLocator
   * ReaderProxy
   * ChangeForReader
+* Public API headers .h have been renamed to .hpp
 * Added create participant methods that use environment XML profile for participant configuration.
 * New TypeObjectRegistry class to register/query TypeObjects/TypeIdentifiers.
 * New TypeObjectUtils class providing API to build and register TypeObjects/TypeIdentifiers.
