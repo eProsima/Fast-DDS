@@ -62,20 +62,22 @@ message(STATUS "BLACKBOX_HIGH_LEVEL_IGNORED_TESTS set to '${BLACKBOX_HIGH_LEVEL_
 
 file(GLOB RTPS_BLACKBOXTESTS_TEST_SOURCE "common/RTPSBlackboxTests*.cpp")
 set(RTPS_BLACKBOXTESTS_SOURCE ${RTPS_BLACKBOXTESTS_TEST_SOURCE}
-    types/HelloWorldPubSubTypes.cxx
-    types/HelloWorldTypeObjectSupport.cxx
-    types/KeyedHelloWorldPubSubTypes.cxx
-    types/KeyedHelloWorldTypeObjectSupport.cxx
-    types/StringTestPubSubTypes.cxx
-    types/StringTestTypeObjectSupport.cxx
-    types/Data64kbPubSubTypes.cxx
-    types/Data64kbTypeObjectSupport.cxx
     types/Data1mbPubSubTypes.cxx
     types/Data1mbTypeObjectSupport.cxx
-    types/KeyedData1mbPubSubTypes.cxx
-    types/KeyedData1mbTypeObjectSupport.cxx
+    types/Data64kbPubSubTypes.cxx
+    types/Data64kbTypeObjectSupport.cxx
     types/FixedSizedPubSubTypes.cxx
     types/FixedSizedTypeObjectSupport.cxx
+    types/HelloWorldPubSubTypes.cxx
+    types/HelloWorldTypeObjectSupport.cxx
+    types/KeyedData1mbPubSubTypes.cxx
+    types/KeyedData1mbTypeObjectSupport.cxx
+    types/KeyedHelloWorldPubSubTypes.cxx
+    types/KeyedHelloWorldTypeObjectSupport.cxx
+    types/rtps/core_typesPubSubTypes.cxx
+    types/rtps/core_typesTypeObjectSupport.cxx
+    types/StringTestPubSubTypes.cxx
+    types/StringTestTypeObjectSupport.cxx
     types/UnboundedHelloWorldPubSubTypes.cxx
     types/UnboundedHelloWorldTypeObjectSupport.cxx
 
@@ -103,20 +105,22 @@ gtest_discover_tests(BlackboxTests_RTPS
 
 file(GLOB BLACKBOXTESTS_TEST_SOURCE "common/BlackboxTests*.cpp")
 set(BLACKBOXTESTS_SOURCE ${BLACKBOXTESTS_TEST_SOURCE}
-    types/HelloWorldPubSubTypes.cxx
-    types/HelloWorldTypeObjectSupport.cxx
-    types/KeyedHelloWorldPubSubTypes.cxx
-    types/KeyedHelloWorldTypeObjectSupport.cxx
-    types/StringTestPubSubTypes.cxx
-    types/StringTestTypeObjectSupport.cxx
-    types/Data64kbPubSubTypes.cxx
-    types/Data64kbTypeObjectSupport.cxx
     types/Data1mbPubSubTypes.cxx
     types/Data1mbTypeObjectSupport.cxx
-    types/KeyedData1mbPubSubTypes.cxx
-    types/KeyedData1mbTypeObjectSupport.cxx
+    types/Data64kbPubSubTypes.cxx
+    types/Data64kbTypeObjectSupport.cxx
     types/FixedSizedPubSubTypes.cxx
     types/FixedSizedTypeObjectSupport.cxx
+    types/HelloWorldPubSubTypes.cxx
+    types/HelloWorldTypeObjectSupport.cxx
+    types/KeyedData1mbPubSubTypes.cxx
+    types/KeyedData1mbTypeObjectSupport.cxx
+    types/KeyedHelloWorldPubSubTypes.cxx
+    types/KeyedHelloWorldTypeObjectSupport.cxx
+    types/rtps/core_typesPubSubTypes.cxx
+    types/rtps/core_typesTypeObjectSupport.cxx
+    types/StringTestPubSubTypes.cxx
+    types/StringTestTypeObjectSupport.cxx
     types/TestIncludeRegression3361TypeObjectSupport.cxx
     types/TestRegression3361PubSubTypes.cxx
     types/TestRegression3361TypeObjectSupport.cxx
