@@ -20,7 +20,7 @@
 
 namespace eprosima {
 namespace fastdds {
-namespace dds{
+namespace dds {
 
 ReadCondition::ReadCondition()
 {

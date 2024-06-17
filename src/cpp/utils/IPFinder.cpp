@@ -73,7 +73,7 @@
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
-    
+
 IPFinder::IPFinder()
 {
 }

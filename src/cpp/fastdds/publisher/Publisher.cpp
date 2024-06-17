@@ -25,7 +25,7 @@
 
 namespace eprosima {
 namespace fastdds {
-namespace dds{
+namespace dds {
 
 Publisher::Publisher(
         PublisherImpl* p,

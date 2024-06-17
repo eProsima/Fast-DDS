@@ -45,7 +45,7 @@
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
-    
+
 using BaseReader = eprosima::fastdds::rtps::BaseReader;
 
 StatelessReader::~StatelessReader()

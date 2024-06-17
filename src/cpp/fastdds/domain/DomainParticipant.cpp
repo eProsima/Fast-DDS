@@ -24,7 +24,7 @@
 
 namespace eprosima {
 namespace fastdds {
-namespace dds{
+namespace dds {
 
 DomainParticipant::DomainParticipant(
         const StatusMask& mask)

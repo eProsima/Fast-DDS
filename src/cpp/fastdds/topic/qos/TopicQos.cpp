@@ -21,7 +21,7 @@
 
 namespace eprosima {
 namespace fastdds {
-namespace dds{
+namespace dds {
 
 const TopicQos TOPIC_QOS_DEFAULT;
 

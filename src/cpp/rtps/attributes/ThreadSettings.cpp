@@ -16,7 +16,7 @@
 
 namespace eprosima {
 namespace fastdds {
-namespace rtps{
+namespace rtps {
 
 bool ThreadSettings::operator ==(
         const ThreadSettings& rhs) const

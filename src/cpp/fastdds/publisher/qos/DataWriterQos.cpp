@@ -21,7 +21,7 @@
 #include <fastdds/core/policy/QosPolicyUtils.hpp>
 namespace eprosima {
 namespace fastdds {
-namespace dds{
+namespace dds {
 
 const DataWriterQos DATAWRITER_QOS_DEFAULT;
 const DataWriterQos DATAWRITER_QOS_USE_TOPIC_QOS;

@@ -22,7 +22,7 @@
 
 namespace eprosima {
 namespace fastdds {
-namespace rtps{
+namespace rtps {
 
 PropertyPolicy PropertyPolicyHelper::get_properties_with_prefix(
         const PropertyPolicy& property_policy,

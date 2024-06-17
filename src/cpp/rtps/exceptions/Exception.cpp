@@ -17,7 +17,7 @@
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
-    
+
 Exception::Exception(
         const char* const& message)
     : message_(message)

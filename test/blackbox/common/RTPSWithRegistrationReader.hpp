@@ -112,6 +112,7 @@ private:
         }
 
     private:
+
         Listener& operator =(
                 const Listener&) = delete;
 

@@ -29,7 +29,7 @@ namespace eprosima {
 namespace fastdds {
 namespace statistics {
 namespace rtps {
-        
+
 struct IProxyQueryable
 {
     /**

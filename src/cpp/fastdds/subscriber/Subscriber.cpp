@@ -23,7 +23,7 @@
 
 namespace eprosima {
 namespace fastdds {
-namespace dds{
+namespace dds {
 
 Subscriber::Subscriber(
         SubscriberImpl* pimpl,
