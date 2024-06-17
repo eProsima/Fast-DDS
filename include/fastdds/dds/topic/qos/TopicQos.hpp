@@ -21,7 +21,7 @@
 #define _FASTDDS_TOPICQOS_HPP
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
-#include <fastdds/rtps/attributes/TopicAttributes.h>
+#include <fastdds/rtps/attributes/TopicAttributes.hpp>
 
 #include <fastdds/dds/log/Log.hpp>
 

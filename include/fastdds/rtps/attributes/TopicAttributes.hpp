@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * @file TopicAttributes.h
+ * @file TopicAttributes.hpp
  */
 
-#ifndef _FASTDDS_TOPICPARAMETERS_H_
-#define _FASTDDS_TOPICPARAMETERS_H_
+#ifndef FASTDDS_RTPS_ATTRIBUTES__TOPICATTRIBUTES_HPP
+#define FASTDDS_RTPS_ATTRIBUTES__TOPICATTRIBUTES_HPP
 
 #include <string>
 
@@ -145,7 +145,7 @@ bool inline operator !=(
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-} /* namespace fastdds */
-} /* namespace eprosima */
+} // namespace fastdds
+} // namespace eprosima
 
-#endif /* _FASTDDS_TOPICPARAMETERS_H_ */
+#endif // FASTDDS_RTPS_ATTRIBUTES__TOPICATTRIBUTES_HPP
