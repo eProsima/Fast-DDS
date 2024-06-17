@@ -33,7 +33,7 @@
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/WriteParams.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.hpp>
-#include <fastdds/rtps/reader/ReaderDiscoveryInfo.h>
+#include <fastdds/rtps/reader/ReaderDiscoveryInfo.hpp>
 #include <fastdds/rtps/writer/WriterDiscoveryInfo.h>
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>
 

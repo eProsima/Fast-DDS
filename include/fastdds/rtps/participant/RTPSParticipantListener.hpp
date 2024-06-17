@@ -21,7 +21,7 @@
 #define FASTDDS_RTPS_PARTICIPANT__RTPSPARTICIPANTLISTENER_HPP
 
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.hpp>
-#include <fastdds/rtps/reader/ReaderDiscoveryInfo.h>
+#include <fastdds/rtps/reader/ReaderDiscoveryInfo.hpp>
 #include <fastdds/rtps/writer/WriterDiscoveryInfo.h>
 
 namespace eprosima {

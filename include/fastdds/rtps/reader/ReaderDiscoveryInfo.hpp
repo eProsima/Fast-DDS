@@ -13,12 +13,12 @@
 // limitations under the License.
 
 /**
- * @file ReaderDiscoveryInfo.h
+ * @file ReaderDiscoveryInfo.hpp
  *
  */
 
-#ifndef _FASTDDS_RTPS_READER_READERDISCOVERYINFO_H__
-#define _FASTDDS_RTPS_READER_READERDISCOVERYINFO_H__
+#ifndef FASTDDS_RTPS_READER__READERDISCOVERYINFO_HPP
+#define FASTDDS_RTPS_READER__READERDISCOVERYINFO_HPP
 
 #include <fastdds/fastdds_dll.hpp>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
@@ -73,4 +73,4 @@ public:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_RTPS_READER_READERDISCOVERYINFO_H__
+#endif // FASTDDS_RTPS_READER__READERDISCOVERYINFO_HPP

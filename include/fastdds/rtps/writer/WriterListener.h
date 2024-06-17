@@ -24,7 +24,7 @@
 #include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/MatchingInfo.hpp>
-#include <fastdds/rtps/reader/ReaderDiscoveryInfo.h>
+#include <fastdds/rtps/reader/ReaderDiscoveryInfo.hpp>
 
 namespace eprosima {
 namespace fastdds {
