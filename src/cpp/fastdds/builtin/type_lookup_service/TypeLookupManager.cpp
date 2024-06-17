@@ -705,8 +705,13 @@ bool TypeLookupManager::send_impl(
         PubSubType* pubsubtype,
         fastdds::rtps::WriterHistory* writer_history) const
 {
+    // Calculate the serialized size of the message using a CdrSizeCalculator
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    size_t current_alignment {0};
+    uint32_t payload_size = static_cast<uint32_t>(calculator.calculate_serialized_size(msg, current_alignment) + 4);
+
     // Create a new CacheChange_t using the provided StatefulWriter
-    CacheChange_t* change = writer_history->create_change(ALIVE);
+    CacheChange_t* change = writer_history->create_change(payload_size, ALIVE);
 
     // Check if the creation of CacheChange_t was successful
     if (!change)
@@ -714,13 +719,7 @@ bool TypeLookupManager::send_impl(
         return false;
     }
 
-    // Calculate the serialized size of the message using a CdrSizeCalculator
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
-    size_t current_alignment {0};
-    uint32_t payload_size = static_cast<uint32_t>(calculator.calculate_serialized_size(msg, current_alignment) + 4);
-
     // Serialize the message using the provided PubSubType
-    change->serializedPayload.reserve(payload_size);
     bool result = pubsubtype->serialize(&msg, &change->serializedPayload, DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
     // If serialization was successful, update the change and add it to the WriterHistory
     if (result)

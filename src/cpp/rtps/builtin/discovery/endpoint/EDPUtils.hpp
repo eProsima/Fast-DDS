@@ -146,17 +146,7 @@ public:
             InstanceHandle_t handle,
             uint32_t cdr_size)
     {
-        CacheChange_t* change = writer.second->create_change(change_kind, handle);
-        if (nullptr != change)
-        {
-            if (!writer.payload_pool->get_payload(cdr_size, change->serializedPayload))
-            {
-                writer.second->release_change(change);
-                change = nullptr;
-            }
-        }
-
-        return change;
+        return writer.second->create_change(cdr_size, change_kind, handle);
     }
 
 };

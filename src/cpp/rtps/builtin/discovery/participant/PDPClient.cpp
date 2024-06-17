@@ -710,7 +710,6 @@ void PDPClient::announceParticipantState(
         auto endpoints = static_cast<fastdds::rtps::DiscoveryServerPDPEndpoints*>(builtin_endpoints_.get());
         fastdds::rtps::StatefulWriter& writer = *(endpoints->writer.writer_);
         WriterHistory& history = *endpoints->writer.history_;
-        const auto& pool = endpoints->writer.payload_pool_;
 
         /*
            Protect writer sequence number. Make sure in order to prevent AB BA deadlock that the
@@ -740,15 +739,10 @@ void PDPClient::announceParticipantState(
             // In order to avoid that we send the message directly as in the standard stateless PDP
 
             CacheChange_t* change = nullptr;
-            change = history.create_change(NOT_ALIVE_DISPOSED_UNREGISTERED, getLocalParticipantProxyData()->m_key);
-            if (nullptr != change)
-            {
-                if (!pool->get_payload(mp_builtin->m_att.writerPayloadSize, change->serializedPayload))
-                {
-                    history.release_change(change);
-                    change = nullptr;
-                }
-            }
+            change = history.create_change(
+                mp_builtin->m_att.writerPayloadSize,
+                NOT_ALIVE_DISPOSED_UNREGISTERED,
+                getLocalParticipantProxyData()->m_key);
 
             if (nullptr != change)
             {
@@ -797,7 +791,7 @@ void PDPClient::announceParticipantState(
         }
         else
         {
-            PDP::announceParticipantState(history, pool, new_change, dispose, wp);
+            PDP::announceParticipantState(history, new_change, dispose, wp);
 
             if (!new_change)
             {

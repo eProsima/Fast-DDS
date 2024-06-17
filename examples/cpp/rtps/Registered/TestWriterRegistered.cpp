@@ -103,15 +103,14 @@ void TestWriterRegistered::run(
 
     for (int i = 0; i < samples; ++i )
     {
-        CacheChange_t* ch = mp_history->create_change(ALIVE);
+        CacheChange_t* ch = mp_history->create_change(255, ALIVE);
         if (!ch)     // In the case history is full, remove some old changes
         {
             std::cout << "cleaning history...";
             mp_history->remove_min_change();
-            ch = mp_history->create_change(ALIVE);
+            ch = mp_history->create_change(255, ALIVE);
         }
 
-        ch->serializedPayload.reserve(255);
 #if defined(_WIN32)
         ch->serializedPayload.length =
                 sprintf_s((char*)ch->serializedPayload.data, 255, "My example string %d", i) + 1;

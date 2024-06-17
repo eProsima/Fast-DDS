@@ -593,7 +593,6 @@ protected:
      */
     void announceParticipantState(
             WriterHistory& history,
-            const std::shared_ptr<IPayloadPool>& payload_pool,
             bool new_change,
             bool dispose = false,
             WriteParams& wparams = WriteParams::WRITE_PARAM_DEFAULT);

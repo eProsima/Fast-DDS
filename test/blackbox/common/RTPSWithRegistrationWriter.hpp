@@ -226,21 +226,12 @@ public:
 
         while (it != msgs.end())
         {
-            eprosima::fastdds::rtps::CacheChange_t* ch = history_->create_change(eprosima::fastdds::rtps::ALIVE);
-            {
-                eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastdds::rtps::DEFAULT_XCDR_VERSION);
-                size_t current_alignment{ 0 };
-                uint32_t cdr_size = static_cast<uint32_t>(
-                    calculator.calculate_serialized_size(*it, current_alignment));
-                if (has_payload_pool_)
-                {
-                    payload_pool_->get_payload(cdr_size, ch->serializedPayload);
-                }
-                else
-                {
-                    ch->serializedPayload.reserve(cdr_size);
-                }
-            }
+            eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastdds::rtps::DEFAULT_XCDR_VERSION);
+            size_t current_alignment{ 0 };
+            uint32_t cdr_size = static_cast<uint32_t>(
+                calculator.calculate_serialized_size(*it, current_alignment));
+            eprosima::fastdds::rtps::CacheChange_t* ch = history_->create_change(
+                cdr_size, eprosima::fastdds::rtps::ALIVE);
 
             eprosima::fastcdr::FastBuffer buffer((char*)ch->serializedPayload.data, ch->serializedPayload.max_size);
             eprosima::fastcdr::Cdr cdr(buffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
@@ -263,6 +254,7 @@ public:
     eprosima::fastdds::rtps::CacheChange_t* send_sample(
             type& msg)
     {
+<<<<<<< HEAD
         eprosima::fastdds::rtps::CacheChange_t* ch = history_->create_change(eprosima::fastdds::rtps::ALIVE);
         {
             eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastdds::rtps::DEFAULT_XCDR_VERSION);
@@ -277,6 +269,13 @@ public:
                 ch->serializedPayload.reserve(cdr_size);
             }
         }
+=======
+        eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastdds::rtps::DEFAULT_XCDR_VERSION);
+        size_t current_alignment{ 0 };
+        uint32_t cdr_size = static_cast<uint32_t>(calculator.calculate_serialized_size(msg, current_alignment));
+        eprosima::fastrtps::rtps::CacheChange_t* ch = history_->create_change(
+            cdr_size, eprosima::fastrtps::rtps::ALIVE);
+>>>>>>> 7f8191161 (Refs #21082. Using new `create_change` overload where relevant.)
 
         eprosima::fastcdr::FastBuffer buffer((char*)ch->serializedPayload.data, ch->serializedPayload.max_size);
         eprosima::fastcdr::Cdr cdr(buffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,

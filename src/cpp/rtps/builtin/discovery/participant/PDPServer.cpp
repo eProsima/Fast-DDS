@@ -824,7 +824,6 @@ void PDPServer::announceParticipantState(
 
         fastdds::rtps::StatefulWriter& writer = *(endpoints->writer.writer_);
         WriterHistory& history = *endpoints->writer.history_;
-        const auto& pool = endpoints->writer.payload_pool_;
 
         std::lock_guard<fastdds::RecursiveTimedMutex> wlock(writer.getMutex());
 
@@ -851,16 +850,7 @@ void PDPServer::announceParticipantState(
                 getMutex()->unlock();
 
                 uint32_t cdr_size = proxy_data_copy.get_serialized_size(true);
-                change = history.create_change(ALIVE, proxy_data_copy.m_key);
-                if (nullptr != change)
-                {
-                    if (!pool->get_payload(cdr_size, change->serializedPayload))
-                    {
-                        history.release_change(change);
-                        change = nullptr;
-                    }
-                }
-
+                change = history.create_change(cdr_size, ALIVE, proxy_data_copy.m_key);
                 if (change != nullptr)
                 {
                     CDRMessage_t aux_msg(change->serializedPayload);
@@ -967,17 +957,8 @@ void PDPServer::announceParticipantState(
             // Unlock PDP mutex since it's no longer needed.
             getMutex()->unlock();
 
-            change = history.create_change(NOT_ALIVE_DISPOSED_UNREGISTERED, key);
-            if (nullptr != change)
-            {
-                if (!pool->get_payload(cdr_size, change->serializedPayload))
-                {
-                    history.release_change(change);
-                    change = nullptr;
-                }
-            }
-
             // Generate the Data(Up)
+            change = history.create_change(cdr_size, NOT_ALIVE_DISPOSED_UNREGISTERED, key);
             if (nullptr != change)
             {
                 // Assign identity

@@ -480,7 +480,6 @@ void PDP::announceParticipantState(
 
 void PDP::announceParticipantState(
         WriterHistory& history,
-        const std::shared_ptr<IPayloadPool>& payload_pool,
         bool new_change,
         bool dispose,
         WriteParams& wparams)
@@ -505,15 +504,7 @@ void PDP::announceParticipantState(
                     history.remove_min_change();
                 }
                 uint32_t cdr_size = proxy_data_copy.get_serialized_size(true);
-                change = history.create_change(ALIVE, key);
-                if (nullptr != change)
-                {
-                    if (!payload_pool->get_payload(cdr_size, change->serializedPayload))
-                    {
-                        history.release_change(change);
-                        change = nullptr;
-                    }
-                }
+                change = history.create_change(cdr_size, ALIVE, key);
 
                 if (nullptr != change)
                 {
@@ -554,15 +545,7 @@ void PDP::announceParticipantState(
                 history.remove_min_change();
             }
             uint32_t cdr_size = proxy_data_copy.get_serialized_size(true);
-            change = history.create_change(NOT_ALIVE_DISPOSED_UNREGISTERED, key);
-            if (nullptr != change)
-            {
-                if (!payload_pool->get_payload(cdr_size, change->serializedPayload))
-                {
-                    history.release_change(change);
-                    change = nullptr;
-                }
-            }
+            change = history.create_change(cdr_size, NOT_ALIVE_DISPOSED_UNREGISTERED, key);
 
             if (nullptr != change)
             {
