@@ -29,6 +29,7 @@
 #include <fastdds/rtps/common/InstanceHandle.hpp>
 #include <fastdds/rtps/history/History.hpp>
 #include <fastdds/rtps/history/IChangePool.hpp>
+#include <fastdds/rtps/history/IPayloadPool.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -63,6 +64,11 @@ public:
 
     FASTDDS_EXPORTED_API WriterHistory(
             const HistoryAttributes& att,
+            const std::shared_ptr<IPayloadPool>& payload_pool);
+
+    FASTDDS_EXPORTED_API WriterHistory(
+            const HistoryAttributes& att,
+            const std::shared_ptr<IPayloadPool>& payload_pool,
             const std::shared_ptr<IChangePool>& change_pool);
 
     FASTDDS_EXPORTED_API virtual ~WriterHistory() override;
@@ -289,7 +295,10 @@ private:
     void set_fragments(
             CacheChange_t* change);
 
+    /// Reference to the change pool used by this history.
     std::shared_ptr<IChangePool> change_pool_;
+    /// Reference to the payload pool used by this history.
+    std::shared_ptr<IPayloadPool> payload_pool_;
 };
 
 } // namespace rtps

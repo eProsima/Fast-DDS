@@ -32,6 +32,8 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
+class IChangePool;
+class IPayloadPool;
 class ReaderProxy;
 class RTPSWriter;
 
@@ -41,6 +43,21 @@ public:
 
     WriterHistory(
             const HistoryAttributes& /*att*/)
+        : samples_number_(0)
+    {
+    }
+
+    WriterHistory(
+            const HistoryAttributes& /*att*/,
+            const std::shared_ptr<IPayloadPool>&)
+        : samples_number_(0)
+    {
+    }
+
+    WriterHistory(
+            const HistoryAttributes& /*att*/,
+            const std::shared_ptr<IPayloadPool>&,
+            const std::shared_ptr<IChangePool>&)
         : samples_number_(0)
     {
     }

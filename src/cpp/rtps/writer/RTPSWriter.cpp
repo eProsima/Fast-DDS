@@ -131,7 +131,8 @@ void RTPSWriter::init(
 
     mp_history->mp_writer = this;
     mp_history->mp_mutex = &mp_mutex;
-    mp_history->change_pool_ = change_pool_;
+    mp_history->change_pool_ = change_pool;
+    mp_history->payload_pool_ = payload_pool;
 
     flow_controller_->register_writer(this);
 

@@ -44,6 +44,7 @@
 #include <fastdds/utils/TimedMutex.hpp>
 #include <fastrtps/qos/ParameterTypes.h>
 
+#include <rtps/history/BasicPayloadPool.hpp>
 #include <rtps/history/CacheChangePool.h>
 #include <rtps/history/PoolConfig.h>
 #include <rtps/messages/RTPSMessageGroup.hpp>
@@ -57,15 +58,36 @@ WriteParams WriteParams::WRITE_PARAM_DEFAULT;
 WriterHistory::WriterHistory(
         const HistoryAttributes& att)
     : History(att)
-    , change_pool_(new CacheChangePool(PoolConfig::from_history_attributes(att)))
 {
+    PoolConfig cfg = PoolConfig::from_history_attributes(att);
+    payload_pool_ = BasicPayloadPool::get(cfg, change_pool_);
 }
 
 WriterHistory::WriterHistory(
         const HistoryAttributes& att,
+        const std::shared_ptr<IPayloadPool>& payload_pool)
+    : History(att)
+    , payload_pool_(payload_pool)
+{
+    PoolConfig cfg = PoolConfig::from_history_attributes(att);
+    auto change_init = [&payload_pool, &cfg](CacheChange_t* change) -> void
+            {
+                if (payload_pool->get_payload(cfg.payload_initial_size,
+                        change->serializedPayload))
+                {
+                    payload_pool->release_payload(change->serializedPayload);
+                }
+            };
+    change_pool_ = std::make_shared<CacheChangePool>(cfg, change_init);
+}
+
+WriterHistory::WriterHistory(
+        const HistoryAttributes& att,
+        const std::shared_ptr<IPayloadPool>& payload_pool,
         const std::shared_ptr<IChangePool>& change_pool)
     : History(att)
     , change_pool_(change_pool)
+    , payload_pool_(payload_pool)
 {
 }
 
