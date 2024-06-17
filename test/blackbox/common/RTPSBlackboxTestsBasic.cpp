@@ -26,7 +26,7 @@
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
 #include <fastdds/rtps/participant/RTPSParticipant.hpp>
 #include <fastdds/rtps/RTPSDomain.h>
-#include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.hpp>
 #include <gtest/gtest.h>
 
 #include "BlackboxTests.hpp"

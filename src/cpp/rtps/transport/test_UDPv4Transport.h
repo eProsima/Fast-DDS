@@ -19,7 +19,7 @@
 
 #include <fastdds/rtps/common/SequenceNumber.hpp>
 #include <fastdds/rtps/messages/RTPS_messages.hpp>
-#include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.hpp>
 #include <rtps/messages/CDRMessage.hpp>
 #include <rtps/transport/UDPv4Transport.h>
 

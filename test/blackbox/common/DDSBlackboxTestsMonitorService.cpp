@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.hpp>
 #include <fastdds/statistics/dds/domain/DomainParticipant.hpp>
 #include <fastdds/statistics/topic_names.hpp>
 #include <gtest/gtest.h>

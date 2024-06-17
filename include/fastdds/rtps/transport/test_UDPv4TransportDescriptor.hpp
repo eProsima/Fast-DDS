@@ -12,8 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef _FASTDDS_TEST_UDPV4_TRANSPORT_DESCRIPTOR_
-#define _FASTDDS_TEST_UDPV4_TRANSPORT_DESCRIPTOR_
+/**
+ * @file test_UDPv4TransportDescriptor.hpp
+ *
+ */
+
+#ifndef FASTDDS_RTPS_TRANSPORT__TEST_UDPV4TRANSPORTDESCRIPTOR_HPP
+#define FASTDDS_RTPS_TRANSPORT__TEST_UDPV4TRANSPORTDESCRIPTOR_HPP
 
 #include <functional>
 #include <atomic>
@@ -173,4 +178,4 @@ struct TestUDPv4TransportOptions
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // FASTDDS_TEST_UDPV4_TRANSPORT_DESCRIPTOR_
+#endif // FASTDDS_RTPS_TRANSPORT__TEST_UDPV4TRANSPORTDESCRIPTOR_HPP

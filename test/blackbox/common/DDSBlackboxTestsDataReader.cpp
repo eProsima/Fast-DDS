@@ -28,8 +28,8 @@
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/LibrarySettings.hpp>
-#include <fastdds/rtps/common/CDRMessage_t.h>
-#include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
+#include <fastdds/rtps/common/CDRMessage_t.hpp>
+#include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.hpp>
 
 #include "../utils/filter_helpers.hpp"
 #include "BlackboxTests.hpp"
