@@ -62,7 +62,7 @@
 #include <utils/Semaphore.hpp>
 
 #if HAVE_SECURITY
-#include <fastdds/rtps/Endpoint.h>
+#include <fastdds/rtps/Endpoint.hpp>
 #include <rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
 #include <rtps/security/SecurityManager.h>
 #include <rtps/security/SecurityPluginFactory.h>
