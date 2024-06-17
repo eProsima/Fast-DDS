@@ -23,7 +23,7 @@
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/rtps/attributes/EndpointAttributes.hpp>
-#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/rtps/flowcontrol/FlowControllerConsts.hpp>
 #include <fastdds/utils/collections/ResourceLimitedContainerConfig.hpp>

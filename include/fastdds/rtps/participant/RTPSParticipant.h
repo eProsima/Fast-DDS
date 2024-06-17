@@ -27,7 +27,7 @@
 #include <fastdds/dds/subscriber/qos/ReaderQos.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
 #include <fastdds/rtps/builtin/data/ContentFilterProperty.hpp>
-#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/statistics/IListeners.hpp>
 #include <fastdds/fastdds_dll.hpp>
 

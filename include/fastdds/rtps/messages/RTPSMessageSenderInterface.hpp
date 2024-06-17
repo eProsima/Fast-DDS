@@ -25,7 +25,7 @@
 #include <chrono>
 #include <vector>
 
-#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/transport/NetworkBuffer.hpp>
 
 namespace eprosima {

@@ -23,7 +23,7 @@
 #include <iostream>
 #include <bitset>
 
-#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/Types.h>
 #include <fastdds/rtps/common/VendorId_t.hpp>
 

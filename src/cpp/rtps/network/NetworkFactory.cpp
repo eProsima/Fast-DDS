@@ -17,7 +17,7 @@
 #include <limits>
 #include <utility>
 
-#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/rtps/transport/TransportDescriptorInterface.h>

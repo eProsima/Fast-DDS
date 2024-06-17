@@ -41,7 +41,7 @@
 #include <fastdds/rtps/builtin/data/ContentFilterProperty.hpp>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
 #include <fastdds/rtps/builtin/data/WriterProxyData.hpp>
-#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/history/IChangePool.h>
 #include <fastdds/rtps/history/IPayloadPool.h>

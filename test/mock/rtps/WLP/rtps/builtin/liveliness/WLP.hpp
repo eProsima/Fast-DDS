@@ -26,7 +26,7 @@
 #include <gmock/gmock.h>
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
-#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/Guid.hpp>
 
 namespace eprosima {
 namespace fastdds {

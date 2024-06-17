@@ -21,7 +21,7 @@
 #define FASTDDS_RTPS_ATTRIBUTES__SERVERATTRIBUTES_HPP
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/LocatorList.hpp>
 
 #include <algorithm>

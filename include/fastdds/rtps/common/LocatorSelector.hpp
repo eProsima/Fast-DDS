@@ -20,7 +20,7 @@
 #define _FASTDDS_RTPS_COMMON_LOCATORSELECTOR_HPP_
 
 #include <fastdds/rtps/common/LocatorSelectorEntry.hpp>
-#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/common/LocatorsIterator.hpp>
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>

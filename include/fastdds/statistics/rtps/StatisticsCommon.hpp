@@ -22,7 +22,7 @@
 #include <memory>
 #include <type_traits>
 
-#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/SampleIdentity.h>
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/statistics/IListeners.hpp>

@@ -18,7 +18,7 @@
 #ifndef _FASTDDS_RTPS_SECURITY_COMMON_PARTICIPANTGENERICMESSAGE_H_
 #define _FASTDDS_RTPS_SECURITY_COMMON_PARTICIPANTGENERICMESSAGE_H_
 
-#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/Token.h>
 
 namespace eprosima {

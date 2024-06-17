@@ -36,7 +36,7 @@
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
 #include <fastdds/rtps/common/CacheChange.hpp>
-#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/InstanceHandle.h>
 #include <fastdds/rtps/common/SequenceNumber.h>
 #include <fastdds/rtps/history/ReaderHistory.h>

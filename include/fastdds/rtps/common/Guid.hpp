@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * @file Guid.h
+ * @file Guid.hpp
  */
 
-#ifndef _FASTDDS_RTPS_RTPS_GUID_H_
-#define _FASTDDS_RTPS_RTPS_GUID_H_
+#ifndef FASTDDS_RTPS_COMMON__GUID_HPP
+#define FASTDDS_RTPS_COMMON__GUID_HPP
 
 #include <fastdds/fastdds_dll.hpp>
 #include <fastdds/rtps/common/Types.h>
@@ -281,4 +281,4 @@ inline std::istream& operator >>(
 } // namespace fastdds
 } // namespace eprosima
 
-#endif /* _FASTDDS_RTPS_RTPS_GUID_H_ */
+#endif // FASTDDS_RTPS_COMMON__GUID_HPP

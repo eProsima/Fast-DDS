@@ -22,7 +22,7 @@
 #include <vector>
 
 #include <fastdds/rtps/attributes/ReaderAttributes.hpp>
-#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/Guid.hpp>
 #include <rtps/reader/BaseReader.hpp>
 #include <fastdds/rtps/transport/NetworkBuffer.hpp>
 #include <rtps/resources/ResourceEvent.h>

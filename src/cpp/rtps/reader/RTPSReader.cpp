@@ -20,7 +20,7 @@
 
 #include <fastdds/rtps/Endpoint.h>
 #include <fastdds/rtps/attributes/ReaderAttributes.hpp>
-#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/history/ReaderHistory.h>
 
 #include <rtps/participant/RTPSParticipantImpl.h>

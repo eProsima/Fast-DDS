@@ -20,7 +20,7 @@
 #ifndef _FASTDDS_RTPS_MATCHINGINFO_H_
 #define _FASTDDS_RTPS_MATCHINGINFO_H_
 
-#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/Guid.hpp>
 
 namespace eprosima {
 namespace fastdds {

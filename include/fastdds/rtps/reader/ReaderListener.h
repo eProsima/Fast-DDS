@@ -24,7 +24,7 @@
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
 #include <fastdds/dds/core/status/SampleRejectedStatus.hpp>
 #include <fastdds/rtps/builtin/data/WriterProxyData.hpp>
-#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/MatchingInfo.h>
 #include <fastdds/rtps/writer/WriterDiscoveryInfo.h>
 

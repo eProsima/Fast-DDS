@@ -38,7 +38,7 @@
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/topic/TopicListener.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
-#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/SampleIdentity.h>
 #include <fastdds/rtps/common/Time_t.h>
 

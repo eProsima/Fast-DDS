@@ -20,7 +20,7 @@
 #ifndef _FASTDDS_STATISTICS_MONITOR_SERVICE_INTERFACES_ISTATUSOBSERVER_HPP_
 #define _FASTDDS_STATISTICS_MONITOR_SERVICE_INTERFACES_ISTATUSOBSERVER_HPP_
 
-#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/Guid.hpp>
 
 namespace eprosima {
 namespace fastdds {

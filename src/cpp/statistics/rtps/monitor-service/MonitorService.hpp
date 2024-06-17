@@ -28,7 +28,7 @@
 #include <vector>
 
 #include <fastdds/dds/publisher/qos/WriterQos.hpp>
-#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/history/WriterHistory.h>
 
 #include "Interfaces.hpp"

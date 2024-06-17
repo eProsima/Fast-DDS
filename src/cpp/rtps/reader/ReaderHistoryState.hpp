@@ -19,7 +19,7 @@
 #ifndef FASTDDS_RTPS_READER_READERHISTORYSTATE_HPP_
 #define FASTDDS_RTPS_READER_READERHISTORYSTATE_HPP_
 
-#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/SequenceNumber.h>
 
 #include <foonathan/memory/container.hpp>

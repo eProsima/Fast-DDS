@@ -26,7 +26,7 @@
 #include <fastdds/fastdds_dll.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
-#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/Guid.hpp>
 
 #include <rtps/reader/StatefulReader.hpp>
 #include <rtps/resources/ResourceEvent.h>

@@ -18,7 +18,7 @@
  */
 
 #include <fastdds/rtps/common/CacheChange.hpp>
-#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/Guid.hpp>
 
 #include <rtps/builtin/discovery/database/DiscoveryParticipantChangeData.hpp>
 

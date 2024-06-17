@@ -19,7 +19,7 @@
 #ifndef _FASTDDS_RTPS_COMMON_SAMPLEIDENTITY_H_
 #define _FASTDDS_RTPS_COMMON_SAMPLEIDENTITY_H_
 
-#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/SequenceNumber.h>
 
 namespace eprosima {

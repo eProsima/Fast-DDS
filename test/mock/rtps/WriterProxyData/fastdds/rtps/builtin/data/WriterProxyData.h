@@ -24,7 +24,7 @@
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/publisher/qos/WriterQos.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
-#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/common/RemoteLocators.hpp>
 

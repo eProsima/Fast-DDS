@@ -22,7 +22,7 @@
 #include <fastdds/dds/core/status/PublicationMatchedStatus.hpp>
 #include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
-#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/MatchingInfo.h>
 #include <fastdds/rtps/reader/ReaderDiscoveryInfo.h>
 

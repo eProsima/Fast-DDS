@@ -9,7 +9,7 @@
 
 #include "FlowController.hpp"
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
-#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastdds/utils/TimedConditionVariable.hpp>
 #include <fastdds/utils/TimedMutex.hpp>

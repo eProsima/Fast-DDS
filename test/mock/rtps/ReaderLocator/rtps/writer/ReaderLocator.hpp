@@ -21,7 +21,7 @@
 
 #include <vector>
 
-#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/common/LocatorSelectorEntry.hpp>
 #include <fastdds/rtps/common/SequenceNumber.h>

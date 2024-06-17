@@ -37,7 +37,7 @@
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/publisher/PublisherImpl.hpp>
 #include <fastdds/rtps/attributes/TopicAttributes.hpp>
-#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/InstanceHandle.h>
 #include <fastdds/rtps/common/Types.h>
 #include <fastdds/rtps/participant/RTPSParticipant.h>

@@ -20,7 +20,7 @@
 
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
 #include <fastdds/rtps/common/CDRMessage_t.hpp>
-#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/Token.h>
 #include <rtps/security/authentication/Handshake.h>
 #include <rtps/security/common/Handle.h>
