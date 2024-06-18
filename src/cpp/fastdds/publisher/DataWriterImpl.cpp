@@ -371,6 +371,13 @@ ReturnCode_t DataWriterImpl::enable()
             RTPSDomain::removeRTPSWriter(writer);
             writer = nullptr;
         }
+        else
+        {
+            for (auto it = history_->changesBegin(); it != history_->changesEnd(); ++it)
+            {
+                writer_pool->add_to_shared_history(*it);
+            }
+        }
     }
 
     if (writer == nullptr &&

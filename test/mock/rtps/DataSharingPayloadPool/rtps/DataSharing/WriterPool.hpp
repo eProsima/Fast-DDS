@@ -42,6 +42,10 @@ public:
         return true;
     }
 
+    void add_to_shared_history(
+            const CacheChange_t* /*cache_change*/)
+    {
+    }
 
 };
 

@@ -32,15 +32,11 @@ namespace rtps {
 PersistentWriter::PersistentWriter(
         const GUID_t& guid,
         const WriterAttributes& att,
-        const std::shared_ptr<IPayloadPool>& payload_pool,
-        const std::shared_ptr<IChangePool>& change_pool,
         WriterHistory* hist,
         IPersistenceService* persistence)
     : persistence_(persistence)
     , persistence_guid_()
 {
-    static_cast<void>(change_pool);
-
     // When persistence GUID is unknown, create from rtps GUID
     GUID_t p_guid = att.endpoint.persistence_guid == c_Guid_Unknown ? guid : att.endpoint.persistence_guid;
     std::ostringstream ss;
@@ -53,17 +49,6 @@ PersistentWriter::PersistentWriter(
     hist->m_isHistoryFull =
             hist->m_att.maximumReservedCaches > 0 &&
             static_cast<int32_t>(hist->m_changes.size()) == hist->m_att.maximumReservedCaches;
-
-    // Prepare the changes for datasharing if compatible
-    if (att.endpoint.data_sharing_configuration().kind() != dds::OFF)
-    {
-        auto pool = std::dynamic_pointer_cast<WriterPool>(payload_pool);
-        assert(pool != nullptr);
-        for (auto change : hist->m_changes)
-        {
-            pool->add_to_shared_history(change);
-        }
-    }
 }
 
 PersistentWriter::~PersistentWriter()
