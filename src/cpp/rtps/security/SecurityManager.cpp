@@ -78,22 +78,11 @@ inline bool usleep_bool()
 
 static CacheChange_t* create_change_for_message(
         const ParticipantGenericMessage& message,
-        WriterHistory* history,
-        const std::shared_ptr<IPayloadPool>& payload_pool)
+        WriterHistory* history)
 {
-    CacheChange_t* change = history->create_change(ALIVE, c_InstanceHandle_Unknown);
-    if (nullptr != change)
-    {
-        uint32_t cdr_size = static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message));
-        cdr_size += 4; // Encapsulation
-        if (!payload_pool->get_payload(cdr_size, change->serializedPayload))
-        {
-            history->release_change(change);
-            change = nullptr;
-        }
-    }
-
-    return change;
+    uint32_t cdr_size = static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message));
+    cdr_size += 4; // Encapsulation
+    return history->create_change(cdr_size, ALIVE, c_InstanceHandle_Unknown);
 }
 
 SecurityManager::SecurityManager(
@@ -921,8 +910,7 @@ bool SecurityManager::on_process_handshake(
 
         CacheChange_t* change = create_change_for_message(
             message,
-            participant_stateless_message_writer_history_,
-            participant_stateless_message_pool_);
+            participant_stateless_message_writer_history_);
 
         if (change != nullptr)
         {
@@ -957,12 +945,13 @@ bool SecurityManager::on_process_handshake(
                 else
                 {
                     EPROSIMA_LOG_ERROR(SECURITY, "WriterHistory cannot add the CacheChange_t");
+                    participant_stateless_message_writer_history_->release_change(change);
                 }
             }
             else
             {
-                //TODO (Ricardo) Return change.
                 EPROSIMA_LOG_ERROR(SECURITY, "Cannot serialize ParticipantGenericMessage");
+                participant_stateless_message_writer_history_->release_change(change);
             }
         }
         else
@@ -2234,8 +2223,7 @@ void SecurityManager::exchange_participant_crypto(
 
         CacheChange_t* change = create_change_for_message(
             message,
-            participant_volatile_message_secure_writer_history_,
-            participant_volatile_message_secure_pool_);
+            participant_volatile_message_secure_writer_history_);
 
         if (change != nullptr)
         {
@@ -3050,8 +3038,7 @@ bool SecurityManager::discovered_reader(
 
                                 CacheChange_t* change = create_change_for_message(
                                     message,
-                                    participant_volatile_message_secure_writer_history_,
-                                    participant_volatile_message_secure_pool_);
+                                    participant_volatile_message_secure_writer_history_);
 
                                 if (change != nullptr)
                                 {
@@ -3410,8 +3397,7 @@ bool SecurityManager::discovered_writer(
 
                                 CacheChange_t* change = create_change_for_message(
                                     message,
-                                    participant_volatile_message_secure_writer_history_,
-                                    participant_volatile_message_secure_pool_);
+                                    participant_volatile_message_secure_writer_history_);
 
                                 if (change != nullptr)
                                 {
