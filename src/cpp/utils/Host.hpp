@@ -22,6 +22,7 @@
 
 namespace eprosima {
 
+
 /**
  * This singleton generates a host_id based on system interfaces
  * ip addresses or mac addresses
@@ -65,7 +66,7 @@ public:
 
         if (loc.size() > 0)
         {
-            MD5 md5;
+            fastdds::MD5 md5;
             for (auto& l : loc)
             {
                 md5.update(l.address, sizeof(l.address));
@@ -106,7 +107,7 @@ private:
         if (fastdds::rtps::IPFinder::getAllMACAddress(&macs) &&
                 macs.size() > 0)
         {
-            MD5 md5;
+            fastdds::MD5 md5;
             for (auto& m : macs)
             {
                 md5.update(m.address, sizeof(m.address));
