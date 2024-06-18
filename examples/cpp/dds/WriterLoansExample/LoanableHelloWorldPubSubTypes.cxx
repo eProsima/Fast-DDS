@@ -57,11 +57,11 @@ LoanableHelloWorldPubSubType::~LoanableHelloWorldPubSubType()
 }
 
 bool LoanableHelloWorldPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    LoanableHelloWorld* p_type = static_cast<LoanableHelloWorld*>(data);
+    const LoanableHelloWorld* p_type = static_cast<const LoanableHelloWorld*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -133,7 +133,7 @@ bool LoanableHelloWorldPubSubType::deserialize(
 }
 
 std::function<uint32_t()> LoanableHelloWorldPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -150,7 +150,7 @@ std::function<uint32_t()> LoanableHelloWorldPubSubType::getSerializedSizeProvide
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<LoanableHelloWorld*>(data), current_alignment)) +
+                               *static_cast<const LoanableHelloWorld*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -173,7 +173,7 @@ void LoanableHelloWorldPubSubType::deleteData(
 }
 
 bool LoanableHelloWorldPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -182,7 +182,7 @@ bool LoanableHelloWorldPubSubType::getKey(
         return false;
     }
 
-    LoanableHelloWorld* p_type = static_cast<LoanableHelloWorld*>(data);
+    const LoanableHelloWorld* p_type = static_cast<const LoanableHelloWorld*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),

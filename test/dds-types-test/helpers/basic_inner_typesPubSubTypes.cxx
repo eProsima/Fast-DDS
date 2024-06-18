@@ -57,11 +57,11 @@ InnerStructureHelperPubSubType::~InnerStructureHelperPubSubType()
 }
 
 bool InnerStructureHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    InnerStructureHelper* p_type = static_cast<InnerStructureHelper*>(data);
+    const InnerStructureHelper* p_type = static_cast<const InnerStructureHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -133,7 +133,7 @@ bool InnerStructureHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> InnerStructureHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -150,7 +150,7 @@ std::function<uint32_t()> InnerStructureHelperPubSubType::getSerializedSizeProvi
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<InnerStructureHelper*>(data), current_alignment)) +
+                               *static_cast<const InnerStructureHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -173,7 +173,7 @@ void InnerStructureHelperPubSubType::deleteData(
 }
 
 bool InnerStructureHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -182,7 +182,7 @@ bool InnerStructureHelperPubSubType::getKey(
         return false;
     }
 
-    InnerStructureHelper* p_type = static_cast<InnerStructureHelper*>(data);
+    const InnerStructureHelper* p_type = static_cast<const InnerStructureHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -250,11 +250,11 @@ InnerEmptyStructureHelperPubSubType::~InnerEmptyStructureHelperPubSubType()
 }
 
 bool InnerEmptyStructureHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    InnerEmptyStructureHelper* p_type = static_cast<InnerEmptyStructureHelper*>(data);
+    const InnerEmptyStructureHelper* p_type = static_cast<const InnerEmptyStructureHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -326,7 +326,7 @@ bool InnerEmptyStructureHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> InnerEmptyStructureHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -343,7 +343,7 @@ std::function<uint32_t()> InnerEmptyStructureHelperPubSubType::getSerializedSize
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<InnerEmptyStructureHelper*>(data), current_alignment)) +
+                               *static_cast<const InnerEmptyStructureHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -366,7 +366,7 @@ void InnerEmptyStructureHelperPubSubType::deleteData(
 }
 
 bool InnerEmptyStructureHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -375,7 +375,7 @@ bool InnerEmptyStructureHelperPubSubType::getKey(
         return false;
     }
 
-    InnerEmptyStructureHelper* p_type = static_cast<InnerEmptyStructureHelper*>(data);
+    const InnerEmptyStructureHelper* p_type = static_cast<const InnerEmptyStructureHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),

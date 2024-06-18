@@ -57,11 +57,11 @@ AnnotatedStructPubSubType::~AnnotatedStructPubSubType()
 }
 
 bool AnnotatedStructPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    AnnotatedStruct* p_type = static_cast<AnnotatedStruct*>(data);
+    const AnnotatedStruct* p_type = static_cast<const AnnotatedStruct*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -133,7 +133,7 @@ bool AnnotatedStructPubSubType::deserialize(
 }
 
 std::function<uint32_t()> AnnotatedStructPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -150,7 +150,7 @@ std::function<uint32_t()> AnnotatedStructPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<AnnotatedStruct*>(data), current_alignment)) +
+                               *static_cast<const AnnotatedStruct*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -173,7 +173,7 @@ void AnnotatedStructPubSubType::deleteData(
 }
 
 bool AnnotatedStructPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -182,7 +182,7 @@ bool AnnotatedStructPubSubType::getKey(
         return false;
     }
 
-    AnnotatedStruct* p_type = static_cast<AnnotatedStruct*>(data);
+    const AnnotatedStruct* p_type = static_cast<const AnnotatedStruct*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -250,11 +250,11 @@ EmptyAnnotatedStructPubSubType::~EmptyAnnotatedStructPubSubType()
 }
 
 bool EmptyAnnotatedStructPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    EmptyAnnotatedStruct* p_type = static_cast<EmptyAnnotatedStruct*>(data);
+    const EmptyAnnotatedStruct* p_type = static_cast<const EmptyAnnotatedStruct*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -326,7 +326,7 @@ bool EmptyAnnotatedStructPubSubType::deserialize(
 }
 
 std::function<uint32_t()> EmptyAnnotatedStructPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -343,7 +343,7 @@ std::function<uint32_t()> EmptyAnnotatedStructPubSubType::getSerializedSizeProvi
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<EmptyAnnotatedStruct*>(data), current_alignment)) +
+                               *static_cast<const EmptyAnnotatedStruct*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -366,7 +366,7 @@ void EmptyAnnotatedStructPubSubType::deleteData(
 }
 
 bool EmptyAnnotatedStructPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -375,7 +375,7 @@ bool EmptyAnnotatedStructPubSubType::getKey(
         return false;
     }
 
-    EmptyAnnotatedStruct* p_type = static_cast<EmptyAnnotatedStruct*>(data);
+    const EmptyAnnotatedStruct* p_type = static_cast<const EmptyAnnotatedStruct*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -444,11 +444,11 @@ BasicAnnotationsStructPubSubType::~BasicAnnotationsStructPubSubType()
 }
 
 bool BasicAnnotationsStructPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    BasicAnnotationsStruct* p_type = static_cast<BasicAnnotationsStruct*>(data);
+    const BasicAnnotationsStruct* p_type = static_cast<const BasicAnnotationsStruct*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -520,7 +520,7 @@ bool BasicAnnotationsStructPubSubType::deserialize(
 }
 
 std::function<uint32_t()> BasicAnnotationsStructPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -537,7 +537,7 @@ std::function<uint32_t()> BasicAnnotationsStructPubSubType::getSerializedSizePro
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<BasicAnnotationsStruct*>(data), current_alignment)) +
+                               *static_cast<const BasicAnnotationsStruct*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -560,7 +560,7 @@ void BasicAnnotationsStructPubSubType::deleteData(
 }
 
 bool BasicAnnotationsStructPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -569,7 +569,7 @@ bool BasicAnnotationsStructPubSubType::getKey(
         return false;
     }
 
-    BasicAnnotationsStruct* p_type = static_cast<BasicAnnotationsStruct*>(data);
+    const BasicAnnotationsStruct* p_type = static_cast<const BasicAnnotationsStruct*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
