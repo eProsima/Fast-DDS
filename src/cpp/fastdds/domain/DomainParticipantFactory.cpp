@@ -542,13 +542,13 @@ ReturnCode_t DomainParticipantFactory::set_library_settings(
 
 ReturnCode_t DomainParticipantFactory::get_dynamic_type_builder_from_xml_by_name(
         const std::string& type_name,
-        DynamicType::_ref_type& type)
+        DynamicTypeBuilder::_ref_type& type_builder)
 {
     if (type_name.empty())
     {
         return RETCODE_BAD_PARAMETER;
     }
-    if (XMLP_ret::XML_OK != XMLProfileManager::getDynamicTypeByName(type, type_name))
+    if (XMLP_ret::XML_OK != XMLProfileManager::getDynamicTypeByName(type_builder, type_name))
     {
         return RETCODE_NO_DATA;
     }
