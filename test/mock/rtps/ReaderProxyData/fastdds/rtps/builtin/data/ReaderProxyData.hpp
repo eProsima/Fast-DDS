@@ -13,21 +13,22 @@
 // limitations under the License.
 
 /**
- * @file WriterProxyData.h
+ * @file ReaderProxyData.hpp
  */
 
-#ifndef _FASTDDS_RTPS_BUILTIN_DATA_WRITERPROXYDATA_H_
-#define _FASTDDS_RTPS_BUILTIN_DATA_WRITERPROXYDATA_H_
+#ifndef FASTDDS_RTPS_BUILTIN_DATA__READERPROXYDATA_HPP
+#define FASTDDS_RTPS_BUILTIN_DATA__READERPROXYDATA_HPP
 
 #include <gmock/gmock.h>
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
-#include <fastdds/dds/publisher/qos/WriterQos.hpp>
+#include <fastdds/dds/subscriber/qos/ReaderQos.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
+#include <fastdds/rtps/common/Locator.hpp>
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/common/RemoteLocators.hpp>
-
+#include <fastdds/rtps/common/VendorId_t.hpp>
 #if HAVE_SECURITY
 #include <fastdds/rtps/attributes/EndpointSecurityAttributes.hpp>
 #endif // if HAVE_SECURITY
@@ -38,37 +39,39 @@ namespace rtps {
 
 class NetworkFactory;
 
-class WriterProxyData
+class ReaderProxyData
 {
 public:
 
-    WriterProxyData(
+    ReaderProxyData(
             size_t max_unicast_locators,
             size_t max_multicast_locators)
         : remote_locators_(max_unicast_locators, max_multicast_locators)
+        , m_expectsInlineQos(false)
         , topic_kind_(NO_KEY)
         , is_alive_(true)
         , type_info_()
-        , m_typeMaxSerialized(0)
         , m_userDefinedId(0)
+        , content_filter_({})
     {
-        m_qos.m_userData.set_max_size(0);
-        m_qos.m_partition.set_max_size(0);
     }
 
-    WriterProxyData(
+    ReaderProxyData(
             size_t max_unicast_locators,
             size_t max_multicast_locators,
-            const VariableLengthDataLimits& data_limits)
+            const VariableLengthDataLimits& data_limits,
+            const fastdds::rtps::ContentFilterProperty::AllocationConfiguration filter_allocation)
         : remote_locators_(max_unicast_locators, max_multicast_locators)
+        , m_expectsInlineQos(false)
         , topic_kind_(NO_KEY)
         , is_alive_(true)
         , type_info_()
-        , m_typeMaxSerialized(0)
         , m_userDefinedId(0)
+        , content_filter_(filter_allocation)
     {
-        m_qos.m_userData.set_max_size((uint32_t)data_limits.max_user_data);
-        m_qos.m_partition.set_max_size((uint32_t)data_limits.max_partitions);
+        static_cast<void>(filter_allocation);
+
+        m_qos.m_userData.set_max_size(data_limits.max_user_data);
     }
 
     const GUID_t& guid() const
@@ -81,23 +84,40 @@ public:
         return m_guid;
     }
 
-    void guid (
+    void guid(
             const GUID_t& guid)
     {
         m_guid = guid;
     }
 
-    void clear()
+    bool disable_positive_acks() const
     {
+        return false;
     }
 
-    const GUID_t& persistence_guid() const
+    void add_unicast_locator(
+            const Locator_t& locator)
     {
-        return m_guid;
+        remote_locators_.add_unicast_locator(locator);
     }
 
-    void persistence_guid(
-            const GUID_t& /*guid*/)
+    void add_multicast_locator(
+            const Locator_t& locator)
+    {
+        remote_locators_.add_multicast_locator(locator);
+    }
+
+    bool has_locators() const
+    {
+        return !remote_locators_.unicast.empty() || !remote_locators_.multicast.empty();
+    }
+
+    const RemoteLocatorList& remote_locators() const
+    {
+        return remote_locators_;
+    }
+
+    void clear ()
     {
     }
 
@@ -119,33 +139,19 @@ public:
     {
     }
 
-    void add_unicast_locator(
-            const Locator_t& locator)
+    bool readFromCDRMessage(
+            CDRMessage_t* /*msg*/,
+            const NetworkFactory& /*network*/,
+            bool /*is_shm_transport_possible*/,
+            fastdds::rtps::VendorId_t /*source_vendor_id*/)
     {
-        remote_locators_.add_unicast_locator(locator);
-    }
-
-    void add_multicast_locator(
-            const Locator_t& locator)
-    {
-        remote_locators_.add_multicast_locator(locator);
+        return true;
     }
 
     void set_multicast_locators(
-            const LocatorList_t& /*locators*/,
+            const LocatorList_t& /*locator*/,
             const NetworkFactory& /*network*/)
     {
-
-    }
-
-    bool has_locators() const
-    {
-        return !remote_locators_.unicast.empty() || !remote_locators_.multicast.empty();
-    }
-
-    const RemoteLocatorList& remote_locators() const
-    {
-        return remote_locators_;
     }
 
     void typeName(
@@ -155,6 +161,11 @@ public:
     }
 
     const fastcdr::string_255& typeName() const
+    {
+        return type_name_;
+    }
+
+    fastcdr::string_255& typeName()
     {
         return type_name_;
     }
@@ -170,6 +181,11 @@ public:
         return topic_name_;
     }
 
+    fastcdr::string_255& topicName()
+    {
+        return topic_name_;
+    }
+
     void topicKind(
             TopicKind_t topicKind)
     {
@@ -177,6 +193,11 @@ public:
     }
 
     TopicKind_t topicKind() const
+    {
+        return topic_kind_;
+    }
+
+    TopicKind_t& topicKind()
     {
         return topic_kind_;
     }
@@ -211,22 +232,6 @@ public:
     fastdds::dds::xtypes::TypeInformationParameter& type_information()
     {
         return type_info_;
-    }
-
-    void typeMaxSerialized(
-            uint32_t typeMaxSerialized)
-    {
-        m_typeMaxSerialized = typeMaxSerialized;
-    }
-
-    uint32_t typeMaxSerialized() const
-    {
-        return m_typeMaxSerialized;
-    }
-
-    uint32_t& typeMaxSerialized()
-    {
-        return m_typeMaxSerialized;
     }
 
     void key(
@@ -295,8 +300,30 @@ public:
         return m_userDefinedId;
     }
 
+    FASTDDS_EXPORTED_API void content_filter(
+            const fastdds::rtps::ContentFilterProperty& filter)
+    {
+        content_filter_ = filter;
+    }
+
+    FASTDDS_EXPORTED_API void content_filter(
+            fastdds::rtps::ContentFilterProperty&& filter)
+    {
+        content_filter_ = std::move(filter);
+    }
+
+    FASTDDS_EXPORTED_API const fastdds::rtps::ContentFilterProperty& content_filter() const
+    {
+        return content_filter_;
+    }
+
+    FASTDDS_EXPORTED_API fastdds::rtps::ContentFilterProperty& content_filter()
+    {
+        return content_filter_;
+    }
+
     void copy(
-            WriterProxyData* /*wdat*/)
+            ReaderProxyData* /*rdat*/)
     {
 
     }
@@ -306,26 +333,27 @@ public:
     security::PluginEndpointSecurityAttributesMask plugin_security_attributes_ = 0UL;
 #endif // if HAVE_SECURITY
 
-    fastdds::dds::WriterQos m_qos;
+    RemoteLocatorList remote_locators_;
+    bool m_expectsInlineQos;
+    fastdds::dds::ReaderQos m_qos;
 
 private:
 
     GUID_t m_guid;
-    RemoteLocatorList remote_locators_;
     fastcdr::string_255 topic_name_;
     fastcdr::string_255 type_name_;
     TopicKind_t topic_kind_;
     bool is_alive_;
     fastdds::dds::xtypes::TypeInformationParameter type_info_;
-    uint32_t m_typeMaxSerialized;
     InstanceHandle_t m_key;
     InstanceHandle_t m_RTPSParticipantKey;
     uint16_t m_userDefinedId;
+    fastdds::rtps::ContentFilterProperty content_filter_;
+
 };
 
 } // namespace rtps
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_RTPS_BUILTIN_DATA_WRITERPROXYDATA_H_
-
+#endif // FASTDDS_RTPS_BUILTIN_DATA__READERPROXYDATA_HPP

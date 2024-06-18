@@ -13,12 +13,12 @@
 // limitations under the License.
 
 /*!
- * @file
+ * @file TypeObjectUtils.hpp
  * This file contains static functions to help build a TypeObject.
  */
 
-#ifndef _FASTDDS_DDS_XTYPES_TYPE_REPRESENTATION_TYPEOBJECTUTILS_HPP_
-#define _FASTDDS_DDS_XTYPES_TYPE_REPRESENTATION_TYPEOBJECTUTILS_HPP_
+#ifndef FASTDDS_DDS_XTYPES_TYPE_REPRESENTATION_TYPEOBJECTUTILS_HPP
+#define FASTDDS_DDS_XTYPES_TYPE_REPRESENTATION_TYPEOBJECTUTILS_HPP
 
 #include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
 
@@ -50,9 +50,9 @@ public:
 
 };
 
-} // xtypes
-} // dds
-} // fastdds
-} // eprosima
+} // namespace xtypes
+} // namespace dds
+} // namespace fastdds
+} // namespace eprosima
 
-#endif // _FASTDDS_DDS_XTYPES_TYPE_REPRESENTATION_TYPEOBJECTUTILS_HPP_
+#endif // FASTDDS_DDS_XTYPES_TYPE_REPRESENTATION_TYPEOBJECTUTILS_HPP

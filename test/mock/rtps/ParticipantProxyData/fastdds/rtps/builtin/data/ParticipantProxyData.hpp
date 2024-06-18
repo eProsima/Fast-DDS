@@ -15,8 +15,8 @@
 /**
  * @file ParticipantProxyData.hpp
  */
-#ifndef _FASTDDS_RTPS_BUILTIN_DATA_PARTICIPANTPROXYDATA_HPP_
-#define _FASTDDS_RTPS_BUILTIN_DATA_PARTICIPANTPROXYDATA_HPP_
+#ifndef FASTDDS_RTPS_BUILTIN_DATA__PARTICIPANTPROXYDATA_HPP
+#define FASTDDS_RTPS_BUILTIN_DATA__PARTICIPANTPROXYDATA_HPP
 
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
 #include <fastdds/rtps/common/CDRMessage_t.hpp>
@@ -81,4 +81,4 @@ public:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_RTPS_BUILTIN_DATA_PARTICIPANTPROXYDATA_HPP_
+#endif // FASTDDS_RTPS_BUILTIN_DATA__PARTICIPANTPROXYDATA_HPP

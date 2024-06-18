@@ -13,12 +13,12 @@
 // limitations under the License.
 
 /**
- * @file FileConsumer.h
+ * @file FileConsumer.hpp
  *
  */
 
-#ifndef _FASTDDS_DDS_LOG_FILECONSUMER_HPP_
-#define _FASTDDS_DDS_LOG_FILECONSUMER_HPP_
+#ifndef FASTDDS_DDS_LOG__FILECONSUMER_HPP
+#define FASTDDS_DDS_LOG__FILECONSUMER_HPP
 
 #include <gmock/gmock.h>
 
@@ -54,4 +54,4 @@ MATCHER(IsFileConsumer, "Argument is a FileConsumer object?")
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_DDS_LOG_FILECONSUMER_HPP_
+#endif // FASTDDS_DDS_LOG__FILECONSUMER_HPP

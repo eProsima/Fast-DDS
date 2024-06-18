@@ -16,8 +16,8 @@
  * @file RTPSWriter.h
  */
 
-#ifndef _FASTDDS_RTPS_RTPSWRITER_H_
-#define _FASTDDS_RTPS_RTPSWRITER_H_
+#ifndef FASTDDS_RTPS_WRITER__RTPSWRITER_HPP
+#define FASTDDS_RTPS_WRITER__RTPSWRITER_HPP
 
 #include <condition_variable>
 #include <vector>
@@ -294,4 +294,4 @@ public:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_RTPS_RTPSWRITER_H_
+#endif // FASTDDS_RTPS_WRITER__RTPSWRITER_HPP

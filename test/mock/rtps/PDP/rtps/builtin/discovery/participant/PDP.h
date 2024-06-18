@@ -16,8 +16,8 @@
  * @file PDP.h
  */
 
-#ifndef _FASTDDS_RTPS_BUILTIN_DISCOVERY_PARTICIPANT_PDP_H_
-#define _FASTDDS_RTPS_BUILTIN_DISCOVERY_PARTICIPANT_PDP_H_
+#ifndef _FASTDDS_RTPS_PDP_H_
+#define _FASTDDS_RTPS_PDP_H_
 
 #include <gmock/gmock.h>
 
@@ -126,4 +126,4 @@ public:
 } //namespace fastdds
 } //namespace eprosima
 
-#endif // _FASTDDS_RTPS_BUILTIN_DISCOVERY_PARTICIPANT_PDP_H_
+#endif // _FASTDDS_RTPS_PDP_H_

@@ -12,9 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/**
+ * @file TypeLookupManager.hpp
+ *
+ */
 
-#ifndef _FASTDDS_TYPELOOKUP_SERVICE_MANAGER_HPP
-#define _FASTDDS_TYPELOOKUP_SERVICE_MANAGER_HPP
+#ifndef _FASTDDS_BUILTIN_TYPE_LOOKUP_SERVICE_TYPE_LOOKUP_MANAGER_HPP_
+#define _FASTDDS_BUILTIN_TYPE_LOOKUP_SERVICE_TYPE_LOOKUP_MANAGER_HPP_
 
 #include <vector>
 
@@ -78,8 +82,8 @@ public:
 
 };
 
-} /* namespace builtin */
-} /* namespace dds */
-} /* namespace fastdds */
-} /* namespace eprosima */
-#endif /* _FASTDDS_TYPELOOKUP_SERVICE_MANAGER_HPP */
+} // namespace builtin 
+} // namespace dds 
+} // namespace fastdds 
+} // namespace eprosima 
+#endif // _FASTDDS_BUILTIN_TYPE_LOOKUP_SERVICE_TYPE_LOOKUP_MANAGER_HPP_ 

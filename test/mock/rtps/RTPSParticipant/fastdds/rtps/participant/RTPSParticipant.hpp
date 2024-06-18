@@ -12,9 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/**
+ * @file RTPSParticipant.hpp
+ *
+ */
 
-#ifndef _FASTDDS_RTPS_RTPSParticipant_H_
-#define _FASTDDS_RTPS_RTPSParticipant_H_
+#ifndef FASTDDS_RTPS_PARTICIPANT__RTPSPARTICIPANTLISTENER_HPP
+#define FASTDDS_RTPS_PARTICIPANT__RTPSPARTICIPANTLISTENER_HPP
 
 #include <cstdlib>
 #include <memory>
@@ -252,8 +256,8 @@ public:
     RTPSParticipantImpl* mp_impl;
 };
 
-} /* namespace rtps */
-} /* namespace fastdds */
-} /* namespace eprosima */
+} // namespace rtps 
+} // namespace fastdds 
+} // namespace eprosima 
 
-#endif /* _FASTDDS_RTPS_RTPSParticipant_H_ */
+#endif // FASTDDS_RTPS_PARTICIPANT__RTPSPARTICIPANTLISTENER_HPP 

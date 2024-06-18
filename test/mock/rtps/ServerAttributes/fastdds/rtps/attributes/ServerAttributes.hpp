@@ -13,12 +13,12 @@
 // limitations under the License.
 
 /**
- * @file ServerAttributes.h
+ * @file ServerAttributes.hpp
  *
  */
 
-#ifndef _FASTDDS_SERVERATTRIBUTES_H_
-#define _FASTDDS_SERVERATTRIBUTES_H_
+#ifndef FASTDDS_RTPS_ATTRIBUTES__SERVERATTRIBUTES_HPP
+#define FASTDDS_RTPS_ATTRIBUTES__SERVERATTRIBUTES_HPP
 
 #include <list>
 
@@ -79,4 +79,4 @@ std::basic_ostream<charT>& operator <<(
 } // namespace fastdds
 } // namespace eprosima
 
-#endif /* _FASTDDS_SERVERATTRIBUTES_H_ */
+#endif // FASTDDS_RTPS_ATTRIBUTES__SERVERATTRIBUTES_HPP

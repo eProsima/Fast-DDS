@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file BiultinProtocols.h
+ * @file BuiltinProtocols.h
  */
 
 #ifndef _FASTDDS_RTPS_BUILTINPROTOCOLS_H_
@@ -70,4 +70,4 @@ public:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_RTPS_ENDPOINT_H_
+#endif // _FASTDDS_RTPS_BUILTINPROTOCOLS_H_

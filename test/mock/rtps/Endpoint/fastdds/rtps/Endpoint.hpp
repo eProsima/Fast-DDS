@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * @file Endpoint.h
+ * @file Endpoint.hpp
  */
 
-#ifndef _FASTDDS_RTPS_ENDPOINT_H_
-#define _FASTDDS_RTPS_ENDPOINT_H_
+#ifndef FASTDDS_RTPS__ENDPOINT_HPP
+#define FASTDDS_RTPS__ENDPOINT_HPP
 
 #include <fastdds/utils/TimedMutex.hpp>
 #include <fastdds/rtps/attributes/EndpointAttributes.hpp>
@@ -64,4 +64,4 @@ public:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_RTPS_ENDPOINT_H_
+#endif // FASTDDS_RTPS__ENDPOINT_HPP

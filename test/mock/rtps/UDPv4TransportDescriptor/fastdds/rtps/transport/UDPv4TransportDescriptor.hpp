@@ -12,8 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef _FASTDDS_UDPV6_TRANSPORT_DESCRIPTOR_
-#define _FASTDDS_UDPV6_TRANSPORT_DESCRIPTOR_
+/**
+ * @file UDPv4TransportDescriptor.hpp
+ *
+ */
+
+#ifndef FASTDDS_RTPS_TRANSPORT__UDPV4TRANSPORTDESCRIPTOR_HPP
+#define FASTDDS_RTPS_TRANSPORT__UDPV4TRANSPORTDESCRIPTOR_HPP
 
 #include <fastdds/rtps/transport/UDPTransportDescriptor.hpp>
 
@@ -33,29 +38,29 @@ using TransportInterface = fastdds::rtps::TransportInterface;
  * - interfaceWhiteList: Lists the allowed interfaces.
  * @ingroup TRANSPORT_MODULE
  */
-typedef struct UDPv6TransportDescriptor : public UDPTransportDescriptor
+typedef struct UDPv4TransportDescriptor : public UDPTransportDescriptor
 {
-    virtual ~UDPv6TransportDescriptor()
+    virtual ~UDPv4TransportDescriptor()
     {
     }
 
-    FASTDDS_EXPORTED_API UDPv6TransportDescriptor()
+    FASTDDS_EXPORTED_API UDPv4TransportDescriptor()
         : UDPTransportDescriptor()
     {
 
     }
 
-    FASTDDS_EXPORTED_API UDPv6TransportDescriptor(
-            const UDPv6TransportDescriptor& /*t*/)
+    FASTDDS_EXPORTED_API UDPv4TransportDescriptor(
+            const UDPv4TransportDescriptor& /*t*/)
         : UDPTransportDescriptor()
     {
 
     }
 
-} UDPv6TransportDescriptor;
+} UDPv4TransportDescriptor;
 
 } // namespace rtps
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_UDPV6_TRANSPORT_DESCRIPTOR_
+#endif // FASTDDS_RTPS_TRANSPORT__UDPV4TRANSPORTDESCRIPTOR_HPP

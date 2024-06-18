@@ -12,10 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef _FASTDDS_UDP_TRANSPORT_DESCRIPTOR_
-#define _FASTDDS_UDP_TRANSPORT_DESCRIPTOR_
+/**
+ * @file UDPv6TransportDescriptor.hpp
+ *
+ */
 
-#include <fastdds/rtps/transport/SocketTransportDescriptor.hpp>
+#ifndef FASTDDS_RTPS_TRANSPORT__UDPV6TRANSPORTDESCRIPTOR_HPP
+#define FASTDDS_RTPS_TRANSPORT__UDPV6TRANSPORTDESCRIPTOR_HPP
+
+#include <fastdds/rtps/transport/UDPTransportDescriptor.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -33,37 +38,29 @@ using TransportInterface = fastdds::rtps::TransportInterface;
  * - interfaceWhiteList: Lists the allowed interfaces.
  * @ingroup TRANSPORT_MODULE
  */
-typedef struct UDPTransportDescriptor : public SocketTransportDescriptor
+typedef struct UDPv6TransportDescriptor : public UDPTransportDescriptor
 {
-    virtual ~UDPTransportDescriptor()
+    virtual ~UDPv6TransportDescriptor()
     {
     }
 
-    virtual TransportInterface* create_transport() const override
-    {
-        return nullptr;
-    }
-
-    FASTDDS_EXPORTED_API UDPTransportDescriptor()
-        : SocketTransportDescriptor(65550, 4)
+    FASTDDS_EXPORTED_API UDPv6TransportDescriptor()
+        : UDPTransportDescriptor()
     {
 
     }
 
-    FASTDDS_EXPORTED_API UDPTransportDescriptor(
-            const UDPTransportDescriptor& /*t*/)
-        : SocketTransportDescriptor(65550, 4)
+    FASTDDS_EXPORTED_API UDPv6TransportDescriptor(
+            const UDPv6TransportDescriptor& /*t*/)
+        : UDPTransportDescriptor()
     {
 
     }
 
-    uint16_t m_output_udp_socket;
-
-    bool non_blocking_send = false;
-} UDPTransportDescriptor;
+} UDPv6TransportDescriptor;
 
 } // namespace rtps
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_UDP_TRANSPORT_DESCRIPTOR_
+#endif // FASTDDS_RTPS_TRANSPORT__UDPV6TRANSPORTDESCRIPTOR_HPP

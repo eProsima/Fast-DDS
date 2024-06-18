@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * @file ReaderHistory.h
+ * @file ReaderHistory.hpp
  */
 
-#ifndef _FASTDDS_RTPS_READERHISTORY_H_
-#define _FASTDDS_RTPS_READERHISTORY_H_
+#ifndef FASTDDS_RTPS_HISTORY__READERHISTORY_HPP
+#define FASTDDS_RTPS_HISTORY__READERHISTORY_HPP
 
 #include <mutex>
 
@@ -221,4 +221,4 @@ protected:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_RTPS_READERHISTORY_H_
+#endif // FASTDDS_RTPS_HISTORY__READERHISTORY_HPP

@@ -12,8 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef _FASTDDS_TCPV4_TRANSPORT_DESCRIPTOR_
-#define _FASTDDS_TCPV4_TRANSPORT_DESCRIPTOR_
+/**
+ * @file TCPv4TransportDescriptor.hpp
+ *
+ */
+
+#ifndef FASTDDS_RTPS_TRANSPORT__TCPV4TRANSPORTDESCRIPTOR_HPP
+#define FASTDDS_RTPS_TRANSPORT__TCPV4TRANSPORTDESCRIPTOR_HPP
 
 #include <fastdds/rtps/common/Types.hpp>
 #include <fastdds/rtps/transport/TCPTransportDescriptor.hpp>
@@ -83,4 +88,4 @@ typedef struct TCPv4TransportDescriptor : public TCPTransportDescriptor
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_TCPV4_TRANSPORT_DESCRIPTOR_
+#endif // FASTDDS_RTPS_TRANSPORT__TCPV4TRANSPORTDESCRIPTOR_HPP

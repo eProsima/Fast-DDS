@@ -12,8 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef _FASTDDS_DDS_LOG_STDOUTERRCONSUMER_HPP_
-#define _FASTDDS_DDS_LOG_STDOUTERRCONSUMER_HPP_
+/**
+ * @file StdoutErrConsumer.hpp
+ *
+ */
+
+#ifndef FASTDDS_DDS_LOG__STDOUTERRCONSUMER_HPP
+#define FASTDDS_DDS_LOG__STDOUTERRCONSUMER_HPP
 
 #include <gmock/gmock.h>
 
@@ -51,4 +56,4 @@ MATCHER(IsStdoutErrConsumer, "Argument is a StdoutErrConsumer object?")
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_DDS_LOG_STDOUTERRCONSUMER_HPP_
+#endif // FASTDDS_DDS_LOG__STDOUTERRCONSUMER_HPP

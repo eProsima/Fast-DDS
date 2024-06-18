@@ -12,8 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef _FASTDDS_SHAREDMEM_TRANSPORT_DESCRIPTOR_
-#define _FASTDDS_SHAREDMEM_TRANSPORT_DESCRIPTOR_
+/**
+ * @file SharedMemTransportDescriptor.hpp
+ *
+ */
+
+#ifndef FASTDDS_RTPS_TRANSPORT_SHARED_MEM__SHAREDMEMTRANSPORTDESCRIPTOR_HPP
+#define FASTDDS_RTPS_TRANSPORT_SHARED_MEM__SHAREDMEMTRANSPORTDESCRIPTOR_HPP
 
 #include <cstdint>
 #include <string>
@@ -137,4 +142,4 @@ private:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_SHAREDMEM_TRANSPORT_DESCRIPTOR_
+#endif // FASTDDS_RTPS_TRANSPORT_SHARED_MEM__SHAREDMEMTRANSPORTDESCRIPTOR_HPP
