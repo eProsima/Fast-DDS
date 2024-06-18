@@ -401,6 +401,12 @@ protected:
     bool is_datasharing_compatible_with(
             const fastdds::rtps::WriterProxyData& wdata);
 
+    /// Pool of serialized payloads.
+    std::shared_ptr<IPayloadPool> payload_pool_;
+
+    /// Pool of cache changes.
+    std::shared_ptr<IChangePool> change_pool_;
+
     /// Pointer to the listener associated with this reader.
     fastdds::rtps::ReaderListener* listener_;
     /// Whether the reader accepts messages from unmatched writers.

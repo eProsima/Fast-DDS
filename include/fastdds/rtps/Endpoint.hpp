@@ -62,11 +62,6 @@ protected:
 
     virtual ~Endpoint()
     {
-        // As releasing the change pool will delete the cache changes it owns,
-        // the payload pool may be called to release their payloads, so we should
-        // ensure that the payload pool is destroyed after the change pool.
-        change_pool_.reset();
-        payload_pool_.reset();
     }
 
 public:
@@ -119,12 +114,6 @@ protected:
 
     //!Endpoint Mutex
     mutable RecursiveTimedMutex mp_mutex;
-
-    //!Pool of serialized payloads.
-    std::shared_ptr<IPayloadPool> payload_pool_;
-
-    //!Pool of cache changes.
-    std::shared_ptr<IChangePool> change_pool_;
 
     //!Fixed size of payloads
     uint32_t fixed_payload_size_ = 0;
