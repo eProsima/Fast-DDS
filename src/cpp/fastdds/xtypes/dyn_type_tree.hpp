@@ -132,29 +132,29 @@ ReturnCode_t dyn_type_tree_to_idl(
  * TODO
  */
 ReturnCode_t struct_to_str(
-        std::ostream& os,
-        const utilities::collections::TreeNode<TreeNodeType>& node) noexcept;
+        const utilities::collections::TreeNode<TreeNodeType>& node,
+        std::string& struct_str) noexcept;
 
 /**
  * TODO
  */
 ReturnCode_t enum_to_str(
-        std::ostream& os,
-        const utilities::collections::TreeNode<TreeNodeType>& node) noexcept;
+        const utilities::collections::TreeNode<TreeNodeType>& node,
+        std::string& enum_str) noexcept;
 
 /**
  * TODO
  */
 ReturnCode_t union_to_str(
-        std::ostream& os,
-        const utilities::collections::TreeNode<TreeNodeType>& node) noexcept;
+        const utilities::collections::TreeNode<TreeNodeType>& node,
+        std::string& union_str) noexcept;
 
 /**
  * TODO
  */
 ReturnCode_t node_to_str(
-        std::ostream& os,
-        const utilities::collections::TreeNode<TreeNodeType>& node) noexcept;
+        const utilities::collections::TreeNode<TreeNodeType>& node,
+        std::string& node_str) noexcept;
 
 } // dds
 } // fastdds

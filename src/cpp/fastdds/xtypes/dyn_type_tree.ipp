@@ -458,7 +458,6 @@ ReturnCode_t dyn_type_tree_to_idl(
     ReturnCode_t ret = RETCODE_OK;
 
     std::set<std::string> types_written;
-    std::stringstream ss;
 
     // For every Node, check if it is of a "writable" type (i.e. struct, enum or union).
     // If it is, check if it is not yet written
@@ -470,23 +469,24 @@ ReturnCode_t dyn_type_tree_to_idl(
             continue;
         }
 
+        std::string kind_str;
         const auto kind = node.info.dynamic_type->get_kind();
 
         switch (kind)
         {
             case TK_STRUCTURE:
             {
-                ret = struct_to_str(ss, node);
+                ret = struct_to_str(node, kind_str);
                 break;
             }
             case TK_ENUM:
             {
-                ret = enum_to_str(ss, node);
+                ret = enum_to_str(node, kind_str);
                 break;
             }
             case TK_UNION:
             {
-                ret = union_to_str(ss, node);
+                ret = union_to_str(node, kind_str);
                 break;
             }
             default:
@@ -498,47 +498,50 @@ ReturnCode_t dyn_type_tree_to_idl(
             return ret;
         }
 
-        ss << "\n"; // Introduce blank line between type definitions
+        dyn_type_idl += kind_str + "\n";
         types_written.insert(node.info.type_kind_name);
     }
 
     // Write struct parent node at last, after all its dependencies
     // NOTE: not a requirement for Foxglove IDL Parser, dependencies can be placed after parent
-    ret = struct_to_str(ss, parent_node);
+    std::string struct_str;
+    ret = struct_to_str(parent_node, struct_str);
 
     if (ret != RETCODE_OK)
     {
         return ret;
     }
 
-    dyn_type_idl = ss.str();
+    dyn_type_idl += struct_str;
 
     return ret;
 }
 
 ReturnCode_t struct_to_str(
-        std::ostream& os,
-        const utilities::collections::TreeNode<TreeNodeType>& node) noexcept
+        const utilities::collections::TreeNode<TreeNodeType>& node,
+        std::string& struct_str) noexcept
 {
     // Add types name
-    os << "struct " << node.info.type_kind_name << TYPE_OPENING;
+    struct_str = "struct " + node.info.type_kind_name + TYPE_OPENING;
 
     // Add struct attributes
     for (auto const& child : node.branches())
     {
-        node_to_str(os, child.info);
-        os << ";\n";
+        std::string child_str;
+        node_to_str(child.info, child_str);
+
+        struct_str += child_str + ";\n";
     }
 
     // Close definition
-    os << TYPE_CLOSURE;
+    struct_str += TYPE_CLOSURE;
 
     return RETCODE_OK;
 }
 
 ReturnCode_t enum_to_str(
-        std::ostream& os,
-        const utilities::collections::TreeNode<TreeNodeType>& node) noexcept
+        const utilities::collections::TreeNode<TreeNodeType>& node,
+        std::string& enum_str) noexcept
 {
     ReturnCode_t ret = RETCODE_OK;
 
@@ -550,30 +553,32 @@ ReturnCode_t enum_to_str(
         return ret;
     }
 
-    os << "enum " << node.info.type_kind_name << TYPE_OPENING << TAB_SEPARATOR;
+    enum_str = "enum " + node.info.type_kind_name + TYPE_OPENING + TAB_SEPARATOR;
     bool first_iter = true;
 
     for (const auto& member : members)
     {
         if (!first_iter)
         {
-            os << ",\n" << TAB_SEPARATOR;
+            enum_str += ",\n";
+            enum_str += TAB_SEPARATOR;
         }
 
         first_iter = false;
 
-        os << member.second->get_name();
+        enum_str += member.second->get_name();
     }
 
     // Close definition
-    os << "\n" << TYPE_CLOSURE;
+    enum_str += "\n";
+    enum_str += TYPE_CLOSURE;
 
     return ret;
 }
 
 ReturnCode_t union_to_str(
-        std::ostream& os,
-        const utilities::collections::TreeNode<TreeNodeType>& node) noexcept
+        const utilities::collections::TreeNode<TreeNodeType>& node,
+        std::string& union_str) noexcept
 {
     ReturnCode_t ret = RETCODE_OK;
 
@@ -593,7 +598,7 @@ ReturnCode_t union_to_str(
         return ret;
     }
 
-    os << "union " << node.info.type_kind_name << " switch (" << discriminant_type_str << ")" << TYPE_OPENING;
+    union_str = "union " + node.info.type_kind_name + " switch (" + discriminant_type_str + ")" + TYPE_OPENING;
 
     std::map<MemberId, DynamicTypeMember::_ref_type> members;
     ret = node.info.dynamic_type->get_all_members(members);  // WARNING: Default case not included in this collection, and currently not available
@@ -620,15 +625,16 @@ ReturnCode_t union_to_str(
         {
             if (first_iter)
             {
-                os << TAB_SEPARATOR;
+                union_str += TAB_SEPARATOR;
             }
             else
             {
-                os << " ";
+                union_str += " ";
             }
+
             first_iter = false;
 
-            os << "case " << std::to_string(label) << ":";
+            union_str += "case " + std::to_string(label) + ":";
         }
 
         std::string member_str;
@@ -639,20 +645,25 @@ ReturnCode_t union_to_str(
             return ret;
         }
 
-        os << "\n" << TAB_SEPARATOR << TAB_SEPARATOR << member_str << " " << member.second->get_name() << ";\n";
+        union_str += "\n";
+        union_str += TAB_SEPARATOR;
+        union_str += TAB_SEPARATOR;
+        union_str += member_str + " ";
+        union_str += member.second->get_name();
+        union_str += ";\n";
     }
 
     // Close definition
-    os << TYPE_CLOSURE;
+    union_str += TYPE_CLOSURE;
 
     return ret;
 }
 
 ReturnCode_t node_to_str(
-        std::ostream& os,
-        const utilities::collections::TreeNode<TreeNodeType>& node) noexcept
+        const utilities::collections::TreeNode<TreeNodeType>& node,
+        std::string& node_str) noexcept
 {
-    os << TAB_SEPARATOR;
+    node_str = TAB_SEPARATOR;
 
     if (node.info.dynamic_type->get_kind() == TK_ARRAY)
     {
@@ -660,11 +671,11 @@ ReturnCode_t node_to_str(
         auto kind_name_str = node.info.type_kind_name.substr(0, dim_pos);
         auto dim_str = node.info.type_kind_name.substr(dim_pos, std::string::npos);
 
-        os << kind_name_str << " " << node.info.member_name << dim_str;
+        node_str += kind_name_str + " " + node.info.member_name + dim_str;
     }
     else
     {
-        os << node.info.type_kind_name << " " << node.info.member_name;
+        node_str += node.info.type_kind_name + " " + node.info.member_name;
     }
 
     return RETCODE_OK;
