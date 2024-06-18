@@ -129,6 +129,86 @@ TEST(BuiltinDataSerializationTests, ok_with_defaults)
     }
 }
 
+TEST(BuiltinDataSerializationTests, msg_without_datasharing)
+{
+    {
+        uint8_t data_r_buffer[] =
+        {
+            // Encapsulation
+            0x00, 0x03, 0x00, 0x00
+        };
+
+        CDRMessage_t msg(0);
+        msg.init(data_r_buffer, static_cast<uint32_t>(sizeof(data_r_buffer)));
+        msg.length = msg.max_size;
+
+        ReaderProxyData out(max_unicast_locators, max_multicast_locators);
+        out.readFromCDRMessage(&msg, network, false);
+        ASSERT_EQ(out.m_qos.data_sharing.kind(), OFF);
+    }
+
+    {
+        uint8_t data_w_buffer[] =
+        {
+            // Encapsulation
+            0x00, 0x03, 0x00, 0x00
+
+        };
+
+        CDRMessage_t msg(0);
+        msg.init(data_w_buffer, static_cast<uint32_t>(sizeof(data_w_buffer)));
+        msg.length = msg.max_size;
+
+        ReaderProxyData out(max_unicast_locators, max_multicast_locators);
+        out.readFromCDRMessage(&msg, network, false);
+        ASSERT_EQ(out.m_qos.data_sharing.kind(), OFF);
+    }
+}
+
+TEST(BuiltinDataSerializationTests, msg_with_datasharing)
+{
+    {
+        uint8_t data_r_buffer[] =
+        {
+            // Encapsulation
+            0x00, 0x03, 0x00, 0x00,
+            //Data Sharing
+            0x06, 0x80, 0x0c, 0x00,
+            0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x6c, 0x9b, 0xf9, 0xbe, 0x1c, 0xb8
+
+        };
+
+        CDRMessage_t msg(0);
+        msg.init(data_r_buffer, static_cast<uint32_t>(sizeof(data_r_buffer)));
+        msg.length = msg.max_size;
+
+        ReaderProxyData out(max_unicast_locators, max_multicast_locators);
+        out.readFromCDRMessage(&msg, network, false);
+        ASSERT_EQ(out.m_qos.data_sharing.kind(), ON);
+    }
+
+    {
+        uint8_t data_w_buffer[] =
+        {
+            // Encapsulation
+            0x00, 0x03, 0x00, 0x00,
+            //Data Sharing
+            0x06, 0x80, 0x0c, 0x00,
+            0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x6c, 0x9b, 0xf9, 0xbe, 0x1c, 0xb8
+
+        };
+
+        CDRMessage_t msg(0);
+        msg.init(data_w_buffer, static_cast<uint32_t>(sizeof(data_w_buffer)));
+        msg.length = msg.max_size;
+
+        ReaderProxyData out(max_unicast_locators, max_multicast_locators);
+        out.readFromCDRMessage(&msg, network, false);
+        ASSERT_EQ(out.m_qos.data_sharing.kind(), ON);
+    }
+}
+
+
 // Regression test for redmine issue #10547
 TEST(BuiltinDataSerializationTests, ignore_unsupported_type_info)
 {
