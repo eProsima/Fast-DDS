@@ -16,8 +16,8 @@
  * @file RTPSParticipant.hpp
  */
 
-#ifndef FASTDDS_RTPS_PARTICIPANT__RTPSParticipant_HPP
-#define FASTDDS_RTPS_PARTICIPANT__RTPSParticipant_HPP
+#ifndef FASTDDS_RTPS_PARTICIPANT__RTPSPARTICIPANT_HPP
+#define FASTDDS_RTPS_PARTICIPANT__RTPSPARTICIPANT_HPP
 
 #include <cstdint>
 #include <cstdlib>
@@ -443,4 +443,4 @@ protected:
 } // namespace rtps
 } // namespace eprosima
 
-#endif // FASTDDS_RTPS_PARTICIPANT__RTPSParticipant_HPP
+#endif // FASTDDS_RTPS_PARTICIPANT__RTPSPARTICIPANT_HPP
