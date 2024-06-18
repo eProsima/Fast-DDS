@@ -357,8 +357,6 @@ ReturnCode_t DataWriterImpl::enable()
         publisher_->rtps_participant(),
         guid_.entityId,
         w_att,
-        pool,
-        change_pool,
         history_.get(),
         static_cast<WriterListener*>(&writer_listener_));
 
@@ -398,8 +396,6 @@ ReturnCode_t DataWriterImpl::enable()
             publisher_->rtps_participant(),
             guid_.entityId,
             w_att,
-            pool,
-            change_pool,
             history_.get(),
             static_cast<WriterListener*>(&writer_listener_));
     }

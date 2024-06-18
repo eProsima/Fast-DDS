@@ -386,15 +386,11 @@ public:
     bool create_writer(
             RTPSWriter**,
             WriterAttributes&,
-            const std::shared_ptr<IPayloadPool>&,
-            const std::shared_ptr<IChangePool>&,
             WriterHistory*,
             WriterListener*,
-            const EntityId_t& entityId = c_EntityId_Unknown,
-            bool isBuiltin = false)
+            const EntityId_t&,
+            bool)
     {
-        static_cast<void>(entityId);
-        static_cast<void>(isBuiltin);
         return true;
     }
 

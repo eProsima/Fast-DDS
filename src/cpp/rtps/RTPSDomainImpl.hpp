@@ -144,10 +144,8 @@ public:
             RTPSParticipant* p,
             const EntityId_t& entity_id,
             WriterAttributes& watt,
-            const std::shared_ptr<IPayloadPool>& payload_pool,
-            const std::shared_ptr<IChangePool>& change_pool,
             WriterHistory* hist,
-            WriterListener* listen = nullptr);
+            WriterListener* listen);
 
     /**
      * Creates the guid of a participant given its identifier.
