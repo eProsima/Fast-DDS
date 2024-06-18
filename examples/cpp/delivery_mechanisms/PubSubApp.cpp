@@ -271,7 +271,8 @@ void PubSubApp::on_data_available(
 
     DataSeq delivery_mechanisms_sequence;
     SampleInfoSeq info_sequence;
-    while ((!is_stopped()) && (RETCODE_OK == reader->take(delivery_mechanisms_sequence, info_sequence)))
+    while ((!is_stopped()) && ((samples_ == 0) || ((samples_ > 0) && (received_samples_ < samples_)))
+            && (RETCODE_OK == reader->take(delivery_mechanisms_sequence, info_sequence)))
     {
         for (LoanableCollection::size_type i = 0; i < info_sequence.length(); ++i)
         {
@@ -282,10 +283,6 @@ void PubSubApp::on_data_available(
                 received_samples_++;
                 std::cout << "Sample: '" << delivery_mechanisms_.message().data() << "' with index: '" <<
                     delivery_mechanisms_.index() << "' RECEIVED" << std::endl;
-                if ((samples_ > 0) && (received_samples_ >= samples_))
-                {
-                    stop();
-                }
             }
         }
         reader->return_loan(delivery_mechanisms_sequence, info_sequence);
@@ -294,18 +291,28 @@ void PubSubApp::on_data_available(
 
 void PubSubApp::run()
 {
-    while (!is_stopped() && ((samples_ == 0) || (index_of_last_sample_sent_ < samples_)))
+    while (!is_stopped())
     {
-        if (!publish() && !is_stopped())
+        // publisher does not send more samples, but app does not stop
+        if ((samples_ == 0) || ((samples_ > 0) && (index_of_last_sample_sent_ < samples_)))
         {
-            std::cout << "Error sending sample with index: '" << index_of_last_sample_sent_ << "'" << std::endl;
+            if (!publish() && !is_stopped())
+            {
+                std::cout << "Error sending sample with index: '" << index_of_last_sample_sent_ << "'" << std::endl;
+            }
         }
+
         // Wait for period or stop event
         std::unique_lock<std::mutex> terminate_lock(mutex_);
         cv_.wait_for(terminate_lock, std::chrono::milliseconds(period_ms_), [&]()
                 {
                     return is_stopped();
                 });
+        // check wether the app needs to be stopped
+        if ((samples_ > 0) && (received_samples_ >= samples_) && (index_of_last_sample_sent_ >= samples_))
+        {
+            stop();
+        }
     }
 }
 
