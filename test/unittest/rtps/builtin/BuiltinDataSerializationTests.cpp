@@ -17,6 +17,7 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#include <fastdds/config.h>
 #include <fastdds/core/policy/ParameterList.hpp>
 #include <fastdds/core/policy/ParameterSerializer.hpp>
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
@@ -137,6 +138,58 @@ TEST(BuiltinDataSerializationTests, ok_with_defaults)
         // Perform deserialization
         msg.pos = 0;
         EXPECT_TRUE(out.readFromCDRMessage(&msg, network, true, true));
+    }
+}
+
+TEST(BuiltinDataSerializationTests, msg_with_product_version)
+{
+    /* Convenient functions to group code */
+    auto participant_read = [](octet* buffer, uint32_t buffer_length, ParticipantProxyData& out) -> void
+            {
+                CDRMessage_t msg(0);
+                msg.init(buffer, buffer_length);
+                msg.length = msg.max_size;
+
+                EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, true, network, false, false,
+                        c_VendorId_eProsima)));
+            };
+
+    auto update_cache_change =
+            [](CacheChange_t& change, octet* buffer, uint32_t buffer_length, uint32_t qos_size) -> void
+            {
+                CDRMessage_t msg(0);
+                msg.init(buffer, buffer_length);
+                msg.length = msg.max_size;
+
+                EXPECT_TRUE(fastdds::dds::ParameterList::updateCacheChangeFromInlineQos(change, &msg, qos_size));
+            };
+
+    // PID_PRODUCT_VERSION
+    {
+        octet data_buffer[] =
+        {
+            // Encapsulation
+            0x00, 0x03, 0x00, 0x00,
+            // PID_PRODUCT_VERSION
+            0x00, 0x80, 4, 0,
+            FASTDDS_VERSION_MAJOR, FASTDDS_VERSION_MINOR, FASTDDS_VERSION_MICRO, 0,
+            // PID_SENTINEL
+            0x01, 0, 0, 0
+        };
+
+        uint32_t buffer_length = static_cast<uint32_t>(sizeof(data_buffer));
+
+        // ParticipantProxyData check
+        ParticipantProxyData participant_pdata(RTPSParticipantAllocationAttributes{});
+        participant_read(data_buffer, buffer_length, participant_pdata);
+        EXPECT_EQ(FASTDDS_VERSION_MAJOR, participant_pdata.product_version.major);
+        EXPECT_EQ(FASTDDS_VERSION_MINOR, participant_pdata.product_version.minor);
+        EXPECT_EQ(FASTDDS_VERSION_MICRO, participant_pdata.product_version.patch);
+        EXPECT_EQ(0, participant_pdata.product_version.tweak);
+
+        // CacheChange_t check
+        CacheChange_t change;
+        update_cache_change(change, data_buffer, buffer_length, 0);
     }
 }
 
@@ -768,6 +821,34 @@ TEST(BuiltinDataSerializationTests, other_vendor_parameter_list_with_custom_pids
         reader_pdata.networkConfiguration(0);
         reader_read(data_buffer, buffer_length, reader_pdata);
         ASSERT_EQ(reader_pdata.networkConfiguration(), 0u);
+
+        // CacheChange_t check
+        CacheChange_t change;
+        update_cache_change(change, data_buffer, buffer_length, 0);
+    }
+
+    // PID_PRODUCT_VERSION
+    {
+        octet data_buffer[] =
+        {
+            // Encapsulation
+            0x00, 0x03, 0x00, 0x00,
+            // PID_PRODUCT_VERSION
+            0x00, 0x80, 4, 0,
+            7, 1, 0, 0,
+            // PID_SENTINEL
+            0x01, 0, 0, 0
+        };
+
+        uint32_t buffer_length = static_cast<uint32_t>(sizeof(data_buffer));
+
+        // ParticipantProxyData check
+        ParticipantProxyData participant_pdata(RTPSParticipantAllocationAttributes{});
+        participant_read(data_buffer, buffer_length, participant_pdata);
+        EXPECT_EQ(0, participant_pdata.product_version.major);
+        EXPECT_EQ(0, participant_pdata.product_version.minor);
+        EXPECT_EQ(0, participant_pdata.product_version.patch);
+        EXPECT_EQ(0, participant_pdata.product_version.tweak);
 
         // CacheChange_t check
         CacheChange_t change;
