@@ -47,6 +47,11 @@ class DataWriterHistory : public rtps::WriterHistory
 
 public:
 
+    static rtps::HistoryAttributes to_history_attributes(
+            const TopicAttributes& topic_att,
+            uint32_t payloadMaxSize,
+            rtps::MemoryManagementPolicy_t mempolicy);
+
     /**
      * Constructor of the DataWriterHistory.
      * @param topic_att TopicAttributed

@@ -40,32 +40,32 @@ namespace dds {
 
 using namespace eprosima::fastdds::rtps;
 
-static HistoryAttributes to_history_attributes(
-        const TopicAttributes& topic_att,
-        uint32_t payloadMaxSize,
-        MemoryManagementPolicy_t mempolicy)
-{
-    auto initial_samples = topic_att.resourceLimitsQos.allocated_samples;
-    auto max_samples = topic_att.resourceLimitsQos.max_samples;
-    auto extra_samples = topic_att.resourceLimitsQos.extra_samples;
-
-    if (topic_att.historyQos.kind != KEEP_ALL_HISTORY_QOS)
-    {
-        max_samples = topic_att.historyQos.depth;
-        if (topic_att.getTopicKind() != NO_KEY)
-        {
-            max_samples *= topic_att.resourceLimitsQos.max_instances;
-        }
-
-        initial_samples = std::min(initial_samples, max_samples);
-    }
-
-    return HistoryAttributes(mempolicy, payloadMaxSize, initial_samples, max_samples, extra_samples);
-}
-
 class DataWriterHistory : public WriterHistory
 {
 public:
+
+    static HistoryAttributes to_history_attributes(
+            const TopicAttributes& topic_att,
+            uint32_t payloadMaxSize,
+            MemoryManagementPolicy_t mempolicy)
+    {
+        auto initial_samples = topic_att.resourceLimitsQos.allocated_samples;
+        auto max_samples = topic_att.resourceLimitsQos.max_samples;
+        auto extra_samples = topic_att.resourceLimitsQos.extra_samples;
+
+        if (topic_att.historyQos.kind != KEEP_ALL_HISTORY_QOS)
+        {
+            max_samples = topic_att.historyQos.depth;
+            if (topic_att.getTopicKind() != NO_KEY)
+            {
+                max_samples *= topic_att.resourceLimitsQos.max_instances;
+            }
+
+            initial_samples = std::min(initial_samples, max_samples);
+        }
+
+        return HistoryAttributes(mempolicy, payloadMaxSize, initial_samples, max_samples, extra_samples);
+    }
 
     DataWriterHistory(
             const std::shared_ptr<IPayloadPool>& payload_pool,

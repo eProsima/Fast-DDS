@@ -243,6 +243,11 @@ ReturnCode_t DataWriterImpl::enable()
 {
     assert(writer_ == nullptr);
 
+    auto topic_att = get_topic_attributes(qos_, *topic_, type_);
+    auto history_att = DataWriterHistory::to_history_attributes(
+        topic_att, type_->m_typeSize, qos_.endpoint().history_memory_policy);
+    pool_config_ = PoolConfig::from_history_attributes(history_att);
+
     WriterAttributes w_att;
     w_att.endpoint.durabilityKind = qos_.durability().durabilityKind();
     w_att.endpoint.endpointKind = WRITER;
@@ -2046,29 +2051,28 @@ DataWriterListener* DataWriterImpl::get_listener_for(
 
 std::shared_ptr<IChangePool> DataWriterImpl::get_change_pool() const
 {
-    PoolConfig config = PoolConfig::from_history_attributes(history_->m_att);
     if (reader_filters_)
     {
         return std::make_shared<DataWriterFilteredChangePool>(
-            config, qos_.writer_resource_limits().reader_filters_allocation);
+            pool_config_, qos_.writer_resource_limits().reader_filters_allocation);
     }
 
-    return std::make_shared<fastdds::rtps::CacheChangePool>(config);
+    return std::make_shared<fastdds::rtps::CacheChangePool>(pool_config_);
 }
 
 std::shared_ptr<IPayloadPool> DataWriterImpl::get_payload_pool()
 {
     if (!payload_pool_)
     {
+        PoolConfig config = pool_config_;
+
         // When the user requested PREALLOCATED_WITH_REALLOC, but we know the type cannot
         // grow, we translate the policy into bare PREALLOCATED
-        if (PREALLOCATED_WITH_REALLOC_MEMORY_MODE == history_->m_att.memoryPolicy &&
+        if (PREALLOCATED_WITH_REALLOC_MEMORY_MODE == config.memory_policy &&
                 (type_->is_bounded() || type_->is_plain(data_representation_)))
         {
-            history_->m_att.memoryPolicy = PREALLOCATED_MEMORY_MODE;
+            config.memory_policy = PREALLOCATED_MEMORY_MODE;
         }
-
-        PoolConfig config = PoolConfig::from_history_attributes(history_->m_att);
 
         // Avoid calling the serialization size functors on PREALLOCATED mode
         fixed_payload_size_ = config.memory_policy == PREALLOCATED_MEMORY_MODE ? config.payload_initial_size : 0u;
@@ -2111,9 +2115,8 @@ bool DataWriterImpl::release_payload_pool()
     }
     else
     {
-        PoolConfig config = PoolConfig::from_history_attributes(history_->m_att);
         auto topic_pool = std::static_pointer_cast<ITopicPayloadPool>(payload_pool_);
-        result = topic_pool->release_history(config, false);
+        result = topic_pool->release_history(pool_config_, false);
     }
 
     payload_pool_.reset();

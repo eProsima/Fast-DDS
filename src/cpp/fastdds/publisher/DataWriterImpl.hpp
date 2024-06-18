@@ -34,6 +34,7 @@
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/common/WriteParams.hpp>
+#include <fastdds/rtps/common/SerializedPayload.hpp>
 #include <fastdds/rtps/history/IChangePool.hpp>
 #include <fastdds/rtps/history/IPayloadPool.hpp>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
@@ -41,9 +42,9 @@
 
 #include <fastdds/publisher/DataWriterHistory.hpp>
 #include <fastdds/publisher/filtering/ReaderFilterCollection.hpp>
-#include <fastdds/rtps/common/SerializedPayload.hpp>
 #include <rtps/DataSharing/DataSharingPayloadPool.hpp>
 #include <rtps/history/ITopicPayloadPool.h>
+#include <rtps/history/PoolConfig.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -487,6 +488,8 @@ protected:
     bool is_data_sharing_compatible_ = false;
 
     uint32_t fixed_payload_size_ = 0u;
+
+    rtps::PoolConfig pool_config_ {};
 
     std::shared_ptr<IPayloadPool> payload_pool_;
 

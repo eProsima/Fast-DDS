@@ -32,7 +32,7 @@ namespace dds {
 
 using namespace eprosima::fastdds::rtps;
 
-static HistoryAttributes to_history_attributes(
+HistoryAttributes DataWriterHistory::to_history_attributes(
         const TopicAttributes& topic_att,
         uint32_t payloadMaxSize,
         MemoryManagementPolicy_t mempolicy)
