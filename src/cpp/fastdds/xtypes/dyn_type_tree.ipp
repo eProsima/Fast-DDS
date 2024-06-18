@@ -92,7 +92,7 @@ ReturnCode_t dyn_type_to_tree(
             }
 
             std::string internal_str;
-            ret = type_kind_to_str(internal_type, internal_str);
+            ret = dyn_type_to_str(internal_type, internal_str);
 
             if (ret != RETCODE_OK)
             {
@@ -117,7 +117,7 @@ ReturnCode_t dyn_type_to_tree(
         default:
         {
             std::string type_str;
-            ret = type_kind_to_str(type, type_str);
+            ret = dyn_type_to_str(type, type_str);
 
             if (ret != RETCODE_OK)
             {
@@ -132,7 +132,7 @@ ReturnCode_t dyn_type_to_tree(
     return ret;
 }
 
-ReturnCode_t type_kind_to_str(
+ReturnCode_t dyn_type_to_str(
         const DynamicType::_ref_type& dyn_type,
         std::string& type_str) noexcept
 {
@@ -285,7 +285,7 @@ ReturnCode_t array_kind_to_str(
         return ret;
     }
 
-    ret = type_kind_to_str(internal_type, array_str);
+    ret = dyn_type_to_str(internal_type, array_str);
 
     if (ret != RETCODE_OK)
     {
@@ -330,7 +330,7 @@ ReturnCode_t sequence_kind_to_str(
         return ret;
     }
 
-    ret = type_kind_to_str(internal_type, sequence_str);
+    ret = dyn_type_to_str(internal_type, sequence_str);
 
     if (ret != RETCODE_OK)
     {
@@ -386,7 +386,7 @@ ReturnCode_t map_kind_to_str(
 
     std::string key_str;
     const auto key_type = type_descriptor->key_element_type();
-    ret = type_kind_to_str(key_type, key_str);
+    ret = dyn_type_to_str(key_type, key_str);
 
     if (ret != RETCODE_OK)
     {
@@ -395,7 +395,7 @@ ReturnCode_t map_kind_to_str(
 
     std::string value_str;
     const auto value_type = type_descriptor->element_type();
-    ret = type_kind_to_str(value_type, value_str);
+    ret = dyn_type_to_str(value_type, value_str);
 
     if (ret != RETCODE_OK)
     {
@@ -489,8 +489,8 @@ ReturnCode_t container_size(
 //////////////////////////////
 
 ReturnCode_t dyn_type_tree_to_idl(
-        const utilities::collections::TreeNode<TreeNodeType>& parent_node,
-        std::string& dyn_type_idl) noexcept
+        const utilities::collections::TreeNode<TreeNodeType>& root,
+        std::string& dyn_type_str) noexcept
 {
     ReturnCode_t ret = RETCODE_OK;
 
@@ -499,7 +499,7 @@ ReturnCode_t dyn_type_tree_to_idl(
     // For every Node, check if it is of a "writable" type (i.e. struct, enum or union).
     // If it is, check if it is not yet written
     // If it is not, write it down
-    for (const auto& node : parent_node.all_nodes())
+    for (const auto& node : root.all_nodes())
     {
         if (types_written.find(node.info.type_kind_name) != types_written.end())
         {
@@ -535,21 +535,21 @@ ReturnCode_t dyn_type_tree_to_idl(
             return ret;
         }
 
-        dyn_type_idl += kind_str + "\n";
+        dyn_type_str += kind_str + "\n";
         types_written.insert(node.info.type_kind_name);
     }
 
     // Write struct parent node at last, after all its dependencies
     // NOTE: not a requirement for Foxglove IDL Parser, dependencies can be placed after parent
     std::string struct_str;
-    ret = struct_to_str(parent_node, struct_str);
+    ret = struct_to_str(root, struct_str);
 
     if (ret != RETCODE_OK)
     {
         return ret;
     }
 
-    dyn_type_idl += struct_str;
+    dyn_type_str += struct_str;
 
     return ret;
 }
@@ -646,7 +646,7 @@ ReturnCode_t union_to_str(
     }
 
     std::string discriminant_type_str;
-    ret = type_kind_to_str(type_descriptor->discriminator_type(), discriminant_type_str);
+    ret = dyn_type_to_str(type_descriptor->discriminator_type(), discriminant_type_str);
 
     if (ret != RETCODE_OK)
     {
@@ -693,7 +693,7 @@ ReturnCode_t union_to_str(
         }
 
         std::string member_str;
-        ret = type_kind_to_str(member_descriptor->type(), member_str);
+        ret = dyn_type_to_str(member_descriptor->type(), member_str);
 
         if (ret != RETCODE_OK)
         {

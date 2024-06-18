@@ -714,7 +714,7 @@ ReturnCode_t generate_dyn_type_schema_from_tree(
 
 ReturnCode_t idl_serialize(
         const traits<DynamicType>::ref_type& dynamic_type,
-        std::string& idl_schema) noexcept
+        std::string& output) noexcept
 {
     // Create a tree representation of the dynamic type
     utilities::collections::TreeNode<TreeNodeType> parent_type;
@@ -726,7 +726,7 @@ ReturnCode_t idl_serialize(
     }
 
     // Serialize the tree to IDL
-    return dyn_type_tree_to_idl(parent_type, idl_schema);
+    return dyn_type_tree_to_idl(parent_type, output);
 }
 
 } // namespace dds
