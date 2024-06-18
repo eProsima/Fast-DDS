@@ -12939,7 +12939,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_enum)
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->load_XML_profiles_file(DynamicTypesTests::config_file()));
 
-    DynamicType::_ref_type xml_type;
+    DynamicTypeBuilder::_ref_type xml_type;
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("EnumStruct",
             xml_type));
@@ -12984,7 +12984,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_alias)
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->load_XML_profiles_file(DynamicTypesTests::config_file()));
 
-    DynamicType::_ref_type xml_type;
+    DynamicTypeBuilder::_ref_type xml_type;
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("AliasStruct",
             xml_type));
@@ -13034,7 +13034,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_alias_with_alias)
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->load_XML_profiles_file(DynamicTypesTests::config_file()));
 
-    DynamicType::_ref_type xml_type;
+    DynamicTypeBuilder::_ref_type xml_type;
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("AliasAliasStruct",
             xml_type));
@@ -13090,7 +13090,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_boolean)
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->load_XML_profiles_file(DynamicTypesTests::config_file()));
 
-    DynamicType::_ref_type xml_type;
+    DynamicTypeBuilder::_ref_type xml_type;
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("BoolStruct",
             xml_type));
@@ -13115,7 +13115,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_octet)
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->load_XML_profiles_file(DynamicTypesTests::config_file()));
 
-    DynamicType::_ref_type xml_type;
+    DynamicTypeBuilder::_ref_type xml_type;
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("OctetStruct",
             xml_type));
@@ -13140,7 +13140,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_short)
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->load_XML_profiles_file(DynamicTypesTests::config_file()));
 
-    DynamicType::_ref_type xml_type;
+    DynamicTypeBuilder::_ref_type xml_type;
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("ShortStruct",
             xml_type));
@@ -13165,7 +13165,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_long)
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->load_XML_profiles_file(DynamicTypesTests::config_file()));
 
-    DynamicType::_ref_type xml_type;
+    DynamicTypeBuilder::_ref_type xml_type;
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("LongStruct",
             xml_type));
@@ -13190,7 +13190,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_longlong)
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->load_XML_profiles_file(DynamicTypesTests::config_file()));
 
-    DynamicType::_ref_type xml_type;
+    DynamicTypeBuilder::_ref_type xml_type;
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("LongLongStruct",
             xml_type));
@@ -13215,7 +13215,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_ushort)
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->load_XML_profiles_file(DynamicTypesTests::config_file()));
 
-    DynamicType::_ref_type xml_type;
+    DynamicTypeBuilder::_ref_type xml_type;
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("UShortStruct",
             xml_type));
@@ -13240,7 +13240,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_ulong)
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->load_XML_profiles_file(DynamicTypesTests::config_file()));
 
-    DynamicType::_ref_type xml_type;
+    DynamicTypeBuilder::_ref_type xml_type;
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("ULongStruct",
             xml_type));
@@ -13265,7 +13265,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_ulonglong)
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->load_XML_profiles_file(DynamicTypesTests::config_file()));
 
-    DynamicType::_ref_type xml_type;
+    DynamicTypeBuilder::_ref_type xml_type;
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("ULongLongStruct",
             xml_type));
@@ -13290,7 +13290,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_float)
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->load_XML_profiles_file(DynamicTypesTests::config_file()));
 
-    DynamicType::_ref_type xml_type;
+    DynamicTypeBuilder::_ref_type xml_type;
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("FloatStruct",
             xml_type));
@@ -13315,7 +13315,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_double)
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->load_XML_profiles_file(DynamicTypesTests::config_file()));
 
-    DynamicType::_ref_type xml_type;
+    DynamicTypeBuilder::_ref_type xml_type;
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("DoubleStruct",
             xml_type));
@@ -13340,7 +13340,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_longdouble)
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->load_XML_profiles_file(DynamicTypesTests::config_file()));
 
-    DynamicType::_ref_type xml_type;
+    DynamicTypeBuilder::_ref_type xml_type;
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("LongDoubleStruct",
             xml_type));
@@ -13365,7 +13365,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_char)
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->load_XML_profiles_file(DynamicTypesTests::config_file()));
 
-    DynamicType::_ref_type xml_type;
+    DynamicTypeBuilder::_ref_type xml_type;
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("CharStruct",
             xml_type));
@@ -13390,7 +13390,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_wchar)
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->load_XML_profiles_file(DynamicTypesTests::config_file()));
 
-    DynamicType::_ref_type xml_type;
+    DynamicTypeBuilder::_ref_type xml_type;
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("WCharStruct",
             xml_type));
@@ -13415,7 +13415,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_string)
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->load_XML_profiles_file(DynamicTypesTests::config_file()));
 
-    DynamicType::_ref_type xml_type;
+    DynamicTypeBuilder::_ref_type xml_type;
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("StringStruct",
             xml_type));
@@ -13440,7 +13440,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_wstring)
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->load_XML_profiles_file(DynamicTypesTests::config_file()));
 
-    DynamicType::_ref_type xml_type;
+    DynamicTypeBuilder::_ref_type xml_type;
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("WStringStruct",
             xml_type));
@@ -13466,7 +13466,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_large_string)
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->load_XML_profiles_file(DynamicTypesTests::config_file()));
 
-    DynamicType::_ref_type xml_type;
+    DynamicTypeBuilder::_ref_type xml_type;
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("LargeStringStruct",
             xml_type));
@@ -13491,7 +13491,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_large_wstring)
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->load_XML_profiles_file(DynamicTypesTests::config_file()));
 
-    DynamicType::_ref_type xml_type;
+    DynamicTypeBuilder::_ref_type xml_type;
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("LargeWStringStruct",
             xml_type));
@@ -13516,7 +13516,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_short_string)
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->load_XML_profiles_file(DynamicTypesTests::config_file()));
 
-    DynamicType::_ref_type xml_type;
+    DynamicTypeBuilder::_ref_type xml_type;
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("ShortStringStruct",
             xml_type));
@@ -13541,7 +13541,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_short_wstring)
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->load_XML_profiles_file(DynamicTypesTests::config_file()));
 
-    DynamicType::_ref_type xml_type;
+    DynamicTypeBuilder::_ref_type xml_type;
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("ShortWStringStruct",
             xml_type));
@@ -13566,7 +13566,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_alias_of_string)
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->load_XML_profiles_file(DynamicTypesTests::config_file()));
 
-    DynamicType::_ref_type xml_type;
+    DynamicTypeBuilder::_ref_type xml_type;
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("StructAliasString",
             xml_type));
@@ -13598,7 +13598,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_alias_of_wstring)
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->load_XML_profiles_file(DynamicTypesTests::config_file()));
 
-    DynamicType::_ref_type xml_type;
+    DynamicTypeBuilder::_ref_type xml_type;
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("StructAliasWString",
             xml_type));
@@ -13630,7 +13630,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_array)
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->load_XML_profiles_file(DynamicTypesTests::config_file()));
 
-    DynamicType::_ref_type xml_type;
+    DynamicTypeBuilder::_ref_type xml_type;
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("ArrayStruct",
             xml_type));
@@ -13659,7 +13659,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_array_of_arrays)
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->load_XML_profiles_file(DynamicTypesTests::config_file()));
 
-    DynamicType::_ref_type xml_type;
+    DynamicTypeBuilder::_ref_type xml_type;
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("ArrayArrayStruct",
             xml_type));
@@ -13695,7 +13695,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_array_struct_with_array_of
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->load_XML_profiles_file(DynamicTypesTests::config_file()));
 
-    DynamicType::_ref_type xml_type;
+    DynamicTypeBuilder::_ref_type xml_type;
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("ArrayArrayArrayStruct",
             xml_type));
@@ -13744,7 +13744,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_sequence)
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->load_XML_profiles_file(DynamicTypesTests::config_file()));
 
-    DynamicType::_ref_type xml_type;
+    DynamicTypeBuilder::_ref_type xml_type;
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("SequenceStruct",
             xml_type));
@@ -13771,7 +13771,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_sequence_of_sequences)
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->load_XML_profiles_file(DynamicTypesTests::config_file()));
 
-    DynamicType::_ref_type xml_type;
+    DynamicTypeBuilder::_ref_type xml_type;
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("SequenceSequenceStruct",
             xml_type));
@@ -13806,7 +13806,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_map)
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->load_XML_profiles_file(DynamicTypesTests::config_file()));
 
-    DynamicType::_ref_type xml_type;
+    DynamicTypeBuilder::_ref_type xml_type;
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("MapStruct", xml_type));
 
@@ -13832,7 +13832,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_map_of_maps)
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->load_XML_profiles_file(DynamicTypesTests::config_file()));
 
-    DynamicType::_ref_type xml_type;
+    DynamicTypeBuilder::_ref_type xml_type;
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("MapMapStruct",
             xml_type));
@@ -13867,7 +13867,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_two_members)
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->load_XML_profiles_file(DynamicTypesTests::config_file()));
 
-    DynamicType::_ref_type xml_type;
+    DynamicTypeBuilder::_ref_type xml_type;
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("StructStruct",
             xml_type));
@@ -13895,7 +13895,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_struct)
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->load_XML_profiles_file(DynamicTypesTests::config_file()));
 
-    DynamicType::_ref_type xml_type;
+    DynamicTypeBuilder::_ref_type xml_type;
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("StructStructStruct",
             xml_type));
@@ -13936,7 +13936,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_union)
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->load_XML_profiles_file(DynamicTypesTests::config_file()));
 
-    DynamicType::_ref_type xml_type;
+    DynamicTypeBuilder::_ref_type xml_type;
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("SimpleUnionStruct",
             xml_type));
@@ -13977,7 +13977,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_union_with_union)
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->load_XML_profiles_file(DynamicTypesTests::config_file()));
 
-    DynamicType::_ref_type xml_type;
+    DynamicTypeBuilder::_ref_type xml_type;
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("UnionUnionStruct",
             xml_type));
@@ -14035,7 +14035,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_WCharUnionStruct_test)
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->load_XML_profiles_file(DynamicTypesTests::config_file()));
 
-    DynamicType::_ref_type xml_type;
+    DynamicTypeBuilder::_ref_type xml_type;
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("WCharUnionStruct",
             xml_type));
@@ -14076,7 +14076,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_Bitset_test)
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->load_XML_profiles_file(DynamicTypesTests::config_file()));
 
-    DynamicType::_ref_type xml_type;
+    DynamicTypeBuilder::_ref_type xml_type;
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("MyBitSet", xml_type));
 
@@ -14143,7 +14143,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_Bitmask_test)
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->load_XML_profiles_file(DynamicTypesTests::config_file()));
 
-    DynamicType::_ref_type xml_type;
+    DynamicTypeBuilder::_ref_type xml_type;
     ASSERT_EQ(RETCODE_OK,
             DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("MyBitMask", xml_type));
 

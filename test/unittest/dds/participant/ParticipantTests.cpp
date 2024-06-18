@@ -427,7 +427,7 @@ TEST(ParticipantTests, DomainParticipantFactoryLibrarySettings)
 
 TEST(ParticipantTests, DomainParticipantFactoryGetDynamicTypeBuilder)
 {
-    traits<DynamicType>::ref_type type;
+    traits<DynamicTypeBuilder>::ref_type type;
     std::string type_name("MyAloneEnumType");
     // Trying to get a Dynamic Type with empty name returns RETCODE_BAD_PARAMETER
     EXPECT_EQ(RETCODE_BAD_PARAMETER,
