@@ -20,6 +20,7 @@
 #include <vector>
 
 #include <fastdds/dds/core/ReturnCode.hpp>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/detail/dynamic_language_binding.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
 
@@ -268,6 +269,12 @@ ReturnCode_t array_kind_to_str(
         const DynamicType::_ref_type& dyn_type,
         std::string& array_str) noexcept
 {
+    if (dyn_type->get_kind() != TK_ARRAY)
+    {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Type is not an array.");
+        return RETCODE_BAD_PARAMETER;
+    }
+
     ReturnCode_t ret = RETCODE_OK;
 
     DynamicType::_ref_type internal_type;
@@ -307,6 +314,12 @@ ReturnCode_t sequence_kind_to_str(
         const DynamicType::_ref_type& dyn_type,
         std::string& sequence_str) noexcept
 {
+    if (dyn_type->get_kind() != TK_SEQUENCE)
+    {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Type is not a sequence.");
+        return RETCODE_BAD_PARAMETER;
+    }
+
     ReturnCode_t ret = RETCODE_OK;
 
     DynamicType::_ref_type internal_type;
@@ -355,6 +368,12 @@ ReturnCode_t map_kind_to_str(
         const DynamicType::_ref_type& dyn_type,
         std::string& map_str) noexcept
 {
+    if (dyn_type->get_kind() != TK_MAP)
+    {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Type is not a map.");
+        return RETCODE_BAD_PARAMETER;
+    }
+
     ReturnCode_t ret = RETCODE_OK;
 
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
@@ -539,6 +558,12 @@ ReturnCode_t struct_to_str(
         const utilities::collections::TreeNode<TreeNodeType>& node,
         std::string& struct_str) noexcept
 {
+    if (node.info.dynamic_type->get_kind() != TK_STRUCTURE)
+    {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Type is not a struct.");
+        return RETCODE_BAD_PARAMETER;
+    }
+
     // Add types name
     struct_str = "struct " + node.info.type_kind_name + TYPE_OPENING;
 
@@ -561,6 +586,12 @@ ReturnCode_t enum_to_str(
         const utilities::collections::TreeNode<TreeNodeType>& node,
         std::string& enum_str) noexcept
 {
+    if (node.info.dynamic_type->get_kind() != TK_ENUM)
+    {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Type is not an enum.");
+        return RETCODE_BAD_PARAMETER;
+    }
+
     ReturnCode_t ret = RETCODE_OK;
 
     std::map<MemberId, DynamicTypeMember::_ref_type> members;
@@ -598,6 +629,12 @@ ReturnCode_t union_to_str(
         const utilities::collections::TreeNode<TreeNodeType>& node,
         std::string& union_str) noexcept
 {
+    if (node.info.dynamic_type->get_kind() != TK_UNION)
+    {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Type is not a union.");
+        return RETCODE_BAD_PARAMETER;
+    }
+
     ReturnCode_t ret = RETCODE_OK;
 
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
