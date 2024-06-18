@@ -53,8 +53,7 @@ PublisherApp::PublisherApp(
     , stop_(false)
 {
     // Create the type
-    DynamicType::_ref_type dynamic_type = create_type();
-
+    DynamicType::_ref_type dynamic_type = create_type(config.use_xml);
     if (!dynamic_type)
     {
         throw std::runtime_error("Error creating dynamic type");
@@ -227,43 +226,59 @@ void PublisherApp::stop()
     cv_.notify_one();
 }
 
-DynamicType::_ref_type PublisherApp::create_type()
+DynamicType::_ref_type PublisherApp::create_type(
+        bool use_xml_type)
 {
-    // Define a struct type with various primitive members
-    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
-    type_descriptor->kind(TK_STRUCTURE);
-    type_descriptor->name("HelloWorld");
-    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
-
-    if (!struct_builder)
+    DynamicTypeBuilder::_ref_type struct_builder;
+    if (use_xml_type)
     {
-        throw std::runtime_error("Error creating type builder");
+        // Create a types from xml
+        if (RETCODE_OK !=
+                DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("HelloWorld",
+                struct_builder))
+        {
+            std::cout <<
+                "Error getting dynamic type \"HelloWorld\"." << std::endl;
+        }
     }
-
-    // Add index member
-    MemberDescriptor::_ref_type index_member_descriptor {traits<MemberDescriptor>::make_shared()};
-    index_member_descriptor->name("index");
-    index_member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32));
-
-    if (RETCODE_OK != struct_builder->add_member(index_member_descriptor))
+    else
     {
-        throw std::runtime_error("Error adding index member");
-    }
+        TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+        type_descriptor->kind(TK_STRUCTURE);
+        type_descriptor->name("HelloWorld");
+        struct_builder = DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor);
 
-    // Add message member
-    MemberDescriptor::_ref_type message_member_descriptor {traits<MemberDescriptor>::make_shared()};
-    message_member_descriptor->name("message");
-    message_member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_string_type(static_cast<uint32_t>(
-                LENGTH_UNLIMITED))->build());
+        if (!struct_builder)
+        {
+            throw std::runtime_error("Error creating type builder");
+        }
 
-    if (!message_member_descriptor)
-    {
-        throw std::runtime_error("Error creating string type");
-    }
+        // Add index member
+        MemberDescriptor::_ref_type index_member_descriptor {traits<MemberDescriptor>::make_shared()};
+        index_member_descriptor->name("index");
+        index_member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32));
 
-    if (RETCODE_OK != struct_builder->add_member(message_member_descriptor))
-    {
-        throw std::runtime_error("Error adding message member");
+        if (RETCODE_OK != struct_builder->add_member(index_member_descriptor))
+        {
+            throw std::runtime_error("Error adding index member");
+        }
+
+        // Add message member
+        MemberDescriptor::_ref_type message_member_descriptor {traits<MemberDescriptor>::make_shared()};
+        message_member_descriptor->name("message");
+        message_member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_string_type(static_cast<
+                    uint32_t>(
+                    LENGTH_UNLIMITED))->build());
+
+        if (!message_member_descriptor)
+        {
+            throw std::runtime_error("Error creating string type");
+        }
+
+        if (RETCODE_OK != struct_builder->add_member(message_member_descriptor))
+        {
+            throw std::runtime_error("Error adding message member");
+        }
     }
 
     // Build the type

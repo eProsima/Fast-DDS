@@ -21,7 +21,8 @@ For further information regarding the configuration environment, please refer to
 The particularity of this example resides in the use of X-Types, which allows the definition of types at runtime.
 In this case:
 
-1. The publisher application defines a type at runtime using the Fast DDS Dynamic Types API.
+1. The publisher application creates a type at runtime using the Fast DDS Dynamic Types API.
+The types can be defined through C++ API or XML file.
 2. The subscriber application discovers the type defined by the publisher and uses it to create a data reader, introspect the type, and print the received data.
 
 It is important to note that this example is fully type compatible with the [Hello world](../hello_world/README.md) example, meaning that the publisher and subscriber applications can be run interchangeably with the *hello world* example applications.

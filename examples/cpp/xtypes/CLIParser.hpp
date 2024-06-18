@@ -45,6 +45,7 @@ public:
     {
         CLIParser::EntityKind entity = CLIParser::EntityKind::UNDEFINED;
         uint16_t samples = 0;
+        bool use_xml = false;
     };
 
     /**
@@ -57,17 +58,20 @@ public:
     static void print_help(
             uint8_t return_code)
     {
-        std::cout << "Usage: xtypes <entity> [options]"                                         << std::endl;
-        std::cout << ""                                                                         << std::endl;
-        std::cout << "Entities:"                                                                << std::endl;
-        std::cout << "  publisher                       Run a publisher entity"                 << std::endl;
-        std::cout << "  subscriber                      Run a subscriber entity"                << std::endl;
-        std::cout << ""                                                                         << std::endl;
-        std::cout << "Common options:"                                                          << std::endl;
-        std::cout << "  -h, --help                      Print this help message"                << std::endl;
-        std::cout << "  -s <num>, --samples <num>       Number of samples to send or receive"   << std::endl;
-        std::cout << "                                  [0 <= <num> <= 65535]"                  << std::endl;
-        std::cout << "                                  (Default: 0 [unlimited])"               << std::endl;
+        std::cout << "Usage: xtypes <entity> [options]"                                            << std::endl;
+        std::cout << ""                                                                            << std::endl;
+        std::cout << "Entities:"                                                                   << std::endl;
+        std::cout << "  publisher                       Run a publisher entity"                    << std::endl;
+        std::cout << "  subscriber                      Run a subscriber entity"                   << std::endl;
+        std::cout << ""                                                                            << std::endl;
+        std::cout << "Common options:"                                                             << std::endl;
+        std::cout << "  -h, --help                      Print this help message"                   << std::endl;
+        std::cout << "  -s <num>, --samples <num>       Number of samples to send or receive"      << std::endl;
+        std::cout << "                                  [0 <= <num> <= 65535]"                     << std::endl;
+        std::cout << "                                  (Default: 0 [unlimited])"                  << std::endl;
+        std::cout << "Publisher options:"                                                          << std::endl;
+        std::cout << "            --xml-type            Get types defined in xml file. "           << std::endl;
+        std::cout << "                                  (Default: Types defined through C++ API) " << std::endl;
         std::exit(return_code);
     }
 
@@ -158,6 +162,24 @@ public:
                     print_help(EXIT_FAILURE);
                 }
             }
+            else if (arg == "--xml-type")
+            {
+                if (config.entity == CLIParser::EntityKind::PUBLISHER)
+                {
+                    config.use_xml = true;
+                }
+                else if (config.entity == CLIParser::EntityKind::SUBSCRIBER)
+                {
+                    EPROSIMA_LOG_ERROR(CLI_PARSER, "--xml-type flag available only for subscriber entity");
+                    print_help(EXIT_FAILURE);
+                }
+                else
+                {
+                    EPROSIMA_LOG_ERROR(CLI_PARSER, "entity not specified for --xml-type flag");
+                    print_help(EXIT_FAILURE);
+                }
+            }
+
             else
             {
                 EPROSIMA_LOG_ERROR(CLI_PARSER, "unknown option " + arg);
