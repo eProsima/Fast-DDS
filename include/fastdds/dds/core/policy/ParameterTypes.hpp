@@ -30,6 +30,7 @@
 #include <fastdds/dds/core/Types.hpp>
 #include <fastdds/rtps/common/InstanceHandle.hpp>
 #include <fastdds/rtps/common/Locator.hpp>
+#include <fastdds/rtps/common/ProductVersion_t.hpp>
 #include <fastdds/rtps/common/SampleIdentity.hpp>
 #include <fastdds/rtps/common/SerializedPayload.hpp>
 #include <fastdds/rtps/common/Time_t.hpp>
@@ -165,11 +166,12 @@ enum ParameterId_t : uint16_t
     PID_RELATED_SAMPLE_IDENTITY             = 0x0083,
 
     /* eProsima Fast DDS extensions */
+    PID_PRODUCT_VERSION                     = 0x8000,
     PID_PERSISTENCE_GUID                    = 0x8002,
-    PID_CUSTOM_RELATED_SAMPLE_IDENTITY      = 0x800f,
     PID_DISABLE_POSITIVE_ACKS               = 0x8005,
     PID_DATASHARING                         = 0x8006,
     PID_NETWORK_CONFIGURATION_SET           = 0x8007,
+    PID_CUSTOM_RELATED_SAMPLE_IDENTITY      = 0x800f,
 };
 
 /*!
@@ -631,6 +633,39 @@ public:
 };
 
 #define PARAMETER_VENDOR_LENGTH 4
+
+/**
+ * @ingroup PARAMETER_MODULE
+ */
+class ParameterProductVersion_t : public Parameter_t
+{
+public:
+
+    rtps::ProductVersion_t version;
+
+    /**
+     * @brief Constructor without parameters
+     */
+    ParameterProductVersion_t()
+    {
+    }
+
+    /**
+     * Constructor using a parameter PID and the parameter length
+     *
+     * @param pid Pid of the parameter
+     * @param in_length Its associated length
+     */
+    ParameterProductVersion_t(
+            ParameterId_t pid,
+            uint16_t in_length)
+        : Parameter_t(pid, in_length)
+    {
+    }
+
+};
+
+#define PARAMETER_PRODUCT_VERSION_LENGTH 4
 
 /**
  * @ingroup PARAMETER_MODULE
@@ -1883,6 +1918,7 @@ using ParameterGuid_t = fastdds::dds::ParameterGuid_t;
 using ParameterDomainId_t = fastdds::dds::ParameterDomainId_t;
 using ParameterProtocolVersion_t = fastdds::dds::ParameterProtocolVersion_t;
 using ParameterVendorId_t = fastdds::dds::ParameterVendorId_t;
+using ParameterProductVersion_t = fastdds::dds::ParameterProductVersion_t;
 using ParameterIP4Address_t = fastdds::dds::ParameterIP4Address_t;
 using ParameterBool_t = fastdds::dds::ParameterBool_t;
 using ParameterStatusInfo_t = fastdds::dds::ParameterStatusInfo_t;

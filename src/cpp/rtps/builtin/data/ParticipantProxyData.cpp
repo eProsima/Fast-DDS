@@ -78,6 +78,7 @@ ParticipantProxyData::ParticipantProxyData(
     : m_protocolVersion(pdata.m_protocolVersion)
     , m_guid(pdata.m_guid)
     , m_VendorId(pdata.m_VendorId)
+    , product_version(pdata.product_version)
     , m_domain_id(pdata.m_domain_id)
     , m_expectsInlineQos(pdata.m_expectsInlineQos)
     , m_availableBuiltinEndpoints(pdata.m_availableBuiltinEndpoints)
@@ -147,10 +148,13 @@ uint32_t ParticipantProxyData::get_serialized_size(
     uint32_t ret_val = include_encapsulation ? 4 : 0;
 
     // PID_PROTOCOL_VERSION
-    ret_val += 4 + 4;
+    ret_val += 4 + PARAMETER_PROTOCOL_LENGTH;
 
     // PID_VENDORID
-    ret_val += 4 + 4;
+    ret_val += 4 + PARAMETER_VENDOR_LENGTH;
+
+    // PID_PRODUCT_VERSION
+    ret_val += 4 + PARAMETER_PRODUCT_VERSION_LENGTH;
 
     // PID_DOMAIN_ID
     ret_val += 4 + PARAMETER_DOMAINID_LENGTH;
@@ -240,7 +244,7 @@ bool ParticipantProxyData::writeToCDRMessage(
     }
 
     {
-        ParameterProtocolVersion_t p(fastdds::dds::PID_PROTOCOL_VERSION, 4);
+        ParameterProtocolVersion_t p(fastdds::dds::PID_PROTOCOL_VERSION, PARAMETER_PROTOCOL_LENGTH);
         p.protocolVersion = this->m_protocolVersion;
         if (!fastdds::dds::ParameterSerializer<ParameterProtocolVersion_t>::add_to_cdr_message(p, msg))
         {
@@ -248,10 +252,21 @@ bool ParticipantProxyData::writeToCDRMessage(
         }
     }
     {
-        ParameterVendorId_t p(fastdds::dds::PID_VENDORID, 4);
+        ParameterVendorId_t p(fastdds::dds::PID_VENDORID, PARAMETER_VENDOR_LENGTH);
         p.vendorId[0] = this->m_VendorId[0];
         p.vendorId[1] = this->m_VendorId[1];
         if (!fastdds::dds::ParameterSerializer<ParameterVendorId_t>::add_to_cdr_message(p, msg))
+        {
+            return false;
+        }
+    }
+    {
+        ParameterProductVersion_t p(fastdds::dds::PID_PRODUCT_VERSION, PARAMETER_PRODUCT_VERSION_LENGTH);
+        p.version.major = this->product_version.major;
+        p.version.minor = this->product_version.minor;
+        p.version.patch = this->product_version.patch;
+        p.version.tweak = this->product_version.tweak;
+        if (!fastdds::dds::ParameterSerializer<ParameterProductVersion_t>::add_to_cdr_message(p, msg))
         {
             return false;
         }
@@ -453,6 +468,32 @@ bool ParticipantProxyData::readFromCDRMessage(
                         m_VendorId[0] = p.vendorId[0];
                         m_VendorId[1] = p.vendorId[1];
                         is_shm_transport_available &= (m_VendorId == c_VendorId_eProsima);
+                        break;
+                    }
+                    case fastdds::dds::PID_PRODUCT_VERSION:
+                    {
+                        VendorId_t local_vendor_id = source_vendor_id;
+                        if (c_VendorId_Unknown == local_vendor_id)
+                        {
+                            local_vendor_id = ((c_VendorId_Unknown == m_VendorId) ? c_VendorId_eProsima : m_VendorId);
+                        }
+
+                        // Ignore custom PID when coming from other vendors
+                        if (c_VendorId_eProsima != local_vendor_id)
+                        {
+                            EPROSIMA_LOG_INFO(RTPS_PROXY_DATA,
+                                    "Ignoring custom PID" << pid << " from vendor " << local_vendor_id);
+                            return true;
+                        }
+
+                        ParameterProductVersion_t p(pid, plength);
+                        if (!fastdds::dds::ParameterSerializer<ParameterProductVersion_t>::read_from_cdr_message(p,
+                                msg, plength))
+                        {
+                            return false;
+                        }
+
+                        product_version = p.version;
                         break;
                     }
                     case fastdds::dds::PID_DOMAIN_ID:
@@ -765,6 +806,7 @@ void ParticipantProxyData::clear()
     m_guid = GUID_t();
     //set_VendorId_Unknown(m_VendorId);
     m_VendorId = c_VendorId_Unknown;
+    product_version = {};
     m_domain_id = fastdds::dds::DOMAIN_ID_UNKNOWN;
     m_expectsInlineQos = false;
     m_availableBuiltinEndpoints = 0;
@@ -797,6 +839,7 @@ void ParticipantProxyData::copy(
     m_guid = pdata.m_guid;
     m_VendorId[0] = pdata.m_VendorId[0];
     m_VendorId[1] = pdata.m_VendorId[1];
+    product_version = pdata.product_version;
     m_domain_id = pdata.m_domain_id;
     m_availableBuiltinEndpoints = pdata.m_availableBuiltinEndpoints;
     m_networkConfiguration = pdata.m_networkConfiguration;
