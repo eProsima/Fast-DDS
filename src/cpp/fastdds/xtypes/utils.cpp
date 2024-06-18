@@ -22,6 +22,7 @@
 
 #include <nlohmann/json.hpp>
 
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/detail/dynamic_language_binding.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
@@ -99,242 +100,414 @@ struct TreeNodeType
     DynamicType::_ref_type dynamic_type;
 };
 
-std::string type_kind_to_str(
-        const DynamicType::_ref_type& type);
+ReturnCode_t type_kind_to_str(
+        const DynamicType::_ref_type& type,
+        std::string& type_str) noexcept;
 
 //// Implementation
 
-DynamicType::_ref_type container_internal_type(
-        const DynamicType::_ref_type& dyn_type)
+ReturnCode_t container_internal_type(
+        const DynamicType::_ref_type& dyn_type,
+        DynamicType::_ref_type& internal_type) noexcept
 {
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     const auto ret = dyn_type->get_descriptor(type_descriptor);
+
     if (ret != RETCODE_OK)
     {
-        //throw utils::InconsistencyException("No Type Descriptor");
+        return ret;
     }
-    return type_descriptor->element_type();
+
+    internal_type = type_descriptor->element_type();
+
+    return RETCODE_OK;
 }
 
-std::vector<uint32_t> container_size(
-        const DynamicType::_ref_type& dyn_type)
+ReturnCode_t container_size(
+        const DynamicType::_ref_type& dyn_type,
+        BoundSeq& bounds) noexcept
 {
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     const auto ret = dyn_type->get_descriptor(type_descriptor);
+
     if (ret != RETCODE_OK)
     {
-        //throw utils::InconsistencyException("No Type Descriptor");
+        return ret;
     }
-    return type_descriptor->bound();
+
+    bounds = type_descriptor->bound();
+
+    return RETCODE_OK;
 }
 
-std::vector<std::pair<std::string, DynamicType::_ref_type>> get_members_sorted(
-        const DynamicType::_ref_type& dyn_type)
+ReturnCode_t get_members_sorted(
+        const DynamicType::_ref_type& dyn_type,
+        std::vector<std::pair<std::string, DynamicType::_ref_type>>& result) noexcept
 {
-    std::vector<std::pair<std::string, DynamicType::_ref_type>> result;
-
     std::map<MemberId, DynamicTypeMember::_ref_type> members;
     dyn_type->get_all_members(members);
 
     for (const auto& member : members)
     {
-        ObjectName dyn_name = member.second->get_name();
         MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
         const auto ret = member.second->get_descriptor(member_descriptor);
+
         if (ret != RETCODE_OK)
         {
-            //throw utils::InconsistencyException("No Member Descriptor");
+            return ret;
         }
+
+        const auto dyn_name = member.second->get_name();
         result.emplace_back(
             std::make_pair<std::string, DynamicType::_ref_type>(
                 dyn_name.to_string(),
                 std::move(member_descriptor->type())));
     }
-    return result;
+
+    return RETCODE_OK;
 }
 
-std::string array_kind_to_str(
-        const DynamicType::_ref_type& dyn_type)
+ReturnCode_t array_kind_to_str(
+        const DynamicType::_ref_type& dyn_type,
+        std::string& array_str) noexcept
 {
-    auto internal_type = container_internal_type(dyn_type);
-    auto this_array_size = container_size(dyn_type);
+    ReturnCode_t ret = RETCODE_OK;
 
-    std::stringstream ss;
-    ss << type_kind_to_str(internal_type);
+    DynamicType::_ref_type internal_type;
+    ret = container_internal_type(dyn_type, internal_type);
 
-    for (const auto& bound : this_array_size)
-    {
-        ss << "[" << bound << "]";
-    }
-
-    return ss.str();
-}
-
-std::string sequence_kind_to_str(
-        const DynamicType::_ref_type& dyn_type)
-{
-    auto internal_type = container_internal_type(dyn_type);
-    auto this_sequence_size = container_size(dyn_type);
-
-    std::stringstream ss;
-    ss << "sequence<" << type_kind_to_str(internal_type);
-
-    for (const auto& bound : this_sequence_size)
-    {
-        ss << ", " << bound;
-    }
-    ss << ">";
-
-    return ss.str();
-}
-
-std::string map_kind_to_str(
-        const DynamicType::_ref_type& dyn_type)
-{
-    std::stringstream ss;
-    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
-    const auto ret = dyn_type->get_descriptor(type_descriptor);
     if (ret != RETCODE_OK)
     {
-        //throw utils::InconsistencyException("No Type Descriptor");
+        return ret;
     }
-    auto key_type = type_descriptor->key_element_type();
-    auto value_type = type_descriptor->element_type();
-    ss << "map<" << type_kind_to_str(key_type) << ", " << type_kind_to_str(value_type) << ">";
 
-    return ss.str();
+    ret = type_kind_to_str(internal_type, array_str);
+
+    if (ret != RETCODE_OK)
+    {
+        return ret;
+    }
+
+    BoundSeq bounds;
+    ret = container_size(dyn_type, bounds);
+
+    if (ret != RETCODE_OK)
+    {
+        return ret;
+    }
+
+    for (const auto& bound : bounds)
+    {
+        array_str += "[";
+        array_str += bound;
+        array_str += "]";
+    }
+
+    return ret;
 }
 
-std::string type_kind_to_str(
-        const DynamicType::_ref_type& dyn_type)
+ReturnCode_t sequence_kind_to_str(
+        const DynamicType::_ref_type& dyn_type,
+        std::string& sequence_str) noexcept
 {
+    ReturnCode_t ret = RETCODE_OK;
+
+    DynamicType::_ref_type internal_type;
+    ret = container_internal_type(dyn_type, internal_type);
+
+    if (ret != RETCODE_OK)
+    {
+        return ret;
+    }
+
+    ret = type_kind_to_str(internal_type, sequence_str);
+
+    if (ret != RETCODE_OK)
+    {
+        return ret;
+    }
+
+    sequence_str = "sequence<" + sequence_str;
+
+    BoundSeq bounds;
+    ret = container_size(dyn_type, bounds);
+
+    if (ret != RETCODE_OK)
+    {
+        return ret;
+    }
+
+    for (const auto& bound : bounds)
+    {
+        sequence_str += ", " + bound;
+    }
+
+    sequence_str += ">";
+
+    return ret;
+}
+
+ReturnCode_t map_kind_to_str(
+        const DynamicType::_ref_type& dyn_type,
+        std::string& map_str) noexcept
+{
+    ReturnCode_t ret = RETCODE_OK;
+
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    ret = dyn_type->get_descriptor(type_descriptor);
+
+    if (ret != RETCODE_OK)
+    {
+        return ret;
+    }
+
+    std::string key_str;
+    const auto key_type = type_descriptor->key_element_type();
+    ret = type_kind_to_str(key_type, key_str);
+
+    if (ret != RETCODE_OK)
+    {
+        return ret;
+    }
+
+    std::string value_str;
+    const auto value_type = type_descriptor->element_type();
+    ret = type_kind_to_str(value_type, value_str);
+
+    if (ret != RETCODE_OK)
+    {
+        return ret;
+    }
+
+    std::stringstream ss;
+
+    ss << "map<" << key_str << ", " << value_str << ">";
+
+    map_str = ss.str();
+
+    return ret;
+}
+
+ReturnCode_t type_kind_to_str(
+        const DynamicType::_ref_type& dyn_type,
+        std::string& type_str) noexcept
+{
+    ReturnCode_t ret = RETCODE_OK;
+
     switch (dyn_type->get_kind())
     {
         case TK_BOOLEAN:
-            return "boolean";
-
+        {
+            type_str = "boolean";
+            break;
+        }
         case TK_BYTE:
-            return "octet";
-
+        {
+            type_str = "octet";
+            break;
+        }
         case TK_INT16:
-            return "short";
-
+        {
+            type_str = "short";
+            break;
+        }
         case TK_INT32:
-            return "long";
-
+        {
+            type_str = "long";
+            break;
+        }
         case TK_INT64:
-            return "long long";
-
+        {
+            type_str = "long long";
+            break;
+        }
         case TK_UINT16:
-            return "unsigned short";
-
+        {
+            type_str = "unsigned short";
+            break;
+        }
         case TK_UINT32:
-            return "unsigned long";
-
+        {
+            type_str = "unsigned long";
+            break;
+        }
         case TK_UINT64:
-            return "unsigned long long";
-
+        {
+            type_str = "unsigned long long";
+            break;
+        }
         case TK_FLOAT32:
-            return "float";
-
+        {
+            type_str = "float";
+            break;
+        }
         case TK_FLOAT64:
-            return "double";
-
+        {
+            type_str = "double";
+            break;
+        }
         case TK_FLOAT128:
-            return "long double";
-
+        {
+            type_str = "long double";
+            break;
+        }
         case TK_CHAR8:
-            return "char";
-
+        {
+            type_str = "char";
+            break;
+        }
         case TK_CHAR16:
-            return "wchar";
-
+        {
+            type_str = "wchar";
+            break;
+        }
         case TK_STRING8:
-            return "string";
-
+        {
+            type_str = "string";
+            break;
+        }
         case TK_STRING16:
-            return "wstring";
-
+        {
+            type_str = "wstring";
+            break;
+        }
         case TK_ARRAY:
-            return array_kind_to_str(dyn_type);
-
+        {
+            ret = array_kind_to_str(dyn_type, type_str);
+            break;
+        }
         case TK_SEQUENCE:
-            return sequence_kind_to_str(dyn_type);
-
+        {
+            ret = sequence_kind_to_str(dyn_type, type_str);
+            break;
+        }
         case TK_MAP:
-            return map_kind_to_str(dyn_type);
-
+        {
+            ret = map_kind_to_str(dyn_type, type_str);
+            break;
+        }
         case TK_STRUCTURE:
         case TK_ENUM:
         case TK_UNION:
-            return (dyn_type->get_name()).to_string();
-
+        {
+            type_str = dyn_type->get_name().to_string();
+            break;
+        }
         case TK_BITSET:
         case TK_BITMASK:
         case TK_NONE:
-            //throw utils::UnsupportedException(
-                    //   STR_ENTRY << "Type " << dyn_type->get_name() << " is not supported.");
-            return "";
-
+        case TK_ALIAS:
+        {
+            ret = RETCODE_UNSUPPORTED;
+            break;
+        }
         default:
-            //throw utils::InconsistencyException(
-                    //   STR_ENTRY << "Type " << dyn_type->get_name() << " has not correct kind.");
-            return "";
-
+        {
+            ret = RETCODE_BAD_PARAMETER;
+            break;
+        }
     }
+
+    return ret;
 }
 
-utilities::collections::TreeNode<TreeNodeType> generate_dyn_type_tree(
+ReturnCode_t generate_dyn_type_tree(
         const DynamicType::_ref_type& type,
-        const std::string& member_name = "PARENT")
+        const std::string& member_name,
+        utilities::collections::TreeNode<TreeNodeType>& node) noexcept
 {
-    // Get kind
-    TypeKind kind = type->get_kind();
+    ReturnCode_t ret = RETCODE_OK;
 
-    switch (kind)
+    switch (type->get_kind())
     {
         case TK_STRUCTURE:
         {
             // If is struct, the call is recursive.
             // Create new tree node
-            utilities::collections::TreeNode<TreeNodeType> parent(member_name, (type->get_name()).to_string(), type);
+            utilities::collections::TreeNode<TreeNodeType> parent(member_name, type->get_name().to_string(), type);
 
             // Get all members of this struct
-            std::vector<std::pair<std::string,
-                    DynamicType::_ref_type>> members_by_name = get_members_sorted(type);
+            std::vector<std::pair<std::string, DynamicType::_ref_type>> members_by_name;
+            ret = get_members_sorted(type, members_by_name);
+
+            if (ret != RETCODE_OK)
+            {
+                return ret;
+            }
 
             for (const auto& member : members_by_name)
             {
-                // Add each member with its name as a new node in a branch (recursion)
-                parent.add_branch(
-                    generate_dyn_type_tree(member.second, member.first));
-            }
-            return parent;
-        }
+                ret = generate_dyn_type_tree(member.second, member.first, node);
 
+                if (ret != RETCODE_OK)
+                {
+                    return ret;
+                }
+
+                // Add each member with its name as a new node in a branch (recursion)
+                parent.add_branch(node);
+            }
+
+            node = parent;
+            break;
+        }
         case TK_ARRAY:
         case TK_SEQUENCE:
         {
             // If container (array or struct) has exactly one branch
             // Calculate child branch
-            auto internal_type = container_internal_type(type);
+            DynamicType::_ref_type internal_type;
+            ret = container_internal_type(type, internal_type);
+
+            if (ret != RETCODE_OK)
+            {
+                return ret;
+            }
+
+            std::string internal_str;
+            ret = type_kind_to_str(internal_type, internal_str);
+
+            if (ret != RETCODE_OK)
+            {
+                return ret;
+            }
 
             // Create this node
-            utilities::collections::TreeNode<TreeNodeType> container(member_name, type_kind_to_str(type), type);
+            utilities::collections::TreeNode<TreeNodeType> container(member_name, internal_str, type);
             // Add branch
-            container.add_branch(generate_dyn_type_tree(internal_type, "CONTAINER_MEMBER"));
+            ret = generate_dyn_type_tree(internal_type, "CONTAINER_MEMBER", node);
 
-            return container;
+            if (ret != RETCODE_OK)
+            {
+                return ret;
+            }
+
+            container.add_branch(node);
+
+            node = container;
+            break;
         }
-
         default:
-            return utilities::collections::TreeNode<TreeNodeType>(member_name, type_kind_to_str(type), type);
+        {
+            std::string type_str;
+            ret = type_kind_to_str(type, type_str);
+
+            if (ret != RETCODE_OK)
+            {
+                return ret;
+            }
+
+            node = utilities::collections::TreeNode<TreeNodeType>(member_name, type_str, type);
+            break;
+        }
     }
+
+    return ret;
 }
 
-std::ostream& node_to_str(
+ReturnCode_t node_to_str(
         std::ostream& os,
-        const utilities::collections::TreeNode<TreeNodeType>& node)
+        const utilities::collections::TreeNode<TreeNodeType>& node) noexcept
 {
     os << TAB_SEPARATOR;
 
@@ -351,12 +524,12 @@ std::ostream& node_to_str(
         os << node.info.type_kind_name << " " << node.info.member_name;
     }
 
-    return os;
+    return RETCODE_OK;
 }
 
-std::ostream& struct_to_str(
+ReturnCode_t struct_to_str(
         std::ostream& os,
-        const utilities::collections::TreeNode<TreeNodeType>& node)
+        const utilities::collections::TreeNode<TreeNodeType>& node) noexcept
 {
     // Add types name
     os << "struct " << node.info.type_kind_name << TYPE_OPENING;
@@ -371,16 +544,16 @@ std::ostream& struct_to_str(
     // Close definition
     os << TYPE_CLOSURE;
 
-    return os;
+    return RETCODE_OK;
 }
 
-std::ostream& enum_to_str(
+ReturnCode_t enum_to_str(
         std::ostream& os,
-        const utilities::collections::TreeNode<TreeNodeType>& node)
+        const utilities::collections::TreeNode<TreeNodeType>& node) noexcept
 {
     os << "enum " << node.info.type_kind_name << TYPE_OPENING << TAB_SEPARATOR;
 
-   std::map<MemberId, DynamicTypeMember::_ref_type> members;
+    std::map<MemberId, DynamicTypeMember::_ref_type> members;
     node.info.dynamic_type->get_all_members(members);
     bool first_iter = true;
     for (const auto& member : members)
@@ -397,34 +570,49 @@ std::ostream& enum_to_str(
     // Close definition
     os << "\n" << TYPE_CLOSURE;
 
-    return os;
+    return RETCODE_OK;
 }
 
-std::ostream& union_to_str(
+ReturnCode_t union_to_str(
         std::ostream& os,
-        const utilities::collections::TreeNode<TreeNodeType>& node)
+        const utilities::collections::TreeNode<TreeNodeType>& node) noexcept
 {
+    ReturnCode_t ret = RETCODE_OK;
+
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
-    const auto ret = node.info.dynamic_type->get_descriptor(type_descriptor);
+    ret = node.info.dynamic_type->get_descriptor(type_descriptor);
+
     if (ret != RETCODE_OK)
     {
-        //throw utils::InconsistencyException("No Type Descriptor");
+        return ret;
     }
-    os << "union " << node.info.type_kind_name << " switch (" << type_kind_to_str(
-        type_descriptor->discriminator_type()) << ")" << TYPE_OPENING;
+
+    std::string discriminant_type_str;
+    ret = type_kind_to_str(type_descriptor->discriminator_type(), discriminant_type_str);
+
+    if (ret != RETCODE_OK)
+    {
+        return ret;
+    }
+
+    os << "union " << node.info.type_kind_name << " switch (" << discriminant_type_str << ")" << TYPE_OPENING;
 
     std::map<MemberId, DynamicTypeMember::_ref_type> members;
     node.info.dynamic_type->get_all_members(members);  // WARNING: Default case not included in this collection, and currently not available
+
     for (const auto& member : members)
     {
         MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
-        const auto ret = member.second->get_descriptor(member_descriptor);
+        ret = member.second->get_descriptor(member_descriptor);
+
         if (ret != RETCODE_OK)
         {
-            //throw utils::InconsistencyException("No Member Descriptor");
+            return ret;
         }
-        auto labels = member_descriptor->label();  // WARNING: There might be casting issues as discriminant type is currently not taken into consideration
+
+        const auto labels = member_descriptor->label();  // WARNING: There might be casting issues as discriminant type is currently not taken into consideration
         bool first_iter = true;
+
         for (const auto& label : labels)
         {
             if (first_iter)
@@ -440,20 +628,26 @@ std::ostream& union_to_str(
             os << "case " << std::to_string(label) << ":";
         }
 
-        os << "\n" << TAB_SEPARATOR << TAB_SEPARATOR << type_kind_to_str(member_descriptor->type()) <<
-            " " << member.second->get_name() << ";\n";
+        std::string member_str;
+        ret = type_kind_to_str(member_descriptor->type(), member_str);
 
+        if (ret != RETCODE_OK)
+        {
+            return ret;
+        }
 
+        os << "\n" << TAB_SEPARATOR << TAB_SEPARATOR << member_str << " " << member.second->get_name() << ";\n";
     }
 
     // Close definition
     os << TYPE_CLOSURE;
 
-    return os;
+    return ret;
 }
 
-std::string generate_dyn_type_schema_from_tree(
-        const utilities::collections::TreeNode<TreeNodeType>& parent_node)
+ReturnCode_t generate_dyn_type_schema_from_tree(
+        const utilities::collections::TreeNode<TreeNodeType>& parent_node,
+        std::string& dyn_type_schema) noexcept
 {
     std::set<std::string> types_written;
 
@@ -464,52 +658,79 @@ std::string generate_dyn_type_schema_from_tree(
     // If it is not, write it down
     for (const auto& node : parent_node.all_nodes())
     {
-        auto kind = node.info.dynamic_type->get_kind();
-        if (types_written.find(node.info.type_kind_name) == types_written.end())
+        if (types_written.find(node.info.type_kind_name) != types_written.end())
         {
-            switch (kind)
-            {
-                case TK_STRUCTURE:
-                    struct_to_str(ss, node);
-                    break;
-
-                case TK_ENUM:
-                    enum_to_str(ss, node);
-                    break;
-
-                case TK_UNION:
-                    union_to_str(ss, node);
-                    break;
-
-                default:
-                    continue;
-            }
-            ss << "\n"; // Introduce blank line between type definitions
-            types_written.insert(node.info.type_kind_name);
+            continue;
         }
+
+        ReturnCode_t ret;
+        const auto kind = node.info.dynamic_type->get_kind();
+
+        switch (kind)
+        {
+            case TK_STRUCTURE:
+            {
+                ret = struct_to_str(ss, node);
+                break;
+            }
+            case TK_ENUM:
+            {
+                ret = enum_to_str(ss, node);
+                break;
+            }
+            case TK_UNION:
+            {
+                ret = union_to_str(ss, node);
+                break;
+            }
+            default:
+                continue;
+        }
+
+        if (ret != RETCODE_OK)
+        {
+            return ret;
+        }
+
+        ss << "\n"; // Introduce blank line between type definitions
+        types_written.insert(node.info.type_kind_name);
     }
 
     // Write struct parent node at last, after all its dependencies
     // NOTE: not a requirement for Foxglove IDL Parser, dependencies can be placed after parent
-    struct_to_str(ss, parent_node);
+    const auto ret = struct_to_str(ss, parent_node);
 
-    return ss.str();
+    if (ret != RETCODE_OK)
+    {
+        return ret;
+    }
+
+    dyn_type_schema = ss.str();
+
+    return RETCODE_OK;
 }
 
-std::string generate_idl_schema(
-        const traits<DynamicType>::ref_type& dynamic_type)
+ReturnCode_t generate_idl_schema(
+        const traits<DynamicType>::ref_type& dynamic_type,
+        std::string& idl_schema) noexcept
 {
     // Generate type tree
-    utilities::collections::TreeNode<TreeNodeType> parent_type = generate_dyn_type_tree(dynamic_type);
+    utilities::collections::TreeNode<TreeNodeType> parent_type("PARENT", "", dynamic_type);
+    const auto ret = generate_dyn_type_tree(dynamic_type, "PARENT", parent_type);
+
+    if (ret != RETCODE_OK)
+    {
+        return ret;
+    }
 
     // From tree, generate string
-    return generate_dyn_type_schema_from_tree(parent_type);
+    return generate_dyn_type_schema_from_tree(parent_type, idl_schema);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //// Dynamic Type to IDL serialization //// END
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-}         // namespace dds
-}     // namespace fastdds
+} // namespace dds
+} // namespace fastdds
 } // namespace eprosima
