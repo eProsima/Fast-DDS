@@ -19,7 +19,7 @@
 #ifndef _FASTDDS_PUBLISHERATTRIBUTES_H_
 #define _FASTDDS_PUBLISHERATTRIBUTES_H_
 
-#include <fastdds/rtps/resources/ResourceManagement.h>
+#include <fastdds/rtps/attributes/ResourceManagement.hpp>
 
 #include <fastdds/dds/publisher/qos/WriterQos.hpp>
 #include <fastdds/rtps/attributes/ExternalLocators.hpp>
