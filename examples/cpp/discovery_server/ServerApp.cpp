@@ -165,17 +165,10 @@ ServerApp::ServerApp(
     pqos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(listening_locator);
 
     // Configure Connection address
-    rtps::RemoteServerAttributes remote_server_att;
     if (config.is_also_client)
     {
-        // Set SERVER's GUID prefix
-        remote_server_att.guidPrefix = get_discovery_server_guid_from_id(config.connection_ds_id);
-
-        // Set SERVER's listening locator for PDP
-        remote_server_att.metatrafficUnicastLocatorList.push_back(connection_locator);
-
         // Add remote SERVER to CLIENT's list of SERVERs
-        pqos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.push_back(remote_server_att);
+        pqos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.push_back(connection_locator);
     }
 
 
@@ -193,7 +186,6 @@ ServerApp::ServerApp(
             "Server Participant " << pqos.name() <<
             " created with GUID " << participant_->guid() <<
             " listening in address <" << listening_locator  << "> " <<
-            " connecting with Discovery Server <" << remote_server_att.guidPrefix << "> "
             " with address <" << connection_locator  << "> " <<
             std::endl;
     }

@@ -144,15 +144,8 @@ ClientPublisherApp::ClientPublisherApp(
     pqos.wire_protocol().builtin.discovery_config.discoveryProtocol =
             eprosima::fastrtps::rtps::DiscoveryProtocol_t::CLIENT;
 
-    // Set SERVER's GUID prefix
-    rtps::RemoteServerAttributes remote_server_att;
-    remote_server_att.guidPrefix = get_discovery_server_guid_from_id(config.connection_ds_id);
-
-    // Set SERVER's listening locator for PDP
-    remote_server_att.metatrafficUnicastLocatorList.push_back(server_locator);
-
     // Add remote SERVER to CLIENT's list of SERVERs
-    pqos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.push_back(remote_server_att);
+    pqos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.push_back(server_locator);
 
     // Add descriptor
     pqos.transport().user_transports.push_back(descriptor);
@@ -169,7 +162,6 @@ ClientPublisherApp::ClientPublisherApp(
         "Publisher Participant " << pqos.name() <<
         " created with GUID " << participant_->guid() <<
         " connecting to server <" << server_locator  << "> " <<
-        " with Guid: <" << remote_server_att.guidPrefix << "> " <<
         std::endl;
 
     // Regsiter type
