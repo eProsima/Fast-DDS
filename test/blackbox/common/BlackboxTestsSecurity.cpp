@@ -3298,13 +3298,13 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_valid
 
     // Initialize one reader on each partition
     reader_p_1.partition("Partition1").
-            reliability(eprosima::fastdds::RELIABLE_RELIABILITY_QOS).
+            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
             property_policy(sub_property_policy).
             init();
     ASSERT_TRUE(reader_p_1.isInitialized());
 
     reader_p_2.partition("Partition2").
-            reliability(eprosima::fastdds::RELIABLE_RELIABILITY_QOS).
+            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
             property_policy(sub_property_policy).
             init();
     ASSERT_TRUE(reader_p_2.isInitialized());

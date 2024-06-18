@@ -595,15 +595,6 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}
     PATTERN "*.ipp"
     )
 
-install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/fastrtps
-    DESTINATION ${INCLUDE_INSTALL_DIR}
-    COMPONENT headers
-    FILES_MATCHING
-    PATTERN "*.h"
-    PATTERN "*.hpp"
-    PATTERN "*.ipp"
-    )
-
 # Install config.h header
 install(FILES ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}/config.h
     DESTINATION ${INCLUDE_INSTALL_DIR}/${PROJECT_NAME}

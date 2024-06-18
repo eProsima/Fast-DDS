@@ -129,7 +129,7 @@ void RTPSWriter::init(
         fixed_payload_size_ = mp_history->m_att.payloadMaxSize;
     }
 
-    if (att.endpoint.data_sharing_configuration().kind() != OFF)
+    if (att.endpoint.data_sharing_configuration().kind() != dds::OFF)
     {
         std::shared_ptr<WriterPool> pool = std::dynamic_pointer_cast<WriterPool>(payload_pool);
         if (!pool || !pool->init_shared_memory(this, att.endpoint.data_sharing_configuration().shm_directory()))
@@ -396,7 +396,7 @@ void RTPSWriter::update_cached_info_nts(
     mp_RTPSParticipant->network_factory().select_locators(locator_selector.locator_selector);
 }
 
-const LivelinessQosPolicyKind& RTPSWriter::get_liveliness_kind() const
+const dds::LivelinessQosPolicyKind& RTPSWriter::get_liveliness_kind() const
 {
     return liveliness_kind_;
 }
@@ -413,7 +413,7 @@ const Duration_t& RTPSWriter::get_liveliness_announcement_period() const
 
 bool RTPSWriter::is_datasharing_compatible() const
 {
-    return (m_att.data_sharing_configuration().kind() != OFF);
+    return (m_att.data_sharing_configuration().kind() != dds::OFF);
 }
 
 bool RTPSWriter::is_datasharing_compatible_with(

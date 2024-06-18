@@ -434,6 +434,36 @@ inline bool ParameterSerializer<ParameterVendorId_t>::read_content_from_cdr_mess
 }
 
 template<>
+inline bool ParameterSerializer<ParameterProductVersion_t>::add_content_to_cdr_message(
+        const ParameterProductVersion_t& parameter,
+        rtps::CDRMessage_t* cdr_message)
+{
+    bool valid = rtps::CDRMessage::addOctet(cdr_message, parameter.version.major);
+    valid &= rtps::CDRMessage::addOctet(cdr_message, parameter.version.minor);
+    valid &= rtps::CDRMessage::addOctet(cdr_message, parameter.version.patch);
+    valid &= rtps::CDRMessage::addOctet(cdr_message, parameter.version.tweak);
+    return valid;
+}
+
+template<>
+inline bool ParameterSerializer<ParameterProductVersion_t>::read_content_from_cdr_message(
+        ParameterProductVersion_t& parameter,
+        rtps::CDRMessage_t* cdr_message,
+        const uint16_t parameter_length)
+{
+    if (parameter_length != PARAMETER_PRODUCT_VERSION_LENGTH)
+    {
+        return false;
+    }
+    parameter.length = parameter_length;
+    bool valid = rtps::CDRMessage::readOctet(cdr_message, &parameter.version.major);
+    valid &= rtps::CDRMessage::readOctet(cdr_message, &parameter.version.minor);
+    valid &= rtps::CDRMessage::readOctet(cdr_message, &parameter.version.patch);
+    valid &= rtps::CDRMessage::readOctet(cdr_message, &parameter.version.tweak);
+    return valid;
+}
+
+template<>
 inline bool ParameterSerializer<ParameterDomainId_t>::add_content_to_cdr_message(
         const ParameterDomainId_t& parameter,
         fastdds::rtps::CDRMessage_t* cdr_message)

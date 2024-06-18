@@ -16,13 +16,16 @@
  * @file CustomPayloadPool.hpp
  */
 
-#ifndef DDS_CUSTOM_PAYLOAD_POOL_HPP
-#define DDS_CUSTOM_PAYLOAD_POOL_HPP
+#ifndef _FASTDDS_CUSTOM_PAYLOAD_POOL_HPP
+#define _FASTDDS_CUSTOM_PAYLOAD_POOL_HPP
 
-#include <assert.h>
+#include <cassert>
 #include <cstdint>
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
+
+#include <fastdds/rtps/common/CacheChange.h>
+#include <fastdds/rtps/history/IPayloadPool.h>
 
 class CustomPayloadPool : public eprosima::fastdds::rtps::IPayloadPool
 {
@@ -100,4 +103,4 @@ public:
 
 };
 
-#endif  // DDS_CUSTOM_PAYLOAD_POOL_HPP
+#endif  // _FASTDDS_CUSTOM_PAYLOAD_POOL_HPP

@@ -437,7 +437,7 @@ bool MonitorService::create_endpoint()
     hatt.maximumReservedCaches = 0;
 
     TopicAttributes tatt;
-    tatt.historyQos.kind = KEEP_LAST_HISTORY_QOS;
+    tatt.historyQos.kind = dds::KEEP_LAST_HISTORY_QOS;
     tatt.historyQos.depth = 1;
     tatt.topicKind = WITH_KEY;
     tatt.topicName = MONITOR_SERVICE_TOPIC;
@@ -472,7 +472,7 @@ bool MonitorService::create_endpoint()
         //! Register the writer in the participant
         fastdds::dds::WriterQos wqos;
 
-        wqos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+        wqos.m_reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
         wqos.m_durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
 
         TopicAttributes tatts;

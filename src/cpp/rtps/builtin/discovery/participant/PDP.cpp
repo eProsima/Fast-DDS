@@ -22,6 +22,7 @@
 #include <mutex>
 #include <chrono>
 
+#include <fastdds/config.h>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/log/Log.hpp>
@@ -236,6 +237,9 @@ void PDP::initializeParticipantProxyData(
     participant_data->m_leaseDuration = attributes.builtin.discovery_config.leaseDuration;
     //set_VendorId_eProsima(participant_data->m_VendorId);
     participant_data->m_VendorId = c_VendorId_eProsima;
+    participant_data->product_version.major = FASTDDS_VERSION_MAJOR;
+    participant_data->product_version.minor = FASTDDS_VERSION_MINOR;
+    participant_data->product_version.patch = FASTDDS_VERSION_MICRO;
 
     // TODO: participant_data->m_availableBuiltinEndpoints |= mp_builtin->available_builtin_endpoints();
 

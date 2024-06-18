@@ -219,7 +219,7 @@ bool StatefulReader::matched_writer_add(
             {
                 EPROSIMA_LOG_INFO(RTPS_READER, "Attempting to add existing writer, updating information");
                 // If Ownership strength changes then update all history instances.
-                if (EXCLUSIVE_OWNERSHIP_QOS == m_att.ownershipKind &&
+                if (dds::EXCLUSIVE_OWNERSHIP_QOS == m_att.ownershipKind &&
                         it->ownership_strength() != wdata.m_qos.m_ownershipStrength.value)
                 {
                     history_->writer_update_its_ownership_strength_nts(
@@ -882,8 +882,8 @@ bool StatefulReader::process_heartbeat_msg(
             {
                 if (liveliness_lease_duration_ < c_TimeInfinite)
                 {
-                    if (liveliness_kind_ == MANUAL_BY_TOPIC_LIVELINESS_QOS ||
-                            writer->liveliness_kind() == MANUAL_BY_TOPIC_LIVELINESS_QOS)
+                    if (liveliness_kind_ == dds::MANUAL_BY_TOPIC_LIVELINESS_QOS ||
+                            writer->liveliness_kind() == dds::MANUAL_BY_TOPIC_LIVELINESS_QOS)
                     {
                         auto wlp = this->mp_RTPSParticipant->wlp();
                         if ( wlp != nullptr)
@@ -1142,7 +1142,7 @@ bool StatefulReader::change_received(
     }
 
     // Update Ownership strength.
-    if (EXCLUSIVE_OWNERSHIP_QOS == m_att.ownershipKind)
+    if (dds::EXCLUSIVE_OWNERSHIP_QOS == m_att.ownershipKind)
     {
         a_change->reader_info.writer_ownership_strength = prox->ownership_strength();
     }

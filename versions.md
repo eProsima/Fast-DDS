@@ -58,6 +58,7 @@ Forthcoming
   * New attribute in `SendBuffersAllocationAttributes` to configure allocation of `NetworkBuffer` vector.
   * `SenderResource` and Transport APIs now receive a collection of `NetworkBuffer` on their `send` method.
 * Migrate fastrtps namespace to fastdds
+* Add new custom pid PID_PRODUCT_VERSION.
 
 Version 2.14.0
 --------------

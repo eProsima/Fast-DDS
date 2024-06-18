@@ -16,14 +16,13 @@
  * @file TopicAttributes.h
  */
 
-#ifndef TOPICPARAMETERS_H_
-#define TOPICPARAMETERS_H_
+#ifndef _FASTDDS_TOPICPARAMETERS_H_
+#define _FASTDDS_TOPICPARAMETERS_H_
 
 #include <string>
 
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/rtps/common/Types.h>
-#include <fastrtps/qos/QosPolicies.h>
-
 
 namespace eprosima {
 namespace fastdds {
@@ -104,15 +103,15 @@ public:
     //!Topic Data Type.
     fastcdr::string_255 topicDataType;
     //!QOS Regarding the History to be saved.
-    HistoryQosPolicy historyQos;
+    dds::HistoryQosPolicy historyQos;
     //!QOS Regarding the resources to allocate.
-    ResourceLimitsQosPolicy resourceLimitsQos;
+    dds::ResourceLimitsQosPolicy resourceLimitsQos;
     //!Type Identifier XTYPES 1.1
-    TypeIdV1 type_id;
+    dds::TypeIdV1 type_id;
     //!Type Object XTYPES 1.1
-    TypeObjectV1 type;
+    dds::TypeObjectV1 type;
     //!XTYPES 1.2
-    xtypes::TypeInformationParameter type_information;
+    dds::xtypes::TypeInformationParameter type_information;
 
     /**
      * Method to check whether the defined QOS are correct.
@@ -137,7 +136,7 @@ bool inline operator !=(
             || t1.topicName != t2.topicName
             || t1.topicDataType != t2.topicDataType
             || t1.historyQos.kind != t2.historyQos.kind
-            || (t1.historyQos.kind == KEEP_LAST_HISTORY_QOS && t1.historyQos.depth != t2.historyQos.depth))
+            || (t1.historyQos.kind == dds::KEEP_LAST_HISTORY_QOS && t1.historyQos.depth != t2.historyQos.depth))
     {
         return true;
     }
@@ -149,4 +148,4 @@ bool inline operator !=(
 } /* namespace fastdds */
 } /* namespace eprosima */
 
-#endif /* TOPICPARAMETERS_H_ */
+#endif /* _FASTDDS_TOPICPARAMETERS_H_ */

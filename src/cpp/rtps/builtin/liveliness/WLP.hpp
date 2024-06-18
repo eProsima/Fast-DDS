@@ -148,7 +148,7 @@ public:
      */
     bool assert_liveliness(
             GUID_t writer,
-            LivelinessQosPolicyKind kind,
+            dds::LivelinessQosPolicyKind kind,
             Duration_t lease_duration);
 
     /**
@@ -239,7 +239,7 @@ private:
      */
     void pub_liveliness_changed(
             const GUID_t& writer,
-            const LivelinessQosPolicyKind& kind,
+            const dds::LivelinessQosPolicyKind& kind,
             const Duration_t& lease_duration,
             int32_t alive_change,
             int32_t not_alive_change);
@@ -254,7 +254,7 @@ private:
      */
     void sub_liveliness_changed(
             const GUID_t& writer,
-            const LivelinessQosPolicyKind& kind,
+            const dds::LivelinessQosPolicyKind& kind,
             const Duration_t& lease_duration,
             int32_t alive_change,
             int32_t not_alive_change);

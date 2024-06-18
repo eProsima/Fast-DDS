@@ -101,7 +101,7 @@ TEST_P(DDSDataReader, LivelinessChangedStatusGet)
 
     // Create and start reader that will not invoke listener for liveliness_changed
     PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
-    reader.liveliness_kind(AUTOMATIC_LIVELINESS_QOS)
+    reader.liveliness_kind(eprosima::fastdds::dds::AUTOMATIC_LIVELINESS_QOS)
             .liveliness_lease_duration(lease_duration)
             .deactivate_status_listener(eprosima::fastdds::dds::StatusMask::liveliness_changed());
     reader.init();
@@ -111,7 +111,7 @@ TEST_P(DDSDataReader, LivelinessChangedStatusGet)
     std::unique_ptr<PubSubParticipant<HelloWorldPubSubType>> writers;
     writers.reset(new PubSubParticipant<HelloWorldPubSubType>(num_times, 0, num_times, 0));
     writers->pub_topic_name(TEST_TOPIC_NAME)
-            .pub_liveliness_kind(AUTOMATIC_LIVELINESS_QOS)
+            .pub_liveliness_kind(eprosima::fastdds::dds::AUTOMATIC_LIVELINESS_QOS)
             .pub_liveliness_announcement_period(announcement_period)
             .pub_liveliness_lease_duration(lease_duration);
     ASSERT_TRUE(writers->init_participant());
@@ -374,8 +374,8 @@ TEST(DDSDataReader, ConsistentReliabilityWhenIntraprocess)
     auto publisher = participant->create_publisher( participant->get_default_publisher_qos());
 
     auto writer_qos = eprosima::fastdds::dds::DATAWRITER_QOS_DEFAULT;
-    writer_qos.durability().kind = DurabilityQosPolicyKind::TRANSIENT_LOCAL_DURABILITY_QOS;
-    writer_qos.reliability().kind = ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS;
+    writer_qos.durability().kind = eprosima::fastdds::dds::DurabilityQosPolicyKind::TRANSIENT_LOCAL_DURABILITY_QOS;
+    writer_qos.reliability().kind = eprosima::fastdds::dds::ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS;
     auto writer = publisher->create_datawriter( topic, writer_qos );
 
     auto data = HelloWorld{};
@@ -386,8 +386,8 @@ TEST(DDSDataReader, ConsistentReliabilityWhenIntraprocess)
     // create a late joiner subscriber and reader
     auto subscriber = participant->create_subscriber( participant->get_default_subscriber_qos());
     auto reader_qos = eprosima::fastdds::dds::DATAREADER_QOS_DEFAULT;
-    reader_qos.durability().kind = DurabilityQosPolicyKind::TRANSIENT_LOCAL_DURABILITY_QOS;
-    reader_qos.reliability().kind = ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS;
+    reader_qos.durability().kind = eprosima::fastdds::dds::DurabilityQosPolicyKind::TRANSIENT_LOCAL_DURABILITY_QOS;
+    reader_qos.reliability().kind = eprosima::fastdds::dds::ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS;
     auto reader = subscriber->create_datareader( topic, reader_qos );
 
     eprosima::fastdds::dds::SubscriptionMatchedStatus status;

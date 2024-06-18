@@ -546,8 +546,8 @@ bool EDP::valid_matching(
         return false;
     }
 
-    if ( wdata->m_qos.m_reliability.kind == BEST_EFFORT_RELIABILITY_QOS
-            && rdata->m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
+    if ( wdata->m_qos.m_reliability.kind == dds::BEST_EFFORT_RELIABILITY_QOS
+            && rdata->m_qos.m_reliability.kind == dds::RELIABLE_RELIABILITY_QOS)
     //Means our writer is BE but the reader wants RE
     {
         EPROSIMA_LOG_WARNING(RTPS_EDP, "INCOMPATIBLE QOS (topic: " << rdata->topicName() << "):Remote Reader "
@@ -702,7 +702,7 @@ bool EDP::checkDataRepresentationQos(
     }
     else
     {
-        DataRepresentationId writerRepresentation {wdata->m_qos.representation.m_value.at(0)};
+        dds::DataRepresentationId writerRepresentation {wdata->m_qos.representation.m_value.at(0)};
 
         if (writerRepresentation == fastdds::dds::XCDR2_DATA_REPRESENTATION)
         {

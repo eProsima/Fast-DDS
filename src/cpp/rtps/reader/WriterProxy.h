@@ -177,7 +177,7 @@ public:
         return persistence_guid_;
     }
 
-    inline LivelinessQosPolicyKind liveliness_kind() const
+    inline dds::LivelinessQosPolicyKind liveliness_kind() const
     {
         return liveliness_kind_;
     }
@@ -409,7 +409,7 @@ private:
     //! Taken from QoS
     uint32_t ownership_strength_;
     //! Taken from QoS
-    LivelinessQosPolicyKind liveliness_kind_;
+    dds::LivelinessQosPolicyKind liveliness_kind_;
     //! Taken from proxy data
     GUID_t persistence_guid_;
     //! Taken from proxy data

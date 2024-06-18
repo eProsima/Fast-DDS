@@ -111,7 +111,7 @@ bool StatelessReader::matched_writer_add(
             {
                 EPROSIMA_LOG_INFO(RTPS_READER, "Attempting to add existing writer, updating information");
 
-                if (EXCLUSIVE_OWNERSHIP_QOS == m_att.ownershipKind &&
+                if (dds::EXCLUSIVE_OWNERSHIP_QOS == m_att.ownershipKind &&
                         writer.ownership_strength != wdata.m_qos.m_ownershipStrength.value)
                 {
                     history_->writer_update_its_ownership_strength_nts(
@@ -146,7 +146,7 @@ bool StatelessReader::matched_writer_add(
         RemoteWriterInfo_t info;
         info.guid = wdata.guid();
         info.persistence_guid = wdata.persistence_guid();
-        info.has_manual_topic_liveliness = (MANUAL_BY_TOPIC_LIVELINESS_QOS == wdata.m_qos.m_liveliness.kind);
+        info.has_manual_topic_liveliness = (dds::MANUAL_BY_TOPIC_LIVELINESS_QOS == wdata.m_qos.m_liveliness.kind);
         info.is_datasharing = is_datasharing;
         info.ownership_strength = wdata.m_qos.m_ownershipStrength.value;
 
@@ -329,7 +329,7 @@ bool StatelessReader::change_received(
         bool update_notified = true;
 
         decltype(matched_writers_)::iterator writer = matched_writers_.end();
-        if ((EXCLUSIVE_OWNERSHIP_QOS == m_att.ownershipKind) ||
+        if ((dds::EXCLUSIVE_OWNERSHIP_QOS == m_att.ownershipKind) ||
                 (trusted_writer_entity_id_ == change->writerGUID.entityId))
         {
             writer = std::find_if(matched_writers_.begin(), matched_writers_.end(),
@@ -342,7 +342,7 @@ bool StatelessReader::change_received(
         }
 
         // Update Ownership strength.
-        if (EXCLUSIVE_OWNERSHIP_QOS == m_att.ownershipKind)
+        if (dds::EXCLUSIVE_OWNERSHIP_QOS == m_att.ownershipKind)
         {
             assert(matched_writers_.end() != writer);
             change->reader_info.writer_ownership_strength = writer->ownership_strength;

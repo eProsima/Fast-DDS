@@ -41,7 +41,7 @@ bool TopicAttributes::checkQos() const
         }
     }
 
-    if (historyQos.kind == KEEP_LAST_HISTORY_QOS)
+    if (historyQos.kind == dds::KEEP_LAST_HISTORY_QOS)
     {
         if ((resourceLimitsQos.max_samples > 0) && (historyQos.depth > resourceLimitsQos.max_samples))
         {

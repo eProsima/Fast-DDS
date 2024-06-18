@@ -367,14 +367,14 @@ public:
         Wqos.m_durability.durabilityKind(watt.durabilityKind);
         Wqos.m_reliability.kind =
                 RELIABLE ==
-                watt.reliabilityKind ? RELIABLE_RELIABILITY_QOS : BEST_EFFORT_RELIABILITY_QOS;
+                watt.reliabilityKind ? dds::RELIABLE_RELIABILITY_QOS : dds::BEST_EFFORT_RELIABILITY_QOS;
 
         dds::ReaderQos Rqos;
         auto& ratt = writer_->getAttributes();
         Rqos.m_durability.durabilityKind(ratt.durabilityKind);
         Rqos.m_reliability.kind =
                 RELIABLE ==
-                ratt.reliabilityKind ? RELIABLE_RELIABILITY_QOS : BEST_EFFORT_RELIABILITY_QOS;
+                ratt.reliabilityKind ? dds::RELIABLE_RELIABILITY_QOS : dds::BEST_EFFORT_RELIABILITY_QOS;
 
         participant_->registerWriter(writer_, Tatt, Wqos);
         participant_->registerReader(reader_, Tatt, Rqos);

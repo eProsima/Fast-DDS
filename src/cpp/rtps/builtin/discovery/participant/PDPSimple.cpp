@@ -632,7 +632,7 @@ void PDPSimple::match_pdp_remote_endpoints(
     const uint32_t endp = pdata.m_availableBuiltinEndpoints;
 
     // Default to values for non-secure endpoints
-    auto reliability_kind = BEST_EFFORT_RELIABILITY_QOS;
+    auto reliability_kind = dds::BEST_EFFORT_RELIABILITY_QOS;
     uint32_t pdp_reader_mask = fastdds::rtps::DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR;
     uint32_t pdp_writer_mask = fastdds::rtps::DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
     EntityId_t reader_entity_id = c_EntityId_SPDPReader;
@@ -645,7 +645,7 @@ void PDPSimple::match_pdp_remote_endpoints(
     if (notify_secure_endpoints)
     {
         auto secure_endpoints = static_cast<fastdds::rtps::SimplePDPEndpointsSecure*>(builtin_endpoints_.get());
-        reliability_kind = RELIABLE_RELIABILITY_QOS;
+        reliability_kind = dds::RELIABLE_RELIABILITY_QOS;
         pdp_reader_mask = fastdds::rtps::DISC_BUILTIN_ENDPOINT_PARTICIPANT_SECURE_DETECTOR;
         pdp_writer_mask = fastdds::rtps::DISC_BUILTIN_ENDPOINT_PARTICIPANT_SECURE_ANNOUNCER;
         reader_entity_id = c_EntityId_spdp_reliable_participant_secure_reader;
@@ -666,7 +666,7 @@ void PDPSimple::match_pdp_remote_endpoints(
         temp_writer_data->set_persistence_entity_id(writer_entity_id);
         temp_writer_data->set_remote_locators(pdata.metatraffic_locators, network, use_multicast_locators);
         temp_writer_data->m_qos.m_reliability.kind = reliability_kind;
-        temp_writer_data->m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+        temp_writer_data->m_qos.m_durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
 #if HAVE_SECURITY
         if (notify_secure_endpoints)
         {
@@ -695,7 +695,7 @@ void PDPSimple::match_pdp_remote_endpoints(
         temp_reader_data->guid().entityId = reader_entity_id;
         temp_reader_data->set_remote_locators(pdata.metatraffic_locators, network, use_multicast_locators);
         temp_reader_data->m_qos.m_reliability.kind = reliability_kind;
-        temp_reader_data->m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+        temp_reader_data->m_qos.m_durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
 #if HAVE_SECURITY
         if (notify_secure_endpoints)
         {
@@ -713,7 +713,7 @@ void PDPSimple::match_pdp_remote_endpoints(
             writer->matched_reader_add(*temp_reader_data);
         }
 
-        if (BEST_EFFORT_RELIABILITY_QOS == reliability_kind)
+        if (dds::BEST_EFFORT_RELIABILITY_QOS == reliability_kind)
         {
             endpoints->writer.writer_->unsent_changes_reset();
         }

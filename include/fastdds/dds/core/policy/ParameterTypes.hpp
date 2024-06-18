@@ -30,6 +30,7 @@
 #include <fastdds/dds/core/Types.hpp>
 #include <fastdds/rtps/common/InstanceHandle.h>
 #include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/ProductVersion_t.hpp>
 #include <fastdds/rtps/common/SampleIdentity.h>
 #include <fastdds/rtps/common/SerializedPayload.h>
 #include <fastdds/rtps/common/Time_t.h>
@@ -165,11 +166,12 @@ enum ParameterId_t : uint16_t
     PID_RELATED_SAMPLE_IDENTITY             = 0x0083,
 
     /* eProsima Fast DDS extensions */
+    PID_PRODUCT_VERSION                     = 0x8000,
     PID_PERSISTENCE_GUID                    = 0x8002,
-    PID_CUSTOM_RELATED_SAMPLE_IDENTITY      = 0x800f,
     PID_DISABLE_POSITIVE_ACKS               = 0x8005,
     PID_DATASHARING                         = 0x8006,
     PID_NETWORK_CONFIGURATION_SET           = 0x8007,
+    PID_CUSTOM_RELATED_SAMPLE_IDENTITY      = 0x800f,
 };
 
 /*!
@@ -631,6 +633,39 @@ public:
 };
 
 #define PARAMETER_VENDOR_LENGTH 4
+
+/**
+ * @ingroup PARAMETER_MODULE
+ */
+class ParameterProductVersion_t : public Parameter_t
+{
+public:
+
+    rtps::ProductVersion_t version;
+
+    /**
+     * @brief Constructor without parameters
+     */
+    ParameterProductVersion_t()
+    {
+    }
+
+    /**
+     * Constructor using a parameter PID and the parameter length
+     *
+     * @param pid Pid of the parameter
+     * @param in_length Its associated length
+     */
+    ParameterProductVersion_t(
+            ParameterId_t pid,
+            uint16_t in_length)
+        : Parameter_t(pid, in_length)
+    {
+    }
+
+};
+
+#define PARAMETER_PRODUCT_VERSION_LENGTH 4
 
 /**
  * @ingroup PARAMETER_MODULE
@@ -1863,6 +1898,37 @@ T get_proxy_property(
 }
 
 } //namespace dds
+
+namespace rtps {
+
+using ParameterId_t = fastdds::dds::ParameterId_t;
+using Parameter_t = fastdds::dds::Parameter_t;
+using ParameterKey_t = fastdds::dds::ParameterKey_t;
+using ParameterLocator_t = fastdds::dds::ParameterLocator_t;
+using ParameterString_t = fastdds::dds::ParameterString_t;
+using ParameterPort_t = fastdds::dds::ParameterPort_t;
+using ParameterGuid_t = fastdds::dds::ParameterGuid_t;
+using ParameterDomainId_t = fastdds::dds::ParameterDomainId_t;
+using ParameterProtocolVersion_t = fastdds::dds::ParameterProtocolVersion_t;
+using ParameterVendorId_t = fastdds::dds::ParameterVendorId_t;
+using ParameterProductVersion_t = fastdds::dds::ParameterProductVersion_t;
+using ParameterIP4Address_t = fastdds::dds::ParameterIP4Address_t;
+using ParameterBool_t = fastdds::dds::ParameterBool_t;
+using ParameterStatusInfo_t = fastdds::dds::ParameterStatusInfo_t;
+using ParameterCount_t = fastdds::dds::ParameterCount_t;
+using ParameterEntityId_t = fastdds::dds::ParameterEntityId_t;
+using ParameterTime_t = fastdds::dds::ParameterTime_t;
+using ParameterBuiltinEndpointSet_t = fastdds::dds::ParameterBuiltinEndpointSet_t;
+using ParameterNetworkConfigSet_t = fastdds::dds::ParameterNetworkConfigSet_t;
+using ParameterPropertyList_t = fastdds::dds::ParameterPropertyList_t;
+using ParameterSampleIdentity_t = fastdds::dds::ParameterSampleIdentity_t;
+#if HAVE_SECURITY
+using ParameterToken_t = fastdds::dds::ParameterToken_t;
+using ParameterParticipantSecurityInfo_t = fastdds::dds::ParameterParticipantSecurityInfo_t;
+using ParameterEndpointSecurityInfo_t = fastdds::dds::ParameterEndpointSecurityInfo_t;
+#endif // if HAVE_SECURITY
+
+} //namespace rtps
 } //namespace fastdds
 } //namespace eprosima
 

@@ -660,7 +660,7 @@ TEST(PubSubFragmentsLimited,
 
     reader.history_depth(2)
             .expect_inline_qos(true)
-            .reliability(eprosima::fastdds::RELIABLE_RELIABILITY_QOS)
+            .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
             .init();
 
     ASSERT_TRUE(reader.isInitialized());
@@ -684,7 +684,7 @@ TEST(PubSubFragmentsLimited,
             .heartbeat_period_seconds(0)
             .heartbeat_period_nanosec(1000000)
             .history_depth(1)
-            .asynchronously(eprosima::fastdds::ASYNCHRONOUS_PUBLISH_MODE).init();
+            .asynchronously(eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE).init();
 
     ASSERT_TRUE(writer.isInitialized());
 

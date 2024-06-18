@@ -414,9 +414,9 @@ TEST(DDSStatistics, simple_statistics_datareaders)
     auto depth = static_cast<int32_t>(num_samples);
 
     // Reader should be reliable so ACKNACK messages are generated (and accounted)
-    data_reader.reliability(eprosima::fastdds::RELIABLE_RELIABILITY_QOS).history_depth(depth).init();
+    data_reader.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).history_depth(depth).init();
     // Enforce synchronous writer to force RTPS_SENT to have at least num_samples
-    data_writer.asynchronously(eprosima::fastdds::SYNCHRONOUS_PUBLISH_MODE).history_depth(depth).init();
+    data_writer.asynchronously(eprosima::fastdds::dds::SYNCHRONOUS_PUBLISH_MODE).history_depth(depth).init();
 
     // Ensure discovery traffic is not included on statistics
     data_reader.wait_discovery();

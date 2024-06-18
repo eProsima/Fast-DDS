@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * @file doxygen_modules.h
+ * @file doxygen_modules.hpp
  */
 
-#ifndef RTPS_DOXYGEN_MODULES_H_
-#define RTPS_DOXYGEN_MODULES_H_
+#ifndef _FASTDDS_DOXYGEN_MODULES_HPP_
+#define _FASTDDS_DOXYGEN_MODULES_HPP_
 
 //Description of doxygen modules, not used in actual code.
 
@@ -141,4 +141,4 @@
  *  @ingroup UTILITIES_MODULE
  */
 
-#endif /* RTPS_DOXYGEN_MODULES_H_ */
+#endif /* _FASTDDS_DOXYGEN_MODULES_HPP_ */

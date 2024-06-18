@@ -341,10 +341,10 @@ TEST_F(XMLEndpointParserTests, loadXMLReaderEndpoint)
         EXPECT_EQ(pdata->m_readers[0]->remote_locators().multicast[0],  multi_loc);
 
         // qos
-        EXPECT_EQ(pdata->m_readers[0]->m_qos.m_reliability.kind,  BEST_EFFORT_RELIABILITY_QOS);
-        EXPECT_EQ(pdata->m_readers[0]->m_qos.m_durability.kind,  VOLATILE_DURABILITY_QOS);
-        EXPECT_EQ(pdata->m_readers[0]->m_qos.m_ownership.kind,  SHARED_OWNERSHIP_QOS);
-        EXPECT_EQ(pdata->m_readers[0]->m_qos.m_liveliness.kind,  AUTOMATIC_LIVELINESS_QOS);
+        EXPECT_EQ(pdata->m_readers[0]->m_qos.m_reliability.kind,  dds::BEST_EFFORT_RELIABILITY_QOS);
+        EXPECT_EQ(pdata->m_readers[0]->m_qos.m_durability.kind,  dds::VOLATILE_DURABILITY_QOS);
+        EXPECT_EQ(pdata->m_readers[0]->m_qos.m_ownership.kind,  dds::SHARED_OWNERSHIP_QOS);
+        EXPECT_EQ(pdata->m_readers[0]->m_qos.m_liveliness.kind,  dds::AUTOMATIC_LIVELINESS_QOS);
         EXPECT_TRUE(pdata->m_readers[0]->m_qos.m_disablePositiveACKs.enabled);
 
         // Delete the ReaderProxyData created inside loadXMLParticipantEndpoint
@@ -589,10 +589,10 @@ TEST_F(XMLEndpointParserTests, loadXMLWriterEndpoint)
         EXPECT_EQ(pdata->m_writers[0]->remote_locators().multicast[0],  multi_loc);
 
         // qos
-        EXPECT_EQ(pdata->m_writers[0]->m_qos.m_reliability.kind,  BEST_EFFORT_RELIABILITY_QOS);
-        EXPECT_EQ(pdata->m_writers[0]->m_qos.m_durability.kind,  VOLATILE_DURABILITY_QOS);
-        EXPECT_EQ(pdata->m_writers[0]->m_qos.m_ownership.kind,  SHARED_OWNERSHIP_QOS);
-        EXPECT_EQ(pdata->m_writers[0]->m_qos.m_liveliness.kind,  AUTOMATIC_LIVELINESS_QOS);
+        EXPECT_EQ(pdata->m_writers[0]->m_qos.m_reliability.kind,  dds::BEST_EFFORT_RELIABILITY_QOS);
+        EXPECT_EQ(pdata->m_writers[0]->m_qos.m_durability.kind,  dds::VOLATILE_DURABILITY_QOS);
+        EXPECT_EQ(pdata->m_writers[0]->m_qos.m_ownership.kind,  dds::SHARED_OWNERSHIP_QOS);
+        EXPECT_EQ(pdata->m_writers[0]->m_qos.m_liveliness.kind,  dds::AUTOMATIC_LIVELINESS_QOS);
         EXPECT_TRUE(pdata->m_writers[0]->m_qos.m_disablePositiveACKs.enabled);
         EXPECT_EQ(pdata->m_writers[0]->m_qos.m_disablePositiveACKs.duration.seconds, 300);
         EXPECT_EQ(pdata->m_writers[0]->m_qos.m_disablePositiveACKs.duration.nanosec, 0u);

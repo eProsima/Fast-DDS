@@ -347,11 +347,11 @@ XMLP_ret XMLEndpointParser::loadXMLReaderEndpoint(
             std::string auxString(get_element_text(element));
             if (auxString == _RELIABLE_RELIABILITY_QOS)
             {
-                rdata->m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+                rdata->m_qos.m_reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
             }
             else if (auxString == _BEST_EFFORT_RELIABILITY_QOS)
             {
-                rdata->m_qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+                rdata->m_qos.m_reliability.kind = dds::BEST_EFFORT_RELIABILITY_QOS;
             }
             else
             {
@@ -373,19 +373,19 @@ XMLP_ret XMLEndpointParser::loadXMLReaderEndpoint(
             std::string auxstring(get_element_text(element));
             if (auxstring == _PERSISTENT_DURABILITY_QOS)
             {
-                rdata->m_qos.m_durability.kind = PERSISTENT_DURABILITY_QOS;
+                rdata->m_qos.m_durability.kind = dds::PERSISTENT_DURABILITY_QOS;
             }
             else if (auxstring == _TRANSIENT_DURABILITY_QOS)
             {
-                rdata->m_qos.m_durability.kind = TRANSIENT_DURABILITY_QOS;
+                rdata->m_qos.m_durability.kind = dds::TRANSIENT_DURABILITY_QOS;
             }
             else if (auxstring == _TRANSIENT_LOCAL_DURABILITY_QOS)
             {
-                rdata->m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+                rdata->m_qos.m_durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
             }
             else if (auxstring == _VOLATILE_DURABILITY_QOS)
             {
-                rdata->m_qos.m_durability.kind = VOLATILE_DURABILITY_QOS;
+                rdata->m_qos.m_durability.kind = dds::VOLATILE_DURABILITY_QOS;
             }
             else
             {
@@ -400,11 +400,11 @@ XMLP_ret XMLEndpointParser::loadXMLReaderEndpoint(
             std::string auxstring(ownership ? ownership : OWNERSHIP_KIND_NOT_PRESENT);
             if (auxstring == _SHARED_OWNERSHIP_QOS)
             {
-                rdata->m_qos.m_ownership.kind = SHARED_OWNERSHIP_QOS;
+                rdata->m_qos.m_ownership.kind = dds::SHARED_OWNERSHIP_QOS;
             }
             else if (auxstring == _EXCLUSIVE_OWNERSHIP_QOS)
             {
-                rdata->m_qos.m_ownership.kind = EXCLUSIVE_OWNERSHIP_QOS;
+                rdata->m_qos.m_ownership.kind = dds::EXCLUSIVE_OWNERSHIP_QOS;
             }
             else
             {
@@ -423,15 +423,15 @@ XMLP_ret XMLEndpointParser::loadXMLReaderEndpoint(
             std::string auxstring(kind ? kind : LIVELINESS_KIND_NOT_PRESENT);
             if (auxstring == _AUTOMATIC_LIVELINESS_QOS)
             {
-                rdata->m_qos.m_liveliness.kind = AUTOMATIC_LIVELINESS_QOS;
+                rdata->m_qos.m_liveliness.kind = dds::AUTOMATIC_LIVELINESS_QOS;
             }
             else if (auxstring == _MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
             {
-                rdata->m_qos.m_liveliness.kind = MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
+                rdata->m_qos.m_liveliness.kind = dds::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
             }
             else if (auxstring == _MANUAL_BY_TOPIC_LIVELINESS_QOS)
             {
-                rdata->m_qos.m_liveliness.kind = MANUAL_BY_TOPIC_LIVELINESS_QOS;
+                rdata->m_qos.m_liveliness.kind = dds::MANUAL_BY_TOPIC_LIVELINESS_QOS;
             }
             else
             {
@@ -636,11 +636,11 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(
             std::string auxString = std::string(get_element_text(element));
             if (auxString == _RELIABLE_RELIABILITY_QOS)
             {
-                wdata->m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+                wdata->m_qos.m_reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
             }
             else if (auxString == _BEST_EFFORT_RELIABILITY_QOS)
             {
-                wdata->m_qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+                wdata->m_qos.m_reliability.kind = dds::BEST_EFFORT_RELIABILITY_QOS;
             }
             else
             {
@@ -662,19 +662,19 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(
             std::string auxstring = std::string(get_element_text(element));
             if (auxstring == _PERSISTENT_DURABILITY_QOS)
             {
-                wdata->m_qos.m_durability.kind = PERSISTENT_DURABILITY_QOS;
+                wdata->m_qos.m_durability.kind = dds::PERSISTENT_DURABILITY_QOS;
             }
             else if (auxstring == _TRANSIENT_DURABILITY_QOS)
             {
-                wdata->m_qos.m_durability.kind = TRANSIENT_DURABILITY_QOS;
+                wdata->m_qos.m_durability.kind = dds::TRANSIENT_DURABILITY_QOS;
             }
             else if (auxstring == _TRANSIENT_LOCAL_DURABILITY_QOS)
             {
-                wdata->m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+                wdata->m_qos.m_durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
             }
             else if (auxstring == _VOLATILE_DURABILITY_QOS)
             {
-                wdata->m_qos.m_durability.kind = VOLATILE_DURABILITY_QOS;
+                wdata->m_qos.m_durability.kind = dds::VOLATILE_DURABILITY_QOS;
             }
             else
             {
@@ -689,11 +689,11 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(
             std::string auxstring(kind ? kind : OWNERSHIP_KIND_NOT_PRESENT);
             if (auxstring == _SHARED_OWNERSHIP_QOS)
             {
-                wdata->m_qos.m_ownership.kind = SHARED_OWNERSHIP_QOS;
+                wdata->m_qos.m_ownership.kind = dds::SHARED_OWNERSHIP_QOS;
             }
             else if (auxstring == _EXCLUSIVE_OWNERSHIP_QOS)
             {
-                wdata->m_qos.m_ownership.kind = EXCLUSIVE_OWNERSHIP_QOS;
+                wdata->m_qos.m_ownership.kind = dds::EXCLUSIVE_OWNERSHIP_QOS;
             }
             else
             {
@@ -715,15 +715,15 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(
             std::string auxstring(kind ? kind : LIVELINESS_KIND_NOT_PRESENT);
             if (auxstring == _AUTOMATIC_LIVELINESS_QOS)
             {
-                wdata->m_qos.m_liveliness.kind = AUTOMATIC_LIVELINESS_QOS;
+                wdata->m_qos.m_liveliness.kind = dds::AUTOMATIC_LIVELINESS_QOS;
             }
             else if (auxstring == _MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
             {
-                wdata->m_qos.m_liveliness.kind = MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
+                wdata->m_qos.m_liveliness.kind = dds::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
             }
             else if (auxstring == _MANUAL_BY_TOPIC_LIVELINESS_QOS)
             {
-                wdata->m_qos.m_liveliness.kind = MANUAL_BY_TOPIC_LIVELINESS_QOS;
+                wdata->m_qos.m_liveliness.kind = dds::MANUAL_BY_TOPIC_LIVELINESS_QOS;
             }
             else
             {

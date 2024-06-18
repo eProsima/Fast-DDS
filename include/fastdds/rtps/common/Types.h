@@ -26,6 +26,7 @@
 
 #include <fastdds/fastdds_dll.hpp>
 
+#include <fastdds/rtps/common/ProductVersion_t.hpp>
 #include <fastdds/rtps/common/VendorId_t.hpp>
 
 namespace eprosima {
