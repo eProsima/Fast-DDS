@@ -165,7 +165,7 @@ public:
      * @return true if data is correctly delivered to the lower layers, false otherwise.
      */
     bool write(
-            void* data);
+            const void* const data);
 
     /**
      * Write data with params to the topic.
@@ -176,7 +176,7 @@ public:
      * @return true if data is correctly delivered to the lower layers, false otherwise.
      */
     bool write(
-            void* data,
+            const void* const data,
             fastdds::rtps::WriteParams& params);
 
     /**
@@ -189,7 +189,7 @@ public:
      * @return any of the standard return codes.
      */
     ReturnCode_t write(
-            void* data,
+            const void* const data,
             const InstanceHandle_t& handle);
 
     /**
@@ -203,7 +203,7 @@ public:
      * @return any of the standard return codes.
      */
     ReturnCode_t write_w_timestamp(
-            void* data,
+            const void* const data,
             const InstanceHandle_t& handle,
             const fastdds::Time_t& timestamp);
 
@@ -218,7 +218,7 @@ public:
      * In case of error, HANDLE_NIL will be returned.
      */
     InstanceHandle_t register_instance(
-            void* instance);
+            const void* const instance);
 
     /**
      * @brief Implementation of the DDS `register_instance_w_timestamp` operation.
@@ -232,7 +232,7 @@ public:
      * In case of error, HANDLE_NIL will be returned.
      */
     InstanceHandle_t register_instance_w_timestamp(
-            void* instance,
+            const void* const instance,
             const fastdds::Time_t& timestamp);
 
     /**
@@ -251,7 +251,7 @@ public:
      * If the operation finishes successfully, RETCODE_OK is returned.
      */
     ReturnCode_t unregister_instance(
-            void* instance,
+            const void* const instance,
             const InstanceHandle_t& handle,
             bool dispose = false);
 
@@ -272,7 +272,7 @@ public:
      * If the operation finishes successfully, RETCODE_OK is returned.
      */
     ReturnCode_t unregister_instance_w_timestamp(
-            void* instance,
+            const void* const instance,
             const InstanceHandle_t& handle,
             const fastdds::Time_t& timestamp,
             bool dispose = false);
@@ -298,7 +298,7 @@ public:
             const fastdds::Duration_t& max_wait);
 
     ReturnCode_t wait_for_acknowledgments(
-            void* instance,
+            const void* const instance,
             const InstanceHandle_t& handle,
             const fastdds::Duration_t& max_wait);
 
@@ -501,17 +501,17 @@ protected:
     DataRepresentationId_t data_representation_ {DEFAULT_DATA_REPRESENTATION};
 
     ReturnCode_t check_write_preconditions(
-            void* data,
+            const void* const data,
             const InstanceHandle_t& handle,
             InstanceHandle_t& instance_handle);
 
     ReturnCode_t check_instance_preconditions(
-            void* data,
+            const void* const data,
             const InstanceHandle_t& handle,
             InstanceHandle_t& instance_handle);
 
     InstanceHandle_t do_register_instance(
-            void* key,
+            const void* const key,
             const InstanceHandle_t instance_handle,
             fastdds::rtps::WriteParams& wparams);
 
@@ -523,7 +523,7 @@ protected:
      */
     ReturnCode_t create_new_change(
             fastdds::rtps::ChangeKind_t kind,
-            void* data);
+            const void* const data);
 
     /**
      *
@@ -534,7 +534,7 @@ protected:
      */
     ReturnCode_t create_new_change_with_params(
             fastdds::rtps::ChangeKind_t kind,
-            void* data,
+            const void* const data,
             fastdds::rtps::WriteParams& wparams);
 
     /**
@@ -547,7 +547,7 @@ protected:
      */
     ReturnCode_t create_new_change_with_params(
             fastdds::rtps::ChangeKind_t kind,
-            void* data,
+            const void* const data,
             fastdds::rtps::WriteParams& wparams,
             const InstanceHandle_t& handle);
 
@@ -577,11 +577,11 @@ protected:
 
     ReturnCode_t check_new_change_preconditions(
             fastdds::rtps::ChangeKind_t change_kind,
-            void* data);
+            const void* const data);
 
     ReturnCode_t perform_create_new_change(
             fastdds::rtps::ChangeKind_t change_kind,
-            void* data,
+            const void* const data,
             fastdds::rtps::WriteParams& wparams,
             const InstanceHandle_t& handle);
 
@@ -682,11 +682,11 @@ protected:
     }
 
     bool add_loan(
-            void* data,
+            const void* const data,
             SerializedPayload_t& payload);
 
     bool check_and_remove_loan(
-            void* data,
+            const void* const data,
             SerializedPayload_t& payload);
 
     /**

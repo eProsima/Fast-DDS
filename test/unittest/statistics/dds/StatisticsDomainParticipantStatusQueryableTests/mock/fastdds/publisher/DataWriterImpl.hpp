@@ -161,27 +161,27 @@ public:
     }
 
     bool write(
-            void* )
+            const void* const )
     {
         return true;
     }
 
     bool write(
-            void*,
+            const void* const,
             fastdds::rtps::WriteParams& )
     {
         return true;
     }
 
     ReturnCode_t write(
-            void*,
+            const void* const,
             const InstanceHandle_t& )
     {
         return RETCODE_OK;
     }
 
     ReturnCode_t write_w_timestamp(
-            void*,
+            const void* const,
             const InstanceHandle_t&,
             const fastdds::Time_t& )
     {
@@ -189,20 +189,20 @@ public:
     }
 
     InstanceHandle_t register_instance(
-            void* )
+            const void* const )
     {
         return InstanceHandle_t();
     }
 
     InstanceHandle_t register_instance_w_timestamp(
-            void*,
+            const void* const,
             const fastdds::Time_t& )
     {
         return InstanceHandle_t();
     }
 
     ReturnCode_t unregister_instance(
-            void*,
+            const void* const,
             const InstanceHandle_t&,
             bool = false)
     {
@@ -210,7 +210,7 @@ public:
     }
 
     ReturnCode_t unregister_instance_w_timestamp(
-            void*,
+            const void* const,
             const InstanceHandle_t&,
             const fastdds::Time_t&,
             bool  = false)
@@ -249,7 +249,7 @@ public:
     }
 
     ReturnCode_t wait_for_acknowledgments(
-            void*,
+            const void* const,
             const InstanceHandle_t&,
             const fastdds::Duration_t& )
     {

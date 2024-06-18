@@ -103,7 +103,7 @@ traits<DynamicType>::ref_type DynamicPubSubType::get_dynamic_type() const noexce
 }
 
 bool DynamicPubSubType::getKey(
-        void* data,
+        const void* const data,
         eprosima::fastdds::rtps::InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -111,7 +111,7 @@ bool DynamicPubSubType::getKey(
     {
         return false;
     }
-    traits<DynamicDataImpl>::ref_type* data_ptr = static_cast<traits<DynamicDataImpl>::ref_type*>(data);
+    const traits<DynamicDataImpl>::ref_type* data_ptr = static_cast<const traits<DynamicDataImpl>::ref_type*>(data);
     eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
     size_t current_alignment {0};
     size_t keyBufferSize =
@@ -149,16 +149,16 @@ bool DynamicPubSubType::getKey(
 }
 
 std::function<uint32_t()> DynamicPubSubType::getSerializedSizeProvider(
-        void* data)
+        const void* const data)
 {
     return getSerializedSizeProvider(data, DEFAULT_DATA_REPRESENTATION);
 }
 
 std::function<uint32_t()> DynamicPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
-    traits<DynamicDataImpl>::ref_type* data_ptr = static_cast<traits<DynamicDataImpl>::ref_type*>(data);
+    const traits<DynamicDataImpl>::ref_type* data_ptr = static_cast<const traits<DynamicDataImpl>::ref_type*>(data);
 
     return [data_ptr, data_representation]() -> uint32_t
            {
@@ -180,11 +180,11 @@ std::function<uint32_t()> DynamicPubSubType::getSerializedSizeProvider(
 }
 
 bool DynamicPubSubType::serialize(
-        void* data,
+        const void* const data,
         eprosima::fastdds::rtps::SerializedPayload_t* payload,
         fastdds::dds::DataRepresentationId_t data_representation)
 {
-    traits<DynamicDataImpl>::ref_type* data_ptr = static_cast<traits<DynamicDataImpl>::ref_type*>(data);
+    const traits<DynamicDataImpl>::ref_type* data_ptr = static_cast<const traits<DynamicDataImpl>::ref_type*>(data);
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
 

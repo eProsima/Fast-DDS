@@ -140,7 +140,7 @@ public:
      */
 
     FASTDDS_EXPORTED_API virtual bool serialize(
-            void* data,
+            const void* const data,
             fastdds::rtps::SerializedPayload_t* payload)
     {
         return serialize(data, payload, DEFAULT_DATA_REPRESENTATION);
@@ -155,7 +155,7 @@ public:
      * @return true if it is serialized correctly, false if not
      */
     FASTDDS_EXPORTED_API virtual bool serialize(
-            void* data,
+            const void* const data,
             fastdds::rtps::SerializedPayload_t* payload,
             DataRepresentationId_t data_representation);
 
@@ -177,7 +177,7 @@ public:
      * @return Functor which calculates the serialized size of the data.
      */
     FASTDDS_EXPORTED_API virtual std::function<uint32_t()> get_serialized_size_provider(
-            void* data)
+            const void* const data)
     {
         return get_serialized_size_provider(data, DEFAULT_DATA_REPRESENTATION);
     }
@@ -190,7 +190,7 @@ public:
      * @return Functor which calculates the serialized size of the data.
      */
     FASTDDS_EXPORTED_API virtual std::function<uint32_t()> get_serialized_size_provider(
-            void* data,
+            const void* const data,
             DataRepresentationId_t data_representation)
     {
         return get()->getSerializedSizeProvider(data, data_representation);

@@ -82,7 +82,7 @@ public:
     // TODO(jlbueno) Remove when Fast DDS-Gen is updated
     // FASTDDS_TODO_BEFORE(3, 0, "Remove this overload")
     FASTDDS_EXPORTED_API virtual bool serialize(
-            void* data,
+            const void* const data,
             fastdds::rtps::SerializedPayload_t* payload) = 0;
 
     /**
@@ -96,7 +96,7 @@ public:
      * @return True if correct.
      */
     FASTDDS_EXPORTED_API virtual bool serialize(
-            void* data,
+            const void* const data,
             fastdds::rtps::SerializedPayload_t* payload,
             DataRepresentationId_t data_representation);
 
@@ -119,7 +119,7 @@ public:
      */
     // FASTDDS_TODO_BEFORE(3, 0, "Remove this overload")
     FASTDDS_EXPORTED_API virtual std::function<uint32_t()> getSerializedSizeProvider(
-            void* data) = 0;
+            const void* const data) = 0;
 
     /*!
      * @brief Returns a function which can be used to calculate the serialized size of the provided data.
@@ -129,7 +129,7 @@ public:
      * @return Functor which calculates the serialized size of the data.
      */
     FASTDDS_EXPORTED_API virtual std::function<uint32_t()> getSerializedSizeProvider(
-            void* data,
+            const void* const data,
             DataRepresentationId_t data_representation);
 
     /**
@@ -155,7 +155,7 @@ public:
      * @return True if correct.
      */
     FASTDDS_EXPORTED_API virtual bool getKey(
-            void* data,
+            const void* const data,
             fastdds::rtps::InstanceHandle_t* ihandle,
             bool force_md5 = false) = 0;
 
