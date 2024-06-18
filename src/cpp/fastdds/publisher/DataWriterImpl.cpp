@@ -42,6 +42,7 @@
 
 #include <rtps/builtin/liveliness/WLP.hpp>
 #include <rtps/DataSharing/DataSharingPayloadPool.hpp>
+#include <rtps/DataSharing/WriterPool.hpp>
 #include <rtps/history/CacheChangePool.h>
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
@@ -360,6 +361,19 @@ ReturnCode_t DataWriterImpl::enable()
         change_pool,
         history_.get(),
         static_cast<WriterListener*>(&writer_listener_));
+
+    if (writer != nullptr &&
+        w_att.endpoint.data_sharing_configuration().kind() != DataSharingKind::OFF)
+    {
+        auto writer_pool = std::dynamic_pointer_cast<fastdds::rtps::WriterPool>(pool);
+        if (!writer_pool || !writer_pool->init_shared_memory(
+            writer, w_att.endpoint.data_sharing_configuration().shm_directory()))
+        {
+            EPROSIMA_LOG_ERROR(DATA_WRITER, "Could not initialize DataSharing writer pool");
+            RTPSDomain::removeRTPSWriter(writer);
+            writer = nullptr;
+        }
+    }
 
     if (writer == nullptr &&
             w_att.endpoint.data_sharing_configuration().kind() == DataSharingKind::AUTO)

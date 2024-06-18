@@ -1269,19 +1269,6 @@ bool RTPSParticipantImpl::create_writer(
                     }
                 }
 
-                // TODO(MiguelCompany): Move this to a functor injected in the argument list
-                if ((nullptr != writer) && (watt.endpoint.data_sharing_configuration().kind() != OFF))
-                {
-                    std::shared_ptr<WriterPool> pool = std::dynamic_pointer_cast<WriterPool>(payload_pool);
-                    if (!pool || !pool->init_shared_memory(
-                                writer, watt.endpoint.data_sharing_configuration().shm_directory()))
-                    {
-                        EPROSIMA_LOG_ERROR(RTPS_WRITER, "Could not initialize DataSharing writer pool");
-                        delete writer;
-                        writer = nullptr;
-                    }
-                }
-
                 return writer;
             };
     return create_writer(WriterOut, watt, entityId, isBuiltin, callback);
