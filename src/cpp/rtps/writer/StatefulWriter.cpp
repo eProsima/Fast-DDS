@@ -313,7 +313,7 @@ StatefulWriter::~StatefulWriter()
 void StatefulWriter::prepare_datasharing_delivery(
         CacheChange_t* change)
 {
-    auto pool = std::dynamic_pointer_cast<WriterPool>(payload_pool_);
+    auto pool = std::dynamic_pointer_cast<WriterPool>(mp_history->get_payload_pool());
     assert (pool != nullptr);
 
     pool->add_to_shared_history(change);
@@ -495,7 +495,7 @@ bool StatefulWriter::change_removed_by_history(
         // remove from datasharing pool history
         if (is_datasharing_compatible())
         {
-            auto pool = std::dynamic_pointer_cast<WriterPool>(payload_pool_);
+            auto pool = std::dynamic_pointer_cast<WriterPool>(mp_history->get_payload_pool());
             assert (pool != nullptr);
 
             pool->remove_from_shared_history(a_change);
@@ -1715,9 +1715,9 @@ bool StatefulWriter::send_periodic_heartbeat(
 
             for (ReaderProxy* reader : matched_datasharing_readers_)
             {
-                std::shared_ptr<WriterPool> p = std::dynamic_pointer_cast<WriterPool>(payload_pool_);
-                assert(p);
-                p->assert_liveliness();
+                auto pool = std::dynamic_pointer_cast<WriterPool>(mp_history->get_payload_pool());
+                assert(pool);
+                pool->assert_liveliness();
                 reader->datasharing_notify();
                 unacked_changes = true;
             }

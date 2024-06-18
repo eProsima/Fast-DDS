@@ -252,7 +252,7 @@ void StatelessWriter::update_reader_info(
 bool StatelessWriter::datasharing_delivery(
         CacheChange_t* change)
 {
-    auto pool = std::dynamic_pointer_cast<WriterPool>(payload_pool_);
+    auto pool = std::dynamic_pointer_cast<WriterPool>(mp_history->get_payload_pool());
     assert(pool != nullptr);
 
     pool->add_to_shared_history(change);
@@ -339,7 +339,7 @@ bool StatelessWriter::change_removed_by_history(
         // remove from datasharing pool history
         if (is_datasharing_compatible())
         {
-            auto pool = std::dynamic_pointer_cast<WriterPool>(payload_pool_);
+            auto pool = std::dynamic_pointer_cast<WriterPool>(mp_history->get_payload_pool());
             assert (pool != nullptr);
 
             pool->remove_from_shared_history(change);
