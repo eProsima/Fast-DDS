@@ -2,25 +2,21 @@ import subprocess
 import pytest
 
 delivery_test_cases = [
-    ('', '', '--unknown-command', 2),
-    ('--unknown-command', '', '', 3),
-    ('--unknown-command', '', ' --ignore-local-endpoints', 2),
-    ('--mechanism shm', '--mechanism shm', '--unknown-command', 2),
-    ('--unknown-command', '--mechanism shm', '--mechanism shm', 3),
-    ('--unknown-command', '--mechanism shm', '--mechanism shm --ignore-local-endpoints', 2),
-    ('--mechanism udp', '--mechanism udp', '--unknown-command', 2),
-    ('--unknown-command', '--mechanism udp', '--mechanism udp', 3),
-    ('--unknown-command', '--mechanism udp', '--mechanism udp --ignore-local-endpoints', 2),
+    ('', '-s 20', '', 50),
+    ('', '-s 20', '--ignore-local-endpoints', 50),
+    ('--mechanism shm', '-s 20 --mechanism shm', '--mechanism shm', 50),
+    ('--mechanism shm', '-s 20 --mechanism shm', '--mechanism shm --ignore-local-endpoints', 50),
+    ('--mechanism udp', '-s 20 --mechanism udp', '--mechanism udp', 50),
+    ('--mechanism udp', '-s 20 --mechanism udp', '--mechanism udp --ignore-local-endpoints', 50),
     # tcp takes longer to match, so explicitly expect much more samples in this case
+    # tcp is configured through initial peers (a single locator), so we test only one publisher at a time
     #  Note: pubsub with TCP and ignore-local-endpoints NOT set is not supported, tested in  below tests
-    ('--mechanism tcp -s 220', '--mechanism tcp -s 220', '--unknown-command', 2),
-    ('--unknown-command', '--mechanism tcp -s 220', '--mechanism tcp -s 220 --ignore-local-endpoints', 2),
-    ('--mechanism data-sharing', '--mechanism data-sharing', '--unknown-command', 2),
-    ('--unknown-command', '--mechanism data-sharing', '--mechanism data-sharing', 3),
-    ('--unknown-command', '--mechanism data-sharing', '--mechanism data-sharing --ignore-local-endpoints', 2),
-#    # Intra-process only makes sense for pubsub entities. This test forces entities != pubsub  to fail, so
-#    #  only 1 message is expected per sample (the local one)
-    ('--unknown-argument', '--unknown-argument', '--mechanism intra-process', 1)
+    ('-s 100 --mechanism tcp', '-s 100 --mechanism tcp', '--unknown-command', 200),
+    ('--mechanism data-sharing', '-s 20 --mechanism data-sharing', '--mechanism data-sharing', 50),
+    ('--mechanism data-sharing', '-s 20 --mechanism data-sharing', '--mechanism data-sharing --ignore-local-endpoints', 50),
+    # Intra-process only makes sense for pubsub entities. This test forces entities != pubsub  to fail, so
+    #  only 1 message is expected per sample (the local one)
+    ('--unknown-argument', '--unknown-argument', '--mechanism intra-process', 10)
 ]
 
 @pytest.mark.parametrize("pub_args, sub_args, pubsub_args, repetitions", delivery_test_cases)
@@ -47,11 +43,11 @@ def test_delivery_mechanisms(pub_args, sub_args, pubsub_args, repetitions):
             if 'RECEIVED' in line:
                 received += 1
                 continue
-        if sent != 0 and received != 0 and sent * repetitions == received:
+        if sent != 0 and received != 0 and repetitions == received:
             ret = True
         else:
             print('ERROR: sent: ' + str(sent) + ', but received: ' + str(received) +
-                  ' (expected: ' + str(sent * repetitions) + ')')
+                  ' (expected: ' + str(repetitions) + ')')
             raise subprocess.CalledProcessError(1, '')
 
     except subprocess.CalledProcessError:
