@@ -40,6 +40,8 @@
 
 #include "dynamic_types/DynamicDataImpl.hpp"
 #include "serializers/json/dynamic_data_json.hpp"
+#include "dyn_type_tree.hpp"
+
 #include "utils/collections/Tree.hpp"
 
 namespace eprosima {
@@ -710,26 +712,22 @@ ReturnCode_t generate_dyn_type_schema_from_tree(
     return RETCODE_OK;
 }
 
-ReturnCode_t generate_idl_schema(
+ReturnCode_t idl_serialize(
         const traits<DynamicType>::ref_type& dynamic_type,
         std::string& idl_schema) noexcept
 {
-    // Generate type tree
-    utilities::collections::TreeNode<TreeNodeType> parent_type("PARENT", "", dynamic_type);
-    const auto ret = generate_dyn_type_tree(dynamic_type, "PARENT", parent_type);
+    // Create a tree representation of the dynamic type
+    utilities::collections::TreeNode<TreeNodeType> parent_type;
+    const auto ret = dyn_type_to_tree(dynamic_type, "PARENT", parent_type);
 
     if (ret != RETCODE_OK)
     {
         return ret;
     }
 
-    // From tree, generate string
-    return generate_dyn_type_schema_from_tree(parent_type, idl_schema);
+    // Serialize the tree to IDL
+    return dyn_type_tree_to_idl(parent_type, idl_schema);
 }
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//// Dynamic Type to IDL serialization //// END
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 } // namespace dds
 } // namespace fastdds

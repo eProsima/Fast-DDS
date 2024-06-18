@@ -50,7 +50,7 @@ FASTDDS_EXPORTED_API ReturnCode_t json_serialize(
         std::ostream& output) noexcept;
 
 // TODO
-FASTDDS_EXPORTED_API ReturnCode_t generate_idl_schema(
+FASTDDS_EXPORTED_API ReturnCode_t idl_serialize(
         const traits<DynamicType>::ref_type& dynamic_type,
         std::string& idl_schema) noexcept;
 
