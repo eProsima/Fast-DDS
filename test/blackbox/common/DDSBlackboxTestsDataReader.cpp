@@ -275,16 +275,16 @@ TEST(DDSDataReader, GetFirstUntakenInfoReturnsTheFirstValidChange)
                 msg.pos += 2; // flags
                 msg.pos += 2; // octets to inline quos
                 readerID = eprosima::fastdds::helpers::cdr_parse_entity_id(
-                        (char*)&msg.buffer[msg.pos]);
+                    (char*)&msg.buffer[msg.pos]);
                 msg.pos += 4;
                 writerID = eprosima::fastdds::helpers::cdr_parse_entity_id(
-                        (char*)&msg.buffer[msg.pos]);
+                    (char*)&msg.buffer[msg.pos]);
                 msg.pos += 4;
                 sn.high = (int32_t)eprosima::fastdds::helpers::cdr_parse_u32(
-                        (char*)&msg.buffer[msg.pos]);
+                    (char*)&msg.buffer[msg.pos]);
                 msg.pos += 4;
                 sn.low = eprosima::fastdds::helpers::cdr_parse_u32(
-                        (char*)&msg.buffer[msg.pos]);
+                    (char*)&msg.buffer[msg.pos]);
 
                 // restore buffer pos
                 msg.pos = old_pos;

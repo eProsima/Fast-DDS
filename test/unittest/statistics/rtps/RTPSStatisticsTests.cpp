@@ -1374,7 +1374,8 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_unordered_datagrams)
     // Send messages in different order
     for (size_t idx : message_order)
     {
-        const std::vector<octet>& msg = test_transport_descriptor_->test_transport_options->test_UDPv4Transport_DropLog[idx];
+        const std::vector<octet>& msg =
+                test_transport_descriptor_->test_transport_options->test_UDPv4Transport_DropLog[idx];
         EXPECT_EQ(msg.size(), sender.send_to(asio::buffer(msg.data(), msg.size()), destination, 0, ec)) << ec;
     }
 

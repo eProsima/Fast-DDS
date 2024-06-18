@@ -1974,7 +1974,8 @@ TEST(Discovery, RemoteBuiltinEndpointHonoring)
 
                 assert(hb_submsg.submsgHeader().submessageId() == HEARTBEAT);
 
-                if (eprosima::fastdds::rtps::c_EntityId_WriterLiveliness == *reinterpret_cast<EntityId_t*>(&hb_submsg.writerId()))
+                if (eprosima::fastdds::rtps::c_EntityId_WriterLiveliness ==
+                        *reinterpret_cast<EntityId_t*>(&hb_submsg.writerId()))
                 {
                     num_wlp_reader_heartbeat++;
                 }
@@ -1991,7 +1992,8 @@ TEST(Discovery, RemoteBuiltinEndpointHonoring)
 
                 assert(acknack_submsg.submsgHeader().submessageId() == ACKNACK);
 
-                if (eprosima::fastdds::rtps::c_EntityId_WriterLiveliness == *reinterpret_cast<EntityId_t*>(&acknack_submsg.writerId()))
+                if (eprosima::fastdds::rtps::c_EntityId_WriterLiveliness ==
+                        *reinterpret_cast<EntityId_t*>(&acknack_submsg.writerId()))
                 {
                     num_wlp_reader_acknack++;
                 }
@@ -2013,7 +2015,8 @@ TEST(Discovery, RemoteBuiltinEndpointHonoring)
 
                 assert(hb_submsg.submsgHeader().submessageId() == HEARTBEAT);
 
-                if (eprosima::fastdds::rtps::c_EntityId_WriterLiveliness == *reinterpret_cast<EntityId_t*>(&hb_submsg.writerId()))
+                if (eprosima::fastdds::rtps::c_EntityId_WriterLiveliness ==
+                        *reinterpret_cast<EntityId_t*>(&hb_submsg.writerId()))
                 {
                     num_wlp_writer_heartbeat++;
                 }
@@ -2030,7 +2033,8 @@ TEST(Discovery, RemoteBuiltinEndpointHonoring)
 
                 assert(acknack_submsg.submsgHeader().submessageId() == ACKNACK);
 
-                if (eprosima::fastdds::rtps::c_EntityId_WriterLiveliness == *reinterpret_cast<EntityId_t*>(&acknack_submsg.writerId()))
+                if (eprosima::fastdds::rtps::c_EntityId_WriterLiveliness ==
+                        *reinterpret_cast<EntityId_t*>(&acknack_submsg.writerId()))
                 {
                     num_wlp_writer_acknack++;
                 }

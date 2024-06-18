@@ -523,7 +523,7 @@ TEST(Security, BuiltinAuthenticationPlugin_second_participant_creation_loop)
                 // Read writer entity id
                 eprosima::fastdds::rtps::GUID_t writer_guid;
                 writer_guid.entityId = eprosima::fastdds::helpers::cdr_parse_entity_id(
-                        (char*)&msg.buffer[msg.pos]);
+                    (char*)&msg.buffer[msg.pos]);
                 msg.pos = old_pos;
 
                 if (writer_guid.entityId == eprosima::fastdds::rtps::participant_stateless_message_writer_entity_id)
