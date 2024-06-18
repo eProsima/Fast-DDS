@@ -56,17 +56,10 @@ RTPSWriter::RTPSWriter(
     , liveliness_lease_duration_(att.liveliness_lease_duration)
     , liveliness_announcement_period_(att.liveliness_announcement_period)
 {
-    PoolConfig cfg = PoolConfig::from_history_attributes(hist->m_att);
-    std::shared_ptr<IChangePool> change_pool;
-    std::shared_ptr<IPayloadPool> payload_pool;
-    payload_pool = BasicPayloadPool::get(cfg, change_pool);
-
-    init(payload_pool, change_pool, att);
+    init(att);
 }
 
 void RTPSWriter::init(
-        const std::shared_ptr<IPayloadPool>& payload_pool,
-        const std::shared_ptr<IChangePool>& change_pool,
         const WriterAttributes& att)
 {
     {
@@ -85,8 +78,6 @@ void RTPSWriter::init(
         }
     }
 
-    payload_pool_ = payload_pool;
-    change_pool_ = change_pool;
     fixed_payload_size_ = 0;
     if (mp_history->m_att.memoryPolicy == PREALLOCATED_MEMORY_MODE)
     {
@@ -95,8 +86,6 @@ void RTPSWriter::init(
 
     mp_history->mp_writer = this;
     mp_history->mp_mutex = &mp_mutex;
-    mp_history->change_pool_ = change_pool;
-    mp_history->payload_pool_ = payload_pool;
 
     flow_controller_->register_writer(this);
 

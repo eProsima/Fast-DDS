@@ -527,8 +527,6 @@ private:
             const RTPSWriter&) = delete;
 
     void init(
-            const std::shared_ptr<IPayloadPool>& payload_pool,
-            const std::shared_ptr<IChangePool>& change_pool,
             const WriterAttributes& att);
 
 
