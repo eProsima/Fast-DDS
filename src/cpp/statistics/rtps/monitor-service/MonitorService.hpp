@@ -58,7 +58,7 @@ public:
     }
 
     inline bool get_monitoring_status(
-            const fastrtps::rtps::GUID_t&,
+            const fastdds::rtps::GUID_t&,
             MonitorServiceData&) override
     {
         return true;
@@ -72,27 +72,27 @@ class MonitorService
 
 public:
 
-    using endpoint_creator_t = std::function<bool (fastrtps::rtps::RTPSWriter**,
-                    fastrtps::rtps::WriterAttributes&,
-                    const std::shared_ptr<fastrtps::rtps::IPayloadPool>&,
-                    fastrtps::rtps::WriterHistory*,
-                    fastrtps::rtps::WriterListener*,
-                    const fastrtps::rtps::EntityId_t&,
+    using endpoint_creator_t = std::function<bool (fastdds::rtps::RTPSWriter**,
+                    fastdds::rtps::WriterAttributes&,
+                    const std::shared_ptr<fastdds::rtps::IPayloadPool>&,
+                    fastdds::rtps::WriterHistory*,
+                    fastdds::rtps::WriterListener*,
+                    const fastdds::rtps::EntityId_t&,
                     bool)>;
 
     using endpoint_registrator_t = std::function<bool (
-                        fastrtps::rtps::RTPSWriter*,
-                        const fastrtps::TopicAttributes&,
+                        fastdds::rtps::RTPSWriter*,
+                        const fastdds::TopicAttributes&,
                         const fastdds::dds::WriterQos&)>;
 
     MonitorService(
-            const fastrtps::rtps::GUID_t& guid,
+            const fastdds::rtps::GUID_t& guid,
             IProxyQueryable* proxy_q,
             IConnectionsQueryable* conns_q,
             IStatusQueryable& status_q,
             endpoint_creator_t endpoint_creator,
             endpoint_registrator_t endpoint_registrator,
-            fastrtps::rtps::ResourceEvent& event_service);
+            fastdds::rtps::ResourceEvent& event_service);
 
     ~MonitorService();
 
@@ -142,7 +142,7 @@ public:
      * @return True if the operation succeeds.
      */
     bool remove_local_entity(
-            const fastrtps::rtps::EntityId_t& entity_id);
+            const fastdds::rtps::EntityId_t& entity_id);
 
     /**
      * @brief Adds a new entity status update to the queue
@@ -157,7 +157,7 @@ public:
      * @return True if the operation succeeds.
      */
     bool push_entity_update(
-            const fastrtps::rtps::EntityId_t& entity_id,
+            const fastdds::rtps::EntityId_t& entity_id,
             const uint32_t& status_id);
 
 private:
@@ -169,7 +169,7 @@ private:
      * @return True if the operation succeeds.
      */
     bool write_status(
-            const fastrtps::rtps::EntityId_t& entity_id,
+            const fastdds::rtps::EntityId_t& entity_id,
             const std::bitset<StatusKind::STATUSES_SIZE>& changed_statuses,
             const bool& entity_disposed);
 
@@ -207,7 +207,7 @@ private:
      * @return true if the entity was correctly initialized
      */
     bool initialize_entity(
-            const fastrtps::rtps::EntityId_t& entity_id);
+            const fastdds::rtps::EntityId_t& entity_id);
 
     /**
      * @brief Frees the Payload Pool
@@ -221,7 +221,7 @@ private:
 
     std::atomic<bool> timer_active_;
 
-    const fastrtps::rtps::GUID_t local_participant_guid_;
+    const fastdds::rtps::GUID_t local_participant_guid_;
 
     IProxyQueryable* proxy_queryable_;
 
@@ -234,23 +234,23 @@ private:
     //! status id that needs to be updated, alongside
     //! with a bool that prevents the entity_id from being
     //! inserted twice.
-    std::map<fastrtps::rtps::EntityId_t,
+    std::map<fastdds::rtps::EntityId_t,
             std::pair<
                 std::bitset<StatusKind::STATUSES_SIZE>, bool>> local_entities_;
 
-    std::unique_ptr<fastrtps::rtps::TimedEvent> event_;
+    std::unique_ptr<fastdds::rtps::TimedEvent> event_;
 
-    std::vector<fastrtps::rtps::EntityId_t> changed_entities_;
+    std::vector<fastdds::rtps::EntityId_t> changed_entities_;
 
     std::mutex mtx_;
 
     MonitorServiceListener* listener_;
 
-    fastrtps::rtps::StatefulWriter* status_writer_;
+    fastdds::rtps::StatefulWriter* status_writer_;
 
-    std::unique_ptr<fastrtps::rtps::WriterHistory> status_writer_history_;
+    std::unique_ptr<fastdds::rtps::WriterHistory> status_writer_history_;
 
-    std::shared_ptr<fastrtps::rtps::ITopicPayloadPool> status_writer_payload_pool_;
+    std::shared_ptr<fastdds::rtps::ITopicPayloadPool> status_writer_payload_pool_;
 
     endpoint_creator_t endpoint_creator_;
 

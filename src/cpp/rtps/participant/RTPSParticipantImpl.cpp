@@ -79,15 +79,8 @@
 #endif  // HAVE_SECURITY
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
-
-using UDPv4TransportDescriptor = fastdds::rtps::UDPv4TransportDescriptor;
-using TCPTransportDescriptor = fastdds::rtps::TCPTransportDescriptor;
-using SharedMemTransportDescriptor = fastdds::rtps::SharedMemTransportDescriptor;
-using BuiltinTransports = fastdds::rtps::BuiltinTransports;
-using BaseReader = fastdds::rtps::BaseReader;
-
 /**
  * Parse the environment variable specifying the transports to instantiate and optional configuration options
  * if the transport selected is LARGE_DATA.
@@ -2224,7 +2217,7 @@ void RTPSParticipantImpl::deleteAllUserEndpoints()
             };
 
 #if HAVE_SECURITY
-    bool (eprosima::fastrtps::rtps::security::SecurityManager::* unregister_endpoint[2])(
+    bool (eprosima::fastdds::rtps::security::SecurityManager::* unregister_endpoint[2])(
             const GUID_t& writer_guid);
     unregister_endpoint[WRITER] = &security::SecurityManager::unregister_local_writer;
     unregister_endpoint[READER] = &security::SecurityManager::unregister_local_reader;
@@ -2606,7 +2599,6 @@ bool RTPSParticipantImpl::did_mutation_took_place_on_meta(
         const LocatorList_t& UnicastLocatorList) const
 {
     using namespace std;
-    using namespace eprosima::fastdds::rtps;
 
     if (m_att.builtin.metatrafficMulticastLocatorList == MulticastLocatorList
             && m_att.builtin.metatrafficUnicastLocatorList == UnicastLocatorList)
@@ -2790,8 +2782,8 @@ void RTPSParticipantImpl::environment_file_has_changed()
 {
     RTPSParticipantAttributes patt = m_att;
     // Only if it is a server/backup or a client override
-    if (DiscoveryProtocol_t::SERVER == m_att.builtin.discovery_config.discoveryProtocol ||
-            DiscoveryProtocol_t::BACKUP == m_att.builtin.discovery_config.discoveryProtocol ||
+    if (DiscoveryProtocol::SERVER == m_att.builtin.discovery_config.discoveryProtocol ||
+            DiscoveryProtocol::BACKUP == m_att.builtin.discovery_config.discoveryProtocol ||
             client_override_)
     {
         if (load_environment_server_info(patt.builtin.discovery_config.m_DiscoveryServers))
@@ -3022,7 +3014,7 @@ const fastdds::statistics::rtps::IStatusObserver* RTPSParticipantImpl::create_mo
                     return this->createWriter(WriterOut, param, payload_pool, hist, listen, entityId, isBuiltin);
                 },
                 [&](RTPSWriter* w,
-                const fastrtps::TopicAttributes& topicAtt,
+                const fastdds::TopicAttributes& topicAtt,
                 const fastdds::dds::WriterQos& wqos) -> bool
                 {
                     return this->registerWriter(w, topicAtt, wqos);
@@ -3086,7 +3078,7 @@ bool RTPSParticipantImpl::disable_monitor_service() const
 }
 
 bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
-        fastrtps::rtps::ParticipantProxyData& data,
+        fastdds::rtps::ParticipantProxyData& data,
         fastdds::statistics::MonitorServiceStatusData& msg)
 {
     bool ret = true;
@@ -3108,7 +3100,7 @@ bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
 }
 
 bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
-        fastrtps::rtps::WriterProxyData& data,
+        fastdds::rtps::WriterProxyData& data,
         fastdds::statistics::MonitorServiceStatusData& msg)
 {
     bool ret = true;
@@ -3129,7 +3121,7 @@ bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
 }
 
 bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
-        fastrtps::rtps::ReaderProxyData& data,
+        fastdds::rtps::ReaderProxyData& data,
         fastdds::statistics::MonitorServiceStatusData& msg)
 {
     bool ret = true;
@@ -3275,5 +3267,5 @@ void RTPSParticipantImpl::update_removed_participant(
 }
 
 } /* namespace rtps */
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */

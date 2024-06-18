@@ -23,13 +23,13 @@
 #include <fastdds/rtps/reader/ReaderListener.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 class RTPSParticipant;
 class ReaderHistory;
 class RTPSReader;
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 class TestReaderSocket
@@ -40,11 +40,11 @@ public:
 
     virtual ~TestReaderSocket();
 
-    eprosima::fastrtps::rtps::RTPSParticipant* mp_participant;
+    eprosima::fastdds::rtps::RTPSParticipant* mp_participant;
 
-    eprosima::fastrtps::rtps::RTPSReader* mp_reader;
+    eprosima::fastdds::rtps::RTPSReader* mp_reader;
 
-    eprosima::fastrtps::rtps::ReaderHistory* mp_history;
+    eprosima::fastdds::rtps::ReaderHistory* mp_history;
 
     bool init(
             std::string ip,
@@ -52,7 +52,7 @@ public:
 
     void run();
 
-    class MyListener : public eprosima::fastrtps::rtps::ReaderListener
+    class MyListener : public eprosima::fastdds::rtps::ReaderListener
     {
     public:
 
@@ -66,8 +66,9 @@ public:
         }
 
         void on_new_cache_change_added(
-                eprosima::fastrtps::rtps::RTPSReader* reader,
-                const eprosima::fastrtps::rtps::CacheChange_t* const change) override;
+                eprosima::fastdds::rtps::RTPSReader* reader,
+                const eprosima::fastdds::rtps::CacheChange_t* const change) override;
+
         uint32_t m_received;
     }
     m_listener;

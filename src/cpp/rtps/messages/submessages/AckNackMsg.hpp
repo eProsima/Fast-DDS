@@ -18,7 +18,7 @@
  */
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 bool RTPSMessageCreator::addMessageAcknack(
@@ -163,5 +163,5 @@ bool RTPSMessageCreator::addSubmessageNackFrag(
 }
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima

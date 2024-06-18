@@ -15,7 +15,7 @@
 #include "MockReceiverResource.h"
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 MockReceiverResource::MockReceiverResource(
@@ -96,5 +96,5 @@ void MockMessageReceiver::processCDRMsg(
 }
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima

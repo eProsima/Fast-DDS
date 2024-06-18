@@ -24,7 +24,7 @@
 #include <rtps/persistence/PersistenceService.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 StatelessPersistentWriter::StatelessPersistentWriter(
@@ -95,5 +95,5 @@ bool StatelessPersistentWriter::change_removed_by_history(
 }
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima

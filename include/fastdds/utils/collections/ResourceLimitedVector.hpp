@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef FASTRTPS_UTILS_COLLECTIONS_RESOURCELIMITEDVECTOR_HPP_
-#define FASTRTPS_UTILS_COLLECTIONS_RESOURCELIMITEDVECTOR_HPP_
+#ifndef FASTDDS_UTILS_COLLECTIONS_RESOURCELIMITEDVECTOR_HPP_
+#define FASTDDS_UTILS_COLLECTIONS_RESOURCELIMITEDVECTOR_HPP_
 
 #include "ResourceLimitedContainerConfig.hpp"
 
@@ -28,7 +28,7 @@
 #include <vector>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 
 /**
  * Resource limited wrapper of std::vector.
@@ -616,7 +616,7 @@ protected:
 
 };
 
-}  // namespace fastrtps
+}  // namespace fastdds
 }  // namespace eprosima
 
-#endif /* FASTRTPS_UTILS_COLLECTIONS_RESOURCELIMITEDVECTOR_HPP_ */
+#endif /* FASTDDS_UTILS_COLLECTIONS_RESOURCELIMITEDVECTOR_HPP_ */

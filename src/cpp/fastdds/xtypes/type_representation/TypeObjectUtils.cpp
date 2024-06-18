@@ -55,7 +55,7 @@ constexpr const EnumeratedLiteralFlag enum_literal_flag_mask = MemberFlagBits::T
 
 fastdds::dds::xtypes::TypeObjectRegistry& type_object_registry_observer()
 {
-    return eprosima::fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer();
+    return eprosima::fastdds::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer();
 }
 
 const TypeObjectHashId TypeObjectUtils::build_type_object_hash_id(

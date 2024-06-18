@@ -26,7 +26,7 @@
 #include <mutex>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 using BaseReader = fastdds::rtps::BaseReader;
@@ -312,5 +312,5 @@ std::shared_ptr<ReaderPool> DataSharingListener::get_pool_for_writer(
 }
 
 }  // namespace rtps
-}  // namespace fastrtps
+}  // namespace fastdds
 }  // namespace eprosima

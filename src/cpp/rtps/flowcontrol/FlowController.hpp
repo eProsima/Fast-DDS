@@ -5,15 +5,10 @@
 
 namespace eprosima {
 
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 class RTPSWriter;
 struct CacheChange_t;
-} // namespace rtps
-} // namespace fastrtps
-
-namespace fastdds {
-namespace rtps {
 
 /*!
  * Interface used by writers to control the usage of network bandwidth.
@@ -38,7 +33,7 @@ public:
      * @param writer Pointer to the writer to be registered. Cannot be nullptr.
      */
     virtual void register_writer(
-            fastrtps::rtps::RTPSWriter* writer) = 0;
+            fastdds::rtps::RTPSWriter* writer) = 0;
 
     /*!
      * Unregister a writer.
@@ -47,7 +42,7 @@ public:
      * @param writer Pointer to the writer to be unregistered. Cannot be nullptr.
      */
     virtual void unregister_writer(
-            fastrtps::rtps::RTPSWriter* writer) = 0;
+            fastdds::rtps::RTPSWriter* writer) = 0;
 
     /*!
      * Adds a CacheChange_t to be managed by this object.
@@ -60,8 +55,8 @@ public:
      * @return true if the sample could be added. false otherwise.
      */
     virtual bool add_new_sample(
-            fastrtps::rtps::RTPSWriter* writer,
-            fastrtps::rtps::CacheChange_t* change,
+            fastdds::rtps::RTPSWriter* writer,
+            fastdds::rtps::CacheChange_t* change,
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time) = 0;
 
     /*!
@@ -74,8 +69,8 @@ public:
      * @return true if the sample could be added. false otherwise.
      */
     virtual bool add_old_sample(
-            fastrtps::rtps::RTPSWriter* writer,
-            fastrtps::rtps::CacheChange_t* change) = 0;
+            fastdds::rtps::RTPSWriter* writer,
+            fastdds::rtps::CacheChange_t* change) = 0;
 
     /*!
      * If the CacheChange_t is currently managed by this object, remove it.
@@ -86,7 +81,7 @@ public:
      * @return true if the sample could be removed. false otherwise.
      */
     virtual bool remove_change(
-            fastrtps::rtps::CacheChange_t* change,
+            fastdds::rtps::CacheChange_t* change,
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time) = 0;
 
     /*!

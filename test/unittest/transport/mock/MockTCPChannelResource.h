@@ -21,7 +21,7 @@
 #include <fastdds/rtps/transport/NetworkBuffer.hpp>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class MockTCPChannelResource;
@@ -86,7 +86,7 @@ public:
 };
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 #endif //MOCK_TCP_CHANNEL_RESOURCE_H

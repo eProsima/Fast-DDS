@@ -18,7 +18,7 @@
  */
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 bool RTPSMessageCreator::addMessageHeartbeat(
@@ -189,5 +189,5 @@ bool RTPSMessageCreator::addSubmessageHeartbeatFrag(
 }
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima

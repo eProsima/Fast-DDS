@@ -48,7 +48,7 @@ public:
             efd::TypeSupport type,
             efd::Topic* topic,
             const efd::DataWriterQos& qos,
-            const eprosima::fastrtps::rtps::EntityId_t& entity_id)
+            const eprosima::fastdds::rtps::EntityId_t& entity_id)
         : BaseType(p, type, topic, qos, entity_id, nullptr)
     {
     }
@@ -59,7 +59,7 @@ public:
             efd::Topic* topic,
             const efd::DataWriterQos& qos,
             efd::DataWriterListener* listener,
-            std::shared_ptr<fastrtps::rtps::IPayloadPool> payload_pool,
+            std::shared_ptr<fastdds::rtps::IPayloadPool> payload_pool,
             std::shared_ptr<IListener> stat_listener)
         : BaseType(p, type, topic, qos, listener, payload_pool)
         , statistics_listener_(stat_listener)

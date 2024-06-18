@@ -28,8 +28,8 @@
 
 namespace testing {
 namespace internal {
-using namespace eprosima::fastrtps::rtps;
-using namespace eprosima::fastrtps;
+using namespace eprosima::fastdds::rtps;
+using namespace eprosima::fastdds;
 
 class WriterProxyTest : public WriterProxy
 {
@@ -39,7 +39,7 @@ public:
             StatefulReader* reader,
             const RemoteLocatorsAllocationAttributes& loc_alloc,
             const ResourceLimitedContainerConfig& changes_allocation,
-            eprosima::fastrtps::rtps::ResourceEvent& service,
+            eprosima::fastdds::rtps::ResourceEvent& service,
             std::promise<void>& promise)
         : WriterProxy(reader, loc_alloc, changes_allocation)
         , reader_(reader)
@@ -84,7 +84,7 @@ private:
 } // namespace testing
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 /**
@@ -94,8 +94,8 @@ namespace rtps {
 TEST(WriterProxyTests, WriterProxyStop)
 {
     // Create actual events service
-    eprosima::fastrtps::rtps::ResourceEvent* service;
-    service = new eprosima::fastrtps::rtps::ResourceEvent();
+    eprosima::fastdds::rtps::ResourceEvent* service;
+    service = new eprosima::fastdds::rtps::ResourceEvent();
     service->init_thread();
 
     // Synchronization primitives
@@ -122,7 +122,7 @@ TEST(WriterProxyTests, WriterProxyStop)
 }
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 int main(

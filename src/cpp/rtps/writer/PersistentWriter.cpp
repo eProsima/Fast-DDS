@@ -25,7 +25,7 @@
 #include <rtps/persistence/PersistenceService.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 
@@ -87,5 +87,5 @@ void PersistentWriter::remove_persistent_change(
 }
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima

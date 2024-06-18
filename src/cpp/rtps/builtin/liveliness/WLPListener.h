@@ -28,7 +28,7 @@
 #include <fastdds/rtps/reader/ReaderListener.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class WLP;

@@ -21,7 +21,7 @@
 #include <condition_variable>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 
 /**
  * @brief ConcurrentQueue. A thread-safe shared queue.
@@ -151,7 +151,7 @@ protected:
     Queue queue_;
 };
 
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 #endif // _FASTDDS_UTILS_CONCURRENT_QUEUE_H_

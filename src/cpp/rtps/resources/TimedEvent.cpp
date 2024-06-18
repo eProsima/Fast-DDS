@@ -23,7 +23,7 @@
 #include "TimedEventImpl.h"
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 TimedEvent::TimedEvent(
@@ -100,5 +100,5 @@ double TimedEvent::getRemainingTimeMilliSec()
 }
 
 } /* namespace rtps */
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */

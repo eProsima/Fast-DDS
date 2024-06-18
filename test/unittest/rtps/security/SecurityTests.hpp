@@ -33,8 +33,8 @@
 #include <rtps/writer/StatefulWriter.hpp>
 #include <rtps/writer/StatelessWriter.hpp>
 
-using namespace eprosima::fastrtps::rtps;
-using namespace eprosima::fastrtps::rtps::security;
+using namespace eprosima::fastdds::rtps;
+using namespace eprosima::fastdds::rtps::security;
 using namespace ::testing;
 
 class SecurityTest;

@@ -26,7 +26,7 @@
 #include "TestWriterPersistent.h"
 
 using namespace eprosima;
-using namespace fastrtps;
+using namespace fastdds;
 using namespace rtps;
 using namespace std;
 

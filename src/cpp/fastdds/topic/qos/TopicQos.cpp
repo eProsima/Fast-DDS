@@ -19,12 +19,18 @@
 
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
 
-using namespace eprosima::fastdds::dds;
+namespace eprosima {
+namespace fastdds {
+namespace dds {
 
-const TopicQos eprosima::fastdds::dds::TOPIC_QOS_DEFAULT;
+const TopicQos TOPIC_QOS_DEFAULT;
 
 TopicQos::TopicQos()
 {
     reliability_.kind = RELIABLE_RELIABILITY_QOS;
     durability_.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
 }
+
+} // namespace dds
+} // namespace fastdds
+} // namespace eprosima

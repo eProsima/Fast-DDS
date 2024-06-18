@@ -26,7 +26,7 @@
 #include <map>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 namespace security {
 
@@ -52,7 +52,7 @@ struct BuiltinLoggingType final
 
 } //namespace security
 } //namespace rtps
-} //namespace fastrtps
+} //namespace fastdds
 } //namespace eprosima
 
 #endif // _FASTDDS_RTPS_SECURITY_LOGGING_BUILTINLOGGINGTYPE_H_

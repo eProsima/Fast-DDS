@@ -23,7 +23,7 @@
 #include <mutex>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 std::shared_ptr<DataSharingNotification> DataSharingNotification::create_notification(
@@ -100,5 +100,5 @@ void DataSharingNotification::destroy()
 }
 
 }  // namespace rtps
-}  // namespace fastrtps
+}  // namespace fastdds
 }  // namespace eprosima

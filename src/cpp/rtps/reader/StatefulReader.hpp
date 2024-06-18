@@ -32,7 +32,7 @@
 #include <rtps/reader/BaseReader.hpp>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class WriterProxy;
@@ -330,11 +330,11 @@ private:
      * @return Iterator pointing to the position were the change was found.
      *         It can be used to improve the following call to this same method.
      */
-    fastrtps::rtps::History::const_iterator find_cache_in_fragmented_process(
-            const fastrtps::rtps::SequenceNumber_t& sequence_number,
-            const fastrtps::rtps::GUID_t& writer_guid,
-            fastrtps::rtps::CacheChange_t*& change,
-            fastrtps::rtps::History::const_iterator hint) const;
+    fastdds::rtps::History::const_iterator find_cache_in_fragmented_process(
+            const fastdds::rtps::SequenceNumber_t& sequence_number,
+            const fastdds::rtps::GUID_t& writer_guid,
+            fastdds::rtps::CacheChange_t*& change,
+            fastdds::rtps::History::const_iterator hint) const;
 
     /*!
      * @remarks Non thread-safe.
@@ -369,7 +369,7 @@ private:
 };
 
 } /* namespace rtps */
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC

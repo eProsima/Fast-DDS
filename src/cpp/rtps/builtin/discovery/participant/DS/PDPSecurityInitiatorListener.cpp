@@ -39,7 +39,7 @@
 using ParameterList = eprosima::fastdds::dds::ParameterList;
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 PDPSecurityInitiatorListener::PDPSecurityInitiatorListener(
@@ -98,5 +98,5 @@ bool PDPSecurityInitiatorListener::check_discovery_conditions(
 }
 
 } /* namespace rtps */
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */

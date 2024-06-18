@@ -42,7 +42,7 @@
 
 namespace eprosima {
 
-using IPFinder = fastrtps::rtps::IPFinder;
+using IPFinder = fastdds::rtps::IPFinder;
 
 SystemInfo::SystemInfo()
 {

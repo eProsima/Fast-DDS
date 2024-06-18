@@ -24,10 +24,9 @@
 #define IDSTRING "(ID:" << std::this_thread::get_id() << ") " <<
 
 using namespace std;
-using namespace eprosima::fastdds::rtps;
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 ReceiverResource::ReceiverResource(
@@ -165,5 +164,5 @@ ReceiverResource::~ReceiverResource()
 }
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima

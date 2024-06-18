@@ -80,7 +80,7 @@ inline bool cdr_serialized_size(
 }
 
 inline void add_bitmap(
-        fastrtps::rtps::CDRMessage_t& msg,
+        fastdds::rtps::CDRMessage_t& msg,
         uint32_t current_bitmap,
         uint32_t& bitmap_pos)
 {
@@ -88,7 +88,7 @@ inline void add_bitmap(
     uint32_t old_pos = msg.pos;
     msg.pos = bitmap_pos;
     msg.length = bitmap_pos;
-    fastrtps::rtps::CDRMessage::addUInt32(&msg, current_bitmap);
+    fastdds::rtps::CDRMessage::addUInt32(&msg, current_bitmap);
     bitmap_pos = msg.pos;
     msg.pos = old_pos;
     msg.length = old_len;
@@ -108,11 +108,11 @@ inline void add_bitmap(
  */
 template<typename FilterEvaluate>
 void cdr_serialize(
-        fastrtps::rtps::SerializedPayload_t& payload,
+        fastdds::rtps::SerializedPayload_t& payload,
         std::size_t num_filters,
         FilterEvaluate evaluate)
 {
-    using namespace fastrtps::rtps;
+    using namespace fastdds::rtps;
 
     uint16_t cdr_size = 0;
     if ((0 < num_filters) && cdr_serialized_size(num_filters, cdr_size))

@@ -27,7 +27,7 @@
 #include <cstring>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 //!Max size of RTPS message in bytes.
@@ -221,7 +221,7 @@ struct FASTDDS_EXPORTED_API CDRMessage_t final
 };
 
 }  // namespace rtps
-}  // namespace fastrtps
+}  // namespace fastdds
 }  // namespace eprosima
 
 #endif /* DOXYGEN_SHOULD_SKIP_THIS_PUBLIC */

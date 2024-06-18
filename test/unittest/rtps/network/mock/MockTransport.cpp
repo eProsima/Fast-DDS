@@ -48,7 +48,7 @@ MockTransport::~MockTransport()
 }
 
 bool MockTransport::init(
-        const fastrtps::rtps::PropertyPolicy* /*properties*/,
+        const fastdds::rtps::PropertyPolicy* /*properties*/,
         const uint32_t& /*max_msg_size_no_frag*/)
 {
     return true;
@@ -138,12 +138,12 @@ LocatorList_t MockTransport::NormalizeLocator(
 }
 
 void MockTransport::select_locators(
-        fastrtps::rtps::LocatorSelector& selector) const
+        fastdds::rtps::LocatorSelector& selector) const
 {
-    fastrtps::ResourceLimitedVector<fastrtps::rtps::LocatorSelectorEntry*>& entries = selector.transport_starts();
+    fastdds::ResourceLimitedVector<fastdds::rtps::LocatorSelectorEntry*>& entries = selector.transport_starts();
     for (size_t i = 0; i < entries.size(); ++i)
     {
-        fastrtps::rtps::LocatorSelectorEntry* entry = entries[i];
+        fastdds::rtps::LocatorSelectorEntry* entry = entries[i];
         if (entry->transport_should_process)
         {
             for (size_t j = 0; j < entry->unicast.size(); ++j)
@@ -157,5 +157,5 @@ void MockTransport::select_locators(
 }
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima

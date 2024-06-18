@@ -55,8 +55,8 @@
 #include <statistics/types/monitorservice_types.hpp>
 #endif //FASTDDS_STATISTICS
 
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds;
+using namespace eprosima::fastdds::rtps;
 using namespace std::chrono;
 
 namespace eprosima {
@@ -148,7 +148,7 @@ DataWriterImpl::DataWriterImpl(
         Topic* topic,
         const DataWriterQos& qos,
         DataWriterListener* listen,
-        std::shared_ptr<fastrtps::rtps::IPayloadPool> payload_pool)
+        std::shared_ptr<fastdds::rtps::IPayloadPool> payload_pool)
     : publisher_(p)
     , type_(type)
     , topic_(topic)
@@ -173,8 +173,8 @@ DataWriterImpl::DataWriterImpl(
     endpoint_attributes.topicKind = type_->m_isGetKeyDefined ? WITH_KEY : NO_KEY;
     endpoint_attributes.setEntityID(qos_.endpoint().entity_id);
     endpoint_attributes.setUserDefinedID(qos_.endpoint().user_defined_id);
-    fastrtps::rtps::RTPSParticipantImpl::preprocess_endpoint_attributes<WRITER, 0x03, 0x02>(
-        fastrtps::rtps::EntityId_t::unknown(),
+    fastdds::rtps::RTPSParticipantImpl::preprocess_endpoint_attributes<WRITER, 0x03, 0x02>(
+        fastdds::rtps::EntityId_t::unknown(),
         publisher_->get_participant_impl()->id_counter(), endpoint_attributes, guid_.entityId);
     guid_.guidPrefix = publisher_->get_participant_impl()->guid().guidPrefix;
 
@@ -190,7 +190,7 @@ DataWriterImpl::DataWriterImpl(
         TypeSupport type,
         Topic* topic,
         const DataWriterQos& qos,
-        const fastrtps::rtps::EntityId_t& entity_id,
+        const fastdds::rtps::EntityId_t& entity_id,
         DataWriterListener* listen)
     : publisher_(p)
     , type_(type)
@@ -617,7 +617,7 @@ bool DataWriterImpl::write(
 
 bool DataWriterImpl::write(
         void* data,
-        fastrtps::rtps::WriteParams& params)
+        fastdds::rtps::WriteParams& params)
 {
     if (writer_ == nullptr)
     {
@@ -676,7 +676,7 @@ ReturnCode_t DataWriterImpl::write(
 ReturnCode_t DataWriterImpl::write_w_timestamp(
         void* data,
         const InstanceHandle_t& handle,
-        const fastrtps::Time_t& timestamp)
+        const fastdds::Time_t& timestamp)
 {
     InstanceHandle_t instance_handle;
     ReturnCode_t ret = RETCODE_OK;
@@ -763,7 +763,7 @@ InstanceHandle_t DataWriterImpl::register_instance(
 
 InstanceHandle_t DataWriterImpl::register_instance_w_timestamp(
         void* key,
-        const fastrtps::Time_t& timestamp)
+        const fastdds::Time_t& timestamp)
 {
     /// Preconditions
     InstanceHandle_t instance_handle;
@@ -814,7 +814,7 @@ InstanceHandle_t DataWriterImpl::do_register_instance(
                     // Serialization of the sample failed. Remove the instance to keep original state.
                     // Note that we will only end-up here if the instance has just been created, so it will be empty
                     // and removing its changes will remove the instance completely.
-                    history_.remove_instance_changes(instance_handle, fastrtps::rtps::SequenceNumber_t());
+                    history_.remove_instance_changes(instance_handle, fastdds::rtps::SequenceNumber_t());
                 }
             }
             return instance_handle;
@@ -851,7 +851,7 @@ ReturnCode_t DataWriterImpl::unregister_instance(
 ReturnCode_t DataWriterImpl::unregister_instance_w_timestamp(
         void* instance,
         const InstanceHandle_t& handle,
-        const fastrtps::Time_t& timestamp,
+        const fastdds::Time_t& timestamp,
         bool dispose)
 {
     // Preconditions
@@ -1126,7 +1126,7 @@ ReturnCode_t DataWriterImpl::get_sending_locators(
     return RETCODE_OK;
 }
 
-const fastrtps::rtps::GUID_t& DataWriterImpl::guid() const
+const fastdds::rtps::GUID_t& DataWriterImpl::guid() const
 {
     return guid_;
 }
@@ -1191,7 +1191,7 @@ ReturnCode_t DataWriterImpl::set_qos(
         }
 
         //Notify the participant that a Writer has changed its QOS
-        fastrtps::TopicAttributes topic_att = get_topic_attributes(qos_, *topic_, type_);
+        fastdds::TopicAttributes topic_att = get_topic_attributes(qos_, *topic_, type_);
         WriterQos wqos = qos_.get_writerqos(get_publisher()->get_qos(), topic_->get_qos());
         publisher_->rtps_participant()->updateWriter(writer_, topic_att, wqos);
 
@@ -1310,7 +1310,7 @@ void DataWriterImpl::InnerDataWriterListener::onWriterChangeReceivedByAll(
 }
 
 void DataWriterImpl::InnerDataWriterListener::on_liveliness_lost(
-        fastrtps::rtps::RTPSWriter* /*writer*/,
+        fastdds::rtps::RTPSWriter* /*writer*/,
         const LivelinessLostStatus& status)
 {
     data_writer_->update_liveliness_lost_status(status);
@@ -1333,21 +1333,21 @@ void DataWriterImpl::InnerDataWriterListener::on_liveliness_lost(
 }
 
 void DataWriterImpl::InnerDataWriterListener::on_reader_discovery(
-        fastrtps::rtps::RTPSWriter* writer,
-        fastrtps::rtps::ReaderDiscoveryInfo::DISCOVERY_STATUS reason,
-        const fastrtps::rtps::GUID_t& reader_guid,
-        const fastrtps::rtps::ReaderProxyData* reader_info)
+        fastdds::rtps::RTPSWriter* writer,
+        fastdds::rtps::ReaderDiscoveryInfo::DISCOVERY_STATUS reason,
+        const fastdds::rtps::GUID_t& reader_guid,
+        const fastdds::rtps::ReaderProxyData* reader_info)
 {
-    if (!fastrtps::rtps::RTPSDomainImpl::should_intraprocess_between(writer->getGuid(), reader_guid))
+    if (!fastdds::rtps::RTPSDomainImpl::should_intraprocess_between(writer->getGuid(), reader_guid))
     {
         switch (reason)
         {
-            case fastrtps::rtps::ReaderDiscoveryInfo::DISCOVERY_STATUS::REMOVED_READER:
+            case fastdds::rtps::ReaderDiscoveryInfo::DISCOVERY_STATUS::REMOVED_READER:
                 data_writer_->remove_reader_filter(reader_guid);
                 break;
 
-            case fastrtps::rtps::ReaderDiscoveryInfo::DISCOVERY_STATUS::DISCOVERED_READER:
-            case fastrtps::rtps::ReaderDiscoveryInfo::DISCOVERY_STATUS::CHANGED_QOS_READER:
+            case fastdds::rtps::ReaderDiscoveryInfo::DISCOVERY_STATUS::DISCOVERED_READER:
+            case fastdds::rtps::ReaderDiscoveryInfo::DISCOVERY_STATUS::CHANGED_QOS_READER:
                 data_writer_->process_reader_filter_info(reader_guid, *reader_info);
                 break;
             default:
@@ -1643,12 +1643,12 @@ ReturnCode_t DataWriterImpl::assert_liveliness()
     return RETCODE_OK;
 }
 
-fastrtps::TopicAttributes DataWriterImpl::get_topic_attributes(
+fastdds::TopicAttributes DataWriterImpl::get_topic_attributes(
         const DataWriterQos& qos,
         const Topic& topic,
         const TypeSupport& type)
 {
-    fastrtps::TopicAttributes topic_att;
+    fastdds::TopicAttributes topic_att;
     topic_att.historyQos = qos.history();
     topic_att.resourceLimitsQos = qos.resource_limits();
     topic_att.topicName = topic.get_name();
@@ -1657,7 +1657,7 @@ fastrtps::TopicAttributes DataWriterImpl::get_topic_attributes(
     if (type->auto_fill_type_information() && xtypes::TK_NONE != type->type_identifiers().type_identifier1()._d())
     {
         if (RETCODE_OK ==
-                fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().get_type_information(
+                fastdds::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().get_type_information(
                     type->type_identifiers(), topic_att.type_information.type_information))
         {
             topic_att.type_information.assigned(true);
@@ -1873,7 +1873,7 @@ ReturnCode_t DataWriterImpl::check_qos(
     if (qos.liveliness().kind == AUTOMATIC_LIVELINESS_QOS ||
             qos.liveliness().kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
     {
-        if (qos.liveliness().lease_duration < eprosima::fastrtps::c_TimeInfinite &&
+        if (qos.liveliness().lease_duration < eprosima::fastdds::c_TimeInfinite &&
                 qos.liveliness().lease_duration <= qos.liveliness().announcement_period)
         {
             EPROSIMA_LOG_ERROR(RTPS_QOS_CHECK, "WRITERQOS: LeaseDuration <= announcement period.");
@@ -2022,7 +2022,7 @@ std::shared_ptr<IChangePool> DataWriterImpl::get_change_pool() const
             config, qos_.writer_resource_limits().reader_filters_allocation);
     }
 
-    return std::make_shared<fastrtps::rtps::CacheChangePool>(config);
+    return std::make_shared<fastdds::rtps::CacheChangePool>(config);
 }
 
 std::shared_ptr<IPayloadPool> DataWriterImpl::get_payload_pool()
@@ -2116,8 +2116,8 @@ ReturnCode_t DataWriterImpl::check_datasharing_compatible(
 #endif // HAVE_SECURITY
 
     bool has_bound_payload_size =
-            (qos_.endpoint().history_memory_policy == eprosima::fastrtps::rtps::PREALLOCATED_MEMORY_MODE ||
-            qos_.endpoint().history_memory_policy == eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE) &&
+            (qos_.endpoint().history_memory_policy == eprosima::fastdds::rtps::PREALLOCATED_MEMORY_MODE ||
+            qos_.endpoint().history_memory_policy == eprosima::fastdds::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE) &&
             type_.is_bounded();
 
     bool has_key = type_->m_isGetKeyDefined;
@@ -2195,7 +2195,7 @@ ReturnCode_t DataWriterImpl::check_datasharing_compatible(
 }
 
 void DataWriterImpl::remove_reader_filter(
-        const fastrtps::rtps::GUID_t& reader_guid)
+        const fastdds::rtps::GUID_t& reader_guid)
 {
     if (reader_filters_)
     {
@@ -2204,8 +2204,8 @@ void DataWriterImpl::remove_reader_filter(
 }
 
 void DataWriterImpl::process_reader_filter_info(
-        const fastrtps::rtps::GUID_t& reader_guid,
-        const fastrtps::rtps::ReaderProxyData& reader_info)
+        const fastdds::rtps::GUID_t& reader_guid,
+        const fastdds::rtps::ReaderProxyData& reader_info)
 {
     if (reader_filters_ &&
             !writer_->is_datasharing_compatible_with(reader_info) &&
@@ -2228,8 +2228,8 @@ void DataWriterImpl::filter_is_being_removed(
 }
 
 bool DataWriterImpl::is_relevant(
-        const fastrtps::rtps::CacheChange_t& change,
-        const fastrtps::rtps::GUID_t& reader_guid) const
+        const fastdds::rtps::CacheChange_t& change,
+        const fastdds::rtps::GUID_t& reader_guid) const
 {
     assert(reader_filters_);
     const DataWriterFilteredChange& writer_change = static_cast<const DataWriterFilteredChange&>(change);

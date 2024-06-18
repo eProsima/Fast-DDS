@@ -27,7 +27,7 @@
 #include <sstream>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 
@@ -382,15 +382,15 @@ const EntityId_t monitor_service_status_writer = ENTITYID_MONITOR_SERVICE_WRITER
 #endif // if FASTDDS_STATISTICS
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 namespace std {
 template <>
-struct hash<eprosima::fastrtps::rtps::EntityId_t>
+struct hash<eprosima::fastdds::rtps::EntityId_t>
 {
     std::size_t operator ()(
-            const eprosima::fastrtps::rtps::EntityId_t& k) const
+            const eprosima::fastdds::rtps::EntityId_t& k) const
     {
         return (static_cast<size_t>(k.value[0]) << 16) |
                (static_cast<size_t>(k.value[1]) << 8) |

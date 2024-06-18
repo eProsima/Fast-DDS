@@ -31,15 +31,15 @@
 
 #include "../logging/mock/MockConsumer.h"
 
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds;
+using namespace eprosima::fastdds::rtps;
 using namespace ::testing;
 
-using eprosima::fastrtps::xmlparser::XMLP_ret;
-using eprosima::fastrtps::xmlparser::XMLEndpointParser;
-using eprosima::fastrtps::xmlparser::StaticRTPSParticipantInfo;
-using eprosima::fastrtps::rtps::ReaderProxyData;
-using eprosima::fastrtps::rtps::WriterProxyData;
+using eprosima::fastdds::xmlparser::XMLP_ret;
+using eprosima::fastdds::xmlparser::XMLEndpointParser;
+using eprosima::fastdds::xmlparser::StaticRTPSParticipantInfo;
+using eprosima::fastdds::rtps::ReaderProxyData;
+using eprosima::fastdds::rtps::WriterProxyData;
 
 using eprosima::fastdds::dds::Log;
 using eprosima::fastdds::dds::LogConsumer;

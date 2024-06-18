@@ -37,9 +37,8 @@
 #include "RTPSWithRegistrationReader.hpp"
 #include "RTPSWithRegistrationWriter.hpp"
 
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
-using test_UDPv4Transport = eprosima::fastdds::rtps::test_UDPv4Transport;
+using namespace eprosima::fastdds;
+using namespace eprosima::fastdds::rtps;
 
 enum communication_type
 {
@@ -58,7 +57,7 @@ public:
         {
             case INTRAPROCESS:
                 library_settings.intraprocess_delivery = eprosima::fastdds::IntraprocessDeliveryType::INTRAPROCESS_FULL;
-                eprosima::fastrtps::rtps::RTPSDomain::set_library_settings(library_settings);
+                eprosima::fastdds::rtps::RTPSDomain::set_library_settings(library_settings);
                 break;
             case TRANSPORT:
             default:
@@ -73,7 +72,7 @@ public:
         {
             case INTRAPROCESS:
                 library_settings.intraprocess_delivery = eprosima::fastdds::IntraprocessDeliveryType::INTRAPROCESS_OFF;
-                eprosima::fastrtps::rtps::RTPSDomain::set_library_settings(library_settings);
+                eprosima::fastdds::rtps::RTPSDomain::set_library_settings(library_settings);
                 break;
             case TRANSPORT:
             default:
@@ -93,7 +92,7 @@ TEST_P(RTPS, RTPSAsNonReliableSocket)
 
     ASSERT_TRUE(reader.isInitialized());
 
-    writer.reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::BEST_EFFORT).
+    writer.reliability(eprosima::fastdds::rtps::ReliabilityKind_t::BEST_EFFORT).
             add_to_multicast_locator_list(ip, global_port).init();
 
     ASSERT_TRUE(writer.isInitialized());
@@ -120,9 +119,9 @@ TEST_P(RTPS, AsyncRTPSAsNonReliableSocket)
 
     ASSERT_TRUE(reader.isInitialized());
 
-    writer.reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::BEST_EFFORT).
+    writer.reliability(eprosima::fastdds::rtps::ReliabilityKind_t::BEST_EFFORT).
             add_to_multicast_locator_list(ip, global_port).
-            asynchronously(eprosima::fastrtps::rtps::RTPSWriterPublishMode::ASYNCHRONOUS_WRITER).init();
+            asynchronously(eprosima::fastdds::rtps::RTPSWriterPublishMode::ASYNCHRONOUS_WRITER).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -150,9 +149,9 @@ TEST_P(RTPS, AsyncRTPSAsNonReliableSocketWithWriterSpecificFlowControl)
 
     uint32_t bytesPerPeriod = 440; // Roughly ten times the size of the payload being sent
     uint32_t periodMillisecs = 300;
-    writer.reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::BEST_EFFORT).
+    writer.reliability(eprosima::fastdds::rtps::ReliabilityKind_t::BEST_EFFORT).
             add_to_multicast_locator_list(ip, global_port).
-            asynchronously(eprosima::fastrtps::rtps::RTPSWriterPublishMode::ASYNCHRONOUS_WRITER).
+            asynchronously(eprosima::fastdds::rtps::RTPSWriterPublishMode::ASYNCHRONOUS_WRITER).
             add_flow_controller_descriptor_to_pparams(bytesPerPeriod, periodMillisecs).init();
 
     ASSERT_TRUE(writer.isInitialized());
@@ -175,12 +174,12 @@ TEST_P(RTPS, RTPSAsReliableSocket)
     RTPSAsSocketWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string ip("239.255.1.4");
 
-    reader.reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).
+    reader.reliability(eprosima::fastdds::rtps::ReliabilityKind_t::RELIABLE).
             add_to_multicast_locator_list(ip, global_port).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
-    writer.reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).
+    writer.reliability(eprosima::fastdds::rtps::ReliabilityKind_t::RELIABLE).
             add_to_multicast_locator_list(ip, global_port).init();
 
     ASSERT_TRUE(writer.isInitialized());
@@ -204,14 +203,14 @@ TEST_P(RTPS, AsyncRTPSAsReliableSocket)
     RTPSAsSocketWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string ip("239.255.1.4");
 
-    reader.reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).
+    reader.reliability(eprosima::fastdds::rtps::ReliabilityKind_t::RELIABLE).
             add_to_multicast_locator_list(ip, global_port).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
-    writer.reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).
+    writer.reliability(eprosima::fastdds::rtps::ReliabilityKind_t::RELIABLE).
             add_to_multicast_locator_list(ip, global_port).
-            asynchronously(eprosima::fastrtps::rtps::RTPSWriterPublishMode::ASYNCHRONOUS_WRITER).init();
+            asynchronously(eprosima::fastdds::rtps::RTPSWriterPublishMode::ASYNCHRONOUS_WRITER).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -238,7 +237,7 @@ TEST_P(RTPS, RTPSAsNonReliableWithRegistration)
 
     ASSERT_TRUE(reader.isInitialized());
 
-    writer.reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::BEST_EFFORT).init();
+    writer.reliability(eprosima::fastdds::rtps::ReliabilityKind_t::BEST_EFFORT).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -268,8 +267,8 @@ TEST_P(RTPS, AsyncRTPSAsNonReliableWithRegistration)
 
     ASSERT_TRUE(reader.isInitialized());
 
-    writer.reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::BEST_EFFORT).
-            asynchronously(eprosima::fastrtps::rtps::RTPSWriterPublishMode::ASYNCHRONOUS_WRITER).init();
+    writer.reliability(eprosima::fastdds::rtps::ReliabilityKind_t::BEST_EFFORT).
+            asynchronously(eprosima::fastdds::rtps::RTPSWriterPublishMode::ASYNCHRONOUS_WRITER).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -296,7 +295,7 @@ TEST_P(RTPS, RTPSAsReliableWithRegistration)
     std::string ip("239.255.1.4");
 
     reader.add_to_multicast_locator_list(ip, global_port).
-            reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).init();
+            reliability(eprosima::fastdds::rtps::ReliabilityKind_t::RELIABLE).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -328,11 +327,11 @@ TEST_P(RTPS, AsyncRTPSAsReliableWithRegistration)
     std::string ip("239.255.1.4");
 
     reader.add_to_multicast_locator_list(ip, global_port).
-            reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).init();
+            reliability(eprosima::fastdds::rtps::ReliabilityKind_t::RELIABLE).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
-    writer.asynchronously(eprosima::fastrtps::rtps::RTPSWriterPublishMode::ASYNCHRONOUS_WRITER).init();
+    writer.asynchronously(eprosima::fastdds::rtps::RTPSWriterPublishMode::ASYNCHRONOUS_WRITER).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -360,13 +359,13 @@ TEST_P(RTPS, RTPSAsReliableVolatileSocket)
     RTPSAsSocketWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string ip("239.255.1.4");
 
-    reader.reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).
+    reader.reliability(eprosima::fastdds::rtps::ReliabilityKind_t::RELIABLE).
             add_to_multicast_locator_list(ip, global_port).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
-    writer.reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).
-            durability(eprosima::fastrtps::rtps::DurabilityKind_t::VOLATILE).
+    writer.reliability(eprosima::fastdds::rtps::ReliabilityKind_t::RELIABLE).
+            durability(eprosima::fastdds::rtps::DurabilityKind_t::VOLATILE).
             add_to_multicast_locator_list(ip, global_port).
             auto_remove_on_volatile().init();
 
@@ -410,12 +409,12 @@ TEST_P(RTPS, RTPSAsReliableWithRegistrationAndHolesInHistory)
     testTransport->dropLogLength = 1;
 
     reader.
-            durability(eprosima::fastrtps::rtps::DurabilityKind_t::TRANSIENT_LOCAL).
-            reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).init();
+            durability(eprosima::fastdds::rtps::DurabilityKind_t::TRANSIENT_LOCAL).
+            reliability(eprosima::fastdds::rtps::ReliabilityKind_t::RELIABLE).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
-    writer.durability(eprosima::fastrtps::rtps::DurabilityKind_t::TRANSIENT_LOCAL).
+    writer.durability(eprosima::fastdds::rtps::DurabilityKind_t::TRANSIENT_LOCAL).
             disable_builtin_transport().
             add_user_transport_to_pparams(testTransport).init();
 
@@ -445,7 +444,7 @@ TEST_P(RTPS, RTPSAsReliableWithRegistrationAndHolesInHistory)
     {
         if ((it->index() % 2) == 0)
         {
-            eprosima::fastrtps::rtps::SequenceNumber_t seq {0, it->index()};
+            eprosima::fastdds::rtps::SequenceNumber_t seq {0, it->index()};
             writer.remove_change(seq);
             it = data.erase(it);
         }
@@ -459,8 +458,8 @@ TEST_P(RTPS, RTPSAsReliableWithRegistrationAndHolesInHistory)
     RTPSWithRegistrationReader<HelloWorldPubSubType> late_joiner(TEST_TOPIC_NAME);
 
     late_joiner.
-            durability(eprosima::fastrtps::rtps::DurabilityKind_t::TRANSIENT_LOCAL).
-            reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).init();
+            durability(eprosima::fastdds::rtps::DurabilityKind_t::TRANSIENT_LOCAL).
+            reliability(eprosima::fastdds::rtps::ReliabilityKind_t::RELIABLE).init();
 
     ASSERT_TRUE(late_joiner.isInitialized());
 
@@ -487,17 +486,17 @@ TEST(RTPS, RTPSUnavailableSampleGapWhenSeparateSending)
     auto testTransport = std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
 
     reader.
-            durability(eprosima::fastrtps::rtps::DurabilityKind_t::TRANSIENT_LOCAL).
+            durability(eprosima::fastdds::rtps::DurabilityKind_t::TRANSIENT_LOCAL).
             history_depth(3).
-            reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).init();
+            reliability(eprosima::fastdds::rtps::ReliabilityKind_t::RELIABLE).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     // set_separate_sending
 
-    writer.durability(eprosima::fastrtps::rtps::DurabilityKind_t::TRANSIENT_LOCAL).
+    writer.durability(eprosima::fastdds::rtps::DurabilityKind_t::TRANSIENT_LOCAL).
             disable_builtin_transport().
-            reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).
+            reliability(eprosima::fastdds::rtps::ReliabilityKind_t::RELIABLE).
             history_depth(3).
             add_user_transport_to_pparams(testTransport).init();
 
@@ -809,15 +808,15 @@ TEST(RTPS, MultithreadedWriterCreation)
     auto thread_run = [rtps_participant, flow_controller_name, &finish_mtx, &finish_cv, &should_finish]()
             {
                 /* Create writer history */
-                eprosima::fastrtps::rtps::HistoryAttributes hattr;
-                eprosima::fastrtps::rtps::WriterHistory* history = new eprosima::fastrtps::rtps::WriterHistory(hattr);
-                eprosima::fastrtps::TopicAttributes topic_attr;
+                eprosima::fastdds::rtps::HistoryAttributes hattr;
+                eprosima::fastdds::rtps::WriterHistory* history = new eprosima::fastdds::rtps::WriterHistory(hattr);
+                eprosima::fastdds::TopicAttributes topic_attr;
 
                 /* Create writer with a flow controller */
-                eprosima::fastrtps::rtps::WriterAttributes writer_attr;
+                eprosima::fastdds::rtps::WriterAttributes writer_attr;
                 writer_attr.mode = RTPSWriterPublishMode::ASYNCHRONOUS_WRITER;
                 writer_attr.flow_controller_name = flow_controller_name;
-                eprosima::fastrtps::rtps::RTPSWriter*  writer = eprosima::fastrtps::rtps::RTPSDomain::createRTPSWriter(
+                eprosima::fastdds::rtps::RTPSWriter*  writer = eprosima::fastdds::rtps::RTPSDomain::createRTPSWriter(
                     rtps_participant, writer_attr, history, nullptr);
 
                 /* Register writer in participant */
@@ -876,8 +875,8 @@ public:
     ~CustomReaderDataFilter() = default;
 
     bool is_relevant(
-            const eprosima::fastrtps::rtps::CacheChange_t& change,
-            const eprosima::fastrtps::rtps::GUID_t& reader_guid) const override
+            const eprosima::fastdds::rtps::CacheChange_t& change,
+            const eprosima::fastdds::rtps::GUID_t& reader_guid) const override
     {
         static_cast<void>(reader_guid);
         if (change.sequenceNumber == SequenceNumber_t{0, 3})
@@ -907,7 +906,7 @@ void has_been_fully_delivered_test(
 
     auto data = default_helloworld_data_generator(3);
     // No matched RTPSReaders: sample considered delivered
-    eprosima::fastrtps::rtps::CacheChange_t* change = writer_1.send_sample(data.front());
+    eprosima::fastdds::rtps::CacheChange_t* change = writer_1.send_sample(data.front());
     EXPECT_TRUE(writer_1.has_been_fully_delivered(change->sequenceNumber));
     data.pop_front();
 
@@ -1054,10 +1053,10 @@ TEST(RTPS, participant_ignore_local_endpoints)
         eprosima::fastdds::dds::Log::RegisterConsumer(std::move(log_consumer_unique_ptr));
 
         // Create the RTPSParticipant with the appropriate value for the property
-        eprosima::fastrtps::rtps::RTPSParticipantAttributes patt;
+        eprosima::fastdds::rtps::RTPSParticipantAttributes patt;
         patt.properties.properties().emplace_back("fastdds.ignore_local_endpoints", test_config.property_value);
-        eprosima::fastrtps::rtps::RTPSParticipant* participant =
-                eprosima::fastrtps::rtps::RTPSDomain::createParticipant(static_cast<uint32_t>(GET_PID()) % 230, patt);
+        eprosima::fastdds::rtps::RTPSParticipant* participant =
+                eprosima::fastdds::rtps::RTPSDomain::createParticipant(static_cast<uint32_t>(GET_PID()) % 230, patt);
         ASSERT_NE(participant, nullptr);
 
         /* Procedure */
@@ -1093,7 +1092,7 @@ TEST(RTPS, participant_ignore_local_endpoints)
                     1)), test_config.log_errors);
 
         /* Tear-down */
-        eprosima::fastrtps::rtps::RTPSDomain::removeRTPSParticipant(participant);
+        eprosima::fastdds::rtps::RTPSDomain::removeRTPSParticipant(participant);
         eprosima::fastdds::dds::Log::Reset();
     }
 }
@@ -1112,13 +1111,13 @@ TEST(RTPS, participant_ignore_local_endpoints_two_participants)
 
     /* Set up */
     // Create the RTPSParticipants with the appropriate value for the property
-    eprosima::fastrtps::rtps::RTPSParticipantAttributes patt;
+    eprosima::fastdds::rtps::RTPSParticipantAttributes patt;
     patt.properties.properties().emplace_back("fastdds.ignore_local_endpoints", "true");
-    eprosima::fastrtps::rtps::RTPSParticipant* participant_writer =
-            eprosima::fastrtps::rtps::RTPSDomain::createParticipant(static_cast<uint32_t>(GET_PID()) % 230, patt);
+    eprosima::fastdds::rtps::RTPSParticipant* participant_writer =
+            eprosima::fastdds::rtps::RTPSDomain::createParticipant(static_cast<uint32_t>(GET_PID()) % 230, patt);
     ASSERT_NE(participant_writer, nullptr);
-    eprosima::fastrtps::rtps::RTPSParticipant* participant_reader =
-            eprosima::fastrtps::rtps::RTPSDomain::createParticipant(static_cast<uint32_t>(GET_PID()) % 230, patt);
+    eprosima::fastdds::rtps::RTPSParticipant* participant_reader =
+            eprosima::fastdds::rtps::RTPSDomain::createParticipant(static_cast<uint32_t>(GET_PID()) % 230, patt);
     ASSERT_NE(participant_reader, nullptr);
 
     /* Procedure */
@@ -1150,8 +1149,8 @@ TEST(RTPS, participant_ignore_local_endpoints_two_participants)
     EXPECT_EQ(reader.getReceivedCount(), 5u);
 
     /* Tear-down */
-    eprosima::fastrtps::rtps::RTPSDomain::removeRTPSParticipant(participant_writer);
-    eprosima::fastrtps::rtps::RTPSDomain::removeRTPSParticipant(participant_reader);
+    eprosima::fastdds::rtps::RTPSDomain::removeRTPSParticipant(participant_writer);
+    eprosima::fastdds::rtps::RTPSDomain::removeRTPSParticipant(participant_reader);
 }
 
 /* Maximum number of bytes allowed for an RTPS datagram generated by this participant. */
@@ -1167,19 +1166,19 @@ TEST(RTPS, max_output_message_size_participant)
     auto testTransport =  std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
     const uint32_t segment_size = 1470;
     std::string segment_size_str = std::to_string(segment_size);
-    testTransport->messages_filter_ = [segment_size](eprosima::fastrtps::rtps::CDRMessage_t& datagram)
+    testTransport->messages_filter_ = [segment_size](eprosima::fastdds::rtps::CDRMessage_t& datagram)
             {
                 EXPECT_LE(datagram.length, segment_size);
                 // Never drop samples
                 return false;
             };
 
-    eprosima::fastrtps::rtps::RTPSParticipantAttributes patt;
+    eprosima::fastdds::rtps::RTPSParticipantAttributes patt;
     patt.useBuiltinTransports = false;
     patt.userTransports.push_back(testTransport);
     patt.properties.properties().emplace_back("fastdds.max_message_size", segment_size_str);
-    eprosima::fastrtps::rtps::RTPSParticipant* participant_writer =
-            eprosima::fastrtps::rtps::RTPSDomain::createParticipant(static_cast<uint32_t>(GET_PID()) % 230, patt);
+    eprosima::fastdds::rtps::RTPSParticipant* participant_writer =
+            eprosima::fastdds::rtps::RTPSDomain::createParticipant(static_cast<uint32_t>(GET_PID()) % 230, patt);
     ASSERT_NE(participant_writer, nullptr);
 
     // Create the RTPSWriter
@@ -1205,7 +1204,7 @@ TEST(RTPS, max_output_message_size_participant)
     EXPECT_EQ(reader.getReceivedCount(), 1u);
 
     /* Tear-down */
-    eprosima::fastrtps::rtps::RTPSDomain::removeRTPSParticipant(participant_writer);
+    eprosima::fastdds::rtps::RTPSDomain::removeRTPSParticipant(participant_writer);
 }
 
 /* Maximum number of bytes allowed for an RTPS datagram generated by this writer. */
@@ -1215,7 +1214,7 @@ TEST(RTPS, max_output_message_size_writer)
     std::string segment_size_str = std::to_string(segment_size);
 
     auto testTransport = std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
-    testTransport->messages_filter_ = [segment_size](eprosima::fastrtps::rtps::CDRMessage_t& datagram)
+    testTransport->messages_filter_ = [segment_size](eprosima::fastdds::rtps::CDRMessage_t& datagram)
             {
                 EXPECT_LE(datagram.length, segment_size);
                 // Never drop samples

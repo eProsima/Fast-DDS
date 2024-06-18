@@ -16,8 +16,6 @@
 
 #include <fastdds/rtps/transport/TransportDescriptorInterface.h>
 
-using namespace eprosima::fastdds::rtps;
-
 namespace eprosima {
 namespace fastdds {
 namespace rtps {

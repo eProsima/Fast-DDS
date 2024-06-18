@@ -255,13 +255,13 @@ int main(
     }
 
     // Check that ip matches transport
-    // if (transport == TransportKind::UDPv4 && !eprosima::fastrtps::rtps::IPLocator::isIPv4(listening_address))
+    // if (transport == TransportKind::UDPv4 && !eprosima::fastdds::rtps::IPLocator::isIPv4(listening_address))
     // {
     //     std::cerr << "ERROR: IPv4 is needed to use UDPv4. Wrong IP address: " << listening_address << std::endl;
     //     option::printUsage(fwrite, stdout, usage, columns);
     //     return 1;
     // }
-    // else if (transport == TransportKind::UDPv6 && !eprosima::fastrtps::rtps::IPLocator::isIPv6(listening_address))
+    // else if (transport == TransportKind::UDPv6 && !eprosima::fastdds::rtps::IPLocator::isIPv6(listening_address))
     // {
     //     std::cerr << "ERROR: IPv6 is needed to use UDPv6. Wrong IP address: " << listening_address << std::endl;
     //     option::printUsage(fwrite, stdout, usage, columns);

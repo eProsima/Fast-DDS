@@ -16,7 +16,7 @@
 #define XML_PARSER_COMMON_H_
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace xmlparser {
 
 /**

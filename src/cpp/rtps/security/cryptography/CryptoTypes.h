@@ -41,7 +41,7 @@ const uint8_t SRTPS_POSTFIX = _SRTPS_POSTFIX_;
 const uint8_t SecureBodySubmessage = _SecureBodySubmessage_;
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 namespace security {
 
@@ -80,7 +80,7 @@ enum SecureSubmessageCategory_t : uint8_t
 
 } //namespace security
 } //namespace rtps
-} //namespace fastrtps
+} //namespace fastdds
 } //namespace eprosima
 
 #endif //_FASTDDS_RTPS_SECURITY_CRYPTOGRAPHY_CRYPTOTYPES_H_

@@ -29,7 +29,7 @@ const std::string INTERNAL_PROPERTY_VALUE = "Other Value";
 } // namespace test
 
 
-using namespace eprosima::fastrtps;
+using namespace eprosima::fastdds;
 
 enum communication_type
 {
@@ -88,11 +88,11 @@ public:
 TEST_P(PropertyQos, send_property_qos)
 {
     // Set Properties that will be sent and those that wont
-    eprosima::fastrtps::rtps::PropertyPolicy source_property_policy;
+    eprosima::fastdds::rtps::PropertyPolicy source_property_policy;
 
     // Add external property
     {
-        eprosima::fastrtps::rtps::Property property;
+        eprosima::fastdds::rtps::Property property;
         property.name(test::EXTERNAL_PROPERTY_NAME);
         property.value(test::EXTERNAL_PROPERTY_VALUE);
         property.propagate(true);
@@ -100,7 +100,7 @@ TEST_P(PropertyQos, send_property_qos)
     }
     // Add internal property
     {
-        eprosima::fastrtps::rtps::Property property;
+        eprosima::fastdds::rtps::Property property;
         property.name(test::INTERNAL_PROPERTY_NAME);
         property.value(test::INTERNAL_PROPERTY_VALUE);
         property.propagate(false);

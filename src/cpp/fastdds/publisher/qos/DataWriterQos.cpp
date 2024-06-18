@@ -19,11 +19,12 @@
 
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/core/policy/QosPolicyUtils.hpp>
+namespace eprosima {
+namespace fastdds {
+namespace dds {
 
-using namespace eprosima::fastdds::dds;
-
-const DataWriterQos eprosima::fastdds::dds::DATAWRITER_QOS_DEFAULT;
-const DataWriterQos eprosima::fastdds::dds::DATAWRITER_QOS_USE_TOPIC_QOS;
+const DataWriterQos DATAWRITER_QOS_DEFAULT;
+const DataWriterQos DATAWRITER_QOS_USE_TOPIC_QOS;
 
 DataWriterQos::DataWriterQos()
 {
@@ -64,3 +65,7 @@ WriterQos DataWriterQos::get_writerqos(
 
     return qos;
 }
+
+} // namespace dds
+} // namespace fastdds
+} // namespace eprosima

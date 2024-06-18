@@ -190,7 +190,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BitsetStruct)
     ASSERT_TRUE(data);
 
     bool bool_value = true;
-    eprosima::fastrtps::rtps::octet octet_value = 7;
+    eprosima::fastdds::rtps::octet octet_value = 7;
     int8_t int8_value = 7;
     uint8_t uint8_value = 7;
     int16_t short_value = 2;
@@ -201,7 +201,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BitsetStruct)
     uint64_t ulong_long_value = 1001;
 
     bool test_bool_value = false;
-    eprosima::fastrtps::rtps::octet test_octet_value = 0;
+    eprosima::fastdds::rtps::octet test_octet_value = 0;
     int8_t test_int8_value = 0;
     uint8_t test_uint8_value = 0;
     int16_t test_short_value = 0;

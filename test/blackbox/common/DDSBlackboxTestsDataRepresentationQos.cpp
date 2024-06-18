@@ -32,7 +32,7 @@ public:
 
     bool serialize(
             void* data,
-            eprosima::fastrtps::rtps::SerializedPayload_t* payload,
+            eprosima::fastdds::rtps::SerializedPayload_t* payload,
             DataRepresentationId_t data_representation) override
     {
         last_data_representation = data_representation;
@@ -41,7 +41,7 @@ public:
     }
 
     bool deserialize(
-            eprosima::fastrtps::rtps::SerializedPayload_t* payload,
+            eprosima::fastdds::rtps::SerializedPayload_t* payload,
             void* data) override
     {
         // Object that manages the raw buffer.

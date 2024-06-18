@@ -20,7 +20,7 @@
 #include <tinyxml2.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 namespace security {
 
@@ -31,34 +31,50 @@ struct PermissionsData
 
 class PermissionsParser
 {
-    public:
+public:
 
-        bool parse_stream(const char* stream, size_t stream_length);
+    bool parse_stream(
+            const char* stream,
+            size_t stream_length);
 
-        void swap(PermissionsData& permissions);
+    void swap(
+            PermissionsData& permissions);
 
-    private:
+private:
 
-        bool parse_permissions(tinyxml2::XMLElement* root);
+    bool parse_permissions(
+            tinyxml2::XMLElement* root);
 
-        bool parse_grant(tinyxml2::XMLElement* root, Grant& grant);
+    bool parse_grant(
+            tinyxml2::XMLElement* root,
+            Grant& grant);
 
-        bool parse_validity(tinyxml2::XMLElement* root, Validity& validity);
+    bool parse_validity(
+            tinyxml2::XMLElement* root,
+            Validity& validity);
 
-        bool parse_rule(tinyxml2::XMLElement* root, Rule& rule);
+    bool parse_rule(
+            tinyxml2::XMLElement* root,
+            Rule& rule);
 
-        bool parse_criteria(tinyxml2::XMLElement* root, Criteria& criteria);
+    bool parse_criteria(
+            tinyxml2::XMLElement* root,
+            Criteria& criteria);
 
-        bool parse_topic(tinyxml2::XMLElement* root, std::vector<std::string>& topics);
+    bool parse_topic(
+            tinyxml2::XMLElement* root,
+            std::vector<std::string>& topics);
 
-        bool parse_partition(tinyxml2::XMLElement* root, std::vector<std::string>& partitions);
+    bool parse_partition(
+            tinyxml2::XMLElement* root,
+            std::vector<std::string>& partitions);
 
-        PermissionsData permissions_;
+    PermissionsData permissions_;
 };
 
-}
-}
-}
-}
+} // namespace security
+} // namespace rtps
+} // namespace fastdds
+} // namespace eprosima
 
 #endif // __SECURITY_ACCESSCONTROL_PERMISSIONSPARSER_H__

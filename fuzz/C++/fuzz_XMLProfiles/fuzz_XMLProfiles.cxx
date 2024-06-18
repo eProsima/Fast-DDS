@@ -3,7 +3,7 @@
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 
 using namespace eprosima;
-using namespace eprosima::fastrtps;
+using namespace eprosima::fastdds;
 
 static bool initialized = false;
 

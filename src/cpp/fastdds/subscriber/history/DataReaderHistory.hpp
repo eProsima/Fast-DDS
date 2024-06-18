@@ -57,15 +57,15 @@ namespace detail {
 /**
  * Class DataReaderHistory, container of the different CacheChanges of a DataReader
  */
-class DataReaderHistory : public eprosima::fastrtps::rtps::ReaderHistory
+class DataReaderHistory : public eprosima::fastdds::rtps::ReaderHistory
 {
 public:
 
-    using MemoryManagementPolicy_t = eprosima::fastrtps::rtps::MemoryManagementPolicy_t;
-    using InstanceHandle_t = eprosima::fastrtps::rtps::InstanceHandle_t;
-    using CacheChange_t = eprosima::fastrtps::rtps::CacheChange_t;
-    using GUID_t = eprosima::fastrtps::rtps::GUID_t;
-    using SequenceNumber_t = eprosima::fastrtps::rtps::SequenceNumber_t;
+    using MemoryManagementPolicy_t = eprosima::fastdds::rtps::MemoryManagementPolicy_t;
+    using InstanceHandle_t = eprosima::fastdds::rtps::InstanceHandle_t;
+    using CacheChange_t = eprosima::fastdds::rtps::CacheChange_t;
+    using GUID_t = eprosima::fastdds::rtps::GUID_t;
+    using SequenceNumber_t = eprosima::fastdds::rtps::SequenceNumber_t;
 
     using InstanceCollection = std::map<InstanceHandle_t, std::shared_ptr<DataReaderInstance>>;
     using instance_info = InstanceCollection::iterator;
@@ -350,7 +350,7 @@ public:
             CacheChange_t* const change);
 
     void writer_not_alive(
-            const fastrtps::rtps::GUID_t& writer_guid);
+            const fastdds::rtps::GUID_t& writer_guid);
 
     void check_and_remove_instance(
             instance_info& instance_info);
@@ -370,9 +370,9 @@ public:
 private:
 
     //!Resource limits for allocating the array of changes per instance
-    eprosima::fastrtps::ResourceLimitedContainerConfig key_changes_allocation_;
+    eprosima::fastdds::ResourceLimitedContainerConfig key_changes_allocation_;
     //!Resource limits for allocating the array of alive writers per instance
-    eprosima::fastrtps::ResourceLimitedContainerConfig key_writers_allocation_;
+    eprosima::fastdds::ResourceLimitedContainerConfig key_writers_allocation_;
     //!Collection of DataReaderInstance objects accessible by their handle
     InstanceCollection instances_;
     //!Collection of DataReaderInstance objects with available data, accessible by their handle

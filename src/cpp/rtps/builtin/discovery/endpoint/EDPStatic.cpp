@@ -36,7 +36,7 @@
 #include <xmlparser/XMLEndpointParser.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 const char* exchange_format_property_name = "dds.discovery.static_edp.exchange_format";
@@ -620,5 +620,5 @@ bool EDPStatic::checkEntityId(
 }
 
 } /* namespace rtps */
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */

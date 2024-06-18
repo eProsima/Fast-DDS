@@ -30,7 +30,7 @@
 #include <fastdds/dds/core/policy/ParameterTypes.hpp>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 bool CDRMessage::initCDRMsg(
@@ -1262,7 +1262,7 @@ bool CDRMessage::skip(
 }
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */

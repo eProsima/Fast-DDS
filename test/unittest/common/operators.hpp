@@ -18,7 +18,7 @@
 #include <fastdds/rtps/common/SequenceNumber.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 // Make SequenceNumberSet_t compatible with GMock macros
@@ -73,5 +73,5 @@ bool operator ==(
 }
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima

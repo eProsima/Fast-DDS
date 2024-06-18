@@ -27,7 +27,7 @@
 #include <fastdds/rtps/history/WriterHistory.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 std::vector<CacheChange_t*>& IPersistenceService::get_changes(
@@ -81,5 +81,5 @@ IPersistenceService* PersistenceFactory::create_persistence_service(
 }
 
 } /* namespace rtps */
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */

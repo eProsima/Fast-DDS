@@ -34,7 +34,7 @@ class PDPServer;
  * This class is implemented in order to use the same structure than with any other RTPSReader.
  *@ingroup DISCOVERY_MODULE
  */
-class PDPServerListener : public fastrtps::rtps::PDPListener
+class PDPServerListener : public fastdds::rtps::PDPListener
 {
 public:
 
@@ -56,8 +56,8 @@ public:
      * @param change
      */
     void on_new_cache_change_added(
-            fastrtps::rtps::RTPSReader* reader,
-            const fastrtps::rtps::CacheChange_t* const change) override;
+            fastdds::rtps::RTPSReader* reader,
+            const fastdds::rtps::CacheChange_t* const change) override;
 
 protected:
 
@@ -70,7 +70,7 @@ protected:
      * The second one indicates if the remote participant data is a client.
      */
     std::pair<bool, bool> check_server_discovery_conditions(
-            fastrtps::rtps::ParticipantProxyData& participant_data);
+            fastdds::rtps::ParticipantProxyData& participant_data);
 };
 
 

@@ -19,7 +19,7 @@
 #include <rtps/transport/shared_mem/SHMLocator.hpp>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 /**
@@ -66,7 +66,7 @@ public:
 };
 
 } /* namespace rtps */
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */
 
 #endif // _FASTDDS_RTPS_BUILTIN_DATA_PROXYDATAFILTERS_H_

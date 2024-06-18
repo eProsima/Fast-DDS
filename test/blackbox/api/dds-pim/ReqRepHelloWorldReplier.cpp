@@ -48,8 +48,8 @@ ReqRepHelloWorldReplier::ReqRepHelloWorldReplier()
     , matched_(0)
 {
     // By default, memory mode is PREALLOCATED_WITH_REALLOC_MEMORY_MODE
-    datareader_qos_.endpoint().history_memory_policy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
-    datawriter_qos_.endpoint().history_memory_policy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+    datareader_qos_.endpoint().history_memory_policy = eprosima::fastdds::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+    datawriter_qos_.endpoint().history_memory_policy = eprosima::fastdds::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 
     datawriter_qos_.reliable_writer_qos().times.heartbeatPeriod.seconds = 1;
     datawriter_qos_.reliable_writer_qos().times.heartbeatPeriod.nanosec = 0;
@@ -150,10 +150,10 @@ void ReqRepHelloWorldReplier::init()
 }
 
 void ReqRepHelloWorldReplier::newNumber(
-        eprosima::fastrtps::rtps::SampleIdentity sample_identity,
+        eprosima::fastdds::rtps::SampleIdentity sample_identity,
         uint16_t number)
 {
-    eprosima::fastrtps::rtps::WriteParams wparams;
+    eprosima::fastdds::rtps::WriteParams wparams;
     HelloWorld hello;
     hello.index(number);
     hello.message("GoodBye");

@@ -25,7 +25,7 @@
 #include <type_traits>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 
 /**
  * A queue with a preallocated fixed size.
@@ -684,7 +684,7 @@ protected:
 
 };
 
-}  // namespace fastrtps
+}  // namespace fastdds
 }  // namespace eprosima
 
 #endif /* FASTDDS_UTILS_COLLECTIONS_FIXEDSIZEQUEUE_HPP_ */

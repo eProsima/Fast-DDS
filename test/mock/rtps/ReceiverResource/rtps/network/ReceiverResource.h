@@ -23,7 +23,7 @@
 #include <fastdds/rtps/transport/TransportInterface.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class RTPSWriter;
@@ -139,7 +139,7 @@ private:
 };
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 #endif // ifndef _FASTDDS_RTPS_RECEIVER_RESOURCE_H

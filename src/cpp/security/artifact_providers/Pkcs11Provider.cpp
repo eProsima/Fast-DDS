@@ -34,7 +34,7 @@
 
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 namespace security {
 namespace detail {
@@ -167,5 +167,5 @@ EVP_PKEY* Pkcs11Provider::load_private_key(
 } // namespace detail
 } // namespace security
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima

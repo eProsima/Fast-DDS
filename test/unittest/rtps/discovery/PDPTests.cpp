@@ -52,7 +52,7 @@
 #endif // if defined(_WIN32)
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 using ::testing::Return;
@@ -62,48 +62,48 @@ class TesterPDPEndpoints : public fastdds::rtps::PDPEndpoints
 {
     ~TesterPDPEndpoints() override = default;
 
-    fastrtps::rtps::BuiltinEndpointSet_t builtin_endpoints() const override
+    fastdds::rtps::BuiltinEndpointSet_t builtin_endpoints() const override
     {
         return fastdds::rtps::DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER |
                fastdds::rtps::DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR;
     }
 
-    const std::unique_ptr<fastrtps::rtps::ReaderListener>& main_listener() const override
+    const std::unique_ptr<fastdds::rtps::ReaderListener>& main_listener() const override
     {
         return no_listener_;
     }
 
     bool enable_pdp_readers(
-            fastrtps::rtps::RTPSParticipantImpl*) override
+            fastdds::rtps::RTPSParticipantImpl*) override
     {
         return true;
     }
 
     void disable_pdp_readers(
-            fastrtps::rtps::RTPSParticipantImpl*) override
+            fastdds::rtps::RTPSParticipantImpl*) override
     {
 
     }
 
     void delete_pdp_endpoints(
-            fastrtps::rtps::RTPSParticipantImpl* ) override
+            fastdds::rtps::RTPSParticipantImpl* ) override
     {
 
     }
 
     void remove_from_pdp_reader_history(
-            const fastrtps::rtps::InstanceHandle_t&) override
+            const fastdds::rtps::InstanceHandle_t&) override
     {
 
     }
 
     void remove_from_pdp_reader_history(
-            fastrtps::rtps::CacheChange_t*) override
+            fastdds::rtps::CacheChange_t*) override
     {
 
     }
 
-    std::unique_ptr<fastrtps::rtps::ReaderListener> no_listener_;
+    std::unique_ptr<fastdds::rtps::ReaderListener> no_listener_;
 
 };
 
@@ -259,7 +259,7 @@ public:
 
     void on_participant_discovery(
             fastdds::dds::DomainParticipant* participant,
-            fastrtps::rtps::ParticipantDiscoveryInfo&& /*info*/,
+            fastdds::rtps::ParticipantDiscoveryInfo&& /*info*/,
             bool& /*should_be_ignored*/) override
     {
         if (std::find(p_matched_.begin(), p_matched_.end(), participant->guid()) == p_matched_.end())
@@ -273,7 +273,7 @@ public:
 
 private:
 
-    std::vector<fastrtps::rtps::GUID_t> p_matched_;
+    std::vector<fastdds::rtps::GUID_t> p_matched_;
 };
 
 class PDPTests : public ::testing::Test
@@ -432,7 +432,7 @@ TEST_F(PDPTests, iproxy_queryable_get_serialized_proxy)
 }
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 int main(

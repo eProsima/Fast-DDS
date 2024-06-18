@@ -28,8 +28,8 @@
 #include "RTPSWithRegistrationReader.hpp"
 #include "RTPSWithRegistrationWriter.hpp"
 
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds;
+using namespace eprosima::fastdds::rtps;
 
 //#define cout "Use Log instead!"
 
@@ -65,7 +65,7 @@ public:
         // datasharing are only tested when required.
         eprosima::fastdds::LibrarySettings att;
         att.intraprocess_delivery = eprosima::fastdds::INTRAPROCESS_OFF;
-        eprosima::fastrtps::rtps::RTPSDomain::set_library_settings(att);
+        eprosima::fastdds::rtps::RTPSDomain::set_library_settings(att);
         //enable_datasharing = false;
 
         //Log::SetVerbosity(eprosima::fastdds::dds::Log::Info);
@@ -76,7 +76,7 @@ public:
     {
         //Log::Reset();
         eprosima::fastdds::dds::Log::KillThread();
-        eprosima::fastrtps::rtps::RTPSDomain::stopAll();
+        eprosima::fastdds::rtps::RTPSDomain::stopAll();
     }
 
 };

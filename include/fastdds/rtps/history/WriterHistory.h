@@ -24,7 +24,7 @@
 #include <fastdds/dds/log/Log.hpp>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class RTPSWriter;
@@ -251,7 +251,7 @@ private:
 };
 
 } // namespace rtps
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */
 
 #endif /* _FASTDDS_RTPS_WRITERHISTORY_H_ */

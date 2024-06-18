@@ -28,7 +28,7 @@
 #include <iomanip>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 //!@brief Structure GuidPrefix_t, Guid Prefix of GUID_t.
@@ -209,7 +209,7 @@ inline std::istream& operator >>(
 }
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 #endif /* _FASTDDS_RTPS_COMMON_GUIDPREFIX_T_HPP_ */

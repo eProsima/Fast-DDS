@@ -24,7 +24,7 @@
 TEST(RTPSDomainTests, library_settings_test)
 {
     eprosima::fastdds::LibrarySettings library_settings;
-    EXPECT_TRUE(eprosima::fastrtps::rtps::RTPSDomain::get_library_settings(library_settings));
+    EXPECT_TRUE(eprosima::fastdds::rtps::RTPSDomain::get_library_settings(library_settings));
     // Get LibrarySettings default values
 #if HAVE_STRICT_REALTIME
     EXPECT_EQ(eprosima::fastdds::INTRAPROCESS_OFF, library_settings.intraprocess_delivery);
@@ -33,27 +33,27 @@ TEST(RTPSDomainTests, library_settings_test)
 #endif // if HAVE_STRICT_REALTIME
     library_settings.intraprocess_delivery = eprosima::fastdds::INTRAPROCESS_USER_DATA_ONLY;
     // Setting the library settings within an empty RTPSDomain shall return true
-    EXPECT_TRUE(eprosima::fastrtps::rtps::RTPSDomain::set_library_settings(library_settings));
-    EXPECT_TRUE(eprosima::fastrtps::rtps::RTPSDomain::get_library_settings(library_settings));
+    EXPECT_TRUE(eprosima::fastdds::rtps::RTPSDomain::set_library_settings(library_settings));
+    EXPECT_TRUE(eprosima::fastdds::rtps::RTPSDomain::get_library_settings(library_settings));
     EXPECT_EQ(eprosima::fastdds::INTRAPROCESS_USER_DATA_ONLY, library_settings.intraprocess_delivery);
     // Create RTPSParticipant
-    eprosima::fastrtps::rtps::RTPSParticipantAttributes part_attr;
-    eprosima::fastrtps::rtps::RTPSParticipant* participant =
-            eprosima::fastrtps::rtps::RTPSDomain::createParticipant(0, part_attr);
+    eprosima::fastdds::rtps::RTPSParticipantAttributes part_attr;
+    eprosima::fastdds::rtps::RTPSParticipant* participant =
+            eprosima::fastdds::rtps::RTPSDomain::createParticipant(0, part_attr);
     ASSERT_NE(nullptr, participant);
     library_settings.intraprocess_delivery = eprosima::fastdds::INTRAPROCESS_OFF;
     // Setting LibrarySettings with any RTPSParticipant shall fail
-    EXPECT_FALSE(eprosima::fastrtps::rtps::RTPSDomain::set_library_settings(library_settings));
-    EXPECT_TRUE(eprosima::fastrtps::rtps::RTPSDomain::get_library_settings(library_settings));
+    EXPECT_FALSE(eprosima::fastdds::rtps::RTPSDomain::set_library_settings(library_settings));
+    EXPECT_TRUE(eprosima::fastdds::rtps::RTPSDomain::get_library_settings(library_settings));
     EXPECT_EQ(eprosima::fastdds::INTRAPROCESS_USER_DATA_ONLY, library_settings.intraprocess_delivery);
     // Remove RTPSParticipant
-    EXPECT_TRUE(eprosima::fastrtps::rtps::RTPSDomain::removeRTPSParticipant(participant));
+    EXPECT_TRUE(eprosima::fastdds::rtps::RTPSDomain::removeRTPSParticipant(participant));
     library_settings.intraprocess_delivery = eprosima::fastdds::INTRAPROCESS_OFF;
     // Setting LibrarySettings with no participants shall suceed
-    EXPECT_TRUE(eprosima::fastrtps::rtps::RTPSDomain::set_library_settings(library_settings));
-    EXPECT_TRUE(eprosima::fastrtps::rtps::RTPSDomain::get_library_settings(library_settings));
+    EXPECT_TRUE(eprosima::fastdds::rtps::RTPSDomain::set_library_settings(library_settings));
+    EXPECT_TRUE(eprosima::fastdds::rtps::RTPSDomain::get_library_settings(library_settings));
     EXPECT_EQ(eprosima::fastdds::INTRAPROCESS_OFF, library_settings.intraprocess_delivery);
-    eprosima::fastrtps::rtps::RTPSDomain::stopAll();
+    eprosima::fastdds::rtps::RTPSDomain::stopAll();
 }
 
 /**
@@ -62,8 +62,8 @@ TEST(RTPSDomainTests, library_settings_test)
 TEST(RTPSDomainTests, get_topic_attributes_from_profile_test)
 {
     std::string profile_name = "test_profile_name";
-    eprosima::fastrtps::TopicAttributes topic_att;
-    EXPECT_FALSE(eprosima::fastrtps::rtps::RTPSDomain::get_topic_attributes_from_profile(profile_name, topic_att));
+    eprosima::fastdds::TopicAttributes topic_att;
+    EXPECT_FALSE(eprosima::fastdds::rtps::RTPSDomain::get_topic_attributes_from_profile(profile_name, topic_att));
 
     const std::string xml =
             R"(<profiles>
@@ -86,7 +86,7 @@ TEST(RTPSDomainTests, get_topic_attributes_from_profile_test)
 
     EXPECT_EQ(eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->load_XML_profiles_string(xml.c_str(),
             xml.length()), eprosima::fastdds::dds::RETCODE_OK);
-    EXPECT_TRUE(eprosima::fastrtps::rtps::RTPSDomain::get_topic_attributes_from_profile(profile_name, topic_att));
+    EXPECT_TRUE(eprosima::fastdds::rtps::RTPSDomain::get_topic_attributes_from_profile(profile_name, topic_att));
     EXPECT_EQ(topic_att.topicName, "Test");
     EXPECT_EQ(topic_att.topicDataType, "DataTest");
     EXPECT_EQ(topic_att.historyQos.kind, eprosima::fastdds::dds::HistoryQosPolicyKind::KEEP_LAST_HISTORY_QOS);

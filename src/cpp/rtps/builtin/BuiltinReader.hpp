@@ -46,7 +46,7 @@ struct BuiltinReader
     {
         if (history_)
         {
-            auto cfg = fastrtps::rtps::PoolConfig::from_history_attributes(history_->m_att);
+            auto cfg = fastdds::rtps::PoolConfig::from_history_attributes(history_->m_att);
             history_.reset();
             if (payload_pool_)
             {
@@ -58,7 +58,7 @@ struct BuiltinReader
     }
 
     void remove_from_history(
-            const fastrtps::rtps::InstanceHandle_t& key)
+            const fastdds::rtps::InstanceHandle_t& key)
     {
         history_->getMutex()->lock();
         for (auto it = history_->changesBegin(); it != history_->changesEnd(); ++it)
@@ -73,13 +73,13 @@ struct BuiltinReader
     }
 
     //! Payload pool for the topic
-    std::shared_ptr<fastrtps::rtps::ITopicPayloadPool> payload_pool_;
+    std::shared_ptr<fastdds::rtps::ITopicPayloadPool> payload_pool_;
     //! History for the builtin reader
-    std::unique_ptr<fastrtps::rtps::ReaderHistory> history_;
+    std::unique_ptr<fastdds::rtps::ReaderHistory> history_;
     //! Builtin RTPS reader
     TReader* reader_ = nullptr;
     //! Listener for the builtin RTPS reader
-    std::unique_ptr<fastrtps::rtps::ReaderListener> listener_;
+    std::unique_ptr<fastdds::rtps::ReaderListener> listener_;
 };
 
 } // namespace rtps

@@ -156,7 +156,7 @@ bool DDSFilterField::set_value_using_member_id(
 
         case eprosima::fastdds::dds::xtypes::TK_BYTE:
         {
-            fastrtps::rtps::octet byte {0};
+            fastdds::rtps::octet byte {0};
             ret = RETCODE_OK == data->get_byte_value(byte, member_id);
             unsigned_integer_value = byte;
         }

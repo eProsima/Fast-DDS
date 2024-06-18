@@ -25,7 +25,7 @@
 #include <string>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 namespace security {
 
@@ -65,7 +65,7 @@ typedef HandleImpl<PKIHandshake, PKIDH> PKIHandshakeHandle;
 
 } //namespace security
 } //namespace rtps
-} //namespace fastrtps
+} //namespace fastdds
 } //namespace eprosima
 
 #endif // _SECURITY_AUTHENTICATION_PKIHANDSHAKEHANDLE_H_

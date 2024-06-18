@@ -38,7 +38,7 @@ struct IProxyObserver;
 } // namespace statistics
 } // namespace fastdds
 
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class PDP
@@ -123,7 +123,7 @@ public:
 };
 
 } //namespace rtps
-} //namespace fastrtps
+} //namespace fastdds
 } //namespace eprosima
 
 #endif // _FASTDDS_RTPS_BUILTIN_DISCOVERY_PARTICIPANT_PDP_H_

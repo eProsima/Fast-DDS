@@ -35,7 +35,7 @@
 #include <fastdds/statistics/rtps/StatisticsCommon.hpp>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 // Forward declarations
@@ -162,7 +162,7 @@ public:
      * @return true if there is an unread CacheChange_t in the history.
      */
     FASTDDS_EXPORTED_API virtual bool wait_for_unread_cache(
-            const eprosima::fastrtps::Duration_t& timeout) = 0;
+            const eprosima::fastdds::Duration_t& timeout) = 0;
 
     /**
      * Get the number of unread CacheChange_t in the history.
@@ -254,8 +254,8 @@ private:
 
 };
 
-}  // namespace rtps
-}  // namespace fastrtps
-}  // namespace eprosima
+} /* namespace rtps */
+} /* namespace fastdds */
+} /* namespace eprosima */
 
 #endif /* _FASTDDS_RTPS_READER_RTPSREADER_H_ */

@@ -32,7 +32,6 @@
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;
-using namespace eprosima::fastrtps::rtps;
 
 ParticipantModule::ParticipantModule(
         const std::string& discovery_protocol,
@@ -41,18 +40,18 @@ ParticipantModule::ParticipantModule(
 {
     if (discovery_protocol.compare(ParticipantType::SERVER) == 0)
     {
-        discovery_protocol_ = DiscoveryProtocol_t::SERVER;
+        discovery_protocol_ = DiscoveryProtocol::SERVER;
         std::istringstream server_guid_prefix_str(guid_prefix);
         server_guid_prefix_str >> server_guid_prefix_;
         unicast_metatraffic_port_ = atoi(unicast_metatraffic_port.c_str());
     }
     else if (discovery_protocol.compare(ParticipantType::CLIENT) == 0)
     {
-        discovery_protocol_ = DiscoveryProtocol_t::CLIENT;
+        discovery_protocol_ = DiscoveryProtocol::CLIENT;
     }
     else
     {
-        discovery_protocol_ = DiscoveryProtocol_t::SIMPLE;
+        discovery_protocol_ = DiscoveryProtocol::SIMPLE;
     }
 }
 
@@ -68,7 +67,7 @@ bool ParticipantModule::init()
 {
     DomainParticipantQos participant_qos;
     participant_qos.wire_protocol().builtin.discovery_config.discoveryProtocol = discovery_protocol_;
-    if (DiscoveryProtocol_t::SERVER == discovery_protocol_)
+    if (DiscoveryProtocol::SERVER == discovery_protocol_)
     {
         participant_qos.wire_protocol().prefix = server_guid_prefix_;
         Locator_t locator_server;

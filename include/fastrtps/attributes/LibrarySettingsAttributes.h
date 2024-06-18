@@ -21,7 +21,7 @@
 #define LIBRARYSETTINGS_ATTRIBUTES_H_
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 
 enum IntraprocessDeliveryType
 {
@@ -31,8 +31,8 @@ enum IntraprocessDeliveryType
 };
 
 /**
- * Class LibraySettingsAttributes, used by the user to define the FastRTPS library behaviour
- * @ingroup FASTRTPS_ATTRIBUTES_MODULE
+ * Class LibraySettingsAttributes, used by the user to define the Fast DDS library behaviour
+ * @ingroup FASTDDS_ATTRIBUTES_MODULE
  */
 class LibrarySettingsAttributes
 {
@@ -60,7 +60,7 @@ public:
 #endif // if HAVE_STRICT_REALTIME
 };
 
-}  // namespace fastrtps
+}  // namespace fastdds
 }  // namespace eprosima
 
 #endif /* LIBRARYSETTINGS_ATTRIBUTES_H_ */

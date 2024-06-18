@@ -23,7 +23,7 @@
 #include "HelloWorldSubscriber.h"
 
 using namespace eprosima;
-using namespace fastrtps;
+using namespace fastdds;
 using namespace rtps;
 using namespace eprosima::fastdds::dds;
 

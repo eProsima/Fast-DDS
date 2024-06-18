@@ -24,7 +24,7 @@
 #include <rtps/history/PoolConfig.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class DataSharingPayloadPool : public IPayloadPool
@@ -162,7 +162,7 @@ protected:
 
 
 }  // namespace rtps
-}  // namespace fastrtps
+}  // namespace fastdds
 }  // namespace eprosima
 
 #endif  // RTPS_HISTORY_DATASHARINGPAYLOADPOOL_HPP

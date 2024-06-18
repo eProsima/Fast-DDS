@@ -7,7 +7,7 @@
 #include <vector>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace xmlparser {
 
 enum class NodeType
@@ -215,6 +215,6 @@ const std::map<std::string, std::string>& DataNode<T>::getAttributes()
 }
 
 } // namespace xmlparser
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 #endif // !_XML_TREE_

@@ -28,7 +28,7 @@
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds::rtps;
 
 FlowControlExamplePublisher::FlowControlExamplePublisher()
     : participant_(nullptr)
@@ -70,7 +70,7 @@ bool FlowControlExamplePublisher::init()
 {
     // Create Participant
     DomainParticipantQos pqos;
-    pqos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastrtps::c_TimeInfinite;
+    pqos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastdds::c_TimeInfinite;
     pqos.name("Participant_publisher");  //You can put here the name you want
 
     // This controller allows 300kb per second.

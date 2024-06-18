@@ -52,7 +52,7 @@ public:
 
     bool serialize(
             void* data,
-            eprosima::fastrtps::rtps::SerializedPayload_t* payload)
+            eprosima::fastdds::rtps::SerializedPayload_t* payload)
     {
         DummyType* sample = reinterpret_cast<DummyType*>(data);
         // Object that manages the raw buffer.
@@ -70,7 +70,7 @@ public:
     }
 
     bool deserialize(
-            eprosima::fastrtps::rtps::SerializedPayload_t* payload,
+            eprosima::fastdds::rtps::SerializedPayload_t* payload,
             void* data)
     {
         DummyType* sample = reinterpret_cast<DummyType*>(data);
@@ -101,7 +101,7 @@ public:
 
     bool getKey(
             void*,
-            eprosima::fastrtps::rtps::InstanceHandle_t*,
+            eprosima::fastdds::rtps::InstanceHandle_t*,
             bool)
     {
         return false;
@@ -226,17 +226,17 @@ TEST_F(UserThreadNonBlockedTest, remove_previous_sample_on_history)
     datawriter_->write(reinterpret_cast<void*>(&sample));
 
     // Record the mutexes.
-    eprosima::fastrtps::tmutex_start_recording();
+    eprosima::fastdds::tmutex_start_recording();
 
     datawriter_->write(reinterpret_cast<void*>(&sample));
 
-    eprosima::fastrtps::tmutex_stop_recording();
+    eprosima::fastdds::tmutex_stop_recording();
 
-    for (size_t count = 0; count < eprosima::fastrtps::tmutex_get_num_mutexes(); ++count)
+    for (size_t count = 0; count < eprosima::fastdds::tmutex_get_num_mutexes(); ++count)
     {
         std::cout << "Testing mutex " << count << std::endl;
         // Start testing locking the mutexes.
-        if (eprosima::fastrtps::tmutex_lock_mutex(count))
+        if (eprosima::fastdds::tmutex_lock_mutex(count))
         {
             std::promise<std::pair<bool, std::chrono::microseconds>> promise;
             std::future<std::pair<bool, std::chrono::microseconds>> future = promise.get_future();
@@ -253,12 +253,12 @@ TEST_F(UserThreadNonBlockedTest, remove_previous_sample_on_history)
             // If main mutex cannot be taken, the write fails.
             // But for the rest the information is stored and it is as if the samples was sent.
             ASSERT_EQ(count <= 3 ? false : true, returned_value.first);
-            std::chrono::microseconds max_w(eprosima::fastrtps::rtps::TimeConv::Time_t2MicroSecondsInt64(
+            std::chrono::microseconds max_w(eprosima::fastdds::rtps::TimeConv::Time_t2MicroSecondsInt64(
                         datawriter_qos_.reliability().max_blocking_time));
             ASSERT_GE(returned_value.second, max_w);
             ASSERT_LE(returned_value.second - max_w, std::chrono::milliseconds(1));
 
-            eprosima::fastrtps::tmutex_unlock_mutex(count);
+            eprosima::fastdds::tmutex_unlock_mutex(count);
         }
         else
         {
@@ -266,9 +266,9 @@ TEST_F(UserThreadNonBlockedTest, remove_previous_sample_on_history)
         }
     }
 
-    ASSERT_EQ(5, eprosima::fastrtps::tmutex_get_num_mutexes());
-    ASSERT_EQ(0, eprosima::fastrtps::tmutex_get_num_lock_type());
-    ASSERT_EQ(5, eprosima::fastrtps::tmutex_get_num_timedlock_type());
+    ASSERT_EQ(5, eprosima::fastdds::tmutex_get_num_mutexes());
+    ASSERT_EQ(0, eprosima::fastdds::tmutex_get_num_lock_type());
+    ASSERT_EQ(5, eprosima::fastdds::tmutex_get_num_timedlock_type());
 }
 
 /*!
@@ -284,17 +284,17 @@ TEST_F(UserThreadNonBlockedTest, write_sample_besteffort)
     DummyType sample{1};
 
     // Record the mutexes.
-    eprosima::fastrtps::tmutex_start_recording();
+    eprosima::fastdds::tmutex_start_recording();
 
     datawriter_->write(reinterpret_cast<void*>(&sample));
 
-    eprosima::fastrtps::tmutex_stop_recording();
+    eprosima::fastdds::tmutex_stop_recording();
 
-    for (size_t count = 0; count < eprosima::fastrtps::tmutex_get_num_mutexes(); ++count)
+    for (size_t count = 0; count < eprosima::fastdds::tmutex_get_num_mutexes(); ++count)
     {
         std::cout << "Testing mutex " << count << std::endl;
         // Start testing locking the mutexes.
-        if (eprosima::fastrtps::tmutex_lock_mutex(count))
+        if (eprosima::fastdds::tmutex_lock_mutex(count))
         {
             std::promise<std::pair<bool, std::chrono::microseconds>> promise;
             std::future<std::pair<bool, std::chrono::microseconds>> future = promise.get_future();
@@ -311,12 +311,12 @@ TEST_F(UserThreadNonBlockedTest, write_sample_besteffort)
             // If main mutex cannot be taken, the write fails.
             // But for the rest the information is stored and it is as if the samples was sent.
             ASSERT_EQ(count == 0 ? false : true, returned_value.first);
-            std::chrono::microseconds max_w(eprosima::fastrtps::rtps::TimeConv::Time_t2MicroSecondsInt64(
+            std::chrono::microseconds max_w(eprosima::fastdds::rtps::TimeConv::Time_t2MicroSecondsInt64(
                         datawriter_qos_.reliability().max_blocking_time));
             ASSERT_GE(returned_value.second, max_w);
             ASSERT_LE(returned_value.second - max_w, std::chrono::milliseconds(1));
 
-            eprosima::fastrtps::tmutex_unlock_mutex(count);
+            eprosima::fastdds::tmutex_unlock_mutex(count);
         }
         else
         {
@@ -324,9 +324,9 @@ TEST_F(UserThreadNonBlockedTest, write_sample_besteffort)
         }
     }
 
-    ASSERT_EQ(2, eprosima::fastrtps::tmutex_get_num_mutexes());
-    ASSERT_EQ(0, eprosima::fastrtps::tmutex_get_num_lock_type());
-    ASSERT_EQ(2, eprosima::fastrtps::tmutex_get_num_timedlock_type());
+    ASSERT_EQ(2, eprosima::fastdds::tmutex_get_num_mutexes());
+    ASSERT_EQ(0, eprosima::fastdds::tmutex_get_num_lock_type());
+    ASSERT_EQ(2, eprosima::fastdds::tmutex_get_num_timedlock_type());
 }
 
 /*!
@@ -342,17 +342,17 @@ TEST_F(UserThreadNonBlockedTest, write_sample_reliable)
     DummyType sample{1};
 
     // Record the mutexes.
-    eprosima::fastrtps::tmutex_start_recording();
+    eprosima::fastdds::tmutex_start_recording();
 
     datawriter_->write(reinterpret_cast<void*>(&sample));
 
-    eprosima::fastrtps::tmutex_stop_recording();
+    eprosima::fastdds::tmutex_stop_recording();
 
     for (size_t count = 0; count < 2; ++count)
     {
         std::cout << "Testing mutex " << count << std::endl;
         // Start testing locking the mutexes.
-        if (eprosima::fastrtps::tmutex_lock_mutex(count))
+        if (eprosima::fastdds::tmutex_lock_mutex(count))
         {
             std::promise<std::pair<bool, std::chrono::microseconds>> promise;
             std::future<std::pair<bool, std::chrono::microseconds>> future = promise.get_future();
@@ -369,12 +369,12 @@ TEST_F(UserThreadNonBlockedTest, write_sample_reliable)
             // If main mutex cannot be taken, the write fails.
             // But for the rest the information is stored and it is as if the samples was sent.
             ASSERT_EQ(count == 0 ? false : true, returned_value.first);
-            std::chrono::microseconds max_w(eprosima::fastrtps::rtps::TimeConv::Time_t2MicroSecondsInt64(
+            std::chrono::microseconds max_w(eprosima::fastdds::rtps::TimeConv::Time_t2MicroSecondsInt64(
                         datawriter_qos_.reliability().max_blocking_time));
             ASSERT_GE(returned_value.second, max_w);
             ASSERT_LE(returned_value.second - max_w, std::chrono::milliseconds(1));
 
-            eprosima::fastrtps::tmutex_unlock_mutex(count);
+            eprosima::fastdds::tmutex_unlock_mutex(count);
         }
         else
         {
@@ -382,9 +382,9 @@ TEST_F(UserThreadNonBlockedTest, write_sample_reliable)
         }
     }
 
-    ASSERT_EQ(3, eprosima::fastrtps::tmutex_get_num_mutexes());
-    ASSERT_EQ(0, eprosima::fastrtps::tmutex_get_num_lock_type());
-    ASSERT_EQ(3, eprosima::fastrtps::tmutex_get_num_timedlock_type());
+    ASSERT_EQ(3, eprosima::fastdds::tmutex_get_num_mutexes());
+    ASSERT_EQ(0, eprosima::fastdds::tmutex_get_num_lock_type());
+    ASSERT_EQ(3, eprosima::fastdds::tmutex_get_num_timedlock_type());
 }
 
 /*!
@@ -401,17 +401,17 @@ TEST_F(UserThreadNonBlockedTest, write_async_sample_besteffort)
     DummyType sample{1};
 
     // Record the mutexes.
-    eprosima::fastrtps::tmutex_start_recording();
+    eprosima::fastdds::tmutex_start_recording();
 
     datawriter_->write(reinterpret_cast<void*>(&sample));
 
-    eprosima::fastrtps::tmutex_stop_recording();
+    eprosima::fastdds::tmutex_stop_recording();
 
-    for (size_t count = 0; count < eprosima::fastrtps::tmutex_get_num_mutexes(); ++count)
+    for (size_t count = 0; count < eprosima::fastdds::tmutex_get_num_mutexes(); ++count)
     {
         std::cout << "Testing mutex " << count << std::endl;
         // Start testing locking the mutexes.
-        if (eprosima::fastrtps::tmutex_lock_mutex(count))
+        if (eprosima::fastdds::tmutex_lock_mutex(count))
         {
             std::promise<std::pair<bool, std::chrono::microseconds>> promise;
             std::future<std::pair<bool, std::chrono::microseconds>> future = promise.get_future();
@@ -428,12 +428,12 @@ TEST_F(UserThreadNonBlockedTest, write_async_sample_besteffort)
             // If main mutex cannot be taken, the write fails.
             // But for the rest the information is stored and it is as if the samples was sent.
             ASSERT_EQ(count == 0 ? false : true, returned_value.first);
-            std::chrono::microseconds max_w(eprosima::fastrtps::rtps::TimeConv::Time_t2MicroSecondsInt64(
+            std::chrono::microseconds max_w(eprosima::fastdds::rtps::TimeConv::Time_t2MicroSecondsInt64(
                         datawriter_qos_.reliability().max_blocking_time));
             ASSERT_GE(returned_value.second, max_w);
             ASSERT_LE(returned_value.second - max_w, std::chrono::milliseconds(1));
 
-            eprosima::fastrtps::tmutex_unlock_mutex(count);
+            eprosima::fastdds::tmutex_unlock_mutex(count);
         }
         else
         {
@@ -441,9 +441,9 @@ TEST_F(UserThreadNonBlockedTest, write_async_sample_besteffort)
         }
     }
 
-    ASSERT_EQ(3, eprosima::fastrtps::tmutex_get_num_mutexes());
-    ASSERT_EQ(0, eprosima::fastrtps::tmutex_get_num_lock_type());
-    ASSERT_EQ(3, eprosima::fastrtps::tmutex_get_num_timedlock_type());
+    ASSERT_EQ(3, eprosima::fastdds::tmutex_get_num_mutexes());
+    ASSERT_EQ(0, eprosima::fastdds::tmutex_get_num_lock_type());
+    ASSERT_EQ(3, eprosima::fastdds::tmutex_get_num_timedlock_type());
 }
 
 /*!
@@ -460,17 +460,17 @@ TEST_F(UserThreadNonBlockedTest, write_async_sample_reliable)
     DummyType sample{1};
 
     // Record the mutexes.
-    eprosima::fastrtps::tmutex_start_recording();
+    eprosima::fastdds::tmutex_start_recording();
 
     datawriter_->write(reinterpret_cast<void*>(&sample));
 
-    eprosima::fastrtps::tmutex_stop_recording();
+    eprosima::fastdds::tmutex_stop_recording();
 
     for (size_t count = 0; count < 2; ++count)
     {
         std::cout << "Testing mutex " << count << std::endl;
         // Start testing locking the mutexes.
-        if (eprosima::fastrtps::tmutex_lock_mutex(count))
+        if (eprosima::fastdds::tmutex_lock_mutex(count))
         {
             std::promise<std::pair<bool, std::chrono::microseconds>> promise;
             std::future<std::pair<bool, std::chrono::microseconds>> future = promise.get_future();
@@ -487,12 +487,12 @@ TEST_F(UserThreadNonBlockedTest, write_async_sample_reliable)
             // If main mutex cannot be taken, the write fails.
             // But for the rest the information is stored and it is as if the samples was sent.
             ASSERT_EQ(count == 0 ? false : true, returned_value.first);
-            std::chrono::microseconds max_w(eprosima::fastrtps::rtps::TimeConv::Time_t2MicroSecondsInt64(
+            std::chrono::microseconds max_w(eprosima::fastdds::rtps::TimeConv::Time_t2MicroSecondsInt64(
                         datawriter_qos_.reliability().max_blocking_time));
             ASSERT_GE(returned_value.second, max_w);
             ASSERT_LE(returned_value.second - max_w, std::chrono::milliseconds(1));
 
-            eprosima::fastrtps::tmutex_unlock_mutex(count);
+            eprosima::fastdds::tmutex_unlock_mutex(count);
         }
         else
         {
@@ -500,9 +500,9 @@ TEST_F(UserThreadNonBlockedTest, write_async_sample_reliable)
         }
     }
 
-    ASSERT_EQ(3, eprosima::fastrtps::tmutex_get_num_mutexes());
-    ASSERT_EQ(0, eprosima::fastrtps::tmutex_get_num_lock_type());
-    ASSERT_EQ(3, eprosima::fastrtps::tmutex_get_num_timedlock_type());
+    ASSERT_EQ(3, eprosima::fastdds::tmutex_get_num_mutexes());
+    ASSERT_EQ(0, eprosima::fastdds::tmutex_get_num_lock_type());
+    ASSERT_EQ(3, eprosima::fastdds::tmutex_get_num_timedlock_type());
 }
 
 /*!
@@ -522,20 +522,20 @@ TEST_F(UserThreadNonBlockedTest, read_sample_besteffort)
     datawriter_->wait_for_acknowledgments({0, 100000000});
 
     // Record the mutexes.
-    eprosima::fastrtps::tmutex_start_recording();
+    eprosima::fastdds::tmutex_start_recording();
 
     datareader_->read_next_sample(reinterpret_cast<void*>(&read_sample), &read_info);
 
-    eprosima::fastrtps::tmutex_stop_recording();
+    eprosima::fastdds::tmutex_stop_recording();
 
-    for (size_t count = 0; count < eprosima::fastrtps::tmutex_get_num_mutexes(); ++count)
+    for (size_t count = 0; count < eprosima::fastdds::tmutex_get_num_mutexes(); ++count)
     {
         datawriter_->write(reinterpret_cast<void*>(&sample));
         datawriter_->wait_for_acknowledgments({0, 100000000});
 
         std::cout << "Testing mutex " << count << std::endl;
         // Start testing locking the mutexes.
-        if (eprosima::fastrtps::tmutex_lock_mutex(count))
+        if (eprosima::fastdds::tmutex_lock_mutex(count))
         {
             std::promise<std::pair<eprosima::fastdds::dds::ReturnCode_t, std::chrono::microseconds>> promise;
             std::future<std::pair<eprosima::fastdds::dds::ReturnCode_t,
@@ -556,12 +556,12 @@ TEST_F(UserThreadNonBlockedTest, read_sample_besteffort)
             // But for the rest the information is stored and it is as if the samples was sent.
             ASSERT_EQ(count == 0 ? eprosima::fastdds::dds::RETCODE_NO_DATA :
                     eprosima::fastdds::dds::RETCODE_OK, returned_value.first);
-            std::chrono::microseconds max_w(eprosima::fastrtps::rtps::TimeConv::Time_t2MicroSecondsInt64(
+            std::chrono::microseconds max_w(eprosima::fastdds::rtps::TimeConv::Time_t2MicroSecondsInt64(
                         datareader_qos_.reliability().max_blocking_time));
             ASSERT_GE(returned_value.second, max_w);
             ASSERT_LE(returned_value.second - max_w, std::chrono::milliseconds(1));
 
-            eprosima::fastrtps::tmutex_unlock_mutex(count);
+            eprosima::fastdds::tmutex_unlock_mutex(count);
         }
         else
         {
@@ -569,9 +569,9 @@ TEST_F(UserThreadNonBlockedTest, read_sample_besteffort)
         }
     }
 
-    ASSERT_EQ(1, eprosima::fastrtps::tmutex_get_num_mutexes());
-    ASSERT_EQ(0, eprosima::fastrtps::tmutex_get_num_lock_type());
-    ASSERT_EQ(1, eprosima::fastrtps::tmutex_get_num_timedlock_type());
+    ASSERT_EQ(1, eprosima::fastdds::tmutex_get_num_mutexes());
+    ASSERT_EQ(0, eprosima::fastdds::tmutex_get_num_lock_type());
+    ASSERT_EQ(1, eprosima::fastdds::tmutex_get_num_timedlock_type());
 }
 
 /*!
@@ -591,20 +591,20 @@ TEST_F(UserThreadNonBlockedTest, read_sample_reliable)
     datawriter_->wait_for_acknowledgments({0, 100000000});
 
     // Record the mutexes.
-    eprosima::fastrtps::tmutex_start_recording();
+    eprosima::fastdds::tmutex_start_recording();
 
     datareader_->read_next_sample(reinterpret_cast<void*>(&read_sample), &read_info);
 
-    eprosima::fastrtps::tmutex_stop_recording();
+    eprosima::fastdds::tmutex_stop_recording();
 
-    for (size_t count = 0; count < eprosima::fastrtps::tmutex_get_num_mutexes(); ++count)
+    for (size_t count = 0; count < eprosima::fastdds::tmutex_get_num_mutexes(); ++count)
     {
         datawriter_->write(reinterpret_cast<void*>(&sample));
         datawriter_->wait_for_acknowledgments({0, 100000000});
 
         std::cout << "Testing mutex " << count << std::endl;
         // Start testing locking the mutexes.
-        if (eprosima::fastrtps::tmutex_lock_mutex(count))
+        if (eprosima::fastdds::tmutex_lock_mutex(count))
         {
             std::promise<std::pair<eprosima::fastdds::dds::ReturnCode_t, std::chrono::microseconds>> promise;
             std::future<std::pair<eprosima::fastdds::dds::ReturnCode_t,
@@ -626,12 +626,12 @@ TEST_F(UserThreadNonBlockedTest, read_sample_reliable)
             ASSERT_EQ(
                 count == 0 ? eprosima::fastdds::dds::RETCODE_NO_DATA : eprosima::fastdds::dds::RETCODE_OK,
                 returned_value.first);
-            std::chrono::microseconds max_w(eprosima::fastrtps::rtps::TimeConv::Time_t2MicroSecondsInt64(
+            std::chrono::microseconds max_w(eprosima::fastdds::rtps::TimeConv::Time_t2MicroSecondsInt64(
                         datareader_qos_.reliability().max_blocking_time));
             ASSERT_GE(returned_value.second, max_w);
             ASSERT_LE(returned_value.second - max_w, std::chrono::milliseconds(1));
 
-            eprosima::fastrtps::tmutex_unlock_mutex(count);
+            eprosima::fastdds::tmutex_unlock_mutex(count);
         }
         else
         {
@@ -639,9 +639,9 @@ TEST_F(UserThreadNonBlockedTest, read_sample_reliable)
         }
     }
 
-    ASSERT_EQ(1, eprosima::fastrtps::tmutex_get_num_mutexes());
-    ASSERT_EQ(0, eprosima::fastrtps::tmutex_get_num_lock_type());
-    ASSERT_EQ(1, eprosima::fastrtps::tmutex_get_num_timedlock_type());
+    ASSERT_EQ(1, eprosima::fastdds::tmutex_get_num_mutexes());
+    ASSERT_EQ(0, eprosima::fastdds::tmutex_get_num_lock_type());
+    ASSERT_EQ(1, eprosima::fastdds::tmutex_get_num_timedlock_type());
 }
 
 /*!
@@ -661,20 +661,20 @@ TEST_F(UserThreadNonBlockedTest, take_sample_besteffort)
     datawriter_->wait_for_acknowledgments({0, 100000000});
 
     // Record the mutexes.
-    eprosima::fastrtps::tmutex_start_recording();
+    eprosima::fastdds::tmutex_start_recording();
 
     datareader_->take_next_sample(reinterpret_cast<void*>(&read_sample), &read_info);
 
-    eprosima::fastrtps::tmutex_stop_recording();
+    eprosima::fastdds::tmutex_stop_recording();
 
-    for (size_t count = 0; count < eprosima::fastrtps::tmutex_get_num_mutexes(); ++count)
+    for (size_t count = 0; count < eprosima::fastdds::tmutex_get_num_mutexes(); ++count)
     {
         datawriter_->write(reinterpret_cast<void*>(&sample));
         datawriter_->wait_for_acknowledgments({0, 100000000});
 
         std::cout << "Testing mutex " << count << std::endl;
         // Start testing locking the mutexes.
-        if (eprosima::fastrtps::tmutex_lock_mutex(count))
+        if (eprosima::fastdds::tmutex_lock_mutex(count))
         {
             std::promise<std::pair<eprosima::fastdds::dds::ReturnCode_t, std::chrono::microseconds>> promise;
             std::future<std::pair<eprosima::fastdds::dds::ReturnCode_t,
@@ -696,12 +696,12 @@ TEST_F(UserThreadNonBlockedTest, take_sample_besteffort)
             ASSERT_EQ(
                 count == 0 ? eprosima::fastdds::dds::RETCODE_NO_DATA : eprosima::fastdds::dds::RETCODE_OK,
                 returned_value.first);
-            std::chrono::microseconds max_w(eprosima::fastrtps::rtps::TimeConv::Time_t2MicroSecondsInt64(
+            std::chrono::microseconds max_w(eprosima::fastdds::rtps::TimeConv::Time_t2MicroSecondsInt64(
                         datareader_qos_.reliability().max_blocking_time));
             ASSERT_GE(returned_value.second, max_w);
             ASSERT_LE(returned_value.second - max_w, std::chrono::milliseconds(1));
 
-            eprosima::fastrtps::tmutex_unlock_mutex(count);
+            eprosima::fastdds::tmutex_unlock_mutex(count);
         }
         else
         {
@@ -709,9 +709,9 @@ TEST_F(UserThreadNonBlockedTest, take_sample_besteffort)
         }
     }
 
-    ASSERT_EQ(1, eprosima::fastrtps::tmutex_get_num_mutexes());
-    ASSERT_EQ(0, eprosima::fastrtps::tmutex_get_num_lock_type());
-    ASSERT_EQ(1, eprosima::fastrtps::tmutex_get_num_timedlock_type());
+    ASSERT_EQ(1, eprosima::fastdds::tmutex_get_num_mutexes());
+    ASSERT_EQ(0, eprosima::fastdds::tmutex_get_num_lock_type());
+    ASSERT_EQ(1, eprosima::fastdds::tmutex_get_num_timedlock_type());
 }
 
 /*!
@@ -731,20 +731,20 @@ TEST_F(UserThreadNonBlockedTest, take_sample_reliable)
     datawriter_->wait_for_acknowledgments({0, 100000000});
 
     // Record the mutexes.
-    eprosima::fastrtps::tmutex_start_recording();
+    eprosima::fastdds::tmutex_start_recording();
 
     datareader_->take_next_sample(reinterpret_cast<void*>(&read_sample), &read_info);
 
-    eprosima::fastrtps::tmutex_stop_recording();
+    eprosima::fastdds::tmutex_stop_recording();
 
-    for (size_t count = 0; count < eprosima::fastrtps::tmutex_get_num_mutexes(); ++count)
+    for (size_t count = 0; count < eprosima::fastdds::tmutex_get_num_mutexes(); ++count)
     {
         datawriter_->write(reinterpret_cast<void*>(&sample));
         datawriter_->wait_for_acknowledgments({0, 100000000});
 
         std::cout << "Testing mutex " << count << std::endl;
         // Start testing locking the mutexes.
-        if (eprosima::fastrtps::tmutex_lock_mutex(count))
+        if (eprosima::fastdds::tmutex_lock_mutex(count))
         {
             std::promise<std::pair<eprosima::fastdds::dds::ReturnCode_t, std::chrono::microseconds>> promise;
             std::future<std::pair<eprosima::fastdds::dds::ReturnCode_t,
@@ -766,12 +766,12 @@ TEST_F(UserThreadNonBlockedTest, take_sample_reliable)
             ASSERT_EQ(
                 count == 0 ? eprosima::fastdds::dds::RETCODE_NO_DATA : eprosima::fastdds::dds::RETCODE_OK,
                 returned_value.first);
-            std::chrono::microseconds max_w(eprosima::fastrtps::rtps::TimeConv::Time_t2MicroSecondsInt64(
+            std::chrono::microseconds max_w(eprosima::fastdds::rtps::TimeConv::Time_t2MicroSecondsInt64(
                         datareader_qos_.reliability().max_blocking_time));
             ASSERT_GE(returned_value.second, max_w);
             ASSERT_LE(returned_value.second - max_w, std::chrono::milliseconds(1));
 
-            eprosima::fastrtps::tmutex_unlock_mutex(count);
+            eprosima::fastdds::tmutex_unlock_mutex(count);
         }
         else
         {
@@ -779,9 +779,9 @@ TEST_F(UserThreadNonBlockedTest, take_sample_reliable)
         }
     }
 
-    ASSERT_EQ(1, eprosima::fastrtps::tmutex_get_num_mutexes());
-    ASSERT_EQ(0, eprosima::fastrtps::tmutex_get_num_lock_type());
-    ASSERT_EQ(1, eprosima::fastrtps::tmutex_get_num_timedlock_type());
+    ASSERT_EQ(1, eprosima::fastdds::tmutex_get_num_mutexes());
+    ASSERT_EQ(0, eprosima::fastdds::tmutex_get_num_lock_type());
+    ASSERT_EQ(1, eprosima::fastdds::tmutex_get_num_timedlock_type());
 }
 
 /*!
@@ -801,20 +801,20 @@ TEST_F(UserThreadNonBlockedTest, wait_for_sample_besteffort)
     datawriter_->wait_for_acknowledgments({0, 100000000});
 
     // Record the mutexes.
-    eprosima::fastrtps::tmutex_start_recording();
+    eprosima::fastdds::tmutex_start_recording();
 
     datareader_->wait_for_unread_message({0, 100000000});
 
-    eprosima::fastrtps::tmutex_stop_recording();
+    eprosima::fastdds::tmutex_stop_recording();
 
-    for (size_t count = 0; count < eprosima::fastrtps::tmutex_get_num_mutexes(); ++count)
+    for (size_t count = 0; count < eprosima::fastdds::tmutex_get_num_mutexes(); ++count)
     {
         datawriter_->write(reinterpret_cast<void*>(&sample));
         datawriter_->wait_for_acknowledgments({0, 100000000});
 
         std::cout << "Testing mutex " << count << std::endl;
         // Start testing locking the mutexes.
-        if (eprosima::fastrtps::tmutex_lock_mutex(count))
+        if (eprosima::fastdds::tmutex_lock_mutex(count))
         {
             std::promise<std::pair<bool, std::chrono::microseconds>> promise;
             std::future<std::pair<bool, std::chrono::microseconds>> future = promise.get_future();
@@ -831,12 +831,12 @@ TEST_F(UserThreadNonBlockedTest, wait_for_sample_besteffort)
             // If main mutex cannot be taken, the write fails.
             // But for the rest the information is stored and it is as if the samples was sent.
             ASSERT_EQ(count == 0 ? false : true, returned_value.first);
-            std::chrono::microseconds max_w(eprosima::fastrtps::rtps::TimeConv::Time_t2MicroSecondsInt64(
+            std::chrono::microseconds max_w(eprosima::fastdds::rtps::TimeConv::Time_t2MicroSecondsInt64(
                         datareader_qos_.reliability().max_blocking_time));
             ASSERT_GE(returned_value.second, max_w);
             ASSERT_LE(returned_value.second - max_w, std::chrono::milliseconds(1));
 
-            eprosima::fastrtps::tmutex_unlock_mutex(count);
+            eprosima::fastdds::tmutex_unlock_mutex(count);
         }
         else
         {
@@ -844,9 +844,9 @@ TEST_F(UserThreadNonBlockedTest, wait_for_sample_besteffort)
         }
     }
 
-    ASSERT_EQ(1, eprosima::fastrtps::tmutex_get_num_mutexes());
-    ASSERT_EQ(0, eprosima::fastrtps::tmutex_get_num_lock_type());
-    ASSERT_EQ(1, eprosima::fastrtps::tmutex_get_num_timedlock_type());
+    ASSERT_EQ(1, eprosima::fastdds::tmutex_get_num_mutexes());
+    ASSERT_EQ(0, eprosima::fastdds::tmutex_get_num_lock_type());
+    ASSERT_EQ(1, eprosima::fastdds::tmutex_get_num_timedlock_type());
 }
 
 /*!
@@ -866,20 +866,20 @@ TEST_F(UserThreadNonBlockedTest, wait_for_sample_reliable)
     datawriter_->wait_for_acknowledgments({0, 100000000});
 
     // Record the mutexes.
-    eprosima::fastrtps::tmutex_start_recording();
+    eprosima::fastdds::tmutex_start_recording();
 
     datareader_->wait_for_unread_message({0, 100000000});
 
-    eprosima::fastrtps::tmutex_stop_recording();
+    eprosima::fastdds::tmutex_stop_recording();
 
-    for (size_t count = 0; count < eprosima::fastrtps::tmutex_get_num_mutexes(); ++count)
+    for (size_t count = 0; count < eprosima::fastdds::tmutex_get_num_mutexes(); ++count)
     {
         datawriter_->write(reinterpret_cast<void*>(&sample));
         datawriter_->wait_for_acknowledgments({0, 100000000});
 
         std::cout << "Testing mutex " << count << std::endl;
         // Start testing locking the mutexes.
-        if (eprosima::fastrtps::tmutex_lock_mutex(count))
+        if (eprosima::fastdds::tmutex_lock_mutex(count))
         {
             std::promise<std::pair<bool, std::chrono::microseconds>> promise;
             std::future<std::pair<bool, std::chrono::microseconds>> future = promise.get_future();
@@ -896,12 +896,12 @@ TEST_F(UserThreadNonBlockedTest, wait_for_sample_reliable)
             // If main mutex cannot be taken, the write fails.
             // But for the rest the information is stored and it is as if the samples was sent.
             ASSERT_EQ(count == 0 ? false : true, returned_value.first);
-            std::chrono::microseconds max_w(eprosima::fastrtps::rtps::TimeConv::Time_t2MicroSecondsInt64(
+            std::chrono::microseconds max_w(eprosima::fastdds::rtps::TimeConv::Time_t2MicroSecondsInt64(
                         datareader_qos_.reliability().max_blocking_time));
             ASSERT_GE(returned_value.second, max_w);
             ASSERT_LE(returned_value.second - max_w, std::chrono::milliseconds(1));
 
-            eprosima::fastrtps::tmutex_unlock_mutex(count);
+            eprosima::fastdds::tmutex_unlock_mutex(count);
         }
         else
         {
@@ -909,9 +909,9 @@ TEST_F(UserThreadNonBlockedTest, wait_for_sample_reliable)
         }
     }
 
-    ASSERT_EQ(1, eprosima::fastrtps::tmutex_get_num_mutexes());
-    ASSERT_EQ(0, eprosima::fastrtps::tmutex_get_num_lock_type());
-    ASSERT_EQ(1, eprosima::fastrtps::tmutex_get_num_timedlock_type());
+    ASSERT_EQ(1, eprosima::fastdds::tmutex_get_num_mutexes());
+    ASSERT_EQ(0, eprosima::fastdds::tmutex_get_num_lock_type());
+    ASSERT_EQ(1, eprosima::fastdds::tmutex_get_num_timedlock_type());
 }
 
 int main(

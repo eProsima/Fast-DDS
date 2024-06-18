@@ -43,13 +43,13 @@ public:
 
     bool serialize(
             void* /*data*/,
-            eprosima::fastrtps::rtps::SerializedPayload_t* /*payload*/) override
+            eprosima::fastdds::rtps::SerializedPayload_t* /*payload*/) override
     {
         return true;
     }
 
     bool deserialize(
-            eprosima::fastrtps::rtps::SerializedPayload_t* /*payload*/,
+            eprosima::fastdds::rtps::SerializedPayload_t* /*payload*/,
             void* /*data*/) override
     {
         return true;
@@ -76,7 +76,7 @@ public:
 
     bool getKey(
             void* /*data*/,
-            eprosima::fastrtps::rtps::InstanceHandle_t* /*ihandle*/,
+            eprosima::fastdds::rtps::InstanceHandle_t* /*ihandle*/,
             bool /*force_md5*/) override
     {
         return true;
@@ -127,7 +127,7 @@ public:
     }
 
     bool monitoring_status(
-            fastrtps::rtps::GUID_t guid,
+            fastdds::rtps::GUID_t guid,
             statistics::MonitorServiceData& status)
     {
         return get_monitoring_status(guid, status);

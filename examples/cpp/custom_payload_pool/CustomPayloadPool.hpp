@@ -26,7 +26,7 @@
 #include <fastdds/rtps/history/IPayloadPool.h>
 #include <fastdds/rtps/common/SerializedPayload.h>
 
-class CustomPayloadPool : public eprosima::fastrtps::rtps::IPayloadPool
+class CustomPayloadPool : public eprosima::fastdds::rtps::IPayloadPool
 {
 public:
 
@@ -34,7 +34,7 @@ public:
 
     bool get_payload(
             unsigned int size,
-            eprosima::fastrtps::rtps::SerializedPayload_t& payload)
+            eprosima::fastdds::rtps::SerializedPayload_t& payload)
     {
         // Reserve new memory for the payload buffer
         unsigned char* payload_buff = new unsigned char[size];
@@ -51,8 +51,8 @@ public:
     }
 
     bool get_payload(
-            const eprosima::fastrtps::rtps::SerializedPayload_t& data,
-            eprosima::fastrtps::rtps::SerializedPayload_t& payload)
+            const eprosima::fastdds::rtps::SerializedPayload_t& data,
+            eprosima::fastdds::rtps::SerializedPayload_t& payload)
     {
         // Reserve new memory for the payload buffer
         unsigned char* payload_buff = new unsigned char[data.length];
@@ -72,7 +72,7 @@ public:
     }
 
     bool release_payload(
-            eprosima::fastrtps::rtps::SerializedPayload_t& payload)
+            eprosima::fastdds::rtps::SerializedPayload_t& payload)
     {
         // Ensure precondition
         if (this != payload.payload_owner)

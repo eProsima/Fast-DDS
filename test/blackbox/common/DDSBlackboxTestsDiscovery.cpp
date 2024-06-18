@@ -92,7 +92,7 @@ TEST(DDSDiscovery, AddDiscoveryServerToListUDP)
 {
     using namespace eprosima;
     using namespace eprosima::fastdds::dds;
-    using namespace eprosima::fastrtps::rtps;
+    using namespace eprosima::fastdds::rtps;
 
     char* value = nullptr;
     std::string W_UNICAST_PORT_RANDOM_NUMBER_STR;
@@ -112,13 +112,13 @@ TEST(DDSDiscovery, AddDiscoveryServerToListUDP)
     PubSubParticipant<HelloWorldPubSubType> server_1(0u, 0u, 0u, 0u);
     // Set participant as server
     WireProtocolConfigQos server_1_qos;
-    server_1_qos.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::SERVER;
+    server_1_qos.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol::SERVER;
     // Generate random GUID prefix
     srand(static_cast<unsigned>(time(nullptr)));
     GuidPrefix_t server_1_prefix;
     for (auto i = 0; i < 12; i++)
     {
-        server_1_prefix.value[i] = eprosima::fastrtps::rtps::octet(rand() % 254);
+        server_1_prefix.value[i] = eprosima::fastdds::rtps::octet(rand() % 254);
     }
     server_1_qos.prefix = server_1_prefix;
     // Generate server's listening locator
@@ -134,7 +134,7 @@ TEST(DDSDiscovery, AddDiscoveryServerToListUDP)
     PubSubParticipant<HelloWorldPubSubType> server_2(0u, 0u, 0u, 0u);
     // Set participant as server
     WireProtocolConfigQos server_2_qos;
-    server_2_qos.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::SERVER;
+    server_2_qos.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol::SERVER;
     // Generate random GUID prefix
     GuidPrefix_t server_2_prefix = server_1_prefix;
     server_2_prefix.value[11]++;
@@ -152,7 +152,7 @@ TEST(DDSDiscovery, AddDiscoveryServerToListUDP)
     PubSubParticipant<HelloWorldPubSubType> client(0u, 0u, 0u, 0u);
     // Set participant as client
     WireProtocolConfigQos client_qos;
-    client_qos.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::CLIENT;
+    client_qos.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol::CLIENT;
     // Connect to first server
     RemoteServerAttributes server_1_att;
     server_1_att.guidPrefix = server_1_prefix;
@@ -204,7 +204,7 @@ TEST(DDSDiscovery, AddDiscoveryServerToListTCP)
 {
     using namespace eprosima;
     using namespace eprosima::fastdds::dds;
-    using namespace eprosima::fastrtps::rtps;
+    using namespace eprosima::fastdds::rtps;
 
     // TCP default DS port
     constexpr uint16_t W_UNICAST_PORT_RANDOM_NUMBER_STR = 42100;
@@ -218,7 +218,7 @@ TEST(DDSDiscovery, AddDiscoveryServerToListTCP)
     GuidPrefix_t server_1_prefix;
     for (auto i = 0; i < 12; i++)
     {
-        server_1_prefix.value[i] = eprosima::fastrtps::rtps::octet(rand() % 254);
+        server_1_prefix.value[i] = eprosima::fastdds::rtps::octet(rand() % 254);
     }
     uint16_t server_1_port = W_UNICAST_PORT_RANDOM_NUMBER_STR;
     Locator_t locator_server_1;
@@ -257,7 +257,7 @@ TEST(DDSDiscovery, AddDiscoveryServerToListTCP)
     PubSubParticipant<HelloWorldPubSubType> client_1(0u, 0u, 0u, 0u);
     // Set participant as client
     WireProtocolConfigQos client_qos_1;
-    client_qos_1.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::CLIENT;
+    client_qos_1.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol::CLIENT;
     // Connect to first server
     RemoteServerAttributes server_1_att;
     server_1_att.guidPrefix = server_1_prefix;
@@ -276,7 +276,7 @@ TEST(DDSDiscovery, AddDiscoveryServerToListTCP)
     PubSubParticipant<HelloWorldPubSubType> client_2(0u, 0u, 0u, 0u);
     // Set participant as client
     WireProtocolConfigQos client_qos_2;
-    client_qos_2.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::CLIENT;
+    client_qos_2.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol::CLIENT;
     // Connect to first server
     client_qos_2.builtin.discovery_config.m_DiscoveryServers.push_back(server_1_att);
     auto descriptor_4 = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
@@ -320,7 +320,7 @@ TEST(DDSDiscovery, ServersConnectionTCP)
 {
     using namespace eprosima;
     using namespace eprosima::fastdds::dds;
-    using namespace eprosima::fastrtps::rtps;
+    using namespace eprosima::fastdds::rtps;
 
     // TCP default DS port
     constexpr uint16_t W_UNICAST_PORT_RANDOM_NUMBER_STR = 41100;
@@ -334,7 +334,7 @@ TEST(DDSDiscovery, ServersConnectionTCP)
     GuidPrefix_t server_1_prefix;
     for (auto i = 0; i < 12; i++)
     {
-        server_1_prefix.value[i] = eprosima::fastrtps::rtps::octet(rand() % 254);
+        server_1_prefix.value[i] = eprosima::fastdds::rtps::octet(rand() % 254);
     }
     Locator_t locator_server_1;
     uint16_t server_1_port = W_UNICAST_PORT_RANDOM_NUMBER_STR;
@@ -618,7 +618,7 @@ TEST(DDSDiscovery, UpdateMatchedStatus)
 TEST(DDSDiscovery, ParticipantProxyPhysicalData)
 {
     using namespace eprosima::fastdds::dds;
-    using namespace eprosima::fastrtps::rtps;
+    using namespace eprosima::fastdds::rtps;
 
     class CustomDomainParticipantListener : public DomainParticipantListener
     {
@@ -655,7 +655,7 @@ TEST(DDSDiscovery, ParticipantProxyPhysicalData)
             static_cast<void>(should_be_ignored);
             std::unique_lock<std::mutex> lck(*mtx_);
             if (info.status ==
-                    eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DISCOVERY_STATUS::DISCOVERED_PARTICIPANT)
+                    eprosima::fastdds::rtps::ParticipantDiscoveryInfo::DISCOVERY_STATUS::DISCOVERED_PARTICIPANT)
             {
                 static_cast<void>(participant);
                 if (nullptr != remote_participant_info)
@@ -817,7 +817,7 @@ TEST(DDSDiscovery, ParticipantProxyPhysicalData)
 TEST(DDSDiscovery, DDSDiscoveryDoesNotDropUDPLocator)
 {
     using namespace eprosima::fastdds::dds;
-    using namespace eprosima::fastrtps::rtps;
+    using namespace eprosima::fastdds::rtps;
 
     struct CustomDomainParticipantListener : public DomainParticipantListener
     {
@@ -904,11 +904,11 @@ TEST(DDSDiscovery, DDSDiscoveryDoesNotDropUDPLocator)
 TEST(DDSDiscovery, WriterAndReaderMatchUsingDynamicReusableMemoryMode)
 {
     using namespace eprosima::fastdds::dds;
-    using namespace eprosima::fastrtps::rtps;
+    using namespace eprosima::fastdds::rtps;
 
     WireProtocolConfigQos qos;
 
-    qos.builtin.readerHistoryMemoryPolicy = eprosima::fastrtps::rtps::DYNAMIC_REUSABLE_MEMORY_MODE;
+    qos.builtin.readerHistoryMemoryPolicy = eprosima::fastdds::rtps::DYNAMIC_REUSABLE_MEMORY_MODE;
 
     PubSubWriter<HelloWorldPubSubType> writer("test");
     PubSubReader<HelloWorldPubSubType> reader("test");
@@ -1789,10 +1789,10 @@ static void test_DDSDiscovery_WaitSetMatchedStatus(
     fastdds::dds::DomainParticipantQos pqos;
     factory->get_default_participant_qos(pqos);
     uint32_t ignore_flags =
-            fastrtps::rtps::ParticipantFilteringFlags::FILTER_DIFFERENT_HOST |
-            fastrtps::rtps::ParticipantFilteringFlags::FILTER_DIFFERENT_PROCESS;
+            fastdds::rtps::ParticipantFilteringFlags::FILTER_DIFFERENT_HOST |
+            fastdds::rtps::ParticipantFilteringFlags::FILTER_DIFFERENT_PROCESS;
     pqos.wire_protocol().builtin.discovery_config.ignoreParticipantFlags =
-            static_cast<fastrtps::rtps::ParticipantFilteringFlags>(ignore_flags);
+            static_cast<fastdds::rtps::ParticipantFilteringFlags>(ignore_flags);
 
     fastdds::dds::DomainParticipantListener listener;
     auto listener_to_use = with_listener ? &listener : nullptr;
@@ -1824,7 +1824,7 @@ static void test_DDSDiscovery_WaitSetMatchedStatus(
                 fastdds::dds::PublicationMatchedStatus matched_status{};
                 while (1 > matched_status.current_count)
                 {
-                    ReturnCode_t ret_code = wait_set.wait(triggered_conditions, fastrtps::c_TimeInfinite);
+                    ReturnCode_t ret_code = wait_set.wait(triggered_conditions, fastdds::c_TimeInfinite);
                     if (eprosima::fastdds::dds::RETCODE_OK != ret_code)
                     {
                         continue;
@@ -1893,10 +1893,10 @@ TEST(DDSDiscovery, DataracePDP)
 
         void on_participant_discovery(
                 DomainParticipant* /*participant*/,
-                eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info,
+                eprosima::fastdds::rtps::ParticipantDiscoveryInfo&& info,
                 bool& /*should_be_ignored*/) override
         {
-            if (info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
+            if (info.status == eprosima::fastdds::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
             {
                 try
                 {
@@ -1908,8 +1908,8 @@ TEST(DDSDiscovery, DataracePDP)
                 }
                 destruction_future.wait();
             }
-            else if (info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT ||
-                    info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
+            else if (info.status == eprosima::fastdds::rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT ||
+                    info.status == eprosima::fastdds::rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
             {
                 try
                 {
@@ -2020,7 +2020,7 @@ TEST(DDSDiscovery, pdp_simple_participants_exchange_same_pid_domain_id_and_disco
 {
     using namespace eprosima::fastdds::dds;
     using namespace eprosima::fastdds::rtps;
-    using namespace eprosima::fastrtps::rtps;
+    using namespace eprosima::fastdds::rtps;
 
     PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
@@ -2045,8 +2045,8 @@ TEST(DDSDiscovery, pdp_simple_participants_exchange_same_pid_domain_id_and_disco
                     uint16_t plength = 0;
                     bool valid = true;
 
-                    valid &= eprosima::fastrtps::rtps::CDRMessage::readUInt16(&msg, (uint16_t*)&pid);
-                    valid &= eprosima::fastrtps::rtps::CDRMessage::readUInt16(&msg, &plength);
+                    valid &= eprosima::fastdds::rtps::CDRMessage::readUInt16(&msg, (uint16_t*)&pid);
+                    valid &= eprosima::fastdds::rtps::CDRMessage::readUInt16(&msg, &plength);
 
                     if (pid == eprosima::fastdds::dds::PID_SENTINEL)
                     {
@@ -2069,7 +2069,7 @@ TEST(DDSDiscovery, pdp_simple_participants_exchange_same_pid_domain_id_and_disco
                         if (pid == eprosima::fastdds::dds::PID_DOMAIN_ID)
                         {
                             uint32_t domain_id = 0;
-                            eprosima::fastrtps::rtps::CDRMessage::readUInt32(&msg, &domain_id);
+                            eprosima::fastdds::rtps::CDRMessage::readUInt32(&msg, &domain_id);
                             if (domain_id == (uint32_t)GET_PID() % 230)
                             {
                                 pid_was_found = true;

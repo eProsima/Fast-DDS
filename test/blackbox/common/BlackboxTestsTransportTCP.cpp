@@ -29,8 +29,8 @@
 #include "PubSubWriter.hpp"
 #include "DatagramInjectionTransport.hpp"
 
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds;
+using namespace eprosima::fastdds::rtps;
 
 enum communication_type
 {
@@ -765,17 +765,17 @@ TEST_P(TransportTCP, large_data_topology)
     // Reliable Keep_all to wait for all acked as end condition
     for (uint16_t i = 0; i < n_participants; i++)
     {
-        writers[i]->reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-                .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
-                .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
-                .lease_duration(eprosima::fastrtps::c_TimeInfinite, eprosima::fastrtps::Duration_t(3, 0))
+        writers[i]->reliability(eprosima::fastdds::RELIABLE_RELIABILITY_QOS)
+                .history_kind(eprosima::fastdds::KEEP_ALL_HISTORY_QOS)
+                .durability_kind(eprosima::fastdds::TRANSIENT_LOCAL_DURABILITY_QOS)
+                .lease_duration(eprosima::fastdds::c_TimeInfinite, eprosima::fastdds::Duration_t(3, 0))
                 .resource_limits_max_instances(1)
                 .resource_limits_max_samples_per_instance(samples_per_participant);
 
-        readers[i]->reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-                .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
-                .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
-                .lease_duration(eprosima::fastrtps::c_TimeInfinite, eprosima::fastrtps::Duration_t(3, 0))
+        readers[i]->reliability(eprosima::fastdds::RELIABLE_RELIABILITY_QOS)
+                .history_kind(eprosima::fastdds::KEEP_ALL_HISTORY_QOS)
+                .durability_kind(eprosima::fastdds::TRANSIENT_LOCAL_DURABILITY_QOS)
+                .lease_duration(eprosima::fastdds::c_TimeInfinite, eprosima::fastdds::Duration_t(3, 0))
                 .resource_limits_max_instances(n_participants)
                 .resource_limits_max_samples_per_instance(samples_per_participant);
 

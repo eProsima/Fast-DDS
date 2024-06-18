@@ -23,7 +23,7 @@
 #include <chrono>
 #include <mutex>
 
-using namespace eprosima::fastrtps;
+using namespace eprosima::fastdds;
 
 TEST(TMutexTests, record_mutexes)
 {
@@ -91,10 +91,22 @@ TEST(TMutexTests, lock_mutexes)
     std::future<int> future_2 = promise_2.get_future();
     std::future<int> future_3 = promise_3.get_future();
     std::future<int> future_4 = promise_4.get_future();
-    std::thread([&]{ mutex_1.lock(); promise_1.set_value_at_thread_exit(0); }).detach();
-    std::thread([&]{ mutex_2.lock(); promise_2.set_value_at_thread_exit(0); }).detach();
-    std::thread([&]{ mutex_3.lock(); promise_3.set_value_at_thread_exit(0); }).detach();
-    std::thread([&]{ mutex_4.lock(); promise_4.set_value_at_thread_exit(0); }).detach();
+    std::thread([&]
+            {
+                mutex_1.lock(); promise_1.set_value_at_thread_exit(0);
+            }).detach();
+    std::thread([&]
+            {
+                mutex_2.lock(); promise_2.set_value_at_thread_exit(0);
+            }).detach();
+    std::thread([&]
+            {
+                mutex_3.lock(); promise_3.set_value_at_thread_exit(0);
+            }).detach();
+    std::thread([&]
+            {
+                mutex_4.lock(); promise_4.set_value_at_thread_exit(0);
+            }).detach();
 
     std::cout << "Waiting..." << std::endl;
     ASSERT_TRUE(future_1.wait_for(std::chrono::milliseconds(200)) == std::future_status::timeout);
@@ -142,10 +154,16 @@ TEST(TMutexTests, lock_timed_mutexes)
     std::promise<int> promise_2;
     std::future<int> future_1 = promise_1.get_future();
     std::future<int> future_2 = promise_2.get_future();
-    std::thread([&]{ mutex_1.try_lock_until(std::chrono::steady_clock::now() + std::chrono::milliseconds(100));
-            promise_1.set_value_at_thread_exit(0); }).detach();
-    std::thread([&]{ mutex_2.try_lock_until(std::chrono::steady_clock::now() + std::chrono::milliseconds(100));
-            promise_2.set_value_at_thread_exit(0); }).detach();
+    std::thread([&]
+            {
+                mutex_1.try_lock_until(std::chrono::steady_clock::now() + std::chrono::milliseconds(100));
+                promise_1.set_value_at_thread_exit(0);
+            }).detach();
+    std::thread([&]
+            {
+                mutex_2.try_lock_until(std::chrono::steady_clock::now() + std::chrono::milliseconds(100));
+                promise_2.set_value_at_thread_exit(0);
+            }).detach();
 
     std::cout << "Waiting..." << std::endl;
     future_1.wait();
@@ -157,7 +175,9 @@ TEST(TMutexTests, lock_timed_mutexes)
     }
 }
 
-int main(int argc, char **argv)
+int main(
+        int argc,
+        char** argv)
 {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

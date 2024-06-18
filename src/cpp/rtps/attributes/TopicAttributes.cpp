@@ -19,7 +19,8 @@
 #include <fastdds/rtps/attributes/TopicAttributes.h>
 #include <fastdds/dds/log/Log.hpp>
 
-using namespace eprosima::fastrtps;
+namespace eprosima {
+namespace fastdds {
 
 bool TopicAttributes::checkQos() const
 {
@@ -70,3 +71,6 @@ bool TopicAttributes::checkQos() const
     }
     return true;
 }
+
+}  // namespace fastdds
+}  // namespace eprosima

@@ -28,7 +28,7 @@
 #include <rtps/resources/ResourceEvent.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class RTPSMessageGroup_t;
@@ -123,7 +123,7 @@ private:
 };
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 #endif // RTPS_READER__STATEFULREADER_HPP

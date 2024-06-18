@@ -25,10 +25,9 @@
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/RTPSDomainImpl.hpp>
 
-using eprosima::fastrtps::rtps::RTPSReader;
-using eprosima::fastrtps::rtps::CacheChange_t;
-using eprosima::fastdds::dds::Log;
-using eprosima::fastrtps::rtps::c_EntityId_TypeLookup_reply_writer;
+using eprosima::fastdds::rtps::RTPSReader;
+using eprosima::fastdds::rtps::CacheChange_t;
+using eprosima::fastdds::rtps::c_EntityId_TypeLookup_reply_writer;
 
 namespace eprosima {
 namespace fastdds {
@@ -146,7 +145,7 @@ void TypeLookupReplyListener::check_get_types_reply(
         {
             xtypes::TypeIdentifierPair type_ids;
             type_ids.type_identifier1(pair.type_identifier());
-            if (RETCODE_OK != fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
+            if (RETCODE_OK != fastdds::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
                             register_type_object(pair.type_object(), type_ids, false))
             {
                 // If any of the types is not registered, log error
@@ -173,7 +172,7 @@ void TypeLookupReplyListener::check_get_types_reply(
                 try
                 {
                     xtypes::TypeObject type_object;
-                    fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().get_type_object(
+                    fastdds::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().get_type_object(
                         requests_it->second.type_id(), type_object);
                     xtypes::TypeObjectUtils::type_object_consistency(type_object);
 
@@ -194,7 +193,7 @@ void TypeLookupReplyListener::check_get_types_reply(
 
 void TypeLookupReplyListener::check_get_type_dependencies_reply(
         const SampleIdentity& request_id,
-        const fastrtps::rtps::GUID_t type_server,
+        const fastdds::rtps::GUID_t type_server,
         const TypeLookup_getTypeDependencies_Out& reply)
 {
     // Check if the received reply SampleIdentity corresponds to an outstanding request
@@ -212,7 +211,7 @@ void TypeLookupReplyListener::check_get_type_dependencies_reply(
     for (xtypes::TypeIdentfierWithSize type : reply.dependent_typeids())
     {
         // Check if the type is known
-        if (!fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
+        if (!fastdds::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
                         is_type_identifier_known(type))
         {
             // Insert the type into the unordered_set and check if the insertion was successful
@@ -316,8 +315,8 @@ void TypeLookupReplyListener::on_new_cache_change_added(
 }
 
 void TypeLookupReplyListener::onWriterChangeReceivedByAll(
-        fastrtps::rtps::RTPSWriter*,
-        fastrtps::rtps::CacheChange_t* change)
+        fastdds::rtps::RTPSWriter*,
+        fastdds::rtps::CacheChange_t* change)
 {
     typelookup_manager_->remove_builtin_reply_writer_history_change(change);
 }

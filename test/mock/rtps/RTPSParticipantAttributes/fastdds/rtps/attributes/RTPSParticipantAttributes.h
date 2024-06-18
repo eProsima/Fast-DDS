@@ -62,13 +62,11 @@ struct ParticipantType
 };
 
 }  // namespace rtps
-}  // namespace fastdds
 
-namespace fastrtps {
 namespace rtps {
 
 //! PDP subclass choice
-typedef enum DiscoveryProtocol
+enum class DiscoveryProtocol
 {
     NONE,
     /*!<
@@ -95,7 +93,7 @@ typedef enum DiscoveryProtocol
     SUPER_CLIENT  /*!< The participant will behave as a client concerning all internal behaviour.
                      Remote servers will treat it as a server and will share every discovery information. */
 
-} DiscoveryProtocol_t;
+};
 
 inline std::ostream& operator <<(
         std::ostream& output,
@@ -131,13 +129,13 @@ inline std::ostream& operator <<(
 }
 
 //! Filtering flags when discovering participants
-typedef enum ParticipantFilteringFlags : uint32_t
+enum ParticipantFilteringFlags : uint32_t
 {
     NO_FILTER = 0,
     FILTER_DIFFERENT_HOST = 0x1,
     FILTER_DIFFERENT_PROCESS = 0x2,
     FILTER_SAME_PROCESS = 0x4
-} ParticipantFilteringFlags_t;
+};
 
 #define BUILTIN_DATA_MAX_SIZE 512
 
@@ -145,7 +143,7 @@ typedef enum ParticipantFilteringFlags : uint32_t
 class PDP;
 class BuiltinProtocols;
 
-typedef struct _PDPFactory
+typedef struct PDPFactory
 {
     // Pointer to the PDP creator
     PDP* (*CreatePDPInstance)(BuiltinProtocols*);
@@ -154,7 +152,7 @@ typedef struct _PDPFactory
             PDP*);
 
     bool operator ==(
-            const struct _PDPFactory& e) const
+            const struct PDPFactory& e) const
     {
         return (CreatePDPInstance == e.CreatePDPInstance)
                && (ReleasePDPInstance == e.ReleasePDPInstance);
@@ -237,7 +235,7 @@ class DiscoverySettings
 public:
 
     //! Chosen discovery protocol
-    DiscoveryProtocol_t discoveryProtocol = DiscoveryProtocol_t::SIMPLE;
+    DiscoveryProtocol discoveryProtocol = DiscoveryProtocol::SIMPLE;
 
     /**
      * If set to true, SimpleEDP would be used.
@@ -281,7 +279,7 @@ public:
     eprosima::fastdds::rtps::RemoteServerList_t m_DiscoveryServers;
 
     //! Filtering participants out depending on location
-    ParticipantFilteringFlags_t ignoreParticipantFlags = ParticipantFilteringFlags::NO_FILTER;
+    ParticipantFilteringFlags ignoreParticipantFlags = ParticipantFilteringFlags::NO_FILTER;
 
     DiscoverySettings() = default;
 
@@ -633,7 +631,7 @@ private:
 };
 
 }  // namespace rtps
-}  // namespace fastrtps
+}  // namespace fastdds
 }  // namespace eprosima
 
 #endif  // _FASTDDS_RTPSPARTICIPANTPARAMETERS_H_

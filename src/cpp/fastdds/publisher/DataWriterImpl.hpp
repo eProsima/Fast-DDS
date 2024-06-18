@@ -46,7 +46,7 @@
 #include <rtps/history/ITopicPayloadPool.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class RTPSWriter;
@@ -54,10 +54,6 @@ class RTPSParticipant;
 class TimedEvent;
 
 } // namespace rtps
-
-} // namespace fastrtps
-
-namespace fastdds {
 
 #ifdef FASTDDS_STATISTICS
 namespace statistics {
@@ -80,8 +76,8 @@ class Publisher;
 class DataWriterImpl : protected rtps::IReaderDataFilter
 {
     using LoanInitializationKind = DataWriter::LoanInitializationKind;
-    using SerializedPayload_t = eprosima::fastrtps::rtps::SerializedPayload_t;
-    using CacheChange_t = eprosima::fastrtps::rtps::CacheChange_t;
+    using SerializedPayload_t = eprosima::fastdds::rtps::SerializedPayload_t;
+    using CacheChange_t = eprosima::fastdds::rtps::CacheChange_t;
     class LoanCollection;
 
 protected:
@@ -102,14 +98,14 @@ protected:
             Topic* topic,
             const DataWriterQos& qos,
             DataWriterListener* listener = nullptr,
-            std::shared_ptr<fastrtps::rtps::IPayloadPool> payload_pool = nullptr);
+            std::shared_ptr<fastdds::rtps::IPayloadPool> payload_pool = nullptr);
 
     DataWriterImpl(
             PublisherImpl* p,
             TypeSupport type,
             Topic* topic,
             const DataWriterQos& qos,
-            const fastrtps::rtps::EntityId_t& entity_id,
+            const fastdds::rtps::EntityId_t& entity_id,
             DataWriterListener* listener = nullptr);
 
 public:
@@ -181,7 +177,7 @@ public:
      */
     bool write(
             void* data,
-            fastrtps::rtps::WriteParams& params);
+            fastdds::rtps::WriteParams& params);
 
     /**
      * @brief Implementation of the DDS `write` operation.
@@ -209,7 +205,7 @@ public:
     ReturnCode_t write_w_timestamp(
             void* data,
             const InstanceHandle_t& handle,
-            const fastrtps::Time_t& timestamp);
+            const fastdds::Time_t& timestamp);
 
     /**
      * @brief Implementation of the DDS `register_instance` operation.
@@ -237,7 +233,7 @@ public:
      */
     InstanceHandle_t register_instance_w_timestamp(
             void* instance,
-            const fastrtps::Time_t& timestamp);
+            const fastdds::Time_t& timestamp);
 
     /**
      * @brief Implementation of the DDS `unregister_instance` and `dispose` operations.
@@ -278,14 +274,14 @@ public:
     ReturnCode_t unregister_instance_w_timestamp(
             void* instance,
             const InstanceHandle_t& handle,
-            const fastrtps::Time_t& timestamp,
+            const fastdds::Time_t& timestamp,
             bool dispose = false);
 
     /**
      *
      * @return
      */
-    const fastrtps::rtps::GUID_t& guid() const;
+    const fastdds::rtps::GUID_t& guid() const;
 
     InstanceHandle_t get_instance_handle() const;
 
@@ -299,12 +295,12 @@ public:
     }
 
     ReturnCode_t wait_for_acknowledgments(
-            const fastrtps::Duration_t& max_wait);
+            const fastdds::Duration_t& max_wait);
 
     ReturnCode_t wait_for_acknowledgments(
             void* instance,
             const InstanceHandle_t& handle,
-            const fastrtps::Duration_t& max_wait);
+            const fastdds::Duration_t& max_wait);
 
     ReturnCode_t get_publication_matched_status(
             PublicationMatchedStatus& status);
@@ -384,14 +380,14 @@ public:
 
 protected:
 
-    using IChangePool = eprosima::fastrtps::rtps::IChangePool;
-    using IPayloadPool = eprosima::fastrtps::rtps::IPayloadPool;
-    using ITopicPayloadPool = eprosima::fastrtps::rtps::ITopicPayloadPool;
+    using IChangePool = eprosima::fastdds::rtps::IChangePool;
+    using IPayloadPool = eprosima::fastdds::rtps::IPayloadPool;
+    using ITopicPayloadPool = eprosima::fastdds::rtps::ITopicPayloadPool;
 
     PublisherImpl* publisher_ = nullptr;
 
     //! Pointer to the associated Data Writer.
-    fastrtps::rtps::RTPSWriter* writer_ = nullptr;
+    fastdds::rtps::RTPSWriter* writer_ = nullptr;
 
     //! Pointer to the TopicDataType object.
     TypeSupport type_;
@@ -410,7 +406,7 @@ protected:
     DataWriterHistory history_;
 
     //!Listener to capture the events of the Writer
-    class InnerDataWriterListener : public fastrtps::rtps::WriterListener
+    class InnerDataWriterListener : public fastdds::rtps::WriterListener
     {
     public:
 
@@ -425,26 +421,26 @@ protected:
         }
 
         void onWriterMatched(
-                fastrtps::rtps::RTPSWriter* writer,
+                fastdds::rtps::RTPSWriter* writer,
                 const fastdds::dds::PublicationMatchedStatus& info) override;
 
         void on_offered_incompatible_qos(
-                fastrtps::rtps::RTPSWriter* writer,
+                fastdds::rtps::RTPSWriter* writer,
                 fastdds::dds::PolicyMask qos) override;
 
         void onWriterChangeReceivedByAll(
-                fastrtps::rtps::RTPSWriter* writer,
-                fastrtps::rtps::CacheChange_t* change) override;
+                fastdds::rtps::RTPSWriter* writer,
+                fastdds::rtps::CacheChange_t* change) override;
 
         void on_liveliness_lost(
-                fastrtps::rtps::RTPSWriter* writer,
+                fastdds::rtps::RTPSWriter* writer,
                 const LivelinessLostStatus& status) override;
 
         void on_reader_discovery(
-                fastrtps::rtps::RTPSWriter* writer,
-                fastrtps::rtps::ReaderDiscoveryInfo::DISCOVERY_STATUS reason,
-                const fastrtps::rtps::GUID_t& reader_guid,
-                const fastrtps::rtps::ReaderProxyData* reader_info) override;
+                fastdds::rtps::RTPSWriter* writer,
+                fastdds::rtps::ReaderDiscoveryInfo::DISCOVERY_STATUS reason,
+                const fastdds::rtps::GUID_t& reader_guid,
+                const fastdds::rtps::ReaderProxyData* reader_info) override;
 
 #ifdef FASTDDS_STATISTICS
         void notify_status_observer(
@@ -455,12 +451,12 @@ protected:
 
     private:
 
-        using fastrtps::rtps::WriterListener::onWriterMatched;
+        using rtps::WriterListener::onWriterMatched;
     }
     writer_listener_;
 
     //! A timer used to check for deadlines
-    fastrtps::rtps::TimedEvent* deadline_timer_ = nullptr;
+    fastdds::rtps::TimedEvent* deadline_timer_ = nullptr;
 
     //! Deadline duration in microseconds
     std::chrono::duration<double, std::ratio<1, 1000000>> deadline_duration_us_;
@@ -481,7 +477,7 @@ protected:
     OfferedIncompatibleQosStatus offered_incompatible_qos_status_;
 
     //! A timed callback to remove expired samples for lifespan QoS
-    fastrtps::rtps::TimedEvent* lifespan_timer_ = nullptr;
+    fastdds::rtps::TimedEvent* lifespan_timer_ = nullptr;
 
     //! The lifespan duration, in microseconds
     std::chrono::duration<double, std::ratio<1, 1000000>> lifespan_duration_us_;
@@ -498,7 +494,7 @@ protected:
 
     std::unique_ptr<LoanCollection> loans_;
 
-    fastrtps::rtps::GUID_t guid_;
+    fastdds::rtps::GUID_t guid_;
 
     std::unique_ptr<ReaderFilterCollection> reader_filters_;
 
@@ -517,7 +513,7 @@ protected:
     InstanceHandle_t do_register_instance(
             void* key,
             const InstanceHandle_t instance_handle,
-            fastrtps::rtps::WriteParams& wparams);
+            fastdds::rtps::WriteParams& wparams);
 
     /**
      *
@@ -526,7 +522,7 @@ protected:
      * @return
      */
     ReturnCode_t create_new_change(
-            fastrtps::rtps::ChangeKind_t kind,
+            fastdds::rtps::ChangeKind_t kind,
             void* data);
 
     /**
@@ -537,9 +533,9 @@ protected:
      * @return
      */
     ReturnCode_t create_new_change_with_params(
-            fastrtps::rtps::ChangeKind_t kind,
+            fastdds::rtps::ChangeKind_t kind,
             void* data,
-            fastrtps::rtps::WriteParams& wparams);
+            fastdds::rtps::WriteParams& wparams);
 
     /**
      *
@@ -550,9 +546,9 @@ protected:
      * @return
      */
     ReturnCode_t create_new_change_with_params(
-            fastrtps::rtps::ChangeKind_t kind,
+            fastdds::rtps::ChangeKind_t kind,
             void* data,
-            fastrtps::rtps::WriteParams& wparams,
+            fastdds::rtps::WriteParams& wparams,
             const InstanceHandle_t& handle);
 
     /**
@@ -580,16 +576,16 @@ protected:
     bool lifespan_expired();
 
     ReturnCode_t check_new_change_preconditions(
-            fastrtps::rtps::ChangeKind_t change_kind,
+            fastdds::rtps::ChangeKind_t change_kind,
             void* data);
 
     ReturnCode_t perform_create_new_change(
-            fastrtps::rtps::ChangeKind_t change_kind,
+            fastdds::rtps::ChangeKind_t change_kind,
             void* data,
-            fastrtps::rtps::WriteParams& wparams,
+            fastdds::rtps::WriteParams& wparams,
             const InstanceHandle_t& handle);
 
-    static fastrtps::TopicAttributes get_topic_attributes(
+    static fastdds::TopicAttributes get_topic_attributes(
             const DataWriterQos& qos,
             const Topic& topic,
             const TypeSupport& type);
@@ -652,8 +648,8 @@ protected:
             const StatusMask& status);
 
     void set_fragment_size_on_change(
-            fastrtps::rtps::WriteParams& wparams,
-            fastrtps::rtps::CacheChange_t* ch,
+            fastdds::rtps::WriteParams& wparams,
+            fastdds::rtps::CacheChange_t* ch,
             const uint32_t& high_mark_for_frag);
 
     std::shared_ptr<IChangePool> get_change_pool() const;
@@ -663,7 +659,7 @@ protected:
     bool release_payload_pool();
 
     ReturnCode_t check_datasharing_compatible(
-            const fastrtps::rtps::WriterAttributes& writer_attributes,
+            const fastdds::rtps::WriterAttributes& writer_attributes,
             bool& is_datasharing_compatible) const;
 
     template<typename SizeFunctor>
@@ -700,7 +696,7 @@ protected:
      * @param reader_guid  GUID of the reader that has been unmatched.
      */
     void remove_reader_filter(
-            const fastrtps::rtps::GUID_t& reader_guid);
+            const fastdds::rtps::GUID_t& reader_guid);
 
     /**
      * Process filtering information for a reader.
@@ -710,12 +706,12 @@ protected:
      * @param reader_info  The reader's discovery information.
      */
     void process_reader_filter_info(
-            const fastrtps::rtps::GUID_t& reader_guid,
-            const fastrtps::rtps::ReaderProxyData& reader_info);
+            const fastdds::rtps::GUID_t& reader_guid,
+            const fastdds::rtps::ReaderProxyData& reader_info);
 
     bool is_relevant(
-            const fastrtps::rtps::CacheChange_t& change,
-            const fastrtps::rtps::GUID_t& reader_guid) const override;
+            const fastdds::rtps::CacheChange_t& change,
+            const fastdds::rtps::GUID_t& reader_guid) const override;
 
 private:
 

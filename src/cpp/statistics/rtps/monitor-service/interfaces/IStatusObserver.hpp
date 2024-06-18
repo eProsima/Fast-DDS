@@ -38,7 +38,7 @@ struct IStatusObserver
      * @return Whether the implementor has been properly notified
      */
     virtual bool on_local_entity_status_change(
-            const fastrtps::rtps::GUID_t& guid,
+            const fastdds::rtps::GUID_t& guid,
             const uint32_t& id) const = 0;
 };
 

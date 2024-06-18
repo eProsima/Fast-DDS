@@ -19,7 +19,7 @@
 #include <fastdds/rtps/common/SerializedPayload.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 SerializedPayload_t& SerializedPayload_t::operator = (
@@ -144,5 +144,5 @@ void SerializedPayload_t::reserve(
 }
 
 } /* namespace rtps */
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */

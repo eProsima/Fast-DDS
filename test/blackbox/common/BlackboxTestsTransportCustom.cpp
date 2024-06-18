@@ -70,11 +70,11 @@ public:
     }
 
     bool init(
-            const eprosima::fastrtps::rtps::PropertyPolicy* properties = nullptr,
+            const eprosima::fastdds::rtps::PropertyPolicy* properties = nullptr,
             const uint32_t& max_msg_size_no_frag = 0) override
     {
         const std::string* value =
-                eprosima::fastrtps::rtps::PropertyPolicyHelper::find_property(*properties, test_property_name);
+                eprosima::fastdds::rtps::PropertyPolicyHelper::find_property(*properties, test_property_name);
         if (value && 0 == value->compare(test_property_value))
         {
             descriptor_.init_function_called();
@@ -83,11 +83,11 @@ public:
     }
 
     bool send(
-            eprosima::fastrtps::rtps::SenderResource* low_sender_resource,
+            eprosima::fastdds::rtps::SenderResource* low_sender_resource,
             const std::vector<NetworkBuffer>& buffers,
             uint32_t total_bytes,
-            eprosima::fastrtps::rtps::LocatorsIterator* destination_locators_begin,
-            eprosima::fastrtps::rtps::LocatorsIterator* destination_locators_end,
+            eprosima::fastdds::rtps::LocatorsIterator* destination_locators_begin,
+            eprosima::fastdds::rtps::LocatorsIterator* destination_locators_end,
             const std::chrono::steady_clock::time_point& timeout) override
     {
         descriptor_.send_function_called();
@@ -99,10 +99,10 @@ public:
 
     void receive(
             eprosima::fastdds::rtps::TransportReceiverInterface* next_receiver,
-            const eprosima::fastrtps::rtps::octet* receive_buffer,
+            const eprosima::fastdds::rtps::octet* receive_buffer,
             uint32_t receive_buffer_size,
-            const eprosima::fastrtps::rtps::Locator_t& local_locator,
-            const eprosima::fastrtps::rtps::Locator_t& remote_locator) override
+            const eprosima::fastdds::rtps::Locator_t& local_locator,
+            const eprosima::fastdds::rtps::Locator_t& remote_locator) override
     {
         descriptor_.receive_function_called();
 
@@ -316,7 +316,7 @@ TEST(ChainingTransportTests, basic_test)
     bool reader_init_function_called = false;
     bool reader_receive_function_called = false;
     bool reader_send_function_called = false;
-    eprosima::fastrtps::rtps::PropertyPolicy test_property_policy;
+    eprosima::fastdds::rtps::PropertyPolicy test_property_policy;
     test_property_policy.properties().push_back({test_property_name, test_property_value});
     std::shared_ptr<UDPv4TransportDescriptor> udp_transport = std::make_shared<UDPv4TransportDescriptor>();
     std::shared_ptr<TestChainingTransportDescriptor> writer_transport =
@@ -398,7 +398,7 @@ TEST(ChainingTransportTests, tcp_client_server_with_wan_correct_sender_resources
     std::atomic<int> times_reader_receive_function_called{0};
     std::atomic<int> times_reader_send_function_called{0};
 
-    eprosima::fastrtps::rtps::PropertyPolicy test_property_policy;
+    eprosima::fastdds::rtps::PropertyPolicy test_property_policy;
     test_property_policy.properties().push_back({test_property_name, test_property_value});
 
     uint16_t port = static_cast<uint16_t>(GET_PID());
@@ -414,8 +414,8 @@ TEST(ChainingTransportTests, tcp_client_server_with_wan_correct_sender_resources
     reader_tcp_transport->set_WAN_address("127.0.0.1");
     reader_tcp_transport->listening_ports.push_back(port);
 
-    eprosima::fastrtps::rtps::LocatorList_t reader_locators;
-    eprosima::fastrtps::rtps::Locator_t reader_loc;
+    eprosima::fastdds::rtps::LocatorList_t reader_locators;
+    eprosima::fastdds::rtps::Locator_t reader_loc;
     reader_loc.port = port;
     IPLocator::setIPv4(reader_loc, "127.0.0.1");
     reader_loc.kind = LOCATOR_KIND_TCPv4;
@@ -457,7 +457,7 @@ TEST(ChainingTransportTests, tcp_client_server_with_wan_correct_sender_resources
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
 
-    eprosima::fastrtps::rtps::LocatorList_t initial_peers;
+    eprosima::fastdds::rtps::LocatorList_t initial_peers;
     initial_peers.push_back(reader_loc);
 
     writer.disable_builtin_transport()

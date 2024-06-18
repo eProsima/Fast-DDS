@@ -48,7 +48,7 @@ ReturnCode_t WaitSet::detach_condition(
 
 ReturnCode_t WaitSet::wait(
         ConditionSeq& active_conditions,
-        const fastrtps::Duration_t timeout) const
+        const fastdds::Duration_t timeout) const
 {
     return impl_->wait(active_conditions, timeout);
 }

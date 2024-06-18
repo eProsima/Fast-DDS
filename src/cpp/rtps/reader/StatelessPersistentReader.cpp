@@ -25,7 +25,7 @@
 #include <rtps/reader/ReaderHistoryState.hpp>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 StatelessPersistentReader::StatelessPersistentReader(
@@ -105,5 +105,5 @@ bool StatelessPersistentReader::may_remove_history_record(
 }
 
 } /* namespace rtps */
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */

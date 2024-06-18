@@ -861,12 +861,12 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BitsetsChildInheritanceStruct)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    eprosima::fastrtps::rtps::octet octet_value {5};
+    eprosima::fastdds::rtps::octet octet_value {5};
     bool bool_value {true};
     uint16_t ushort_value {1000};
     int16_t short_value {2000};
     uint32_t long_value {111};
-    eprosima::fastrtps::rtps::octet test_octet_value;
+    eprosima::fastdds::rtps::octet test_octet_value;
     bool test_bool_value;
     uint16_t test_ushort_value;
     int16_t test_short_value;

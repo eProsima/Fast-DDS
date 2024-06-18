@@ -33,7 +33,7 @@
 #include <fastdds/rtps/history/IPayloadPool.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 struct CacheChange_t;
@@ -424,7 +424,7 @@ private:
 };
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 #endif /* _FASTDDS_RTPS_CACHECHANGE_H_ */

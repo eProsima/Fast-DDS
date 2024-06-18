@@ -30,7 +30,7 @@
 #include <map>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 using guid_map_helper = utilities::collections::map_size_helper<GUID_t, GUID_t>;
@@ -76,7 +76,7 @@ struct ReaderHistoryState
 };
 
 } /* namespace rtps */
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */
 
 #endif /* FASTDDS_RTPS_READER_READERHISTORYSTATE_HPP_ */

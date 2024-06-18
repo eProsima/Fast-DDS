@@ -34,8 +34,8 @@ namespace dds {
  */
 struct IContentFilter
 {
-    using SerializedPayload = eprosima::fastrtps::rtps::SerializedPayload_t;
-    using GUID_t = fastrtps::rtps::GUID_t;
+    using SerializedPayload = eprosima::fastdds::rtps::SerializedPayload_t;
+    using GUID_t = fastdds::rtps::GUID_t;
 
     /**
      * Selected information from the cache change that is passed to the content filter object on
@@ -43,7 +43,7 @@ struct IContentFilter
      */
     struct FilterSampleInfo
     {
-        using SampleIdentity = eprosima::fastrtps::rtps::SampleIdentity;
+        using SampleIdentity = eprosima::fastdds::rtps::SampleIdentity;
 
         /// Identity of the sample being filtered.
         SampleIdentity sample_identity;

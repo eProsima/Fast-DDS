@@ -45,7 +45,7 @@ struct BuiltinWriter
     {
         if (history_)
         {
-            auto cfg = fastrtps::rtps::PoolConfig::from_history_attributes(history_->m_att);
+            auto cfg = fastdds::rtps::PoolConfig::from_history_attributes(history_->m_att);
             history_.reset();
             if (payload_pool_)
             {
@@ -55,9 +55,9 @@ struct BuiltinWriter
     }
 
     //! Payload pool for the topic
-    std::shared_ptr<fastrtps::rtps::ITopicPayloadPool> payload_pool_;
+    std::shared_ptr<fastdds::rtps::ITopicPayloadPool> payload_pool_;
     //! History for the builtin writer
-    std::unique_ptr<fastrtps::rtps::WriterHistory> history_;
+    std::unique_ptr<fastdds::rtps::WriterHistory> history_;
     //! Builtin RTPS writer
     TWriter* writer_ = nullptr;
 };

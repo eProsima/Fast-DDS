@@ -26,7 +26,7 @@
 using NetworkBuffer = eprosima::fastdds::rtps::NetworkBuffer;
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 namespace {
@@ -507,5 +507,5 @@ bool RTPSMessageCreator::addSubmessageDataFrag(
 }
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima

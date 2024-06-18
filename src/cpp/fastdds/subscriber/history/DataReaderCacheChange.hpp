@@ -29,7 +29,7 @@ namespace dds {
 namespace detail {
 
 /// A DataReader cache entry
-using DataReaderCacheChange = fastrtps::rtps::CacheChange_t*;
+using DataReaderCacheChange = fastdds::rtps::CacheChange_t*;
 
 } /* namespace detail */
 } /* namespace dds */

@@ -28,7 +28,7 @@
 #include <algorithm>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 using FragmentNumber_t = uint32_t;
@@ -51,7 +51,7 @@ inline std::ostream& operator <<(
 }
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 #endif /* _FASTDDS_RTPS_RPTS_ELEM_FRAGNUM_H_ */

@@ -44,7 +44,7 @@
 #define TIME_LIMIT_US 10000
 
 using namespace eprosima::fastdds::dds;
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds::rtps;
 
 LatencyTestPublisher::LatencyTestPublisher()
     : latency_command_type_(new TestCommandDataType())

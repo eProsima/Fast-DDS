@@ -18,7 +18,9 @@
 
 #include <fastdds/subscriber/ReadConditionImpl.hpp>
 
-using namespace eprosima::fastdds::dds;
+namespace eprosima {
+namespace fastdds {
+namespace dds {
 
 ReadCondition::ReadCondition()
 {
@@ -57,3 +59,7 @@ InstanceStateMask ReadCondition::get_instance_state_mask() const noexcept
     assert((bool)impl_);
     return impl_->get_instance_state_mask();
 }
+
+} // namespace dds
+} // namespace fastdds
+} // namespace eprosima

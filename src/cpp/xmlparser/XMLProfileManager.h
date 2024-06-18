@@ -31,7 +31,7 @@
 #include <xmlparser/XMLParserCommon.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace xmlparser {
 
 using participant_factory_map_t = std::map<std::string, up_participantfactory_t>;

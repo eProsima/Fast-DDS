@@ -44,7 +44,7 @@ class XMLDocument;
 } // namespace tinyxml2
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace xmlparser {
 
 class BaseNode;
@@ -620,7 +620,7 @@ protected:
 
     static XMLP_ret getXMLEnum(
             tinyxml2::XMLElement* elem,
-            rtps::DiscoveryProtocol_t* e,
+            rtps::DiscoveryProtocol* e,
             uint8_t ident);
 
     static XMLP_ret getXMLList(
@@ -630,7 +630,7 @@ protected:
 
     static XMLP_ret getXMLEnum(
             tinyxml2::XMLElement* elem,
-            rtps::ParticipantFilteringFlags_t* e,
+            rtps::ParticipantFilteringFlags* e,
             uint8_t ident);
 
     static XMLP_ret getXMLRemoteServer(
@@ -702,7 +702,7 @@ protected:
 };
 
 } // namespace xmlparser
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 #endif // ifndef XML_PARSER_H_

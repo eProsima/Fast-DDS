@@ -15,7 +15,7 @@
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>
 #include <gtest/gtest.h>
 
-using namespace eprosima::fastrtps;
+using namespace eprosima::fastdds;
 
 // Power of two has been chosen to allow for ASSERT_EQ on capacity, as
 // some implementations of std::vector would enforce power of two capacities

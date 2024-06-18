@@ -37,7 +37,7 @@
 
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 ReaderProxy::ReaderProxy(
@@ -712,5 +712,5 @@ bool ReaderProxy::has_been_delivered(
 }
 
 }   // namespace rtps
-}   // namespace fastrtps
+}   // namespace fastdds
 }   // namespace eprosima

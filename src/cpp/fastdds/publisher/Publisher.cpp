@@ -23,8 +23,9 @@
 
 #include <fastdds/dds/log/Log.hpp>
 
-using namespace eprosima;
-using namespace eprosima::fastdds::dds;
+namespace eprosima {
+namespace fastdds {
+namespace dds {
 
 Publisher::Publisher(
         PublisherImpl* p,
@@ -113,7 +114,7 @@ DataWriter* Publisher::create_datawriter(
         const DataWriterQos& qos,
         DataWriterListener* listener,
         const StatusMask& mask,
-        std::shared_ptr<fastrtps::rtps::IPayloadPool> payload_pool)
+        std::shared_ptr<fastdds::rtps::IPayloadPool> payload_pool)
 {
     return impl_->create_datawriter(topic, qos, listener, mask, payload_pool);
 }
@@ -123,7 +124,7 @@ DataWriter* Publisher::create_datawriter_with_profile(
         const std::string& profile_name,
         DataWriterListener* listener,
         const StatusMask& mask,
-        std::shared_ptr<fastrtps::rtps::IPayloadPool> payload_pool)
+        std::shared_ptr<fastdds::rtps::IPayloadPool> payload_pool)
 {
     return impl_->create_datawriter_with_profile(topic, profile_name, listener, mask, payload_pool);
 }
@@ -173,7 +174,7 @@ ReturnCode_t Publisher::end_coherent_changes()
 }
 
 ReturnCode_t Publisher::wait_for_acknowledgments(
-        const fastrtps::Duration_t& max_wait)
+        const fastdds::Duration_t& max_wait)
 {
     return impl_->wait_for_acknowledgments(max_wait);
 }
@@ -213,7 +214,7 @@ ReturnCode_t Publisher::copy_from_topic_qos(
     return PublisherImpl::copy_from_topic_qos(writer_qos, topic_qos);
 }
 
-const fastrtps::rtps::InstanceHandle_t& Publisher::get_instance_handle() const
+const fastdds::rtps::InstanceHandle_t& Publisher::get_instance_handle() const
 {
     return impl_->get_instance_handle();
 }
@@ -235,3 +236,7 @@ ReturnCode_t Publisher::get_datawriter_qos_from_profile(
 {
     return impl_->get_datawriter_qos_from_profile(profile_name, qos);
 }
+
+} // namespace dds
+} // namespace fastdds
+} // namespace eprosima

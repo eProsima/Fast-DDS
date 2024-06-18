@@ -9,7 +9,7 @@
 #include <fastdds/utils/TimedMutex.hpp>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class RTPSWriter;
@@ -110,7 +110,7 @@ public:
         return mutex_.try_lock_until(abs_time);
     }
 
-    fastrtps::rtps::LocatorSelector locator_selector;
+    fastdds::rtps::LocatorSelector locator_selector;
 
     ResourceLimitedVector<GUID_t> all_remote_readers;
 
@@ -124,6 +124,6 @@ private:
 };
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 #endif // _FASTDDS_RTPS_WRITER_LOCATORSELECTORSENDER_HPP_

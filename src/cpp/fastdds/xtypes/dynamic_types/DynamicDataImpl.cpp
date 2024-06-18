@@ -679,7 +679,7 @@ ReturnCode_t DynamicDataImpl::get_char16_value(
 }
 
 ReturnCode_t DynamicDataImpl::get_byte_value(
-        eprosima::fastrtps::rtps::octet& value,
+        eprosima::fastdds::rtps::octet& value,
         MemberId id) noexcept
 {
     return get_value<TK_BYTE>(value, id);
@@ -1179,7 +1179,7 @@ ReturnCode_t DynamicDataImpl::set_char16_value(
 
 ReturnCode_t DynamicDataImpl::set_byte_value(
         MemberId id,
-        eprosima::fastrtps::rtps::octet value) noexcept
+        eprosima::fastdds::rtps::octet value) noexcept
 {
     return set_value<TK_BYTE>(id, value);
 }

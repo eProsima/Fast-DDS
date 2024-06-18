@@ -32,7 +32,7 @@
 
 namespace eprosima {
 
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 struct CacheChange_t;
@@ -44,61 +44,61 @@ class WriterProxy;
 class WriterProxyData;
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 
 namespace fastdds {
 namespace rtps {
 
-class BaseReader : public fastrtps::rtps::RTPSReader
+class BaseReader : public fastdds::rtps::RTPSReader
 {
 public:
 
     BaseReader()
-        : fastrtps::rtps::RTPSReader()
+        : fastdds::rtps::RTPSReader()
     {
     }
 
     BaseReader(
-            fastrtps::rtps::ReaderHistory* history,
-            fastrtps::RecursiveTimedMutex* mutex)
-        : fastrtps::rtps::RTPSReader(history, mutex)
+            fastdds::rtps::ReaderHistory* history,
+            fastdds::RecursiveTimedMutex* mutex)
+        : fastdds::rtps::RTPSReader(history, mutex)
     {
     }
 
     virtual ~BaseReader() = default;
 
     static BaseReader* downcast(
-            fastrtps::rtps::RTPSReader* reader)
+            fastdds::rtps::RTPSReader* reader)
     {
         return static_cast<BaseReader*>(reader);
     }
 
     static BaseReader* downcast(
-            fastrtps::rtps::Endpoint* endpoint)
+            fastdds::rtps::Endpoint* endpoint)
     {
         return static_cast<BaseReader*>(endpoint);
     }
 
-    fastrtps::rtps::ReaderListener* get_listener() const override
+    fastdds::rtps::ReaderListener* get_listener() const override
     {
         return listener_;
     }
 
     virtual bool set_listener(
-            fastrtps::rtps::ReaderListener* listener) override
+            fastdds::rtps::ReaderListener* listener) override
     {
         listener_ = listener;
         return true;
     }
 
     virtual bool process_data_msg(
-            fastrtps::rtps::CacheChange_t*)
+            fastdds::rtps::CacheChange_t*)
     {
         return true;
     }
 
     virtual bool process_data_frag_msg(
-            fastrtps::rtps::CacheChange_t*,
+            fastdds::rtps::CacheChange_t*,
             uint32_t,
             uint32_t,
             uint16_t)
@@ -107,10 +107,10 @@ public:
     }
 
     virtual bool process_heartbeat_msg(
-            const fastrtps::rtps::GUID_t&,
+            const fastdds::rtps::GUID_t&,
             uint32_t,
-            const fastrtps::rtps::SequenceNumber_t&,
-            const fastrtps::rtps::SequenceNumber_t&,
+            const fastdds::rtps::SequenceNumber_t&,
+            const fastdds::rtps::SequenceNumber_t&,
             bool,
             bool)
     {
@@ -118,44 +118,44 @@ public:
     }
 
     virtual bool process_gap_msg(
-            const fastrtps::rtps::GUID_t&,
-            const fastrtps::rtps::SequenceNumber_t&,
-            const fastrtps::rtps::SequenceNumberSet_t&)
+            const fastdds::rtps::GUID_t&,
+            const fastdds::rtps::SequenceNumber_t&,
+            const fastdds::rtps::SequenceNumberSet_t&)
     {
         return true;
     }
 
     virtual bool change_removed_by_history(
-            fastrtps::rtps::CacheChange_t*,
-            fastrtps::rtps::WriterProxy*)
+            fastdds::rtps::CacheChange_t*,
+            fastdds::rtps::WriterProxy*)
     {
         return true;
     }
 
     virtual bool begin_sample_access_nts(
-            fastrtps::rtps::CacheChange_t* /*change*/,
-            fastrtps::rtps::WriterProxy*& /*wp*/,
+            fastdds::rtps::CacheChange_t* /*change*/,
+            fastdds::rtps::WriterProxy*& /*wp*/,
             bool& /*is_future_change*/)
     {
         return true;
     }
 
     virtual void end_sample_access_nts(
-            fastrtps::rtps::CacheChange_t* /*change*/,
-            fastrtps::rtps::WriterProxy*& /*wp*/,
+            fastdds::rtps::CacheChange_t* /*change*/,
+            fastdds::rtps::WriterProxy*& /*wp*/,
             bool /*mark_as_read*/)
     {
     }
 
     // *INDENT-OFF* Uncrustify makes a mess with MOCK_METHOD macros
-    MOCK_METHOD1(change_removed_by_history, bool(fastrtps::rtps::CacheChange_t* change));
+    MOCK_METHOD1(change_removed_by_history, bool(fastdds::rtps::CacheChange_t* change));
 
-    MOCK_METHOD2(reserve_cache, bool(uint32_t, fastrtps::rtps::CacheChange_t*&));
+    MOCK_METHOD2(reserve_cache, bool(uint32_t, fastdds::rtps::CacheChange_t*&));
 
-    MOCK_METHOD1(release_cache, void(fastrtps::rtps::CacheChange_t* a_change));
+    MOCK_METHOD1(release_cache, void(fastdds::rtps::CacheChange_t* a_change));
     // *INDENT-ON*
 
-    fastrtps::rtps::ReaderListener* listener_;
+    fastdds::rtps::ReaderListener* listener_;
 
 };
 

@@ -61,9 +61,11 @@
 #define LOCATION " (" __FILE__ ":" S2(__LINE__) ")"
 #define _SecurityException_(str) SecurityException(std::string(str) + LOCATION)
 
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
-using namespace eprosima::fastrtps::rtps::security;
+namespace eprosima {
+namespace fastdds {
+namespace rtps {
+
+using namespace security;
 
 using ParameterList = eprosima::fastdds::dds::ParameterList;
 
@@ -2588,3 +2590,7 @@ bool PKIDH::check_guid_comes_from(
     return adjusted == original;
 
 }
+
+} // namespace rtps
+} // namespace fastdds
+} // namespace eprosima

@@ -136,7 +136,7 @@ public:
     }
 
     void newNumber(
-            eprosima::fastrtps::rtps::SampleIdentity sample_identity,
+            eprosima::fastdds::rtps::SampleIdentity sample_identity,
             uint16_t number);
     void wait_discovery();
     void matched();

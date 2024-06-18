@@ -61,7 +61,7 @@
 #include <functional>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 
 #if HAVE_STRICT_REALTIME && (/*defined(_WIN32) ||*/ defined(__unix__))
 
@@ -190,7 +190,7 @@ private:
 using TimedConditionVariable = std::condition_variable_any;
 #endif // HAVE_STRICT_REALTIME && (/*defined(_WIN32)*/ || defined(__unix__))
 
-}  // namespace fastrtps
+}  // namespace fastdds
 }  // namespace eprosima
 
 #endif // _UTILS_TIMEDCONDITIONVARIABLE_HPP_

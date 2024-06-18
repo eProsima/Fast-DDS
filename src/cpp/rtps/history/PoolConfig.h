@@ -23,7 +23,7 @@
 #include <fastdds/rtps/resources/ResourceManagement.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 struct BasicPoolConfig
@@ -86,7 +86,7 @@ struct PoolConfig : public BasicPoolConfig
 };
 
 } /* namespace rtps */
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */
 
 #endif /* RTPS_HISTORY_POOLCONFIG_H_ */

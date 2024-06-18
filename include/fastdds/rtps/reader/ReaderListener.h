@@ -29,7 +29,7 @@
 #include <fastdds/rtps/writer/WriterDiscoveryInfo.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class RTPSReader;
@@ -200,7 +200,7 @@ public:
 };
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 #endif /* _FASTDDS_RTPS_READERLISTENER_H_ */

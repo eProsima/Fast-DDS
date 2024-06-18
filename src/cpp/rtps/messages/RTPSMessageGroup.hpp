@@ -35,7 +35,7 @@
 #include <rtps/messages/RTPSMessageCreator.hpp>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class RTPSParticipantImpl;
@@ -361,7 +361,7 @@ private:
     ResourceLimitedVector<eprosima::fastdds::rtps::NetworkBuffer>* buffers_to_send_ = nullptr;
 
     // Vector of payloads of which the RTPSMessageGroup is the owner
-    ResourceLimitedVector<eprosima::fastrtps::rtps::SerializedPayload_t>* payloads_to_send_ = nullptr;
+    ResourceLimitedVector<eprosima::fastdds::rtps::SerializedPayload_t>* payloads_to_send_ = nullptr;
 
     // Bytes to send in the next list of buffers
     uint32_t buffers_bytes_ = 0;
@@ -374,7 +374,7 @@ private:
 };
 
 } /* namespace rtps */
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC

@@ -18,7 +18,7 @@
 
 #include <fastdds/rtps/common/PortParameters.h>
 
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds::rtps;
 
 /*!
  * @fn TEST(PortParameters, Limit_Unicast_Domain_OK)

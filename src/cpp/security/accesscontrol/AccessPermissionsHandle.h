@@ -29,7 +29,7 @@
 #include <map>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 namespace security {
 
@@ -70,7 +70,7 @@ typedef HandleImpl<AccessPermissions, Permissions> AccessPermissionsHandle;
 
 } //namespace security
 } //namespace rtps
-} //namespace fastrtps
+} //namespace fastdds
 } //namespace eprosima
 
 #endif // __SECURITY_ACCESSCONTROL_ACCESSPERMISSIONSHANDLE_H__

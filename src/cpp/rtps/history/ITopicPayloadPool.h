@@ -23,7 +23,7 @@
 #include <rtps/history/PoolConfig.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class ITopicPayloadPool : public IPayloadPool
@@ -89,7 +89,7 @@ public:
 };
 
 }  // namespace rtps
-}  // namespace fastrtps
+}  // namespace fastdds
 }  // namespace eprosima
 
 

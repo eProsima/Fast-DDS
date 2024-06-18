@@ -151,7 +151,7 @@ public:
             MemberId id) noexcept override;
 
     ReturnCode_t get_byte_value(
-            eprosima::fastrtps::rtps::octet& value,
+            eprosima::fastdds::rtps::octet& value,
             MemberId id) noexcept override;
 
     ReturnCode_t get_boolean_value(
@@ -310,7 +310,7 @@ public:
 
     ReturnCode_t set_byte_value(
             MemberId id,
-            eprosima::fastrtps::rtps::octet value) noexcept override;
+            eprosima::fastdds::rtps::octet value) noexcept override;
 
     ReturnCode_t set_boolean_value(
             MemberId id,

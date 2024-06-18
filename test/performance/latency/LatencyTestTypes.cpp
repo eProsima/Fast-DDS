@@ -22,8 +22,8 @@
 #include <cstring>
 #include <cstddef>
 
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds;
+using namespace eprosima::fastdds::rtps;
 
 const size_t LatencyType::overhead = offsetof(LatencyType, data) +
         SerializedPayload_t::representation_header_size;

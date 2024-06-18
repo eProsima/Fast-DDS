@@ -44,8 +44,7 @@
 
 namespace eprosima {
 
-using namespace fastrtps::rtps;
-using eprosima::fastdds::dds::Log;
+using namespace fastdds::rtps;
 
 namespace fastdds {
 namespace dds {
@@ -53,21 +52,21 @@ namespace builtin {
 
 
 inline SequenceNumber_t sequence_number_rtps_2_dds(
-        const fastrtps::rtps::SequenceNumber_t& seq_number)
+        const fastdds::rtps::SequenceNumber_t& seq_number)
 {
     return *reinterpret_cast<const SequenceNumber_t*>(&seq_number);
 }
 
 inline GUID_t guid_rtps_2_dds(
-        const fastrtps::rtps::GUID_t& rtps_guid)
+        const fastdds::rtps::GUID_t& rtps_guid)
 {
     return *reinterpret_cast<const GUID_t*>(&rtps_guid);
 }
 
-inline fastrtps::rtps::GUID_t guid_dds_2_rtps(
+inline fastdds::rtps::GUID_t guid_dds_2_rtps(
         const GUID_t& guid)
 {
-    return *reinterpret_cast<const fastrtps::rtps::GUID_t*>(&guid);
+    return *reinterpret_cast<const fastdds::rtps::GUID_t*>(&guid);
 }
 
 TypeLookupManager::TypeLookupManager()
@@ -105,17 +104,17 @@ TypeLookupManager::~TypeLookupManager()
 }
 
 bool TypeLookupManager::init(
-        fastrtps::rtps::BuiltinProtocols* protocols)
+        fastdds::rtps::BuiltinProtocols* protocols)
 {
     participant_ = protocols->mp_participantImpl;
     builtin_protocols_ = protocols;
 
     local_instance_name_ = get_instance_name(participant_->getGuid());
 
-    temp_reader_proxy_data_ = new fastrtps::rtps::ReaderProxyData(
+    temp_reader_proxy_data_ = new fastdds::rtps::ReaderProxyData(
         protocols->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
         protocols->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators);
-    temp_writer_proxy_data_ = new fastrtps::rtps::WriterProxyData(
+    temp_writer_proxy_data_ = new fastdds::rtps::WriterProxyData(
         protocols->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
         protocols->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators);
 
@@ -147,16 +146,16 @@ bool TypeLookupManager::assign_remote_endpoints(
     temp_writer_proxy_data_->persistence_guid().guidPrefix = pdata.m_guid.guidPrefix;
     temp_writer_proxy_data_->set_remote_locators(pdata.metatraffic_locators, network, true);
     temp_writer_proxy_data_->topicKind(NO_KEY);
-    temp_writer_proxy_data_->m_qos.m_durability.kind = fastrtps::VOLATILE_DURABILITY_QOS;
-    temp_writer_proxy_data_->m_qos.m_reliability.kind = fastrtps::RELIABLE_RELIABILITY_QOS;
+    temp_writer_proxy_data_->m_qos.m_durability.kind = fastdds::VOLATILE_DURABILITY_QOS;
+    temp_writer_proxy_data_->m_qos.m_reliability.kind = fastdds::RELIABLE_RELIABILITY_QOS;
 
     temp_reader_proxy_data_->clear();
     temp_reader_proxy_data_->m_expectsInlineQos = false;
     temp_reader_proxy_data_->guid().guidPrefix = pdata.m_guid.guidPrefix;
     temp_reader_proxy_data_->set_remote_locators(pdata.metatraffic_locators, network, true);
     temp_reader_proxy_data_->topicKind(NO_KEY);
-    temp_reader_proxy_data_->m_qos.m_durability.kind = fastrtps::VOLATILE_DURABILITY_QOS;
-    temp_reader_proxy_data_->m_qos.m_reliability.kind = fastrtps::RELIABLE_RELIABILITY_QOS;
+    temp_reader_proxy_data_->m_qos.m_durability.kind = fastdds::VOLATILE_DURABILITY_QOS;
+    temp_reader_proxy_data_->m_qos.m_reliability.kind = fastdds::RELIABLE_RELIABILITY_QOS;
 
     EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "for RTPSParticipant: " << pdata.m_guid);
 
@@ -165,8 +164,8 @@ bool TypeLookupManager::assign_remote_endpoints(
     if (auxendp != 0 && builtin_request_reader_ != nullptr)
     {
         EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "Adding remote writer to the local Builtin Request Reader");
-        temp_writer_proxy_data_->guid().entityId = fastrtps::rtps::c_EntityId_TypeLookup_request_writer;
-        temp_writer_proxy_data_->persistence_guid().entityId = fastrtps::rtps::c_EntityId_TypeLookup_request_writer;
+        temp_writer_proxy_data_->guid().entityId = fastdds::rtps::c_EntityId_TypeLookup_request_writer;
+        temp_writer_proxy_data_->persistence_guid().entityId = fastdds::rtps::c_EntityId_TypeLookup_request_writer;
         builtin_request_reader_->matched_writer_add(*temp_writer_proxy_data_);
     }
 
@@ -176,8 +175,8 @@ bool TypeLookupManager::assign_remote_endpoints(
     if (auxendp != 0 && builtin_reply_reader_ != nullptr)
     {
         EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "Adding remote writer to the local Builtin Reply Reader");
-        temp_writer_proxy_data_->guid().entityId = fastrtps::rtps::c_EntityId_TypeLookup_reply_writer;
-        temp_writer_proxy_data_->persistence_guid().entityId = fastrtps::rtps::c_EntityId_TypeLookup_reply_writer;
+        temp_writer_proxy_data_->guid().entityId = fastdds::rtps::c_EntityId_TypeLookup_reply_writer;
+        temp_writer_proxy_data_->persistence_guid().entityId = fastdds::rtps::c_EntityId_TypeLookup_reply_writer;
         builtin_reply_reader_->matched_writer_add(*temp_writer_proxy_data_);
     }
 
@@ -187,7 +186,7 @@ bool TypeLookupManager::assign_remote_endpoints(
     if (auxendp != 0 && builtin_request_writer_ != nullptr)
     {
         EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "Adding remote reader to the local Builtin Request Writer");
-        temp_reader_proxy_data_->guid().entityId = fastrtps::rtps::c_EntityId_TypeLookup_request_reader;
+        temp_reader_proxy_data_->guid().entityId = fastdds::rtps::c_EntityId_TypeLookup_request_reader;
         builtin_request_writer_->matched_reader_add(*temp_reader_proxy_data_);
     }
 
@@ -197,7 +196,7 @@ bool TypeLookupManager::assign_remote_endpoints(
     if (auxendp != 0 && builtin_reply_writer_ != nullptr)
     {
         EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "Adding remote reader to the local Builtin Reply Writer");
-        temp_reader_proxy_data_->guid().entityId = fastrtps::rtps::c_EntityId_TypeLookup_reply_reader;
+        temp_reader_proxy_data_->guid().entityId = fastdds::rtps::c_EntityId_TypeLookup_reply_reader;
         builtin_reply_writer_->matched_reader_add(*temp_reader_proxy_data_);
     }
 
@@ -205,9 +204,9 @@ bool TypeLookupManager::assign_remote_endpoints(
 }
 
 void TypeLookupManager::remove_remote_endpoints(
-        fastrtps::rtps::ParticipantProxyData* pdata)
+        fastdds::rtps::ParticipantProxyData* pdata)
 {
-    fastrtps::rtps::GUID_t tmp_guid;
+    fastdds::rtps::GUID_t tmp_guid;
     tmp_guid.guidPrefix = pdata->m_guid.guidPrefix;
 
     EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "for RTPSParticipant: " << pdata->m_guid);
@@ -220,7 +219,7 @@ void TypeLookupManager::remove_remote_endpoints(
     if ((auxendp != 0 || partdet != 0) && builtin_request_reader_ != nullptr)
     {
         EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "Removing remote writer from the local Builtin Request Reader");
-        tmp_guid.entityId = fastrtps::rtps::c_EntityId_TypeLookup_request_writer;
+        tmp_guid.entityId = fastdds::rtps::c_EntityId_TypeLookup_request_writer;
         builtin_request_reader_->matched_writer_remove(tmp_guid);
     }
 
@@ -230,7 +229,7 @@ void TypeLookupManager::remove_remote_endpoints(
     if ((auxendp != 0 || partdet != 0) && builtin_reply_reader_ != nullptr)
     {
         EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "Removing remote writer from the local Builtin Reply Reader");
-        tmp_guid.entityId = fastrtps::rtps::c_EntityId_TypeLookup_reply_writer;
+        tmp_guid.entityId = fastdds::rtps::c_EntityId_TypeLookup_reply_writer;
         builtin_reply_reader_->matched_writer_remove(tmp_guid);
     }
 
@@ -240,7 +239,7 @@ void TypeLookupManager::remove_remote_endpoints(
     if ((auxendp != 0 || partdet != 0) && builtin_request_writer_ != nullptr)
     {
         EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "Removing remote reader from the local Builtin Request Writer");
-        tmp_guid.entityId = fastrtps::rtps::c_EntityId_TypeLookup_request_reader;
+        tmp_guid.entityId = fastdds::rtps::c_EntityId_TypeLookup_request_reader;
         builtin_request_writer_->matched_reader_remove(tmp_guid);
     }
 
@@ -250,14 +249,14 @@ void TypeLookupManager::remove_remote_endpoints(
     if ((auxendp != 0 || partdet != 0) && builtin_reply_writer_ != nullptr)
     {
         EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "Removing remote reader from the local Builtin Reply Writer");
-        tmp_guid.entityId = fastrtps::rtps::c_EntityId_TypeLookup_reply_reader;
+        tmp_guid.entityId = fastdds::rtps::c_EntityId_TypeLookup_reply_reader;
         builtin_reply_writer_->matched_reader_remove(tmp_guid);
     }
 }
 
 SampleIdentity TypeLookupManager::get_type_dependencies(
         const xtypes::TypeIdentifierSeq& id_seq,
-        const fastrtps::rtps::GUID_t& type_server,
+        const fastdds::rtps::GUID_t& type_server,
         const std::vector<uint8_t>& continuation_point) const
 {
     TypeLookup_getTypeDependencies_In in;
@@ -286,7 +285,7 @@ SampleIdentity TypeLookupManager::get_type_dependencies(
 
 SampleIdentity TypeLookupManager::get_types(
         const xtypes::TypeIdentifierSeq& id_seq,
-        const fastrtps::rtps::GUID_t& type_server) const
+        const fastdds::rtps::GUID_t& type_server) const
 {
     TypeLookup_getTypes_In in;
     in.type_ids(id_seq);
@@ -309,18 +308,18 @@ SampleIdentity TypeLookupManager::get_types(
 }
 
 ReturnCode_t TypeLookupManager::async_get_type(
-        eprosima::ProxyPool<eprosima::fastrtps::rtps::WriterProxyData>::smart_ptr& temp_writer_data,
+        eprosima::ProxyPool<eprosima::fastdds::rtps::WriterProxyData>::smart_ptr& temp_writer_data,
         const AsyncGetTypeWriterCallback& callback)
 {
-    return check_type_identifier_received<eprosima::fastrtps::rtps::WriterProxyData>(
+    return check_type_identifier_received<eprosima::fastdds::rtps::WriterProxyData>(
         temp_writer_data, callback, async_get_type_writer_callbacks_);
 }
 
 ReturnCode_t TypeLookupManager::async_get_type(
-        eprosima::ProxyPool<eprosima::fastrtps::rtps::ReaderProxyData>::smart_ptr&  temp_reader_data,
+        eprosima::ProxyPool<eprosima::fastdds::rtps::ReaderProxyData>::smart_ptr&  temp_reader_data,
         const AsyncGetTypeReaderCallback& callback)
 {
-    return check_type_identifier_received<eprosima::fastrtps::rtps::ReaderProxyData>(
+    return check_type_identifier_received<eprosima::fastdds::rtps::ReaderProxyData>(
         temp_reader_data, callback, async_get_type_reader_callbacks_);
 }
 
@@ -334,10 +333,10 @@ ReturnCode_t TypeLookupManager::check_type_identifier_received(
 {
     xtypes::TypeIdentfierWithSize type_identifier_with_size =
             temp_proxy_data->type_information().type_information.complete().typeid_with_size();
-    fastrtps::rtps::GUID_t type_server = temp_proxy_data->guid();
+    fastdds::rtps::GUID_t type_server = temp_proxy_data->guid();
 
     // Check if the type is known
-    if (fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
+    if (fastdds::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
                     is_type_identifier_known(type_identifier_with_size))
     {
         // The type is already known, invoke the callback
@@ -521,10 +520,10 @@ bool TypeLookupManager::create_endpoints()
     watt.endpoint.ignore_non_matching_locators = pattr.ignore_non_matching_locators;
     watt.endpoint.remoteLocatorList = builtin_protocols_->m_initialPeersList;
     watt.matched_readers_allocation = pattr.allocation.participants;
-    watt.endpoint.topicKind = fastrtps::rtps::NO_KEY;
-    watt.endpoint.reliabilityKind = fastrtps::rtps::RELIABLE;
-    watt.endpoint.durabilityKind = fastrtps::rtps::VOLATILE;
-    watt.mode = fastrtps::rtps::ASYNCHRONOUS_WRITER;
+    watt.endpoint.topicKind = fastdds::rtps::NO_KEY;
+    watt.endpoint.reliabilityKind = fastdds::rtps::RELIABLE;
+    watt.endpoint.durabilityKind = fastdds::rtps::VOLATILE;
+    watt.mode = fastdds::rtps::ASYNCHRONOUS_WRITER;
 
     ReaderAttributes ratt;
     ratt.endpoint.unicastLocatorList = builtin_protocols_->m_metatrafficUnicastLocatorList;
@@ -534,9 +533,9 @@ bool TypeLookupManager::create_endpoints()
     ratt.endpoint.remoteLocatorList = builtin_protocols_->m_initialPeersList;
     ratt.matched_writers_allocation = pattr.allocation.participants;
     ratt.expects_inline_qos = true;
-    ratt.endpoint.topicKind = fastrtps::rtps::NO_KEY;
-    ratt.endpoint.reliabilityKind = fastrtps::rtps::RELIABLE;
-    ratt.endpoint.durabilityKind = fastrtps::rtps::VOLATILE;
+    ratt.endpoint.topicKind = fastdds::rtps::NO_KEY;
+    ratt.endpoint.reliabilityKind = fastdds::rtps::RELIABLE;
+    ratt.endpoint.durabilityKind = fastdds::rtps::VOLATILE;
 
     // Built-in request writer
     request_listener_ = new TypeLookupRequestListener(this);
@@ -548,7 +547,7 @@ bool TypeLookupManager::create_endpoints()
                 watt,
                 builtin_request_writer_history_,
                 request_listener_,
-                fastrtps::rtps::c_EntityId_TypeLookup_request_writer,
+                fastdds::rtps::c_EntityId_TypeLookup_request_writer,
                 true))
     {
         builtin_request_writer_ = dynamic_cast<StatefulWriter*>(req_writer);
@@ -569,7 +568,7 @@ bool TypeLookupManager::create_endpoints()
                 ratt,
                 builtin_request_reader_history_,
                 request_listener_,
-                fastrtps::rtps::c_EntityId_TypeLookup_request_reader,
+                fastdds::rtps::c_EntityId_TypeLookup_request_reader,
                 true))
     {
         builtin_request_reader_ = dynamic_cast<StatefulReader*>(req_reader);
@@ -591,7 +590,7 @@ bool TypeLookupManager::create_endpoints()
                 watt,
                 builtin_reply_writer_history_,
                 reply_listener_,
-                fastrtps::rtps::c_EntityId_TypeLookup_reply_writer,
+                fastdds::rtps::c_EntityId_TypeLookup_reply_writer,
                 true))
     {
         builtin_reply_writer_ = dynamic_cast<StatefulWriter*>(rep_writer);
@@ -612,7 +611,7 @@ bool TypeLookupManager::create_endpoints()
                 ratt,
                 builtin_reply_reader_history_,
                 reply_listener_,
-                fastrtps::rtps::c_EntityId_TypeLookup_reply_reader,
+                fastdds::rtps::c_EntityId_TypeLookup_reply_reader,
                 true))
     {
         builtin_reply_reader_ = dynamic_cast<StatefulReader*>(rep_reader);
@@ -667,7 +666,7 @@ bool TypeLookupManager::create_endpoints()
 }
 
 TypeLookup_Request* TypeLookupManager::create_request(
-        const fastrtps::rtps::GUID_t& type_server,
+        const fastdds::rtps::GUID_t& type_server,
         TypeLookup_RequestPubSubType& pupsubtype) const
 {
     TypeLookup_Request* request = static_cast<TypeLookup_Request*>(pupsubtype.createData());
@@ -704,8 +703,8 @@ template <typename Type, typename PubSubType>
 bool TypeLookupManager::send_impl(
         Type& msg,
         PubSubType* pubsubtype,
-        fastrtps::rtps::StatefulWriter* writer,
-        fastrtps::rtps::WriterHistory* writer_history) const
+        fastdds::rtps::StatefulWriter* writer,
+        fastdds::rtps::WriterHistory* writer_history) const
 {
     // Create a new CacheChange_t using the provided StatefulWriter
     CacheChange_t* change = writer->new_change(
@@ -751,7 +750,7 @@ bool TypeLookupManager::send_impl(
 }
 
 bool TypeLookupManager::prepare_receive_payload(
-        fastrtps::rtps::CacheChange_t& change,
+        fastdds::rtps::CacheChange_t& change,
         SerializedPayload_t& payload) const
 {
     CDRMessage_t msg(change.serializedPayload);
@@ -764,7 +763,7 @@ bool TypeLookupManager::prepare_receive_payload(
 }
 
 bool TypeLookupManager::receive(
-        fastrtps::rtps::CacheChange_t& change,
+        fastdds::rtps::CacheChange_t& change,
         TypeLookup_Request& request) const
 {
     if (!receive_impl(change, request, &request_type_))
@@ -783,7 +782,7 @@ bool TypeLookupManager::receive(
 }
 
 bool TypeLookupManager::receive(
-        fastrtps::rtps::CacheChange_t& change,
+        fastdds::rtps::CacheChange_t& change,
         TypeLookup_Reply& reply) const
 {
     if (!receive_impl(change, reply, &reply_type_))
@@ -802,7 +801,7 @@ bool TypeLookupManager::receive(
 
 template <typename Type, typename PubSubType>
 bool TypeLookupManager::receive_impl(
-        fastrtps::rtps::CacheChange_t& change,
+        fastdds::rtps::CacheChange_t& change,
         Type& msg,
         PubSubType* pubsubtype) const
 {
@@ -819,7 +818,7 @@ bool TypeLookupManager::receive_impl(
 }
 
 std::string TypeLookupManager::get_instance_name(
-        const fastrtps::rtps::GUID_t guid) const
+        const fastdds::rtps::GUID_t guid) const
 {
     std::stringstream ss;
     ss << std::hex;
@@ -842,13 +841,13 @@ std::string TypeLookupManager::get_instance_name(
 }
 
 void TypeLookupManager::remove_builtin_request_writer_history_change(
-        fastrtps::rtps::CacheChange_t* change)
+        fastdds::rtps::CacheChange_t* change)
 {
     builtin_request_writer_history_->remove_change(change);
 }
 
 void TypeLookupManager::remove_builtin_reply_writer_history_change(
-        fastrtps::rtps::CacheChange_t* change)
+        fastdds::rtps::CacheChange_t* change)
 {
     builtin_reply_writer_history_->remove_change(change);
 }

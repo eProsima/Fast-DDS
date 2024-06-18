@@ -24,7 +24,7 @@
 #include <memory>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 bool DataSharingPayloadPool::release_payload(
@@ -108,5 +108,5 @@ std::shared_ptr<DataSharingPayloadPool> DataSharingPayloadPool::get_writer_pool(
 }
 
 }  // namespace rtps
-}  // namespace fastrtps
+}  // namespace fastdds
 }  // namespace eprosima

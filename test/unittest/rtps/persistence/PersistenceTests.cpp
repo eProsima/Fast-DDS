@@ -27,7 +27,7 @@
 #include <rtps/persistence/SQLite3PersistenceServiceStatements.h>
 #include <utils/SystemInfo.hpp>
 
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds::rtps;
 
 class NoOpPayloadPool : public IPayloadPool
 {

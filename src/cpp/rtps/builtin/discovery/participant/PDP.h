@@ -68,7 +68,7 @@ class PDPEndpoints;
 } // namespace rtps
 } // namespace fastdds
 
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class RTPSWriter;
@@ -666,7 +666,7 @@ extern const Duration_t pdp_heartbeat_response_delay;
 extern const int32_t pdp_initial_reserved_caches;
 
 } /* namespace rtps */
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC

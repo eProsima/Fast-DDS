@@ -26,7 +26,7 @@
 #include <iostream>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 
 /**
  * Structure Time_t, used to describe times.
@@ -118,10 +118,10 @@ public:
             long double sec);
 
     /**
-     * @param time fastrtps::Time_t, aka. Duration_t.
+     * @param time fastdds::Time_t, aka. Duration_t.
      */
     Time_t(
-            const eprosima::fastrtps::Time_t& time);
+            const eprosima::fastdds::Time_t& time);
 
     /**
      *  Returns stored time as nanoseconds (including seconds)
@@ -687,11 +687,11 @@ const Time_t c_TimeZero{0, 0};
 //! Time_t (Duration_t) representing an invalid time. DONT USE IT IN CONSTRUCTORS
 const Time_t c_TimeInvalid{-1, Time_t::INFINITE_NANOSECONDS};
 
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 // defines to avoid the "static initialization order fiasco"
-#define TIME_T_INFINITE_SECONDS (eprosima::fastrtps::Time_t::INFINITE_SECONDS)
-#define TIME_T_INFINITE_NANOSECONDS (eprosima::fastrtps::Time_t::INFINITE_NANOSECONDS)
+#define TIME_T_INFINITE_SECONDS (eprosima::fastdds::Time_t::INFINITE_SECONDS)
+#define TIME_T_INFINITE_NANOSECONDS (eprosima::fastdds::Time_t::INFINITE_NANOSECONDS)
 
 #endif /* _FASTDDS_RTPS_TIME_T_H_ */

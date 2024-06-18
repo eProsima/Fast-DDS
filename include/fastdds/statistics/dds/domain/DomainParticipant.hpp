@@ -28,14 +28,13 @@
 #include <fastdds/fastdds_dll.hpp>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class ReaderProxyData;
 class WriterProxyData;
 } // namespace rtps
-} // namespace fastrtps
-namespace fastdds {
+
 namespace statistics {
 
 class MonitorServiceStatusData;
@@ -145,7 +144,7 @@ public:
      * @return RETCODE_ERROR if the  operation fails.
      */
     FASTDDS_EXPORTED_API eprosima::fastdds::dds::ReturnCode_t fill_discovery_data_from_cdr_message(
-            fastrtps::rtps::ParticipantProxyData& data,
+            fastdds::rtps::ParticipantProxyData& data,
             statistics::MonitorServiceStatusData& msg);
 
     /**
@@ -158,7 +157,7 @@ public:
      * @return RETCODE_ERROR if the  operation fails.
      */
     FASTDDS_EXPORTED_API eprosima::fastdds::dds::ReturnCode_t fill_discovery_data_from_cdr_message(
-            fastrtps::rtps::WriterProxyData& data,
+            fastdds::rtps::WriterProxyData& data,
             statistics::MonitorServiceStatusData& msg);
 
     /**
@@ -171,7 +170,7 @@ public:
      * @return RETCODE_ERROR if the  operation fails.
      */
     FASTDDS_EXPORTED_API eprosima::fastdds::dds::ReturnCode_t fill_discovery_data_from_cdr_message(
-            fastrtps::rtps::ReaderProxyData& data,
+            fastdds::rtps::ReaderProxyData& data,
             statistics::MonitorServiceStatusData& msg);
 
     /**
@@ -184,7 +183,7 @@ public:
      * @return RETCODE_ERROR if the  operation fails.
      */
     FASTDDS_EXPORTED_API eprosima::fastdds::dds::ReturnCode_t fill_discovery_data_from_cdr_message(
-            fastrtps::rtps::ParticipantProxyData& data,
+            fastdds::rtps::ParticipantProxyData& data,
             const statistics::MonitorServiceStatusData& msg);
 
     /**
@@ -197,7 +196,7 @@ public:
      * @return RETCODE_ERROR if the  operation fails.
      */
     FASTDDS_EXPORTED_API eprosima::fastdds::dds::ReturnCode_t fill_discovery_data_from_cdr_message(
-            fastrtps::rtps::WriterProxyData& data,
+            fastdds::rtps::WriterProxyData& data,
             const statistics::MonitorServiceStatusData& msg);
 
     /**
@@ -210,7 +209,7 @@ public:
      * @return RETCODE_ERROR if the  operation fails.
      */
     FASTDDS_EXPORTED_API eprosima::fastdds::dds::ReturnCode_t fill_discovery_data_from_cdr_message(
-            fastrtps::rtps::ReaderProxyData& data,
+            fastdds::rtps::ReaderProxyData& data,
             const statistics::MonitorServiceStatusData& msg);
 
 };

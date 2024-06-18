@@ -49,13 +49,11 @@ class DomainParticipant;
 } // namespace dds
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 class ResourceEvent;
 } // namespace rtps
-} //namespace fastrtps
 
-namespace fastdds {
 namespace dds {
 
 class DomainParticipantImpl;
@@ -388,7 +386,7 @@ public:
      */
     FASTDDS_EXPORTED_API Topic* find_topic(
             const std::string& topic_name,
-            const fastrtps::Duration_t& timeout);
+            const fastdds::Duration_t& timeout);
 
     /**
      * Looks up an existing, locally created @ref TopicDescription, based on its name.
@@ -749,7 +747,7 @@ public:
      * @return RETCODE_OK
      */
     FASTDDS_EXPORTED_API ReturnCode_t get_current_time(
-            fastrtps::Time_t& current_time) const;
+            fastdds::Time_t& current_time) const;
 
     // DomainParticipant methods specific from Fast DDS
 
@@ -808,7 +806,7 @@ public:
      *
      * @return A reference to the GUID
      */
-    FASTDDS_EXPORTED_API const fastrtps::rtps::GUID_t& guid() const;
+    FASTDDS_EXPORTED_API const fastdds::rtps::GUID_t& guid() const;
 
     /**
      * @brief Getter for the participant names
@@ -819,7 +817,7 @@ public:
 
     /**
      * This method can be used when using a StaticEndpointDiscovery mechanism different that the one
-     * included in FastRTPS, for example when communicating with other implementations.
+     * included in Fast DDS, for example when communicating with other implementations.
      * It indicates the Participant that an Endpoint from the XML has been discovered and
      * should be activated.
      *
@@ -829,9 +827,9 @@ public:
      * @return True if correctly found and activated.
      */
     FASTDDS_EXPORTED_API bool new_remote_endpoint_discovered(
-            const fastrtps::rtps::GUID_t& partguid,
+            const fastdds::rtps::GUID_t& partguid,
             uint16_t userId,
-            fastrtps::rtps::EndpointKind_t kind);
+            fastdds::rtps::EndpointKind_t kind);
 
     /**
      * Register a custom content filter factory, which can be used to create a ContentFilteredTopic.

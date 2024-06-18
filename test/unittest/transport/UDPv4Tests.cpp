@@ -30,11 +30,7 @@
 #include <rtps/transport/UDPv4Transport.h>
 
 using namespace eprosima::fastdds;
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
-using UDPv4Transport = eprosima::fastdds::rtps::UDPv4Transport;
-using UDPv4TransportDescriptor = eprosima::fastdds::rtps::UDPv4TransportDescriptor;
-using SendResourceList = eprosima::fastdds::rtps::SendResourceList;
+using namespace eprosima::fastdds::rtps;
 
 #if defined(_WIN32)
 #define GET_PID _getpid

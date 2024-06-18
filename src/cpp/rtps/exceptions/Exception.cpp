@@ -14,7 +14,9 @@
 
 #include "Exception.h"
 
-using namespace eprosima::fastrtps::rtps;
+namespace eprosima {
+namespace fastdds {
+namespace rtps {
 
 Exception::Exception(
         const char* const& message)
@@ -80,3 +82,7 @@ const char* Exception::what() const throw()
 {
     return message_.c_str();
 }
+
+} // namespace rtps
+} // namespace fastdds
+} // namespace eprosima

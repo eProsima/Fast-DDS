@@ -34,7 +34,7 @@
 #include <algorithm>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 /// Initialize locator with invalid values
@@ -510,14 +510,14 @@ typedef std::vector<Locator_t>::iterator LocatorListIterator;
 typedef std::vector<Locator_t>::const_iterator LocatorListConstIterator;
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-using Locator = eprosima::fastrtps::rtps::Locator_t;
+using Locator = eprosima::fastdds::rtps::Locator_t;
 
 } // namespace rtps
 } // namespace fastdds

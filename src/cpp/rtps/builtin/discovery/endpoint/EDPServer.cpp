@@ -27,7 +27,7 @@
 #include <rtps/reader/StatefulReader.hpp>
 #include <rtps/writer/StatefulWriter.hpp>
 
-using namespace ::eprosima::fastrtps::rtps;
+using namespace ::eprosima::fastdds::rtps;
 
 namespace eprosima {
 namespace fastdds {
@@ -434,13 +434,13 @@ bool EDPServer::processLocalReaderProxyData(
 }
 
 bool EDPServer::process_disposal(
-        fastrtps::rtps::CacheChange_t* disposal_change,
+        fastdds::rtps::CacheChange_t* disposal_change,
         fastdds::rtps::ddb::DiscoveryDataBase& discovery_db,
-        fastrtps::rtps::GuidPrefix_t& change_guid_prefix,
+        fastdds::rtps::GuidPrefix_t& change_guid_prefix,
         bool should_publish_disposal)
 {
     bool ret_val = false;
-    eprosima::fastrtps::rtps::WriteParams wp = disposal_change->write_params;
+    eprosima::fastdds::rtps::WriteParams wp = disposal_change->write_params;
 
     // DATA(Uw) or DATA(Ur) cases
     if (discovery_db.is_writer(disposal_change) || discovery_db.is_reader(disposal_change))
@@ -454,7 +454,7 @@ bool EDPServer::process_disposal(
         if (nullptr != builtin_pair.first && nullptr != builtin_pair.second)
         {
             // Lock EDP writer
-            std::unique_lock<fastrtps::RecursiveTimedMutex> lock(builtin_pair.first->getMutex());
+            std::unique_lock<fastdds::RecursiveTimedMutex> lock(builtin_pair.first->getMutex());
 
             // Remove all DATA(w/r) with the same sample identity as the DATA(Uw/Ur) from EDP PUBs/Subs writer's history
             discovery_db.remove_related_alive_from_history_nts(builtin_pair.second, change_guid_prefix);
@@ -473,7 +473,7 @@ bool EDPServer::process_disposal(
 }
 
 bool EDPServer::process_and_release_change(
-        fastrtps::rtps::CacheChange_t* change,
+        fastdds::rtps::CacheChange_t* change,
         bool release_from_reader)
 {
     bool ret_val = false;

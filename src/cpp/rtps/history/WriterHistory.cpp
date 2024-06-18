@@ -27,7 +27,7 @@
 #include <rtps/messages/RTPSMessageGroup.hpp>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 WriteParams WriteParams::WRITE_PARAM_DEFAULT;
@@ -373,5 +373,5 @@ void WriterHistory::set_fragments(
 }
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima

@@ -29,7 +29,7 @@
 #include <sstream>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 struct InstanceHandle_t;
@@ -278,7 +278,7 @@ inline std::istream& operator >>(
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 #endif /* _FASTDDS_RTPS_RTPS_GUID_H_ */

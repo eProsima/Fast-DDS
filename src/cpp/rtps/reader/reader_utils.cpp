@@ -32,7 +32,7 @@ bool change_is_relevant_for_filter(
     bool ret = true;
 
     // Only evaluate filter on ALIVE changes, as UNREGISTERED and DISPOSED are always relevant
-    if ((nullptr != filter) && (fastrtps::rtps::ALIVE == change.kind) && (!filter->is_relevant(change, reader_guid)))
+    if ((nullptr != filter) && (fastdds::rtps::ALIVE == change.kind) && (!filter->is_relevant(change, reader_guid)))
     {
         ret = false;
     }

@@ -25,8 +25,8 @@
 const size_t ThroughputType::overhead = offsetof(ThroughputType, data);
 const std::string ThroughputDataType::type_name_ = "ThroughputType";
 
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds;
+using namespace eprosima::fastdds::rtps;
 
 bool ThroughputDataType::compare_data(
         const ThroughputType& lt1,

@@ -26,12 +26,12 @@
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
 
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds;
+using namespace eprosima::fastdds::rtps;
 
 bool check_shared_file (
         const char* shared_dir,
-        const eprosima::fastrtps::rtps::GUID_t& guid)
+        const eprosima::fastdds::rtps::GUID_t& guid)
 {
     bool result;
     std::stringstream file_name;

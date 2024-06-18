@@ -33,10 +33,10 @@
 #include <xmlparser/XMLParserUtils.hpp>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace xmlparser {
 
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds::rtps;
 using namespace eprosima::fastdds::xml::detail;
 
 XMLEndpointParser::XMLEndpointParser()
@@ -835,5 +835,5 @@ XMLP_ret XMLEndpointParser::lookforWriter(
 }
 
 }  // namespace xmlparser
-}  // namespace fastrtps
+}  // namespace fastdds
 }  // namespace eprosima

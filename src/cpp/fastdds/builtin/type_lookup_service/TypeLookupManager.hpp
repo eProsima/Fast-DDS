@@ -84,7 +84,7 @@ struct hash<eprosima::fastdds::dds::SampleIdentity>
 } // std
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class BuiltinProtocols;
@@ -96,18 +96,16 @@ class ParticipantProxyData;
 class WriterHistory;
 
 } // namespace rtps
-} // namespace fastrtps
 
-namespace fastdds {
 namespace dds {
 namespace builtin {
 
 const SampleIdentity INVALID_SAMPLE_IDENTITY;
 
 using AsyncGetTypeWriterCallback = std::function<
-    void (eprosima::fastrtps::rtps::WriterProxyData*)>;
+    void (eprosima::fastdds::rtps::WriterProxyData*)>;
 using AsyncGetTypeReaderCallback = std::function<
-    void (eprosima::fastrtps::rtps::ReaderProxyData*)>;
+    void (eprosima::fastdds::rtps::ReaderProxyData*)>;
 
 /**
  * Class TypeLookupManager that implements the TypeLookup Service described in the DDS-XTYPES 1.3 specification.
@@ -136,21 +134,21 @@ public:
      * @return true if members and endpoints are created, false otherwise.
      */
     bool init(
-            fastrtps::rtps::BuiltinProtocols* protocols);
+            fastdds::rtps::BuiltinProtocols* protocols);
     /**
      * Assign the remote endpoints for a newly discovered RTPSParticipant.
      * @param pdata Pointer to the RTPSParticipantProxyData object.
      * @return True if correct.
      */
     bool assign_remote_endpoints(
-            const fastrtps::rtps::ParticipantProxyData& pdata);
+            const fastdds::rtps::ParticipantProxyData& pdata);
 
     /**
      * Remove remote endpoints from the typelookup service.
      * @param pdata Pointer to the ParticipantProxyData to remove.
      */
     void remove_remote_endpoints(
-            fastrtps::rtps::ParticipantProxyData* pdata);
+            fastdds::rtps::ParticipantProxyData* pdata);
 
     /**
      * Create and send a request using the builtin TypeLookup Service to retrieve all the type dependencies
@@ -162,7 +160,7 @@ public:
      */
     SampleIdentity get_type_dependencies(
             const xtypes::TypeIdentifierSeq& id_seq,
-            const fastrtps::rtps::GUID_t& type_server,
+            const fastdds::rtps::GUID_t& type_server,
             const std::vector<uint8_t>& continuation_point = std::vector<uint8_t>()) const;
 
     /**
@@ -174,7 +172,7 @@ public:
      */
     SampleIdentity get_types(
             const xtypes::TypeIdentifierSeq& id_seq,
-            const fastrtps::rtps::GUID_t& type_server) const;
+            const fastdds::rtps::GUID_t& type_server) const;
 
     /**
      * Use builtin TypeLookup service to solve the type and dependencies of a given TypeInformation.
@@ -186,10 +184,10 @@ public:
      *                      RETCODE_ERROR if any request was not sent correctly.
      */
     ReturnCode_t async_get_type(
-            eprosima::ProxyPool<eprosima::fastrtps::rtps::WriterProxyData>::smart_ptr& temp_proxy_data,
+            eprosima::ProxyPool<eprosima::fastdds::rtps::WriterProxyData>::smart_ptr& temp_proxy_data,
             const AsyncGetTypeWriterCallback& callback);
     ReturnCode_t async_get_type(
-            eprosima::ProxyPool<eprosima::fastrtps::rtps::ReaderProxyData>::smart_ptr& temp_proxy_data,
+            eprosima::ProxyPool<eprosima::fastdds::rtps::ReaderProxyData>::smart_ptr& temp_proxy_data,
             const AsyncGetTypeReaderCallback& callback);
 
 protected:
@@ -255,7 +253,7 @@ protected:
      * @return the TypeLookup_Request created.
      */
     TypeLookup_Request* create_request(
-            const fastrtps::rtps::GUID_t& type_server,
+            const fastdds::rtps::GUID_t& type_server,
             TypeLookup_RequestPubSubType& pupsubtype) const;
 
     /**
@@ -286,8 +284,8 @@ protected:
     bool send_impl(
             Type& msg,
             PubSubType* pubsubtype,
-            fastrtps::rtps::StatefulWriter* writer,
-            fastrtps::rtps::WriterHistory* writer_history) const;
+            fastdds::rtps::StatefulWriter* writer,
+            fastdds::rtps::WriterHistory* writer_history) const;
 
     /**
      * Prepares the received payload of a CacheChange before deserializing.
@@ -296,8 +294,8 @@ protected:
      * @return true if received payload is prepared, false otherwise.
      */
     bool prepare_receive_payload(
-            fastrtps::rtps::CacheChange_t& change,
-            fastrtps::rtps::SerializedPayload_t& payload) const;
+            fastdds::rtps::CacheChange_t& change,
+            fastdds::rtps::SerializedPayload_t& payload) const;
 
     /**
      * Uses the receive_impl with the appropriate parameters and checks if it is directed to the local DomainParticipant.
@@ -306,7 +304,7 @@ protected:
      * @return true if the request is deserialized and directed to the local participant, false otherwise.
      */
     bool receive(
-            fastrtps::rtps::CacheChange_t& change,
+            fastdds::rtps::CacheChange_t& change,
             TypeLookup_Request& request) const;
 
     /**
@@ -316,7 +314,7 @@ protected:
      * @return true if the request is deserialized and the reply's recipient is us, false otherwise.
      */
     bool receive(
-            fastrtps::rtps::CacheChange_t& change,
+            fastdds::rtps::CacheChange_t& change,
             TypeLookup_Reply& reply) const;
 
     /**
@@ -329,7 +327,7 @@ protected:
      */
     template <typename Type, typename PubSubType>
     bool receive_impl(
-            fastrtps::rtps::CacheChange_t& change,
+            fastdds::rtps::CacheChange_t& change,
             Type& msg,
             PubSubType* pubsubtype) const;
 
@@ -337,7 +335,7 @@ protected:
      * Get the RTPS participant
      * @return RTPS participant
      */
-    inline fastrtps::rtps::RTPSParticipantImpl* get_RTPS_participant()
+    inline fastdds::rtps::RTPSParticipantImpl* get_RTPS_participant()
     {
         return participant_;
     }
@@ -348,7 +346,7 @@ protected:
      * @return The instance name.
      */
     std::string get_instance_name(
-            const fastrtps::rtps::GUID_t guid) const;
+            const fastdds::rtps::GUID_t guid) const;
 
     /**
      * Create the builtin endpoints used in the TypeLookupManager.
@@ -361,47 +359,47 @@ protected:
      * @param change[in] CacheChange_t to be removed.
      */
     void remove_builtin_request_writer_history_change(
-            fastrtps::rtps::CacheChange_t* change);
+            fastdds::rtps::CacheChange_t* change);
 
     /**
      * Removes a change from the builtin_reply_writer_history_.
      * @param change[in] CacheChange_t to be removed.
      */
     void remove_builtin_reply_writer_history_change(
-            fastrtps::rtps::CacheChange_t* change);
+            fastdds::rtps::CacheChange_t* change);
 
     //! Pointer to the local RTPSParticipant.
-    fastrtps::rtps::RTPSParticipantImpl* participant_ = nullptr;
+    fastdds::rtps::RTPSParticipantImpl* participant_ = nullptr;
 
     //! Own instance name.
     std::string local_instance_name_;
 
     //! Pointer to the BuiltinProtocols class.
-    fastrtps::rtps::BuiltinProtocols* builtin_protocols_ = nullptr;
+    fastdds::rtps::BuiltinProtocols* builtin_protocols_ = nullptr;
 
     //! Pointer to the RTPSWriter for the TypeLookup_Request.
-    fastrtps::rtps::StatefulWriter* builtin_request_writer_ = nullptr;
+    fastdds::rtps::StatefulWriter* builtin_request_writer_ = nullptr;
 
     //! Pointer to the RTPSReader for the TypeLookup_Request.
-    fastrtps::rtps::StatefulReader* builtin_request_reader_ = nullptr;
+    fastdds::rtps::StatefulReader* builtin_request_reader_ = nullptr;
 
     //! Pointer to the RTPSWriter for the TypeLookup_Reply.
-    fastrtps::rtps::StatefulWriter* builtin_reply_writer_ = nullptr;
+    fastdds::rtps::StatefulWriter* builtin_reply_writer_ = nullptr;
 
     //! Pointer to the RTPSReader for the TypeLookup_Reply.
-    fastrtps::rtps::StatefulReader* builtin_reply_reader_ = nullptr;
+    fastdds::rtps::StatefulReader* builtin_reply_reader_ = nullptr;
 
     //! Pointer to the Writer History of TypeLookup_Request.
-    fastrtps::rtps::WriterHistory* builtin_request_writer_history_ = nullptr;
+    fastdds::rtps::WriterHistory* builtin_request_writer_history_ = nullptr;
 
     //! Pointer to the Writer History of TypeLookup_Reply.
-    fastrtps::rtps::WriterHistory* builtin_reply_writer_history_ = nullptr;
+    fastdds::rtps::WriterHistory* builtin_reply_writer_history_ = nullptr;
 
     //! Pointer to the Reader History of TypeLookup_Request.
-    fastrtps::rtps::ReaderHistory* builtin_request_reader_history_ = nullptr;
+    fastdds::rtps::ReaderHistory* builtin_request_reader_history_ = nullptr;
 
     //! Pointer to the Reader History of TypeLookup_Reply.
-    fastrtps::rtps::ReaderHistory* builtin_reply_reader_history_ = nullptr;
+    fastdds::rtps::ReaderHistory* builtin_reply_reader_history_ = nullptr;
 
     //! Request Listener object.
     TypeLookupRequestListener* request_listener_ = nullptr;
@@ -413,12 +411,12 @@ protected:
     std::mutex temp_data_lock_;
 
     //! Pointer to the temp ReaderProxyData used for assigments.
-    fastrtps::rtps::ReaderProxyData* temp_reader_proxy_data_ = nullptr;
+    fastdds::rtps::ReaderProxyData* temp_reader_proxy_data_ = nullptr;
 
     //! Pointer to the temp WriterProxyData used for assigments.
-    fastrtps::rtps::WriterProxyData* temp_writer_proxy_data_ = nullptr;
+    fastdds::rtps::WriterProxyData* temp_writer_proxy_data_ = nullptr;
 
-    mutable fastrtps::rtps::SequenceNumber_t request_seq_number_;
+    mutable fastdds::rtps::SequenceNumber_t request_seq_number_;
     mutable TypeLookup_RequestPubSubType request_type_;
     mutable TypeLookup_ReplyPubSubType reply_type_;
 
@@ -427,12 +425,12 @@ protected:
 
     //! Collection of all the WriterProxyData and their callbacks related to a TypeIdentfierWithSize, hashed by its TypeIdentfierWithSize.
     std::unordered_map < xtypes::TypeIdentfierWithSize,
-            std::vector<std::pair<eprosima::fastrtps::rtps::WriterProxyData*,
+            std::vector<std::pair<eprosima::fastdds::rtps::WriterProxyData*,
             AsyncGetTypeWriterCallback>>> async_get_type_writer_callbacks_;
 
     //! Collection of all the ReaderProxyData and their callbacks related to a TypeIdentfierWithSize, hashed by its TypeIdentfierWithSize.
     std::unordered_map < xtypes::TypeIdentfierWithSize,
-            std::vector<std::pair<eprosima::fastrtps::rtps::ReaderProxyData*,
+            std::vector<std::pair<eprosima::fastdds::rtps::ReaderProxyData*,
             AsyncGetTypeReaderCallback>>> async_get_type_reader_callbacks_;
 
     //! Collection of all SampleIdentity and the TypeIdentfierWithSize it originated from, hashed by its SampleIdentity.

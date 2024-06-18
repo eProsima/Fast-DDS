@@ -21,7 +21,7 @@
 using namespace std::chrono;
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 using LivelinessDataIterator = ResourceLimitedVector<LivelinessData>::iterator;
@@ -415,5 +415,5 @@ const ResourceLimitedVector<LivelinessData>& LivelinessManager::get_liveliness_d
 }
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima

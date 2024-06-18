@@ -69,7 +69,7 @@ class CalculatorServer
                         reply.z(request.x() / request.y());
                     }
                 }
-                eprosima::fastrtps::rtps::WriteParams write_params;
+                eprosima::fastdds::rtps::WriteParams write_params;
                 write_params.related_sample_identity().writer_guid(sample_info.sample_identity.writer_guid());
                 write_params.related_sample_identity().sequence_number(sample_info.sample_identity.sequence_number());
                 writer_->write(reinterpret_cast<void*>(&reply), write_params);

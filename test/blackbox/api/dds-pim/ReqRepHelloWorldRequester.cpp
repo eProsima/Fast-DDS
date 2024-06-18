@@ -47,8 +47,8 @@ ReqRepHelloWorldRequester::ReqRepHelloWorldRequester()
     , matched_(0)
 {
     // By default, memory mode is PREALLOCATED_WITH_REALLOC_MEMORY_MODE
-    datareader_qos_.endpoint().history_memory_policy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
-    datawriter_qos_.endpoint().history_memory_policy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+    datareader_qos_.endpoint().history_memory_policy = eprosima::fastdds::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+    datawriter_qos_.endpoint().history_memory_policy = eprosima::fastdds::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 
     datawriter_qos_.reliable_writer_qos().times.heartbeatPeriod.seconds = 1;
     datawriter_qos_.reliable_writer_qos().times.heartbeatPeriod.nanosec = 0;
@@ -148,8 +148,8 @@ void ReqRepHelloWorldRequester::init()
 }
 
 void ReqRepHelloWorldRequester::init_with_latency(
-        const eprosima::fastrtps::Duration_t& latency_budget_duration_pub,
-        const eprosima::fastrtps::Duration_t& latency_budget_duration_sub)
+        const eprosima::fastdds::Duration_t& latency_budget_duration_pub,
+        const eprosima::fastdds::Duration_t& latency_budget_duration_sub)
 {
     datareader_qos_.latency_budget().duration = latency_budget_duration_sub;
     datawriter_qos_.latency_budget().duration = latency_budget_duration_pub;
@@ -157,7 +157,7 @@ void ReqRepHelloWorldRequester::init_with_latency(
 }
 
 void ReqRepHelloWorldRequester::newNumber(
-        eprosima::fastrtps::rtps::SampleIdentity related_sample_identity,
+        eprosima::fastdds::rtps::SampleIdentity related_sample_identity,
         uint16_t number)
 {
     std::unique_lock<std::mutex> lock(mutex_);
@@ -230,7 +230,7 @@ void ReqRepHelloWorldRequester::ReplyListener::on_data_available(
 void ReqRepHelloWorldRequester::send(
         const uint16_t number)
 {
-    eprosima::fastrtps::rtps::WriteParams wparams;
+    eprosima::fastdds::rtps::WriteParams wparams;
     HelloWorld hello;
     hello.index(number);
     hello.message("HelloWorld");
@@ -242,5 +242,5 @@ void ReqRepHelloWorldRequester::send(
 
     ASSERT_EQ(request_datawriter_->write((void*)&hello, wparams), true);
     related_sample_identity_ = wparams.sample_identity();
-    ASSERT_NE(related_sample_identity_.sequence_number(), eprosima::fastrtps::rtps::SequenceNumber_t());
+    ASSERT_NE(related_sample_identity_.sequence_number(), eprosima::fastdds::rtps::SequenceNumber_t());
 }

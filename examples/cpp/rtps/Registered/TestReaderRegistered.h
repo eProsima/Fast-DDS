@@ -24,13 +24,13 @@
 
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 class RTPSParticipant;
 class ReaderHistory;
 class RTPSReader;
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 class TestReaderRegistered
@@ -39,13 +39,13 @@ public:
 
     TestReaderRegistered();
     virtual ~TestReaderRegistered();
-    eprosima::fastrtps::rtps::RTPSParticipant* mp_participant;
-    eprosima::fastrtps::rtps::RTPSReader* mp_reader;
-    eprosima::fastrtps::rtps::ReaderHistory* mp_history;
+    eprosima::fastdds::rtps::RTPSParticipant* mp_participant;
+    eprosima::fastdds::rtps::RTPSReader* mp_reader;
+    eprosima::fastdds::rtps::ReaderHistory* mp_history;
     bool init(); //Initialization
     bool reg(); //Register
     void run(); //Run
-    class MyListener : public eprosima::fastrtps::rtps::ReaderListener
+    class MyListener : public eprosima::fastdds::rtps::ReaderListener
     {
     public:
 
@@ -60,13 +60,14 @@ public:
         }
 
         void on_new_cache_change_added(
-                eprosima::fastrtps::rtps::RTPSReader* reader,
-                const eprosima::fastrtps::rtps::CacheChange_t* const change) override;
+                eprosima::fastdds::rtps::RTPSReader* reader,
+                const eprosima::fastdds::rtps::CacheChange_t* const change) override;
         void on_reader_matched(
-                eprosima::fastrtps::rtps::RTPSReader*,
-                const eprosima::fastrtps::rtps::MatchingInfo& info) override
+                eprosima::fastdds::rtps::RTPSReader*,
+                const eprosima::fastdds::rtps::MatchingInfo& info) override
+
         {
-            if (info.status == eprosima::fastrtps::rtps::MATCHED_MATCHING)
+            if (info.status == eprosima::fastdds::rtps::MATCHED_MATCHING)
             {
                 n_matched++;
             }
@@ -74,7 +75,6 @@ public:
 
         uint32_t n_received;
         uint32_t n_matched;
-
     }
     m_listener;
 };

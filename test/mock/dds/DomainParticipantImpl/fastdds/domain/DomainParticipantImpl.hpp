@@ -87,8 +87,8 @@ protected:
         participant_->impl_ = this;
 
         guid_.guidPrefix.value[11] = 1;
-        eprosima::fastrtps::TopicAttributes top_attr;
-        eprosima::fastrtps::xmlparser::XMLProfileManager::getDefaultTopicAttributes(top_attr);
+        eprosima::fastdds::TopicAttributes top_attr;
+        eprosima::fastdds::xmlparser::XMLProfileManager::getDefaultTopicAttributes(top_attr);
         default_topic_qos_.history() = top_attr.historyQos;
         default_topic_qos_.resource_limits() = top_attr.resourceLimitsQos;
     }
@@ -97,7 +97,7 @@ protected:
     {
         if (rtps_participant_ != nullptr)
         {
-            eprosima::fastrtps::rtps::RTPSDomain::removeRTPSParticipant(rtps_participant_);
+            eprosima::fastdds::rtps::RTPSDomain::removeRTPSParticipant(rtps_participant_);
         }
 
         if (participant_)
@@ -114,9 +114,9 @@ public:
 
     virtual ReturnCode_t enable()
     {
-        fastrtps::rtps::RTPSParticipantAttributes rtps_attr;
+        fastdds::rtps::RTPSParticipantAttributes rtps_attr;
 
-        rtps_participant_ = eprosima::fastrtps::rtps::RTPSDomain::createParticipant(
+        rtps_participant_ = eprosima::fastdds::rtps::RTPSDomain::createParticipant(
             domain_id_, false, rtps_attr, &rtps_listener_);
 
         return RETCODE_OK;
@@ -304,7 +304,7 @@ public:
 
     Topic* find_topic(
             const std::string& /*topic_name*/,
-            const fastrtps::Duration_t& /*timeout*/)
+            const fastdds::Duration_t& /*timeout*/)
     {
         return nullptr;
     }
@@ -379,7 +379,7 @@ public:
                 const char* filter_class_name));
 
     MOCK_METHOD1(ignore_participant, bool (
-                const fastrtps::rtps::InstanceHandle_t& handle));
+                const fastdds::rtps::InstanceHandle_t& handle));
 
 
     TopicDescription* lookup_topicdescription(
@@ -538,7 +538,7 @@ public:
     }
 
     ReturnCode_t get_current_time(
-            fastrtps::Time_t& /*current_time*/) const
+            fastdds::Time_t& /*current_time*/) const
     {
         return RETCODE_OK;
     }
@@ -548,7 +548,7 @@ public:
         return participant_;
     }
 
-    fastrtps::rtps::RTPSParticipant* get_rtps_participant()
+    fastdds::rtps::RTPSParticipant* get_rtps_participant()
     {
         return rtps_participant_;
     }
@@ -570,7 +570,7 @@ public:
         return static_cast<const InstanceHandle_t&>(guid_);
     }
 
-    const fastrtps::rtps::GUID_t& guid() const
+    const fastdds::rtps::GUID_t& guid() const
     {
         return guid_;
     }
@@ -581,14 +581,14 @@ public:
     }
 
     bool new_remote_endpoint_discovered(
-            const fastrtps::rtps::GUID_t& /*partguid*/,
+            const fastdds::rtps::GUID_t& /*partguid*/,
             uint16_t /*endpointId*/,
-            fastrtps::rtps::EndpointKind_t /*kind*/)
+            fastdds::rtps::EndpointKind_t /*kind*/)
     {
         return false;
     }
 
-    fastrtps::rtps::ResourceEvent& get_resource_event() const
+    fastdds::rtps::ResourceEvent& get_resource_event() const
     {
         return rtps_participant_->get_resource_event();
     }
@@ -716,9 +716,9 @@ public:
 protected:
 
     DomainId_t domain_id_;
-    fastrtps::rtps::GUID_t guid_;
+    fastdds::rtps::GUID_t guid_;
     DomainParticipantQos qos_;
-    fastrtps::rtps::RTPSParticipant* rtps_participant_;
+    fastdds::rtps::RTPSParticipant* rtps_participant_;
     DomainParticipant* participant_;
     DomainParticipantListener* listener_;
     std::map<Publisher*, PublisherImpl*> publishers_;
@@ -735,7 +735,7 @@ protected:
     TopicQos default_topic_qos_;
     std::atomic<uint32_t> id_counter_;
 
-    class MyRTPSParticipantListener : public fastrtps::rtps::RTPSParticipantListener
+    class MyRTPSParticipantListener : public fastdds::rtps::RTPSParticipantListener
     {
     public:
 

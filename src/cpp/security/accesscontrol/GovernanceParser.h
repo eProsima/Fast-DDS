@@ -20,7 +20,7 @@
 #include <string>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 namespace security {
 
@@ -62,30 +62,41 @@ struct DomainAccessRules
 
 class GovernanceParser
 {
-    public:
+public:
 
-        bool parse_stream(const char* stream, size_t stream_length);
+    bool parse_stream(
+            const char* stream,
+            size_t stream_length);
 
-        void swap(DomainAccessRules& rules);
+    void swap(
+            DomainAccessRules& rules);
 
-    private:
+private:
 
-        bool parse_domain_access_rules_node(tinyxml2::XMLElement* root);
+    bool parse_domain_access_rules_node(
+            tinyxml2::XMLElement* root);
 
-        bool parse_domain_access_rules(tinyxml2::XMLElement* root);
+    bool parse_domain_access_rules(
+            tinyxml2::XMLElement* root);
 
-        bool parse_domain_rule(tinyxml2::XMLElement* root, DomainRule& rule);
+    bool parse_domain_rule(
+            tinyxml2::XMLElement* root,
+            DomainRule& rule);
 
-        bool parse_topic_access_rules(tinyxml2::XMLElement* root, std::vector<TopicRule>& rules);
+    bool parse_topic_access_rules(
+            tinyxml2::XMLElement* root,
+            std::vector<TopicRule>& rules);
 
-        bool parse_topic_rule(tinyxml2::XMLElement* root, TopicRule& rule);
+    bool parse_topic_rule(
+            tinyxml2::XMLElement* root,
+            TopicRule& rule);
 
-        DomainAccessRules access_rules_;
+    DomainAccessRules access_rules_;
 };
 
-}
-}
-}
-}
+} // namespace security
+} // namespace rtps
+} // namespace fastdds
+} // namespace eprosima
 
 #endif // __SECURITY_ACCESSCONTROL_GOVERNANCEPARSER_H__

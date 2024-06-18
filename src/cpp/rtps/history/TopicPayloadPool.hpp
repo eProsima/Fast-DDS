@@ -34,7 +34,7 @@
 #include <cassert>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class TopicPayloadPool : public ITopicPayloadPool
@@ -364,7 +364,7 @@ protected:
 
 
 }  // namespace rtps
-}  // namespace fastrtps
+}  // namespace fastdds
 }  // namespace eprosima
 
 #endif  // RTPS_HISTORY_TOPICPAYLOADPOOL_HPP

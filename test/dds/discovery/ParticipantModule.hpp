@@ -31,7 +31,7 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds::rtps;
 
 class ParticipantModule : public DomainParticipantListener
 {
@@ -57,7 +57,7 @@ private:
 
     unsigned int matched_ = 0;
     DomainParticipant* participant_ = nullptr;
-    DiscoveryProtocol_t discovery_protocol_;
+    DiscoveryProtocol discovery_protocol_;
     GuidPrefix_t server_guid_prefix_;
     uint32_t unicast_metatraffic_port_;
 };

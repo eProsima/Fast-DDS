@@ -51,7 +51,7 @@ struct IStatusObserver;
 
 #endif //FASTDDS_STATISTICS
 
-namespace fastrtps {
+namespace fastdds {
 
 class TopicAttributes;
 
@@ -403,7 +403,7 @@ public:
      * @return true if the operation succeeds.
      */
     bool fill_discovery_data_from_cdr_message(
-            fastrtps::rtps::ParticipantProxyData& data,
+            fastdds::rtps::ParticipantProxyData& data,
             fastdds::statistics::MonitorServiceStatusData& msg);
 
     /**
@@ -415,7 +415,7 @@ public:
      * @return true if the operation succeeds.
      */
     bool fill_discovery_data_from_cdr_message(
-            fastrtps::rtps::WriterProxyData& data,
+            fastdds::rtps::WriterProxyData& data,
             fastdds::statistics::MonitorServiceStatusData& msg);
 
     /**
@@ -427,7 +427,7 @@ public:
      * @return true if the operation succeeds.
      */
     bool fill_discovery_data_from_cdr_message(
-            fastrtps::rtps::ReaderProxyData& data,
+            fastdds::rtps::ReaderProxyData& data,
             fastdds::statistics::MonitorServiceStatusData& msg);
 
 #endif // FASTDDS_STATISTICS

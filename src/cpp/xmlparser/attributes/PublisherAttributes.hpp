@@ -34,7 +34,7 @@ namespace fastdds {
 
 /**
  * Class PublisherAttributes, used by the user to define the attributes of a Publisher.
- * @ingroup FASTRTPS_ATTRIBUTES_MODULE
+ * @ingroup FASTDDS_ATTRIBUTES_MODULE
  */
 class PublisherAttributes
 {
@@ -60,22 +60,22 @@ public:
     }
 
     //! Topic Attributes for the Publisher
-    fastrtps::TopicAttributes topic;
+    fastdds::TopicAttributes topic;
 
     //! QOS for the Publisher
     dds::WriterQos qos;
 
     //! Writer Attributes
-    fastrtps::rtps::WriterTimes times;
+    rtps::WriterTimes times;
 
     //! Unicast locator list
-    fastrtps::rtps::LocatorList_t unicastLocatorList;
+    rtps::LocatorList_t unicastLocatorList;
 
     //! Multicast locator list
-    fastrtps::rtps::LocatorList_t multicastLocatorList;
+    rtps::LocatorList_t multicastLocatorList;
 
     //! Remote locator list
-    fastrtps::rtps::LocatorList_t remoteLocatorList;
+    rtps::LocatorList_t remoteLocatorList;
 
     //! The collection of external locators to use for communication.
     rtps::ExternalLocators external_unicast_locators;
@@ -84,14 +84,14 @@ public:
     bool ignore_non_matching_locators = false;
 
     //! Underlying History memory policy
-    fastrtps::rtps::MemoryManagementPolicy_t historyMemoryPolicy =
-            fastrtps::rtps::MemoryManagementPolicy_t::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+    rtps::MemoryManagementPolicy_t historyMemoryPolicy =
+            rtps::MemoryManagementPolicy_t::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 
     //! Properties
-    fastrtps::rtps::PropertyPolicy properties;
+    rtps::PropertyPolicy properties;
 
     //! Allocation limits on the matched subscribers collections
-    fastrtps::ResourceLimitedContainerConfig matched_subscriber_allocation;
+    fastdds::ResourceLimitedContainerConfig matched_subscriber_allocation;
 
     /**
      * Get the user defined ID

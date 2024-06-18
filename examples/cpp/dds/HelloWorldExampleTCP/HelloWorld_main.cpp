@@ -167,7 +167,7 @@ const option::Descriptor usage[] = {
 };
 
 using namespace eprosima;
-using namespace fastrtps;
+using namespace fastdds;
 using namespace rtps;
 int main(
         int argc,

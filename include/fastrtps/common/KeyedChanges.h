@@ -23,12 +23,12 @@
 #include <fastdds/rtps/common/CacheChange.h>
 #include <chrono>
 
-namespace eprosima{
-namespace fastrtps{
+namespace eprosima {
+namespace fastdds {
 
 /**
  * @brief A struct storing a vector of cache changes and the next deadline in the group
- * @ingroup FASTRTPS_MODULE
+ * @ingroup FASTDDS_MODULE
  */
 struct KeyedChanges
 {
@@ -40,7 +40,8 @@ struct KeyedChanges
     }
 
     //! Copy constructor
-    KeyedChanges(const KeyedChanges& other)
+    KeyedChanges(
+            const KeyedChanges& other)
         : cache_changes(other.cache_changes)
         , next_deadline_us(other.next_deadline_us)
     {

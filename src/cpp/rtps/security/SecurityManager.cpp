@@ -64,9 +64,11 @@
 
 // TODO(Ricardo) Add event because stateless messages can be not received.
 
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
-using namespace eprosima::fastrtps::rtps::security;
+namespace eprosima {
+namespace fastdds {
+namespace rtps {
+
+using namespace security;
 
 inline bool usleep_bool()
 {
@@ -85,14 +87,14 @@ SecurityManager::SecurityManager(
     , auth_last_sequence_number_(1)
     , crypto_last_sequence_number_(1)
     , temp_reader_proxies_({
-    participant->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
-    participant->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators,
-    participant->getRTPSParticipantAttributes().allocation.data_limits,
-    participant->getRTPSParticipantAttributes().allocation.content_filter})
+                participant->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
+                participant->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators,
+                participant->getRTPSParticipantAttributes().allocation.data_limits,
+                participant->getRTPSParticipantAttributes().allocation.content_filter})
     , temp_writer_proxies_({
-    participant->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
-    participant->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators,
-    participant->getRTPSParticipantAttributes().allocation.data_limits})
+                participant->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
+                participant->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators,
+                participant->getRTPSParticipantAttributes().allocation.data_limits})
 {
     assert(participant != nullptr);
     static OpenSSLInit openssl_init;
@@ -4357,3 +4359,7 @@ void SecurityManager::onWriterChangeReceivedByAll(
         participant_volatile_message_secure_writer_history_->remove_change(change);
     }
 }
+
+} // namespace rtps
+} // namespace fastdds
+} // namespace eprosima

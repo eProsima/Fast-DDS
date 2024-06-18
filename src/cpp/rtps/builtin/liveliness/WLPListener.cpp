@@ -41,7 +41,7 @@
 #include <rtps/writer/LivelinessManager.hpp>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 WLPListener::WLPListener(

@@ -26,7 +26,7 @@
 #include <fastdds/utils/collections/ResourceLimitedContainerConfig.hpp>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 static inline ResourceLimitedContainerConfig resource_limits_from_history(
@@ -50,7 +50,7 @@ static inline ResourceLimitedContainerConfig resource_limits_from_history(
 }
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 #endif // DOXYGEN_SHOULD_SKIP_THIS_PUBLIC

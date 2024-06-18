@@ -26,7 +26,7 @@
 #include <rtps/security/logging/Logging.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 namespace security {
 
@@ -59,7 +59,7 @@ protected:
 
 } //namespace security
 } //namespace rtps
-} //namespace fastrtps
+} //namespace fastdds
 } //namespace eprosima
 
 #endif // _RTPS_SECURITY_SECURITYPLUGINFACTORY_H_

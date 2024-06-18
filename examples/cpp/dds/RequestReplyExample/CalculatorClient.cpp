@@ -54,7 +54,7 @@ class CalculatorClient
             }
         }
 
-        eprosima::fastrtps::rtps::WriteParams write_params;
+        eprosima::fastdds::rtps::WriteParams write_params;
 
         // Structures for waiting reply
         std::mutex reception_mutex;

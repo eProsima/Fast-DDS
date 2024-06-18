@@ -24,7 +24,7 @@
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 namespace security {
 
@@ -73,14 +73,14 @@ public:
 
     MOCK_METHOD1(remove_participant, void(const ParticipantProxyData& participant_data));
 
-    MOCK_CONST_METHOD0(builtin_endpoints, fastrtps::rtps::BuiltinEndpointSet_t());
+    MOCK_CONST_METHOD0(builtin_endpoints, fastdds::rtps::BuiltinEndpointSet_t());
 
     // *INDENT-ON*
 };
 
 } //namespace security
 } //namespace rtps
-} //namespace fastrtps
+} //namespace fastdds
 } //namespace eprosima
 
 #endif // _RTPS_SECURITY_SECURITYMANAGER_H_

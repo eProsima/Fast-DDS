@@ -22,7 +22,7 @@
 #include <rtps/reader/BaseReader.hpp>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class StatelessReader : public fastdds::rtps::BaseReader
@@ -52,7 +52,7 @@ public:
 };
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 #endif // RTPS_READER__STATELESSREADER_HPP

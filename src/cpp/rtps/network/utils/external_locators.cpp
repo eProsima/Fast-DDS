@@ -44,9 +44,9 @@ static uint8_t get_locator_mask(
 {
     uint8_t ret = 24;
 
-    std::vector<fastrtps::rtps::IPFinder::info_IP> infoIPs;
+    std::vector<fastdds::rtps::IPFinder::info_IP> infoIPs;
     SystemInfo::get_ips(infoIPs, true, false);
-    for (const fastrtps::rtps::IPFinder::info_IP& infoIP : infoIPs)
+    for (const fastdds::rtps::IPFinder::info_IP& infoIP : infoIPs)
     {
         if (infoIP.locator.kind == locator.kind &&
                 std::equal(infoIP.locator.address, infoIP.locator.address + 16, locator.address))
@@ -206,7 +206,7 @@ static uint64_t heuristic(
         return heuristic_value(0, 0);
     }
 
-    if (fastrtps::rtps::IPLocator::isLocal(remote_locator))
+    if (fastdds::rtps::IPLocator::isLocal(remote_locator))
     {
         return heuristic_value(0, 1);
     }
@@ -229,7 +229,7 @@ static uint64_t heuristic(
 }
 
 static void filter_remote_locators(
-        fastrtps::ResourceLimitedVector<Locator>& locators,
+        fastdds::ResourceLimitedVector<Locator>& locators,
         const ExternalLocators& external_locators,
         bool ignore_non_matching)
 {

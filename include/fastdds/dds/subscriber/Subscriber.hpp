@@ -39,11 +39,11 @@ class Subscriber;
 } // namespace dds
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 
 class TopicAttributes;
 
-} // namespace fastrtps
+} // namespace fastdds
 
 namespace fastdds {
 namespace dds {
@@ -168,7 +168,7 @@ public:
             const DataReaderQos& reader_qos,
             DataReaderListener* listener = nullptr,
             const StatusMask& mask = StatusMask::all(),
-            std::shared_ptr<fastrtps::rtps::IPayloadPool> payload_pool = nullptr);
+            std::shared_ptr<fastdds::rtps::IPayloadPool> payload_pool = nullptr);
 
     /**
      * This operation creates a DataReader. The returned DataReader will be attached and belongs to the Subscriber.
@@ -185,7 +185,7 @@ public:
             const std::string& profile_name,
             DataReaderListener* listener = nullptr,
             const StatusMask& mask = StatusMask::all(),
-            std::shared_ptr<fastrtps::rtps::IPayloadPool> payload_pool = nullptr);
+            std::shared_ptr<fastdds::rtps::IPayloadPool> payload_pool = nullptr);
 
     /**
      * This operation deletes a DataReader that belongs to the Subscriber.

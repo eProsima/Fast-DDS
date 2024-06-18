@@ -29,7 +29,7 @@
 #include <fastdds/utils/TimedMutex.hpp>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class ReaderProxy;
@@ -145,13 +145,13 @@ public:
     }
 
     virtual bool remove_change_g(
-            fastrtps::rtps::CacheChange_t* a_change)
+            fastdds::rtps::CacheChange_t* a_change)
     {
         return remove_change(a_change);
     }
 
     virtual bool remove_change_g(
-            fastrtps::rtps::CacheChange_t* a_change,
+            fastdds::rtps::CacheChange_t* a_change,
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
     {
         return remove_change(a_change, max_blocking_time);
@@ -215,7 +215,7 @@ public:
 };
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 #endif // _FASTDDS_RTPS_WRITERHISTORY_H_

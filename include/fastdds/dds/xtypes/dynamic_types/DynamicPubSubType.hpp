@@ -68,12 +68,12 @@ public:
 
     /*
      * Deserialize an object from the given payload
-     * @param payload @ref eprosima::fastrtps::rtps::SerializedPayload_t to parse
+     * @param payload @ref eprosima::fastdds::rtps::SerializedPayload_t to parse
      * @param data object to fill in with payload data
      * @return bool specifying success
      */
     FASTDDS_EXPORTED_API bool deserialize (
-            eprosima::fastrtps::rtps::SerializedPayload_t* payload,
+            eprosima::fastdds::rtps::SerializedPayload_t* payload,
             void* data) override;
 
     /*
@@ -85,13 +85,13 @@ public:
     /*
      * Calculate the key associated to a given object
      * @param data object whose key is calculated
-     * @param ihandle @ref eprosima::fastrtps::rtps::InstanceHandle_t to fill in
+     * @param ihandle @ref eprosima::fastdds::rtps::InstanceHandle_t to fill in
      * @param force_md5 use always md5 even if key payload footprint is smaller than the hash
      * @return bool specifying success
      */
     FASTDDS_EXPORTED_API bool getKey(
             void* data,
-            eprosima::fastrtps::rtps::InstanceHandle_t* ihandle,
+            eprosima::fastdds::rtps::InstanceHandle_t* ihandle,
             bool force_md5 = false) override;
 
     /*
@@ -110,12 +110,12 @@ public:
     /*
      * Serialize an object into a given payload
      * @param data object to serialize
-     * @param payload @ref eprosima::fastrtps::rtps::SerializedPayload_t to fill in
+     * @param payload @ref eprosima::fastdds::rtps::SerializedPayload_t to fill in
      * @return bool specifying success
      */
     FASTDDS_EXPORTED_API bool serialize(
             void* data,
-            eprosima::fastrtps::rtps::SerializedPayload_t* payload) override
+            eprosima::fastdds::rtps::SerializedPayload_t* payload) override
     {
         return serialize(data, payload, fastdds::dds::DEFAULT_DATA_REPRESENTATION);
     }
@@ -123,12 +123,12 @@ public:
     /*
      * Serialize an object into a given payload
      * @param data object to serialize
-     * @param payload @ref eprosima::fastrtps::rtps::SerializedPayload_t to fill in
+     * @param payload @ref eprosima::fastdds::rtps::SerializedPayload_t to fill in
      * @return bool specifying success
      */
     FASTDDS_EXPORTED_API bool serialize(
             void* data,
-            eprosima::fastrtps::rtps::SerializedPayload_t* payload,
+            eprosima::fastdds::rtps::SerializedPayload_t* payload,
             fastdds::dds::DataRepresentationId_t data_representation) override;
 
     /*

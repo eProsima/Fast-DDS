@@ -45,7 +45,7 @@ namespace rtps {
  * Class PDPServer manages server side of the discovery server mechanism
  *@ingroup DISCOVERY_MODULE
  */
-class PDPServer : public fastrtps::rtps::PDP
+class PDPServer : public fastdds::rtps::PDP
 {
     friend class DServerRoutineEvent;
     friend class DServerPingEvent;
@@ -62,14 +62,14 @@ public:
      * @param durability_kind the kind of persistence we want for the discovery data
      */
     PDPServer(
-            fastrtps::rtps::BuiltinProtocols* builtin,
-            const fastrtps::rtps::RTPSParticipantAllocationAttributes& allocation,
-            fastrtps::rtps::DurabilityKind_t durability_kind = fastrtps::rtps::TRANSIENT_LOCAL);
+            fastdds::rtps::BuiltinProtocols* builtin,
+            const fastdds::rtps::RTPSParticipantAllocationAttributes& allocation,
+            fastdds::rtps::DurabilityKind_t durability_kind = fastdds::rtps::TRANSIENT_LOCAL);
 
     ~PDPServer();
 
     void initializeParticipantProxyData(
-            fastrtps::rtps::ParticipantProxyData* participant_data) override;
+            fastdds::rtps::ParticipantProxyData* participant_data) override;
 
     /**
      * Initialize the PDP.
@@ -77,11 +77,11 @@ public:
      * @return True on success
      */
     bool init(
-            fastrtps::rtps::RTPSParticipantImpl* part) override;
+            fastdds::rtps::RTPSParticipantImpl* part) override;
 
     /**
      * @brief Checks if a backup file needs to be restored for
-     * DiscoveryProtocol_t::BACKUP before enabling the Participant Discovery Protocol
+     * DiscoveryProtocol::BACKUP before enabling the Participant Discovery Protocol
      */
     void pre_enable_actions() override;
 
@@ -91,9 +91,9 @@ public:
      * @param writer_guid GUID of originating writer
      * @return new ParticipantProxyData * or nullptr on failure
      */
-    fastrtps::rtps::ParticipantProxyData* createParticipantProxyData(
-            const fastrtps::rtps::ParticipantProxyData& p,
-            const fastrtps::rtps::GUID_t& writer_guid) override;
+    fastdds::rtps::ParticipantProxyData* createParticipantProxyData(
+            const fastdds::rtps::ParticipantProxyData& p,
+            const fastdds::rtps::GUID_t& writer_guid) override;
 
     /**
      * Create the SPDP Writer and Reader
@@ -108,8 +108,8 @@ public:
      * @return true if correct.
      */
     bool remove_remote_participant(
-            const fastrtps::rtps::GUID_t& participant_guid,
-            fastrtps::rtps::ParticipantDiscoveryInfo::DISCOVERY_STATUS reason) override;
+            const fastdds::rtps::GUID_t& participant_guid,
+            fastdds::rtps::ParticipantDiscoveryInfo::DISCOVERY_STATUS reason) override;
 
     /**
      * Force the sending of our local PDP to all servers
@@ -125,15 +125,15 @@ public:
     void announceParticipantState(
             bool new_change,
             bool dispose = false,
-            fastrtps::rtps::WriteParams& wparams = fastrtps::rtps::WriteParams::WRITE_PARAM_DEFAULT) override;
+            fastdds::rtps::WriteParams& wparams = fastdds::rtps::WriteParams::WRITE_PARAM_DEFAULT) override;
 
     // Force the sending of our DATA(p) to those servers that has not acked yet
     void ping_remote_servers();
 
     // send a specific Data to specific locators
     void send_announcement(
-            fastrtps::rtps::CacheChange_t* change,
-            std::vector<fastrtps::rtps::GUID_t> remote_readers,
+            fastdds::rtps::CacheChange_t* change,
+            std::vector<fastdds::rtps::GUID_t> remote_readers,
             LocatorList locators,
             bool dispose = false);
 
@@ -143,21 +143,21 @@ public:
      * @param pdata Pointer to the RTPSParticipantProxyData object.
      */
     void assignRemoteEndpoints(
-            fastrtps::rtps::ParticipantProxyData* pdata) override;
+            fastdds::rtps::ParticipantProxyData* pdata) override;
     void removeRemoteEndpoints(
-            fastrtps::rtps::ParticipantProxyData* pdata) override;
+            fastdds::rtps::ParticipantProxyData* pdata) override;
     void notifyAboveRemoteEndpoints(
-            const fastrtps::rtps::ParticipantProxyData& pdata,
+            const fastdds::rtps::ParticipantProxyData& pdata,
             bool notify_secure_endpoints) override;
 
 #if HAVE_SECURITY
     bool pairing_remote_writer_with_local_reader_after_security(
-            const fastrtps::rtps::GUID_t& local_reader,
-            const fastrtps::rtps::WriterProxyData& remote_writer_data) override;
+            const fastdds::rtps::GUID_t& local_reader,
+            const fastdds::rtps::WriterProxyData& remote_writer_data) override;
 
     bool pairing_remote_reader_with_local_writer_after_security(
-            const fastrtps::rtps::GUID_t& local_reader,
-            const fastrtps::rtps::ReaderProxyData& remote_reader_data) override;
+            const fastdds::rtps::GUID_t& local_reader,
+            const fastdds::rtps::ReaderProxyData& remote_reader_data) override;
 #endif // HAVE_SECURITY
 
     //! Get filename for writer persistence database file
@@ -216,20 +216,20 @@ protected:
     /*
      * Get Pointer to the server resource event thread.
      */
-    eprosima::fastrtps::rtps::ResourceEvent& get_resource_event_thread();
+    eprosima::fastdds::rtps::ResourceEvent& get_resource_event_thread();
 
     // Check the messages in histories. Check which ones modify the database to unlock further messages
     // and clean them when not needed anymore
     bool process_writers_acknowledgements();
 
     bool process_history_acknowledgement(
-            fastrtps::rtps::StatefulWriter* writer,
-            fastrtps::rtps::WriterHistory* writer_history);
+            fastdds::rtps::StatefulWriter* writer,
+            fastdds::rtps::WriterHistory* writer_history);
 
-    fastrtps::rtps::History::iterator process_change_acknowledgement(
-            fastrtps::rtps::History::iterator c,
-            fastrtps::rtps::StatefulWriter* writer,
-            fastrtps::rtps::WriterHistory* writer_history);
+    fastdds::rtps::History::iterator process_change_acknowledgement(
+            fastdds::rtps::History::iterator c,
+            fastdds::rtps::StatefulWriter* writer,
+            fastdds::rtps::WriterHistory* writer_history);
 
     bool process_data_queues();
 
@@ -238,28 +238,28 @@ protected:
     bool process_changes_release();
 
     void process_changes_release_(
-            const std::vector<fastrtps::rtps::CacheChange_t*>& changes);
+            const std::vector<fastdds::rtps::CacheChange_t*>& changes);
 
     bool remove_change_from_writer_history(
-            fastrtps::rtps::RTPSWriter* writer,
-            fastrtps::rtps::WriterHistory* history,
-            fastrtps::rtps::CacheChange_t* change,
+            fastdds::rtps::RTPSWriter* writer,
+            fastdds::rtps::WriterHistory* history,
+            fastdds::rtps::CacheChange_t* change,
             bool release_change = true);
 
     bool announcement_from_same_participant_in_disposals(
-            const std::vector<fastrtps::rtps::CacheChange_t*>& disposals,
-            const fastrtps::rtps::GuidPrefix_t& participant);
+            const std::vector<fastdds::rtps::CacheChange_t*>& disposals,
+            const fastdds::rtps::GuidPrefix_t& participant);
 
     bool process_to_send_lists();
 
     bool process_to_send_list(
-            const std::vector<eprosima::fastrtps::rtps::CacheChange_t*>& send_list,
-            fastrtps::rtps::RTPSWriter* writer,
-            fastrtps::rtps::WriterHistory* history);
+            const std::vector<eprosima::fastdds::rtps::CacheChange_t*>& send_list,
+            fastdds::rtps::RTPSWriter* writer,
+            fastdds::rtps::WriterHistory* history);
 
     bool remove_change_from_history_nts(
-            fastrtps::rtps::WriterHistory* history,
-            fastrtps::rtps::CacheChange_t* change,
+            fastdds::rtps::WriterHistory* history,
+            fastdds::rtps::CacheChange_t* change,
             bool release_change = true);
 
     bool process_dirty_topics();
@@ -286,7 +286,7 @@ protected:
             nlohmann::json& ddb_json,
             std::vector<nlohmann::json>& new_changes);
 
-    std::set<fastrtps::rtps::GuidPrefix_t> servers_prefixes();
+    std::set<fastdds::rtps::GuidPrefix_t> servers_prefixes();
 
     // General file name for the prefix of every backup file
     std::ostringstream get_persistence_file_name_() const;
@@ -320,11 +320,11 @@ protected:
      * @param change The CacheChange_t to be released.
      */
     void release_change_from_writer(
-            eprosima::fastrtps::rtps::CacheChange_t* change);
+            eprosima::fastdds::rtps::CacheChange_t* change);
 
 private:
 
-    using fastrtps::rtps::PDP::announceParticipantState;
+    using PDP::announceParticipantState;
 
 #if HAVE_SECURITY
     /**
@@ -369,13 +369,13 @@ private:
      * Provides the functionality of notifyAboveRemoteEndpoints without being an override of that method.
      */
     void perform_builtin_endpoints_matching(
-            const fastrtps::rtps::ParticipantProxyData& pdata);
+            const fastdds::rtps::ParticipantProxyData& pdata);
 
     void match_reliable_pdp_endpoints(
-            const fastrtps::rtps::ParticipantProxyData& pdata);
+            const fastdds::rtps::ParticipantProxyData& pdata);
 
     //! Server thread
-    eprosima::fastrtps::rtps::ResourceEvent resource_event_thread_;
+    eprosima::fastdds::rtps::ResourceEvent resource_event_thread_;
 
     /**
      * TimedEvent for server routine
@@ -391,7 +391,7 @@ private:
     fastdds::rtps::ddb::DiscoveryDataBase discovery_db_;
 
     //! TRANSIENT or TRANSIENT_LOCAL durability;
-    fastrtps::rtps::DurabilityKind_t durability_;
+    fastdds::rtps::DurabilityKind_t durability_;
 
 };
 

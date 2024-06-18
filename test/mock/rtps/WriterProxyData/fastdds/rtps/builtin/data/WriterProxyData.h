@@ -33,7 +33,7 @@
 #endif // if HAVE_SECURITY
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class NetworkFactory;
@@ -324,7 +324,7 @@ private:
 };
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 #endif // _FASTDDS_RTPS_BUILTIN_DATA_WRITERPROXYDATA_H_

@@ -31,7 +31,7 @@
 #define TIME_LIMIT_US 10000
 
 using namespace eprosima;
-using namespace eprosima::fastrtps;
+using namespace eprosima::fastdds;
 using namespace eprosima::fastdds::dds;
 
 using std::cout;
@@ -139,8 +139,8 @@ void VideoTestPublisher::init(
         bool reliable,
         uint32_t pid,
         bool hostname,
-        const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
-        const eprosima::fastrtps::rtps::PropertyPolicy& property_policy,
+        const eprosima::fastdds::rtps::PropertyPolicy& part_property_policy,
+        const eprosima::fastdds::rtps::PropertyPolicy& property_policy,
         bool large_data,
         const std::string& sXMLConfigFile,
         int test_time,
@@ -254,7 +254,7 @@ void VideoTestPublisher::init(
     if (large_data)
     {
         datawriter_qos_data.endpoint().history_memory_policy =
-                eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+                eprosima::fastdds::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
         datawriter_qos_data.publish_mode().kind = PublishModeQosPolicyKind::ASYNCHRONOUS_PUBLISH_MODE;
     }
     datawriter_qos_data.reliable_writer_qos().times.heartbeatPeriod.seconds = 0;

@@ -42,7 +42,7 @@ class XMLDocument;
 
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 class ReaderProxyData;
 class WriterProxyData;

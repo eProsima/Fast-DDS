@@ -26,45 +26,45 @@
 int pthread_mutex_lock(
         pthread_mutex_t* mutex)
 {
-    pid_t pid = eprosima::fastrtps::g_tmutex_thread_pid;
+    pid_t pid = eprosima::fastdds::g_tmutex_thread_pid;
 
     if (0 != pid)
     {
         if (pid == GET_TID())
         {
-            eprosima::fastrtps::tmutex_record_mutex_(eprosima::fastrtps::LockType::LOCK, mutex);
+            eprosima::fastdds::tmutex_record_mutex_(eprosima::fastdds::LockType::LOCK, mutex);
         }
     }
 
-    if (eprosima::fastrtps::g_origin_lock_func == nullptr)
+    if (eprosima::fastdds::g_origin_lock_func == nullptr)
     {
-        eprosima::fastrtps::g_origin_lock_func = (int (*)(pthread_mutex_t*))dlsym(RTLD_NEXT, "pthread_mutex_lock");
+        eprosima::fastdds::g_origin_lock_func = (int (*)(pthread_mutex_t*))dlsym(RTLD_NEXT, "pthread_mutex_lock");
     }
 
-    return (*eprosima::fastrtps::g_origin_lock_func)(mutex);
+    return (*eprosima::fastdds::g_origin_lock_func)(mutex);
 }
 
 int pthread_mutex_timedlock(
         pthread_mutex_t* mutex,
         const struct timespec* abs_timeout)
 {
-    pid_t pid = eprosima::fastrtps::g_tmutex_thread_pid;
+    pid_t pid = eprosima::fastdds::g_tmutex_thread_pid;
 
     if (0 != pid)
     {
         if (pid == GET_TID())
         {
-            eprosima::fastrtps::tmutex_record_mutex_(eprosima::fastrtps::LockType::TIMED_LOCK, mutex);
+            eprosima::fastdds::tmutex_record_mutex_(eprosima::fastdds::LockType::TIMED_LOCK, mutex);
         }
     }
 
-    if (eprosima::fastrtps::g_origin_timedlock_func == nullptr)
+    if (eprosima::fastdds::g_origin_timedlock_func == nullptr)
     {
-        eprosima::fastrtps::g_origin_timedlock_func =
+        eprosima::fastdds::g_origin_timedlock_func =
                 (int (*)(pthread_mutex_t*, const struct timespec*))dlsym(RTLD_NEXT, "pthread_mutex_timedlock");
     }
 
-    return (*eprosima::fastrtps::g_origin_timedlock_func)(mutex, abs_timeout);
+    return (*eprosima::fastdds::g_origin_timedlock_func)(mutex, abs_timeout);
 }
 
 int pthread_mutex_clocklock(
@@ -72,22 +72,22 @@ int pthread_mutex_clocklock(
         clockid_t clock,
         const struct timespec* abs_timeout)
 {
-    pid_t pid = eprosima::fastrtps::g_tmutex_thread_pid;
+    pid_t pid = eprosima::fastdds::g_tmutex_thread_pid;
 
     if (0 != pid)
     {
         if (pid == GET_TID())
         {
-            eprosima::fastrtps::tmutex_record_mutex_(eprosima::fastrtps::LockType::TIMED_LOCK, mutex);
+            eprosima::fastdds::tmutex_record_mutex_(eprosima::fastdds::LockType::TIMED_LOCK, mutex);
         }
     }
 
-    if (eprosima::fastrtps::g_origin_clocklock_func == nullptr)
+    if (eprosima::fastdds::g_origin_clocklock_func == nullptr)
     {
-        eprosima::fastrtps::g_origin_clocklock_func =
+        eprosima::fastdds::g_origin_clocklock_func =
                 (int (*)(pthread_mutex_t*, clockid_t, const struct timespec*))dlsym(RTLD_NEXT,
                         "pthread_mutex_clocklock");
     }
 
-    return (*eprosima::fastrtps::g_origin_clocklock_func)(mutex, clock, abs_timeout);
+    return (*eprosima::fastdds::g_origin_clocklock_func)(mutex, clock, abs_timeout);
 }

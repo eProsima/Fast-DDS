@@ -29,7 +29,7 @@
 #include <rtps/messages/CDRMessage.hpp>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 using NetworkBuffer = eprosima::fastdds::rtps::NetworkBuffer;

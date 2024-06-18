@@ -18,8 +18,8 @@
 
 #include "SecurityPluginFactory.h"
 
-using namespace eprosima::fastrtps::rtps;
-using namespace eprosima::fastrtps::rtps::security;
+using namespace eprosima::fastdds::rtps;
+using namespace eprosima::fastdds::rtps::security;
 
 Authentication* SecurityPluginFactory::auth_plugin_ = nullptr;
 
@@ -29,84 +29,92 @@ Cryptography* SecurityPluginFactory::crypto_plugin_ = nullptr;
 
 Logging* SecurityPluginFactory::logging_plugin_ = nullptr;
 
-Authentication* SecurityPluginFactory::create_authentication_plugin(const PropertyPolicy& /*property_policy*/)
+Authentication* SecurityPluginFactory::create_authentication_plugin(
+        const PropertyPolicy& /*property_policy*/)
 {
     Authentication* ret =  auth_plugin_;
     auth_plugin_ = nullptr;
     return ret;
 }
 
-void SecurityPluginFactory::set_auth_plugin(Authentication* plugin)
+void SecurityPluginFactory::set_auth_plugin(
+        Authentication* plugin)
 {
     auth_plugin_ = plugin;
 }
 
 void SecurityPluginFactory::release_auth_plugin()
 {
-    if(auth_plugin_ != nullptr)
+    if (auth_plugin_ != nullptr)
     {
         delete auth_plugin_;
         auth_plugin_ = nullptr;
     }
 }
 
-AccessControl* SecurityPluginFactory::create_access_control_plugin(const PropertyPolicy& /*property_policy*/)
+AccessControl* SecurityPluginFactory::create_access_control_plugin(
+        const PropertyPolicy& /*property_policy*/)
 {
     AccessControl* ret =  access_plugin_;
     access_plugin_ = nullptr;
     return ret;
 }
 
-void SecurityPluginFactory::set_access_control_plugin(AccessControl* plugin)
+void SecurityPluginFactory::set_access_control_plugin(
+        AccessControl* plugin)
 {
     access_plugin_ = plugin;
 }
 
 void SecurityPluginFactory::release_access_control_plugin()
 {
-    if(access_plugin_ != nullptr)
+    if (access_plugin_ != nullptr)
     {
         delete access_plugin_;
         access_plugin_ = nullptr;
     }
 }
 
-Cryptography* SecurityPluginFactory::create_cryptography_plugin(const PropertyPolicy& /*property_policy*/)
+Cryptography* SecurityPluginFactory::create_cryptography_plugin(
+        const PropertyPolicy& /*property_policy*/)
 {
     Cryptography* ret =  crypto_plugin_;
     crypto_plugin_ = nullptr;
     return ret;
 }
 
-void SecurityPluginFactory::set_crypto_plugin(Cryptography* plugin)
+void SecurityPluginFactory::set_crypto_plugin(
+        Cryptography* plugin)
 {
     crypto_plugin_ = plugin;
 }
 
 void SecurityPluginFactory::release_crypto_plugin()
 {
-    if(crypto_plugin_ != nullptr)
+    if (crypto_plugin_ != nullptr)
     {
         delete crypto_plugin_;
         crypto_plugin_ = nullptr;
     }
 }
 
-Logging* SecurityPluginFactory::create_logging_plugin(const PropertyPolicy& /*property_policy*/)
+Logging* SecurityPluginFactory::create_logging_plugin(
+        const PropertyPolicy& /*property_policy*/)
 {
     Logging* ret =  logging_plugin_;
     logging_plugin_ = nullptr;
     return ret;
 }
 
-void SecurityPluginFactory::set_logging_plugin(Logging* plugin)
+void SecurityPluginFactory::set_logging_plugin(
+        Logging* plugin)
 {
     logging_plugin_ = plugin;
 }
 
 void SecurityPluginFactory::release_logging_plugin()
 {
-    if(logging_plugin_ != nullptr)
+    if (logging_plugin_ != nullptr)
     {
         delete logging_plugin_;
         logging_plugin_ = nullptr;

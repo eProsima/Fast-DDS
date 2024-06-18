@@ -24,20 +24,11 @@
 #include <rtps/builtin/discovery/endpoint/EDPSimpleListeners.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class RTPSReader;
 struct CacheChange_t;
-
-} // namespace rtps
-} // namespace fastdds
-} // namespace eprosima
-
-namespace eprosima {
-namespace fastdds {
-namespace rtps {
-
 class BaseReader;
 class PDPServer;
 class EDPServer;
@@ -46,7 +37,7 @@ class EDPServer;
  * Class EDPServerPUBListener, used to define the behavior when a new WriterProxyData is received.
  * @ingroup DISCOVERY_MODULE
  */
-class EDPServerPUBListener : public fastrtps::rtps::EDPBasePUBListener
+class EDPServerPUBListener : public fastdds::rtps::EDPBasePUBListener
 {
 public:
 
@@ -70,22 +61,22 @@ public:
      * @param change
      */
     void on_new_cache_change_added(
-            fastrtps::rtps::RTPSReader* reader,
-            const fastrtps::rtps::CacheChange_t* const change) override;
+            fastdds::rtps::RTPSReader* reader,
+            const fastdds::rtps::CacheChange_t* const change) override;
 
 private:
 
     std::string get_writer_proxy_topic_name(
-            fastrtps::rtps::GUID_t auxGUID);
+            fastdds::rtps::GUID_t auxGUID);
 
     void notify_discoverydatabase(
             std::string topic_name,
             BaseReader* reader,
-            fastrtps::rtps::CacheChange_t* change);
+            fastdds::rtps::CacheChange_t* change);
 
     void continue_with_writer(
             BaseReader* reader,
-            fastrtps::rtps::CacheChange_t* change);
+            fastdds::rtps::CacheChange_t* change);
 
     //!Pointer to the EDPServer
     EDPServer* sedp_;
@@ -95,7 +86,7 @@ private:
  * Class EDPServerSUBListener, used to define the behavior when a new ReaderProxyData is received.
  * @ingroup DISCOVERY_MODULE
  */
-class EDPServerSUBListener : public fastrtps::rtps::EDPBaseSUBListener
+class EDPServerSUBListener : public fastdds::rtps::EDPBaseSUBListener
 {
 public:
 
@@ -116,22 +107,22 @@ public:
      * @param change
      */
     void on_new_cache_change_added(
-            fastrtps::rtps::RTPSReader* reader,
-            const fastrtps::rtps::CacheChange_t* const change) override;
+            fastdds::rtps::RTPSReader* reader,
+            const fastdds::rtps::CacheChange_t* const change) override;
 
 private:
 
     std::string get_reader_proxy_topic_name(
-            fastrtps::rtps::GUID_t auxGUID);
+            fastdds::rtps::GUID_t auxGUID);
 
     void notify_discoverydatabase(
             std::string topic_name,
             BaseReader* reader,
-            fastrtps::rtps::CacheChange_t* change);
+            fastdds::rtps::CacheChange_t* change);
 
     void continue_with_reader(
             BaseReader* reader,
-            fastrtps::rtps::CacheChange_t* change);
+            fastdds::rtps::CacheChange_t* change);
 
     //!Pointer to the EDPServer
     EDPServer* sedp_;

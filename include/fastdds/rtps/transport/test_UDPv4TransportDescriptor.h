@@ -24,14 +24,10 @@
 
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 struct CDRMessage_t;
-} //rtps
-} //fastrtps
-namespace fastdds {
-namespace rtps {
 
 /**
  * UDP v4 Test Transport configuration
@@ -40,7 +36,7 @@ namespace rtps {
 struct test_UDPv4TransportDescriptor : public SocketTransportDescriptor
 {
     //! Custom message filtering functions
-    typedef std::function<bool (eprosima::fastrtps::rtps::CDRMessage_t& msg)> filter;
+    typedef std::function<bool (eprosima::fastdds::rtps::CDRMessage_t& msg)> filter;
     //! Locator filtering function
     typedef std::function<bool (const Locator& destination)> DestinationLocatorFilter;
 
@@ -91,7 +87,7 @@ struct test_UDPv4TransportDescriptor : public SocketTransportDescriptor
     DestinationLocatorFilter locator_filter_;
 
     //! Vector containing the message's sequence numbers being dropped
-    std::vector<fastrtps::rtps::SequenceNumber_t> sequenceNumberDataMessagesToDrop;
+    std::vector<fastdds::rtps::SequenceNumber_t> sequenceNumberDataMessagesToDrop;
 
     //! Log dropped packets
     uint32_t dropLogLength;

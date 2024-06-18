@@ -102,8 +102,11 @@ static bool create_kx_key(
     return true;
 }
 
-using namespace eprosima::fastrtps::rtps;
-using namespace eprosima::fastrtps::rtps::security;
+namespace eprosima {
+namespace fastdds {
+namespace rtps {
+
+using namespace security;
 
 ParticipantCryptoHandleDeleter::ParticipantCryptoHandleDeleter(
         AESGCMGMAC_KeyFactory& factory)
@@ -995,3 +998,7 @@ void AESGCMGMAC_KeyFactory::release_key_id(
         m_CryptoTransformKeyIds.erase(it);
     }
 }
+
+} // namespace rtps
+} // namespace fastdds
+} // namespace eprosima

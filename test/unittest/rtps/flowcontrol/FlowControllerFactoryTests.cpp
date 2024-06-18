@@ -27,14 +27,14 @@ TEST(FlowControllerFactory, get_default_flow_controllers)
     // Initialize factory.
     factory.init(nullptr);
 
-    eprosima::fastrtps::rtps::WriterAttributes besteffort_sync_attributes;
-    besteffort_sync_attributes.endpoint.reliabilityKind = eprosima::fastrtps::rtps::BEST_EFFORT;
-    eprosima::fastrtps::rtps::WriterAttributes reliable_sync_attributes;
-    eprosima::fastrtps::rtps::WriterAttributes besteffort_async_attributes;
-    besteffort_async_attributes.endpoint.reliabilityKind = eprosima::fastrtps::rtps::BEST_EFFORT;
-    besteffort_async_attributes.mode = eprosima::fastrtps::rtps::ASYNCHRONOUS_WRITER;
-    eprosima::fastrtps::rtps::WriterAttributes reliable_async_attributes;
-    reliable_async_attributes.mode = eprosima::fastrtps::rtps::ASYNCHRONOUS_WRITER;
+    eprosima::fastdds::rtps::WriterAttributes besteffort_sync_attributes;
+    besteffort_sync_attributes.endpoint.reliabilityKind = eprosima::fastdds::rtps::BEST_EFFORT;
+    eprosima::fastdds::rtps::WriterAttributes reliable_sync_attributes;
+    eprosima::fastdds::rtps::WriterAttributes besteffort_async_attributes;
+    besteffort_async_attributes.endpoint.reliabilityKind = eprosima::fastdds::rtps::BEST_EFFORT;
+    besteffort_async_attributes.mode = eprosima::fastdds::rtps::ASYNCHRONOUS_WRITER;
+    eprosima::fastdds::rtps::WriterAttributes reliable_async_attributes;
+    reliable_async_attributes.mode = eprosima::fastdds::rtps::ASYNCHRONOUS_WRITER;
 
 
     // Retrieve PureSyncFlowController.
@@ -69,7 +69,7 @@ TEST(FlowControllerFactory, register_flow_controllers)
     FlowControllerFactory factory;
     FlowController* flow_controller = nullptr;
     FlowControllerDescriptor flow_controller_descr;
-    eprosima::fastrtps::rtps::WriterAttributes writer_attributes;
+    eprosima::fastdds::rtps::WriterAttributes writer_attributes;
 
     // Initialize factory.
     factory.init(nullptr);

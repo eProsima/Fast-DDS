@@ -44,7 +44,7 @@ using pid_t = int;
 #include <bits/types/clockid_t.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 
 enum LockType : int32_t
 {
@@ -130,7 +130,7 @@ size_t tmutex_get_num_lock_type();
  */
 size_t tmutex_get_num_timedlock_type();
 
-} //namespace fastrtps
+} //namespace fastdds
 } //namespace eprosima
 
 #endif // __TEST_REALTIME_TMUTEX_HPP__

@@ -57,10 +57,10 @@
 #include <statistics/types/monitorservice_types.hpp>
 #endif //FASTDDS_STATISTICS
 
-using eprosima::fastrtps::RecursiveTimedMutex;
-using eprosima::fastrtps::c_TimeInfinite;
+using eprosima::fastdds::RecursiveTimedMutex;
+using eprosima::fastdds::c_TimeInfinite;
 
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds::rtps;
 using namespace std::chrono;
 
 namespace eprosima {
@@ -97,7 +97,7 @@ DataReaderImpl::DataReaderImpl(
         TopicDescription* topic,
         const DataReaderQos& qos,
         DataReaderListener* listener,
-        std::shared_ptr<fastrtps::rtps::IPayloadPool> payload_pool)
+        std::shared_ptr<fastdds::rtps::IPayloadPool> payload_pool)
     : subscriber_(s)
     , type_(type)
     , topic_(topic)
@@ -117,7 +117,7 @@ DataReaderImpl::DataReaderImpl(
     endpoint_attributes.setEntityID(qos_.endpoint().entity_id);
     endpoint_attributes.setUserDefinedID(qos_.endpoint().user_defined_id);
     RTPSParticipantImpl::preprocess_endpoint_attributes<READER, 0x04, 0x07>(
-        fastrtps::rtps::EntityId_t::unknown(),
+        fastdds::rtps::EntityId_t::unknown(),
         subscriber_->get_participant_impl()->id_counter(), endpoint_attributes, guid_.entityId);
     guid_.guidPrefix = subscriber_->get_participant_impl()->guid().guidPrefix;
 
@@ -807,7 +807,7 @@ uint64_t DataReaderImpl::get_unread_count(
     return ret_val;
 }
 
-const fastrtps::rtps::GUID_t& DataReaderImpl::guid() const
+const fastdds::rtps::GUID_t& DataReaderImpl::guid() const
 {
     return guid_;
 }
@@ -908,9 +908,9 @@ const DataReaderQos& DataReaderImpl::get_qos() const
 
 void DataReaderImpl::InnerDataReaderListener::on_data_available(
         RTPSReader* /*reader*/,
-        const fastrtps::rtps::GUID_t& writer_guid,
-        const fastrtps::rtps::SequenceNumber_t& first_sequence,
-        const fastrtps::rtps::SequenceNumber_t& last_sequence,
+        const fastdds::rtps::GUID_t& writer_guid,
+        const fastdds::rtps::SequenceNumber_t& first_sequence,
+        const fastdds::rtps::SequenceNumber_t& last_sequence,
         bool& should_notify_individual_changes)
 {
     should_notify_individual_changes = false;
@@ -1065,9 +1065,9 @@ void DataReaderImpl::InnerDataReaderListener::notify_status_observer(
 #endif //FASTDDS_STATISTICS
 
 bool DataReaderImpl::on_data_available(
-        const fastrtps::rtps::GUID_t& writer_guid,
-        const fastrtps::rtps::SequenceNumber_t& first_sequence,
-        const fastrtps::rtps::SequenceNumber_t& last_sequence)
+        const fastdds::rtps::GUID_t& writer_guid,
+        const fastdds::rtps::SequenceNumber_t& first_sequence,
+        const fastdds::rtps::SequenceNumber_t& last_sequence)
 {
     bool ret_val = false;
 
@@ -1765,9 +1765,9 @@ void DataReaderImpl::set_qos(
     }
 }
 
-fastrtps::TopicAttributes DataReaderImpl::topic_attributes() const
+fastdds::TopicAttributes DataReaderImpl::topic_attributes() const
 {
-    fastrtps::TopicAttributes topic_att;
+    fastdds::TopicAttributes topic_att;
     topic_att.topicKind = type_->m_isGetKeyDefined ? WITH_KEY : NO_KEY;
     topic_att.topicName = topic_->get_impl()->get_rtps_topic_name();
     topic_att.topicDataType = topic_->get_type_name();
@@ -1776,7 +1776,7 @@ fastrtps::TopicAttributes DataReaderImpl::topic_attributes() const
     if (type_->auto_fill_type_information() && xtypes::TK_NONE != type_->type_identifiers().type_identifier1()._d())
     {
         if (RETCODE_OK ==
-                fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().get_type_information(
+                fastdds::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().get_type_information(
                     type_->type_identifiers(), topic_att.type_information.type_information))
         {
             topic_att.type_information.assigned(true);
@@ -1851,8 +1851,8 @@ void DataReaderImpl::release_payload_pool()
     if (!is_custom_payload_pool_)
     {
         PoolConfig config = PoolConfig::from_history_attributes(history_.m_att);
-        std::shared_ptr<fastrtps::rtps::ITopicPayloadPool> topic_payload_pool =
-                std::dynamic_pointer_cast<fastrtps::rtps::ITopicPayloadPool>(payload_pool_);
+        std::shared_ptr<fastdds::rtps::ITopicPayloadPool> topic_payload_pool =
+                std::dynamic_pointer_cast<fastdds::rtps::ITopicPayloadPool>(payload_pool_);
         topic_payload_pool->release_history(config, true);
     }
 

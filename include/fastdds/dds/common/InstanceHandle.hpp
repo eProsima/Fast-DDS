@@ -28,7 +28,7 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-using InstanceHandle_t = eprosima::fastrtps::rtps::InstanceHandle_t;
+using InstanceHandle_t = eprosima::fastdds::rtps::InstanceHandle_t;
 
 extern FASTDDS_EXPORTED_API const InstanceHandle_t HANDLE_NIL;
 

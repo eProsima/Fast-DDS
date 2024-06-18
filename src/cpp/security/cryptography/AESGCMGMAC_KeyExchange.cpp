@@ -35,7 +35,7 @@
 #undef max
 #endif // ifdef WIN32
 
-using namespace eprosima::fastrtps::rtps::security;
+using namespace eprosima::fastdds::rtps::security;
 
 AESGCMGMAC_KeyExchange::AESGCMGMAC_KeyExchange()
 {

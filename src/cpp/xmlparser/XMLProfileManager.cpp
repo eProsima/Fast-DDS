@@ -28,7 +28,6 @@
 
 #include <xmlparser/XMLTree.h>
 
-using namespace eprosima::fastrtps;
 using namespace eprosima::fastdds;
 using namespace ::xmlparser;
 

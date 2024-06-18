@@ -78,8 +78,8 @@ public:
             bool hostname,
             bool export_csv,
             const std::string& export_prefix,
-            const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
-            const eprosima::fastrtps::rtps::PropertyPolicy& property_policy,
+            const eprosima::fastdds::rtps::PropertyPolicy& part_property_policy,
+            const eprosima::fastdds::rtps::PropertyPolicy& property_policy,
             const std::string& sXMLConfigFile,
             uint32_t data_size,
             bool dynamic_types);

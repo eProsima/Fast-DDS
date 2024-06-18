@@ -32,8 +32,8 @@ public:
     bool send(
             const std::vector<NetworkBuffer>& buffers,
             uint32_t total_bytes,
-            fastrtps::rtps::LocatorsIterator* destination_locators_begin,
-            fastrtps::rtps::LocatorsIterator* destination_locators_end,
+            LocatorsIterator* destination_locators_begin,
+            LocatorsIterator* destination_locators_end,
             const std::chrono::steady_clock::time_point& max_blocking_time_point) override;
 
     SharedMemChannelResource* CreateInputChannelResource(

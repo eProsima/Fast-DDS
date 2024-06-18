@@ -23,8 +23,8 @@
 #include "RTPSWithRegistrationReader.hpp"
 #include "RTPSWithRegistrationWriter.hpp"
 
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds;
+using namespace eprosima::fastdds::rtps;
 
 enum communication_type
 {
@@ -43,7 +43,7 @@ public:
         {
             case INTRAPROCESS:
                 library_settings.intraprocess_delivery = eprosima::fastdds::IntraprocessDeliveryType::INTRAPROCESS_FULL;
-                eprosima::fastrtps::rtps::RTPSDomain::set_library_settings(library_settings);
+                eprosima::fastdds::rtps::RTPSDomain::set_library_settings(library_settings);
                 break;
             case TRANSPORT:
             default:
@@ -58,7 +58,7 @@ public:
         {
             case INTRAPROCESS:
                 library_settings.intraprocess_delivery = eprosima::fastdds::IntraprocessDeliveryType::INTRAPROCESS_OFF;
-                eprosima::fastrtps::rtps::RTPSDomain::set_library_settings(library_settings);
+                eprosima::fastdds::rtps::RTPSDomain::set_library_settings(library_settings);
                 break;
             case TRANSPORT:
             default:
@@ -246,7 +246,7 @@ void do_test(
         RTPSWithRegistrationReader<TType> reader(topic_name);
         RTPSWithRegistrationWriter<TType> writer(topic_name);
 
-        reader.reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE);
+        reader.reliability(eprosima::fastdds::rtps::ReliabilityKind_t::RELIABLE);
         if (pool_on_reader)
         {
             reader.payload_pool(pool);

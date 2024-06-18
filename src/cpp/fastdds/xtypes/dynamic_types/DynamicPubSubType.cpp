@@ -75,7 +75,7 @@ void DynamicPubSubType::deleteData(
 }
 
 bool DynamicPubSubType::deserialize(
-        eprosima::fastrtps::rtps::SerializedPayload_t* payload,
+        eprosima::fastdds::rtps::SerializedPayload_t* payload,
         void* data)
 {
     traits<DynamicDataImpl>::ref_type* data_ptr = static_cast<traits<DynamicDataImpl>::ref_type*>(data);
@@ -104,7 +104,7 @@ traits<DynamicType>::ref_type DynamicPubSubType::get_dynamic_type() const noexce
 
 bool DynamicPubSubType::getKey(
         void* data,
-        eprosima::fastrtps::rtps::InstanceHandle_t* handle,
+        eprosima::fastdds::rtps::InstanceHandle_t* handle,
         bool force_md5)
 {
     if (!dynamic_type_ || !m_isGetKeyDefined)
@@ -181,7 +181,7 @@ std::function<uint32_t()> DynamicPubSubType::getSerializedSizeProvider(
 
 bool DynamicPubSubType::serialize(
         void* data,
-        eprosima::fastrtps::rtps::SerializedPayload_t* payload,
+        eprosima::fastdds::rtps::SerializedPayload_t* payload,
         fastdds::dds::DataRepresentationId_t data_representation)
 {
     traits<DynamicDataImpl>::ref_type* data_ptr = static_cast<traits<DynamicDataImpl>::ref_type*>(data);
@@ -238,7 +238,7 @@ void DynamicPubSubType::register_type_object_representation()
 {
     if (dynamic_type_)
     {
-        if (RETCODE_OK != fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
+        if (RETCODE_OK != fastdds::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
                         register_typeobject_w_dynamic_type(dynamic_type_, type_identifiers_))
         {
             EPROSIMA_LOG_ERROR(DYN_TYPES, "Error registering DynamicType TypeObject representation.");

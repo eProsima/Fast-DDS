@@ -32,7 +32,7 @@
 #include <fastdds/rtps/attributes/TopicAttributes.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class RTPSParticipantImpl;
@@ -335,7 +335,7 @@ private:
 };
 
 } // namespace rtps
-} /* namespace fastrtps  */
+} /* namespace fastdds  */
 } /* namespace eprosima */
 
 #endif /* _FASTDDS_RTPS_DOMAIN_H_*/

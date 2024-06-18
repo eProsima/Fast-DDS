@@ -67,13 +67,13 @@ class PubSubWriterReader
 #if HAVE_SECURITY
         void onParticipantAuthentication(
                 eprosima::fastdds::dds::DomainParticipant*,
-                eprosima::fastrtps::rtps::ParticipantAuthenticationInfo&& info) override
+                eprosima::fastdds::rtps::ParticipantAuthenticationInfo&& info) override
         {
-            if (info.status == eprosima::fastrtps::rtps::ParticipantAuthenticationInfo::AUTHORIZED_PARTICIPANT)
+            if (info.status == eprosima::fastdds::rtps::ParticipantAuthenticationInfo::AUTHORIZED_PARTICIPANT)
             {
                 wreader_.authorized();
             }
-            else if (info.status == eprosima::fastrtps::rtps::ParticipantAuthenticationInfo::UNAUTHORIZED_PARTICIPANT)
+            else if (info.status == eprosima::fastdds::rtps::ParticipantAuthenticationInfo::UNAUTHORIZED_PARTICIPANT)
             {
                 wreader_.unauthorized();
             }
@@ -82,7 +82,7 @@ class PubSubWriterReader
 #endif // if HAVE_SECURITY
         void on_participant_discovery(
                 eprosima::fastdds::dds::DomainParticipant* participant,
-                eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info,
+                eprosima::fastdds::rtps::ParticipantDiscoveryInfo&& info,
                 bool& should_be_ignored) override
         {
             static_cast<void>(should_be_ignored);
@@ -90,15 +90,15 @@ class PubSubWriterReader
 
             switch (info.status)
             {
-                case eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT:
+                case eprosima::fastdds::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT:
                     info_add(discovered_participants_, info.info.m_guid);
                     break;
 
-                case eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT:
+                case eprosima::fastdds::rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT:
                     info_remove(discovered_participants_, info.info.m_guid);
                     break;
 
-                case eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT:
+                case eprosima::fastdds::rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT:
                     std::cout << "Participant " << info.info.m_guid << " has been dropped";
                     info_remove(discovered_participants_, info.info.m_guid);
                     break;
@@ -110,18 +110,18 @@ class PubSubWriterReader
 
         void on_data_reader_discovery(
                 eprosima::fastdds::dds::DomainParticipant* participant,
-                eprosima::fastrtps::rtps::ReaderDiscoveryInfo&& info,
+                eprosima::fastdds::rtps::ReaderDiscoveryInfo&& info,
                 bool& /*should_be_ignored*/) override
         {
             (void)participant;
 
             switch (info.status)
             {
-                case eprosima::fastrtps::rtps::ReaderDiscoveryInfo::DISCOVERED_READER:
+                case eprosima::fastdds::rtps::ReaderDiscoveryInfo::DISCOVERED_READER:
                     info_add(discovered_subscribers_, info.info.guid());
                     break;
 
-                case eprosima::fastrtps::rtps::ReaderDiscoveryInfo::REMOVED_READER:
+                case eprosima::fastdds::rtps::ReaderDiscoveryInfo::REMOVED_READER:
                     info_remove(discovered_subscribers_, info.info.guid());
                     break;
 
@@ -132,18 +132,18 @@ class PubSubWriterReader
 
         void on_data_writer_discovery(
                 eprosima::fastdds::dds::DomainParticipant* participant,
-                eprosima::fastrtps::rtps::WriterDiscoveryInfo&& info,
+                eprosima::fastdds::rtps::WriterDiscoveryInfo&& info,
                 bool& /*should_be_ignored*/) override
         {
             (void)participant;
 
             switch (info.status)
             {
-                case eprosima::fastrtps::rtps::WriterDiscoveryInfo::DISCOVERED_WRITER:
+                case eprosima::fastdds::rtps::WriterDiscoveryInfo::DISCOVERED_WRITER:
                     info_add(discovered_publishers_, info.info.guid());
                     break;
 
-                case eprosima::fastrtps::rtps::WriterDiscoveryInfo::REMOVED_WRITER:
+                case eprosima::fastdds::rtps::WriterDiscoveryInfo::REMOVED_WRITER:
                     info_remove(discovered_publishers_, info.info.guid());
                     break;
 
@@ -179,23 +179,23 @@ class PubSubWriterReader
         //! Mutex guarding all info collections
         mutable std::mutex info_mutex_;
         //! The discovered participants excluding the participant this listener is listening to
-        std::set<eprosima::fastrtps::rtps::GUID_t> discovered_participants_;
+        std::set<eprosima::fastdds::rtps::GUID_t> discovered_participants_;
         //! Number of subscribers discovered
-        std::set<eprosima::fastrtps::rtps::GUID_t> discovered_subscribers_;
+        std::set<eprosima::fastdds::rtps::GUID_t> discovered_subscribers_;
         //! Number of publishers discovered
-        std::set<eprosima::fastrtps::rtps::GUID_t> discovered_publishers_;
+        std::set<eprosima::fastdds::rtps::GUID_t> discovered_publishers_;
 
         void info_add(
-                std::set<eprosima::fastrtps::rtps::GUID_t>& collection,
-                const eprosima::fastrtps::rtps::GUID_t& item)
+                std::set<eprosima::fastdds::rtps::GUID_t>& collection,
+                const eprosima::fastdds::rtps::GUID_t& item)
         {
             std::lock_guard<std::mutex> guard(info_mutex_);
             collection.insert(item);
         }
 
         void info_remove(
-                std::set<eprosima::fastrtps::rtps::GUID_t>& collection,
-                const eprosima::fastrtps::rtps::GUID_t& item)
+                std::set<eprosima::fastdds::rtps::GUID_t>& collection,
+                const eprosima::fastdds::rtps::GUID_t& item)
         {
             std::lock_guard<std::mutex> guard(info_mutex_);
             collection.erase(item);
@@ -351,9 +351,9 @@ public:
 
         // By default, memory mode is PREALLOCATED_WITH_REALLOC_MEMORY_MODE
         datawriter_qos_.endpoint().history_memory_policy =
-                eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+                eprosima::fastdds::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
         datareader_qos_.endpoint().history_memory_policy =
-                eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+                eprosima::fastdds::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 
         // By default, heartbeat period and nack response delay are 100 milliseconds.
         datawriter_qos_.reliable_writer_qos().times.heartbeatPeriod.seconds = 0;
@@ -430,7 +430,7 @@ public:
     bool create_additional_topics(
             size_t num_topics,
             const char* suffix,
-            const eprosima::fastrtps::rtps::PropertySeq& writer_properties = eprosima::fastrtps::rtps::PropertySeq())
+            const eprosima::fastdds::rtps::PropertySeq& writer_properties = eprosima::fastdds::rtps::PropertySeq())
     {
         bool ret_val = initialized_;
         if (ret_val)
@@ -786,21 +786,21 @@ public:
     }
 
     PubSubWriterReader& property_policy(
-            const eprosima::fastrtps::rtps::PropertyPolicy property_policy)
+            const eprosima::fastdds::rtps::PropertyPolicy property_policy)
     {
         participant_qos_.properties() = property_policy;
         return *this;
     }
 
     PubSubWriterReader& pub_property_policy(
-            const eprosima::fastrtps::rtps::PropertyPolicy property_policy)
+            const eprosima::fastdds::rtps::PropertyPolicy property_policy)
     {
         datawriter_qos_.properties() = property_policy;
         return *this;
     }
 
     PubSubWriterReader& sub_property_policy(
-            const eprosima::fastrtps::rtps::PropertyPolicy property_policy)
+            const eprosima::fastdds::rtps::PropertyPolicy property_policy)
     {
         datareader_qos_.properties() = property_policy;
         return *this;
@@ -821,28 +821,28 @@ public:
     }
 
     PubSubWriterReader& pub_liveliness_announcement_period(
-            const eprosima::fastrtps::Duration_t announcement_period)
+            const eprosima::fastdds::Duration_t announcement_period)
     {
         datawriter_qos_.liveliness().announcement_period = announcement_period;
         return *this;
     }
 
     PubSubWriterReader& sub_liveliness_announcement_period(
-            const eprosima::fastrtps::Duration_t announcement_period)
+            const eprosima::fastdds::Duration_t announcement_period)
     {
         datareader_qos_.liveliness().announcement_period = announcement_period;
         return *this;
     }
 
     PubSubWriterReader& pub_liveliness_lease_duration(
-            const eprosima::fastrtps::Duration_t lease_duration)
+            const eprosima::fastdds::Duration_t lease_duration)
     {
         datawriter_qos_.liveliness().lease_duration = lease_duration;
         return *this;
     }
 
     PubSubWriterReader& sub_liveliness_lease_duration(
-            const eprosima::fastrtps::Duration_t lease_duration)
+            const eprosima::fastdds::Duration_t lease_duration)
     {
         datareader_qos_.liveliness().lease_duration = lease_duration;
         return *this;
@@ -1018,11 +1018,11 @@ private:
     std::condition_variable cv_;
     std::mutex mutexDiscovery_;
     std::condition_variable cvDiscovery_;
-    std::set<eprosima::fastrtps::rtps::InstanceHandle_t> matched_writers_;
-    std::set<eprosima::fastrtps::rtps::InstanceHandle_t> matched_readers_;
+    std::set<eprosima::fastdds::rtps::InstanceHandle_t> matched_writers_;
+    std::set<eprosima::fastdds::rtps::InstanceHandle_t> matched_readers_;
     std::atomic<bool> receiving_;
     eprosima::fastdds::dds::TypeSupport type_;
-    eprosima::fastrtps::rtps::SequenceNumber_t last_seq;
+    eprosima::fastdds::rtps::SequenceNumber_t last_seq;
     size_t current_received_count_;
     size_t number_samples_expected_;
 #if HAVE_SECURITY

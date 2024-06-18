@@ -18,7 +18,7 @@
 
 #include <rtps/security/common/SharedSecretHandle.h>
 
-using namespace eprosima::fastrtps::rtps::security;
+using namespace eprosima::fastdds::rtps::security;
 
 const char* const SharedSecret::class_id_ = "SharedSecret";
 

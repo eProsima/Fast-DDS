@@ -26,11 +26,11 @@
 #include <rtps/RTPSDomainImpl.hpp>
 #include <rtps/reader/StatefulReader.hpp>
 
-using eprosima::fastrtps::rtps::RTPSReader;
-using eprosima::fastrtps::rtps::CacheChange_t;
+using eprosima::fastdds::rtps::RTPSReader;
+using eprosima::fastdds::rtps::CacheChange_t;
 using eprosima::fastdds::dds::Log;
 
-using eprosima::fastrtps::rtps::c_EntityId_TypeLookup_request_writer;
+using eprosima::fastdds::rtps::c_EntityId_TypeLookup_request_writer;
 
 namespace eprosima {
 namespace fastdds {
@@ -202,7 +202,7 @@ void TypeLookupRequestListener::check_get_types_request(
         {
             minimal_id = type_id;
             // Get complete TypeIdentifier from registry
-            complete_id = fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
+            complete_id = fastdds::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
                             get_complementary_type_identifier(minimal_id);
 
             xtypes::TypeIdentifierPair id_pair;
@@ -216,7 +216,7 @@ void TypeLookupRequestListener::check_get_types_request(
             complete_id = type_id;
         }
 
-        type_result = fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
+        type_result = fastdds::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
                         get_type_object(complete_id, obj);
         if (RETCODE_OK != type_result)
         {
@@ -284,7 +284,7 @@ void TypeLookupRequestListener::check_get_type_dependencies_request(
         {
             // Get the dependencies from the registry
             type_dependencies_result =
-                    fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
+                    fastdds::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
                             get_type_dependencies(request.type_ids(), type_dependencies);
 
             // If there are too many dependent types, store the type dependencies for future requests
@@ -449,8 +449,8 @@ void TypeLookupRequestListener::on_new_cache_change_added(
 }
 
 void TypeLookupRequestListener::onWriterChangeReceivedByAll(
-        fastrtps::rtps::RTPSWriter*,
-        fastrtps::rtps::CacheChange_t* change)
+        fastdds::rtps::RTPSWriter*,
+        fastdds::rtps::CacheChange_t* change)
 {
     typelookup_manager_->remove_builtin_request_writer_history_change(change);
 }

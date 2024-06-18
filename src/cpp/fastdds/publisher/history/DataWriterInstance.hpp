@@ -36,11 +36,11 @@ namespace detail {
 struct DataWriterInstance
 {
     //! A vector of cache changes
-    std::vector<fastrtps::rtps::CacheChange_t*> cache_changes;
+    std::vector<fastdds::rtps::CacheChange_t*> cache_changes;
     //! The time when the group will miss the deadline
     std::chrono::steady_clock::time_point next_deadline_us;
     //! Serialized payload for key holder
-    fastrtps::rtps::SerializedPayload_t key_payload;
+    fastdds::rtps::SerializedPayload_t key_payload;
 
     DataWriterInstance() = default;
 
@@ -50,8 +50,8 @@ struct DataWriterInstance
     bool is_registered() const
     {
         return cache_changes.empty() ||
-               (fastrtps::rtps::NOT_ALIVE_UNREGISTERED != cache_changes.back()->kind &&
-               fastrtps::rtps::NOT_ALIVE_DISPOSED_UNREGISTERED != cache_changes.back()->kind);
+               (fastdds::rtps::NOT_ALIVE_UNREGISTERED != cache_changes.back()->kind &&
+               fastdds::rtps::NOT_ALIVE_DISPOSED_UNREGISTERED != cache_changes.back()->kind);
     }
 
 };

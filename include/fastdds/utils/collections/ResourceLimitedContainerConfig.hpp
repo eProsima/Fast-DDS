@@ -17,14 +17,14 @@
  *
  */
 
-#ifndef FASTRTPS_UTILS_COLLECTIONS_RESOURCELIMITEDCONTAINERCONFIG_HPP_
-#define FASTRTPS_UTILS_COLLECTIONS_RESOURCELIMITEDCONTAINERCONFIG_HPP_
+#ifndef FASTDDS_UTILS_COLLECTIONS_RESOURCELIMITEDCONTAINERCONFIG_HPP_
+#define FASTDDS_UTILS_COLLECTIONS_RESOURCELIMITEDCONTAINERCONFIG_HPP_
 
 #include <cstddef>
 #include <limits>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 
 #define dummy_avoid_winmax
 
@@ -87,7 +87,7 @@ inline bool operator == (
         lhs.increment == rhs.increment;
 }
 
-}  // namespace fastrtps
+}  // namespace fastdds
 }  // namespace eprosima
 
-#endif /* FASTRTPS_UTILS_COLLECTIONS_RESOURCELIMITEDCONTAINERCONFIG_HPP_ */
+#endif /* FASTDDS_UTILS_COLLECTIONS_RESOURCELIMITEDCONTAINERCONFIG_HPP_ */

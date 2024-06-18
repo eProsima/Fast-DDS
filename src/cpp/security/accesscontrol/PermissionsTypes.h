@@ -24,7 +24,7 @@
 #include <ctime>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 namespace security {
 
@@ -63,9 +63,9 @@ struct Grant
     bool is_default_allow;
 };
 
-}
-}
-}
-}
+} // namespace security
+} // namespace rtps
+} // namespace fastdds
+} // namespace eprosima
 
 #endif // __SECURITY_ACCESSCONTROL_PERMISSIONSTYPES_H__

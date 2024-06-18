@@ -125,13 +125,13 @@ SubscriberApp::SubscriberApp(
         reader_qos.resource_limits().max_instances = config.max_instances;
         reader_qos.resource_limits().max_samples_per_instance = config.max_samples_per_instance;
         reader_qos.ownership().kind = config.ownership;
-        reader_qos.deadline().period = eprosima::fastrtps::Duration_t(config.deadline * 1e-3);
+        reader_qos.deadline().period = eprosima::fastdds::Duration_t(config.deadline * 1e-3);
         reader_qos.reliable_reader_qos().disable_positive_ACKs.enabled = config.disable_positive_ack;
-        reader_qos.lifespan().duration = eprosima::fastrtps::Duration_t(config.lifespan * 1e-3);
+        reader_qos.lifespan().duration = eprosima::fastdds::Duration_t(config.lifespan * 1e-3);
         reader_qos.liveliness().kind = config.liveliness;
-        reader_qos.liveliness().lease_duration = eprosima::fastrtps::Duration_t(
+        reader_qos.liveliness().lease_duration = eprosima::fastdds::Duration_t(
             config.liveliness_lease * 1e-3);
-        reader_qos.liveliness().announcement_period = eprosima::fastrtps::Duration_t(
+        reader_qos.liveliness().announcement_period = eprosima::fastdds::Duration_t(
             config.liveliness_assert * 1e-3);
         reader_ = subscriber_->create_datareader(topic_, reader_qos, this, StatusMask::all());
     }

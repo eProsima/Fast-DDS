@@ -133,12 +133,11 @@ std::string get_element_text(
 
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace xmlparser {
 
-using namespace eprosima::fastdds::rtps;
 using namespace eprosima::fastdds::xml::detail;
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds::rtps;
 
 static XMLP_ret parseXMLOctetVector(
         tinyxml2::XMLElement* elem,
@@ -3923,7 +3922,7 @@ XMLP_ret XMLParser::getXMLEnum(
 
 XMLP_ret XMLParser::getXMLEnum(
         tinyxml2::XMLElement* elem,
-        DiscoveryProtocol_t* e,
+        DiscoveryProtocol* e,
         uint8_t /*ident*/)
 {
     /*
@@ -3954,12 +3953,12 @@ XMLP_ret XMLParser::getXMLEnum(
     }
 
     if (!get_element_enum_value(text.c_str(), *e,
-            NONE, DiscoveryProtocol_t::NONE,
-            SIMPLE, DiscoveryProtocol_t::SIMPLE,
-            CLIENT, DiscoveryProtocol_t::CLIENT,
-            SERVER, DiscoveryProtocol_t::SERVER,
-            BACKUP, DiscoveryProtocol_t::BACKUP,
-            SUPER_CLIENT, DiscoveryProtocol_t::SUPER_CLIENT))
+            NONE, DiscoveryProtocol::NONE,
+            SIMPLE, DiscoveryProtocol::SIMPLE,
+            CLIENT, DiscoveryProtocol::CLIENT,
+            SERVER, DiscoveryProtocol::SERVER,
+            BACKUP, DiscoveryProtocol::BACKUP,
+            SUPER_CLIENT, DiscoveryProtocol::SUPER_CLIENT))
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << RTPS_PDP_TYPE << "' with bad content");
         return XMLP_ret::XML_ERROR;
@@ -3970,7 +3969,7 @@ XMLP_ret XMLParser::getXMLEnum(
 
 XMLP_ret XMLParser::getXMLEnum(
         tinyxml2::XMLElement* elem,
-        ParticipantFilteringFlags_t* e,
+        ParticipantFilteringFlags* e,
         uint8_t /*ident*/)
 {
     /*
@@ -4014,19 +4013,19 @@ XMLP_ret XMLParser::getXMLEnum(
 
         if (flag == FILTER_DIFFERENT_HOST )
         {
-            newflags |= ParticipantFilteringFlags_t::FILTER_DIFFERENT_HOST;
+            newflags |= ParticipantFilteringFlags::FILTER_DIFFERENT_HOST;
         }
         else if (flag == FILTER_DIFFERENT_PROCESS )
         {
-            newflags |= ParticipantFilteringFlags_t::FILTER_DIFFERENT_PROCESS;
+            newflags |= ParticipantFilteringFlags::FILTER_DIFFERENT_PROCESS;
         }
         else if (flag == FILTER_SAME_PROCESS )
         {
-            newflags |= ParticipantFilteringFlags_t::FILTER_SAME_PROCESS;
+            newflags |= ParticipantFilteringFlags::FILTER_SAME_PROCESS;
         }
     }
 
-    *e = static_cast<ParticipantFilteringFlags_t>(newflags);
+    *e = static_cast<ParticipantFilteringFlags>(newflags);
 
     return XMLP_ret::XML_OK;
 }
@@ -4953,5 +4952,5 @@ XMLP_ret XMLParser::getXMLBuiltinTransports(
 }
 
 }  // namespace xmlparser
-}  // namespace fastrtps
+}  // namespace fastdds
 }  // namespace eprosima

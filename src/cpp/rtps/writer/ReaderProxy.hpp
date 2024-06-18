@@ -37,7 +37,7 @@
 #include <rtps/writer/ReaderLocator.hpp>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class StatefulWriter;
@@ -501,7 +501,7 @@ private:
 };
 
 } /* namespace rtps */
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */
 
 #endif // RTPS_WRITER__READERPROXY_HPP

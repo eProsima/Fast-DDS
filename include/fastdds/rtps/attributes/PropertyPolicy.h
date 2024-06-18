@@ -23,7 +23,7 @@
 #include <fastdds/fastdds_dll.hpp>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class PropertyPolicy
@@ -143,7 +143,7 @@ public:
 };
 
 } //namespace rtps
-} //namespace fastrtps
+} //namespace fastdds
 } //namespace eprosima
 
 #endif // _FASTDDS_RTPS_ATTRIBUTES_PROPERTYPOLICY_H_

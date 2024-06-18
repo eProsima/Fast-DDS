@@ -44,8 +44,8 @@ public:
      * @return true if relevant, false otherwise.
      */
     virtual bool is_relevant(
-            const fastrtps::rtps::CacheChange_t& change,
-            const fastrtps::rtps::GUID_t& reader_guid) const = 0;
+            const fastdds::rtps::CacheChange_t& change,
+            const fastdds::rtps::GUID_t& reader_guid) const = 0;
 };
 
 } /* namespace rtps */

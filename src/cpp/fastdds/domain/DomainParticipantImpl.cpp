@@ -71,26 +71,23 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-using fastrtps::xmlparser::XMLProfileManager;
-using fastrtps::xmlparser::XMLP_ret;
-using fastrtps::TopicAttributes;
-using fastrtps::rtps::ParticipantDiscoveryInfo;
-using fastrtps::rtps::RTPSDomain;
-using fastrtps::rtps::RTPSDomainImpl;
-using fastrtps::rtps::RTPSParticipant;
-using fastrtps::TopicAttributes;
-using fastrtps::xmlparser::XMLP_ret;
-using fastrtps::xmlparser::XMLProfileManager;
+using xmlparser::XMLProfileManager;
+using xmlparser::XMLP_ret;
+using rtps::ParticipantDiscoveryInfo;
+using rtps::RTPSDomain;
+using rtps::RTPSDomainImpl;
+using rtps::RTPSParticipant;
+using xmlparser::XMLP_ret;
+using xmlparser::XMLProfileManager;
 #if HAVE_SECURITY
-using fastrtps::rtps::ParticipantAuthenticationInfo;
+using rtps::ParticipantAuthenticationInfo;
 #endif // if HAVE_SECURITY
-using eprosima::fastdds::dds::Log;
-using fastrtps::rtps::EndpointKind_t;
-using fastrtps::rtps::ReaderDiscoveryInfo;
-using fastrtps::rtps::ReaderProxyData;
-using fastrtps::rtps::ResourceEvent;
-using fastrtps::rtps::WriterDiscoveryInfo;
-using fastrtps::rtps::WriterProxyData;
+using rtps::EndpointKind_t;
+using rtps::ReaderDiscoveryInfo;
+using rtps::ReaderProxyData;
+using rtps::ResourceEvent;
+using rtps::WriterDiscoveryInfo;
+using rtps::WriterProxyData;
 
 DomainParticipantImpl::DomainParticipantImpl(
         DomainParticipant* dp,
@@ -126,20 +123,20 @@ DomainParticipantImpl::DomainParticipantImpl(
 
     // Pre calculate participant id and generated guid
     participant_id_ = qos_.wire_protocol().participant_id;
-    if (!eprosima::fastrtps::rtps::RTPSDomainImpl::create_participant_guid(participant_id_, guid_))
+    if (!eprosima::fastdds::rtps::RTPSDomainImpl::create_participant_guid(participant_id_, guid_))
     {
         EPROSIMA_LOG_ERROR(DOMAIN_PARTICIPANT, "Error generating GUID for participant");
     }
 
     /* Fill physical data properties if they are found and empty */
-    std::string* property_value = fastrtps::rtps::PropertyPolicyHelper::find_property(
+    std::string* property_value = fastdds::rtps::PropertyPolicyHelper::find_property(
         qos_.properties(), parameter_policy_physical_data_host);
     if (nullptr != property_value && property_value->empty())
     {
         property_value->assign(asio::ip::host_name() + ":" + std::to_string(utils::default_domain_id()));
     }
 
-    property_value = fastrtps::rtps::PropertyPolicyHelper::find_property(
+    property_value = fastdds::rtps::PropertyPolicyHelper::find_property(
         qos_.properties(), parameter_policy_physical_data_user);
     if (nullptr != property_value && property_value->empty())
     {
@@ -150,7 +147,7 @@ DomainParticipantImpl::DomainParticipantImpl(
         }
     }
 
-    property_value = fastrtps::rtps::PropertyPolicyHelper::find_property(
+    property_value = fastdds::rtps::PropertyPolicyHelper::find_property(
         qos_.properties(), parameter_policy_physical_data_process);
     if (nullptr != property_value && property_value->empty())
     {
@@ -257,9 +254,9 @@ ReturnCode_t DomainParticipantImpl::enable()
     // Should not have been previously enabled
     assert(get_rtps_participant() == nullptr);
     // Should not have failed assigning the GUID
-    assert (guid_ != fastrtps::rtps::GUID_t::unknown());
+    assert (guid_ != fastdds::rtps::GUID_t::unknown());
 
-    fastrtps::rtps::RTPSParticipantAttributes rtps_attr;
+    fastdds::rtps::RTPSParticipantAttributes rtps_attr;
     utils::set_attributes_from_qos(rtps_attr, qos_);
     rtps_attr.participantID = participant_id_;
 
@@ -340,8 +337,8 @@ ReturnCode_t DomainParticipantImpl::set_qos(
 {
     bool enabled = false;
     bool qos_should_be_updated = false;
-    fastrtps::rtps::RTPSParticipantAttributes patt;
-    fastrtps::rtps::RTPSParticipant* rtps_participant = nullptr;
+    fastdds::rtps::RTPSParticipantAttributes patt;
+    fastdds::rtps::RTPSParticipant* rtps_participant = nullptr;
 
     {
         std::lock_guard<std::mutex> _(mtx_gs_);
@@ -461,7 +458,7 @@ ReturnCode_t DomainParticipantImpl::delete_subscriber(
 
 Topic* DomainParticipantImpl::find_topic(
         const std::string& topic_name,
-        const fastrtps::Duration_t& timeout)
+        const fastdds::Duration_t& timeout)
 {
     auto find_fn = [this, &topic_name]()
             {
@@ -757,7 +754,7 @@ const InstanceHandle_t& DomainParticipantImpl::get_instance_handle() const
     return static_cast<const InstanceHandle_t&>(guid_);
 }
 
-const fastrtps::rtps::GUID_t& DomainParticipantImpl::guid() const
+const fastdds::rtps::GUID_t& DomainParticipantImpl::guid() const
 {
     return guid_;
 }
@@ -971,7 +968,7 @@ ReturnCode_t DomainParticipantImpl::delete_contained_entities()
 
 ReturnCode_t DomainParticipantImpl::assert_liveliness()
 {
-    fastrtps::rtps::RTPSParticipant* rtps_participant = get_rtps_participant();
+    fastdds::rtps::RTPSParticipant* rtps_participant = get_rtps_participant();
     if (rtps_participant == nullptr)
     {
         return RETCODE_NOT_ENABLED;
@@ -1246,7 +1243,7 @@ bool DomainParticipantImpl::contains_entity(
 }
 
 ReturnCode_t DomainParticipantImpl::get_current_time(
-        fastrtps::Time_t& current_time) const
+        fastdds::Time_t& current_time) const
 {
     auto now = std::chrono::system_clock::now();
     auto duration = now.time_since_epoch();
@@ -1593,13 +1590,13 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onWriterDiscovery(
 }
 
 bool DomainParticipantImpl::new_remote_endpoint_discovered(
-        const fastrtps::rtps::GUID_t& partguid,
+        const fastdds::rtps::GUID_t& partguid,
         uint16_t endpointId,
         EndpointKind_t kind)
 {
     if (get_rtps_participant() != nullptr)
     {
-        if (kind == fastrtps::rtps::WRITER)
+        if (kind == fastdds::rtps::WRITER)
         {
             return get_rtps_participant()->newRemoteWriterDiscovered(partguid, static_cast<int16_t>(endpointId));
         }
@@ -1858,7 +1855,7 @@ bool DomainParticipantImpl::can_qos_be_updated(
 void DomainParticipantImpl::create_instance_handle(
         InstanceHandle_t& handle)
 {
-    using eprosima::fastrtps::rtps::octet;
+    using rtps::octet;
 
     uint32_t id = ++next_instance_id_;
     handle = guid_;

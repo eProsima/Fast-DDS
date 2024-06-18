@@ -32,8 +32,8 @@
 #pragma warning (disable:4512)
 #endif // if defined(_MSC_VER)
 
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds;
+using namespace eprosima::fastdds::rtps;
 
 #if FASTDDS_IS_BIG_ENDIAN_TARGET
 const Endianness_t DEFAULT_ENDIAN = BIGEND;

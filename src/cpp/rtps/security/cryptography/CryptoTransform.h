@@ -25,7 +25,7 @@
 #include <fastdds/rtps/common/SerializedPayload.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 namespace security {
 
@@ -199,7 +199,7 @@ public:
 };
 
 } //namespace eprosima
-} //namespace fastrtps
+} //namespace fastdds
 } //namespace rtps
 } //namespace security
 

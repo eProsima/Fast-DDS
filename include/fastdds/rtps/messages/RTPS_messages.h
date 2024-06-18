@@ -28,7 +28,7 @@
 #include <fastdds/rtps/common/VendorId_t.hpp>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 // //!@brief Enumeration of the different Submessages types
@@ -123,7 +123,7 @@ inline std::ostream& operator <<(
 }
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 

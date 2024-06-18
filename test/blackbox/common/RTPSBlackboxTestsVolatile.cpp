@@ -23,7 +23,7 @@
 #include "RTPSAsSocketReader.hpp"
 #include "RTPSAsSocketWriter.hpp"
 
-using namespace eprosima::fastrtps;
+using namespace eprosima::fastdds;
 
 enum communication_type
 {
@@ -42,7 +42,7 @@ public:
         {
             case INTRAPROCESS:
                 library_settings.intraprocess_delivery = eprosima::fastdds::IntraprocessDeliveryType::INTRAPROCESS_FULL;
-                eprosima::fastrtps::rtps::RTPSDomain::set_library_settings(library_settings);
+                eprosima::fastdds::rtps::RTPSDomain::set_library_settings(library_settings);
                 break;
             case TRANSPORT:
             default:
@@ -57,7 +57,7 @@ public:
         {
             case INTRAPROCESS:
                 library_settings.intraprocess_delivery = eprosima::fastdds::IntraprocessDeliveryType::INTRAPROCESS_OFF;
-                eprosima::fastrtps::rtps::RTPSDomain::set_library_settings(library_settings);
+                eprosima::fastdds::rtps::RTPSDomain::set_library_settings(library_settings);
                 break;
             case TRANSPORT:
             default:
@@ -74,13 +74,13 @@ TEST_P(Volatile, AsyncPubSubAsNonReliableVolatileKeepAllHelloworld)
     RTPSAsSocketWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string ip("239.255.1.4");
 
-    reader.reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::BEST_EFFORT).
+    reader.reliability(eprosima::fastdds::rtps::ReliabilityKind_t::BEST_EFFORT).
             add_to_multicast_locator_list(ip, global_port).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
-    writer.reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::BEST_EFFORT).
-            durability(eprosima::fastrtps::rtps::DurabilityKind_t::VOLATILE).
+    writer.reliability(eprosima::fastdds::rtps::ReliabilityKind_t::BEST_EFFORT).
+            durability(eprosima::fastdds::rtps::DurabilityKind_t::VOLATILE).
             add_to_multicast_locator_list(ip, global_port).
             auto_remove_on_volatile().init();
 

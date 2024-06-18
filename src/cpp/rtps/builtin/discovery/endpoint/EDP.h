@@ -46,9 +46,6 @@ class TypeIdentifier;
 
 } // namespace xtypes
 } // namespace dds
-} // namespace fastdds
-
-namespace fastrtps {
 
 class TopicAttributes;
 
@@ -405,7 +402,7 @@ private:
 };
 
 } /* namespace rtps */
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC

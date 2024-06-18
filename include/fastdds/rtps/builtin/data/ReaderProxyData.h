@@ -33,7 +33,7 @@
 #include <fastdds/rtps/attributes/TopicAttributes.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 struct CDRMessage_t;

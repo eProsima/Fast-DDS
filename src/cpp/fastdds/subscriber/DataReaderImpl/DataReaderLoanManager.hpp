@@ -136,7 +136,7 @@ private:
 
     };
 
-    using collection_type = eprosima::fastrtps::ResourceLimitedVector<OutstandingLoanItem>;
+    using collection_type = eprosima::fastdds::ResourceLimitedVector<OutstandingLoanItem>;
 
     int32_t max_samples_ = 0;
     collection_type free_loans_;

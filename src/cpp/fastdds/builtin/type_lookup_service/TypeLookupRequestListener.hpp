@@ -57,16 +57,14 @@ struct hash<eprosima::fastdds::dds::xtypes::TypeIdentifierSeq>
 } // std
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class RTPSReader;
 struct CacheChange_t;
 
 } // namespace rtps
-} // namespace fastrtp
 
-namespace fastdds {
 namespace dds {
 namespace builtin {
 
@@ -76,7 +74,7 @@ class TypeLookupManager;
  * Class TypeLookupRequestListener that receives the typelookup request messages of remote endpoints.
  * @ingroup TYPES_MODULE
  */
-class TypeLookupRequestListener : public fastrtps::rtps::ReaderListener, public fastrtps::rtps::WriterListener
+class TypeLookupRequestListener : public fastdds::rtps::ReaderListener, public fastdds::rtps::WriterListener
 {
 public:
 
@@ -163,12 +161,12 @@ protected:
      * @param change The cache change.
      */
     void on_new_cache_change_added(
-            fastrtps::rtps::RTPSReader* reader,
-            const fastrtps::rtps::CacheChange_t* const change) override;
+            fastdds::rtps::RTPSReader* reader,
+            const fastdds::rtps::CacheChange_t* const change) override;
 
     void onWriterChangeReceivedByAll(
-            fastrtps::rtps::RTPSWriter*,
-            fastrtps::rtps::CacheChange_t* change) override;
+            fastdds::rtps::RTPSWriter*,
+            fastdds::rtps::CacheChange_t* change) override;
 
     //! A pointer to the typelookup manager.
     TypeLookupManager* typelookup_manager_;

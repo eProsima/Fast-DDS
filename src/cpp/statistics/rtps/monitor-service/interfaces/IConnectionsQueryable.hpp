@@ -42,7 +42,7 @@ struct IConnectionsQueryable
      * @return Whether the list of connnections could be retrieved
      */
     virtual bool get_entity_connections(
-            const fastrtps::rtps::GUID_t& guid,
+            const fastdds::rtps::GUID_t& guid,
             ConnectionList& conns_list) = 0;
 };
 

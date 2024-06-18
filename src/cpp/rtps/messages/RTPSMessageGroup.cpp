@@ -34,7 +34,7 @@
 #include <statistics/rtps/messages/RTPSStatisticsMessages.hpp>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 using BaseReader = fastdds::rtps::BaseReader;
@@ -356,7 +356,6 @@ void RTPSMessageGroup::send()
 {
     if (endpoint_ && sender_)
     {
-
         if (header_msg_->length > RTPSMESSAGE_HEADER_SIZE)
         {
             std::lock_guard<RTPSMessageSenderInterface> lock(*sender_);
@@ -1080,5 +1079,5 @@ bool RTPSMessageGroup::add_nackfrag(
 }
 
 } /* namespace rtps */
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */

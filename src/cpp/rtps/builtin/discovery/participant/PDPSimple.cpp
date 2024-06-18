@@ -48,7 +48,7 @@
 #include <rtps/writer/StatelessWriter.hpp>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 static HistoryAttributes pdp_reader_history_attributes(
@@ -198,7 +198,7 @@ ParticipantProxyData* PDPSimple::createParticipantProxyData(
     std::unique_lock<std::recursive_mutex> lock(*getMutex());
 
     // decide if we dismiss the participant using the ParticipantFilteringFlags
-    const ParticipantFilteringFlags_t& flags = m_discovery.discovery_config.ignoreParticipantFlags;
+    const ParticipantFilteringFlags& flags = m_discovery.discovery_config.ignoreParticipantFlags;
     const GUID_t& remote = participant_data.m_guid;
     const GUID_t& local = getLocalParticipantProxyData()->m_guid;
     bool is_same_host = local.is_on_same_host_as(remote);
@@ -212,7 +212,7 @@ ParticipantProxyData* PDPSimple::createParticipantProxyData(
         return nullptr;
     }
 
-    if (flags != ParticipantFilteringFlags_t::NO_FILTER)
+    if (flags != ParticipantFilteringFlags::NO_FILTER)
     {
         if (!is_same_host)
         {
@@ -789,5 +789,5 @@ bool PDPSimple::newRemoteEndpointStaticallyDiscovered(
 }
 
 } /* namespace rtps */
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */

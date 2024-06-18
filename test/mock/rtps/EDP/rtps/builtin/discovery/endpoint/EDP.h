@@ -28,7 +28,7 @@
 #include <rtps/builtin/BuiltinProtocols.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class EDP
@@ -41,52 +41,52 @@ public:
     }
 
     virtual bool initEDP(
-            eprosima::fastrtps::rtps::BuiltinAttributes&)
+            eprosima::fastdds::rtps::BuiltinAttributes&)
     {
         return true;
     }
 
     virtual void removeRemoteEndpoints(
-            eprosima::fastrtps::rtps::ParticipantProxyData*)
+            eprosima::fastdds::rtps::ParticipantProxyData*)
     {
 
     }
 
     virtual bool areRemoteEndpointsMatched(
-            const eprosima::fastrtps::rtps::ParticipantProxyData*)
+            const eprosima::fastdds::rtps::ParticipantProxyData*)
     {
         return true;
     }
 
     virtual bool removeLocalReader(
-            eprosima::fastrtps::rtps::RTPSReader*)
+            eprosima::fastdds::rtps::RTPSReader*)
     {
         return true;
     }
 
     virtual bool removeLocalWriter(
-            eprosima::fastrtps::rtps::RTPSWriter*)
+            eprosima::fastdds::rtps::RTPSWriter*)
     {
         return true;
     }
 
     virtual void assignRemoteEndpoints(
-            const eprosima::fastrtps::rtps::ParticipantProxyData&,
+            const eprosima::fastdds::rtps::ParticipantProxyData&,
             bool)
     {
 
     }
 
     virtual bool processLocalReaderProxyData(
-            eprosima::fastrtps::rtps::RTPSReader*,
-            eprosima::fastrtps::rtps::ReaderProxyData*)
+            eprosima::fastdds::rtps::RTPSReader*,
+            eprosima::fastdds::rtps::ReaderProxyData*)
     {
         return true;
     }
 
     virtual bool processLocalWriterProxyData(
-            eprosima::fastrtps::rtps::RTPSWriter*,
-            eprosima::fastrtps::rtps::WriterProxyData*)
+            eprosima::fastdds::rtps::RTPSWriter*,
+            eprosima::fastdds::rtps::WriterProxyData*)
     {
         return true;
     }
@@ -114,15 +114,15 @@ public:
             const WriterProxyData& remote_writer_data));
 
     virtual bool pairing_remote_writer_with_local_builtin_reader_after_security(
-            const eprosima::fastrtps::rtps::GUID_t&,
-            const eprosima::fastrtps::rtps::WriterProxyData&)
+            const eprosima::fastdds::rtps::GUID_t&,
+            const eprosima::fastdds::rtps::WriterProxyData&)
     {
         return true;
     }
 
     virtual bool pairing_remote_reader_with_local_builtin_writer_after_security(
-            const eprosima::fastrtps::rtps::GUID_t&,
-            const eprosima::fastrtps::rtps::ReaderProxyData&)
+            const eprosima::fastdds::rtps::GUID_t&,
+            const eprosima::fastdds::rtps::ReaderProxyData&)
     {
         return true;
     }
@@ -131,7 +131,7 @@ public:
 };
 
 } //namespace rtps
-} //namespace fastrtps
+} //namespace fastdds
 } //namespace eprosima
 
 #endif // _FASTDDS_RTPS_EDP_H_

@@ -19,7 +19,7 @@
 #include "samplePubSubTypes.h"
 
 using namespace eprosima::fastdds::dds;
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds::rtps;
 
 //Enums and configuration structure
 enum Reliability_type
@@ -216,7 +216,7 @@ DataWriter* initPublisher(
 {
     //Create Publisher Participant
     DomainParticipantQos ppqos;
-    ppqos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastrtps::c_TimeInfinite;
+    ppqos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastdds::c_TimeInfinite;
     ppqos.name("PublisherParticipant");
 
     PubParticipant = DomainParticipantFactory::get_instance()->create_participant(0, ppqos);
@@ -274,7 +274,7 @@ DataReader* initSubscriber(
 {
     //Create Subscriber Participant
     DomainParticipantQos psqos;
-    psqos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastrtps::c_TimeInfinite;
+    psqos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastdds::c_TimeInfinite;
     psqos.name("SubscriberParticipant");
 
     SubParticipant = DomainParticipantFactory::get_instance()->create_participant(0, psqos);

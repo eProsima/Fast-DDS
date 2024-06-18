@@ -141,7 +141,7 @@ public:
 
     FASTDDS_EXPORTED_API virtual bool serialize(
             void* data,
-            fastrtps::rtps::SerializedPayload_t* payload)
+            fastdds::rtps::SerializedPayload_t* payload)
     {
         return serialize(data, payload, DEFAULT_DATA_REPRESENTATION);
     }
@@ -156,7 +156,7 @@ public:
      */
     FASTDDS_EXPORTED_API virtual bool serialize(
             void* data,
-            fastrtps::rtps::SerializedPayload_t* payload,
+            fastdds::rtps::SerializedPayload_t* payload,
             DataRepresentationId_t data_representation);
 
     /**
@@ -167,7 +167,7 @@ public:
      * @return true if it is deserialized correctly, false if not
      */
     FASTDDS_EXPORTED_API virtual bool deserialize(
-            fastrtps::rtps::SerializedPayload_t* payload,
+            fastdds::rtps::SerializedPayload_t* payload,
             void* data);
 
     /*!

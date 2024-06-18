@@ -18,7 +18,7 @@
 
 #include <fastdds/rtps/common/SequenceNumber.h>
 
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds::rtps;
 
 /*!
  * @fn TEST(SequenceNumber, IncrementalOperator)

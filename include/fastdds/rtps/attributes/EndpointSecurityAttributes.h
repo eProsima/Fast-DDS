@@ -21,7 +21,7 @@
 #include <cstdint>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 namespace security {
 
@@ -124,7 +124,7 @@ struct EndpointSecurityAttributes
 
 } // namespace security
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 #endif // _FASTDDS_RTPS_SECURITY_ACCESSCONTROL_ENDPOINTSECURITYATTRIBUTES_H_

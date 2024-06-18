@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef FASTRTPS_UTILS_FIXED_SIZE_BITMAP_HPP_
-#define FASTRTPS_UTILS_FIXED_SIZE_BITMAP_HPP_
+#ifndef FASTDDS_UTILS_FIXED_SIZE_BITMAP_HPP_
+#define FASTDDS_UTILS_FIXED_SIZE_BITMAP_HPP_
 
 #include <array>
 #include <cstdint>
@@ -44,7 +44,7 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 
 using std::uint32_t;
 
@@ -615,7 +615,7 @@ private:
 
 };
 
-}   // namespace fastrtps
+}   // namespace fastdds
 }   // namespace eprosima
 
 #endif   // DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
@@ -634,4 +634,4 @@ private:
 
 #endif // if _MSC_VER
 
-#endif   // FASTRTPS_UTILS_FIXED_SIZE_BITMAP_HPP_
+#endif   // FASTDDS_UTILS_FIXED_SIZE_BITMAP_HPP_

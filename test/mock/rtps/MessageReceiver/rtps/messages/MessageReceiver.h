@@ -29,7 +29,7 @@
 #include <rtps/writer/StatelessWriter.hpp>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 class RTPSWriter;

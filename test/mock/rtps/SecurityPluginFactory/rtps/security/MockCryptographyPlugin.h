@@ -26,7 +26,7 @@
 #include <rtps/security/MockCryptoTransform.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 namespace security {
 
@@ -56,7 +56,7 @@ public:
 
 } //namespace security
 } //namespace rtps
-} //namespace fastrtps
+} //namespace fastdds
 } //namespace eprosima
 
 #endif // _RTPS_SECURITY_MOCKCRYPTOGRAPHYPLUGIN_H_

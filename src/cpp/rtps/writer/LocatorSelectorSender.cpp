@@ -2,7 +2,7 @@
 #include <fastdds/rtps/writer/RTPSWriter.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 bool LocatorSelectorSender::send(
@@ -14,5 +14,5 @@ bool LocatorSelectorSender::send(
 }
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima

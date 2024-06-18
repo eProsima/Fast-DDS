@@ -28,8 +28,8 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-using CacheChange = fastrtps::rtps::CacheChange_t;
-using GUID = fastrtps::rtps::GUID_t;
+using CacheChange = fastdds::rtps::CacheChange_t;
+using GUID = fastdds::rtps::GUID_t;
 
 /**
  * @brief Check if a change is relevant for a reader.

@@ -32,7 +32,7 @@ using ParameterList = eprosima::fastdds::dds::ParameterList;
 using ContentFilterProperty = eprosima::fastdds::rtps::ContentFilterProperty;
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 using ::operator <<;
@@ -1331,5 +1331,5 @@ void ReaderProxyData::set_remote_locators(
 }
 
 } /* namespace rtps */
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */
