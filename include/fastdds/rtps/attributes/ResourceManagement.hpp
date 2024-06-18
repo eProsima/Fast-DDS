@@ -13,12 +13,12 @@
 // limitations under the License.
 
 /**
- * @file ResourceManagement.h
+ * @file ResourceManagement.hpp
  *
  */
 
-#ifndef _FASTDDS_RTPS_RESOURCE_MANAGEMENT_H_
-#define _FASTDDS_RTPS_RESOURCE_MANAGEMENT_H_
+#ifndef FASTDDS_RTPS_ATTRIBUTES__RESOURCEMANAGEMENT_HPP
+#define FASTDDS_RTPS_ATTRIBUTES__RESOURCEMANAGEMENT_HPP
 
 
 namespace eprosima {
@@ -38,8 +38,8 @@ typedef enum MemoryManagementPolicy
 }MemoryManagementPolicy_t;
 
 
-} // end namespaces
+} // namespace rtps
 } // namespace fastdds
 } // namespace eprosima
 
-#endif /* _FASTDDS_RTPS_RESOURCE_MANAGEMENT_H_ */
+#endif // FASTDDS_RTPS_ATTRIBUTES__RESOURCEMANAGEMENT_HPP

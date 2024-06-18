@@ -19,7 +19,7 @@
 #include <fastdds/statistics/dds/subscriber/qos/DataReaderQos.hpp>
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
-#include <fastdds/rtps/resources/ResourceManagement.h>
+#include <fastdds/rtps/attributes/ResourceManagement.hpp>
 
 namespace eprosima {
 namespace fastdds {
