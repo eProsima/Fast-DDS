@@ -31,7 +31,7 @@
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 
 #include "CLIParser.hpp"
-#include "HelloWorldPubSubTypes.h"
+#include "HelloWorldPubSubTypes.hpp"
 #include "Application.hpp"
 
 using namespace eprosima::fastdds::dds;

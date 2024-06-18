@@ -26,7 +26,7 @@
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 
 #include "LoanableHelloWorldSubscriber.h"
-#include "LoanableHelloWorldPubSubTypes.h"
+#include "LoanableHelloWorldPubSubTypes.hpp"
 
 using namespace eprosima::fastdds::dds;
 

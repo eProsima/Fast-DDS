@@ -49,8 +49,8 @@
 #include "../api/dds-pim/PubSubWriter.hpp"
 #include "../api/dds-pim/PubSubWriterReader.hpp"
 #include "../types/FixedSized.hpp"
-#include "../types/FixedSizedPubSubTypes.h"
-#include "../types/HelloWorldPubSubTypes.h"
+#include "../types/FixedSizedPubSubTypes.hpp"
+#include "../types/HelloWorldPubSubTypes.hpp"
 
 namespace eprosima {
 namespace fastdds {

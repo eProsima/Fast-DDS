@@ -16,7 +16,7 @@
 #include <mutex>
 #include <vector>
 
-#include "CalculatorPubSubTypes.h"
+#include "CalculatorPubSubTypes.hpp"
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>

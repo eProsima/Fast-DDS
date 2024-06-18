@@ -15,8 +15,8 @@
 #include <gtest/gtest.h>
 
 #include "../DynamicTypesDDSTypesTest.hpp"
-#include "../../../dds-types-test/helpers/basic_inner_typesPubSubTypes.h"
-#include "../../../dds-types-test/bitsetsPubSubTypes.h"
+#include "../../../dds-types-test/helpers/basic_inner_typesPubSubTypes.hpp"
+#include "../../../dds-types-test/bitsetsPubSubTypes.hpp"
 #include "../../../dds-types-test/bitsetsTypeObjectSupport.hpp"
 #include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>

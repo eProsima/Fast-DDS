@@ -20,7 +20,7 @@
 // TODO(jlbueno): remove private header
 #include <statistics/rtps/StatisticsBase.hpp>
 
-#include "../types/statistics/monitorservice_typesPubSubTypes.h"
+#include "../types/statistics/monitorservice_typesPubSubTypes.hpp"
 #include "BlackboxTests.hpp"
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"

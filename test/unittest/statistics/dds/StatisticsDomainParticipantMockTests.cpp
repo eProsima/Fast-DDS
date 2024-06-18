@@ -25,7 +25,7 @@
 #include <fastdds/statistics/topic_names.hpp>
 #include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
 #include <statistics/fastdds/publisher/PublisherImpl.hpp>
-#include <statistics/types/typesPubSubTypes.h>
+#include <statistics/types/typesPubSubTypes.hpp>
 
 #include "../../logging/mock/MockConsumer.h"
 

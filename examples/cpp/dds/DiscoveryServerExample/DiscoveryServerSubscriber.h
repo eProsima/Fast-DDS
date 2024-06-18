@@ -28,7 +28,7 @@
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 
-#include "types/HelloWorldPubSubTypes.h"
+#include "types/HelloWorldPubSubTypes.hpp"
 #include "common.h"
 
 /**

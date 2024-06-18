@@ -32,7 +32,7 @@
 #include <gtest/gtest.h>
 
 #include "../types/HelloWorldTypeObjectSupport.hpp"
-#include "../types/TestRegression3361PubSubTypes.h"
+#include "../types/TestRegression3361PubSubTypes.hpp"
 #include "../types/TestRegression3361TypeObjectSupport.hpp"
 #include "../utils/filter_helpers.hpp"
 #include "BlackboxTests.hpp"

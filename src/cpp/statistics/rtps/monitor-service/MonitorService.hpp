@@ -37,7 +37,7 @@
 #include <rtps/writer/StatefulWriter.hpp>
 #include <statistics/rtps/monitor-service/MonitorServiceListener.hpp>
 #include <statistics/types/monitorservice_types.hpp>
-#include <statistics/types/monitorservice_typesPubSubTypes.h>
+#include <statistics/types/monitorservice_typesPubSubTypes.hpp>
 
 namespace eprosima {
 namespace fastdds {

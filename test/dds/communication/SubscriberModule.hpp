@@ -24,8 +24,8 @@
 #include <fastdds/dds/subscriber/SubscriberListener.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.hpp>
 
-#include "types/FixedSizedPubSubTypes.h"
-#include "types/HelloWorldPubSubTypes.h"
+#include "types/FixedSizedPubSubTypes.hpp"
+#include "types/HelloWorldPubSubTypes.hpp"
 
 #include <mutex>
 #include <condition_variable>

@@ -21,7 +21,7 @@
 
 
 #include "LoanableHelloWorldPublisher.h"
-#include "LoanableHelloWorldPubSubTypes.h"
+#include "LoanableHelloWorldPubSubTypes.hpp"
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>

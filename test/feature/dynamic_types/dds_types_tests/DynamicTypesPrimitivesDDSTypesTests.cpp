@@ -15,7 +15,7 @@
 #include <gtest/gtest.h>
 
 #include "../DynamicTypesDDSTypesTest.hpp"
-#include "../../../dds-types-test/primitivesPubSubTypes.h"
+#include "../../../dds-types-test/primitivesPubSubTypes.hpp"
 #include "../../../dds-types-test/primitivesTypeObjectSupport.hpp"
 #include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>

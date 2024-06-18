@@ -23,7 +23,7 @@
 #include <memory>
 #include <vector>
 
-#include "TransportInterface.h"
+#include "TransportInterface.hpp"
 
 namespace eprosima {
 namespace fastdds {

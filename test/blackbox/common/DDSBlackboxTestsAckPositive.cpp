@@ -45,8 +45,8 @@
 #include "../api/dds-pim/ReqRepAsReliableHelloWorldRequester.hpp"
 #include "../api/dds-pim/ReqRepAsReliableHelloWorldReplier.hpp"
 #include "../types/FixedSized.hpp"
-#include "../types/FixedSizedPubSubTypes.h"
-#include "../types/HelloWorldPubSubTypes.h"
+#include "../types/FixedSizedPubSubTypes.hpp"
+#include "../types/HelloWorldPubSubTypes.hpp"
 
 using namespace eprosima::fastdds;
 using namespace eprosima::fastdds::rtps;

@@ -45,7 +45,7 @@
 #include <statistics/fastdds/subscriber/SubscriberImpl.hpp>
 #include <statistics/rtps/GuidUtils.hpp>
 #include <statistics/types/types.hpp>
-#include <statistics/types/typesPubSubTypes.h>
+#include <statistics/types/typesPubSubTypes.hpp>
 #include <utils/SystemInfo.hpp>
 #include <xmlparser/attributes/PublisherAttributes.hpp>
 #include <xmlparser/XMLParserCommon.h>

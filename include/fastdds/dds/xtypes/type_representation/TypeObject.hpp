@@ -24,7 +24,7 @@
 
 #include <fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobject.hpp>
 #include <fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobjectCdrAux.hpp>
-#include <fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobjectPubSubTypes.h>
+#include <fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobjectPubSubTypes.hpp>
 
 #endif // FASTDDS_DDS_XTYPES_TYPE_REPRESENTATION__TYPEOBJECT_HPP
 

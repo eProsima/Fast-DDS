@@ -23,8 +23,8 @@
 #include <map>
 #include <memory>
 
-#include "TransportInterface.h"
-#include "ChainingTransportDescriptor.h"
+#include "TransportInterface.hpp"
+#include "ChainingTransportDescriptor.hpp"
 
 namespace eprosima {
 namespace fastdds {

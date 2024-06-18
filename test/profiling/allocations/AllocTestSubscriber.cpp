@@ -35,7 +35,7 @@
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
 
 #include "AllocTestCommon.h"
-#include "AllocTestTypePubSubTypes.h"
+#include "AllocTestTypePubSubTypes.hpp"
 
 using namespace eprosima::fastdds::dds;
 
