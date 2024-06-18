@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <cstdint>
 #include <iostream>
 #include <set>
 #include <string>
@@ -325,7 +326,14 @@ ReturnCode_t sequence_kind_to_str(
 
     for (const auto& bound : bounds)
     {
-        sequence_str += ", " + bound;
+        if (bound == static_cast<std::uint32_t>(LENGTH_UNLIMITED))
+        {
+            sequence_str += ", unbounded";
+        }
+        else
+        {
+            sequence_str += ", " + bound;
+        }
     }
 
     sequence_str += ">";
