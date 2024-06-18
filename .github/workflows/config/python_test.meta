@@ -1,10 +1,12 @@
 names:
-    fastdds-docs:
+    fastdds_python:
         cmake-args:
+            - "-DBUILD_TESTING=ON"
             - "-DBUILD_DOCUMENTATION=ON"
-            - "-DCOMPILE_TESTS=ON"
         ctest-args: [
-                "--timeout", "500"
+                "--repeat", "until-pass:3",
+                "--timeout", "300",
+                "--label-exclude", "xfail"
         ]
     googletest-distribution:
         cmake-args:
