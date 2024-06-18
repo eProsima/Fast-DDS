@@ -32,7 +32,7 @@
 
 #include "Application.hpp"
 #include "CLIParser.hpp"
-#include "DeliveryMechanismsPubSubTypes.h"
+#include "DeliveryMechanismsPubSubTypes.hpp"
 
 using namespace eprosima::fastdds::dds;
 

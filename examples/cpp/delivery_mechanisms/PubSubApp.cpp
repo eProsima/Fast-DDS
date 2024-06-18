@@ -33,13 +33,13 @@
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
-#include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
-#include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
-#include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.hpp>
+#include <fastdds/rtps/transport/TCPv4TransportDescriptor.hpp>
+#include <fastdds/rtps/transport/UDPv4TransportDescriptor.hpp>
 
 #include "Application.hpp"
 #include "CLIParser.hpp"
-#include "DeliveryMechanismsPubSubTypes.h"
+#include "DeliveryMechanismsPubSubTypes.hpp"
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;
@@ -109,7 +109,7 @@ PubSubApp::PubSubApp(
         case CLIParser::DeliveryMechanismKind::TCP:
         {
             std::shared_ptr<TCPv4TransportDescriptor> tcp_transport_ = std::make_shared<TCPv4TransportDescriptor>();
-            pqos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastrtps::c_TimeInfinite;
+            pqos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastdds::c_TimeInfinite;
             pqos.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod = Duration_t(5, 0);
             tcp_transport_->sendBufferSize = 0;
             tcp_transport_->receiveBufferSize = 0;
@@ -118,7 +118,7 @@ PubSubApp::PubSubApp(
             Locator tcp_initial_peers_locator_;
             tcp_initial_peers_locator_.kind = LOCATOR_KIND_TCPv4;
             tcp_initial_peers_locator_.port = 5100;
-            eprosima::fastrtps::rtps::IPLocator::setIPv4(tcp_initial_peers_locator_, "127.0.0.1");
+            eprosima::fastdds::rtps::IPLocator::setIPv4(tcp_initial_peers_locator_, "127.0.0.1");
             pqos.wire_protocol().builtin.initialPeersList.push_back(tcp_initial_peers_locator_);
             break;
         }
