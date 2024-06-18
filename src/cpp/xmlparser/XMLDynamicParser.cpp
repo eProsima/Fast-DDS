@@ -463,7 +463,14 @@ XMLP_ret XMLParser::parseXMLAliasDynamicType(
                     alias_descriptor->base_type(value_type);
                     DynamicTypeBuilder::_ref_type builder {DynamicTypeBuilderFactory::get_instance()->create_type(
                                                                alias_descriptor)};
-                    if (false == XMLProfileManager::insertDynamicTypeByName(name, builder->build()))
+                    if (nullptr != builder)
+                    {
+                        if (false == XMLProfileManager::insertDynamicTypeByName(name, builder->build()))
+                        {
+                            ret = XMLP_ret::XML_ERROR;
+                        }
+                    }
+                    else
                     {
                         ret = XMLP_ret::XML_ERROR;
                     }
