@@ -54,7 +54,6 @@ public:
     struct client_config
     {
         uint16_t connection_port{16166};
-        uint16_t connection_ds_id{0};
         std::string connection_address{"127.0.0.1"};
     };
 
@@ -87,7 +86,6 @@ public:
         bool is_also_client{false};
         TransportKind transport_kind{TransportKind::UDPv4};
         uint16_t listening_port{16166};
-        uint16_t id{0};
         uint16_t timeout{0};
         std::string listening_address{"127.0.0.1"};
     };
@@ -114,7 +112,6 @@ public:
                 os << "Client options:" << std::endl;
                 os << "  Connection address: " << config.pub_config.connection_address << std::endl;
                 os << "  Connection port: " << config.pub_config.connection_port << std::endl;
-                os << "  Connection DS id: " << config.pub_config.connection_ds_id << std::endl;
             }
 
             if (config.entity == CLIParser::EntityKind::CLIENT_PUBLISHER)
@@ -135,7 +132,6 @@ public:
                 os << "Server options:" << std::endl;
                 os << "  Listening address: " << config.srv_config.listening_address << std::endl;
                 os << "  Listening port: " << config.srv_config.listening_port << std::endl;
-                os << "  Id: " << config.srv_config.id << std::endl;
                 os << "  Timeout: " << config.srv_config.timeout << std::endl;
             }
 
@@ -167,7 +163,6 @@ public:
         std::cout << "                                       (Default address: 127.0.0.1)."            << std::endl;
         std::cout << "  -p <num>, --connection-port <num>    Port of the Server to connect to"         << std::endl;
         std::cout << "                                       (Default port: 16166)."                   << std::endl;
-        std::cout << "            --connection-ds-id <num>   Id of the Discovery Server to connect to" << std::endl;
         std::cout << "                                       (0 by default)."                          << std::endl;
         std::cout << "            --transport <str>          [udpv4|udpv6|tcpv4|tcpv6|shm] "           << std::endl;
         std::cout << "                                       (udpv4 by default)."                      << std::endl;
@@ -199,7 +194,6 @@ public:
         std::cout << "                                       (Default address: 127.0.0.1)"             << std::endl;
         std::cout << "            --listening-port <num>     Server listening port"                    << std::endl;
         std::cout << "                                       (Default port: 16166)"                    << std::endl;
-        std::cout << "            --id <num>                 Id of the Discovery Server (Default: 0)." << std::endl;
         std::cout << "            --timeout <num>            Number of seconds before finish"          << std::endl;
         std::cout << "                                       the process (Default: 0 = till ^C)."      << std::endl;
         std::exit(return_code);
@@ -372,47 +366,6 @@ public:
                 else
                 {
                     EPROSIMA_LOG_ERROR(CLI_PARSER, "parsing port argument");
-                    print_help(EXIT_FAILURE);
-                }
-            }
-            else if (arg == "--connection-ds-id")
-            {
-                if (++i < argc)
-                {
-                    try
-                    {
-                        int input = std::stoi(argv[i]);
-                        if (input < 0 || input > 255)
-                        {
-                            throw std::out_of_range("connection-ds-id argument " + std::string(
-                                              argv[i]) + " out of range [0, 255].");
-                        }
-                        else
-                        {
-                            config.pub_config.connection_ds_id = static_cast<uint16_t>(input);
-                            config.sub_config.connection_ds_id = static_cast<uint16_t>(input);
-                            config.srv_config.connection_ds_id = static_cast<uint16_t>(input);
-                            if (config.entity == CLIParser::EntityKind::SERVER)
-                            {
-                                config.srv_config.is_also_client = true;
-                            }
-                        }
-                    }
-                    catch (const std::invalid_argument& e)
-                    {
-                        EPROSIMA_LOG_ERROR(CLI_PARSER, "invalid connection-ds-id argument " + std::string(
-                                    argv[i]) + ": " + std::string(e.what()));
-                        print_help(EXIT_FAILURE);
-                    }
-                    catch (const std::out_of_range& e)
-                    {
-                        EPROSIMA_LOG_ERROR(CLI_PARSER, std::string(e.what()));
-                        print_help(EXIT_FAILURE);
-                    }
-                }
-                else
-                {
-                    EPROSIMA_LOG_ERROR(CLI_PARSER, "parsing connection-ds-id argument");
                     print_help(EXIT_FAILURE);
                 }
             }
@@ -593,49 +546,6 @@ public:
                 else
                 {
                     EPROSIMA_LOG_ERROR(CLI_PARSER, "parsing port argument");
-                    print_help(EXIT_FAILURE);
-                }
-            }
-            else if (arg == "--id")
-            {
-                if (++i < argc)
-                {
-                    if (config.entity == CLIParser::EntityKind::SERVER)
-                    {
-                        try
-                        {
-                            int input = std::stoi(argv[i]);
-                            if (input < 0 || input > 255)
-                            {
-                                throw std::out_of_range("id argument " + std::string(
-                                                  argv[i]) + " out of range [0, 255].");
-                            }
-                            else
-                            {
-                                config.srv_config.id = static_cast<uint16_t>(input);
-                            }
-                        }
-                        catch (const std::invalid_argument& e)
-                        {
-                            EPROSIMA_LOG_ERROR(CLI_PARSER, "invalid id argument " + std::string(
-                                        argv[i]) + ": " + std::string(e.what()));
-                            print_help(EXIT_FAILURE);
-                        }
-                        catch (const std::out_of_range& e)
-                        {
-                            EPROSIMA_LOG_ERROR(CLI_PARSER, std::string(e.what()));
-                            print_help(EXIT_FAILURE);
-                        }
-                    }
-                    else
-                    {
-                        EPROSIMA_LOG_ERROR(CLI_PARSER, "--listening-port argument is only valid for server entity");
-                        print_help(EXIT_FAILURE);
-                    }
-                }
-                else
-                {
-                    EPROSIMA_LOG_ERROR(CLI_PARSER, "parsing id argument");
                     print_help(EXIT_FAILURE);
                 }
             }

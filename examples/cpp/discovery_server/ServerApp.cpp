@@ -158,9 +158,6 @@ ServerApp::ServerApp(
     pqos.wire_protocol().builtin.discovery_config.discoveryProtocol =
             eprosima::fastrtps::rtps::DiscoveryProtocol_t::SERVER;
 
-    // Set SERVER's GUID prefix
-    pqos.wire_protocol().prefix = get_discovery_server_guid_from_id(config.id);
-
     // Set SERVER's listening locator for PDP
     pqos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(listening_locator);
 
@@ -186,7 +183,7 @@ ServerApp::ServerApp(
             "Server Participant " << pqos.name() <<
             " created with GUID " << participant_->guid() <<
             " listening in address <" << listening_locator  << "> " <<
-            " with address <" << connection_locator  << "> " <<
+            " connected to address <" << connection_locator  << "> " <<
             std::endl;
     }
     else
