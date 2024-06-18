@@ -705,7 +705,7 @@ sp_transport_t XMLProfileManager::getTransportById(
     return nullptr;
 }
 
-bool XMLProfileManager::insertDynamicTypeByName(
+bool XMLProfileManager::insertDynamicTypeBuilderByName(
         const std::string& type_name,
         const eprosima::fastdds::dds::DynamicTypeBuilder::_ref_type& type)
 {
@@ -718,7 +718,7 @@ bool XMLProfileManager::insertDynamicTypeByName(
     return false;
 }
 
-XMLP_ret XMLProfileManager::getDynamicTypeByName(
+XMLP_ret XMLProfileManager::getDynamicTypeBuilderByName(
         eprosima::fastdds::dds::DynamicTypeBuilder::_ref_type& dynamic_type,
         const std::string& type_name)
 {

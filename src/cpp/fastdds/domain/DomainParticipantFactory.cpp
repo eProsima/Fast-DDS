@@ -548,7 +548,7 @@ ReturnCode_t DomainParticipantFactory::get_dynamic_type_builder_from_xml_by_name
     {
         return RETCODE_BAD_PARAMETER;
     }
-    if (XMLP_ret::XML_OK != XMLProfileManager::getDynamicTypeByName(type_builder, type_name))
+    if (XMLP_ret::XML_OK != XMLProfileManager::getDynamicTypeBuilderByName(type_builder, type_name))
     {
         return RETCODE_NO_DATA;
     }
