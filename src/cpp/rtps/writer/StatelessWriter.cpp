@@ -163,43 +163,6 @@ StatelessWriter::StatelessWriter(
     init(impl, attributes);
 }
 
-StatelessWriter::StatelessWriter(
-        RTPSParticipantImpl* impl,
-        const GUID_t& guid,
-        const WriterAttributes& attributes,
-        const std::shared_ptr<IPayloadPool>& payload_pool,
-        fastdds::rtps::FlowController* flow_controller,
-        WriterHistory* history,
-        WriterListener* listener)
-    : RTPSWriter(impl, guid, attributes, payload_pool, flow_controller, history, listener)
-    , matched_remote_readers_(attributes.matched_readers_allocation)
-    , matched_local_readers_(attributes.matched_readers_allocation)
-    , matched_datasharing_readers_(attributes.matched_readers_allocation)
-    , matched_readers_pool_(attributes.matched_readers_allocation)
-    , locator_selector_(*this, attributes.matched_readers_allocation)
-{
-    init(impl, attributes);
-}
-
-StatelessWriter::StatelessWriter(
-        RTPSParticipantImpl* participant,
-        const GUID_t& guid,
-        const WriterAttributes& attributes,
-        const std::shared_ptr<IPayloadPool>& payload_pool,
-        const std::shared_ptr<IChangePool>& change_pool,
-        fastdds::rtps::FlowController* flow_controller,
-        WriterHistory* history,
-        WriterListener* listener)
-    : RTPSWriter(participant, guid, attributes, payload_pool, change_pool, flow_controller, history, listener)
-    , matched_remote_readers_(attributes.matched_readers_allocation)
-    , matched_local_readers_(attributes.matched_readers_allocation)
-    , matched_datasharing_readers_(attributes.matched_readers_allocation)
-    , matched_readers_pool_(attributes.matched_readers_allocation)
-    , locator_selector_(*this, attributes.matched_readers_allocation)
-{
-    init(participant, attributes);
-}
-
 void StatelessWriter::init(
         RTPSParticipantImpl* participant,
         const WriterAttributes& attributes)

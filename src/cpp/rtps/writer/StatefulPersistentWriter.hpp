@@ -46,27 +46,6 @@ class StatefulPersistentWriter : public StatefulWriter, private PersistentWriter
             WriterListener* listen = nullptr,
             IPersistenceService* persistence = nullptr);
 
-    StatefulPersistentWriter(
-            RTPSParticipantImpl*,
-            const GUID_t& guid,
-            const WriterAttributes& att,
-            const std::shared_ptr<IPayloadPool>& payload_pool,
-            fastdds::rtps::FlowController* flow_controller,
-            WriterHistory* hist,
-            WriterListener* listen = nullptr,
-            IPersistenceService* persistence = nullptr);
-
-    StatefulPersistentWriter(
-            RTPSParticipantImpl*,
-            const GUID_t& guid,
-            const WriterAttributes& att,
-            const std::shared_ptr<IPayloadPool>& payload_pool,
-            const std::shared_ptr<IChangePool>& change_pool,
-            fastdds::rtps::FlowController* flow_controller,
-            WriterHistory* hist,
-            WriterListener* listen = nullptr,
-            IPersistenceService* persistence = nullptr);
-
     void print_inconsistent_acknack(
             const GUID_t& writer_guid,
             const GUID_t& reader_guid,

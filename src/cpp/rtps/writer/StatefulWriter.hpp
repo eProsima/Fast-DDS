@@ -63,25 +63,6 @@ protected:
             WriterHistory* hist,
             WriterListener* listen = nullptr);
 
-    StatefulWriter(
-            RTPSParticipantImpl* impl,
-            const GUID_t& guid,
-            const WriterAttributes& att,
-            const std::shared_ptr<IPayloadPool>& payload_pool,
-            fastdds::rtps::FlowController* flow_controller,
-            WriterHistory* hist,
-            WriterListener* listen = nullptr);
-
-    StatefulWriter(
-            RTPSParticipantImpl* impl,
-            const GUID_t& guid,
-            const WriterAttributes& att,
-            const std::shared_ptr<IPayloadPool>& payload_pool,
-            const std::shared_ptr<IChangePool>& change_pool,
-            fastdds::rtps::FlowController* flow_controller,
-            WriterHistory* hist,
-            WriterListener* listen = nullptr);
-
     void rebuild_status_after_load();
 
     virtual void print_inconsistent_acknack(

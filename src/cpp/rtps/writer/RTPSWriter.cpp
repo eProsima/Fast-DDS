@@ -64,42 +64,6 @@ RTPSWriter::RTPSWriter(
     init(payload_pool, change_pool, att);
 }
 
-RTPSWriter::RTPSWriter(
-        RTPSParticipantImpl* impl,
-        const GUID_t& guid,
-        const WriterAttributes& att,
-        const std::shared_ptr<IPayloadPool>& payload_pool,
-        fastdds::rtps::FlowController* flow_controller,
-        WriterHistory* hist,
-        WriterListener* listen)
-    : RTPSWriter(
-        impl, guid, att, payload_pool,
-        std::make_shared<CacheChangePool>(PoolConfig::from_history_attributes(hist->m_att)),
-        flow_controller, hist, listen)
-{
-}
-
-RTPSWriter::RTPSWriter(
-        RTPSParticipantImpl* impl,
-        const GUID_t& guid,
-        const WriterAttributes& att,
-        const std::shared_ptr<IPayloadPool>& payload_pool,
-        const std::shared_ptr<IChangePool>& change_pool,
-        fastdds::rtps::FlowController* flow_controller,
-        WriterHistory* hist,
-        WriterListener* listen)
-    : Endpoint(impl, guid, att.endpoint)
-    , flow_controller_(flow_controller)
-    , mp_history(hist)
-    , mp_listener(listen)
-    , is_async_(att.mode == SYNCHRONOUS_WRITER ? false : true)
-    , liveliness_kind_(att.liveliness_kind)
-    , liveliness_lease_duration_(att.liveliness_lease_duration)
-    , liveliness_announcement_period_(att.liveliness_announcement_period)
-{
-    init(payload_pool, change_pool, att);
-}
-
 void RTPSWriter::init(
         const std::shared_ptr<IPayloadPool>& payload_pool,
         const std::shared_ptr<IChangePool>& change_pool,

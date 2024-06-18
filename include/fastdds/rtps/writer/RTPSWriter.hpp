@@ -86,25 +86,6 @@ protected:
             WriterHistory* hist,
             WriterListener* listen = nullptr);
 
-    RTPSWriter(
-            RTPSParticipantImpl* impl,
-            const GUID_t& guid,
-            const WriterAttributes& att,
-            const std::shared_ptr<IPayloadPool>& payload_pool,
-            fastdds::rtps::FlowController* flow_controller,
-            WriterHistory* hist,
-            WriterListener* listen = nullptr);
-
-    RTPSWriter(
-            RTPSParticipantImpl* impl,
-            const GUID_t& guid,
-            const WriterAttributes& att,
-            const std::shared_ptr<IPayloadPool>& payload_pool,
-            const std::shared_ptr<IChangePool>& change_pool,
-            fastdds::rtps::FlowController* flow_controller,
-            WriterHistory* hist,
-            WriterListener* listen = nullptr);
-
     virtual ~RTPSWriter();
 
 public:
