@@ -378,13 +378,20 @@ ReturnCode_t get_members_sorted(
         const DynamicType::_ref_type& dyn_type,
         std::vector<std::pair<std::string, DynamicType::_ref_type>>& result) noexcept
 {
+    ReturnCode_t ret = RETCODE_OK;
+
     std::map<MemberId, DynamicTypeMember::_ref_type> members;
-    dyn_type->get_all_members(members);
+    ret = dyn_type->get_all_members(members);
+
+    if (ret != RETCODE_OK)
+    {
+        return ret;
+    }
 
     for (const auto& member : members)
     {
         MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
-        const auto ret = member.second->get_descriptor(member_descriptor);
+        ret = member.second->get_descriptor(member_descriptor);
 
         if (ret != RETCODE_OK)
         {
@@ -398,15 +405,17 @@ ReturnCode_t get_members_sorted(
                 std::move(member_descriptor->type())));
     }
 
-    return RETCODE_OK;
+    return ret;
 }
 
 ReturnCode_t container_internal_type(
         const DynamicType::_ref_type& dyn_type,
         DynamicType::_ref_type& internal_type) noexcept
 {
+    ReturnCode_t ret = RETCODE_OK;
+
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
-    const auto ret = dyn_type->get_descriptor(type_descriptor);
+    ret = dyn_type->get_descriptor(type_descriptor);
 
     if (ret != RETCODE_OK)
     {
@@ -415,15 +424,17 @@ ReturnCode_t container_internal_type(
 
     internal_type = type_descriptor->element_type();
 
-    return RETCODE_OK;
+    return ret;
 }
 
 ReturnCode_t container_size(
         const DynamicType::_ref_type& dyn_type,
         BoundSeq& bounds) noexcept
 {
+    ReturnCode_t ret = RETCODE_OK;
+
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
-    const auto ret = dyn_type->get_descriptor(type_descriptor);
+    ret = dyn_type->get_descriptor(type_descriptor);
 
     if (ret != RETCODE_OK)
     {
@@ -432,7 +443,7 @@ ReturnCode_t container_size(
 
     bounds = type_descriptor->bound();
 
-    return RETCODE_OK;
+    return ret;
 }
 
 
@@ -444,8 +455,9 @@ ReturnCode_t dyn_type_tree_to_idl(
         const utilities::collections::TreeNode<TreeNodeType>& parent_node,
         std::string& dyn_type_idl) noexcept
 {
-    std::set<std::string> types_written;
+    ReturnCode_t ret = RETCODE_OK;
 
+    std::set<std::string> types_written;
     std::stringstream ss;
 
     // For every Node, check if it is of a "writable" type (i.e. struct, enum or union).
@@ -458,7 +470,6 @@ ReturnCode_t dyn_type_tree_to_idl(
             continue;
         }
 
-        ReturnCode_t ret;
         const auto kind = node.info.dynamic_type->get_kind();
 
         switch (kind)
@@ -493,7 +504,7 @@ ReturnCode_t dyn_type_tree_to_idl(
 
     // Write struct parent node at last, after all its dependencies
     // NOTE: not a requirement for Foxglove IDL Parser, dependencies can be placed after parent
-    const auto ret = struct_to_str(ss, parent_node);
+    ret = struct_to_str(ss, parent_node);
 
     if (ret != RETCODE_OK)
     {
@@ -502,7 +513,7 @@ ReturnCode_t dyn_type_tree_to_idl(
 
     dyn_type_idl = ss.str();
 
-    return RETCODE_OK;
+    return ret;
 }
 
 ReturnCode_t struct_to_str(
@@ -529,17 +540,26 @@ ReturnCode_t enum_to_str(
         std::ostream& os,
         const utilities::collections::TreeNode<TreeNodeType>& node) noexcept
 {
-    os << "enum " << node.info.type_kind_name << TYPE_OPENING << TAB_SEPARATOR;
+    ReturnCode_t ret = RETCODE_OK;
 
     std::map<MemberId, DynamicTypeMember::_ref_type> members;
-    node.info.dynamic_type->get_all_members(members);
+    ret = node.info.dynamic_type->get_all_members(members);
+
+    if (ret != RETCODE_OK)
+    {
+        return ret;
+    }
+
+    os << "enum " << node.info.type_kind_name << TYPE_OPENING << TAB_SEPARATOR;
     bool first_iter = true;
+
     for (const auto& member : members)
     {
         if (!first_iter)
         {
             os << ",\n" << TAB_SEPARATOR;
         }
+
         first_iter = false;
 
         os << member.second->get_name();
@@ -548,7 +568,7 @@ ReturnCode_t enum_to_str(
     // Close definition
     os << "\n" << TYPE_CLOSURE;
 
-    return RETCODE_OK;
+    return ret;
 }
 
 ReturnCode_t union_to_str(
@@ -576,7 +596,12 @@ ReturnCode_t union_to_str(
     os << "union " << node.info.type_kind_name << " switch (" << discriminant_type_str << ")" << TYPE_OPENING;
 
     std::map<MemberId, DynamicTypeMember::_ref_type> members;
-    node.info.dynamic_type->get_all_members(members);  // WARNING: Default case not included in this collection, and currently not available
+    ret = node.info.dynamic_type->get_all_members(members);  // WARNING: Default case not included in this collection, and currently not available
+
+    if (ret != RETCODE_OK)
+    {
+        return ret;
+    }
 
     for (const auto& member : members)
     {
