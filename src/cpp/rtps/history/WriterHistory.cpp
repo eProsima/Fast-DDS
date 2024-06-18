@@ -116,6 +116,16 @@ WriterHistory::~WriterHistory()
     // TODO Auto-generated destructor stub
 }
 
+const std::shared_ptr<IPayloadPool>& WriterHistory::get_payload_pool() const
+{
+    return payload_pool_;
+}
+
+const std::shared_ptr<IChangePool>& WriterHistory::get_change_pool() const
+{
+    return change_pool_;
+}
+
 bool WriterHistory::add_change(
         CacheChange_t* a_change)
 {

@@ -75,6 +75,20 @@ public:
     FASTDDS_EXPORTED_API virtual ~WriterHistory() override;
 
     /**
+     * @brief Get the payload pool used by this history.
+     *
+     * @return Reference to the payload pool used by this history.
+     */
+    FASTDDS_EXPORTED_API const std::shared_ptr<IPayloadPool>& get_payload_pool() const;
+
+    /**
+     * @brief Get the change pool used by this history.
+     *
+     * @return Reference to the change pool used by this history.
+     */
+    FASTDDS_EXPORTED_API const std::shared_ptr<IChangePool>& get_change_pool() const;
+
+    /**
      * @brief Create a new CacheChange_t object.
      *
      * @param change_kind  Kind of the change.
