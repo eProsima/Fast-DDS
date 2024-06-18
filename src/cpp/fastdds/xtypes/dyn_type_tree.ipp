@@ -149,6 +149,11 @@ ReturnCode_t type_kind_to_str(
             type_str = "octet";
             break;
         }
+        case TK_INT8:
+        {
+            type_str = "char";
+            break;
+        }
         case TK_INT16:
         {
             type_str = "short";
@@ -162,6 +167,11 @@ ReturnCode_t type_kind_to_str(
         case TK_INT64:
         {
             type_str = "long long";
+            break;
+        }
+        case TK_UINT8:
+        {
+            type_str = "unsigned char";
             break;
         }
         case TK_UINT16:
