@@ -317,7 +317,7 @@ endif()
 
 if(WIN32 AND (MSVC OR MSVC_IDE))
     list(APPEND ${PROJECT_NAME}_source_files
-        ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps.rc
+        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds.rc
         )
 endif()
 
