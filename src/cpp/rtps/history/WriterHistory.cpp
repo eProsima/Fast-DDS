@@ -25,7 +25,7 @@
 #include <mutex>
 #include <utility>
 
-#include <fastdds/core/policy/ParameterSerializer.hpp>
+#include <fastdds/dds/core/policy/ParameterTypes.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/attributes/HistoryAttributes.hpp>
 #include <fastdds/rtps/common/CacheChange.hpp>
@@ -42,8 +42,8 @@
 #include <fastdds/rtps/history/IPayloadPool.hpp>
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
 #include <fastdds/utils/TimedMutex.hpp>
-#include <fastrtps/qos/ParameterTypes.h>
 
+#include <fastdds/core/policy/ParameterSerializer.hpp>
 #include <rtps/history/BasicPayloadPool.hpp>
 #include <rtps/history/CacheChangePool.h>
 #include <rtps/history/PoolConfig.h>

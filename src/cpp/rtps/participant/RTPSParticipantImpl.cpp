@@ -26,6 +26,7 @@
 #include <sstream>
 
 #include <fastdds/dds/core/ReturnCode.hpp>
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/attributes/BuiltinTransports.hpp>
@@ -1178,7 +1179,7 @@ bool RTPSParticipantImpl::createWriter(
 {
     *WriterOut = nullptr;
 
-    if (param.endpoint.data_sharing_configuration().kind() != DataSharingKind::OFF)
+    if (param.endpoint.data_sharing_configuration().kind() != dds::DataSharingKind::OFF)
     {
         EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Data sharing needs a DataSharing payload pool");
         return false;
