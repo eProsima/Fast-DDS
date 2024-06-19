@@ -23,6 +23,21 @@ on:
         description: 'Branch or tag of Fast DDS repository (https://github.com/eProsima/Fast-DDS)'
         type: string
         required: true
+      security:
+        description: 'Enable security features'
+        required: false
+        type: boolean
+        default: true
+      run-tests:
+        description: 'Run suite of tests of Fast DDS, Fast DDS python, and Fast DDS Discovery Server'
+        required: false
+        type: boolean
+        default: true
+      use-ccache:
+        description: 'Use CCache to speed up the build'
+        required: false
+        type: boolean
+        default: false
 
   pull_request:
     types:
@@ -39,21 +54,20 @@ concurrency:
 jobs:
   ubuntu-ci:
 
-    strategy:
-      fail-fast: false
-      matrix:
-        os-image:
-          - 'ubuntu-20.04'
-
     if: ${{ (
               !contains(github.event.pull_request.labels.*.name, 'skip-ci') &&
               !contains(github.event.pull_request.labels.*.name, 'conflicts')
             ) }}
     uses: ./.github/workflows/reusable-ubuntu-ci.yml
     with:
-      os-image: ${{ matrix.os-image }}
+      # It would be desirable to have a matrix of ubuntu OS for this job, but due to the issue opened in this ticket:
+      # https://github.com/orgs/community/discussions/128118 , it has been set as a single OS job.
+      os-image: 'ubuntu-20.04'
       label: ${{ inputs.label || 'ubuntu-ci' }}
       colcon-args: ${{ inputs.colcon-args }}
-      cmake-args: '-DSECURITY=ON ${{ inputs.cmake-args }}'
+      cmake-args: ${{ inputs.cmake-args }}
       ctest-args: ${{ inputs.ctest-args || '-LE xfail' }}
       fastdds-branch: ${{ inputs.fastdds_branch || github.ref || '2.6.x' }}
+      security: ${{ ((inputs.security == true) && true) || github.event_name == 'pull_request' }}
+      run-tests: ${{ ((inputs.run-tests == true) && true) || (github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'no-test')) }}
+      use-ccache: ${{ ((inputs.use-ccache == true) && true) || false }}

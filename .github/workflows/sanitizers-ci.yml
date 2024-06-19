@@ -66,9 +66,9 @@ jobs:
     uses: ./.github/workflows/reusable-sanitizers-ci.yml
     with:
       label: ${{ inputs.label || 'fastdds-sanitizers-ci' }}
-      run_asan_fastdds: ${{ inputs.run_asan_fastdds || github.event_name == 'pull_request' }}
-      run_asan_discovery_server: ${{ inputs.run_asan_discovery_server || github.event_name == 'pull_request' }}
-      run_tsan_fastdds: ${{ inputs.run_tsan_fastdds || github.event_name == 'pull_request' }}
+      run_asan_fastdds: ${{ ((inputs.run_asan_fastdds == true) && true) || github.event_name == 'pull_request' }}
+      run_asan_discovery_server: ${{ ((inputs.run_asan_discovery_server == true) && true) || github.event_name == 'pull_request' }}
+      run_tsan_fastdds: ${{ ((inputs.run_tsan_fastdds == true) && true) || github.event_name == 'pull_request' }}
       colcon_build_args: ${{ inputs.colcon_build_args || '' }}
       colcon_test_args: ${{ inputs.colcon_test_args || '' }}
       cmake_args: ${{ inputs.cmake_args || '' }}

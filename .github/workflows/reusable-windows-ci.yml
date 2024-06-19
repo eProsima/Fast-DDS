@@ -31,7 +31,6 @@ defaults:
 jobs:
   reusable-windows-ci:
     runs-on: windows-2019
-    if: ${{ !contains(github.event.pull_request.labels.*.name, 'skip-ci') }}
     strategy:
       fail-fast: false
       matrix:
@@ -138,18 +137,36 @@ jobs:
       - name: Fetch Fast DDS CI dependencies
         uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
         with:
-          vcs_repos_file: ${{ github.workspace }}\src\fastrtps\.github\workflows\config\ci.repos
+          vcs_repos_file: ${{ github.workspace }}\src\fastrtps\.github\workflows\config\fastdds_test.repos
           destination_workspace: src
           skip_existing: 'true'
+
+      - name: Prepare build meta file
+        run: |
+            $build_meta_file = '${{ github.workspace }}\src\fastrtps\.github\workflows\config\fastdds_build.meta'
+            $test_meta_file = '${{ github.workspace }}\src\fastrtps\.github\workflows\config\fastdds_test.meta'
+            $build_test_meta_file = '${{ github.workspace }}\src\fastrtps\.github\workflows\config\fastdds_build_test.meta'
+
+            # Read the content of the build meta file
+            $build_meta_content = Get-Content -Path $build_meta_file
+
+            # Read the content of the test meta file, starting from line 4 (skipping "name" line [1], cmake project name line [2] and "cmake-args" line [3])
+            $test_meta_content = Get-Content -Path $test_meta_file | Select-Object -Skip 3
+
+            # Combine the content of the build meta file and the test meta file
+            $combined_content = $build_meta_content + $test_meta_content
+
+            # Write the combined content to the build test meta file
+            $combined_content | Out-File -FilePath $build_test_meta_file -Encoding UTF8
 
       - name: Build
         id: build
         continue-on-error: false
         uses: eProsima/eProsima-CI/windows/colcon_build@v0
         with:
-          colcon_meta_file: ${{ github.workspace }}\src\fastrtps\.github\workflows\config\ci.meta
+          colcon_meta_file: ${{ github.workspace }}\src\fastrtps\.github\workflows\config\fastdds_build_test.meta
           colcon_build_args: ${{ inputs.colcon-args }}
-          # The following Fast DDS CMake options need to be specified here instead of in the ci.meta file
+          # The following Fast DDS CMake options need to be specified here instead of in the meta files
           # because they vary from platform to platform
           cmake_args_default: ${{ inputs.cmake-args }} -T ${{ matrix.vs-toolset }} -DTHIRDPARTY_Asio=FORCE -DTHIRDPARTY_TinyXML2=FORCE -DTHIRDPARTY_fastcdr=OFF -DTHIRDPARTY_UPDATE=ON -DEPROSIMA_EXTRA_CMAKE_CXX_FLAGS="/MP /WX"
           cmake_build_type: ${{ matrix.cmake-config }}
@@ -160,10 +177,10 @@ jobs:
         id: test
         uses: eProsima/eProsima-CI/windows/colcon_test@v0
         with:
+          colcon_meta_file: ${{ github.workspace }}\src\fastrtps\.github\workflows\config\fastdds_test.meta
           colcon_test_args: ${{ inputs.colcon-args }}
           colcon_test_args_default: --event-handlers=console_direct+
           ctest_args: ${{ inputs.ctest-args }}
-          ctest_args_default: --repeat until-pass:3 --timeout 300 --label-exclude "xfail"
           packages_names: fastrtps
           workspace: ${{ github.workspace }}
           test_report_artifact: ${{ format('test_report_{0}_{1}_{2}', inputs.label, github.job, join(matrix.*, '_')) }}
