@@ -51,10 +51,10 @@ public:
     virtual ~DummyType() = default;
 
     bool serialize(
-            void* data,
+            const void* const data,
             eprosima::fastdds::rtps::SerializedPayload_t* payload)
     {
-        DummyType* sample = reinterpret_cast<DummyType*>(data);
+        const DummyType* sample = static_cast<const DummyType*>(data);
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->max_size);
         // Object that serializes the data.
@@ -91,7 +91,7 @@ public:
     }
 
     std::function<uint32_t()> getSerializedSizeProvider(
-            void*)
+            const void* const)
     {
         return []() -> uint32_t
                {
@@ -100,7 +100,7 @@ public:
     }
 
     bool getKey(
-            void*,
+            const void* const,
             eprosima::fastdds::rtps::InstanceHandle_t*,
             bool)
     {
