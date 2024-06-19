@@ -76,6 +76,7 @@ Forthcoming
   * Servers only redirect discovery information of their direct clients.
   * Remote Discovery servers connection list can now be updated and modified at runtime without restrictions.
   * Fast DDS CLI has been updated to allow the creation of servers without GUID.
+* Refactor in XML Parser to return DynamicTypeBuilder instead of DynamicType
 
 Version 2.14.0
 --------------
