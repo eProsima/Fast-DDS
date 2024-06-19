@@ -1198,6 +1198,24 @@ bool RTPSParticipantImpl::create_writer(
 {
     *WriterOut = nullptr;
 
+    if (hist == nullptr)
+    {
+        EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Need a WriterHistory to create an RTPSWriter");
+        return false;
+    }
+
+    if (!hist->get_payload_pool())
+    {
+        EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "WriterHistory needs a payload pool to create an RTPSWriter");
+        return false;
+    }
+
+    if (!hist->get_change_pool())
+    {
+        EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "WriterHistory needs a change pool to create an RTPSWriter");
+        return false;
+    }
+
     auto callback = [hist, listen, this]
                 (const GUID_t& guid, WriterAttributes& watt, fastdds::rtps::FlowController* flow_controller,
                     IPersistenceService* persistence, bool is_reliable) -> RTPSWriter*

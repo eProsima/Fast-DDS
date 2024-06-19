@@ -109,13 +109,6 @@ void pool_initialization_test (
     ASSERT_NE(participant, nullptr);
 
     std::shared_ptr<TestPayloadPool> pool;
-    pool = std::make_shared<TestPayloadPool>();
-
-    // Creating the Writer initializes the PayloadPool with the initial reserved size
-    EXPECT_CALL(*pool, get_payload_delegate(TestDataType::data_size, _))
-            .Times(0);
-    EXPECT_CALL(*pool, release_payload_delegate(_))
-            .Times(0);
 
     HistoryAttributes h_attr;
     h_attr.memoryPolicy = policy;
@@ -125,6 +118,19 @@ void pool_initialization_test (
 
     WriterAttributes w_attr;
     RTPSWriter* writer = RTPSDomain::createRTPSWriter(participant, w_attr, history);
+    EXPECT_EQ(nullptr, writer);
+
+    delete history;
+    pool = std::make_shared<TestPayloadPool>();
+    history = new WriterHistory(h_attr, pool);
+
+    // Creating the Writer initializes the PayloadPool with the initial reserved size
+    EXPECT_CALL(*pool, get_payload_delegate(TestDataType::data_size, _))
+            .Times(0);
+    EXPECT_CALL(*pool, release_payload_delegate(_))
+            .Times(0);
+
+    writer = RTPSDomain::createRTPSWriter(participant, w_attr, history);
 
     Mock::VerifyAndClearExpectations(pool.get());
 

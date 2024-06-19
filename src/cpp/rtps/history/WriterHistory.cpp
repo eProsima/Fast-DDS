@@ -90,15 +90,7 @@ WriterHistory::WriterHistory(
     , payload_pool_(payload_pool)
 {
     PoolConfig cfg = PoolConfig::from_history_attributes(att);
-    auto change_init = [&payload_pool, &cfg](CacheChange_t* change) -> void
-            {
-                if (payload_pool->get_payload(cfg.payload_initial_size,
-                        change->serializedPayload))
-                {
-                    payload_pool->release_payload(change->serializedPayload);
-                }
-            };
-    change_pool_ = std::make_shared<CacheChangePool>(cfg, change_init);
+    change_pool_ = std::make_shared<CacheChangePool>(cfg);
 }
 
 WriterHistory::WriterHistory(
