@@ -104,7 +104,7 @@ private:
     mutable std::mutex terminate_cv_mtx_;
 
     std::condition_variable terminate_cv_;
-    
+
 };
 
 } // namespace xtypes
