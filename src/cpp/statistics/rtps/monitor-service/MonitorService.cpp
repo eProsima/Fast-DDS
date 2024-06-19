@@ -458,14 +458,14 @@ bool MonitorService::create_endpoint()
     status_writer_payload_pool_->reserve_history(writer_pool_cfg, false);
 
     status_writer_history_.reset(new eprosima::fastdds::dds::DataWriterHistory(
-            status_writer_payload_pool_,
-            std::make_shared<fastdds::rtps::CacheChangePool>(writer_pool_cfg),
-            tatt, type_.m_typeSize,
-            MemoryManagementPolicy_t::PREALLOCATED_WITH_REALLOC_MEMORY_MODE,
-            [](
-                const InstanceHandle_t& ) -> void
-            {
-            }));
+                status_writer_payload_pool_,
+                std::make_shared<fastdds::rtps::CacheChangePool>(writer_pool_cfg),
+                tatt, type_.m_typeSize,
+                MemoryManagementPolicy_t::PREALLOCATED_WITH_REALLOC_MEMORY_MODE,
+                [](
+                    const InstanceHandle_t& ) -> void
+                {
+                }));
 
     listener_ = new MonitorServiceListener(this);
 

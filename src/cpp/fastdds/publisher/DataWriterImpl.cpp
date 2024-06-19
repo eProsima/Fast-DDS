@@ -366,11 +366,11 @@ ReturnCode_t DataWriterImpl::enable()
         static_cast<WriterListener*>(&writer_listener_));
 
     if (writer != nullptr &&
-        w_att.endpoint.data_sharing_configuration().kind() != DataSharingKind::OFF)
+            w_att.endpoint.data_sharing_configuration().kind() != DataSharingKind::OFF)
     {
         auto writer_pool = std::dynamic_pointer_cast<fastdds::rtps::WriterPool>(pool);
         if (!writer_pool || !writer_pool->init_shared_memory(
-            writer, w_att.endpoint.data_sharing_configuration().shm_directory()))
+                    writer, w_att.endpoint.data_sharing_configuration().shm_directory()))
         {
             EPROSIMA_LOG_ERROR(DATA_WRITER, "Could not initialize DataSharing writer pool");
             RTPSDomain::removeRTPSWriter(writer);

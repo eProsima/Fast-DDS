@@ -128,12 +128,14 @@ public:
         std::shared_ptr<fastdds::rtps::IChangePool> change_pool;
 
         history_.reset(new DataWriterHistory(
-            payload_pool,
-            change_pool,
-            atts_,
-            500,
-            fastdds::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE,
-            [](const InstanceHandle_t&) {}));
+                    payload_pool,
+                    change_pool,
+                    atts_,
+                    500,
+                    fastdds::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE,
+                    [](const InstanceHandle_t&)
+                    {
+                    }));
         return RETCODE_OK;
     }
 
