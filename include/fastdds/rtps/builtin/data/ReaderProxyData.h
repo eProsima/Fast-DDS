@@ -305,22 +305,22 @@ public:
     }
 
     FASTDDS_EXPORTED_API void type_id(
-            const TypeIdV1& other_type_id)
+            const dds::TypeIdV1& other_type_id)
     {
         type_id() = other_type_id;
     }
 
-    FASTDDS_EXPORTED_API const TypeIdV1& type_id() const
+    FASTDDS_EXPORTED_API const dds::TypeIdV1& type_id() const
     {
         assert(m_type_id != nullptr);
         return *m_type_id;
     }
 
-    FASTDDS_EXPORTED_API TypeIdV1& type_id()
+    FASTDDS_EXPORTED_API dds::TypeIdV1& type_id()
     {
         if (m_type_id == nullptr)
         {
-            m_type_id = new TypeIdV1();
+            m_type_id = new dds::TypeIdV1();
         }
         return *m_type_id;
     }
@@ -331,22 +331,22 @@ public:
     }
 
     FASTDDS_EXPORTED_API void type(
-            const TypeObjectV1& other_type)
+            const dds::TypeObjectV1& other_type)
     {
         type() = other_type;
     }
 
-    FASTDDS_EXPORTED_API const TypeObjectV1& type() const
+    FASTDDS_EXPORTED_API const dds::TypeObjectV1& type() const
     {
         assert(m_type != nullptr);
         return *m_type;
     }
 
-    FASTDDS_EXPORTED_API TypeObjectV1& type()
+    FASTDDS_EXPORTED_API dds::TypeObjectV1& type()
     {
         if (m_type == nullptr)
         {
-            m_type = new TypeObjectV1();
+            m_type = new dds::TypeObjectV1();
         }
         return *m_type;
     }
@@ -357,22 +357,22 @@ public:
     }
 
     FASTDDS_EXPORTED_API void type_information(
-            const xtypes::TypeInformationParameter& other_type_information)
+            const dds::xtypes::TypeInformationParameter& other_type_information)
     {
         type_information() = other_type_information;
     }
 
-    FASTDDS_EXPORTED_API const xtypes::TypeInformationParameter& type_information() const
+    FASTDDS_EXPORTED_API const dds::xtypes::TypeInformationParameter& type_information() const
     {
         assert(m_type_information != nullptr);
         return *m_type_information;
     }
 
-    FASTDDS_EXPORTED_API xtypes::TypeInformationParameter& type_information()
+    FASTDDS_EXPORTED_API dds::xtypes::TypeInformationParameter& type_information()
     {
         if (m_type_information == nullptr)
         {
-            m_type_information = new xtypes::TypeInformationParameter();
+            m_type_information = new dds::xtypes::TypeInformationParameter();
         }
         return *m_type_information;
     }
@@ -502,11 +502,11 @@ private:
     //!Topic kind
     TopicKind_t m_topicKind;
     //!Type Identifier
-    TypeIdV1* m_type_id;
+    dds::TypeIdV1* m_type_id;
     //!Type Object
-    TypeObjectV1* m_type;
+    dds::TypeObjectV1* m_type;
     //!Type Information
-    xtypes::TypeInformationParameter* m_type_information;
+    dds::xtypes::TypeInformationParameter* m_type_information;
     //!
     ParameterPropertyList_t m_properties;
     //!Information on the content filter applied by the reader.

@@ -265,7 +265,7 @@ TEST_P(DeadlineQos, KeyedTopicNoReaderVolatileWriterSetDeadline)
 {
     PubSubWriter<KeyedHelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
-    writer.durability_kind(VOLATILE_DURABILITY_QOS);
+    writer.durability_kind(eprosima::fastdds::dds::VOLATILE_DURABILITY_QOS);
 
     uint32_t deadline_period_ms = 50;
 
@@ -290,7 +290,7 @@ TEST_P(DeadlineQos, KeyedTopicBestEffortReaderVolatileWriterSetDeadline)
     PubSubWriter<KeyedHelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     PubSubReader<KeyedHelloWorldPubSubType> reader(TEST_TOPIC_NAME);
 
-    writer.durability_kind(VOLATILE_DURABILITY_QOS);
+    writer.durability_kind(eprosima::fastdds::dds::VOLATILE_DURABILITY_QOS);
 
     uint32_t deadline_period_ms = 50;
 

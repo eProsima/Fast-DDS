@@ -76,7 +76,7 @@ private:
     bool separateKey(
             InstanceHandle_t& key,
             GuidPrefix_t* guidP,
-            LivelinessQosPolicyKind* liveliness);
+            dds::LivelinessQosPolicyKind* liveliness);
 
     /**
      * Compute the key from a CacheChange_t
@@ -96,7 +96,7 @@ private:
      */
     bool get_wlp_kind(
             const octet* serialized_kind,
-            LivelinessQosPolicyKind& liveliness_kind);
+            dds::LivelinessQosPolicyKind& liveliness_kind);
 
     //! A pointer to the writer liveliness protocol
     WLP* mp_WLP;

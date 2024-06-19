@@ -125,7 +125,7 @@ void ReaderProxy::start(
     is_active_ = true;
     durability_kind_ = reader_attributes.m_qos.m_durability.durabilityKind();
     expects_inline_qos_ = reader_attributes.m_expectsInlineQos;
-    is_reliable_ = reader_attributes.m_qos.m_reliability.kind != BEST_EFFORT_RELIABILITY_QOS;
+    is_reliable_ = reader_attributes.m_qos.m_reliability.kind != dds::BEST_EFFORT_RELIABILITY_QOS;
     disable_positive_acks_ = reader_attributes.disable_positive_acks();
     if (durability_kind_ == DurabilityKind_t::VOLATILE)
     {
@@ -152,7 +152,7 @@ bool ReaderProxy::update(
 {
     durability_kind_ = reader_attributes.m_qos.m_durability.durabilityKind();
     expects_inline_qos_ = reader_attributes.m_expectsInlineQos;
-    is_reliable_ = reader_attributes.m_qos.m_reliability.kind != BEST_EFFORT_RELIABILITY_QOS;
+    is_reliable_ = reader_attributes.m_qos.m_reliability.kind != dds::BEST_EFFORT_RELIABILITY_QOS;
     disable_positive_acks_ = reader_attributes.disable_positive_acks();
 
     locator_info_.update(

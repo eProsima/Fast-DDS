@@ -54,7 +54,7 @@ PersistentWriter::PersistentWriter(
             static_cast<int32_t>(hist->m_changes.size()) == hist->m_att.maximumReservedCaches;
 
     // Prepare the changes for datasharing if compatible
-    if (att.endpoint.data_sharing_configuration().kind() != OFF)
+    if (att.endpoint.data_sharing_configuration().kind() != dds::OFF)
     {
         auto pool = std::dynamic_pointer_cast<WriterPool>(payload_pool);
         assert(pool != nullptr);

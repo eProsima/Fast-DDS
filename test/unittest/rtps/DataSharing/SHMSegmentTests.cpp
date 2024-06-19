@@ -50,7 +50,7 @@ TEST(SHMSegmentTests, Writer)
     history_attr.maximumReservedCaches = 50;
     WriterHistory* history = new WriterHistory(history_attr);
     WriterAttributes writer_attr;
-    DataSharingQosPolicy dsq;
+    dds::DataSharingQosPolicy dsq;
     // We select a folder to force the use of SharedFileSegment
     dsq.automatic("tmp");
     writer_attr.endpoint.set_data_sharing_configuration(dsq);

@@ -90,10 +90,12 @@ void run_parametrized_test(
         bool reliable_reader)
 {
     // Set test parameters
-    ReliabilityQosPolicyKind writer_reliability =
-            reliable_writer ? RELIABLE_RELIABILITY_QOS : BEST_EFFORT_RELIABILITY_QOS;
-    ReliabilityQosPolicyKind reader_reliability =
-            reliable_reader ? RELIABLE_RELIABILITY_QOS : BEST_EFFORT_RELIABILITY_QOS;
+    eprosima::fastdds::dds::ReliabilityQosPolicyKind writer_reliability =
+            reliable_writer ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS : eprosima::fastdds::dds::
+                    BEST_EFFORT_RELIABILITY_QOS;
+    eprosima::fastdds::dds::ReliabilityQosPolicyKind reader_reliability =
+            reliable_reader ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS : eprosima::fastdds::dds::
+                    BEST_EFFORT_RELIABILITY_QOS;
 
     // Set up
     PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
@@ -108,8 +110,8 @@ void run_parametrized_test(
             .add_user_transport_to_pparams(sub_shm_descriptor)
             .add_user_transport_to_pparams(sub_udp_descriptor)
             .reliability(reader_reliability)
-            .durability_kind(VOLATILE_DURABILITY_QOS)
-            .history_kind(KEEP_ALL_HISTORY_QOS)
+            .durability_kind(eprosima::fastdds::dds::VOLATILE_DURABILITY_QOS)
+            .history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
             .init();
     ASSERT_TRUE(reader.isInitialized());
 
@@ -132,9 +134,9 @@ void run_parametrized_test(
             .add_user_transport_to_pparams(pub_shm_descriptor)
             .add_user_transport_to_pparams(pub_udp_descriptor)
             .reliability(writer_reliability)
-            .durability_kind(VOLATILE_DURABILITY_QOS)
-            .history_kind(KEEP_ALL_HISTORY_QOS)
-            .asynchronously(SYNCHRONOUS_PUBLISH_MODE)
+            .durability_kind(eprosima::fastdds::dds::VOLATILE_DURABILITY_QOS)
+            .history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
+            .asynchronously(eprosima::fastdds::dds::SYNCHRONOUS_PUBLISH_MODE)
             .init();
     ASSERT_TRUE(writer.isInitialized());
 

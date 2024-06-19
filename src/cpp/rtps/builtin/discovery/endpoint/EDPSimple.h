@@ -41,6 +41,7 @@ class ReaderAttributes;
 class WriterAttributes;
 class EDPListener;
 class ITopicPayloadPool;
+struct CacheChange_t;
 
 /**
  * Class EDPSimple, implements the Simple Endpoint Discovery Protocol defined in the RTPS specification.

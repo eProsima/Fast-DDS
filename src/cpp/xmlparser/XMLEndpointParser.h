@@ -149,7 +149,7 @@ private:
 
     XMLP_ret get_disable_positive_acks_qos(
             tinyxml2::XMLElement* elem,
-            DisablePositiveACKsQosPolicy& disable_positive_acks_qos);
+            dds::DisablePositiveACKsQosPolicy& disable_positive_acks_qos);
 
     std::set<int16_t> m_endpointIds;
     std::set<uint32_t> m_entityIds;

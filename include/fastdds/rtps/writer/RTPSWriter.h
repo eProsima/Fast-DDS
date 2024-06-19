@@ -469,7 +469,7 @@ public:
      *
      * @return Liveliness kind
      */
-    const LivelinessQosPolicyKind& get_liveliness_kind() const;
+    const dds::LivelinessQosPolicyKind& get_liveliness_kind() const;
 
     /**
      * @brief A method to retrieve the liveliness lease duration
@@ -550,7 +550,7 @@ protected:
     bool m_separateSendingEnabled = false;
 
     //! The liveliness kind of this writer
-    LivelinessQosPolicyKind liveliness_kind_;
+    dds::LivelinessQosPolicyKind liveliness_kind_;
     //! The liveliness lease duration of this writer
     Duration_t liveliness_lease_duration_;
     //! The liveliness announcement period

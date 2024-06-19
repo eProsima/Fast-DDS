@@ -590,8 +590,8 @@ TEST(TransportUDP, MaliciousManipulatedDataOctetsToNextHeaderIgnore)
 
     // Set common QoS
     reader.disable_builtin_transport().add_user_transport_to_pparams(udp_transport)
-            .history_depth(10).reliability(eprosima::fastdds::RELIABLE_RELIABILITY_QOS);
-    writer.history_depth(10).reliability(eprosima::fastdds::RELIABLE_RELIABILITY_QOS);
+            .history_depth(10).reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
+    writer.history_depth(10).reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
 
     // Set custom reader locator so we can send malicious data to a known location
     Locator_t reader_locator;

@@ -636,8 +636,8 @@ void PDPClient::removeRemoteEndpoints(
                 temp_writer_data->persistence_guid(pdata->get_persistence_guid());
                 temp_writer_data->set_persistence_entity_id(c_EntityId_SPDPWriter);
                 temp_writer_data->set_remote_locators(pdata->metatraffic_locators, network, true);
-                temp_writer_data->m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-                temp_writer_data->m_qos.m_durability.kind = TRANSIENT_DURABILITY_QOS;
+                temp_writer_data->m_qos.m_reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
+                temp_writer_data->m_qos.m_durability.kind = dds::TRANSIENT_DURABILITY_QOS;
                 endpoints->reader.reader_->matched_writer_add(*temp_writer_data);
             }
         }
@@ -662,8 +662,8 @@ void PDPClient::removeRemoteEndpoints(
                 temp_reader_data->m_expectsInlineQos = false;
                 temp_reader_data->guid(rguid);
                 temp_reader_data->set_remote_locators(pdata->metatraffic_locators, network, true);
-                temp_reader_data->m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-                temp_reader_data->m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+                temp_reader_data->m_qos.m_reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
+                temp_reader_data->m_qos.m_durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
                 endpoints->writer.writer_->matched_reader_add(*temp_reader_data);
             }
         }
@@ -888,8 +888,8 @@ void PDPClient::match_pdp_writer_nts_(
     temp_writer_data->guid({ prefix_override, endpoints->writer.writer_->getGuid().entityId });
     temp_writer_data->set_multicast_locators(server_att.metatrafficMulticastLocatorList, network);
     temp_writer_data->set_remote_unicast_locators(server_att.metatrafficUnicastLocatorList, network);
-    temp_writer_data->m_qos.m_durability.kind = TRANSIENT_DURABILITY_QOS;
-    temp_writer_data->m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    temp_writer_data->m_qos.m_durability.kind = dds::TRANSIENT_DURABILITY_QOS;
+    temp_writer_data->m_qos.m_reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
 #if HAVE_SECURITY
     if (should_protect_discovery())
     {
@@ -922,8 +922,8 @@ void PDPClient::match_pdp_reader_nts_(
     temp_reader_data->guid({ prefix_override, endpoints->reader.reader_->getGuid().entityId });
     temp_reader_data->set_multicast_locators(server_att.metatrafficMulticastLocatorList, network);
     temp_reader_data->set_remote_unicast_locators(server_att.metatrafficUnicastLocatorList, network);
-    temp_reader_data->m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-    temp_reader_data->m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    temp_reader_data->m_qos.m_durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
+    temp_reader_data->m_qos.m_reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
 #if HAVE_SECURITY
     if (should_protect_discovery())
     {
