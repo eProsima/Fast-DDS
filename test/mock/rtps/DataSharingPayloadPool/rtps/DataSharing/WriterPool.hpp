@@ -42,6 +42,11 @@ public:
         return true;
     }
 
+    bool is_initialized() const
+    {
+        return writer_guid_ != GUID_t::unknown();
+    }
+
     void add_to_shared_history(
             const CacheChange_t* /*cache_change*/)
     {

@@ -19,6 +19,7 @@
 
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
 
+#include <memory>
 #include <mutex>
 
 #include <fastdds/dds/log/Log.hpp>
@@ -82,6 +83,15 @@ void RTPSWriter::init(
     if (mp_history->m_att.memoryPolicy == PREALLOCATED_MEMORY_MODE)
     {
         fixed_payload_size_ = mp_history->m_att.payloadMaxSize;
+    }
+
+    if (att.endpoint.data_sharing_configuration().kind() != dds::OFF)
+    {
+        std::shared_ptr<WriterPool> pool = std::dynamic_pointer_cast<WriterPool>(mp_history->get_payload_pool());
+        if (!pool || !pool->init_shared_memory(this, att.endpoint.data_sharing_configuration().shm_directory()))
+        {
+            EPROSIMA_LOG_ERROR(RTPS_WRITER, "Could not initialize DataSharing writer pool");
+        }
     }
 
     mp_history->mp_writer = this;
