@@ -64,15 +64,16 @@ ReturnCode_t dyn_type_to_tree(
 
             for (const auto& member : members_by_name)
             {
-                ret = dyn_type_to_tree(member.second, member.first, node);
+                utilities::collections::TreeNode<TreeNodeType> child;
+                ret = dyn_type_to_tree(member.second, member.first, child);
 
                 if (ret != RETCODE_OK)
                 {
                     return ret;
                 }
 
-                // Add each member with its name as a new node in a branch (recursion)
-                parent.add_branch(node);
+                // Add each member with its name as a new child in a branch (recursion)
+                parent.add_branch(child);
             }
 
             node = parent;
@@ -92,7 +93,7 @@ ReturnCode_t dyn_type_to_tree(
             }
 
             std::string internal_str;
-            ret = dyn_type_to_str(internal_type, internal_str);
+            ret = dyn_type_to_str(type, internal_str);
 
             if (ret != RETCODE_OK)
             {
@@ -303,7 +304,7 @@ ReturnCode_t array_kind_to_str(
     for (const auto& bound : bounds)
     {
         array_str += "[";
-        array_str += bound;
+        array_str += std::to_string(bound);
         array_str += "]";
     }
 
@@ -349,13 +350,11 @@ ReturnCode_t sequence_kind_to_str(
 
     for (const auto& bound : bounds)
     {
-        if (bound == static_cast<std::uint32_t>(LENGTH_UNLIMITED))
+        const auto UNBOUNDED = static_cast<std::uint32_t>(LENGTH_UNLIMITED);
+
+        if (bound != UNBOUNDED)
         {
-            sequence_str += ", unbounded";
-        }
-        else
-        {
-            sequence_str += ", " + bound;
+            sequence_str += ", " + std::to_string(bound);
         }
     }
 
@@ -527,7 +526,9 @@ ReturnCode_t dyn_type_tree_to_idl(
                 break;
             }
             default:
+            {
                 continue;
+            }
         }
 
         if (ret != RETCODE_OK)
@@ -722,9 +723,16 @@ ReturnCode_t node_to_str(
 
     if (node.info.dynamic_type->get_kind() == TK_ARRAY)
     {
-        auto dim_pos = node.info.type_kind_name.find("[");
-        auto kind_name_str = node.info.type_kind_name.substr(0, dim_pos);
-        auto dim_str = node.info.type_kind_name.substr(dim_pos, std::string::npos);
+        const auto dim_pos = node.info.type_kind_name.find("[");
+
+        if (dim_pos == std::string::npos)
+        {
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Array type name is not well formed.");
+            return RETCODE_BAD_PARAMETER;
+        }
+
+        const auto kind_name_str = node.info.type_kind_name.substr(0, dim_pos);
+        const auto dim_str = node.info.type_kind_name.substr(dim_pos, std::string::npos);
 
         node_str += kind_name_str + " " + node.info.member_name + dim_str;
     }
