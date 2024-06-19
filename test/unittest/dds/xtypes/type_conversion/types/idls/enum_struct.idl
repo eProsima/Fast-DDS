@@ -1,0 +1,12 @@
+enum ColorEnum
+{
+    RED,
+    GREEN,
+    BLUE
+};
+
+struct enum_struct
+{
+    unsigned long index;
+    ColorEnum enum_value;
+};

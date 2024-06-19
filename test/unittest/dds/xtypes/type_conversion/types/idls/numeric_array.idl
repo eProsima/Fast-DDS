@@ -1,0 +1,4 @@
+struct numeric_array
+{
+    long points[3];
+};

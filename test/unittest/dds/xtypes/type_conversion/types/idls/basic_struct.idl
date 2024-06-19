@@ -1,0 +1,9 @@
+struct TheOtherObject
+{
+    long some_num;
+};
+
+struct basic_struct
+{
+    TheOtherObject sub_struct;
+};

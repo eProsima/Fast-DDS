@@ -1,0 +1,4 @@
+struct map_struct
+{
+    map<string, boolean> my_map;
+};

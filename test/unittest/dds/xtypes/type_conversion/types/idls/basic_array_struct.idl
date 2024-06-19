@@ -1,0 +1,11 @@
+struct TheOtherObjectInArray
+{
+    long some_num;
+    boolean positive;
+};
+
+struct basic_array_struct
+{
+    unsigned long index;
+    TheOtherObjectInArray sub_structs[5];
+};
