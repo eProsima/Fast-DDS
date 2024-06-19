@@ -58,7 +58,7 @@
  * @brief This class represents the enumeration Color defined by the user in the IDL file.
  * @ingroup ContentFilterTestType
  */
-enum class Color : uint32_t
+enum class Color : int32_t
 {
     RED,
     GREEN,
@@ -70,7 +70,7 @@ enum class Color : uint32_t
  * @brief This class represents the enumeration Material defined by the user in the IDL file.
  * @ingroup ContentFilterTestType
  */
-enum class Material : uint32_t
+enum class Material : int32_t
 {
     WOOD,
     PLASTIC,

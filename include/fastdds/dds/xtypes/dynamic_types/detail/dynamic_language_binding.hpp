@@ -103,7 +103,7 @@ typedef std::map<ObjectName, ObjectName> Parameters;
  * @brief This class represents the enumeration ExtensibilityKind defined by the user in the IDL file.
  * @ingroup dynamic_language_binding
  */
-enum class ExtensibilityKind : uint32_t
+enum class ExtensibilityKind : int32_t
 {
     FINAL,
     APPENDABLE,
@@ -113,7 +113,7 @@ enum class ExtensibilityKind : uint32_t
  * @brief This class represents the enumeration TryConstructKind defined by the user in the IDL file.
  * @ingroup dynamic_language_binding
  */
-enum class TryConstructKind : uint32_t
+enum class TryConstructKind : int32_t
 {
     USE_DEFAULT,
     DISCARD,
