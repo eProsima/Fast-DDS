@@ -32,7 +32,6 @@ bool MemoryDataType::serialize(
     *(uint32_t*)payload->data = lt->seqnum;
     *(uint32_t*)(payload->data + 4) = (uint32_t)lt->data.size();
 
-    //std::copy(lt->data.begin(),lt->data.end(),payload->data+8);
     memcpy(payload->data + 8, lt->data.data(), lt->data.size());
     payload->length = static_cast<uint32_t>(8 + lt->data.size());
     return true;
@@ -114,10 +113,7 @@ bool TestCommandDataType::deserialize(
         void* data)
 {
     TestCommandType* t = static_cast<TestCommandType*>(data);
-    // cout << "PAYLOAD LENGTH: "<<payload->length << endl;
-    // cout << "PAYLOAD FIRST BYTE: "<< (int)payload->data[0] << endl;
     t->m_command = static_cast<TESTCOMMAND>(*(payload->data));
-    // cout << "COMMAND: "<<t->m_command<< endl;
     return true;
 }
 
