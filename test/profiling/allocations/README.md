@@ -1,6 +1,6 @@
 ## Requisites
 
-This test uses [OSRF testing tools](https://github.com/osrf/osrf_testing_tools_cpp) memory_tools package.
+This test uses [OSRF testing tools v1.4.0](https://github.com/osrf/osrf_testing_tools_cpp/tree/1.4.0) memory_tools package.
 OSRF testing tools should be installed before building this test.
 
 ## Usage
