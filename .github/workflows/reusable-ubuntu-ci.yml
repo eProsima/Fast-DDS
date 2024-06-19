@@ -710,7 +710,7 @@ jobs:
       - name: Install apt dependencies
         uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
         with:
-          packages: libasio-dev libtinyxml2-dev libssl-dev
+          packages: libasio-dev libtinyxml2-dev libssl-dev valgrind
           update: false
           upgrade: false
 
@@ -750,7 +750,7 @@ jobs:
         uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta
-          colcon_build_args: ${{ inputs.colcon-args }}
+          colcon_build_args: ${{ inputs.colcon-args }} --packages-up-to fastdds
           cmake_args: '-DPROFILING_TESTS=ON ${{ inputs.cmake-args }}'
           cmake_args_default: ${{ env.colcon-build-default-cmake-args }}
           cmake_build_type: ${{ matrix.cmake-build-type }}
