@@ -113,7 +113,11 @@ WriterHistory::WriterHistory(
 
 WriterHistory::~WriterHistory()
 {
-    // TODO Auto-generated destructor stub
+    // As releasing the change pool will delete the cache changes it owns,
+    // the payload pool may be called to release their payloads, so we should
+    // ensure that the payload pool is destroyed after the change pool.
+    change_pool_.reset();
+    payload_pool_.reset();
 }
 
 const std::shared_ptr<IPayloadPool>& WriterHistory::get_payload_pool() const
