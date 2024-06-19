@@ -891,6 +891,25 @@ public:
         on_participant_qos_update_ = f;
     }
 
+    PubSubParticipant& fill_server_qos(
+            eprosima::fastdds::dds::WireProtocolConfigQos& qos,
+            eprosima::fastrtps::rtps::GuidPrefix_t& guid,
+            eprosima::fastrtps::rtps::Locator_t& locator_server,
+            uint16_t port,
+            uint32_t kind)
+    {
+        qos.builtin.discovery_config.discoveryProtocol = eprosima::fastrtps::rtps::DiscoveryProtocol_t::SERVER;
+        qos.prefix = guid;
+        // Generate server's listening locator
+        eprosima::fastrtps::rtps::IPLocator::setIPv4(locator_server, 127, 0, 0, 1);
+        eprosima::fastrtps::rtps::IPLocator::setPhysicalPort(locator_server, port);
+        locator_server.kind = kind;
+        // Leave logical port as 0 to use TCP DS default logical port
+        qos.builtin.metatrafficUnicastLocatorList.push_back(locator_server);
+
+        return wire_protocol(qos);
+    }
+
 private:
 
     PubSubParticipant& operator =(
