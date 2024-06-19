@@ -68,7 +68,7 @@ private:
 
 /*
  * This test checks that the default XML file is loaded only once when there is a DEFAULT_FASTDDS_PROFILES.xml file
- * in the current directory and the environment variable FASTRTPS_DEFAULT_PROFILES_FILE is set pointing to the same
+ * in the current directory and the environment variable FASTDDS_DEFAULT_PROFILES_FILE is set pointing to the same
  * file.
  * 1. Initialize Mock Consumer to consume the LogInfo entry that the library generates when the file has been already
  * parsed. Set filters to consume only the desired entry.
@@ -107,7 +107,7 @@ TEST_F(XMLLoadFileTests, load_twice_default_xml)
     // Write DEFAULT_FASTDDS_PROFILES.xml
     std::ofstream xmlFile;
     xmlFile.open("DEFAULT_FASTDDS_PROFILES.xml");
-    xmlFile << "<dds xmlns=\"http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles\">";
+    xmlFile << "<dds xmlns=\"http://www.eprosima.com\">";
     xmlFile << "<profiles><participant profile_name=\"test_participant_profile\" is_default_profile=\"true\">";
     xmlFile << "<rtps><useBuiltinTransports>true</useBuiltinTransports><name>test_name</name></rtps></participant>";
     xmlFile << "</profiles></dds>";
