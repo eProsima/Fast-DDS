@@ -55,6 +55,7 @@ SubscriberApp::SubscriberApp(
     , type_(new DeliveryMechanismsPubSubType())
     , received_samples_(0)
     , samples_(config.samples)
+    , stop_(false)
 {
     // Create the participant
     DomainParticipantQos pqos = PARTICIPANT_QOS_DEFAULT;
