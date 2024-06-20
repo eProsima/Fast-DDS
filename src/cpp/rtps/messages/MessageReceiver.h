@@ -16,8 +16,8 @@
  * @file MessageReceiver.h
  */
 
-#ifndef _FASTDDS_RTPS_MESSAGERECEIVER_H_
-#define _FASTDDS_RTPS_MESSAGERECEIVER_H_
+#ifndef FASTDDS_RTPS_MESSAGES__MESSAGERECEIVER_H
+#define FASTDDS_RTPS_MESSAGES__MESSAGERECEIVER_H
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <functional>
@@ -301,9 +301,9 @@ private:
 
 };
 
-} /* namespace rtps */
-} /* namespace fastdds */
-} /* namespace eprosima */
+} // namespace rtps
+} // namespace fastdds
+} // namespace eprosima
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#endif /* _FASTDDS_RTPS_MESSAGERECEIVER_H_ */
+#endif // FASTDDS_RTPS_MESSAGES__MESSAGERECEIVER_H

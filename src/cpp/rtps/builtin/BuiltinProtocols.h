@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _FASTDDS_RTPS_BUILTINPROTOCOLS_H_
-#define _FASTDDS_RTPS_BUILTINPROTOCOLS_H_
+#ifndef FASTDDS_RTPS_BUILTIN__BUILTINPROTOCOLS_H
+#define FASTDDS_RTPS_BUILTIN__BUILTINPROTOCOLS_H
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <list>
@@ -208,7 +208,7 @@ public:
 };
 
 } // namespace rtps
-} /* namespace rtps */
-} /* namespace eprosima */
+} // namespace rtps
+} // namespace eprosima
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#endif /* _FASTDDS_RTPS_BUILTINPROTOCOLS_H_ */
+#endif // FASTDDS_RTPS_BUILTIN__BUILTINPROTOCOLS_H

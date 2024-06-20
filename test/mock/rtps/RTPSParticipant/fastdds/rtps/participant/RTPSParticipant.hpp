@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef FASTDDS_RTPS_PARTICIPANT__RTPSPARTICIPANTLISTENER_HPP
-#define FASTDDS_RTPS_PARTICIPANT__RTPSPARTICIPANTLISTENER_HPP
+#ifndef FASTDDS_RTPS_PARTICIPANT__RTPSPARTICIPANT_HPP
+#define FASTDDS_RTPS_PARTICIPANT__RTPSPARTICIPANT_HPP
 
 #include <cstdlib>
 #include <memory>
@@ -256,8 +256,8 @@ public:
     RTPSParticipantImpl* mp_impl;
 };
 
-} // namespace rtps 
-} // namespace fastdds 
-} // namespace eprosima 
+} // namespace rtps
+} // namespace fastdds
+} // namespace eprosima
 
-#endif // FASTDDS_RTPS_PARTICIPANT__RTPSPARTICIPANTLISTENER_HPP 
+#endif // FASTDDS_RTPS_PARTICIPANT__RTPSPARTICIPANT_HPP

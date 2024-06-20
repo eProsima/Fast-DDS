@@ -16,8 +16,8 @@
  * @file StatefulReader.hpp
  */
 
-#ifndef RTPS_READER__STATEFULREADER_HPP
-#define RTPS_READER__STATEFULREADER_HPP
+#ifndef FASTDDS_RTPS_READER__STATEFULREADER_HPP
+#define FASTDDS_RTPS_READER__STATEFULREADER_HPP
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
@@ -368,10 +368,10 @@ private:
     bool is_alive_;
 };
 
-} /* namespace rtps */
-} /* namespace fastdds */
-} /* namespace eprosima */
+} // namespace rtps 
+} // namespace fastdds 
+} // namespace eprosima 
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#endif // RTPS_READER__STATEFULREADER_HPP
+#endif // FASTDDS_RTPS_READER__STATEFULREADER_HPP

@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _FASTDDS_RTPS_RESOURCES_RESOURCEEVENT_H_
-#define _FASTDDS_RTPS_RESOURCES_RESOURCEEVENT_H_
+#ifndef FASTDDS_RTPS_RESOURCES__RESOURCEEVENT_H
+#define FASTDDS_RTPS_RESOURCES__RESOURCEEVENT_H
 
 #include <gmock/gmock.h>
 
@@ -53,5 +53,5 @@ public:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif //_FASTDDS_RTPS_RESOURCES_RESOURCEEVENT_H_
+#endif //FASTDDS_RTPS_RESOURCES__RESOURCEEVENT_H
 

@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _FASTDDS_RTPS_WLP_HPP_
-#define _FASTDDS_RTPS_WLP_HPP_
+#ifndef FASTDDS_RTPS_BUILTIN_LIVELINESS__WLP_HPP
+#define FASTDDS_RTPS_BUILTIN_LIVELINESS__WLP_HPP
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <cstdint>
@@ -324,4 +324,4 @@ private:
 } /* namespace eprosima */
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#endif /* _FASTDDS_RTPS_WLP_HPP_ */
+#endif /* FASTDDS_RTPS_BUILTIN_LIVELINESS__WLP_HPP */

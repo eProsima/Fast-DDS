@@ -15,8 +15,8 @@
 /*!
  * @file SecurityManager.h
  */
-#ifndef _RTPS_SECURITY_SECURITYMANAGER_H_
-#define _RTPS_SECURITY_SECURITYMANAGER_H_
+#ifndef FASTDDS_RTPS_SECURITY__SECURITYMANAGER_H
+#define FASTDDS_RTPS_SECURITY__SECURITYMANAGER_H
 
 #include <atomic>
 #include <list>
@@ -949,4 +949,4 @@ private:
 } //namespace fastdds
 } //namespace eprosima
 
-#endif // _RTPS_SECURITY_SECURITYMANAGER_H_
+#endif // FASTDDS_RTPS_SECURITY__SECURITYMANAGER_H

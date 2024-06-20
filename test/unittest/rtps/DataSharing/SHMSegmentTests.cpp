@@ -15,7 +15,7 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include "fastdds/rtps/common/Types.h"
+#include "fastdds/rtps/common/Types.hpp"
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/rtps/history/WriterHistory.hpp>
 #include <fastdds/rtps/participant/RTPSParticipant.hpp>

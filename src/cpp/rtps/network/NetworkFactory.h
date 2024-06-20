@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef _RTPS_NETWORK_NETWORKFACTORY_H_
-#define _RTPS_NETWORK_NETWORKFACTORY_H_
+#ifndef FASTDDS_RTPS_NETWORK__NETWORKFACTORY_H
+#define FASTDDS_RTPS_NETWORK__NETWORKFACTORY_H
 
 #include <vector>
 #include <memory>
@@ -350,4 +350,4 @@ private:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif /* _RTPS_NETWORK_NETWORKFACTORY_H_ */
+#endif // FASTDDS_RTPS_NETWORK__NETWORKFACTORY_H

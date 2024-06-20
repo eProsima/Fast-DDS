@@ -15,8 +15,8 @@
 /*!
  * @file SecurityPluginFactory.h
  */
-#ifndef _RTPS_SECURITY_SECURITYPLUGINFACTORY_H_
-#define _RTPS_SECURITY_SECURITYPLUGINFACTORY_H_
+#ifndef FASTDDS_RTPS_SECURITY__SECURITYPLUGINFACTORY_H
+#define FASTDDS_RTPS_SECURITY__SECURITYPLUGINFACTORY_H
 
 #include <fastdds/rtps/attributes/PropertyPolicy.hpp>
 #include <rtps/security/accesscontrol/AccessControl.h>
@@ -82,4 +82,4 @@ private:
 } //namespace fastdds
 } //namespace eprosima
 
-#endif // _RTPS_SECURITY_SECURITYPLUGINFACTORY_H_
+#endif // FASTDDS_RTPS_SECURITY__SECURITYPLUGINFACTORY_H

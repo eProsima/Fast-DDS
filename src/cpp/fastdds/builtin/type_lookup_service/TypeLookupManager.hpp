@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _FASTDDS_BUILTIN_TYPE_LOOKUP_SERVICE_TYPE_LOOKUP_MANAGER_HPP_
-#define _FASTDDS_BUILTIN_TYPE_LOOKUP_SERVICE_TYPE_LOOKUP_MANAGER_HPP_
+#ifndef FASTDDS_FASTDDS_BUILTIN_TYPE_LOOKUP_SERVICE__TYPELOOKUPMANAGER_HPP
+#define FASTDDS_FASTDDS_BUILTIN_TYPE_LOOKUP_SERVICE__TYPELOOKUPMANAGER_HPP
 
 #include <cstdint>
 #include <mutex>
@@ -440,8 +440,8 @@ protected:
     static constexpr uint32_t typelookup_data_max_size = 5000;
 };
 
-} /* namespace builtin */
-} /* namespace dds */
-} /* namespace fastdds */
-} /* namespace eprosima */
-#endif /* _FASTDDS_BUILTIN_TYPE_LOOKUP_SERVICE_TYPE_LOOKUP_MANAGER_HPP_ */
+} // namespace builtin
+} // namespace dds
+} // namespace fastdds
+} // namespace eprosima
+#endif // FASTDDS_FASTDDS_BUILTIN_TYPE_LOOKUP_SERVICE__TYPELOOKUPMANAGER_HPP

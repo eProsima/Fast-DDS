@@ -16,8 +16,8 @@
  * @file StatelessWriter.hpp
  */
 
-#ifndef RTPS_WRITER__STATELESSWRITER_HPP
-#define RTPS_WRITER__STATELESSWRITER_HPP
+#ifndef FASTDDS_RTPS_WRITER__STATELESSWRITER_HPP
+#define FASTDDS_RTPS_WRITER__STATELESSWRITER_HPP
 
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
 

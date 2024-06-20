@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _FASTDDS_PARTICIPANTIMPL_HPP_
-#define _FASTDDS_PARTICIPANTIMPL_HPP_
+#ifndef FASTDDS_DOMAIN__DOMAINPARTICIPANTIMPL_HPP
+#define FASTDDS_DOMAIN__DOMAINPARTICIPANTIMPL_HPP
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <atomic>
@@ -701,8 +701,8 @@ protected:
             const DomainParticipantQos& from);
 };
 
-} /* namespace dds */
-} /* namespace fastdds */
-} /* namespace eprosima */
+} // namespace dds
+} // namespace fastdds
+} // namespace eprosima
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#endif /* _FASTDDS_PARTICIPANTIMPL_HPP_ */
+#endif // FASTDDS_DOMAIN__DOMAINPARTICIPANTIMPL_HPP

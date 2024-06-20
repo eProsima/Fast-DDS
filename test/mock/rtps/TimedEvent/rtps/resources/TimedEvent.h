@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef _FASTDDS_RTPS_RESOURCES_TIMEDEVENT_H_
-#define _FASTDDS_RTPS_RESOURCES_TIMEDEVENT_H_
+#ifndef FASTDDS_RTPS_RESOURCES__TIMEDEVENT_H
+#define FASTDDS_RTPS_RESOURCES__TIMEDEVENT_H
 
 #include <chrono>
 
@@ -52,5 +52,5 @@ public:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_RTPS_RESOURCES_TIMEDEVENT_H_
+#endif // FASTDDS_RTPS_RESOURCES__TIMEDEVENT_H
 

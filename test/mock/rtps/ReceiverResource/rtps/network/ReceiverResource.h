@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _RTPS_NETWORK_RECEIVERRESOURCE_H_
-#define _RTPS_NETWORK_RECEIVERRESOURCE_H_
+#ifndef FASTDDS_RTPS_NETWORK__RECEIVERRESOURCE_H
+#define FASTDDS_RTPS_NETWORK__RECEIVERRESOURCE_H
 
 #include <functional>
 #include <memory>
@@ -147,4 +147,4 @@ private:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _RTPS_NETWORK_RECEIVERRESOURCE_H_
+#endif // FASTDDS_RTPS_NETWORK__RECEIVERRESOURCE_H

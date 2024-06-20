@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef _FASTDDS_PARTICIPANTIMPL_HPP_
-#define _FASTDDS_PARTICIPANTIMPL_HPP_
+#ifndef FASTDDS_DOMAIN__DOMAINPARTICIPANTIMPL_HPP
+#define FASTDDS_DOMAIN__DOMAINPARTICIPANTIMPL_HPP
 
 #include <atomic>
 #include <map>
@@ -782,8 +782,8 @@ protected:
 
 };
 
-} // dds
-} // fastdds
-} // eprosima
+} // namespace dds
+} // namespace fastdds
+} // namespace eprosima
 
-#endif /* _FASTDDS_PARTICIPANTIMPL_HPP_ */
+#endif // FASTDDS_DOMAIN__DOMAINPARTICIPANTIMPL_HPP

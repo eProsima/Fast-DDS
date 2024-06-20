@@ -16,8 +16,8 @@
  * @file external_locators.hpp
  */
 
-#ifndef _RTPS_NETWORK_UTILS_EXTERNAL_LOCATORS_HPP_
-#define _RTPS_NETWORK_UTILS_EXTERNAL_LOCATORS_HPP_
+#ifndef FASTDDS_RTPS_NETWORK_UTILS_EXTERNAL_LOCATORS_HPP
+#define FASTDDS_RTPS_NETWORK_UTILS_EXTERNAL_LOCATORS_HPP
 
 #include <fastdds/rtps/attributes/ExternalLocators.hpp>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
@@ -123,4 +123,4 @@ void filter_remote_locators(
 } // namespace fastdds
 } // namespace eprosima
 
-#endif  // _RTPS_NETWORK_UTILS_EXTERNAL_LOCATORS_HPP_
+#endif  // FASTDDS_RTPS_NETWORK_UTILS_EXTERNAL_LOCATORS_HPP

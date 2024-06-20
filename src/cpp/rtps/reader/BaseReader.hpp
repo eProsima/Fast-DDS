@@ -16,8 +16,8 @@
  * @file BaseReader.hpp
  */
 
-#ifndef RTPS_READER__BASEREADER_HPP
-#define RTPS_READER__BASEREADER_HPP
+#ifndef FASTDDS_RTPS_READER__BASEREADER_HPP
+#define FASTDDS_RTPS_READER__BASEREADER_HPP
 
 #include <cstdint>
 #include <memory>
@@ -465,4 +465,4 @@ private:
 }  // namespace fastdds
 }  // namespace eprosima
 
-#endif /* RTPS_READER__BASEREADER_HPP */
+#endif // FASTDDS_RTPS_READER__BASEREADER_HPP

@@ -16,8 +16,8 @@
  * @file ReaderLocator.hpp
  */
 
-#ifndef RTPS_WRITER__READERLOCATOR_HPP
-#define RTPS_WRITER__READERLOCATOR_HPP
+#ifndef FASTDDS_RTPS_WRITER__READERLOCATOR_HPP
+#define FASTDDS_RTPS_WRITER__READERLOCATOR_HPP
 
 #include <vector>
 
@@ -256,4 +256,4 @@ private:
 } /* namespace fastdds */
 } /* namespace eprosima */
 
-#endif // RTPS_WRITER__READERLOCATOR_HPP
+#endif // FASTDDS_RTPS_WRITER__READERLOCATOR_HPP

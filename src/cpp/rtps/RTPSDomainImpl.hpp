@@ -13,8 +13,8 @@
 // limitations under the License.
 
 
-#ifndef _RTPS_RTPSDOMAINIMPL_HPP_
-#define _RTPS_RTPSDOMAINIMPL_HPP_
+#ifndef FASTDDS_RTPS__RTPSDOMAINIMPL_HPP
+#define FASTDDS_RTPS__RTPSDOMAINIMPL_HPP
 
 #include <chrono>
 #include <memory>
@@ -325,4 +325,4 @@ private:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif  // _RTPS_RTPSDOMAINIMPL_HPP_
+#endif  // FASTDDS_RTPS__RTPSDOMAINIMPL_HPP

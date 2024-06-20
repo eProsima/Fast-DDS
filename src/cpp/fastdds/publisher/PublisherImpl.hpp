@@ -18,8 +18,8 @@
 
 
 
-#ifndef _FASTDDS_PUBLISHERIMPL_HPP_
-#define _FASTDDS_PUBLISHERIMPL_HPP_
+#ifndef FASTDDS_PUBLISHER_PUBLISHERIMPL_HPP
+#define FASTDDS_PUBLISHER_PUBLISHERIMPL_HPP
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 
@@ -278,8 +278,8 @@ protected:
 
 };
 
-} /* namespace dds */
-} /* namespace fastdds */
-} /* namespace eprosima */
+} // namespace dds
+} // namespace fastdds
+} // namespace eprosima
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#endif /* _FASTDDS_PUBLISHER_HPP_ */
+#endif // FASTDDS_PUBLISHER_PUBLISHERIMPL_HPP

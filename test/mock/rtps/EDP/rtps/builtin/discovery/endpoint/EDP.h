@@ -16,8 +16,8 @@
  * @file EDP.h
  */
 
-#ifndef _FASTDDS_RTPS_EDP_H_
-#define _FASTDDS_RTPS_EDP_H_
+#ifndef FASTDDS_RTPS_BUILTIN_DISCOVERY_ENDPOINT_EDP_H
+#define FASTDDS_RTPS_BUILTIN_DISCOVERY_ENDPOINT_EDP_H
 #include <gmock/gmock.h>
 
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
@@ -134,4 +134,4 @@ public:
 } //namespace fastdds
 } //namespace eprosima
 
-#endif // _FASTDDS_RTPS_EDP_H_
+#endif // FASTDDS_RTPS_BUILTIN_DISCOVERY_ENDPOINT_EDP_H

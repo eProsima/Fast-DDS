@@ -16,8 +16,8 @@
  * @file StatefulWriter.hpp
  */
 
-#ifndef RTPS_WRITER__STATEFULWRITER_HPP
-#define RTPS_WRITER__STATEFULWRITER_HPP
+#ifndef FASTDDS_RTPS_WRITER__STATEFULWRITER_HPP
+#define FASTDDS_RTPS_WRITER__STATEFULWRITER_HPP
 
 #include <fastdds/rtps/history/WriterHistory.hpp>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
@@ -129,4 +129,4 @@ private:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // RTPS_WRITER__STATEFULWRITER_HPP
+#endif // FASTDDS_RTPS_WRITER__STATEFULWRITER_HPP

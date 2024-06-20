@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _FASTDDS_RTPS_BUILTIN_DISCOVERY_PARTICIPANT_PDPSIMPLE_H_
-#define _FASTDDS_RTPS_BUILTIN_DISCOVERY_PARTICIPANT_PDPSIMPLE_H_
+#ifndef FASTDDS_RTPS_BUILTIN_DISCOVERY_PARTICIPANT__PDPSIMPLE_H
+#define FASTDDS_RTPS_BUILTIN_DISCOVERY_PARTICIPANT__PDPSIMPLE_H
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <rtps/builtin/discovery/participant/PDP.h>
@@ -163,9 +163,9 @@ private:
 
 };
 
-} /* namespace rtps */
-} /* namespace fastdds */
-} /* namespace eprosima */
+} // namespace rtps
+} // namespace fastdds
+} // namespace eprosima
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#endif //_FASTDDS_RTPS_BUILTIN_DISCOVERY_PARTICIPANT_PDPSIMPLE_H_
+#endif //FASTDDS_RTPS_BUILTIN_DISCOVERY_PARTICIPANT__PDPSIMPLE_H

@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _FASTDDS_RTPS_EDP_H_
-#define _FASTDDS_RTPS_EDP_H_
+#ifndef FASTDDS_RTPS_BUILTIN_DISCOVERY_ENDPOINT_EDP_H
+#define FASTDDS_RTPS_BUILTIN_DISCOVERY_ENDPOINT_EDP_H
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <foonathan/memory/container.hpp>
@@ -401,9 +401,9 @@ private:
     foonathan::memory::map<GUID_t, fastdds::dds::PublicationMatchedStatus, pool_allocator_t> writer_status_;
 };
 
-} /* namespace rtps */
-} /* namespace fastdds */
-} /* namespace eprosima */
+} // namespace rtps
+} // namespace fastdds
+} // namespace eprosima
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#endif /* _FASTDDS_RTPS_EDP_H_ */
+#endif // FASTDDS_RTPS_BUILTIN_DISCOVERY_ENDPOINT_EDP_H

@@ -34,4 +34,4 @@ class OStreamConsumer : public LogConsumer
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // ifndef FASTDDS_DDS_LOG__OSTREAMCONSUMER_HPP
+#endif // FASTDDS_DDS_LOG__OSTREAMCONSUMER_HPP

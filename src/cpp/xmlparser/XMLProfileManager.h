@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-#ifndef XML_PROFILE_MANAGER_H_
-#define XML_PROFILE_MANAGER_H_
+#ifndef FASTDDS_XMLPARSER__XMLPROFILEMANAGER_H
+#define FASTDDS_XMLPARSER__XMLPROFILEMANAGER_H
 
 #include <cstdio>
 #include <map>
@@ -320,8 +320,8 @@ private:
     static p_dynamictype_map_t dynamic_types_;
 };
 
-} /* xmlparser */
-} /* namespace */
-} /* namespace eprosima */
+} // namespace xmlparser
+} // namespace fastdds
+} // namespace eprosima
 
-#endif // ifndef XML_PROFILE_MANAGER_H_
+#endif // FASTDDS_XMLPARSER__XMLPROFILEMANAGER_H

@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef XMLENDPOINTPARSER_H_
-#define XMLENDPOINTPARSER_H_
+#ifndef FASTDDS_XMLPARSER__XMLENDPOINTPARSER_H
+#define FASTDDS_XMLPARSER__XMLENDPOINTPARSER_H
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <cstdint>
@@ -158,9 +158,9 @@ private:
 };
 
 
-} /* xmlparser */
-} /* namespace */
-} /* namespace eprosima */
+} // namespace xmlparser
+} // namespace fastdds
+} // namespace eprosima
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#endif /* XMLENDPOINTPARSER_H_ */
+#endif // FASTDDS_XMLPARSER__XMLENDPOINTPARSER_H
