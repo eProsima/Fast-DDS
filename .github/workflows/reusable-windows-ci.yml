@@ -23,6 +23,15 @@ on:
         description: 'Branch or tag of Fast DDS repository (https://github.com/eProsima/Fast-DDS)'
         required: true
         type: string
+      run-build:
+        description: 'Run build jobs of Fast DDS'
+        required: true
+        type: boolean
+      run-tests:
+        description: 'Run test suite of Fast DDS'
+        required: false
+        type: boolean
+        default: true
 
 defaults:
   run:
@@ -31,6 +40,7 @@ defaults:
 jobs:
   reusable-windows-ci:
     runs-on: windows-2019
+    if: ${{ inputs.run-build == true }}
     strategy:
       fail-fast: false
       matrix:
@@ -99,7 +109,7 @@ jobs:
           packages: vcstool xmlschema
 
       - name: Update known hosts file for DNS resolver testing
-        if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') }}
+        if: ${{ inputs.run-tests == true }}
         run: |
           $hostfile = "$Env:SystemRoot\system32\drivers" -replace "\\", "/"
           $hostfile += "/etc/hosts"
@@ -172,7 +182,7 @@ jobs:
           workspace: ${{ github.workspace }}
 
       - name: Test
-        if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') }}
+        if: ${{ inputs.run-tests == true }}
         id: test
         uses: eProsima/eProsima-CI/windows/colcon_test@v0
         with:
@@ -186,7 +196,7 @@ jobs:
 
       - name: Test summary
         uses: eProsima/eProsima-CI/windows/junit_summary@v0
-        if: ${{ !cancelled() && !contains(github.event.pull_request.labels.*.name, 'no-test') }}
+        if: ${{ !cancelled() && inputs.run-tests == true }}
         with:
           junit_reports_dir: "${{ steps.test.outputs.ctest_results_path }}"
           print_summary: 'True'
