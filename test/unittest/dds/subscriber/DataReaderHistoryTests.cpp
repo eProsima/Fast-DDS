@@ -17,34 +17,41 @@ class TestType : public TopicDataType
 {
 public:
 
-    MOCK_METHOD2(serialize, bool(
+    MOCK_METHOD(bool, serialize, (
                 const void* const data,
-                eprosima::fastdds::rtps::SerializedPayload_t* payload));
+                eprosima::fastdds::rtps::SerializedPayload_t* payload),
+                (override));
 
-    MOCK_METHOD3(serialize, bool(
+    MOCK_METHOD(bool, serialize, (
                 const void* const data,
                 eprosima::fastdds::rtps::SerializedPayload_t* payload,
-                DataRepresentationId_t data_representation));
+                DataRepresentationId_t data_representation),
+                (override));
 
-    MOCK_METHOD2(deserialize, bool(
+    MOCK_METHOD(bool, deserialize, (
                 eprosima::fastdds::rtps::SerializedPayload_t* payload,
-                void* data));
+                void* data),
+                (override));
 
-    MOCK_METHOD2(getSerializedSizeProvider, std::function<uint32_t()> (
-                const void* const data, DataRepresentationId_t data_representation));
+    MOCK_METHOD(std::function<uint32_t()>, getSerializedSizeProvider, (
+                const void* const data, DataRepresentationId_t data_representation),
+                (override));
 
-    MOCK_METHOD1(getSerializedSizeProvider, std::function<uint32_t()> (
-                const void* const data));
+    MOCK_METHOD(std::function<uint32_t()>, getSerializedSizeProvider, (
+                const void* const data),
+                (override));
 
-    MOCK_METHOD0(createData, void* ());
+    MOCK_METHOD(void*, createData, (), (override));
 
-    MOCK_METHOD1(deleteData, void(
-                void* data));
+    MOCK_METHOD(void, deleteData, (
+                void* data),
+                (override));
 
-    MOCK_METHOD3(getKey, bool(
+    MOCK_METHOD(bool, getKey, (
                 const void* const data,
                 eprosima::fastdds::dds::InstanceHandle_t* ihandle,
-                bool));
+                bool),
+                (override));
 };
 
 /*!
