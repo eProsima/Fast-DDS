@@ -12,6 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+
+#ifndef EXPECTED_JSON_COMPREHENSIVE_EPROSIMA_HPP
+#define EXPECTED_JSON_COMPREHENSIVE_EPROSIMA_HPP
+
 #include <string>
 
 std::string expected_json_comprehensive_eprosima = R"({
@@ -372,3 +376,5 @@ std::string expected_json_comprehensive_eprosima = R"({
         "string_unbounded_map": null
     }
 })";
+
+#endif // EXPECTED_JSON_COMPREHENSIVE_EPROSIMA_HPP
