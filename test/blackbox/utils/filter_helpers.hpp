@@ -18,7 +18,7 @@
 #include <fastdds/dds/core/Entity.hpp>
 #include <fastdds/rtps/common/Types.h>
 
-#include "../types/rtps/core_typesPubSubTypes.h"
+#include "../types/core/core_typesPubSubTypes.h"
 
 namespace eprosima {
 namespace fastdds {

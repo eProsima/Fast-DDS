@@ -62,6 +62,7 @@ Forthcoming
 * `const` qualify all data related inputs in DataWriter APIs
 * New `DomainParticipantExtendedQos` that includes both `DomainId` and `DomainParticipantQos` (extends `DomainParticipantFactory` API).
 * Make Blackbox tests not include any private API.
+* Remove all the private API include from Blackbox tests.
 
 Version 2.14.0
 --------------

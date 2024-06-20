@@ -26,8 +26,7 @@ namespace fastdds {
 namespace rtps {
 
 struct CDRMessage_t;
-
-struct TestTransportOptions;
+struct TestUDPv4TransportOptions;
 
 /**
  * UDP v4 Test Transport configuration
@@ -41,7 +40,7 @@ struct test_UDPv4TransportDescriptor : public SocketTransportDescriptor
     typedef std::function<bool (const Locator& destination)> DestinationLocatorFilter;
 
     //! Test transport options
-    std::shared_ptr<TestTransportOptions> test_transport_options = std::make_shared<TestTransportOptions>();
+    std::shared_ptr<TestUDPv4TransportOptions> test_transport_options = std::make_shared<TestUDPv4TransportOptions>();
 
     //! Test shim parameters
     //! Percentage of data messages being dropped
@@ -153,10 +152,10 @@ struct test_UDPv4TransportDescriptor : public SocketTransportDescriptor
             const test_UDPv4TransportDescriptor& t) const;
 };
 
-struct TestTransportOptions
+struct TestUDPv4TransportOptions
 {
-    FASTDDS_EXPORTED_API TestTransportOptions() = default;
-    ~TestTransportOptions() = default;
+    FASTDDS_EXPORTED_API TestUDPv4TransportOptions() = default;
+    ~TestUDPv4TransportOptions() = default;
 
     std::atomic<bool> test_UDPv4Transport_ShutdownAllNetwork{false};
     // Handle to a persistent log of dropped packets. Defaults to length 0 (no logging) to prevent wasted resources.

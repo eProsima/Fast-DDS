@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file test/blackbox/types/rtps/core_types.idl
+ * @file test/blackbox/types/core/core_types.idl
  */
 
 module eprosima {

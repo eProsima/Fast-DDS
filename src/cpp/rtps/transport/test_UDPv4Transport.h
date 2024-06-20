@@ -53,7 +53,7 @@ public:
     virtual LocatorList NormalizeLocator(
             const Locator& locator) override;
 
-    std::shared_ptr<TestTransportOptions> test_transport_options;
+    std::shared_ptr<TestUDPv4TransportOptions> test_transport_options;
 
 protected:
 

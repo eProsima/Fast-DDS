@@ -34,7 +34,6 @@
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
-#include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
 #include <gtest/gtest.h>
 
 #include "../utils/filter_helpers.hpp"

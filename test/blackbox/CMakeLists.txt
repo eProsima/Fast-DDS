@@ -74,8 +74,8 @@ set(RTPS_BLACKBOXTESTS_SOURCE ${RTPS_BLACKBOXTESTS_TEST_SOURCE}
     types/KeyedData1mbTypeObjectSupport.cxx
     types/KeyedHelloWorldPubSubTypes.cxx
     types/KeyedHelloWorldTypeObjectSupport.cxx
-    types/rtps/core_typesPubSubTypes.cxx
-    types/rtps/core_typesTypeObjectSupport.cxx
+    types/core/core_typesPubSubTypes.cxx
+    types/core/core_typesTypeObjectSupport.cxx
     types/StringTestPubSubTypes.cxx
     types/StringTestTypeObjectSupport.cxx
     types/UnboundedHelloWorldPubSubTypes.cxx
@@ -117,8 +117,8 @@ set(BLACKBOXTESTS_SOURCE ${BLACKBOXTESTS_TEST_SOURCE}
     types/KeyedData1mbTypeObjectSupport.cxx
     types/KeyedHelloWorldPubSubTypes.cxx
     types/KeyedHelloWorldTypeObjectSupport.cxx
-    types/rtps/core_typesPubSubTypes.cxx
-    types/rtps/core_typesTypeObjectSupport.cxx
+    types/core/core_typesPubSubTypes.cxx
+    types/core/core_typesTypeObjectSupport.cxx
     types/StringTestPubSubTypes.cxx
     types/StringTestTypeObjectSupport.cxx
     types/TestIncludeRegression3361TypeObjectSupport.cxx
