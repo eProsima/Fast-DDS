@@ -17,7 +17,7 @@
  *
  */
 
-#include <fastdds/rtps/attributes/ServerAttributes.hpp>
+#include <rtps/attributes/ServerAttributes.hpp>
 
 namespace eprosima {
 namespace fastdds {

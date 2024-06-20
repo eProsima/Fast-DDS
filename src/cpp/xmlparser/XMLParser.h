@@ -623,19 +623,9 @@ protected:
             rtps::DiscoveryProtocol* e,
             uint8_t ident);
 
-    static XMLP_ret getXMLList(
-            tinyxml2::XMLElement* elem,
-            eprosima::fastdds::rtps::RemoteServerList_t& list,
-            uint8_t ident);
-
     static XMLP_ret getXMLEnum(
             tinyxml2::XMLElement* elem,
             rtps::ParticipantFilteringFlags* e,
-            uint8_t ident);
-
-    static XMLP_ret getXMLRemoteServer(
-            tinyxml2::XMLElement* elem,
-            eprosima::fastdds::rtps::RemoteServerAttributes& server,
             uint8_t ident);
 
     static XMLP_ret getXMLString(

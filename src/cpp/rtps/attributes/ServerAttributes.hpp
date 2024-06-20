@@ -1,4 +1,4 @@
-// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,9 +29,9 @@
 #include <list>
 
 namespace eprosima {
-
 namespace fastdds {
 namespace rtps {
+
 class ParticipantProxyData;
 
 /**
@@ -43,7 +43,7 @@ class RemoteServerAttributes
 {
 public:
 
-    FASTDDS_EXPORTED_API inline bool operator ==(
+    inline bool operator ==(
             const RemoteServerAttributes& r) const
     {
         return guidPrefix == r.guidPrefix
@@ -51,19 +51,19 @@ public:
                && metatrafficMulticastLocatorList == r.metatrafficMulticastLocatorList;
     }
 
-    FASTDDS_EXPORTED_API void clear()
+    void clear()
     {
         guidPrefix = fastdds::rtps::GuidPrefix_t::unknown();
         metatrafficUnicastLocatorList.clear();
         metatrafficMulticastLocatorList.clear();
     }
 
-    FASTDDS_EXPORTED_API fastdds::rtps::GUID_t GetParticipant() const;
+    fastdds::rtps::GUID_t GetParticipant() const;
 
-    FASTDDS_EXPORTED_API fastdds::rtps::GUID_t GetPDPReader() const;
-    FASTDDS_EXPORTED_API fastdds::rtps::GUID_t GetPDPWriter() const;
+    fastdds::rtps::GUID_t GetPDPReader() const;
+    fastdds::rtps::GUID_t GetPDPWriter() const;
 
-    FASTDDS_EXPORTED_API inline bool ReadguidPrefix(
+    inline bool ReadguidPrefix(
             const char* pfx)
     {
         return bool(std::istringstream(pfx) >> guidPrefix);
@@ -92,8 +92,8 @@ typedef std::list<RemoteServerAttributes> RemoteServerList_t;
 template<class charT>
 struct server_ostream_separators
 {
-    FASTDDS_EXPORTED_API static const charT* list_separator;
-    FASTDDS_EXPORTED_API static const charT* locator_separator;
+    static const charT* list_separator;
+    static const charT* locator_separator;
 };
 
 #ifndef _MSC_VER
@@ -133,12 +133,8 @@ std::basic_ostream<charT>& operator <<(
     return output;
 }
 
-// port used if the ros environment variable doesn't specify one
-constexpr uint16_t DEFAULT_ROS2_SERVER_PORT = 11811;
-// default server base guidPrefix
+// Default server base guidPrefix
 const char* const DEFAULT_ROS2_SERVER_GUIDPREFIX = "44.53.00.5f.45.50.52.4f.53.49.4d.41";
-// port used by default for tcp transport
-constexpr uint16_t DEFAULT_TCP_SERVER_PORT = 42100;
 
 /* Environment variable to specify a semicolon-separated list of locators ([transport]ip:port) that define remote server
  * locators. The [transport] specification is optional. The default transport is UDPv4.
@@ -166,7 +162,7 @@ const char* const ROS_SUPER_CLIENT = "ROS_SUPER_CLIENT";
  * @param[out] servers_list reference to a LocatorList_t to populate.
  * @return true if parsing succeeds, false otherwise (or if the list is empty)
  */
-FASTDDS_EXPORTED_API bool load_environment_server_info(
+bool load_environment_server_info(
         const std::string& list,
         LocatorList& servers_list);
 
@@ -181,30 +177,20 @@ FASTDDS_EXPORTED_API bool load_environment_server_info(
  * @param[out] servers_list reference to a LocatorList_t to populate.
  * @return true if parsing succeeds, false otherwise
  */
-FASTDDS_EXPORTED_API bool load_environment_server_info(
+bool load_environment_server_info(
         LocatorList& servers_list);
 
 /**
  * Get the value of environment variable DEFAULT_ROS2_MASTER_URI
  * @return The value of environment variable DEFAULT_ROS2_MASTER_URI. Empty string if the variable is not defined.
  */
-FASTDDS_EXPORTED_API const std::string& ros_discovery_server_env();
+const std::string& ros_discovery_server_env();
 
 /**
  * Get the value of environment variable ROS_SUPER_CLIENT
  * @return The value of environment variable ROS_SUPER_CLIENT. False if the variable is not defined.
  */
-FASTDDS_EXPORTED_API bool ros_super_client_env();
-
-/**
- * Returns the guidPrefix associated to the given server id
- * @param[in] id of the default server whose guidPrefix we want to retrieve
- * @param[out] guid reference to the guidPrefix to modify
- * @return true if the server guid can be delivered
- */
-FASTDDS_EXPORTED_API bool get_server_client_default_guidPrefix(
-        int id,
-        fastdds::rtps::GuidPrefix_t& guid);
+bool ros_super_client_env();
 
 } // rtps
 } // fastdds

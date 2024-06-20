@@ -29,7 +29,6 @@
 #include <fastdds/rtps/attributes/PropertyPolicy.hpp>
 #include <fastdds/rtps/attributes/ResourceManagement.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
-#include <fastdds/rtps/attributes/ServerAttributes.hpp>
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastdds/rtps/common/Locator.hpp>
 #include <fastdds/rtps/common/PortParameters.hpp>
@@ -40,6 +39,8 @@
 #include <fastdds/rtps/transport/TransportInterface.hpp>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.hpp>
 #include <fastdds/fastdds_dll.hpp>
+
+#include <rtps/attributes/ServerAttributes.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -127,6 +128,11 @@ inline std::ostream& operator <<(
     }
     return output;
 }
+
+// Port used if the ros environment variable doesn't specify one
+constexpr uint16_t DEFAULT_ROS2_SERVER_PORT = 11811;
+// Port used by default for tcp transport
+constexpr uint16_t DEFAULT_TCP_SERVER_PORT = 42100;
 
 //! Filtering flags when discovering participants
 enum ParticipantFilteringFlags : uint32_t

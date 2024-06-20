@@ -36,6 +36,7 @@
 #include <fastdds/utils/IPLocator.hpp>
 #include <fastdds/utils/md5.hpp>
 
+#include <rtps/attributes/ServerAttributes.hpp>
 #include <rtps/common/GuidUtils.hpp>
 #include <rtps/network/utils/external_locators.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
