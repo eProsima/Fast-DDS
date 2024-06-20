@@ -65,6 +65,13 @@ PubSubApp::PubSubApp(
     , samples_(config.samples)
     , stop_(false)
 {
+    // Check that the generated type fulfils example constraints: it is plain and bounded
+    if (!type_->is_plain() || !type_->is_bounded())
+    {
+        throw std::runtime_error(
+                "Example generated type does not fulfil the example constraints: it is not plain and/or bounded");
+    }
+
     // Create the participant
     DomainParticipantQos pqos = PARTICIPANT_QOS_DEFAULT;
     pqos.name("DeliveryMechanisms_pubsub_participant");
