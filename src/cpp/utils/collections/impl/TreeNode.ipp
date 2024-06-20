@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file Tree.ipp
+ * @file TreeNode.ipp
  *
  */
 

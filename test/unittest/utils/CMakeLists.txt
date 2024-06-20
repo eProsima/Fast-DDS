@@ -66,7 +66,7 @@ set(SYSTEMINFOTESTS_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp)
 
 set(TREETESTS_SOURCE
-    TreeTests.cpp)
+    TreeNodeTests.cpp)
 
 include_directories(mock/)
 
@@ -170,10 +170,10 @@ target_include_directories(SharedMutexTests PRIVATE ${PROJECT_SOURCE_DIR}/src/cp
 target_link_libraries(SharedMutexTests PUBLIC GTest::gtest)
 gtest_discover_tests(SharedMutexTests)
 
-add_executable(TreeTests ${TREETESTS_SOURCE})
-target_include_directories(TreeTests PRIVATE ${PROJECT_SOURCE_DIR}/src/cpp)
-target_link_libraries(TreeTests PUBLIC GTest::gtest)
-gtest_discover_tests(TreeTests)
+add_executable(TreeNodeTests ${TREETESTS_SOURCE})
+target_include_directories(TreeNodeTests PRIVATE ${PROJECT_SOURCE_DIR}/src/cpp)
+target_link_libraries(TreeNodeTests PUBLIC GTest::gtest)
+gtest_discover_tests(TreeNodeTests)
 
 ###############################################################################
 # Necessary files

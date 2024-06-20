@@ -42,7 +42,7 @@
 #include "serializers/json/dynamic_data_json.hpp"
 #include "type_conversion/dyn_type_tree.hpp"
 
-#include "utils/collections/Tree.hpp"
+#include "utils/collections/TreeNode.hpp"
 
 namespace eprosima {
 namespace fastdds {

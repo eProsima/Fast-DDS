@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file Tree.hpp
+ * @file TreeNode.hpp
  *
  */
 
@@ -84,6 +84,6 @@ protected:
 } /* namespace eprosima */
 
 // Include implementation template file
-#include "impl/Tree.ipp"
+#include "impl/TreeNode.ipp"
 
 #endif /* FASTDDS_UTILS_COLLECTIONS_TREE_HPP_ */

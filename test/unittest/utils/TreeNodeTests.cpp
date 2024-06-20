@@ -17,7 +17,7 @@
 
 #include <gtest/gtest.h>
 
-#include <utils/collections/Tree.hpp>
+#include <utils/collections/TreeNode.hpp>
 
 using namespace eprosima;
 
@@ -41,7 +41,7 @@ struct TreeNodeTestType
  *  ▼
  *  1
  */
-TEST(TreeTests, one_shallow_branch)
+TEST(TreeNodeTests, one_shallow_branch)
 {
     constexpr auto NODE_COUNT = 2;
 
@@ -96,7 +96,7 @@ TEST(TreeTests, one_shallow_branch)
  *  ▼
  *  5
  */
-TEST(TreeTests, one_deep_branch)
+TEST(TreeNodeTests, one_deep_branch)
 {
     constexpr auto NODE_COUNT = 6;
 
@@ -142,7 +142,7 @@ TEST(TreeTests, one_deep_branch)
  * ▼   ▼   ▼   ▼   ▼
  * 1   2   3   4   5
  */
-TEST(TreeTests, many_shallow_branches)
+TEST(TreeNodeTests, many_shallow_branches)
 {
     constexpr auto NODE_COUNT = 6;
 

@@ -27,7 +27,7 @@
 #include <fastdds/dds/xtypes/dynamic_types/detail/dynamic_language_binding.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
 
-#include "utils/collections/Tree.hpp"
+#include "utils/collections/TreeNode.hpp"
 
 namespace eprosima {
 namespace fastdds {
