@@ -20,6 +20,9 @@
 #ifndef SRC_CPP_UTILS_COLLECTIONS_IMPL_TREE_IPP_
 #define SRC_CPP_UTILS_COLLECTIONS_IMPL_TREE_IPP_
 
+#include <algorithm>
+
+
 namespace eprosima {
 namespace utilities {
 namespace collections {
@@ -92,13 +95,15 @@ bool TreeNode<Info>::leaf() const noexcept
 template <typename Info>
 unsigned int TreeNode<Info>::depth() const noexcept
 {
-    unsigned int max_value = 0;
-    for (const auto& b : branches_)
+    unsigned int max_child_depth = 0;
+
+    for (const auto& branch : branches_)
     {
-        auto child_value = b.depth();
-        max_value = MAX(max_value, child_value);
+        const auto child_depth = branch.depth() + 1;
+        max_child_depth = std::max(max_child_depth, child_depth);
     }
-    return max_value;
+
+    return max_child_depth;
 }
 
 template <typename Info>
