@@ -32,6 +32,10 @@ on:
         required: false
         type: boolean
         default: true
+      run-build:
+        description: 'Run build jobs of Fast DDS (standard and alternative builds)'
+        required: true
+        type: boolean
       run-tests:
         description: 'Run test suite of Fast DDS, Fast DDS python, and Fast DDS Discovery Server'
         required: false
@@ -53,6 +57,7 @@ defaults:
 jobs:
   fastdds_build:
     runs-on: ${{ inputs.os-image }}
+    if: ${{ inputs.run-build == true }}
     strategy:
       fail-fast: false
       matrix:
@@ -685,6 +690,7 @@ jobs:
   fastdds_alternative_builds:
     needs: fastdds_build
     runs-on: ${{ inputs.os-image }}
+    if: ${{ inputs.run-build == true }}
     strategy:
       fail-fast: false
       matrix:
