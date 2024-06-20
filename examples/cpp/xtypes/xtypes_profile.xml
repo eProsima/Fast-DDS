@@ -55,8 +55,8 @@
     <types xmlns="http://www.eprosima.com" >
         <type>
             <struct name="HelloWorld">
-                <member name="message" type="string"/>
                 <member name="index" type="uint32"/>
+                <member name="message" type="string"/>
             </struct>
         </type>
     </types>
