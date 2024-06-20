@@ -16,30 +16,40 @@ import subprocess
 import pytest
 
 delivery_test_cases = [
-    ('', '-s 20', '', 50),
-    ('', '-s 20', '--ignore-local-endpoints', 50),
-    ('--mechanism shm', '-s 20 --mechanism shm', '--mechanism shm', 50),
-    ('--mechanism shm', '-s 20 --mechanism shm', '--mechanism shm --ignore-local-endpoints', 50),
-    ('--mechanism udp', '-s 20 --mechanism udp', '--mechanism udp', 50),
-    ('--mechanism udp', '-s 20 --mechanism udp', '--mechanism udp --ignore-local-endpoints', 50),
-    # tcp takes longer to match, so explicitly expect much more samples in this case
-    # tcp is configured through initial peers (a single locator), so we test only one publisher at a time
-    #  Note: pubsub with TCP and ignore-local-endpoints NOT set is not supported, tested in  below tests
-    ('-s 100 --mechanism tcp', '-s 100 --mechanism tcp', '--unknown-command', 200),
-    ('--mechanism data-sharing', '-s 20 --mechanism data-sharing', '--mechanism data-sharing', 50),
-    ('--mechanism data-sharing', '-s 20 --mechanism data-sharing', '--mechanism data-sharing --ignore-local-endpoints', 50),
+    # Default builtin transports (remove isolated subscriber to avoid flakiness)
+    ('', '-s 20', '--unknown-argument', '', 30),
+    ('', '-s 20', '--unknown-argument', '--ignore-local-endpoints', 30),
+    # Data-sharing isolated subscriber tested in timeout test cases
+    ('--mechanism data-sharing', '-s 20 --mechanism data-sharing', '--unknown-argument', '--mechanism data-sharing', 30),
+    ('--mechanism data-sharing', '-s 20 --mechanism data-sharing', '--unknown-argument', '--mechanism data-sharing --ignore-local-endpoints', 30),
     # Intra-process only makes sense for pubsub entities. This test forces entities != pubsub  to fail, so
     #  only 1 message is expected per sample (the local one)
-    ('--unknown-argument', '--unknown-argument', '--mechanism intra-process', 10)
+    ('--unknown-argument', '--unknown-argument', '--unknown-argument', '--mechanism intra-process', 10),
+    # Large-data (using shared memory, so isolated subscriber is removed to avoid flakiness)
+    ('--mechanism large-data', '-s 20 --mechanism large-data', '--unknown-argument', '--mechanism large-data', 30),
+    ('--mechanism large-data', '-s 20 --mechanism large-data', '--unknown-argument', '--mechanism large-data --ignore-local-endpoints', 30),
+    # Shared memory isolated subscriber tested in timeout test cases
+    ('--mechanism shm', '-s 20 --mechanism shm', '--unknown-argument', '--mechanism shm', 30),
+    ('--mechanism shm', '-s 20 --mechanism shm', '--unknown-argument', '--mechanism shm --ignore-local-endpoints', 30),
+    # TCP takes longer to match, so explicitly expect much more samples in this case.
+    # TCP is configured through initial peers (a single locator), so we test only one publisher at a time
+    #  Note: pubsub with TCP and ignore-local-endpoints NOT set is not supported, tested in  expected output test cases
+    ('-s 100 --mechanism tcpv4', '-s 100 --mechanism tcpv4', '-s 100 --mechanism tcpv4', '--unknown-command', 200),
+    ('-s 100 --mechanism tcpv6', '-s 100 --mechanism tcpv6', '-s 100 --mechanism tcpv6', '--unknown-command', 200),
+    # UDP
+    ('--mechanism udpv4', '-s 20 --mechanism udpv4', '-s 20 --mechanism udpv4', '--mechanism udpv4', 50),
+    ('--mechanism udpv4', '-s 20 --mechanism udpv4', '-s 20 --mechanism udpv4', '--mechanism udpv4 --ignore-local-endpoints', 50),
+    ('--mechanism udpv6', '-s 20 --mechanism udpv6', '-s 20 --mechanism udpv6', '--mechanism udpv6', 50),
+    ('--mechanism udpv6', '-s 20 --mechanism udpv6', '-s 20 --mechanism udpv6', '--mechanism udpv6 --ignore-local-endpoints', 50)
 ]
 
-@pytest.mark.parametrize("pub_args, sub_args, pubsub_args, repetitions", delivery_test_cases)
-def test_delivery_mechanisms(pub_args, sub_args, pubsub_args, repetitions):
+@pytest.mark.parametrize("pub_args, sub_args, isub_args, pubsub_args, repetitions", delivery_test_cases)
+def test_delivery_mechanisms(pub_args, sub_args, isub_args, pubsub_args, repetitions):
     """."""
     ret = False
     out = ''
 
-    command_prerequisites = 'PUB_ARGS="' + pub_args + '" SUB_ARGS="' + sub_args + '" PUBSUB_ARGS="' + pubsub_args + '" '
+    command_prerequisites = 'PUB_ARGS="' + pub_args + '" SUB_ARGS="' + sub_args + '" ISUB_ARGS="' + isub_args + '" PUBSUB_ARGS="' + pubsub_args + '" '
     try:
         out = subprocess.check_output(command_prerequisites + '@DOCKER_EXECUTABLE@ compose -f delivery_mechanisms.compose.yml up',
             stderr=subprocess.STDOUT,
@@ -74,17 +84,21 @@ def test_delivery_mechanisms(pub_args, sub_args, pubsub_args, repetitions):
     assert(ret)
 
 timeout_test_cases = [
-    ('--mechanism tcp', '--mechanism udp', '--mechanism shm -i'),
-    ('--mechanism shm', '--mechanism data-sharing', '--mechanism intra-process -i')
+    # Shared memory and data-sharing isolated subscriber timeout test cases
+    ('--mechanism shm', '--unknown-argument', '--mechanism shm', '--unknown-argument'),
+    ('--mechanism data-sharing', '--unknown-argument', '--mechanism data-sharing', '--unknown-argument'),
+    # Incompatible mechanisms timeout test cases
+    ('--mechanism tcpv4', '--mechanism udpv4', '--mechanism udpv6', '--mechanism tcpv6 -i'),
+    ('--mechanism shm', '--mechanism data-sharing', '--mechanism large-data', '--mechanism intra-process -i')
 ]
 
-@pytest.mark.parametrize("pub_args, sub_args, pubsub_args", timeout_test_cases)
-def test_delivery_mechanisms_timeout(pub_args, sub_args, pubsub_args):
+@pytest.mark.parametrize("pub_args, sub_args, isub_args, pubsub_args", timeout_test_cases)
+def test_delivery_mechanisms_timeout(pub_args, sub_args, isub_args, pubsub_args):
     """."""
     ret = False
     out = ''
 
-    command_prerequisites = 'PUB_ARGS="' + pub_args + '" SUB_ARGS="' + sub_args + '" PUBSUB_ARGS="' + pubsub_args + '" '
+    command_prerequisites = 'PUB_ARGS="' + pub_args + '" SUB_ARGS="' + sub_args + '" ISUB_ARGS="' + isub_args + '" PUBSUB_ARGS="' + pubsub_args + '" '
     try:
         out = subprocess.check_output(command_prerequisites + '@DOCKER_EXECUTABLE@ compose -f delivery_mechanisms.compose.yml up',
             stderr=subprocess.STDOUT,
@@ -103,6 +117,7 @@ def test_delivery_mechanisms_timeout(pub_args, sub_args, pubsub_args):
 
     assert(ret)
 
+# Unsupported delivery mechanisms corner case test
 expected_output_test_cases = [
     ('--unknown-argument', '--unknown-argument', '--mechanism tcp', 'Unsupported', 1)
 ]
@@ -114,7 +129,7 @@ def test_delivery_mechanisms_expected_output(pub_args, sub_args, pubsub_args, ex
     out = ''
     render_out = ''
 
-    command_prerequisites = 'PUB_ARGS="' + pub_args + '" SUB_ARGS="' + sub_args + '" PUBSUB_ARGS="' + pubsub_args + '" '
+    command_prerequisites = 'PUB_ARGS="' + pub_args + '" SUB_ARGS="' + sub_args + '" ISUB_ARGS="' + sub_args + '" PUBSUB_ARGS="' + pubsub_args + '" '
     try:
         out = subprocess.check_output(command_prerequisites + '@DOCKER_EXECUTABLE@ compose -f delivery_mechanisms.compose.yml up',
             stderr=subprocess.STDOUT,
