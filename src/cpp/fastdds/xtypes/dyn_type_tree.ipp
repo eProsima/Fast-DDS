@@ -653,18 +653,13 @@ ReturnCode_t union_to_str(
 
     union_str = "union " + node.info.type_kind_name + " switch (" + discriminant_type_str + ")" + TYPE_OPENING;
 
-    std::map<MemberId, DynamicTypeMember::_ref_type> members;
-    ret = node.info.dynamic_type->get_all_members(members);  // WARNING: Default case not included in this collection, and currently not available
-
-    if (ret != RETCODE_OK)
+    for (std::uint32_t index = 1; index < node.info.dynamic_type->get_member_count(); index++)
     {
-        return ret;
-    }
+        traits<DynamicTypeMember>::ref_type member;
+        ret = node.info.dynamic_type->get_member_by_index(member, index);
 
-    for (const auto& member : members)
-    {
         MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
-        ret = member.second->get_descriptor(member_descriptor);
+        ret = member->get_descriptor(member_descriptor);
 
         if (ret != RETCODE_OK)
         {
@@ -702,7 +697,7 @@ ReturnCode_t union_to_str(
         union_str += TAB_SEPARATOR;
         union_str += TAB_SEPARATOR;
         union_str += member_str + " ";
-        union_str += member.second->get_name();
+        union_str += member->get_name().to_string();
         union_str += ";\n";
     }
 
