@@ -31,7 +31,9 @@
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.hpp>
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.hpp>
+#include <fastdds/rtps/transport/TCPv6TransportDescriptor.hpp>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.hpp>
+#include <fastdds/rtps/transport/UDPv6TransportDescriptor.hpp>
 
 #include "Application.hpp"
 #include "CLIParser.hpp"
@@ -98,21 +100,43 @@ SubscriberApp::SubscriberApp(
             pqos.transport().user_transports.push_back(shm_transport_);
             break;
         }
-        case CLIParser::DeliveryMechanismKind::TCP:
+        case CLIParser::DeliveryMechanismKind::LARGE_DATA:
         {
-            Locator tcp_initial_peers_locator_;
-            tcp_initial_peers_locator_.kind = LOCATOR_KIND_TCPv4;
-            tcp_initial_peers_locator_.port = 5100;
-            eprosima::fastdds::rtps::IPLocator::setIPv4(tcp_initial_peers_locator_, "127.0.0.1");
-            pqos.wire_protocol().builtin.initialPeersList.push_back(tcp_initial_peers_locator_);
+            pqos.transport().use_builtin_transports = true;
+            pqos.setup_transports(eprosima::fastdds::rtps::BuiltinTransports::LARGE_DATA);
+            break;
+        }
+        case CLIParser::DeliveryMechanismKind::TCPv4:
+        {
+            Locator tcp_v4_initial_peers_locator_;
+            tcp_v4_initial_peers_locator_.kind = LOCATOR_KIND_TCPv4;
+            tcp_v4_initial_peers_locator_.port = 5100;
+            eprosima::fastdds::rtps::IPLocator::setIPv4(tcp_v4_initial_peers_locator_, "127.0.0.1");
+            pqos.wire_protocol().builtin.initialPeersList.push_back(tcp_v4_initial_peers_locator_);
             pqos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastdds::c_TimeInfinite;
             pqos.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod = Duration_t(5, 0);
             pqos.transport().user_transports.push_back(std::make_shared<TCPv4TransportDescriptor>());
             break;
         }
-        case CLIParser::DeliveryMechanismKind::UDP:
+        case CLIParser::DeliveryMechanismKind::TCPv6:
+        {
+            Locator tcp_v6_initial_peers_locator_;
+            tcp_v6_initial_peers_locator_.kind = LOCATOR_KIND_TCPv6;
+            tcp_v6_initial_peers_locator_.port = 5100;
+            eprosima::fastdds::rtps::IPLocator::setIPv6(tcp_v6_initial_peers_locator_, "::1");
+            pqos.wire_protocol().builtin.initialPeersList.push_back(tcp_v6_initial_peers_locator_);
+            pqos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastdds::c_TimeInfinite;
+            pqos.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod = Duration_t(5, 0);
+            pqos.transport().user_transports.push_back(std::make_shared<TCPv6TransportDescriptor>());
+            break;
+        }
+        case CLIParser::DeliveryMechanismKind::UDPv4:
         {
             pqos.transport().user_transports.push_back(std::make_shared<UDPv4TransportDescriptor>());
+            break;
+        }case CLIParser::DeliveryMechanismKind::UDPv6:
+        {
+            pqos.transport().user_transports.push_back(std::make_shared<UDPv6TransportDescriptor>());
             break;
         }
         default:

@@ -21,12 +21,18 @@ Moreover, this example uses loans API in both reading and writing calls (refer t
 
 The delivery mechanisms configuration considers all the possible delivery mechanisms, that can be configured by using **``-m``** or **``--mechanism``** flag, followed by any of these options:
 
-* **``UDP``** option instantiates a UDP for IPv4 transport.
-* **``TCP``** option instantiates a TCP for IPv4 transport.
-* **``SHM``** option instantiates a shared memory transport.
-* **``data-sharing``** option instantiates also a shared memory transport, but uses data-sharing delivery to write in the memory segment.
+* **``data-sharing``** option instantiates a shared memory transport, but uses data-sharing delivery to write in the memory segment.
 * **``intra-process``** option shares the payload pool between the participant's datareader and datawriter.
   This option can only be available when the endpoints belong to the same participant and same process, so it can only be used by the PubSub application.
+* **``large-data``** option instantiates a UDPv4 multicast transport to perform PDP discovery phase, and a TCPv4 and SHM transports to perform user data communication.
+  Fast DDS priors SHM over TCP if possible.
+* **``SHM``** option instantiates a shared memory transport.
+* **``TCPv4``** option instantiates a TCP for IPv4 transport.
+* **``TCPv6``** option instantiates a TCP for IPv6 transport.
+* **``UDPv4``** option instantiates a UDP for IPv4 transport.
+* **``UDPv6``** option instantiates a UDP for IPv6 transport.
+
+If it is not configured, the default delivery mechanisms are the default builtin transports: UDPv4 and SHM transports are instantiated, and Fast DDS priors SHM over UDP is possible.
 
 All the example available arguments can be queried running the executable with the **``-h``** or **``--help``** argument.
 

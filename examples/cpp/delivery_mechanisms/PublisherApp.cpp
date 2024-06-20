@@ -33,7 +33,9 @@
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.hpp>
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.hpp>
+#include <fastdds/rtps/transport/TCPv6TransportDescriptor.hpp>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.hpp>
+#include <fastdds/rtps/transport/UDPv6TransportDescriptor.hpp>
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;
@@ -96,20 +98,42 @@ PublisherApp::PublisherApp(
             pqos.transport().user_transports.push_back(shm_transport_);
             break;
         }
-        case CLIParser::DeliveryMechanismKind::TCP:
+        case CLIParser::DeliveryMechanismKind::LARGE_DATA:
         {
-            std::shared_ptr<TCPv4TransportDescriptor> tcp_transport_ = std::make_shared<TCPv4TransportDescriptor>();
-            pqos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastdds::c_TimeInfinite;
-            pqos.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod = Duration_t(5, 0);
-            tcp_transport_->sendBufferSize = 0;
-            tcp_transport_->receiveBufferSize = 0;
-            tcp_transport_->add_listener_port(5100);
-            pqos.transport().user_transports.push_back(tcp_transport_);
+            pqos.transport().use_builtin_transports = true;
+            pqos.setup_transports(eprosima::fastdds::rtps::BuiltinTransports::LARGE_DATA);
             break;
         }
-        case CLIParser::DeliveryMechanismKind::UDP:
+        case CLIParser::DeliveryMechanismKind::TCPv4:
+        {
+            std::shared_ptr<TCPv4TransportDescriptor> tcp_v4_transport_ = std::make_shared<TCPv4TransportDescriptor>();
+            pqos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastdds::c_TimeInfinite;
+            pqos.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod = Duration_t(5, 0);
+            tcp_v4_transport_->sendBufferSize = 0;
+            tcp_v4_transport_->receiveBufferSize = 0;
+            tcp_v4_transport_->add_listener_port(5100);
+            pqos.transport().user_transports.push_back(tcp_v4_transport_);
+            break;
+        }
+        case CLIParser::DeliveryMechanismKind::TCPv6:
+        {
+            std::shared_ptr<TCPv6TransportDescriptor> tcp_v6_transport_ = std::make_shared<TCPv6TransportDescriptor>();
+            pqos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastdds::c_TimeInfinite;
+            pqos.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod = Duration_t(5, 0);
+            tcp_v6_transport_->sendBufferSize = 0;
+            tcp_v6_transport_->receiveBufferSize = 0;
+            tcp_v6_transport_->add_listener_port(5100);
+            pqos.transport().user_transports.push_back(tcp_v6_transport_);
+            break;
+        }
+        case CLIParser::DeliveryMechanismKind::UDPv4:
         {
             pqos.transport().user_transports.push_back(std::make_shared<UDPv4TransportDescriptor>());
+            break;
+        }
+        case CLIParser::DeliveryMechanismKind::UDPv6:
+        {
+            pqos.transport().user_transports.push_back(std::make_shared<UDPv6TransportDescriptor>());
             break;
         }
         default:

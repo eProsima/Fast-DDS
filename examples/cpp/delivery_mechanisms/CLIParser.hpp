@@ -49,11 +49,14 @@ public:
     //! Delivery mechanism enumeration
     enum class DeliveryMechanismKind : uint8_t
     {
-        TCP,
-        UDP,
-        SHM,
         DATA_SHARING,
         INTRA_PROCESS,
+        LARGE_DATA,
+        SHM,
+        TCPv4,
+        TCPv6,
+        UDPv4,
+        UDPv6,
         DEFAULT
     };
 
@@ -90,13 +93,17 @@ public:
         std::cout << "                                      (Default: 0)"                               << std::endl;
         std::cout << "  -h, --help                          Print this help message"                    << std::endl;
         std::cout << "  -m <string>, --mechanism <string>   Select delivery mechanism <string>:"        << std::endl;
-        std::cout << "                                       · TCP: TCP transport over IPv4"            << std::endl;
-        std::cout << "                                       · UDP: UDP transport over IPv4"            << std::endl;
-        std::cout << "                                       · SHM: Shared Memory Transport"            << std::endl;
         std::cout << "                                       · DATA-SHARING:  Data-sharing mechanism"   << std::endl;
         std::cout << "                                       · INTRA-PROCESS: Intra-process mechanism"  << std::endl;
         std::cout << "                                          (only allowed with \"pubsub\" entity)"  << std::endl;
-        std::cout << "                                      (Default: UDP)"                             << std::endl;
+        std::cout << "                                       · LARGE-DATA:    Large data mechanism"     << std::endl;
+        std::cout << "                                       · TCPv4:         TCP transport over IPv4"  << std::endl;
+        std::cout << "                                       · TCPv6:         TCP transport over IPv6"  << std::endl;
+        std::cout << "                                       · UDPv4:         UDP transport over IPv4"  << std::endl;
+        std::cout << "                                       · UDPv6:         UDP transport over IPv6"  << std::endl;
+        std::cout << "                                       · SHM:           Shared Memory Transport"  << std::endl;
+        std::cout << "                                      (Default: default builtin transports"       << std::endl;
+        std::cout << "                                       [SHM and UDPv4, SHM prior UDPv4])"         << std::endl;
         std::cout << "  -s <num>, --samples <num>           Number of samples to send or receive"       << std::endl;
         std::cout << "                                      [0 <= <num> <= 65535]"                      << std::endl;
         std::cout << "                                      (Default: 0 [unlimited])"                   << std::endl;
@@ -238,23 +245,13 @@ public:
                 if (++i < argc)
                 {
                     std::string mechanism = argv[i];
-                    if (mechanism == "TCP" || mechanism == "tcp")
-                    {
-                        config.delivery_mechanism = DeliveryMechanismKind::TCP;
-                    }
-                    else if (mechanism == "UDP" || mechanism == "udp")
-                    {
-                        config.delivery_mechanism = DeliveryMechanismKind::UDP;
-                    }
-                    else if (mechanism == "SHM" || mechanism == "shm")
-                    {
-                        config.delivery_mechanism = DeliveryMechanismKind::SHM;
-                    }
-                    else if (mechanism == "DATA-SHARING" || mechanism == "data-sharing")
+                    if (mechanism == "DATA-SHARING" || mechanism == "data-sharing"
+                            || mechanism == "DATA_SHARING" || mechanism == "data_sharing")
                     {
                         config.delivery_mechanism = DeliveryMechanismKind::DATA_SHARING;
                     }
-                    else if (mechanism == "INTRA-PROCESS" || mechanism == "intra-process")
+                    else if (mechanism == "INTRA-PROCESS" || mechanism == "intra-process"
+                            || mechanism == "INTRA_PROCESS" || mechanism == "intra_process")
                     {
                         if (config.entity == EntityKind::PUBSUB)
                         {
@@ -266,6 +263,33 @@ public:
                                     "intra-process mechanism only allowed with \"pubsub\" entity");
                             print_help(EXIT_FAILURE);
                         }
+                    }
+                    else if (mechanism == "LARGE-DATA" || mechanism == "large-data"
+                            || mechanism == "LARGE_DATA" || mechanism == "large_data")
+                    {
+                        config.delivery_mechanism = DeliveryMechanismKind::LARGE_DATA;
+                    }
+                    else if (mechanism == "TCP" || mechanism == "tcp" || mechanism == "TCPv4" || mechanism == "tcpv4"
+                            || mechanism == "TCPV4")
+                    {
+                        config.delivery_mechanism = DeliveryMechanismKind::TCPv4;
+                    }
+                    else if (mechanism == "TCPv6" || mechanism == "tcpv6" || mechanism == "TCPV6")
+                    {
+                        config.delivery_mechanism = DeliveryMechanismKind::TCPv6;
+                    }
+                    else if (mechanism == "UDP" || mechanism == "udp" || mechanism == "UDPv4" || mechanism == "udpv4"
+                            || mechanism == "UDPV4")
+                    {
+                        config.delivery_mechanism = DeliveryMechanismKind::UDPv4;
+                    }
+                    else if (mechanism == "UDPv6" || mechanism == "udpv6" || mechanism == "UDPV6")
+                    {
+                        config.delivery_mechanism = DeliveryMechanismKind::UDPv6;
+                    }
+                    else if (mechanism == "SHM" || mechanism == "shm")
+                    {
+                        config.delivery_mechanism = DeliveryMechanismKind::SHM;
                     }
                     else
                     {
@@ -299,9 +323,9 @@ public:
         }
 
         // Pubsub entity does not support TCP transport without ignore-local-endpoints option
-        if (config.entity == CLIParser::EntityKind::PUBSUB &&
-                config.delivery_mechanism == DeliveryMechanismKind::TCP &&
-                !config.ignore_local_endpoints)
+        if (config.entity == CLIParser::EntityKind::PUBSUB && !config.ignore_local_endpoints &&
+                (config.delivery_mechanism == DeliveryMechanismKind::TCPv4 ||
+                 config.delivery_mechanism == DeliveryMechanismKind::TCPv6))
         {
             EPROSIMA_LOG_ERROR(CLI_PARSER,
                     "Unsupported corner case: TCP delivery mechanism is not allowed for \"pubsub\" without ignore-local-endpoints option");
