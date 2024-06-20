@@ -33,15 +33,15 @@ enum class TransportKind : uint8_t
     SHM,
 };
 
-inline eprosima::fastrtps::rtps::GuidPrefix_t get_discovery_server_guid_from_id(
+inline eprosima::fastdds::rtps::GuidPrefix_t get_discovery_server_guid_from_id(
         unsigned short id)
 {
-    eprosima::fastrtps::rtps::GuidPrefix_t result;
+    eprosima::fastdds::rtps::GuidPrefix_t result;
 
     // Get default DS guid and modify the one value expected to be changed
     std::istringstream(eprosima::fastdds::rtps::DEFAULT_ROS2_SERVER_GUIDPREFIX) >> result;
     result.value[2] =
-            static_cast<eprosima::fastrtps::rtps::octet>(id); // This is done like this in Fast
+            static_cast<eprosima::fastdds::rtps::octet>(id); // This is done like this in Fast
 
     return result;
 }
@@ -49,7 +49,7 @@ inline eprosima::fastrtps::rtps::GuidPrefix_t get_discovery_server_guid_from_id(
 inline bool is_ip(
         const std::string ip_str)
 {
-    return eprosima::fastrtps::rtps::IPLocator::isIPv4(ip_str) || eprosima::fastrtps::rtps::IPLocator::isIPv6(ip_str);
+    return eprosima::fastdds::rtps::IPLocator::isIPv4(ip_str) || eprosima::fastdds::rtps::IPLocator::isIPv6(ip_str);
 }
 
 inline std::string get_ip_from_dns(
@@ -57,7 +57,7 @@ inline std::string get_ip_from_dns(
         TransportKind kind)
 {
     std::pair<std::set<std::string>, std::set<std::string>> dns_response =
-            eprosima::fastrtps::rtps::IPLocator::resolveNameDNS(domain_name);
+            eprosima::fastdds::rtps::IPLocator::resolveNameDNS(domain_name);
 
     if (kind == TransportKind::UDPv4 || kind == TransportKind::TCPv4)
     {

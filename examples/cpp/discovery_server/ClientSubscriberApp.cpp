@@ -77,7 +77,7 @@ ClientSubscriberApp::ClientSubscriberApp(
 
     // Create DS SERVER locator
     eprosima::fastdds::rtps::Locator server_locator;
-    eprosima::fastrtps::rtps::IPLocator::setPhysicalPort(server_locator, server_port);
+    eprosima::fastdds::rtps::IPLocator::setPhysicalPort(server_locator, server_port);
 
     std::shared_ptr<eprosima::fastdds::rtps::TransportDescriptorInterface> descriptor;
 
@@ -95,7 +95,7 @@ ClientSubscriberApp::ClientSubscriberApp(
             descriptor = descriptor_tmp;
 
             server_locator.kind = LOCATOR_KIND_UDPv4;
-            eprosima::fastrtps::rtps::IPLocator::setIPv4(server_locator, ip_server_address);
+            eprosima::fastdds::rtps::IPLocator::setIPv4(server_locator, ip_server_address);
             break;
         }
 
@@ -106,7 +106,7 @@ ClientSubscriberApp::ClientSubscriberApp(
             descriptor = descriptor_tmp;
 
             server_locator.kind = LOCATOR_KIND_UDPv6;
-            eprosima::fastrtps::rtps::IPLocator::setIPv6(server_locator, ip_server_address);
+            eprosima::fastdds::rtps::IPLocator::setIPv6(server_locator, ip_server_address);
             break;
         }
 
@@ -119,8 +119,8 @@ ClientSubscriberApp::ClientSubscriberApp(
             descriptor = descriptor_tmp;
 
             server_locator.kind = LOCATOR_KIND_TCPv4;
-            eprosima::fastrtps::rtps::IPLocator::setLogicalPort(server_locator, server_port);
-            eprosima::fastrtps::rtps::IPLocator::setIPv4(server_locator, ip_server_address);
+            eprosima::fastdds::rtps::IPLocator::setLogicalPort(server_locator, server_port);
+            eprosima::fastdds::rtps::IPLocator::setIPv4(server_locator, ip_server_address);
             break;
         }
 
@@ -133,8 +133,8 @@ ClientSubscriberApp::ClientSubscriberApp(
             descriptor = descriptor_tmp;
 
             server_locator.kind = LOCATOR_KIND_TCPv6;
-            eprosima::fastrtps::rtps::IPLocator::setLogicalPort(server_locator, server_port);
-            eprosima::fastrtps::rtps::IPLocator::setIPv6(server_locator, ip_server_address);
+            eprosima::fastdds::rtps::IPLocator::setLogicalPort(server_locator, server_port);
+            eprosima::fastdds::rtps::IPLocator::setIPv6(server_locator, ip_server_address);
             break;
         }
 
@@ -144,7 +144,7 @@ ClientSubscriberApp::ClientSubscriberApp(
 
     // Set participant as DS CLIENT
     pqos.wire_protocol().builtin.discovery_config.discoveryProtocol =
-            eprosima::fastrtps::rtps::DiscoveryProtocol_t::CLIENT;
+            eprosima::fastdds::rtps::DiscoveryProtocol::CLIENT;
 
     // Add remote SERVER to CLIENT's list of SERVERs
     pqos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.push_back(server_locator);

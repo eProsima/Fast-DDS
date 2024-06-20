@@ -80,8 +80,8 @@ ServerApp::ServerApp(
     // Create DS SERVER locator
     eprosima::fastdds::rtps::Locator listening_locator;
     eprosima::fastdds::rtps::Locator connection_locator;
-    eprosima::fastrtps::rtps::IPLocator::setPhysicalPort(listening_locator, config.listening_port);
-    eprosima::fastrtps::rtps::IPLocator::setPhysicalPort(connection_locator, config.connection_port);
+    eprosima::fastdds::rtps::IPLocator::setPhysicalPort(listening_locator, config.listening_port);
+    eprosima::fastdds::rtps::IPLocator::setPhysicalPort(connection_locator, config.connection_port);
 
     std::shared_ptr<eprosima::fastdds::rtps::TransportDescriptorInterface> descriptor;
 
@@ -99,9 +99,9 @@ ServerApp::ServerApp(
             descriptor = descriptor_tmp;
 
             listening_locator.kind = LOCATOR_KIND_UDPv4;
-            eprosima::fastrtps::rtps::IPLocator::setIPv4(listening_locator, ip_listening_address);
+            eprosima::fastdds::rtps::IPLocator::setIPv4(listening_locator, ip_listening_address);
             connection_locator.kind = LOCATOR_KIND_UDPv4;
-            eprosima::fastrtps::rtps::IPLocator::setIPv4(connection_locator, ip_connection_address);
+            eprosima::fastdds::rtps::IPLocator::setIPv4(connection_locator, ip_connection_address);
             break;
         }
 
@@ -111,9 +111,9 @@ ServerApp::ServerApp(
             descriptor = descriptor_tmp;
 
             listening_locator.kind = LOCATOR_KIND_UDPv6;
-            eprosima::fastrtps::rtps::IPLocator::setIPv6(listening_locator, ip_listening_address);
+            eprosima::fastdds::rtps::IPLocator::setIPv6(listening_locator, ip_listening_address);
             connection_locator.kind = LOCATOR_KIND_UDPv6;
-            eprosima::fastrtps::rtps::IPLocator::setIPv6(connection_locator, ip_connection_address);
+            eprosima::fastdds::rtps::IPLocator::setIPv6(connection_locator, ip_connection_address);
             break;
         }
 
@@ -124,11 +124,11 @@ ServerApp::ServerApp(
             descriptor = descriptor_tmp;
 
             listening_locator.kind = LOCATOR_KIND_TCPv4;
-            eprosima::fastrtps::rtps::IPLocator::setLogicalPort(listening_locator, config.listening_port);
-            eprosima::fastrtps::rtps::IPLocator::setIPv4(listening_locator, ip_listening_address);
+            eprosima::fastdds::rtps::IPLocator::setLogicalPort(listening_locator, config.listening_port);
+            eprosima::fastdds::rtps::IPLocator::setIPv4(listening_locator, ip_listening_address);
             connection_locator.kind = LOCATOR_KIND_TCPv4;
-            eprosima::fastrtps::rtps::IPLocator::setIPv4(connection_locator, ip_connection_address);
-            eprosima::fastrtps::rtps::IPLocator::setLogicalPort(connection_locator, config.connection_port);
+            eprosima::fastdds::rtps::IPLocator::setIPv4(connection_locator, ip_connection_address);
+            eprosima::fastdds::rtps::IPLocator::setLogicalPort(connection_locator, config.connection_port);
             break;
         }
 
@@ -139,11 +139,11 @@ ServerApp::ServerApp(
             descriptor = descriptor_tmp;
 
             listening_locator.kind = LOCATOR_KIND_TCPv6;
-            eprosima::fastrtps::rtps::IPLocator::setLogicalPort(listening_locator, config.listening_port);
-            eprosima::fastrtps::rtps::IPLocator::setIPv6(listening_locator, ip_listening_address);
+            eprosima::fastdds::rtps::IPLocator::setLogicalPort(listening_locator, config.listening_port);
+            eprosima::fastdds::rtps::IPLocator::setIPv6(listening_locator, ip_listening_address);
             connection_locator.kind = LOCATOR_KIND_TCPv6;
-            eprosima::fastrtps::rtps::IPLocator::setIPv6(connection_locator, ip_connection_address);
-            eprosima::fastrtps::rtps::IPLocator::setLogicalPort(connection_locator, config.connection_port);
+            eprosima::fastdds::rtps::IPLocator::setIPv6(connection_locator, ip_connection_address);
+            eprosima::fastdds::rtps::IPLocator::setLogicalPort(connection_locator, config.connection_port);
             break;
         }
 
@@ -156,7 +156,7 @@ ServerApp::ServerApp(
 
     // Set participant as SERVER
     pqos.wire_protocol().builtin.discovery_config.discoveryProtocol =
-            eprosima::fastrtps::rtps::DiscoveryProtocol_t::SERVER;
+            eprosima::fastdds::rtps::DiscoveryProtocol::SERVER;
 
     // Set SERVER's listening locator for PDP
     pqos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(listening_locator);
@@ -210,17 +210,17 @@ ServerApp::~ServerApp()
 
 void ServerApp::on_participant_discovery(
         DomainParticipant*,
-        fastrtps::rtps::ParticipantDiscoveryInfo&& info,
+        fastdds::rtps::ParticipantDiscoveryInfo&& info,
         bool& should_be_ignored)
 {
     static_cast<void>(should_be_ignored);
-    if (info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
+    if (info.status == eprosima::fastdds::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
     {
         std::cout << "Discovered Participant with GUID " << info.info.m_guid << std::endl;
         ++matched_;
     }
-    else if (info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT ||
-            info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT)
+    else if (info.status == eprosima::fastdds::rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT ||
+            info.status == eprosima::fastdds::rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT)
     {
         std::cout << "Dropped Participant with GUID " << info.info.m_guid << std::endl;
         --matched_;
