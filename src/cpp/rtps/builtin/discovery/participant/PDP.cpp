@@ -227,7 +227,7 @@ bool PDP::data_matches_with_prefix(
 }
 
 std::string PDP::check_participant_type(
-        const eprosima::fastrtps::ParameterPropertyList_t properties)
+        const fastdds::dds::ParameterPropertyList_t properties)
 {
     auto participant_type = std::find_if(
         properties.begin(),

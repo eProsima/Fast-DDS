@@ -223,7 +223,7 @@ RTPSParticipant* RTPSDomainImpl::createParticipant(
     }
     else
     {
-        if (PParam.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol_t::BACKUP)
+        if (PParam.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::BACKUP)
         {
             EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Specifying a GUID prefix is mandatory for BACKUP Discovery Servers.");
             return nullptr;

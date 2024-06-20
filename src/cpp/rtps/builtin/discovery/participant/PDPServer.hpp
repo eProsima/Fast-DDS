@@ -293,7 +293,7 @@ protected:
      * It does however take temp_data_lock_
      */
     void match_pdp_writer_nts_(
-            const fastrtps::rtps::ParticipantProxyData& pdata);
+            const fastdds::rtps::ParticipantProxyData& pdata);
 
     /**
      * Manually match the local PDP writer with the PDP reader of a given partipant of type server.
@@ -301,7 +301,7 @@ protected:
      * It does however take temp_data_lock_
      */
     void match_pdp_reader_nts_(
-            const fastrtps::rtps::ParticipantProxyData& pdata);
+            const fastdds::rtps::ParticipantProxyData& pdata);
 
     /**
      * Release a change from the history of the PDP writer.

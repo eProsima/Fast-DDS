@@ -193,7 +193,7 @@ int fastdds_discovery_server(
         }
         else if (participantQos.wire_protocol().prefix == prefix_cero &&
                 participantQos.wire_protocol().builtin.discovery_config.discoveryProtocol ==
-                eprosima::fastrtps::rtps::DiscoveryProtocol::BACKUP)
+                eprosima::fastdds::rtps::DiscoveryProtocol::BACKUP)
         {
             // Discovery protocol specified in XML is BACKUP, but no GUID was specified
             std::cout << "Specifying a GUID prefix is mandatory for BACKUP Discovery Servers." <<
@@ -233,7 +233,7 @@ int fastdds_discovery_server(
     pOp = options[BACKUP];
     if (nullptr != pOp)
     {
-        fastrtps::rtps::GuidPrefix_t prefix_cero;
+        fastdds::rtps::GuidPrefix_t prefix_cero;
         if (participantQos.wire_protocol().prefix == prefix_cero && server_id == -1)
         {
             // BACKUP argument used, but no GUID was specified either in the XML nor in the CLI

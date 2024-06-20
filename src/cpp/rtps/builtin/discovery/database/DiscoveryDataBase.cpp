@@ -69,7 +69,7 @@ void DiscoveryDataBase::add_server(
 }
 
 void DiscoveryDataBase::remove_server(
-        fastrtps::rtps::GuidPrefix_t server)
+        fastdds::rtps::GuidPrefix_t server)
 {
     std::lock_guard<std::recursive_mutex> guard(mutex_);
     if (servers_.erase(server) == 1)

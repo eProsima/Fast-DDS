@@ -580,7 +580,7 @@ protected:
      * @return a string indicating the participant type.
      */
     std::string check_participant_type(
-            const eprosima::fastrtps::ParameterPropertyList_t properties);
+            const fastdds::dds::ParameterPropertyList_t properties);
 
     /**
      * Gets the key of a participant proxy data.

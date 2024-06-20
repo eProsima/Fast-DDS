@@ -57,7 +57,7 @@ public:
     }
 
     DiscoveryParticipantChangeData(
-            fastrtps::rtps::RemoteLocatorList metatraffic_locators,
+            RemoteLocatorList metatraffic_locators,
             bool is_client,
             bool is_local,
             bool is_superclient)

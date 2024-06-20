@@ -344,7 +344,7 @@ public:
 
     //! Remove a server from the list of remote servers
     void remove_server(
-            fastrtps::rtps::GuidPrefix_t server);
+            fastdds::rtps::GuidPrefix_t server);
 
     // Removes all the changes whose original sender was entity_guid_prefix from writer_history
     void remove_related_alive_from_history_nts(
