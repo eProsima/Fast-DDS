@@ -89,6 +89,7 @@ jobs:
 
       - name: Setup CCache
         uses: eProsima/eProsima-CI/external/setup-ccache-action@v0
+        if: ${{ !always() }}
         with:
           api_token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -171,6 +172,7 @@ jobs:
 
       - name: Setup CCache
         uses: eProsima/eProsima-CI/external/setup-ccache-action@v0
+        if: ${{ !always() }}
         with:
           api_token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -251,6 +253,7 @@ jobs:
 
       - name: Setup CCache
         uses: eProsima/eProsima-CI/external/setup-ccache-action@v0
+        if: ${{ !always() }}
         with:
           api_token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -358,6 +361,7 @@ jobs:
 
       - name: Setup CCache
         uses: eProsima/eProsima-CI/external/setup-ccache-action@v0
+        if: ${{ !always() }}
         with:
           api_token: ${{ secrets.GITHUB_TOKEN }}
 
