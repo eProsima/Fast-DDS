@@ -17,14 +17,14 @@ set(RESOURCEIDLTOJSONTESTS_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/utils.cpp)
 
 file(GLOB DATATYPEBASE_SOURCES_CPP "types/*.cpp")
-file(GLOB DATATYPE_GROUND_TRUTH_SOURCES_CPP "types/**/*.cpp")
+file(GLOB DATATYPE_COMMON_CPP "types/**/common/*.cpp")
 file(GLOB DATATYPE_SOURCES_CPP "types/**/**/*.cpp")
 file(GLOB DATATYPE_SOURCES_CXX "types/**/**/*.cxx")
 
 set(
     EXAMPLE_SOURCES
         ${DATATYPEBASE_SOURCES_CPP}
-        ${DATATYPE_GROUND_TRUTH_SOURCES_CPP}
+        ${DATATYPE_COMMON_CPP}
         ${DATATYPE_SOURCES_CPP}
         ${DATATYPE_SOURCES_CXX}
     )
