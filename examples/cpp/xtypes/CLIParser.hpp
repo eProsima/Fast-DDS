@@ -70,7 +70,7 @@ public:
         std::cout << "                                  [0 <= <num> <= 65535]"                     << std::endl;
         std::cout << "                                  (Default: 0 [unlimited])"                  << std::endl;
         std::cout << "Publisher options:"                                                          << std::endl;
-        std::cout << "            --xml-type            Get types defined in xml file. "           << std::endl;
+        std::cout << "            --xml-type            Get types defined in xml file."            << std::endl;
         std::cout << "                                  (Default: Types defined through C++ API) " << std::endl;
         std::exit(return_code);
     }

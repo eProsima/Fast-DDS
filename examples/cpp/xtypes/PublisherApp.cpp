@@ -52,6 +52,15 @@ PublisherApp::PublisherApp(
     , samples_(config.samples)
     , stop_(false)
 {
+    // Create the participant
+    auto factory = DomainParticipantFactory::get_instance();
+    participant_ = factory->create_participant_with_default_profile(nullptr, StatusMask::none());
+
+    if (participant_ == nullptr)
+    {
+        throw std::runtime_error("Participant initialization failed");
+    }
+
     // Create the type
     DynamicType::_ref_type dynamic_type = create_type(config.use_xml);
     if (!dynamic_type)
@@ -69,15 +78,6 @@ PublisherApp::PublisherApp(
 
     hello_->set_uint32_value(hello_->get_member_id_by_name("index"), 0);
     hello_->set_string_value(hello_->get_member_id_by_name("message"), "Hello xtypes world");
-
-    // Create the participant
-    auto factory = DomainParticipantFactory::get_instance();
-    participant_ = factory->create_participant_with_default_profile(nullptr, StatusMask::none());
-
-    if (participant_ == nullptr)
-    {
-        throw std::runtime_error("Participant initialization failed");
-    }
 
     // Register the type
     TypeSupport type(new DynamicPubSubType(dynamic_type));
