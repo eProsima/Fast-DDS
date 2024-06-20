@@ -595,28 +595,25 @@ ReturnCode_t enum_to_str(
 
     ReturnCode_t ret = RETCODE_OK;
 
-    std::map<MemberId, DynamicTypeMember::_ref_type> members;
-    ret = node.info.dynamic_type->get_all_members(members);
-
-    if (ret != RETCODE_OK)
-    {
-        return ret;
-    }
-
     enum_str = "enum " + node.info.type_kind_name + TYPE_OPENING + TAB_SEPARATOR;
-    bool first_iter = true;
 
-    for (const auto& member : members)
+    for (std::uint32_t index = 0; index < node.info.dynamic_type->get_member_count(); index++)
     {
-        if (!first_iter)
+        traits<DynamicTypeMember>::ref_type member;
+        ret = node.info.dynamic_type->get_member_by_index(member, index);
+
+        if (ret != RETCODE_OK)
+        {
+            return ret;
+        }
+
+        if (index != 0)
         {
             enum_str += ",\n";
             enum_str += TAB_SEPARATOR;
         }
 
-        first_iter = false;
-
-        enum_str += member.second->get_name();
+        enum_str += member->get_name().to_string();
     }
 
     // Close definition
