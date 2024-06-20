@@ -23,6 +23,11 @@ on:
         description: 'Branch or tag of Fast DDS repository (https://github.com/eProsima/Fast-DDS)'
         type: string
         required: true
+      run-tests:
+        description: 'Run suite of tests of Fast DDS'
+        required: false
+        type: boolean
+        default: true
       use-ccache:
         description: 'Use CCache to speed up the build'
         required: false
@@ -43,10 +48,6 @@ concurrency:
 
 jobs:
   mac-ci:
-    if: ${{ (
-              !contains(github.event.pull_request.labels.*.name, 'skip-ci') &&
-              !contains(github.event.pull_request.labels.*.name, 'conflicts')
-            ) }}
     uses: ./.github/workflows/reusable-mac-ci.yml
     with:
       label: ${{ inputs.label || 'mac-ci' }}
@@ -54,4 +55,6 @@ jobs:
       cmake-args: '-DSECURITY=ON ${{ inputs.cmake-args }}'
       ctest-args: ${{ inputs.ctest-args }}
       fastdds-branch: ${{ inputs.fastdds_branch || github.ref || 'master' }}
+      run-build: ${{ (github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'skip-ci') && !contains(github.event.pull_request.labels.*.name, 'conflicts')) || true }}
+      run-tests: ${{ ((inputs.run-tests == true) && true) || (github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'no-test')) }}
       use-ccache: ${{ ((inputs.use-ccache == true) && true) || false }}

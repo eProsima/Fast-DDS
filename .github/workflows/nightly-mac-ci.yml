@@ -19,6 +19,8 @@ jobs:
       cmake-args: "-DSECURITY=${{ matrix.security }}"
       ctest-args: "-LE xfail"
       fastdds-branch: 'master'
+      run-build: true
+      run-tests: true
       use-ccache: false
 
   nightly-mac-ci-2_14_x:
@@ -34,6 +36,8 @@ jobs:
       cmake-args: "-DSECURITY=${{ matrix.security }}"
       ctest-args: "-LE xfail"
       fastdds-branch: '2.14.x'
+      run-build: true
+      run-tests: true
       use-ccache: false
 
   nightly-mac-ci-2_13_x:
@@ -49,6 +53,8 @@ jobs:
       cmake-args: "-DSECURITY=${{ matrix.security }}"
       ctest-args: "-LE xfail"
       fastdds-branch: '2.13.x'
+      run-build: true
+      run-tests: true
       use-ccache: false
 
   nightly-mac-ci-2_10_x:
@@ -64,6 +70,8 @@ jobs:
       cmake-args: "-DSECURITY=${{ matrix.security }}"
       ctest-args: "-LE xfail"
       fastdds-branch: '2.10.x'
+      run-build: true
+      run-tests: true
       use-ccache: false
 
   nightly-mac-ci-2_6_x:
@@ -79,4 +87,6 @@ jobs:
       cmake-args: "-DSECURITY=${{ matrix.security }}"
       ctest-args: "-LE xfail"
       fastdds-branch: '2.6.x'
+      run-build: true
+      run-tests: true
       use-ccache: false
