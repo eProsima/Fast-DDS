@@ -24,6 +24,7 @@
 
 #include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/detail/dynamic_language_binding.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
@@ -176,7 +177,9 @@ traits<DynamicType>::ref_type create_dynamic_type<DataTypeKind::COMPREHENSIVE_TY
 {
     const auto type_name = "ComprehensiveType";
 
-    register_ComprehensiveType_type_objects();
+    eprosima::fastdds::dds::TypeSupport type(new ComprehensiveTypePubSubType());
+
+    type->register_type_object_representation();
 
     xtypes::TypeObjectPair type_object_pair;
     if (RETCODE_OK !=
