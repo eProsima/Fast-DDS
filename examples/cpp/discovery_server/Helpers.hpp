@@ -13,17 +13,18 @@
 // limitations under the License.
 
 /**
- * @file common.h
+ * @file Helpers.hpp
  *
  */
 
-#ifndef _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_DISCOVERYSERVEREXAMPLE_COMMON_H_
-#define _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_DISCOVERYSERVEREXAMPLE_COMMON_H_
+#ifndef _FASTDDS_DISCOVERY_SERVER_EXAMPLE_HELPERS_HPP_
+#define _FASTDDS_DISCOVERY_SERVER_EXAMPLE_HELPERS_HPP_
 
-#include <fastdds/rtps/common/GuidPrefix_t.hpp>
+#include <fastdds/rtps/attributes/ServerAttributes.h>
 #include <fastdds/utils/IPLocator.h>
 
-enum class TransportKind
+//! Transport kind enumeration
+enum class TransportKind : uint8_t
 {
     UDPv4,
     UDPv6,
@@ -31,6 +32,19 @@ enum class TransportKind
     TCPv6,
     SHM,
 };
+
+inline eprosima::fastdds::rtps::GuidPrefix_t get_discovery_server_guid_from_id(
+        unsigned short id)
+{
+    eprosima::fastdds::rtps::GuidPrefix_t result;
+
+    // Get default DS guid and modify the one value expected to be changed
+    std::istringstream(eprosima::fastdds::rtps::DEFAULT_ROS2_SERVER_GUIDPREFIX) >> result;
+    result.value[2] =
+            static_cast<eprosima::fastdds::rtps::octet>(id); // This is done like this in Fast
+
+    return result;
+}
 
 inline bool is_ip(
         const std::string ip_str)
@@ -77,4 +91,4 @@ inline std::string get_ip_from_dns(
     return domain_name;
 }
 
-#endif /* _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_DISCOVERYSERVEREXAMPLE_COMMON_H_ */
+#endif /* _FASTDDS_DISCOVERY_SERVER_EXAMPLE_HELPERS_HPP_ */

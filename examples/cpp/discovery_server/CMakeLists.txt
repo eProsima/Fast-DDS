@@ -1,4 +1,4 @@
-# Copyright 2022 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+# Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 
 cmake_minimum_required(VERSION 3.20)
 
-project(DiscoveryServerExample VERSION 1 LANGUAGES CXX)
+project(fastdds_discovery_server_example VERSION 1 LANGUAGES CXX)
 
 # Find requirements
 if(NOT fastcdr_FOUND)
@@ -29,21 +29,22 @@ endif()
 include(CheckCXXCompilerFlag)
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     check_cxx_compiler_flag(-std=c++11 SUPPORTS_CXX11)
-    check_cxx_compiler_flag(-std=c++11 SUPPORTS_CXX11)
     if(NOT SUPPORTS_CXX11)
         message(FATAL_ERROR "Compiler doesn't support C++11")
     endif()
 endif()
 
-message(STATUS "Configuring DiscoveryServerExample example...")
-file(GLOB DISCOVERY_SERVER_EXAMPLE_SOURCES_CXX "types/*.cxx")
-file(GLOB DISCOVERY_SERVER_EXAMPLE_SOURCES_CPP "*.cpp")
+message(STATUS "Configuring discovery server example...")
+file(GLOB DISCOVERY_SERVER_SOURCES_CXX "*.cxx")
+file(GLOB DISCOVERY_SERVER_SOURCES_CPP "*.cpp")
 
-add_executable(${PROJECT_NAME} ${DISCOVERY_SERVER_EXAMPLE_SOURCES_CXX} ${DISCOVERY_SERVER_EXAMPLE_SOURCES_CPP})
-target_compile_definitions(${PROJECT_NAME} PRIVATE
+add_executable(discovery_server ${DISCOVERY_SERVER_SOURCES_CXX} ${DISCOVERY_SERVER_SOURCES_CPP})
+target_compile_definitions(discovery_server PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+    $<$<BOOL:${SHM_TRANSPORT_DEFAULT}>:SHM_TRANSPORT_BUILTIN> # Enable SHM as built-in transport
 )
-target_link_libraries(${PROJECT_NAME} fastdds fastcdr fastdds::optionparser)
-install(TARGETS ${PROJECT_NAME}
-    RUNTIME DESTINATION examples/cpp/dds/${PROJECT_NAME}/${BIN_INSTALL_DIR})
+target_link_libraries(discovery_server fastdds fastcdr)
+install(TARGETS discovery_server
+    RUNTIME DESTINATION ${DATA_INSTALL_DIR}/fastdds/examples/cpp/discovery_server/${BIN_INSTALL_DIR})
+

@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-add_subdirectory(DiscoveryServerExample)
 add_subdirectory(DynamicHelloWorldExample)
 add_subdirectory(FlowControlExample)
 add_subdirectory(HelloWorldExampleDataSharing)
