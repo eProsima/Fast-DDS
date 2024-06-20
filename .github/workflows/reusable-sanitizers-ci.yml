@@ -89,6 +89,9 @@ jobs:
 
       - name: Setup CCache
         uses: eProsima/eProsima-CI/external/setup-ccache-action@v0
+        if: ${{ !always() }}
+        with:
+          api_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Fetch Fast DDS dependencies
         uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
@@ -169,6 +172,9 @@ jobs:
 
       - name: Setup CCache
         uses: eProsima/eProsima-CI/external/setup-ccache-action@v0
+        if: ${{ !always() }}
+        with:
+          api_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Show .meta file
         id: show_meta
@@ -247,6 +253,9 @@ jobs:
 
       - name: Setup CCache
         uses: eProsima/eProsima-CI/external/setup-ccache-action@v0
+        if: ${{ !always() }}
+        with:
+          api_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Get Discovery Server branch
         id: get_discovery_server_branch
@@ -352,6 +361,9 @@ jobs:
 
       - name: Setup CCache
         uses: eProsima/eProsima-CI/external/setup-ccache-action@v0
+        if: ${{ !always() }}
+        with:
+          api_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Fetch Fast DDS dependencies
         uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
