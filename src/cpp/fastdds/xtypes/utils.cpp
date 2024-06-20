@@ -460,7 +460,7 @@ ReturnCode_t json_serialize_basic_member(
         }
         case TK_BYTE:
         {
-            fastrtps::rtps::octet value;
+            fastdds::rtps::octet value;
             ReturnCode_t ret = data->get_byte_value(value, member_id);
             if (RETCODE_OK == ret)
             {

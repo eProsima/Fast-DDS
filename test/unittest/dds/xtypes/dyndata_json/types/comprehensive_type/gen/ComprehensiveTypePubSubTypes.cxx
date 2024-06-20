@@ -27,8 +27,8 @@
 #include "ComprehensiveTypeCdrAux.hpp"
 #include "ComprehensiveTypeTypeObjectSupport.hpp"
 
-using SerializedPayload_t = eprosima::fastrtps::rtps::SerializedPayload_t;
-using InstanceHandle_t = eprosima::fastrtps::rtps::InstanceHandle_t;
+using SerializedPayload_t = eprosima::fastdds::rtps::SerializedPayload_t;
+using InstanceHandle_t = eprosima::fastdds::rtps::InstanceHandle_t;
 using DataRepresentationId_t = eprosima::fastdds::dds::DataRepresentationId_t;
 
 PrimitivesStructPubSubType::PrimitivesStructPubSubType()
@@ -219,9 +219,9 @@ bool PrimitivesStructPubSubType::getKey(
     return true;
 }
 
-void PrimitivesStructPubSubType::register_type_object_representation() const
+void PrimitivesStructPubSubType::register_type_object_representation()
 {
-    register_ComprehensiveType_type_objects();
+    register_PrimitivesStruct_type_identifier(type_identifiers_);
 }
 
 
@@ -421,9 +421,9 @@ bool AllStructPubSubType::getKey(
     return true;
 }
 
-void AllStructPubSubType::register_type_object_representation() const
+void AllStructPubSubType::register_type_object_representation()
 {
-    register_ComprehensiveType_type_objects();
+    register_AllStruct_type_identifier(type_identifiers_);
 }
 
 ComprehensiveTypePubSubType::ComprehensiveTypePubSubType()
@@ -614,9 +614,9 @@ bool ComprehensiveTypePubSubType::getKey(
     return true;
 }
 
-void ComprehensiveTypePubSubType::register_type_object_representation() const
+void ComprehensiveTypePubSubType::register_type_object_representation()
 {
-    register_ComprehensiveType_type_objects();
+    register_ComprehensiveType_type_identifier(type_identifiers_);
 }
 
 
