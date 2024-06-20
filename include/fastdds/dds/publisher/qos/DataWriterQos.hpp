@@ -58,6 +58,11 @@ public:
                (this->disable_heartbeat_piggyback == b.disable_heartbeat_piggyback);
     }
 
+    inline void clear()
+    {
+        *this = RTPSReliableWriterQos();
+    }
+
     //!Writer Timing Attributes
     fastdds::rtps::WriterTimes times;
 

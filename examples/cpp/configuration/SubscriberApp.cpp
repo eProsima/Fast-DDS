@@ -126,7 +126,7 @@ SubscriberApp::SubscriberApp(
         reader_qos.resource_limits().max_samples_per_instance = config.max_samples_per_instance;
         reader_qos.ownership().kind = config.ownership;
         reader_qos.deadline().period = eprosima::fastdds::Duration_t(config.deadline * 1e-3);
-        reader_qos.reliable_reader_qos().disable_positive_ACKs.enabled = config.disable_positive_ack;
+        reader_qos.reliable_reader_qos().disable_positive_acks.enabled = config.disable_positive_ack;
         reader_qos.lifespan().duration = eprosima::fastdds::Duration_t(config.lifespan * 1e-3);
         reader_qos.liveliness().kind = config.liveliness;
         reader_qos.liveliness().lease_duration = eprosima::fastdds::Duration_t(

@@ -306,9 +306,9 @@ TEST(SubscriberTests, ChangeDefaultDataReaderQos)
     qos.reliable_reader_qos().times.initial_acknack_delay.nanosec = 32u;
     qos.reliable_reader_qos().times.heartbeat_response_delay.seconds = 432;
     qos.reliable_reader_qos().times.heartbeat_response_delay.nanosec = 43u;
-    qos.reliable_reader_qos().disable_positive_ACKs.enabled = true;
-    qos.reliable_reader_qos().disable_positive_ACKs.duration.seconds = 13;
-    qos.reliable_reader_qos().disable_positive_ACKs.duration.nanosec = 320u;
+    qos.reliable_reader_qos().disable_positive_acks.enabled = true;
+    qos.reliable_reader_qos().disable_positive_acks.duration.seconds = 13;
+    qos.reliable_reader_qos().disable_positive_acks.duration.nanosec = 320u;
     // .type_consistency
     qos.representation().m_value.push_back(XML_DATA_REPRESENTATION);
     qos.representation().m_value.push_back(XCDR_DATA_REPRESENTATION);
@@ -428,9 +428,9 @@ TEST(SubscriberTests, ChangeDefaultDataReaderQos)
     EXPECT_EQ(32u, rqos.reliable_reader_qos().times.initial_acknack_delay.nanosec);
     EXPECT_EQ(432, rqos.reliable_reader_qos().times.heartbeat_response_delay.seconds);
     EXPECT_EQ(43u, rqos.reliable_reader_qos().times.heartbeat_response_delay.nanosec);
-    EXPECT_TRUE(rqos.reliable_reader_qos().disable_positive_ACKs.enabled);
-    EXPECT_EQ(13, rqos.reliable_reader_qos().disable_positive_ACKs.duration.seconds);
-    EXPECT_EQ(320u, rqos.reliable_reader_qos().disable_positive_ACKs.duration.nanosec);
+    EXPECT_TRUE(rqos.reliable_reader_qos().disable_positive_acks.enabled);
+    EXPECT_EQ(13, rqos.reliable_reader_qos().disable_positive_acks.duration.seconds);
+    EXPECT_EQ(320u, rqos.reliable_reader_qos().disable_positive_acks.duration.nanosec);
     // .type_consistency
     EXPECT_EQ(XML_DATA_REPRESENTATION, rqos.representation().m_value.at(0));
     EXPECT_EQ(XCDR_DATA_REPRESENTATION, rqos.representation().m_value.at(1));

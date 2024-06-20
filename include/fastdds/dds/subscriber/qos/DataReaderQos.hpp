@@ -55,13 +55,12 @@ public:
             const RTPSReliableReaderQos& b) const
     {
         return (this->times == b.times) &&
-               (this->disable_positive_ACKs == b.disable_positive_ACKs);
+               (this->disable_positive_acks == b.disable_positive_acks);
     }
 
     inline void clear()
     {
-        RTPSReliableReaderQos reset = RTPSReliableReaderQos();
-        std::swap(*this, reset);
+        *this = RTPSReliableReaderQos();
     }
 
     /*!
@@ -72,7 +71,7 @@ public:
     /*!
      * @brief Control the sending of positive ACKs
      */
-    DisablePositiveACKsQosPolicy disable_positive_ACKs;
+    DisablePositiveACKsQosPolicy disable_positive_acks;
 };
 
 //! Qos Policy to configure the limit of the reader resources

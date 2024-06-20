@@ -71,6 +71,12 @@ public:
                (this->binary_properties_ == b.binary_properties_);
     }
 
+    FASTDDS_EXPORTED_API bool operator !=(
+            const PropertyPolicy& b) const
+    {
+        return !(*this == b);
+    }
+
     //!Get properties
     FASTDDS_EXPORTED_API const PropertySeq& properties() const
     {
