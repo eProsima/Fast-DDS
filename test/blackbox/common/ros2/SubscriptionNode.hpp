@@ -16,6 +16,7 @@
 #define FASTDDS_TEST_BLACKBOX_COMMON_ROS2__SUBSCRIPTIONNODE_HPP
 
 #include <cstdint>
+#include <functional>
 #include <memory>
 #include <mutex>
 #include <string>
@@ -24,6 +25,7 @@
 
 #include <fastdds/dds/core/detail/DDSReturnCode.hpp>
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/dds/core/status/LivelinessChangedStatus.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
@@ -44,6 +46,19 @@ using namespace eprosima::fastdds::dds;
 
 struct SubscriptionListener : public DataReaderListener
 {
+    void on_liveliness_changed(
+            DataReader* reader,
+            const LivelinessChangedStatus& status) override
+    {
+        static_cast<void>(reader);
+
+        if (liveliness_callback)
+        {
+            liveliness_callback(status);
+        }
+    }
+
+    std::function<void(const LivelinessChangedStatus&)> liveliness_callback;
 };
 
 struct SubscriptionNode : public Node
