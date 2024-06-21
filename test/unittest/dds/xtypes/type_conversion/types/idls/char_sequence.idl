@@ -1,0 +1,4 @@
+struct char_sequence
+{
+    sequence<char> chars;
+};

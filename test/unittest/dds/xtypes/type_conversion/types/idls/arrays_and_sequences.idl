@@ -1,0 +1,12 @@
+struct AnInternalObject
+{
+    float x;
+    boolean positive;
+};
+
+struct arrays_and_sequences
+{
+    sequence<AnInternalObject> unlimited_vector;
+    sequence<AnInternalObject, 10> limited_vector;
+    AnInternalObject limited_array[10];
+};

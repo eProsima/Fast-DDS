@@ -1,0 +1,23 @@
+struct ThirdLevelElement
+{
+    double x;
+    double y;
+};
+
+struct SecondLevelElement
+{
+    ThirdLevelElement an_element_alone;
+    sequence<ThirdLevelElement, 1> a_limited_other_value;
+};
+
+struct FirstLevelElement
+{
+    string useless_name;
+    sequence<SecondLevelElement> sub;
+    ThirdLevelElement an_element_alone;
+};
+
+struct complex_nested_arrays
+{
+    FirstLevelElement array_of_elements[3];
+};

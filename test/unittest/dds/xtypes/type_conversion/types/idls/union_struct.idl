@@ -1,0 +1,15 @@
+union MyUnion switch (long)
+{
+    case 1:
+        octet octet_value;
+    case 2:
+        long long_value;
+    case 3:
+        string string_value;
+};
+
+struct union_struct
+{
+    unsigned long index;
+    MyUnion union_value;
+};

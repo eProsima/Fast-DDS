@@ -59,6 +59,7 @@ Forthcoming
   * `SenderResource` and Transport APIs now receive a collection of `NetworkBuffer` on their `send` method.
 * Migrate fastrtps namespace to fastdds
 * Migrate fastrtps `ResourceManagement` API from `rtps/resources` to `rtps/attributes`.
+* New `idl_serialize` method to convert a `DynamicType` to an IDL string.
 
 Version 2.14.0
 --------------

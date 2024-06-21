@@ -1,0 +1,4 @@
+struct float_bounded_sequence
+{
+    sequence<float, 13> numbers;
+};

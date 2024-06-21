@@ -65,6 +65,9 @@ set(SYSTEMINFOTESTS_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp)
 
+set(TREETESTS_SOURCE
+    TreeNodeTests.cpp)
+
 include_directories(mock/)
 
 add_executable(StringMatchingTests ${STRINGMATCHINGTESTS_SOURCE})
@@ -166,6 +169,11 @@ target_compile_definitions(SharedMutexTests PUBLIC USE_THIRDPARTY_SHARED_MUTEX=1
 target_include_directories(SharedMutexTests PRIVATE ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(SharedMutexTests PUBLIC GTest::gtest)
 gtest_discover_tests(SharedMutexTests)
+
+add_executable(TreeNodeTests ${TREETESTS_SOURCE})
+target_include_directories(TreeNodeTests PRIVATE ${PROJECT_SOURCE_DIR}/src/cpp)
+target_link_libraries(TreeNodeTests PUBLIC GTest::gtest)
+gtest_discover_tests(TreeNodeTests)
 
 ###############################################################################
 # Necessary files
