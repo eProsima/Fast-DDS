@@ -160,7 +160,7 @@ public:
         ASSERT_NE(reader_, nullptr);
 
         register_writer();
-        
+
         initialized_ = true;
     }
 

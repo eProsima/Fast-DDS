@@ -270,10 +270,10 @@ private:
     ResourceLimitedVector<RemoteWriterInfo_t> matched_writers_;
 };
 
-} // namespace rtps 
-} // namespace fastdds 
-} // namespace eprosima 
+} // namespace rtps
+} // namespace fastdds
+} // namespace eprosima
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#endif // FASTDDS_RTPS_READER__STATELESSREADER_HPP 
+#endif // FASTDDS_RTPS_READER__STATELESSREADER_HPP

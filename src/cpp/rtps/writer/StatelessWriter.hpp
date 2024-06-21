@@ -297,9 +297,9 @@ private:
     fastdds::rtps::IReaderDataFilter* reader_data_filter_ = nullptr;
 };
 
-} // namespace rtps 
-} // namespace fastdds 
-} // namespace eprosima 
+} // namespace rtps
+} // namespace fastdds
+} // namespace eprosima
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#endif // FASTDDS_RTPS_WRITER__STATELESSWRITER_HPP 
+#endif // FASTDDS_RTPS_WRITER__STATELESSWRITER_HPP

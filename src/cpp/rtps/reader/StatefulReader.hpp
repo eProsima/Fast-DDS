@@ -368,9 +368,9 @@ private:
     bool is_alive_;
 };
 
-} // namespace rtps 
-} // namespace fastdds 
-} // namespace eprosima 
+} // namespace rtps
+} // namespace fastdds
+} // namespace eprosima
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 

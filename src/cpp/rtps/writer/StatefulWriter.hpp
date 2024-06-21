@@ -545,9 +545,9 @@ private:
     LocatorSelectorSender locator_selector_async_;
 };
 
-} // namespace rtps 
-} // namespace fastdds 
-} // namespace eprosima 
+} // namespace rtps
+} // namespace fastdds
+} // namespace eprosima
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#endif // FASTDDS_RTPS_WRITER__STATEFULWRITER_HPP 
+#endif // FASTDDS_RTPS_WRITER__STATEFULWRITER_HPP
