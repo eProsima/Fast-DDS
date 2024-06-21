@@ -1457,7 +1457,7 @@ ReturnCode_t DomainParticipantImpl::register_type(
 
     /*
      * The type object registration sets the TypeIdentifiers in the type support's underlying TopicDataType.
-     * This means that that we need need to trigger the registration of the type object representation
+     * This means that we need need to trigger the registration of the type object representation
      * (idempotent operation) before finding the type in the registry.
      * Otherwise, registering two TypeSupport instances with the same underlying TopicDataType will fail upon
      * the second registration, as the TypeIdentifiers of the retrieved type from the registry would not be equal
