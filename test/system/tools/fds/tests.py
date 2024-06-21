@@ -589,7 +589,7 @@ def test_fast_discovery_security_enabled_xml_prefix(fast_discovery_tool):
         sys.exit(exit_code)
     EXPECTED_OUTPUTS = [
         "Security:           YES",
-        "44.53.00.5f.45.50.52.4f.53.49.4d.41",
+        "UDPv4:[127.0.0.1]:32823",
     ]
     for pattern in EXPECTED_OUTPUTS:
         exit_code = check_output(output, err, pattern, False)
@@ -609,7 +609,7 @@ def test_fast_discovery_security_enabled_cli_prefix(fast_discovery_tool):
         sys.exit(exit_code)
     EXPECTED_OUTPUTS = [
         "Security:           YES",
-        "44.53.00.5f.45.50.52.4f.53.49.4d.41",
+        "UDPv4:[127.0.0.1]:32823",
     ]
     for pattern in EXPECTED_OUTPUTS:
         exit_code = check_output(output, err, pattern, False)
