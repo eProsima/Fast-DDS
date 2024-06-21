@@ -763,7 +763,7 @@ typedef uint8_t UnusedMember;
  * @brief This class represents the enumeration RemoteExceptionCode_t defined by the user in the IDL file.
  * @ingroup rpc_types
  */
-enum class RemoteExceptionCode_t : uint32_t
+enum class RemoteExceptionCode_t : int32_t
 {
     REMOTE_EX_OK,
     REMOTE_EX_UNSUPPORTED,

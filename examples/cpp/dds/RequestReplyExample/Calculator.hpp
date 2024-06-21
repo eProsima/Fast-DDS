@@ -53,7 +53,7 @@
  * @brief This class represents the enumeration OperationType defined by the user in the IDL file.
  * @ingroup Calculator
  */
-enum class OperationType : uint32_t
+enum class OperationType : int32_t
 {
     ADDITION,
     SUBTRACTION,

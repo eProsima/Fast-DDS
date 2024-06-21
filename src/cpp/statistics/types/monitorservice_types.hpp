@@ -66,7 +66,7 @@ namespace statistics {
  * @brief This class represents the enumeration ConnectionMode defined by the user in the IDL file.
  * @ingroup monitorservice_types
  */
-enum class ConnectionMode : uint32_t
+enum class ConnectionMode : int32_t
 {
     DATA_SHARING,
     INTRAPROCESS,
