@@ -57,11 +57,11 @@ MapShortShortPubSubType::~MapShortShortPubSubType()
 }
 
 bool MapShortShortPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapShortShort* p_type = static_cast<MapShortShort*>(data);
+    const MapShortShort* p_type = static_cast<const MapShortShort*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -133,7 +133,7 @@ bool MapShortShortPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapShortShortPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -150,7 +150,7 @@ std::function<uint32_t()> MapShortShortPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapShortShort*>(data), current_alignment)) +
+                               *static_cast<const MapShortShort*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -173,7 +173,7 @@ void MapShortShortPubSubType::deleteData(
 }
 
 bool MapShortShortPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -182,7 +182,7 @@ bool MapShortShortPubSubType::getKey(
         return false;
     }
 
-    MapShortShort* p_type = static_cast<MapShortShort*>(data);
+    const MapShortShort* p_type = static_cast<const MapShortShort*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -250,11 +250,11 @@ MapShortUShortPubSubType::~MapShortUShortPubSubType()
 }
 
 bool MapShortUShortPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapShortUShort* p_type = static_cast<MapShortUShort*>(data);
+    const MapShortUShort* p_type = static_cast<const MapShortUShort*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -326,7 +326,7 @@ bool MapShortUShortPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapShortUShortPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -343,7 +343,7 @@ std::function<uint32_t()> MapShortUShortPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapShortUShort*>(data), current_alignment)) +
+                               *static_cast<const MapShortUShort*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -366,7 +366,7 @@ void MapShortUShortPubSubType::deleteData(
 }
 
 bool MapShortUShortPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -375,7 +375,7 @@ bool MapShortUShortPubSubType::getKey(
         return false;
     }
 
-    MapShortUShort* p_type = static_cast<MapShortUShort*>(data);
+    const MapShortUShort* p_type = static_cast<const MapShortUShort*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -443,11 +443,11 @@ MapShortLongPubSubType::~MapShortLongPubSubType()
 }
 
 bool MapShortLongPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapShortLong* p_type = static_cast<MapShortLong*>(data);
+    const MapShortLong* p_type = static_cast<const MapShortLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -519,7 +519,7 @@ bool MapShortLongPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapShortLongPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -536,7 +536,7 @@ std::function<uint32_t()> MapShortLongPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapShortLong*>(data), current_alignment)) +
+                               *static_cast<const MapShortLong*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -559,7 +559,7 @@ void MapShortLongPubSubType::deleteData(
 }
 
 bool MapShortLongPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -568,7 +568,7 @@ bool MapShortLongPubSubType::getKey(
         return false;
     }
 
-    MapShortLong* p_type = static_cast<MapShortLong*>(data);
+    const MapShortLong* p_type = static_cast<const MapShortLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -636,11 +636,11 @@ MapShortULongPubSubType::~MapShortULongPubSubType()
 }
 
 bool MapShortULongPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapShortULong* p_type = static_cast<MapShortULong*>(data);
+    const MapShortULong* p_type = static_cast<const MapShortULong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -712,7 +712,7 @@ bool MapShortULongPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapShortULongPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -729,7 +729,7 @@ std::function<uint32_t()> MapShortULongPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapShortULong*>(data), current_alignment)) +
+                               *static_cast<const MapShortULong*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -752,7 +752,7 @@ void MapShortULongPubSubType::deleteData(
 }
 
 bool MapShortULongPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -761,7 +761,7 @@ bool MapShortULongPubSubType::getKey(
         return false;
     }
 
-    MapShortULong* p_type = static_cast<MapShortULong*>(data);
+    const MapShortULong* p_type = static_cast<const MapShortULong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -829,11 +829,11 @@ MapShortLongLongPubSubType::~MapShortLongLongPubSubType()
 }
 
 bool MapShortLongLongPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapShortLongLong* p_type = static_cast<MapShortLongLong*>(data);
+    const MapShortLongLong* p_type = static_cast<const MapShortLongLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -905,7 +905,7 @@ bool MapShortLongLongPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapShortLongLongPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -922,7 +922,7 @@ std::function<uint32_t()> MapShortLongLongPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapShortLongLong*>(data), current_alignment)) +
+                               *static_cast<const MapShortLongLong*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -945,7 +945,7 @@ void MapShortLongLongPubSubType::deleteData(
 }
 
 bool MapShortLongLongPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -954,7 +954,7 @@ bool MapShortLongLongPubSubType::getKey(
         return false;
     }
 
-    MapShortLongLong* p_type = static_cast<MapShortLongLong*>(data);
+    const MapShortLongLong* p_type = static_cast<const MapShortLongLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -1022,11 +1022,11 @@ MapShortULongLongPubSubType::~MapShortULongLongPubSubType()
 }
 
 bool MapShortULongLongPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapShortULongLong* p_type = static_cast<MapShortULongLong*>(data);
+    const MapShortULongLong* p_type = static_cast<const MapShortULongLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -1098,7 +1098,7 @@ bool MapShortULongLongPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapShortULongLongPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -1115,7 +1115,7 @@ std::function<uint32_t()> MapShortULongLongPubSubType::getSerializedSizeProvider
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapShortULongLong*>(data), current_alignment)) +
+                               *static_cast<const MapShortULongLong*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -1138,7 +1138,7 @@ void MapShortULongLongPubSubType::deleteData(
 }
 
 bool MapShortULongLongPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -1147,7 +1147,7 @@ bool MapShortULongLongPubSubType::getKey(
         return false;
     }
 
-    MapShortULongLong* p_type = static_cast<MapShortULongLong*>(data);
+    const MapShortULongLong* p_type = static_cast<const MapShortULongLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -1215,11 +1215,11 @@ MapShortFloatPubSubType::~MapShortFloatPubSubType()
 }
 
 bool MapShortFloatPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapShortFloat* p_type = static_cast<MapShortFloat*>(data);
+    const MapShortFloat* p_type = static_cast<const MapShortFloat*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -1291,7 +1291,7 @@ bool MapShortFloatPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapShortFloatPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -1308,7 +1308,7 @@ std::function<uint32_t()> MapShortFloatPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapShortFloat*>(data), current_alignment)) +
+                               *static_cast<const MapShortFloat*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -1331,7 +1331,7 @@ void MapShortFloatPubSubType::deleteData(
 }
 
 bool MapShortFloatPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -1340,7 +1340,7 @@ bool MapShortFloatPubSubType::getKey(
         return false;
     }
 
-    MapShortFloat* p_type = static_cast<MapShortFloat*>(data);
+    const MapShortFloat* p_type = static_cast<const MapShortFloat*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -1408,11 +1408,11 @@ MapShortDoublePubSubType::~MapShortDoublePubSubType()
 }
 
 bool MapShortDoublePubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapShortDouble* p_type = static_cast<MapShortDouble*>(data);
+    const MapShortDouble* p_type = static_cast<const MapShortDouble*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -1484,7 +1484,7 @@ bool MapShortDoublePubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapShortDoublePubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -1501,7 +1501,7 @@ std::function<uint32_t()> MapShortDoublePubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapShortDouble*>(data), current_alignment)) +
+                               *static_cast<const MapShortDouble*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -1524,7 +1524,7 @@ void MapShortDoublePubSubType::deleteData(
 }
 
 bool MapShortDoublePubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -1533,7 +1533,7 @@ bool MapShortDoublePubSubType::getKey(
         return false;
     }
 
-    MapShortDouble* p_type = static_cast<MapShortDouble*>(data);
+    const MapShortDouble* p_type = static_cast<const MapShortDouble*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -1601,11 +1601,11 @@ MapShortLongDoublePubSubType::~MapShortLongDoublePubSubType()
 }
 
 bool MapShortLongDoublePubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapShortLongDouble* p_type = static_cast<MapShortLongDouble*>(data);
+    const MapShortLongDouble* p_type = static_cast<const MapShortLongDouble*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -1677,7 +1677,7 @@ bool MapShortLongDoublePubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapShortLongDoublePubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -1694,7 +1694,7 @@ std::function<uint32_t()> MapShortLongDoublePubSubType::getSerializedSizeProvide
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapShortLongDouble*>(data), current_alignment)) +
+                               *static_cast<const MapShortLongDouble*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -1717,7 +1717,7 @@ void MapShortLongDoublePubSubType::deleteData(
 }
 
 bool MapShortLongDoublePubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -1726,7 +1726,7 @@ bool MapShortLongDoublePubSubType::getKey(
         return false;
     }
 
-    MapShortLongDouble* p_type = static_cast<MapShortLongDouble*>(data);
+    const MapShortLongDouble* p_type = static_cast<const MapShortLongDouble*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -1794,11 +1794,11 @@ MapShortBooleanPubSubType::~MapShortBooleanPubSubType()
 }
 
 bool MapShortBooleanPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapShortBoolean* p_type = static_cast<MapShortBoolean*>(data);
+    const MapShortBoolean* p_type = static_cast<const MapShortBoolean*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -1870,7 +1870,7 @@ bool MapShortBooleanPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapShortBooleanPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -1887,7 +1887,7 @@ std::function<uint32_t()> MapShortBooleanPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapShortBoolean*>(data), current_alignment)) +
+                               *static_cast<const MapShortBoolean*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -1910,7 +1910,7 @@ void MapShortBooleanPubSubType::deleteData(
 }
 
 bool MapShortBooleanPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -1919,7 +1919,7 @@ bool MapShortBooleanPubSubType::getKey(
         return false;
     }
 
-    MapShortBoolean* p_type = static_cast<MapShortBoolean*>(data);
+    const MapShortBoolean* p_type = static_cast<const MapShortBoolean*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -1987,11 +1987,11 @@ MapShortOctetPubSubType::~MapShortOctetPubSubType()
 }
 
 bool MapShortOctetPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapShortOctet* p_type = static_cast<MapShortOctet*>(data);
+    const MapShortOctet* p_type = static_cast<const MapShortOctet*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -2063,7 +2063,7 @@ bool MapShortOctetPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapShortOctetPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -2080,7 +2080,7 @@ std::function<uint32_t()> MapShortOctetPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapShortOctet*>(data), current_alignment)) +
+                               *static_cast<const MapShortOctet*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -2103,7 +2103,7 @@ void MapShortOctetPubSubType::deleteData(
 }
 
 bool MapShortOctetPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -2112,7 +2112,7 @@ bool MapShortOctetPubSubType::getKey(
         return false;
     }
 
-    MapShortOctet* p_type = static_cast<MapShortOctet*>(data);
+    const MapShortOctet* p_type = static_cast<const MapShortOctet*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -2180,11 +2180,11 @@ MapShortCharPubSubType::~MapShortCharPubSubType()
 }
 
 bool MapShortCharPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapShortChar* p_type = static_cast<MapShortChar*>(data);
+    const MapShortChar* p_type = static_cast<const MapShortChar*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -2256,7 +2256,7 @@ bool MapShortCharPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapShortCharPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -2273,7 +2273,7 @@ std::function<uint32_t()> MapShortCharPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapShortChar*>(data), current_alignment)) +
+                               *static_cast<const MapShortChar*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -2296,7 +2296,7 @@ void MapShortCharPubSubType::deleteData(
 }
 
 bool MapShortCharPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -2305,7 +2305,7 @@ bool MapShortCharPubSubType::getKey(
         return false;
     }
 
-    MapShortChar* p_type = static_cast<MapShortChar*>(data);
+    const MapShortChar* p_type = static_cast<const MapShortChar*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -2373,11 +2373,11 @@ MapShortWCharPubSubType::~MapShortWCharPubSubType()
 }
 
 bool MapShortWCharPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapShortWChar* p_type = static_cast<MapShortWChar*>(data);
+    const MapShortWChar* p_type = static_cast<const MapShortWChar*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -2449,7 +2449,7 @@ bool MapShortWCharPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapShortWCharPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -2466,7 +2466,7 @@ std::function<uint32_t()> MapShortWCharPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapShortWChar*>(data), current_alignment)) +
+                               *static_cast<const MapShortWChar*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -2489,7 +2489,7 @@ void MapShortWCharPubSubType::deleteData(
 }
 
 bool MapShortWCharPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -2498,7 +2498,7 @@ bool MapShortWCharPubSubType::getKey(
         return false;
     }
 
-    MapShortWChar* p_type = static_cast<MapShortWChar*>(data);
+    const MapShortWChar* p_type = static_cast<const MapShortWChar*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -2566,11 +2566,11 @@ MapShortStringPubSubType::~MapShortStringPubSubType()
 }
 
 bool MapShortStringPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapShortString* p_type = static_cast<MapShortString*>(data);
+    const MapShortString* p_type = static_cast<const MapShortString*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -2642,7 +2642,7 @@ bool MapShortStringPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapShortStringPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -2659,7 +2659,7 @@ std::function<uint32_t()> MapShortStringPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapShortString*>(data), current_alignment)) +
+                               *static_cast<const MapShortString*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -2682,7 +2682,7 @@ void MapShortStringPubSubType::deleteData(
 }
 
 bool MapShortStringPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -2691,7 +2691,7 @@ bool MapShortStringPubSubType::getKey(
         return false;
     }
 
-    MapShortString* p_type = static_cast<MapShortString*>(data);
+    const MapShortString* p_type = static_cast<const MapShortString*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -2759,11 +2759,11 @@ MapShortWStringPubSubType::~MapShortWStringPubSubType()
 }
 
 bool MapShortWStringPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapShortWString* p_type = static_cast<MapShortWString*>(data);
+    const MapShortWString* p_type = static_cast<const MapShortWString*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -2835,7 +2835,7 @@ bool MapShortWStringPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapShortWStringPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -2852,7 +2852,7 @@ std::function<uint32_t()> MapShortWStringPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapShortWString*>(data), current_alignment)) +
+                               *static_cast<const MapShortWString*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -2875,7 +2875,7 @@ void MapShortWStringPubSubType::deleteData(
 }
 
 bool MapShortWStringPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -2884,7 +2884,7 @@ bool MapShortWStringPubSubType::getKey(
         return false;
     }
 
-    MapShortWString* p_type = static_cast<MapShortWString*>(data);
+    const MapShortWString* p_type = static_cast<const MapShortWString*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -2952,11 +2952,11 @@ MapShortInnerAliasBoundedStringHelperPubSubType::~MapShortInnerAliasBoundedStrin
 }
 
 bool MapShortInnerAliasBoundedStringHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapShortInnerAliasBoundedStringHelper* p_type = static_cast<MapShortInnerAliasBoundedStringHelper*>(data);
+    const MapShortInnerAliasBoundedStringHelper* p_type = static_cast<const MapShortInnerAliasBoundedStringHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -3028,7 +3028,7 @@ bool MapShortInnerAliasBoundedStringHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapShortInnerAliasBoundedStringHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -3045,7 +3045,7 @@ std::function<uint32_t()> MapShortInnerAliasBoundedStringHelperPubSubType::getSe
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapShortInnerAliasBoundedStringHelper*>(data), current_alignment)) +
+                               *static_cast<const MapShortInnerAliasBoundedStringHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -3068,7 +3068,7 @@ void MapShortInnerAliasBoundedStringHelperPubSubType::deleteData(
 }
 
 bool MapShortInnerAliasBoundedStringHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -3077,7 +3077,7 @@ bool MapShortInnerAliasBoundedStringHelperPubSubType::getKey(
         return false;
     }
 
-    MapShortInnerAliasBoundedStringHelper* p_type = static_cast<MapShortInnerAliasBoundedStringHelper*>(data);
+    const MapShortInnerAliasBoundedStringHelper* p_type = static_cast<const MapShortInnerAliasBoundedStringHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -3145,11 +3145,11 @@ MapShortInnerAliasBoundedWStringHelperPubSubType::~MapShortInnerAliasBoundedWStr
 }
 
 bool MapShortInnerAliasBoundedWStringHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapShortInnerAliasBoundedWStringHelper* p_type = static_cast<MapShortInnerAliasBoundedWStringHelper*>(data);
+    const MapShortInnerAliasBoundedWStringHelper* p_type = static_cast<const MapShortInnerAliasBoundedWStringHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -3221,7 +3221,7 @@ bool MapShortInnerAliasBoundedWStringHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapShortInnerAliasBoundedWStringHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -3238,7 +3238,7 @@ std::function<uint32_t()> MapShortInnerAliasBoundedWStringHelperPubSubType::getS
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapShortInnerAliasBoundedWStringHelper*>(data), current_alignment)) +
+                               *static_cast<const MapShortInnerAliasBoundedWStringHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -3261,7 +3261,7 @@ void MapShortInnerAliasBoundedWStringHelperPubSubType::deleteData(
 }
 
 bool MapShortInnerAliasBoundedWStringHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -3270,7 +3270,7 @@ bool MapShortInnerAliasBoundedWStringHelperPubSubType::getKey(
         return false;
     }
 
-    MapShortInnerAliasBoundedWStringHelper* p_type = static_cast<MapShortInnerAliasBoundedWStringHelper*>(data);
+    const MapShortInnerAliasBoundedWStringHelper* p_type = static_cast<const MapShortInnerAliasBoundedWStringHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -3338,11 +3338,11 @@ MapShortInnerEnumHelperPubSubType::~MapShortInnerEnumHelperPubSubType()
 }
 
 bool MapShortInnerEnumHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapShortInnerEnumHelper* p_type = static_cast<MapShortInnerEnumHelper*>(data);
+    const MapShortInnerEnumHelper* p_type = static_cast<const MapShortInnerEnumHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -3414,7 +3414,7 @@ bool MapShortInnerEnumHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapShortInnerEnumHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -3431,7 +3431,7 @@ std::function<uint32_t()> MapShortInnerEnumHelperPubSubType::getSerializedSizePr
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapShortInnerEnumHelper*>(data), current_alignment)) +
+                               *static_cast<const MapShortInnerEnumHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -3454,7 +3454,7 @@ void MapShortInnerEnumHelperPubSubType::deleteData(
 }
 
 bool MapShortInnerEnumHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -3463,7 +3463,7 @@ bool MapShortInnerEnumHelperPubSubType::getKey(
         return false;
     }
 
-    MapShortInnerEnumHelper* p_type = static_cast<MapShortInnerEnumHelper*>(data);
+    const MapShortInnerEnumHelper* p_type = static_cast<const MapShortInnerEnumHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -3531,11 +3531,11 @@ MapShortInnerBitMaskHelperPubSubType::~MapShortInnerBitMaskHelperPubSubType()
 }
 
 bool MapShortInnerBitMaskHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapShortInnerBitMaskHelper* p_type = static_cast<MapShortInnerBitMaskHelper*>(data);
+    const MapShortInnerBitMaskHelper* p_type = static_cast<const MapShortInnerBitMaskHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -3607,7 +3607,7 @@ bool MapShortInnerBitMaskHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapShortInnerBitMaskHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -3624,7 +3624,7 @@ std::function<uint32_t()> MapShortInnerBitMaskHelperPubSubType::getSerializedSiz
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapShortInnerBitMaskHelper*>(data), current_alignment)) +
+                               *static_cast<const MapShortInnerBitMaskHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -3647,7 +3647,7 @@ void MapShortInnerBitMaskHelperPubSubType::deleteData(
 }
 
 bool MapShortInnerBitMaskHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -3656,7 +3656,7 @@ bool MapShortInnerBitMaskHelperPubSubType::getKey(
         return false;
     }
 
-    MapShortInnerBitMaskHelper* p_type = static_cast<MapShortInnerBitMaskHelper*>(data);
+    const MapShortInnerBitMaskHelper* p_type = static_cast<const MapShortInnerBitMaskHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -3724,11 +3724,11 @@ MapShortInnerAliasHelperPubSubType::~MapShortInnerAliasHelperPubSubType()
 }
 
 bool MapShortInnerAliasHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapShortInnerAliasHelper* p_type = static_cast<MapShortInnerAliasHelper*>(data);
+    const MapShortInnerAliasHelper* p_type = static_cast<const MapShortInnerAliasHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -3800,7 +3800,7 @@ bool MapShortInnerAliasHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapShortInnerAliasHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -3817,7 +3817,7 @@ std::function<uint32_t()> MapShortInnerAliasHelperPubSubType::getSerializedSizeP
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapShortInnerAliasHelper*>(data), current_alignment)) +
+                               *static_cast<const MapShortInnerAliasHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -3840,7 +3840,7 @@ void MapShortInnerAliasHelperPubSubType::deleteData(
 }
 
 bool MapShortInnerAliasHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -3849,7 +3849,7 @@ bool MapShortInnerAliasHelperPubSubType::getKey(
         return false;
     }
 
-    MapShortInnerAliasHelper* p_type = static_cast<MapShortInnerAliasHelper*>(data);
+    const MapShortInnerAliasHelper* p_type = static_cast<const MapShortInnerAliasHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -3917,11 +3917,11 @@ MapShortInnerAliasArrayHelperPubSubType::~MapShortInnerAliasArrayHelperPubSubTyp
 }
 
 bool MapShortInnerAliasArrayHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapShortInnerAliasArrayHelper* p_type = static_cast<MapShortInnerAliasArrayHelper*>(data);
+    const MapShortInnerAliasArrayHelper* p_type = static_cast<const MapShortInnerAliasArrayHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -3993,7 +3993,7 @@ bool MapShortInnerAliasArrayHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapShortInnerAliasArrayHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -4010,7 +4010,7 @@ std::function<uint32_t()> MapShortInnerAliasArrayHelperPubSubType::getSerialized
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapShortInnerAliasArrayHelper*>(data), current_alignment)) +
+                               *static_cast<const MapShortInnerAliasArrayHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -4033,7 +4033,7 @@ void MapShortInnerAliasArrayHelperPubSubType::deleteData(
 }
 
 bool MapShortInnerAliasArrayHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -4042,7 +4042,7 @@ bool MapShortInnerAliasArrayHelperPubSubType::getKey(
         return false;
     }
 
-    MapShortInnerAliasArrayHelper* p_type = static_cast<MapShortInnerAliasArrayHelper*>(data);
+    const MapShortInnerAliasArrayHelper* p_type = static_cast<const MapShortInnerAliasArrayHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -4110,11 +4110,11 @@ MapShortInnerAliasSequenceHelperPubSubType::~MapShortInnerAliasSequenceHelperPub
 }
 
 bool MapShortInnerAliasSequenceHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapShortInnerAliasSequenceHelper* p_type = static_cast<MapShortInnerAliasSequenceHelper*>(data);
+    const MapShortInnerAliasSequenceHelper* p_type = static_cast<const MapShortInnerAliasSequenceHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -4186,7 +4186,7 @@ bool MapShortInnerAliasSequenceHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapShortInnerAliasSequenceHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -4203,7 +4203,7 @@ std::function<uint32_t()> MapShortInnerAliasSequenceHelperPubSubType::getSeriali
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapShortInnerAliasSequenceHelper*>(data), current_alignment)) +
+                               *static_cast<const MapShortInnerAliasSequenceHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -4226,7 +4226,7 @@ void MapShortInnerAliasSequenceHelperPubSubType::deleteData(
 }
 
 bool MapShortInnerAliasSequenceHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -4235,7 +4235,7 @@ bool MapShortInnerAliasSequenceHelperPubSubType::getKey(
         return false;
     }
 
-    MapShortInnerAliasSequenceHelper* p_type = static_cast<MapShortInnerAliasSequenceHelper*>(data);
+    const MapShortInnerAliasSequenceHelper* p_type = static_cast<const MapShortInnerAliasSequenceHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -4303,11 +4303,11 @@ MapShortInnerAliasMapHelperPubSubType::~MapShortInnerAliasMapHelperPubSubType()
 }
 
 bool MapShortInnerAliasMapHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapShortInnerAliasMapHelper* p_type = static_cast<MapShortInnerAliasMapHelper*>(data);
+    const MapShortInnerAliasMapHelper* p_type = static_cast<const MapShortInnerAliasMapHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -4379,7 +4379,7 @@ bool MapShortInnerAliasMapHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapShortInnerAliasMapHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -4396,7 +4396,7 @@ std::function<uint32_t()> MapShortInnerAliasMapHelperPubSubType::getSerializedSi
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapShortInnerAliasMapHelper*>(data), current_alignment)) +
+                               *static_cast<const MapShortInnerAliasMapHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -4419,7 +4419,7 @@ void MapShortInnerAliasMapHelperPubSubType::deleteData(
 }
 
 bool MapShortInnerAliasMapHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -4428,7 +4428,7 @@ bool MapShortInnerAliasMapHelperPubSubType::getKey(
         return false;
     }
 
-    MapShortInnerAliasMapHelper* p_type = static_cast<MapShortInnerAliasMapHelper*>(data);
+    const MapShortInnerAliasMapHelper* p_type = static_cast<const MapShortInnerAliasMapHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -4496,11 +4496,11 @@ MapShortInnerUnionHelperPubSubType::~MapShortInnerUnionHelperPubSubType()
 }
 
 bool MapShortInnerUnionHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapShortInnerUnionHelper* p_type = static_cast<MapShortInnerUnionHelper*>(data);
+    const MapShortInnerUnionHelper* p_type = static_cast<const MapShortInnerUnionHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -4572,7 +4572,7 @@ bool MapShortInnerUnionHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapShortInnerUnionHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -4589,7 +4589,7 @@ std::function<uint32_t()> MapShortInnerUnionHelperPubSubType::getSerializedSizeP
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapShortInnerUnionHelper*>(data), current_alignment)) +
+                               *static_cast<const MapShortInnerUnionHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -4612,7 +4612,7 @@ void MapShortInnerUnionHelperPubSubType::deleteData(
 }
 
 bool MapShortInnerUnionHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -4621,7 +4621,7 @@ bool MapShortInnerUnionHelperPubSubType::getKey(
         return false;
     }
 
-    MapShortInnerUnionHelper* p_type = static_cast<MapShortInnerUnionHelper*>(data);
+    const MapShortInnerUnionHelper* p_type = static_cast<const MapShortInnerUnionHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -4689,11 +4689,11 @@ MapShortInnerStructureHelperPubSubType::~MapShortInnerStructureHelperPubSubType(
 }
 
 bool MapShortInnerStructureHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapShortInnerStructureHelper* p_type = static_cast<MapShortInnerStructureHelper*>(data);
+    const MapShortInnerStructureHelper* p_type = static_cast<const MapShortInnerStructureHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -4765,7 +4765,7 @@ bool MapShortInnerStructureHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapShortInnerStructureHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -4782,7 +4782,7 @@ std::function<uint32_t()> MapShortInnerStructureHelperPubSubType::getSerializedS
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapShortInnerStructureHelper*>(data), current_alignment)) +
+                               *static_cast<const MapShortInnerStructureHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -4805,7 +4805,7 @@ void MapShortInnerStructureHelperPubSubType::deleteData(
 }
 
 bool MapShortInnerStructureHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -4814,7 +4814,7 @@ bool MapShortInnerStructureHelperPubSubType::getKey(
         return false;
     }
 
-    MapShortInnerStructureHelper* p_type = static_cast<MapShortInnerStructureHelper*>(data);
+    const MapShortInnerStructureHelper* p_type = static_cast<const MapShortInnerStructureHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -4882,11 +4882,11 @@ MapShortInnerBitsetHelperPubSubType::~MapShortInnerBitsetHelperPubSubType()
 }
 
 bool MapShortInnerBitsetHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapShortInnerBitsetHelper* p_type = static_cast<MapShortInnerBitsetHelper*>(data);
+    const MapShortInnerBitsetHelper* p_type = static_cast<const MapShortInnerBitsetHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -4958,7 +4958,7 @@ bool MapShortInnerBitsetHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapShortInnerBitsetHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -4975,7 +4975,7 @@ std::function<uint32_t()> MapShortInnerBitsetHelperPubSubType::getSerializedSize
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapShortInnerBitsetHelper*>(data), current_alignment)) +
+                               *static_cast<const MapShortInnerBitsetHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -4998,7 +4998,7 @@ void MapShortInnerBitsetHelperPubSubType::deleteData(
 }
 
 bool MapShortInnerBitsetHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -5007,7 +5007,7 @@ bool MapShortInnerBitsetHelperPubSubType::getKey(
         return false;
     }
 
-    MapShortInnerBitsetHelper* p_type = static_cast<MapShortInnerBitsetHelper*>(data);
+    const MapShortInnerBitsetHelper* p_type = static_cast<const MapShortInnerBitsetHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -5075,11 +5075,11 @@ MapUShortShortPubSubType::~MapUShortShortPubSubType()
 }
 
 bool MapUShortShortPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapUShortShort* p_type = static_cast<MapUShortShort*>(data);
+    const MapUShortShort* p_type = static_cast<const MapUShortShort*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -5151,7 +5151,7 @@ bool MapUShortShortPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapUShortShortPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -5168,7 +5168,7 @@ std::function<uint32_t()> MapUShortShortPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapUShortShort*>(data), current_alignment)) +
+                               *static_cast<const MapUShortShort*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -5191,7 +5191,7 @@ void MapUShortShortPubSubType::deleteData(
 }
 
 bool MapUShortShortPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -5200,7 +5200,7 @@ bool MapUShortShortPubSubType::getKey(
         return false;
     }
 
-    MapUShortShort* p_type = static_cast<MapUShortShort*>(data);
+    const MapUShortShort* p_type = static_cast<const MapUShortShort*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -5268,11 +5268,11 @@ MapUShortUShortPubSubType::~MapUShortUShortPubSubType()
 }
 
 bool MapUShortUShortPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapUShortUShort* p_type = static_cast<MapUShortUShort*>(data);
+    const MapUShortUShort* p_type = static_cast<const MapUShortUShort*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -5344,7 +5344,7 @@ bool MapUShortUShortPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapUShortUShortPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -5361,7 +5361,7 @@ std::function<uint32_t()> MapUShortUShortPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapUShortUShort*>(data), current_alignment)) +
+                               *static_cast<const MapUShortUShort*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -5384,7 +5384,7 @@ void MapUShortUShortPubSubType::deleteData(
 }
 
 bool MapUShortUShortPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -5393,7 +5393,7 @@ bool MapUShortUShortPubSubType::getKey(
         return false;
     }
 
-    MapUShortUShort* p_type = static_cast<MapUShortUShort*>(data);
+    const MapUShortUShort* p_type = static_cast<const MapUShortUShort*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -5461,11 +5461,11 @@ MapUShortLongPubSubType::~MapUShortLongPubSubType()
 }
 
 bool MapUShortLongPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapUShortLong* p_type = static_cast<MapUShortLong*>(data);
+    const MapUShortLong* p_type = static_cast<const MapUShortLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -5537,7 +5537,7 @@ bool MapUShortLongPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapUShortLongPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -5554,7 +5554,7 @@ std::function<uint32_t()> MapUShortLongPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapUShortLong*>(data), current_alignment)) +
+                               *static_cast<const MapUShortLong*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -5577,7 +5577,7 @@ void MapUShortLongPubSubType::deleteData(
 }
 
 bool MapUShortLongPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -5586,7 +5586,7 @@ bool MapUShortLongPubSubType::getKey(
         return false;
     }
 
-    MapUShortLong* p_type = static_cast<MapUShortLong*>(data);
+    const MapUShortLong* p_type = static_cast<const MapUShortLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -5654,11 +5654,11 @@ MapUShortULongPubSubType::~MapUShortULongPubSubType()
 }
 
 bool MapUShortULongPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapUShortULong* p_type = static_cast<MapUShortULong*>(data);
+    const MapUShortULong* p_type = static_cast<const MapUShortULong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -5730,7 +5730,7 @@ bool MapUShortULongPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapUShortULongPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -5747,7 +5747,7 @@ std::function<uint32_t()> MapUShortULongPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapUShortULong*>(data), current_alignment)) +
+                               *static_cast<const MapUShortULong*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -5770,7 +5770,7 @@ void MapUShortULongPubSubType::deleteData(
 }
 
 bool MapUShortULongPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -5779,7 +5779,7 @@ bool MapUShortULongPubSubType::getKey(
         return false;
     }
 
-    MapUShortULong* p_type = static_cast<MapUShortULong*>(data);
+    const MapUShortULong* p_type = static_cast<const MapUShortULong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -5847,11 +5847,11 @@ MapUShortLongLongPubSubType::~MapUShortLongLongPubSubType()
 }
 
 bool MapUShortLongLongPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapUShortLongLong* p_type = static_cast<MapUShortLongLong*>(data);
+    const MapUShortLongLong* p_type = static_cast<const MapUShortLongLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -5923,7 +5923,7 @@ bool MapUShortLongLongPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapUShortLongLongPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -5940,7 +5940,7 @@ std::function<uint32_t()> MapUShortLongLongPubSubType::getSerializedSizeProvider
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapUShortLongLong*>(data), current_alignment)) +
+                               *static_cast<const MapUShortLongLong*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -5963,7 +5963,7 @@ void MapUShortLongLongPubSubType::deleteData(
 }
 
 bool MapUShortLongLongPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -5972,7 +5972,7 @@ bool MapUShortLongLongPubSubType::getKey(
         return false;
     }
 
-    MapUShortLongLong* p_type = static_cast<MapUShortLongLong*>(data);
+    const MapUShortLongLong* p_type = static_cast<const MapUShortLongLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -6040,11 +6040,11 @@ MapUShortULongLongPubSubType::~MapUShortULongLongPubSubType()
 }
 
 bool MapUShortULongLongPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapUShortULongLong* p_type = static_cast<MapUShortULongLong*>(data);
+    const MapUShortULongLong* p_type = static_cast<const MapUShortULongLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -6116,7 +6116,7 @@ bool MapUShortULongLongPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapUShortULongLongPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -6133,7 +6133,7 @@ std::function<uint32_t()> MapUShortULongLongPubSubType::getSerializedSizeProvide
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapUShortULongLong*>(data), current_alignment)) +
+                               *static_cast<const MapUShortULongLong*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -6156,7 +6156,7 @@ void MapUShortULongLongPubSubType::deleteData(
 }
 
 bool MapUShortULongLongPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -6165,7 +6165,7 @@ bool MapUShortULongLongPubSubType::getKey(
         return false;
     }
 
-    MapUShortULongLong* p_type = static_cast<MapUShortULongLong*>(data);
+    const MapUShortULongLong* p_type = static_cast<const MapUShortULongLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -6233,11 +6233,11 @@ MapUShortFloatPubSubType::~MapUShortFloatPubSubType()
 }
 
 bool MapUShortFloatPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapUShortFloat* p_type = static_cast<MapUShortFloat*>(data);
+    const MapUShortFloat* p_type = static_cast<const MapUShortFloat*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -6309,7 +6309,7 @@ bool MapUShortFloatPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapUShortFloatPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -6326,7 +6326,7 @@ std::function<uint32_t()> MapUShortFloatPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapUShortFloat*>(data), current_alignment)) +
+                               *static_cast<const MapUShortFloat*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -6349,7 +6349,7 @@ void MapUShortFloatPubSubType::deleteData(
 }
 
 bool MapUShortFloatPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -6358,7 +6358,7 @@ bool MapUShortFloatPubSubType::getKey(
         return false;
     }
 
-    MapUShortFloat* p_type = static_cast<MapUShortFloat*>(data);
+    const MapUShortFloat* p_type = static_cast<const MapUShortFloat*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -6426,11 +6426,11 @@ MapUShortDoublePubSubType::~MapUShortDoublePubSubType()
 }
 
 bool MapUShortDoublePubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapUShortDouble* p_type = static_cast<MapUShortDouble*>(data);
+    const MapUShortDouble* p_type = static_cast<const MapUShortDouble*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -6502,7 +6502,7 @@ bool MapUShortDoublePubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapUShortDoublePubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -6519,7 +6519,7 @@ std::function<uint32_t()> MapUShortDoublePubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapUShortDouble*>(data), current_alignment)) +
+                               *static_cast<const MapUShortDouble*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -6542,7 +6542,7 @@ void MapUShortDoublePubSubType::deleteData(
 }
 
 bool MapUShortDoublePubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -6551,7 +6551,7 @@ bool MapUShortDoublePubSubType::getKey(
         return false;
     }
 
-    MapUShortDouble* p_type = static_cast<MapUShortDouble*>(data);
+    const MapUShortDouble* p_type = static_cast<const MapUShortDouble*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -6619,11 +6619,11 @@ MapUShortLongDoublePubSubType::~MapUShortLongDoublePubSubType()
 }
 
 bool MapUShortLongDoublePubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapUShortLongDouble* p_type = static_cast<MapUShortLongDouble*>(data);
+    const MapUShortLongDouble* p_type = static_cast<const MapUShortLongDouble*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -6695,7 +6695,7 @@ bool MapUShortLongDoublePubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapUShortLongDoublePubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -6712,7 +6712,7 @@ std::function<uint32_t()> MapUShortLongDoublePubSubType::getSerializedSizeProvid
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapUShortLongDouble*>(data), current_alignment)) +
+                               *static_cast<const MapUShortLongDouble*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -6735,7 +6735,7 @@ void MapUShortLongDoublePubSubType::deleteData(
 }
 
 bool MapUShortLongDoublePubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -6744,7 +6744,7 @@ bool MapUShortLongDoublePubSubType::getKey(
         return false;
     }
 
-    MapUShortLongDouble* p_type = static_cast<MapUShortLongDouble*>(data);
+    const MapUShortLongDouble* p_type = static_cast<const MapUShortLongDouble*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -6812,11 +6812,11 @@ MapUShortBooleanPubSubType::~MapUShortBooleanPubSubType()
 }
 
 bool MapUShortBooleanPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapUShortBoolean* p_type = static_cast<MapUShortBoolean*>(data);
+    const MapUShortBoolean* p_type = static_cast<const MapUShortBoolean*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -6888,7 +6888,7 @@ bool MapUShortBooleanPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapUShortBooleanPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -6905,7 +6905,7 @@ std::function<uint32_t()> MapUShortBooleanPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapUShortBoolean*>(data), current_alignment)) +
+                               *static_cast<const MapUShortBoolean*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -6928,7 +6928,7 @@ void MapUShortBooleanPubSubType::deleteData(
 }
 
 bool MapUShortBooleanPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -6937,7 +6937,7 @@ bool MapUShortBooleanPubSubType::getKey(
         return false;
     }
 
-    MapUShortBoolean* p_type = static_cast<MapUShortBoolean*>(data);
+    const MapUShortBoolean* p_type = static_cast<const MapUShortBoolean*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -7005,11 +7005,11 @@ MapUShortOctetPubSubType::~MapUShortOctetPubSubType()
 }
 
 bool MapUShortOctetPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapUShortOctet* p_type = static_cast<MapUShortOctet*>(data);
+    const MapUShortOctet* p_type = static_cast<const MapUShortOctet*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -7081,7 +7081,7 @@ bool MapUShortOctetPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapUShortOctetPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -7098,7 +7098,7 @@ std::function<uint32_t()> MapUShortOctetPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapUShortOctet*>(data), current_alignment)) +
+                               *static_cast<const MapUShortOctet*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -7121,7 +7121,7 @@ void MapUShortOctetPubSubType::deleteData(
 }
 
 bool MapUShortOctetPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -7130,7 +7130,7 @@ bool MapUShortOctetPubSubType::getKey(
         return false;
     }
 
-    MapUShortOctet* p_type = static_cast<MapUShortOctet*>(data);
+    const MapUShortOctet* p_type = static_cast<const MapUShortOctet*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -7198,11 +7198,11 @@ MapUShortCharPubSubType::~MapUShortCharPubSubType()
 }
 
 bool MapUShortCharPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapUShortChar* p_type = static_cast<MapUShortChar*>(data);
+    const MapUShortChar* p_type = static_cast<const MapUShortChar*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -7274,7 +7274,7 @@ bool MapUShortCharPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapUShortCharPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -7291,7 +7291,7 @@ std::function<uint32_t()> MapUShortCharPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapUShortChar*>(data), current_alignment)) +
+                               *static_cast<const MapUShortChar*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -7314,7 +7314,7 @@ void MapUShortCharPubSubType::deleteData(
 }
 
 bool MapUShortCharPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -7323,7 +7323,7 @@ bool MapUShortCharPubSubType::getKey(
         return false;
     }
 
-    MapUShortChar* p_type = static_cast<MapUShortChar*>(data);
+    const MapUShortChar* p_type = static_cast<const MapUShortChar*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -7391,11 +7391,11 @@ MapUShortWCharPubSubType::~MapUShortWCharPubSubType()
 }
 
 bool MapUShortWCharPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapUShortWChar* p_type = static_cast<MapUShortWChar*>(data);
+    const MapUShortWChar* p_type = static_cast<const MapUShortWChar*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -7467,7 +7467,7 @@ bool MapUShortWCharPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapUShortWCharPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -7484,7 +7484,7 @@ std::function<uint32_t()> MapUShortWCharPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapUShortWChar*>(data), current_alignment)) +
+                               *static_cast<const MapUShortWChar*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -7507,7 +7507,7 @@ void MapUShortWCharPubSubType::deleteData(
 }
 
 bool MapUShortWCharPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -7516,7 +7516,7 @@ bool MapUShortWCharPubSubType::getKey(
         return false;
     }
 
-    MapUShortWChar* p_type = static_cast<MapUShortWChar*>(data);
+    const MapUShortWChar* p_type = static_cast<const MapUShortWChar*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -7584,11 +7584,11 @@ MapUShortStringPubSubType::~MapUShortStringPubSubType()
 }
 
 bool MapUShortStringPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapUShortString* p_type = static_cast<MapUShortString*>(data);
+    const MapUShortString* p_type = static_cast<const MapUShortString*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -7660,7 +7660,7 @@ bool MapUShortStringPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapUShortStringPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -7677,7 +7677,7 @@ std::function<uint32_t()> MapUShortStringPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapUShortString*>(data), current_alignment)) +
+                               *static_cast<const MapUShortString*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -7700,7 +7700,7 @@ void MapUShortStringPubSubType::deleteData(
 }
 
 bool MapUShortStringPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -7709,7 +7709,7 @@ bool MapUShortStringPubSubType::getKey(
         return false;
     }
 
-    MapUShortString* p_type = static_cast<MapUShortString*>(data);
+    const MapUShortString* p_type = static_cast<const MapUShortString*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -7777,11 +7777,11 @@ MapUShortWStringPubSubType::~MapUShortWStringPubSubType()
 }
 
 bool MapUShortWStringPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapUShortWString* p_type = static_cast<MapUShortWString*>(data);
+    const MapUShortWString* p_type = static_cast<const MapUShortWString*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -7853,7 +7853,7 @@ bool MapUShortWStringPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapUShortWStringPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -7870,7 +7870,7 @@ std::function<uint32_t()> MapUShortWStringPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapUShortWString*>(data), current_alignment)) +
+                               *static_cast<const MapUShortWString*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -7893,7 +7893,7 @@ void MapUShortWStringPubSubType::deleteData(
 }
 
 bool MapUShortWStringPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -7902,7 +7902,7 @@ bool MapUShortWStringPubSubType::getKey(
         return false;
     }
 
-    MapUShortWString* p_type = static_cast<MapUShortWString*>(data);
+    const MapUShortWString* p_type = static_cast<const MapUShortWString*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -7970,11 +7970,11 @@ MapUShortInnerAliasBoundedStringHelperPubSubType::~MapUShortInnerAliasBoundedStr
 }
 
 bool MapUShortInnerAliasBoundedStringHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapUShortInnerAliasBoundedStringHelper* p_type = static_cast<MapUShortInnerAliasBoundedStringHelper*>(data);
+    const MapUShortInnerAliasBoundedStringHelper* p_type = static_cast<const MapUShortInnerAliasBoundedStringHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -8046,7 +8046,7 @@ bool MapUShortInnerAliasBoundedStringHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapUShortInnerAliasBoundedStringHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -8063,7 +8063,7 @@ std::function<uint32_t()> MapUShortInnerAliasBoundedStringHelperPubSubType::getS
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapUShortInnerAliasBoundedStringHelper*>(data), current_alignment)) +
+                               *static_cast<const MapUShortInnerAliasBoundedStringHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -8086,7 +8086,7 @@ void MapUShortInnerAliasBoundedStringHelperPubSubType::deleteData(
 }
 
 bool MapUShortInnerAliasBoundedStringHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -8095,7 +8095,7 @@ bool MapUShortInnerAliasBoundedStringHelperPubSubType::getKey(
         return false;
     }
 
-    MapUShortInnerAliasBoundedStringHelper* p_type = static_cast<MapUShortInnerAliasBoundedStringHelper*>(data);
+    const MapUShortInnerAliasBoundedStringHelper* p_type = static_cast<const MapUShortInnerAliasBoundedStringHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -8163,11 +8163,11 @@ MapUShortInnerAliasBoundedWStringHelperPubSubType::~MapUShortInnerAliasBoundedWS
 }
 
 bool MapUShortInnerAliasBoundedWStringHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapUShortInnerAliasBoundedWStringHelper* p_type = static_cast<MapUShortInnerAliasBoundedWStringHelper*>(data);
+    const MapUShortInnerAliasBoundedWStringHelper* p_type = static_cast<const MapUShortInnerAliasBoundedWStringHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -8239,7 +8239,7 @@ bool MapUShortInnerAliasBoundedWStringHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapUShortInnerAliasBoundedWStringHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -8256,7 +8256,7 @@ std::function<uint32_t()> MapUShortInnerAliasBoundedWStringHelperPubSubType::get
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapUShortInnerAliasBoundedWStringHelper*>(data), current_alignment)) +
+                               *static_cast<const MapUShortInnerAliasBoundedWStringHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -8279,7 +8279,7 @@ void MapUShortInnerAliasBoundedWStringHelperPubSubType::deleteData(
 }
 
 bool MapUShortInnerAliasBoundedWStringHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -8288,7 +8288,7 @@ bool MapUShortInnerAliasBoundedWStringHelperPubSubType::getKey(
         return false;
     }
 
-    MapUShortInnerAliasBoundedWStringHelper* p_type = static_cast<MapUShortInnerAliasBoundedWStringHelper*>(data);
+    const MapUShortInnerAliasBoundedWStringHelper* p_type = static_cast<const MapUShortInnerAliasBoundedWStringHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -8356,11 +8356,11 @@ MapUShortInnerEnumHelperPubSubType::~MapUShortInnerEnumHelperPubSubType()
 }
 
 bool MapUShortInnerEnumHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapUShortInnerEnumHelper* p_type = static_cast<MapUShortInnerEnumHelper*>(data);
+    const MapUShortInnerEnumHelper* p_type = static_cast<const MapUShortInnerEnumHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -8432,7 +8432,7 @@ bool MapUShortInnerEnumHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapUShortInnerEnumHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -8449,7 +8449,7 @@ std::function<uint32_t()> MapUShortInnerEnumHelperPubSubType::getSerializedSizeP
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapUShortInnerEnumHelper*>(data), current_alignment)) +
+                               *static_cast<const MapUShortInnerEnumHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -8472,7 +8472,7 @@ void MapUShortInnerEnumHelperPubSubType::deleteData(
 }
 
 bool MapUShortInnerEnumHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -8481,7 +8481,7 @@ bool MapUShortInnerEnumHelperPubSubType::getKey(
         return false;
     }
 
-    MapUShortInnerEnumHelper* p_type = static_cast<MapUShortInnerEnumHelper*>(data);
+    const MapUShortInnerEnumHelper* p_type = static_cast<const MapUShortInnerEnumHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -8549,11 +8549,11 @@ MapUShortInnerBitMaskHelperPubSubType::~MapUShortInnerBitMaskHelperPubSubType()
 }
 
 bool MapUShortInnerBitMaskHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapUShortInnerBitMaskHelper* p_type = static_cast<MapUShortInnerBitMaskHelper*>(data);
+    const MapUShortInnerBitMaskHelper* p_type = static_cast<const MapUShortInnerBitMaskHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -8625,7 +8625,7 @@ bool MapUShortInnerBitMaskHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapUShortInnerBitMaskHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -8642,7 +8642,7 @@ std::function<uint32_t()> MapUShortInnerBitMaskHelperPubSubType::getSerializedSi
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapUShortInnerBitMaskHelper*>(data), current_alignment)) +
+                               *static_cast<const MapUShortInnerBitMaskHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -8665,7 +8665,7 @@ void MapUShortInnerBitMaskHelperPubSubType::deleteData(
 }
 
 bool MapUShortInnerBitMaskHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -8674,7 +8674,7 @@ bool MapUShortInnerBitMaskHelperPubSubType::getKey(
         return false;
     }
 
-    MapUShortInnerBitMaskHelper* p_type = static_cast<MapUShortInnerBitMaskHelper*>(data);
+    const MapUShortInnerBitMaskHelper* p_type = static_cast<const MapUShortInnerBitMaskHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -8742,11 +8742,11 @@ MapUShortInnerAliasHelperPubSubType::~MapUShortInnerAliasHelperPubSubType()
 }
 
 bool MapUShortInnerAliasHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapUShortInnerAliasHelper* p_type = static_cast<MapUShortInnerAliasHelper*>(data);
+    const MapUShortInnerAliasHelper* p_type = static_cast<const MapUShortInnerAliasHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -8818,7 +8818,7 @@ bool MapUShortInnerAliasHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapUShortInnerAliasHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -8835,7 +8835,7 @@ std::function<uint32_t()> MapUShortInnerAliasHelperPubSubType::getSerializedSize
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapUShortInnerAliasHelper*>(data), current_alignment)) +
+                               *static_cast<const MapUShortInnerAliasHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -8858,7 +8858,7 @@ void MapUShortInnerAliasHelperPubSubType::deleteData(
 }
 
 bool MapUShortInnerAliasHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -8867,7 +8867,7 @@ bool MapUShortInnerAliasHelperPubSubType::getKey(
         return false;
     }
 
-    MapUShortInnerAliasHelper* p_type = static_cast<MapUShortInnerAliasHelper*>(data);
+    const MapUShortInnerAliasHelper* p_type = static_cast<const MapUShortInnerAliasHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -8935,11 +8935,11 @@ MapUShortInnerAliasArrayHelperPubSubType::~MapUShortInnerAliasArrayHelperPubSubT
 }
 
 bool MapUShortInnerAliasArrayHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapUShortInnerAliasArrayHelper* p_type = static_cast<MapUShortInnerAliasArrayHelper*>(data);
+    const MapUShortInnerAliasArrayHelper* p_type = static_cast<const MapUShortInnerAliasArrayHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -9011,7 +9011,7 @@ bool MapUShortInnerAliasArrayHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapUShortInnerAliasArrayHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -9028,7 +9028,7 @@ std::function<uint32_t()> MapUShortInnerAliasArrayHelperPubSubType::getSerialize
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapUShortInnerAliasArrayHelper*>(data), current_alignment)) +
+                               *static_cast<const MapUShortInnerAliasArrayHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -9051,7 +9051,7 @@ void MapUShortInnerAliasArrayHelperPubSubType::deleteData(
 }
 
 bool MapUShortInnerAliasArrayHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -9060,7 +9060,7 @@ bool MapUShortInnerAliasArrayHelperPubSubType::getKey(
         return false;
     }
 
-    MapUShortInnerAliasArrayHelper* p_type = static_cast<MapUShortInnerAliasArrayHelper*>(data);
+    const MapUShortInnerAliasArrayHelper* p_type = static_cast<const MapUShortInnerAliasArrayHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -9128,11 +9128,11 @@ MapUShortInnerAliasSequenceHelperPubSubType::~MapUShortInnerAliasSequenceHelperP
 }
 
 bool MapUShortInnerAliasSequenceHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapUShortInnerAliasSequenceHelper* p_type = static_cast<MapUShortInnerAliasSequenceHelper*>(data);
+    const MapUShortInnerAliasSequenceHelper* p_type = static_cast<const MapUShortInnerAliasSequenceHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -9204,7 +9204,7 @@ bool MapUShortInnerAliasSequenceHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapUShortInnerAliasSequenceHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -9221,7 +9221,7 @@ std::function<uint32_t()> MapUShortInnerAliasSequenceHelperPubSubType::getSerial
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapUShortInnerAliasSequenceHelper*>(data), current_alignment)) +
+                               *static_cast<const MapUShortInnerAliasSequenceHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -9244,7 +9244,7 @@ void MapUShortInnerAliasSequenceHelperPubSubType::deleteData(
 }
 
 bool MapUShortInnerAliasSequenceHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -9253,7 +9253,7 @@ bool MapUShortInnerAliasSequenceHelperPubSubType::getKey(
         return false;
     }
 
-    MapUShortInnerAliasSequenceHelper* p_type = static_cast<MapUShortInnerAliasSequenceHelper*>(data);
+    const MapUShortInnerAliasSequenceHelper* p_type = static_cast<const MapUShortInnerAliasSequenceHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -9321,11 +9321,11 @@ MapUShortInnerAliasMapHelperPubSubType::~MapUShortInnerAliasMapHelperPubSubType(
 }
 
 bool MapUShortInnerAliasMapHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapUShortInnerAliasMapHelper* p_type = static_cast<MapUShortInnerAliasMapHelper*>(data);
+    const MapUShortInnerAliasMapHelper* p_type = static_cast<const MapUShortInnerAliasMapHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -9397,7 +9397,7 @@ bool MapUShortInnerAliasMapHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapUShortInnerAliasMapHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -9414,7 +9414,7 @@ std::function<uint32_t()> MapUShortInnerAliasMapHelperPubSubType::getSerializedS
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapUShortInnerAliasMapHelper*>(data), current_alignment)) +
+                               *static_cast<const MapUShortInnerAliasMapHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -9437,7 +9437,7 @@ void MapUShortInnerAliasMapHelperPubSubType::deleteData(
 }
 
 bool MapUShortInnerAliasMapHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -9446,7 +9446,7 @@ bool MapUShortInnerAliasMapHelperPubSubType::getKey(
         return false;
     }
 
-    MapUShortInnerAliasMapHelper* p_type = static_cast<MapUShortInnerAliasMapHelper*>(data);
+    const MapUShortInnerAliasMapHelper* p_type = static_cast<const MapUShortInnerAliasMapHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -9514,11 +9514,11 @@ MapUShortInnerUnionHelperPubSubType::~MapUShortInnerUnionHelperPubSubType()
 }
 
 bool MapUShortInnerUnionHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapUShortInnerUnionHelper* p_type = static_cast<MapUShortInnerUnionHelper*>(data);
+    const MapUShortInnerUnionHelper* p_type = static_cast<const MapUShortInnerUnionHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -9590,7 +9590,7 @@ bool MapUShortInnerUnionHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapUShortInnerUnionHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -9607,7 +9607,7 @@ std::function<uint32_t()> MapUShortInnerUnionHelperPubSubType::getSerializedSize
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapUShortInnerUnionHelper*>(data), current_alignment)) +
+                               *static_cast<const MapUShortInnerUnionHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -9630,7 +9630,7 @@ void MapUShortInnerUnionHelperPubSubType::deleteData(
 }
 
 bool MapUShortInnerUnionHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -9639,7 +9639,7 @@ bool MapUShortInnerUnionHelperPubSubType::getKey(
         return false;
     }
 
-    MapUShortInnerUnionHelper* p_type = static_cast<MapUShortInnerUnionHelper*>(data);
+    const MapUShortInnerUnionHelper* p_type = static_cast<const MapUShortInnerUnionHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -9707,11 +9707,11 @@ MapUShortInnerStructureHelperPubSubType::~MapUShortInnerStructureHelperPubSubTyp
 }
 
 bool MapUShortInnerStructureHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapUShortInnerStructureHelper* p_type = static_cast<MapUShortInnerStructureHelper*>(data);
+    const MapUShortInnerStructureHelper* p_type = static_cast<const MapUShortInnerStructureHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -9783,7 +9783,7 @@ bool MapUShortInnerStructureHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapUShortInnerStructureHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -9800,7 +9800,7 @@ std::function<uint32_t()> MapUShortInnerStructureHelperPubSubType::getSerialized
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapUShortInnerStructureHelper*>(data), current_alignment)) +
+                               *static_cast<const MapUShortInnerStructureHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -9823,7 +9823,7 @@ void MapUShortInnerStructureHelperPubSubType::deleteData(
 }
 
 bool MapUShortInnerStructureHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -9832,7 +9832,7 @@ bool MapUShortInnerStructureHelperPubSubType::getKey(
         return false;
     }
 
-    MapUShortInnerStructureHelper* p_type = static_cast<MapUShortInnerStructureHelper*>(data);
+    const MapUShortInnerStructureHelper* p_type = static_cast<const MapUShortInnerStructureHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -9900,11 +9900,11 @@ MapUShortInnerBitsetHelperPubSubType::~MapUShortInnerBitsetHelperPubSubType()
 }
 
 bool MapUShortInnerBitsetHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapUShortInnerBitsetHelper* p_type = static_cast<MapUShortInnerBitsetHelper*>(data);
+    const MapUShortInnerBitsetHelper* p_type = static_cast<const MapUShortInnerBitsetHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -9976,7 +9976,7 @@ bool MapUShortInnerBitsetHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapUShortInnerBitsetHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -9993,7 +9993,7 @@ std::function<uint32_t()> MapUShortInnerBitsetHelperPubSubType::getSerializedSiz
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapUShortInnerBitsetHelper*>(data), current_alignment)) +
+                               *static_cast<const MapUShortInnerBitsetHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -10016,7 +10016,7 @@ void MapUShortInnerBitsetHelperPubSubType::deleteData(
 }
 
 bool MapUShortInnerBitsetHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -10025,7 +10025,7 @@ bool MapUShortInnerBitsetHelperPubSubType::getKey(
         return false;
     }
 
-    MapUShortInnerBitsetHelper* p_type = static_cast<MapUShortInnerBitsetHelper*>(data);
+    const MapUShortInnerBitsetHelper* p_type = static_cast<const MapUShortInnerBitsetHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -10093,11 +10093,11 @@ MapLongShortPubSubType::~MapLongShortPubSubType()
 }
 
 bool MapLongShortPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapLongShort* p_type = static_cast<MapLongShort*>(data);
+    const MapLongShort* p_type = static_cast<const MapLongShort*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -10169,7 +10169,7 @@ bool MapLongShortPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapLongShortPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -10186,7 +10186,7 @@ std::function<uint32_t()> MapLongShortPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapLongShort*>(data), current_alignment)) +
+                               *static_cast<const MapLongShort*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -10209,7 +10209,7 @@ void MapLongShortPubSubType::deleteData(
 }
 
 bool MapLongShortPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -10218,7 +10218,7 @@ bool MapLongShortPubSubType::getKey(
         return false;
     }
 
-    MapLongShort* p_type = static_cast<MapLongShort*>(data);
+    const MapLongShort* p_type = static_cast<const MapLongShort*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -10286,11 +10286,11 @@ MapLongUShortPubSubType::~MapLongUShortPubSubType()
 }
 
 bool MapLongUShortPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapLongUShort* p_type = static_cast<MapLongUShort*>(data);
+    const MapLongUShort* p_type = static_cast<const MapLongUShort*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -10362,7 +10362,7 @@ bool MapLongUShortPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapLongUShortPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -10379,7 +10379,7 @@ std::function<uint32_t()> MapLongUShortPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapLongUShort*>(data), current_alignment)) +
+                               *static_cast<const MapLongUShort*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -10402,7 +10402,7 @@ void MapLongUShortPubSubType::deleteData(
 }
 
 bool MapLongUShortPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -10411,7 +10411,7 @@ bool MapLongUShortPubSubType::getKey(
         return false;
     }
 
-    MapLongUShort* p_type = static_cast<MapLongUShort*>(data);
+    const MapLongUShort* p_type = static_cast<const MapLongUShort*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -10479,11 +10479,11 @@ MapLongLongPubSubType::~MapLongLongPubSubType()
 }
 
 bool MapLongLongPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapLongLong* p_type = static_cast<MapLongLong*>(data);
+    const MapLongLong* p_type = static_cast<const MapLongLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -10555,7 +10555,7 @@ bool MapLongLongPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapLongLongPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -10572,7 +10572,7 @@ std::function<uint32_t()> MapLongLongPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapLongLong*>(data), current_alignment)) +
+                               *static_cast<const MapLongLong*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -10595,7 +10595,7 @@ void MapLongLongPubSubType::deleteData(
 }
 
 bool MapLongLongPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -10604,7 +10604,7 @@ bool MapLongLongPubSubType::getKey(
         return false;
     }
 
-    MapLongLong* p_type = static_cast<MapLongLong*>(data);
+    const MapLongLong* p_type = static_cast<const MapLongLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -10672,11 +10672,11 @@ MapLongULongPubSubType::~MapLongULongPubSubType()
 }
 
 bool MapLongULongPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapLongULong* p_type = static_cast<MapLongULong*>(data);
+    const MapLongULong* p_type = static_cast<const MapLongULong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -10748,7 +10748,7 @@ bool MapLongULongPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapLongULongPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -10765,7 +10765,7 @@ std::function<uint32_t()> MapLongULongPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapLongULong*>(data), current_alignment)) +
+                               *static_cast<const MapLongULong*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -10788,7 +10788,7 @@ void MapLongULongPubSubType::deleteData(
 }
 
 bool MapLongULongPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -10797,7 +10797,7 @@ bool MapLongULongPubSubType::getKey(
         return false;
     }
 
-    MapLongULong* p_type = static_cast<MapLongULong*>(data);
+    const MapLongULong* p_type = static_cast<const MapLongULong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -10865,11 +10865,11 @@ MapLongKeyLongLongValuePubSubType::~MapLongKeyLongLongValuePubSubType()
 }
 
 bool MapLongKeyLongLongValuePubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapLongKeyLongLongValue* p_type = static_cast<MapLongKeyLongLongValue*>(data);
+    const MapLongKeyLongLongValue* p_type = static_cast<const MapLongKeyLongLongValue*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -10941,7 +10941,7 @@ bool MapLongKeyLongLongValuePubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapLongKeyLongLongValuePubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -10958,7 +10958,7 @@ std::function<uint32_t()> MapLongKeyLongLongValuePubSubType::getSerializedSizePr
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapLongKeyLongLongValue*>(data), current_alignment)) +
+                               *static_cast<const MapLongKeyLongLongValue*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -10981,7 +10981,7 @@ void MapLongKeyLongLongValuePubSubType::deleteData(
 }
 
 bool MapLongKeyLongLongValuePubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -10990,7 +10990,7 @@ bool MapLongKeyLongLongValuePubSubType::getKey(
         return false;
     }
 
-    MapLongKeyLongLongValue* p_type = static_cast<MapLongKeyLongLongValue*>(data);
+    const MapLongKeyLongLongValue* p_type = static_cast<const MapLongKeyLongLongValue*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -11058,11 +11058,11 @@ MapLongULongLongPubSubType::~MapLongULongLongPubSubType()
 }
 
 bool MapLongULongLongPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapLongULongLong* p_type = static_cast<MapLongULongLong*>(data);
+    const MapLongULongLong* p_type = static_cast<const MapLongULongLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -11134,7 +11134,7 @@ bool MapLongULongLongPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapLongULongLongPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -11151,7 +11151,7 @@ std::function<uint32_t()> MapLongULongLongPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapLongULongLong*>(data), current_alignment)) +
+                               *static_cast<const MapLongULongLong*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -11174,7 +11174,7 @@ void MapLongULongLongPubSubType::deleteData(
 }
 
 bool MapLongULongLongPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -11183,7 +11183,7 @@ bool MapLongULongLongPubSubType::getKey(
         return false;
     }
 
-    MapLongULongLong* p_type = static_cast<MapLongULongLong*>(data);
+    const MapLongULongLong* p_type = static_cast<const MapLongULongLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -11251,11 +11251,11 @@ MapLongFloatPubSubType::~MapLongFloatPubSubType()
 }
 
 bool MapLongFloatPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapLongFloat* p_type = static_cast<MapLongFloat*>(data);
+    const MapLongFloat* p_type = static_cast<const MapLongFloat*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -11327,7 +11327,7 @@ bool MapLongFloatPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapLongFloatPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -11344,7 +11344,7 @@ std::function<uint32_t()> MapLongFloatPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapLongFloat*>(data), current_alignment)) +
+                               *static_cast<const MapLongFloat*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -11367,7 +11367,7 @@ void MapLongFloatPubSubType::deleteData(
 }
 
 bool MapLongFloatPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -11376,7 +11376,7 @@ bool MapLongFloatPubSubType::getKey(
         return false;
     }
 
-    MapLongFloat* p_type = static_cast<MapLongFloat*>(data);
+    const MapLongFloat* p_type = static_cast<const MapLongFloat*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -11444,11 +11444,11 @@ MapLongDoublePubSubType::~MapLongDoublePubSubType()
 }
 
 bool MapLongDoublePubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapLongDouble* p_type = static_cast<MapLongDouble*>(data);
+    const MapLongDouble* p_type = static_cast<const MapLongDouble*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -11520,7 +11520,7 @@ bool MapLongDoublePubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapLongDoublePubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -11537,7 +11537,7 @@ std::function<uint32_t()> MapLongDoublePubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapLongDouble*>(data), current_alignment)) +
+                               *static_cast<const MapLongDouble*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -11560,7 +11560,7 @@ void MapLongDoublePubSubType::deleteData(
 }
 
 bool MapLongDoublePubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -11569,7 +11569,7 @@ bool MapLongDoublePubSubType::getKey(
         return false;
     }
 
-    MapLongDouble* p_type = static_cast<MapLongDouble*>(data);
+    const MapLongDouble* p_type = static_cast<const MapLongDouble*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -11637,11 +11637,11 @@ MapLongKeyLongDoubleValuePubSubType::~MapLongKeyLongDoubleValuePubSubType()
 }
 
 bool MapLongKeyLongDoubleValuePubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapLongKeyLongDoubleValue* p_type = static_cast<MapLongKeyLongDoubleValue*>(data);
+    const MapLongKeyLongDoubleValue* p_type = static_cast<const MapLongKeyLongDoubleValue*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -11713,7 +11713,7 @@ bool MapLongKeyLongDoubleValuePubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapLongKeyLongDoubleValuePubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -11730,7 +11730,7 @@ std::function<uint32_t()> MapLongKeyLongDoubleValuePubSubType::getSerializedSize
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapLongKeyLongDoubleValue*>(data), current_alignment)) +
+                               *static_cast<const MapLongKeyLongDoubleValue*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -11753,7 +11753,7 @@ void MapLongKeyLongDoubleValuePubSubType::deleteData(
 }
 
 bool MapLongKeyLongDoubleValuePubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -11762,7 +11762,7 @@ bool MapLongKeyLongDoubleValuePubSubType::getKey(
         return false;
     }
 
-    MapLongKeyLongDoubleValue* p_type = static_cast<MapLongKeyLongDoubleValue*>(data);
+    const MapLongKeyLongDoubleValue* p_type = static_cast<const MapLongKeyLongDoubleValue*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -11830,11 +11830,11 @@ MapLongBooleanPubSubType::~MapLongBooleanPubSubType()
 }
 
 bool MapLongBooleanPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapLongBoolean* p_type = static_cast<MapLongBoolean*>(data);
+    const MapLongBoolean* p_type = static_cast<const MapLongBoolean*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -11906,7 +11906,7 @@ bool MapLongBooleanPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapLongBooleanPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -11923,7 +11923,7 @@ std::function<uint32_t()> MapLongBooleanPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapLongBoolean*>(data), current_alignment)) +
+                               *static_cast<const MapLongBoolean*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -11946,7 +11946,7 @@ void MapLongBooleanPubSubType::deleteData(
 }
 
 bool MapLongBooleanPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -11955,7 +11955,7 @@ bool MapLongBooleanPubSubType::getKey(
         return false;
     }
 
-    MapLongBoolean* p_type = static_cast<MapLongBoolean*>(data);
+    const MapLongBoolean* p_type = static_cast<const MapLongBoolean*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -12023,11 +12023,11 @@ MapLongOctetPubSubType::~MapLongOctetPubSubType()
 }
 
 bool MapLongOctetPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapLongOctet* p_type = static_cast<MapLongOctet*>(data);
+    const MapLongOctet* p_type = static_cast<const MapLongOctet*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -12099,7 +12099,7 @@ bool MapLongOctetPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapLongOctetPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -12116,7 +12116,7 @@ std::function<uint32_t()> MapLongOctetPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapLongOctet*>(data), current_alignment)) +
+                               *static_cast<const MapLongOctet*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -12139,7 +12139,7 @@ void MapLongOctetPubSubType::deleteData(
 }
 
 bool MapLongOctetPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -12148,7 +12148,7 @@ bool MapLongOctetPubSubType::getKey(
         return false;
     }
 
-    MapLongOctet* p_type = static_cast<MapLongOctet*>(data);
+    const MapLongOctet* p_type = static_cast<const MapLongOctet*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -12216,11 +12216,11 @@ MapLongCharPubSubType::~MapLongCharPubSubType()
 }
 
 bool MapLongCharPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapLongChar* p_type = static_cast<MapLongChar*>(data);
+    const MapLongChar* p_type = static_cast<const MapLongChar*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -12292,7 +12292,7 @@ bool MapLongCharPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapLongCharPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -12309,7 +12309,7 @@ std::function<uint32_t()> MapLongCharPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapLongChar*>(data), current_alignment)) +
+                               *static_cast<const MapLongChar*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -12332,7 +12332,7 @@ void MapLongCharPubSubType::deleteData(
 }
 
 bool MapLongCharPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -12341,7 +12341,7 @@ bool MapLongCharPubSubType::getKey(
         return false;
     }
 
-    MapLongChar* p_type = static_cast<MapLongChar*>(data);
+    const MapLongChar* p_type = static_cast<const MapLongChar*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -12409,11 +12409,11 @@ MapLongWCharPubSubType::~MapLongWCharPubSubType()
 }
 
 bool MapLongWCharPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapLongWChar* p_type = static_cast<MapLongWChar*>(data);
+    const MapLongWChar* p_type = static_cast<const MapLongWChar*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -12485,7 +12485,7 @@ bool MapLongWCharPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapLongWCharPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -12502,7 +12502,7 @@ std::function<uint32_t()> MapLongWCharPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapLongWChar*>(data), current_alignment)) +
+                               *static_cast<const MapLongWChar*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -12525,7 +12525,7 @@ void MapLongWCharPubSubType::deleteData(
 }
 
 bool MapLongWCharPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -12534,7 +12534,7 @@ bool MapLongWCharPubSubType::getKey(
         return false;
     }
 
-    MapLongWChar* p_type = static_cast<MapLongWChar*>(data);
+    const MapLongWChar* p_type = static_cast<const MapLongWChar*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -12602,11 +12602,11 @@ MapLongStringPubSubType::~MapLongStringPubSubType()
 }
 
 bool MapLongStringPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapLongString* p_type = static_cast<MapLongString*>(data);
+    const MapLongString* p_type = static_cast<const MapLongString*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -12678,7 +12678,7 @@ bool MapLongStringPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapLongStringPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -12695,7 +12695,7 @@ std::function<uint32_t()> MapLongStringPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapLongString*>(data), current_alignment)) +
+                               *static_cast<const MapLongString*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -12718,7 +12718,7 @@ void MapLongStringPubSubType::deleteData(
 }
 
 bool MapLongStringPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -12727,7 +12727,7 @@ bool MapLongStringPubSubType::getKey(
         return false;
     }
 
-    MapLongString* p_type = static_cast<MapLongString*>(data);
+    const MapLongString* p_type = static_cast<const MapLongString*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -12795,11 +12795,11 @@ MapLongWStringPubSubType::~MapLongWStringPubSubType()
 }
 
 bool MapLongWStringPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapLongWString* p_type = static_cast<MapLongWString*>(data);
+    const MapLongWString* p_type = static_cast<const MapLongWString*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -12871,7 +12871,7 @@ bool MapLongWStringPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapLongWStringPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -12888,7 +12888,7 @@ std::function<uint32_t()> MapLongWStringPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapLongWString*>(data), current_alignment)) +
+                               *static_cast<const MapLongWString*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -12911,7 +12911,7 @@ void MapLongWStringPubSubType::deleteData(
 }
 
 bool MapLongWStringPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -12920,7 +12920,7 @@ bool MapLongWStringPubSubType::getKey(
         return false;
     }
 
-    MapLongWString* p_type = static_cast<MapLongWString*>(data);
+    const MapLongWString* p_type = static_cast<const MapLongWString*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -12988,11 +12988,11 @@ MapLongInnerAliasBoundedStringHelperPubSubType::~MapLongInnerAliasBoundedStringH
 }
 
 bool MapLongInnerAliasBoundedStringHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapLongInnerAliasBoundedStringHelper* p_type = static_cast<MapLongInnerAliasBoundedStringHelper*>(data);
+    const MapLongInnerAliasBoundedStringHelper* p_type = static_cast<const MapLongInnerAliasBoundedStringHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -13064,7 +13064,7 @@ bool MapLongInnerAliasBoundedStringHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapLongInnerAliasBoundedStringHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -13081,7 +13081,7 @@ std::function<uint32_t()> MapLongInnerAliasBoundedStringHelperPubSubType::getSer
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapLongInnerAliasBoundedStringHelper*>(data), current_alignment)) +
+                               *static_cast<const MapLongInnerAliasBoundedStringHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -13104,7 +13104,7 @@ void MapLongInnerAliasBoundedStringHelperPubSubType::deleteData(
 }
 
 bool MapLongInnerAliasBoundedStringHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -13113,7 +13113,7 @@ bool MapLongInnerAliasBoundedStringHelperPubSubType::getKey(
         return false;
     }
 
-    MapLongInnerAliasBoundedStringHelper* p_type = static_cast<MapLongInnerAliasBoundedStringHelper*>(data);
+    const MapLongInnerAliasBoundedStringHelper* p_type = static_cast<const MapLongInnerAliasBoundedStringHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -13181,11 +13181,11 @@ MapLongInnerAliasBoundedWStringHelperPubSubType::~MapLongInnerAliasBoundedWStrin
 }
 
 bool MapLongInnerAliasBoundedWStringHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapLongInnerAliasBoundedWStringHelper* p_type = static_cast<MapLongInnerAliasBoundedWStringHelper*>(data);
+    const MapLongInnerAliasBoundedWStringHelper* p_type = static_cast<const MapLongInnerAliasBoundedWStringHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -13257,7 +13257,7 @@ bool MapLongInnerAliasBoundedWStringHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapLongInnerAliasBoundedWStringHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -13274,7 +13274,7 @@ std::function<uint32_t()> MapLongInnerAliasBoundedWStringHelperPubSubType::getSe
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapLongInnerAliasBoundedWStringHelper*>(data), current_alignment)) +
+                               *static_cast<const MapLongInnerAliasBoundedWStringHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -13297,7 +13297,7 @@ void MapLongInnerAliasBoundedWStringHelperPubSubType::deleteData(
 }
 
 bool MapLongInnerAliasBoundedWStringHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -13306,7 +13306,7 @@ bool MapLongInnerAliasBoundedWStringHelperPubSubType::getKey(
         return false;
     }
 
-    MapLongInnerAliasBoundedWStringHelper* p_type = static_cast<MapLongInnerAliasBoundedWStringHelper*>(data);
+    const MapLongInnerAliasBoundedWStringHelper* p_type = static_cast<const MapLongInnerAliasBoundedWStringHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -13374,11 +13374,11 @@ MapLongInnerEnumHelperPubSubType::~MapLongInnerEnumHelperPubSubType()
 }
 
 bool MapLongInnerEnumHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapLongInnerEnumHelper* p_type = static_cast<MapLongInnerEnumHelper*>(data);
+    const MapLongInnerEnumHelper* p_type = static_cast<const MapLongInnerEnumHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -13450,7 +13450,7 @@ bool MapLongInnerEnumHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapLongInnerEnumHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -13467,7 +13467,7 @@ std::function<uint32_t()> MapLongInnerEnumHelperPubSubType::getSerializedSizePro
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapLongInnerEnumHelper*>(data), current_alignment)) +
+                               *static_cast<const MapLongInnerEnumHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -13490,7 +13490,7 @@ void MapLongInnerEnumHelperPubSubType::deleteData(
 }
 
 bool MapLongInnerEnumHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -13499,7 +13499,7 @@ bool MapLongInnerEnumHelperPubSubType::getKey(
         return false;
     }
 
-    MapLongInnerEnumHelper* p_type = static_cast<MapLongInnerEnumHelper*>(data);
+    const MapLongInnerEnumHelper* p_type = static_cast<const MapLongInnerEnumHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -13567,11 +13567,11 @@ MapLongInnerBitMaskHelperPubSubType::~MapLongInnerBitMaskHelperPubSubType()
 }
 
 bool MapLongInnerBitMaskHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapLongInnerBitMaskHelper* p_type = static_cast<MapLongInnerBitMaskHelper*>(data);
+    const MapLongInnerBitMaskHelper* p_type = static_cast<const MapLongInnerBitMaskHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -13643,7 +13643,7 @@ bool MapLongInnerBitMaskHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapLongInnerBitMaskHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -13660,7 +13660,7 @@ std::function<uint32_t()> MapLongInnerBitMaskHelperPubSubType::getSerializedSize
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapLongInnerBitMaskHelper*>(data), current_alignment)) +
+                               *static_cast<const MapLongInnerBitMaskHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -13683,7 +13683,7 @@ void MapLongInnerBitMaskHelperPubSubType::deleteData(
 }
 
 bool MapLongInnerBitMaskHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -13692,7 +13692,7 @@ bool MapLongInnerBitMaskHelperPubSubType::getKey(
         return false;
     }
 
-    MapLongInnerBitMaskHelper* p_type = static_cast<MapLongInnerBitMaskHelper*>(data);
+    const MapLongInnerBitMaskHelper* p_type = static_cast<const MapLongInnerBitMaskHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -13760,11 +13760,11 @@ MapLongInnerAliasHelperPubSubType::~MapLongInnerAliasHelperPubSubType()
 }
 
 bool MapLongInnerAliasHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapLongInnerAliasHelper* p_type = static_cast<MapLongInnerAliasHelper*>(data);
+    const MapLongInnerAliasHelper* p_type = static_cast<const MapLongInnerAliasHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -13836,7 +13836,7 @@ bool MapLongInnerAliasHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapLongInnerAliasHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -13853,7 +13853,7 @@ std::function<uint32_t()> MapLongInnerAliasHelperPubSubType::getSerializedSizePr
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapLongInnerAliasHelper*>(data), current_alignment)) +
+                               *static_cast<const MapLongInnerAliasHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -13876,7 +13876,7 @@ void MapLongInnerAliasHelperPubSubType::deleteData(
 }
 
 bool MapLongInnerAliasHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -13885,7 +13885,7 @@ bool MapLongInnerAliasHelperPubSubType::getKey(
         return false;
     }
 
-    MapLongInnerAliasHelper* p_type = static_cast<MapLongInnerAliasHelper*>(data);
+    const MapLongInnerAliasHelper* p_type = static_cast<const MapLongInnerAliasHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -13953,11 +13953,11 @@ MapLongInnerAliasArrayHelperPubSubType::~MapLongInnerAliasArrayHelperPubSubType(
 }
 
 bool MapLongInnerAliasArrayHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapLongInnerAliasArrayHelper* p_type = static_cast<MapLongInnerAliasArrayHelper*>(data);
+    const MapLongInnerAliasArrayHelper* p_type = static_cast<const MapLongInnerAliasArrayHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -14029,7 +14029,7 @@ bool MapLongInnerAliasArrayHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapLongInnerAliasArrayHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -14046,7 +14046,7 @@ std::function<uint32_t()> MapLongInnerAliasArrayHelperPubSubType::getSerializedS
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapLongInnerAliasArrayHelper*>(data), current_alignment)) +
+                               *static_cast<const MapLongInnerAliasArrayHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -14069,7 +14069,7 @@ void MapLongInnerAliasArrayHelperPubSubType::deleteData(
 }
 
 bool MapLongInnerAliasArrayHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -14078,7 +14078,7 @@ bool MapLongInnerAliasArrayHelperPubSubType::getKey(
         return false;
     }
 
-    MapLongInnerAliasArrayHelper* p_type = static_cast<MapLongInnerAliasArrayHelper*>(data);
+    const MapLongInnerAliasArrayHelper* p_type = static_cast<const MapLongInnerAliasArrayHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -14146,11 +14146,11 @@ MapLongInnerAliasSequenceHelperPubSubType::~MapLongInnerAliasSequenceHelperPubSu
 }
 
 bool MapLongInnerAliasSequenceHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapLongInnerAliasSequenceHelper* p_type = static_cast<MapLongInnerAliasSequenceHelper*>(data);
+    const MapLongInnerAliasSequenceHelper* p_type = static_cast<const MapLongInnerAliasSequenceHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -14222,7 +14222,7 @@ bool MapLongInnerAliasSequenceHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapLongInnerAliasSequenceHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -14239,7 +14239,7 @@ std::function<uint32_t()> MapLongInnerAliasSequenceHelperPubSubType::getSerializ
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapLongInnerAliasSequenceHelper*>(data), current_alignment)) +
+                               *static_cast<const MapLongInnerAliasSequenceHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -14262,7 +14262,7 @@ void MapLongInnerAliasSequenceHelperPubSubType::deleteData(
 }
 
 bool MapLongInnerAliasSequenceHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -14271,7 +14271,7 @@ bool MapLongInnerAliasSequenceHelperPubSubType::getKey(
         return false;
     }
 
-    MapLongInnerAliasSequenceHelper* p_type = static_cast<MapLongInnerAliasSequenceHelper*>(data);
+    const MapLongInnerAliasSequenceHelper* p_type = static_cast<const MapLongInnerAliasSequenceHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -14339,11 +14339,11 @@ MapLongInnerAliasMapHelperPubSubType::~MapLongInnerAliasMapHelperPubSubType()
 }
 
 bool MapLongInnerAliasMapHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapLongInnerAliasMapHelper* p_type = static_cast<MapLongInnerAliasMapHelper*>(data);
+    const MapLongInnerAliasMapHelper* p_type = static_cast<const MapLongInnerAliasMapHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -14415,7 +14415,7 @@ bool MapLongInnerAliasMapHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapLongInnerAliasMapHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -14432,7 +14432,7 @@ std::function<uint32_t()> MapLongInnerAliasMapHelperPubSubType::getSerializedSiz
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapLongInnerAliasMapHelper*>(data), current_alignment)) +
+                               *static_cast<const MapLongInnerAliasMapHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -14455,7 +14455,7 @@ void MapLongInnerAliasMapHelperPubSubType::deleteData(
 }
 
 bool MapLongInnerAliasMapHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -14464,7 +14464,7 @@ bool MapLongInnerAliasMapHelperPubSubType::getKey(
         return false;
     }
 
-    MapLongInnerAliasMapHelper* p_type = static_cast<MapLongInnerAliasMapHelper*>(data);
+    const MapLongInnerAliasMapHelper* p_type = static_cast<const MapLongInnerAliasMapHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -14532,11 +14532,11 @@ MapLongInnerUnionHelperPubSubType::~MapLongInnerUnionHelperPubSubType()
 }
 
 bool MapLongInnerUnionHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapLongInnerUnionHelper* p_type = static_cast<MapLongInnerUnionHelper*>(data);
+    const MapLongInnerUnionHelper* p_type = static_cast<const MapLongInnerUnionHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -14608,7 +14608,7 @@ bool MapLongInnerUnionHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapLongInnerUnionHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -14625,7 +14625,7 @@ std::function<uint32_t()> MapLongInnerUnionHelperPubSubType::getSerializedSizePr
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapLongInnerUnionHelper*>(data), current_alignment)) +
+                               *static_cast<const MapLongInnerUnionHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -14648,7 +14648,7 @@ void MapLongInnerUnionHelperPubSubType::deleteData(
 }
 
 bool MapLongInnerUnionHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -14657,7 +14657,7 @@ bool MapLongInnerUnionHelperPubSubType::getKey(
         return false;
     }
 
-    MapLongInnerUnionHelper* p_type = static_cast<MapLongInnerUnionHelper*>(data);
+    const MapLongInnerUnionHelper* p_type = static_cast<const MapLongInnerUnionHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -14725,11 +14725,11 @@ MapLongInnerStructureHelperPubSubType::~MapLongInnerStructureHelperPubSubType()
 }
 
 bool MapLongInnerStructureHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapLongInnerStructureHelper* p_type = static_cast<MapLongInnerStructureHelper*>(data);
+    const MapLongInnerStructureHelper* p_type = static_cast<const MapLongInnerStructureHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -14801,7 +14801,7 @@ bool MapLongInnerStructureHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapLongInnerStructureHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -14818,7 +14818,7 @@ std::function<uint32_t()> MapLongInnerStructureHelperPubSubType::getSerializedSi
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapLongInnerStructureHelper*>(data), current_alignment)) +
+                               *static_cast<const MapLongInnerStructureHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -14841,7 +14841,7 @@ void MapLongInnerStructureHelperPubSubType::deleteData(
 }
 
 bool MapLongInnerStructureHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -14850,7 +14850,7 @@ bool MapLongInnerStructureHelperPubSubType::getKey(
         return false;
     }
 
-    MapLongInnerStructureHelper* p_type = static_cast<MapLongInnerStructureHelper*>(data);
+    const MapLongInnerStructureHelper* p_type = static_cast<const MapLongInnerStructureHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -14918,11 +14918,11 @@ MapLongInnerBitsetHelperPubSubType::~MapLongInnerBitsetHelperPubSubType()
 }
 
 bool MapLongInnerBitsetHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapLongInnerBitsetHelper* p_type = static_cast<MapLongInnerBitsetHelper*>(data);
+    const MapLongInnerBitsetHelper* p_type = static_cast<const MapLongInnerBitsetHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -14994,7 +14994,7 @@ bool MapLongInnerBitsetHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapLongInnerBitsetHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -15011,7 +15011,7 @@ std::function<uint32_t()> MapLongInnerBitsetHelperPubSubType::getSerializedSizeP
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapLongInnerBitsetHelper*>(data), current_alignment)) +
+                               *static_cast<const MapLongInnerBitsetHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -15034,7 +15034,7 @@ void MapLongInnerBitsetHelperPubSubType::deleteData(
 }
 
 bool MapLongInnerBitsetHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -15043,7 +15043,7 @@ bool MapLongInnerBitsetHelperPubSubType::getKey(
         return false;
     }
 
-    MapLongInnerBitsetHelper* p_type = static_cast<MapLongInnerBitsetHelper*>(data);
+    const MapLongInnerBitsetHelper* p_type = static_cast<const MapLongInnerBitsetHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -15111,11 +15111,11 @@ MapULongShortPubSubType::~MapULongShortPubSubType()
 }
 
 bool MapULongShortPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapULongShort* p_type = static_cast<MapULongShort*>(data);
+    const MapULongShort* p_type = static_cast<const MapULongShort*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -15187,7 +15187,7 @@ bool MapULongShortPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapULongShortPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -15204,7 +15204,7 @@ std::function<uint32_t()> MapULongShortPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapULongShort*>(data), current_alignment)) +
+                               *static_cast<const MapULongShort*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -15227,7 +15227,7 @@ void MapULongShortPubSubType::deleteData(
 }
 
 bool MapULongShortPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -15236,7 +15236,7 @@ bool MapULongShortPubSubType::getKey(
         return false;
     }
 
-    MapULongShort* p_type = static_cast<MapULongShort*>(data);
+    const MapULongShort* p_type = static_cast<const MapULongShort*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -15304,11 +15304,11 @@ MapULongUShortPubSubType::~MapULongUShortPubSubType()
 }
 
 bool MapULongUShortPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapULongUShort* p_type = static_cast<MapULongUShort*>(data);
+    const MapULongUShort* p_type = static_cast<const MapULongUShort*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -15380,7 +15380,7 @@ bool MapULongUShortPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapULongUShortPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -15397,7 +15397,7 @@ std::function<uint32_t()> MapULongUShortPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapULongUShort*>(data), current_alignment)) +
+                               *static_cast<const MapULongUShort*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -15420,7 +15420,7 @@ void MapULongUShortPubSubType::deleteData(
 }
 
 bool MapULongUShortPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -15429,7 +15429,7 @@ bool MapULongUShortPubSubType::getKey(
         return false;
     }
 
-    MapULongUShort* p_type = static_cast<MapULongUShort*>(data);
+    const MapULongUShort* p_type = static_cast<const MapULongUShort*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -15497,11 +15497,11 @@ MapULongLongPubSubType::~MapULongLongPubSubType()
 }
 
 bool MapULongLongPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapULongLong* p_type = static_cast<MapULongLong*>(data);
+    const MapULongLong* p_type = static_cast<const MapULongLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -15573,7 +15573,7 @@ bool MapULongLongPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapULongLongPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -15590,7 +15590,7 @@ std::function<uint32_t()> MapULongLongPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapULongLong*>(data), current_alignment)) +
+                               *static_cast<const MapULongLong*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -15613,7 +15613,7 @@ void MapULongLongPubSubType::deleteData(
 }
 
 bool MapULongLongPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -15622,7 +15622,7 @@ bool MapULongLongPubSubType::getKey(
         return false;
     }
 
-    MapULongLong* p_type = static_cast<MapULongLong*>(data);
+    const MapULongLong* p_type = static_cast<const MapULongLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -15690,11 +15690,11 @@ MapULongULongPubSubType::~MapULongULongPubSubType()
 }
 
 bool MapULongULongPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapULongULong* p_type = static_cast<MapULongULong*>(data);
+    const MapULongULong* p_type = static_cast<const MapULongULong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -15766,7 +15766,7 @@ bool MapULongULongPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapULongULongPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -15783,7 +15783,7 @@ std::function<uint32_t()> MapULongULongPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapULongULong*>(data), current_alignment)) +
+                               *static_cast<const MapULongULong*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -15806,7 +15806,7 @@ void MapULongULongPubSubType::deleteData(
 }
 
 bool MapULongULongPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -15815,7 +15815,7 @@ bool MapULongULongPubSubType::getKey(
         return false;
     }
 
-    MapULongULong* p_type = static_cast<MapULongULong*>(data);
+    const MapULongULong* p_type = static_cast<const MapULongULong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -15883,11 +15883,11 @@ MapKeyULongValueLongLongPubSubType::~MapKeyULongValueLongLongPubSubType()
 }
 
 bool MapKeyULongValueLongLongPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapKeyULongValueLongLong* p_type = static_cast<MapKeyULongValueLongLong*>(data);
+    const MapKeyULongValueLongLong* p_type = static_cast<const MapKeyULongValueLongLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -15959,7 +15959,7 @@ bool MapKeyULongValueLongLongPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapKeyULongValueLongLongPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -15976,7 +15976,7 @@ std::function<uint32_t()> MapKeyULongValueLongLongPubSubType::getSerializedSizeP
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapKeyULongValueLongLong*>(data), current_alignment)) +
+                               *static_cast<const MapKeyULongValueLongLong*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -15999,7 +15999,7 @@ void MapKeyULongValueLongLongPubSubType::deleteData(
 }
 
 bool MapKeyULongValueLongLongPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -16008,7 +16008,7 @@ bool MapKeyULongValueLongLongPubSubType::getKey(
         return false;
     }
 
-    MapKeyULongValueLongLong* p_type = static_cast<MapKeyULongValueLongLong*>(data);
+    const MapKeyULongValueLongLong* p_type = static_cast<const MapKeyULongValueLongLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -16076,11 +16076,11 @@ MapULongULongLongPubSubType::~MapULongULongLongPubSubType()
 }
 
 bool MapULongULongLongPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapULongULongLong* p_type = static_cast<MapULongULongLong*>(data);
+    const MapULongULongLong* p_type = static_cast<const MapULongULongLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -16152,7 +16152,7 @@ bool MapULongULongLongPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapULongULongLongPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -16169,7 +16169,7 @@ std::function<uint32_t()> MapULongULongLongPubSubType::getSerializedSizeProvider
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapULongULongLong*>(data), current_alignment)) +
+                               *static_cast<const MapULongULongLong*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -16192,7 +16192,7 @@ void MapULongULongLongPubSubType::deleteData(
 }
 
 bool MapULongULongLongPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -16201,7 +16201,7 @@ bool MapULongULongLongPubSubType::getKey(
         return false;
     }
 
-    MapULongULongLong* p_type = static_cast<MapULongULongLong*>(data);
+    const MapULongULongLong* p_type = static_cast<const MapULongULongLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -16269,11 +16269,11 @@ MapULongFloatPubSubType::~MapULongFloatPubSubType()
 }
 
 bool MapULongFloatPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapULongFloat* p_type = static_cast<MapULongFloat*>(data);
+    const MapULongFloat* p_type = static_cast<const MapULongFloat*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -16345,7 +16345,7 @@ bool MapULongFloatPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapULongFloatPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -16362,7 +16362,7 @@ std::function<uint32_t()> MapULongFloatPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapULongFloat*>(data), current_alignment)) +
+                               *static_cast<const MapULongFloat*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -16385,7 +16385,7 @@ void MapULongFloatPubSubType::deleteData(
 }
 
 bool MapULongFloatPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -16394,7 +16394,7 @@ bool MapULongFloatPubSubType::getKey(
         return false;
     }
 
-    MapULongFloat* p_type = static_cast<MapULongFloat*>(data);
+    const MapULongFloat* p_type = static_cast<const MapULongFloat*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -16462,11 +16462,11 @@ MapULongDoublePubSubType::~MapULongDoublePubSubType()
 }
 
 bool MapULongDoublePubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapULongDouble* p_type = static_cast<MapULongDouble*>(data);
+    const MapULongDouble* p_type = static_cast<const MapULongDouble*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -16538,7 +16538,7 @@ bool MapULongDoublePubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapULongDoublePubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -16555,7 +16555,7 @@ std::function<uint32_t()> MapULongDoublePubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapULongDouble*>(data), current_alignment)) +
+                               *static_cast<const MapULongDouble*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -16578,7 +16578,7 @@ void MapULongDoublePubSubType::deleteData(
 }
 
 bool MapULongDoublePubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -16587,7 +16587,7 @@ bool MapULongDoublePubSubType::getKey(
         return false;
     }
 
-    MapULongDouble* p_type = static_cast<MapULongDouble*>(data);
+    const MapULongDouble* p_type = static_cast<const MapULongDouble*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -16655,11 +16655,11 @@ MapKeyULongValueLongDoublePubSubType::~MapKeyULongValueLongDoublePubSubType()
 }
 
 bool MapKeyULongValueLongDoublePubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapKeyULongValueLongDouble* p_type = static_cast<MapKeyULongValueLongDouble*>(data);
+    const MapKeyULongValueLongDouble* p_type = static_cast<const MapKeyULongValueLongDouble*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -16731,7 +16731,7 @@ bool MapKeyULongValueLongDoublePubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapKeyULongValueLongDoublePubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -16748,7 +16748,7 @@ std::function<uint32_t()> MapKeyULongValueLongDoublePubSubType::getSerializedSiz
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapKeyULongValueLongDouble*>(data), current_alignment)) +
+                               *static_cast<const MapKeyULongValueLongDouble*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -16771,7 +16771,7 @@ void MapKeyULongValueLongDoublePubSubType::deleteData(
 }
 
 bool MapKeyULongValueLongDoublePubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -16780,7 +16780,7 @@ bool MapKeyULongValueLongDoublePubSubType::getKey(
         return false;
     }
 
-    MapKeyULongValueLongDouble* p_type = static_cast<MapKeyULongValueLongDouble*>(data);
+    const MapKeyULongValueLongDouble* p_type = static_cast<const MapKeyULongValueLongDouble*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -16848,11 +16848,11 @@ MapULongBooleanPubSubType::~MapULongBooleanPubSubType()
 }
 
 bool MapULongBooleanPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapULongBoolean* p_type = static_cast<MapULongBoolean*>(data);
+    const MapULongBoolean* p_type = static_cast<const MapULongBoolean*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -16924,7 +16924,7 @@ bool MapULongBooleanPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapULongBooleanPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -16941,7 +16941,7 @@ std::function<uint32_t()> MapULongBooleanPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapULongBoolean*>(data), current_alignment)) +
+                               *static_cast<const MapULongBoolean*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -16964,7 +16964,7 @@ void MapULongBooleanPubSubType::deleteData(
 }
 
 bool MapULongBooleanPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -16973,7 +16973,7 @@ bool MapULongBooleanPubSubType::getKey(
         return false;
     }
 
-    MapULongBoolean* p_type = static_cast<MapULongBoolean*>(data);
+    const MapULongBoolean* p_type = static_cast<const MapULongBoolean*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -17041,11 +17041,11 @@ MapULongOctetPubSubType::~MapULongOctetPubSubType()
 }
 
 bool MapULongOctetPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapULongOctet* p_type = static_cast<MapULongOctet*>(data);
+    const MapULongOctet* p_type = static_cast<const MapULongOctet*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -17117,7 +17117,7 @@ bool MapULongOctetPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapULongOctetPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -17134,7 +17134,7 @@ std::function<uint32_t()> MapULongOctetPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapULongOctet*>(data), current_alignment)) +
+                               *static_cast<const MapULongOctet*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -17157,7 +17157,7 @@ void MapULongOctetPubSubType::deleteData(
 }
 
 bool MapULongOctetPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -17166,7 +17166,7 @@ bool MapULongOctetPubSubType::getKey(
         return false;
     }
 
-    MapULongOctet* p_type = static_cast<MapULongOctet*>(data);
+    const MapULongOctet* p_type = static_cast<const MapULongOctet*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -17234,11 +17234,11 @@ MapULongCharPubSubType::~MapULongCharPubSubType()
 }
 
 bool MapULongCharPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapULongChar* p_type = static_cast<MapULongChar*>(data);
+    const MapULongChar* p_type = static_cast<const MapULongChar*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -17310,7 +17310,7 @@ bool MapULongCharPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapULongCharPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -17327,7 +17327,7 @@ std::function<uint32_t()> MapULongCharPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapULongChar*>(data), current_alignment)) +
+                               *static_cast<const MapULongChar*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -17350,7 +17350,7 @@ void MapULongCharPubSubType::deleteData(
 }
 
 bool MapULongCharPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -17359,7 +17359,7 @@ bool MapULongCharPubSubType::getKey(
         return false;
     }
 
-    MapULongChar* p_type = static_cast<MapULongChar*>(data);
+    const MapULongChar* p_type = static_cast<const MapULongChar*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -17427,11 +17427,11 @@ MapULongWCharPubSubType::~MapULongWCharPubSubType()
 }
 
 bool MapULongWCharPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapULongWChar* p_type = static_cast<MapULongWChar*>(data);
+    const MapULongWChar* p_type = static_cast<const MapULongWChar*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -17503,7 +17503,7 @@ bool MapULongWCharPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapULongWCharPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -17520,7 +17520,7 @@ std::function<uint32_t()> MapULongWCharPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapULongWChar*>(data), current_alignment)) +
+                               *static_cast<const MapULongWChar*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -17543,7 +17543,7 @@ void MapULongWCharPubSubType::deleteData(
 }
 
 bool MapULongWCharPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -17552,7 +17552,7 @@ bool MapULongWCharPubSubType::getKey(
         return false;
     }
 
-    MapULongWChar* p_type = static_cast<MapULongWChar*>(data);
+    const MapULongWChar* p_type = static_cast<const MapULongWChar*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -17620,11 +17620,11 @@ MapULongStringPubSubType::~MapULongStringPubSubType()
 }
 
 bool MapULongStringPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapULongString* p_type = static_cast<MapULongString*>(data);
+    const MapULongString* p_type = static_cast<const MapULongString*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -17696,7 +17696,7 @@ bool MapULongStringPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapULongStringPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -17713,7 +17713,7 @@ std::function<uint32_t()> MapULongStringPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapULongString*>(data), current_alignment)) +
+                               *static_cast<const MapULongString*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -17736,7 +17736,7 @@ void MapULongStringPubSubType::deleteData(
 }
 
 bool MapULongStringPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -17745,7 +17745,7 @@ bool MapULongStringPubSubType::getKey(
         return false;
     }
 
-    MapULongString* p_type = static_cast<MapULongString*>(data);
+    const MapULongString* p_type = static_cast<const MapULongString*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -17813,11 +17813,11 @@ MapULongWStringPubSubType::~MapULongWStringPubSubType()
 }
 
 bool MapULongWStringPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapULongWString* p_type = static_cast<MapULongWString*>(data);
+    const MapULongWString* p_type = static_cast<const MapULongWString*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -17889,7 +17889,7 @@ bool MapULongWStringPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapULongWStringPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -17906,7 +17906,7 @@ std::function<uint32_t()> MapULongWStringPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapULongWString*>(data), current_alignment)) +
+                               *static_cast<const MapULongWString*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -17929,7 +17929,7 @@ void MapULongWStringPubSubType::deleteData(
 }
 
 bool MapULongWStringPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -17938,7 +17938,7 @@ bool MapULongWStringPubSubType::getKey(
         return false;
     }
 
-    MapULongWString* p_type = static_cast<MapULongWString*>(data);
+    const MapULongWString* p_type = static_cast<const MapULongWString*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -18006,11 +18006,11 @@ MapULongInnerAliasBoundedStringHelperPubSubType::~MapULongInnerAliasBoundedStrin
 }
 
 bool MapULongInnerAliasBoundedStringHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapULongInnerAliasBoundedStringHelper* p_type = static_cast<MapULongInnerAliasBoundedStringHelper*>(data);
+    const MapULongInnerAliasBoundedStringHelper* p_type = static_cast<const MapULongInnerAliasBoundedStringHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -18082,7 +18082,7 @@ bool MapULongInnerAliasBoundedStringHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapULongInnerAliasBoundedStringHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -18099,7 +18099,7 @@ std::function<uint32_t()> MapULongInnerAliasBoundedStringHelperPubSubType::getSe
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapULongInnerAliasBoundedStringHelper*>(data), current_alignment)) +
+                               *static_cast<const MapULongInnerAliasBoundedStringHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -18122,7 +18122,7 @@ void MapULongInnerAliasBoundedStringHelperPubSubType::deleteData(
 }
 
 bool MapULongInnerAliasBoundedStringHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -18131,7 +18131,7 @@ bool MapULongInnerAliasBoundedStringHelperPubSubType::getKey(
         return false;
     }
 
-    MapULongInnerAliasBoundedStringHelper* p_type = static_cast<MapULongInnerAliasBoundedStringHelper*>(data);
+    const MapULongInnerAliasBoundedStringHelper* p_type = static_cast<const MapULongInnerAliasBoundedStringHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -18199,11 +18199,11 @@ MapULongInnerAliasBoundedWStringHelperPubSubType::~MapULongInnerAliasBoundedWStr
 }
 
 bool MapULongInnerAliasBoundedWStringHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapULongInnerAliasBoundedWStringHelper* p_type = static_cast<MapULongInnerAliasBoundedWStringHelper*>(data);
+    const MapULongInnerAliasBoundedWStringHelper* p_type = static_cast<const MapULongInnerAliasBoundedWStringHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -18275,7 +18275,7 @@ bool MapULongInnerAliasBoundedWStringHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapULongInnerAliasBoundedWStringHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -18292,7 +18292,7 @@ std::function<uint32_t()> MapULongInnerAliasBoundedWStringHelperPubSubType::getS
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapULongInnerAliasBoundedWStringHelper*>(data), current_alignment)) +
+                               *static_cast<const MapULongInnerAliasBoundedWStringHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -18315,7 +18315,7 @@ void MapULongInnerAliasBoundedWStringHelperPubSubType::deleteData(
 }
 
 bool MapULongInnerAliasBoundedWStringHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -18324,7 +18324,7 @@ bool MapULongInnerAliasBoundedWStringHelperPubSubType::getKey(
         return false;
     }
 
-    MapULongInnerAliasBoundedWStringHelper* p_type = static_cast<MapULongInnerAliasBoundedWStringHelper*>(data);
+    const MapULongInnerAliasBoundedWStringHelper* p_type = static_cast<const MapULongInnerAliasBoundedWStringHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -18392,11 +18392,11 @@ MapULongInnerEnumHelperPubSubType::~MapULongInnerEnumHelperPubSubType()
 }
 
 bool MapULongInnerEnumHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapULongInnerEnumHelper* p_type = static_cast<MapULongInnerEnumHelper*>(data);
+    const MapULongInnerEnumHelper* p_type = static_cast<const MapULongInnerEnumHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -18468,7 +18468,7 @@ bool MapULongInnerEnumHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapULongInnerEnumHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -18485,7 +18485,7 @@ std::function<uint32_t()> MapULongInnerEnumHelperPubSubType::getSerializedSizePr
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapULongInnerEnumHelper*>(data), current_alignment)) +
+                               *static_cast<const MapULongInnerEnumHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -18508,7 +18508,7 @@ void MapULongInnerEnumHelperPubSubType::deleteData(
 }
 
 bool MapULongInnerEnumHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -18517,7 +18517,7 @@ bool MapULongInnerEnumHelperPubSubType::getKey(
         return false;
     }
 
-    MapULongInnerEnumHelper* p_type = static_cast<MapULongInnerEnumHelper*>(data);
+    const MapULongInnerEnumHelper* p_type = static_cast<const MapULongInnerEnumHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -18585,11 +18585,11 @@ MapULongInnerBitMaskHelperPubSubType::~MapULongInnerBitMaskHelperPubSubType()
 }
 
 bool MapULongInnerBitMaskHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapULongInnerBitMaskHelper* p_type = static_cast<MapULongInnerBitMaskHelper*>(data);
+    const MapULongInnerBitMaskHelper* p_type = static_cast<const MapULongInnerBitMaskHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -18661,7 +18661,7 @@ bool MapULongInnerBitMaskHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapULongInnerBitMaskHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -18678,7 +18678,7 @@ std::function<uint32_t()> MapULongInnerBitMaskHelperPubSubType::getSerializedSiz
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapULongInnerBitMaskHelper*>(data), current_alignment)) +
+                               *static_cast<const MapULongInnerBitMaskHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -18701,7 +18701,7 @@ void MapULongInnerBitMaskHelperPubSubType::deleteData(
 }
 
 bool MapULongInnerBitMaskHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -18710,7 +18710,7 @@ bool MapULongInnerBitMaskHelperPubSubType::getKey(
         return false;
     }
 
-    MapULongInnerBitMaskHelper* p_type = static_cast<MapULongInnerBitMaskHelper*>(data);
+    const MapULongInnerBitMaskHelper* p_type = static_cast<const MapULongInnerBitMaskHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -18778,11 +18778,11 @@ MapULongInnerAliasHelperPubSubType::~MapULongInnerAliasHelperPubSubType()
 }
 
 bool MapULongInnerAliasHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapULongInnerAliasHelper* p_type = static_cast<MapULongInnerAliasHelper*>(data);
+    const MapULongInnerAliasHelper* p_type = static_cast<const MapULongInnerAliasHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -18854,7 +18854,7 @@ bool MapULongInnerAliasHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapULongInnerAliasHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -18871,7 +18871,7 @@ std::function<uint32_t()> MapULongInnerAliasHelperPubSubType::getSerializedSizeP
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapULongInnerAliasHelper*>(data), current_alignment)) +
+                               *static_cast<const MapULongInnerAliasHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -18894,7 +18894,7 @@ void MapULongInnerAliasHelperPubSubType::deleteData(
 }
 
 bool MapULongInnerAliasHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -18903,7 +18903,7 @@ bool MapULongInnerAliasHelperPubSubType::getKey(
         return false;
     }
 
-    MapULongInnerAliasHelper* p_type = static_cast<MapULongInnerAliasHelper*>(data);
+    const MapULongInnerAliasHelper* p_type = static_cast<const MapULongInnerAliasHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -18971,11 +18971,11 @@ MapULongInnerAliasArrayHelperPubSubType::~MapULongInnerAliasArrayHelperPubSubTyp
 }
 
 bool MapULongInnerAliasArrayHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapULongInnerAliasArrayHelper* p_type = static_cast<MapULongInnerAliasArrayHelper*>(data);
+    const MapULongInnerAliasArrayHelper* p_type = static_cast<const MapULongInnerAliasArrayHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -19047,7 +19047,7 @@ bool MapULongInnerAliasArrayHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapULongInnerAliasArrayHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -19064,7 +19064,7 @@ std::function<uint32_t()> MapULongInnerAliasArrayHelperPubSubType::getSerialized
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapULongInnerAliasArrayHelper*>(data), current_alignment)) +
+                               *static_cast<const MapULongInnerAliasArrayHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -19087,7 +19087,7 @@ void MapULongInnerAliasArrayHelperPubSubType::deleteData(
 }
 
 bool MapULongInnerAliasArrayHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -19096,7 +19096,7 @@ bool MapULongInnerAliasArrayHelperPubSubType::getKey(
         return false;
     }
 
-    MapULongInnerAliasArrayHelper* p_type = static_cast<MapULongInnerAliasArrayHelper*>(data);
+    const MapULongInnerAliasArrayHelper* p_type = static_cast<const MapULongInnerAliasArrayHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -19164,11 +19164,11 @@ MapULongInnerAliasSequenceHelperPubSubType::~MapULongInnerAliasSequenceHelperPub
 }
 
 bool MapULongInnerAliasSequenceHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapULongInnerAliasSequenceHelper* p_type = static_cast<MapULongInnerAliasSequenceHelper*>(data);
+    const MapULongInnerAliasSequenceHelper* p_type = static_cast<const MapULongInnerAliasSequenceHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -19240,7 +19240,7 @@ bool MapULongInnerAliasSequenceHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapULongInnerAliasSequenceHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -19257,7 +19257,7 @@ std::function<uint32_t()> MapULongInnerAliasSequenceHelperPubSubType::getSeriali
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapULongInnerAliasSequenceHelper*>(data), current_alignment)) +
+                               *static_cast<const MapULongInnerAliasSequenceHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -19280,7 +19280,7 @@ void MapULongInnerAliasSequenceHelperPubSubType::deleteData(
 }
 
 bool MapULongInnerAliasSequenceHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -19289,7 +19289,7 @@ bool MapULongInnerAliasSequenceHelperPubSubType::getKey(
         return false;
     }
 
-    MapULongInnerAliasSequenceHelper* p_type = static_cast<MapULongInnerAliasSequenceHelper*>(data);
+    const MapULongInnerAliasSequenceHelper* p_type = static_cast<const MapULongInnerAliasSequenceHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -19357,11 +19357,11 @@ MapULongInnerAliasMapHelperPubSubType::~MapULongInnerAliasMapHelperPubSubType()
 }
 
 bool MapULongInnerAliasMapHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapULongInnerAliasMapHelper* p_type = static_cast<MapULongInnerAliasMapHelper*>(data);
+    const MapULongInnerAliasMapHelper* p_type = static_cast<const MapULongInnerAliasMapHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -19433,7 +19433,7 @@ bool MapULongInnerAliasMapHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapULongInnerAliasMapHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -19450,7 +19450,7 @@ std::function<uint32_t()> MapULongInnerAliasMapHelperPubSubType::getSerializedSi
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapULongInnerAliasMapHelper*>(data), current_alignment)) +
+                               *static_cast<const MapULongInnerAliasMapHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -19473,7 +19473,7 @@ void MapULongInnerAliasMapHelperPubSubType::deleteData(
 }
 
 bool MapULongInnerAliasMapHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -19482,7 +19482,7 @@ bool MapULongInnerAliasMapHelperPubSubType::getKey(
         return false;
     }
 
-    MapULongInnerAliasMapHelper* p_type = static_cast<MapULongInnerAliasMapHelper*>(data);
+    const MapULongInnerAliasMapHelper* p_type = static_cast<const MapULongInnerAliasMapHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -19550,11 +19550,11 @@ MapULongInnerUnionHelperPubSubType::~MapULongInnerUnionHelperPubSubType()
 }
 
 bool MapULongInnerUnionHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapULongInnerUnionHelper* p_type = static_cast<MapULongInnerUnionHelper*>(data);
+    const MapULongInnerUnionHelper* p_type = static_cast<const MapULongInnerUnionHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -19626,7 +19626,7 @@ bool MapULongInnerUnionHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapULongInnerUnionHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -19643,7 +19643,7 @@ std::function<uint32_t()> MapULongInnerUnionHelperPubSubType::getSerializedSizeP
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapULongInnerUnionHelper*>(data), current_alignment)) +
+                               *static_cast<const MapULongInnerUnionHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -19666,7 +19666,7 @@ void MapULongInnerUnionHelperPubSubType::deleteData(
 }
 
 bool MapULongInnerUnionHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -19675,7 +19675,7 @@ bool MapULongInnerUnionHelperPubSubType::getKey(
         return false;
     }
 
-    MapULongInnerUnionHelper* p_type = static_cast<MapULongInnerUnionHelper*>(data);
+    const MapULongInnerUnionHelper* p_type = static_cast<const MapULongInnerUnionHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -19743,11 +19743,11 @@ MapULongInnerStructureHelperPubSubType::~MapULongInnerStructureHelperPubSubType(
 }
 
 bool MapULongInnerStructureHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapULongInnerStructureHelper* p_type = static_cast<MapULongInnerStructureHelper*>(data);
+    const MapULongInnerStructureHelper* p_type = static_cast<const MapULongInnerStructureHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -19819,7 +19819,7 @@ bool MapULongInnerStructureHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapULongInnerStructureHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -19836,7 +19836,7 @@ std::function<uint32_t()> MapULongInnerStructureHelperPubSubType::getSerializedS
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapULongInnerStructureHelper*>(data), current_alignment)) +
+                               *static_cast<const MapULongInnerStructureHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -19859,7 +19859,7 @@ void MapULongInnerStructureHelperPubSubType::deleteData(
 }
 
 bool MapULongInnerStructureHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -19868,7 +19868,7 @@ bool MapULongInnerStructureHelperPubSubType::getKey(
         return false;
     }
 
-    MapULongInnerStructureHelper* p_type = static_cast<MapULongInnerStructureHelper*>(data);
+    const MapULongInnerStructureHelper* p_type = static_cast<const MapULongInnerStructureHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -19936,11 +19936,11 @@ MapULongInnerBitsetHelperPubSubType::~MapULongInnerBitsetHelperPubSubType()
 }
 
 bool MapULongInnerBitsetHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapULongInnerBitsetHelper* p_type = static_cast<MapULongInnerBitsetHelper*>(data);
+    const MapULongInnerBitsetHelper* p_type = static_cast<const MapULongInnerBitsetHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -20012,7 +20012,7 @@ bool MapULongInnerBitsetHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapULongInnerBitsetHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -20029,7 +20029,7 @@ std::function<uint32_t()> MapULongInnerBitsetHelperPubSubType::getSerializedSize
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapULongInnerBitsetHelper*>(data), current_alignment)) +
+                               *static_cast<const MapULongInnerBitsetHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -20052,7 +20052,7 @@ void MapULongInnerBitsetHelperPubSubType::deleteData(
 }
 
 bool MapULongInnerBitsetHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -20061,7 +20061,7 @@ bool MapULongInnerBitsetHelperPubSubType::getKey(
         return false;
     }
 
-    MapULongInnerBitsetHelper* p_type = static_cast<MapULongInnerBitsetHelper*>(data);
+    const MapULongInnerBitsetHelper* p_type = static_cast<const MapULongInnerBitsetHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -20129,11 +20129,11 @@ MapLongLongShortPubSubType::~MapLongLongShortPubSubType()
 }
 
 bool MapLongLongShortPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapLongLongShort* p_type = static_cast<MapLongLongShort*>(data);
+    const MapLongLongShort* p_type = static_cast<const MapLongLongShort*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -20205,7 +20205,7 @@ bool MapLongLongShortPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapLongLongShortPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -20222,7 +20222,7 @@ std::function<uint32_t()> MapLongLongShortPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapLongLongShort*>(data), current_alignment)) +
+                               *static_cast<const MapLongLongShort*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -20245,7 +20245,7 @@ void MapLongLongShortPubSubType::deleteData(
 }
 
 bool MapLongLongShortPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -20254,7 +20254,7 @@ bool MapLongLongShortPubSubType::getKey(
         return false;
     }
 
-    MapLongLongShort* p_type = static_cast<MapLongLongShort*>(data);
+    const MapLongLongShort* p_type = static_cast<const MapLongLongShort*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -20322,11 +20322,11 @@ MapLongLongUShortPubSubType::~MapLongLongUShortPubSubType()
 }
 
 bool MapLongLongUShortPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapLongLongUShort* p_type = static_cast<MapLongLongUShort*>(data);
+    const MapLongLongUShort* p_type = static_cast<const MapLongLongUShort*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -20398,7 +20398,7 @@ bool MapLongLongUShortPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapLongLongUShortPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -20415,7 +20415,7 @@ std::function<uint32_t()> MapLongLongUShortPubSubType::getSerializedSizeProvider
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapLongLongUShort*>(data), current_alignment)) +
+                               *static_cast<const MapLongLongUShort*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -20438,7 +20438,7 @@ void MapLongLongUShortPubSubType::deleteData(
 }
 
 bool MapLongLongUShortPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -20447,7 +20447,7 @@ bool MapLongLongUShortPubSubType::getKey(
         return false;
     }
 
-    MapLongLongUShort* p_type = static_cast<MapLongLongUShort*>(data);
+    const MapLongLongUShort* p_type = static_cast<const MapLongLongUShort*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -20515,11 +20515,11 @@ MapLongLongKeyLongValuePubSubType::~MapLongLongKeyLongValuePubSubType()
 }
 
 bool MapLongLongKeyLongValuePubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapLongLongKeyLongValue* p_type = static_cast<MapLongLongKeyLongValue*>(data);
+    const MapLongLongKeyLongValue* p_type = static_cast<const MapLongLongKeyLongValue*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -20591,7 +20591,7 @@ bool MapLongLongKeyLongValuePubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapLongLongKeyLongValuePubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -20608,7 +20608,7 @@ std::function<uint32_t()> MapLongLongKeyLongValuePubSubType::getSerializedSizePr
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapLongLongKeyLongValue*>(data), current_alignment)) +
+                               *static_cast<const MapLongLongKeyLongValue*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -20631,7 +20631,7 @@ void MapLongLongKeyLongValuePubSubType::deleteData(
 }
 
 bool MapLongLongKeyLongValuePubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -20640,7 +20640,7 @@ bool MapLongLongKeyLongValuePubSubType::getKey(
         return false;
     }
 
-    MapLongLongKeyLongValue* p_type = static_cast<MapLongLongKeyLongValue*>(data);
+    const MapLongLongKeyLongValue* p_type = static_cast<const MapLongLongKeyLongValue*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -20708,11 +20708,11 @@ MapLongLongULongPubSubType::~MapLongLongULongPubSubType()
 }
 
 bool MapLongLongULongPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapLongLongULong* p_type = static_cast<MapLongLongULong*>(data);
+    const MapLongLongULong* p_type = static_cast<const MapLongLongULong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -20784,7 +20784,7 @@ bool MapLongLongULongPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapLongLongULongPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -20801,7 +20801,7 @@ std::function<uint32_t()> MapLongLongULongPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapLongLongULong*>(data), current_alignment)) +
+                               *static_cast<const MapLongLongULong*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -20824,7 +20824,7 @@ void MapLongLongULongPubSubType::deleteData(
 }
 
 bool MapLongLongULongPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -20833,7 +20833,7 @@ bool MapLongLongULongPubSubType::getKey(
         return false;
     }
 
-    MapLongLongULong* p_type = static_cast<MapLongLongULong*>(data);
+    const MapLongLongULong* p_type = static_cast<const MapLongLongULong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -20901,11 +20901,11 @@ MapLongLongLongLongPubSubType::~MapLongLongLongLongPubSubType()
 }
 
 bool MapLongLongLongLongPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapLongLongLongLong* p_type = static_cast<MapLongLongLongLong*>(data);
+    const MapLongLongLongLong* p_type = static_cast<const MapLongLongLongLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -20977,7 +20977,7 @@ bool MapLongLongLongLongPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapLongLongLongLongPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -20994,7 +20994,7 @@ std::function<uint32_t()> MapLongLongLongLongPubSubType::getSerializedSizeProvid
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapLongLongLongLong*>(data), current_alignment)) +
+                               *static_cast<const MapLongLongLongLong*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -21017,7 +21017,7 @@ void MapLongLongLongLongPubSubType::deleteData(
 }
 
 bool MapLongLongLongLongPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -21026,7 +21026,7 @@ bool MapLongLongLongLongPubSubType::getKey(
         return false;
     }
 
-    MapLongLongLongLong* p_type = static_cast<MapLongLongLongLong*>(data);
+    const MapLongLongLongLong* p_type = static_cast<const MapLongLongLongLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -21094,11 +21094,11 @@ MapLongLongULongLongPubSubType::~MapLongLongULongLongPubSubType()
 }
 
 bool MapLongLongULongLongPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapLongLongULongLong* p_type = static_cast<MapLongLongULongLong*>(data);
+    const MapLongLongULongLong* p_type = static_cast<const MapLongLongULongLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -21170,7 +21170,7 @@ bool MapLongLongULongLongPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapLongLongULongLongPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -21187,7 +21187,7 @@ std::function<uint32_t()> MapLongLongULongLongPubSubType::getSerializedSizeProvi
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapLongLongULongLong*>(data), current_alignment)) +
+                               *static_cast<const MapLongLongULongLong*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -21210,7 +21210,7 @@ void MapLongLongULongLongPubSubType::deleteData(
 }
 
 bool MapLongLongULongLongPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -21219,7 +21219,7 @@ bool MapLongLongULongLongPubSubType::getKey(
         return false;
     }
 
-    MapLongLongULongLong* p_type = static_cast<MapLongLongULongLong*>(data);
+    const MapLongLongULongLong* p_type = static_cast<const MapLongLongULongLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -21287,11 +21287,11 @@ MapLongLongFloatPubSubType::~MapLongLongFloatPubSubType()
 }
 
 bool MapLongLongFloatPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapLongLongFloat* p_type = static_cast<MapLongLongFloat*>(data);
+    const MapLongLongFloat* p_type = static_cast<const MapLongLongFloat*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -21363,7 +21363,7 @@ bool MapLongLongFloatPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapLongLongFloatPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -21380,7 +21380,7 @@ std::function<uint32_t()> MapLongLongFloatPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapLongLongFloat*>(data), current_alignment)) +
+                               *static_cast<const MapLongLongFloat*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -21403,7 +21403,7 @@ void MapLongLongFloatPubSubType::deleteData(
 }
 
 bool MapLongLongFloatPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -21412,7 +21412,7 @@ bool MapLongLongFloatPubSubType::getKey(
         return false;
     }
 
-    MapLongLongFloat* p_type = static_cast<MapLongLongFloat*>(data);
+    const MapLongLongFloat* p_type = static_cast<const MapLongLongFloat*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -21480,11 +21480,11 @@ MapLongLongKeyDoubleValuePubSubType::~MapLongLongKeyDoubleValuePubSubType()
 }
 
 bool MapLongLongKeyDoubleValuePubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapLongLongKeyDoubleValue* p_type = static_cast<MapLongLongKeyDoubleValue*>(data);
+    const MapLongLongKeyDoubleValue* p_type = static_cast<const MapLongLongKeyDoubleValue*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -21556,7 +21556,7 @@ bool MapLongLongKeyDoubleValuePubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapLongLongKeyDoubleValuePubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -21573,7 +21573,7 @@ std::function<uint32_t()> MapLongLongKeyDoubleValuePubSubType::getSerializedSize
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapLongLongKeyDoubleValue*>(data), current_alignment)) +
+                               *static_cast<const MapLongLongKeyDoubleValue*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -21596,7 +21596,7 @@ void MapLongLongKeyDoubleValuePubSubType::deleteData(
 }
 
 bool MapLongLongKeyDoubleValuePubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -21605,7 +21605,7 @@ bool MapLongLongKeyDoubleValuePubSubType::getKey(
         return false;
     }
 
-    MapLongLongKeyDoubleValue* p_type = static_cast<MapLongLongKeyDoubleValue*>(data);
+    const MapLongLongKeyDoubleValue* p_type = static_cast<const MapLongLongKeyDoubleValue*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -21673,11 +21673,11 @@ MapLongLongLongDoublePubSubType::~MapLongLongLongDoublePubSubType()
 }
 
 bool MapLongLongLongDoublePubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapLongLongLongDouble* p_type = static_cast<MapLongLongLongDouble*>(data);
+    const MapLongLongLongDouble* p_type = static_cast<const MapLongLongLongDouble*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -21749,7 +21749,7 @@ bool MapLongLongLongDoublePubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapLongLongLongDoublePubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -21766,7 +21766,7 @@ std::function<uint32_t()> MapLongLongLongDoublePubSubType::getSerializedSizeProv
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapLongLongLongDouble*>(data), current_alignment)) +
+                               *static_cast<const MapLongLongLongDouble*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -21789,7 +21789,7 @@ void MapLongLongLongDoublePubSubType::deleteData(
 }
 
 bool MapLongLongLongDoublePubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -21798,7 +21798,7 @@ bool MapLongLongLongDoublePubSubType::getKey(
         return false;
     }
 
-    MapLongLongLongDouble* p_type = static_cast<MapLongLongLongDouble*>(data);
+    const MapLongLongLongDouble* p_type = static_cast<const MapLongLongLongDouble*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -21866,11 +21866,11 @@ MapLongLongBooleanPubSubType::~MapLongLongBooleanPubSubType()
 }
 
 bool MapLongLongBooleanPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapLongLongBoolean* p_type = static_cast<MapLongLongBoolean*>(data);
+    const MapLongLongBoolean* p_type = static_cast<const MapLongLongBoolean*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -21942,7 +21942,7 @@ bool MapLongLongBooleanPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapLongLongBooleanPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -21959,7 +21959,7 @@ std::function<uint32_t()> MapLongLongBooleanPubSubType::getSerializedSizeProvide
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapLongLongBoolean*>(data), current_alignment)) +
+                               *static_cast<const MapLongLongBoolean*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -21982,7 +21982,7 @@ void MapLongLongBooleanPubSubType::deleteData(
 }
 
 bool MapLongLongBooleanPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -21991,7 +21991,7 @@ bool MapLongLongBooleanPubSubType::getKey(
         return false;
     }
 
-    MapLongLongBoolean* p_type = static_cast<MapLongLongBoolean*>(data);
+    const MapLongLongBoolean* p_type = static_cast<const MapLongLongBoolean*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -22059,11 +22059,11 @@ MapLongLongOctetPubSubType::~MapLongLongOctetPubSubType()
 }
 
 bool MapLongLongOctetPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapLongLongOctet* p_type = static_cast<MapLongLongOctet*>(data);
+    const MapLongLongOctet* p_type = static_cast<const MapLongLongOctet*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -22135,7 +22135,7 @@ bool MapLongLongOctetPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapLongLongOctetPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -22152,7 +22152,7 @@ std::function<uint32_t()> MapLongLongOctetPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapLongLongOctet*>(data), current_alignment)) +
+                               *static_cast<const MapLongLongOctet*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -22175,7 +22175,7 @@ void MapLongLongOctetPubSubType::deleteData(
 }
 
 bool MapLongLongOctetPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -22184,7 +22184,7 @@ bool MapLongLongOctetPubSubType::getKey(
         return false;
     }
 
-    MapLongLongOctet* p_type = static_cast<MapLongLongOctet*>(data);
+    const MapLongLongOctet* p_type = static_cast<const MapLongLongOctet*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -22252,11 +22252,11 @@ MapLongLongCharPubSubType::~MapLongLongCharPubSubType()
 }
 
 bool MapLongLongCharPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapLongLongChar* p_type = static_cast<MapLongLongChar*>(data);
+    const MapLongLongChar* p_type = static_cast<const MapLongLongChar*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -22328,7 +22328,7 @@ bool MapLongLongCharPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapLongLongCharPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -22345,7 +22345,7 @@ std::function<uint32_t()> MapLongLongCharPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapLongLongChar*>(data), current_alignment)) +
+                               *static_cast<const MapLongLongChar*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -22368,7 +22368,7 @@ void MapLongLongCharPubSubType::deleteData(
 }
 
 bool MapLongLongCharPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -22377,7 +22377,7 @@ bool MapLongLongCharPubSubType::getKey(
         return false;
     }
 
-    MapLongLongChar* p_type = static_cast<MapLongLongChar*>(data);
+    const MapLongLongChar* p_type = static_cast<const MapLongLongChar*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -22445,11 +22445,11 @@ MapLongLongWCharPubSubType::~MapLongLongWCharPubSubType()
 }
 
 bool MapLongLongWCharPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapLongLongWChar* p_type = static_cast<MapLongLongWChar*>(data);
+    const MapLongLongWChar* p_type = static_cast<const MapLongLongWChar*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -22521,7 +22521,7 @@ bool MapLongLongWCharPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapLongLongWCharPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -22538,7 +22538,7 @@ std::function<uint32_t()> MapLongLongWCharPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapLongLongWChar*>(data), current_alignment)) +
+                               *static_cast<const MapLongLongWChar*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -22561,7 +22561,7 @@ void MapLongLongWCharPubSubType::deleteData(
 }
 
 bool MapLongLongWCharPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -22570,7 +22570,7 @@ bool MapLongLongWCharPubSubType::getKey(
         return false;
     }
 
-    MapLongLongWChar* p_type = static_cast<MapLongLongWChar*>(data);
+    const MapLongLongWChar* p_type = static_cast<const MapLongLongWChar*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -22638,11 +22638,11 @@ MapLongLongStringPubSubType::~MapLongLongStringPubSubType()
 }
 
 bool MapLongLongStringPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapLongLongString* p_type = static_cast<MapLongLongString*>(data);
+    const MapLongLongString* p_type = static_cast<const MapLongLongString*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -22714,7 +22714,7 @@ bool MapLongLongStringPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapLongLongStringPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -22731,7 +22731,7 @@ std::function<uint32_t()> MapLongLongStringPubSubType::getSerializedSizeProvider
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapLongLongString*>(data), current_alignment)) +
+                               *static_cast<const MapLongLongString*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -22754,7 +22754,7 @@ void MapLongLongStringPubSubType::deleteData(
 }
 
 bool MapLongLongStringPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -22763,7 +22763,7 @@ bool MapLongLongStringPubSubType::getKey(
         return false;
     }
 
-    MapLongLongString* p_type = static_cast<MapLongLongString*>(data);
+    const MapLongLongString* p_type = static_cast<const MapLongLongString*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -22831,11 +22831,11 @@ MapLongLongWStringPubSubType::~MapLongLongWStringPubSubType()
 }
 
 bool MapLongLongWStringPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapLongLongWString* p_type = static_cast<MapLongLongWString*>(data);
+    const MapLongLongWString* p_type = static_cast<const MapLongLongWString*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -22907,7 +22907,7 @@ bool MapLongLongWStringPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapLongLongWStringPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -22924,7 +22924,7 @@ std::function<uint32_t()> MapLongLongWStringPubSubType::getSerializedSizeProvide
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapLongLongWString*>(data), current_alignment)) +
+                               *static_cast<const MapLongLongWString*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -22947,7 +22947,7 @@ void MapLongLongWStringPubSubType::deleteData(
 }
 
 bool MapLongLongWStringPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -22956,7 +22956,7 @@ bool MapLongLongWStringPubSubType::getKey(
         return false;
     }
 
-    MapLongLongWString* p_type = static_cast<MapLongLongWString*>(data);
+    const MapLongLongWString* p_type = static_cast<const MapLongLongWString*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -23024,11 +23024,11 @@ MapLongLongInnerAliasBoundedStringHelperPubSubType::~MapLongLongInnerAliasBounde
 }
 
 bool MapLongLongInnerAliasBoundedStringHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapLongLongInnerAliasBoundedStringHelper* p_type = static_cast<MapLongLongInnerAliasBoundedStringHelper*>(data);
+    const MapLongLongInnerAliasBoundedStringHelper* p_type = static_cast<const MapLongLongInnerAliasBoundedStringHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -23100,7 +23100,7 @@ bool MapLongLongInnerAliasBoundedStringHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapLongLongInnerAliasBoundedStringHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -23117,7 +23117,7 @@ std::function<uint32_t()> MapLongLongInnerAliasBoundedStringHelperPubSubType::ge
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapLongLongInnerAliasBoundedStringHelper*>(data), current_alignment)) +
+                               *static_cast<const MapLongLongInnerAliasBoundedStringHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -23140,7 +23140,7 @@ void MapLongLongInnerAliasBoundedStringHelperPubSubType::deleteData(
 }
 
 bool MapLongLongInnerAliasBoundedStringHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -23149,7 +23149,7 @@ bool MapLongLongInnerAliasBoundedStringHelperPubSubType::getKey(
         return false;
     }
 
-    MapLongLongInnerAliasBoundedStringHelper* p_type = static_cast<MapLongLongInnerAliasBoundedStringHelper*>(data);
+    const MapLongLongInnerAliasBoundedStringHelper* p_type = static_cast<const MapLongLongInnerAliasBoundedStringHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -23217,11 +23217,11 @@ MapLongLongInnerAliasBoundedWStringHelperPubSubType::~MapLongLongInnerAliasBound
 }
 
 bool MapLongLongInnerAliasBoundedWStringHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapLongLongInnerAliasBoundedWStringHelper* p_type = static_cast<MapLongLongInnerAliasBoundedWStringHelper*>(data);
+    const MapLongLongInnerAliasBoundedWStringHelper* p_type = static_cast<const MapLongLongInnerAliasBoundedWStringHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -23293,7 +23293,7 @@ bool MapLongLongInnerAliasBoundedWStringHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapLongLongInnerAliasBoundedWStringHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -23310,7 +23310,7 @@ std::function<uint32_t()> MapLongLongInnerAliasBoundedWStringHelperPubSubType::g
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapLongLongInnerAliasBoundedWStringHelper*>(data), current_alignment)) +
+                               *static_cast<const MapLongLongInnerAliasBoundedWStringHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -23333,7 +23333,7 @@ void MapLongLongInnerAliasBoundedWStringHelperPubSubType::deleteData(
 }
 
 bool MapLongLongInnerAliasBoundedWStringHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -23342,7 +23342,7 @@ bool MapLongLongInnerAliasBoundedWStringHelperPubSubType::getKey(
         return false;
     }
 
-    MapLongLongInnerAliasBoundedWStringHelper* p_type = static_cast<MapLongLongInnerAliasBoundedWStringHelper*>(data);
+    const MapLongLongInnerAliasBoundedWStringHelper* p_type = static_cast<const MapLongLongInnerAliasBoundedWStringHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -23410,11 +23410,11 @@ MapLongLongInnerEnumHelperPubSubType::~MapLongLongInnerEnumHelperPubSubType()
 }
 
 bool MapLongLongInnerEnumHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapLongLongInnerEnumHelper* p_type = static_cast<MapLongLongInnerEnumHelper*>(data);
+    const MapLongLongInnerEnumHelper* p_type = static_cast<const MapLongLongInnerEnumHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -23486,7 +23486,7 @@ bool MapLongLongInnerEnumHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapLongLongInnerEnumHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -23503,7 +23503,7 @@ std::function<uint32_t()> MapLongLongInnerEnumHelperPubSubType::getSerializedSiz
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapLongLongInnerEnumHelper*>(data), current_alignment)) +
+                               *static_cast<const MapLongLongInnerEnumHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -23526,7 +23526,7 @@ void MapLongLongInnerEnumHelperPubSubType::deleteData(
 }
 
 bool MapLongLongInnerEnumHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -23535,7 +23535,7 @@ bool MapLongLongInnerEnumHelperPubSubType::getKey(
         return false;
     }
 
-    MapLongLongInnerEnumHelper* p_type = static_cast<MapLongLongInnerEnumHelper*>(data);
+    const MapLongLongInnerEnumHelper* p_type = static_cast<const MapLongLongInnerEnumHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -23603,11 +23603,11 @@ MapLongLongInnerBitMaskHelperPubSubType::~MapLongLongInnerBitMaskHelperPubSubTyp
 }
 
 bool MapLongLongInnerBitMaskHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapLongLongInnerBitMaskHelper* p_type = static_cast<MapLongLongInnerBitMaskHelper*>(data);
+    const MapLongLongInnerBitMaskHelper* p_type = static_cast<const MapLongLongInnerBitMaskHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -23679,7 +23679,7 @@ bool MapLongLongInnerBitMaskHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapLongLongInnerBitMaskHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -23696,7 +23696,7 @@ std::function<uint32_t()> MapLongLongInnerBitMaskHelperPubSubType::getSerialized
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapLongLongInnerBitMaskHelper*>(data), current_alignment)) +
+                               *static_cast<const MapLongLongInnerBitMaskHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -23719,7 +23719,7 @@ void MapLongLongInnerBitMaskHelperPubSubType::deleteData(
 }
 
 bool MapLongLongInnerBitMaskHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -23728,7 +23728,7 @@ bool MapLongLongInnerBitMaskHelperPubSubType::getKey(
         return false;
     }
 
-    MapLongLongInnerBitMaskHelper* p_type = static_cast<MapLongLongInnerBitMaskHelper*>(data);
+    const MapLongLongInnerBitMaskHelper* p_type = static_cast<const MapLongLongInnerBitMaskHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -23796,11 +23796,11 @@ MapLongLongInnerAliasHelperPubSubType::~MapLongLongInnerAliasHelperPubSubType()
 }
 
 bool MapLongLongInnerAliasHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapLongLongInnerAliasHelper* p_type = static_cast<MapLongLongInnerAliasHelper*>(data);
+    const MapLongLongInnerAliasHelper* p_type = static_cast<const MapLongLongInnerAliasHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -23872,7 +23872,7 @@ bool MapLongLongInnerAliasHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapLongLongInnerAliasHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -23889,7 +23889,7 @@ std::function<uint32_t()> MapLongLongInnerAliasHelperPubSubType::getSerializedSi
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapLongLongInnerAliasHelper*>(data), current_alignment)) +
+                               *static_cast<const MapLongLongInnerAliasHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -23912,7 +23912,7 @@ void MapLongLongInnerAliasHelperPubSubType::deleteData(
 }
 
 bool MapLongLongInnerAliasHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -23921,7 +23921,7 @@ bool MapLongLongInnerAliasHelperPubSubType::getKey(
         return false;
     }
 
-    MapLongLongInnerAliasHelper* p_type = static_cast<MapLongLongInnerAliasHelper*>(data);
+    const MapLongLongInnerAliasHelper* p_type = static_cast<const MapLongLongInnerAliasHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -23989,11 +23989,11 @@ MapLongLongInnerAliasArrayHelperPubSubType::~MapLongLongInnerAliasArrayHelperPub
 }
 
 bool MapLongLongInnerAliasArrayHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapLongLongInnerAliasArrayHelper* p_type = static_cast<MapLongLongInnerAliasArrayHelper*>(data);
+    const MapLongLongInnerAliasArrayHelper* p_type = static_cast<const MapLongLongInnerAliasArrayHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -24065,7 +24065,7 @@ bool MapLongLongInnerAliasArrayHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapLongLongInnerAliasArrayHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -24082,7 +24082,7 @@ std::function<uint32_t()> MapLongLongInnerAliasArrayHelperPubSubType::getSeriali
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapLongLongInnerAliasArrayHelper*>(data), current_alignment)) +
+                               *static_cast<const MapLongLongInnerAliasArrayHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -24105,7 +24105,7 @@ void MapLongLongInnerAliasArrayHelperPubSubType::deleteData(
 }
 
 bool MapLongLongInnerAliasArrayHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -24114,7 +24114,7 @@ bool MapLongLongInnerAliasArrayHelperPubSubType::getKey(
         return false;
     }
 
-    MapLongLongInnerAliasArrayHelper* p_type = static_cast<MapLongLongInnerAliasArrayHelper*>(data);
+    const MapLongLongInnerAliasArrayHelper* p_type = static_cast<const MapLongLongInnerAliasArrayHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -24182,11 +24182,11 @@ MapLongLongInnerAliasSequenceHelperPubSubType::~MapLongLongInnerAliasSequenceHel
 }
 
 bool MapLongLongInnerAliasSequenceHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapLongLongInnerAliasSequenceHelper* p_type = static_cast<MapLongLongInnerAliasSequenceHelper*>(data);
+    const MapLongLongInnerAliasSequenceHelper* p_type = static_cast<const MapLongLongInnerAliasSequenceHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -24258,7 +24258,7 @@ bool MapLongLongInnerAliasSequenceHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapLongLongInnerAliasSequenceHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -24275,7 +24275,7 @@ std::function<uint32_t()> MapLongLongInnerAliasSequenceHelperPubSubType::getSeri
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapLongLongInnerAliasSequenceHelper*>(data), current_alignment)) +
+                               *static_cast<const MapLongLongInnerAliasSequenceHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -24298,7 +24298,7 @@ void MapLongLongInnerAliasSequenceHelperPubSubType::deleteData(
 }
 
 bool MapLongLongInnerAliasSequenceHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -24307,7 +24307,7 @@ bool MapLongLongInnerAliasSequenceHelperPubSubType::getKey(
         return false;
     }
 
-    MapLongLongInnerAliasSequenceHelper* p_type = static_cast<MapLongLongInnerAliasSequenceHelper*>(data);
+    const MapLongLongInnerAliasSequenceHelper* p_type = static_cast<const MapLongLongInnerAliasSequenceHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -24375,11 +24375,11 @@ MapLongLongInnerAliasMapHelperPubSubType::~MapLongLongInnerAliasMapHelperPubSubT
 }
 
 bool MapLongLongInnerAliasMapHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapLongLongInnerAliasMapHelper* p_type = static_cast<MapLongLongInnerAliasMapHelper*>(data);
+    const MapLongLongInnerAliasMapHelper* p_type = static_cast<const MapLongLongInnerAliasMapHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -24451,7 +24451,7 @@ bool MapLongLongInnerAliasMapHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapLongLongInnerAliasMapHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -24468,7 +24468,7 @@ std::function<uint32_t()> MapLongLongInnerAliasMapHelperPubSubType::getSerialize
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapLongLongInnerAliasMapHelper*>(data), current_alignment)) +
+                               *static_cast<const MapLongLongInnerAliasMapHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -24491,7 +24491,7 @@ void MapLongLongInnerAliasMapHelperPubSubType::deleteData(
 }
 
 bool MapLongLongInnerAliasMapHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -24500,7 +24500,7 @@ bool MapLongLongInnerAliasMapHelperPubSubType::getKey(
         return false;
     }
 
-    MapLongLongInnerAliasMapHelper* p_type = static_cast<MapLongLongInnerAliasMapHelper*>(data);
+    const MapLongLongInnerAliasMapHelper* p_type = static_cast<const MapLongLongInnerAliasMapHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -24568,11 +24568,11 @@ MapLongLongInnerUnionHelperPubSubType::~MapLongLongInnerUnionHelperPubSubType()
 }
 
 bool MapLongLongInnerUnionHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapLongLongInnerUnionHelper* p_type = static_cast<MapLongLongInnerUnionHelper*>(data);
+    const MapLongLongInnerUnionHelper* p_type = static_cast<const MapLongLongInnerUnionHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -24644,7 +24644,7 @@ bool MapLongLongInnerUnionHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapLongLongInnerUnionHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -24661,7 +24661,7 @@ std::function<uint32_t()> MapLongLongInnerUnionHelperPubSubType::getSerializedSi
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapLongLongInnerUnionHelper*>(data), current_alignment)) +
+                               *static_cast<const MapLongLongInnerUnionHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -24684,7 +24684,7 @@ void MapLongLongInnerUnionHelperPubSubType::deleteData(
 }
 
 bool MapLongLongInnerUnionHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -24693,7 +24693,7 @@ bool MapLongLongInnerUnionHelperPubSubType::getKey(
         return false;
     }
 
-    MapLongLongInnerUnionHelper* p_type = static_cast<MapLongLongInnerUnionHelper*>(data);
+    const MapLongLongInnerUnionHelper* p_type = static_cast<const MapLongLongInnerUnionHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -24761,11 +24761,11 @@ MapLongLongInnerStructureHelperPubSubType::~MapLongLongInnerStructureHelperPubSu
 }
 
 bool MapLongLongInnerStructureHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapLongLongInnerStructureHelper* p_type = static_cast<MapLongLongInnerStructureHelper*>(data);
+    const MapLongLongInnerStructureHelper* p_type = static_cast<const MapLongLongInnerStructureHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -24837,7 +24837,7 @@ bool MapLongLongInnerStructureHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapLongLongInnerStructureHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -24854,7 +24854,7 @@ std::function<uint32_t()> MapLongLongInnerStructureHelperPubSubType::getSerializ
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapLongLongInnerStructureHelper*>(data), current_alignment)) +
+                               *static_cast<const MapLongLongInnerStructureHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -24877,7 +24877,7 @@ void MapLongLongInnerStructureHelperPubSubType::deleteData(
 }
 
 bool MapLongLongInnerStructureHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -24886,7 +24886,7 @@ bool MapLongLongInnerStructureHelperPubSubType::getKey(
         return false;
     }
 
-    MapLongLongInnerStructureHelper* p_type = static_cast<MapLongLongInnerStructureHelper*>(data);
+    const MapLongLongInnerStructureHelper* p_type = static_cast<const MapLongLongInnerStructureHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -24954,11 +24954,11 @@ MapLongLongInnerBitsetHelperPubSubType::~MapLongLongInnerBitsetHelperPubSubType(
 }
 
 bool MapLongLongInnerBitsetHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapLongLongInnerBitsetHelper* p_type = static_cast<MapLongLongInnerBitsetHelper*>(data);
+    const MapLongLongInnerBitsetHelper* p_type = static_cast<const MapLongLongInnerBitsetHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -25030,7 +25030,7 @@ bool MapLongLongInnerBitsetHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapLongLongInnerBitsetHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -25047,7 +25047,7 @@ std::function<uint32_t()> MapLongLongInnerBitsetHelperPubSubType::getSerializedS
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapLongLongInnerBitsetHelper*>(data), current_alignment)) +
+                               *static_cast<const MapLongLongInnerBitsetHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -25070,7 +25070,7 @@ void MapLongLongInnerBitsetHelperPubSubType::deleteData(
 }
 
 bool MapLongLongInnerBitsetHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -25079,7 +25079,7 @@ bool MapLongLongInnerBitsetHelperPubSubType::getKey(
         return false;
     }
 
-    MapLongLongInnerBitsetHelper* p_type = static_cast<MapLongLongInnerBitsetHelper*>(data);
+    const MapLongLongInnerBitsetHelper* p_type = static_cast<const MapLongLongInnerBitsetHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -25147,11 +25147,11 @@ MapULongLongShortPubSubType::~MapULongLongShortPubSubType()
 }
 
 bool MapULongLongShortPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapULongLongShort* p_type = static_cast<MapULongLongShort*>(data);
+    const MapULongLongShort* p_type = static_cast<const MapULongLongShort*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -25223,7 +25223,7 @@ bool MapULongLongShortPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapULongLongShortPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -25240,7 +25240,7 @@ std::function<uint32_t()> MapULongLongShortPubSubType::getSerializedSizeProvider
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapULongLongShort*>(data), current_alignment)) +
+                               *static_cast<const MapULongLongShort*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -25263,7 +25263,7 @@ void MapULongLongShortPubSubType::deleteData(
 }
 
 bool MapULongLongShortPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -25272,7 +25272,7 @@ bool MapULongLongShortPubSubType::getKey(
         return false;
     }
 
-    MapULongLongShort* p_type = static_cast<MapULongLongShort*>(data);
+    const MapULongLongShort* p_type = static_cast<const MapULongLongShort*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -25340,11 +25340,11 @@ MapULongLongUShortPubSubType::~MapULongLongUShortPubSubType()
 }
 
 bool MapULongLongUShortPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapULongLongUShort* p_type = static_cast<MapULongLongUShort*>(data);
+    const MapULongLongUShort* p_type = static_cast<const MapULongLongUShort*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -25416,7 +25416,7 @@ bool MapULongLongUShortPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapULongLongUShortPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -25433,7 +25433,7 @@ std::function<uint32_t()> MapULongLongUShortPubSubType::getSerializedSizeProvide
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapULongLongUShort*>(data), current_alignment)) +
+                               *static_cast<const MapULongLongUShort*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -25456,7 +25456,7 @@ void MapULongLongUShortPubSubType::deleteData(
 }
 
 bool MapULongLongUShortPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -25465,7 +25465,7 @@ bool MapULongLongUShortPubSubType::getKey(
         return false;
     }
 
-    MapULongLongUShort* p_type = static_cast<MapULongLongUShort*>(data);
+    const MapULongLongUShort* p_type = static_cast<const MapULongLongUShort*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -25533,11 +25533,11 @@ MapULongLongLongPubSubType::~MapULongLongLongPubSubType()
 }
 
 bool MapULongLongLongPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapULongLongLong* p_type = static_cast<MapULongLongLong*>(data);
+    const MapULongLongLong* p_type = static_cast<const MapULongLongLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -25609,7 +25609,7 @@ bool MapULongLongLongPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapULongLongLongPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -25626,7 +25626,7 @@ std::function<uint32_t()> MapULongLongLongPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapULongLongLong*>(data), current_alignment)) +
+                               *static_cast<const MapULongLongLong*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -25649,7 +25649,7 @@ void MapULongLongLongPubSubType::deleteData(
 }
 
 bool MapULongLongLongPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -25658,7 +25658,7 @@ bool MapULongLongLongPubSubType::getKey(
         return false;
     }
 
-    MapULongLongLong* p_type = static_cast<MapULongLongLong*>(data);
+    const MapULongLongLong* p_type = static_cast<const MapULongLongLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -25726,11 +25726,11 @@ MapULongLongULongPubSubType::~MapULongLongULongPubSubType()
 }
 
 bool MapULongLongULongPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapULongLongULong* p_type = static_cast<MapULongLongULong*>(data);
+    const MapULongLongULong* p_type = static_cast<const MapULongLongULong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -25802,7 +25802,7 @@ bool MapULongLongULongPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapULongLongULongPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -25819,7 +25819,7 @@ std::function<uint32_t()> MapULongLongULongPubSubType::getSerializedSizeProvider
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapULongLongULong*>(data), current_alignment)) +
+                               *static_cast<const MapULongLongULong*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -25842,7 +25842,7 @@ void MapULongLongULongPubSubType::deleteData(
 }
 
 bool MapULongLongULongPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -25851,7 +25851,7 @@ bool MapULongLongULongPubSubType::getKey(
         return false;
     }
 
-    MapULongLongULong* p_type = static_cast<MapULongLongULong*>(data);
+    const MapULongLongULong* p_type = static_cast<const MapULongLongULong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -25919,11 +25919,11 @@ MapULongLongLongLongPubSubType::~MapULongLongLongLongPubSubType()
 }
 
 bool MapULongLongLongLongPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapULongLongLongLong* p_type = static_cast<MapULongLongLongLong*>(data);
+    const MapULongLongLongLong* p_type = static_cast<const MapULongLongLongLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -25995,7 +25995,7 @@ bool MapULongLongLongLongPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapULongLongLongLongPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -26012,7 +26012,7 @@ std::function<uint32_t()> MapULongLongLongLongPubSubType::getSerializedSizeProvi
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapULongLongLongLong*>(data), current_alignment)) +
+                               *static_cast<const MapULongLongLongLong*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -26035,7 +26035,7 @@ void MapULongLongLongLongPubSubType::deleteData(
 }
 
 bool MapULongLongLongLongPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -26044,7 +26044,7 @@ bool MapULongLongLongLongPubSubType::getKey(
         return false;
     }
 
-    MapULongLongLongLong* p_type = static_cast<MapULongLongLongLong*>(data);
+    const MapULongLongLongLong* p_type = static_cast<const MapULongLongLongLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -26112,11 +26112,11 @@ MapULongLongULongLongPubSubType::~MapULongLongULongLongPubSubType()
 }
 
 bool MapULongLongULongLongPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapULongLongULongLong* p_type = static_cast<MapULongLongULongLong*>(data);
+    const MapULongLongULongLong* p_type = static_cast<const MapULongLongULongLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -26188,7 +26188,7 @@ bool MapULongLongULongLongPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapULongLongULongLongPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -26205,7 +26205,7 @@ std::function<uint32_t()> MapULongLongULongLongPubSubType::getSerializedSizeProv
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapULongLongULongLong*>(data), current_alignment)) +
+                               *static_cast<const MapULongLongULongLong*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -26228,7 +26228,7 @@ void MapULongLongULongLongPubSubType::deleteData(
 }
 
 bool MapULongLongULongLongPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -26237,7 +26237,7 @@ bool MapULongLongULongLongPubSubType::getKey(
         return false;
     }
 
-    MapULongLongULongLong* p_type = static_cast<MapULongLongULongLong*>(data);
+    const MapULongLongULongLong* p_type = static_cast<const MapULongLongULongLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -26305,11 +26305,11 @@ MapULongLongFloatPubSubType::~MapULongLongFloatPubSubType()
 }
 
 bool MapULongLongFloatPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapULongLongFloat* p_type = static_cast<MapULongLongFloat*>(data);
+    const MapULongLongFloat* p_type = static_cast<const MapULongLongFloat*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -26381,7 +26381,7 @@ bool MapULongLongFloatPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapULongLongFloatPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -26398,7 +26398,7 @@ std::function<uint32_t()> MapULongLongFloatPubSubType::getSerializedSizeProvider
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapULongLongFloat*>(data), current_alignment)) +
+                               *static_cast<const MapULongLongFloat*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -26421,7 +26421,7 @@ void MapULongLongFloatPubSubType::deleteData(
 }
 
 bool MapULongLongFloatPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -26430,7 +26430,7 @@ bool MapULongLongFloatPubSubType::getKey(
         return false;
     }
 
-    MapULongLongFloat* p_type = static_cast<MapULongLongFloat*>(data);
+    const MapULongLongFloat* p_type = static_cast<const MapULongLongFloat*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -26498,11 +26498,11 @@ MapKeyULongLongValueDoublePubSubType::~MapKeyULongLongValueDoublePubSubType()
 }
 
 bool MapKeyULongLongValueDoublePubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapKeyULongLongValueDouble* p_type = static_cast<MapKeyULongLongValueDouble*>(data);
+    const MapKeyULongLongValueDouble* p_type = static_cast<const MapKeyULongLongValueDouble*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -26574,7 +26574,7 @@ bool MapKeyULongLongValueDoublePubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapKeyULongLongValueDoublePubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -26591,7 +26591,7 @@ std::function<uint32_t()> MapKeyULongLongValueDoublePubSubType::getSerializedSiz
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapKeyULongLongValueDouble*>(data), current_alignment)) +
+                               *static_cast<const MapKeyULongLongValueDouble*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -26614,7 +26614,7 @@ void MapKeyULongLongValueDoublePubSubType::deleteData(
 }
 
 bool MapKeyULongLongValueDoublePubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -26623,7 +26623,7 @@ bool MapKeyULongLongValueDoublePubSubType::getKey(
         return false;
     }
 
-    MapKeyULongLongValueDouble* p_type = static_cast<MapKeyULongLongValueDouble*>(data);
+    const MapKeyULongLongValueDouble* p_type = static_cast<const MapKeyULongLongValueDouble*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -26691,11 +26691,11 @@ MapULongLongLongDoublePubSubType::~MapULongLongLongDoublePubSubType()
 }
 
 bool MapULongLongLongDoublePubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapULongLongLongDouble* p_type = static_cast<MapULongLongLongDouble*>(data);
+    const MapULongLongLongDouble* p_type = static_cast<const MapULongLongLongDouble*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -26767,7 +26767,7 @@ bool MapULongLongLongDoublePubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapULongLongLongDoublePubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -26784,7 +26784,7 @@ std::function<uint32_t()> MapULongLongLongDoublePubSubType::getSerializedSizePro
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapULongLongLongDouble*>(data), current_alignment)) +
+                               *static_cast<const MapULongLongLongDouble*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -26807,7 +26807,7 @@ void MapULongLongLongDoublePubSubType::deleteData(
 }
 
 bool MapULongLongLongDoublePubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -26816,7 +26816,7 @@ bool MapULongLongLongDoublePubSubType::getKey(
         return false;
     }
 
-    MapULongLongLongDouble* p_type = static_cast<MapULongLongLongDouble*>(data);
+    const MapULongLongLongDouble* p_type = static_cast<const MapULongLongLongDouble*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -26884,11 +26884,11 @@ MapULongLongBooleanPubSubType::~MapULongLongBooleanPubSubType()
 }
 
 bool MapULongLongBooleanPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapULongLongBoolean* p_type = static_cast<MapULongLongBoolean*>(data);
+    const MapULongLongBoolean* p_type = static_cast<const MapULongLongBoolean*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -26960,7 +26960,7 @@ bool MapULongLongBooleanPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapULongLongBooleanPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -26977,7 +26977,7 @@ std::function<uint32_t()> MapULongLongBooleanPubSubType::getSerializedSizeProvid
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapULongLongBoolean*>(data), current_alignment)) +
+                               *static_cast<const MapULongLongBoolean*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -27000,7 +27000,7 @@ void MapULongLongBooleanPubSubType::deleteData(
 }
 
 bool MapULongLongBooleanPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -27009,7 +27009,7 @@ bool MapULongLongBooleanPubSubType::getKey(
         return false;
     }
 
-    MapULongLongBoolean* p_type = static_cast<MapULongLongBoolean*>(data);
+    const MapULongLongBoolean* p_type = static_cast<const MapULongLongBoolean*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -27077,11 +27077,11 @@ MapULongLongOctetPubSubType::~MapULongLongOctetPubSubType()
 }
 
 bool MapULongLongOctetPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapULongLongOctet* p_type = static_cast<MapULongLongOctet*>(data);
+    const MapULongLongOctet* p_type = static_cast<const MapULongLongOctet*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -27153,7 +27153,7 @@ bool MapULongLongOctetPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapULongLongOctetPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -27170,7 +27170,7 @@ std::function<uint32_t()> MapULongLongOctetPubSubType::getSerializedSizeProvider
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapULongLongOctet*>(data), current_alignment)) +
+                               *static_cast<const MapULongLongOctet*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -27193,7 +27193,7 @@ void MapULongLongOctetPubSubType::deleteData(
 }
 
 bool MapULongLongOctetPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -27202,7 +27202,7 @@ bool MapULongLongOctetPubSubType::getKey(
         return false;
     }
 
-    MapULongLongOctet* p_type = static_cast<MapULongLongOctet*>(data);
+    const MapULongLongOctet* p_type = static_cast<const MapULongLongOctet*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -27270,11 +27270,11 @@ MapULongLongCharPubSubType::~MapULongLongCharPubSubType()
 }
 
 bool MapULongLongCharPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapULongLongChar* p_type = static_cast<MapULongLongChar*>(data);
+    const MapULongLongChar* p_type = static_cast<const MapULongLongChar*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -27346,7 +27346,7 @@ bool MapULongLongCharPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapULongLongCharPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -27363,7 +27363,7 @@ std::function<uint32_t()> MapULongLongCharPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapULongLongChar*>(data), current_alignment)) +
+                               *static_cast<const MapULongLongChar*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -27386,7 +27386,7 @@ void MapULongLongCharPubSubType::deleteData(
 }
 
 bool MapULongLongCharPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -27395,7 +27395,7 @@ bool MapULongLongCharPubSubType::getKey(
         return false;
     }
 
-    MapULongLongChar* p_type = static_cast<MapULongLongChar*>(data);
+    const MapULongLongChar* p_type = static_cast<const MapULongLongChar*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -27463,11 +27463,11 @@ MapULongLongWCharPubSubType::~MapULongLongWCharPubSubType()
 }
 
 bool MapULongLongWCharPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapULongLongWChar* p_type = static_cast<MapULongLongWChar*>(data);
+    const MapULongLongWChar* p_type = static_cast<const MapULongLongWChar*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -27539,7 +27539,7 @@ bool MapULongLongWCharPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapULongLongWCharPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -27556,7 +27556,7 @@ std::function<uint32_t()> MapULongLongWCharPubSubType::getSerializedSizeProvider
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapULongLongWChar*>(data), current_alignment)) +
+                               *static_cast<const MapULongLongWChar*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -27579,7 +27579,7 @@ void MapULongLongWCharPubSubType::deleteData(
 }
 
 bool MapULongLongWCharPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -27588,7 +27588,7 @@ bool MapULongLongWCharPubSubType::getKey(
         return false;
     }
 
-    MapULongLongWChar* p_type = static_cast<MapULongLongWChar*>(data);
+    const MapULongLongWChar* p_type = static_cast<const MapULongLongWChar*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -27656,11 +27656,11 @@ MapULongLongStringPubSubType::~MapULongLongStringPubSubType()
 }
 
 bool MapULongLongStringPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapULongLongString* p_type = static_cast<MapULongLongString*>(data);
+    const MapULongLongString* p_type = static_cast<const MapULongLongString*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -27732,7 +27732,7 @@ bool MapULongLongStringPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapULongLongStringPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -27749,7 +27749,7 @@ std::function<uint32_t()> MapULongLongStringPubSubType::getSerializedSizeProvide
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapULongLongString*>(data), current_alignment)) +
+                               *static_cast<const MapULongLongString*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -27772,7 +27772,7 @@ void MapULongLongStringPubSubType::deleteData(
 }
 
 bool MapULongLongStringPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -27781,7 +27781,7 @@ bool MapULongLongStringPubSubType::getKey(
         return false;
     }
 
-    MapULongLongString* p_type = static_cast<MapULongLongString*>(data);
+    const MapULongLongString* p_type = static_cast<const MapULongLongString*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -27849,11 +27849,11 @@ MapULongLongWStringPubSubType::~MapULongLongWStringPubSubType()
 }
 
 bool MapULongLongWStringPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapULongLongWString* p_type = static_cast<MapULongLongWString*>(data);
+    const MapULongLongWString* p_type = static_cast<const MapULongLongWString*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -27925,7 +27925,7 @@ bool MapULongLongWStringPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapULongLongWStringPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -27942,7 +27942,7 @@ std::function<uint32_t()> MapULongLongWStringPubSubType::getSerializedSizeProvid
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapULongLongWString*>(data), current_alignment)) +
+                               *static_cast<const MapULongLongWString*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -27965,7 +27965,7 @@ void MapULongLongWStringPubSubType::deleteData(
 }
 
 bool MapULongLongWStringPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -27974,7 +27974,7 @@ bool MapULongLongWStringPubSubType::getKey(
         return false;
     }
 
-    MapULongLongWString* p_type = static_cast<MapULongLongWString*>(data);
+    const MapULongLongWString* p_type = static_cast<const MapULongLongWString*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -28042,11 +28042,11 @@ MapULongLongInnerAliasBoundedStringHelperPubSubType::~MapULongLongInnerAliasBoun
 }
 
 bool MapULongLongInnerAliasBoundedStringHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapULongLongInnerAliasBoundedStringHelper* p_type = static_cast<MapULongLongInnerAliasBoundedStringHelper*>(data);
+    const MapULongLongInnerAliasBoundedStringHelper* p_type = static_cast<const MapULongLongInnerAliasBoundedStringHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -28118,7 +28118,7 @@ bool MapULongLongInnerAliasBoundedStringHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapULongLongInnerAliasBoundedStringHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -28135,7 +28135,7 @@ std::function<uint32_t()> MapULongLongInnerAliasBoundedStringHelperPubSubType::g
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapULongLongInnerAliasBoundedStringHelper*>(data), current_alignment)) +
+                               *static_cast<const MapULongLongInnerAliasBoundedStringHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -28158,7 +28158,7 @@ void MapULongLongInnerAliasBoundedStringHelperPubSubType::deleteData(
 }
 
 bool MapULongLongInnerAliasBoundedStringHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -28167,7 +28167,7 @@ bool MapULongLongInnerAliasBoundedStringHelperPubSubType::getKey(
         return false;
     }
 
-    MapULongLongInnerAliasBoundedStringHelper* p_type = static_cast<MapULongLongInnerAliasBoundedStringHelper*>(data);
+    const MapULongLongInnerAliasBoundedStringHelper* p_type = static_cast<const MapULongLongInnerAliasBoundedStringHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -28235,11 +28235,11 @@ MapULongLongInnerAliasBoundedWStringHelperPubSubType::~MapULongLongInnerAliasBou
 }
 
 bool MapULongLongInnerAliasBoundedWStringHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapULongLongInnerAliasBoundedWStringHelper* p_type = static_cast<MapULongLongInnerAliasBoundedWStringHelper*>(data);
+    const MapULongLongInnerAliasBoundedWStringHelper* p_type = static_cast<const MapULongLongInnerAliasBoundedWStringHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -28311,7 +28311,7 @@ bool MapULongLongInnerAliasBoundedWStringHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapULongLongInnerAliasBoundedWStringHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -28328,7 +28328,7 @@ std::function<uint32_t()> MapULongLongInnerAliasBoundedWStringHelperPubSubType::
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapULongLongInnerAliasBoundedWStringHelper*>(data), current_alignment)) +
+                               *static_cast<const MapULongLongInnerAliasBoundedWStringHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -28351,7 +28351,7 @@ void MapULongLongInnerAliasBoundedWStringHelperPubSubType::deleteData(
 }
 
 bool MapULongLongInnerAliasBoundedWStringHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -28360,7 +28360,7 @@ bool MapULongLongInnerAliasBoundedWStringHelperPubSubType::getKey(
         return false;
     }
 
-    MapULongLongInnerAliasBoundedWStringHelper* p_type = static_cast<MapULongLongInnerAliasBoundedWStringHelper*>(data);
+    const MapULongLongInnerAliasBoundedWStringHelper* p_type = static_cast<const MapULongLongInnerAliasBoundedWStringHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -28428,11 +28428,11 @@ MapULongLongInnerEnumHelperPubSubType::~MapULongLongInnerEnumHelperPubSubType()
 }
 
 bool MapULongLongInnerEnumHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapULongLongInnerEnumHelper* p_type = static_cast<MapULongLongInnerEnumHelper*>(data);
+    const MapULongLongInnerEnumHelper* p_type = static_cast<const MapULongLongInnerEnumHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -28504,7 +28504,7 @@ bool MapULongLongInnerEnumHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapULongLongInnerEnumHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -28521,7 +28521,7 @@ std::function<uint32_t()> MapULongLongInnerEnumHelperPubSubType::getSerializedSi
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapULongLongInnerEnumHelper*>(data), current_alignment)) +
+                               *static_cast<const MapULongLongInnerEnumHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -28544,7 +28544,7 @@ void MapULongLongInnerEnumHelperPubSubType::deleteData(
 }
 
 bool MapULongLongInnerEnumHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -28553,7 +28553,7 @@ bool MapULongLongInnerEnumHelperPubSubType::getKey(
         return false;
     }
 
-    MapULongLongInnerEnumHelper* p_type = static_cast<MapULongLongInnerEnumHelper*>(data);
+    const MapULongLongInnerEnumHelper* p_type = static_cast<const MapULongLongInnerEnumHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -28621,11 +28621,11 @@ MapULongLongInnerBitMaskHelperPubSubType::~MapULongLongInnerBitMaskHelperPubSubT
 }
 
 bool MapULongLongInnerBitMaskHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapULongLongInnerBitMaskHelper* p_type = static_cast<MapULongLongInnerBitMaskHelper*>(data);
+    const MapULongLongInnerBitMaskHelper* p_type = static_cast<const MapULongLongInnerBitMaskHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -28697,7 +28697,7 @@ bool MapULongLongInnerBitMaskHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapULongLongInnerBitMaskHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -28714,7 +28714,7 @@ std::function<uint32_t()> MapULongLongInnerBitMaskHelperPubSubType::getSerialize
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapULongLongInnerBitMaskHelper*>(data), current_alignment)) +
+                               *static_cast<const MapULongLongInnerBitMaskHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -28737,7 +28737,7 @@ void MapULongLongInnerBitMaskHelperPubSubType::deleteData(
 }
 
 bool MapULongLongInnerBitMaskHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -28746,7 +28746,7 @@ bool MapULongLongInnerBitMaskHelperPubSubType::getKey(
         return false;
     }
 
-    MapULongLongInnerBitMaskHelper* p_type = static_cast<MapULongLongInnerBitMaskHelper*>(data);
+    const MapULongLongInnerBitMaskHelper* p_type = static_cast<const MapULongLongInnerBitMaskHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -28814,11 +28814,11 @@ MapULongLongInnerAliasHelperPubSubType::~MapULongLongInnerAliasHelperPubSubType(
 }
 
 bool MapULongLongInnerAliasHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapULongLongInnerAliasHelper* p_type = static_cast<MapULongLongInnerAliasHelper*>(data);
+    const MapULongLongInnerAliasHelper* p_type = static_cast<const MapULongLongInnerAliasHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -28890,7 +28890,7 @@ bool MapULongLongInnerAliasHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapULongLongInnerAliasHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -28907,7 +28907,7 @@ std::function<uint32_t()> MapULongLongInnerAliasHelperPubSubType::getSerializedS
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapULongLongInnerAliasHelper*>(data), current_alignment)) +
+                               *static_cast<const MapULongLongInnerAliasHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -28930,7 +28930,7 @@ void MapULongLongInnerAliasHelperPubSubType::deleteData(
 }
 
 bool MapULongLongInnerAliasHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -28939,7 +28939,7 @@ bool MapULongLongInnerAliasHelperPubSubType::getKey(
         return false;
     }
 
-    MapULongLongInnerAliasHelper* p_type = static_cast<MapULongLongInnerAliasHelper*>(data);
+    const MapULongLongInnerAliasHelper* p_type = static_cast<const MapULongLongInnerAliasHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -29007,11 +29007,11 @@ MapULongLongInnerAliasArrayHelperPubSubType::~MapULongLongInnerAliasArrayHelperP
 }
 
 bool MapULongLongInnerAliasArrayHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapULongLongInnerAliasArrayHelper* p_type = static_cast<MapULongLongInnerAliasArrayHelper*>(data);
+    const MapULongLongInnerAliasArrayHelper* p_type = static_cast<const MapULongLongInnerAliasArrayHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -29083,7 +29083,7 @@ bool MapULongLongInnerAliasArrayHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapULongLongInnerAliasArrayHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -29100,7 +29100,7 @@ std::function<uint32_t()> MapULongLongInnerAliasArrayHelperPubSubType::getSerial
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapULongLongInnerAliasArrayHelper*>(data), current_alignment)) +
+                               *static_cast<const MapULongLongInnerAliasArrayHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -29123,7 +29123,7 @@ void MapULongLongInnerAliasArrayHelperPubSubType::deleteData(
 }
 
 bool MapULongLongInnerAliasArrayHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -29132,7 +29132,7 @@ bool MapULongLongInnerAliasArrayHelperPubSubType::getKey(
         return false;
     }
 
-    MapULongLongInnerAliasArrayHelper* p_type = static_cast<MapULongLongInnerAliasArrayHelper*>(data);
+    const MapULongLongInnerAliasArrayHelper* p_type = static_cast<const MapULongLongInnerAliasArrayHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -29200,11 +29200,11 @@ MapULongLongInnerAliasSequenceHelperPubSubType::~MapULongLongInnerAliasSequenceH
 }
 
 bool MapULongLongInnerAliasSequenceHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapULongLongInnerAliasSequenceHelper* p_type = static_cast<MapULongLongInnerAliasSequenceHelper*>(data);
+    const MapULongLongInnerAliasSequenceHelper* p_type = static_cast<const MapULongLongInnerAliasSequenceHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -29276,7 +29276,7 @@ bool MapULongLongInnerAliasSequenceHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapULongLongInnerAliasSequenceHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -29293,7 +29293,7 @@ std::function<uint32_t()> MapULongLongInnerAliasSequenceHelperPubSubType::getSer
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapULongLongInnerAliasSequenceHelper*>(data), current_alignment)) +
+                               *static_cast<const MapULongLongInnerAliasSequenceHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -29316,7 +29316,7 @@ void MapULongLongInnerAliasSequenceHelperPubSubType::deleteData(
 }
 
 bool MapULongLongInnerAliasSequenceHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -29325,7 +29325,7 @@ bool MapULongLongInnerAliasSequenceHelperPubSubType::getKey(
         return false;
     }
 
-    MapULongLongInnerAliasSequenceHelper* p_type = static_cast<MapULongLongInnerAliasSequenceHelper*>(data);
+    const MapULongLongInnerAliasSequenceHelper* p_type = static_cast<const MapULongLongInnerAliasSequenceHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -29393,11 +29393,11 @@ MapULongLongInnerAliasMapHelperPubSubType::~MapULongLongInnerAliasMapHelperPubSu
 }
 
 bool MapULongLongInnerAliasMapHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapULongLongInnerAliasMapHelper* p_type = static_cast<MapULongLongInnerAliasMapHelper*>(data);
+    const MapULongLongInnerAliasMapHelper* p_type = static_cast<const MapULongLongInnerAliasMapHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -29469,7 +29469,7 @@ bool MapULongLongInnerAliasMapHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapULongLongInnerAliasMapHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -29486,7 +29486,7 @@ std::function<uint32_t()> MapULongLongInnerAliasMapHelperPubSubType::getSerializ
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapULongLongInnerAliasMapHelper*>(data), current_alignment)) +
+                               *static_cast<const MapULongLongInnerAliasMapHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -29509,7 +29509,7 @@ void MapULongLongInnerAliasMapHelperPubSubType::deleteData(
 }
 
 bool MapULongLongInnerAliasMapHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -29518,7 +29518,7 @@ bool MapULongLongInnerAliasMapHelperPubSubType::getKey(
         return false;
     }
 
-    MapULongLongInnerAliasMapHelper* p_type = static_cast<MapULongLongInnerAliasMapHelper*>(data);
+    const MapULongLongInnerAliasMapHelper* p_type = static_cast<const MapULongLongInnerAliasMapHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -29586,11 +29586,11 @@ MapULongLongInnerUnionHelperPubSubType::~MapULongLongInnerUnionHelperPubSubType(
 }
 
 bool MapULongLongInnerUnionHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapULongLongInnerUnionHelper* p_type = static_cast<MapULongLongInnerUnionHelper*>(data);
+    const MapULongLongInnerUnionHelper* p_type = static_cast<const MapULongLongInnerUnionHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -29662,7 +29662,7 @@ bool MapULongLongInnerUnionHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapULongLongInnerUnionHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -29679,7 +29679,7 @@ std::function<uint32_t()> MapULongLongInnerUnionHelperPubSubType::getSerializedS
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapULongLongInnerUnionHelper*>(data), current_alignment)) +
+                               *static_cast<const MapULongLongInnerUnionHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -29702,7 +29702,7 @@ void MapULongLongInnerUnionHelperPubSubType::deleteData(
 }
 
 bool MapULongLongInnerUnionHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -29711,7 +29711,7 @@ bool MapULongLongInnerUnionHelperPubSubType::getKey(
         return false;
     }
 
-    MapULongLongInnerUnionHelper* p_type = static_cast<MapULongLongInnerUnionHelper*>(data);
+    const MapULongLongInnerUnionHelper* p_type = static_cast<const MapULongLongInnerUnionHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -29779,11 +29779,11 @@ MapULongLongInnerStructureHelperPubSubType::~MapULongLongInnerStructureHelperPub
 }
 
 bool MapULongLongInnerStructureHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapULongLongInnerStructureHelper* p_type = static_cast<MapULongLongInnerStructureHelper*>(data);
+    const MapULongLongInnerStructureHelper* p_type = static_cast<const MapULongLongInnerStructureHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -29855,7 +29855,7 @@ bool MapULongLongInnerStructureHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapULongLongInnerStructureHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -29872,7 +29872,7 @@ std::function<uint32_t()> MapULongLongInnerStructureHelperPubSubType::getSeriali
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapULongLongInnerStructureHelper*>(data), current_alignment)) +
+                               *static_cast<const MapULongLongInnerStructureHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -29895,7 +29895,7 @@ void MapULongLongInnerStructureHelperPubSubType::deleteData(
 }
 
 bool MapULongLongInnerStructureHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -29904,7 +29904,7 @@ bool MapULongLongInnerStructureHelperPubSubType::getKey(
         return false;
     }
 
-    MapULongLongInnerStructureHelper* p_type = static_cast<MapULongLongInnerStructureHelper*>(data);
+    const MapULongLongInnerStructureHelper* p_type = static_cast<const MapULongLongInnerStructureHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -29972,11 +29972,11 @@ MapULongLongInnerBitsetHelperPubSubType::~MapULongLongInnerBitsetHelperPubSubTyp
 }
 
 bool MapULongLongInnerBitsetHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapULongLongInnerBitsetHelper* p_type = static_cast<MapULongLongInnerBitsetHelper*>(data);
+    const MapULongLongInnerBitsetHelper* p_type = static_cast<const MapULongLongInnerBitsetHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -30048,7 +30048,7 @@ bool MapULongLongInnerBitsetHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapULongLongInnerBitsetHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -30065,7 +30065,7 @@ std::function<uint32_t()> MapULongLongInnerBitsetHelperPubSubType::getSerialized
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapULongLongInnerBitsetHelper*>(data), current_alignment)) +
+                               *static_cast<const MapULongLongInnerBitsetHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -30088,7 +30088,7 @@ void MapULongLongInnerBitsetHelperPubSubType::deleteData(
 }
 
 bool MapULongLongInnerBitsetHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -30097,7 +30097,7 @@ bool MapULongLongInnerBitsetHelperPubSubType::getKey(
         return false;
     }
 
-    MapULongLongInnerBitsetHelper* p_type = static_cast<MapULongLongInnerBitsetHelper*>(data);
+    const MapULongLongInnerBitsetHelper* p_type = static_cast<const MapULongLongInnerBitsetHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -30165,11 +30165,11 @@ MapStringShortPubSubType::~MapStringShortPubSubType()
 }
 
 bool MapStringShortPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapStringShort* p_type = static_cast<MapStringShort*>(data);
+    const MapStringShort* p_type = static_cast<const MapStringShort*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -30241,7 +30241,7 @@ bool MapStringShortPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapStringShortPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -30258,7 +30258,7 @@ std::function<uint32_t()> MapStringShortPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapStringShort*>(data), current_alignment)) +
+                               *static_cast<const MapStringShort*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -30281,7 +30281,7 @@ void MapStringShortPubSubType::deleteData(
 }
 
 bool MapStringShortPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -30290,7 +30290,7 @@ bool MapStringShortPubSubType::getKey(
         return false;
     }
 
-    MapStringShort* p_type = static_cast<MapStringShort*>(data);
+    const MapStringShort* p_type = static_cast<const MapStringShort*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -30358,11 +30358,11 @@ MapStringUShortPubSubType::~MapStringUShortPubSubType()
 }
 
 bool MapStringUShortPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapStringUShort* p_type = static_cast<MapStringUShort*>(data);
+    const MapStringUShort* p_type = static_cast<const MapStringUShort*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -30434,7 +30434,7 @@ bool MapStringUShortPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapStringUShortPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -30451,7 +30451,7 @@ std::function<uint32_t()> MapStringUShortPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapStringUShort*>(data), current_alignment)) +
+                               *static_cast<const MapStringUShort*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -30474,7 +30474,7 @@ void MapStringUShortPubSubType::deleteData(
 }
 
 bool MapStringUShortPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -30483,7 +30483,7 @@ bool MapStringUShortPubSubType::getKey(
         return false;
     }
 
-    MapStringUShort* p_type = static_cast<MapStringUShort*>(data);
+    const MapStringUShort* p_type = static_cast<const MapStringUShort*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -30551,11 +30551,11 @@ MapStringLongPubSubType::~MapStringLongPubSubType()
 }
 
 bool MapStringLongPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapStringLong* p_type = static_cast<MapStringLong*>(data);
+    const MapStringLong* p_type = static_cast<const MapStringLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -30627,7 +30627,7 @@ bool MapStringLongPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapStringLongPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -30644,7 +30644,7 @@ std::function<uint32_t()> MapStringLongPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapStringLong*>(data), current_alignment)) +
+                               *static_cast<const MapStringLong*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -30667,7 +30667,7 @@ void MapStringLongPubSubType::deleteData(
 }
 
 bool MapStringLongPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -30676,7 +30676,7 @@ bool MapStringLongPubSubType::getKey(
         return false;
     }
 
-    MapStringLong* p_type = static_cast<MapStringLong*>(data);
+    const MapStringLong* p_type = static_cast<const MapStringLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -30744,11 +30744,11 @@ MapStringULongPubSubType::~MapStringULongPubSubType()
 }
 
 bool MapStringULongPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapStringULong* p_type = static_cast<MapStringULong*>(data);
+    const MapStringULong* p_type = static_cast<const MapStringULong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -30820,7 +30820,7 @@ bool MapStringULongPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapStringULongPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -30837,7 +30837,7 @@ std::function<uint32_t()> MapStringULongPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapStringULong*>(data), current_alignment)) +
+                               *static_cast<const MapStringULong*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -30860,7 +30860,7 @@ void MapStringULongPubSubType::deleteData(
 }
 
 bool MapStringULongPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -30869,7 +30869,7 @@ bool MapStringULongPubSubType::getKey(
         return false;
     }
 
-    MapStringULong* p_type = static_cast<MapStringULong*>(data);
+    const MapStringULong* p_type = static_cast<const MapStringULong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -30937,11 +30937,11 @@ MapStringLongLongPubSubType::~MapStringLongLongPubSubType()
 }
 
 bool MapStringLongLongPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapStringLongLong* p_type = static_cast<MapStringLongLong*>(data);
+    const MapStringLongLong* p_type = static_cast<const MapStringLongLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -31013,7 +31013,7 @@ bool MapStringLongLongPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapStringLongLongPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -31030,7 +31030,7 @@ std::function<uint32_t()> MapStringLongLongPubSubType::getSerializedSizeProvider
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapStringLongLong*>(data), current_alignment)) +
+                               *static_cast<const MapStringLongLong*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -31053,7 +31053,7 @@ void MapStringLongLongPubSubType::deleteData(
 }
 
 bool MapStringLongLongPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -31062,7 +31062,7 @@ bool MapStringLongLongPubSubType::getKey(
         return false;
     }
 
-    MapStringLongLong* p_type = static_cast<MapStringLongLong*>(data);
+    const MapStringLongLong* p_type = static_cast<const MapStringLongLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -31130,11 +31130,11 @@ MapStringULongLongPubSubType::~MapStringULongLongPubSubType()
 }
 
 bool MapStringULongLongPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapStringULongLong* p_type = static_cast<MapStringULongLong*>(data);
+    const MapStringULongLong* p_type = static_cast<const MapStringULongLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -31206,7 +31206,7 @@ bool MapStringULongLongPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapStringULongLongPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -31223,7 +31223,7 @@ std::function<uint32_t()> MapStringULongLongPubSubType::getSerializedSizeProvide
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapStringULongLong*>(data), current_alignment)) +
+                               *static_cast<const MapStringULongLong*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -31246,7 +31246,7 @@ void MapStringULongLongPubSubType::deleteData(
 }
 
 bool MapStringULongLongPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -31255,7 +31255,7 @@ bool MapStringULongLongPubSubType::getKey(
         return false;
     }
 
-    MapStringULongLong* p_type = static_cast<MapStringULongLong*>(data);
+    const MapStringULongLong* p_type = static_cast<const MapStringULongLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -31323,11 +31323,11 @@ MapStringFloatPubSubType::~MapStringFloatPubSubType()
 }
 
 bool MapStringFloatPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapStringFloat* p_type = static_cast<MapStringFloat*>(data);
+    const MapStringFloat* p_type = static_cast<const MapStringFloat*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -31399,7 +31399,7 @@ bool MapStringFloatPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapStringFloatPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -31416,7 +31416,7 @@ std::function<uint32_t()> MapStringFloatPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapStringFloat*>(data), current_alignment)) +
+                               *static_cast<const MapStringFloat*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -31439,7 +31439,7 @@ void MapStringFloatPubSubType::deleteData(
 }
 
 bool MapStringFloatPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -31448,7 +31448,7 @@ bool MapStringFloatPubSubType::getKey(
         return false;
     }
 
-    MapStringFloat* p_type = static_cast<MapStringFloat*>(data);
+    const MapStringFloat* p_type = static_cast<const MapStringFloat*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -31516,11 +31516,11 @@ MapStringDoublePubSubType::~MapStringDoublePubSubType()
 }
 
 bool MapStringDoublePubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapStringDouble* p_type = static_cast<MapStringDouble*>(data);
+    const MapStringDouble* p_type = static_cast<const MapStringDouble*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -31592,7 +31592,7 @@ bool MapStringDoublePubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapStringDoublePubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -31609,7 +31609,7 @@ std::function<uint32_t()> MapStringDoublePubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapStringDouble*>(data), current_alignment)) +
+                               *static_cast<const MapStringDouble*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -31632,7 +31632,7 @@ void MapStringDoublePubSubType::deleteData(
 }
 
 bool MapStringDoublePubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -31641,7 +31641,7 @@ bool MapStringDoublePubSubType::getKey(
         return false;
     }
 
-    MapStringDouble* p_type = static_cast<MapStringDouble*>(data);
+    const MapStringDouble* p_type = static_cast<const MapStringDouble*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -31709,11 +31709,11 @@ MapStringLongDoublePubSubType::~MapStringLongDoublePubSubType()
 }
 
 bool MapStringLongDoublePubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapStringLongDouble* p_type = static_cast<MapStringLongDouble*>(data);
+    const MapStringLongDouble* p_type = static_cast<const MapStringLongDouble*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -31785,7 +31785,7 @@ bool MapStringLongDoublePubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapStringLongDoublePubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -31802,7 +31802,7 @@ std::function<uint32_t()> MapStringLongDoublePubSubType::getSerializedSizeProvid
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapStringLongDouble*>(data), current_alignment)) +
+                               *static_cast<const MapStringLongDouble*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -31825,7 +31825,7 @@ void MapStringLongDoublePubSubType::deleteData(
 }
 
 bool MapStringLongDoublePubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -31834,7 +31834,7 @@ bool MapStringLongDoublePubSubType::getKey(
         return false;
     }
 
-    MapStringLongDouble* p_type = static_cast<MapStringLongDouble*>(data);
+    const MapStringLongDouble* p_type = static_cast<const MapStringLongDouble*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -31902,11 +31902,11 @@ MapStringBooleanPubSubType::~MapStringBooleanPubSubType()
 }
 
 bool MapStringBooleanPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapStringBoolean* p_type = static_cast<MapStringBoolean*>(data);
+    const MapStringBoolean* p_type = static_cast<const MapStringBoolean*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -31978,7 +31978,7 @@ bool MapStringBooleanPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapStringBooleanPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -31995,7 +31995,7 @@ std::function<uint32_t()> MapStringBooleanPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapStringBoolean*>(data), current_alignment)) +
+                               *static_cast<const MapStringBoolean*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -32018,7 +32018,7 @@ void MapStringBooleanPubSubType::deleteData(
 }
 
 bool MapStringBooleanPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -32027,7 +32027,7 @@ bool MapStringBooleanPubSubType::getKey(
         return false;
     }
 
-    MapStringBoolean* p_type = static_cast<MapStringBoolean*>(data);
+    const MapStringBoolean* p_type = static_cast<const MapStringBoolean*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -32095,11 +32095,11 @@ MapStringOctetPubSubType::~MapStringOctetPubSubType()
 }
 
 bool MapStringOctetPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapStringOctet* p_type = static_cast<MapStringOctet*>(data);
+    const MapStringOctet* p_type = static_cast<const MapStringOctet*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -32171,7 +32171,7 @@ bool MapStringOctetPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapStringOctetPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -32188,7 +32188,7 @@ std::function<uint32_t()> MapStringOctetPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapStringOctet*>(data), current_alignment)) +
+                               *static_cast<const MapStringOctet*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -32211,7 +32211,7 @@ void MapStringOctetPubSubType::deleteData(
 }
 
 bool MapStringOctetPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -32220,7 +32220,7 @@ bool MapStringOctetPubSubType::getKey(
         return false;
     }
 
-    MapStringOctet* p_type = static_cast<MapStringOctet*>(data);
+    const MapStringOctet* p_type = static_cast<const MapStringOctet*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -32288,11 +32288,11 @@ MapStringCharPubSubType::~MapStringCharPubSubType()
 }
 
 bool MapStringCharPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapStringChar* p_type = static_cast<MapStringChar*>(data);
+    const MapStringChar* p_type = static_cast<const MapStringChar*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -32364,7 +32364,7 @@ bool MapStringCharPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapStringCharPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -32381,7 +32381,7 @@ std::function<uint32_t()> MapStringCharPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapStringChar*>(data), current_alignment)) +
+                               *static_cast<const MapStringChar*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -32404,7 +32404,7 @@ void MapStringCharPubSubType::deleteData(
 }
 
 bool MapStringCharPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -32413,7 +32413,7 @@ bool MapStringCharPubSubType::getKey(
         return false;
     }
 
-    MapStringChar* p_type = static_cast<MapStringChar*>(data);
+    const MapStringChar* p_type = static_cast<const MapStringChar*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -32481,11 +32481,11 @@ MapStringWCharPubSubType::~MapStringWCharPubSubType()
 }
 
 bool MapStringWCharPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapStringWChar* p_type = static_cast<MapStringWChar*>(data);
+    const MapStringWChar* p_type = static_cast<const MapStringWChar*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -32557,7 +32557,7 @@ bool MapStringWCharPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapStringWCharPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -32574,7 +32574,7 @@ std::function<uint32_t()> MapStringWCharPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapStringWChar*>(data), current_alignment)) +
+                               *static_cast<const MapStringWChar*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -32597,7 +32597,7 @@ void MapStringWCharPubSubType::deleteData(
 }
 
 bool MapStringWCharPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -32606,7 +32606,7 @@ bool MapStringWCharPubSubType::getKey(
         return false;
     }
 
-    MapStringWChar* p_type = static_cast<MapStringWChar*>(data);
+    const MapStringWChar* p_type = static_cast<const MapStringWChar*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -32674,11 +32674,11 @@ MapStringStringPubSubType::~MapStringStringPubSubType()
 }
 
 bool MapStringStringPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapStringString* p_type = static_cast<MapStringString*>(data);
+    const MapStringString* p_type = static_cast<const MapStringString*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -32750,7 +32750,7 @@ bool MapStringStringPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapStringStringPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -32767,7 +32767,7 @@ std::function<uint32_t()> MapStringStringPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapStringString*>(data), current_alignment)) +
+                               *static_cast<const MapStringString*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -32790,7 +32790,7 @@ void MapStringStringPubSubType::deleteData(
 }
 
 bool MapStringStringPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -32799,7 +32799,7 @@ bool MapStringStringPubSubType::getKey(
         return false;
     }
 
-    MapStringString* p_type = static_cast<MapStringString*>(data);
+    const MapStringString* p_type = static_cast<const MapStringString*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -32867,11 +32867,11 @@ MapStringWStringPubSubType::~MapStringWStringPubSubType()
 }
 
 bool MapStringWStringPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapStringWString* p_type = static_cast<MapStringWString*>(data);
+    const MapStringWString* p_type = static_cast<const MapStringWString*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -32943,7 +32943,7 @@ bool MapStringWStringPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapStringWStringPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -32960,7 +32960,7 @@ std::function<uint32_t()> MapStringWStringPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapStringWString*>(data), current_alignment)) +
+                               *static_cast<const MapStringWString*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -32983,7 +32983,7 @@ void MapStringWStringPubSubType::deleteData(
 }
 
 bool MapStringWStringPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -32992,7 +32992,7 @@ bool MapStringWStringPubSubType::getKey(
         return false;
     }
 
-    MapStringWString* p_type = static_cast<MapStringWString*>(data);
+    const MapStringWString* p_type = static_cast<const MapStringWString*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -33060,11 +33060,11 @@ MapStringInnerAliasBoundedStringHelperPubSubType::~MapStringInnerAliasBoundedStr
 }
 
 bool MapStringInnerAliasBoundedStringHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapStringInnerAliasBoundedStringHelper* p_type = static_cast<MapStringInnerAliasBoundedStringHelper*>(data);
+    const MapStringInnerAliasBoundedStringHelper* p_type = static_cast<const MapStringInnerAliasBoundedStringHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -33136,7 +33136,7 @@ bool MapStringInnerAliasBoundedStringHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapStringInnerAliasBoundedStringHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -33153,7 +33153,7 @@ std::function<uint32_t()> MapStringInnerAliasBoundedStringHelperPubSubType::getS
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapStringInnerAliasBoundedStringHelper*>(data), current_alignment)) +
+                               *static_cast<const MapStringInnerAliasBoundedStringHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -33176,7 +33176,7 @@ void MapStringInnerAliasBoundedStringHelperPubSubType::deleteData(
 }
 
 bool MapStringInnerAliasBoundedStringHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -33185,7 +33185,7 @@ bool MapStringInnerAliasBoundedStringHelperPubSubType::getKey(
         return false;
     }
 
-    MapStringInnerAliasBoundedStringHelper* p_type = static_cast<MapStringInnerAliasBoundedStringHelper*>(data);
+    const MapStringInnerAliasBoundedStringHelper* p_type = static_cast<const MapStringInnerAliasBoundedStringHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -33253,11 +33253,11 @@ MapStringInnerAliasBoundedWStringHelperPubSubType::~MapStringInnerAliasBoundedWS
 }
 
 bool MapStringInnerAliasBoundedWStringHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapStringInnerAliasBoundedWStringHelper* p_type = static_cast<MapStringInnerAliasBoundedWStringHelper*>(data);
+    const MapStringInnerAliasBoundedWStringHelper* p_type = static_cast<const MapStringInnerAliasBoundedWStringHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -33329,7 +33329,7 @@ bool MapStringInnerAliasBoundedWStringHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapStringInnerAliasBoundedWStringHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -33346,7 +33346,7 @@ std::function<uint32_t()> MapStringInnerAliasBoundedWStringHelperPubSubType::get
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapStringInnerAliasBoundedWStringHelper*>(data), current_alignment)) +
+                               *static_cast<const MapStringInnerAliasBoundedWStringHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -33369,7 +33369,7 @@ void MapStringInnerAliasBoundedWStringHelperPubSubType::deleteData(
 }
 
 bool MapStringInnerAliasBoundedWStringHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -33378,7 +33378,7 @@ bool MapStringInnerAliasBoundedWStringHelperPubSubType::getKey(
         return false;
     }
 
-    MapStringInnerAliasBoundedWStringHelper* p_type = static_cast<MapStringInnerAliasBoundedWStringHelper*>(data);
+    const MapStringInnerAliasBoundedWStringHelper* p_type = static_cast<const MapStringInnerAliasBoundedWStringHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -33446,11 +33446,11 @@ MapStringInnerEnumHelperPubSubType::~MapStringInnerEnumHelperPubSubType()
 }
 
 bool MapStringInnerEnumHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapStringInnerEnumHelper* p_type = static_cast<MapStringInnerEnumHelper*>(data);
+    const MapStringInnerEnumHelper* p_type = static_cast<const MapStringInnerEnumHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -33522,7 +33522,7 @@ bool MapStringInnerEnumHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapStringInnerEnumHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -33539,7 +33539,7 @@ std::function<uint32_t()> MapStringInnerEnumHelperPubSubType::getSerializedSizeP
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapStringInnerEnumHelper*>(data), current_alignment)) +
+                               *static_cast<const MapStringInnerEnumHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -33562,7 +33562,7 @@ void MapStringInnerEnumHelperPubSubType::deleteData(
 }
 
 bool MapStringInnerEnumHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -33571,7 +33571,7 @@ bool MapStringInnerEnumHelperPubSubType::getKey(
         return false;
     }
 
-    MapStringInnerEnumHelper* p_type = static_cast<MapStringInnerEnumHelper*>(data);
+    const MapStringInnerEnumHelper* p_type = static_cast<const MapStringInnerEnumHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -33639,11 +33639,11 @@ MapStringInnerBitMaskHelperPubSubType::~MapStringInnerBitMaskHelperPubSubType()
 }
 
 bool MapStringInnerBitMaskHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapStringInnerBitMaskHelper* p_type = static_cast<MapStringInnerBitMaskHelper*>(data);
+    const MapStringInnerBitMaskHelper* p_type = static_cast<const MapStringInnerBitMaskHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -33715,7 +33715,7 @@ bool MapStringInnerBitMaskHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapStringInnerBitMaskHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -33732,7 +33732,7 @@ std::function<uint32_t()> MapStringInnerBitMaskHelperPubSubType::getSerializedSi
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapStringInnerBitMaskHelper*>(data), current_alignment)) +
+                               *static_cast<const MapStringInnerBitMaskHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -33755,7 +33755,7 @@ void MapStringInnerBitMaskHelperPubSubType::deleteData(
 }
 
 bool MapStringInnerBitMaskHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -33764,7 +33764,7 @@ bool MapStringInnerBitMaskHelperPubSubType::getKey(
         return false;
     }
 
-    MapStringInnerBitMaskHelper* p_type = static_cast<MapStringInnerBitMaskHelper*>(data);
+    const MapStringInnerBitMaskHelper* p_type = static_cast<const MapStringInnerBitMaskHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -33832,11 +33832,11 @@ MapStringInnerAliasHelperPubSubType::~MapStringInnerAliasHelperPubSubType()
 }
 
 bool MapStringInnerAliasHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapStringInnerAliasHelper* p_type = static_cast<MapStringInnerAliasHelper*>(data);
+    const MapStringInnerAliasHelper* p_type = static_cast<const MapStringInnerAliasHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -33908,7 +33908,7 @@ bool MapStringInnerAliasHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapStringInnerAliasHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -33925,7 +33925,7 @@ std::function<uint32_t()> MapStringInnerAliasHelperPubSubType::getSerializedSize
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapStringInnerAliasHelper*>(data), current_alignment)) +
+                               *static_cast<const MapStringInnerAliasHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -33948,7 +33948,7 @@ void MapStringInnerAliasHelperPubSubType::deleteData(
 }
 
 bool MapStringInnerAliasHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -33957,7 +33957,7 @@ bool MapStringInnerAliasHelperPubSubType::getKey(
         return false;
     }
 
-    MapStringInnerAliasHelper* p_type = static_cast<MapStringInnerAliasHelper*>(data);
+    const MapStringInnerAliasHelper* p_type = static_cast<const MapStringInnerAliasHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -34025,11 +34025,11 @@ MapStringInnerAliasArrayHelperPubSubType::~MapStringInnerAliasArrayHelperPubSubT
 }
 
 bool MapStringInnerAliasArrayHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapStringInnerAliasArrayHelper* p_type = static_cast<MapStringInnerAliasArrayHelper*>(data);
+    const MapStringInnerAliasArrayHelper* p_type = static_cast<const MapStringInnerAliasArrayHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -34101,7 +34101,7 @@ bool MapStringInnerAliasArrayHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapStringInnerAliasArrayHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -34118,7 +34118,7 @@ std::function<uint32_t()> MapStringInnerAliasArrayHelperPubSubType::getSerialize
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapStringInnerAliasArrayHelper*>(data), current_alignment)) +
+                               *static_cast<const MapStringInnerAliasArrayHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -34141,7 +34141,7 @@ void MapStringInnerAliasArrayHelperPubSubType::deleteData(
 }
 
 bool MapStringInnerAliasArrayHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -34150,7 +34150,7 @@ bool MapStringInnerAliasArrayHelperPubSubType::getKey(
         return false;
     }
 
-    MapStringInnerAliasArrayHelper* p_type = static_cast<MapStringInnerAliasArrayHelper*>(data);
+    const MapStringInnerAliasArrayHelper* p_type = static_cast<const MapStringInnerAliasArrayHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -34218,11 +34218,11 @@ MapStringInnerAliasSequenceHelperPubSubType::~MapStringInnerAliasSequenceHelperP
 }
 
 bool MapStringInnerAliasSequenceHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapStringInnerAliasSequenceHelper* p_type = static_cast<MapStringInnerAliasSequenceHelper*>(data);
+    const MapStringInnerAliasSequenceHelper* p_type = static_cast<const MapStringInnerAliasSequenceHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -34294,7 +34294,7 @@ bool MapStringInnerAliasSequenceHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapStringInnerAliasSequenceHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -34311,7 +34311,7 @@ std::function<uint32_t()> MapStringInnerAliasSequenceHelperPubSubType::getSerial
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapStringInnerAliasSequenceHelper*>(data), current_alignment)) +
+                               *static_cast<const MapStringInnerAliasSequenceHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -34334,7 +34334,7 @@ void MapStringInnerAliasSequenceHelperPubSubType::deleteData(
 }
 
 bool MapStringInnerAliasSequenceHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -34343,7 +34343,7 @@ bool MapStringInnerAliasSequenceHelperPubSubType::getKey(
         return false;
     }
 
-    MapStringInnerAliasSequenceHelper* p_type = static_cast<MapStringInnerAliasSequenceHelper*>(data);
+    const MapStringInnerAliasSequenceHelper* p_type = static_cast<const MapStringInnerAliasSequenceHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -34411,11 +34411,11 @@ MapStringInnerAliasMapHelperPubSubType::~MapStringInnerAliasMapHelperPubSubType(
 }
 
 bool MapStringInnerAliasMapHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapStringInnerAliasMapHelper* p_type = static_cast<MapStringInnerAliasMapHelper*>(data);
+    const MapStringInnerAliasMapHelper* p_type = static_cast<const MapStringInnerAliasMapHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -34487,7 +34487,7 @@ bool MapStringInnerAliasMapHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapStringInnerAliasMapHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -34504,7 +34504,7 @@ std::function<uint32_t()> MapStringInnerAliasMapHelperPubSubType::getSerializedS
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapStringInnerAliasMapHelper*>(data), current_alignment)) +
+                               *static_cast<const MapStringInnerAliasMapHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -34527,7 +34527,7 @@ void MapStringInnerAliasMapHelperPubSubType::deleteData(
 }
 
 bool MapStringInnerAliasMapHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -34536,7 +34536,7 @@ bool MapStringInnerAliasMapHelperPubSubType::getKey(
         return false;
     }
 
-    MapStringInnerAliasMapHelper* p_type = static_cast<MapStringInnerAliasMapHelper*>(data);
+    const MapStringInnerAliasMapHelper* p_type = static_cast<const MapStringInnerAliasMapHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -34604,11 +34604,11 @@ MapStringInnerUnionHelperPubSubType::~MapStringInnerUnionHelperPubSubType()
 }
 
 bool MapStringInnerUnionHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapStringInnerUnionHelper* p_type = static_cast<MapStringInnerUnionHelper*>(data);
+    const MapStringInnerUnionHelper* p_type = static_cast<const MapStringInnerUnionHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -34680,7 +34680,7 @@ bool MapStringInnerUnionHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapStringInnerUnionHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -34697,7 +34697,7 @@ std::function<uint32_t()> MapStringInnerUnionHelperPubSubType::getSerializedSize
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapStringInnerUnionHelper*>(data), current_alignment)) +
+                               *static_cast<const MapStringInnerUnionHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -34720,7 +34720,7 @@ void MapStringInnerUnionHelperPubSubType::deleteData(
 }
 
 bool MapStringInnerUnionHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -34729,7 +34729,7 @@ bool MapStringInnerUnionHelperPubSubType::getKey(
         return false;
     }
 
-    MapStringInnerUnionHelper* p_type = static_cast<MapStringInnerUnionHelper*>(data);
+    const MapStringInnerUnionHelper* p_type = static_cast<const MapStringInnerUnionHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -34797,11 +34797,11 @@ MapStringInnerStructureHelperPubSubType::~MapStringInnerStructureHelperPubSubTyp
 }
 
 bool MapStringInnerStructureHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapStringInnerStructureHelper* p_type = static_cast<MapStringInnerStructureHelper*>(data);
+    const MapStringInnerStructureHelper* p_type = static_cast<const MapStringInnerStructureHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -34873,7 +34873,7 @@ bool MapStringInnerStructureHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapStringInnerStructureHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -34890,7 +34890,7 @@ std::function<uint32_t()> MapStringInnerStructureHelperPubSubType::getSerialized
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapStringInnerStructureHelper*>(data), current_alignment)) +
+                               *static_cast<const MapStringInnerStructureHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -34913,7 +34913,7 @@ void MapStringInnerStructureHelperPubSubType::deleteData(
 }
 
 bool MapStringInnerStructureHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -34922,7 +34922,7 @@ bool MapStringInnerStructureHelperPubSubType::getKey(
         return false;
     }
 
-    MapStringInnerStructureHelper* p_type = static_cast<MapStringInnerStructureHelper*>(data);
+    const MapStringInnerStructureHelper* p_type = static_cast<const MapStringInnerStructureHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -34990,11 +34990,11 @@ MapStringInnerBitsetHelperPubSubType::~MapStringInnerBitsetHelperPubSubType()
 }
 
 bool MapStringInnerBitsetHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapStringInnerBitsetHelper* p_type = static_cast<MapStringInnerBitsetHelper*>(data);
+    const MapStringInnerBitsetHelper* p_type = static_cast<const MapStringInnerBitsetHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -35066,7 +35066,7 @@ bool MapStringInnerBitsetHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapStringInnerBitsetHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -35083,7 +35083,7 @@ std::function<uint32_t()> MapStringInnerBitsetHelperPubSubType::getSerializedSiz
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapStringInnerBitsetHelper*>(data), current_alignment)) +
+                               *static_cast<const MapStringInnerBitsetHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -35106,7 +35106,7 @@ void MapStringInnerBitsetHelperPubSubType::deleteData(
 }
 
 bool MapStringInnerBitsetHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -35115,7 +35115,7 @@ bool MapStringInnerBitsetHelperPubSubType::getKey(
         return false;
     }
 
-    MapStringInnerBitsetHelper* p_type = static_cast<MapStringInnerBitsetHelper*>(data);
+    const MapStringInnerBitsetHelper* p_type = static_cast<const MapStringInnerBitsetHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -35183,11 +35183,11 @@ MapWStringShortPubSubType::~MapWStringShortPubSubType()
 }
 
 bool MapWStringShortPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapWStringShort* p_type = static_cast<MapWStringShort*>(data);
+    const MapWStringShort* p_type = static_cast<const MapWStringShort*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -35259,7 +35259,7 @@ bool MapWStringShortPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapWStringShortPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -35276,7 +35276,7 @@ std::function<uint32_t()> MapWStringShortPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapWStringShort*>(data), current_alignment)) +
+                               *static_cast<const MapWStringShort*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -35299,7 +35299,7 @@ void MapWStringShortPubSubType::deleteData(
 }
 
 bool MapWStringShortPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -35308,7 +35308,7 @@ bool MapWStringShortPubSubType::getKey(
         return false;
     }
 
-    MapWStringShort* p_type = static_cast<MapWStringShort*>(data);
+    const MapWStringShort* p_type = static_cast<const MapWStringShort*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -35376,11 +35376,11 @@ MapWStringUShortPubSubType::~MapWStringUShortPubSubType()
 }
 
 bool MapWStringUShortPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapWStringUShort* p_type = static_cast<MapWStringUShort*>(data);
+    const MapWStringUShort* p_type = static_cast<const MapWStringUShort*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -35452,7 +35452,7 @@ bool MapWStringUShortPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapWStringUShortPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -35469,7 +35469,7 @@ std::function<uint32_t()> MapWStringUShortPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapWStringUShort*>(data), current_alignment)) +
+                               *static_cast<const MapWStringUShort*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -35492,7 +35492,7 @@ void MapWStringUShortPubSubType::deleteData(
 }
 
 bool MapWStringUShortPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -35501,7 +35501,7 @@ bool MapWStringUShortPubSubType::getKey(
         return false;
     }
 
-    MapWStringUShort* p_type = static_cast<MapWStringUShort*>(data);
+    const MapWStringUShort* p_type = static_cast<const MapWStringUShort*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -35569,11 +35569,11 @@ MapWStringLongPubSubType::~MapWStringLongPubSubType()
 }
 
 bool MapWStringLongPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapWStringLong* p_type = static_cast<MapWStringLong*>(data);
+    const MapWStringLong* p_type = static_cast<const MapWStringLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -35645,7 +35645,7 @@ bool MapWStringLongPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapWStringLongPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -35662,7 +35662,7 @@ std::function<uint32_t()> MapWStringLongPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapWStringLong*>(data), current_alignment)) +
+                               *static_cast<const MapWStringLong*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -35685,7 +35685,7 @@ void MapWStringLongPubSubType::deleteData(
 }
 
 bool MapWStringLongPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -35694,7 +35694,7 @@ bool MapWStringLongPubSubType::getKey(
         return false;
     }
 
-    MapWStringLong* p_type = static_cast<MapWStringLong*>(data);
+    const MapWStringLong* p_type = static_cast<const MapWStringLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -35762,11 +35762,11 @@ MapWStringULongPubSubType::~MapWStringULongPubSubType()
 }
 
 bool MapWStringULongPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapWStringULong* p_type = static_cast<MapWStringULong*>(data);
+    const MapWStringULong* p_type = static_cast<const MapWStringULong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -35838,7 +35838,7 @@ bool MapWStringULongPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapWStringULongPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -35855,7 +35855,7 @@ std::function<uint32_t()> MapWStringULongPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapWStringULong*>(data), current_alignment)) +
+                               *static_cast<const MapWStringULong*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -35878,7 +35878,7 @@ void MapWStringULongPubSubType::deleteData(
 }
 
 bool MapWStringULongPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -35887,7 +35887,7 @@ bool MapWStringULongPubSubType::getKey(
         return false;
     }
 
-    MapWStringULong* p_type = static_cast<MapWStringULong*>(data);
+    const MapWStringULong* p_type = static_cast<const MapWStringULong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -35955,11 +35955,11 @@ MapWStringLongLongPubSubType::~MapWStringLongLongPubSubType()
 }
 
 bool MapWStringLongLongPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapWStringLongLong* p_type = static_cast<MapWStringLongLong*>(data);
+    const MapWStringLongLong* p_type = static_cast<const MapWStringLongLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -36031,7 +36031,7 @@ bool MapWStringLongLongPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapWStringLongLongPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -36048,7 +36048,7 @@ std::function<uint32_t()> MapWStringLongLongPubSubType::getSerializedSizeProvide
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapWStringLongLong*>(data), current_alignment)) +
+                               *static_cast<const MapWStringLongLong*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -36071,7 +36071,7 @@ void MapWStringLongLongPubSubType::deleteData(
 }
 
 bool MapWStringLongLongPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -36080,7 +36080,7 @@ bool MapWStringLongLongPubSubType::getKey(
         return false;
     }
 
-    MapWStringLongLong* p_type = static_cast<MapWStringLongLong*>(data);
+    const MapWStringLongLong* p_type = static_cast<const MapWStringLongLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -36148,11 +36148,11 @@ MapWStringULongLongPubSubType::~MapWStringULongLongPubSubType()
 }
 
 bool MapWStringULongLongPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapWStringULongLong* p_type = static_cast<MapWStringULongLong*>(data);
+    const MapWStringULongLong* p_type = static_cast<const MapWStringULongLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -36224,7 +36224,7 @@ bool MapWStringULongLongPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapWStringULongLongPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -36241,7 +36241,7 @@ std::function<uint32_t()> MapWStringULongLongPubSubType::getSerializedSizeProvid
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapWStringULongLong*>(data), current_alignment)) +
+                               *static_cast<const MapWStringULongLong*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -36264,7 +36264,7 @@ void MapWStringULongLongPubSubType::deleteData(
 }
 
 bool MapWStringULongLongPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -36273,7 +36273,7 @@ bool MapWStringULongLongPubSubType::getKey(
         return false;
     }
 
-    MapWStringULongLong* p_type = static_cast<MapWStringULongLong*>(data);
+    const MapWStringULongLong* p_type = static_cast<const MapWStringULongLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -36341,11 +36341,11 @@ MapWStringFloatPubSubType::~MapWStringFloatPubSubType()
 }
 
 bool MapWStringFloatPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapWStringFloat* p_type = static_cast<MapWStringFloat*>(data);
+    const MapWStringFloat* p_type = static_cast<const MapWStringFloat*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -36417,7 +36417,7 @@ bool MapWStringFloatPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapWStringFloatPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -36434,7 +36434,7 @@ std::function<uint32_t()> MapWStringFloatPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapWStringFloat*>(data), current_alignment)) +
+                               *static_cast<const MapWStringFloat*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -36457,7 +36457,7 @@ void MapWStringFloatPubSubType::deleteData(
 }
 
 bool MapWStringFloatPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -36466,7 +36466,7 @@ bool MapWStringFloatPubSubType::getKey(
         return false;
     }
 
-    MapWStringFloat* p_type = static_cast<MapWStringFloat*>(data);
+    const MapWStringFloat* p_type = static_cast<const MapWStringFloat*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -36534,11 +36534,11 @@ MapWStringDoublePubSubType::~MapWStringDoublePubSubType()
 }
 
 bool MapWStringDoublePubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapWStringDouble* p_type = static_cast<MapWStringDouble*>(data);
+    const MapWStringDouble* p_type = static_cast<const MapWStringDouble*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -36610,7 +36610,7 @@ bool MapWStringDoublePubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapWStringDoublePubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -36627,7 +36627,7 @@ std::function<uint32_t()> MapWStringDoublePubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapWStringDouble*>(data), current_alignment)) +
+                               *static_cast<const MapWStringDouble*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -36650,7 +36650,7 @@ void MapWStringDoublePubSubType::deleteData(
 }
 
 bool MapWStringDoublePubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -36659,7 +36659,7 @@ bool MapWStringDoublePubSubType::getKey(
         return false;
     }
 
-    MapWStringDouble* p_type = static_cast<MapWStringDouble*>(data);
+    const MapWStringDouble* p_type = static_cast<const MapWStringDouble*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -36727,11 +36727,11 @@ MapWStringLongDoublePubSubType::~MapWStringLongDoublePubSubType()
 }
 
 bool MapWStringLongDoublePubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapWStringLongDouble* p_type = static_cast<MapWStringLongDouble*>(data);
+    const MapWStringLongDouble* p_type = static_cast<const MapWStringLongDouble*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -36803,7 +36803,7 @@ bool MapWStringLongDoublePubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapWStringLongDoublePubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -36820,7 +36820,7 @@ std::function<uint32_t()> MapWStringLongDoublePubSubType::getSerializedSizeProvi
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapWStringLongDouble*>(data), current_alignment)) +
+                               *static_cast<const MapWStringLongDouble*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -36843,7 +36843,7 @@ void MapWStringLongDoublePubSubType::deleteData(
 }
 
 bool MapWStringLongDoublePubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -36852,7 +36852,7 @@ bool MapWStringLongDoublePubSubType::getKey(
         return false;
     }
 
-    MapWStringLongDouble* p_type = static_cast<MapWStringLongDouble*>(data);
+    const MapWStringLongDouble* p_type = static_cast<const MapWStringLongDouble*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -36920,11 +36920,11 @@ MapWStringBooleanPubSubType::~MapWStringBooleanPubSubType()
 }
 
 bool MapWStringBooleanPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapWStringBoolean* p_type = static_cast<MapWStringBoolean*>(data);
+    const MapWStringBoolean* p_type = static_cast<const MapWStringBoolean*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -36996,7 +36996,7 @@ bool MapWStringBooleanPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapWStringBooleanPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -37013,7 +37013,7 @@ std::function<uint32_t()> MapWStringBooleanPubSubType::getSerializedSizeProvider
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapWStringBoolean*>(data), current_alignment)) +
+                               *static_cast<const MapWStringBoolean*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -37036,7 +37036,7 @@ void MapWStringBooleanPubSubType::deleteData(
 }
 
 bool MapWStringBooleanPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -37045,7 +37045,7 @@ bool MapWStringBooleanPubSubType::getKey(
         return false;
     }
 
-    MapWStringBoolean* p_type = static_cast<MapWStringBoolean*>(data);
+    const MapWStringBoolean* p_type = static_cast<const MapWStringBoolean*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -37113,11 +37113,11 @@ MapWStringOctetPubSubType::~MapWStringOctetPubSubType()
 }
 
 bool MapWStringOctetPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapWStringOctet* p_type = static_cast<MapWStringOctet*>(data);
+    const MapWStringOctet* p_type = static_cast<const MapWStringOctet*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -37189,7 +37189,7 @@ bool MapWStringOctetPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapWStringOctetPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -37206,7 +37206,7 @@ std::function<uint32_t()> MapWStringOctetPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapWStringOctet*>(data), current_alignment)) +
+                               *static_cast<const MapWStringOctet*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -37229,7 +37229,7 @@ void MapWStringOctetPubSubType::deleteData(
 }
 
 bool MapWStringOctetPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -37238,7 +37238,7 @@ bool MapWStringOctetPubSubType::getKey(
         return false;
     }
 
-    MapWStringOctet* p_type = static_cast<MapWStringOctet*>(data);
+    const MapWStringOctet* p_type = static_cast<const MapWStringOctet*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -37306,11 +37306,11 @@ MapWStringCharPubSubType::~MapWStringCharPubSubType()
 }
 
 bool MapWStringCharPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapWStringChar* p_type = static_cast<MapWStringChar*>(data);
+    const MapWStringChar* p_type = static_cast<const MapWStringChar*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -37382,7 +37382,7 @@ bool MapWStringCharPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapWStringCharPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -37399,7 +37399,7 @@ std::function<uint32_t()> MapWStringCharPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapWStringChar*>(data), current_alignment)) +
+                               *static_cast<const MapWStringChar*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -37422,7 +37422,7 @@ void MapWStringCharPubSubType::deleteData(
 }
 
 bool MapWStringCharPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -37431,7 +37431,7 @@ bool MapWStringCharPubSubType::getKey(
         return false;
     }
 
-    MapWStringChar* p_type = static_cast<MapWStringChar*>(data);
+    const MapWStringChar* p_type = static_cast<const MapWStringChar*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -37499,11 +37499,11 @@ MapWStringWCharPubSubType::~MapWStringWCharPubSubType()
 }
 
 bool MapWStringWCharPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapWStringWChar* p_type = static_cast<MapWStringWChar*>(data);
+    const MapWStringWChar* p_type = static_cast<const MapWStringWChar*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -37575,7 +37575,7 @@ bool MapWStringWCharPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapWStringWCharPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -37592,7 +37592,7 @@ std::function<uint32_t()> MapWStringWCharPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapWStringWChar*>(data), current_alignment)) +
+                               *static_cast<const MapWStringWChar*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -37615,7 +37615,7 @@ void MapWStringWCharPubSubType::deleteData(
 }
 
 bool MapWStringWCharPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -37624,7 +37624,7 @@ bool MapWStringWCharPubSubType::getKey(
         return false;
     }
 
-    MapWStringWChar* p_type = static_cast<MapWStringWChar*>(data);
+    const MapWStringWChar* p_type = static_cast<const MapWStringWChar*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -37692,11 +37692,11 @@ MapWStringStringPubSubType::~MapWStringStringPubSubType()
 }
 
 bool MapWStringStringPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapWStringString* p_type = static_cast<MapWStringString*>(data);
+    const MapWStringString* p_type = static_cast<const MapWStringString*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -37768,7 +37768,7 @@ bool MapWStringStringPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapWStringStringPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -37785,7 +37785,7 @@ std::function<uint32_t()> MapWStringStringPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapWStringString*>(data), current_alignment)) +
+                               *static_cast<const MapWStringString*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -37808,7 +37808,7 @@ void MapWStringStringPubSubType::deleteData(
 }
 
 bool MapWStringStringPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -37817,7 +37817,7 @@ bool MapWStringStringPubSubType::getKey(
         return false;
     }
 
-    MapWStringString* p_type = static_cast<MapWStringString*>(data);
+    const MapWStringString* p_type = static_cast<const MapWStringString*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -37885,11 +37885,11 @@ MapWStringWStringPubSubType::~MapWStringWStringPubSubType()
 }
 
 bool MapWStringWStringPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapWStringWString* p_type = static_cast<MapWStringWString*>(data);
+    const MapWStringWString* p_type = static_cast<const MapWStringWString*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -37961,7 +37961,7 @@ bool MapWStringWStringPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapWStringWStringPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -37978,7 +37978,7 @@ std::function<uint32_t()> MapWStringWStringPubSubType::getSerializedSizeProvider
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapWStringWString*>(data), current_alignment)) +
+                               *static_cast<const MapWStringWString*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -38001,7 +38001,7 @@ void MapWStringWStringPubSubType::deleteData(
 }
 
 bool MapWStringWStringPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -38010,7 +38010,7 @@ bool MapWStringWStringPubSubType::getKey(
         return false;
     }
 
-    MapWStringWString* p_type = static_cast<MapWStringWString*>(data);
+    const MapWStringWString* p_type = static_cast<const MapWStringWString*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -38078,11 +38078,11 @@ MapWStringInnerAliasBoundedStringHelperPubSubType::~MapWStringInnerAliasBoundedS
 }
 
 bool MapWStringInnerAliasBoundedStringHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapWStringInnerAliasBoundedStringHelper* p_type = static_cast<MapWStringInnerAliasBoundedStringHelper*>(data);
+    const MapWStringInnerAliasBoundedStringHelper* p_type = static_cast<const MapWStringInnerAliasBoundedStringHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -38154,7 +38154,7 @@ bool MapWStringInnerAliasBoundedStringHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapWStringInnerAliasBoundedStringHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -38171,7 +38171,7 @@ std::function<uint32_t()> MapWStringInnerAliasBoundedStringHelperPubSubType::get
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapWStringInnerAliasBoundedStringHelper*>(data), current_alignment)) +
+                               *static_cast<const MapWStringInnerAliasBoundedStringHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -38194,7 +38194,7 @@ void MapWStringInnerAliasBoundedStringHelperPubSubType::deleteData(
 }
 
 bool MapWStringInnerAliasBoundedStringHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -38203,7 +38203,7 @@ bool MapWStringInnerAliasBoundedStringHelperPubSubType::getKey(
         return false;
     }
 
-    MapWStringInnerAliasBoundedStringHelper* p_type = static_cast<MapWStringInnerAliasBoundedStringHelper*>(data);
+    const MapWStringInnerAliasBoundedStringHelper* p_type = static_cast<const MapWStringInnerAliasBoundedStringHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -38271,11 +38271,11 @@ MapWStringInnerAliasBoundedWStringHelperPubSubType::~MapWStringInnerAliasBounded
 }
 
 bool MapWStringInnerAliasBoundedWStringHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapWStringInnerAliasBoundedWStringHelper* p_type = static_cast<MapWStringInnerAliasBoundedWStringHelper*>(data);
+    const MapWStringInnerAliasBoundedWStringHelper* p_type = static_cast<const MapWStringInnerAliasBoundedWStringHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -38347,7 +38347,7 @@ bool MapWStringInnerAliasBoundedWStringHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapWStringInnerAliasBoundedWStringHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -38364,7 +38364,7 @@ std::function<uint32_t()> MapWStringInnerAliasBoundedWStringHelperPubSubType::ge
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapWStringInnerAliasBoundedWStringHelper*>(data), current_alignment)) +
+                               *static_cast<const MapWStringInnerAliasBoundedWStringHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -38387,7 +38387,7 @@ void MapWStringInnerAliasBoundedWStringHelperPubSubType::deleteData(
 }
 
 bool MapWStringInnerAliasBoundedWStringHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -38396,7 +38396,7 @@ bool MapWStringInnerAliasBoundedWStringHelperPubSubType::getKey(
         return false;
     }
 
-    MapWStringInnerAliasBoundedWStringHelper* p_type = static_cast<MapWStringInnerAliasBoundedWStringHelper*>(data);
+    const MapWStringInnerAliasBoundedWStringHelper* p_type = static_cast<const MapWStringInnerAliasBoundedWStringHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -38464,11 +38464,11 @@ MapWStringInnerEnumHelperPubSubType::~MapWStringInnerEnumHelperPubSubType()
 }
 
 bool MapWStringInnerEnumHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapWStringInnerEnumHelper* p_type = static_cast<MapWStringInnerEnumHelper*>(data);
+    const MapWStringInnerEnumHelper* p_type = static_cast<const MapWStringInnerEnumHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -38540,7 +38540,7 @@ bool MapWStringInnerEnumHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapWStringInnerEnumHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -38557,7 +38557,7 @@ std::function<uint32_t()> MapWStringInnerEnumHelperPubSubType::getSerializedSize
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapWStringInnerEnumHelper*>(data), current_alignment)) +
+                               *static_cast<const MapWStringInnerEnumHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -38580,7 +38580,7 @@ void MapWStringInnerEnumHelperPubSubType::deleteData(
 }
 
 bool MapWStringInnerEnumHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -38589,7 +38589,7 @@ bool MapWStringInnerEnumHelperPubSubType::getKey(
         return false;
     }
 
-    MapWStringInnerEnumHelper* p_type = static_cast<MapWStringInnerEnumHelper*>(data);
+    const MapWStringInnerEnumHelper* p_type = static_cast<const MapWStringInnerEnumHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -38657,11 +38657,11 @@ MapWStringInnerBitMaskHelperPubSubType::~MapWStringInnerBitMaskHelperPubSubType(
 }
 
 bool MapWStringInnerBitMaskHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapWStringInnerBitMaskHelper* p_type = static_cast<MapWStringInnerBitMaskHelper*>(data);
+    const MapWStringInnerBitMaskHelper* p_type = static_cast<const MapWStringInnerBitMaskHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -38733,7 +38733,7 @@ bool MapWStringInnerBitMaskHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapWStringInnerBitMaskHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -38750,7 +38750,7 @@ std::function<uint32_t()> MapWStringInnerBitMaskHelperPubSubType::getSerializedS
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapWStringInnerBitMaskHelper*>(data), current_alignment)) +
+                               *static_cast<const MapWStringInnerBitMaskHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -38773,7 +38773,7 @@ void MapWStringInnerBitMaskHelperPubSubType::deleteData(
 }
 
 bool MapWStringInnerBitMaskHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -38782,7 +38782,7 @@ bool MapWStringInnerBitMaskHelperPubSubType::getKey(
         return false;
     }
 
-    MapWStringInnerBitMaskHelper* p_type = static_cast<MapWStringInnerBitMaskHelper*>(data);
+    const MapWStringInnerBitMaskHelper* p_type = static_cast<const MapWStringInnerBitMaskHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -38850,11 +38850,11 @@ MapWStringInnerAliasHelperPubSubType::~MapWStringInnerAliasHelperPubSubType()
 }
 
 bool MapWStringInnerAliasHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapWStringInnerAliasHelper* p_type = static_cast<MapWStringInnerAliasHelper*>(data);
+    const MapWStringInnerAliasHelper* p_type = static_cast<const MapWStringInnerAliasHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -38926,7 +38926,7 @@ bool MapWStringInnerAliasHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapWStringInnerAliasHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -38943,7 +38943,7 @@ std::function<uint32_t()> MapWStringInnerAliasHelperPubSubType::getSerializedSiz
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapWStringInnerAliasHelper*>(data), current_alignment)) +
+                               *static_cast<const MapWStringInnerAliasHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -38966,7 +38966,7 @@ void MapWStringInnerAliasHelperPubSubType::deleteData(
 }
 
 bool MapWStringInnerAliasHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -38975,7 +38975,7 @@ bool MapWStringInnerAliasHelperPubSubType::getKey(
         return false;
     }
 
-    MapWStringInnerAliasHelper* p_type = static_cast<MapWStringInnerAliasHelper*>(data);
+    const MapWStringInnerAliasHelper* p_type = static_cast<const MapWStringInnerAliasHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -39043,11 +39043,11 @@ MapWStringInnerAliasArrayHelperPubSubType::~MapWStringInnerAliasArrayHelperPubSu
 }
 
 bool MapWStringInnerAliasArrayHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapWStringInnerAliasArrayHelper* p_type = static_cast<MapWStringInnerAliasArrayHelper*>(data);
+    const MapWStringInnerAliasArrayHelper* p_type = static_cast<const MapWStringInnerAliasArrayHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -39119,7 +39119,7 @@ bool MapWStringInnerAliasArrayHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapWStringInnerAliasArrayHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -39136,7 +39136,7 @@ std::function<uint32_t()> MapWStringInnerAliasArrayHelperPubSubType::getSerializ
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapWStringInnerAliasArrayHelper*>(data), current_alignment)) +
+                               *static_cast<const MapWStringInnerAliasArrayHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -39159,7 +39159,7 @@ void MapWStringInnerAliasArrayHelperPubSubType::deleteData(
 }
 
 bool MapWStringInnerAliasArrayHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -39168,7 +39168,7 @@ bool MapWStringInnerAliasArrayHelperPubSubType::getKey(
         return false;
     }
 
-    MapWStringInnerAliasArrayHelper* p_type = static_cast<MapWStringInnerAliasArrayHelper*>(data);
+    const MapWStringInnerAliasArrayHelper* p_type = static_cast<const MapWStringInnerAliasArrayHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -39236,11 +39236,11 @@ MapWStringInnerAliasSequenceHelperPubSubType::~MapWStringInnerAliasSequenceHelpe
 }
 
 bool MapWStringInnerAliasSequenceHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapWStringInnerAliasSequenceHelper* p_type = static_cast<MapWStringInnerAliasSequenceHelper*>(data);
+    const MapWStringInnerAliasSequenceHelper* p_type = static_cast<const MapWStringInnerAliasSequenceHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -39312,7 +39312,7 @@ bool MapWStringInnerAliasSequenceHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapWStringInnerAliasSequenceHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -39329,7 +39329,7 @@ std::function<uint32_t()> MapWStringInnerAliasSequenceHelperPubSubType::getSeria
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapWStringInnerAliasSequenceHelper*>(data), current_alignment)) +
+                               *static_cast<const MapWStringInnerAliasSequenceHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -39352,7 +39352,7 @@ void MapWStringInnerAliasSequenceHelperPubSubType::deleteData(
 }
 
 bool MapWStringInnerAliasSequenceHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -39361,7 +39361,7 @@ bool MapWStringInnerAliasSequenceHelperPubSubType::getKey(
         return false;
     }
 
-    MapWStringInnerAliasSequenceHelper* p_type = static_cast<MapWStringInnerAliasSequenceHelper*>(data);
+    const MapWStringInnerAliasSequenceHelper* p_type = static_cast<const MapWStringInnerAliasSequenceHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -39429,11 +39429,11 @@ MapWStringInnerAliasMapHelperPubSubType::~MapWStringInnerAliasMapHelperPubSubTyp
 }
 
 bool MapWStringInnerAliasMapHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapWStringInnerAliasMapHelper* p_type = static_cast<MapWStringInnerAliasMapHelper*>(data);
+    const MapWStringInnerAliasMapHelper* p_type = static_cast<const MapWStringInnerAliasMapHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -39505,7 +39505,7 @@ bool MapWStringInnerAliasMapHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapWStringInnerAliasMapHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -39522,7 +39522,7 @@ std::function<uint32_t()> MapWStringInnerAliasMapHelperPubSubType::getSerialized
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapWStringInnerAliasMapHelper*>(data), current_alignment)) +
+                               *static_cast<const MapWStringInnerAliasMapHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -39545,7 +39545,7 @@ void MapWStringInnerAliasMapHelperPubSubType::deleteData(
 }
 
 bool MapWStringInnerAliasMapHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -39554,7 +39554,7 @@ bool MapWStringInnerAliasMapHelperPubSubType::getKey(
         return false;
     }
 
-    MapWStringInnerAliasMapHelper* p_type = static_cast<MapWStringInnerAliasMapHelper*>(data);
+    const MapWStringInnerAliasMapHelper* p_type = static_cast<const MapWStringInnerAliasMapHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -39622,11 +39622,11 @@ MapWStringInnerUnionHelperPubSubType::~MapWStringInnerUnionHelperPubSubType()
 }
 
 bool MapWStringInnerUnionHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapWStringInnerUnionHelper* p_type = static_cast<MapWStringInnerUnionHelper*>(data);
+    const MapWStringInnerUnionHelper* p_type = static_cast<const MapWStringInnerUnionHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -39698,7 +39698,7 @@ bool MapWStringInnerUnionHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapWStringInnerUnionHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -39715,7 +39715,7 @@ std::function<uint32_t()> MapWStringInnerUnionHelperPubSubType::getSerializedSiz
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapWStringInnerUnionHelper*>(data), current_alignment)) +
+                               *static_cast<const MapWStringInnerUnionHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -39738,7 +39738,7 @@ void MapWStringInnerUnionHelperPubSubType::deleteData(
 }
 
 bool MapWStringInnerUnionHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -39747,7 +39747,7 @@ bool MapWStringInnerUnionHelperPubSubType::getKey(
         return false;
     }
 
-    MapWStringInnerUnionHelper* p_type = static_cast<MapWStringInnerUnionHelper*>(data);
+    const MapWStringInnerUnionHelper* p_type = static_cast<const MapWStringInnerUnionHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -39815,11 +39815,11 @@ MapWStringInnerStructureHelperPubSubType::~MapWStringInnerStructureHelperPubSubT
 }
 
 bool MapWStringInnerStructureHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapWStringInnerStructureHelper* p_type = static_cast<MapWStringInnerStructureHelper*>(data);
+    const MapWStringInnerStructureHelper* p_type = static_cast<const MapWStringInnerStructureHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -39891,7 +39891,7 @@ bool MapWStringInnerStructureHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapWStringInnerStructureHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -39908,7 +39908,7 @@ std::function<uint32_t()> MapWStringInnerStructureHelperPubSubType::getSerialize
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapWStringInnerStructureHelper*>(data), current_alignment)) +
+                               *static_cast<const MapWStringInnerStructureHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -39931,7 +39931,7 @@ void MapWStringInnerStructureHelperPubSubType::deleteData(
 }
 
 bool MapWStringInnerStructureHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -39940,7 +39940,7 @@ bool MapWStringInnerStructureHelperPubSubType::getKey(
         return false;
     }
 
-    MapWStringInnerStructureHelper* p_type = static_cast<MapWStringInnerStructureHelper*>(data);
+    const MapWStringInnerStructureHelper* p_type = static_cast<const MapWStringInnerStructureHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -40008,11 +40008,11 @@ MapWStringInnerBitsetHelperPubSubType::~MapWStringInnerBitsetHelperPubSubType()
 }
 
 bool MapWStringInnerBitsetHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapWStringInnerBitsetHelper* p_type = static_cast<MapWStringInnerBitsetHelper*>(data);
+    const MapWStringInnerBitsetHelper* p_type = static_cast<const MapWStringInnerBitsetHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -40084,7 +40084,7 @@ bool MapWStringInnerBitsetHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapWStringInnerBitsetHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -40101,7 +40101,7 @@ std::function<uint32_t()> MapWStringInnerBitsetHelperPubSubType::getSerializedSi
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapWStringInnerBitsetHelper*>(data), current_alignment)) +
+                               *static_cast<const MapWStringInnerBitsetHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -40124,7 +40124,7 @@ void MapWStringInnerBitsetHelperPubSubType::deleteData(
 }
 
 bool MapWStringInnerBitsetHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -40133,7 +40133,7 @@ bool MapWStringInnerBitsetHelperPubSubType::getKey(
         return false;
     }
 
-    MapWStringInnerBitsetHelper* p_type = static_cast<MapWStringInnerBitsetHelper*>(data);
+    const MapWStringInnerBitsetHelper* p_type = static_cast<const MapWStringInnerBitsetHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -40201,11 +40201,11 @@ MapInnerAliasBoundedStringHelperShortPubSubType::~MapInnerAliasBoundedStringHelp
 }
 
 bool MapInnerAliasBoundedStringHelperShortPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapInnerAliasBoundedStringHelperShort* p_type = static_cast<MapInnerAliasBoundedStringHelperShort*>(data);
+    const MapInnerAliasBoundedStringHelperShort* p_type = static_cast<const MapInnerAliasBoundedStringHelperShort*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -40277,7 +40277,7 @@ bool MapInnerAliasBoundedStringHelperShortPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapInnerAliasBoundedStringHelperShortPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -40294,7 +40294,7 @@ std::function<uint32_t()> MapInnerAliasBoundedStringHelperShortPubSubType::getSe
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapInnerAliasBoundedStringHelperShort*>(data), current_alignment)) +
+                               *static_cast<const MapInnerAliasBoundedStringHelperShort*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -40317,7 +40317,7 @@ void MapInnerAliasBoundedStringHelperShortPubSubType::deleteData(
 }
 
 bool MapInnerAliasBoundedStringHelperShortPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -40326,7 +40326,7 @@ bool MapInnerAliasBoundedStringHelperShortPubSubType::getKey(
         return false;
     }
 
-    MapInnerAliasBoundedStringHelperShort* p_type = static_cast<MapInnerAliasBoundedStringHelperShort*>(data);
+    const MapInnerAliasBoundedStringHelperShort* p_type = static_cast<const MapInnerAliasBoundedStringHelperShort*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -40394,11 +40394,11 @@ MapInnerAliasBoundedStringHelperUShortPubSubType::~MapInnerAliasBoundedStringHel
 }
 
 bool MapInnerAliasBoundedStringHelperUShortPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapInnerAliasBoundedStringHelperUShort* p_type = static_cast<MapInnerAliasBoundedStringHelperUShort*>(data);
+    const MapInnerAliasBoundedStringHelperUShort* p_type = static_cast<const MapInnerAliasBoundedStringHelperUShort*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -40470,7 +40470,7 @@ bool MapInnerAliasBoundedStringHelperUShortPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapInnerAliasBoundedStringHelperUShortPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -40487,7 +40487,7 @@ std::function<uint32_t()> MapInnerAliasBoundedStringHelperUShortPubSubType::getS
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapInnerAliasBoundedStringHelperUShort*>(data), current_alignment)) +
+                               *static_cast<const MapInnerAliasBoundedStringHelperUShort*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -40510,7 +40510,7 @@ void MapInnerAliasBoundedStringHelperUShortPubSubType::deleteData(
 }
 
 bool MapInnerAliasBoundedStringHelperUShortPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -40519,7 +40519,7 @@ bool MapInnerAliasBoundedStringHelperUShortPubSubType::getKey(
         return false;
     }
 
-    MapInnerAliasBoundedStringHelperUShort* p_type = static_cast<MapInnerAliasBoundedStringHelperUShort*>(data);
+    const MapInnerAliasBoundedStringHelperUShort* p_type = static_cast<const MapInnerAliasBoundedStringHelperUShort*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -40587,11 +40587,11 @@ MapInnerAliasBoundedStringHelperLongPubSubType::~MapInnerAliasBoundedStringHelpe
 }
 
 bool MapInnerAliasBoundedStringHelperLongPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapInnerAliasBoundedStringHelperLong* p_type = static_cast<MapInnerAliasBoundedStringHelperLong*>(data);
+    const MapInnerAliasBoundedStringHelperLong* p_type = static_cast<const MapInnerAliasBoundedStringHelperLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -40663,7 +40663,7 @@ bool MapInnerAliasBoundedStringHelperLongPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapInnerAliasBoundedStringHelperLongPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -40680,7 +40680,7 @@ std::function<uint32_t()> MapInnerAliasBoundedStringHelperLongPubSubType::getSer
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapInnerAliasBoundedStringHelperLong*>(data), current_alignment)) +
+                               *static_cast<const MapInnerAliasBoundedStringHelperLong*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -40703,7 +40703,7 @@ void MapInnerAliasBoundedStringHelperLongPubSubType::deleteData(
 }
 
 bool MapInnerAliasBoundedStringHelperLongPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -40712,7 +40712,7 @@ bool MapInnerAliasBoundedStringHelperLongPubSubType::getKey(
         return false;
     }
 
-    MapInnerAliasBoundedStringHelperLong* p_type = static_cast<MapInnerAliasBoundedStringHelperLong*>(data);
+    const MapInnerAliasBoundedStringHelperLong* p_type = static_cast<const MapInnerAliasBoundedStringHelperLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -40780,11 +40780,11 @@ MapInnerAliasBoundedStringHelperULongPubSubType::~MapInnerAliasBoundedStringHelp
 }
 
 bool MapInnerAliasBoundedStringHelperULongPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapInnerAliasBoundedStringHelperULong* p_type = static_cast<MapInnerAliasBoundedStringHelperULong*>(data);
+    const MapInnerAliasBoundedStringHelperULong* p_type = static_cast<const MapInnerAliasBoundedStringHelperULong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -40856,7 +40856,7 @@ bool MapInnerAliasBoundedStringHelperULongPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapInnerAliasBoundedStringHelperULongPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -40873,7 +40873,7 @@ std::function<uint32_t()> MapInnerAliasBoundedStringHelperULongPubSubType::getSe
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapInnerAliasBoundedStringHelperULong*>(data), current_alignment)) +
+                               *static_cast<const MapInnerAliasBoundedStringHelperULong*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -40896,7 +40896,7 @@ void MapInnerAliasBoundedStringHelperULongPubSubType::deleteData(
 }
 
 bool MapInnerAliasBoundedStringHelperULongPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -40905,7 +40905,7 @@ bool MapInnerAliasBoundedStringHelperULongPubSubType::getKey(
         return false;
     }
 
-    MapInnerAliasBoundedStringHelperULong* p_type = static_cast<MapInnerAliasBoundedStringHelperULong*>(data);
+    const MapInnerAliasBoundedStringHelperULong* p_type = static_cast<const MapInnerAliasBoundedStringHelperULong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -40973,11 +40973,11 @@ MapInnerAliasBoundedStringHelperLongLongPubSubType::~MapInnerAliasBoundedStringH
 }
 
 bool MapInnerAliasBoundedStringHelperLongLongPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapInnerAliasBoundedStringHelperLongLong* p_type = static_cast<MapInnerAliasBoundedStringHelperLongLong*>(data);
+    const MapInnerAliasBoundedStringHelperLongLong* p_type = static_cast<const MapInnerAliasBoundedStringHelperLongLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -41049,7 +41049,7 @@ bool MapInnerAliasBoundedStringHelperLongLongPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapInnerAliasBoundedStringHelperLongLongPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -41066,7 +41066,7 @@ std::function<uint32_t()> MapInnerAliasBoundedStringHelperLongLongPubSubType::ge
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapInnerAliasBoundedStringHelperLongLong*>(data), current_alignment)) +
+                               *static_cast<const MapInnerAliasBoundedStringHelperLongLong*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -41089,7 +41089,7 @@ void MapInnerAliasBoundedStringHelperLongLongPubSubType::deleteData(
 }
 
 bool MapInnerAliasBoundedStringHelperLongLongPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -41098,7 +41098,7 @@ bool MapInnerAliasBoundedStringHelperLongLongPubSubType::getKey(
         return false;
     }
 
-    MapInnerAliasBoundedStringHelperLongLong* p_type = static_cast<MapInnerAliasBoundedStringHelperLongLong*>(data);
+    const MapInnerAliasBoundedStringHelperLongLong* p_type = static_cast<const MapInnerAliasBoundedStringHelperLongLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -41166,11 +41166,11 @@ MapInnerAliasBoundedStringHelperULongLongPubSubType::~MapInnerAliasBoundedString
 }
 
 bool MapInnerAliasBoundedStringHelperULongLongPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapInnerAliasBoundedStringHelperULongLong* p_type = static_cast<MapInnerAliasBoundedStringHelperULongLong*>(data);
+    const MapInnerAliasBoundedStringHelperULongLong* p_type = static_cast<const MapInnerAliasBoundedStringHelperULongLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -41242,7 +41242,7 @@ bool MapInnerAliasBoundedStringHelperULongLongPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapInnerAliasBoundedStringHelperULongLongPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -41259,7 +41259,7 @@ std::function<uint32_t()> MapInnerAliasBoundedStringHelperULongLongPubSubType::g
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapInnerAliasBoundedStringHelperULongLong*>(data), current_alignment)) +
+                               *static_cast<const MapInnerAliasBoundedStringHelperULongLong*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -41282,7 +41282,7 @@ void MapInnerAliasBoundedStringHelperULongLongPubSubType::deleteData(
 }
 
 bool MapInnerAliasBoundedStringHelperULongLongPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -41291,7 +41291,7 @@ bool MapInnerAliasBoundedStringHelperULongLongPubSubType::getKey(
         return false;
     }
 
-    MapInnerAliasBoundedStringHelperULongLong* p_type = static_cast<MapInnerAliasBoundedStringHelperULongLong*>(data);
+    const MapInnerAliasBoundedStringHelperULongLong* p_type = static_cast<const MapInnerAliasBoundedStringHelperULongLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -41359,11 +41359,11 @@ MapInnerAliasBoundedStringHelperFloatPubSubType::~MapInnerAliasBoundedStringHelp
 }
 
 bool MapInnerAliasBoundedStringHelperFloatPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapInnerAliasBoundedStringHelperFloat* p_type = static_cast<MapInnerAliasBoundedStringHelperFloat*>(data);
+    const MapInnerAliasBoundedStringHelperFloat* p_type = static_cast<const MapInnerAliasBoundedStringHelperFloat*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -41435,7 +41435,7 @@ bool MapInnerAliasBoundedStringHelperFloatPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapInnerAliasBoundedStringHelperFloatPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -41452,7 +41452,7 @@ std::function<uint32_t()> MapInnerAliasBoundedStringHelperFloatPubSubType::getSe
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapInnerAliasBoundedStringHelperFloat*>(data), current_alignment)) +
+                               *static_cast<const MapInnerAliasBoundedStringHelperFloat*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -41475,7 +41475,7 @@ void MapInnerAliasBoundedStringHelperFloatPubSubType::deleteData(
 }
 
 bool MapInnerAliasBoundedStringHelperFloatPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -41484,7 +41484,7 @@ bool MapInnerAliasBoundedStringHelperFloatPubSubType::getKey(
         return false;
     }
 
-    MapInnerAliasBoundedStringHelperFloat* p_type = static_cast<MapInnerAliasBoundedStringHelperFloat*>(data);
+    const MapInnerAliasBoundedStringHelperFloat* p_type = static_cast<const MapInnerAliasBoundedStringHelperFloat*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -41552,11 +41552,11 @@ MapInnerAliasBoundedStringHelperDoublePubSubType::~MapInnerAliasBoundedStringHel
 }
 
 bool MapInnerAliasBoundedStringHelperDoublePubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapInnerAliasBoundedStringHelperDouble* p_type = static_cast<MapInnerAliasBoundedStringHelperDouble*>(data);
+    const MapInnerAliasBoundedStringHelperDouble* p_type = static_cast<const MapInnerAliasBoundedStringHelperDouble*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -41628,7 +41628,7 @@ bool MapInnerAliasBoundedStringHelperDoublePubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapInnerAliasBoundedStringHelperDoublePubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -41645,7 +41645,7 @@ std::function<uint32_t()> MapInnerAliasBoundedStringHelperDoublePubSubType::getS
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapInnerAliasBoundedStringHelperDouble*>(data), current_alignment)) +
+                               *static_cast<const MapInnerAliasBoundedStringHelperDouble*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -41668,7 +41668,7 @@ void MapInnerAliasBoundedStringHelperDoublePubSubType::deleteData(
 }
 
 bool MapInnerAliasBoundedStringHelperDoublePubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -41677,7 +41677,7 @@ bool MapInnerAliasBoundedStringHelperDoublePubSubType::getKey(
         return false;
     }
 
-    MapInnerAliasBoundedStringHelperDouble* p_type = static_cast<MapInnerAliasBoundedStringHelperDouble*>(data);
+    const MapInnerAliasBoundedStringHelperDouble* p_type = static_cast<const MapInnerAliasBoundedStringHelperDouble*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -41745,11 +41745,11 @@ MapInnerAliasBoundedStringHelperLongDoublePubSubType::~MapInnerAliasBoundedStrin
 }
 
 bool MapInnerAliasBoundedStringHelperLongDoublePubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapInnerAliasBoundedStringHelperLongDouble* p_type = static_cast<MapInnerAliasBoundedStringHelperLongDouble*>(data);
+    const MapInnerAliasBoundedStringHelperLongDouble* p_type = static_cast<const MapInnerAliasBoundedStringHelperLongDouble*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -41821,7 +41821,7 @@ bool MapInnerAliasBoundedStringHelperLongDoublePubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapInnerAliasBoundedStringHelperLongDoublePubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -41838,7 +41838,7 @@ std::function<uint32_t()> MapInnerAliasBoundedStringHelperLongDoublePubSubType::
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapInnerAliasBoundedStringHelperLongDouble*>(data), current_alignment)) +
+                               *static_cast<const MapInnerAliasBoundedStringHelperLongDouble*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -41861,7 +41861,7 @@ void MapInnerAliasBoundedStringHelperLongDoublePubSubType::deleteData(
 }
 
 bool MapInnerAliasBoundedStringHelperLongDoublePubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -41870,7 +41870,7 @@ bool MapInnerAliasBoundedStringHelperLongDoublePubSubType::getKey(
         return false;
     }
 
-    MapInnerAliasBoundedStringHelperLongDouble* p_type = static_cast<MapInnerAliasBoundedStringHelperLongDouble*>(data);
+    const MapInnerAliasBoundedStringHelperLongDouble* p_type = static_cast<const MapInnerAliasBoundedStringHelperLongDouble*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -41938,11 +41938,11 @@ MapInnerAliasBoundedStringHelperBooleanPubSubType::~MapInnerAliasBoundedStringHe
 }
 
 bool MapInnerAliasBoundedStringHelperBooleanPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapInnerAliasBoundedStringHelperBoolean* p_type = static_cast<MapInnerAliasBoundedStringHelperBoolean*>(data);
+    const MapInnerAliasBoundedStringHelperBoolean* p_type = static_cast<const MapInnerAliasBoundedStringHelperBoolean*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -42014,7 +42014,7 @@ bool MapInnerAliasBoundedStringHelperBooleanPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapInnerAliasBoundedStringHelperBooleanPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -42031,7 +42031,7 @@ std::function<uint32_t()> MapInnerAliasBoundedStringHelperBooleanPubSubType::get
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapInnerAliasBoundedStringHelperBoolean*>(data), current_alignment)) +
+                               *static_cast<const MapInnerAliasBoundedStringHelperBoolean*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -42054,7 +42054,7 @@ void MapInnerAliasBoundedStringHelperBooleanPubSubType::deleteData(
 }
 
 bool MapInnerAliasBoundedStringHelperBooleanPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -42063,7 +42063,7 @@ bool MapInnerAliasBoundedStringHelperBooleanPubSubType::getKey(
         return false;
     }
 
-    MapInnerAliasBoundedStringHelperBoolean* p_type = static_cast<MapInnerAliasBoundedStringHelperBoolean*>(data);
+    const MapInnerAliasBoundedStringHelperBoolean* p_type = static_cast<const MapInnerAliasBoundedStringHelperBoolean*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -42131,11 +42131,11 @@ MapInnerAliasBoundedStringHelperOctetPubSubType::~MapInnerAliasBoundedStringHelp
 }
 
 bool MapInnerAliasBoundedStringHelperOctetPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapInnerAliasBoundedStringHelperOctet* p_type = static_cast<MapInnerAliasBoundedStringHelperOctet*>(data);
+    const MapInnerAliasBoundedStringHelperOctet* p_type = static_cast<const MapInnerAliasBoundedStringHelperOctet*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -42207,7 +42207,7 @@ bool MapInnerAliasBoundedStringHelperOctetPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapInnerAliasBoundedStringHelperOctetPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -42224,7 +42224,7 @@ std::function<uint32_t()> MapInnerAliasBoundedStringHelperOctetPubSubType::getSe
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapInnerAliasBoundedStringHelperOctet*>(data), current_alignment)) +
+                               *static_cast<const MapInnerAliasBoundedStringHelperOctet*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -42247,7 +42247,7 @@ void MapInnerAliasBoundedStringHelperOctetPubSubType::deleteData(
 }
 
 bool MapInnerAliasBoundedStringHelperOctetPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -42256,7 +42256,7 @@ bool MapInnerAliasBoundedStringHelperOctetPubSubType::getKey(
         return false;
     }
 
-    MapInnerAliasBoundedStringHelperOctet* p_type = static_cast<MapInnerAliasBoundedStringHelperOctet*>(data);
+    const MapInnerAliasBoundedStringHelperOctet* p_type = static_cast<const MapInnerAliasBoundedStringHelperOctet*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -42324,11 +42324,11 @@ MapInnerAliasBoundedStringHelperCharPubSubType::~MapInnerAliasBoundedStringHelpe
 }
 
 bool MapInnerAliasBoundedStringHelperCharPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapInnerAliasBoundedStringHelperChar* p_type = static_cast<MapInnerAliasBoundedStringHelperChar*>(data);
+    const MapInnerAliasBoundedStringHelperChar* p_type = static_cast<const MapInnerAliasBoundedStringHelperChar*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -42400,7 +42400,7 @@ bool MapInnerAliasBoundedStringHelperCharPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapInnerAliasBoundedStringHelperCharPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -42417,7 +42417,7 @@ std::function<uint32_t()> MapInnerAliasBoundedStringHelperCharPubSubType::getSer
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapInnerAliasBoundedStringHelperChar*>(data), current_alignment)) +
+                               *static_cast<const MapInnerAliasBoundedStringHelperChar*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -42440,7 +42440,7 @@ void MapInnerAliasBoundedStringHelperCharPubSubType::deleteData(
 }
 
 bool MapInnerAliasBoundedStringHelperCharPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -42449,7 +42449,7 @@ bool MapInnerAliasBoundedStringHelperCharPubSubType::getKey(
         return false;
     }
 
-    MapInnerAliasBoundedStringHelperChar* p_type = static_cast<MapInnerAliasBoundedStringHelperChar*>(data);
+    const MapInnerAliasBoundedStringHelperChar* p_type = static_cast<const MapInnerAliasBoundedStringHelperChar*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -42517,11 +42517,11 @@ MapInnerAliasBoundedStringHelperWCharPubSubType::~MapInnerAliasBoundedStringHelp
 }
 
 bool MapInnerAliasBoundedStringHelperWCharPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapInnerAliasBoundedStringHelperWChar* p_type = static_cast<MapInnerAliasBoundedStringHelperWChar*>(data);
+    const MapInnerAliasBoundedStringHelperWChar* p_type = static_cast<const MapInnerAliasBoundedStringHelperWChar*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -42593,7 +42593,7 @@ bool MapInnerAliasBoundedStringHelperWCharPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapInnerAliasBoundedStringHelperWCharPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -42610,7 +42610,7 @@ std::function<uint32_t()> MapInnerAliasBoundedStringHelperWCharPubSubType::getSe
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapInnerAliasBoundedStringHelperWChar*>(data), current_alignment)) +
+                               *static_cast<const MapInnerAliasBoundedStringHelperWChar*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -42633,7 +42633,7 @@ void MapInnerAliasBoundedStringHelperWCharPubSubType::deleteData(
 }
 
 bool MapInnerAliasBoundedStringHelperWCharPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -42642,7 +42642,7 @@ bool MapInnerAliasBoundedStringHelperWCharPubSubType::getKey(
         return false;
     }
 
-    MapInnerAliasBoundedStringHelperWChar* p_type = static_cast<MapInnerAliasBoundedStringHelperWChar*>(data);
+    const MapInnerAliasBoundedStringHelperWChar* p_type = static_cast<const MapInnerAliasBoundedStringHelperWChar*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -42710,11 +42710,11 @@ MapInnerAliasBoundedStringHelperStringPubSubType::~MapInnerAliasBoundedStringHel
 }
 
 bool MapInnerAliasBoundedStringHelperStringPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapInnerAliasBoundedStringHelperString* p_type = static_cast<MapInnerAliasBoundedStringHelperString*>(data);
+    const MapInnerAliasBoundedStringHelperString* p_type = static_cast<const MapInnerAliasBoundedStringHelperString*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -42786,7 +42786,7 @@ bool MapInnerAliasBoundedStringHelperStringPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapInnerAliasBoundedStringHelperStringPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -42803,7 +42803,7 @@ std::function<uint32_t()> MapInnerAliasBoundedStringHelperStringPubSubType::getS
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapInnerAliasBoundedStringHelperString*>(data), current_alignment)) +
+                               *static_cast<const MapInnerAliasBoundedStringHelperString*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -42826,7 +42826,7 @@ void MapInnerAliasBoundedStringHelperStringPubSubType::deleteData(
 }
 
 bool MapInnerAliasBoundedStringHelperStringPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -42835,7 +42835,7 @@ bool MapInnerAliasBoundedStringHelperStringPubSubType::getKey(
         return false;
     }
 
-    MapInnerAliasBoundedStringHelperString* p_type = static_cast<MapInnerAliasBoundedStringHelperString*>(data);
+    const MapInnerAliasBoundedStringHelperString* p_type = static_cast<const MapInnerAliasBoundedStringHelperString*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -42903,11 +42903,11 @@ MapInnerAliasBoundedStringHelperWStringPubSubType::~MapInnerAliasBoundedStringHe
 }
 
 bool MapInnerAliasBoundedStringHelperWStringPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapInnerAliasBoundedStringHelperWString* p_type = static_cast<MapInnerAliasBoundedStringHelperWString*>(data);
+    const MapInnerAliasBoundedStringHelperWString* p_type = static_cast<const MapInnerAliasBoundedStringHelperWString*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -42979,7 +42979,7 @@ bool MapInnerAliasBoundedStringHelperWStringPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapInnerAliasBoundedStringHelperWStringPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -42996,7 +42996,7 @@ std::function<uint32_t()> MapInnerAliasBoundedStringHelperWStringPubSubType::get
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapInnerAliasBoundedStringHelperWString*>(data), current_alignment)) +
+                               *static_cast<const MapInnerAliasBoundedStringHelperWString*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -43019,7 +43019,7 @@ void MapInnerAliasBoundedStringHelperWStringPubSubType::deleteData(
 }
 
 bool MapInnerAliasBoundedStringHelperWStringPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -43028,7 +43028,7 @@ bool MapInnerAliasBoundedStringHelperWStringPubSubType::getKey(
         return false;
     }
 
-    MapInnerAliasBoundedStringHelperWString* p_type = static_cast<MapInnerAliasBoundedStringHelperWString*>(data);
+    const MapInnerAliasBoundedStringHelperWString* p_type = static_cast<const MapInnerAliasBoundedStringHelperWString*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -43096,11 +43096,11 @@ MapInnerAliasBoundedStringHelperInnerAliasBoundedStringHelperPubSubType::~MapInn
 }
 
 bool MapInnerAliasBoundedStringHelperInnerAliasBoundedStringHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapInnerAliasBoundedStringHelperInnerAliasBoundedStringHelper* p_type = static_cast<MapInnerAliasBoundedStringHelperInnerAliasBoundedStringHelper*>(data);
+    const MapInnerAliasBoundedStringHelperInnerAliasBoundedStringHelper* p_type = static_cast<const MapInnerAliasBoundedStringHelperInnerAliasBoundedStringHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -43172,7 +43172,7 @@ bool MapInnerAliasBoundedStringHelperInnerAliasBoundedStringHelperPubSubType::de
 }
 
 std::function<uint32_t()> MapInnerAliasBoundedStringHelperInnerAliasBoundedStringHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -43189,7 +43189,7 @@ std::function<uint32_t()> MapInnerAliasBoundedStringHelperInnerAliasBoundedStrin
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapInnerAliasBoundedStringHelperInnerAliasBoundedStringHelper*>(data), current_alignment)) +
+                               *static_cast<const MapInnerAliasBoundedStringHelperInnerAliasBoundedStringHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -43212,7 +43212,7 @@ void MapInnerAliasBoundedStringHelperInnerAliasBoundedStringHelperPubSubType::de
 }
 
 bool MapInnerAliasBoundedStringHelperInnerAliasBoundedStringHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -43221,7 +43221,7 @@ bool MapInnerAliasBoundedStringHelperInnerAliasBoundedStringHelperPubSubType::ge
         return false;
     }
 
-    MapInnerAliasBoundedStringHelperInnerAliasBoundedStringHelper* p_type = static_cast<MapInnerAliasBoundedStringHelperInnerAliasBoundedStringHelper*>(data);
+    const MapInnerAliasBoundedStringHelperInnerAliasBoundedStringHelper* p_type = static_cast<const MapInnerAliasBoundedStringHelperInnerAliasBoundedStringHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -43289,11 +43289,11 @@ MapInnerAliasBoundedStringHelperInnerAliasBoundedWStringHelperPubSubType::~MapIn
 }
 
 bool MapInnerAliasBoundedStringHelperInnerAliasBoundedWStringHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapInnerAliasBoundedStringHelperInnerAliasBoundedWStringHelper* p_type = static_cast<MapInnerAliasBoundedStringHelperInnerAliasBoundedWStringHelper*>(data);
+    const MapInnerAliasBoundedStringHelperInnerAliasBoundedWStringHelper* p_type = static_cast<const MapInnerAliasBoundedStringHelperInnerAliasBoundedWStringHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -43365,7 +43365,7 @@ bool MapInnerAliasBoundedStringHelperInnerAliasBoundedWStringHelperPubSubType::d
 }
 
 std::function<uint32_t()> MapInnerAliasBoundedStringHelperInnerAliasBoundedWStringHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -43382,7 +43382,7 @@ std::function<uint32_t()> MapInnerAliasBoundedStringHelperInnerAliasBoundedWStri
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapInnerAliasBoundedStringHelperInnerAliasBoundedWStringHelper*>(data), current_alignment)) +
+                               *static_cast<const MapInnerAliasBoundedStringHelperInnerAliasBoundedWStringHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -43405,7 +43405,7 @@ void MapInnerAliasBoundedStringHelperInnerAliasBoundedWStringHelperPubSubType::d
 }
 
 bool MapInnerAliasBoundedStringHelperInnerAliasBoundedWStringHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -43414,7 +43414,7 @@ bool MapInnerAliasBoundedStringHelperInnerAliasBoundedWStringHelperPubSubType::g
         return false;
     }
 
-    MapInnerAliasBoundedStringHelperInnerAliasBoundedWStringHelper* p_type = static_cast<MapInnerAliasBoundedStringHelperInnerAliasBoundedWStringHelper*>(data);
+    const MapInnerAliasBoundedStringHelperInnerAliasBoundedWStringHelper* p_type = static_cast<const MapInnerAliasBoundedStringHelperInnerAliasBoundedWStringHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -43482,11 +43482,11 @@ MapInnerAliasBoundedStringHelperInnerEnumHelperPubSubType::~MapInnerAliasBounded
 }
 
 bool MapInnerAliasBoundedStringHelperInnerEnumHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapInnerAliasBoundedStringHelperInnerEnumHelper* p_type = static_cast<MapInnerAliasBoundedStringHelperInnerEnumHelper*>(data);
+    const MapInnerAliasBoundedStringHelperInnerEnumHelper* p_type = static_cast<const MapInnerAliasBoundedStringHelperInnerEnumHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -43558,7 +43558,7 @@ bool MapInnerAliasBoundedStringHelperInnerEnumHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapInnerAliasBoundedStringHelperInnerEnumHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -43575,7 +43575,7 @@ std::function<uint32_t()> MapInnerAliasBoundedStringHelperInnerEnumHelperPubSubT
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapInnerAliasBoundedStringHelperInnerEnumHelper*>(data), current_alignment)) +
+                               *static_cast<const MapInnerAliasBoundedStringHelperInnerEnumHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -43598,7 +43598,7 @@ void MapInnerAliasBoundedStringHelperInnerEnumHelperPubSubType::deleteData(
 }
 
 bool MapInnerAliasBoundedStringHelperInnerEnumHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -43607,7 +43607,7 @@ bool MapInnerAliasBoundedStringHelperInnerEnumHelperPubSubType::getKey(
         return false;
     }
 
-    MapInnerAliasBoundedStringHelperInnerEnumHelper* p_type = static_cast<MapInnerAliasBoundedStringHelperInnerEnumHelper*>(data);
+    const MapInnerAliasBoundedStringHelperInnerEnumHelper* p_type = static_cast<const MapInnerAliasBoundedStringHelperInnerEnumHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -43675,11 +43675,11 @@ MapInnerAliasBoundedStringHelperInnerBitMaskHelperPubSubType::~MapInnerAliasBoun
 }
 
 bool MapInnerAliasBoundedStringHelperInnerBitMaskHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapInnerAliasBoundedStringHelperInnerBitMaskHelper* p_type = static_cast<MapInnerAliasBoundedStringHelperInnerBitMaskHelper*>(data);
+    const MapInnerAliasBoundedStringHelperInnerBitMaskHelper* p_type = static_cast<const MapInnerAliasBoundedStringHelperInnerBitMaskHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -43751,7 +43751,7 @@ bool MapInnerAliasBoundedStringHelperInnerBitMaskHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapInnerAliasBoundedStringHelperInnerBitMaskHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -43768,7 +43768,7 @@ std::function<uint32_t()> MapInnerAliasBoundedStringHelperInnerBitMaskHelperPubS
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapInnerAliasBoundedStringHelperInnerBitMaskHelper*>(data), current_alignment)) +
+                               *static_cast<const MapInnerAliasBoundedStringHelperInnerBitMaskHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -43791,7 +43791,7 @@ void MapInnerAliasBoundedStringHelperInnerBitMaskHelperPubSubType::deleteData(
 }
 
 bool MapInnerAliasBoundedStringHelperInnerBitMaskHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -43800,7 +43800,7 @@ bool MapInnerAliasBoundedStringHelperInnerBitMaskHelperPubSubType::getKey(
         return false;
     }
 
-    MapInnerAliasBoundedStringHelperInnerBitMaskHelper* p_type = static_cast<MapInnerAliasBoundedStringHelperInnerBitMaskHelper*>(data);
+    const MapInnerAliasBoundedStringHelperInnerBitMaskHelper* p_type = static_cast<const MapInnerAliasBoundedStringHelperInnerBitMaskHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -43868,11 +43868,11 @@ MapInnerAliasBoundedStringHelperInnerAliasHelperPubSubType::~MapInnerAliasBounde
 }
 
 bool MapInnerAliasBoundedStringHelperInnerAliasHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapInnerAliasBoundedStringHelperInnerAliasHelper* p_type = static_cast<MapInnerAliasBoundedStringHelperInnerAliasHelper*>(data);
+    const MapInnerAliasBoundedStringHelperInnerAliasHelper* p_type = static_cast<const MapInnerAliasBoundedStringHelperInnerAliasHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -43944,7 +43944,7 @@ bool MapInnerAliasBoundedStringHelperInnerAliasHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapInnerAliasBoundedStringHelperInnerAliasHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -43961,7 +43961,7 @@ std::function<uint32_t()> MapInnerAliasBoundedStringHelperInnerAliasHelperPubSub
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapInnerAliasBoundedStringHelperInnerAliasHelper*>(data), current_alignment)) +
+                               *static_cast<const MapInnerAliasBoundedStringHelperInnerAliasHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -43984,7 +43984,7 @@ void MapInnerAliasBoundedStringHelperInnerAliasHelperPubSubType::deleteData(
 }
 
 bool MapInnerAliasBoundedStringHelperInnerAliasHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -43993,7 +43993,7 @@ bool MapInnerAliasBoundedStringHelperInnerAliasHelperPubSubType::getKey(
         return false;
     }
 
-    MapInnerAliasBoundedStringHelperInnerAliasHelper* p_type = static_cast<MapInnerAliasBoundedStringHelperInnerAliasHelper*>(data);
+    const MapInnerAliasBoundedStringHelperInnerAliasHelper* p_type = static_cast<const MapInnerAliasBoundedStringHelperInnerAliasHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -44061,11 +44061,11 @@ MapInnerAliasBoundedStringHelperInnerAliasArrayHelperPubSubType::~MapInnerAliasB
 }
 
 bool MapInnerAliasBoundedStringHelperInnerAliasArrayHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapInnerAliasBoundedStringHelperInnerAliasArrayHelper* p_type = static_cast<MapInnerAliasBoundedStringHelperInnerAliasArrayHelper*>(data);
+    const MapInnerAliasBoundedStringHelperInnerAliasArrayHelper* p_type = static_cast<const MapInnerAliasBoundedStringHelperInnerAliasArrayHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -44137,7 +44137,7 @@ bool MapInnerAliasBoundedStringHelperInnerAliasArrayHelperPubSubType::deserializ
 }
 
 std::function<uint32_t()> MapInnerAliasBoundedStringHelperInnerAliasArrayHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -44154,7 +44154,7 @@ std::function<uint32_t()> MapInnerAliasBoundedStringHelperInnerAliasArrayHelperP
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapInnerAliasBoundedStringHelperInnerAliasArrayHelper*>(data), current_alignment)) +
+                               *static_cast<const MapInnerAliasBoundedStringHelperInnerAliasArrayHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -44177,7 +44177,7 @@ void MapInnerAliasBoundedStringHelperInnerAliasArrayHelperPubSubType::deleteData
 }
 
 bool MapInnerAliasBoundedStringHelperInnerAliasArrayHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -44186,7 +44186,7 @@ bool MapInnerAliasBoundedStringHelperInnerAliasArrayHelperPubSubType::getKey(
         return false;
     }
 
-    MapInnerAliasBoundedStringHelperInnerAliasArrayHelper* p_type = static_cast<MapInnerAliasBoundedStringHelperInnerAliasArrayHelper*>(data);
+    const MapInnerAliasBoundedStringHelperInnerAliasArrayHelper* p_type = static_cast<const MapInnerAliasBoundedStringHelperInnerAliasArrayHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -44254,11 +44254,11 @@ MapInnerAliasBoundedStringHelperInnerAliasSequenceHelperPubSubType::~MapInnerAli
 }
 
 bool MapInnerAliasBoundedStringHelperInnerAliasSequenceHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapInnerAliasBoundedStringHelperInnerAliasSequenceHelper* p_type = static_cast<MapInnerAliasBoundedStringHelperInnerAliasSequenceHelper*>(data);
+    const MapInnerAliasBoundedStringHelperInnerAliasSequenceHelper* p_type = static_cast<const MapInnerAliasBoundedStringHelperInnerAliasSequenceHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -44330,7 +44330,7 @@ bool MapInnerAliasBoundedStringHelperInnerAliasSequenceHelperPubSubType::deseria
 }
 
 std::function<uint32_t()> MapInnerAliasBoundedStringHelperInnerAliasSequenceHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -44347,7 +44347,7 @@ std::function<uint32_t()> MapInnerAliasBoundedStringHelperInnerAliasSequenceHelp
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapInnerAliasBoundedStringHelperInnerAliasSequenceHelper*>(data), current_alignment)) +
+                               *static_cast<const MapInnerAliasBoundedStringHelperInnerAliasSequenceHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -44370,7 +44370,7 @@ void MapInnerAliasBoundedStringHelperInnerAliasSequenceHelperPubSubType::deleteD
 }
 
 bool MapInnerAliasBoundedStringHelperInnerAliasSequenceHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -44379,7 +44379,7 @@ bool MapInnerAliasBoundedStringHelperInnerAliasSequenceHelperPubSubType::getKey(
         return false;
     }
 
-    MapInnerAliasBoundedStringHelperInnerAliasSequenceHelper* p_type = static_cast<MapInnerAliasBoundedStringHelperInnerAliasSequenceHelper*>(data);
+    const MapInnerAliasBoundedStringHelperInnerAliasSequenceHelper* p_type = static_cast<const MapInnerAliasBoundedStringHelperInnerAliasSequenceHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -44447,11 +44447,11 @@ MapInnerAliasBoundedStringHelperInnerAliasMapHelperPubSubType::~MapInnerAliasBou
 }
 
 bool MapInnerAliasBoundedStringHelperInnerAliasMapHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapInnerAliasBoundedStringHelperInnerAliasMapHelper* p_type = static_cast<MapInnerAliasBoundedStringHelperInnerAliasMapHelper*>(data);
+    const MapInnerAliasBoundedStringHelperInnerAliasMapHelper* p_type = static_cast<const MapInnerAliasBoundedStringHelperInnerAliasMapHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -44523,7 +44523,7 @@ bool MapInnerAliasBoundedStringHelperInnerAliasMapHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapInnerAliasBoundedStringHelperInnerAliasMapHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -44540,7 +44540,7 @@ std::function<uint32_t()> MapInnerAliasBoundedStringHelperInnerAliasMapHelperPub
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapInnerAliasBoundedStringHelperInnerAliasMapHelper*>(data), current_alignment)) +
+                               *static_cast<const MapInnerAliasBoundedStringHelperInnerAliasMapHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -44563,7 +44563,7 @@ void MapInnerAliasBoundedStringHelperInnerAliasMapHelperPubSubType::deleteData(
 }
 
 bool MapInnerAliasBoundedStringHelperInnerAliasMapHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -44572,7 +44572,7 @@ bool MapInnerAliasBoundedStringHelperInnerAliasMapHelperPubSubType::getKey(
         return false;
     }
 
-    MapInnerAliasBoundedStringHelperInnerAliasMapHelper* p_type = static_cast<MapInnerAliasBoundedStringHelperInnerAliasMapHelper*>(data);
+    const MapInnerAliasBoundedStringHelperInnerAliasMapHelper* p_type = static_cast<const MapInnerAliasBoundedStringHelperInnerAliasMapHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -44640,11 +44640,11 @@ MapInnerAliasBoundedStringHelperInnerUnionHelperPubSubType::~MapInnerAliasBounde
 }
 
 bool MapInnerAliasBoundedStringHelperInnerUnionHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapInnerAliasBoundedStringHelperInnerUnionHelper* p_type = static_cast<MapInnerAliasBoundedStringHelperInnerUnionHelper*>(data);
+    const MapInnerAliasBoundedStringHelperInnerUnionHelper* p_type = static_cast<const MapInnerAliasBoundedStringHelperInnerUnionHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -44716,7 +44716,7 @@ bool MapInnerAliasBoundedStringHelperInnerUnionHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapInnerAliasBoundedStringHelperInnerUnionHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -44733,7 +44733,7 @@ std::function<uint32_t()> MapInnerAliasBoundedStringHelperInnerUnionHelperPubSub
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapInnerAliasBoundedStringHelperInnerUnionHelper*>(data), current_alignment)) +
+                               *static_cast<const MapInnerAliasBoundedStringHelperInnerUnionHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -44756,7 +44756,7 @@ void MapInnerAliasBoundedStringHelperInnerUnionHelperPubSubType::deleteData(
 }
 
 bool MapInnerAliasBoundedStringHelperInnerUnionHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -44765,7 +44765,7 @@ bool MapInnerAliasBoundedStringHelperInnerUnionHelperPubSubType::getKey(
         return false;
     }
 
-    MapInnerAliasBoundedStringHelperInnerUnionHelper* p_type = static_cast<MapInnerAliasBoundedStringHelperInnerUnionHelper*>(data);
+    const MapInnerAliasBoundedStringHelperInnerUnionHelper* p_type = static_cast<const MapInnerAliasBoundedStringHelperInnerUnionHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -44833,11 +44833,11 @@ MapInnerAliasBoundedStringHelperInnerStructureHelperPubSubType::~MapInnerAliasBo
 }
 
 bool MapInnerAliasBoundedStringHelperInnerStructureHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapInnerAliasBoundedStringHelperInnerStructureHelper* p_type = static_cast<MapInnerAliasBoundedStringHelperInnerStructureHelper*>(data);
+    const MapInnerAliasBoundedStringHelperInnerStructureHelper* p_type = static_cast<const MapInnerAliasBoundedStringHelperInnerStructureHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -44909,7 +44909,7 @@ bool MapInnerAliasBoundedStringHelperInnerStructureHelperPubSubType::deserialize
 }
 
 std::function<uint32_t()> MapInnerAliasBoundedStringHelperInnerStructureHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -44926,7 +44926,7 @@ std::function<uint32_t()> MapInnerAliasBoundedStringHelperInnerStructureHelperPu
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapInnerAliasBoundedStringHelperInnerStructureHelper*>(data), current_alignment)) +
+                               *static_cast<const MapInnerAliasBoundedStringHelperInnerStructureHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -44949,7 +44949,7 @@ void MapInnerAliasBoundedStringHelperInnerStructureHelperPubSubType::deleteData(
 }
 
 bool MapInnerAliasBoundedStringHelperInnerStructureHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -44958,7 +44958,7 @@ bool MapInnerAliasBoundedStringHelperInnerStructureHelperPubSubType::getKey(
         return false;
     }
 
-    MapInnerAliasBoundedStringHelperInnerStructureHelper* p_type = static_cast<MapInnerAliasBoundedStringHelperInnerStructureHelper*>(data);
+    const MapInnerAliasBoundedStringHelperInnerStructureHelper* p_type = static_cast<const MapInnerAliasBoundedStringHelperInnerStructureHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -45026,11 +45026,11 @@ MapInnerAliasBoundedStringHelperInnerBitsetHelperPubSubType::~MapInnerAliasBound
 }
 
 bool MapInnerAliasBoundedStringHelperInnerBitsetHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapInnerAliasBoundedStringHelperInnerBitsetHelper* p_type = static_cast<MapInnerAliasBoundedStringHelperInnerBitsetHelper*>(data);
+    const MapInnerAliasBoundedStringHelperInnerBitsetHelper* p_type = static_cast<const MapInnerAliasBoundedStringHelperInnerBitsetHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -45102,7 +45102,7 @@ bool MapInnerAliasBoundedStringHelperInnerBitsetHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapInnerAliasBoundedStringHelperInnerBitsetHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -45119,7 +45119,7 @@ std::function<uint32_t()> MapInnerAliasBoundedStringHelperInnerBitsetHelperPubSu
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapInnerAliasBoundedStringHelperInnerBitsetHelper*>(data), current_alignment)) +
+                               *static_cast<const MapInnerAliasBoundedStringHelperInnerBitsetHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -45142,7 +45142,7 @@ void MapInnerAliasBoundedStringHelperInnerBitsetHelperPubSubType::deleteData(
 }
 
 bool MapInnerAliasBoundedStringHelperInnerBitsetHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -45151,7 +45151,7 @@ bool MapInnerAliasBoundedStringHelperInnerBitsetHelperPubSubType::getKey(
         return false;
     }
 
-    MapInnerAliasBoundedStringHelperInnerBitsetHelper* p_type = static_cast<MapInnerAliasBoundedStringHelperInnerBitsetHelper*>(data);
+    const MapInnerAliasBoundedStringHelperInnerBitsetHelper* p_type = static_cast<const MapInnerAliasBoundedStringHelperInnerBitsetHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -45219,11 +45219,11 @@ MapInnerAliasBoundedWStringHelperShortPubSubType::~MapInnerAliasBoundedWStringHe
 }
 
 bool MapInnerAliasBoundedWStringHelperShortPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapInnerAliasBoundedWStringHelperShort* p_type = static_cast<MapInnerAliasBoundedWStringHelperShort*>(data);
+    const MapInnerAliasBoundedWStringHelperShort* p_type = static_cast<const MapInnerAliasBoundedWStringHelperShort*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -45295,7 +45295,7 @@ bool MapInnerAliasBoundedWStringHelperShortPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapInnerAliasBoundedWStringHelperShortPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -45312,7 +45312,7 @@ std::function<uint32_t()> MapInnerAliasBoundedWStringHelperShortPubSubType::getS
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapInnerAliasBoundedWStringHelperShort*>(data), current_alignment)) +
+                               *static_cast<const MapInnerAliasBoundedWStringHelperShort*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -45335,7 +45335,7 @@ void MapInnerAliasBoundedWStringHelperShortPubSubType::deleteData(
 }
 
 bool MapInnerAliasBoundedWStringHelperShortPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -45344,7 +45344,7 @@ bool MapInnerAliasBoundedWStringHelperShortPubSubType::getKey(
         return false;
     }
 
-    MapInnerAliasBoundedWStringHelperShort* p_type = static_cast<MapInnerAliasBoundedWStringHelperShort*>(data);
+    const MapInnerAliasBoundedWStringHelperShort* p_type = static_cast<const MapInnerAliasBoundedWStringHelperShort*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -45412,11 +45412,11 @@ MapInnerAliasBoundedWStringHelperUShortPubSubType::~MapInnerAliasBoundedWStringH
 }
 
 bool MapInnerAliasBoundedWStringHelperUShortPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapInnerAliasBoundedWStringHelperUShort* p_type = static_cast<MapInnerAliasBoundedWStringHelperUShort*>(data);
+    const MapInnerAliasBoundedWStringHelperUShort* p_type = static_cast<const MapInnerAliasBoundedWStringHelperUShort*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -45488,7 +45488,7 @@ bool MapInnerAliasBoundedWStringHelperUShortPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapInnerAliasBoundedWStringHelperUShortPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -45505,7 +45505,7 @@ std::function<uint32_t()> MapInnerAliasBoundedWStringHelperUShortPubSubType::get
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapInnerAliasBoundedWStringHelperUShort*>(data), current_alignment)) +
+                               *static_cast<const MapInnerAliasBoundedWStringHelperUShort*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -45528,7 +45528,7 @@ void MapInnerAliasBoundedWStringHelperUShortPubSubType::deleteData(
 }
 
 bool MapInnerAliasBoundedWStringHelperUShortPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -45537,7 +45537,7 @@ bool MapInnerAliasBoundedWStringHelperUShortPubSubType::getKey(
         return false;
     }
 
-    MapInnerAliasBoundedWStringHelperUShort* p_type = static_cast<MapInnerAliasBoundedWStringHelperUShort*>(data);
+    const MapInnerAliasBoundedWStringHelperUShort* p_type = static_cast<const MapInnerAliasBoundedWStringHelperUShort*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -45605,11 +45605,11 @@ MapInnerAliasBoundedWStringHelperLongPubSubType::~MapInnerAliasBoundedWStringHel
 }
 
 bool MapInnerAliasBoundedWStringHelperLongPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapInnerAliasBoundedWStringHelperLong* p_type = static_cast<MapInnerAliasBoundedWStringHelperLong*>(data);
+    const MapInnerAliasBoundedWStringHelperLong* p_type = static_cast<const MapInnerAliasBoundedWStringHelperLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -45681,7 +45681,7 @@ bool MapInnerAliasBoundedWStringHelperLongPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapInnerAliasBoundedWStringHelperLongPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -45698,7 +45698,7 @@ std::function<uint32_t()> MapInnerAliasBoundedWStringHelperLongPubSubType::getSe
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapInnerAliasBoundedWStringHelperLong*>(data), current_alignment)) +
+                               *static_cast<const MapInnerAliasBoundedWStringHelperLong*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -45721,7 +45721,7 @@ void MapInnerAliasBoundedWStringHelperLongPubSubType::deleteData(
 }
 
 bool MapInnerAliasBoundedWStringHelperLongPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -45730,7 +45730,7 @@ bool MapInnerAliasBoundedWStringHelperLongPubSubType::getKey(
         return false;
     }
 
-    MapInnerAliasBoundedWStringHelperLong* p_type = static_cast<MapInnerAliasBoundedWStringHelperLong*>(data);
+    const MapInnerAliasBoundedWStringHelperLong* p_type = static_cast<const MapInnerAliasBoundedWStringHelperLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -45798,11 +45798,11 @@ MapInnerAliasBoundedWStringHelperULongPubSubType::~MapInnerAliasBoundedWStringHe
 }
 
 bool MapInnerAliasBoundedWStringHelperULongPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapInnerAliasBoundedWStringHelperULong* p_type = static_cast<MapInnerAliasBoundedWStringHelperULong*>(data);
+    const MapInnerAliasBoundedWStringHelperULong* p_type = static_cast<const MapInnerAliasBoundedWStringHelperULong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -45874,7 +45874,7 @@ bool MapInnerAliasBoundedWStringHelperULongPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapInnerAliasBoundedWStringHelperULongPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -45891,7 +45891,7 @@ std::function<uint32_t()> MapInnerAliasBoundedWStringHelperULongPubSubType::getS
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapInnerAliasBoundedWStringHelperULong*>(data), current_alignment)) +
+                               *static_cast<const MapInnerAliasBoundedWStringHelperULong*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -45914,7 +45914,7 @@ void MapInnerAliasBoundedWStringHelperULongPubSubType::deleteData(
 }
 
 bool MapInnerAliasBoundedWStringHelperULongPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -45923,7 +45923,7 @@ bool MapInnerAliasBoundedWStringHelperULongPubSubType::getKey(
         return false;
     }
 
-    MapInnerAliasBoundedWStringHelperULong* p_type = static_cast<MapInnerAliasBoundedWStringHelperULong*>(data);
+    const MapInnerAliasBoundedWStringHelperULong* p_type = static_cast<const MapInnerAliasBoundedWStringHelperULong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -45991,11 +45991,11 @@ MapInnerAliasBoundedWStringHelperLongLongPubSubType::~MapInnerAliasBoundedWStrin
 }
 
 bool MapInnerAliasBoundedWStringHelperLongLongPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapInnerAliasBoundedWStringHelperLongLong* p_type = static_cast<MapInnerAliasBoundedWStringHelperLongLong*>(data);
+    const MapInnerAliasBoundedWStringHelperLongLong* p_type = static_cast<const MapInnerAliasBoundedWStringHelperLongLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -46067,7 +46067,7 @@ bool MapInnerAliasBoundedWStringHelperLongLongPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapInnerAliasBoundedWStringHelperLongLongPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -46084,7 +46084,7 @@ std::function<uint32_t()> MapInnerAliasBoundedWStringHelperLongLongPubSubType::g
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapInnerAliasBoundedWStringHelperLongLong*>(data), current_alignment)) +
+                               *static_cast<const MapInnerAliasBoundedWStringHelperLongLong*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -46107,7 +46107,7 @@ void MapInnerAliasBoundedWStringHelperLongLongPubSubType::deleteData(
 }
 
 bool MapInnerAliasBoundedWStringHelperLongLongPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -46116,7 +46116,7 @@ bool MapInnerAliasBoundedWStringHelperLongLongPubSubType::getKey(
         return false;
     }
 
-    MapInnerAliasBoundedWStringHelperLongLong* p_type = static_cast<MapInnerAliasBoundedWStringHelperLongLong*>(data);
+    const MapInnerAliasBoundedWStringHelperLongLong* p_type = static_cast<const MapInnerAliasBoundedWStringHelperLongLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -46184,11 +46184,11 @@ MapInnerAliasBoundedWStringHelperULongLongPubSubType::~MapInnerAliasBoundedWStri
 }
 
 bool MapInnerAliasBoundedWStringHelperULongLongPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapInnerAliasBoundedWStringHelperULongLong* p_type = static_cast<MapInnerAliasBoundedWStringHelperULongLong*>(data);
+    const MapInnerAliasBoundedWStringHelperULongLong* p_type = static_cast<const MapInnerAliasBoundedWStringHelperULongLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -46260,7 +46260,7 @@ bool MapInnerAliasBoundedWStringHelperULongLongPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapInnerAliasBoundedWStringHelperULongLongPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -46277,7 +46277,7 @@ std::function<uint32_t()> MapInnerAliasBoundedWStringHelperULongLongPubSubType::
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapInnerAliasBoundedWStringHelperULongLong*>(data), current_alignment)) +
+                               *static_cast<const MapInnerAliasBoundedWStringHelperULongLong*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -46300,7 +46300,7 @@ void MapInnerAliasBoundedWStringHelperULongLongPubSubType::deleteData(
 }
 
 bool MapInnerAliasBoundedWStringHelperULongLongPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -46309,7 +46309,7 @@ bool MapInnerAliasBoundedWStringHelperULongLongPubSubType::getKey(
         return false;
     }
 
-    MapInnerAliasBoundedWStringHelperULongLong* p_type = static_cast<MapInnerAliasBoundedWStringHelperULongLong*>(data);
+    const MapInnerAliasBoundedWStringHelperULongLong* p_type = static_cast<const MapInnerAliasBoundedWStringHelperULongLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -46377,11 +46377,11 @@ MapInnerAliasBoundedWStringHelperFloatPubSubType::~MapInnerAliasBoundedWStringHe
 }
 
 bool MapInnerAliasBoundedWStringHelperFloatPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapInnerAliasBoundedWStringHelperFloat* p_type = static_cast<MapInnerAliasBoundedWStringHelperFloat*>(data);
+    const MapInnerAliasBoundedWStringHelperFloat* p_type = static_cast<const MapInnerAliasBoundedWStringHelperFloat*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -46453,7 +46453,7 @@ bool MapInnerAliasBoundedWStringHelperFloatPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapInnerAliasBoundedWStringHelperFloatPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -46470,7 +46470,7 @@ std::function<uint32_t()> MapInnerAliasBoundedWStringHelperFloatPubSubType::getS
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapInnerAliasBoundedWStringHelperFloat*>(data), current_alignment)) +
+                               *static_cast<const MapInnerAliasBoundedWStringHelperFloat*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -46493,7 +46493,7 @@ void MapInnerAliasBoundedWStringHelperFloatPubSubType::deleteData(
 }
 
 bool MapInnerAliasBoundedWStringHelperFloatPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -46502,7 +46502,7 @@ bool MapInnerAliasBoundedWStringHelperFloatPubSubType::getKey(
         return false;
     }
 
-    MapInnerAliasBoundedWStringHelperFloat* p_type = static_cast<MapInnerAliasBoundedWStringHelperFloat*>(data);
+    const MapInnerAliasBoundedWStringHelperFloat* p_type = static_cast<const MapInnerAliasBoundedWStringHelperFloat*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -46570,11 +46570,11 @@ MapInnerAliasBoundedWStringHelperDoublePubSubType::~MapInnerAliasBoundedWStringH
 }
 
 bool MapInnerAliasBoundedWStringHelperDoublePubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapInnerAliasBoundedWStringHelperDouble* p_type = static_cast<MapInnerAliasBoundedWStringHelperDouble*>(data);
+    const MapInnerAliasBoundedWStringHelperDouble* p_type = static_cast<const MapInnerAliasBoundedWStringHelperDouble*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -46646,7 +46646,7 @@ bool MapInnerAliasBoundedWStringHelperDoublePubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapInnerAliasBoundedWStringHelperDoublePubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -46663,7 +46663,7 @@ std::function<uint32_t()> MapInnerAliasBoundedWStringHelperDoublePubSubType::get
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapInnerAliasBoundedWStringHelperDouble*>(data), current_alignment)) +
+                               *static_cast<const MapInnerAliasBoundedWStringHelperDouble*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -46686,7 +46686,7 @@ void MapInnerAliasBoundedWStringHelperDoublePubSubType::deleteData(
 }
 
 bool MapInnerAliasBoundedWStringHelperDoublePubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -46695,7 +46695,7 @@ bool MapInnerAliasBoundedWStringHelperDoublePubSubType::getKey(
         return false;
     }
 
-    MapInnerAliasBoundedWStringHelperDouble* p_type = static_cast<MapInnerAliasBoundedWStringHelperDouble*>(data);
+    const MapInnerAliasBoundedWStringHelperDouble* p_type = static_cast<const MapInnerAliasBoundedWStringHelperDouble*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -46763,11 +46763,11 @@ MapInnerAliasBoundedWStringHelperLongDoublePubSubType::~MapInnerAliasBoundedWStr
 }
 
 bool MapInnerAliasBoundedWStringHelperLongDoublePubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapInnerAliasBoundedWStringHelperLongDouble* p_type = static_cast<MapInnerAliasBoundedWStringHelperLongDouble*>(data);
+    const MapInnerAliasBoundedWStringHelperLongDouble* p_type = static_cast<const MapInnerAliasBoundedWStringHelperLongDouble*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -46839,7 +46839,7 @@ bool MapInnerAliasBoundedWStringHelperLongDoublePubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapInnerAliasBoundedWStringHelperLongDoublePubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -46856,7 +46856,7 @@ std::function<uint32_t()> MapInnerAliasBoundedWStringHelperLongDoublePubSubType:
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapInnerAliasBoundedWStringHelperLongDouble*>(data), current_alignment)) +
+                               *static_cast<const MapInnerAliasBoundedWStringHelperLongDouble*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -46879,7 +46879,7 @@ void MapInnerAliasBoundedWStringHelperLongDoublePubSubType::deleteData(
 }
 
 bool MapInnerAliasBoundedWStringHelperLongDoublePubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -46888,7 +46888,7 @@ bool MapInnerAliasBoundedWStringHelperLongDoublePubSubType::getKey(
         return false;
     }
 
-    MapInnerAliasBoundedWStringHelperLongDouble* p_type = static_cast<MapInnerAliasBoundedWStringHelperLongDouble*>(data);
+    const MapInnerAliasBoundedWStringHelperLongDouble* p_type = static_cast<const MapInnerAliasBoundedWStringHelperLongDouble*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -46956,11 +46956,11 @@ MapInnerAliasBoundedWStringHelperBooleanPubSubType::~MapInnerAliasBoundedWString
 }
 
 bool MapInnerAliasBoundedWStringHelperBooleanPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapInnerAliasBoundedWStringHelperBoolean* p_type = static_cast<MapInnerAliasBoundedWStringHelperBoolean*>(data);
+    const MapInnerAliasBoundedWStringHelperBoolean* p_type = static_cast<const MapInnerAliasBoundedWStringHelperBoolean*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -47032,7 +47032,7 @@ bool MapInnerAliasBoundedWStringHelperBooleanPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapInnerAliasBoundedWStringHelperBooleanPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -47049,7 +47049,7 @@ std::function<uint32_t()> MapInnerAliasBoundedWStringHelperBooleanPubSubType::ge
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapInnerAliasBoundedWStringHelperBoolean*>(data), current_alignment)) +
+                               *static_cast<const MapInnerAliasBoundedWStringHelperBoolean*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -47072,7 +47072,7 @@ void MapInnerAliasBoundedWStringHelperBooleanPubSubType::deleteData(
 }
 
 bool MapInnerAliasBoundedWStringHelperBooleanPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -47081,7 +47081,7 @@ bool MapInnerAliasBoundedWStringHelperBooleanPubSubType::getKey(
         return false;
     }
 
-    MapInnerAliasBoundedWStringHelperBoolean* p_type = static_cast<MapInnerAliasBoundedWStringHelperBoolean*>(data);
+    const MapInnerAliasBoundedWStringHelperBoolean* p_type = static_cast<const MapInnerAliasBoundedWStringHelperBoolean*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -47149,11 +47149,11 @@ MapInnerAliasBoundedWStringHelperOctetPubSubType::~MapInnerAliasBoundedWStringHe
 }
 
 bool MapInnerAliasBoundedWStringHelperOctetPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapInnerAliasBoundedWStringHelperOctet* p_type = static_cast<MapInnerAliasBoundedWStringHelperOctet*>(data);
+    const MapInnerAliasBoundedWStringHelperOctet* p_type = static_cast<const MapInnerAliasBoundedWStringHelperOctet*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -47225,7 +47225,7 @@ bool MapInnerAliasBoundedWStringHelperOctetPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapInnerAliasBoundedWStringHelperOctetPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -47242,7 +47242,7 @@ std::function<uint32_t()> MapInnerAliasBoundedWStringHelperOctetPubSubType::getS
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapInnerAliasBoundedWStringHelperOctet*>(data), current_alignment)) +
+                               *static_cast<const MapInnerAliasBoundedWStringHelperOctet*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -47265,7 +47265,7 @@ void MapInnerAliasBoundedWStringHelperOctetPubSubType::deleteData(
 }
 
 bool MapInnerAliasBoundedWStringHelperOctetPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -47274,7 +47274,7 @@ bool MapInnerAliasBoundedWStringHelperOctetPubSubType::getKey(
         return false;
     }
 
-    MapInnerAliasBoundedWStringHelperOctet* p_type = static_cast<MapInnerAliasBoundedWStringHelperOctet*>(data);
+    const MapInnerAliasBoundedWStringHelperOctet* p_type = static_cast<const MapInnerAliasBoundedWStringHelperOctet*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -47342,11 +47342,11 @@ MapInnerAliasBoundedWStringHelperCharPubSubType::~MapInnerAliasBoundedWStringHel
 }
 
 bool MapInnerAliasBoundedWStringHelperCharPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapInnerAliasBoundedWStringHelperChar* p_type = static_cast<MapInnerAliasBoundedWStringHelperChar*>(data);
+    const MapInnerAliasBoundedWStringHelperChar* p_type = static_cast<const MapInnerAliasBoundedWStringHelperChar*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -47418,7 +47418,7 @@ bool MapInnerAliasBoundedWStringHelperCharPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapInnerAliasBoundedWStringHelperCharPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -47435,7 +47435,7 @@ std::function<uint32_t()> MapInnerAliasBoundedWStringHelperCharPubSubType::getSe
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapInnerAliasBoundedWStringHelperChar*>(data), current_alignment)) +
+                               *static_cast<const MapInnerAliasBoundedWStringHelperChar*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -47458,7 +47458,7 @@ void MapInnerAliasBoundedWStringHelperCharPubSubType::deleteData(
 }
 
 bool MapInnerAliasBoundedWStringHelperCharPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -47467,7 +47467,7 @@ bool MapInnerAliasBoundedWStringHelperCharPubSubType::getKey(
         return false;
     }
 
-    MapInnerAliasBoundedWStringHelperChar* p_type = static_cast<MapInnerAliasBoundedWStringHelperChar*>(data);
+    const MapInnerAliasBoundedWStringHelperChar* p_type = static_cast<const MapInnerAliasBoundedWStringHelperChar*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -47535,11 +47535,11 @@ MapInnerAliasBoundedWStringHelperWCharPubSubType::~MapInnerAliasBoundedWStringHe
 }
 
 bool MapInnerAliasBoundedWStringHelperWCharPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapInnerAliasBoundedWStringHelperWChar* p_type = static_cast<MapInnerAliasBoundedWStringHelperWChar*>(data);
+    const MapInnerAliasBoundedWStringHelperWChar* p_type = static_cast<const MapInnerAliasBoundedWStringHelperWChar*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -47611,7 +47611,7 @@ bool MapInnerAliasBoundedWStringHelperWCharPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapInnerAliasBoundedWStringHelperWCharPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -47628,7 +47628,7 @@ std::function<uint32_t()> MapInnerAliasBoundedWStringHelperWCharPubSubType::getS
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapInnerAliasBoundedWStringHelperWChar*>(data), current_alignment)) +
+                               *static_cast<const MapInnerAliasBoundedWStringHelperWChar*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -47651,7 +47651,7 @@ void MapInnerAliasBoundedWStringHelperWCharPubSubType::deleteData(
 }
 
 bool MapInnerAliasBoundedWStringHelperWCharPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -47660,7 +47660,7 @@ bool MapInnerAliasBoundedWStringHelperWCharPubSubType::getKey(
         return false;
     }
 
-    MapInnerAliasBoundedWStringHelperWChar* p_type = static_cast<MapInnerAliasBoundedWStringHelperWChar*>(data);
+    const MapInnerAliasBoundedWStringHelperWChar* p_type = static_cast<const MapInnerAliasBoundedWStringHelperWChar*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -47728,11 +47728,11 @@ MapInnerAliasBoundedWStringHelperStringPubSubType::~MapInnerAliasBoundedWStringH
 }
 
 bool MapInnerAliasBoundedWStringHelperStringPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapInnerAliasBoundedWStringHelperString* p_type = static_cast<MapInnerAliasBoundedWStringHelperString*>(data);
+    const MapInnerAliasBoundedWStringHelperString* p_type = static_cast<const MapInnerAliasBoundedWStringHelperString*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -47804,7 +47804,7 @@ bool MapInnerAliasBoundedWStringHelperStringPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapInnerAliasBoundedWStringHelperStringPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -47821,7 +47821,7 @@ std::function<uint32_t()> MapInnerAliasBoundedWStringHelperStringPubSubType::get
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapInnerAliasBoundedWStringHelperString*>(data), current_alignment)) +
+                               *static_cast<const MapInnerAliasBoundedWStringHelperString*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -47844,7 +47844,7 @@ void MapInnerAliasBoundedWStringHelperStringPubSubType::deleteData(
 }
 
 bool MapInnerAliasBoundedWStringHelperStringPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -47853,7 +47853,7 @@ bool MapInnerAliasBoundedWStringHelperStringPubSubType::getKey(
         return false;
     }
 
-    MapInnerAliasBoundedWStringHelperString* p_type = static_cast<MapInnerAliasBoundedWStringHelperString*>(data);
+    const MapInnerAliasBoundedWStringHelperString* p_type = static_cast<const MapInnerAliasBoundedWStringHelperString*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -47921,11 +47921,11 @@ MapInnerAliasBoundedWStringHelperWStringPubSubType::~MapInnerAliasBoundedWString
 }
 
 bool MapInnerAliasBoundedWStringHelperWStringPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapInnerAliasBoundedWStringHelperWString* p_type = static_cast<MapInnerAliasBoundedWStringHelperWString*>(data);
+    const MapInnerAliasBoundedWStringHelperWString* p_type = static_cast<const MapInnerAliasBoundedWStringHelperWString*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -47997,7 +47997,7 @@ bool MapInnerAliasBoundedWStringHelperWStringPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapInnerAliasBoundedWStringHelperWStringPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -48014,7 +48014,7 @@ std::function<uint32_t()> MapInnerAliasBoundedWStringHelperWStringPubSubType::ge
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapInnerAliasBoundedWStringHelperWString*>(data), current_alignment)) +
+                               *static_cast<const MapInnerAliasBoundedWStringHelperWString*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -48037,7 +48037,7 @@ void MapInnerAliasBoundedWStringHelperWStringPubSubType::deleteData(
 }
 
 bool MapInnerAliasBoundedWStringHelperWStringPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -48046,7 +48046,7 @@ bool MapInnerAliasBoundedWStringHelperWStringPubSubType::getKey(
         return false;
     }
 
-    MapInnerAliasBoundedWStringHelperWString* p_type = static_cast<MapInnerAliasBoundedWStringHelperWString*>(data);
+    const MapInnerAliasBoundedWStringHelperWString* p_type = static_cast<const MapInnerAliasBoundedWStringHelperWString*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -48114,11 +48114,11 @@ MapInnerAliasBoundedWStringHelperInnerAliasBoundedStringHelperPubSubType::~MapIn
 }
 
 bool MapInnerAliasBoundedWStringHelperInnerAliasBoundedStringHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapInnerAliasBoundedWStringHelperInnerAliasBoundedStringHelper* p_type = static_cast<MapInnerAliasBoundedWStringHelperInnerAliasBoundedStringHelper*>(data);
+    const MapInnerAliasBoundedWStringHelperInnerAliasBoundedStringHelper* p_type = static_cast<const MapInnerAliasBoundedWStringHelperInnerAliasBoundedStringHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -48190,7 +48190,7 @@ bool MapInnerAliasBoundedWStringHelperInnerAliasBoundedStringHelperPubSubType::d
 }
 
 std::function<uint32_t()> MapInnerAliasBoundedWStringHelperInnerAliasBoundedStringHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -48207,7 +48207,7 @@ std::function<uint32_t()> MapInnerAliasBoundedWStringHelperInnerAliasBoundedStri
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapInnerAliasBoundedWStringHelperInnerAliasBoundedStringHelper*>(data), current_alignment)) +
+                               *static_cast<const MapInnerAliasBoundedWStringHelperInnerAliasBoundedStringHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -48230,7 +48230,7 @@ void MapInnerAliasBoundedWStringHelperInnerAliasBoundedStringHelperPubSubType::d
 }
 
 bool MapInnerAliasBoundedWStringHelperInnerAliasBoundedStringHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -48239,7 +48239,7 @@ bool MapInnerAliasBoundedWStringHelperInnerAliasBoundedStringHelperPubSubType::g
         return false;
     }
 
-    MapInnerAliasBoundedWStringHelperInnerAliasBoundedStringHelper* p_type = static_cast<MapInnerAliasBoundedWStringHelperInnerAliasBoundedStringHelper*>(data);
+    const MapInnerAliasBoundedWStringHelperInnerAliasBoundedStringHelper* p_type = static_cast<const MapInnerAliasBoundedWStringHelperInnerAliasBoundedStringHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -48307,11 +48307,11 @@ MapInnerAliasBoundedWStringHelperInnerAliasBoundedWStringHelperPubSubType::~MapI
 }
 
 bool MapInnerAliasBoundedWStringHelperInnerAliasBoundedWStringHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapInnerAliasBoundedWStringHelperInnerAliasBoundedWStringHelper* p_type = static_cast<MapInnerAliasBoundedWStringHelperInnerAliasBoundedWStringHelper*>(data);
+    const MapInnerAliasBoundedWStringHelperInnerAliasBoundedWStringHelper* p_type = static_cast<const MapInnerAliasBoundedWStringHelperInnerAliasBoundedWStringHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -48383,7 +48383,7 @@ bool MapInnerAliasBoundedWStringHelperInnerAliasBoundedWStringHelperPubSubType::
 }
 
 std::function<uint32_t()> MapInnerAliasBoundedWStringHelperInnerAliasBoundedWStringHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -48400,7 +48400,7 @@ std::function<uint32_t()> MapInnerAliasBoundedWStringHelperInnerAliasBoundedWStr
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapInnerAliasBoundedWStringHelperInnerAliasBoundedWStringHelper*>(data), current_alignment)) +
+                               *static_cast<const MapInnerAliasBoundedWStringHelperInnerAliasBoundedWStringHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -48423,7 +48423,7 @@ void MapInnerAliasBoundedWStringHelperInnerAliasBoundedWStringHelperPubSubType::
 }
 
 bool MapInnerAliasBoundedWStringHelperInnerAliasBoundedWStringHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -48432,7 +48432,7 @@ bool MapInnerAliasBoundedWStringHelperInnerAliasBoundedWStringHelperPubSubType::
         return false;
     }
 
-    MapInnerAliasBoundedWStringHelperInnerAliasBoundedWStringHelper* p_type = static_cast<MapInnerAliasBoundedWStringHelperInnerAliasBoundedWStringHelper*>(data);
+    const MapInnerAliasBoundedWStringHelperInnerAliasBoundedWStringHelper* p_type = static_cast<const MapInnerAliasBoundedWStringHelperInnerAliasBoundedWStringHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -48500,11 +48500,11 @@ MapInnerAliasBoundedWStringHelperInnerEnumHelperPubSubType::~MapInnerAliasBounde
 }
 
 bool MapInnerAliasBoundedWStringHelperInnerEnumHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapInnerAliasBoundedWStringHelperInnerEnumHelper* p_type = static_cast<MapInnerAliasBoundedWStringHelperInnerEnumHelper*>(data);
+    const MapInnerAliasBoundedWStringHelperInnerEnumHelper* p_type = static_cast<const MapInnerAliasBoundedWStringHelperInnerEnumHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -48576,7 +48576,7 @@ bool MapInnerAliasBoundedWStringHelperInnerEnumHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapInnerAliasBoundedWStringHelperInnerEnumHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -48593,7 +48593,7 @@ std::function<uint32_t()> MapInnerAliasBoundedWStringHelperInnerEnumHelperPubSub
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapInnerAliasBoundedWStringHelperInnerEnumHelper*>(data), current_alignment)) +
+                               *static_cast<const MapInnerAliasBoundedWStringHelperInnerEnumHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -48616,7 +48616,7 @@ void MapInnerAliasBoundedWStringHelperInnerEnumHelperPubSubType::deleteData(
 }
 
 bool MapInnerAliasBoundedWStringHelperInnerEnumHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -48625,7 +48625,7 @@ bool MapInnerAliasBoundedWStringHelperInnerEnumHelperPubSubType::getKey(
         return false;
     }
 
-    MapInnerAliasBoundedWStringHelperInnerEnumHelper* p_type = static_cast<MapInnerAliasBoundedWStringHelperInnerEnumHelper*>(data);
+    const MapInnerAliasBoundedWStringHelperInnerEnumHelper* p_type = static_cast<const MapInnerAliasBoundedWStringHelperInnerEnumHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -48693,11 +48693,11 @@ MapInnerAliasBoundedWStringHelperInnerBitMaskHelperPubSubType::~MapInnerAliasBou
 }
 
 bool MapInnerAliasBoundedWStringHelperInnerBitMaskHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapInnerAliasBoundedWStringHelperInnerBitMaskHelper* p_type = static_cast<MapInnerAliasBoundedWStringHelperInnerBitMaskHelper*>(data);
+    const MapInnerAliasBoundedWStringHelperInnerBitMaskHelper* p_type = static_cast<const MapInnerAliasBoundedWStringHelperInnerBitMaskHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -48769,7 +48769,7 @@ bool MapInnerAliasBoundedWStringHelperInnerBitMaskHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapInnerAliasBoundedWStringHelperInnerBitMaskHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -48786,7 +48786,7 @@ std::function<uint32_t()> MapInnerAliasBoundedWStringHelperInnerBitMaskHelperPub
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapInnerAliasBoundedWStringHelperInnerBitMaskHelper*>(data), current_alignment)) +
+                               *static_cast<const MapInnerAliasBoundedWStringHelperInnerBitMaskHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -48809,7 +48809,7 @@ void MapInnerAliasBoundedWStringHelperInnerBitMaskHelperPubSubType::deleteData(
 }
 
 bool MapInnerAliasBoundedWStringHelperInnerBitMaskHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -48818,7 +48818,7 @@ bool MapInnerAliasBoundedWStringHelperInnerBitMaskHelperPubSubType::getKey(
         return false;
     }
 
-    MapInnerAliasBoundedWStringHelperInnerBitMaskHelper* p_type = static_cast<MapInnerAliasBoundedWStringHelperInnerBitMaskHelper*>(data);
+    const MapInnerAliasBoundedWStringHelperInnerBitMaskHelper* p_type = static_cast<const MapInnerAliasBoundedWStringHelperInnerBitMaskHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -48886,11 +48886,11 @@ MapInnerAliasBoundedWStringHelperInnerAliasHelperPubSubType::~MapInnerAliasBound
 }
 
 bool MapInnerAliasBoundedWStringHelperInnerAliasHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapInnerAliasBoundedWStringHelperInnerAliasHelper* p_type = static_cast<MapInnerAliasBoundedWStringHelperInnerAliasHelper*>(data);
+    const MapInnerAliasBoundedWStringHelperInnerAliasHelper* p_type = static_cast<const MapInnerAliasBoundedWStringHelperInnerAliasHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -48962,7 +48962,7 @@ bool MapInnerAliasBoundedWStringHelperInnerAliasHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapInnerAliasBoundedWStringHelperInnerAliasHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -48979,7 +48979,7 @@ std::function<uint32_t()> MapInnerAliasBoundedWStringHelperInnerAliasHelperPubSu
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapInnerAliasBoundedWStringHelperInnerAliasHelper*>(data), current_alignment)) +
+                               *static_cast<const MapInnerAliasBoundedWStringHelperInnerAliasHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -49002,7 +49002,7 @@ void MapInnerAliasBoundedWStringHelperInnerAliasHelperPubSubType::deleteData(
 }
 
 bool MapInnerAliasBoundedWStringHelperInnerAliasHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -49011,7 +49011,7 @@ bool MapInnerAliasBoundedWStringHelperInnerAliasHelperPubSubType::getKey(
         return false;
     }
 
-    MapInnerAliasBoundedWStringHelperInnerAliasHelper* p_type = static_cast<MapInnerAliasBoundedWStringHelperInnerAliasHelper*>(data);
+    const MapInnerAliasBoundedWStringHelperInnerAliasHelper* p_type = static_cast<const MapInnerAliasBoundedWStringHelperInnerAliasHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -49079,11 +49079,11 @@ MapInnerAliasBoundedWStringHelperInnerAliasArrayHelperPubSubType::~MapInnerAlias
 }
 
 bool MapInnerAliasBoundedWStringHelperInnerAliasArrayHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapInnerAliasBoundedWStringHelperInnerAliasArrayHelper* p_type = static_cast<MapInnerAliasBoundedWStringHelperInnerAliasArrayHelper*>(data);
+    const MapInnerAliasBoundedWStringHelperInnerAliasArrayHelper* p_type = static_cast<const MapInnerAliasBoundedWStringHelperInnerAliasArrayHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -49155,7 +49155,7 @@ bool MapInnerAliasBoundedWStringHelperInnerAliasArrayHelperPubSubType::deseriali
 }
 
 std::function<uint32_t()> MapInnerAliasBoundedWStringHelperInnerAliasArrayHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -49172,7 +49172,7 @@ std::function<uint32_t()> MapInnerAliasBoundedWStringHelperInnerAliasArrayHelper
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapInnerAliasBoundedWStringHelperInnerAliasArrayHelper*>(data), current_alignment)) +
+                               *static_cast<const MapInnerAliasBoundedWStringHelperInnerAliasArrayHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -49195,7 +49195,7 @@ void MapInnerAliasBoundedWStringHelperInnerAliasArrayHelperPubSubType::deleteDat
 }
 
 bool MapInnerAliasBoundedWStringHelperInnerAliasArrayHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -49204,7 +49204,7 @@ bool MapInnerAliasBoundedWStringHelperInnerAliasArrayHelperPubSubType::getKey(
         return false;
     }
 
-    MapInnerAliasBoundedWStringHelperInnerAliasArrayHelper* p_type = static_cast<MapInnerAliasBoundedWStringHelperInnerAliasArrayHelper*>(data);
+    const MapInnerAliasBoundedWStringHelperInnerAliasArrayHelper* p_type = static_cast<const MapInnerAliasBoundedWStringHelperInnerAliasArrayHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -49272,11 +49272,11 @@ MapInnerAliasBoundedWStringHelperInnerAliasSequenceHelperPubSubType::~MapInnerAl
 }
 
 bool MapInnerAliasBoundedWStringHelperInnerAliasSequenceHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapInnerAliasBoundedWStringHelperInnerAliasSequenceHelper* p_type = static_cast<MapInnerAliasBoundedWStringHelperInnerAliasSequenceHelper*>(data);
+    const MapInnerAliasBoundedWStringHelperInnerAliasSequenceHelper* p_type = static_cast<const MapInnerAliasBoundedWStringHelperInnerAliasSequenceHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -49348,7 +49348,7 @@ bool MapInnerAliasBoundedWStringHelperInnerAliasSequenceHelperPubSubType::deseri
 }
 
 std::function<uint32_t()> MapInnerAliasBoundedWStringHelperInnerAliasSequenceHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -49365,7 +49365,7 @@ std::function<uint32_t()> MapInnerAliasBoundedWStringHelperInnerAliasSequenceHel
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapInnerAliasBoundedWStringHelperInnerAliasSequenceHelper*>(data), current_alignment)) +
+                               *static_cast<const MapInnerAliasBoundedWStringHelperInnerAliasSequenceHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -49388,7 +49388,7 @@ void MapInnerAliasBoundedWStringHelperInnerAliasSequenceHelperPubSubType::delete
 }
 
 bool MapInnerAliasBoundedWStringHelperInnerAliasSequenceHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -49397,7 +49397,7 @@ bool MapInnerAliasBoundedWStringHelperInnerAliasSequenceHelperPubSubType::getKey
         return false;
     }
 
-    MapInnerAliasBoundedWStringHelperInnerAliasSequenceHelper* p_type = static_cast<MapInnerAliasBoundedWStringHelperInnerAliasSequenceHelper*>(data);
+    const MapInnerAliasBoundedWStringHelperInnerAliasSequenceHelper* p_type = static_cast<const MapInnerAliasBoundedWStringHelperInnerAliasSequenceHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -49465,11 +49465,11 @@ MapInnerAliasBoundedWStringHelperInnerAliasMapHelperPubSubType::~MapInnerAliasBo
 }
 
 bool MapInnerAliasBoundedWStringHelperInnerAliasMapHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapInnerAliasBoundedWStringHelperInnerAliasMapHelper* p_type = static_cast<MapInnerAliasBoundedWStringHelperInnerAliasMapHelper*>(data);
+    const MapInnerAliasBoundedWStringHelperInnerAliasMapHelper* p_type = static_cast<const MapInnerAliasBoundedWStringHelperInnerAliasMapHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -49541,7 +49541,7 @@ bool MapInnerAliasBoundedWStringHelperInnerAliasMapHelperPubSubType::deserialize
 }
 
 std::function<uint32_t()> MapInnerAliasBoundedWStringHelperInnerAliasMapHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -49558,7 +49558,7 @@ std::function<uint32_t()> MapInnerAliasBoundedWStringHelperInnerAliasMapHelperPu
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapInnerAliasBoundedWStringHelperInnerAliasMapHelper*>(data), current_alignment)) +
+                               *static_cast<const MapInnerAliasBoundedWStringHelperInnerAliasMapHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -49581,7 +49581,7 @@ void MapInnerAliasBoundedWStringHelperInnerAliasMapHelperPubSubType::deleteData(
 }
 
 bool MapInnerAliasBoundedWStringHelperInnerAliasMapHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -49590,7 +49590,7 @@ bool MapInnerAliasBoundedWStringHelperInnerAliasMapHelperPubSubType::getKey(
         return false;
     }
 
-    MapInnerAliasBoundedWStringHelperInnerAliasMapHelper* p_type = static_cast<MapInnerAliasBoundedWStringHelperInnerAliasMapHelper*>(data);
+    const MapInnerAliasBoundedWStringHelperInnerAliasMapHelper* p_type = static_cast<const MapInnerAliasBoundedWStringHelperInnerAliasMapHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -49658,11 +49658,11 @@ MapInnerAliasBoundedWStringHelperInnerUnionHelperPubSubType::~MapInnerAliasBound
 }
 
 bool MapInnerAliasBoundedWStringHelperInnerUnionHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapInnerAliasBoundedWStringHelperInnerUnionHelper* p_type = static_cast<MapInnerAliasBoundedWStringHelperInnerUnionHelper*>(data);
+    const MapInnerAliasBoundedWStringHelperInnerUnionHelper* p_type = static_cast<const MapInnerAliasBoundedWStringHelperInnerUnionHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -49734,7 +49734,7 @@ bool MapInnerAliasBoundedWStringHelperInnerUnionHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapInnerAliasBoundedWStringHelperInnerUnionHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -49751,7 +49751,7 @@ std::function<uint32_t()> MapInnerAliasBoundedWStringHelperInnerUnionHelperPubSu
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapInnerAliasBoundedWStringHelperInnerUnionHelper*>(data), current_alignment)) +
+                               *static_cast<const MapInnerAliasBoundedWStringHelperInnerUnionHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -49774,7 +49774,7 @@ void MapInnerAliasBoundedWStringHelperInnerUnionHelperPubSubType::deleteData(
 }
 
 bool MapInnerAliasBoundedWStringHelperInnerUnionHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -49783,7 +49783,7 @@ bool MapInnerAliasBoundedWStringHelperInnerUnionHelperPubSubType::getKey(
         return false;
     }
 
-    MapInnerAliasBoundedWStringHelperInnerUnionHelper* p_type = static_cast<MapInnerAliasBoundedWStringHelperInnerUnionHelper*>(data);
+    const MapInnerAliasBoundedWStringHelperInnerUnionHelper* p_type = static_cast<const MapInnerAliasBoundedWStringHelperInnerUnionHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -49851,11 +49851,11 @@ MapInnerAliasBoundedWStringHelperInnerStructureHelperPubSubType::~MapInnerAliasB
 }
 
 bool MapInnerAliasBoundedWStringHelperInnerStructureHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapInnerAliasBoundedWStringHelperInnerStructureHelper* p_type = static_cast<MapInnerAliasBoundedWStringHelperInnerStructureHelper*>(data);
+    const MapInnerAliasBoundedWStringHelperInnerStructureHelper* p_type = static_cast<const MapInnerAliasBoundedWStringHelperInnerStructureHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -49927,7 +49927,7 @@ bool MapInnerAliasBoundedWStringHelperInnerStructureHelperPubSubType::deserializ
 }
 
 std::function<uint32_t()> MapInnerAliasBoundedWStringHelperInnerStructureHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -49944,7 +49944,7 @@ std::function<uint32_t()> MapInnerAliasBoundedWStringHelperInnerStructureHelperP
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapInnerAliasBoundedWStringHelperInnerStructureHelper*>(data), current_alignment)) +
+                               *static_cast<const MapInnerAliasBoundedWStringHelperInnerStructureHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -49967,7 +49967,7 @@ void MapInnerAliasBoundedWStringHelperInnerStructureHelperPubSubType::deleteData
 }
 
 bool MapInnerAliasBoundedWStringHelperInnerStructureHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -49976,7 +49976,7 @@ bool MapInnerAliasBoundedWStringHelperInnerStructureHelperPubSubType::getKey(
         return false;
     }
 
-    MapInnerAliasBoundedWStringHelperInnerStructureHelper* p_type = static_cast<MapInnerAliasBoundedWStringHelperInnerStructureHelper*>(data);
+    const MapInnerAliasBoundedWStringHelperInnerStructureHelper* p_type = static_cast<const MapInnerAliasBoundedWStringHelperInnerStructureHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -50044,11 +50044,11 @@ MapInnerAliasBoundedWStringHelperInnerBitsetHelperPubSubType::~MapInnerAliasBoun
 }
 
 bool MapInnerAliasBoundedWStringHelperInnerBitsetHelperPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    MapInnerAliasBoundedWStringHelperInnerBitsetHelper* p_type = static_cast<MapInnerAliasBoundedWStringHelperInnerBitsetHelper*>(data);
+    const MapInnerAliasBoundedWStringHelperInnerBitsetHelper* p_type = static_cast<const MapInnerAliasBoundedWStringHelperInnerBitsetHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -50120,7 +50120,7 @@ bool MapInnerAliasBoundedWStringHelperInnerBitsetHelperPubSubType::deserialize(
 }
 
 std::function<uint32_t()> MapInnerAliasBoundedWStringHelperInnerBitsetHelperPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -50137,7 +50137,7 @@ std::function<uint32_t()> MapInnerAliasBoundedWStringHelperInnerBitsetHelperPubS
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<MapInnerAliasBoundedWStringHelperInnerBitsetHelper*>(data), current_alignment)) +
+                               *static_cast<const MapInnerAliasBoundedWStringHelperInnerBitsetHelper*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -50160,7 +50160,7 @@ void MapInnerAliasBoundedWStringHelperInnerBitsetHelperPubSubType::deleteData(
 }
 
 bool MapInnerAliasBoundedWStringHelperInnerBitsetHelperPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -50169,7 +50169,7 @@ bool MapInnerAliasBoundedWStringHelperInnerBitsetHelperPubSubType::getKey(
         return false;
     }
 
-    MapInnerAliasBoundedWStringHelperInnerBitsetHelper* p_type = static_cast<MapInnerAliasBoundedWStringHelperInnerBitsetHelper*>(data);
+    const MapInnerAliasBoundedWStringHelperInnerBitsetHelper* p_type = static_cast<const MapInnerAliasBoundedWStringHelperInnerBitsetHelper*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -50237,11 +50237,11 @@ BoundedSmallMapPubSubType::~BoundedSmallMapPubSubType()
 }
 
 bool BoundedSmallMapPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    BoundedSmallMap* p_type = static_cast<BoundedSmallMap*>(data);
+    const BoundedSmallMap* p_type = static_cast<const BoundedSmallMap*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -50313,7 +50313,7 @@ bool BoundedSmallMapPubSubType::deserialize(
 }
 
 std::function<uint32_t()> BoundedSmallMapPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -50330,7 +50330,7 @@ std::function<uint32_t()> BoundedSmallMapPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<BoundedSmallMap*>(data), current_alignment)) +
+                               *static_cast<const BoundedSmallMap*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -50353,7 +50353,7 @@ void BoundedSmallMapPubSubType::deleteData(
 }
 
 bool BoundedSmallMapPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -50362,7 +50362,7 @@ bool BoundedSmallMapPubSubType::getKey(
         return false;
     }
 
-    BoundedSmallMap* p_type = static_cast<BoundedSmallMap*>(data);
+    const BoundedSmallMap* p_type = static_cast<const BoundedSmallMap*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -50430,11 +50430,11 @@ BoundedLargeMapPubSubType::~BoundedLargeMapPubSubType()
 }
 
 bool BoundedLargeMapPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    BoundedLargeMap* p_type = static_cast<BoundedLargeMap*>(data);
+    const BoundedLargeMap* p_type = static_cast<const BoundedLargeMap*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -50506,7 +50506,7 @@ bool BoundedLargeMapPubSubType::deserialize(
 }
 
 std::function<uint32_t()> BoundedLargeMapPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -50523,7 +50523,7 @@ std::function<uint32_t()> BoundedLargeMapPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<BoundedLargeMap*>(data), current_alignment)) +
+                               *static_cast<const BoundedLargeMap*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -50546,7 +50546,7 @@ void BoundedLargeMapPubSubType::deleteData(
 }
 
 bool BoundedLargeMapPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -50555,7 +50555,7 @@ bool BoundedLargeMapPubSubType::getKey(
         return false;
     }
 
-    BoundedLargeMap* p_type = static_cast<BoundedLargeMap*>(data);
+    const BoundedLargeMap* p_type = static_cast<const BoundedLargeMap*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),

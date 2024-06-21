@@ -57,11 +57,11 @@ RequestTypePubSubType::~RequestTypePubSubType()
 }
 
 bool RequestTypePubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    RequestType* p_type = static_cast<RequestType*>(data);
+    const RequestType* p_type = static_cast<const RequestType*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -133,7 +133,7 @@ bool RequestTypePubSubType::deserialize(
 }
 
 std::function<uint32_t()> RequestTypePubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -150,7 +150,7 @@ std::function<uint32_t()> RequestTypePubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<RequestType*>(data), current_alignment)) +
+                               *static_cast<const RequestType*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -173,7 +173,7 @@ void RequestTypePubSubType::deleteData(
 }
 
 bool RequestTypePubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -182,7 +182,7 @@ bool RequestTypePubSubType::getKey(
         return false;
     }
 
-    RequestType* p_type = static_cast<RequestType*>(data);
+    const RequestType* p_type = static_cast<const RequestType*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -250,11 +250,11 @@ ReplyTypePubSubType::~ReplyTypePubSubType()
 }
 
 bool ReplyTypePubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    ReplyType* p_type = static_cast<ReplyType*>(data);
+    const ReplyType* p_type = static_cast<const ReplyType*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -326,7 +326,7 @@ bool ReplyTypePubSubType::deserialize(
 }
 
 std::function<uint32_t()> ReplyTypePubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -343,7 +343,7 @@ std::function<uint32_t()> ReplyTypePubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<ReplyType*>(data), current_alignment)) +
+                               *static_cast<const ReplyType*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -366,7 +366,7 @@ void ReplyTypePubSubType::deleteData(
 }
 
 bool ReplyTypePubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -375,7 +375,7 @@ bool ReplyTypePubSubType::getKey(
         return false;
     }
 
-    ReplyType* p_type = static_cast<ReplyType*>(data);
+    const ReplyType* p_type = static_cast<const ReplyType*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),

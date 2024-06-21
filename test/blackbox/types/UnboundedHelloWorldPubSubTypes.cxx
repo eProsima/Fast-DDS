@@ -57,11 +57,11 @@ UnboundedHelloWorldPubSubType::~UnboundedHelloWorldPubSubType()
 }
 
 bool UnboundedHelloWorldPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    UnboundedHelloWorld* p_type = static_cast<UnboundedHelloWorld*>(data);
+    const UnboundedHelloWorld* p_type = static_cast<const UnboundedHelloWorld*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -133,7 +133,7 @@ bool UnboundedHelloWorldPubSubType::deserialize(
 }
 
 std::function<uint32_t()> UnboundedHelloWorldPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -150,7 +150,7 @@ std::function<uint32_t()> UnboundedHelloWorldPubSubType::getSerializedSizeProvid
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<UnboundedHelloWorld*>(data), current_alignment)) +
+                               *static_cast<const UnboundedHelloWorld*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -173,7 +173,7 @@ void UnboundedHelloWorldPubSubType::deleteData(
 }
 
 bool UnboundedHelloWorldPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -182,7 +182,7 @@ bool UnboundedHelloWorldPubSubType::getKey(
         return false;
     }
 
-    UnboundedHelloWorld* p_type = static_cast<UnboundedHelloWorld*>(data);
+    const UnboundedHelloWorld* p_type = static_cast<const UnboundedHelloWorld*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),

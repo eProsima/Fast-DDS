@@ -57,11 +57,11 @@ StringStructPubSubType::~StringStructPubSubType()
 }
 
 bool StringStructPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    StringStruct* p_type = static_cast<StringStruct*>(data);
+    const StringStruct* p_type = static_cast<const StringStruct*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -133,7 +133,7 @@ bool StringStructPubSubType::deserialize(
 }
 
 std::function<uint32_t()> StringStructPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -150,7 +150,7 @@ std::function<uint32_t()> StringStructPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<StringStruct*>(data), current_alignment)) +
+                               *static_cast<const StringStruct*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -173,7 +173,7 @@ void StringStructPubSubType::deleteData(
 }
 
 bool StringStructPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -182,7 +182,7 @@ bool StringStructPubSubType::getKey(
         return false;
     }
 
-    StringStruct* p_type = static_cast<StringStruct*>(data);
+    const StringStruct* p_type = static_cast<const StringStruct*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -250,11 +250,11 @@ WStringStructPubSubType::~WStringStructPubSubType()
 }
 
 bool WStringStructPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    WStringStruct* p_type = static_cast<WStringStruct*>(data);
+    const WStringStruct* p_type = static_cast<const WStringStruct*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -326,7 +326,7 @@ bool WStringStructPubSubType::deserialize(
 }
 
 std::function<uint32_t()> WStringStructPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -343,7 +343,7 @@ std::function<uint32_t()> WStringStructPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<WStringStruct*>(data), current_alignment)) +
+                               *static_cast<const WStringStruct*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -366,7 +366,7 @@ void WStringStructPubSubType::deleteData(
 }
 
 bool WStringStructPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -375,7 +375,7 @@ bool WStringStructPubSubType::getKey(
         return false;
     }
 
-    WStringStruct* p_type = static_cast<WStringStruct*>(data);
+    const WStringStruct* p_type = static_cast<const WStringStruct*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -443,11 +443,11 @@ SmallStringStructPubSubType::~SmallStringStructPubSubType()
 }
 
 bool SmallStringStructPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    SmallStringStruct* p_type = static_cast<SmallStringStruct*>(data);
+    const SmallStringStruct* p_type = static_cast<const SmallStringStruct*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -519,7 +519,7 @@ bool SmallStringStructPubSubType::deserialize(
 }
 
 std::function<uint32_t()> SmallStringStructPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -536,7 +536,7 @@ std::function<uint32_t()> SmallStringStructPubSubType::getSerializedSizeProvider
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<SmallStringStruct*>(data), current_alignment)) +
+                               *static_cast<const SmallStringStruct*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -559,7 +559,7 @@ void SmallStringStructPubSubType::deleteData(
 }
 
 bool SmallStringStructPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -568,7 +568,7 @@ bool SmallStringStructPubSubType::getKey(
         return false;
     }
 
-    SmallStringStruct* p_type = static_cast<SmallStringStruct*>(data);
+    const SmallStringStruct* p_type = static_cast<const SmallStringStruct*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -636,11 +636,11 @@ SmallWStringStructPubSubType::~SmallWStringStructPubSubType()
 }
 
 bool SmallWStringStructPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    SmallWStringStruct* p_type = static_cast<SmallWStringStruct*>(data);
+    const SmallWStringStruct* p_type = static_cast<const SmallWStringStruct*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -712,7 +712,7 @@ bool SmallWStringStructPubSubType::deserialize(
 }
 
 std::function<uint32_t()> SmallWStringStructPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -729,7 +729,7 @@ std::function<uint32_t()> SmallWStringStructPubSubType::getSerializedSizeProvide
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<SmallWStringStruct*>(data), current_alignment)) +
+                               *static_cast<const SmallWStringStruct*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -752,7 +752,7 @@ void SmallWStringStructPubSubType::deleteData(
 }
 
 bool SmallWStringStructPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -761,7 +761,7 @@ bool SmallWStringStructPubSubType::getKey(
         return false;
     }
 
-    SmallWStringStruct* p_type = static_cast<SmallWStringStruct*>(data);
+    const SmallWStringStruct* p_type = static_cast<const SmallWStringStruct*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -829,11 +829,11 @@ LargeStringStructPubSubType::~LargeStringStructPubSubType()
 }
 
 bool LargeStringStructPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    LargeStringStruct* p_type = static_cast<LargeStringStruct*>(data);
+    const LargeStringStruct* p_type = static_cast<const LargeStringStruct*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -905,7 +905,7 @@ bool LargeStringStructPubSubType::deserialize(
 }
 
 std::function<uint32_t()> LargeStringStructPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -922,7 +922,7 @@ std::function<uint32_t()> LargeStringStructPubSubType::getSerializedSizeProvider
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<LargeStringStruct*>(data), current_alignment)) +
+                               *static_cast<const LargeStringStruct*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -945,7 +945,7 @@ void LargeStringStructPubSubType::deleteData(
 }
 
 bool LargeStringStructPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -954,7 +954,7 @@ bool LargeStringStructPubSubType::getKey(
         return false;
     }
 
-    LargeStringStruct* p_type = static_cast<LargeStringStruct*>(data);
+    const LargeStringStruct* p_type = static_cast<const LargeStringStruct*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -1022,11 +1022,11 @@ LargeWStringStructPubSubType::~LargeWStringStructPubSubType()
 }
 
 bool LargeWStringStructPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    LargeWStringStruct* p_type = static_cast<LargeWStringStruct*>(data);
+    const LargeWStringStruct* p_type = static_cast<const LargeWStringStruct*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -1098,7 +1098,7 @@ bool LargeWStringStructPubSubType::deserialize(
 }
 
 std::function<uint32_t()> LargeWStringStructPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -1115,7 +1115,7 @@ std::function<uint32_t()> LargeWStringStructPubSubType::getSerializedSizeProvide
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<LargeWStringStruct*>(data), current_alignment)) +
+                               *static_cast<const LargeWStringStruct*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -1138,7 +1138,7 @@ void LargeWStringStructPubSubType::deleteData(
 }
 
 bool LargeWStringStructPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -1147,7 +1147,7 @@ bool LargeWStringStructPubSubType::getKey(
         return false;
     }
 
-    LargeWStringStruct* p_type = static_cast<LargeWStringStruct*>(data);
+    const LargeWStringStruct* p_type = static_cast<const LargeWStringStruct*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),

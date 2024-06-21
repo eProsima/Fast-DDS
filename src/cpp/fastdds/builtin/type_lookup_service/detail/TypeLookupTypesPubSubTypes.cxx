@@ -63,11 +63,11 @@ namespace builtin {
     }
 
     bool TypeLookup_getTypes_InPubSubType::serialize(
-            void* data,
+            const void* const data,
             SerializedPayload_t* payload,
             DataRepresentationId_t data_representation)
     {
-        TypeLookup_getTypes_In* p_type = static_cast<TypeLookup_getTypes_In*>(data);
+        const TypeLookup_getTypes_In* p_type = static_cast<const TypeLookup_getTypes_In*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -139,7 +139,7 @@ namespace builtin {
     }
 
     std::function<uint32_t()> TypeLookup_getTypes_InPubSubType::getSerializedSizeProvider(
-            void* data,
+            const void* const data,
             DataRepresentationId_t data_representation)
     {
         return [data, data_representation]() -> uint32_t
@@ -156,7 +156,7 @@ namespace builtin {
                            eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                        size_t current_alignment {0};
                        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                                   *static_cast<TypeLookup_getTypes_In*>(data), current_alignment)) +
+                                   *static_cast<const TypeLookup_getTypes_In*>(data), current_alignment)) +
                                4u /*encapsulation*/;
                    }
                    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -179,7 +179,7 @@ namespace builtin {
     }
 
     bool TypeLookup_getTypes_InPubSubType::getKey(
-            void* data,
+            const void* const data,
             InstanceHandle_t* handle,
             bool force_md5)
     {
@@ -188,7 +188,7 @@ namespace builtin {
             return false;
         }
 
-        TypeLookup_getTypes_In* p_type = static_cast<TypeLookup_getTypes_In*>(data);
+        const TypeLookup_getTypes_In* p_type = static_cast<const TypeLookup_getTypes_In*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -257,11 +257,11 @@ namespace builtin {
     }
 
     bool TypeLookup_getTypes_OutPubSubType::serialize(
-            void* data,
+            const void* const data,
             SerializedPayload_t* payload,
             DataRepresentationId_t data_representation)
     {
-        TypeLookup_getTypes_Out* p_type = static_cast<TypeLookup_getTypes_Out*>(data);
+        const TypeLookup_getTypes_Out* p_type = static_cast<const TypeLookup_getTypes_Out*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -333,7 +333,7 @@ namespace builtin {
     }
 
     std::function<uint32_t()> TypeLookup_getTypes_OutPubSubType::getSerializedSizeProvider(
-            void* data,
+            const void* const data,
             DataRepresentationId_t data_representation)
     {
         return [data, data_representation]() -> uint32_t
@@ -350,7 +350,7 @@ namespace builtin {
                            eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                        size_t current_alignment {0};
                        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                                   *static_cast<TypeLookup_getTypes_Out*>(data), current_alignment)) +
+                                   *static_cast<const TypeLookup_getTypes_Out*>(data), current_alignment)) +
                                4u /*encapsulation*/;
                    }
                    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -373,7 +373,7 @@ namespace builtin {
     }
 
     bool TypeLookup_getTypes_OutPubSubType::getKey(
-            void* data,
+            const void* const data,
             InstanceHandle_t* handle,
             bool force_md5)
     {
@@ -382,7 +382,7 @@ namespace builtin {
             return false;
         }
 
-        TypeLookup_getTypes_Out* p_type = static_cast<TypeLookup_getTypes_Out*>(data);
+        const TypeLookup_getTypes_Out* p_type = static_cast<const TypeLookup_getTypes_Out*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -452,11 +452,11 @@ namespace builtin {
     }
 
     bool TypeLookup_getTypeDependencies_InPubSubType::serialize(
-            void* data,
+            const void* const data,
             SerializedPayload_t* payload,
             DataRepresentationId_t data_representation)
     {
-        TypeLookup_getTypeDependencies_In* p_type = static_cast<TypeLookup_getTypeDependencies_In*>(data);
+        const TypeLookup_getTypeDependencies_In* p_type = static_cast<const TypeLookup_getTypeDependencies_In*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -528,7 +528,7 @@ namespace builtin {
     }
 
     std::function<uint32_t()> TypeLookup_getTypeDependencies_InPubSubType::getSerializedSizeProvider(
-            void* data,
+            const void* const data,
             DataRepresentationId_t data_representation)
     {
         return [data, data_representation]() -> uint32_t
@@ -545,7 +545,7 @@ namespace builtin {
                            eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                        size_t current_alignment {0};
                        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                                   *static_cast<TypeLookup_getTypeDependencies_In*>(data), current_alignment)) +
+                                   *static_cast<const TypeLookup_getTypeDependencies_In*>(data), current_alignment)) +
                                4u /*encapsulation*/;
                    }
                    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -568,7 +568,7 @@ namespace builtin {
     }
 
     bool TypeLookup_getTypeDependencies_InPubSubType::getKey(
-            void* data,
+            const void* const data,
             InstanceHandle_t* handle,
             bool force_md5)
     {
@@ -577,7 +577,7 @@ namespace builtin {
             return false;
         }
 
-        TypeLookup_getTypeDependencies_In* p_type = static_cast<TypeLookup_getTypeDependencies_In*>(data);
+        const TypeLookup_getTypeDependencies_In* p_type = static_cast<const TypeLookup_getTypeDependencies_In*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -646,11 +646,11 @@ namespace builtin {
     }
 
     bool TypeLookup_getTypeDependencies_OutPubSubType::serialize(
-            void* data,
+            const void* const data,
             SerializedPayload_t* payload,
             DataRepresentationId_t data_representation)
     {
-        TypeLookup_getTypeDependencies_Out* p_type = static_cast<TypeLookup_getTypeDependencies_Out*>(data);
+        const TypeLookup_getTypeDependencies_Out* p_type = static_cast<const TypeLookup_getTypeDependencies_Out*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -722,7 +722,7 @@ namespace builtin {
     }
 
     std::function<uint32_t()> TypeLookup_getTypeDependencies_OutPubSubType::getSerializedSizeProvider(
-            void* data,
+            const void* const data,
             DataRepresentationId_t data_representation)
     {
         return [data, data_representation]() -> uint32_t
@@ -739,7 +739,7 @@ namespace builtin {
                            eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                        size_t current_alignment {0};
                        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                                   *static_cast<TypeLookup_getTypeDependencies_Out*>(data), current_alignment)) +
+                                   *static_cast<const TypeLookup_getTypeDependencies_Out*>(data), current_alignment)) +
                                4u /*encapsulation*/;
                    }
                    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -762,7 +762,7 @@ namespace builtin {
     }
 
     bool TypeLookup_getTypeDependencies_OutPubSubType::getKey(
-            void* data,
+            const void* const data,
             InstanceHandle_t* handle,
             bool force_md5)
     {
@@ -771,7 +771,7 @@ namespace builtin {
             return false;
         }
 
-        TypeLookup_getTypeDependencies_Out* p_type = static_cast<TypeLookup_getTypeDependencies_Out*>(data);
+        const TypeLookup_getTypeDependencies_Out* p_type = static_cast<const TypeLookup_getTypeDependencies_Out*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -842,11 +842,11 @@ namespace builtin {
     }
 
     bool TypeLookup_RequestPubSubType::serialize(
-            void* data,
+            const void* const data,
             SerializedPayload_t* payload,
             DataRepresentationId_t data_representation)
     {
-        TypeLookup_Request* p_type = static_cast<TypeLookup_Request*>(data);
+        const TypeLookup_Request* p_type = static_cast<const TypeLookup_Request*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -918,7 +918,7 @@ namespace builtin {
     }
 
     std::function<uint32_t()> TypeLookup_RequestPubSubType::getSerializedSizeProvider(
-            void* data,
+            const void* const data,
             DataRepresentationId_t data_representation)
     {
         return [data, data_representation]() -> uint32_t
@@ -935,7 +935,7 @@ namespace builtin {
                            eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                        size_t current_alignment {0};
                        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                                   *static_cast<TypeLookup_Request*>(data), current_alignment)) +
+                                   *static_cast<const TypeLookup_Request*>(data), current_alignment)) +
                                4u /*encapsulation*/;
                    }
                    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -958,7 +958,7 @@ namespace builtin {
     }
 
     bool TypeLookup_RequestPubSubType::getKey(
-            void* data,
+            const void* const data,
             InstanceHandle_t* handle,
             bool force_md5)
     {
@@ -967,7 +967,7 @@ namespace builtin {
             return false;
         }
 
-        TypeLookup_Request* p_type = static_cast<TypeLookup_Request*>(data);
+        const TypeLookup_Request* p_type = static_cast<const TypeLookup_Request*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -1037,11 +1037,11 @@ namespace builtin {
     }
 
     bool TypeLookup_ReplyPubSubType::serialize(
-            void* data,
+            const void* const data,
             SerializedPayload_t* payload,
             DataRepresentationId_t data_representation)
     {
-        TypeLookup_Reply* p_type = static_cast<TypeLookup_Reply*>(data);
+        const TypeLookup_Reply* p_type = static_cast<const TypeLookup_Reply*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -1113,7 +1113,7 @@ namespace builtin {
     }
 
     std::function<uint32_t()> TypeLookup_ReplyPubSubType::getSerializedSizeProvider(
-            void* data,
+            const void* const data,
             DataRepresentationId_t data_representation)
     {
         return [data, data_representation]() -> uint32_t
@@ -1130,7 +1130,7 @@ namespace builtin {
                            eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                        size_t current_alignment {0};
                        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                                   *static_cast<TypeLookup_Reply*>(data), current_alignment)) +
+                                   *static_cast<const TypeLookup_Reply*>(data), current_alignment)) +
                                4u /*encapsulation*/;
                    }
                    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -1153,7 +1153,7 @@ namespace builtin {
     }
 
     bool TypeLookup_ReplyPubSubType::getKey(
-            void* data,
+            const void* const data,
             InstanceHandle_t* handle,
             bool force_md5)
     {
@@ -1162,7 +1162,7 @@ namespace builtin {
             return false;
         }
 
-        TypeLookup_Reply* p_type = static_cast<TypeLookup_Reply*>(data);
+        const TypeLookup_Reply* p_type = static_cast<const TypeLookup_Reply*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),

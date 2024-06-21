@@ -31,7 +31,7 @@ class MockHelloWorldPubSubType : public HelloWorldPubSubType
 public:
 
     bool serialize(
-            void* data,
+            const void* const data,
             eprosima::fastdds::rtps::SerializedPayload_t* payload,
             DataRepresentationId_t data_representation) override
     {

@@ -43,7 +43,7 @@ TopicDataType::~TopicDataType()
 }
 
 bool TopicDataType::serialize(
-        void* data,
+        const void* const data,
         fastdds::rtps::SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
@@ -53,7 +53,7 @@ bool TopicDataType::serialize(
 }
 
 std::function<uint32_t()> TopicDataType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     static_cast<void>(data);

@@ -42,7 +42,7 @@ public:
     }
 
     bool serialize(
-            void* /*data*/,
+            const void* const /*data*/,
             eprosima::fastdds::rtps::SerializedPayload_t* /*payload*/) override
     {
         return true;
@@ -56,7 +56,7 @@ public:
     }
 
     std::function<uint32_t()> getSerializedSizeProvider(
-            void* /*data*/) override
+            const void* const /*data*/) override
     {
         return []()->uint32_t
                {
@@ -75,7 +75,7 @@ public:
     }
 
     bool getKey(
-            void* /*data*/,
+            const void* const /*data*/,
             eprosima::fastdds::rtps::InstanceHandle_t* /*ihandle*/,
             bool /*force_md5*/) override
     {

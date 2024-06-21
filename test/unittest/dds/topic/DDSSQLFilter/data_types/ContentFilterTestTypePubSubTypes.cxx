@@ -57,11 +57,11 @@ StructTypePubSubType::~StructTypePubSubType()
 }
 
 bool StructTypePubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    StructType* p_type = static_cast<StructType*>(data);
+    const StructType* p_type = static_cast<const StructType*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -133,7 +133,7 @@ bool StructTypePubSubType::deserialize(
 }
 
 std::function<uint32_t()> StructTypePubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -150,7 +150,7 @@ std::function<uint32_t()> StructTypePubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<StructType*>(data), current_alignment)) +
+                               *static_cast<const StructType*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -173,7 +173,7 @@ void StructTypePubSubType::deleteData(
 }
 
 bool StructTypePubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -182,7 +182,7 @@ bool StructTypePubSubType::getKey(
         return false;
     }
 
-    StructType* p_type = static_cast<StructType*>(data);
+    const StructType* p_type = static_cast<const StructType*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -252,11 +252,11 @@ ContentFilterTestTypePubSubType::~ContentFilterTestTypePubSubType()
 }
 
 bool ContentFilterTestTypePubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    ContentFilterTestType* p_type = static_cast<ContentFilterTestType*>(data);
+    const ContentFilterTestType* p_type = static_cast<const ContentFilterTestType*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -328,7 +328,7 @@ bool ContentFilterTestTypePubSubType::deserialize(
 }
 
 std::function<uint32_t()> ContentFilterTestTypePubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -345,7 +345,7 @@ std::function<uint32_t()> ContentFilterTestTypePubSubType::getSerializedSizeProv
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<ContentFilterTestType*>(data), current_alignment)) +
+                               *static_cast<const ContentFilterTestType*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -368,7 +368,7 @@ void ContentFilterTestTypePubSubType::deleteData(
 }
 
 bool ContentFilterTestTypePubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -377,7 +377,7 @@ bool ContentFilterTestTypePubSubType::getKey(
         return false;
     }
 
-    ContentFilterTestType* p_type = static_cast<ContentFilterTestType*>(data);
+    const ContentFilterTestType* p_type = static_cast<const ContentFilterTestType*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),

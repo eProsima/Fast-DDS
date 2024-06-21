@@ -60,11 +60,11 @@ EnumStructurePubSubType::~EnumStructurePubSubType()
 }
 
 bool EnumStructurePubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    EnumStructure* p_type = static_cast<EnumStructure*>(data);
+    const EnumStructure* p_type = static_cast<const EnumStructure*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -136,7 +136,7 @@ bool EnumStructurePubSubType::deserialize(
 }
 
 std::function<uint32_t()> EnumStructurePubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -153,7 +153,7 @@ std::function<uint32_t()> EnumStructurePubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<EnumStructure*>(data), current_alignment)) +
+                               *static_cast<const EnumStructure*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -176,7 +176,7 @@ void EnumStructurePubSubType::deleteData(
 }
 
 bool EnumStructurePubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -185,7 +185,7 @@ bool EnumStructurePubSubType::getKey(
         return false;
     }
 
-    EnumStructure* p_type = static_cast<EnumStructure*>(data);
+    const EnumStructure* p_type = static_cast<const EnumStructure*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -253,11 +253,11 @@ BitMaskStructurePubSubType::~BitMaskStructurePubSubType()
 }
 
 bool BitMaskStructurePubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    BitMaskStructure* p_type = static_cast<BitMaskStructure*>(data);
+    const BitMaskStructure* p_type = static_cast<const BitMaskStructure*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -329,7 +329,7 @@ bool BitMaskStructurePubSubType::deserialize(
 }
 
 std::function<uint32_t()> BitMaskStructurePubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -346,7 +346,7 @@ std::function<uint32_t()> BitMaskStructurePubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<BitMaskStructure*>(data), current_alignment)) +
+                               *static_cast<const BitMaskStructure*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -369,7 +369,7 @@ void BitMaskStructurePubSubType::deleteData(
 }
 
 bool BitMaskStructurePubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -378,7 +378,7 @@ bool BitMaskStructurePubSubType::getKey(
         return false;
     }
 
-    BitMaskStructure* p_type = static_cast<BitMaskStructure*>(data);
+    const BitMaskStructure* p_type = static_cast<const BitMaskStructure*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
@@ -446,11 +446,11 @@ BoundedBitMaskStructurePubSubType::~BoundedBitMaskStructurePubSubType()
 }
 
 bool BoundedBitMaskStructurePubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    BoundedBitMaskStructure* p_type = static_cast<BoundedBitMaskStructure*>(data);
+    const BoundedBitMaskStructure* p_type = static_cast<const BoundedBitMaskStructure*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -522,7 +522,7 @@ bool BoundedBitMaskStructurePubSubType::deserialize(
 }
 
 std::function<uint32_t()> BoundedBitMaskStructurePubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -539,7 +539,7 @@ std::function<uint32_t()> BoundedBitMaskStructurePubSubType::getSerializedSizePr
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<BoundedBitMaskStructure*>(data), current_alignment)) +
+                               *static_cast<const BoundedBitMaskStructure*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -562,7 +562,7 @@ void BoundedBitMaskStructurePubSubType::deleteData(
 }
 
 bool BoundedBitMaskStructurePubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -571,7 +571,7 @@ bool BoundedBitMaskStructurePubSubType::getKey(
         return false;
     }
 
-    BoundedBitMaskStructure* p_type = static_cast<BoundedBitMaskStructure*>(data);
+    const BoundedBitMaskStructure* p_type = static_cast<const BoundedBitMaskStructure*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),

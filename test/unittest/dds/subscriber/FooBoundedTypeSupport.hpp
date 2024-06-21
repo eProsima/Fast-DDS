@@ -40,18 +40,18 @@ public:
     }
 
     bool serialize(
-            void* data,
+            const void* const data,
             eprosima::fastdds::rtps::SerializedPayload_t* payload) override
     {
         return serialize(data, payload, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
     }
 
     bool serialize(
-            void* data,
+            const void* const data,
             fastdds::rtps::SerializedPayload_t* payload,
             DataRepresentationId_t data_representation) override
     {
-        type* p_type = static_cast<type*>(data);
+        const type* p_type = static_cast<const type*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fb(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -125,18 +125,18 @@ public:
     }
 
     std::function<uint32_t()> getSerializedSizeProvider(
-            void* data) override
+            const void* const data) override
     {
         return getSerializedSizeProvider(data, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
     }
 
     std::function<uint32_t()> getSerializedSizeProvider(
-            void* data,
+            const void* const data,
             DataRepresentationId_t /*data_representation*/) override
     {
         return [data]() -> uint32_t
                {
-                   return static_cast<uint32_t>(type::getCdrSerializedSize(*static_cast<type*>(data))) +
+                   return static_cast<uint32_t>(type::getCdrSerializedSize(*static_cast<const type*>(data))) +
                           4u /*encapsulation*/;
                };
     }
@@ -154,7 +154,7 @@ public:
     }
 
     bool getKey(
-            void* /*data*/,
+            const void* const /*data*/,
             fastdds::rtps::InstanceHandle_t* /*handle*/,
             bool /*force_md5*/) override
     {

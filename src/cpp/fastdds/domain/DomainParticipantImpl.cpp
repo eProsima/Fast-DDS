@@ -1455,6 +1455,16 @@ ReturnCode_t DomainParticipantImpl::register_type(
         return RETCODE_BAD_PARAMETER;
     }
 
+    /*
+     * The type object registration sets the TypeIdentifiers in the type support's underlying TopicDataType.
+     * This means that we need need to trigger the registration of the type object representation
+     * (idempotent operation) before finding the type in the registry.
+     * Otherwise, registering two TypeSupport instances with the same underlying TopicDataType will fail upon
+     * the second registration, as the TypeIdentifiers of the retrieved type from the registry would not be equal
+     * to those of the incoming type support.
+     */
+    type.get()->register_type_object_representation();
+
     TypeSupport t = find_type(type_name);
 
     if (!t.empty())
@@ -1471,8 +1481,6 @@ ReturnCode_t DomainParticipantImpl::register_type(
     EPROSIMA_LOG_INFO(PARTICIPANT, "Type " << type_name << " registered.");
     std::lock_guard<std::mutex> lock(mtx_types_);
     types_.insert(std::make_pair(type_name, type));
-
-    type.get()->register_type_object_representation();
 
     return RETCODE_OK;
 }

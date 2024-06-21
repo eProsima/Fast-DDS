@@ -131,7 +131,7 @@ public:
      * @return True if correct, false otherwise
      */
     FASTDDS_EXPORTED_API bool write(
-            void* data);
+            const void* const data);
 
     /**
      * Write data with params to the topic.
@@ -141,7 +141,7 @@ public:
      * @return True if correct, false otherwise
      */
     FASTDDS_EXPORTED_API bool write(
-            void* data,
+            const void* const data,
             fastdds::rtps::WriteParams& params);
 
     /**
@@ -156,7 +156,7 @@ public:
      * RETCODE_OK if the data is correctly sent and RETCODE_ERROR otherwise.
      */
     FASTDDS_EXPORTED_API ReturnCode_t write(
-            void* data,
+            const void* const data,
             const InstanceHandle_t& handle);
 
     /**
@@ -176,7 +176,7 @@ public:
      * @return Any of the standard return codes.
      */
     FASTDDS_EXPORTED_API ReturnCode_t write_w_timestamp(
-            void* data,
+            const void* const data,
             const InstanceHandle_t& handle,
             const fastdds::Time_t& timestamp);
 
@@ -190,7 +190,7 @@ public:
      * In case of error, HANDLE_NIL will be returned.
      */
     FASTDDS_EXPORTED_API InstanceHandle_t register_instance(
-            void* instance);
+            const void* const instance);
 
     /**
      * @brief This operation performs the same function as register_instance and can be used instead of
@@ -211,7 +211,7 @@ public:
      * @return Handle containing the instance's key.
      */
     FASTDDS_EXPORTED_API InstanceHandle_t register_instance_w_timestamp(
-            void* instance,
+            const void* const instance,
             const fastdds::Time_t& timestamp);
 
     /*!
@@ -226,7 +226,7 @@ public:
      * If the operation finishes successfully, RETCODE_OK is returned.
      */
     FASTDDS_EXPORTED_API ReturnCode_t unregister_instance(
-            void* instance,
+            const void* const instance,
             const InstanceHandle_t& handle);
 
     /**
@@ -249,7 +249,7 @@ public:
      * @return Handle containing the instance's key.
      */
     FASTDDS_EXPORTED_API ReturnCode_t unregister_instance_w_timestamp(
-            void* instance,
+            const void* const instance,
             const InstanceHandle_t& handle,
             const fastdds::Time_t& timestamp);
 
@@ -283,7 +283,7 @@ public:
      * @return handle of the given instance
      */
     FASTDDS_EXPORTED_API InstanceHandle_t lookup_instance(
-            const void* instance) const;
+            const void* const instance) const;
 
     /**
      * Returns the DataWriter's GUID
@@ -418,7 +418,7 @@ public:
      * RETCODE_OK if the data is correctly sent and RETCODE_ERROR otherwise.
      */
     FASTDDS_EXPORTED_API ReturnCode_t dispose(
-            void* data,
+            const void* const data,
             const InstanceHandle_t& handle);
 
     /**
@@ -442,7 +442,7 @@ public:
      * @return FASTDDS_EXPORTED_API
      */
     FASTDDS_EXPORTED_API ReturnCode_t dispose_w_timestamp(
-            void* instance,
+            const void* const instance,
             const InstanceHandle_t& handle,
             const fastdds::Time_t& timestamp);
     /**
@@ -580,7 +580,7 @@ public:
      * @return RETCODE_TIMEOUT otherwise.
      */
     FASTDDS_EXPORTED_API ReturnCode_t wait_for_acknowledgments(
-            void* instance,
+            const void* const instance,
             const InstanceHandle_t& handle,
             const fastdds::Duration_t& max_wait);
 

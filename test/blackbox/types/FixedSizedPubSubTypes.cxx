@@ -57,11 +57,11 @@ FixedSizedPubSubType::~FixedSizedPubSubType()
 }
 
 bool FixedSizedPubSubType::serialize(
-        void* data,
+        const void* const data,
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    FixedSized* p_type = static_cast<FixedSized*>(data);
+    const FixedSized* p_type = static_cast<const FixedSized*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -133,7 +133,7 @@ bool FixedSizedPubSubType::deserialize(
 }
 
 std::function<uint32_t()> FixedSizedPubSubType::getSerializedSizeProvider(
-        void* data,
+        const void* const data,
         DataRepresentationId_t data_representation)
 {
     return [data, data_representation]() -> uint32_t
@@ -150,7 +150,7 @@ std::function<uint32_t()> FixedSizedPubSubType::getSerializedSizeProvider(
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<FixedSized*>(data), current_alignment)) +
+                               *static_cast<const FixedSized*>(data), current_alignment)) +
                            4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -173,7 +173,7 @@ void FixedSizedPubSubType::deleteData(
 }
 
 bool FixedSizedPubSubType::getKey(
-        void* data,
+        const void* const data,
         InstanceHandle_t* handle,
         bool force_md5)
 {
@@ -182,7 +182,7 @@ bool FixedSizedPubSubType::getKey(
         return false;
     }
 
-    FixedSized* p_type = static_cast<FixedSized*>(data);
+    const FixedSized* p_type = static_cast<const FixedSized*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),

@@ -94,7 +94,7 @@ public:
     }
 
     bool add_loan(
-            void* data,
+            const void* const data,
             SerializedPayload_t& payload)
     {
         static_cast<void>(data);
@@ -103,10 +103,10 @@ public:
     }
 
     bool check_and_remove_loan(
-            void* data,
+            const void* const data,
             SerializedPayload_t& payload)
     {
-        octet* payload_data = static_cast<octet*>(data) - SerializedPayload_t::representation_header_size;
+        const octet* payload_data = static_cast<const octet*>(data) - SerializedPayload_t::representation_header_size;
         for (auto it = loans_.begin(); it != loans_.end(); ++it)
         {
             if (it->data == payload_data)
@@ -604,7 +604,7 @@ ReturnCode_t DataWriterImpl::discard_loan(
 }
 
 bool DataWriterImpl::write(
-        void* data)
+        const void* const data)
 {
     if (writer_ == nullptr)
     {
@@ -616,7 +616,7 @@ bool DataWriterImpl::write(
 }
 
 bool DataWriterImpl::write(
-        void* data,
+        const void* const data,
         fastdds::rtps::WriteParams& params)
 {
     if (writer_ == nullptr)
@@ -629,7 +629,7 @@ bool DataWriterImpl::write(
 }
 
 ReturnCode_t DataWriterImpl::check_write_preconditions(
-        void* data,
+        const void* const data,
         const InstanceHandle_t& handle,
         InstanceHandle_t& instance_handle)
 {
@@ -658,7 +658,7 @@ ReturnCode_t DataWriterImpl::check_write_preconditions(
 }
 
 ReturnCode_t DataWriterImpl::write(
-        void* data,
+        const void* const data,
         const InstanceHandle_t& handle)
 {
     InstanceHandle_t instance_handle;
@@ -674,7 +674,7 @@ ReturnCode_t DataWriterImpl::write(
 }
 
 ReturnCode_t DataWriterImpl::write_w_timestamp(
-        void* data,
+        const void* const data,
         const InstanceHandle_t& handle,
         const fastdds::Time_t& timestamp)
 {
@@ -702,7 +702,7 @@ ReturnCode_t DataWriterImpl::write_w_timestamp(
 }
 
 ReturnCode_t DataWriterImpl::check_instance_preconditions(
-        void* data,
+        const void* const data,
         const InstanceHandle_t& handle,
         InstanceHandle_t& instance_handle)
 {
@@ -748,7 +748,7 @@ ReturnCode_t DataWriterImpl::check_instance_preconditions(
 }
 
 InstanceHandle_t DataWriterImpl::register_instance(
-        void* key)
+        const void* const key)
 {
     /// Preconditions
     InstanceHandle_t instance_handle;
@@ -762,7 +762,7 @@ InstanceHandle_t DataWriterImpl::register_instance(
 }
 
 InstanceHandle_t DataWriterImpl::register_instance_w_timestamp(
-        void* key,
+        const void* const key,
         const fastdds::Time_t& timestamp)
 {
     /// Preconditions
@@ -779,7 +779,7 @@ InstanceHandle_t DataWriterImpl::register_instance_w_timestamp(
 }
 
 InstanceHandle_t DataWriterImpl::do_register_instance(
-        void* key,
+        const void* const key,
         const InstanceHandle_t instance_handle,
         WriteParams& wparams)
 {
@@ -825,7 +825,7 @@ InstanceHandle_t DataWriterImpl::do_register_instance(
 }
 
 ReturnCode_t DataWriterImpl::unregister_instance(
-        void* instance,
+        const void* const instance,
         const InstanceHandle_t& handle,
         bool dispose)
 {
@@ -849,7 +849,7 @@ ReturnCode_t DataWriterImpl::unregister_instance(
 }
 
 ReturnCode_t DataWriterImpl::unregister_instance_w_timestamp(
-        void* instance,
+        const void* const instance,
         const InstanceHandle_t& handle,
         const fastdds::Time_t& timestamp,
         bool dispose)
@@ -929,7 +929,7 @@ ReturnCode_t DataWriterImpl::get_key_value(
 
 ReturnCode_t DataWriterImpl::create_new_change(
         ChangeKind_t changeKind,
-        void* data)
+        const void* const data)
 {
     WriteParams wparams;
     return create_new_change_with_params(changeKind, data, wparams);
@@ -937,7 +937,7 @@ ReturnCode_t DataWriterImpl::create_new_change(
 
 ReturnCode_t DataWriterImpl::check_new_change_preconditions(
         ChangeKind_t change_kind,
-        void* data)
+        const void* const data)
 {
     // Preconditions
     if (data == nullptr)
@@ -962,7 +962,7 @@ ReturnCode_t DataWriterImpl::check_new_change_preconditions(
 
 ReturnCode_t DataWriterImpl::perform_create_new_change(
         ChangeKind_t change_kind,
-        void* data,
+        const void* const data,
         WriteParams& wparams,
         const InstanceHandle_t& handle)
 {
@@ -1066,7 +1066,7 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
 
 ReturnCode_t DataWriterImpl::create_new_change_with_params(
         ChangeKind_t changeKind,
-        void* data,
+        const void* const data,
         WriteParams& wparams)
 {
     ReturnCode_t ret_code = check_new_change_preconditions(changeKind, data);
@@ -1090,7 +1090,7 @@ ReturnCode_t DataWriterImpl::create_new_change_with_params(
 
 ReturnCode_t DataWriterImpl::create_new_change_with_params(
         ChangeKind_t changeKind,
-        void* data,
+        const void* const data,
         WriteParams& wparams,
         const InstanceHandle_t& handle)
 {
@@ -1389,7 +1389,7 @@ ReturnCode_t DataWriterImpl::wait_for_acknowledgments(
 }
 
 ReturnCode_t DataWriterImpl::wait_for_acknowledgments(
-        void* instance,
+        const void* const instance,
         const InstanceHandle_t& handle,
         const Duration_t& max_wait)
 {
@@ -2097,14 +2097,14 @@ bool DataWriterImpl::release_payload_pool()
 }
 
 bool DataWriterImpl::add_loan(
-        void* data,
+        const void* const data,
         SerializedPayload_t& payload)
 {
     return loans_ && loans_->add_loan(data, payload);
 }
 
 bool DataWriterImpl::check_and_remove_loan(
-        void* data,
+        const void* const data,
         SerializedPayload_t& payload)
 {
     return loans_ && loans_->check_and_remove_loan(data, payload);

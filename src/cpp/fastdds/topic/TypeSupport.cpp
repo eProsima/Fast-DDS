@@ -44,7 +44,7 @@ ReturnCode_t TypeSupport::register_type(
 }
 
 bool TypeSupport::serialize(
-        void* data,
+        const void* const data,
         fastdds::rtps::SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {

@@ -79,27 +79,27 @@ ReturnCode_t DataWriter::discard_loan(
 }
 
 bool DataWriter::write(
-        void* data)
+        const void* const data)
 {
     return impl_->write(data);
 }
 
 bool DataWriter::write(
-        void* data,
+        const void* const data,
         fastdds::rtps::WriteParams& params)
 {
     return impl_->write(data, params);
 }
 
 ReturnCode_t DataWriter::write(
-        void* data,
+        const void* const data,
         const InstanceHandle_t& handle)
 {
     return impl_->write(data, handle);
 }
 
 ReturnCode_t DataWriter::write_w_timestamp(
-        void* data,
+        const void* const data,
         const InstanceHandle_t& handle,
         const fastdds::Time_t& timestamp)
 {
@@ -107,27 +107,27 @@ ReturnCode_t DataWriter::write_w_timestamp(
 }
 
 InstanceHandle_t DataWriter::register_instance(
-        void* instance)
+        const void* const instance)
 {
     return impl_->register_instance(instance);
 }
 
 InstanceHandle_t DataWriter::register_instance_w_timestamp(
-        void* instance,
+        const void* const instance,
         const fastdds::Time_t& timestamp)
 {
     return impl_->register_instance_w_timestamp(instance, timestamp);
 }
 
 ReturnCode_t DataWriter::unregister_instance(
-        void* instance,
+        const void* const instance,
         const InstanceHandle_t& handle)
 {
     return impl_->unregister_instance(instance, handle);
 }
 
 ReturnCode_t DataWriter::unregister_instance_w_timestamp(
-        void* instance,
+        const void* const instance,
         const InstanceHandle_t& handle,
         const fastdds::Time_t& timestamp)
 {
@@ -142,7 +142,7 @@ ReturnCode_t DataWriter::get_key_value(
 }
 
 InstanceHandle_t DataWriter::lookup_instance(
-        const void* instance) const
+        const void* const instance) const
 {
     static_cast<void> (instance);
     EPROSIMA_LOG_WARNING(DATA_WRITER, "lookup_instance method not implemented");
@@ -150,14 +150,14 @@ InstanceHandle_t DataWriter::lookup_instance(
 }
 
 ReturnCode_t DataWriter::dispose(
-        void* data,
+        const void* const data,
         const InstanceHandle_t& handle)
 {
     return impl_->unregister_instance(data, handle, true);
 }
 
 ReturnCode_t DataWriter::dispose_w_timestamp(
-        void* instance,
+        const void* const instance,
         const InstanceHandle_t& handle,
         const fastdds::Time_t& timestamp)
 {
@@ -301,7 +301,7 @@ ReturnCode_t DataWriter::get_sending_locators(
 }
 
 ReturnCode_t DataWriter::wait_for_acknowledgments(
-        void* instance,
+        const void* const instance,
         const InstanceHandle_t& handle,
         const fastdds::Duration_t& max_wait)
 {
