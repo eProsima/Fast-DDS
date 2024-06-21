@@ -391,8 +391,13 @@ bool PDPServer::create_ds_pdp_reliable_endpoints(
     {
         endpoints.reader.reader_ = dynamic_cast<fastdds::rtps::StatefulReader*>(reader);
 
-        // Enable unknown clients to reach this reader
-        BaseReader::downcast(endpoints.reader.reader_)->allow_unknown_writers();
+#if HAVE_SECURITY
+        if (!secure)
+#endif  // HAVE_SECURITY
+        {
+            // Enable unknown clients to reach this reader
+            BaseReader::downcast(endpoints.reader.reader_)->allow_unknown_writers();
+        }
 
 #if HAVE_SECURITY
         mp_RTPSParticipant->set_endpoint_rtps_protection_supports(reader, false);
