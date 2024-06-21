@@ -22,15 +22,9 @@
  * for TYPE in hello_world numeric_array char_sequence basic_struct basic_array_struct float_bounded_sequence arrays_and_sequences complex_nested_arrays; do ${FASTDDSGEN_WS}/scripts/fastddsgen -replace -d ${WS}/src/recorder/ddsrecorder/test/unittest/dynamic_types/types/type_objects/ -typeobject -cs ${WS}/src/recorder/ddsrecorder/test/unittest/dynamic_types/types/idls/${TYPE}.idl; done
  */
 
-#pragma once
+#include <string>
 
-#include <fastdds/dds/core/ReturnCode.hpp>
-#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
-#include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
-#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilder.hpp>
-#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilderFactory.hpp>
-#include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
 
 #include "type_objects/arrays_and_sequences/arrays_and_sequences.hpp"
 #include "type_objects/arrays_and_sequences/arrays_and_sequencesPubSubTypes.h"
@@ -68,107 +62,72 @@
 
 namespace test {
 
-enum SupportedType
-{
-    hello_world,
-    numeric_array,
-    char_sequence,
-    basic_struct,
-    basic_array_struct,
-    float_bounded_sequence,
-    arrays_and_sequences,
-    complex_nested_arrays,
-    enum_struct,
-    union_struct,  // NOTE: default case currently not supported in dynamic types
-    map_struct
+namespace SupportedTypes {
+
+const std::string HELLO_WORLD{"hello_world"};
+const std::string NUMERIC_ARRAY{"numeric_array"};
+const std::string CHAR_SEQUENCE{"char_sequence"};
+const std::string BASIC_STRUCT{"basic_struct"};
+const std::string BASIC_ARRAY_STRUCT{"basic_array_struct"};
+const std::string FLOAT_BOUNDED_SEQUENCE{"float_bounded_sequence"};
+const std::string ARRAYS_AND_SEQUENCES{"arrays_and_sequences"};
+const std::string COMPLEX_NESTED_ARRAYS{"complex_nested_arrays"};
+const std::string ENUM_STRUCT{"enum_struct"};
+const std::string UNION_STRUCT{"union_struct"};
+const std::string MAP_STRUCT{"map_struct"};
+
+} // namespace SupportedTypes
+
+const std::vector<std::string> supported_types = {
+    SupportedTypes::HELLO_WORLD,
+    SupportedTypes::NUMERIC_ARRAY,
+    SupportedTypes::CHAR_SEQUENCE,
+    SupportedTypes::BASIC_STRUCT,
+    SupportedTypes::BASIC_ARRAY_STRUCT,
+    SupportedTypes::FLOAT_BOUNDED_SEQUENCE,
+    SupportedTypes::ARRAYS_AND_SEQUENCES,
+    SupportedTypes::COMPLEX_NESTED_ARRAYS,
+    SupportedTypes::ENUM_STRUCT,
+    SupportedTypes::UNION_STRUCT,
+    SupportedTypes::MAP_STRUCT
 };
 
-std::string to_string(const SupportedType& type)
+void register_dynamic_types()
 {
-    switch (type)
-    {
-        case SupportedType::hello_world:
-            return "hello_world";
-        case SupportedType::numeric_array:
-            return "numeric_array";
-        case SupportedType::char_sequence:
-            return "char_sequence";
-        case SupportedType::basic_struct:
-            return "basic_struct";
-        case SupportedType::basic_array_struct:
-            return "basic_array_struct";
-        case SupportedType::float_bounded_sequence:
-            return "float_bounded_sequence";
-        case SupportedType::arrays_and_sequences:
-            return "arrays_and_sequences";
-        case SupportedType::complex_nested_arrays:
-            return "complex_nested_arrays";
-        case SupportedType::enum_struct:
-            return "enum_struct";
-        case SupportedType::union_struct:
-            return "union_struct";
-        case SupportedType::map_struct:
-            return "map_struct";
-        default:
-            return "invalid";
-    }
-}
+    using namespace eprosima::fastdds::dds;
 
-
-eprosima::fastdds::dds::DynamicType::_ref_type get_dynamic_type( // traits<eprosima::fastdds::dds::DynamicType>::ref_type
-        SupportedType dyn_type)
-{
-    // Register the type
-    eprosima::fastdds::dds::TypeSupport type_arrays_and_sequences(new arrays_and_sequencesPubSubType());
-    type_arrays_and_sequences->register_type_object_representation();
-
-    eprosima::fastdds::dds::TypeSupport type_basic_array_struct(new basic_array_structPubSubType());
-    type_basic_array_struct->register_type_object_representation();
-
-    eprosima::fastdds::dds::TypeSupport type_basic_struct(new basic_structPubSubType());
-    type_basic_struct->register_type_object_representation();
-
-    eprosima::fastdds::dds::TypeSupport type_complex_nested_arrays(new complex_nested_arraysPubSubType());
-    type_complex_nested_arrays->register_type_object_representation();
-
-    eprosima::fastdds::dds::TypeSupport type_char_sequence(new char_sequencePubSubType());
-    type_char_sequence->register_type_object_representation();
-
-    eprosima::fastdds::dds::TypeSupport type_enum_struct(new enum_structPubSubType());
-    type_enum_struct->register_type_object_representation();
-
-    eprosima::fastdds::dds::TypeSupport type_float_bounded_sequence(new float_bounded_sequencePubSubType());
-    type_float_bounded_sequence->register_type_object_representation();
-
-    eprosima::fastdds::dds::TypeSupport type_hello_world(new hello_worldPubSubType());
+    TypeSupport type_hello_world(new hello_worldPubSubType());
     type_hello_world->register_type_object_representation();
 
-    eprosima::fastdds::dds::TypeSupport type_map_struct(new map_structPubSubType());
-    type_map_struct->register_type_object_representation();
-
-    eprosima::fastdds::dds::TypeSupport type_numeric_array(new numeric_arrayPubSubType());
+    TypeSupport type_numeric_array(new numeric_arrayPubSubType());
     type_numeric_array->register_type_object_representation();
 
+    TypeSupport type_char_sequence(new char_sequencePubSubType());
+    type_char_sequence->register_type_object_representation();
 
-    eprosima::fastdds::dds::TypeSupport type_union_struct(new union_structPubSubType());
+    TypeSupport type_basic_struct(new basic_structPubSubType());
+    type_basic_struct->register_type_object_representation();
+
+    TypeSupport type_basic_array_struct(new basic_array_structPubSubType());
+    type_basic_array_struct->register_type_object_representation();
+
+    TypeSupport type_float_bounded_sequence(new float_bounded_sequencePubSubType());
+    type_float_bounded_sequence->register_type_object_representation();
+
+    TypeSupport type_arrays_and_sequences(new arrays_and_sequencesPubSubType());
+    type_arrays_and_sequences->register_type_object_representation();
+
+    TypeSupport type_complex_nested_arrays(new complex_nested_arraysPubSubType());
+    type_complex_nested_arrays->register_type_object_representation();
+
+    TypeSupport type_enum_struct(new enum_structPubSubType());
+    type_enum_struct->register_type_object_representation();
+
+    TypeSupport type_union_struct(new union_structPubSubType());
     type_union_struct->register_type_object_representation();
 
-    auto type_name = to_string(dyn_type);
-
-    eprosima::fastdds::dds::xtypes::TypeObjectPair type_objs;
-    if (eprosima::fastdds::dds::RETCODE_OK == eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_objects(
-            type_name,
-            type_objs))
-    {
-        return eprosima::fastdds::dds::DynamicTypeBuilderFactory::get_instance()->create_type_w_type_object(type_objs.complete_type_object)->build();
-    }
-
-    else
-    {
-        // throw eprosima::utils::InconsistencyException("No Type Object");
-    }
-
-    return nullptr;
+    TypeSupport type_map_struct(new map_structPubSubType());
+    type_map_struct->register_type_object_representation();
 }
 
 } /* namespace test */
