@@ -111,7 +111,12 @@ SubscriberApp::SubscriberApp(
             Locator tcp_v4_initial_peers_locator_;
             tcp_v4_initial_peers_locator_.kind = LOCATOR_KIND_TCPv4;
             tcp_v4_initial_peers_locator_.port = 5100;
-            eprosima::fastdds::rtps::IPLocator::setIPv4(tcp_v4_initial_peers_locator_, "127.0.0.1");
+            std::string tcp_ip_address = "127.0.0.1";
+            if (!config.tcp_ip_address.empty())
+            {
+                tcp_ip_address = config.tcp_ip_address;
+            }
+            eprosima::fastdds::rtps::IPLocator::setIPv4(tcp_v4_initial_peers_locator_, tcp_ip_address);
             pqos.wire_protocol().builtin.initialPeersList.push_back(tcp_v4_initial_peers_locator_);
             pqos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastdds::c_TimeInfinite;
             pqos.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod = Duration_t(5, 0);
@@ -123,7 +128,12 @@ SubscriberApp::SubscriberApp(
             Locator tcp_v6_initial_peers_locator_;
             tcp_v6_initial_peers_locator_.kind = LOCATOR_KIND_TCPv6;
             tcp_v6_initial_peers_locator_.port = 5100;
-            eprosima::fastdds::rtps::IPLocator::setIPv6(tcp_v6_initial_peers_locator_, "::1");
+            std::string tcp_ip_address = "::1";
+            if (!config.tcp_ip_address.empty())
+            {
+                tcp_ip_address = config.tcp_ip_address;
+            }
+            eprosima::fastdds::rtps::IPLocator::setIPv6(tcp_v6_initial_peers_locator_, tcp_ip_address);
             pqos.wire_protocol().builtin.initialPeersList.push_back(tcp_v6_initial_peers_locator_);
             pqos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastdds::c_TimeInfinite;
             pqos.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod = Duration_t(5, 0);

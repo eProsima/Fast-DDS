@@ -111,6 +111,12 @@ PublisherApp::PublisherApp(
             pqos.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod = Duration_t(5, 0);
             tcp_v4_transport_->sendBufferSize = 0;
             tcp_v4_transport_->receiveBufferSize = 0;
+            std::string tcp_ip_address = "127.0.0.1";
+            if (!config.tcp_ip_address.empty())
+            {
+                tcp_ip_address = config.tcp_ip_address;
+            }
+            tcp_v4_transport_->set_WAN_address(tcp_ip_address);
             tcp_v4_transport_->add_listener_port(5100);
             pqos.transport().user_transports.push_back(tcp_v4_transport_);
             break;
