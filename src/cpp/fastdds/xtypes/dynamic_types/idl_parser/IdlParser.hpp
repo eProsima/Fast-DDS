@@ -378,7 +378,7 @@ struct action
             std::map<std::string, std::string>& state,
             std::vector<traits<DynamicData>::ref_type>& operands)
     {
-        std::cout << "Rule: " << typeid(Rule).name() << " " << in.string() << std::endl;
+        // std::cout << "Rule: " << typeid(Rule).name() << " " << in.string() << std::endl;
     }
 
 };
@@ -981,12 +981,12 @@ struct action<struct_forward_dcl>
         TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
         type_descriptor->kind(TK_STRUCTURE);
         type_descriptor->name(struct_name);
-        DynamicTypeBuilder::_ref_type type_builder {factory->create_type(type_descriptor)};
+        DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
 
         EPROSIMA_LOG_INFO(IDLPARSER, "Found forward struct declaration: " << struct_name);
-        module.structure(type_builder);
+        module.structure(builder);
 
-        ctx->builder = type_builder;
+        ctx->builder = builder;
 
         state.erase("struct_name");
         state.erase("struct_member_types");
@@ -995,41 +995,44 @@ struct action<struct_forward_dcl>
 
 };
 
-// template<>
-// struct action<union_forward_dcl>
-// {
-//     template<typename Input>
-//     static void apply(
-//             const Input& in,
-//             Context* ctx,
-//             std::map<std::string, std::string>& state,
-//             std::vector<v1_3::DynamicData_ptr>& operands)
-//     {
-//         Module& module = ctx->module();
-//         const std::string& union_name = state["union_name"];
-//         if (module.has_symbol(union_name, false))
-//         {
-//             EPROSIMA_LOG_ERROR(IDLPARSER, "Union " << union_name << " was already declared.");
-//             throw std::runtime_error("Union " + union_name + " was already declared.");
-//         }
+template<>
+struct action<union_forward_dcl>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state,
+            std::vector<traits<DynamicData>::ref_type>& operands)
+    {
+        Module& module = ctx->module();
+        const std::string& union_name = state["union_name"];
+        if (module.has_symbol(union_name, false))
+        {
+            EPROSIMA_LOG_ERROR(IDLPARSER, "Union " << union_name << " was already declared.");
+            throw std::runtime_error("Union " + union_name + " was already declared.");
+        }
 
-//         v1_3::DynamicTypeBuilderFactory& factory = v1_3::DynamicTypeBuilderFactory::get_instance();
-//         v1_3::DynamicTypeBuilder_cptr discriminator = factory.create_int32_type();
-//         auto discriminant_type = discriminator->build();
-//         v1_3::DynamicTypeBuilder_ptr builder = factory.create_union_type(*discriminant_type);
-//         builder->set_name(union_name);
-//         auto union_type = builder->build();
-//         EPROSIMA_LOG_INFO(IDLPARSER, "Found forward union declaration: " << union_name);
-//         module.union_switch(std::move(const_cast<v1_3::DynamicType&>(*union_type)));
+        DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+        TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+        type_descriptor->kind(TK_UNION);
+        type_descriptor->name(union_name);
+        type_descriptor->discriminator_type(factory->get_primitive_type(TK_INT32));
+        DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
 
-//         state.erase("union_name");
-//         state.erase("union_discriminant");
-//         state.erase("union_labels");
-//         state.erase("union_member_types");
-//         state.erase("union_member_names");
-//     }
+        EPROSIMA_LOG_INFO(IDLPARSER, "Found forward union declaration: " << union_name);
+        module.union_switch(builder);
 
-// };
+        ctx->builder = builder;
+
+        state.erase("union_name");
+        state.erase("union_discriminant");
+        state.erase("union_labels");
+        state.erase("union_member_types");
+        state.erase("union_member_names");
+    }
+
+};
 
 template<>
 struct action<const_dcl>
@@ -1056,61 +1059,67 @@ struct action<const_dcl>
 
 };
 
-// template<>
-// struct action<kw_enum>
-// {
-//     template<typename Input>
-//     static void apply(
-//             const Input& in,
-//             Context* ctx,
-//             std::map<std::string, std::string>& state,
-//             std::vector<v1_3::DynamicData_ptr>& operands)
-//     {
-//         // Create empty enum states to indicate the start of parsing enum
-//         state["enum_name"] = "";
-//         state["enum_member_names"] = "";
-//     }
+template<>
+struct action<kw_enum>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state,
+            std::vector<traits<DynamicData>::ref_type>& operands)
+    {
+        // Create empty enum states to indicate the start of parsing enum
+        state["enum_name"] = "";
+        state["enum_member_names"] = "";
+    }
 
-// };
+};
 
-// template<>
-// struct action<enum_dcl>
-// {
-//     template<typename Input>
-//     static void apply(
-//             const Input& in,
-//             Context* ctx,
-//             std::map<std::string, std::string>& state,
-//             std::vector<v1_3::DynamicData_ptr>& operands)
-//     {
-//         Module& module = ctx->module();
+template<>
+struct action<enum_dcl>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state,
+            std::vector<traits<DynamicData>::ref_type>& operands)
+    {
+        Module& module = ctx->module();
+        const std::string& enum_name = state["enum_name"];
 
-//         v1_3::DynamicTypeBuilderFactory& factory = v1_3::DynamicTypeBuilderFactory::get_instance();
-//         v1_3::DynamicTypeBuilder_ptr builder = factory.create_enum_type();
+        DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+        TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+        type_descriptor->kind(TK_ENUM);
+        type_descriptor->name(enum_name);
+        DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
 
-//         std::vector<std::string> tokens = ctx->split_string(state["enum_member_names"], ';');
+        std::vector<std::string> tokens = ctx->split_string(state["enum_member_names"], ';');
 
-//         for (int i = 0; i < tokens.size(); i++)
-//         {
-//             v1_3::DynamicTypeBuilder_cptr member_builder = factory.create_uint32_type();
-//             auto member_type = member_builder->build();
-//             v1_3::DynamicData_ptr data(v1_3::DynamicDataFactory::get_instance()->create_data(member_type));
+        for (size_t i = 0; i < tokens.size(); i++)
+        {
+            MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
+            member_descriptor->name(tokens[i]);
+            member_descriptor->type(factory->get_primitive_type(TK_UINT32));
+            builder->add_member(member_descriptor);
 
-//             builder->add_member(i, tokens[i]);
-//             module.create_constant(tokens[i], data, false, true); // Mark it as "from_enum"
-//         }
+            DynamicType::_ref_type member_type {factory->get_primitive_type(TK_UINT32)}; // TODO what about value?
+            DynamicData::_ref_type member_data {DynamicDataFactory::get_instance()->create_data(member_type)};
 
-//         const std::string& enum_name = state["enum_name"];
-//         builder->set_name(enum_name);
-//         auto enum_type = builder->build();
-//         EPROSIMA_LOG_INFO(IDLPARSER, "Found enum: " << enum_name);
-//         module.enum_32(enum_name, enum_type);
+            module.create_constant(tokens[i], member_data, false, true); // Mark it as "from_enum"
+        }
 
-//         state.erase("enum_name");
-//         state.erase("enum_member_names");
-//     }
+        EPROSIMA_LOG_INFO(IDLPARSER, "Found enum: " << enum_name);
+        module.enum_32(enum_name, builder);
 
-// };
+        ctx->builder = builder;
+
+        state.erase("enum_name");
+        state.erase("enum_member_names");
+    }
+
+};
 
 template<>
 struct action<kw_struct>
@@ -1146,23 +1155,23 @@ struct action<struct_def>
         TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
         type_descriptor->kind(TK_STRUCTURE);
         type_descriptor->name(state["struct_name"]);
-        DynamicTypeBuilder::_ref_type type_builder {factory->create_type(type_descriptor)};
+        DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
 
         std::vector<std::string> types = ctx->split_string(state["struct_member_types"], ';');
         std::vector<std::string> names = ctx->split_string(state["struct_member_names"], ';');
 
-        for (int i = 0; i < types.size(); i++)
+        for (size_t i = 0; i < types.size(); i++)
         {
             MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
             member_descriptor->name(names[i]);
             member_descriptor->type(ctx->get_type(state, types[i]));
-            type_builder->add_member(member_descriptor);
+            builder->add_member(member_descriptor);
         }
 
         EPROSIMA_LOG_INFO(IDLPARSER, "Found struct: " << state["struct_name"]);
-        module.structure(type_builder);
+        module.structure(builder);
 
-        ctx->builder = type_builder;
+        ctx->builder = builder;
 
         state.erase("struct_name");
         state.erase("struct_member_types");
@@ -1171,246 +1180,264 @@ struct action<struct_def>
 
 };
 
-// template<>
-// struct action<kw_union>
-// {
-//     template<typename Input>
-//     static void apply(
-//             const Input& in,
-//             Context* ctx,
-//             std::map<std::string, std::string>& state,
-//             std::vector<v1_3::DynamicData_ptr>& operands)
-//     {
-//         // Create empty union states to indicate the start of parsing union
-//         state["union_name"] = "";
-//         state["union_discriminant"] = "";
-//         state["union_labels"] = "";
-//         state["union_member_names"] = "";
-//         state["union_member_types"] = "";
-//     }
+template<>
+struct action<kw_union>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state,
+            std::vector<traits<DynamicData>::ref_type>& operands)
+    {
+        // Create empty union states to indicate the start of parsing union
+        state["union_name"] = "";
+        state["union_discriminant"] = "";
+        state["union_labels"] = "";
+        state["union_member_names"] = "";
+        state["union_member_types"] = "";
+    }
 
-// };
+};
 
-// template<>
-// struct action<case_label>
-// {
-//     template<typename Input>
-//     static void apply(
-//             const Input& in,
-//             Context* ctx,
-//             std::map<std::string, std::string>& state,
-//             std::vector<v1_3::DynamicData_ptr>& operands)
-//     {
-//         Module& module = ctx->module();
-//         std::string label;
+template<>
+struct action<case_label>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state,
+            std::vector<traits<DynamicData>::ref_type>& operands)
+    {
+        Module& module = ctx->module();
+        std::string label;
 
-//         for (char c : in.string())
-//         {
-//             if (std::isdigit(c)) {
-//                 label += c;
-//             }
-//         }
-//         if (label.empty() && in.string().find("default") != std::string::npos)
-//         {
-//             if (state["union_labels"].empty() || state["union_labels"].back() == ';')
-//             {
-//                 state["union_labels"] += "default";
-//             }
-//             else
-//             {
-//                 state["union_labels"] += ",default";
-//             }
-//         }
-//         else
-//         {
-//             if (state["union_labels"].empty() || state["union_labels"].back() == ';')
-//             {
-//                 state["union_labels"] += label;
-//             }
-//             else
-//             {
-//                 state["union_labels"] += "," + label;
-//             }
-//         }
+        for (char c : in.string())
+        {
+            if (std::isdigit(c)) {
+                label += c;
+            }
+        }
+        if (label.empty() && in.string().find("default") != std::string::npos)
+        {
+            if (state["union_labels"].empty() || state["union_labels"].back() == ';')
+            {
+                state["union_labels"] += "default";
+            }
+            else
+            {
+                state["union_labels"] += ",default";
+            }
+        }
+        else
+        {
+            if (state["union_labels"].empty() || state["union_labels"].back() == ';')
+            {
+                state["union_labels"] += label;
+            }
+            else
+            {
+                state["union_labels"] += "," + label;
+            }
+        }
 
-//         if (state["union_discriminant"].empty())
-//         {
-//             state["union_discriminant"] = state["type"];
-//         }
-//     }
+        if (state["union_discriminant"].empty())
+        {
+            state["union_discriminant"] = state["type"];
+        }
+    }
 
-// };
+};
 
-// template<>
-// struct action<switch_case>
-// {
-//     template<typename Input>
-//     static void apply(
-//             const Input& in,
-//             Context* ctx,
-//             std::map<std::string, std::string>& state,
-//             std::vector<v1_3::DynamicData_ptr>& operands)
-//     {
-//         Module& module = ctx->module();
+template<>
+struct action<switch_case>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state,
+            std::vector<traits<DynamicData>::ref_type>& operands)
+    {
+        Module& module = ctx->module();
 
-//         state["union_labels"] += ";";
-//         state["union_member_types"] += ";";
-//         state["union_member_names"] += ";";
-//     }
+        state["union_labels"] += ";";
+        state["union_member_types"] += ";";
+        state["union_member_names"] += ";";
+    }
 
-// };
+};
 
-// template<>
-// struct action<union_def>
-// {
-//     template<typename Input>
-//     static void apply(
-//             const Input& in,
-//             Context* ctx,
-//             std::map<std::string, std::string>& state,
-//             std::vector<v1_3::DynamicData_ptr>& operands)
-//     {
-//         Module& module = ctx->module();
+template<>
+struct action<union_def>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state,
+            std::vector<traits<DynamicData>::ref_type>& operands)
+    {
+        Module& module = ctx->module();
+        const std::string& union_name = state["union_name"];
 
-//         auto discriminant_type = ctx->get_type(state, state["union_discriminant"]);
-//         v1_3::DynamicTypeBuilderFactory& factory = v1_3::DynamicTypeBuilderFactory::get_instance();
-//         v1_3::DynamicTypeBuilder_ptr builder = factory.create_union_type(*discriminant_type);
+        DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+        TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+        DynamicType::_ref_type discriminant_type = ctx->get_type(state, state["union_discriminant"]);
+        type_descriptor->kind(TK_UNION);
+        type_descriptor->name(union_name);
+        type_descriptor->discriminator_type(discriminant_type);
+        DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
 
-//         const std::string& union_name = state["union_name"];
-//         std::vector<std::string> label_groups = ctx->split_string(state["union_labels"], ';');
-//         std::vector<std::string> types = ctx->split_string(state["union_member_types"], ';');
-//         std::vector<std::string> names = ctx->split_string(state["union_member_names"], ';');
+        std::vector<std::string> label_groups = ctx->split_string(state["union_labels"], ';');
+        std::vector<std::string> types = ctx->split_string(state["union_member_types"], ';');
+        std::vector<std::string> names = ctx->split_string(state["union_member_names"], ';');
 
-//         std::vector<std::vector<uint64_t>> labels;
-//         int idx = 0;
-//         for (int i = 0; i < label_groups.size(); i++)
-//         {
-//             if (label_groups[i].empty()) continue; // Skip empty strings
-//             std::vector<std::string> numbers_str = ctx->split_string(label_groups[i], ',');
-//             std::vector<uint64_t> numbers;
-//             for (const auto& num_str : numbers_str)
-//             {
-//                 if (num_str == "default")
-//                 {
-//                     numbers.push_back(std::numeric_limits<uint64_t>::max());
-//                     idx = i; // mark the index of default label
-//                 }
-//                 else
-//                 {
-//                     numbers.push_back(std::stoi(num_str));
-//                 }
-//             }
-//             if (!numbers.empty())   labels.push_back(numbers);
-//         }
+        std::vector<std::vector<int32_t>> labels;
+        int default_label_index = 0;
+        for (size_t i = 0; i < label_groups.size(); i++)
+        {
+            if (label_groups[i].empty()) continue; // Skip empty strings
+            std::vector<std::string> numbers_str = ctx->split_string(label_groups[i], ',');
+            std::vector<int32_t> numbers;
+            for (const auto& num_str : numbers_str)
+            {
+                if (num_str == "default")
+                {
+                    numbers.push_back(std::numeric_limits<int32_t>::max());
+                    default_label_index = i; // mark the index of default label
+                }
+                else
+                {
+                    numbers.push_back(std::stoi(num_str));
+                }
+            }
+            if (!numbers.empty())   labels.push_back(numbers);
+        }
 
-//         for (int i = 0; i < types.size(); i++)
-//         {
-//             auto member_type = ctx->get_type(state, types[i]);
-//             builder->add_member(v1_3::MemberId{ i }, names[i], member_type, "", labels[i], i == idx ? true : false);
-//         }
-//         builder->set_name(union_name);
-//         auto union_type = builder->build();
-//         EPROSIMA_LOG_INFO(IDLPARSER, "Found union: " << union_name);
-//         module.union_switch(std::move(const_cast<v1_3::DynamicType&>(*union_type)));
+        for (size_t i = 0; i < types.size(); i++)
+        {
+            MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
+            member_descriptor->name(names[i]);
+            member_descriptor->type(ctx->get_type(state, types[i]));
+            member_descriptor->id(i);
+            member_descriptor->label(labels[i]);
+            member_descriptor->is_default_label(i == default_label_index);
+            builder->add_member(member_descriptor);
+        }
 
-//         state.erase("union_name");
-//         state.erase("union_discriminant");
-//         state.erase("union_labels");
-//         state.erase("union_member_types");
-//         state.erase("union_member_names");
-//     }
+        EPROSIMA_LOG_INFO(IDLPARSER, "Found union: " << union_name);
+        module.union_switch(builder);
 
-// };
+        ctx->builder = builder;
 
-// template<>
-// struct action<kw_typedef>
-// {
-//     template<typename Input>
-//     static void apply(
-//             const Input& in,
-//             Context* ctx,
-//             std::map<std::string, std::string>& state,
-//             std::vector<v1_3::DynamicData_ptr>& operands)
-//     {
-//         // Create empty alias states to indicate the start of parsing alias
-//         state["alias"] = "";
-//         state["alias_sizes"] = "";
-//     }
+        state.erase("union_name");
+        state.erase("union_discriminant");
+        state.erase("union_labels");
+        state.erase("union_member_types");
+        state.erase("union_member_names");
+    }
 
-// };
+};
 
-// template<>
-// struct action<fixed_array_size>
-// {
-//     template<typename Input>
-//     static void apply(
-//             const Input& in,
-//             Context* ctx,
-//             std::map<std::string, std::string>& state,
-//             std::vector<v1_3::DynamicData_ptr>& operands)
-//     {
-//         if (state.count("alias") && !state["alias"].empty())
-//         {
-//             std::string str = in.string();
+template<>
+struct action<kw_typedef>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state,
+            std::vector<traits<DynamicData>::ref_type>& operands)
+    {
+        // Create empty alias states to indicate the start of parsing alias
+        state["alias"] = "";
+        state["alias_sizes"] = "";
+    }
 
-//             // Find the opening and closing brackets
-//             size_t start_pos = str.find('[');
-//             size_t end_pos = str.find(']');
+};
 
-//             // Extract the substring between the brackets and trim spaces
-//             std::string size = str.substr(start_pos + 1, end_pos - start_pos - 1);
-//             size.erase(0, size.find_first_not_of(" \t\n\r"));
-//             size.erase(size.find_last_not_of(" \t\n\r") + 1);
+template<>
+struct action<fixed_array_size>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state,
+            std::vector<traits<DynamicData>::ref_type>& operands)
+    {
+        if (state.count("alias") && !state["alias"].empty())
+        {
+            std::string str = in.string();
 
-//             state["alias_sizes"] += size + ";";
-//         }
-//     }
+            // Find the opening and closing brackets
+            size_t start_pos = str.find('[');
+            size_t end_pos = str.find(']');
 
-// };
+            // Extract the substring between the brackets and trim spaces
+            std::string size = str.substr(start_pos + 1, end_pos - start_pos - 1);
+            size.erase(0, size.find_first_not_of(" \t\n\r"));
+            size.erase(size.find_last_not_of(" \t\n\r") + 1);
 
-// template<>
-// struct action<typedef_dcl>
-// {
-//     template<typename Input>
-//     static void apply(
-//             const Input& in,
-//             Context* ctx,
-//             std::map<std::string, std::string>& state,
-//             std::vector<v1_3::DynamicData_ptr>& operands)
-//     {
-//         Module& module = ctx->module();
+            state["alias_sizes"] += size + ";";
+        }
+    }
 
-//         std::string alias_name;
-//         std::vector<std::string> sizes_str = ctx->split_string(state["alias_sizes"], ';');
+};
 
-//         std::stringstream ss(state["alias"]);
-//         std::getline(ss, state["type"], ',');
-//         std::getline(ss, alias_name, ',');
+template<>
+struct action<typedef_dcl>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state,
+            std::vector<traits<DynamicData>::ref_type>& operands)
+    {
+        Module& module = ctx->module();
 
-//         auto alias_type = ctx->get_type(state, state["type"]);
-//         if (sizes_str.empty())
-//         {
-//             module.create_alias(alias_name, alias_type);
-//         }
-//         else
-//         {
-//             std::vector<uint32_t> sizes;
-//             for (const auto& size : sizes_str)
-//             {
-//                 sizes.push_back(static_cast<uint32_t>(std::stoul(size)));
-//             }
-//             v1_3::DynamicTypeBuilderFactory& factory = v1_3::DynamicTypeBuilderFactory::get_instance();
-//             v1_3::DynamicTypeBuilder_ptr array_type_builder = factory.create_array_type(*alias_type, sizes);
-//             auto array_type = array_type_builder->build();
+        std::string alias_name;
+        std::vector<std::string> sizes_str = ctx->split_string(state["alias_sizes"], ';');
 
-//             module.create_alias(alias_name, array_type);
-//         }
+        std::stringstream ss(state["alias"]);
+        std::getline(ss, state["type"], ',');
+        std::getline(ss, alias_name, ',');
 
-//         state.erase("alias");
-//         state.erase("alias_sizes");
-//     }
+        DynamicType::_ref_type alias_type = ctx->get_type(state, state["type"]);
+        DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+        TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+        if (sizes_str.empty())
+        {
+            type_descriptor->kind(TK_ALIAS);
+            type_descriptor->name(alias_name);
+        }
+        else
+        {
+            std::vector<uint32_t> sizes;
+            for (const auto& size : sizes_str)
+            {
+                sizes.push_back(static_cast<uint32_t>(std::stoul(size)));
+            }
+            type_descriptor->kind(TK_ARRAY);
+            type_descriptor->element_type(alias_type);
+            type_descriptor->bound(sizes);
+        }
 
-// };
+        DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+
+        EPROSIMA_LOG_INFO(IDLPARSER, "Found alias: " << alias_name);
+        module.create_alias(alias_name, builder);
+
+        ctx->builder = builder;
+
+        state.erase("alias");
+        state.erase("alias_sizes");
+    }
+
+};
 
 class Parser
     : public std::enable_shared_from_this<Parser>
@@ -1569,98 +1596,101 @@ private:
     {
         DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
         DynamicTypeBuilder::_ref_type builder;
-        traits<DynamicType>::ref_type dtype;
+        DynamicType::_ref_type xtype;
 
         if (type == "boolean")
         {
-            dtype = factory->get_primitive_type(TK_BOOLEAN);
+            xtype = factory->get_primitive_type(TK_BOOLEAN);
         }
         else if (type == "int8")
         {
-            dtype = factory->get_primitive_type(TK_INT8);
+            xtype = factory->get_primitive_type(TK_INT8);
         }
         else if (type == "uint8")
         {
-            dtype = factory->get_primitive_type(TK_UINT8);
+            xtype = factory->get_primitive_type(TK_UINT8);
         }
         else if (type == "int16")
         {
-            dtype = factory->get_primitive_type(TK_INT16);
+            xtype = factory->get_primitive_type(TK_INT16);
         }
         else if (type == "uint16")
         {
-            dtype = factory->get_primitive_type(TK_UINT16);
+            xtype = factory->get_primitive_type(TK_UINT16);
         }
         else if (type == "int32")
         {
-            dtype = factory->get_primitive_type(TK_INT32);
+            xtype = factory->get_primitive_type(TK_INT32);
         }
         else if (type == "uint32")
         {
-            dtype = factory->get_primitive_type(TK_UINT32);
+            xtype = factory->get_primitive_type(TK_UINT32);
         }
         else if (type == "int64")
         {
-            dtype = factory->get_primitive_type(TK_INT64);
+            xtype = factory->get_primitive_type(TK_INT64);
         }
         else if (type == "uint64")
         {
-            dtype = factory->get_primitive_type(TK_UINT64);
+            xtype = factory->get_primitive_type(TK_UINT64);
         }
         else if (type == "float")
         {
-            dtype = factory->get_primitive_type(TK_FLOAT32);
+            xtype = factory->get_primitive_type(TK_FLOAT32);
         }
         else if (type == "double")
         {
-            dtype = factory->get_primitive_type(TK_FLOAT64);
+            xtype = factory->get_primitive_type(TK_FLOAT64);
         }
         else if (type == "long double")
         {
-            dtype = factory->get_primitive_type(TK_FLOAT128);
+            xtype = factory->get_primitive_type(TK_FLOAT128);
         }
-        // else if (type == "char")
-        // {
-        //     builder = factory.create_char8_type();
-        //     dtype = builder->build();
-        // }
-        // else if (type == "wchar" || type == "char16")
-        // {
-        //     builder = factory.create_char16_type();
-        //     dtype = builder->build();
-        // }
-        // else if (type == "string")
-        // {
-        //     if (state.count("string_size"))
-        //     {
-        //         builder = factory.create_string_type(std::atoi(state["string_size"].c_str()));
-        //         state.erase("string_size");
-        //     }
-        //     else
-        //     {
-        //         builder = factory.create_string_type();
-        //     }
-        //     dtype = builder->build();
-        // }
-        // else if (type == "wstring")
-        // {
-        //     if (state.count("wstring_size"))
-        //     {
-        //         builder = factory.create_wstring_type(std::atoi(state["wstring_size"].c_str()));
-        //         state.erase("wstring_size");
-        //     }
-        //     else
-        //     {
-        //         builder = factory.create_wstring_type();
-        //     }
-        //     dtype = builder->build();
-        // }
-        // else
-        // {
-        //     dtype = context_->module().type(type);
-        // }
+        else if (type == "char")
+        {
+            xtype = factory->get_primitive_type(TK_CHAR8);
+        }
+        else if (type == "wchar" || type == "char16")
+        {
+            xtype = factory->get_primitive_type(TK_CHAR16);
+        }
+        else if (type == "string")
+        {
+            TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+            type_descriptor->kind(TK_STRING8);
+            type_descriptor->element_type(factory->get_primitive_type(TK_CHAR8));
 
-        return dtype;
+            if (state.count("string_size"))
+            {
+                uint32_t size = std::atoi(state["string_size"].c_str());
+                type_descriptor->bound({size});
+                state.erase("string_size");
+            }
+            builder = factory->create_type(type_descriptor);
+            xtype = builder->build();
+        }
+        else if (type == "wstring")
+        {
+            TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+            type_descriptor->kind(TK_STRING16);
+            type_descriptor->element_type(factory->get_primitive_type(TK_CHAR16));
+
+            if (state.count("wstring_size"))
+            {
+                uint32_t size = std::atoi(state["wstring_size"].c_str());
+                type_descriptor->bound({size});
+                state.erase("wstring_size");
+            }
+            builder = factory->create_type(type_descriptor);
+            xtype = builder->build();
+        }
+        else
+        {
+            builder = context_->module().get_builder(type);
+            xtype = builder->build();
+        }
+
+        return xtype;
     }
 
 }; // class Parser
