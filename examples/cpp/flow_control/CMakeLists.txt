@@ -14,7 +14,7 @@
 
 cmake_minimum_required(VERSION 3.20)
 
-project(FlowControlExample VERSION 1 LANGUAGES CXX)
+project(FlowControl VERSION 1 LANGUAGES CXX)
 
 # Find requirements
 if(NOT fastcdr_FOUND)
@@ -49,4 +49,4 @@ target_compile_definitions(flow_control PRIVATE
     )
 target_link_libraries(flow_control fastdds fastcdr foonathan_memory)
 install(TARGETS flow_control
-    RUNTIME DESTINATION examples/cpp/dds/FlowControlExample/${BIN_INSTALL_DIR})
+    RUNTIME DESTINATION examples/cpp/dds/FlowControl/${BIN_INSTALL_DIR})

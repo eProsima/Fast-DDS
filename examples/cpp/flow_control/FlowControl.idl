@@ -1,4 +1,4 @@
-struct FlowControlExample
+struct FlowControl
 {
    char message[600000];
    char wasFast;
