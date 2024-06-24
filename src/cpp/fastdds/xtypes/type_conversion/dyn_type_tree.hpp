@@ -26,6 +26,7 @@
 #include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/detail/dynamic_language_binding.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/MemberDescriptor.hpp>
 
 #include "utils/collections/TreeNode.hpp"
 
@@ -42,16 +43,19 @@ struct TreeNodeType
     TreeNodeType(
             const std::string& member_name,
             const std::string& type_kind_name,
-            const DynamicType::_ref_type& dynamic_type)
+            const DynamicType::_ref_type& dynamic_type,
+            const bool is_key = false)
         : member_name(member_name)
         , type_kind_name(type_kind_name)
         , dynamic_type(dynamic_type)
+        , is_key(is_key)
     {
     }
 
     std::string member_name;
     std::string type_kind_name;
     DynamicType::_ref_type dynamic_type;
+    bool is_key;
 };
 
 
@@ -115,11 +119,11 @@ ReturnCode_t map_kind_to_str(
  * @brief Gathers the members of a DynamicType.
  *
  * @param dyn_type The DynamicType to gather the members from.
- * @param result The vector of (name, type) to store the members.
+ * @param result The vector of (name, member_descriptor) to store the members.
  */
 ReturnCode_t get_members_sorted(
         const DynamicType::_ref_type& dyn_type,
-        std::vector<std::pair<std::string, DynamicType::_ref_type>>& result) noexcept;
+        std::vector<std::pair<std::string, MemberDescriptor::_ref_type>>& result) noexcept;
 
 /**
  * @brief Gathers the \c element_type of the DynamicType.

@@ -54,7 +54,7 @@ ReturnCode_t dyn_type_to_tree(
             utilities::collections::TreeNode<TreeNodeType> parent(member_name, type->get_name().to_string(), type);
 
             // Get all members of this struct
-            std::vector<std::pair<std::string, DynamicType::_ref_type>> members_by_name;
+            std::vector<std::pair<std::string, MemberDescriptor::_ref_type>> members_by_name;
             ret = get_members_sorted(type, members_by_name);
 
             if (ret != RETCODE_OK)
@@ -64,13 +64,18 @@ ReturnCode_t dyn_type_to_tree(
 
             for (const auto& member : members_by_name)
             {
+                const auto& member_name = member.first;
+                const auto& member_descriptor = member.second;
+
                 utilities::collections::TreeNode<TreeNodeType> child;
-                ret = dyn_type_to_tree(member.second, member.first, child);
+                ret = dyn_type_to_tree(member_descriptor->type(), member_name, child);
 
                 if (ret != RETCODE_OK)
                 {
                     return ret;
                 }
+
+                child.info.is_key = member_descriptor->is_key();
 
                 // Add each member with its name as a new child in a branch (recursion)
                 parent.add_branch(child);
@@ -412,7 +417,7 @@ ReturnCode_t map_kind_to_str(
 
 ReturnCode_t get_members_sorted(
         const DynamicType::_ref_type& dyn_type,
-        std::vector<std::pair<std::string, DynamicType::_ref_type>>& result) noexcept
+        std::vector<std::pair<std::string, MemberDescriptor::_ref_type>>& result) noexcept
 {
     ReturnCode_t ret = RETCODE_OK;
 
@@ -436,9 +441,9 @@ ReturnCode_t get_members_sorted(
 
         const auto dyn_name = member.second->get_name();
         result.emplace_back(
-            std::make_pair<std::string, DynamicType::_ref_type>(
+            std::make_pair<std::string, MemberDescriptor::_ref_type>(
                 dyn_name.to_string(),
-                std::move(member_descriptor->type())));
+                std::move(member_descriptor)));
     }
 
     return ret;
@@ -941,6 +946,11 @@ ReturnCode_t node_to_str(
         std::string& node_str) noexcept
 {
     node_str = TAB_SEPARATOR;
+
+    if (node.info.is_key)
+    {
+        node_str += "@key ";
+    }
 
     if (node.info.dynamic_type->get_kind() == TK_ARRAY)
     {
