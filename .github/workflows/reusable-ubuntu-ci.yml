@@ -710,7 +710,7 @@ jobs:
       - name: Install apt dependencies
         uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
         with:
-          packages: libasio-dev libtinyxml2-dev libssl-dev valgrind
+          packages: libasio-dev libtinyxml2-dev libssl-dev
           update: false
           upgrade: false
 
