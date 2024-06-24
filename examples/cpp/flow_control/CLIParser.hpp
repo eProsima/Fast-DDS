@@ -46,6 +46,7 @@ public:
     struct flow_control_config
     {
         CLIParser::EntityKind entity = CLIParser::EntityKind::UNDEFINED;
+        uint16_t samples = 0;
     };
 
     /**
