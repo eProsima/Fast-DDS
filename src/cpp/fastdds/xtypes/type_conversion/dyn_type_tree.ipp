@@ -246,12 +246,12 @@ ReturnCode_t dyn_type_to_str(
         case TK_UNION:
         case TK_BITSET:
         case TK_BITMASK:
+        case TK_ALIAS:
         {
             type_str = dyn_type->get_name().to_string();
             break;
         }
         case TK_NONE:
-        case TK_ALIAS:
         {
             ret = RETCODE_UNSUPPORTED;
             break;
@@ -533,6 +533,11 @@ ReturnCode_t dyn_type_tree_to_idl(
             case TK_BITMASK:
             {
                 ret = bitmask_to_str(node, kind_str);
+                break;
+            }
+            case TK_ALIAS:
+            {
+                ret = alias_to_str(node, kind_str);
                 break;
             }
             default:
@@ -891,6 +896,42 @@ ReturnCode_t bitmask_to_str(
 
     // Close definition
     bitset_str += TYPE_CLOSURE;
+
+    return ret;
+}
+
+ReturnCode_t alias_to_str(
+        const utilities::collections::TreeNode<TreeNodeType>& node,
+        std::string& alias_str) noexcept
+{
+    if (node.info.dynamic_type->get_kind() != TK_ALIAS)
+    {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Type is not an alias.");
+        return RETCODE_BAD_PARAMETER;
+    }
+
+    ReturnCode_t ret = RETCODE_OK;
+
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    ret = node.info.dynamic_type->get_descriptor(type_descriptor);
+
+    if (ret != RETCODE_OK)
+    {
+        return ret;
+    }
+
+    // Find the base type of the alias
+    std::string base_type_kind_str;
+    ret = dyn_type_to_str(type_descriptor->base_type(), base_type_kind_str);
+
+    if (ret != RETCODE_OK)
+    {
+        return ret;
+    }
+
+    alias_str = "typedef ";
+    alias_str += base_type_kind_str + " ";
+    alias_str += type_descriptor->name().to_string() + ";\n";
 
     return ret;
 }

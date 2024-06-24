@@ -207,6 +207,16 @@ ReturnCode_t bitmask_to_str(
         std::string& bitset_str) noexcept;
 
 /**
+ * @brief Converts a tree with a \c TK_ALIAS root to an IDL string.
+ *
+ * @param node The root node of the tree.
+ * @param alias_str The string representation of the tree.
+ */
+ReturnCode_t alias_to_str(
+        const utilities::collections::TreeNode<TreeNodeType>& node,
+        std::string& alias_str) noexcept;
+
+/**
  * @brief Converts a simple tree to an IDL string.
  *
  * @param node The root node of the tree.
