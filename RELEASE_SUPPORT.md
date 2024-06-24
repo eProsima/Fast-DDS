@@ -14,26 +14,26 @@ Before the minor release end of life (EOL) date, a final patch release including
 
 The table below outlines the *eProsima Fast DDS* minor releases and their support cycles:
 
-|Version branch|Release Date|EOL Date|
-|--------------|------------|--------|
-|***v2.14.x (LTS)***|***March 2024***|***March 2025 [^*]***|
-|***v2.13.x***|***December 2023***|***June 2024***|
-|v2.12.x|September 2023|March 2024|
-|v2.11.x|July 2023|January 2024|
-|***v2.10.x (LTS)***|***March 2023***|***May 2024 [^*]***|
-|v2.9.x|December 2022|July 2023|
-|v2.8.x|September 2022|March 2023|
-|v2.7.x|July 2022|January 2023|
-|***v2.6.x (LTS)***|***March 2022***|***May 2024 [^*]***|
-|v2.5.x|December 2021|June 2022|
-|v2.4.x|September 2021|March 2022|
-|v2.3.x|March 2021|November 2022|
-|v2.2.x|January 2021|February 2022|
-|v2.1.x|November 2020|May 2023|
-|v2.0.x|June 2020|February 2022|
-|v1.10.x|April 2020|February 2022|
-|v1.9.x|August 2019|February 2022|
-|v1.8.x|May 2019|February 2022|
-|v1.7.x|December 2018|February 2022|
+|Version branch|Release Date|End of Standard Support Date|EOL Date|
+|--------------|------------|----------------------------|--------|
+|***v2.14.x (LTS)***|***March 2024***|***March 2025 [^*]***|***March 2025 [^*]***|
+|***v2.13.x***|***December 2023***|***June 2024***|***June 2024***|
+|v2.12.x|September 2023|March 2024|March 2024|
+|v2.11.x|July 2023|January 2024|January 2024|
+|***v2.10.x (LTS)***|***March 2023***|***May 2024 [^*]***|***May 2024 [^*]***|
+|v2.9.x|December 2022|July 2023|July 2023|
+|v2.8.x|September 2022|March 2023|March 2023|
+|v2.7.x|July 2022|January 2023|January 2023|
+|***v2.6.x (LTS)***|***March 2022***|***May 2024 [^*]***|***May 2024 [^*]***|
+|v2.5.x|December 2021|June 2022|June 2022|
+|v2.4.x|September 2021|March 2022|March 2022|
+|v2.3.x|March 2021|November 2022|November 2022|
+|v2.2.x|January 2021|February 2022|February 2022|
+|v2.1.x|November 2020|May 2023|May 2023|
+|v2.0.x|June 2020|February 2022|February 2022|
+|v1.10.x|April 2020|February 2022|February 2022|
+|v1.9.x|August 2019|February 2022|February 2022|
+|v1.8.x|May 2019|February 2022|February 2022|
+|v1.7.x|December 2018|February 2022|February 2022|
 
 [^*]: Support may be extended.
