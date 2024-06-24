@@ -19,6 +19,28 @@
 
 #include <gtest/gtest.h>
 
+// *INDENT-OFF* Uncrustify makes a mess with this kind of macros
+/**
+ * @brief Generic holder class for a DDS entity.
+ * This macro generates a holder class for a DDS entity along with it's factory so that the entity is automatically
+ * released when the holder is destroyed.
+ * The generated class has a custom-named getter method to access the entity.
+ * The macro allows to specify the factory class, the entity class, the factory's method to release the entity and the
+ * getter method name.
+ *
+ * @param _Factory  The class of the factory that created the entity (e.g. Publisher).
+ * @param _Entity   The class of the entity (e.g., DataWriter).
+ * @param _Release  The method of the factory to release the entity (e.g., delete_datawriter).
+ * @param _Getter   The name of the getter method to access the entity (for instance, writer).
+ *
+ * Examples:
+ * GENERIC_HOLDER_CLASS(Publisher, DataWriter, delete_datawriter, writer) generates DataWriterHolder.
+ * GENERIC_HOLDER_CLASS(Subscriber, DataReader, delete_datareader, reader) generates DataReaderHolder.
+ * GENERIC_HOLDER_CLASS(DomainParticipant, Publisher, delete_publisher, publisher) generates PublisherHolder.
+ * GENERIC_HOLDER_CLASS(DomainParticipant, Subscriber, delete_subscriber, subscriber) generates SubscriberHolder.
+ * GENERIC_HOLDER_CLASS(DomainParticipant, Topic, delete_topic, topic) generates TopicHolder.
+ * GENERIC_HOLDER_CLASS(DomainParticipantFactory, DomainParticipant, delete_participant, participant) generates DomainParticipantHolder.
+ */
 #define GENERIC_HOLDER_CLASS(_Factory, _Entity, _Release, _Getter) \
 class _Entity##Holder                                              \
 {                                                                  \
@@ -50,5 +72,6 @@ private:                                                           \
     _Entity* entity_ = nullptr;                                    \
                                                                    \
 };
+// *INDENT-ON*
 
 #endif  // FASTDDS_TEST_BLACKBOX_COMMON_ROS2__GENERICHOLDER_HPP

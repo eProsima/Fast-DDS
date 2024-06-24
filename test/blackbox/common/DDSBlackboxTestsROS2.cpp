@@ -80,83 +80,83 @@ TEST(DDS_ROS2, test_automatic_liveliness_changed)
     }
 
     {
-    auto context = std::make_shared<ros2::Context>();
+        auto context = std::make_shared<ros2::Context>();
 
-    auto topic_name = TEST_TOPIC_NAME;
-    const Duration_t liveliness_duration = { 1, 0 };
-    const Duration_t liveliness_announcement_period = { 0, 666666666 };
-    LivelinessQosPolicy liveliness;
-    liveliness.kind = LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS;
-    liveliness.lease_duration = liveliness_duration;
-    liveliness.announcement_period = liveliness_announcement_period;
-    ReliabilityQosPolicy reliability;
-    reliability.kind = RELIABLE_RELIABILITY_QOS;
+        auto topic_name = TEST_TOPIC_NAME;
+        const Duration_t liveliness_duration = { 1, 0 };
+        const Duration_t liveliness_announcement_period = { 0, 666666666 };
+        LivelinessQosPolicy liveliness;
+        liveliness.kind = LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS;
+        liveliness.lease_duration = liveliness_duration;
+        liveliness.announcement_period = liveliness_announcement_period;
+        ReliabilityQosPolicy reliability;
+        reliability.kind = RELIABLE_RELIABILITY_QOS;
 
-    TypeSupport type_support(new HelloWorldPubSubType());
-    auto pub = std::make_shared<ros2::PublicationNode>(context, topic_name + "/pub", topic_name, type_support);
-    auto sub = std::make_shared<ros2::SubscriptionNode>(context, topic_name + "/sub", topic_name, type_support);
+        TypeSupport type_support(new HelloWorldPubSubType());
+        auto pub = std::make_shared<ros2::PublicationNode>(context, topic_name + "/pub", topic_name, type_support);
+        auto sub = std::make_shared<ros2::SubscriptionNode>(context, topic_name + "/sub", topic_name, type_support);
 
-    // Configure the subscription node with a listener that will check the liveliness changed status.
-    int total_number_of_liveliness_events = 0;
-    auto sub_listener = std::make_shared<ros2::SubscriptionListener>();
-    sub_listener->liveliness_callback = [this, &total_number_of_liveliness_events](
-        const LivelinessChangedStatus& event) -> void
-            {
-                total_number_of_liveliness_events++;
-
-                // strict checking for expected events
-                if (total_number_of_liveliness_events == 1)
+        // Configure the subscription node with a listener that will check the liveliness changed status.
+        int total_number_of_liveliness_events = 0;
+        auto sub_listener = std::make_shared<ros2::SubscriptionListener>();
+        sub_listener->liveliness_callback = [this, &total_number_of_liveliness_events](
+            const LivelinessChangedStatus& event) -> void
                 {
-                    // publisher came alive
-                    ASSERT_EQ(1, event.alive_count);
-                    ASSERT_EQ(0, event.not_alive_count);
-                    ASSERT_EQ(1, event.alive_count_change);
-                    ASSERT_EQ(0, event.not_alive_count_change);
-                }
-                else if (total_number_of_liveliness_events == 2)
-                {
-                    // publisher died
-                    ASSERT_EQ(0, event.alive_count);
-                    ASSERT_EQ(0, event.not_alive_count);
-                    ASSERT_EQ(-1, event.alive_count_change);
-                    ASSERT_EQ(0, event.not_alive_count_change);
-                }
-            };
-    sub->set_listener(sub_listener);
+                    total_number_of_liveliness_events++;
 
-    DataReaderQos reader_qos = context->subscriber()->get_default_datareader_qos();
-    reader_qos.liveliness(liveliness);
-    reader_qos.reliability(reliability);
-    sub->set_qos(reader_qos);
+                    // strict checking for expected events
+                    if (total_number_of_liveliness_events == 1)
+                    {
+                        // publisher came alive
+                        ASSERT_EQ(1, event.alive_count);
+                        ASSERT_EQ(0, event.not_alive_count);
+                        ASSERT_EQ(1, event.alive_count_change);
+                        ASSERT_EQ(0, event.not_alive_count_change);
+                    }
+                    else if (total_number_of_liveliness_events == 2)
+                    {
+                        // publisher died
+                        ASSERT_EQ(0, event.alive_count);
+                        ASSERT_EQ(0, event.not_alive_count);
+                        ASSERT_EQ(-1, event.alive_count_change);
+                        ASSERT_EQ(0, event.not_alive_count_change);
+                    }
+                };
+        sub->set_listener(sub_listener);
 
-    // Start the subscription node.
-    sub->start();
+        DataReaderQos reader_qos = context->subscriber()->get_default_datareader_qos();
+        reader_qos.liveliness(liveliness);
+        reader_qos.reliability(reliability);
+        sub->set_qos(reader_qos);
 
-    DataWriterQos writer_qos = context->publisher()->get_default_datawriter_qos();
-    writer_qos.liveliness(liveliness);
-    writer_qos.reliability(reliability);
-    pub->set_qos(writer_qos);
+        // Start the subscription node.
+        sub->start();
 
-    // Start the publication node.
-    pub->start();
+        DataWriterQos writer_qos = context->publisher()->get_default_datawriter_qos();
+        writer_qos.liveliness(liveliness);
+        writer_qos.reliability(reliability);
+        pub->set_qos(writer_qos);
 
-    // Wait some time and kill the publication node.
-    HelloWorld hello;
-    hello.message("Hello, World!");
-    for (uint16_t i = 0; i < 10; ++i)
-    {
-        hello.index(i);
-        pub->publish(&hello);
-        std::this_thread::sleep_for(std::chrono::milliseconds(200));
-    }
+        // Start the publication node.
+        pub->start();
 
-    pub->stop();
+        // Wait some time and kill the publication node.
+        HelloWorld hello;
+        hello.message("Hello, World!");
+        for (uint16_t i = 0; i < 10; ++i)
+        {
+            hello.index(i);
+            pub->publish(&hello);
+            std::this_thread::sleep_for(std::chrono::milliseconds(200));
+        }
 
-    // Wait some time and check that the liveliness changed status was triggered.
-    std::this_thread::sleep_for(std::chrono::seconds(6));
-    EXPECT_EQ(2, total_number_of_liveliness_events);  // check expected number of liveliness events
+        pub->stop();
 
-    sub->stop();
+        // Wait some time and check that the liveliness changed status was triggered.
+        std::this_thread::sleep_for(std::chrono::seconds(6));
+        EXPECT_EQ(2, total_number_of_liveliness_events); // check expected number of liveliness events
+
+        sub->stop();
     }
 
     factory->set_library_settings(old_library_settings);
