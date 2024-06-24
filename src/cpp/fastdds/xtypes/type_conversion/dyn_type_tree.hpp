@@ -187,6 +187,16 @@ ReturnCode_t union_to_str(
         std::string& union_str) noexcept;
 
 /**
+ * @brief Converts a tree with a \c TK_BITSET root to an IDL string.
+ *
+ * @param node The root node of the tree.
+ * @param union_str The string representation of the tree.
+ */
+ReturnCode_t bitset_to_str(
+        const utilities::collections::TreeNode<TreeNodeType>& node,
+        std::string& bitset_str) noexcept;
+
+/**
  * @brief Converts a simple tree to an IDL string.
  *
  * @param node The root node of the tree.
@@ -195,6 +205,16 @@ ReturnCode_t union_to_str(
 ReturnCode_t node_to_str(
         const utilities::collections::TreeNode<TreeNodeType>& node,
         std::string& node_str) noexcept;
+
+/**
+ * @brief Finds the default type kind for a variable with a given size.
+ *
+ * @param size The size of the variable.
+ * @param default_type The default type kind.
+ */
+ReturnCode_t get_default_type_kind(
+        const std::uint32_t size,
+        TypeKind& default_type) noexcept;
 
 } // dds
 } // fastdds

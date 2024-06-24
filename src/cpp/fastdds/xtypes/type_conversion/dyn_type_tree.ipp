@@ -244,11 +244,11 @@ ReturnCode_t dyn_type_to_str(
         case TK_STRUCTURE:
         case TK_ENUM:
         case TK_UNION:
+        case TK_BITSET:
         {
             type_str = dyn_type->get_name().to_string();
             break;
         }
-        case TK_BITSET:
         case TK_BITMASK:
         case TK_NONE:
         case TK_ALIAS:
@@ -525,6 +525,11 @@ ReturnCode_t dyn_type_tree_to_idl(
                 ret = union_to_str(node, kind_str);
                 break;
             }
+            case TK_BITSET:
+            {
+                ret = bitset_to_str(node, kind_str);
+                break;
+            }
             default:
             {
                 continue;
@@ -707,6 +712,103 @@ ReturnCode_t union_to_str(
     return ret;
 }
 
+ReturnCode_t bitset_to_str(
+        const utilities::collections::TreeNode<TreeNodeType>& node,
+        std::string& bitset_str) noexcept
+{
+    if (node.info.dynamic_type->get_kind() != TK_BITSET)
+    {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Type is not a bitset.");
+        return RETCODE_BAD_PARAMETER;
+    }
+
+    ReturnCode_t ret = RETCODE_OK;
+
+    bitset_str = "bitset " + node.info.type_kind_name + TYPE_OPENING;
+
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    ret = node.info.dynamic_type->get_descriptor(type_descriptor);
+
+    if (ret != RETCODE_OK)
+    {
+        return ret;
+    }
+
+    // Find the bits that each bitfield occupies
+    const auto bits = type_descriptor->bound();
+
+    std::uint32_t bits_set = 0;
+
+    for (std::uint32_t index = 0; index < node.info.dynamic_type->get_member_count(); index++)
+    {
+        traits<DynamicTypeMember>::ref_type member;
+        ret = node.info.dynamic_type->get_member_by_index(member, index);
+
+        if (ret != RETCODE_OK)
+        {
+            return ret;
+        }
+
+        // The id of the member is the position in the bitset
+        const auto id = member->get_id();
+
+        if (id > bits_set)
+        {
+            // If the id is higher than the bits set, there must have been an empty bitfield (i.e. a gap)
+            const auto bits = id - bits_set;
+            bits_set += bits;
+
+            bitset_str += TAB_SEPARATOR;
+            bitset_str += "bitfield<";
+            bitset_str += std::to_string(bits);
+            bitset_str += ">;\n";
+        }
+
+        bitset_str += TAB_SEPARATOR;
+        bitset_str += "bitfield<";
+        bitset_str += std::to_string(bits[index]);
+
+        MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
+        ret = member->get_descriptor(member_descriptor);
+
+        if (ret != RETCODE_OK)
+        {
+            return ret;
+        }
+
+        TypeKind default_type_kind;
+        ret = get_default_type_kind(bits[index], default_type_kind);
+
+        if (ret != RETCODE_OK)
+        {
+            return ret;
+        }
+
+        // WARNING: If a user had explicitly set the type to be the default type, the serialization to IDL will not
+        // set it explicitly.
+        if (member_descriptor->type()->get_kind() != default_type_kind)
+        {
+            // The type of the bitfield is not the default type. Write it.
+            std::string type_str;
+            dyn_type_to_str(member_descriptor->type(), type_str);
+
+            bitset_str += ", ";
+            bitset_str += type_str;
+        }
+
+        bitset_str += "> ";
+        bitset_str += member->get_name().to_string();
+        bitset_str += ";\n";
+
+        bits_set += bits[index];
+    }
+
+    // Close definition
+    bitset_str += TYPE_CLOSURE;
+
+    return ret;
+}
+
 ReturnCode_t node_to_str(
         const utilities::collections::TreeNode<TreeNodeType>& node,
         std::string& node_str) noexcept
@@ -731,6 +833,39 @@ ReturnCode_t node_to_str(
     else
     {
         node_str += node.info.type_kind_name + " " + node.info.member_name;
+    }
+
+    return RETCODE_OK;
+}
+
+ReturnCode_t get_default_type_kind(
+        const std::uint32_t size,
+        TypeKind& default_type) noexcept
+{
+    if (size == 1)
+    {
+        default_type = TK_BOOLEAN;
+    }
+    else if (size <= 8)
+    {
+        default_type = TK_UINT8;
+    }
+    else if (size <= 16)
+    {
+        default_type = TK_UINT16;
+    }
+    else if (size <= 32)
+    {
+        default_type = TK_UINT32;
+    }
+    else if (size <= 64)
+    {
+        default_type = TK_UINT64;
+    }
+    else
+    {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Size is not supported.");
+        return RETCODE_BAD_PARAMETER;
     }
 
     return RETCODE_OK;
