@@ -13808,7 +13808,8 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_map)
 
     DynamicTypeBuilder::_ref_type xml_type_builder;
     ASSERT_EQ(RETCODE_OK,
-            DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("MapStruct", xml_type_builder));
+            DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("MapStruct",
+            xml_type_builder));
 
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
@@ -14078,7 +14079,8 @@ TEST_F(DynamicTypesTests, DynamicType_XML_Bitset_test)
 
     DynamicTypeBuilder::_ref_type xml_type_builder;
     ASSERT_EQ(RETCODE_OK,
-            DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("MyBitSet", xml_type_builder));
+            DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("MyBitSet",
+            xml_type_builder));
 
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
@@ -14145,7 +14147,8 @@ TEST_F(DynamicTypesTests, DynamicType_XML_Bitmask_test)
 
     DynamicTypeBuilder::_ref_type xml_type_builder;
     ASSERT_EQ(RETCODE_OK,
-            DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("MyBitMask", xml_type_builder));
+            DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("MyBitMask",
+            xml_type_builder));
 
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 

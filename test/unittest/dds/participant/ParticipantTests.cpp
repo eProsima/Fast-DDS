@@ -431,10 +431,12 @@ TEST(ParticipantTests, DomainParticipantFactoryGetDynamicTypeBuilder)
     std::string type_name("MyAloneEnumType");
     // Trying to get a Dynamic Type with empty name returns RETCODE_BAD_PARAMETER
     EXPECT_EQ(RETCODE_BAD_PARAMETER,
-            DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name(std::string(), type_builder));
+            DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name(std::string(),
+            type_builder));
     // Trying to get an unknown Dynamic Type return RETCODE_NO_DATA
     EXPECT_EQ(RETCODE_NO_DATA,
-            DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name(type_name, type_builder));
+            DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name(type_name,
+            type_builder));
     EXPECT_EQ(nullptr, type_builder);
     // Load XML file
     std::string xml =
@@ -451,7 +453,8 @@ TEST(ParticipantTests, DomainParticipantFactoryGetDynamicTypeBuilder)
     DomainParticipantFactory::get_instance()->load_XML_profiles_string(xml.c_str(), xml.length());
     // Getting a known dynamic type returns RETCODE_OK
     EXPECT_EQ(RETCODE_OK,
-            DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name(type_name, type_builder));
+            DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name(type_name,
+            type_builder));
     EXPECT_NE(nullptr, type_builder);
 }
 
