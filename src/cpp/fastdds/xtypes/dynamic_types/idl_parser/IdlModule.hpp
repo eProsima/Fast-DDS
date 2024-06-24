@@ -20,8 +20,6 @@
 
 #include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilder.hpp>
 
-// #include "IdlTypeBuilder.hpp"
-
 namespace eprosima {
 namespace fastdds {
 namespace dds {
@@ -151,17 +149,17 @@ public:
         return false;
     }
 
-    // bool has_structure(
-    //         const std::string& name) const
-    // {
-    //     // Solve scope
-    //     PairModuleSymbol module = resolve_scope(name);
-    //     if (module.first == nullptr)
-    //     {
-    //         return false;
-    //     }
-    //     return module.first->structs_.count(module.second) > 0;
-    // }
+    bool has_structure(
+            const std::string& name) const
+    {
+        // Solve scope
+        PairModuleSymbol module = resolve_scope(name);
+        if (module.first == nullptr)
+        {
+            return false;
+        }
+        return module.first->structs_.count(module.second) > 0;
+    }
 
     // v1_3::DynamicType& structure(
     //         const std::string& name)
@@ -232,10 +230,10 @@ public:
     // }
 
     bool structure(
-            DynamicTypeBuilder::_ref_type type_builder,
+            DynamicTypeBuilder::_ref_type builder,
             bool replace = false)
     {
-        std::string name(type_builder->get_name());
+        std::string name(builder->get_name());
         if (name.find("::") != std::string::npos)
         {
             return false; // Cannot add a symbol with scoped name.
@@ -252,24 +250,24 @@ public:
 
         std::string name_space = scope();
         TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
-        type_builder->get_descriptor(type_descriptor);
+        builder->get_descriptor(type_descriptor);
         type_descriptor->name(name_space + (name_space.empty() ? "" : "::") + name);
-        auto result = structs_.emplace(name, type_builder);
+        auto result = structs_.emplace(name, builder);
 
         return result.second;
     }
 
-    // bool has_union(
-    //         const std::string& name) const
-    // {
-    //     // Solve scope
-    //     PairModuleSymbol module = resolve_scope(name);
-    //     if (module.first == nullptr)
-    //     {
-    //         return false;
-    //     }
-    //     return module.first->unions_.count(module.second) > 0;
-    // }
+    bool has_union(
+            const std::string& name) const
+    {
+        // Solve scope
+        PairModuleSymbol module = resolve_scope(name);
+        if (module.first == nullptr)
+        {
+            return false;
+        }
+        return module.first->unions_.count(module.second) > 0;
+    }
 
     // const v1_3::DynamicType union_switch(
     //         const std::string& name) const
@@ -313,23 +311,23 @@ public:
     //     return const_cast<v1_3::DynamicType&>(*it->second.get());
     // }
 
-    // bool union_switch(
-    //         v1_3::DynamicType& union_type)
-    // {
-    //     if (union_type.get_name().find("::") != std::string::npos)
-    //     {
-    //         return false; // Cannot add a symbol with scoped name.
-    //     }
+    bool union_switch(
+            DynamicTypeBuilder::_ref_type builder)
+    {
+        std::string name(builder->get_name());
+        if (name.find("::") != std::string::npos)
+        {
+            return false; // Cannot add a symbol with scoped name.
+        }
 
-    //     std::string name = union_type.get_name();
-    //     std::string name_space = scope();
-    //     // TODO set name of union type?
-    //     //union_type.set_name(name_space + (name_space.empty() ? "" : "::") + name);
-    //     auto result = unions_.emplace(
-    //         name,
-    //         Type(*this, union_type));
-    //     return result.second;
-    // }
+        std::string name_space = scope();
+        TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+        builder->get_descriptor(type_descriptor);
+        type_descriptor->name(name_space + (name_space.empty() ? "" : "::") + name);
+        auto result = unions_.emplace(name, builder);
+
+        return result.second;
+    }
 
     // bool union_switch(
     //         v1_3::DynamicType&& union_type,
@@ -393,135 +391,136 @@ public:
         return result.second;
     }
 
-    // bool has_enum_32(
-    //         const std::string& name) const
-    // {
-    //     return enumerations_32_.count(name) > 0;
-    // }
+    bool has_enum_32(
+            const std::string& name) const
+    {
+        return enumerations_32_.count(name) > 0;
+    }
 
-    // bool enum_32(
-    //         const std::string& name,
-    //         v1_3::DynamicType_ptr enum_type,
-    //         bool replace = false)
-    // {
-    //     if (name.find("::") != std::string::npos)
-    //     {
-    //         return false; // Cannot add a symbol with scoped name.
-    //     }
+    bool enum_32(
+            const std::string& name,
+            DynamicTypeBuilder::_ref_type builder,
+            bool replace = false)
+    {
+        if (name.find("::") != std::string::npos)
+        {
+            return false; // Cannot add a symbol with scoped name.
+        }
 
-    //     if (replace)
-    //     {
-    //         auto it = enumerations_32_.find(name);
-    //         if (it != enumerations_32_.end())
-    //         {
-    //             enumerations_32_.erase(it);
-    //         }
-    //     }
+        if (replace)
+        {
+            auto it = enumerations_32_.find(name);
+            if (it != enumerations_32_.end())
+            {
+                enumerations_32_.erase(it);
+            }
+        }
 
-    //     std::string name_space = scope();
-    //     // TODO set name of enum type?
-    //     //enum_type.set_name(name_space + (name_space.empty() ? "" : "::") + name);
-    //     auto result = enumerations_32_.emplace(
-    //         name,
-    //         Type(*this, *enum_type));
-    //     return result.second;
-    // }
+        std::string name_space = scope();
+        TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+        builder->get_descriptor(type_descriptor);
+        type_descriptor->name(name_space + (name_space.empty() ? "" : "::") + name);
+        auto result = enumerations_32_.emplace(name, builder);
 
-    // bool has_alias(
-    //         const std::string& name) const
-    // {
-    //     // Solve scope
-    //     PairModuleSymbol module = resolve_scope(name);
-    //     if (module.first == nullptr)
-    //     {
-    //         return false;
-    //     }
+        return result.second;
+    }
 
-    //     auto it = module.first->aliases_.find(module.second);
-    //     return it != module.first->aliases_.end();
-    // }
+    bool has_alias(
+            const std::string& name) const
+    {
+        // Solve scope
+        PairModuleSymbol module = resolve_scope(name);
+        if (module.first == nullptr)
+        {
+            return false;
+        }
 
-    // bool create_alias(
-    //         const std::string& name,
-    //         v1_3::DynamicType_ptr type)
-    // {
-    //     if (name.find("::") != std::string::npos || has_alias(name))
-    //     {
-    //         return false; // Cannot define alias with scoped name (or already defined).
-    //     }
+        auto it = module.first->aliases_.find(module.second);
+        return it != module.first->aliases_.end();
+    }
 
-    //     std::string name_space = scope();
-    //     std::string alias_name = name_space + (name_space.empty() ? "" : "::") + name;
-    //     v1_3::DynamicTypeBuilderFactory& factory = v1_3::DynamicTypeBuilderFactory::get_instance();
-    //     v1_3::DynamicTypeBuilder_ptr alias_builder = factory.create_alias_type(*type, alias_name);
-    //     auto alias_type = alias_builder->build();
+    bool create_alias(
+            const std::string& name,
+            DynamicTypeBuilder::_ref_type builder)
+    {
+        if (name.find("::") != std::string::npos || has_alias(name))
+        {
+            return false; // Cannot define alias with scoped name (or already defined).
+        }
 
-    //     auto result = aliases_.emplace(name, Type(*this, *alias_type));
-    //     return result.second;
-    // }
+        std::string name_space = scope();
+        TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+        builder->get_descriptor(type_descriptor);
+        type_descriptor->name(name_space + (name_space.empty() ? "" : "::") + name);
+        auto result = aliases_.emplace(name, builder);
 
-    // // Generic type retrieval.
-    // v1_3::DynamicType_ptr type(
-    //         const std::string& name,
-    //         bool recursive = false)
-    // {
-    //     v1_3::DynamicType_ptr ret_type;
+        return result.second;
+    }
 
-    //     if (recursive)
-    //     {
-    //         for (auto& pair : inner_)
-    //         {
-    //             const std::string& key = pair.first;
-    //             std::shared_ptr<Module>& mod = pair.second;
-    //             ret_type = mod->type(name, recursive);
-    //         }
-    //     }
+    // Generic type builder retrieval
+    DynamicTypeBuilder::_ref_type get_builder(
+            const std::string& name,
+            bool recursive = false)
+    {
+        DynamicTypeBuilder::_ref_type builder;
 
-    //     // Solve scope
-    //     PairModuleSymbol module = resolve_scope(name);
-    //     if (module.first == nullptr)
-    //     {
-    //         return ret_type;
-    //     }
+        if (recursive)
+        {
+            for (auto& pair : inner_)
+            {
+                const std::string& key = pair.first;
+                std::shared_ptr<Module>& mod = pair.second;
+                builder = mod->get_builder(name, recursive);
+            }
+        }
 
-    //     // Check enums
-    //     if (module.first->has_enum_32(module.second))
-    //     {
-    //         ret_type = module.first->enumerations_32_.at(module.second).get();
-    //     }
+        // Solve scope
+        PairModuleSymbol module = resolve_scope(name);
+        if (module.first == nullptr)
+        {
+            return builder;
+        }
 
-    //     // Check structs
-    //     if (module.first->has_structure(module.second))
-    //     {
-    //         ret_type = module.first->structs_.at(module.second).get();
-    //     }
+        // Check enums
+        if (module.first->has_enum_32(module.second))
+        {
+            builder = module.first->enumerations_32_.at(module.second);
+        }
 
-    //     // Check unions
-    //     if (module.first->has_union(module.second))
-    //     {
-    //         ret_type = module.first->unions_.at(module.second).get();
-    //     }
+        // Check structs
+        if (module.first->has_structure(module.second))
+        {
+            builder = module.first->structs_.at(module.second);
+        }
 
-    //     // Check aliases
-    //     if (module.first->has_alias(module.second))
-    //     {
-    //         ret_type = module.first->aliases_.at(module.second).get();
-    //     }
+        // Check unions
+        if (module.first->has_union(module.second))
+        {
+            builder = module.first->unions_.at(module.second);
+        }
 
-    //     //if (name.find("::") == 0)
-    //     //{
-    //     //    // Scope ambiguity solver was originally used, add it to the retrieved DynamicType
-    //     //    ret_type->name(name);
-    //     //}
+        // Check aliases
+        if (module.first->has_alias(module.second))
+        {
+            builder = module.first->aliases_.at(module.second);
+        }
 
-    //     // Check bitsets
-    //     // TODO
+        if (name.find("::") == 0)
+        {
+            // Scope ambiguity solver was originally used, add it to the retrieved DynamicTypeBuilder
+            TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+            builder->get_descriptor(type_descriptor);
+            type_descriptor->name(name);
+        }
 
-    //     // Check bitmasks
-    //     // TODO
+        // Check bitsets
+        // TODO
 
-    //     return ret_type;
-    // }
+        // Check bitmasks
+        // TODO
+
+        return builder;
+    }
 
 protected:
 
@@ -548,95 +547,95 @@ protected:
     // Auxiliar method to resolve scoped. It will return the Module up to the last "::" by calling
     // recursively resolving each scoped name, looking for the scope path, and the symbol name without the scope.
     // If the path cannot be resolved, it will return nullptr as path, and the full given symbol name.
-    // PairModuleSymbol resolve_scope(
-    //         const std::string& symbol_name) const
-    // {
-    //     return resolve_scope(symbol_name, symbol_name, true);
-    // }
+    PairModuleSymbol resolve_scope(
+            const std::string& symbol_name) const
+    {
+        return resolve_scope(symbol_name, symbol_name, true);
+    }
 
-    // PairModuleSymbol resolve_scope(
-    //         const std::string& symbol_name,
-    //         const std::string& original_name,
-    //         bool first = false) const
-    // {
-    //     if (!first && symbol_name == original_name)
-    //     {
-    //         // Loop trying to resolve the name. Abort failing.
-    //         PairModuleSymbol pair;
-    //         pair.first = nullptr;
-    //         pair.second = original_name;
-    //         return pair;
-    //     }
+    PairModuleSymbol resolve_scope(
+            const std::string& symbol_name,
+            const std::string& original_name,
+            bool first = false) const
+    {
+        if (!first && symbol_name == original_name)
+        {
+            // Loop trying to resolve the name. Abort failing.
+            PairModuleSymbol pair;
+            pair.first = nullptr;
+            pair.second = original_name;
+            return pair;
+        }
 
-    //     std::string name = symbol_name;
-    //     // Solve scope
-    //     if (symbol_name.find("::") != std::string::npos) // It is an scoped name
-    //     {
-    //         if (symbol_name.find("::") == 0) // Looking for root
-    //         {
-    //             if (outer_ == nullptr) // We are the root, now go down.
-    //             {
-    //                 return resolve_scope(symbol_name.substr(2), original_name);
-    //             }
-    //             else // We are not the root, go up, with the original name.
-    //             {
-    //                 return outer_->resolve_scope(original_name, original_name, true);
-    //             }
-    //         }
-    //         else // not looking for root
-    //         {
-    //             std::string inner_scope = symbol_name.substr(0, symbol_name.find("::"));
-    //             // Maybe the current scope its me?
-    //             if (inner_scope == name_)
-    //             {
-    //                 std::string innest_scope = inner_scope.substr(0, inner_scope.find("::"));
-    //                 if (inner_.count(innest_scope) > 0)
-    //                 {
-    //                     std::string inner_name = symbol_name.substr(symbol_name.find("::") + 2);
-    //                     const auto& it = inner_.find(innest_scope);
-    //                     PairModuleSymbol result = it->second->resolve_scope(inner_name, original_name);
-    //                     if (result.first != nullptr)
-    //                     {
-    //                         return result;
-    //                     }
-    //                 }
-    //             }
-    //             // Do we have a inner scope that matches?
-    //             if (inner_.count(inner_scope) > 0)
-    //             {
-    //                 std::string inner_name = symbol_name.substr(symbol_name.find("::") + 2);
-    //                 const auto& it = inner_.find(inner_scope);
-    //                 return it->second->resolve_scope(inner_name, original_name);
-    //             }
-    //             // Try going back
-    //             if (outer_ != nullptr && first)
-    //             {
-    //                 return outer_->resolve_scope(original_name, original_name, true);
-    //             }
-    //             // Unknown scope
-    //             PairModuleSymbol pair;
-    //             pair.first = nullptr;
-    //             pair.second = original_name;
-    //             return pair;
-    //         }
-    //     }
+        std::string name = symbol_name;
+        // Solve scope
+        if (symbol_name.find("::") != std::string::npos) // It is an scoped name
+        {
+            if (symbol_name.find("::") == 0) // Looking for root
+            {
+                if (outer_ == nullptr) // We are the root, now go down.
+                {
+                    return resolve_scope(symbol_name.substr(2), original_name);
+                }
+                else // We are not the root, go up, with the original name.
+                {
+                    return outer_->resolve_scope(original_name, original_name, true);
+                }
+            }
+            else // not looking for root
+            {
+                std::string inner_scope = symbol_name.substr(0, symbol_name.find("::"));
+                // Maybe the current scope its me?
+                if (inner_scope == name_)
+                {
+                    std::string innest_scope = inner_scope.substr(0, inner_scope.find("::"));
+                    if (inner_.count(innest_scope) > 0)
+                    {
+                        std::string inner_name = symbol_name.substr(symbol_name.find("::") + 2);
+                        const auto& it = inner_.find(innest_scope);
+                        PairModuleSymbol result = it->second->resolve_scope(inner_name, original_name);
+                        if (result.first != nullptr)
+                        {
+                            return result;
+                        }
+                    }
+                }
+                // Do we have a inner scope that matches?
+                if (inner_.count(inner_scope) > 0)
+                {
+                    std::string inner_name = symbol_name.substr(symbol_name.find("::") + 2);
+                    const auto& it = inner_.find(inner_scope);
+                    return it->second->resolve_scope(inner_name, original_name);
+                }
+                // Try going back
+                if (outer_ != nullptr && first)
+                {
+                    return outer_->resolve_scope(original_name, original_name, true);
+                }
+                // Unknown scope
+                PairModuleSymbol pair;
+                pair.first = nullptr;
+                pair.second = original_name;
+                return pair;
+            }
+        }
 
-    //     if (has_symbol(name, false))
-    //     {
-    //         return std::make_pair<const Module*, std::string>(this, std::move(name));
-    //     }
+        if (has_symbol(name, false))
+        {
+            return std::make_pair<const Module*, std::string>(this, std::move(name));
+        }
 
-    //     if (outer_ != nullptr)
-    //     {
-    //         return outer_->resolve_scope(symbol_name, original_name, true);
-    //     }
+        if (outer_ != nullptr)
+        {
+            return outer_->resolve_scope(symbol_name, original_name, true);
+        }
 
-    //     // Failed, not found
-    //     PairModuleSymbol pair;
-    //     pair.first = nullptr;
-    //     pair.second = original_name;
-    //     return pair;
-    // }
+        // Failed, not found
+        PairModuleSymbol pair;
+        pair.first = nullptr;
+        pair.second = original_name;
+        return pair;
+    }
 
 }; // class Module
 
