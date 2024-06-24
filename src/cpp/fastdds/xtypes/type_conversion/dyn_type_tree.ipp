@@ -245,11 +245,11 @@ ReturnCode_t dyn_type_to_str(
         case TK_ENUM:
         case TK_UNION:
         case TK_BITSET:
+        case TK_BITMASK:
         {
             type_str = dyn_type->get_name().to_string();
             break;
         }
-        case TK_BITMASK:
         case TK_NONE:
         case TK_ALIAS:
         {
@@ -530,6 +530,11 @@ ReturnCode_t dyn_type_tree_to_idl(
                 ret = bitset_to_str(node, kind_str);
                 break;
             }
+            case TK_BITMASK:
+            {
+                ret = bitmask_to_str(node, kind_str);
+                break;
+            }
             default:
             {
                 continue;
@@ -801,6 +806,87 @@ ReturnCode_t bitset_to_str(
         bitset_str += ";\n";
 
         bits_set += bits[index];
+    }
+
+    // Close definition
+    bitset_str += TYPE_CLOSURE;
+
+    return ret;
+}
+
+ReturnCode_t bitmask_to_str(
+        const utilities::collections::TreeNode<TreeNodeType>& node,
+        std::string& bitset_str) noexcept
+{
+    if (node.info.dynamic_type->get_kind() != TK_BITMASK)
+    {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Type is not a bitmask.");
+        return RETCODE_BAD_PARAMETER;
+    }
+
+    ReturnCode_t ret = RETCODE_OK;
+
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    ret = node.info.dynamic_type->get_descriptor(type_descriptor);
+
+    if (ret != RETCODE_OK)
+    {
+        return ret;
+    }
+
+    if (type_descriptor->bound().size() != 1)
+    {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Bitmask type must have exactly one bound.");
+        return RETCODE_BAD_PARAMETER;
+    }
+
+    // Annotation with the bitmask size
+    static constexpr std::uint32_t DEFAULT_BITMASK_SIZE = 32;
+    const auto bitmask_size = type_descriptor->bound()[0];
+
+    if (bitmask_size != DEFAULT_BITMASK_SIZE)
+    {
+        bitset_str = "@bit_bound(" + std::to_string(bitmask_size) + ")\n";
+    }
+
+    bitset_str += "bitmask " + node.info.type_kind_name + TYPE_OPENING;
+
+    const auto member_count = node.info.dynamic_type->get_member_count();
+
+    std::uint32_t pos = 0;
+
+    for (std::uint32_t index = 0; index < member_count; index++)
+    {
+        traits<DynamicTypeMember>::ref_type member;
+        ret = node.info.dynamic_type->get_member_by_index(member, index);
+
+        if (ret != RETCODE_OK)
+        {
+            return ret;
+        }
+
+        bitset_str += TAB_SEPARATOR;
+
+        // Annotation with the position
+        const auto id = member->get_id();
+
+        if (id != pos)
+        {
+            bitset_str += "@position(" + std::to_string(id) + ") ";
+        }
+
+        bitset_str += member->get_name().to_string();
+
+        // Add comma if not last member
+        if (index < member_count - 1)
+        {
+            bitset_str += ",";
+        }
+
+        bitset_str += "\n";
+
+        // The position is always sequential
+        pos = id + 1;
     }
 
     // Close definition
