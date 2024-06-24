@@ -43,16 +43,15 @@ int main(
         char** argv)
 {
     auto ret = EXIT_SUCCESS;
-    const std::string topic_name = "flow_control_topic";
     CLIParser::flow_control_config config = CLIParser::parse_cli_options(argc, argv);
     uint16_t samples = 0;
     switch (config.entity)
     {
         case CLIParser::EntityKind::PUBLISHER:
-            samples = config.pub_config.samples;
+            samples = config.samples;
             break;
         case CLIParser::EntityKind::SUBSCRIBER:
-            samples = config.sub_config.samples;
+            samples = config.samples;
             break;
         default:
             break;
@@ -63,7 +62,7 @@ int main(
 
     try
     {
-        app = Application::make_app(config, topic_name);
+        app = Application::make_app(config);
     }
     catch (const std::runtime_error& e)
     {
