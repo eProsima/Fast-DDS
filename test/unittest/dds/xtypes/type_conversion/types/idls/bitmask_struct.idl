@@ -1,0 +1,13 @@
+@bit_bound(8)
+bitmask ColorBitmask
+{
+    red,
+    @position(2) green,
+    blue,
+    @position(5) yellow
+};
+
+struct bitmask_struct
+{
+    ColorBitmask my_bitmask;
+};

@@ -62,6 +62,9 @@
 #include "type_objects/bitset_struct/bitset_struct.hpp"
 #include "type_objects/bitset_struct/bitset_structPubSubTypes.h"
 
+#include "type_objects/bitmask_struct/bitmask_struct.hpp"
+#include "type_objects/bitmask_struct/bitmask_structPubSubTypes.h"
+
 namespace test {
 
 namespace SupportedTypes {
@@ -78,6 +81,7 @@ const std::string ENUM_STRUCT{"enum_struct"};
 const std::string UNION_STRUCT{"union_struct"};
 const std::string MAP_STRUCT{"map_struct"};
 const std::string BITSET_STRUCT{"bitset_struct"};
+const std::string BITMASK_STRUCT{"bitmask_struct"};
 
 } // namespace SupportedTypes
 
@@ -93,7 +97,8 @@ const std::vector<std::string> supported_types = {
     SupportedTypes::ENUM_STRUCT,
     SupportedTypes::UNION_STRUCT,
     SupportedTypes::MAP_STRUCT,
-    SupportedTypes::BITSET_STRUCT
+    SupportedTypes::BITSET_STRUCT,
+    SupportedTypes::BITMASK_STRUCT
 };
 
 void register_dynamic_types()
@@ -135,6 +140,9 @@ void register_dynamic_types()
 
     TypeSupport type_bitset_struct(new bitset_structPubSubType());
     type_bitset_struct->register_type_object_representation();
+
+    TypeSupport type_bitmask_struct(new bitmask_structPubSubType());
+    type_bitmask_struct->register_type_object_representation();
 }
 
 } /* namespace test */
