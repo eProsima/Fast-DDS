@@ -12,13 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*!
+/**
  * @file PublisherApp.hpp
+ *
  */
 
 
 #ifndef FASTDDS_FLOW_CONTROL_PUBLISHER_APP_HPP_
 #define FASTDDS_FLOW_CONTROL_PUBLISHER_APP_HPP_
+
+#include <condition_variable>
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
@@ -26,59 +29,75 @@
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 
-#include "FlowControlExamplePubSubTypes.hpp"
+#include "Application.hpp"
+#include "CLIParser.hpp"
+#include "FlowControlPubSubTypes.h"
 
+using namespace eprosima::fastdds::dds;
 
+namespace eprosima {
+namespace fastdds {
+namespace examples {
+namespace flow_control {
 
-class FlowControlExamplePublisher
+class PublisherApp : public Application, public DataWriterListener
 {
 public:
 
-    FlowControlExamplePublisher();
+    PublisherApp(
+            const CLIParser::flow_control_config& config);
 
-    virtual ~FlowControlExamplePublisher();
+    ~PublisherApp();
 
-    bool init();
+    //! Publisher matched method
+    void on_publication_matched(
+            DataWriter* writer,
+            const PublicationMatchedStatus& info) override;
 
-    void run();
+    //! Run publisher
+    void run() override;
+
+    //! Stop publisher
+    void stop() override;
 
 private:
 
-    eprosima::fastdds::dds::DomainParticipant* participant_;
+    //! Return the current state of execution
+    bool is_stopped();
 
-    eprosima::fastdds::dds::Publisher* fast_publisher_;
+    //! Publish a sample
+    bool publish();
 
-    eprosima::fastdds::dds::Publisher* slow_publisher_;
+    DomainParticipant* participant_;
 
-    eprosima::fastdds::dds::Topic* topic_;
+    Publisher* fast_publisher_;
 
-    eprosima::fastdds::dds::DataWriter* fast_writer_;
+    Publisher* slow_publisher_;
 
-    eprosima::fastdds::dds::DataWriter* slow_writer_;
+    Topic* topic_;
 
-    class PubListener : public eprosima::fastdds::dds::DataWriterListener
-    {
-    public:
+    DataWriter* fast_writer_;
 
-        PubListener()
-            : n_matched(0)
-        {
-        }
+    DataWriter* slow_writer_;
 
-        ~PubListener() override
-        {
-        }
+    TypeSupport type_;
 
-        void on_publication_matched(
-                eprosima::fastdds::dds::DataWriter* writer,
-                const eprosima::fastdds::dds::PublicationMatchedStatus& info) override;
+    int16_t matched_;
 
-        int n_matched;
+    uint16_t samples_;
 
-    }
-    m_listener;
+    std::mutex mutex_;
 
-    eprosima::fastdds::dds::TypeSupport myType;
+    std::condition_variable cv_;
+
+    std::atomic<bool> stop_;
+
+    const uint32_t period_ms_ = 100; // in ms
 };
+
+} // namespace flow_control
+} // namespace examples
+} // namespace fastdds
+} // namespace eprosima
 
 #endif /* _FASTDDS_FLOW_CONTROL_PUBLISHER_APP_HPP_ */

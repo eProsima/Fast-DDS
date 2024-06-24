@@ -12,63 +12,42 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*!
+/**
  * @file PublisherApp.cpp
+ *
  */
 
 #include "PublisherApp.hpp"
 
-#include <chrono>
-#include <thread>
+#include <stdexcept>
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;
-using namespace eprosima::fastdds::rtps;
 
-FlowControlExamplePublisher::FlowControlExamplePublisher()
+namespace eprosima {
+namespace fastdds {
+namespace examples {
+namespace flow_control {
+
+PublisherApp::PublisherApp(
+        const CLIParser::flow_control_config& config)
     : participant_(nullptr)
     , fast_publisher_(nullptr)
     , slow_publisher_(nullptr)
     , topic_(nullptr)
     , fast_writer_(nullptr)
     , slow_writer_(nullptr)
-    , myType(new FlowControlExamplePubSubType())
-{
-}
-
-FlowControlExamplePublisher::~FlowControlExamplePublisher()
-{
-    if (fast_writer_ != nullptr)
-    {
-        fast_publisher_->delete_datawriter(fast_writer_);
-    }
-    if (slow_writer_ != nullptr)
-    {
-        slow_publisher_->delete_datawriter(slow_writer_);
-    }
-    if (fast_publisher_ != nullptr)
-    {
-        participant_->delete_publisher(fast_publisher_);
-    }
-    if (slow_publisher_ != nullptr)
-    {
-        participant_->delete_publisher(slow_publisher_);
-    }
-    if (topic_ != nullptr)
-    {
-        participant_->delete_topic(topic_);
-    }
-    DomainParticipantFactory::get_instance()->delete_participant(participant_);
-}
-
-bool FlowControlExamplePublisher::init()
+    , type_(new FlowControlPubSubType())
+    , matched_(0)
+    , samples_(config.samples)
+    , stop_(false)
 {
     // Create Participant
-    DomainParticipantQos pqos;
+    DomainParticipantQos pqos = PARTICIPANT_QOS_DEFAULT;
     pqos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastdds::c_TimeInfinite;
-    pqos.name("Participant_publisher");  //You can put here the name you want
+    pqos.name("Participant_publisher");
 
     // This controller allows 300kb per second.
     auto slow_flow_controller_descriptor = std::make_shared<eprosima::fastdds::rtps::FlowControllerDescriptor>();
@@ -78,78 +57,86 @@ bool FlowControlExamplePublisher::init()
     pqos.flow_controllers().push_back(slow_flow_controller_descriptor);
 
     participant_ = DomainParticipantFactory::get_instance()->create_participant(0, pqos);
-
     if (participant_ == nullptr)
     {
-        return false;
+        throw std::runtime_error("Participant initialization failed");
     }
 
     //Register the type
-    myType.register_type(participant_);
+    type_.register_type(participant_);
 
     // Create fast Publisher, which has no controller of its own.
-    fast_publisher_ = participant_->create_publisher(PUBLISHER_QOS_DEFAULT);
-
+    fast_publisher_ = participant_->create_publisher(PUBLISHER_QOS_DEFAULT, nullptr, StatusMask::none());
     if (fast_publisher_ == nullptr)
     {
-        return false;
+        throw std::runtime_error("Fast Publisher initialization failed");
     }
 
     // Create Topic
-    topic_ = participant_->create_topic("FlowControlExamplePubSubTopic", myType.get_type_name(), TOPIC_QOS_DEFAULT);
+    topic_ = participant_->create_topic("flow_control_topic", type_.get_type_name(), TOPIC_QOS_DEFAULT);
 
     if (topic_ == nullptr)
     {
-        return false;
+        throw std::runtime_error("Topic initialization failed");
     }
 
     // Create fast DataWriter
-    DataWriterQos wfqos;
+    DataWriterQos wfqos = DATAWRITER_QOS_DEFAULT;
     wfqos.publish_mode().kind = ASYNCHRONOUS_PUBLISH_MODE;
 
-    fast_writer_ = fast_publisher_->create_datawriter(topic_, wfqos, &m_listener);
-
+    fast_writer_ = fast_publisher_->create_datawriter(topic_, wfqos, this, StatusMask::all());
     if (fast_writer_ == nullptr)
     {
-        return false;
+        throw std::runtime_error("Fast DataWriter initialization failed");
     }
     std::cout << "Fast publisher created, waiting for Subscribers." << std::endl;
 
     // Create slow Publisher, with its own controller
-    slow_publisher_ = participant_->create_publisher(PUBLISHER_QOS_DEFAULT);
-
+    slow_publisher_ = participant_->create_publisher(PUBLISHER_QOS_DEFAULT, nullptr, StatusMask::none());
     if (slow_publisher_ == nullptr)
     {
-        return false;
+        throw std::runtime_error("Slow Publisher initialization failed");
     }
 
     // Create slow DataWriter
-    DataWriterQos wsqos;
+    DataWriterQos wsqos = DATAWRITER_QOS_DEFAULT;
     wsqos.publish_mode().kind = ASYNCHRONOUS_PUBLISH_MODE;
     wsqos.publish_mode().flow_controller_name = slow_flow_controller_descriptor->name;
 
-    slow_writer_ = slow_publisher_->create_datawriter(topic_, wsqos, &m_listener);
-
+    slow_writer_ = slow_publisher_->create_datawriter(topic_, wsqos, this, StatusMask::all());
     if (slow_writer_ == nullptr)
     {
-        return false;
+        throw std::runtime_error("Slow DataWriter initialization failed");
     }
     std::cout << "Slow publisher created, waiting for Subscribers." << std::endl;
-    return true;
 }
 
-void FlowControlExamplePublisher::PubListener::on_publication_matched(
+
+PublisherApp::~PublisherApp()
+{
+    if (nullptr != participant_)
+    {
+        // Delete DDS entities contained within the DomainParticipant
+        participant_->delete_contained_entities();
+
+        // Delete DomainParticipant
+        DomainParticipantFactory::get_instance()->delete_participant(participant_);
+    }
+}
+
+void PublisherApp::on_publication_matched(
         eprosima::fastdds::dds::DataWriter*,
         const eprosima::fastdds::dds::PublicationMatchedStatus& info)
 {
     if (info.current_count_change == 1)
     {
-        n_matched = info.total_count;
+        matched_ = static_cast<int16_t>(info.current_count);
         std::cout << "Publisher matched." << std::endl;
+        cv_.notify_one();
     }
     else if (info.current_count_change == -1)
     {
-        n_matched = info.total_count;
+        matched_ = static_cast<int16_t>(info.current_count);
         std::cout << "Publisher unmatched." << std::endl;
     }
     else
@@ -159,19 +146,12 @@ void FlowControlExamplePublisher::PubListener::on_publication_matched(
     }
 }
 
-void FlowControlExamplePublisher::run()
+void PublisherApp::run()
 {
-    while (m_listener.n_matched == 0)
-    {
-        std::this_thread::sleep_for(std::chrono::milliseconds(250));
-    }
-
     // Publication code
-
-    FlowControlExample st;
+    FlowControl st;
 
     /* Initialize your structure here */
-
     int msgsent_fast = 0;
     int msgsent_slow = 0;
     char ch;
@@ -186,20 +166,46 @@ void FlowControlExamplePublisher::run()
         if (ch == 'f')
         {
             st.wasFast(true);
-            fast_writer_->write(&st);  ++msgsent_fast;
+            // Wait for the data endpoints discovery
+            std::unique_lock<std::mutex> matched_lock(mutex_);
+            cv_.wait(matched_lock, [&]()
+                    {
+                        // at least one has been discovered
+                        return ((matched_ > 0) || is_stopped());
+                    });
+
+            if (!is_stopped())
+            {
+                fast_writer_->write(&st);
+            }
+            ++msgsent_fast;
             std::cout << "Sending sample, count=" << msgsent_fast <<
                 " through the fast writer. Send another sample? (f-fast,s-slow,q-quit): ";
         }
         else if (ch == 's')
         {
             st.wasFast(false);
-            slow_writer_->write(&st);  ++msgsent_slow;
+            slow_writer_->write(&st);
+            // Wait for the data endpoints discovery
+            std::unique_lock<std::mutex> matched_lock(mutex_);
+            cv_.wait(matched_lock, [&]()
+                    {
+                        // at least one has been discovered
+                        return ((matched_ > 0) || is_stopped());
+                    });
+
+            if (!is_stopped())
+            {
+                fast_writer_->write(&st);
+            }
+            ++msgsent_slow;
             std::cout << "Sending sample, count=" << msgsent_slow <<
                 " through the slow writer. Send another sample? (f-fast,s-slow,q-quit): ";
         }
         else if (ch == 'q')
         {
             std::cout << "Finishing Flow Control example" << std::endl;
+            stop();
             break;
         }
         else
@@ -209,3 +215,19 @@ void FlowControlExamplePublisher::run()
 
     }
 }
+
+bool PublisherApp::is_stopped()
+{
+    return stop_.load();
+}
+
+void PublisherApp::stop()
+{
+    stop_.store(true);
+    cv_.notify_one();
+}
+
+} // namespace flow_control
+} // namespace examples
+} // namespace fastdds
+} // namespace eprosima
