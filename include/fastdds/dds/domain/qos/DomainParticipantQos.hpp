@@ -42,6 +42,8 @@ class DomainParticipantQos
 {
 public:
 
+    friend class DomainParticipantExtendedQos;
+
     /*!
      * User defined flow controllers to use alongside.
      *
@@ -73,7 +75,7 @@ public:
     {
     }
 
-    bool operator ==(
+    virtual bool operator ==(
             const DomainParticipantQos& b) const
     {
         return (this->user_data_ == b.user_data()) &&
