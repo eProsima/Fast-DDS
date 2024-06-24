@@ -3,61 +3,45 @@ name: Fast DDS Ubuntu CI reusable workflow
 on:
   workflow_call:
     inputs:
-      os-image:
-        description: 'The OS image for the workflow'
+      input_string:
+        description: 'The input string for the workflow'
         required: true
         type: string
-      label:
-        description: 'ID associated to the workflow'
+      input_separator:
+        description: 'The separator for the input string'
+        type: string
         required: true
+      key_value_separator:
+        description: 'The separator for the key-value input string'
         type: string
-      colcon-args:
-        description: 'Extra arguments for colcon cli'
-        required: false
-        type: string
-      cmake-args:
-        description: 'Extra arguments for cmake cli'
-        required: false
-        type: string
-      ctest-args:
-        description: 'Extra arguments for ctest cli'
-        required: false
-        type: string
-      fastdds-branch:
-        description: 'Branch or tag of Fast DDS repository (https://github.com/eProsima/Fast-DDS)'
         required: true
-        type: string
-      security:
-        description: 'Enable security features'
-        required: false
-        type: boolean
-        default: true
-      run-build:
-        description: 'Run build jobs of Fast DDS (standard and alternative builds)'
-        required: true
-        type: boolean
-      run-tests:
-        description: 'Run test suite of Fast DDS, Fast DDS python, and Fast DDS Discovery Server'
-        required: false
-        type: boolean
-        default: true
-      use-ccache:
-        description: 'Use CCache to speed up the build'
-        required: false
-        type: boolean
-        default: false
 
 env:
-  security-cmake-flag: ${{ inputs.security == true && '-DSECURITY=ON' || '-DSECURITY=OFF' }}
   colcon-build-default-cmake-args: '-DCMAKE_CXX_FLAGS="-Werror -Wall -Wextra -Wpedantic -Wunused-value -Woverloaded-virtual"'
 defaults:
   run:
     shell: bash
 
 jobs:
+  prepare_workflow:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Parse inputs as github env variables
+        uses: eProsima/eProsima-CI/multiplatform/parse_inputs@feature/input_parser
+        with:
+          input_string: ${{ inputs.input_string }}
+          input_separator: ${{ inputs.input_separator }}
+          key_value_separator: ${{ inputs.key_value_separator }}
+
+      - name: Set manual environment variables
+        run: |
+          echo "security-cmake-flag=${{ env.security == true && '-DSECURITY=ON' || '-DSECURITY=OFF' }}"" >> $GITHUB_ENV
+
+
   fastdds_build:
-    runs-on: ${{ inputs.os-image }}
-    if: ${{ inputs.run-build == true }}
+    runs-on: ${{ env.os-image }}
+    needs: prepare_workflow
+    if: ${{ env.run-build == true }}
     strategy:
       fail-fast: false
       matrix:
@@ -76,7 +60,7 @@ jobs:
         uses: eProsima/eProsima-CI/external/checkout@v0
         with:
           path: src/fastdds
-          ref: ${{ inputs.fastdds-branch }}
+          ref: ${{ env.fastdds-branch }}
 
       - name: Install Fix Python version
         uses: eProsima/eProsima-CI/external/setup-python@v0
@@ -106,7 +90,7 @@ jobs:
 
       - name: Setup CCache
         uses: eProsima/eProsima-CI/external/setup-ccache-action@v0
-        if: ${{ inputs.use-ccache == true }}
+        if: ${{ env.use-ccache == true }}
         with:
           api_token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -125,8 +109,8 @@ jobs:
         uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta
-          colcon_build_args: ${{ inputs.colcon-args }}
-          cmake_args: '-DCOMPILE_TOOLS=OFF ${{ env.security-cmake-flag }} ${{ inputs.cmake-args }}'
+          colcon_build_args: ${{ env.colcon-args }}
+          cmake_args: '-DCOMPILE_TOOLS=OFF ${{ env.security-cmake-flag }} ${{ env.cmake-args }}'
           cmake_args_default: ${{ env.colcon-build-default-cmake-args }}
           cmake_build_type: ${{ matrix.cmake-build-type }}
           workspace: ${{ github.workspace }}
@@ -134,13 +118,13 @@ jobs:
       - name: Upload build artifacts
         uses: eProsima/eProsima-CI/external/upload-artifact@v0
         with:
-          name: fastdds_build_${{ inputs.label }}
+          name: fastdds_build_${{ env.label }}
           path: ${{ github.workspace }}
 
   fastdds_test:
     needs: fastdds_build
-    runs-on: ${{ inputs.os-image }}
-    if: ${{ inputs.run-tests == true }}
+    runs-on: ${{ env.os-image }}
+    if: ${{ env.run-tests == true }}
     strategy:
       fail-fast: false
       matrix:
@@ -150,7 +134,7 @@ jobs:
       - name: Download build artifacts
         uses: eProsima/eProsima-CI/external/download-artifact@v0
         with:
-          name: fastdds_build_${{ inputs.label }}
+          name: fastdds_build_${{ env.label }}
           path: ${{ github.workspace }}
 
       - name: Install Fix Python version
@@ -178,7 +162,7 @@ jobs:
 
       - name: Setup CCache
         uses: eProsima/eProsima-CI/external/setup-ccache-action@v0
-        if: ${{ inputs.use-ccache == true }}
+        if: ${{ env.use-ccache == true }}
         with:
           api_token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -209,8 +193,8 @@ jobs:
         uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_test.meta
-          colcon_build_args: ${{ inputs.colcon-args }}
-          cmake_args: '${{ env.security-cmake-flag }} ${{ inputs.cmake-args }}'
+          colcon_build_args: ${{ env.colcon-args }}
+          cmake_args: '${{ env.security-cmake-flag }} ${{ env.cmake-args }}'
           cmake_args_default: '${{ env.colcon-build-default-cmake-args }} -DFASTDDS_EXAMPLE_TESTS=ON'
           cmake_build_type: ${{ matrix.cmake-build-type }}
           workspace: ${{ github.workspace }}
@@ -220,12 +204,12 @@ jobs:
         uses: eProsima/eProsima-CI/multiplatform/colcon_test@v0
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_test.meta
-          colcon_test_args: ${{ inputs.colcon-args }}
+          colcon_test_args: ${{ env.colcon-args }}
           colcon_test_args_default: --event-handlers=console_direct+
-          ctest_args: ${{ inputs.ctest-args }}
+          ctest_args: ${{ env.ctest-args }}
           packages_names: fastdds
           workspace: ${{ github.workspace }}
-          test_report_artifact: ${{ format('test_report_{0}_{1}_{2}', inputs.label, github.job, join(matrix.*, '_')) }}
+          test_report_artifact: ${{ format('test_report_{0}_{1}_{2}', env.label, github.job, join(matrix.*, '_')) }}
 
       - name: Fast DDS test summary
         uses: eProsima/eProsima-CI/multiplatform/junit_summary@v0
@@ -239,8 +223,8 @@ jobs:
 
   fastdds_python_build:
     needs: fastdds_build
-    runs-on: ${{ inputs.os-image }}
-    if: ${{ inputs.security == true }}
+    runs-on: ${{ env.os-image }}
+    if: ${{ env.security == true }}
     strategy:
       fail-fast: false
       matrix:
@@ -250,7 +234,7 @@ jobs:
       - name: Download build artifacts
         uses: eProsima/eProsima-CI/external/download-artifact@v0
         with:
-          name: fastdds_build_${{ inputs.label }}
+          name: fastdds_build_${{ env.label }}
           path: ${{ github.workspace }}
 
       - name: Install Fix Python version
@@ -278,7 +262,7 @@ jobs:
 
       - name: Setup CCache
         uses: eProsima/eProsima-CI/external/setup-ccache-action@v0
-        if: ${{ inputs.use-ccache == true }}
+        if: ${{ env.use-ccache == true }}
         with:
           api_token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -301,8 +285,8 @@ jobs:
         uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta
-          colcon_build_args: ${{ inputs.colcon-args }}
-          cmake_args: '${{ env.security-cmake-flag }} ${{ inputs.cmake-args }}'
+          colcon_build_args: ${{ env.colcon-args }}
+          cmake_args: '${{ env.security-cmake-flag }} ${{ env.cmake-args }}'
           cmake_args_default: ''
           cmake_build_type: ${{ matrix.cmake-build-type }}
           workspace: ${{ github.workspace }}
@@ -310,13 +294,13 @@ jobs:
       - name: Upload python build artifacts
         uses: eProsima/eProsima-CI/external/upload-artifact@v0
         with:
-          name: fastdds_python_build_${{ inputs.label }}
+          name: fastdds_python_build_${{ env.label }}
           path: ${{ github.workspace }}
 
   fastdds_python_test:
     needs: fastdds_python_build
-    runs-on: ${{ inputs.os-image }}
-    if: ${{ inputs.security == true && inputs.run-tests == true }}
+    runs-on: ${{ env.os-image }}
+    if: ${{ env.security == true && env.run-tests == true }}
     strategy:
       fail-fast: false
       matrix:
@@ -326,7 +310,7 @@ jobs:
       - name: Download python build artifacts
         uses: eProsima/eProsima-CI/external/download-artifact@v0
         with:
-          name: fastdds_python_build_${{ inputs.label }}
+          name: fastdds_python_build_${{ env.label }}
           path: ${{ github.workspace }}
 
       - name: Install Fix Python version
@@ -361,7 +345,7 @@ jobs:
 
       - name: Setup CCache
         uses: eProsima/eProsima-CI/external/setup-ccache-action@v0
-        if: ${{ inputs.use-ccache == true }}
+        if: ${{ env.use-ccache == true }}
         with:
           api_token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -370,8 +354,8 @@ jobs:
         uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta ${{ github.workspace }}/src/fastdds/.github/workflows/config/python_test.meta
-          colcon_build_args: ${{ inputs.colcon-args }}
-          cmake_args: '${{ env.security-cmake-flag }} ${{ inputs.cmake-args }}'
+          colcon_build_args: ${{ env.colcon-args }}
+          cmake_args: '${{ env.security-cmake-flag }} ${{ env.cmake-args }}'
           cmake_args_default: ''
           cmake_build_type: ${{ matrix.cmake-build-type }}
           workspace: ${{ github.workspace }}
@@ -381,13 +365,13 @@ jobs:
         uses: eProsima/eProsima-CI/multiplatform/colcon_test@v0
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/python_test.meta
-          colcon_test_args: ${{ inputs.colcon-args }}
+          colcon_test_args: ${{ env.colcon-args }}
           colcon_test_args_default: --event-handlers=console_direct+
-          ctest_args: ${{ inputs.ctest-args }}
+          ctest_args: ${{ env.ctest-args }}
           packages_names: fastdds_python
           workspace: ${{ github.workspace }}
           workspace_dependencies: ''
-          test_report_artifact: ${{ format('test_report_{0}_{1}_{2}', inputs.label, github.job, join(matrix.*, '_')) }}
+          test_report_artifact: ${{ format('test_report_{0}_{1}_{2}', env.label, github.job, join(matrix.*, '_')) }}
 
       - name: Fast DDS Python test summary
         uses: eProsima/eProsima-CI/multiplatform/junit_summary@v0
@@ -401,8 +385,8 @@ jobs:
 
   fastdds_docs_test:
     needs: fastdds_python_build
-    runs-on: ${{ inputs.os-image }}
-    if: ${{ inputs.security == true }}
+    runs-on: ${{ env.os-image }}
+    if: ${{ env.security == true }}
     strategy:
       fail-fast: false
       matrix:
@@ -412,7 +396,7 @@ jobs:
       - name: Download python build artifacts
         uses: eProsima/eProsima-CI/external/download-artifact@v0
         with:
-          name: fastdds_python_build_${{ inputs.label }}
+          name: fastdds_python_build_${{ env.label }}
           path: ${{ github.workspace }}
 
       - name: Install Fix Python version
@@ -440,7 +424,7 @@ jobs:
 
       - name: Setup CCache
         uses: eProsima/eProsima-CI/external/setup-ccache-action@v0
-        if: ${{ inputs.use-ccache == true }}
+        if: ${{ env.use-ccache == true }}
         with:
           api_token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -459,7 +443,7 @@ jobs:
           ref: ${{ steps.get_fastdds_docs_branch.outputs.deduced_branch }}
 
       - name: Fetch Fast DDS CI dependencies
-        if: ${{ inputs.run-tests == true }}
+        if: ${{ env.run-tests == true }}
         uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
         with:
           vcs_repos_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_test.repos
@@ -477,28 +461,28 @@ jobs:
         uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta ${{ github.workspace }}/src/fastdds/.github/workflows/config/documentation.meta
-          colcon_build_args: ${{ inputs.colcon-args }}
-          cmake_args: '${{ env.security-cmake-flag }} ${{ inputs.cmake-args }}'
+          colcon_build_args: ${{ env.colcon-args }}
+          cmake_args: '${{ env.security-cmake-flag }} ${{ env.cmake-args }}'
           cmake_build_type: ${{ matrix.cmake-build-type }}
           workspace: ${{ github.workspace }}
 
       - name: Colcon test
         id: docs_test
-        if: ${{ inputs.run-tests == true }}
+        if: ${{ env.run-tests == true }}
         uses: eProsima/eProsima-CI/multiplatform/colcon_test@v0
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/documentation.meta
-          colcon_test_args: ${{ inputs.colcon-args }}
+          colcon_test_args: ${{ env.colcon-args }}
           colcon_test_args_default: --event-handlers=console_direct+
-          ctest_args: ${{ inputs.ctest-args }}
+          ctest_args: ${{ env.ctest-args }}
           packages_names: fastdds-docs
           workspace: ${{ github.workspace }}
           workspace_dependencies: ''
-          test_report_artifact: ${{ format('test_report_{0}_{1}_{2}', inputs.label, github.job, join(matrix.*, '_')) }}
+          test_report_artifact: ${{ format('test_report_{0}_{1}_{2}', env.label, github.job, join(matrix.*, '_')) }}
 
       - name: Fast DDS Docs test summary
         uses: eProsima/eProsima-CI/multiplatform/junit_summary@v0
-        if: ${{ !cancelled() && inputs.run-tests == true }}
+        if: ${{ !cancelled() && env.run-tests == true }}
         with:
           junit_reports_dir: "${{ steps.docs_test.outputs.ctest_results_path }}"
           print_summary: 'True'
@@ -508,7 +492,7 @@ jobs:
 
   fastdds_shapesdemo_build:
     needs: fastdds_build
-    runs-on: ${{ inputs.os-image }}
+    runs-on: ${{ env.os-image }}
     strategy:
       fail-fast: false
       matrix:
@@ -518,7 +502,7 @@ jobs:
       - name: Download build artifacts
         uses: eProsima/eProsima-CI/external/download-artifact@v0
         with:
-          name: fastdds_build_${{ inputs.label }}
+          name: fastdds_build_${{ env.label }}
           path: ${{ github.workspace }}
 
       - name: Install Fix Python version
@@ -546,7 +530,7 @@ jobs:
 
       - name: Setup CCache
         uses: eProsima/eProsima-CI/external/setup-ccache-action@v0
-        if: ${{ inputs.use-ccache == true }}
+        if: ${{ env.use-ccache == true }}
         with:
           api_token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -581,15 +565,15 @@ jobs:
         uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta
-          colcon_build_args: ${{ inputs.colcon-args }}
-          cmake_args: '${{ env.security-cmake-flag }} ${{ inputs.cmake-args }}'
+          colcon_build_args: ${{ env.colcon-args }}
+          cmake_args: '${{ env.security-cmake-flag }} ${{ env.cmake-args }}'
           cmake_args_default: ${{ env.colcon-build-default-cmake-args }}
           cmake_build_type: ${{ matrix.cmake-build-type }}
           workspace: ${{ github.workspace }}
 
   fastdds_discovery_server_test:
     needs: fastdds_build
-    runs-on: ${{ inputs.os-image }}
+    runs-on: ${{ env.os-image }}
     strategy:
       fail-fast: false
       matrix:
@@ -599,7 +583,7 @@ jobs:
       - name: Download build artifacts
         uses: eProsima/eProsima-CI/external/download-artifact@v0
         with:
-          name: fastdds_build_${{ inputs.label }}
+          name: fastdds_build_${{ env.label }}
           path: ${{ github.workspace }}
 
       - name: Install Fix Python version
@@ -627,7 +611,7 @@ jobs:
 
       - name: Setup CCache
         uses: eProsima/eProsima-CI/external/setup-ccache-action@v0
-        if: ${{ inputs.use-ccache == true }}
+        if: ${{ env.use-ccache == true }}
         with:
           api_token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -657,29 +641,29 @@ jobs:
         uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta ${{ github.workspace }}/src/fastdds/.github/workflows/config/discovery_server.meta
-          colcon_build_args: ${{ inputs.colcon-args }}
-          cmake_args: '${{ env.security-cmake-flag }} ${{ inputs.cmake-args }}'
+          colcon_build_args: ${{ env.colcon-args }}
+          cmake_args: '${{ env.security-cmake-flag }} ${{ env.cmake-args }}'
           cmake_args_default: ${{ env.colcon-build-default-cmake-args }}
           cmake_build_type: ${{ matrix.cmake-build-type }}
           workspace: ${{ github.workspace }}
 
       - name: Colcon test
         id: discovery_server_test
-        if: ${{ inputs.run-tests == true }}
+        if: ${{ env.run-tests == true }}
         uses: eProsima/eProsima-CI/multiplatform/colcon_test@v0
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/discovery_server.meta
-          colcon_test_args: ${{ inputs.colcon-args }}
+          colcon_test_args: ${{ env.colcon-args }}
           colcon_test_args_default: --event-handlers=console_direct+
-          ctest_args: ${{ inputs.ctest-args }}
+          ctest_args: ${{ env.ctest-args }}
           packages_names: discovery-server
           workspace: ${{ github.workspace }}
           workspace_dependencies: ''
-          test_report_artifact: ${{ format('test_report_{0}_{1}_{2}', inputs.label, github.job, join(matrix.*, '_')) }}
+          test_report_artifact: ${{ format('test_report_{0}_{1}_{2}', env.label, github.job, join(matrix.*, '_')) }}
 
       - name: Discovery server test summary
         uses: eProsima/eProsima-CI/multiplatform/junit_summary@v0
-        if: ${{ !cancelled() && inputs.run-tests == true }}
+        if: ${{ !cancelled() && env.run-tests == true }}
         with:
           junit_reports_dir: "${{ steps.discovery_server_test.outputs.ctest_results_path }}"
           print_summary: 'True'
@@ -688,9 +672,9 @@ jobs:
           show_skipped: 'False'
 
   fastdds_alternative_builds:
-    needs: fastdds_build
-    runs-on: ${{ inputs.os-image }}
-    if: ${{ inputs.run-build == true }}
+    runs-on: ${{ env.os-image }}
+    needs: prepare_workflow
+    if: ${{ env.run-build == true }}
     strategy:
       fail-fast: false
       matrix:
@@ -700,8 +684,8 @@ jobs:
       - name: Download build artifacts
         uses: eProsima/eProsima-CI/external/download-artifact@v0
         with:
-          name: fastdds_build_${{ inputs.label }}
-          path: ${{ github.workspace }}
+          path: src/fastdds
+          ref: ${{ env.fastdds-branch }}
 
       - name: Install Fix Python version
         uses: eProsima/eProsima-CI/external/setup-python@v0
@@ -731,7 +715,7 @@ jobs:
 
       - name: Setup CCache
         uses: eProsima/eProsima-CI/external/setup-ccache-action@v0
-        if: ${{ inputs.use-ccache == true }}
+        if: ${{ env.use-ccache == true }}
         with:
           api_token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -773,8 +757,8 @@ jobs:
         uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta
-          colcon_build_args: ${{ inputs.colcon-args }}
-          cmake_args: '-DSECURITY=OFF ${{ inputs.cmake-args }}'
+          colcon_build_args: ${{ env.colcon-args }}
+          cmake_args: '-DSECURITY=OFF ${{ env.cmake-args }}'
           cmake_args_default: ${{ env.colcon-build-default-cmake-args }}
           cmake_build_type: ${{ matrix.cmake-build-type }}
           workspace: ${{ github.workspace }}
@@ -788,8 +772,8 @@ jobs:
         uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta
-          colcon_build_args: ${{ inputs.colcon-args }}
-          cmake_args: '-DFASTDDS_STATISTICS=OFF ${{ env.security-cmake-flag }} ${{ inputs.cmake-args }}'
+          colcon_build_args: ${{ env.colcon-args }}
+          cmake_args: '-DFASTDDS_STATISTICS=OFF ${{ env.security-cmake-flag }} ${{ env.cmake-args }}'
           cmake_args_default: ${{ env.colcon-build-default-cmake-args }}
           cmake_build_type: ${{ matrix.cmake-build-type }}
           workspace: ${{ github.workspace }}
@@ -804,8 +788,8 @@ jobs:
         uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
         with:
           colcon_meta_file: ''
-          colcon_build_args: ${{ inputs.colcon-args }}
-          cmake_args: '-DCOMPILE_EXAMPLES=ON ${{ env.security-cmake-flag }} ${{ inputs.cmake-args }}'
+          colcon_build_args: ${{ env.colcon-args }}
+          cmake_args: '-DCOMPILE_EXAMPLES=ON ${{ env.security-cmake-flag }} ${{ env.cmake-args }}'
           cmake_args_default: ${{ env.colcon-build-default-cmake-args }}
           cmake_build_type: ${{ matrix.cmake-build-type }}
           workspace: ${{ github.workspace }}
@@ -819,8 +803,8 @@ jobs:
         uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta
-          colcon_build_args: ${{ inputs.colcon-args }}
-          cmake_args: '-DBUILD_SHARED_LIBS=OFF ${{ env.security-cmake-flag }} ${{ inputs.cmake-args }}'
+          colcon_build_args: ${{ env.colcon-args }}
+          cmake_args: '-DBUILD_SHARED_LIBS=OFF ${{ env.security-cmake-flag }} ${{ env.cmake-args }}'
           cmake_args_default: ${{ env.colcon-build-default-cmake-args }}
           cmake_build_type: ${{ matrix.cmake-build-type }}
           workspace: ${{ github.workspace }}
