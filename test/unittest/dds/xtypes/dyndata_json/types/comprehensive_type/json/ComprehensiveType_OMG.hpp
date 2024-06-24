@@ -14,9 +14,6 @@
 
 #include <string>
 
-#ifndef EXPECTED_JSON_COMPREHENSIVE_OMG_HPP
-#define EXPECTED_JSON_COMPREHENSIVE_OMG_HPP
-
 std::string expected_json_comprehensive_omg = R"({
     "complex_array": [
         {
@@ -337,5 +334,3 @@ std::string expected_json_comprehensive_omg = R"({
     }
 })";
 
-
-#endif // EXPECTED_JSON_COMPREHENSIVE_OMG_HPP

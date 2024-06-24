@@ -30,10 +30,10 @@
 
 #include "types/comprehensive_type/gen/ComprehensiveTypePubSubTypes.h"
 #include "types/comprehensive_type/gen/ComprehensiveTypeTypeObjectSupport.hpp"
-#include "types/comprehensive_type/ComprehensiveType_OMG.hpp"
-#include "types/comprehensive_type/ComprehensiveTypeFilled_OMG.hpp"
-#include "types/comprehensive_type/ComprehensiveType_EPROSIMA.hpp"
-#include "types/comprehensive_type/ComprehensiveTypeFilled_EPROSIMA.hpp"
+#include "types/comprehensive_type/json/ComprehensiveType_OMG.hpp"
+#include "types/comprehensive_type/json/ComprehensiveType_Filled_OMG.hpp"
+#include "types/comprehensive_type/json/ComprehensiveType_EPROSIMA.hpp"
+#include "types/comprehensive_type/json/ComprehensiveType_Filled_EPROSIMA.hpp"
 
 #include "types/types.hpp"
 
@@ -74,17 +74,21 @@ TEST(idl_to_json_Tests, ComprehensiveType_EPROSIMA)
 TEST(idl_to_json_Tests, ComprehensiveTypeFilled_EPROSIMA)
 {
     auto dyn_type = create_dynamic_type<DataTypeKind::COMPREHENSIVE_TYPE>();
-    auto dyn_data = create_dynamic_data<DataTypeKind::COMPREHENSIVE_TYPE>(dyn_type, true, 1);
 
-    std::stringstream generated_json;
-    generated_json << std::setw(4);
-    const auto ret = json_serialize(
-                dyn_data,
-                generated_json,
-                DynamicDataJsonFormat::EPROSIMA);
+    for (unsigned int i = 1; i < 3; i++)
+    {
+        auto dyn_data = create_dynamic_data<DataTypeKind::COMPREHENSIVE_TYPE>(dyn_type, true, i);
+        std::stringstream generated_json;
+        generated_json << std::setw(4);
 
-    ASSERT_EQ(ret, RETCODE_OK);
-    ASSERT_EQ(generated_json.str(), expected_json_comprehensive_filled_eprosima);
+        const auto ret = json_serialize(
+                    dyn_data,
+                    generated_json,
+                    DynamicDataJsonFormat::EPROSIMA);
+
+        ASSERT_EQ(ret, RETCODE_OK);
+        ASSERT_EQ(generated_json.str(), expected_json_comprehensive_filled_eprosima[i]);
+    }
 }
 
 TEST(idl_to_json_Tests, ComprehensiveType_OMG)
@@ -106,17 +110,20 @@ TEST(idl_to_json_Tests, ComprehensiveType_OMG)
 TEST(idl_to_json_Tests, ComprehensiveTypeFilled_OMG)
 {
     auto dyn_type = create_dynamic_type<DataTypeKind::COMPREHENSIVE_TYPE>();
-    auto dyn_data = create_dynamic_data<DataTypeKind::COMPREHENSIVE_TYPE>(dyn_type, true, 1);
 
-    std::stringstream generated_json;
-    generated_json << std::setw(4);
-    const auto ret = json_serialize(
-                dyn_data,
-                generated_json,
-                DynamicDataJsonFormat::OMG);
+    for (unsigned int i = 1; i < 3; i++)
+    {
+        auto dyn_data = create_dynamic_data<DataTypeKind::COMPREHENSIVE_TYPE>(dyn_type, true, i);
+        std::stringstream generated_json;
+        generated_json << std::setw(4);
+        const auto ret = json_serialize(
+                    dyn_data,
+                    generated_json,
+                    DynamicDataJsonFormat::OMG);
 
-    ASSERT_EQ(ret, RETCODE_OK);
-    ASSERT_EQ(generated_json.str(), expected_json_comprehensive_filled_omg);
+        ASSERT_EQ(ret, RETCODE_OK);
+        ASSERT_EQ(generated_json.str(), expected_json_comprehensive_filled_omg[i]);
+    }
 }
 
 

@@ -703,7 +703,7 @@ private:
  * @brief This class represents the enumeration MyEnum defined by the user in the IDL file.
  * @ingroup ComprehensiveType
  */
-enum class MyEnum : uint32_t
+enum class MyEnum : int32_t
 {
     A,
     B,
