@@ -24,7 +24,7 @@
 <!-- @Mergifyio backport 2.14.x 2.13.x 2.10.x -->
 
 <!--
-    In case of critical bug fix, please uncomment following line with LTS supported 2.6.x branch.
+    In case of critical bug fix, please uncomment following line, adjusting the corresponding LTS target branches for the backport.
 -->
 <!-- @Mergifyio backport 2.6.x -->
 
@@ -52,12 +52,12 @@
 - [ ] New feature has been documented/Current behavior is correctly described in the documentation. <!-- Please uncomment following line with the corresponding PR to the documentation project: -->
     <!-- - Related documentation PR: eProsima/Fast-DDS-docs#(PR) -->
 - [ ] Applicable backports have been included in the description.
-<!-- If critical bug fix, make sure that a backport to the 2.6.x branch is opened. -->
 
 ## Reviewer Checklist
 
 - [ ] The PR has a milestone assigned.
 - [ ] The title and description correctly express the PR's purpose.
 - [ ] Check contributor checklist is correct.
+- [ ] If critical bug fix, backport to the 2.6.x branch has been opened.
 - [ ] Check CI results: changes do not issue any warning.
 - [ ] Check CI results: failing tests are unrelated with the changes.

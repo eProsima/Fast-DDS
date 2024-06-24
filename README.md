@@ -68,6 +68,10 @@ For more information check the FIWARE Catalogue entry for [Robotics](https://git
 Write to evaluation.support@eprosima.com or mention @EProsima on Twitter.
 We are curious to get to know your use case!
 
+## Supported platforms
+
+More information about the official support can be found [here](https://github.com/eProsima/Fast-DDS/blob/master/PLATFORM_SUPPORT.md#platform-support)
+
 ## Installation Guide
 You can get either a binary distribution of *eprosima Fast DDS* or compile the library yourself from source.
 Please, refer to [Fast DDS documentation](https://fast-dds.docs.eprosima.com/en/latest/installation/binaries/binaries_linux.html) for the complete installation guide.
