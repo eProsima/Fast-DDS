@@ -57,7 +57,7 @@ namespace AnnotationTest {
      * @brief This class represents the enumeration InnerEnumHelper defined by the user in the IDL file.
      * @ingroup annotations
      */
-    enum class InnerEnumHelper : uint32_t
+    enum class InnerEnumHelper : int32_t
     {
         ONE,
         TWO

@@ -62,7 +62,7 @@
  * @brief This class represents the enumeration InnerEnumHelper defined by the user in the IDL file.
  * @ingroup basic_inner_types
  */
-enum class InnerEnumHelper : uint32_t
+enum class InnerEnumHelper : int32_t
 {
     ENUM_VALUE_1,
     ENUM_VALUE_2,
