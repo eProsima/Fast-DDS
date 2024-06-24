@@ -232,7 +232,7 @@ DynamicType::_ref_type PublisherApp::create_type(
     DynamicTypeBuilder::_ref_type struct_builder;
     if (use_xml_type)
     {
-        // Create a types from xml
+        // Retrieve the type builder from xml
         if (RETCODE_OK !=
                 DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("HelloWorld",
                 struct_builder))
