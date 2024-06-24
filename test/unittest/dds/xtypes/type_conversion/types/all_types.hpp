@@ -65,6 +65,9 @@
 #include "type_objects/bitmask_struct/bitmask_struct.hpp"
 #include "type_objects/bitmask_struct/bitmask_structPubSubTypes.h"
 
+#include "type_objects/alias_struct/alias_struct.hpp"
+#include "type_objects/alias_struct/alias_structPubSubTypes.h"
+
 namespace test {
 
 namespace SupportedTypes {
@@ -82,6 +85,7 @@ const std::string UNION_STRUCT{"union_struct"};
 const std::string MAP_STRUCT{"map_struct"};
 const std::string BITSET_STRUCT{"bitset_struct"};
 const std::string BITMASK_STRUCT{"bitmask_struct"};
+const std::string ALIAS_STRUCT{"alias_struct"};
 
 } // namespace SupportedTypes
 
@@ -98,7 +102,8 @@ const std::vector<std::string> supported_types = {
     SupportedTypes::UNION_STRUCT,
     SupportedTypes::MAP_STRUCT,
     SupportedTypes::BITSET_STRUCT,
-    SupportedTypes::BITMASK_STRUCT
+    SupportedTypes::BITMASK_STRUCT,
+    SupportedTypes::ALIAS_STRUCT
 };
 
 void register_dynamic_types()
@@ -143,6 +148,9 @@ void register_dynamic_types()
 
     TypeSupport type_bitmask_struct(new bitmask_structPubSubType());
     type_bitmask_struct->register_type_object_representation();
+
+    TypeSupport type_alias_struct(new alias_structPubSubType());
+    type_alias_struct->register_type_object_representation();
 }
 
 } /* namespace test */

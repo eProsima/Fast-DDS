@@ -1,0 +1,12 @@
+typedef short MyShort;
+
+typedef unsigned long MyLong;
+
+typedef MyShort MyRecursiveShort;
+
+struct alias_struct
+{
+    MyShort my_short;
+    MyLong my_long;
+    MyRecursiveShort my_recursive_short;
+};

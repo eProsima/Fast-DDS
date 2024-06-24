@@ -64,6 +64,10 @@ configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/bitmask_struct.idl
     ${CMAKE_CURRENT_BINARY_DIR}/types/idls/bitmask_struct.idl
     COPYONLY)
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/alias_struct.idl
+    ${CMAKE_CURRENT_BINARY_DIR}/types/idls/alias_struct.idl
+    COPYONLY)
 
 set(RESOURCEDYNTYPETOIDLTESTS_SOURCE
     DynamicTypeSerializationTests.cpp
