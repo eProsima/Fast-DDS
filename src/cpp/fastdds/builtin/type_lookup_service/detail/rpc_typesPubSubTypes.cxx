@@ -79,7 +79,7 @@ bool EntityId_tPubSubType::serialize(
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
 #endif // FASTCDR_VERSION_MAJOR > 1
 
     try
@@ -273,7 +273,7 @@ bool GUID_tPubSubType::serialize(
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
 #endif // FASTCDR_VERSION_MAJOR > 1
 
     try
@@ -467,7 +467,7 @@ bool SequenceNumber_tPubSubType::serialize(
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
 #endif // FASTCDR_VERSION_MAJOR > 1
 
     try
@@ -661,7 +661,7 @@ bool SampleIdentityPubSubType::serialize(
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
 #endif // FASTCDR_VERSION_MAJOR > 1
 
     try
@@ -856,7 +856,7 @@ namespace rpc {
         ser.set_encoding_flag(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
     #endif // FASTCDR_VERSION_MAJOR > 1
 
         try
@@ -1050,7 +1050,7 @@ namespace rpc {
         ser.set_encoding_flag(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
     #endif // FASTCDR_VERSION_MAJOR > 1
 
         try

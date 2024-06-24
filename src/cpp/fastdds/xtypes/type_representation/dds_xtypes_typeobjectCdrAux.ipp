@@ -1242,6 +1242,78 @@ void serialize_key(
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastdds::dds::xtypes::Dummy& data,
+        size_t& current_alignment)
+{
+    using namespace eprosima::fastdds::dds::xtypes;
+
+    static_cast<void>(data);
+
+    eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
+                                current_alignment)};
+
+
+
+    calculated_size += calculator.end_calculate_type_serialized_size(previous_encoding, current_alignment);
+
+    return calculated_size;
+}
+
+template<>
+eProsima_user_DllExport void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastdds::dds::xtypes::Dummy& data)
+{
+    using namespace eprosima::fastdds::dds::xtypes;
+
+    eprosima::fastcdr::Cdr::state current_state(scdr);
+    scdr.begin_serialize_type(current_state,
+            eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
+
+    static_cast<void>(data);
+
+    scdr.end_serialize_type(current_state);
+}
+
+template<>
+eProsima_user_DllExport void deserialize(
+        eprosima::fastcdr::Cdr& cdr,
+        eprosima::fastdds::dds::xtypes::Dummy& data)
+{
+    using namespace eprosima::fastdds::dds::xtypes;
+
+    cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2 :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
+            [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
+            {
+                static_cast<void>(data);
+                static_cast<void>(dcdr);
+                static_cast<void>(mid);
+                return false;
+            });
+}
+
+void serialize_key(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastdds::dds::xtypes::Dummy& data)
+{
+    using namespace eprosima::fastdds::dds::xtypes;
+
+    static_cast<void>(scdr);
+    static_cast<void>(data);
+}
+
+
+template<>
+eProsima_user_DllExport size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastdds::dds::xtypes::TypeIdentifier& data,
         size_t& current_alignment)
 {
@@ -1261,61 +1333,81 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
+                case TK_NONE:
+                case TK_BOOLEAN:
+                case TK_BYTE:
+                case TK_INT8:
+                case TK_INT16:
+                case TK_INT32:
+                case TK_INT64:
+                case TK_UINT8:
+                case TK_UINT16:
+                case TK_UINT32:
+                case TK_UINT64:
+                case TK_FLOAT32:
+                case TK_FLOAT64:
+                case TK_FLOAT128:
+                case TK_CHAR8:
+                case TK_CHAR16:
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
+                                data.no_value(), current_alignment);
+                    break;
+
                 case TI_STRING8_SMALL:
                 case TI_STRING16_SMALL:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2),
                                 data.string_sdefn(), current_alignment);
                     break;
 
                 case TI_STRING8_LARGE:
                 case TI_STRING16_LARGE:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(3),
                                 data.string_ldefn(), current_alignment);
                     break;
 
                 case TI_PLAIN_SEQUENCE_SMALL:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(3),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(4),
                                 data.seq_sdefn(), current_alignment);
                     break;
 
                 case TI_PLAIN_SEQUENCE_LARGE:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(4),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(5),
                                 data.seq_ldefn(), current_alignment);
                     break;
 
                 case TI_PLAIN_ARRAY_SMALL:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(5),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(6),
                                 data.array_sdefn(), current_alignment);
                     break;
 
                 case TI_PLAIN_ARRAY_LARGE:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(6),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(7),
                                 data.array_ldefn(), current_alignment);
                     break;
 
                 case TI_PLAIN_MAP_SMALL:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(7),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(8),
                                 data.map_sdefn(), current_alignment);
                     break;
 
                 case TI_PLAIN_MAP_LARGE:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(8),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(9),
                                 data.map_ldefn(), current_alignment);
                     break;
 
                 case TI_STRONGLY_CONNECTED_COMPONENT:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(9),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(10),
                                 data.sc_component_id(), current_alignment);
                     break;
 
                 case EK_COMPLETE:
                 case EK_MINIMAL:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(10),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(11),
                                 data.equivalence_hash(), current_alignment);
                     break;
 
                 default:
-                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(11),
+                    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(12),
                                 data.extended_defn(), current_alignment);
                     break;
 
@@ -1344,51 +1436,70 @@ eProsima_user_DllExport void serialize(
 
     switch (data._d())
     {
+                case TK_NONE:
+                case TK_BOOLEAN:
+                case TK_BYTE:
+                case TK_INT8:
+                case TK_INT16:
+                case TK_INT32:
+                case TK_INT64:
+                case TK_UINT8:
+                case TK_UINT16:
+                case TK_UINT32:
+                case TK_UINT64:
+                case TK_FLOAT32:
+                case TK_FLOAT64:
+                case TK_FLOAT128:
+                case TK_CHAR8:
+                case TK_CHAR16:
+                    scdr << eprosima::fastcdr::MemberId(1) << data.no_value();
+                    break;
+
                 case TI_STRING8_SMALL:
                 case TI_STRING16_SMALL:
-                    scdr << eprosima::fastcdr::MemberId(1) << data.string_sdefn();
+                    scdr << eprosima::fastcdr::MemberId(2) << data.string_sdefn();
                     break;
 
                 case TI_STRING8_LARGE:
                 case TI_STRING16_LARGE:
-                    scdr << eprosima::fastcdr::MemberId(2) << data.string_ldefn();
+                    scdr << eprosima::fastcdr::MemberId(3) << data.string_ldefn();
                     break;
 
                 case TI_PLAIN_SEQUENCE_SMALL:
-                    scdr << eprosima::fastcdr::MemberId(3) << data.seq_sdefn();
+                    scdr << eprosima::fastcdr::MemberId(4) << data.seq_sdefn();
                     break;
 
                 case TI_PLAIN_SEQUENCE_LARGE:
-                    scdr << eprosima::fastcdr::MemberId(4) << data.seq_ldefn();
+                    scdr << eprosima::fastcdr::MemberId(5) << data.seq_ldefn();
                     break;
 
                 case TI_PLAIN_ARRAY_SMALL:
-                    scdr << eprosima::fastcdr::MemberId(5) << data.array_sdefn();
+                    scdr << eprosima::fastcdr::MemberId(6) << data.array_sdefn();
                     break;
 
                 case TI_PLAIN_ARRAY_LARGE:
-                    scdr << eprosima::fastcdr::MemberId(6) << data.array_ldefn();
+                    scdr << eprosima::fastcdr::MemberId(7) << data.array_ldefn();
                     break;
 
                 case TI_PLAIN_MAP_SMALL:
-                    scdr << eprosima::fastcdr::MemberId(7) << data.map_sdefn();
+                    scdr << eprosima::fastcdr::MemberId(8) << data.map_sdefn();
                     break;
 
                 case TI_PLAIN_MAP_LARGE:
-                    scdr << eprosima::fastcdr::MemberId(8) << data.map_ldefn();
+                    scdr << eprosima::fastcdr::MemberId(9) << data.map_ldefn();
                     break;
 
                 case TI_STRONGLY_CONNECTED_COMPONENT:
-                    scdr << eprosima::fastcdr::MemberId(9) << data.sc_component_id();
+                    scdr << eprosima::fastcdr::MemberId(10) << data.sc_component_id();
                     break;
 
                 case EK_COMPLETE:
                 case EK_MINIMAL:
-                    scdr << eprosima::fastcdr::MemberId(10) << data.equivalence_hash();
+                    scdr << eprosima::fastcdr::MemberId(11) << data.equivalence_hash();
                     break;
 
                 default:
-                    scdr << eprosima::fastcdr::MemberId(11) << data.extended_defn();
+                    scdr << eprosima::fastcdr::MemberId(12) << data.extended_defn();
                     break;
 
     }
@@ -1416,6 +1527,29 @@ eProsima_user_DllExport void deserialize(
 
                     switch (discriminator)
                     {
+                                                case TK_NONE:
+                                                case TK_BOOLEAN:
+                                                case TK_BYTE:
+                                                case TK_INT8:
+                                                case TK_INT16:
+                                                case TK_INT32:
+                                                case TK_INT64:
+                                                case TK_UINT8:
+                                                case TK_UINT16:
+                                                case TK_UINT32:
+                                                case TK_UINT64:
+                                                case TK_FLOAT32:
+                                                case TK_FLOAT64:
+                                                case TK_FLOAT128:
+                                                case TK_CHAR8:
+                                                case TK_CHAR16:
+                                                    {
+                                                        eprosima::fastdds::dds::xtypes::Dummy no_value_value;
+                                                        data.no_value(std::move(no_value_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
                                                 case TI_STRING8_SMALL:
                                                 case TI_STRING16_SMALL:
                                                     {
@@ -1513,6 +1647,25 @@ eProsima_user_DllExport void deserialize(
                 {
                     switch (data._d())
                     {
+                                                case TK_NONE:
+                                                case TK_BOOLEAN:
+                                                case TK_BYTE:
+                                                case TK_INT8:
+                                                case TK_INT16:
+                                                case TK_INT32:
+                                                case TK_INT64:
+                                                case TK_UINT8:
+                                                case TK_UINT16:
+                                                case TK_UINT32:
+                                                case TK_UINT64:
+                                                case TK_FLOAT32:
+                                                case TK_FLOAT64:
+                                                case TK_FLOAT128:
+                                                case TK_CHAR8:
+                                                case TK_CHAR16:
+                                                    dcdr >> data.no_value();
+                                                    break;
+
                                                 case TI_STRING8_SMALL:
                                                 case TI_STRING16_SMALL:
                                                     dcdr >> data.string_sdefn();

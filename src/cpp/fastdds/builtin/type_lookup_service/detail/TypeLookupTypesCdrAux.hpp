@@ -24,7 +24,7 @@
 
 #include "TypeLookupTypes.hpp"
 
-constexpr uint32_t eprosima_fastdds_dds_builtin_TypeLookup_Reply_max_cdr_typesize {140UL};
+constexpr uint32_t eprosima_fastdds_dds_builtin_TypeLookup_Reply_max_cdr_typesize {116UL};
 constexpr uint32_t eprosima_fastdds_dds_builtin_TypeLookup_Reply_max_key_cdr_typesize {0UL};
 
 
@@ -45,6 +45,7 @@ constexpr uint32_t eprosima_fastdds_dds_builtin_TypeLookup_Reply_max_key_cdr_typ
 
 constexpr uint32_t eprosima_fastdds_dds_builtin_TypeLookup_getTypes_In_max_cdr_typesize {24UL};
 constexpr uint32_t eprosima_fastdds_dds_builtin_TypeLookup_getTypes_In_max_key_cdr_typesize {0UL};
+
 
 
 
@@ -124,7 +125,7 @@ constexpr uint32_t eprosima_fastdds_dds_builtin_TypeLookup_getTypes_Out_max_key_
 
 
 
-constexpr uint32_t eprosima_fastdds_dds_builtin_TypeLookup_Request_max_cdr_typesize {388UL};
+constexpr uint32_t eprosima_fastdds_dds_builtin_TypeLookup_Request_max_cdr_typesize {364UL};
 constexpr uint32_t eprosima_fastdds_dds_builtin_TypeLookup_Request_max_key_cdr_typesize {0UL};
 
 

@@ -399,7 +399,7 @@ private:
             }
 
 
-    uint8_t m__d {0};
+    uint8_t m__d {127};
 
     union
     {
@@ -2705,6 +2705,101 @@ private:
 
 };
 /*!
+ * @brief This class represents the structure Dummy defined by the user in the IDL file.
+ * @ingroup dds_xtypes_typeobject
+ */
+class Dummy
+{
+public:
+
+    /*!
+     * @brief Default constructor.
+     */
+    eProsima_user_DllExport Dummy()
+    {
+    }
+
+    /*!
+     * @brief Default destructor.
+     */
+    eProsima_user_DllExport ~Dummy()
+    {
+    }
+
+    /*!
+     * @brief Copy constructor.
+     * @param x Reference to the object Dummy that will be copied.
+     */
+    eProsima_user_DllExport Dummy(
+            const Dummy& x)
+    {
+        static_cast<void>(x);
+    }
+
+    /*!
+     * @brief Move constructor.
+     * @param x Reference to the object Dummy that will be copied.
+     */
+    eProsima_user_DllExport Dummy(
+            Dummy&& x) noexcept
+    {
+        static_cast<void>(x);
+    }
+
+    /*!
+     * @brief Copy assignment.
+     * @param x Reference to the object Dummy that will be copied.
+     */
+    eProsima_user_DllExport Dummy& operator =(
+            const Dummy& x)
+    {
+
+        static_cast<void>(x);
+
+        return *this;
+    }
+
+    /*!
+     * @brief Move assignment.
+     * @param x Reference to the object Dummy that will be copied.
+     */
+    eProsima_user_DllExport Dummy& operator =(
+            Dummy&& x) noexcept
+    {
+
+        static_cast<void>(x);
+
+        return *this;
+    }
+
+    /*!
+     * @brief Comparison operator.
+     * @param x Dummy object to compare.
+     */
+    eProsima_user_DllExport bool operator ==(
+            const Dummy& x) const
+    {
+        static_cast<void>(x);
+        return true;
+    }
+
+    /*!
+     * @brief Comparison operator.
+     * @param x Dummy object to compare.
+     */
+    eProsima_user_DllExport bool operator !=(
+            const Dummy& x) const
+    {
+        return !(*this == x);
+    }
+
+
+
+private:
+
+
+};
+/*!
  * @brief This class represents the union TypeIdentifier defined by the user in the IDL file.
  * @ingroup dds_xtypes_typeobject
  */
@@ -2717,7 +2812,7 @@ public:
      */
     eProsima_user_DllExport TypeIdentifier()
     {
-        extended_defn_();
+        no_value_();
     }
 
     /*!
@@ -2743,46 +2838,50 @@ public:
         switch (x.selected_member_)
         {
                         case 0x00000001:
-                            string_sdefn_() = x.m_string_sdefn;
+                            no_value_() = x.m_no_value;
                             break;
 
                         case 0x00000002:
-                            string_ldefn_() = x.m_string_ldefn;
+                            string_sdefn_() = x.m_string_sdefn;
                             break;
 
                         case 0x00000003:
-                            seq_sdefn_() = x.m_seq_sdefn;
+                            string_ldefn_() = x.m_string_ldefn;
                             break;
 
                         case 0x00000004:
-                            seq_ldefn_() = x.m_seq_ldefn;
+                            seq_sdefn_() = x.m_seq_sdefn;
                             break;
 
                         case 0x00000005:
-                            array_sdefn_() = x.m_array_sdefn;
+                            seq_ldefn_() = x.m_seq_ldefn;
                             break;
 
                         case 0x00000006:
-                            array_ldefn_() = x.m_array_ldefn;
+                            array_sdefn_() = x.m_array_sdefn;
                             break;
 
                         case 0x00000007:
-                            map_sdefn_() = x.m_map_sdefn;
+                            array_ldefn_() = x.m_array_ldefn;
                             break;
 
                         case 0x00000008:
-                            map_ldefn_() = x.m_map_ldefn;
+                            map_sdefn_() = x.m_map_sdefn;
                             break;
 
                         case 0x00000009:
-                            sc_component_id_() = x.m_sc_component_id;
+                            map_ldefn_() = x.m_map_ldefn;
                             break;
 
                         case 0x0000000a:
-                            equivalence_hash_() = x.m_equivalence_hash;
+                            sc_component_id_() = x.m_sc_component_id;
                             break;
 
                         case 0x0000000b:
+                            equivalence_hash_() = x.m_equivalence_hash;
+                            break;
+
+                        case 0x0000000c:
                             extended_defn_() = x.m_extended_defn;
                             break;
 
@@ -2801,46 +2900,50 @@ public:
         switch (x.selected_member_)
         {
                         case 0x00000001:
-                            string_sdefn_() = std::move(x.m_string_sdefn);
+                            no_value_() = std::move(x.m_no_value);
                             break;
 
                         case 0x00000002:
-                            string_ldefn_() = std::move(x.m_string_ldefn);
+                            string_sdefn_() = std::move(x.m_string_sdefn);
                             break;
 
                         case 0x00000003:
-                            seq_sdefn_() = std::move(x.m_seq_sdefn);
+                            string_ldefn_() = std::move(x.m_string_ldefn);
                             break;
 
                         case 0x00000004:
-                            seq_ldefn_() = std::move(x.m_seq_ldefn);
+                            seq_sdefn_() = std::move(x.m_seq_sdefn);
                             break;
 
                         case 0x00000005:
-                            array_sdefn_() = std::move(x.m_array_sdefn);
+                            seq_ldefn_() = std::move(x.m_seq_ldefn);
                             break;
 
                         case 0x00000006:
-                            array_ldefn_() = std::move(x.m_array_ldefn);
+                            array_sdefn_() = std::move(x.m_array_sdefn);
                             break;
 
                         case 0x00000007:
-                            map_sdefn_() = std::move(x.m_map_sdefn);
+                            array_ldefn_() = std::move(x.m_array_ldefn);
                             break;
 
                         case 0x00000008:
-                            map_ldefn_() = std::move(x.m_map_ldefn);
+                            map_sdefn_() = std::move(x.m_map_sdefn);
                             break;
 
                         case 0x00000009:
-                            sc_component_id_() = std::move(x.m_sc_component_id);
+                            map_ldefn_() = std::move(x.m_map_ldefn);
                             break;
 
                         case 0x0000000a:
-                            equivalence_hash_() = std::move(x.m_equivalence_hash);
+                            sc_component_id_() = std::move(x.m_sc_component_id);
                             break;
 
                         case 0x0000000b:
+                            equivalence_hash_() = std::move(x.m_equivalence_hash);
+                            break;
+
+                        case 0x0000000c:
                             extended_defn_() = std::move(x.m_extended_defn);
                             break;
 
@@ -2859,46 +2962,50 @@ public:
         switch (x.selected_member_)
         {
                         case 0x00000001:
-                            string_sdefn_() = x.m_string_sdefn;
+                            no_value_() = x.m_no_value;
                             break;
 
                         case 0x00000002:
-                            string_ldefn_() = x.m_string_ldefn;
+                            string_sdefn_() = x.m_string_sdefn;
                             break;
 
                         case 0x00000003:
-                            seq_sdefn_() = x.m_seq_sdefn;
+                            string_ldefn_() = x.m_string_ldefn;
                             break;
 
                         case 0x00000004:
-                            seq_ldefn_() = x.m_seq_ldefn;
+                            seq_sdefn_() = x.m_seq_sdefn;
                             break;
 
                         case 0x00000005:
-                            array_sdefn_() = x.m_array_sdefn;
+                            seq_ldefn_() = x.m_seq_ldefn;
                             break;
 
                         case 0x00000006:
-                            array_ldefn_() = x.m_array_ldefn;
+                            array_sdefn_() = x.m_array_sdefn;
                             break;
 
                         case 0x00000007:
-                            map_sdefn_() = x.m_map_sdefn;
+                            array_ldefn_() = x.m_array_ldefn;
                             break;
 
                         case 0x00000008:
-                            map_ldefn_() = x.m_map_ldefn;
+                            map_sdefn_() = x.m_map_sdefn;
                             break;
 
                         case 0x00000009:
-                            sc_component_id_() = x.m_sc_component_id;
+                            map_ldefn_() = x.m_map_ldefn;
                             break;
 
                         case 0x0000000a:
-                            equivalence_hash_() = x.m_equivalence_hash;
+                            sc_component_id_() = x.m_sc_component_id;
                             break;
 
                         case 0x0000000b:
+                            equivalence_hash_() = x.m_equivalence_hash;
+                            break;
+
+                        case 0x0000000c:
                             extended_defn_() = x.m_extended_defn;
                             break;
 
@@ -2919,46 +3026,50 @@ public:
         switch (x.selected_member_)
         {
                         case 0x00000001:
-                            string_sdefn_() = std::move(x.m_string_sdefn);
+                            no_value_() = std::move(x.m_no_value);
                             break;
 
                         case 0x00000002:
-                            string_ldefn_() = std::move(x.m_string_ldefn);
+                            string_sdefn_() = std::move(x.m_string_sdefn);
                             break;
 
                         case 0x00000003:
-                            seq_sdefn_() = std::move(x.m_seq_sdefn);
+                            string_ldefn_() = std::move(x.m_string_ldefn);
                             break;
 
                         case 0x00000004:
-                            seq_ldefn_() = std::move(x.m_seq_ldefn);
+                            seq_sdefn_() = std::move(x.m_seq_sdefn);
                             break;
 
                         case 0x00000005:
-                            array_sdefn_() = std::move(x.m_array_sdefn);
+                            seq_ldefn_() = std::move(x.m_seq_ldefn);
                             break;
 
                         case 0x00000006:
-                            array_ldefn_() = std::move(x.m_array_ldefn);
+                            array_sdefn_() = std::move(x.m_array_sdefn);
                             break;
 
                         case 0x00000007:
-                            map_sdefn_() = std::move(x.m_map_sdefn);
+                            array_ldefn_() = std::move(x.m_array_ldefn);
                             break;
 
                         case 0x00000008:
-                            map_ldefn_() = std::move(x.m_map_ldefn);
+                            map_sdefn_() = std::move(x.m_map_sdefn);
                             break;
 
                         case 0x00000009:
-                            sc_component_id_() = std::move(x.m_sc_component_id);
+                            map_ldefn_() = std::move(x.m_map_ldefn);
                             break;
 
                         case 0x0000000a:
-                            equivalence_hash_() = std::move(x.m_equivalence_hash);
+                            sc_component_id_() = std::move(x.m_sc_component_id);
                             break;
 
                         case 0x0000000b:
+                            equivalence_hash_() = std::move(x.m_equivalence_hash);
+                            break;
+
+                        case 0x0000000c:
                             extended_defn_() = std::move(x.m_extended_defn);
                             break;
 
@@ -2982,46 +3093,50 @@ public:
             switch (selected_member_)
             {
                                 case 0x00000001:
-                                    ret_value = (m_string_sdefn == x.m_string_sdefn);
+                                    ret_value = (m_no_value == x.m_no_value);
                                     break;
 
                                 case 0x00000002:
-                                    ret_value = (m_string_ldefn == x.m_string_ldefn);
+                                    ret_value = (m_string_sdefn == x.m_string_sdefn);
                                     break;
 
                                 case 0x00000003:
-                                    ret_value = (m_seq_sdefn == x.m_seq_sdefn);
+                                    ret_value = (m_string_ldefn == x.m_string_ldefn);
                                     break;
 
                                 case 0x00000004:
-                                    ret_value = (m_seq_ldefn == x.m_seq_ldefn);
+                                    ret_value = (m_seq_sdefn == x.m_seq_sdefn);
                                     break;
 
                                 case 0x00000005:
-                                    ret_value = (m_array_sdefn == x.m_array_sdefn);
+                                    ret_value = (m_seq_ldefn == x.m_seq_ldefn);
                                     break;
 
                                 case 0x00000006:
-                                    ret_value = (m_array_ldefn == x.m_array_ldefn);
+                                    ret_value = (m_array_sdefn == x.m_array_sdefn);
                                     break;
 
                                 case 0x00000007:
-                                    ret_value = (m_map_sdefn == x.m_map_sdefn);
+                                    ret_value = (m_array_ldefn == x.m_array_ldefn);
                                     break;
 
                                 case 0x00000008:
-                                    ret_value = (m_map_ldefn == x.m_map_ldefn);
+                                    ret_value = (m_map_sdefn == x.m_map_sdefn);
                                     break;
 
                                 case 0x00000009:
-                                    ret_value = (m_sc_component_id == x.m_sc_component_id);
+                                    ret_value = (m_map_ldefn == x.m_map_ldefn);
                                     break;
 
                                 case 0x0000000a:
-                                    ret_value = (m_equivalence_hash == x.m_equivalence_hash);
+                                    ret_value = (m_sc_component_id == x.m_sc_component_id);
                                     break;
 
                                 case 0x0000000b:
+                                    ret_value = (m_equivalence_hash == x.m_equivalence_hash);
+                                    break;
+
+                                case 0x0000000c:
                                     ret_value = (m_extended_defn == x.m_extended_defn);
                                     break;
 
@@ -3053,9 +3168,31 @@ public:
 
         switch (__d)
         {
+                        case TK_NONE:
+                        case TK_BOOLEAN:
+                        case TK_BYTE:
+                        case TK_INT8:
+                        case TK_INT16:
+                        case TK_INT32:
+                        case TK_INT64:
+                        case TK_UINT8:
+                        case TK_UINT16:
+                        case TK_UINT32:
+                        case TK_UINT64:
+                        case TK_FLOAT32:
+                        case TK_FLOAT64:
+                        case TK_FLOAT128:
+                        case TK_CHAR8:
+                        case TK_CHAR16:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
+
                         case TI_STRING8_SMALL:
                         case TI_STRING16_SMALL:
-                            if (0x00000001 == selected_member_)
+                            if (0x00000002 == selected_member_)
                             {
                                 valid_discriminator = true;
                             }
@@ -3063,56 +3200,56 @@ public:
 
                         case TI_STRING8_LARGE:
                         case TI_STRING16_LARGE:
-                            if (0x00000002 == selected_member_)
-                            {
-                                valid_discriminator = true;
-                            }
-                            break;
-
-                        case TI_PLAIN_SEQUENCE_SMALL:
                             if (0x00000003 == selected_member_)
                             {
                                 valid_discriminator = true;
                             }
                             break;
 
-                        case TI_PLAIN_SEQUENCE_LARGE:
+                        case TI_PLAIN_SEQUENCE_SMALL:
                             if (0x00000004 == selected_member_)
                             {
                                 valid_discriminator = true;
                             }
                             break;
 
-                        case TI_PLAIN_ARRAY_SMALL:
+                        case TI_PLAIN_SEQUENCE_LARGE:
                             if (0x00000005 == selected_member_)
                             {
                                 valid_discriminator = true;
                             }
                             break;
 
-                        case TI_PLAIN_ARRAY_LARGE:
+                        case TI_PLAIN_ARRAY_SMALL:
                             if (0x00000006 == selected_member_)
                             {
                                 valid_discriminator = true;
                             }
                             break;
 
-                        case TI_PLAIN_MAP_SMALL:
+                        case TI_PLAIN_ARRAY_LARGE:
                             if (0x00000007 == selected_member_)
                             {
                                 valid_discriminator = true;
                             }
                             break;
 
-                        case TI_PLAIN_MAP_LARGE:
+                        case TI_PLAIN_MAP_SMALL:
                             if (0x00000008 == selected_member_)
                             {
                                 valid_discriminator = true;
                             }
                             break;
 
-                        case TI_STRONGLY_CONNECTED_COMPONENT:
+                        case TI_PLAIN_MAP_LARGE:
                             if (0x00000009 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
+
+                        case TI_STRONGLY_CONNECTED_COMPONENT:
+                            if (0x0000000a == selected_member_)
                             {
                                 valid_discriminator = true;
                             }
@@ -3120,14 +3257,14 @@ public:
 
                         case EK_COMPLETE:
                         case EK_MINIMAL:
-                            if (0x0000000a == selected_member_)
+                            if (0x0000000b == selected_member_)
                             {
                                 valid_discriminator = true;
                             }
                             break;
 
                         default:
-                            if (0x0000000b == selected_member_)
+                            if (0x0000000c == selected_member_)
                             {
                                 valid_discriminator = true;
                             }
@@ -3151,6 +3288,59 @@ public:
     {
         return m__d;
     }
+
+    /*!
+     * @brief This function copies the value in member no_value
+     * @param _no_value New value to be copied in member no_value
+     */
+    eProsima_user_DllExport void no_value(
+            const Dummy& _no_value)
+    {
+        no_value_() = _no_value;
+        m__d = TK_NONE;
+    }
+
+    /*!
+     * @brief This function moves the value in member no_value
+     * @param _no_value New value to be moved in member no_value
+     */
+    eProsima_user_DllExport void no_value(
+            Dummy&& _no_value)
+    {
+        no_value_() = _no_value;
+        m__d = TK_NONE;
+    }
+
+    /*!
+     * @brief This function returns a constant reference to member no_value
+     * @return Constant reference to member no_value
+     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the requested union member is not the current selection.
+     */
+    eProsima_user_DllExport const Dummy& no_value() const
+    {
+        if (0x00000001 != selected_member_)
+        {
+            throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
+        }
+
+        return m_no_value;
+    }
+
+    /*!
+     * @brief This function returns a reference to member no_value
+     * @return Reference to member no_value
+     * @exception eprosima::fastcdr::exception::BadParamException This exception is thrown if the requested union member is not the current selection.
+     */
+    eProsima_user_DllExport Dummy& no_value()
+    {
+        if (0x00000001 != selected_member_)
+        {
+            throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
+        }
+
+        return m_no_value;
+    }
+
 
     /*!
      * @brief This function copies the value in member string_sdefn
@@ -3181,7 +3371,7 @@ public:
      */
     eProsima_user_DllExport const StringSTypeDefn& string_sdefn() const
     {
-        if (0x00000001 != selected_member_)
+        if (0x00000002 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -3196,7 +3386,7 @@ public:
      */
     eProsima_user_DllExport StringSTypeDefn& string_sdefn()
     {
-        if (0x00000001 != selected_member_)
+        if (0x00000002 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -3234,7 +3424,7 @@ public:
      */
     eProsima_user_DllExport const StringLTypeDefn& string_ldefn() const
     {
-        if (0x00000002 != selected_member_)
+        if (0x00000003 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -3249,7 +3439,7 @@ public:
      */
     eProsima_user_DllExport StringLTypeDefn& string_ldefn()
     {
-        if (0x00000002 != selected_member_)
+        if (0x00000003 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -3287,7 +3477,7 @@ public:
      */
     eProsima_user_DllExport const PlainSequenceSElemDefn& seq_sdefn() const
     {
-        if (0x00000003 != selected_member_)
+        if (0x00000004 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -3302,7 +3492,7 @@ public:
      */
     eProsima_user_DllExport PlainSequenceSElemDefn& seq_sdefn()
     {
-        if (0x00000003 != selected_member_)
+        if (0x00000004 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -3340,7 +3530,7 @@ public:
      */
     eProsima_user_DllExport const PlainSequenceLElemDefn& seq_ldefn() const
     {
-        if (0x00000004 != selected_member_)
+        if (0x00000005 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -3355,7 +3545,7 @@ public:
      */
     eProsima_user_DllExport PlainSequenceLElemDefn& seq_ldefn()
     {
-        if (0x00000004 != selected_member_)
+        if (0x00000005 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -3393,7 +3583,7 @@ public:
      */
     eProsima_user_DllExport const PlainArraySElemDefn& array_sdefn() const
     {
-        if (0x00000005 != selected_member_)
+        if (0x00000006 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -3408,7 +3598,7 @@ public:
      */
     eProsima_user_DllExport PlainArraySElemDefn& array_sdefn()
     {
-        if (0x00000005 != selected_member_)
+        if (0x00000006 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -3446,7 +3636,7 @@ public:
      */
     eProsima_user_DllExport const PlainArrayLElemDefn& array_ldefn() const
     {
-        if (0x00000006 != selected_member_)
+        if (0x00000007 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -3461,7 +3651,7 @@ public:
      */
     eProsima_user_DllExport PlainArrayLElemDefn& array_ldefn()
     {
-        if (0x00000006 != selected_member_)
+        if (0x00000007 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -3499,7 +3689,7 @@ public:
      */
     eProsima_user_DllExport const PlainMapSTypeDefn& map_sdefn() const
     {
-        if (0x00000007 != selected_member_)
+        if (0x00000008 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -3514,7 +3704,7 @@ public:
      */
     eProsima_user_DllExport PlainMapSTypeDefn& map_sdefn()
     {
-        if (0x00000007 != selected_member_)
+        if (0x00000008 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -3552,7 +3742,7 @@ public:
      */
     eProsima_user_DllExport const PlainMapLTypeDefn& map_ldefn() const
     {
-        if (0x00000008 != selected_member_)
+        if (0x00000009 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -3567,7 +3757,7 @@ public:
      */
     eProsima_user_DllExport PlainMapLTypeDefn& map_ldefn()
     {
-        if (0x00000008 != selected_member_)
+        if (0x00000009 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -3605,7 +3795,7 @@ public:
      */
     eProsima_user_DllExport const StronglyConnectedComponentId& sc_component_id() const
     {
-        if (0x00000009 != selected_member_)
+        if (0x0000000a != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -3620,7 +3810,7 @@ public:
      */
     eProsima_user_DllExport StronglyConnectedComponentId& sc_component_id()
     {
-        if (0x00000009 != selected_member_)
+        if (0x0000000a != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -3658,7 +3848,7 @@ public:
      */
     eProsima_user_DllExport const EquivalenceHash& equivalence_hash() const
     {
-        if (0x0000000a != selected_member_)
+        if (0x0000000b != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -3673,7 +3863,7 @@ public:
      */
     eProsima_user_DllExport EquivalenceHash& equivalence_hash()
     {
-        if (0x0000000a != selected_member_)
+        if (0x0000000b != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -3690,7 +3880,7 @@ public:
             const ExtendedTypeDefn& _extended_defn)
     {
         extended_defn_() = _extended_defn;
-        m__d = 0;
+        m__d = 127;
     }
 
     /*!
@@ -3701,7 +3891,7 @@ public:
             ExtendedTypeDefn&& _extended_defn)
     {
         extended_defn_() = _extended_defn;
-        m__d = 0;
+        m__d = 127;
     }
 
     /*!
@@ -3711,7 +3901,7 @@ public:
      */
     eProsima_user_DllExport const ExtendedTypeDefn& extended_defn() const
     {
-        if (0x0000000b != selected_member_)
+        if (0x0000000c != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -3726,7 +3916,7 @@ public:
      */
     eProsima_user_DllExport ExtendedTypeDefn& extended_defn()
     {
-        if (0x0000000b != selected_member_)
+        if (0x0000000c != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -3738,7 +3928,7 @@ public:
 
 private:
 
-            StringSTypeDefn& string_sdefn_()
+            Dummy& no_value_()
             {
                 if (0x00000001 != selected_member_)
                 {
@@ -3748,6 +3938,24 @@ private:
                     }
 
                     selected_member_ = 0x00000001;
+                    member_destructor_ = [&]() {m_no_value.~Dummy();};
+                    new(&m_no_value) Dummy();
+    ;
+                }
+
+                return m_no_value;
+            }
+
+            StringSTypeDefn& string_sdefn_()
+            {
+                if (0x00000002 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000002;
                     member_destructor_ = [&]() {m_string_sdefn.~StringSTypeDefn();};
                     new(&m_string_sdefn) StringSTypeDefn();
     ;
@@ -3758,14 +3966,14 @@ private:
 
             StringLTypeDefn& string_ldefn_()
             {
-                if (0x00000002 != selected_member_)
+                if (0x00000003 != selected_member_)
                 {
                     if (member_destructor_)
                     {
                         member_destructor_();
                     }
 
-                    selected_member_ = 0x00000002;
+                    selected_member_ = 0x00000003;
                     member_destructor_ = [&]() {m_string_ldefn.~StringLTypeDefn();};
                     new(&m_string_ldefn) StringLTypeDefn();
     ;
@@ -3776,14 +3984,14 @@ private:
 
             PlainSequenceSElemDefn& seq_sdefn_()
             {
-                if (0x00000003 != selected_member_)
+                if (0x00000004 != selected_member_)
                 {
                     if (member_destructor_)
                     {
                         member_destructor_();
                     }
 
-                    selected_member_ = 0x00000003;
+                    selected_member_ = 0x00000004;
                     member_destructor_ = [&]() {m_seq_sdefn.~PlainSequenceSElemDefn();};
                     new(&m_seq_sdefn) PlainSequenceSElemDefn();
     ;
@@ -3794,14 +4002,14 @@ private:
 
             PlainSequenceLElemDefn& seq_ldefn_()
             {
-                if (0x00000004 != selected_member_)
+                if (0x00000005 != selected_member_)
                 {
                     if (member_destructor_)
                     {
                         member_destructor_();
                     }
 
-                    selected_member_ = 0x00000004;
+                    selected_member_ = 0x00000005;
                     member_destructor_ = [&]() {m_seq_ldefn.~PlainSequenceLElemDefn();};
                     new(&m_seq_ldefn) PlainSequenceLElemDefn();
     ;
@@ -3812,14 +4020,14 @@ private:
 
             PlainArraySElemDefn& array_sdefn_()
             {
-                if (0x00000005 != selected_member_)
+                if (0x00000006 != selected_member_)
                 {
                     if (member_destructor_)
                     {
                         member_destructor_();
                     }
 
-                    selected_member_ = 0x00000005;
+                    selected_member_ = 0x00000006;
                     member_destructor_ = [&]() {m_array_sdefn.~PlainArraySElemDefn();};
                     new(&m_array_sdefn) PlainArraySElemDefn();
     ;
@@ -3830,14 +4038,14 @@ private:
 
             PlainArrayLElemDefn& array_ldefn_()
             {
-                if (0x00000006 != selected_member_)
+                if (0x00000007 != selected_member_)
                 {
                     if (member_destructor_)
                     {
                         member_destructor_();
                     }
 
-                    selected_member_ = 0x00000006;
+                    selected_member_ = 0x00000007;
                     member_destructor_ = [&]() {m_array_ldefn.~PlainArrayLElemDefn();};
                     new(&m_array_ldefn) PlainArrayLElemDefn();
     ;
@@ -3848,14 +4056,14 @@ private:
 
             PlainMapSTypeDefn& map_sdefn_()
             {
-                if (0x00000007 != selected_member_)
+                if (0x00000008 != selected_member_)
                 {
                     if (member_destructor_)
                     {
                         member_destructor_();
                     }
 
-                    selected_member_ = 0x00000007;
+                    selected_member_ = 0x00000008;
                     member_destructor_ = [&]() {m_map_sdefn.~PlainMapSTypeDefn();};
                     new(&m_map_sdefn) PlainMapSTypeDefn();
     ;
@@ -3866,14 +4074,14 @@ private:
 
             PlainMapLTypeDefn& map_ldefn_()
             {
-                if (0x00000008 != selected_member_)
+                if (0x00000009 != selected_member_)
                 {
                     if (member_destructor_)
                     {
                         member_destructor_();
                     }
 
-                    selected_member_ = 0x00000008;
+                    selected_member_ = 0x00000009;
                     member_destructor_ = [&]() {m_map_ldefn.~PlainMapLTypeDefn();};
                     new(&m_map_ldefn) PlainMapLTypeDefn();
     ;
@@ -3884,14 +4092,14 @@ private:
 
             StronglyConnectedComponentId& sc_component_id_()
             {
-                if (0x00000009 != selected_member_)
+                if (0x0000000a != selected_member_)
                 {
                     if (member_destructor_)
                     {
                         member_destructor_();
                     }
 
-                    selected_member_ = 0x00000009;
+                    selected_member_ = 0x0000000a;
                     member_destructor_ = [&]() {m_sc_component_id.~StronglyConnectedComponentId();};
                     new(&m_sc_component_id) StronglyConnectedComponentId();
     ;
@@ -3902,14 +4110,14 @@ private:
 
             EquivalenceHash& equivalence_hash_()
             {
-                if (0x0000000a != selected_member_)
+                if (0x0000000b != selected_member_)
                 {
                     if (member_destructor_)
                     {
                         member_destructor_();
                     }
 
-                    selected_member_ = 0x0000000a;
+                    selected_member_ = 0x0000000b;
                     member_destructor_ = [&]() {m_equivalence_hash.~EquivalenceHash();};
                     new(&m_equivalence_hash) EquivalenceHash();
     ;
@@ -3920,14 +4128,14 @@ private:
 
             ExtendedTypeDefn& extended_defn_()
             {
-                if (0x0000000b != selected_member_)
+                if (0x0000000c != selected_member_)
                 {
                     if (member_destructor_)
                     {
                         member_destructor_();
                     }
 
-                    selected_member_ = 0x0000000b;
+                    selected_member_ = 0x0000000c;
                     member_destructor_ = [&]() {m_extended_defn.~ExtendedTypeDefn();};
                     new(&m_extended_defn) ExtendedTypeDefn();
     ;
@@ -3937,10 +4145,11 @@ private:
             }
 
 
-    uint8_t m__d {0};
+    uint8_t m__d {TK_NONE};
 
     union
     {
+        Dummy m_no_value;
         StringSTypeDefn m_string_sdefn;
         StringLTypeDefn m_string_ldefn;
         PlainSequenceSElemDefn m_seq_sdefn;
@@ -5506,7 +5715,7 @@ public:
             const ExtendedAnnotationParameterValue& _extended_value)
     {
         extended_value_() = _extended_value;
-        m__d = 0;
+        m__d = 127;
     }
 
     /*!
@@ -5517,7 +5726,7 @@ public:
             ExtendedAnnotationParameterValue&& _extended_value)
     {
         extended_value_() = _extended_value;
-        m__d = 0;
+        m__d = 127;
     }
 
     /*!
@@ -5897,7 +6106,7 @@ private:
             }
 
 
-    uint8_t m__d {0};
+    uint8_t m__d {127};
 
     union
     {
@@ -21447,7 +21656,7 @@ public:
             const CompleteExtendedType& _extended_type)
     {
         extended_type_() = _extended_type;
-        m__d = 0;
+        m__d = 127;
     }
 
     /*!
@@ -21458,7 +21667,7 @@ public:
             CompleteExtendedType&& _extended_type)
     {
         extended_type_() = _extended_type;
-        m__d = 0;
+        m__d = 127;
     }
 
     /*!
@@ -21694,7 +21903,7 @@ private:
             }
 
 
-    uint8_t m__d {0};
+    uint8_t m__d {127};
 
     union
     {
@@ -22793,7 +23002,7 @@ public:
             const MinimalExtendedType& _extended_type)
     {
         extended_type_() = _extended_type;
-        m__d = 0;
+        m__d = 127;
     }
 
     /*!
@@ -22804,7 +23013,7 @@ public:
             MinimalExtendedType&& _extended_type)
     {
         extended_type_() = _extended_type;
-        m__d = 0;
+        m__d = 127;
     }
 
     /*!
@@ -23040,7 +23249,7 @@ private:
             }
 
 
-    uint8_t m__d {0};
+    uint8_t m__d {127};
 
     union
     {
@@ -23418,7 +23627,7 @@ private:
             }
 
 
-    uint8_t m__d {0};
+    uint8_t m__d {127};
 
     union
     {
