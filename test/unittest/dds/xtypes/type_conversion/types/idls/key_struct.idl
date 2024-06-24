@@ -1,0 +1,6 @@
+struct key_struct
+{
+    short small_num;
+    @key long big_num;
+    @key unsigned long long huge_num;
+};
