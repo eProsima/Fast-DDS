@@ -12,101 +12,96 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*
+/**
  * @file SubscriberApp.cpp
+ *
  */
+
+#include "SubscriberApp.hpp"
+
+#include <condition_variable>
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 
-#include "SubscriberApp.hpp"
+#include "Application.hpp"
+#include "CLIParser.hpp"
+#include "FlowControlPubSubTypes.h"
 
 using namespace eprosima::fastdds::dds;
-using namespace eprosima::fastdds::rtps;
 
-FlowControlExampleSubscriber::FlowControlExampleSubscriber()
+namespace eprosima {
+namespace fastdds {
+namespace examples {
+namespace flow_control {
+
+SubscriberApp::SubscriberApp(
+        const CLIParser::flow_control_config& config)
     : participant_(nullptr)
     , subscriber_(nullptr)
     , topic_(nullptr)
     , reader_(nullptr)
-    , myType(new FlowControlExamplePubSubType())
-{
-}
-
-FlowControlExampleSubscriber::~FlowControlExampleSubscriber()
-{
-    if (reader_ != nullptr)
-    {
-        subscriber_->delete_datareader(reader_);
-    }
-    if (topic_ != nullptr)
-    {
-        participant_->delete_topic(topic_);
-    }
-    if (subscriber_ != nullptr)
-    {
-        participant_->delete_subscriber(subscriber_);
-    }
-    DomainParticipantFactory::get_instance()->delete_participant(participant_);
-}
-
-bool FlowControlExampleSubscriber::init()
+    , type_(new FlowControlPubSubType())
 {
     // Create Participant
-    DomainParticipantQos pqos;
+    DomainParticipantQos pqos = PARTICIPANT_QOS_DEFAULT;
     pqos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastdds::c_TimeInfinite;
-    pqos.name("Participant_subscriber"); //You can put the name you want
+    pqos.name("Participant_subscriber");
 
     participant_ = DomainParticipantFactory::get_instance()->create_participant(0, pqos);
-
     if (participant_ == nullptr)
     {
-        return false;
+        throw std::runtime_error("Participant initialization failed");
     }
 
     //Register the type
-    myType.register_type(participant_);
+    type_.register_type(participant_);
 
     // Create Subscriber
-    subscriber_ = participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
-
+    subscriber_ = participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT, nullptr, StatusMask::none());
     if (subscriber_ == nullptr)
     {
-        return false;
+        throw std::runtime_error("Subscriber initialization failed");
     }
 
     // Create Topic
-    topic_ = participant_->create_topic("FlowControlExamplePubSubTopic", myType.get_type_name(), TOPIC_QOS_DEFAULT);
-
+    topic_ = participant_->create_topic("flow_control_topic", type_.get_type_name(), TOPIC_QOS_DEFAULT);
     if (topic_ == nullptr)
     {
-        return false;
+        throw std::runtime_error("Topic initialization failed");
     }
 
     // Create DataReader
-    reader_ = subscriber_->create_datareader(topic_, DATAREADER_QOS_DEFAULT, &m_listener);
-
+    reader_ = subscriber_->create_datareader(topic_, DATAREADER_QOS_DEFAULT, this, StatusMask::all());
     if (reader_ == nullptr)
     {
-        return false;
+        throw std::runtime_error("DataReader initialization failed");
     }
-
-    return true;
 }
 
-void FlowControlExampleSubscriber::SubListener::on_subscription_matched(
+SubscriberApp::~SubscriberApp()
+{
+    if (nullptr != participant_)
+    {
+        // Delete DDS entities contained within the DomainParticipant
+        participant_->delete_contained_entities();
+
+        // Delete DomainParticipant
+        DomainParticipantFactory::get_instance()->delete_participant(participant_);
+    }
+}
+
+void SubscriberApp::on_subscription_matched(
         DataReader*,
         const SubscriptionMatchedStatus& info)
 {
     if (info.current_count_change == 1)
     {
-        n_matched = info.total_count;
         std::cout << "Subscriber matched." << std::endl;
     }
     else if (info.current_count_change == -1)
     {
-        n_matched = info.total_count;
         std::cout << "Subscriber unmatched." << std::endl;
     }
     else
@@ -116,16 +111,15 @@ void FlowControlExampleSubscriber::SubListener::on_subscription_matched(
     }
 }
 
-void FlowControlExampleSubscriber::SubListener::on_data_available(
+void SubscriberApp::on_data_available(
         DataReader* reader)
 {
     SampleInfo info;
-    FlowControlExample st;
+    FlowControl st;
     if (reader->take_next_sample(&st, &info) == RETCODE_OK)
     {
         if (info.valid_data)
         {
-            ++n_msg;
             static unsigned int fastMessages = 0;
             static unsigned int slowMessages = 0;
             // Print your structure data here.
@@ -143,9 +137,27 @@ void FlowControlExampleSubscriber::SubListener::on_data_available(
     }
 }
 
-void FlowControlExampleSubscriber::run()
+void SubscriberApp::run()
 {
-    std::cout << "Waiting for Data, press Enter to stop the Subscriber. " << std::endl;
-    std::cin.ignore();
-    std::cout << "Shutting down the Subscriber." << std::endl;
+    std::unique_lock<std::mutex> lck(terminate_cv_mtx_);
+    terminate_cv_.wait(lck, [&]
+            {
+                return is_stopped();
+            });
 }
+
+bool SubscriberApp::is_stopped()
+{
+    return stop_.load();
+}
+
+void SubscriberApp::stop()
+{
+    stop_.store(true);
+    terminate_cv_.notify_all();
+}
+
+} // namespace flow_control
+} // namespace examples
+} // namespace fastdds
+} // namespace eprosima

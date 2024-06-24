@@ -12,13 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*
+/**
  * @file SubscriberApp.hpp
+ *
  */
 
 
 #ifndef FASTDDS_FLOW_CONTROL_SUBSCRIBER_APP_HPP_
 #define FASTDDS_FLOW_CONTROL_SUBSCRIBER_APP_HPP_
+
+#include <condition_variable>
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
@@ -26,59 +29,68 @@
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 
-#include "FlowControlExamplePubSubTypes.hpp"
+#include "Application.hpp"
+#include "CLIParser.hpp"
+#include "FlowControlPubSubTypes.h"
 
-class FlowControlExampleSubscriber
+using namespace eprosima::fastdds::dds;
+
+namespace eprosima {
+namespace fastdds {
+namespace examples {
+namespace flow_control {
+
+class SubscriberApp : public Application,  public DataReaderListener
 {
 public:
 
-    FlowControlExampleSubscriber();
+    SubscriberApp(
+            const CLIParser::flow_control_config& config);
 
-    virtual ~FlowControlExampleSubscriber();
+    ~SubscriberApp();
 
-    bool init();
+    //! Subscription callback
+    void on_data_available(
+            DataReader* reader) override;
 
-    void run();
+    //! Subscriber matched method
+    void on_subscription_matched(
+            DataReader* reader,
+            const SubscriptionMatchedStatus& info) override;
+
+    //! Run subscriber
+    void run() override;
+
+    //! Trigger the end of execution
+    void stop() override;
 
 private:
 
-    eprosima::fastdds::dds::DomainParticipant* participant_;
+    //! Return the current state of execution
+    bool is_stopped();
 
-    eprosima::fastdds::dds::Subscriber* subscriber_;
+    DomainParticipant* participant_;
 
-    eprosima::fastdds::dds::Topic* topic_;
+    Subscriber* subscriber_;
 
-    eprosima::fastdds::dds::DataReader* reader_;
+    Topic* topic_;
 
-    class SubListener : public eprosima::fastdds::dds::DataReaderListener
-    {
-    public:
+    DataReader* reader_;
 
-        SubListener()
-            : n_matched(0)
-            , n_msg(0)
-        {
-        }
+    TypeSupport type_;
 
-        ~SubListener() override
-        {
-        }
+    uint16_t samples_;
 
-        void on_data_available(
-                eprosima::fastdds::dds::DataReader* reader) override;
+    std::atomic<bool> stop_;
 
-        void on_subscription_matched(
-                eprosima::fastdds::dds::DataReader* reader,
-                const eprosima::fastdds::dds::SubscriptionMatchedStatus& info) override;
+    mutable std::mutex terminate_cv_mtx_;
 
-        int n_matched;
-
-        int n_msg;
-
-    }
-    m_listener;
-
-    eprosima::fastdds::dds::TypeSupport myType;
+    std::condition_variable terminate_cv_;
 };
+
+} // namespace flow_control
+} // namespace examples
+} // namespace fastdds
+} // namespace eprosima
 
 #endif // FASTDDS_FLOW_CONTROL_SUBSCRIBER_APP_HPP_
