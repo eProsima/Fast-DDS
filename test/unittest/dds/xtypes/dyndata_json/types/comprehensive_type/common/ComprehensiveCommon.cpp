@@ -71,13 +71,13 @@ void fill_my_enum(
     switch (index % 3)
     {
         case 0:
-            dyn_data->set_uint32_value(dyn_data->get_member_id_by_name(member_name), 0);
+            dyn_data->set_int32_value(dyn_data->get_member_id_by_name(member_name), 0);
             break;
         case 1:
-            dyn_data->set_uint32_value(dyn_data->get_member_id_by_name(member_name), 1);
+            dyn_data->set_int32_value(dyn_data->get_member_id_by_name(member_name), 1);
             break;
         case 2:
-            dyn_data->set_uint32_value(dyn_data->get_member_id_by_name(member_name), 2);
+            dyn_data->set_int32_value(dyn_data->get_member_id_by_name(member_name), 2);
             break;
     }
 }
@@ -100,8 +100,12 @@ void fill_all_struct(
 
     // bitmask
     traits<DynamicData>::ref_type dyn_data_my_bitmask = dyn_data->loan_value(dyn_data->get_member_id_by_name("my_bitmask"));
-    dyn_data_my_bitmask->set_uint32_value(dyn_data_my_bitmask->get_member_id_by_name("flag0"), static_cast<uint32_t>(index));
+    index % 2 ? dyn_data_my_bitmask->set_boolean_value(dyn_data_my_bitmask->get_member_id_by_name("flag0"), true) :
+                dyn_data_my_bitmask->set_boolean_value(dyn_data_my_bitmask->get_member_id_by_name("flag0"),false);
+    // traits<DynamicData>::ref_type dyn_data_bitmask_sequence = dyn_data->loan_value(dyn_data->get_member_id_by_name("bitmask_sequence"));
+    // dyn_data_bitmask_sequence->set_complex_value(dyn_data_bitmask_sequence->get_member_id_by_name("my_bitmask"), dyn_data_my_bitmask);
     dyn_data->return_loaned_value(dyn_data_my_bitmask);
+    // dyn_data->return_loaned_value(dyn_data_bitmask_sequence);
 
     // alias
     traits<DynamicData>::ref_type dyn_data_my_aliased_struct = dyn_data->loan_value(dyn_data->get_member_id_by_name("my_aliased_struct"));
@@ -116,11 +120,9 @@ void fill_all_struct(
 
 
     // // sequences
-    // UInt32Seq bitmask_seq = {static_cast<uint32_t>(index), 0, 0, static_cast<uint32_t>(index)};
     Int16Seq short_seq = {0, static_cast<int16_t>(index)};
-    // dyn_data->set_uint32_values(dyn_data->get_member_id_by_name("bitmask_sequence"), bitmask_seq);
     dyn_data->set_int16_values(dyn_data->get_member_id_by_name("short_sequence"), short_seq);
-    // dyn_data->set_uint32_value(dyn_data->get_member_id_by_name("bitmask_sequence"), static_cast<uint32_t>(index));
+
 
     // array
     Int32Seq long_array_seq = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24};
@@ -131,6 +133,19 @@ void fill_all_struct(
     int32_t key {1};
     dyn_data_short_long_map->set_int32_value(dyn_data_short_long_map->get_member_id_by_name(std::to_string(key)), static_cast<uint32_t>(index));
     dyn_data->return_loaned_value(dyn_data_short_long_map);
+
+    // union
+    traits<DynamicData>::ref_type dyn_data_inner_union = dyn_data->loan_value(dyn_data->get_member_id_by_name("inner_union"));
+    dyn_data_inner_union->set_int64_value(dyn_data_inner_union->get_member_id_by_name("second"), static_cast<int64_t>(index));
+    traits<DynamicData>::ref_type dyn_data_complex_union = dyn_data->loan_value(dyn_data->get_member_id_by_name("complex_union"));
+    dyn_data_complex_union->set_complex_value(dyn_data_complex_union->get_member_id_by_name("fourth"), dyn_data_inner_union);
+    dyn_data->return_loaned_value(dyn_data_complex_union);
+    dyn_data->return_loaned_value(dyn_data_inner_union);
+
+    // bitset
+    traits<DynamicData>::ref_type dyn_data_my_bitset = dyn_data->loan_value(dyn_data->get_member_id_by_name("my_bitset"));
+    dyn_data_my_bitset->set_int16_value(dyn_data_my_bitset->get_member_id_by_name("d"), static_cast<int16_t>(index));
+    dyn_data->return_loaned_value(dyn_data_my_bitset);
 }
 
 
