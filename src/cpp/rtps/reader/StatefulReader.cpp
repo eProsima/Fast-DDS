@@ -380,35 +380,6 @@ bool StatefulReader::matched_writer_remove(
         bool removed_by_lease)
 {
 
-    if (is_alive_ && liveliness_lease_duration_ < c_TimeInfinite)
-    {
-        auto wlp = this->mp_RTPSParticipant->wlp();
-        if ( wlp != nullptr)
-        {
-            LivelinessData::WriterStatus writer_liveliness_status;
-            wlp->sub_liveliness_manager_->remove_writer(
-                writer_guid,
-                liveliness_kind_,
-                liveliness_lease_duration_,
-                writer_liveliness_status);
-
-            if (writer_liveliness_status == LivelinessData::WriterStatus::ALIVE)
-            {
-                update_liveliness_changed_status(writer_guid, -1, 0);
-            }
-            else if (writer_liveliness_status == LivelinessData::WriterStatus::NOT_ALIVE)
-            {
-                update_liveliness_changed_status(writer_guid, 0, -1);
-            }
-
-        }
-        else
-        {
-            EPROSIMA_LOG_ERROR(RTPS_LIVELINESS,
-                    "Finite liveliness lease duration but WLP not enabled, cannot remove writer");
-        }
-    }
-
     std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
     WriterProxy* wproxy = nullptr;
     if (is_alive_)
@@ -466,6 +437,34 @@ bool StatefulReader::matched_writer_remove(
             }
 #endif //FASTDDS_STATISTICS
 
+            if (liveliness_lease_duration_ < c_TimeInfinite)
+            {
+                auto wlp = this->mp_RTPSParticipant->wlp();
+                if ( wlp != nullptr)
+                {
+                    LivelinessData::WriterStatus writer_liveliness_status;
+                    wlp->sub_liveliness_manager_->remove_writer(
+                        writer_guid,
+                        liveliness_kind_,
+                        liveliness_lease_duration_,
+                        writer_liveliness_status);
+
+                    if (writer_liveliness_status == LivelinessData::WriterStatus::ALIVE)
+                    {
+                        update_liveliness_changed_status(writer_guid, -1, 0);
+                    }
+                    else if (writer_liveliness_status == LivelinessData::WriterStatus::NOT_ALIVE)
+                    {
+                        update_liveliness_changed_status(writer_guid, 0, -1);
+                    }
+
+                }
+                else
+                {
+                    EPROSIMA_LOG_ERROR(RTPS_LIVELINESS,
+                            "Finite liveliness lease duration but WLP not enabled, cannot remove writer");
+                }
+            }
         }
         else
         {
