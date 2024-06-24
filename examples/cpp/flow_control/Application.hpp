@@ -44,8 +44,7 @@ public:
 
     //! Factory method to create applications based on configuration
     static std::shared_ptr<Application> make_app(
-            const CLIParser::flow_control_config& config,
-            const std::string& topic_name);
+            const CLIParser::flow_control_config& config);
 };
 
 } // namespace flow_control
