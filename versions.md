@@ -59,12 +59,8 @@ Forthcoming
   * `SenderResource` and Transport APIs now receive a collection of `NetworkBuffer` on their `send` method.
 * Migrate fastrtps namespace to fastdds
 * Migrate fastrtps `ResourceManagement` API from `rtps/resources` to `rtps/attributes`.
-<<<<<<< HEAD
 * `const` qualify all data related inputs in DataWriter APIs
-=======
 * New `DomainParticipantExtendedQos` that includes both `DomainId` and `DomainParticipantQos` (extends `DomainParticipantFactory` API).
-
->>>>>>> 463834195 (Update versions.md)
 
 Version 2.14.0
 --------------
