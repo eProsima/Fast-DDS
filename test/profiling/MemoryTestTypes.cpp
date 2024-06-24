@@ -36,6 +36,14 @@ bool MemoryDataType::serialize(void*data,SerializedPayload_t* payload)
     return true;
 }
 
+bool MemoryDataType::serialize(
+            void* data,
+            eprosima::fastrtps::rtps::SerializedPayload_t* payload,
+            eprosima::fastdds::dds::DataRepresentationId_t)
+{
+    return serialize(data,payload);
+}
+
 bool MemoryDataType::deserialize(SerializedPayload_t* payload,void * data)
 {
     MemoryType* lt = (MemoryType*)data;
@@ -58,6 +66,11 @@ std::function<uint32_t()> MemoryDataType::getSerializedSizeProvider(void* data)
     };
 }
 
+std::function<uint32_t()> MemoryDataType::getSerializedSizeProvider(void* data, eprosima::fastdds::dds::DataRepresentationId_t)
+{
+    return getSerializedSizeProvider(data);
+}
+
 void* MemoryDataType::createData()
 {
 
@@ -77,6 +90,15 @@ bool TestCommandDataType::serialize(void*data,SerializedPayload_t* payload)
     payload->length = 4;
     return true;
 }
+
+bool TestCommandDataType::serialize(
+            void* data,
+            eprosima::fastrtps::rtps::SerializedPayload_t* payload,
+            eprosima::fastdds::dds::DataRepresentationId_t)
+{
+    return serialize(data,payload);
+}
+
 bool TestCommandDataType::deserialize(SerializedPayload_t* payload,void * data)
 {
     TestCommandType* t = (TestCommandType*)data;
@@ -97,6 +119,11 @@ std::function<uint32_t()> TestCommandDataType::getSerializedSizeProvider(void*)
 
         return size;
     };
+}
+
+std::function<uint32_t()> TestCommandDataType::getSerializedSizeProvider(void* data, eprosima::fastdds::dds::DataRepresentationId_t)
+{
+    return getSerializedSizeProvider(data);
 }
 
 void* TestCommandDataType::createData()
