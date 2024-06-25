@@ -2055,7 +2055,7 @@ static void test_liveliness_qos_independent_topics(
 {
     const auto lease_dutation_time = std::chrono::seconds(1);
     const eprosima::fastdds::Duration_t lease_duration(1, 0);
-    const eprosima::fastdds::Duration_t announcement_period(0, 500000000);
+    const eprosima::fastdds::Duration_t announcement_period(0, 250000000);
 
     PubSubReader<HelloWorldPubSubType> reader1(topic_name + "1");
     PubSubReader<HelloWorldPubSubType> reader2(topic_name + "2");
