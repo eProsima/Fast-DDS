@@ -76,7 +76,7 @@ public:
         std::cout << "Slow Publisher options:"                                                  << std::endl;
         std::cout << "      --max-bytes <num>           Maximum number of bytes to be sent"     << std::endl;
         std::cout << "                                  per period [0 <= <num> <= 2147483647]"  << std::endl;
-        std::cout << "                                  (Default: 300kB )"       << std::endl;
+        std::cout << "                                  (Default: 300kB)"                       << std::endl;
         std::cout << "      --period <num>              Period of time on which the"            << std::endl;
         std::cout << "                                  flow controller is allowed"             << std::endl;
         std::cout << "                                  to send the max bytes per period."      << std::endl;

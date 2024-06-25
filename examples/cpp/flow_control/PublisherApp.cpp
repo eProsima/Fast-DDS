@@ -84,6 +84,7 @@ PublisherApp::PublisherApp(
     // Create fast DataWriter
     DataWriterQos wfqos = DATAWRITER_QOS_DEFAULT;
     wfqos.publish_mode().kind = ASYNCHRONOUS_PUBLISH_MODE;
+    wfqos.data_sharing().off();
 
     fast_writer_ = fast_publisher_->create_datawriter(topic_, wfqos, this, StatusMask::all());
     if (fast_writer_ == nullptr)
@@ -103,7 +104,7 @@ PublisherApp::PublisherApp(
     DataWriterQos wsqos = DATAWRITER_QOS_DEFAULT;
     wsqos.publish_mode().kind = ASYNCHRONOUS_PUBLISH_MODE;
     wsqos.publish_mode().flow_controller_name = slow_flow_controller_descriptor->name;
-
+    wsqos.data_sharing().off();
     slow_writer_ = slow_publisher_->create_datawriter(topic_, wsqos, this, StatusMask::all());
     if (slow_writer_ == nullptr)
     {
@@ -156,7 +157,6 @@ void PublisherApp::run()
     int msgsent_fast = 0;
     int msgsent_slow = 0;
     char ch;
-    std::cout << "Flow Control example." << std::endl;
     std::cout << "Press \"f\" to send a sample through the fast writer, which has unlimited bandwidth" << std::endl;
     std::cout <<
         "Press \"s\" to send a sample through the slow writer, which is also limited by its own Flow Controller" <<
@@ -167,45 +167,21 @@ void PublisherApp::run()
         if (ch == 'f')
         {
             st.wasFast(true);
-            // Wait for the data endpoints discovery
-            std::unique_lock<std::mutex> matched_lock(mutex_);
-            cv_.wait(matched_lock, [&]()
-                    {
-                        // at least one has been discovered
-                        return ((matched_ > 0) || is_stopped());
-                    });
-
-            if (!is_stopped())
+            if(publish(fast_writer_, msgsent_fast, st))
             {
-                fast_writer_->write(&st);
+                std::cout << "Message count " << msgsent_fast <<" SENT from FAST WRITER" << std::endl;
             }
-            ++msgsent_fast;
-            std::cout << "Sending sample, count=" << msgsent_fast <<
-                " through the fast writer. Send another sample? (f-fast,s-slow,q-quit): ";
         }
         else if (ch == 's')
         {
             st.wasFast(false);
-            slow_writer_->write(&st);
-            // Wait for the data endpoints discovery
-            std::unique_lock<std::mutex> matched_lock(mutex_);
-            cv_.wait(matched_lock, [&]()
-                    {
-                        // at least one has been discovered
-                        return ((matched_ > 0) || is_stopped());
-                    });
-
-            if (!is_stopped())
+            if(publish(slow_writer_, msgsent_slow, st))
             {
-                fast_writer_->write(&st);
+                std::cout << "Message count " << msgsent_slow <<" SENT from SLOW WRITER" << std::endl;
             }
-            ++msgsent_slow;
-            std::cout << "Sending sample, count=" << msgsent_slow <<
-                " through the slow writer. Send another sample? (f-fast,s-slow,q-quit): ";
         }
         else if (ch == 'q')
         {
-            std::cout << "Finishing Flow Control example" << std::endl;
             stop();
             break;
         }
@@ -213,8 +189,26 @@ void PublisherApp::run()
         {
             std::cout << "Command " << ch << " not recognized, please enter \"f/s/q\":";
         }
-
     }
+}
+
+bool PublisherApp::publish(DataWriter* writer_, int &msgsent, FlowControl msg)
+{
+    bool ret = false;
+    // Wait for the data endpoints discovery
+    std::unique_lock<std::mutex> matched_lock(mutex_);
+    cv_.wait(matched_lock, [&]()
+            {
+                // at least one has been discovered
+                return ((matched_ > 0) || is_stopped());
+            });
+
+    if (!is_stopped())
+    {
+        ret = writer_->write(&msg);
+        ++msgsent;
+    }
+    return ret;
 }
 
 bool PublisherApp::is_stopped()
