@@ -12,8 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef _FASTDDS_TEST_SHAREDMEM_TRANSPORT_DESCRIPTOR_
-#define _FASTDDS_TEST_SHAREDMEM_TRANSPORT_DESCRIPTOR_
+/**
+ * @file test_SharedMemTransportDescriptor.hpp
+ *
+ */
+
+#ifndef FASTDDS_RTPS_TRANSPORT_SHARED_MEM__TEST_SHAREDMEMTRANSPORTDESCRIPTOR_HPP
+#define FASTDDS_RTPS_TRANSPORT_SHARED_MEM__TEST_SHAREDMEMTRANSPORTDESCRIPTOR_HPP
 
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.hpp>
 
@@ -48,4 +53,4 @@ typedef struct test_SharedMemTransportDescriptor : public SharedMemTransportDesc
 } // namespace fastdds
 } // namespace eprosima
 
-#endif //_FASTDDS_TEST_SHAREDMEM_TRANSPORT_DESCRIPTOR_
+#endif //FASTDDS_RTPS_TRANSPORT_SHARED_MEM__TEST_SHAREDMEMTRANSPORTDESCRIPTOR_HPP
