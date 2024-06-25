@@ -104,6 +104,8 @@ PublisherApp::PublisherApp(
     DataWriterQos wsqos = DATAWRITER_QOS_DEFAULT;
     wsqos.publish_mode().kind = ASYNCHRONOUS_PUBLISH_MODE;
     wsqos.publish_mode().flow_controller_name = slow_flow_controller_descriptor->name;
+    wsqos.properties().properties().emplace_back("fastdds.sfc.priority", config.priority);
+    wsqos.properties().properties().emplace_back("fastdds.sfc.bandwidth_reservation", config.bandwidth);
     wsqos.data_sharing().off();
     slow_writer_ = slow_publisher_->create_datawriter(topic_, wsqos, this, StatusMask::all());
     if (slow_writer_ == nullptr)

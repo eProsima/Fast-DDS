@@ -50,6 +50,8 @@ public:
         uint16_t samples = 0;
         uint64_t period = 500;
         int32_t max_bytes_per_period = 300000;
+        std::string bandwidth = "0";
+        std::string priority = "10";
         rtps::FlowControllerSchedulerPolicy scheduler = rtps::FlowControllerSchedulerPolicy::FIFO;
     };
 
@@ -87,6 +89,15 @@ public:
         std::cout << "      --scheduler <string>        Scheduler policy [FIFO, ROUND-ROBIN,"   << std::endl;
         std::cout << "                                  HIGH-PRIORITY, PRIORITY-RESERVATION]"   << std::endl;
         std::cout << "                                  (Default: FIFO)"                        << std::endl;
+        std::cout << "      --bandwidth <string>        Bandwidth that the DataWriter can"      << std::endl;
+        std::cout << "                                  request for PRIORITY_WITH_RESERVATION"  << std::endl;
+        std::cout << "                                  express as a percentage of the total "  << std::endl;
+        std::cout << "                                  flow controller limit: [0; 100]"        << std::endl;
+        std::cout << "                                  (Default: 0)"                           << std::endl;
+        std::cout << "      --priority <string>         Priority for HIGH_PRIORITY and"         << std::endl;
+        std::cout << "                                  PRIORITY_WITH_RESERVATION schedulers"   << std::endl;
+        std::cout << "                                  [-10 (highest) ; 10 (lowest)]"          << std::endl;
+        std::cout << "                                  (Default: 10)"                          << std::endl;
         std::exit(return_code);
     }
 
@@ -288,6 +299,86 @@ public:
                     else
                     {
                         EPROSIMA_LOG_ERROR(CLI_PARSER, "scheduler argument is only valid for publisher entity");
+                        print_help(EXIT_FAILURE);
+                    }
+                }
+                else
+                {
+                    EPROSIMA_LOG_ERROR(CLI_PARSER, "missing argument for " + arg) ;
+                    print_help(EXIT_FAILURE);
+                }
+            }
+            else if (arg == "--bandwidth")
+            {
+                if (++i < argc)
+                {
+                    try
+                    {
+                        int32_t input = std::stoi(argv[i]);
+                        if (input < 0 || input > 100)
+                        {
+                            throw std::out_of_range("bandwidth argument " + std::string(
+                                            argv[i]) + " out of range.");
+                        }
+                        else if (config.entity == CLIParser::EntityKind::PUBLISHER)
+                        {
+                            config.bandwidth = argv[i];
+                        }
+                        else
+                        {
+                            EPROSIMA_LOG_ERROR(CLI_PARSER, "bandwidth argument is only valid for publisher entity");
+                            print_help(EXIT_FAILURE);
+                        }
+                    }
+                    catch (const std::invalid_argument& e)
+                    {
+                        EPROSIMA_LOG_ERROR(CLI_PARSER, "invalid bandwidth argument " + std::string(
+                                    argv[i]) + ": " + std::string(e.what()));
+                        print_help(EXIT_FAILURE);
+                    }
+                    catch (const std::out_of_range& e)
+                    {
+                        EPROSIMA_LOG_ERROR(CLI_PARSER, std::string(e.what()));
+                        print_help(EXIT_FAILURE);
+                    }
+                }
+                else
+                {
+                    EPROSIMA_LOG_ERROR(CLI_PARSER, "missing argument for " + arg) ;
+                    print_help(EXIT_FAILURE);
+                }
+            }
+            else if (arg == "--priority")
+            {
+                if (++i < argc)
+                {
+                    try
+                    {
+                        int32_t input = std::stoi(argv[i]);
+                        if (input < -10 || input > 10)
+                        {
+                            throw std::out_of_range("priority argument " + std::string(
+                                            argv[i]) + " out of range.");
+                        }
+                        else if (config.entity == CLIParser::EntityKind::PUBLISHER)
+                        {
+                            config.priority = argv[i];
+                        }
+                        else
+                        {
+                            EPROSIMA_LOG_ERROR(CLI_PARSER, "priority argument is only valid for publisher entity");
+                            print_help(EXIT_FAILURE);
+                        }
+                    }
+                    catch (const std::invalid_argument& e)
+                    {
+                        EPROSIMA_LOG_ERROR(CLI_PARSER, "invalid priority argument " + std::string(
+                                    argv[i]) + ": " + std::string(e.what()));
+                        print_help(EXIT_FAILURE);
+                    }
+                    catch (const std::out_of_range& e)
+                    {
+                        EPROSIMA_LOG_ERROR(CLI_PARSER, std::string(e.what()));
                         print_help(EXIT_FAILURE);
                     }
                 }
