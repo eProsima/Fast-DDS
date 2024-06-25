@@ -48,7 +48,7 @@ public:
     {
         CLIParser::EntityKind entity = CLIParser::EntityKind::UNDEFINED;
         uint16_t samples = 0;
-        uint64_t period = 1000;
+        uint64_t period = 500;
         int32_t max_bytes_per_period = 300000;
         rtps::FlowControllerSchedulerPolicy scheduler = rtps::FlowControllerSchedulerPolicy::FIFO;
     };
@@ -72,6 +72,9 @@ public:
         std::cout << "Common options:"                                                          << std::endl;
         std::cout << ""                                                                         << std::endl;
         std::cout << "  -h, --help                      Print this help message"                << std::endl;
+        std::cout << "  -s <num>, --samples <num>       Number of samples to send or receive"   << std::endl;
+        std::cout << "                                  [0 <= <num> <= 65535]"                  << std::endl;
+        std::cout << "                                  (Default: 0 [unlimited])"               << std::endl;
         std::cout << ""                                                                         << std::endl;
         std::cout << "Slow Publisher options:"                                                  << std::endl;
         std::cout << "      --max-bytes <num>           Maximum number of bytes to be sent"     << std::endl;
@@ -130,6 +133,42 @@ public:
             if (arg == "-h" || arg == "--help")
             {
                 print_help(EXIT_SUCCESS);
+            }
+            else if (arg == "-s" || arg == "--samples")
+            {
+                if (++i < argc)
+                {
+                    try
+                    {
+                        int input = std::stoi(argv[i]);
+                        if (input < std::numeric_limits<uint16_t>::min() ||
+                                input > std::numeric_limits<uint16_t>::max())
+                        {
+                            throw std::out_of_range("sample argument " + std::string(
+                                              argv[i]) + " out of range [0, 65535].");
+                        }
+                        else
+                        {
+                            config.samples = static_cast<uint16_t>(input);
+                        }
+                    }
+                    catch (const std::invalid_argument& e)
+                    {
+                        EPROSIMA_LOG_ERROR(CLI_PARSER, "invalid sample argument " + std::string(
+                                    argv[i]) + ": " + std::string(e.what()));
+                        print_help(EXIT_FAILURE);
+                    }
+                    catch (const std::out_of_range& e)
+                    {
+                        EPROSIMA_LOG_ERROR(CLI_PARSER, std::string(e.what()));
+                        print_help(EXIT_FAILURE);
+                    }
+                }
+                else
+                {
+                    EPROSIMA_LOG_ERROR(CLI_PARSER, "parsing samples argument");
+                    print_help(EXIT_FAILURE);
+                }
             }
             else if (arg == "--max-bytes")
             {

@@ -43,6 +43,8 @@ SubscriberApp::SubscriberApp(
     , topic_(nullptr)
     , reader_(nullptr)
     , type_(new FlowControlPubSubType())
+    , samples_(config.samples)
+    , stop_(false)
 {
     // Create Participant
     DomainParticipantQos pqos = PARTICIPANT_QOS_DEFAULT;
@@ -116,9 +118,9 @@ void SubscriberApp::on_data_available(
 {
     SampleInfo info;
     FlowControl st;
-    if (reader->take_next_sample(&st, &info) == RETCODE_OK)
+    while ((!is_stopped()) && (RETCODE_OK == reader->take_next_sample(&st, &info)))
     {
-        if (info.valid_data)
+        if ((info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data)
         {
             static unsigned int fastMessages = 0;
             static unsigned int slowMessages = 0;
@@ -126,12 +128,16 @@ void SubscriberApp::on_data_available(
             if (st.wasFast())
             {
                 fastMessages++;
-                std::cout << "Sample received from fast writer, count=" << fastMessages << std::endl;
+                std::cout << "Sample RECEIVED from fast writer, count=" << fastMessages << std::endl;
             }
-            else
+            else 
             {
                 slowMessages++;
-                std::cout << "Sample received from slow writer, count=" << slowMessages << std::endl;
+                std::cout << "Sample RECEIVED from slow writer, count=" << slowMessages << std::endl;
+            }
+            if ((samples_ > 0) && (fastMessages >= samples_) && (slowMessages >= samples_))
+            {
+                stop();
             }
         }
     }
