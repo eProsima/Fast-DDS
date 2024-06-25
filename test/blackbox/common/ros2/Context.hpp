@@ -86,9 +86,23 @@ public:
         {
             TypeSupport type_support(new RosDiscoveryInfoPubSubType());
             std::shared_ptr<TopicHolder> topic_holder;
-            create_topic(topic_holder, "ros_discovery_info", "ROSDiscoveryInfo", type_support);
-            create_publication(discovery_info_pub_, topic_holder, DATAWRITER_QOS_DEFAULT, nullptr, false);
-            create_subscription(discovery_info_sub_, topic_holder, DATAREADER_QOS_DEFAULT, nullptr, false);
+            create_topic(topic_holder, "ros_discovery_info", "rmw_dds_common::msg::dds_::ParticipantEntitiesInfo_", type_support);
+            {
+                DataWriterQos qos = publisher_->get_default_datawriter_qos();
+                qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+                qos.durability().kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+                qos.history().kind = KEEP_LAST_HISTORY_QOS;
+                qos.history().depth = 1;
+                create_publication(discovery_info_pub_, topic_holder, DATAWRITER_QOS_DEFAULT, nullptr, false);
+            }
+            {
+                DataReaderQos qos = subscriber_->get_default_datareader_qos();
+                qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+                qos.durability().kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+                qos.history().kind = KEEP_LAST_HISTORY_QOS;
+                qos.history().depth = 100;
+                create_subscription(discovery_info_sub_, topic_holder, DATAREADER_QOS_DEFAULT, nullptr, false);
+            }
         }
     }
 
