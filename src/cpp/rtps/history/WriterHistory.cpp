@@ -87,10 +87,9 @@ WriterHistory::WriterHistory(
         const HistoryAttributes& att,
         const std::shared_ptr<IPayloadPool>& payload_pool)
     : History(att)
+    , change_pool_(std::make_shared<CacheChangePool>(PoolConfig::from_history_attributes(att)))
     , payload_pool_(payload_pool)
 {
-    PoolConfig cfg = PoolConfig::from_history_attributes(att);
-    change_pool_ = std::make_shared<CacheChangePool>(cfg);
 }
 
 WriterHistory::WriterHistory(

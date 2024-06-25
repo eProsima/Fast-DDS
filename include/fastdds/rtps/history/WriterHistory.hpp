@@ -58,15 +58,30 @@ class WriterHistory : public rtps::History
 public:
 
     /**
-     * Constructor of the WriterHistory.
+     * @brief Construct a WriterHistory.
+     *
+     * @param att  Attributes configuring the WriterHistory.
      */
     FASTDDS_EXPORTED_API WriterHistory(
             const HistoryAttributes& att);
 
+    /**
+     * @brief Construct a WriterHistory with a custom payload pool.
+     *
+     * @param att           Attributes configuring the WriterHistory.
+     * @param payload_pool  Pool of payloads to be used by the WriterHistory.
+     */
     FASTDDS_EXPORTED_API WriterHistory(
             const HistoryAttributes& att,
             const std::shared_ptr<IPayloadPool>& payload_pool);
 
+    /**
+     * @brief Construct a WriterHistory with custom payload and change pools.
+     *
+     * @param att           Attributes configuring the WriterHistory.
+     * @param payload_pool  Pool of payloads to be used by the WriterHistory.
+     * @param change_pool   Pool of changes to be used by the WriterHistory.
+     */
     FASTDDS_EXPORTED_API WriterHistory(
             const HistoryAttributes& att,
             const std::shared_ptr<IPayloadPool>& payload_pool,
