@@ -58,6 +58,6 @@
 - [ ] The PR has a milestone assigned.
 - [ ] The title and description correctly express the PR's purpose.
 - [ ] Check contributor checklist is correct.
-- [ ] If critical bug fix, backport to the 2.6.x branch has been opened.
+- [ ] If this is a critical bug fix, backports to the critical-only supported branches has been requested.
 - [ ] Check CI results: changes do not issue any warning.
 - [ ] Check CI results: failing tests are unrelated with the changes.

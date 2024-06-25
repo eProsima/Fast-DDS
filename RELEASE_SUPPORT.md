@@ -14,18 +14,18 @@ Before the minor release end of life (EOL) date, a final patch release including
 Long Term Supported (LTS) versions may have an extended supported period for only critical issues and security fixes, where no other ABI compatible neither bug fixes will be backported.
 This period applies since the end of standard support date to the end of life (EOL) date.
 
-The table below outlines the *eProsima Fast DDS* currently supported versions and their support cycles:
+## *eProsima Fast DDS* currently supported versions and their support cycles
 
-|Version branch|Release Date|End of Standard Support Date|EOL Date|
-|--------------|------------|----------------------------|--------|
-|v2.14.x (LTS)|March 2024|March 2025 [^*]|March 2025 [^*]|
-|v2.13.x|December 2023|July 2024|July 2024|
-|v2.10.x (LTS)|March 2023|May 2025 [^*]|May 2025|
-|v2.6.x (LTS)|March 2022|July 2024|May 2025|
+|Version|Version branch|Latest Release|Release Date|End of Standard Support Date|EOL Date|
+|-------|--------------|--------------|------------|----------------------------|--------|
+|2.14|v2.14.x (LTS)|[v2.14.2](https://fast-dds.docs.eprosima.com/en/v2.14.2/notes/notes.html)|March 2024|March 2025 [^*]|March 2025 [^*]|
+|2.13|v2.13.x|[v2.13.5](https://fast-dds.docs.eprosima.com/en/v2.13.5/notes/notes.html)|December 2023|July 2024|July 2024|
+|2.10|v2.10.x (LTS)|[v2.10.4](https://fast-dds.docs.eprosima.com/en/v2.10.4/notes/notes.html)|March 2023|October 2024 [^*]|May 2025|
+|2.6|v2.6.x (LTS)|[v2.6.8](https://fast-dds.docs.eprosima.com/en/v2.6.8/notes/notes.html)|March 2022|July 2024|May 2025[^*]|
 
 [^*]: Support may be extended.
 
-Moreover, the following table records the lifecycle of previously supported Fast DDS versions.
+## *eProsima Fast DDS* previously supported versions.
 
 |Version branch|Release Date|EOL Date|
 |--------------|------------|--------|
