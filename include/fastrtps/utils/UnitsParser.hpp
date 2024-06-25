@@ -20,6 +20,7 @@
 #define _FASTDDS_UTILS_UNITS_PARSER_HPP_
 
 #include <string>
+#include <cstdint>
 
 namespace eprosima {
 namespace fastdds {
