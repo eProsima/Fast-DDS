@@ -47,6 +47,9 @@
 #include "type_objects/enum_struct/enum_struct.hpp"
 #include "type_objects/enum_struct/enum_structPubSubTypes.h"
 
+#include "type_objects/extensibility_struct/extensibility_struct.hpp"
+#include "type_objects/extensibility_struct/extensibility_structPubSubTypes.h"
+
 #include "type_objects/float_bounded_sequence/float_bounded_sequence.hpp"
 #include "type_objects/float_bounded_sequence/float_bounded_sequencePubSubTypes.h"
 
@@ -78,6 +81,7 @@ const std::string BITSET_STRUCT{"bitset_struct"};
 const std::string CHAR_SEQUENCE{"char_sequence"};
 const std::string COMPLEX_NESTED_ARRAYS{"complex_nested_arrays"};
 const std::string ENUM_STRUCT{"enum_struct"};
+const std::string EXTENSIBILITY_STRUCT{"extensibility_struct"};
 const std::string FLOAT_BOUNDED_SEQUENCE{"float_bounded_sequence"};
 const std::string HELLO_WORLD{"hello_world"};
 const std::string KEY_STRUCT{"key_struct"};
@@ -97,6 +101,7 @@ const std::vector<std::string> supported_types = {
     SupportedTypes::CHAR_SEQUENCE,
     SupportedTypes::COMPLEX_NESTED_ARRAYS,
     SupportedTypes::ENUM_STRUCT,
+    SupportedTypes::EXTENSIBILITY_STRUCT,
     SupportedTypes::FLOAT_BOUNDED_SEQUENCE,
     SupportedTypes::HELLO_WORLD,
     SupportedTypes::KEY_STRUCT,
@@ -135,6 +140,9 @@ void register_dynamic_types()
 
     TypeSupport type_enum_struct(new enum_structPubSubType());
     type_enum_struct->register_type_object_representation();
+
+    TypeSupport type_extensibility_struct(new extensibility_structPubSubType());
+    type_extensibility_struct->register_type_object_representation();
 
     TypeSupport type_float_bounded_sequence(new float_bounded_sequencePubSubType());
     type_float_bounded_sequence->register_type_object_representation();

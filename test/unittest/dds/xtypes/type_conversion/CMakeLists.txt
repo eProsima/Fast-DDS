@@ -49,6 +49,10 @@ configure_file(
     ${CMAKE_CURRENT_BINARY_DIR}/types/idls/enum_struct.idl
     COPYONLY)
 configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/extensibility_struct.idl
+    ${CMAKE_CURRENT_BINARY_DIR}/types/idls/extensibility_struct.idl
+    COPYONLY)
+configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/float_bounded_sequence.idl
     ${CMAKE_CURRENT_BINARY_DIR}/types/idls/float_bounded_sequence.idl
     COPYONLY)

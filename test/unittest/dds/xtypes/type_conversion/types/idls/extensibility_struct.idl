@@ -1,0 +1,23 @@
+@extensibility(FINAL)
+struct FinalStruct
+{
+    octet color;
+};
+
+@extensibility(MUTABLE)
+struct MutableStruct
+{
+    octet color;
+};
+
+struct AppendableStruct
+{
+    octet color;
+};
+
+struct extensibility_struct
+{
+    FinalStruct red;
+    MutableStruct blue;
+    AppendableStruct green;
+};
