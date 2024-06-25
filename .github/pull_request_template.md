@@ -18,10 +18,9 @@
 -->
 
 <!--
-    In case of bug fixes, please provide the list of supported branches where this fix should be also merged.
-    Please uncomment following line, adjusting the corresponding target branches for the backport.
+    In case of critical bug fix, please uncomment following line, adjusting the corresponding LTS target branches for the backport.
 -->
-<!-- @Mergifyio backport 2.12.x 2.11.x 2.10.x 2.6.x -->
+<!-- @Mergifyio backport 2.6.x -->
 
 <!-- If an issue is already opened, please uncomment next line with the corresponding issue number. -->
 <!-- Fixes #(issue) -->
@@ -54,5 +53,6 @@
 - [ ] The PR has a milestone assigned.
 - [ ] The title and description correctly express the PR's purpose.
 - [ ] Check contributor checklist is correct.
+- [ ] If this is a critical bug fix, backports to the critical-only supported branches have been requested.
 - [ ] Check CI results: changes do not issue any warning.
 - [ ] Check CI results: failing tests are unrelated with the changes.
