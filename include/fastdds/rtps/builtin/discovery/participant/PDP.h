@@ -550,14 +550,6 @@ private:
      */
     void set_initial_announcement_interval();
 
-<<<<<<< HEAD
-=======
-    /**
-     * Set to a Participant Proxy those properties from this participant that must be sent.
-     */
-    void set_external_participant_properties_(
-            ParticipantProxyData* participant_data);
-
     /**
      * Performs all the necessary actions after removing a ParticipantProxyData from the
      * participant_proxies_ collection.
@@ -573,7 +565,6 @@ private:
             ParticipantDiscoveryInfo::DISCOVERY_STATUS reason,
             RTPSParticipantListener* listener);
 
->>>>>>> 689dd3f15 (Automatically unmatch remote participants on participant deletion (#4849))
 };
 
 

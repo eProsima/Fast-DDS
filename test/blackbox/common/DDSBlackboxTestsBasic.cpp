@@ -38,16 +38,7 @@
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
 #include "BlackboxTests.hpp"
-<<<<<<< HEAD
-=======
 #include "mock/BlackboxMockConsumer.h"
-#include "../api/dds-pim/CustomPayloadPool.hpp"
-#include "../api/dds-pim/PubSubReader.hpp"
-#include "../api/dds-pim/PubSubWriter.hpp"
-#include "../api/dds-pim/PubSubWriterReader.hpp"
-#include "../types/FixedSized.h"
-#include "../types/FixedSizedPubSubTypes.h"
->>>>>>> 689dd3f15 (Automatically unmatch remote participants on participant deletion (#4849))
 #include "../types/HelloWorldPubSubTypes.h"
 
 namespace eprosima {

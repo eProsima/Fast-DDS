@@ -465,7 +465,7 @@ void PDP::disable()
     // Extract all the participant proxies excluding first one (ourselves)
     std::vector<ParticipantProxyData*> participants;
     {
-        std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
+        std::lock_guard<std::recursive_mutex> guardPDP(*mp_mutex);
         participants.insert(participants.end(), participant_proxies_.begin() + 1, participant_proxies_.end());
         participant_proxies_.erase(participant_proxies_.begin() + 1, participant_proxies_.end());
     }
@@ -700,13 +700,8 @@ bool PDP::lookupWriterProxyData(
 bool PDP::removeReaderProxyData(
         const GUID_t& reader_guid)
 {
-<<<<<<< HEAD
     logInfo(RTPS_PDP, "Removing reader proxy data " << reader_guid);
-    std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
-=======
-    EPROSIMA_LOG_INFO(RTPS_PDP, "Removing reader proxy data " << reader_guid);
     std::lock_guard<std::recursive_mutex> guardPDP(*mp_mutex);
->>>>>>> 689dd3f15 (Automatically unmatch remote participants on participant deletion (#4849))
 
     for (ParticipantProxyData* pit : participant_proxies_)
     {
@@ -742,13 +737,8 @@ bool PDP::removeReaderProxyData(
 bool PDP::removeWriterProxyData(
         const GUID_t& writer_guid)
 {
-<<<<<<< HEAD
     logInfo(RTPS_PDP, "Removing writer proxy data " << writer_guid);
-    std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
-=======
-    EPROSIMA_LOG_INFO(RTPS_PDP, "Removing writer proxy data " << writer_guid);
     std::lock_guard<std::recursive_mutex> guardPDP(*mp_mutex);
->>>>>>> 689dd3f15 (Automatically unmatch remote participants on participant deletion (#4849))
 
     for (ParticipantProxyData* pit : participant_proxies_)
     {
@@ -1022,133 +1012,6 @@ bool PDP::pairing_remote_reader_with_local_writer_after_security(
 
 #endif // HAVE_SECURITY
 
-<<<<<<< HEAD
-=======
-#ifdef FASTDDS_STATISTICS
-bool PDP::get_all_local_proxies(
-        std::vector<GUID_t>& guids)
-{
-    std::lock_guard<std::recursive_mutex> guardPDP(*mp_mutex);
-    ParticipantProxyData* local_participant = getLocalParticipantProxyData();
-    guids.reserve(local_participant->m_writers->size() +
-            local_participant->m_readers->size() +
-            1);
-
-    //! Add the Participant entity to the local entities
-    guids.push_back(local_participant->m_guid);
-
-    // Add all the writers and readers belonging to the participant
-    for (auto& writer : *(local_participant->m_writers))
-    {
-        guids.push_back(writer.second->guid());
-    }
-
-    for (auto& reader : *(local_participant->m_readers))
-    {
-        guids.push_back(reader.second->guid());
-    }
-
-    return true;
-}
-
-bool PDP::get_serialized_proxy(
-        const GUID_t& guid,
-        CDRMessage_t* msg)
-{
-    bool ret = false;
-    bool found = false;
-
-    std::lock_guard<std::recursive_mutex> guardPDP(*mp_mutex);
-
-    if (guid.entityId == c_EntityId_RTPSParticipant)
-    {
-        for (auto part_proxy = participant_proxies_.begin();
-                part_proxy != participant_proxies_.end(); ++part_proxy)
-        {
-            if ((*part_proxy)->m_guid == guid)
-            {
-                msg->msg_endian = LITTLEEND;
-                msg->max_size = msg->reserved_size = (*part_proxy)->get_serialized_size(true);
-                ret = (*part_proxy)->writeToCDRMessage(msg, true);
-                found = true;
-                break;
-            }
-        }
-
-        if (!found)
-        {
-            EPROSIMA_LOG_ERROR(PDP, "Unknown participant proxy requested to serialize: " << guid);
-        }
-    }
-    else if (guid.entityId.is_reader())
-    {
-        for (auto part_proxy = participant_proxies_.begin();
-                part_proxy != participant_proxies_.end(); ++part_proxy)
-        {
-            if ((*part_proxy)->m_guid.guidPrefix == guid.guidPrefix)
-            {
-                for (auto& reader : *((*part_proxy)->m_readers))
-                {
-                    if (reader.second->guid() == guid)
-                    {
-                        msg->max_size = msg->reserved_size = reader.second->get_serialized_size(true);
-                        ret = reader.second->writeToCDRMessage(msg, true);
-                        found = true;
-                        break;
-                    }
-                }
-                break;
-            }
-        }
-
-        if (!found)
-        {
-            EPROSIMA_LOG_ERROR(PDP, "Unknown reader proxy requested to serialize: " << guid);
-        }
-    }
-    else if (guid.entityId.is_writer())
-    {
-        for (auto part_proxy = participant_proxies_.begin();
-                part_proxy != participant_proxies_.end(); ++part_proxy)
-        {
-            if ((*part_proxy)->m_guid.guidPrefix == guid.guidPrefix)
-            {
-                for (auto& writer : *((*part_proxy)->m_writers))
-                {
-                    if (writer.second->guid() == guid)
-                    {
-                        msg->max_size = msg->reserved_size = writer.second->get_serialized_size(true);
-                        ret = writer.second->writeToCDRMessage(msg, true);
-                        found = true;
-                        break;
-                    }
-                }
-                break;
-            }
-        }
-
-        if (!found)
-        {
-            EPROSIMA_LOG_ERROR(PDP, "Unknown writer proxy requested to serialize: " << guid);
-        }
-    }
-    else
-    {
-        EPROSIMA_LOG_ERROR(PDP, "Unknown entitiy kind requested to serialize: " << guid);
-    }
-
-    return ret;
-}
-
-void PDP::set_proxy_observer(
-        const fastdds::statistics::rtps::IProxyObserver* proxy_observer)
-{
-    proxy_observer_.store(proxy_observer);
-}
-
-#endif // FASTDDS_STATISTICS
-
->>>>>>> 689dd3f15 (Automatically unmatch remote participants on participant deletion (#4849))
 bool PDP::remove_remote_participant(
         const GUID_t& partGUID,
         ParticipantDiscoveryInfo::DISCOVERY_STATUS reason)
@@ -1251,16 +1114,6 @@ void PDP::actions_on_remote_participant_removed(
 
     builtin_endpoints_->remove_from_pdp_reader_history(pdata->m_key);
 
-<<<<<<< HEAD
-        auto listener =  mp_RTPSParticipant->getListener();
-        if (listener != nullptr)
-        {
-            std::lock_guard<std::mutex> lock(callback_mtx_);
-            ParticipantDiscoveryInfo info(*pdata);
-            info.status = reason;
-            listener->onParticipantDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
-        }
-=======
     if (listener)
     {
         std::lock_guard<std::mutex> lock(callback_mtx_);
@@ -1270,7 +1123,6 @@ void PDP::actions_on_remote_participant_removed(
         listener->onParticipantDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(
                     info), should_be_ignored);
     }
->>>>>>> 689dd3f15 (Automatically unmatch remote participants on participant deletion (#4849))
 
     {
         std::lock_guard<std::recursive_mutex> guardPDP(*mp_mutex);
