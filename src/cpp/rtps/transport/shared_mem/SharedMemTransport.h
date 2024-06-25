@@ -88,6 +88,18 @@ public:
             const Locator&) override;
 
     /**
+     * Opens a socket on the locators provided by the given locator_selector_entry.
+     *
+     * @param sender_resource_list Participant's send resource list.
+     * @param locator_selector_entry Locator selector entry with the remote entity locators.
+     *
+     * @return true if the socket was correctly opened or if finding an already opened one.
+     */
+    bool OpenOutputChannels(
+            SendResourceList& sender_resource_list,
+            const fastrtps::rtps::LocatorSelectorEntry& locator_selector_entry) override;
+
+    /**
      * Converts a given remote locator (that is, a locator referring to a remote
      * destination) to the main local locator whose channel can write to that
      * destination. In this case it will return a 0.0.0.0 address on that port.
