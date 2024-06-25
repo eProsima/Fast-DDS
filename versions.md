@@ -61,6 +61,7 @@ Forthcoming
   * Discovery server example.
   * Request-reply example to showcase RPC paradigms over Fast DDS.
   * Static EDP discovery example to avoid EDP meta-traffic.
+  * Flow Controller example with `FlowControllersQos` and property settings.
 * Removed `TypeConsistencyQos` from DataReader, and included `TypeConsistencyEnforcementQosPolicy` and `DataRepresentationQosPolicy`
 * Added new `flow_controller_descriptor_list` XML configuration, remove `ThroughtputController`.
 * Migrate `#define`s within `BuiltinEndpoints.hpp` to namespaced `constexpr` variables.
