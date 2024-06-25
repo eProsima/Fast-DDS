@@ -22,7 +22,8 @@ The particularity of this example resides in the use of X-Types, which allows th
 In this case:
 
 1. The publisher application creates a type at runtime using the Fast DDS Dynamic Types API.
-The types can be defined through C++ API or [XML file](https://fast-dds.docs.eprosima.com/en/latest/fastdds/xml_configuration/dynamic_types.html).
+The types can be configured through C++ API or [XML file](https://fast-dds.docs.eprosima.com/en/latest/fastdds/xml_configuration/dynamic_types.html).
+The flag `--xml-types` allows to use the types defined in the XML file. The profile must be uploaded setting the environment variable ``FASTDDS_DEFAULT_PROFILES_FILE`` to the XML file path, see [XML profile playground](#xml-profile-playground).
 2. The subscriber application discovers the type defined by the publisher and uses it to create a data reader, introspect the type, and print the received data.
 
 It is important to note that this example is fully type compatible with the [Hello world](../hello_world/README.md) example, meaning that the publisher and subscriber applications can be run interchangeably with the *hello world* example applications.
