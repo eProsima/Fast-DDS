@@ -146,7 +146,7 @@ public:
         if (!topic_holder)
         {
             EXPECT_EQ(RETCODE_OK, type_support.register_type(participant_, type_name));
-            auto topic = participant_->create_topic(topic_name, type_name, TOPIC_QOS_DEFAULT);
+            auto topic = participant_->create_topic("testing/" + topic_name, type_name, TOPIC_QOS_DEFAULT);
             ASSERT_NE(nullptr, topic);
             topic_holder = std::make_shared<TopicHolder>(participant_, topic);
             topics_[topic_name] = topic_holder;
