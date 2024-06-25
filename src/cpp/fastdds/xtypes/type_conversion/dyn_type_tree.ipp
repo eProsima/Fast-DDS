@@ -839,8 +839,43 @@ ReturnCode_t struct_to_str(
         return RETCODE_BAD_PARAMETER;
     }
 
+    ReturnCode_t ret = RETCODE_OK;
+
+    // Annotation with the extensibility kind
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    ret = node.info.dynamic_type->get_descriptor(type_descriptor);
+
+    if (ret != RETCODE_OK)
+    {
+        return ret;
+    }
+
+    switch (type_descriptor->extensibility_kind())
+    {
+        case ExtensibilityKind::FINAL:
+        {
+            struct_str = "@extensibility(FINAL)\n";
+            break;
+        }
+        case ExtensibilityKind::MUTABLE:
+        {
+            struct_str = "@extensibility(MUTABLE)\n";
+            break;
+        }
+        case ExtensibilityKind::APPENDABLE:
+        {
+            // Appendable is the default extensibility kind
+            break;
+        }
+        default:
+        {
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Extensibility kind not supported.");
+            return RETCODE_BAD_PARAMETER;
+        }
+    }
+
     // Add types name
-    struct_str = "struct " + node.info.type_kind_name + TYPE_OPENING;
+    struct_str += "struct " + node.info.type_kind_name + TYPE_OPENING;
 
     // Add struct attributes
     for (auto const& child : node.branches())
@@ -854,7 +889,7 @@ ReturnCode_t struct_to_str(
     // Close definition
     struct_str += TYPE_CLOSURE;
 
-    return RETCODE_OK;
+    return ret;
 }
 
 ReturnCode_t union_to_str(
