@@ -1308,9 +1308,9 @@ public:
     }
 
     eProsima_user_DllExport inline bool is_plain(
-        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
     {
-        if(data_representation == eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)
+        if (data_representation == eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)
         {
             return is_plain_xcdrv2_impl();
         }
@@ -1332,7 +1332,7 @@ public:
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
-    MD5 m_md5;
+    eprosima::fastdds::MD5 m_md5;
     unsigned char* m_keyBuffer;
 
 private:

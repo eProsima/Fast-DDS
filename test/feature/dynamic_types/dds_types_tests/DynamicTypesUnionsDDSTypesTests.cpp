@@ -2740,6 +2740,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionSeveralFieldsWithDefault)
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
+// This union is custom and serves to test a specific case used in internal type of DDS X-Types (TypeIdentifier).
+// No supported by Dynamic Language Binding.
+// TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_DefaultAnnotation)
+
 } // dds
 } // fastdds
 } // eprosima

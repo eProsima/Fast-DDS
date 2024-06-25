@@ -149,7 +149,7 @@ public:
     eProsima_user_DllExport inline bool is_plain(
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
     {
-        if(data_representation == eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)
+        if (data_representation == eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)
         {
             return is_plain_xcdrv2_impl();
         }
@@ -295,7 +295,7 @@ public:
     eProsima_user_DllExport inline bool is_plain(
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
     {
-        if(data_representation == eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)
+        if (data_representation == eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)
         {
             return is_plain_xcdrv2_impl();
         }
@@ -441,7 +441,7 @@ public:
     eProsima_user_DllExport inline bool is_plain(
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
     {
-        if(data_representation == eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)
+        if (data_representation == eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)
         {
             return is_plain_xcdrv2_impl();
         }
@@ -587,7 +587,7 @@ public:
     eProsima_user_DllExport inline bool is_plain(
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
     {
-        if(data_representation == eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)
+        if (data_representation == eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)
         {
             return is_plain_xcdrv2_impl();
         }
@@ -831,7 +831,7 @@ namespace rpc
         eProsima_user_DllExport inline bool is_plain(
                 eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
         {
-            if(data_representation == eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)
+            if (data_representation == eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)
             {
                 return is_plain_xcdrv2_impl();
             }
