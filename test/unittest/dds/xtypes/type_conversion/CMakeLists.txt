@@ -45,6 +45,10 @@ configure_file(
     ${CMAKE_CURRENT_BINARY_DIR}/types/idls/complex_nested_arrays.idl
     COPYONLY)
 configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/inheritance_struct.idl
+    ${CMAKE_CURRENT_BINARY_DIR}/types/idls/inheritance_struct.idl
+    COPYONLY)
+configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/enum_struct.idl
     ${CMAKE_CURRENT_BINARY_DIR}/types/idls/enum_struct.idl
     COPYONLY)

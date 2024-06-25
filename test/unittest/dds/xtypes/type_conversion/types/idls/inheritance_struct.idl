@@ -1,0 +1,29 @@
+struct GreatgrandfatherStruct
+{
+    long greatgrandfather;
+};
+
+struct GrandfatherStruct : GreatgrandfatherStruct
+{
+    long grandfather;
+};
+
+struct FatherStruct : GrandfatherStruct
+{
+    long father;
+};
+
+struct SonStruct : FatherStruct
+{
+    long son;
+};
+
+struct GrandsonStruct : SonStruct
+{
+    long grandson;
+};
+
+struct inheritance_struct : GrandsonStruct
+{
+    long value;
+};

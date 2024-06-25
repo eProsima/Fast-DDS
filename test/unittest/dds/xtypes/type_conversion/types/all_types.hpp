@@ -56,6 +56,9 @@
 #include "type_objects/hello_world/hello_world.hpp"
 #include "type_objects/hello_world/hello_worldPubSubTypes.h"
 
+#include "type_objects/inheritance_struct/inheritance_struct.hpp"
+#include "type_objects/inheritance_struct/inheritance_structPubSubTypes.h"
+
 #include "type_objects/key_struct/key_struct.hpp"
 #include "type_objects/key_struct/key_structPubSubTypes.h"
 
@@ -87,6 +90,7 @@ const std::string ENUM_STRUCT{"enum_struct"};
 const std::string EXTENSIBILITY_STRUCT{"extensibility_struct"};
 const std::string FLOAT_BOUNDED_SEQUENCE{"float_bounded_sequence"};
 const std::string HELLO_WORLD{"hello_world"};
+const std::string INHERITANCE_STRUCT{"inheritance_struct"};
 const std::string KEY_STRUCT{"key_struct"};
 const std::string MAP_STRUCT{"map_struct"};
 const std::string NESTED_STRUCT{"nested_struct"};
@@ -108,6 +112,7 @@ const std::vector<std::string> supported_types = {
     SupportedTypes::EXTENSIBILITY_STRUCT,
     SupportedTypes::FLOAT_BOUNDED_SEQUENCE,
     SupportedTypes::HELLO_WORLD,
+    SupportedTypes::INHERITANCE_STRUCT,
     SupportedTypes::KEY_STRUCT,
     SupportedTypes::MAP_STRUCT,
     SupportedTypes::NESTED_STRUCT,
@@ -154,6 +159,9 @@ void register_dynamic_types()
 
     TypeSupport type_hello_world(new hello_worldPubSubType());
     type_hello_world->register_type_object_representation();
+
+    TypeSupport type_inheritance_struct(new inheritance_structPubSubType());
+    type_inheritance_struct->register_type_object_representation();
 
     TypeSupport type_key_struct(new key_structPubSubType());
     type_key_struct->register_type_object_representation();
