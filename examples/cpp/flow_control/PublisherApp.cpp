@@ -52,8 +52,9 @@ PublisherApp::PublisherApp(
     // This controller allows 300kb per second.
     auto slow_flow_controller_descriptor = std::make_shared<eprosima::fastdds::rtps::FlowControllerDescriptor>();
     slow_flow_controller_descriptor->name = "slow_flow_controller_descriptor";
-    slow_flow_controller_descriptor->max_bytes_per_period = 300000;
-    slow_flow_controller_descriptor->period_ms = static_cast<uint64_t>(1000);
+    slow_flow_controller_descriptor->max_bytes_per_period = config.max_bytes_per_period;
+    slow_flow_controller_descriptor->period_ms = config.period;
+    slow_flow_controller_descriptor->scheduler = config.scheduler;
     pqos.flow_controllers().push_back(slow_flow_controller_descriptor);
 
     participant_ = DomainParticipantFactory::get_instance()->create_participant(0, pqos);

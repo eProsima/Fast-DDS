@@ -17,6 +17,7 @@
 #include <iostream>
 
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/flowcontrol/FlowControllerSchedulerPolicy.hpp>
 
 #ifndef _FASTDDS_FLOW_CONTROL_CLI_PARSER_HPP_
 #define _FASTDDS_FLOW_CONTROL_CLI_PARSER_HPP_
@@ -47,6 +48,9 @@ public:
     {
         CLIParser::EntityKind entity = CLIParser::EntityKind::UNDEFINED;
         uint16_t samples = 0;
+        uint64_t period = 1000;
+        int32_t max_bytes_per_period = 300000;
+        rtps::FlowControllerSchedulerPolicy scheduler = rtps::FlowControllerSchedulerPolicy::FIFO;
     };
 
     /**
@@ -59,14 +63,27 @@ public:
     static void print_help(
             uint8_t return_code)
     {
-        std::cout << "Usage: flow_control <entity> [options]"                                    << std::endl;
+        std::cout << "Usage: flow_control <entity> [options]"                                   << std::endl;
         std::cout << ""                                                                         << std::endl;
         std::cout << "Entities:"                                                                << std::endl;
         std::cout << "  publisher                       Run a publisher entity"                 << std::endl;
         std::cout << "  subscriber                      Run a subscriber entity"                << std::endl;
         std::cout << ""                                                                         << std::endl;
         std::cout << "Common options:"                                                          << std::endl;
+        std::cout << ""                                                                         << std::endl;
         std::cout << "  -h, --help                      Print this help message"                << std::endl;
+        std::cout << ""                                                                         << std::endl;
+        std::cout << "Slow Publisher options:"                                                  << std::endl;
+        std::cout << "      --max-bytes <num>           Maximum number of bytes to be sent"     << std::endl;
+        std::cout << "                                  per period [0 <= <num> <= 2147483647]"  << std::endl;
+        std::cout << "                                  (Default: 300kB )"       << std::endl;
+        std::cout << "      --period <num>              Period of time on which the"            << std::endl;
+        std::cout << "                                  flow controller is allowed"             << std::endl;
+        std::cout << "                                  to send the max bytes per period."      << std::endl;
+        std::cout << "                                  (Default: 1000ms)"                      << std::endl;
+        std::cout << "      --scheduler <string>        Scheduler policy [FIFO, ROUND-ROBIN,"   << std::endl;
+        std::cout << "                                  HIGH-PRIORITY, PRIORITY-RESERVATION]"   << std::endl;
+        std::cout << "                                  (Default: FIFO)"                        << std::endl;
         std::exit(return_code);
     }
 
@@ -105,10 +122,147 @@ public:
         {
             print_help(EXIT_SUCCESS);
         }
-        else
+
+        for (int i = 2; i < argc; ++i)
         {
-            EPROSIMA_LOG_ERROR(CLI_PARSER, "parsing entity argument " + first_argument);
-            print_help(EXIT_FAILURE);
+            std::string arg = argv[i];
+
+            if (arg == "-h" || arg == "--help")
+            {
+                print_help(EXIT_SUCCESS);
+            }
+            else if (arg == "--max-bytes")
+            {
+                if (config.entity == CLIParser::EntityKind::PUBLISHER)
+                {
+                    if (++i < argc)
+                    {
+                        try
+                        {
+                            int32_t input = std::stoi(argv[i]);
+                            if (input < 0 || input > std::numeric_limits<int32_t>::max())
+                            {
+                                throw std::out_of_range("max-bytes argument " + std::string(
+                                                argv[i]) + " out of range [0, 2147483647].");
+                            }
+                            else
+                            {
+                                config.max_bytes_per_period = input;
+                            }
+                        }
+                        catch (const std::invalid_argument& e)
+                        {
+                            EPROSIMA_LOG_ERROR(CLI_PARSER, "invalid max-bytes argument " + std::string(
+                                        argv[i]) + ": " + std::string(e.what()));
+                            print_help(EXIT_FAILURE);
+                        }
+                        catch (const std::out_of_range& e)
+                        {
+                            EPROSIMA_LOG_ERROR(CLI_PARSER, std::string(e.what()));
+                            print_help(EXIT_FAILURE);
+                        }
+                    }
+                    else
+                    {
+                        EPROSIMA_LOG_ERROR(CLI_PARSER, "parsing max-bytes argument");
+                        print_help(EXIT_FAILURE);
+                    }
+                }
+                else
+                {
+                    EPROSIMA_LOG_ERROR(CLI_PARSER, "max-bytes argument is only valid for publisher entity");
+                    print_help(EXIT_FAILURE);
+                }
+            }
+            else if (arg == "--period")
+            {
+                if (config.entity == CLIParser::EntityKind::PUBLISHER)
+                {
+                    if (++i < argc)
+                    {
+                        try
+                        {
+                            uint64_t input = std::stoull(argv[i]);
+                            if (input > std::numeric_limits<uint64_t>::max())
+                            {
+                                throw std::out_of_range("period argument " + std::string(
+                                                argv[i]) + " out of range.");
+                            }
+                            else
+                            {
+                                config.period = input;
+                            }
+                        }
+                        catch (const std::invalid_argument& e)
+                        {
+                            EPROSIMA_LOG_ERROR(CLI_PARSER, "invalid period argument " + std::string(
+                                        argv[i]) + ": " + std::string(e.what()));
+                            print_help(EXIT_FAILURE);
+                        }
+                        catch (const std::out_of_range& e)
+                        {
+                            EPROSIMA_LOG_ERROR(CLI_PARSER, std::string(e.what()));
+                            print_help(EXIT_FAILURE);
+                        }
+                    }
+                    else
+                    {
+                        EPROSIMA_LOG_ERROR(CLI_PARSER, "parsing period argument");
+                        print_help(EXIT_FAILURE);
+                    }
+                }
+                else
+                {
+                    EPROSIMA_LOG_ERROR(CLI_PARSER, "period argument is only valid for publisher entity");
+                    print_help(EXIT_FAILURE);
+                }
+            }
+            else if (arg == "--scheduler")
+            {
+                if (++i < argc)
+                {
+                    std::string scheduler = argv[i];
+                    if (config.entity == CLIParser::EntityKind::PUBLISHER)
+                    {
+                        if (scheduler == "FIFO")
+                        {
+                            config.scheduler = rtps::FlowControllerSchedulerPolicy::FIFO;
+                        }
+                        else if (scheduler == "ROUND-ROBIN")
+                        {
+                            config.scheduler = rtps::FlowControllerSchedulerPolicy::ROUND_ROBIN;
+                        }
+                        else if (scheduler == "HIGH-PRIORITY")
+                        {
+                            config.scheduler = rtps::FlowControllerSchedulerPolicy::HIGH_PRIORITY;
+                        }
+                        else if (scheduler == "PRIORITY-RESERVATION")
+                        {
+                            config.scheduler = rtps::FlowControllerSchedulerPolicy::PRIORITY_WITH_RESERVATION;
+                        }
+                        else
+                        {
+                            EPROSIMA_LOG_ERROR(CLI_PARSER, "unknown argument ");
+                            print_help(EXIT_FAILURE);
+                        }
+                    }
+                    else
+                    {
+                        EPROSIMA_LOG_ERROR(CLI_PARSER, "scheduler argument is only valid for publisher entity");
+                        print_help(EXIT_FAILURE);
+                    }
+                }
+                else
+                {
+                    EPROSIMA_LOG_ERROR(CLI_PARSER, "missing argument for " + arg) ;
+                    print_help(EXIT_FAILURE);
+                }
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(CLI_PARSER, "parsing argument: " + arg);
+                print_help(EXIT_FAILURE);
+            }
         }
 
         return config;
