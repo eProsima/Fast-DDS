@@ -60,7 +60,7 @@ struct PublicationNode : public Node
     {
     }
 
-    ~PublicationNode()
+    ~PublicationNode() override
     {
         stop();
     }

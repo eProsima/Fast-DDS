@@ -99,7 +99,7 @@ TEST(DDS_ROS2, test_automatic_liveliness_changed)
         // Configure the subscription node with a listener that will check the liveliness changed status.
         int total_number_of_liveliness_events = 0;
         auto sub_listener = std::make_shared<ros2::SubscriptionListener>();
-        sub_listener->liveliness_callback = [this, &total_number_of_liveliness_events](
+        sub_listener->liveliness_callback = [&total_number_of_liveliness_events](
             const LivelinessChangedStatus& event) -> void
                 {
                     total_number_of_liveliness_events++;

@@ -48,9 +48,7 @@ public:
     {
     }
 
-    ~Node()
-    {
-    }
+    virtual ~Node() = default;
 
     void start()
     {

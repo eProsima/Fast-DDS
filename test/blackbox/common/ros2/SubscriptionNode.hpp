@@ -75,7 +75,7 @@ struct SubscriptionNode : public Node
     {
     }
 
-    ~SubscriptionNode()
+    ~SubscriptionNode() override
     {
         stop();
     }
