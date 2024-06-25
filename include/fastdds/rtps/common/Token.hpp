@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /*!
- * @file Token.h
+ * @file Token.hpp
  */
 #ifndef FASTDDS_RTPS_COMMON__TOKEN_HPP
 #define FASTDDS_RTPS_COMMON__TOKEN_HPP

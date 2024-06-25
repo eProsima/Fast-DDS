@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _FASTDDS_PARTICIPANTEXTENDEDQOS_HPP_
-#define _FASTDDS_PARTICIPANTEXTENDEDQOS_HPP_
+#ifndef FASTDDS_DDS_DOMAIN_QOS__PARTICIPANTEXTENDEDQOS_HPP
+#define FASTDDS_DDS_DOMAIN_QOS__PARTICIPANTEXTENDEDQOS_HPP
 
 #include <fastdds/fastdds_dll.hpp>
 
@@ -95,8 +95,8 @@ private:
 };
 
 
-} /* namespace dds */
-} /* namespace fastdds */
-} /* namespace eprosima */
+} // namespace dds
+} // namespace fastdds
+} // namespace eprosima
 
-#endif /* _FASTDDS_PARTICIPANTEXTENDEDQOS_HPP_ */
+#endif // FASTDDS_DDS_DOMAIN_QOS__PARTICIPANTEXTENDEDQOS_HPP

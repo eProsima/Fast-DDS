@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file RTPS_messages.h
+ * @file RTPS_messages.hpp
  */
 
 #ifndef FASTDDS_RTPS_MESSAGES__RTPS_MESSAGES_HPP

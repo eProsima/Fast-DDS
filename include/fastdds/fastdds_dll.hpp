@@ -12,8 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef _FASTDDS_FASTDDS_DLL_H_
-#define _FASTDDS_FASTDDS_DLL_H_
+/**
+ * @file fastdds_dll.hpp
+ *
+ */
+
+#ifndef FASTDDS_FASTDDS_DLL_H
+#define FASTDDS_FASTDDS_DLL_H
 
 #include <fastdds/config.hpp>
 
@@ -66,4 +71,4 @@
 #include <fastdds/fastdds_auto_link.hpp>
 #endif // auto-linking disabled
 
-#endif // _FASTDDS_FASTDDS_DLL_H_
+#endif // FASTDDS_FASTDDS_DLL_H
