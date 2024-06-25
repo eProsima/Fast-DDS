@@ -86,7 +86,8 @@ public:
         {
             TypeSupport type_support(new RosDiscoveryInfoPubSubType());
             std::shared_ptr<TopicHolder> topic_holder;
-            create_topic(topic_holder, "ros_discovery_info", "rmw_dds_common::msg::dds_::ParticipantEntitiesInfo_", type_support);
+            create_topic(topic_holder, "ros_discovery_info", "rmw_dds_common::msg::dds_::ParticipantEntitiesInfo_",
+                    type_support);
             {
                 DataWriterQos qos = publisher_->get_default_datawriter_qos();
                 qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
