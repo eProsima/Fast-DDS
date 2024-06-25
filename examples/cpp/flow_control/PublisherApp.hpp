@@ -92,7 +92,7 @@ private:
 
     std::atomic<bool> stop_;
 
-    const uint32_t period_ms_ = 100; // in ms
+    const uint32_t period_ms_ = 2000; // in ms
 };
 
 } // namespace flow_control

@@ -156,39 +156,26 @@ void PublisherApp::run()
     /* Initialize your structure here */
     int msgsent_fast = 0;
     int msgsent_slow = 0;
-    char ch;
-    std::cout << "Press \"f\" to send a sample through the fast writer, which has unlimited bandwidth" << std::endl;
-    std::cout <<
-        "Press \"s\" to send a sample through the slow writer, which is also limited by its own Flow Controller" <<
-        std::endl;
-    std::cout << "Press \"q\" quit" << std::endl;
-    while (std::cin >> ch)
+    while (!is_stopped() && ((samples_ == 0) || ((msgsent_fast < samples_) && (msgsent_slow < samples_))))
     {
-        if (ch == 'f')
+        st.wasFast(false);
+        if(publish(slow_writer_, msgsent_slow, st))
         {
-            st.wasFast(true);
-            if(publish(fast_writer_, msgsent_fast, st))
-            {
-                std::cout << "Message count " << msgsent_fast <<" SENT from FAST WRITER" << std::endl;
-            }
+            std::cout << "Message SENT from SLOW WRITER, count=" << msgsent_slow << std::endl;
         }
-        else if (ch == 's')
+
+        st.wasFast(true);
+        if(publish(fast_writer_, msgsent_fast, st))
         {
-            st.wasFast(false);
-            if(publish(slow_writer_, msgsent_slow, st))
-            {
-                std::cout << "Message count " << msgsent_slow <<" SENT from SLOW WRITER" << std::endl;
-            }
+            std::cout << "Message SENT from FAST WRITER, count=" << msgsent_fast << std::endl;
         }
-        else if (ch == 'q')
-        {
-            stop();
-            break;
-        }
-        else
-        {
-            std::cout << "Command " << ch << " not recognized, please enter \"f/s/q\":";
-        }
+
+        // Wait for period or stop event
+        std::unique_lock<std::mutex> period_lock(mutex_);
+        cv_.wait_for(period_lock, std::chrono::milliseconds(period_ms_), [&]()
+                {
+                    return is_stopped();
+                });
     }
 }
 
