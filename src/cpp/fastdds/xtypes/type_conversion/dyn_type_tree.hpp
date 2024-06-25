@@ -81,7 +81,7 @@ ReturnCode_t dyn_type_to_tree(
  * @param dyn_type The DynamicType to convert.
  * @param type_str The string representation of the DynamicType.
  */
-ReturnCode_t dyn_type_to_str(
+ReturnCode_t type_kind_to_str(
         const DynamicType::_ref_type& dyn_type,
         std::string& type_str) noexcept;
 
@@ -96,16 +96,6 @@ ReturnCode_t array_kind_to_str(
         std::string& array_str) noexcept;
 
 /**
- * @brief Converts a DynamicType of \c TK_SEQUENCE kind to a string.
- *
- * @param dyn_type The DynamicType to convert.
- * @param sequence_str The string representation of the DynamicType.
- */
-ReturnCode_t sequence_kind_to_str(
-        const DynamicType::_ref_type& dyn_type,
-        std::string& sequence_str) noexcept;
-
-/**
  * @brief Converts a DynamicType of \c TK_MAP kind to a string.
  *
  * @param dyn_type The DynamicType to convert.
@@ -114,6 +104,16 @@ ReturnCode_t sequence_kind_to_str(
 ReturnCode_t map_kind_to_str(
         const DynamicType::_ref_type& dyn_type,
         std::string& map_str) noexcept;
+
+/**
+ * @brief Converts a DynamicType of \c TK_SEQUENCE kind to a string.
+ *
+ * @param dyn_type The DynamicType to convert.
+ * @param sequence_str The string representation of the DynamicType.
+ */
+ReturnCode_t sequence_kind_to_str(
+        const DynamicType::_ref_type& dyn_type,
+        std::string& sequence_str) noexcept;
 
 /**
  * @brief Gathers the members of a DynamicType.
@@ -161,44 +161,14 @@ ReturnCode_t dyn_type_tree_to_idl(
         std::string& dyn_type_str) noexcept;
 
 /**
- * @brief Converts a tree with a \c TK_STRUCTURE root to an IDL string.
+ * @brief Converts a tree with a \c TK_ALIAS root to an IDL string.
  *
  * @param node The root node of the tree.
- * @param struct_str The string representation of the tree.
+ * @param alias_str The string representation of the tree.
  */
-ReturnCode_t struct_to_str(
+ReturnCode_t alias_to_str(
         const utilities::collections::TreeNode<TreeNodeType>& node,
-        std::string& struct_str) noexcept;
-
-/**
- * @brief Converts a tree with a \c TK_ENUM root to an IDL string.
- *
- * @param node The root node of the tree.
- * @param enum_str The string representation of the tree.
- */
-ReturnCode_t enum_to_str(
-        const utilities::collections::TreeNode<TreeNodeType>& node,
-        std::string& enum_str) noexcept;
-
-/**
- * @brief Converts a tree with a \c TK_UNION root to an IDL string.
- *
- * @param node The root node of the tree.
- * @param union_str The string representation of the tree.
- */
-ReturnCode_t union_to_str(
-        const utilities::collections::TreeNode<TreeNodeType>& node,
-        std::string& union_str) noexcept;
-
-/**
- * @brief Converts a tree with a \c TK_BITSET root to an IDL string.
- *
- * @param node The root node of the tree.
- * @param union_str The string representation of the tree.
- */
-ReturnCode_t bitset_to_str(
-        const utilities::collections::TreeNode<TreeNodeType>& node,
-        std::string& bitset_str) noexcept;
+        std::string& alias_str) noexcept;
 
 /**
  * @brief Converts a tree with a \c TK_BITMASK root to an IDL string.
@@ -211,14 +181,44 @@ ReturnCode_t bitmask_to_str(
         std::string& bitset_str) noexcept;
 
 /**
- * @brief Converts a tree with a \c TK_ALIAS root to an IDL string.
+ * @brief Converts a tree with a \c TK_BITSET root to an IDL string.
  *
  * @param node The root node of the tree.
- * @param alias_str The string representation of the tree.
+ * @param union_str The string representation of the tree.
  */
-ReturnCode_t alias_to_str(
+ReturnCode_t bitset_to_str(
         const utilities::collections::TreeNode<TreeNodeType>& node,
-        std::string& alias_str) noexcept;
+        std::string& bitset_str) noexcept;
+
+/**
+ * @brief Converts a tree with a \c TK_ENUM root to an IDL string.
+ *
+ * @param node The root node of the tree.
+ * @param enum_str The string representation of the tree.
+ */
+ReturnCode_t enum_to_str(
+        const utilities::collections::TreeNode<TreeNodeType>& node,
+        std::string& enum_str) noexcept;
+
+/**
+ * @brief Converts a tree with a \c TK_STRUCTURE root to an IDL string.
+ *
+ * @param node The root node of the tree.
+ * @param struct_str The string representation of the tree.
+ */
+ReturnCode_t struct_to_str(
+        const utilities::collections::TreeNode<TreeNodeType>& node,
+        std::string& struct_str) noexcept;
+
+/**
+ * @brief Converts a tree with a \c TK_UNION root to an IDL string.
+ *
+ * @param node The root node of the tree.
+ * @param union_str The string representation of the tree.
+ */
+ReturnCode_t union_to_str(
+        const utilities::collections::TreeNode<TreeNodeType>& node,
+        std::string& union_str) noexcept;
 
 /**
  * @brief Converts a simple tree to an IDL string.

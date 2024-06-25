@@ -13,32 +13,32 @@
 # limitations under the License.
 
 configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/hello_world.idl
-    ${CMAKE_CURRENT_BINARY_DIR}/types/idls/hello_world.idl
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/alias_struct.idl
+    ${CMAKE_CURRENT_BINARY_DIR}/types/idls/alias_struct.idl
     COPYONLY)
 configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/numeric_array.idl
-    ${CMAKE_CURRENT_BINARY_DIR}/types/idls/numeric_array.idl
-    COPYONLY)
-configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/char_sequence.idl
-    ${CMAKE_CURRENT_BINARY_DIR}/types/idls/char_sequence.idl
-    COPYONLY)
-configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/basic_struct.idl
-    ${CMAKE_CURRENT_BINARY_DIR}/types/idls/basic_struct.idl
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/arrays_and_sequences.idl
+    ${CMAKE_CURRENT_BINARY_DIR}/types/idls/arrays_and_sequences.idl
     COPYONLY)
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/basic_array_struct.idl
     ${CMAKE_CURRENT_BINARY_DIR}/types/idls/basic_array_struct.idl
     COPYONLY)
 configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/float_bounded_sequence.idl
-    ${CMAKE_CURRENT_BINARY_DIR}/types/idls/float_bounded_sequence.idl
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/basic_struct.idl
+    ${CMAKE_CURRENT_BINARY_DIR}/types/idls/basic_struct.idl
     COPYONLY)
 configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/arrays_and_sequences.idl
-    ${CMAKE_CURRENT_BINARY_DIR}/types/idls/arrays_and_sequences.idl
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/bitmask_struct.idl
+    ${CMAKE_CURRENT_BINARY_DIR}/types/idls/bitmask_struct.idl
+    COPYONLY)
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/bitset_struct.idl
+    ${CMAKE_CURRENT_BINARY_DIR}/types/idls/bitset_struct.idl
+    COPYONLY)
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/char_sequence.idl
+    ${CMAKE_CURRENT_BINARY_DIR}/types/idls/char_sequence.idl
     COPYONLY)
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/complex_nested_arrays.idl
@@ -49,28 +49,28 @@ configure_file(
     ${CMAKE_CURRENT_BINARY_DIR}/types/idls/enum_struct.idl
     COPYONLY)
 configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/union_struct.idl
-    ${CMAKE_CURRENT_BINARY_DIR}/types/idls/union_struct.idl
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/float_bounded_sequence.idl
+    ${CMAKE_CURRENT_BINARY_DIR}/types/idls/float_bounded_sequence.idl
+    COPYONLY)
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/hello_world.idl
+    ${CMAKE_CURRENT_BINARY_DIR}/types/idls/hello_world.idl
+    COPYONLY)
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/key_struct.idl
+    ${CMAKE_CURRENT_BINARY_DIR}/types/idls/key_struct.idl
     COPYONLY)
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/map_struct.idl
     ${CMAKE_CURRENT_BINARY_DIR}/types/idls/map_struct.idl
     COPYONLY)
 configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/bitset_struct.idl
-    ${CMAKE_CURRENT_BINARY_DIR}/types/idls/bitset_struct.idl
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/numeric_array.idl
+    ${CMAKE_CURRENT_BINARY_DIR}/types/idls/numeric_array.idl
     COPYONLY)
 configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/bitmask_struct.idl
-    ${CMAKE_CURRENT_BINARY_DIR}/types/idls/bitmask_struct.idl
-    COPYONLY)
-configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/alias_struct.idl
-    ${CMAKE_CURRENT_BINARY_DIR}/types/idls/alias_struct.idl
-    COPYONLY)
-configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/key_struct.idl
-    ${CMAKE_CURRENT_BINARY_DIR}/types/idls/key_struct.idl
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/union_struct.idl
+    ${CMAKE_CURRENT_BINARY_DIR}/types/idls/union_struct.idl
     COPYONLY)
 
 set(RESOURCEDYNTYPETOIDLTESTS_SOURCE
