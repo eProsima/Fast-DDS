@@ -16,6 +16,7 @@
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/LibrarySettings.hpp>
+#include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
 #include <gtest/gtest.h>
 
 #include "BlackboxTests.hpp"
@@ -25,8 +26,6 @@
 #include "PubSubWriterReader.hpp"
 #include "ReqRepAsReliableHelloWorldReplier.hpp"
 #include "ReqRepAsReliableHelloWorldRequester.hpp"
-
-#include <rtps/transport/test_UDPv4Transport.h>
 
 using namespace eprosima::fastdds;
 using namespace eprosima::fastdds::rtps;
@@ -1951,8 +1950,8 @@ TEST(LivelinessTests, Detect_Deadlock_ManualByParticipant_Intraprocess)
 // Regression test of Refs #20584, github issue #4373
 TEST(LivelinessTests, Reader_Successfully_Asserts_Liveliness_on_a_Disconnected_Writer)
 {
-    // Create a TestTransport to simulate a network shutdown (Ctrl+C)
-    auto testTransport = std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
+    // Create a test_transport to simulate a network shutdown (Ctrl+C)
+    auto test_transport = std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
 
     // Create two writer participants
     PubSubWriter<HelloWorldPubSubType> writer_1(TEST_TOPIC_NAME);
@@ -1974,7 +1973,7 @@ TEST(LivelinessTests, Reader_Successfully_Asserts_Liveliness_on_a_Disconnected_W
     // Create writers
     writer_1.disable_builtin_transport()
             .lease_duration(c_TimeInfinite, 1)
-            .add_user_transport_to_pparams(testTransport)
+            .add_user_transport_to_pparams(test_transport)
             .liveliness_lease_duration(eprosima::fastdds::Time_t(1, 0))
             .liveliness_kind(eprosima::fastdds::dds::AUTOMATIC_LIVELINESS_QOS)
             .liveliness_announcement_period(eprosima::fastdds::Time_t(0, 500000000))
@@ -1991,7 +1990,7 @@ TEST(LivelinessTests, Reader_Successfully_Asserts_Liveliness_on_a_Disconnected_W
     reader.sub_wait_liveliness_recovered(2);
 
     // Simulate a Ctrl+C in one of the writers
-    eprosima::fastdds::rtps::test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = true;
+    test_transport->test_transport_options->test_UDPv4Transport_ShutdownAllNetwork = true;
 
     // After 1.6 secs, we should receive a on_liveliness_changed(status lost)
     // in the TEST_TOPIC_NAME reader that was matched with the disconnected writer_1

@@ -41,6 +41,7 @@
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
 
+#include "../utils/filter_helpers.hpp"
 #include "BlackboxTests.hpp"
 #include "mock/BlackboxMockConsumer.h"
 #include "../api/dds-pim/CustomPayloadPool.hpp"
@@ -392,11 +393,14 @@ bool check_related_sample_identity_field(
         msg.pos = original_pos + qos_size;
 
         ParameterId_t pid{PID_SENTINEL};
-        uint16_t plength = 0;
         bool valid = true;
         auto msg_pid_pos = msg.pos;
-        valid &= fastdds::rtps::CDRMessage::readUInt16(&msg, (uint16_t*)&pid);
-        valid &= fastdds::rtps::CDRMessage::readUInt16(&msg, &plength);
+        pid = (ParameterId_t)eprosima::fastdds::helpers::cdr_parse_u16(
+            (char*)&msg.buffer[msg.pos]);
+        msg.pos += 2;
+        uint16_t plength = eprosima::fastdds::helpers::cdr_parse_u16(
+            (char*)&msg.buffer[msg.pos]);
+        msg.pos += 2;
 
         if (pid == PID_SENTINEL)
         {

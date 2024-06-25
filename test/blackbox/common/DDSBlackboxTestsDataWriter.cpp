@@ -30,9 +30,7 @@
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/LibrarySettings.hpp>
-
-// TODO(jlbueno): remove private header
-#include <rtps/transport/test_UDPv4Transport.h>
+#include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
 
 #include "BlackboxTests.hpp"
 #include "PubSubReader.hpp"
@@ -97,9 +95,9 @@ TEST_P(DDSDataWriter, WaitForAcknowledgmentInstance)
     PubSubWriter<KeyedHelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     PubSubReader<KeyedHelloWorldPubSubType> reader(TEST_TOPIC_NAME);
 
-    auto testTransport = std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
+    auto test_transport = std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
 
-    writer.disable_builtin_transport().add_user_transport_to_pparams(testTransport).init();
+    writer.disable_builtin_transport().add_user_transport_to_pparams(test_transport).init();
     ASSERT_TRUE(writer.isInitialized());
 
     reader.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).init();
@@ -109,7 +107,7 @@ TEST_P(DDSDataWriter, WaitForAcknowledgmentInstance)
     reader.wait_discovery();
 
     // Disable communication to prevent reception of ACKs
-    eprosima::fastdds::rtps::test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = true;
+    test_transport->test_transport_options->test_UDPv4Transport_ShutdownAllNetwork = true;
 
     auto data = default_keyedhelloworld_data_generator(2);
 
@@ -139,7 +137,7 @@ TEST_P(DDSDataWriter, WaitForAcknowledgmentInstance)
     }
 
     // Enable communication and wait for acknowledgment
-    eprosima::fastdds::rtps::test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = false;
+    test_transport->test_transport_options->test_UDPv4Transport_ShutdownAllNetwork = false;
 
     EXPECT_TRUE(writer.waitForInstanceAcked(&sample_1, instance_handle_1, std::chrono::seconds(1)));
     EXPECT_TRUE(writer.waitForInstanceAcked(&sample_2, rtps::c_InstanceHandle_Unknown, std::chrono::seconds(1)));

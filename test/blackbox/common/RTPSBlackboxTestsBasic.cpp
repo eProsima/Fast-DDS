@@ -21,15 +21,13 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+#include <fastdds/rtps/common/CDRMessage_t.h>
 #include <fastdds/rtps/flowcontrol/FlowControllerDescriptor.hpp>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
 #include <gtest/gtest.h>
-
-// TODO(jlbueno): remove private headers
-#include <rtps/transport/test_UDPv4Transport.h>
 
 #include "BlackboxTests.hpp"
 #include "RTPSAsSocketReader.hpp"
@@ -396,8 +394,8 @@ TEST_P(RTPS, RTPSAsReliableWithRegistrationAndHolesInHistory)
 
     // To simulate lossy conditions
     int gaps_to_drop = 2;
-    auto testTransport = std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
-    testTransport->drop_gap_messages_filter_ = [&gaps_to_drop](rtps::CDRMessage_t& )
+    auto test_transport = std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
+    test_transport->drop_gap_messages_filter_ = [&gaps_to_drop](rtps::CDRMessage_t& )
             {
                 if (gaps_to_drop > 0)
                 {
@@ -406,7 +404,7 @@ TEST_P(RTPS, RTPSAsReliableWithRegistrationAndHolesInHistory)
                 }
                 return false;
             };
-    testTransport->dropLogLength = 1;
+    test_transport->dropLogLength = 1;
 
     reader.
             durability(eprosima::fastdds::rtps::DurabilityKind_t::TRANSIENT_LOCAL).
@@ -416,7 +414,7 @@ TEST_P(RTPS, RTPSAsReliableWithRegistrationAndHolesInHistory)
 
     writer.durability(eprosima::fastdds::rtps::DurabilityKind_t::TRANSIENT_LOCAL).
             disable_builtin_transport().
-            add_user_transport_to_pparams(testTransport).init();
+            add_user_transport_to_pparams(test_transport).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -483,7 +481,7 @@ TEST(RTPS, RTPSUnavailableSampleGapWhenSeparateSending)
     RTPSWithRegistrationWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     // To simulate lossy conditions
-    auto testTransport = std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
+    auto test_transport = std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
 
     reader.
             durability(eprosima::fastdds::rtps::DurabilityKind_t::TRANSIENT_LOCAL).
@@ -498,7 +496,7 @@ TEST(RTPS, RTPSUnavailableSampleGapWhenSeparateSending)
             disable_builtin_transport().
             reliability(eprosima::fastdds::rtps::ReliabilityKind_t::RELIABLE).
             history_depth(3).
-            add_user_transport_to_pparams(testTransport).init();
+            add_user_transport_to_pparams(test_transport).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -525,7 +523,7 @@ TEST(RTPS, RTPSUnavailableSampleGapWhenSeparateSending)
     reader.expected_data(expected);
     writer.send(data);
 
-    test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = true;
+    test_transport->test_transport_options->test_UDPv4Transport_ShutdownAllNetwork = true;
 
     std::this_thread::sleep_for(std::chrono::seconds(1));
 
@@ -543,7 +541,7 @@ TEST(RTPS, RTPSUnavailableSampleGapWhenSeparateSending)
 
     std::this_thread::sleep_for(std::chrono::seconds(1));
 
-    test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = false;
+    test_transport->test_transport_options->test_UDPv4Transport_ShutdownAllNetwork = false;
 
     std::this_thread::sleep_for(std::chrono::seconds(1));
 
@@ -689,8 +687,8 @@ TEST(RTPS, RTPSNetworkInterfaceChangesAtRunTime)
     ASSERT_TRUE(reader.isInitialized());
 
     // writer: launch without interfaces
-    test_UDPv4Transport::simulate_no_interfaces = true;
     auto test_transport = std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
+    test_transport->test_transport_options->simulate_no_interfaces = true;
     writer.disable_builtin_transport().add_user_transport_to_pparams(test_transport).init();
     ASSERT_TRUE(writer.isInitialized());
 
@@ -715,7 +713,7 @@ TEST(RTPS, RTPSNetworkInterfaceChangesAtRunTime)
     EXPECT_EQ(reader.getReceivedCount(), 0u);
 
     // enable interfaces
-    test_UDPv4Transport::simulate_no_interfaces = false;
+    test_transport->test_transport_options->simulate_no_interfaces = false;
     writer.participant_update_attributes();
 
     // Wait for discovery
@@ -1163,10 +1161,10 @@ TEST(RTPS, max_output_message_size_participant)
     EXPECT_TRUE(reader.isInitialized());
 
     // Create the RTPSParticipants with the appropriate value for the property
-    auto testTransport =  std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
+    auto test_transport =  std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
     const uint32_t segment_size = 1470;
     std::string segment_size_str = std::to_string(segment_size);
-    testTransport->messages_filter_ = [segment_size](eprosima::fastdds::rtps::CDRMessage_t& datagram)
+    test_transport->messages_filter_ = [segment_size](eprosima::fastdds::rtps::CDRMessage_t& datagram)
             {
                 EXPECT_LE(datagram.length, segment_size);
                 // Never drop samples
@@ -1175,7 +1173,7 @@ TEST(RTPS, max_output_message_size_participant)
 
     eprosima::fastdds::rtps::RTPSParticipantAttributes patt;
     patt.useBuiltinTransports = false;
-    patt.userTransports.push_back(testTransport);
+    patt.userTransports.push_back(test_transport);
     patt.properties.properties().emplace_back("fastdds.max_message_size", segment_size_str);
     eprosima::fastdds::rtps::RTPSParticipant* participant_writer =
             eprosima::fastdds::rtps::RTPSDomain::createParticipant(static_cast<uint32_t>(GET_PID()) % 230, patt);
@@ -1213,8 +1211,8 @@ TEST(RTPS, max_output_message_size_writer)
     const uint32_t segment_size = 1470;
     std::string segment_size_str = std::to_string(segment_size);
 
-    auto testTransport = std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
-    testTransport->messages_filter_ = [segment_size](eprosima::fastdds::rtps::CDRMessage_t& datagram)
+    auto test_transport = std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
+    test_transport->messages_filter_ = [segment_size](eprosima::fastdds::rtps::CDRMessage_t& datagram)
             {
                 EXPECT_LE(datagram.length, segment_size);
                 // Never drop samples
@@ -1222,7 +1220,7 @@ TEST(RTPS, max_output_message_size_writer)
             };
     RTPSWithRegistrationWriter<Data1mbPubSubType> writer(TEST_TOPIC_NAME);
     writer.add_property("fastdds.max_message_size", segment_size_str).
-            disable_builtin_transport().add_user_transport_to_pparams(testTransport).init();
+            disable_builtin_transport().add_user_transport_to_pparams(test_transport).init();
     ASSERT_TRUE(writer.isInitialized());
 
     RTPSWithRegistrationReader<Data1mbPubSubType> reader(TEST_TOPIC_NAME);

@@ -26,19 +26,10 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-std::vector<std::vector<octet>> test_UDPv4Transport::test_UDPv4Transport_DropLog;
-std::atomic<uint32_t> test_UDPv4Transport::test_UDPv4Transport_DropLogLength(0);
-std::atomic<bool> test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork(false);
-std::atomic<bool> test_UDPv4Transport::always_drop_participant_builtin_topic_data(false);
-std::atomic<bool> test_UDPv4Transport::simulate_no_interfaces(false);
-test_UDPv4TransportDescriptor::DestinationLocatorFilter test_UDPv4Transport::locator_filter([](const Locator&)
-        {
-            return false;
-        });
-
 test_UDPv4Transport::test_UDPv4Transport(
         const test_UDPv4TransportDescriptor& descriptor)
-    : drop_data_messages_percentage_(descriptor.dropDataMessagesPercentage)
+    : test_transport_options(descriptor.test_transport_options)
+    , drop_data_messages_percentage_(descriptor.dropDataMessagesPercentage)
     , drop_participant_builtin_data_messages_percentage_(descriptor.dropParticipantBuiltinDataMessagesPercentage)
     , drop_publication_builtin_data_messages_percentage_(descriptor.dropPublicationBuiltinDataMessagesPercentage)
     , drop_subscription_builtin_data_messages_percentage_(descriptor.dropSubscriptionBuiltinDataMessagesPercentage)
@@ -61,70 +52,25 @@ test_UDPv4Transport::test_UDPv4Transport(
     , sequence_number_data_messages_to_drop_(descriptor.sequenceNumberDataMessagesToDrop)
     , locator_filter_(descriptor.locator_filter_)
 {
-    test_UDPv4Transport_DropLogLength = 0;
-    test_UDPv4Transport_ShutdownAllNetwork = false;
+    if (nullptr == test_transport_options)
+    {
+        throw std::runtime_error("test_UDPv4Transport: test_transport_options is nullptr");
+    }
+
+    test_transport_options->test_UDPv4Transport_DropLogLength = 0;
+    test_transport_options->test_UDPv4Transport_ShutdownAllNetwork = false;
     UDPv4Transport::mSendBufferSize = descriptor.sendBufferSize;
     UDPv4Transport::mReceiveBufferSize = descriptor.receiveBufferSize;
     for (auto interf : descriptor.interfaceWhiteList)
     {
         UDPv4Transport::interface_whitelist_.emplace_back(asio::ip::address_v4::from_string(interf));
     }
-    test_UDPv4Transport_DropLog.clear();
-    test_UDPv4Transport_DropLogLength = descriptor.dropLogLength;
+    test_transport_options->test_UDPv4Transport_DropLog.clear();
+    test_transport_options->test_UDPv4Transport_DropLogLength = descriptor.dropLogLength;
 }
 
 test_UDPv4TransportDescriptor::test_UDPv4TransportDescriptor()
     : SocketTransportDescriptor(s_maximumMessageSize, s_maximumInitialPeersRange)
-    , dropDataMessagesPercentage(0)
-    , dropParticipantBuiltinDataMessagesPercentage(0)
-    , dropPublicationBuiltinDataMessagesPercentage(0)
-    , dropSubscriptionBuiltinDataMessagesPercentage(0)
-    , drop_data_messages_filter_([](CDRMessage_t&)
-            {
-                return false;
-            })
-    , drop_builtin_data_messages_filter_([](CDRMessage_t&)
-            {
-                return false;
-            })
-    , dropParticipantBuiltinTopicData(false)
-    , dropPublicationBuiltinTopicData(false)
-    , dropSubscriptionBuiltinTopicData(false)
-    , dropDataFragMessagesPercentage(0)
-    , drop_data_frag_messages_filter_([](CDRMessage_t&)
-            {
-                return false;
-            })
-    , dropHeartbeatMessagesPercentage(0)
-    , drop_heartbeat_messages_filter_([](CDRMessage_t&)
-            {
-                return false;
-            })
-    , dropAckNackMessagesPercentage(0)
-    , drop_ack_nack_messages_filter_([](CDRMessage_t&)
-            {
-                return false;
-            })
-    , dropGapMessagesPercentage(0)
-    , drop_gap_messages_filter_([](CDRMessage_t&)
-            {
-                return false;
-            })
-    , sub_messages_filter_([](CDRMessage_t&)
-            {
-                return false;
-            })
-    , percentageOfMessagesToDrop(0)
-    , messages_filter_([](CDRMessage_t&)
-            {
-                return false;
-            })
-    , locator_filter_([](const Locator&)
-            {
-                return false;
-            })
-    , sequenceNumberDataMessagesToDrop()
-    , dropLogLength(0)
 {
 }
 
@@ -155,7 +101,7 @@ bool test_UDPv4Transport::get_ips(
         bool return_loopback,
         bool force_lookup) const
 {
-    if (!simulate_no_interfaces)
+    if (!test_transport_options->simulate_no_interfaces)
     {
         return UDPv4Transport::get_ips(locNames, return_loopback, force_lookup);
     }
@@ -178,7 +124,7 @@ bool test_UDPv4Transport::get_ips(
 LocatorList test_UDPv4Transport::NormalizeLocator(
         const Locator& locator)
 {
-    if (!simulate_no_interfaces)
+    if (!test_transport_options->simulate_no_interfaces)
     {
         return UDPv4Transport::NormalizeLocator(locator);
     }
@@ -308,10 +254,10 @@ static bool ReadSubmessageHeader(
 bool test_UDPv4Transport::should_drop_locator(
         const Locator& remote_locator)
 {
-    return locator_filter(remote_locator) ||
+    return test_transport_options->locator_filter(remote_locator) ||
            locator_filter_(remote_locator) ||
            // If there are no interfaces (simulate_no_interfaces), only multicast and localhost traffic is sent
-           (simulate_no_interfaces &&
+           (test_transport_options->simulate_no_interfaces &&
            !fastdds::rtps::IPLocator::isMulticast(remote_locator) &&
            !fastdds::rtps::IPLocator::isLocal(remote_locator));
 }
@@ -320,7 +266,7 @@ bool test_UDPv4Transport::packet_should_drop(
         const std::vector<NetworkBuffer>& buffers,
         uint32_t total_bytes)
 {
-    if (test_UDPv4Transport_ShutdownAllNetwork)
+    if (test_transport_options->test_UDPv4Transport_ShutdownAllNetwork)
     {
         return true;
     }
@@ -380,7 +326,7 @@ bool test_UDPv4Transport::packet_should_drop(
 
                 if (writer_id == fastdds::rtps::c_EntityId_SPDPWriter)
                 {
-                    if (always_drop_participant_builtin_topic_data)
+                    if (test_transport_options->always_drop_participant_builtin_topic_data)
                     {
                         return true;
                     }
@@ -526,7 +472,8 @@ bool test_UDPv4Transport::log_drop(
         uint32_t size)
 {
     static_cast<void>(size);
-    if (test_UDPv4Transport_DropLog.size() < test_UDPv4Transport_DropLogLength)
+    if (test_transport_options->test_UDPv4Transport_DropLog.size() <
+            test_transport_options->test_UDPv4Transport_DropLogLength)
     {
         vector<octet> message;
         for (const auto& buf: buffers)
@@ -535,7 +482,7 @@ bool test_UDPv4Transport::log_drop(
             message.insert(message.end(), byte_data, byte_data + buf.size);
         }
         assert(message.size() == size);
-        test_UDPv4Transport_DropLog.push_back(message);
+        test_transport_options->test_UDPv4Transport_DropLog.push_back(message);
         return true;
     }
 

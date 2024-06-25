@@ -25,9 +25,6 @@
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
 #include <gtest/gtest.h>
 
-// TODO(jlbueno): remove private header
-#include <rtps/transport/test_UDPv4Transport.h>
-
 #include "BlackboxTests.hpp"
 #include "mock/BlackboxMockConsumer.h"
 #include "PubSubReader.hpp"

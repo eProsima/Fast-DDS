@@ -30,11 +30,11 @@
 #include <fastdds/rtps/common/CDRMessage_t.h>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
 #include <gtest/gtest.h>
-#include <rtps/messages/CDRMessage.hpp>
 
 #include "../types/HelloWorldTypeObjectSupport.hpp"
 #include "../types/TestRegression3361PubSubTypes.h"
 #include "../types/TestRegression3361TypeObjectSupport.hpp"
+#include "../utils/filter_helpers.hpp"
 #include "BlackboxTests.hpp"
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
@@ -65,14 +65,16 @@ struct ContentFilterInfoCounter
 
                     // Skip extraFlags, read octetsToInlineQos, and calculate inline qos position.
                     msg.pos += 2;
-                    uint16_t to_inline_qos = 0;
-                    fastdds::rtps::CDRMessage::readUInt16(&msg, &to_inline_qos);
+                    uint16_t to_inline_qos = eprosima::fastdds::helpers::cdr_parse_u16(
+                        (char*)&msg.buffer[msg.pos]);
+                    msg.pos += 2;
                     uint32_t inline_qos_pos = msg.pos + to_inline_qos;
 
                     // Read writerId, and skip if built-in.
                     msg.pos += 4;
                     fastdds::rtps::GUID_t writer_guid;
-                    fastdds::rtps::CDRMessage::readEntityId(&msg, &writer_guid.entityId);
+                    writer_guid.entityId = eprosima::fastdds::helpers::cdr_parse_entity_id(
+                        (char*)&msg.buffer[msg.pos]);
                     msg.pos = old_pos;
 
                     if (writer_guid.is_builtin())
@@ -87,11 +89,12 @@ struct ContentFilterInfoCounter
                         msg.pos = inline_qos_pos;
                         while (msg.pos < msg.length)
                         {
-                            uint16_t pid = 0;
-                            uint16_t plen = 0;
-
-                            fastdds::rtps::CDRMessage::readUInt16(&msg, &pid);
-                            fastdds::rtps::CDRMessage::readUInt16(&msg, &plen);
+                            uint16_t pid = eprosima::fastdds::helpers::cdr_parse_u16(
+                                (char*)&msg.buffer[msg.pos]);
+                            msg.pos += 2;
+                            uint16_t plen = eprosima::fastdds::helpers::cdr_parse_u16(
+                                (char*)&msg.buffer[msg.pos]);
+                            msg.pos += 2;
                             uint32_t next_pos = msg.pos + plen;
 
                             if (pid == PID_CONTENT_FILTER_INFO)
@@ -102,13 +105,15 @@ struct ContentFilterInfoCounter
                                 if (plen >= 4 + 4 + 4 + 16)
                                 {
                                     // Read numBitmaps and skip bitmaps
-                                    uint32_t num_bitmaps = 0;
-                                    fastdds::rtps::CDRMessage::readUInt32(&msg, &num_bitmaps);
+                                    uint32_t num_bitmaps = eprosima::fastdds::helpers::cdr_parse_u32(
+                                        (char*)&msg.buffer[msg.pos]);
+                                    msg.pos += 4;
                                     msg.pos += 4 * num_bitmaps;
 
                                     // Read numSignatures and keep maximum
-                                    uint32_t num_signatures = 0;
-                                    fastdds::rtps::CDRMessage::readUInt32(&msg, &num_signatures);
+                                    uint32_t num_signatures = eprosima::fastdds::helpers::cdr_parse_u32(
+                                        (char*)&msg.buffer[msg.pos]);
+                                    msg.pos += 4;
                                     if (max_filter_signature_number < num_signatures)
                                     {
                                         max_filter_signature_number = num_signatures;

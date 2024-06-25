@@ -29,7 +29,7 @@ class TransportInterface;
 
 /**
  * Shared memory transport configuration.
- * The kind value for SharedMemTransportDescriptor is given by eprosima::fastdds::rtps::LOCATOR_KIND_SHM.
+ * The kind is given by eprosima::fastdds::rtps::LOCATOR_KIND_SHM.
  *
  * - segment_size_: size of the shared memory segment (in octets).
  *

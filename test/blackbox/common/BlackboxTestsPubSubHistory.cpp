@@ -18,11 +18,11 @@
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/LibrarySettings.hpp>
+#include <fastdds/rtps/common/CDRMessage_t.h>
+#include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
 #include <gtest/gtest.h>
 
-// TODO(jlbueno): remove private header
-#include <rtps/transport/test_UDPv4Transport.h>
-
+#include "../utils/filter_helpers.hpp"
 #include "BlackboxTests.hpp"
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
@@ -680,7 +680,7 @@ TEST(PubSubHistory, PubSubAsReliableKeepAllWithKeyAndMaxSamplesPerInstanceAndLif
     // Lifespan period in milliseconds
     constexpr uint32_t lifespan_ms = 1000;
     constexpr uint32_t max_block_time_ms = 500;
-    auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
+    auto test_transport = std::make_shared<test_UDPv4TransportDescriptor>();
 
     writer.resource_limits_max_instances(keys)
             .resource_limits_max_samples_per_instance(samples_per_instance)
@@ -689,7 +689,7 @@ TEST(PubSubHistory, PubSubAsReliableKeepAllWithKeyAndMaxSamplesPerInstanceAndLif
             .max_blocking_time(max_block_time_ms * 1e-3)
             .lifespan_period(lifespan_ms * 1e-3)
             .disable_builtin_transport()
-            .add_user_transport_to_pparams(testTransport)
+            .add_user_transport_to_pparams(test_transport)
             .init();
 
     ASSERT_TRUE(writer.isInitialized());
@@ -698,7 +698,7 @@ TEST(PubSubHistory, PubSubAsReliableKeepAllWithKeyAndMaxSamplesPerInstanceAndLif
     writer.wait_discovery();
     reader.wait_discovery();
 
-    test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = true;
+    test_transport->test_transport_options->test_UDPv4Transport_ShutdownAllNetwork = true;
 
     auto data = default_keyedhelloworld_data_generator(2);
 
@@ -710,10 +710,10 @@ TEST(PubSubHistory, PubSubAsReliableKeepAllWithKeyAndMaxSamplesPerInstanceAndLif
     data = default_keyedhelloworld_data_generator(4);
     reader.startReception(data);
 
-    std::thread thread([]()
+    std::thread thread([&test_transport]()
             {
                 std::this_thread::sleep_for(std::chrono::milliseconds(20));
-                test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = false;
+                test_transport->test_transport_options->test_UDPv4Transport_ShutdownAllNetwork = false;
             });
 
     // Send data
@@ -972,14 +972,14 @@ TEST_P(PubSubHistory, PubSubAsReliableKeepLastWithKeyUnorderedReception)
 
     ASSERT_TRUE(reader.isInitialized());
 
-    auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
-    testTransport->dropDataMessagesPercentage = 25;
+    auto test_transport = std::make_shared<test_UDPv4TransportDescriptor>();
+    test_transport->dropDataMessagesPercentage = 25;
 
     writer.resource_limits_max_instances(keys).
             reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
             history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS).
             history_depth(depth).mem_policy(mem_policy_).
-            disable_builtin_transport().add_user_transport_to_pparams(testTransport).
+            disable_builtin_transport().add_user_transport_to_pparams(test_transport).
             init();
 
     ASSERT_TRUE(writer.isInitialized());
@@ -998,7 +998,7 @@ TEST_P(PubSubHistory, PubSubAsReliableKeepLastWithKeyUnorderedReception)
     reader.block_for_at_least(static_cast<size_t>(keys * depth * 0.1));
 
     //! Avoid dropping deterministically the same re-sent samples
-    testTransport->dropDataMessagesPercentage.store(10);
+    test_transport->dropDataMessagesPercentage.store(10);
 
     reader.block_for_all();
     reader.stopReception();
@@ -1329,29 +1329,21 @@ TEST(PubSubHistory, ReliableUnmatchWithFutureChanges)
     std::atomic_bool drop_data {false};
     std::atomic_bool drop_heartbeat {false};
 
-    auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
-    testTransport->drop_data_messages_filter_ = [&drop_data](eprosima::fastdds::rtps::CDRMessage_t& msg)
+    auto test_transport = std::make_shared<test_UDPv4TransportDescriptor>();
+    test_transport->drop_data_messages_filter_ = [&drop_data](eprosima::fastdds::rtps::CDRMessage_t&)
             -> bool
             {
-                auto old_pos = msg.pos;
-
-                // Jump to writer entity id
-                msg.pos += 2 + 2 + 4;
-
-                // Read writer entity id
-                eprosima::fastdds::rtps::GUID_t writer_guid;
-                eprosima::fastdds::rtps::CDRMessage::readEntityId(&msg, &writer_guid.entityId);
-                msg.pos = old_pos;
-
-                return drop_data && !writer_guid.is_builtin();
+                // drop_data_filter never receives builtin data
+                return drop_data;
             };
-    testTransport->drop_heartbeat_messages_filter_ = [&drop_heartbeat](eprosima::fastdds::rtps::CDRMessage_t& msg)
+    test_transport->drop_heartbeat_messages_filter_ = [&drop_heartbeat](eprosima::fastdds::rtps::CDRMessage_t& msg)
             -> bool
             {
                 auto old_pos = msg.pos;
                 msg.pos += 4;
                 eprosima::fastdds::rtps::GUID_t writer_guid;
-                eprosima::fastdds::rtps::CDRMessage::readEntityId(&msg, &writer_guid.entityId);
+                writer_guid.entityId = eprosima::fastdds::helpers::cdr_parse_entity_id(
+                    (char*)&msg.buffer[msg.pos]);
                 msg.pos = old_pos;
 
                 return drop_heartbeat && !writer_guid.is_builtin();
@@ -1359,7 +1351,7 @@ TEST(PubSubHistory, ReliableUnmatchWithFutureChanges)
 
     writer.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
             history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS).history_depth(depth).
-            disable_builtin_transport().add_user_transport_to_pparams(testTransport).
+            disable_builtin_transport().add_user_transport_to_pparams(test_transport).
             init();
 
     ASSERT_TRUE(writer.isInitialized());

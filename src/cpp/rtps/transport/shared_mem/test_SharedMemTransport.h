@@ -15,8 +15,9 @@
 #ifndef _FASTDDS_TEST_SHAREDMEM_TRANSPORT_H_
 #define _FASTDDS_TEST_SHAREDMEM_TRANSPORT_H_
 
+#include <fastdds/rtps/transport/shared_mem/test_SharedMemTransportDescriptor.h>
+
 #include <rtps/transport/shared_mem/SharedMemTransport.h>
-#include <rtps/transport/shared_mem/test_SharedMemTransportDescriptor.h>
 
 namespace eprosima {
 namespace fastdds {

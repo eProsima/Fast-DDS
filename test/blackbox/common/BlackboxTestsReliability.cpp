@@ -14,11 +14,11 @@
 
 #include <thread>
 
+#include <fastdds/rtps/common/CDRMessage_t.h>
+#include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
 #include <gtest/gtest.h>
 
-// TODO(jlbueno): remove private header
-#include <rtps/transport/test_UDPv4Transport.h>
-
+#include "../utils/filter_helpers.hpp"
 #include "BlackboxTests.hpp"
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
@@ -43,9 +43,9 @@ void reliability_disable_heartbeat_piggyback(
                 if (start_reception)
                 {
                     auto old_pos = msg.pos;
-                    EntityId_t writer_id_msg;
                     msg.pos += 4;
-                    CDRMessage::readEntityId(&msg, &writer_id_msg);
+                    EntityId_t writer_id_msg = eprosima::fastdds::helpers::cdr_parse_entity_id(
+                        (char*)&msg.buffer[msg.pos]);
                     if (writer_id == writer_id_msg)
                     {
                         heartbeat_found = true;

@@ -38,9 +38,6 @@
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
 
-// TODO(jlbueno): remove private headers
-#include <rtps/transport/test_UDPv4Transport.h>
-
 #include "BlackboxTests.hpp"
 #include "../api/dds-pim/CustomPayloadPool.hpp"
 #include "../api/dds-pim/PubSubReader.hpp"
@@ -154,7 +151,7 @@ TEST(AcknackQos, RecoverAfterLosingCommunicationWithDisablePositiveAck)
     // Number of samples written by writer
     uint32_t writer_samples = 15;
 
-    auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
+    auto test_transport = std::make_shared<test_UDPv4TransportDescriptor>();
 
     writer.keep_duration({2, 0});
     //writer.history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS);
@@ -163,7 +160,7 @@ TEST(AcknackQos, RecoverAfterLosingCommunicationWithDisablePositiveAck)
     writer.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
     //writer.lifespan_period(lifespan_s);
     writer.disable_builtin_transport();
-    writer.add_user_transport_to_pparams(testTransport);
+    writer.add_user_transport_to_pparams(test_transport);
     writer.init();
 
     reader.keep_duration({1, 0});
@@ -190,7 +187,7 @@ TEST(AcknackQos, RecoverAfterLosingCommunicationWithDisablePositiveAck)
     // Block reader until reception finished or timeout.
     reader.block_for_all();
 
-    test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = true;
+    test_transport->test_transport_options->test_UDPv4Transport_ShutdownAllNetwork = true;
 
     data = default_helloworld_data_generator(writer_samples);
     reader.startReception(data);
@@ -201,7 +198,7 @@ TEST(AcknackQos, RecoverAfterLosingCommunicationWithDisablePositiveAck)
 
     std::this_thread::sleep_for(std::chrono::seconds(1));
 
-    test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = false;
+    test_transport->test_transport_options->test_UDPv4Transport_ShutdownAllNetwork = false;
 
     // Block reader until reception finished or timeout.
     reader.block_for_all();
@@ -220,7 +217,7 @@ TEST(AcknackQos, NotRecoverAfterLosingCommunicationWithDisablePositiveAck)
     // Number of samples written by writer
     uint32_t writer_samples = 15;
 
-    auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
+    auto test_transport = std::make_shared<test_UDPv4TransportDescriptor>();
 
     writer.keep_duration({1, 0});
     //writer.history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS);
@@ -229,7 +226,7 @@ TEST(AcknackQos, NotRecoverAfterLosingCommunicationWithDisablePositiveAck)
     writer.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
     //writer.lifespan_period(lifespan_s);
     writer.disable_builtin_transport();
-    writer.add_user_transport_to_pparams(testTransport);
+    writer.add_user_transport_to_pparams(test_transport);
     writer.init();
 
     reader.keep_duration({1, 0});
@@ -256,7 +253,7 @@ TEST(AcknackQos, NotRecoverAfterLosingCommunicationWithDisablePositiveAck)
     // Block reader until reception finished or timeout.
     reader.block_for_all();
 
-    test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = true;
+    test_transport->test_transport_options->test_UDPv4Transport_ShutdownAllNetwork = true;
 
     data = default_helloworld_data_generator(writer_samples);
     reader.startReception(data);
@@ -267,7 +264,7 @@ TEST(AcknackQos, NotRecoverAfterLosingCommunicationWithDisablePositiveAck)
 
     std::this_thread::sleep_for(std::chrono::seconds(2));
 
-    test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = false;
+    test_transport->test_transport_options->test_UDPv4Transport_ShutdownAllNetwork = false;
 
     // Block reader until reception finished or timeout.
     ASSERT_EQ(reader.block_for_all(std::chrono::seconds(1)), 0u);
