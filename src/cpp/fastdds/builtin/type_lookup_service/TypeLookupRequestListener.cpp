@@ -152,27 +152,28 @@ void TypeLookupRequestListener::process_requests()
 
         if (!requests_queue_.empty())
         {
-            TypeLookup_Request& request = requests_queue_.front();
+            std::pair<TypeLookup_Request, rtps::VendorId_t>& request = requests_queue_.front();
             {
                 // Process the TypeLookup_Request based on its type
-                switch (request.data()._d())
+                switch (request.first.data()._d())
                 {
                     case TypeLookup_getTypes_HashId:
                     {
-                        check_get_types_request(request.header().requestId(), request.data().getTypes());
+                        check_get_types_request(request.first.header().requestId(),
+                                request.first.data().getTypes(), request.second);
                         break;
                     }
                     case TypeLookup_getDependencies_HashId:
                     {
-                        check_get_type_dependencies_request(request.header().requestId(),
-                                request.data().getTypeDependencies());
+                        check_get_type_dependencies_request(request.first.header().requestId(),
+                                request.first.data().getTypeDependencies());
                         break;
                     }
                     default:
                         // If the type of request is not known, log an error and answer with an exception
                         EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE_REQUEST_LISTENER,
                                 "Received unknown request in type lookup service.");
-                        answer_request(request.header().requestId(),
+                        answer_request(request.first.header().requestId(),
                                 rpc::RemoteExceptionCode_t::REMOTE_EX_UNKNOWN_OPERATION);
                         break;
                 }
@@ -185,7 +186,8 @@ void TypeLookupRequestListener::process_requests()
 
 void TypeLookupRequestListener::check_get_types_request(
         SampleIdentity request_id,
-        const TypeLookup_getTypes_In& request)
+        const TypeLookup_getTypes_In& request,
+        const rtps::VendorId_t& vendor_id)
 {
     // Always Sends EK_COMPLETE
     // TODO: Add a property to the participant to configure this behavior. Allowing it to respond with EK_MINIMAL when possible.
@@ -198,7 +200,7 @@ void TypeLookupRequestListener::check_get_types_request(
     for (const xtypes::TypeIdentifier& type_id : request.type_ids())
     {
         // If TypeIdentifier is EK_MINIMAL add complete_to_minimal to answer
-        if (type_id._d() == xtypes::EK_MINIMAL)
+        if (type_id._d() == xtypes::EK_MINIMAL && rtps::c_VendorId_opendds != vendor_id)
         {
             minimal_id = type_id;
             // Get complete TypeIdentifier from registry
@@ -438,7 +440,7 @@ void TypeLookupRequestListener::on_new_cache_change_added(
         {
             std::unique_lock<std::mutex> guard(request_processor_cv_mutex_);
             // Add request to the processing queue
-            requests_queue_.push(request);
+            requests_queue_.push({request, change->vendor_id});
             // Notify processor
             request_processor_cv_.notify_all();
         }
