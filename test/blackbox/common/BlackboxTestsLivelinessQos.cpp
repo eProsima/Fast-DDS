@@ -16,7 +16,7 @@
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/LibrarySettings.hpp>
-#include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.hpp>
 #include <gtest/gtest.h>
 
 #include "BlackboxTests.hpp"

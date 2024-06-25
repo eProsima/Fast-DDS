@@ -30,7 +30,7 @@
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/LibrarySettings.hpp>
-#include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.hpp>
 
 #include "BlackboxTests.hpp"
 #include "PubSubReader.hpp"

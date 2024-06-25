@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
-#include "fastdds/rtps/messages/RTPS_messages.h"
 #include <atomic>
 #include <thread>
 
@@ -32,7 +30,8 @@
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 #include <fastdds/rtps/attributes/ServerAttributes.hpp>
 #include <fastdds/rtps/common/CDRMessage_t.hpp>
-#include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
+#include <fastdds/rtps/messages/RTPS_messages.hpp>
+#include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.hpp>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.hpp>
 
 #include "../utils/filter_helpers.hpp"

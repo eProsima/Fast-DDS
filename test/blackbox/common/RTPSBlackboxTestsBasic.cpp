@@ -21,7 +21,7 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
-#include <fastdds/rtps/common/CDRMessage_t.h>
+#include <fastdds/rtps/common/CDRMessage_t.hpp>
 #include <fastdds/rtps/flowcontrol/FlowControllerDescriptor.hpp>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
 #include <fastdds/rtps/participant/RTPSParticipant.hpp>

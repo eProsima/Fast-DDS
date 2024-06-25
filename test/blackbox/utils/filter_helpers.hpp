@@ -16,9 +16,9 @@
 #include <fastcdr/FastBuffer.h>
 
 #include <fastdds/dds/core/Entity.hpp>
-#include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/common/Types.hpp>
 
-#include "../types/core/core_typesPubSubTypes.h"
+#include "../types/core/core_typesPubSubTypes.hpp"
 
 namespace eprosima {
 namespace fastdds {
