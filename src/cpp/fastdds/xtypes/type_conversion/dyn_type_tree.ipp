@@ -53,6 +53,34 @@ ReturnCode_t dyn_type_to_tree(
             // Create new tree node
             utilities::collections::TreeNode<TreeNodeType> parent(member_name, type->get_name().to_string(), type);
 
+            // Get its base class
+            TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+            ret = type->get_descriptor(type_descriptor);
+
+            if (ret != RETCODE_OK)
+            {
+                return ret;
+            }
+
+            // Add base class as a new branch
+            const auto base_type = type_descriptor->base_type();
+
+            if (base_type != nullptr)
+            {
+                utilities::collections::TreeNode<TreeNodeType> child;
+                ret = dyn_type_to_tree(base_type, "PARENT", child);
+
+                if (ret != RETCODE_OK)
+                {
+                    return ret;
+                }
+
+                child.info.is_base = true;
+
+                // Add each member with its name as a new child in a branch (recursion)
+                parent.add_branch(child);
+            }
+
             // Get all members of this struct
             std::vector<std::pair<std::string, MemberDescriptor::_ref_type>> members_by_name;
             ret = get_members_sorted(type, members_by_name);
@@ -246,12 +274,12 @@ ReturnCode_t type_kind_to_str(
             ret = map_kind_to_str(dyn_type, type_str);
             break;
         }
-        case TK_STRUCTURE:
-        case TK_ENUM:
-        case TK_UNION:
-        case TK_BITSET:
-        case TK_BITMASK:
         case TK_ALIAS:
+        case TK_BITMASK:
+        case TK_BITSET:
+        case TK_ENUM:
+        case TK_STRUCTURE:
+        case TK_UNION:
         {
             type_str = dyn_type->get_name().to_string();
             break;
@@ -421,28 +449,47 @@ ReturnCode_t get_members_sorted(
 {
     ReturnCode_t ret = RETCODE_OK;
 
-    std::map<MemberId, DynamicTypeMember::_ref_type> members;
-    ret = dyn_type->get_all_members(members);
+    // Skip the inherited members
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    ret = dyn_type->get_descriptor(type_descriptor);
 
     if (ret != RETCODE_OK)
     {
         return ret;
     }
 
-    for (const auto& member : members)
+    const auto base_type = type_descriptor->base_type();
+
+    std::uint32_t first_member = 0;
+
+    if (base_type != nullptr)
     {
-        MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
-        ret = member.second->get_descriptor(member_descriptor);
+        // If the struct has a base type, the first member is the base type
+        first_member = base_type->get_member_count();
+    }
+
+    // Collect its members
+    for (std::uint32_t index = first_member; index < dyn_type->get_member_count(); index++)
+    {
+        traits<DynamicTypeMember>::ref_type member;
+        ret = dyn_type->get_member_by_index(member, index);
 
         if (ret != RETCODE_OK)
         {
             return ret;
         }
 
-        const auto dyn_name = member.second->get_name();
+        MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
+        ret = member->get_descriptor(member_descriptor);
+
+        if (ret != RETCODE_OK)
+        {
+            return ret;
+        }
+
         result.emplace_back(
             std::make_pair<std::string, MemberDescriptor::_ref_type>(
-                dyn_name.to_string(),
+                member_descriptor->name().to_string(),
                 std::move(member_descriptor)));
     }
 
@@ -875,11 +922,32 @@ ReturnCode_t struct_to_str(
     }
 
     // Add types name
-    struct_str += "struct " + node.info.type_kind_name + TYPE_OPENING;
+    struct_str += "struct " + node.info.type_kind_name;
+
+    // Add inheritance
+    if (type_descriptor->base_type() != nullptr)
+    {
+        std::string base_type_str;
+        ret = type_kind_to_str(type_descriptor->base_type(), base_type_str);
+
+        if (ret != RETCODE_OK)
+        {
+            return ret;
+        }
+
+        struct_str += " : " + base_type_str;
+    }
+
+    struct_str += TYPE_OPENING;
 
     // Add struct attributes
     for (auto const& child : node.branches())
     {
+        if (child.info.is_base)
+        {
+            continue;
+        }
+
         std::string child_str;
         node_to_str(child.info, child_str);
 
