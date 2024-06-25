@@ -69,6 +69,10 @@ configure_file(
     ${CMAKE_CURRENT_BINARY_DIR}/types/idls/map_struct.idl
     COPYONLY)
 configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/nested_struct.idl
+    ${CMAKE_CURRENT_BINARY_DIR}/types/idls/nested_struct.idl
+    COPYONLY)
+configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/types/idls/numeric_array.idl
     ${CMAKE_CURRENT_BINARY_DIR}/types/idls/numeric_array.idl
     COPYONLY)

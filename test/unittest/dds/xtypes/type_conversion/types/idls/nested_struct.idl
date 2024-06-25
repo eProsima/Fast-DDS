@@ -1,0 +1,33 @@
+struct FirstStruct
+{
+    long value;
+};
+
+struct SecondStruct
+{
+    FirstStruct first;
+};
+
+struct ThirdStruct
+{
+    SecondStruct second;
+};
+
+struct FourthStruct
+{
+    ThirdStruct third;
+};
+
+struct FifthStruct
+{
+    FourthStruct fourth;
+};
+
+struct nested_struct
+{
+    FirstStruct first;
+    SecondStruct second;
+    ThirdStruct third;
+    FourthStruct fourth;
+    FifthStruct fifth;
+};

@@ -62,6 +62,9 @@
 #include "type_objects/map_struct/map_struct.hpp"
 #include "type_objects/map_struct/map_structPubSubTypes.h"
 
+#include "type_objects/nested_struct/nested_struct.hpp"
+#include "type_objects/nested_struct/nested_structPubSubTypes.h"
+
 #include "type_objects/numeric_array/numeric_array.hpp"
 #include "type_objects/numeric_array/numeric_arrayPubSubTypes.h"
 
@@ -86,6 +89,7 @@ const std::string FLOAT_BOUNDED_SEQUENCE{"float_bounded_sequence"};
 const std::string HELLO_WORLD{"hello_world"};
 const std::string KEY_STRUCT{"key_struct"};
 const std::string MAP_STRUCT{"map_struct"};
+const std::string NESTED_STRUCT{"nested_struct"};
 const std::string NUMERIC_ARRAY{"numeric_array"};
 const std::string UNION_STRUCT{"union_struct"};
 
@@ -106,6 +110,7 @@ const std::vector<std::string> supported_types = {
     SupportedTypes::HELLO_WORLD,
     SupportedTypes::KEY_STRUCT,
     SupportedTypes::MAP_STRUCT,
+    SupportedTypes::NESTED_STRUCT,
     SupportedTypes::NUMERIC_ARRAY,
     SupportedTypes::UNION_STRUCT
 };
@@ -155,6 +160,9 @@ void register_dynamic_types()
 
     TypeSupport type_map_struct(new map_structPubSubType());
     type_map_struct->register_type_object_representation();
+
+    TypeSupport type_nested_struct(new nested_structPubSubType());
+    type_nested_struct->register_type_object_representation();
 
     TypeSupport type_numeric_array(new numeric_arrayPubSubType());
     type_numeric_array->register_type_object_representation();
