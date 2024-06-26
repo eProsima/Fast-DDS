@@ -67,6 +67,16 @@ static bool is_partition_empty(
     return partition.size() <= 1 && 0 == strlen(partition.name());
 }
 
+static bool compare(
+        const dds::xtypes::TypeInformation& t1,
+        const dds::xtypes::TypeInformation& t2)
+{
+    return (dds::xtypes::TK_NONE != t1.complete().typeid_with_size().type_id()._d()
+           && t1.complete().typeid_with_size() == t2.complete().typeid_with_size())
+           || (dds::xtypes::TK_NONE != t1.minimal().typeid_with_size().type_id()._d()
+           && t1.minimal().typeid_with_size() == t2.minimal().typeid_with_size());
+}
+
 EDP::EDP(
         PDP* p,
         RTPSParticipantImpl* part)
@@ -515,7 +525,7 @@ bool EDP::valid_matching(
     if ((wdata->has_type_information() && wdata->type_information().assigned()) &&
             (rdata->has_type_information() && rdata->type_information().assigned()))
     {
-        if (wdata->type_information().type_information != rdata->type_information().type_information)
+        if (!compare(wdata->type_information().type_information, rdata->type_information().type_information))
         {
             reason.set(MatchingFailureMask::different_typeinfo);
             return false;
