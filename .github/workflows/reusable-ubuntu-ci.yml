@@ -683,6 +683,7 @@ jobs:
           show_skipped: 'False'
 
   fastdds_alternative_builds:
+    needs: fastdds_build
     runs-on: ${{ inputs.os-image }}
     strategy:
       fail-fast: false
@@ -690,11 +691,11 @@ jobs:
         cmake-build-type:
           - 'RelWithDebInfo'
     steps:
-      - name: Sync eProsima/Fast-DDS repository
-        uses: eProsima/eProsima-CI/external/checkout@v0
+      - name: Download build artifacts
+        uses: eProsima/eProsima-CI/external/download-artifact@v0
         with:
-          path: src/fastrtps
-          ref: ${{ inputs.fastdds-branch }}
+          name: fastdds_build_${{ inputs.label }}
+          path: ${{ github.workspace }}
 
       - name: Install Fix Python version
         uses: eProsima/eProsima-CI/external/setup-python@v0
@@ -719,7 +720,7 @@ jobs:
       - name: Install Python dependencies
         uses: eProsima/eProsima-CI/multiplatform/install_python_packages@v0
         with:
-          packages: vcstool xmlschema
+          packages: vcstool xmlschema msparser
           upgrade: false
 
       - name: Setup CCache
@@ -728,12 +729,38 @@ jobs:
         with:
           api_token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Fetch Fast DDS dependencies
-        uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
+      - name: Sync osrf/osrf_testing_tools_cpp repository
+        uses: eProsima/eProsima-CI/external/checkout@v0
         with:
-          vcs_repos_file: ${{ github.workspace }}/src/fastrtps/fastrtps.repos
-          destination_workspace: src
-          skip_existing: 'true'
+          repository: osrf/osrf_testing_tools_cpp
+          path: src/osrf_testing_tools_cpp
+          ref: 1.4.0
+
+      - name: OSRF testing tools build
+        uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
+        with:
+          colcon_meta_file: ''
+          colcon_build_args: ${{ inputs.colcon-args }} --packages-select osrf_testing_tools_cpp
+          cmake_args: '-DBUILD_TESTING=OFF'
+          cmake_args_default: ''
+          cmake_build_type: ${{ matrix.cmake-build-type }}
+          workspace: ${{ github.workspace }}
+
+      - name: Profilling tests build
+        uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
+        with:
+          colcon_meta_file: ${{ github.workspace }}/src/fastrtps/.github/workflows/config/fastdds_build.meta
+          colcon_build_args: ${{ inputs.colcon-args }} --packages-up-to fastrtps
+          cmake_args: '-DPROFILING_TESTS=ON ${{ inputs.cmake-args }}'
+          cmake_args_default: ${{ env.colcon-build-default-cmake-args }}
+          cmake_build_type: ${{ matrix.cmake-build-type }}
+          workspace: ${{ github.workspace }}
+          workspace_dependencies: ${{ github.workspace }}/install
+
+      - name: Clean workspace - Profiling tests
+        run: |
+          cd ${{ github.workspace }}
+          rm -rf build install log src/osrf_testing_tools_cpp
 
       - name: No security colcon build
         continue-on-error: true
