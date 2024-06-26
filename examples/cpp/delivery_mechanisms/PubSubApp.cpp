@@ -71,7 +71,7 @@ PubSubApp::PubSubApp(
     if (!type_->is_plain() || !type_->is_bounded())
     {
         throw std::runtime_error(
-                "Example generated type does not fulfil the example constraints: it is not plain and/or bounded");
+                  "Example generated type does not fulfil the example constraints: it is not plain and/or bounded");
     }
 
     // Create the participant
@@ -150,7 +150,8 @@ PubSubApp::PubSubApp(
             eprosima::fastdds::rtps::IPLocator::setIPv4(tcp_v4_initial_peers_locator_, tcp_ip_address);
             pqos.wire_protocol().builtin.initialPeersList.push_back(tcp_v4_initial_peers_locator_);
             break;
-        }case CLIParser::DeliveryMechanismKind::TCPv6:
+        }
+        case CLIParser::DeliveryMechanismKind::TCPv6:
         {
             std::shared_ptr<TCPv6TransportDescriptor> tcp_v6_transport_ = std::make_shared<TCPv6TransportDescriptor>();
             pqos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastdds::c_TimeInfinite;

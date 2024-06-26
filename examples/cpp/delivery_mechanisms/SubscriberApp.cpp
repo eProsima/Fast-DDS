@@ -63,7 +63,7 @@ SubscriberApp::SubscriberApp(
     if (!type_->is_plain() || !type_->is_bounded())
     {
         throw std::runtime_error(
-                "Example generated type does not fulfil the example constraints: it is not plain and/or bounded");
+                  "Example generated type does not fulfil the example constraints: it is not plain and/or bounded");
     }
 
     // Create the participant
@@ -145,7 +145,8 @@ SubscriberApp::SubscriberApp(
         {
             pqos.transport().user_transports.push_back(std::make_shared<UDPv4TransportDescriptor>());
             break;
-        }case CLIParser::DeliveryMechanismKind::UDPv6:
+        }
+        case CLIParser::DeliveryMechanismKind::UDPv6:
         {
             pqos.transport().user_transports.push_back(std::make_shared<UDPv6TransportDescriptor>());
             break;

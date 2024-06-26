@@ -92,7 +92,7 @@ public:
         std::cout << "Common options:"                                                                  << std::endl;
         std::cout << "  -a <ip>, --address <ip>             TCP IP address (only available if selected" << std::endl;
         std::cout << "                                      delivery mechanism is TCPv4 or TCPv6)"      << std::endl;
-        std::cout << "                                      (Default: localhost ['127.0.0.1' or '::1'])"<< std::endl;
+        std::cout << "                                      (Default: localhost [127.0.0.1 or ::1])"    << std::endl;
         std::cout << "  -d <num>, --domain <num>            Domain ID number [0 <= <num> <= 232]"       << std::endl;
         std::cout << "                                      (Default: 0)"                               << std::endl;
         std::cout << "  -h, --help                          Print this help message"                    << std::endl;
@@ -341,7 +341,7 @@ public:
         // Pubsub entity does not support TCP transport without ignore-local-endpoints option
         if (config.entity == CLIParser::EntityKind::PUBSUB && !config.ignore_local_endpoints &&
                 (config.delivery_mechanism == DeliveryMechanismKind::TCPv4 ||
-                 config.delivery_mechanism == DeliveryMechanismKind::TCPv6))
+                config.delivery_mechanism == DeliveryMechanismKind::TCPv6))
         {
             EPROSIMA_LOG_ERROR(CLI_PARSER,
                     "Unsupported corner case: TCP delivery mechanism is not allowed for \"pubsub\" without ignore-local-endpoints option");
@@ -351,7 +351,7 @@ public:
         // Address argument is only allowed with TCP transport
         if (!config.tcp_ip_address.empty() &&
                 !(config.delivery_mechanism == DeliveryMechanismKind::TCPv4 ||
-                  config.delivery_mechanism == DeliveryMechanismKind::TCPv6))
+                config.delivery_mechanism == DeliveryMechanismKind::TCPv6))
         {
             EPROSIMA_LOG_ERROR(CLI_PARSER, "address argument only allowed with TCP delivery mechanism");
             print_help(EXIT_FAILURE);
