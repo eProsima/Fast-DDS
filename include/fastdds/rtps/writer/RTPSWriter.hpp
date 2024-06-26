@@ -41,27 +41,21 @@
 
 namespace eprosima {
 namespace fastdds {
-namespace rtps {
-
-class FlowController;
-
-} // namespace rtps
 
 namespace dds {
 
 class DataWriterImpl;
 
 } // namespace dds
-} // namespace fastdds
 
-namespace fastdds {
 namespace rtps {
 
+struct CacheChange_t;
+class DataSharingNotifier;
+class FlowController;
+class RTPSMessageGroup;
 class WriterListener;
 class WriterHistory;
-class DataSharingNotifier;
-class RTPSMessageGroup;
-struct CacheChange_t;
 
 /**
  * Class RTPSWriter, manages the sending of data to the readers. Is always associated with a HistoryCache.
@@ -153,7 +147,7 @@ public:
      * @return True if acknowledged by all.
      */
     FASTDDS_EXPORTED_API virtual bool is_acked_by_all(
-            const CacheChange_t* /*a_change*/) const
+            const SequenceNumber_t& /*seq_num*/) const
     {
         return false;
     }

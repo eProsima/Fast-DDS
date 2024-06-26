@@ -1344,20 +1344,13 @@ bool StatefulWriter::has_been_fully_delivered(
 }
 
 bool StatefulWriter::is_acked_by_all(
-        const CacheChange_t* change) const
+        const SequenceNumber_t& seq_num) const
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
-
-    if (change->writerGUID != this->getGuid())
-    {
-        EPROSIMA_LOG_WARNING(RTPS_WRITER, "The given change is not from this Writer");
-        return false;
-    }
-
-    return is_acked_by_all(change->sequenceNumber);
+    return is_acked_by_all_nts(seq_num);
 }
 
-bool StatefulWriter::is_acked_by_all(
+bool StatefulWriter::is_acked_by_all_nts(
         const SequenceNumber_t seq) const
 {
     assert(history_->next_sequence_number() > seq);
@@ -1586,7 +1579,7 @@ bool StatefulWriter::wait_for_acknowledgement(
     return may_remove_change_cond_.wait_until(lock, max_blocking_time_point,
                    [this, &seq]()
                    {
-                       return is_acked_by_all(seq);
+                       return is_acked_by_all_nts(seq);
                    });
 }
 

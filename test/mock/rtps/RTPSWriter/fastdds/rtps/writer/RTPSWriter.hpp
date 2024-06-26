@@ -200,7 +200,7 @@ public:
     }
 
     virtual bool is_acked_by_all(
-            const CacheChange_t* /*a_change*/) const
+            const SequenceNumber_t& /*seq_num*/) const
     {
         return false;
     }

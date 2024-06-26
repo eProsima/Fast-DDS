@@ -1277,7 +1277,7 @@ History::iterator PDPServer::process_change_acknowledgement(
     else
     {
         // If `StatefulWriter::is_acked_by_all()`:
-        if (writer->is_acked_by_all(c))
+        if (writer->is_acked_by_all(c->sequenceNumber))
         {
             // Remove entry from `participants_|writers_|readers_`
             // AND put the change in changes_release

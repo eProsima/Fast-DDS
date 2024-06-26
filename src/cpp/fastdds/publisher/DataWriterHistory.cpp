@@ -579,7 +579,7 @@ bool DataWriterHistory::change_is_acked_or_fully_delivered(
     }
     else
     {
-        is_acked = mp_writer->is_acked_by_all(change);
+        is_acked = mp_writer->is_acked_by_all(change->sequenceNumber);
     }
     return is_acked;
 }

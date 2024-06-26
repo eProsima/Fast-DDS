@@ -201,7 +201,7 @@ public:
             const SequenceNumber_t& seq_num) const override;
 
     bool is_acked_by_all(
-            const CacheChange_t* a_change) const override;
+            const SequenceNumber_t& a_change) const override;
 
     template <typename Function>
     Function for_each_reader_proxy(
@@ -438,7 +438,7 @@ public:
 
 private:
 
-    bool is_acked_by_all(
+    bool is_acked_by_all_nts(
             const SequenceNumber_t seq) const;
 
     void update_reader_info(

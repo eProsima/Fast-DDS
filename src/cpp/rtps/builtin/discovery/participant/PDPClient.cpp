@@ -684,7 +684,7 @@ bool PDPClient::all_servers_acknowledge_PDP()
     CacheChange_t* pPD;
     if (endpoints->writer.history_->get_min_change(&pPD))
     {
-        return endpoints->writer.writer_->is_acked_by_all(pPD);
+        return endpoints->writer.writer_->is_acked_by_all(pPD->sequenceNumber);
     }
     else
     {

@@ -380,12 +380,6 @@ bool StatelessWriter::has_been_fully_delivered(
 }
 
 bool StatelessWriter::is_acked_by_all(
-        const CacheChange_t* change) const
-{
-    return is_acked_by_all(change->sequenceNumber);
-}
-
-bool StatelessWriter::is_acked_by_all(
         const SequenceNumber_t& seq_num) const
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
