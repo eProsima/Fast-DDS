@@ -14,7 +14,6 @@
 
 /**
  * @file WriterHistory.hpp
- *
  */
 
 #ifndef FASTDDS_RTPS_HISTORY__WRITERHISTORY_HPP
@@ -36,8 +35,8 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
+class BaseWriter;
 class HistoryAttributes;
-class RTPSWriter;
 class WriteParams;
 
 /**
@@ -46,7 +45,7 @@ class WriteParams;
  */
 class WriterHistory : public rtps::History
 {
-    friend class RTPSWriter;
+    friend class BaseWriter;
     friend class PersistentWriter;
     friend class IPersistenceService;
 
@@ -302,10 +301,10 @@ protected:
         return true;
     }
 
-    //!Last CacheChange Sequence Number added to the History.
+    //! Last CacheChange Sequence Number added to the History.
     SequenceNumber_t m_lastCacheChangeSeqNum {};
-    //!Pointer to the associated RTPSWriter;
-    RTPSWriter* mp_writer = nullptr;
+    //! Pointer to the associated writer
+    BaseWriter* mp_writer = nullptr;
 
     uint32_t high_mark_for_frag_ = 0;
 

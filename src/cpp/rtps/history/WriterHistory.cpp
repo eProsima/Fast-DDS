@@ -48,6 +48,7 @@
 #include <rtps/history/CacheChangePool.h>
 #include <rtps/history/PoolConfig.h>
 #include <rtps/messages/RTPSMessageGroup.hpp>
+#include <rtps/writer/BaseWriter.hpp>
 
 namespace eprosima {
 namespace fastdds {

@@ -26,6 +26,8 @@
 #include <fastdds/rtps/common/Time_t.hpp>
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
 
+#include <rtps/writer/BaseWriter.hpp>
+
 namespace eprosima {
 namespace fastdds {
 namespace dds {

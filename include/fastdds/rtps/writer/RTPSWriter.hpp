@@ -144,11 +144,15 @@ public:
     /**
      * Check if a specific change has been acknowledged by all Readers.
      * Is only useful in reliable Writer. In BE Writers returns false when pending to be sent.
+     *
+     * @param seq_num Sequence number to check.
+     *
      * @return True if acknowledged by all.
      */
     FASTDDS_EXPORTED_API virtual bool is_acked_by_all(
-            const SequenceNumber_t& /*seq_num*/) const
+            const SequenceNumber_t& seq_num) const
     {
+        static_cast<void>(seq_num);
         return false;
     }
 
@@ -507,8 +511,6 @@ protected:
     void add_statistics_sent_submessage(
             CacheChange_t* change,
             size_t num_locators);
-
-    void deinit();
 
 private:
 

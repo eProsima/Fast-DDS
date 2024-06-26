@@ -93,44 +93,10 @@ void RTPSWriter::init(
             EPROSIMA_LOG_ERROR(RTPS_WRITER, "Could not initialize DataSharing writer pool");
         }
     }
-
-    history_->mp_writer = this;
-    history_->mp_mutex = &mp_mutex;
-
-    flow_controller_->register_writer(this);
-
-    EPROSIMA_LOG_INFO(RTPS_WRITER, "RTPSWriter created");
 }
 
 RTPSWriter::~RTPSWriter()
 {
-    EPROSIMA_LOG_INFO(RTPS_WRITER, "RTPSWriter destructor");
-
-    // Deletion of the events has to be made in child destructor.
-    // Also at this point all CacheChange_t must have been released by the child destructor
-
-    history_->mp_writer = nullptr;
-    history_->mp_mutex = nullptr;
-}
-
-void RTPSWriter::deinit()
-{
-    // First, unregister changes from FlowController. This action must be protected.
-    {
-        std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
-        for (auto it = history_->changesBegin(); it != history_->changesEnd(); ++it)
-        {
-            flow_controller_->remove_change(*it, std::chrono::steady_clock::now() + std::chrono::hours(24));
-        }
-
-        for (auto it = history_->changesBegin(); it != history_->changesEnd(); ++it)
-        {
-            history_->release_change(*it);
-        }
-
-        history_->m_changes.clear();
-    }
-    flow_controller_->unregister_writer(this);
 }
 
 SequenceNumber_t RTPSWriter::get_seq_num_min()

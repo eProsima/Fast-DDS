@@ -35,7 +35,7 @@ namespace rtps {
 class IChangePool;
 class IPayloadPool;
 class ReaderProxy;
-class RTPSWriter;
+class BaseWriter;
 
 class WriterHistory
 {
@@ -245,7 +245,7 @@ public:
     SequenceNumber_t last_sequence_number_;
     RecursiveTimedMutex* mp_mutex;
     bool m_isHistoryFull;
-    RTPSWriter* mp_writer;
+    BaseWriter* mp_writer;
 
 };
 

@@ -44,7 +44,7 @@ class BaseWriter : public fastdds::rtps::RTPSWriter
 
 public:
 
-    virtual ~BaseWriter() = default;
+    virtual ~BaseWriter();
 
 protected:
 
@@ -55,6 +55,8 @@ protected:
             FlowController* flow_controller,
             WriterHistory* hist,
             WriterListener* listen = nullptr);
+
+    void deinit();
 
 };
 
