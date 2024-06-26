@@ -117,6 +117,7 @@ PubSubApp::PubSubApp(
         }
         case CLIParser::DeliveryMechanismKind::LARGE_DATA:
         {
+            // Large Data is a builtin transport
             pqos.transport().use_builtin_transports = true;
             pqos.setup_transports(eprosima::fastdds::rtps::BuiltinTransports::LARGE_DATA);
             break;
@@ -133,6 +134,13 @@ PubSubApp::PubSubApp(
             {
                 tcp_ip_address = config.tcp_ip_address;
             }
+            // Set unicast locators
+            eprosima::fastdds::rtps::Locator_t tcp_v4_locator_;
+            tcp_v4_locator_.kind = LOCATOR_KIND_TCPv4;
+            eprosima::fastdds::rtps::IPLocator::setIPv4(tcp_v4_locator_, tcp_ip_address);
+            eprosima::fastdds::rtps::IPLocator::setPhysicalPort(tcp_v4_locator_, 5100);
+            pqos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(tcp_v4_locator_);
+            pqos.wire_protocol().default_unicast_locator_list.push_back(tcp_v4_locator_);
             tcp_v4_transport_->set_WAN_address(tcp_ip_address);
             tcp_v4_transport_->add_listener_port(5100);
             pqos.transport().user_transports.push_back(tcp_v4_transport_);
@@ -154,6 +162,13 @@ PubSubApp::PubSubApp(
             {
                 tcp_ip_address = config.tcp_ip_address;
             }
+            // Set unicast locators
+            eprosima::fastdds::rtps::Locator_t tcp_v6_locator_;
+            tcp_v6_locator_.kind = LOCATOR_KIND_TCPv6;
+            eprosima::fastdds::rtps::IPLocator::setIPv6(tcp_v6_locator_, tcp_ip_address);
+            eprosima::fastdds::rtps::IPLocator::setPhysicalPort(tcp_v6_locator_, 5100);
+            pqos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(tcp_v6_locator_);
+            pqos.wire_protocol().default_unicast_locator_list.push_back(tcp_v6_locator_);
             tcp_v6_transport_->add_listener_port(5100);
             pqos.transport().user_transports.push_back(tcp_v6_transport_);
             Locator tcp_v6_initial_peers_locator_;

@@ -102,6 +102,7 @@ SubscriberApp::SubscriberApp(
         }
         case CLIParser::DeliveryMechanismKind::LARGE_DATA:
         {
+            // Large Data is a builtin transport
             pqos.transport().use_builtin_transports = true;
             pqos.setup_transports(eprosima::fastdds::rtps::BuiltinTransports::LARGE_DATA);
             break;
