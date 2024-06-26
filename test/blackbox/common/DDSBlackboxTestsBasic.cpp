@@ -35,8 +35,12 @@
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastrtps/types/TypesBase.h>
 
+#include <rtps/transport/test_UDPv4Transport.h>
+
 #include "BlackboxTests.hpp"
 #include "../types/HelloWorldPubSubTypes.h"
+#include "PubSubReader.hpp"
+#include "PubSubWriter.hpp"
 
 namespace eprosima {
 namespace fastdds {
