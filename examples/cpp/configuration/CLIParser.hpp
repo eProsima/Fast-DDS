@@ -45,10 +45,10 @@ class CLIParser
         int32_t max_samples = 5000;
         int32_t max_instances = 10;
         int32_t max_samples_per_instance = 400;
-        uint32_t deadline = fastdds::Duration_t::INFINITE_SECONDS;
-        uint32_t lifespan = fastdds::Duration_t::INFINITE_SECONDS;
-        uint32_t liveliness_lease = fastdds::Duration_t::INFINITE_SECONDS;
-        uint32_t liveliness_assert = fastdds::Duration_t::INFINITE_SECONDS - 1;
+        uint32_t deadline = 0;
+        uint32_t lifespan = 0;
+        uint32_t liveliness_lease = 0;
+        uint32_t liveliness_assert = 0;
         std::string partitions = "";
         std::string profile_participant = "";
         std::string topic_name = "configuration_topic";
@@ -76,7 +76,7 @@ public:
     struct publisher_config : public entity_config
     {
         uint16_t wait = 0;
-        uint32_t ack_keep_duration = fastdds::Duration_t::INFINITE_SECONDS;
+        uint32_t ack_keep_duration = 0;
         uint32_t interval = 100;
         uint32_t msg_size = 10;
         uint32_t ownership_strength = 0;
