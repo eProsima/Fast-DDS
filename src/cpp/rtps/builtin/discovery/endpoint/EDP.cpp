@@ -515,7 +515,7 @@ bool EDP::valid_matching(
     if ((wdata->has_type_information() && wdata->type_information().assigned()) &&
             (rdata->has_type_information() && rdata->type_information().assigned()))
     {
-        if (wdata->type_information().type_information != rdata->type_information().type_information)
+        if (wdata->type_information().type_information.complete().typeid_with_size().type_id() != rdata->type_information().type_information.complete().typeid_with_size().type_id())
         {
             reason.set(MatchingFailureMask::different_typeinfo);
             return false;
