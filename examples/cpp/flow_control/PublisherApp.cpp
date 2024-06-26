@@ -115,7 +115,6 @@ PublisherApp::PublisherApp(
     std::cout << "Slow publisher created, waiting for Subscribers." << std::endl;
 }
 
-
 PublisherApp::~PublisherApp()
 {
     if (nullptr != participant_)
@@ -161,13 +160,13 @@ void PublisherApp::run()
     while (!is_stopped() && ((samples_ == 0) || ((msgsent_fast < samples_) && (msgsent_slow < samples_))))
     {
         st.wasFast(false);
-        if(publish(slow_writer_, msgsent_slow, st))
+        if (publish(slow_writer_, msgsent_slow, st))
         {
             std::cout << "Message SENT from SLOW WRITER, count=" << msgsent_slow << std::endl;
         }
 
         st.wasFast(true);
-        if(publish(fast_writer_, msgsent_fast, st))
+        if (publish(fast_writer_, msgsent_fast, st))
         {
             std::cout << "Message SENT from FAST WRITER, count=" << msgsent_fast << std::endl;
         }
@@ -181,7 +180,10 @@ void PublisherApp::run()
     }
 }
 
-bool PublisherApp::publish(DataWriter* writer_, int &msgsent, FlowControl msg)
+bool PublisherApp::publish(
+        DataWriter* writer_,
+        int& msgsent,
+        FlowControl msg)
 {
     bool ret = false;
     // Wait for the data endpoints discovery

@@ -66,7 +66,10 @@ private:
     bool is_stopped();
 
     //! Publish a sample
-    bool publish(DataWriter* writer_, int &msgsent, FlowControl msg);
+    bool publish(
+            DataWriter* writer_,
+            int& msgsent,
+            FlowControl msg);
 
     DomainParticipant* participant_;
 

@@ -193,7 +193,7 @@ public:
                             if (input < 0 || input > std::numeric_limits<int32_t>::max())
                             {
                                 throw std::out_of_range("max-bytes argument " + std::string(
-                                                argv[i]) + " out of range [0, 2147483647].");
+                                                  argv[i]) + " out of range [0, 2147483647].");
                             }
                             else
                             {
@@ -236,7 +236,7 @@ public:
                             if (input > std::numeric_limits<uint64_t>::max())
                             {
                                 throw std::out_of_range("period argument " + std::string(
-                                                argv[i]) + " out of range.");
+                                                  argv[i]) + " out of range.");
                             }
                             else
                             {
@@ -304,7 +304,7 @@ public:
                 }
                 else
                 {
-                    EPROSIMA_LOG_ERROR(CLI_PARSER, "missing argument for " + arg) ;
+                    EPROSIMA_LOG_ERROR(CLI_PARSER, "missing argument for " + arg);
                     print_help(EXIT_FAILURE);
                 }
             }
@@ -318,7 +318,7 @@ public:
                         if (input < 0 || input > 100)
                         {
                             throw std::out_of_range("bandwidth argument " + std::string(
-                                            argv[i]) + " out of range.");
+                                              argv[i]) + " out of range.");
                         }
                         else if (config.entity == CLIParser::EntityKind::PUBLISHER)
                         {
@@ -344,7 +344,7 @@ public:
                 }
                 else
                 {
-                    EPROSIMA_LOG_ERROR(CLI_PARSER, "missing argument for " + arg) ;
+                    EPROSIMA_LOG_ERROR(CLI_PARSER, "missing argument for " + arg);
                     print_help(EXIT_FAILURE);
                 }
             }
@@ -358,7 +358,7 @@ public:
                         if (input < -10 || input > 10)
                         {
                             throw std::out_of_range("priority argument " + std::string(
-                                            argv[i]) + " out of range.");
+                                              argv[i]) + " out of range.");
                         }
                         else if (config.entity == CLIParser::EntityKind::PUBLISHER)
                         {
@@ -384,7 +384,7 @@ public:
                 }
                 else
                 {
-                    EPROSIMA_LOG_ERROR(CLI_PARSER, "missing argument for " + arg) ;
+                    EPROSIMA_LOG_ERROR(CLI_PARSER, "missing argument for " + arg);
                     print_help(EXIT_FAILURE);
                 }
             }
