@@ -2815,7 +2815,6 @@ public:
     {
         return (this->unicast_locator_list == b.unicast_locator_list) &&
                (this->multicast_locator_list == b.multicast_locator_list) &&
-               (this->remote_locator_list == b.remote_locator_list) &&
                (this->external_unicast_locators == b.external_unicast_locators) &&
                (this->ignore_non_matching_locators == b.ignore_non_matching_locators) &&
                (this->user_defined_id == b.user_defined_id) &&
@@ -2828,9 +2827,6 @@ public:
 
     //! Multicast locator list
     rtps::LocatorList multicast_locator_list;
-
-    //! Remote locator list
-    rtps::LocatorList remote_locator_list;
 
     //! The collection of external locators to use for communication.
     fastdds::rtps::ExternalLocators external_unicast_locators;

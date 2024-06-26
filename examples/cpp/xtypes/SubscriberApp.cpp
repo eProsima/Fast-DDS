@@ -200,6 +200,7 @@ void SubscriberApp::on_data_writer_discovery(
     {
         // Get remote type information and use it to retrieve the type object
         auto type_info = info.info.type_information().type_information;
+        // TODO(eduponz): Check whether complete/minimal is there.
         auto type_id = type_info.complete().typeid_with_size().type_id();
 
         if (RETCODE_OK != DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(

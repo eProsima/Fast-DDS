@@ -1,0 +1,133 @@
+module eprosima {
+module fastdds {
+module dds {
+
+// TODO(eduponz): Add PIDs.
+
+@mutable
+struct ParticipantBuiltinTopicData
+{
+    //! Builtin topic Key
+    @key BuiltinTopicKey_t key;
+
+    //! UserData QoS
+    UserDataQosPolicy user_data;
+
+    PropertyPolicyQos properties;
+
+    string<255> name;
+
+    GUID_t guid;
+
+    LocatorList default_unicast_locator_list;
+
+    LocatorList default_multicast_locator_list;
+
+    LocatorList mettraffic_unicast_locator_list;
+
+    LocatorList mettraffic_multicast_locator_list;
+
+    Duration_t lease_duration;
+
+    VendorId_t vendor_id;
+
+    DomainId_t m_domain_id;
+};
+
+@mutable @representation(XCDRv1)
+struct
+{
+    //! Builtin topic Key
+    @key BuiltinTopicKey_t key;
+
+    //! Builtin participant topic Key
+    @key BuiltinTopicKey_t participant_key;
+
+    //! Topic name
+    string<255> topic_name;
+
+    //! Type name
+    string<255> type_name;
+
+    // DataWriter Qos
+
+    //!Durability Qos, implemented in the library.
+    DurabilityQosPolicy durability;
+
+    //!Durability Service Qos, NOT implemented in the library.
+    DurabilityServiceQosPolicy durability_service;
+
+    //!Deadline Qos, implemented in the library.
+    DeadlineQosPolicy deadline;
+
+    //!Latency Budget Qos, NOT implemented in the library.
+    LatencyBudgetQosPolicy latency_budget;
+
+    //!Liveliness Qos, implemented in the library.
+    LivelinessQosPolicy liveliness;
+
+    //!Reliability Qos, implemented in the library.
+    ReliabilityQosPolicy reliability;
+
+    //!Lifespan Qos, implemented in the library.
+    LifespanQosPolicy lifespan;
+
+    //!User Data Qos, implemented in the library.
+    UserDataQosPolicy user_data;
+
+    //!Ownership Qos, implemented in the library.
+    OwnershipQosPolicy ownership;
+
+    //!Ownership Strength Qos, implemented in the library.
+    OwnershipStrengthQosPolicy ownership_strength;
+
+    //!Destination Order Qos, NOT implemented in the library.
+    DestinationOrderQosPolicy destination_order;
+
+    // Publisher Qos
+
+    //!Presentation Qos, NOT implemented in the library.
+    PresentationQosPolicy presentation;
+
+    //!Partition Qos, implemented in the library.
+    PartitionQosPolicy partition;
+
+    //!Topic Data Qos, NOT implemented in the library.
+    TopicDataQosPolicy topic_data;
+
+    //!Group Data Qos, implemented in the library.
+    GroupDataQosPolicy group_data;
+
+    PublishModeQosPolicy publish_mode;
+
+    HistoryQosPolicy history;
+
+    ResourceLimitsQosPolicy resource_limits;
+
+    DataRepresentationQosPolicy representation;
+
+    DataSharingQosPolicy data_sharing;
+
+    LocatorList unicast_locator_list;
+
+    LocatorList multicast_locator_list;
+
+    GUID_t guid;
+
+    GUID_t persistence_guid_;
+
+    MemoryManagementPolicy_t history_memory_policy;
+
+    DisablePositiveACKsQosPolicy disable_positive_acks;
+
+    uint32_t m_typeMaxSerialized;
+
+    PropertyPolicyQos properties;
+
+    xtypes::TypeInformation type_information;
+
+};
+
+} // dds
+} // fastdds
+} // eprosima

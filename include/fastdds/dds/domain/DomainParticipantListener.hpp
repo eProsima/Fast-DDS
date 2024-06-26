@@ -69,7 +69,8 @@ public:
      */
     virtual void on_participant_discovery(
             DomainParticipant* participant,
-            rtps::ParticipantDiscoveryInfo&& info,
+            reason reason,
+            const ParticipantBuiltinTopicData& info,
             bool& should_be_ignored)
     {
         static_cast<void>(participant);

@@ -166,6 +166,7 @@ public:
      *                      RETCODE_NO_DATA if the given TypeIdentifier is not found in the registry.
      *                      RETCODE_PRECONDITION_NOT_MET if the TypeIdentifier is not a direct hash.
      */
+    // TODO(eduponz): Overload to receive the typeinformation. Try to use the complete first, else minimal, else error.
     virtual FASTDDS_EXPORTED_API ReturnCode_t get_type_object(
             const TypeIdentifier& type_identifier,
             TypeObject& type_object) = 0;
