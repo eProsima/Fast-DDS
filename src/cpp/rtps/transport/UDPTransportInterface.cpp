@@ -432,6 +432,19 @@ bool UDPTransportInterface::OpenOutputChannel(
     return true;
 }
 
+bool UDPTransportInterface::OpenOutputChannels(
+        SendResourceList& send_resource_list,
+        const LocatorSelectorEntry& locator_selector_entry)
+{
+    bool success = false;
+    for (size_t i = 0; i < locator_selector_entry.state.unicast.size(); ++i)
+    {
+        size_t index = locator_selector_entry.state.unicast[i];
+        success |= OpenOutputChannel(send_resource_list, locator_selector_entry.unicast[index]);
+    }
+    return success;
+}
+
 Locator UDPTransportInterface::RemoteToMainLocal(
         const Locator& remote) const
 {
