@@ -304,12 +304,12 @@ eProsimaUDPSocket UDPv6Transport::OpenAndBindInputSocket(
         if (!asio_helpers::asio_helpers::try_setting_buffer_size<asio::socket_base::receive_buffer_size>(
                     socket, mReceiveBufferSize, minimum_value, configured_value))
         {
-            EPROSIMA_LOG_ERROR(TRANSPORT_UDPV6,
+            logError(TRANSPORT_UDPV6,
                     "Couldn't set receive buffer size to minimum value: " << minimum_value);
         }
         else if (mReceiveBufferSize != configured_value)
         {
-            EPROSIMA_LOG_WARNING(TRANSPORT_UDPV6,
+            logWarning(TRANSPORT_UDPV6,
                     "Receive buffer size could not be set to the desired value. "
                     << "Using " << configured_value << " instead of " << mReceiveBufferSize);
         }

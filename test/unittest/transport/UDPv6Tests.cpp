@@ -12,13 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-<<<<<<< HEAD
-=======
 #include <limits>
 #include <memory>
->>>>>>> 532acfa74 (Handle errors when setting socket buffer sizes (#4760) (#4795))
 #include <thread>
-#include <memory>
 
 #include <asio.hpp>
 #include <gtest/gtest.h>

@@ -384,12 +384,12 @@ void TCPChannelResource::set_socket_options(
         if (!asio_helpers::try_setting_buffer_size<asio::socket_base::send_buffer_size>(
                     socket, desired_value, minimum_value, configured_value))
         {
-            EPROSIMA_LOG_ERROR(TCP_TRANSPORT,
+            logError(TCP_TRANSPORT,
                     "Couldn't set send buffer size to minimum value: " << minimum_value);
         }
         else if (desired_value != configured_value)
         {
-            EPROSIMA_LOG_WARNING(TCP_TRANSPORT,
+            logWarning(TCP_TRANSPORT,
                     "Couldn't set send buffer size to desired value. "
                     << "Using " << configured_value << " instead of " << desired_value);
         }
@@ -402,12 +402,12 @@ void TCPChannelResource::set_socket_options(
         if (!asio_helpers::try_setting_buffer_size<asio::socket_base::receive_buffer_size>(
                     socket, desired_value, minimum_value, configured_value))
         {
-            EPROSIMA_LOG_ERROR(TCP_TRANSPORT,
+            logError(TCP_TRANSPORT,
                     "Couldn't set receive buffer size to minimum value: " << minimum_value);
         }
         else if (desired_value != configured_value)
         {
-            EPROSIMA_LOG_WARNING(TCP_TRANSPORT,
+            logWarning(TCP_TRANSPORT,
                     "Couldn't set receive buffer size to desired value. "
                     << "Using " << configured_value << " instead of " << desired_value);
         }
