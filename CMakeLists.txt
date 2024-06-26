@@ -368,7 +368,7 @@ if(BUILD_DOCUMENTATION)
     endif()
 
     # Target to create documentation directories
-    add_custom_target(docdirs
+    add_custom_target(fastdds_docdirs
         COMMAND ${CMAKE_COMMAND} -E make_directory ${PROJECT_BINARY_DIR}/doc
         COMMENT "Creating documentation directory" VERBATIM)
 
@@ -381,12 +381,12 @@ if(BUILD_DOCUMENTATION)
     # Configure the template doxyfile for or specific project
     configure_file(doxyfile.in ${PROJECT_BINARY_DIR}/doxyfile @ONLY IMMEDIATE)
     # Add custom target to run doxygen when ever the project is build
-    add_custom_target(doxygen
+    add_custom_target(fastdds_doxygen
         COMMAND "${DOXYGEN_EXECUTABLE}" "${PROJECT_BINARY_DIR}/doxyfile"
         SOURCES "${PROJECT_BINARY_DIR}/doxyfile"
         COMMENT "Generating API documentation with doxygen" VERBATIM)
 
-    add_dependencies(doxygen docdirs)
+    add_dependencies(fastdds_doxygen fastdds_docdirs)
 
     ### README html ########################
 
@@ -437,15 +437,15 @@ if(BUILD_DOCUMENTATION)
             COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/readthedocs_custom.cmake
             )
 
-        add_dependencies(readthedocs docdirs)
+        add_dependencies(readthedocs fastdds_docdirs)
     endif()
 
-    add_custom_target(doc ALL
+    add_custom_target(fastdds_docs ALL
         COMMENT "Generated project documentation" VERBATIM)
 
-    add_dependencies(doc doxygen)
+    add_dependencies(fastdds_docs fastdds_doxygen)
     if(NOT CHECK_DOCUMENTATION)
-        add_dependencies(doc readthedocs)
+        add_dependencies(fastdds_docs readthedocs)
     endif()
 endif()
 
