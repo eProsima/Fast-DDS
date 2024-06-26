@@ -40,8 +40,6 @@
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.hpp>
 #include <fastdds/fastdds_dll.hpp>
 
-#include <rtps/attributes/ServerAttributes.hpp>
-
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
