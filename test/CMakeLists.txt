@@ -63,14 +63,7 @@ endif()
 # Profiling tests using valgrind
 ###############################################################################
 if(NOT ((MSVC OR MSVC_IDE)) AND PROFILING_TESTS)
-<<<<<<< HEAD
-   find_program(CTEST_MEMORYCHECK_COMMAND NAMES valgrind)
-   if(CTEST_MEMORYCHECK_COMMAND)
-      add_subdirectory(profiling)
-   endif()
-=======
     add_subdirectory(profiling)
->>>>>>> 2d4c6acf8 (Build profiling tests as alternate build in Ubuntu CI  (#4989))
 endif()
 
 ###############################################################################
