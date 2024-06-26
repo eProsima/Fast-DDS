@@ -19,6 +19,7 @@
 #include <rtps/writer/BaseWriter.hpp>
 
 #include <chrono>
+#include <cstdint>
 #include <memory>
 #include <mutex>
 
@@ -65,6 +66,41 @@ BaseWriter::~BaseWriter()
 
     history_->mp_writer = nullptr;
     history_->mp_mutex = nullptr;
+}
+
+#ifdef FASTDDS_STATISTICS
+
+bool BaseWriter::add_statistics_listener(
+        std::shared_ptr<fastdds::statistics::IListener> listener)
+{
+    return add_statistics_listener_impl(listener);
+}
+
+bool BaseWriter::remove_statistics_listener(
+        std::shared_ptr<fastdds::statistics::IListener> listener)
+{
+    return remove_statistics_listener_impl(listener);
+}
+
+void BaseWriter::set_enabled_statistics_writers_mask(
+        uint32_t enabled_writers)
+{
+    set_enabled_statistics_writers_mask_impl(enabled_writers);
+}
+
+#endif // FASTDDS_STATISTICS
+
+void BaseWriter::add_statistics_sent_submessage(
+        CacheChange_t* change,
+        size_t num_locators)
+{
+    static_cast<void>(change);
+    static_cast<void>(num_locators);
+
+#ifdef FASTDDS_STATISTICS
+    change->writer_info.num_sent_submessages += num_locators;
+    on_data_generated(num_locators);
+#endif // ifdef FASTDDS_STATISTICS
 }
 
 void BaseWriter::deinit()

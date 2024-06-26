@@ -26,6 +26,7 @@
 #include <mutex>
 #include <vector>
 
+#include <fastdds/fastdds_dll.hpp>
 #include <fastdds/dds/core/status/BaseStatus.hpp>
 #include <fastdds/rtps/attributes/HistoryAttributes.hpp>
 #include <fastdds/rtps/attributes/WriterAttributes.hpp>
@@ -36,8 +37,8 @@
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
 #include <fastdds/rtps/writer/DeliveryRetCode.hpp>
 #include <fastdds/rtps/writer/LocatorSelectorSender.hpp>
+#include <fastdds/statistics/IListeners.hpp>
 #include <fastdds/statistics/rtps/monitor_service/connections_fwd.hpp>
-#include <fastdds/statistics/rtps/StatisticsCommon.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -61,13 +62,10 @@ class WriterHistory;
  * Class RTPSWriter, manages the sending of data to the readers. Is always associated with a HistoryCache.
  * @ingroup WRITER_MODULE
  */
-class RTPSWriter
-    : public Endpoint
-    , public fastdds::statistics::StatisticsWriterImpl
+class RTPSWriter : public Endpoint
 {
     friend class WriterHistory;
     friend class RTPSParticipantImpl;
-    friend class RTPSMessageGroup;
     friend class fastdds::dds::DataWriterImpl;
 
 protected:
@@ -263,24 +261,24 @@ public:
      * @param listener
      * @return true if successfully added
      */
-    FASTDDS_EXPORTED_API bool add_statistics_listener(
-            std::shared_ptr<fastdds::statistics::IListener> listener);
+    FASTDDS_EXPORTED_API virtual bool add_statistics_listener(
+            std::shared_ptr<fastdds::statistics::IListener> listener) = 0;
 
     /**
      * Remove a listener from receiving statistics backend callbacks
      * @param listener
      * @return true if successfully removed
      */
-    FASTDDS_EXPORTED_API bool remove_statistics_listener(
-            std::shared_ptr<fastdds::statistics::IListener> listener);
+    FASTDDS_EXPORTED_API virtual bool remove_statistics_listener(
+            std::shared_ptr<fastdds::statistics::IListener> listener) = 0;
 
     /**
      * @brief Set the enabled statistics writers mask
      *
      * @param enabled_writers The new mask to set
      */
-    FASTDDS_EXPORTED_API void set_enabled_statistics_writers_mask(
-            uint32_t enabled_writers);
+    FASTDDS_EXPORTED_API virtual void set_enabled_statistics_writers_mask(
+            uint32_t enabled_writers) = 0;
 
     /**
      * @brief Get the connection list of this writer
@@ -507,10 +505,6 @@ protected:
 
     bool is_datasharing_compatible_with(
             const ReaderProxyData& rdata) const;
-
-    void add_statistics_sent_submessage(
-            CacheChange_t* change,
-            size_t num_locators);
 
 private:
 

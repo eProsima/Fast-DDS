@@ -19,9 +19,14 @@
 #ifndef RTPS_WRITER__BASEWRITER_HPP
 #define RTPS_WRITER__BASEWRITER_HPP
 
+#include <cstdint>
 #include <memory>
 
+#include <fastdds/fastdds_dll.hpp>
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
+#include <fastdds/statistics/IListeners.hpp>
+#include <fastdds/statistics/rtps/StatisticsCommon.hpp>
+#include <fastdds/statistics/rtps/monitor_service/connections_fwd.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -39,10 +44,41 @@ class WriterAttributes;
 class WriterHistory;
 class WriterListener;
 
-class BaseWriter : public fastdds::rtps::RTPSWriter
+class BaseWriter
+    : public fastdds::rtps::RTPSWriter
+    , public fastdds::statistics::StatisticsWriterImpl
 {
 
 public:
+
+#ifdef FASTDDS_STATISTICS
+
+    /**
+     * Add a listener to receive statistics backend callbacks
+     * @param listener
+     * @return true if successfully added
+     */
+    FASTDDS_EXPORTED_API bool add_statistics_listener(
+            std::shared_ptr<fastdds::statistics::IListener> listener) override;
+
+    /**
+     * Remove a listener from receiving statistics backend callbacks
+     * @param listener
+     * @return true if successfully removed
+     */
+    FASTDDS_EXPORTED_API bool remove_statistics_listener(
+            std::shared_ptr<fastdds::statistics::IListener> listener) override;
+
+    /**
+     * @brief Set the enabled statistics writers mask
+     *
+     * @param enabled_writers The new mask to set
+     */
+    FASTDDS_EXPORTED_API void set_enabled_statistics_writers_mask(
+            uint32_t enabled_writers) override;
+
+#endif // FASTDDS_STATISTICS
+
 
     virtual ~BaseWriter();
 
@@ -57,6 +93,10 @@ protected:
             WriterListener* listen = nullptr);
 
     void deinit();
+
+    void add_statistics_sent_submessage(
+            CacheChange_t* change,
+            size_t num_locators);
 
 };
 

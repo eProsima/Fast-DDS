@@ -270,42 +270,6 @@ bool RTPSWriter::send_nts(
                    locator_selector.locator_selector.end(), max_blocking_time_point);
 }
 
-#ifdef FASTDDS_STATISTICS
-
-bool RTPSWriter::add_statistics_listener(
-        std::shared_ptr<fastdds::statistics::IListener> listener)
-{
-    return add_statistics_listener_impl(listener);
-}
-
-bool RTPSWriter::remove_statistics_listener(
-        std::shared_ptr<fastdds::statistics::IListener> listener)
-{
-    return remove_statistics_listener_impl(listener);
-}
-
-void RTPSWriter::set_enabled_statistics_writers_mask(
-        uint32_t enabled_writers)
-{
-    set_enabled_statistics_writers_mask_impl(enabled_writers);
-}
-
-#endif // FASTDDS_STATISTICS
-
-void RTPSWriter::add_statistics_sent_submessage(
-        CacheChange_t* change,
-        size_t num_locators)
-{
-    static_cast<void>(change);
-    static_cast<void>(num_locators);
-
-#ifdef FASTDDS_STATISTICS
-    change->writer_info.num_sent_submessages += num_locators;
-    on_data_generated(num_locators);
-#endif // ifdef FASTDDS_STATISTICS
-}
-
 }  // namespace rtps
 }  // namespace fastdds
-
 }  // namespace eprosima

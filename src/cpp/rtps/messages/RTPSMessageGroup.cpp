@@ -30,6 +30,7 @@
 #include <rtps/messages/RTPSMessageGroup_t.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/reader/BaseReader.hpp>
+#include <rtps/writer/BaseWriter.hpp>
 
 #include <statistics/rtps/messages/RTPSStatisticsMessages.hpp>
 
@@ -933,8 +934,8 @@ bool RTPSMessageGroup::create_gap_submessage(
 #endif // if HAVE_SECURITY
 
     // Notify the statistics module, note that only writers add gaps
-    assert(nullptr != dynamic_cast<RTPSWriter*>(endpoint_));
-    static_cast<RTPSWriter*>(endpoint_)->on_gap();
+    assert(nullptr != dynamic_cast<BaseWriter*>(endpoint_));
+    static_cast<BaseWriter*>(endpoint_)->on_gap();
 
     return true;
 }

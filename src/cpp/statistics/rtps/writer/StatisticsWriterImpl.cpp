@@ -18,16 +18,16 @@
 
 #include <statistics/rtps/StatisticsBase.hpp>
 
-#include <fastdds/rtps/writer/RTPSWriter.hpp>
+#include <rtps/writer/BaseWriter.hpp>
 #include <statistics/types/types.hpp>
 
-using eprosima::fastdds::RecursiveTimedMutex;
-using eprosima::fastdds::rtps::RTPSWriter;
-using eprosima::fastdds::rtps::GUID_t;
 
 namespace eprosima {
 namespace fastdds {
 namespace statistics {
+
+using eprosima::fastdds::rtps::BaseWriter;
+using eprosima::fastdds::rtps::GUID_t;
 
 StatisticsWriterImpl::StatisticsWriterImpl()
 {
@@ -46,21 +46,21 @@ StatisticsWriterAncillary* StatisticsWriterImpl::get_members() const
 RecursiveTimedMutex& StatisticsWriterImpl::get_statistics_mutex()
 {
     static_assert(
-        std::is_base_of<StatisticsWriterImpl, RTPSWriter>::value,
+        std::is_base_of<StatisticsWriterImpl, BaseWriter>::value,
         "Must be call from a writer.");
 
-    return static_cast<RTPSWriter*>(this)->getMutex();
+    return static_cast<BaseWriter*>(this)->getMutex();
 }
 
 const GUID_t& StatisticsWriterImpl::get_guid() const
 {
-    using eprosima::fastdds::rtps::RTPSWriter;
+    using eprosima::fastdds::rtps::BaseWriter;
 
     static_assert(
-        std::is_base_of<StatisticsWriterImpl, RTPSWriter>::value,
-        "This method should be called from an actual RTPSWriter");
+        std::is_base_of<StatisticsWriterImpl, BaseWriter>::value,
+        "This method should be called from an actual BaseWriter");
 
-    return static_cast<const RTPSWriter*>(this)->getGuid();
+    return static_cast<const BaseWriter*>(this)->getGuid();
 }
 
 void StatisticsWriterImpl::on_sample_datas(
