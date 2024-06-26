@@ -915,9 +915,9 @@ TEST(RTPS, max_output_message_size_participant)
                 return false;
             };
     writer.add_user_transport_to_pparams(testTransport).
-        disable_builtin_transport().
-        add_property("fastdds.max_message_size", segment_size_str).
-        init();
+            disable_builtin_transport().
+            add_property("fastdds.max_message_size", segment_size_str).
+            init();
     EXPECT_TRUE(writer.isInitialized());
 
     // Wait for discovery
