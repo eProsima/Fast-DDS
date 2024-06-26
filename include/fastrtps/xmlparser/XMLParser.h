@@ -27,6 +27,7 @@
 #include <fastrtps/attributes/LibrarySettingsAttributes.h>
 
 #include <map>
+#include <mutex>
 #include <string>
 
 namespace tinyxml2 {

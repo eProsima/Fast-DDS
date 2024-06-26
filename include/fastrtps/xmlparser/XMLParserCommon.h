@@ -260,7 +260,6 @@ extern const char* BYTES_PER_SECOND;
 extern const char* PERIOD_MILLISECS;
 extern const char* FLOW_CONTROLLER_DESCRIPTOR;
 extern const char* SCHEDULER;
-extern const char* SENDER_THREAD;
 extern const char* MAX_BYTES_PER_PERIOD;
 extern const char* PERIOD_MS;
 extern const char* FLOW_CONTROLLER_NAME;

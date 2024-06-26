@@ -774,7 +774,7 @@ XMLP_ret XMLParser::getXMLFlowControllerDescriptorList(
     p_aux0 = elem->FirstChildElement(FLOW_CONTROLLER_DESCRIPTOR);
     if (nullptr == p_aux0)
     {
-        EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << elem->Value() << "' without content");
+        logError(XMLPARSER, "Node '" << elem->Value() << "' without content");
         return XMLP_ret::XML_ERROR;
     }
 
@@ -787,7 +787,6 @@ XMLP_ret XMLParser::getXMLFlowControllerDescriptorList(
                     <xs:element name="scheduler" type="flowControllerSchedulerPolicy" minOccurs="0" maxOccurs="1"/>
                     <xs:element name="max_bytes_per_period" type="int32" minOccurs="0" maxOccurs="1"/>
                     <xs:element name="period_ms" type="uint64" minOccurs="0" maxOccurs="1"/>
-                    <xs:element name="sender_thread" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
                 </xs:all>
             </xs:complexType>
             <xs:simpleType name="flowControllerSchedulerPolicy">
@@ -812,7 +811,7 @@ XMLP_ret XMLParser::getXMLFlowControllerDescriptorList(
 
             if (tags_present.count(name) != 0)
             {
-                EPROSIMA_LOG_ERROR(XMLPARSER,
+                logError(XMLPARSER,
                         "Duplicated element found in 'flowControllerDescriptorType'. Name: " << name);
                 return XMLP_ret::XML_ERROR;
             }
@@ -825,16 +824,16 @@ XMLP_ret XMLParser::getXMLFlowControllerDescriptorList(
             {
                 std::lock_guard<std::mutex> lock(collections_mtx_);
                 // name - stringType
-                std::string element = get_element_text(p_aux1);
-                if (element.empty())
+                const char* element = p_aux1->GetText();
+                if (nullptr == element)
                 {
-                    EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << NAME << "' without content");
+                    logError(XMLPARSER, "Node '" << NAME << "' without content");
                     return XMLP_ret::XML_ERROR;
                 }
                 auto element_inserted = flow_controller_descriptor_names_.insert(element);
                 if (element_inserted.first == flow_controller_descriptor_names_.end())
                 {
-                    EPROSIMA_LOG_ERROR(XMLPARSER,
+                    logError(XMLPARSER,
                             "Insertion error for flow controller node '" << FLOW_CONTROLLER_NAME << "'");
                     return XMLP_ret::XML_ERROR;
                 }
@@ -843,22 +842,22 @@ XMLP_ret XMLParser::getXMLFlowControllerDescriptorList(
             }
             else if (strcmp(name, SCHEDULER) == 0)
             {
-                std::string text = get_element_text(p_aux1);
-                if (text.empty())
+                const char* text = p_aux1->GetText();
+                if (nullptr == text)
                 {
-                    EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << SCHEDULER << "' without content");
+                    logError(XMLPARSER, "Node '" << SCHEDULER << "' without content");
                     return XMLP_ret::XML_ERROR;
                 }
 
                 // scheduler - flowControllerSchedulerPolicy
-                if (!get_element_enum_value(text.c_str(), flow_controller_descriptor->scheduler,
+                if (!get_element_enum_value(text, flow_controller_descriptor->scheduler,
                         FIFO, fastdds::rtps::FlowControllerSchedulerPolicy::FIFO,
                         HIGH_PRIORITY, fastdds::rtps::FlowControllerSchedulerPolicy::HIGH_PRIORITY,
                         ROUND_ROBIN, fastdds::rtps::FlowControllerSchedulerPolicy::ROUND_ROBIN,
                         PRIORITY_WITH_RESERVATION,
                         fastdds::rtps::FlowControllerSchedulerPolicy::PRIORITY_WITH_RESERVATION))
                 {
-                    EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << SCHEDULER << "' with bad content");
+                    logError(XMLPARSER, "Node '" << SCHEDULER << "' with bad content");
                     return XMLP_ret::XML_ERROR;
                 }
             }
@@ -873,19 +872,14 @@ XMLP_ret XMLParser::getXMLFlowControllerDescriptorList(
             else if (strcmp(name, PERIOD_MS) == 0)
             {
                 // period_ms - uint64Type
-                if (XMLP_ret::XML_OK != getXMLUint(p_aux1, &flow_controller_descriptor->period_ms, ident))
+                if (XMLP_ret::XML_OK != getXMLUint(p_aux1, (uint16_t*)&flow_controller_descriptor->period_ms, ident))
                 {
                     return XMLP_ret::XML_ERROR;
                 }
             }
-            else if (strcmp(name, SENDER_THREAD) == 0)
-            {
-                // sender_thread - threadSettingsType
-                getXMLThreadSettings(*p_aux1, flow_controller_descriptor->sender_thread);
-            }
             else
             {
-                EPROSIMA_LOG_ERROR(XMLPARSER,
+                logError(XMLPARSER,
                         "Invalid element found into 'flowControllerDescriptorType'. Name: " << name);
                 return XMLP_ret::XML_ERROR;
             }
@@ -893,7 +887,7 @@ XMLP_ret XMLParser::getXMLFlowControllerDescriptorList(
 
         if (!name_defined)
         {
-            EPROSIMA_LOG_ERROR(XMLPARSER, "Flow Controller Descriptor requires a 'name'");
+            logError(XMLPARSER, "Flow Controller Descriptor requires a 'name'");
             return XMLP_ret::XML_ERROR;
         }
 
@@ -2634,16 +2628,16 @@ XMLP_ret XMLParser::getXMLPublishModeQos(
         else if (strcmp(name, FLOW_CONTROLLER_NAME) == 0)
         {
             std::lock_guard<std::mutex> lock(collections_mtx_);
-            std::string element = get_element_text(p_aux0);
-            if (element.empty())
+            const char* element = p_aux0->GetText();
+            if (nullptr == element)
             {
-                EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << FLOW_CONTROLLER_NAME << "' without content");
+                logError(XMLPARSER, "Node '" << FLOW_CONTROLLER_NAME << "' without content");
                 return XMLP_ret::XML_ERROR;
             }
             auto element_inserted = flow_controller_descriptor_names_.insert(element);
             if (element_inserted.first == flow_controller_descriptor_names_.end())
             {
-                EPROSIMA_LOG_ERROR(XMLPARSER, "Insertion error for node '" << FLOW_CONTROLLER_NAME << "'");
+                logError(XMLPARSER, "Insertion error for node '" << FLOW_CONTROLLER_NAME << "'");
                 return XMLP_ret::XML_ERROR;
             }
             publishMode.flow_controller_name = element_inserted.first->c_str();

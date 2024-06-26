@@ -247,7 +247,6 @@ const char* BYTES_PER_SECOND = "bytesPerPeriod";
 const char* PERIOD_MILLISECS = "periodMillisecs";
 const char* FLOW_CONTROLLER_DESCRIPTOR = "flow_controller_descriptor";
 const char* SCHEDULER = "scheduler";
-const char* SENDER_THREAD = "sender_thread";
 const char* MAX_BYTES_PER_PERIOD = "max_bytes_per_period";
 const char* PERIOD_MS = "period_ms";
 const char* FLOW_CONTROLLER_NAME = "flow_controller_name";

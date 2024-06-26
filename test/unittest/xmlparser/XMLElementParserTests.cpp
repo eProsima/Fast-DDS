@@ -1980,39 +1980,32 @@ TEST_F(XMLParserTests, getXMLFlowControllerDescriptorList)
     std::vector<std::pair<std::vector<std::string>, XMLP_ret>> test_cases =
     {
         /*
-         * name, scheduler, max_bytes_per_period, period_ms,
-         * sender_thread_scheduling_policy, sender_thread_priority,
-         * sender_thread_affinity, sender_thread_stack_size, extra_xml_tag
+         * name, scheduler, max_bytes_per_period, period_ms, extra_xml_tag
          */
-        {{"test_flow_controller", "FIFO", "120", "50", \
-            "12", "12", "12", "12", "" }, XMLP_ret::XML_OK},
-        {{"test_flow_controller", "ROUND_ROBIN", "2500", "100", \
-            "15", "12", "12", "12", "" }, XMLP_ret::XML_OK},
-        {{"test_flow_controller", "HIGH_PRIORITY", "2500", "100", \
-            "15", "12", "12", "12", "" }, XMLP_ret::XML_OK},
-        {{"test_flow_controller", "PRIORITY_WITH_RESERVATION", "2500", "100", \
-            "15", "12", "12", "12", "" }, XMLP_ret::XML_OK},
-        {{"test_flow_controller", "INVALID", "120", "50", \
-            "12", "12", "12", "12", "" }, XMLP_ret::XML_ERROR},   // Invalid scheduler
-        {{"test_flow_controller", "HIGH_PRIORITY", "120", "-10", \
-            "12", "12", "12", "12", "" }, XMLP_ret::XML_ERROR},   // negative period_ms
-        {{"test_flow_controller", "HIGH_PRIORITY", "120", "50", \
-            "12", "12", "12", "12", "<bad_element></bad_element>" }, XMLP_ret::XML_ERROR},   // Invalid tag
-        {{"", "HIGH_PRIORITY", "120", "50", \
-            "12", "12", "12", "12", "" }, XMLP_ret::XML_ERROR},   // empty name
-        {{"test_flow_controller", "HIGH_PRIORITY", "120", "50", \
-            "12", "12", "12", "12", "<name>another_name</name>" }, XMLP_ret::XML_ERROR},   // duplicated name tag
-        {{"test_flow_controller", "HIGH_PRIORITY", "120", "50", \
-            "12", "12", "12", "12", "<scheduler>FIFO</scheduler>" }, XMLP_ret::XML_ERROR},   // duplicated scheduler tag
-        {{"test_flow_controller", "HIGH_PRIORITY", "120", "50", \
-            "12", "12", "12", "12", "<max_bytes_per_period>96</max_bytes_per_period>" }, XMLP_ret::XML_ERROR},   // duplicated max_bytes_per_period tag
-        {{"test_flow_controller", "HIGH_PRIORITY", "120", "50", \
-            "12", "12", "12", "12", "<period_ms>96</period_ms>" }, XMLP_ret::XML_ERROR},   // duplicated period_ms tag
-        {{"test_flow_controller", "HIGH_PRIORITY", "120", "50", \
-            "12", "12", "12", "12", "<sender_thread><scheduling_policy>12</scheduling_policy></sender_thread>" },
-            XMLP_ret::XML_ERROR}, // duplicated sender_thread tag
-        {{"", "HIGH_PRIORITY", "120", "50", \
-            "12345", "12", "12", "a", "" }, XMLP_ret::XML_ERROR},   // invalid thread settings
+        {{"test_flow_controller", "FIFO", "120", "50", "" } \
+            , XMLP_ret::XML_OK},
+        {{"test_flow_controller", "ROUND_ROBIN", "2500", "100", "" } \
+            , XMLP_ret::XML_OK},
+        {{"test_flow_controller", "HIGH_PRIORITY", "2500", "100", "" } \
+            , XMLP_ret::XML_OK},
+        {{"test_flow_controller", "PRIORITY_WITH_RESERVATION", "2500", "100", "" } \
+            , XMLP_ret::XML_OK},
+        {{"test_flow_controller", "INVALID", "120", "50", "" } \
+            , XMLP_ret::XML_ERROR},   // Invalid scheduler
+        {{"test_flow_controller", "HIGH_PRIORITY", "120", "-10", "" } \
+            , XMLP_ret::XML_ERROR},   // negative period_ms
+        {{"test_flow_controller", "HIGH_PRIORITY", "120", "50", "<bad_element></bad_element>" } \
+            , XMLP_ret::XML_ERROR},   // Invalid tag
+        {{"", "HIGH_PRIORITY", "120", "50", "" } \
+            , XMLP_ret::XML_ERROR},   // empty name
+        {{"test_flow_controller", "HIGH_PRIORITY", "120", "50", "<name>another_name</name>" } \
+            , XMLP_ret::XML_ERROR},   // duplicated name tag
+        {{"test_flow_controller", "HIGH_PRIORITY", "120", "50", "<scheduler>FIFO</scheduler>" } \
+            , XMLP_ret::XML_ERROR},   // duplicated scheduler tag
+        {{"test_flow_controller", "HIGH_PRIORITY", "120", "50", "<max_bytes_per_period>96</max_bytes_per_period>" } \
+            , XMLP_ret::XML_ERROR},   // duplicated max_bytes_per_period tag
+        {{"test_flow_controller", "HIGH_PRIORITY", "120", "50", "<period_ms>96</period_ms>" } \
+            , XMLP_ret::XML_ERROR},   // duplicated period_ms tag
     };
 
     /* Run the tests */
@@ -2034,13 +2027,7 @@ TEST_F(XMLParserTests, getXMLFlowControllerDescriptorList)
                 "       <scheduler>" + params[1] + "</scheduler>"
                 "       <max_bytes_per_period>" + params[2] + "</max_bytes_per_period>"
                 "       <period_ms>" + params[3] + "</period_ms>"
-                "       <sender_thread>"
-                "           <scheduling_policy>" + params[4] + "</scheduling_policy>"
-                "           <priority>" + params[5] + "</priority>"
-                "           <affinity>" + params[6] + "</affinity>"
-                "           <stack_size>" + params[7] + "</stack_size>"
-                "       </sender_thread>"
-                + params[8] +
+                + params[4] +
                 "   </flow_controller_descriptor>"
                 "</flow_controller_descriptor_list>";
 
@@ -2061,14 +2048,6 @@ TEST_F(XMLParserTests, getXMLFlowControllerDescriptorList)
             ASSERT_EQ(flow_controller_descriptor_list.at(0)->max_bytes_per_period,
                     static_cast<int32_t>(std::stoi(params[2])));
             ASSERT_EQ(flow_controller_descriptor_list.at(0)->period_ms, static_cast<uint64_t>(std::stoi(params[3])));
-            ASSERT_EQ(flow_controller_descriptor_list.at(0)->sender_thread.scheduling_policy,
-                    static_cast<int32_t>(std::stoi(params[4])));
-            ASSERT_EQ(flow_controller_descriptor_list.at(0)->sender_thread.priority,
-                    static_cast<int32_t>(std::stoi(params[5])));
-            ASSERT_EQ(flow_controller_descriptor_list.at(0)->sender_thread.affinity,
-                    static_cast<uint64_t>(std::stoi(params[6])));
-            ASSERT_EQ(flow_controller_descriptor_list.at(0)->sender_thread.stack_size,
-                    static_cast<int32_t>(std::stoi(params[7])));
         }
     }
 }
