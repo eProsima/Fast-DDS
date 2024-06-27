@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _FASTDDS_RTPS_EDP_H_
-#define _FASTDDS_RTPS_EDP_H_
+#ifndef FASTDDS_RTPS_BUILTIN_DISCOVERY_ENDPOINT_EDP_H
+#define FASTDDS_RTPS_BUILTIN_DISCOVERY_ENDPOINT_EDP_H
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <foonathan/memory/container.hpp>
@@ -27,11 +27,11 @@
 #include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
 #include <fastdds/dds/core/status/PublicationMatchedStatus.hpp>
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
-#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
 #include <fastdds/rtps/builtin/data/ContentFilterProperty.hpp>
-#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
-#include <fastdds/rtps/builtin/data/WriterProxyData.h>
-#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
+#include <fastdds/rtps/builtin/data/WriterProxyData.hpp>
+#include <fastdds/rtps/common/Guid.hpp>
 
 #include <utils/ProxyPool.hpp>
 
@@ -401,9 +401,9 @@ private:
     foonathan::memory::map<GUID_t, fastdds::dds::PublicationMatchedStatus, pool_allocator_t> writer_status_;
 };
 
-} /* namespace rtps */
-} /* namespace fastdds */
-} /* namespace eprosima */
+} // namespace rtps
+} // namespace fastdds
+} // namespace eprosima
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#endif /* _FASTDDS_RTPS_EDP_H_ */
+#endif // FASTDDS_RTPS_BUILTIN_DISCOVERY_ENDPOINT_EDP_H

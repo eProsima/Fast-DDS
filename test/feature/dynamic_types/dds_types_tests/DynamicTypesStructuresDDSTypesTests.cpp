@@ -18,7 +18,7 @@
 
 #include "../DynamicTypesDDSTypesTest.hpp"
 #include "../../../dds-types-test/helpers/basic_inner_types.hpp"
-#include "../../../dds-types-test/structuresPubSubTypes.h"
+#include "../../../dds-types-test/structuresPubSubTypes.hpp"
 #include "../../../dds-types-test/structuresTypeObjectSupport.hpp"
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>

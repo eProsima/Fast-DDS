@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef _FASTDDS_PUBLISHER_HPP_
-#define _FASTDDS_PUBLISHER_HPP_
+#ifndef FASTDDS_DDS_PUBLISHER__PUBLISHER_HPP
+#define FASTDDS_DDS_PUBLISHER__PUBLISHER_HPP
 
 #include <string>
 #include <vector>
@@ -25,7 +25,7 @@
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
-#include <fastdds/rtps/common/InstanceHandle.h>
+#include <fastdds/rtps/common/InstanceHandle.hpp>
 
 #include <fastdds/publisher/PublisherImpl.hpp>
 
@@ -153,8 +153,8 @@ protected:
     PublisherImpl* impl_;
 };
 
-} // dds
-} // fastdds
-} // eprosima
+} // namespace dds
+} // namespace fastdds
+} // namespace eprosima
 
-#endif /* _FASTDDS_PUBLISHER_HPP_ */
+#endif // FASTDDS_DDS_PUBLISHER__PUBLISHER_HPP

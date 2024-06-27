@@ -20,7 +20,7 @@
 #ifndef _FASTDDS_PARTICIPANTATTRIBUTES_H_
 #define _FASTDDS_PARTICIPANTATTRIBUTES_H_
 
-#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
 
 namespace eprosima {
 namespace fastdds {

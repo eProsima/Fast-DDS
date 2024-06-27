@@ -17,8 +17,8 @@
  *
  */
 
-#include <fastdds/rtps/Endpoint.h>
-#include <fastdds/rtps/participant/RTPSParticipant.h>
+#include <fastdds/rtps/Endpoint.hpp>
+#include <fastdds/rtps/participant/RTPSParticipant.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 
 namespace eprosima {

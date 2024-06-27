@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _FASTDDS_DDS_SUBSCRIBER_DATAREADER_HPP_
-#define _FASTDDS_DDS_SUBSCRIBER_DATAREADER_HPP_
+#ifndef FASTDDS_DDS_SUBSCRIBER__DATAREADER_HPP
+#define FASTDDS_DDS_SUBSCRIBER__DATAREADER_HPP
 
 #include <cstdint>
 #include <vector>
@@ -41,7 +41,7 @@
 #include <fastdds/fastdds_dll.hpp>
 
 #include <fastdds/rtps/common/LocatorList.hpp>
-#include <fastdds/rtps/common/Time_t.h>
+#include <fastdds/rtps/common/Time_t.hpp>
 
 namespace dds {
 namespace sub {
@@ -1084,8 +1084,8 @@ protected:
 
 };
 
-} /* namespace dds */
-} /* namespace fastdds */
-} /* namespace eprosima */
+} // namespace dds
+} // namespace fastdds
+} // namespace eprosima
 
-#endif /* _FASTDDS_DDS_SUBSCRIBER_DATAREADER_HPP_*/
+#endif // FASTDDS_DDS_SUBSCRIBER__DATAREADER_HPP

@@ -17,7 +17,7 @@
 
 #include <vector>
 
-#include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPv6TransportDescriptor.hpp>
 #include <rtps/transport/TCPv6Transport.h>
 
 namespace eprosima {

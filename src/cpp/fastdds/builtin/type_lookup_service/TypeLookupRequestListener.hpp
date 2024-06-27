@@ -27,8 +27,8 @@
 #include <unordered_set>
 
 #include <fastdds/builtin/type_lookup_service/detail/TypeLookupTypes.hpp>
-#include <fastdds/rtps/reader/ReaderListener.h>
-#include <fastdds/rtps/writer/WriterListener.h>
+#include <fastdds/rtps/reader/ReaderListener.hpp>
+#include <fastdds/rtps/writer/WriterListener.hpp>
 #include <fastdds/xtypes/type_representation/TypeIdentifierWithSizeHashSpecialization.h>
 
 #include <utils/thread.hpp>

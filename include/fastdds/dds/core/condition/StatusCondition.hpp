@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _FASTDDS_STATUS_CONDITION_HPP_
-#define _FASTDDS_STATUS_CONDITION_HPP_
+#ifndef FASTDDS_DDS_CORE_CONDITION__STATUSCONDITION_HPP
+#define FASTDDS_DDS_CORE_CONDITION__STATUSCONDITION_HPP
 
 #include <fastdds/dds/core/condition/Condition.hpp>
 #include <fastdds/dds/core/ReturnCode.hpp>
@@ -107,4 +107,4 @@ protected:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_STATUS_CONDITION_HPP_
+#endif // FASTDDS_DDS_CORE_CONDITION__STATUSCONDITION_HPP

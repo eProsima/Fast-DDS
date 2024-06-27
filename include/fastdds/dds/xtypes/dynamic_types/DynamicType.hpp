@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef FASTDDS_DDS_XTYPES_DYNAMIC_TYPES_DYNAMIC_TYPE_HPP
-#define FASTDDS_DDS_XTYPES_DYNAMIC_TYPES_DYNAMIC_TYPE_HPP
+#ifndef FASTDDS_DDS_XTYPES_DYNAMIC_TYPES__DYNAMICTYPE_HPP
+#define FASTDDS_DDS_XTYPES_DYNAMIC_TYPES__DYNAMICTYPE_HPP
 
 #include <memory>
 
@@ -188,4 +188,4 @@ private:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // FASTDDS_DDS_XTYPES_DYNAMIC_TYPES_DYNAMIC_TYPE_HPP
+#endif // FASTDDS_DDS_XTYPES_DYNAMIC_TYPES__DYNAMICTYPE_HPP

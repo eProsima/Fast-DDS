@@ -16,15 +16,15 @@
  * @file StatisticsCommon.hpp
  */
 
-#ifndef _FASTDDS_STATISTICS_RTPS_STATISTICSCOMMON_HPP_
-#define _FASTDDS_STATISTICS_RTPS_STATISTICSCOMMON_HPP_
+#ifndef FASTDDS_STATISTICS_RTPS__STATISTICSCOMMON_HPP
+#define FASTDDS_STATISTICS_RTPS__STATISTICSCOMMON_HPP
 
 #include <memory>
 #include <type_traits>
 
-#include <fastdds/rtps/common/Guid.h>
-#include <fastdds/rtps/common/SampleIdentity.h>
-#include <fastdds/rtps/common/Time_t.h>
+#include <fastdds/rtps/common/Guid.hpp>
+#include <fastdds/rtps/common/SampleIdentity.hpp>
+#include <fastdds/rtps/common/Time_t.hpp>
 #include <fastdds/statistics/IListeners.hpp>
 #include <fastdds/utils/TimedMutex.hpp>
 
@@ -394,4 +394,4 @@ protected:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_STATISTICS_RTPS_STATISTICSCOMMON_HPP_
+#endif // FASTDDS_STATISTICS_RTPS__STATISTICSCOMMON_HPP

@@ -23,8 +23,8 @@
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
-#include <fastdds/rtps/common/Locator.h>
-#include <fastdds/utils/IPFinder.h>
+#include <fastdds/rtps/common/Locator.hpp>
+#include <fastdds/utils/IPFinder.hpp>
 
 #include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
 #include <rtps/builtin/discovery/endpoint/EDP.h>

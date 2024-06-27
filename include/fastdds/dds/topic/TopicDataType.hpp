@@ -16,8 +16,8 @@
  * @file TopicDataType.hpp
  */
 
-#ifndef _FASTDDS_TOPICDATATYPE_HPP_
-#define _FASTDDS_TOPICDATATYPE_HPP_
+#ifndef FASTDDS_DDS_TOPIC__TOPICDATATYPE_HPP
+#define FASTDDS_DDS_TOPIC__TOPICDATATYPE_HPP
 
 #include <functional>
 #include <memory>
@@ -27,9 +27,9 @@
 #include <fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobject.hpp>
 #include <fastdds/fastdds_dll.hpp>
 #include <fastdds/rtps/common/CdrSerialization.hpp>
-#include <fastdds/rtps/common/InstanceHandle.h>
-#include <fastdds/rtps/common/SerializedPayload.h>
-#include <fastdds/utils/md5.h>
+#include <fastdds/rtps/common/InstanceHandle.hpp>
+#include <fastdds/rtps/common/SerializedPayload.hpp>
+#include <fastdds/utils/md5.hpp>
 
 // This version of TypeSupport has `is_bounded()`
 #define TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
@@ -279,8 +279,8 @@ private:
 
 };
 
-} /* namespace dds */
-} /* namespace fastdds */
-} /* namespace eprosima */
+} // namespace dds
+} // namespace fastdds
+} // namespace eprosima
 
-#endif /* _FASTDDS_TOPICDATATYPE_HPP_ */
+#endif // FASTDDS_DDS_TOPIC__TOPICDATATYPE_HPP

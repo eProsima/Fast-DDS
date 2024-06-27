@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef FASTDDS_DDS_XTYPES_DYNAMIC_TYPES_DYNAMIC_PUB_SUB_TYPE_HPP
-#define FASTDDS_DDS_XTYPES_DYNAMIC_TYPES_DYNAMIC_PUB_SUB_TYPE_HPP
+#ifndef FASTDDS_DDS_XTYPES_DYNAMIC_TYPES__DYNAMICPUBSUBTYPE_HPP
+#define FASTDDS_DDS_XTYPES_DYNAMIC_TYPES__DYNAMICPUBSUBTYPE_HPP
 
 #include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/Types.hpp>
-#include <fastdds/utils/md5.h>
+#include <fastdds/utils/md5.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -154,4 +154,4 @@ private:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // FASTDDS_DDS_XTYPES_DYNAMIC_TYPES_DYNAMIC_PUB_SUB_TYPE_HPP
+#endif // FASTDDS_DDS_XTYPES_DYNAMIC_TYPES__DYNAMICPUBSUBTYPE_HPP

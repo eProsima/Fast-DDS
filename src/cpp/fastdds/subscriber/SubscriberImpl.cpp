@@ -28,8 +28,8 @@
 #include <fastdds/dds/subscriber/SubscriberListener.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/domain/DomainParticipantImpl.hpp>
-#include <fastdds/rtps/common/Property.h>
-#include <fastdds/rtps/participant/RTPSParticipant.h>
+#include <fastdds/rtps/common/Property.hpp>
+#include <fastdds/rtps/participant/RTPSParticipant.hpp>
 #include <fastdds/subscriber/DataReaderImpl.hpp>
 #include <fastdds/topic/TopicDescriptionImpl.hpp>
 #include <fastdds/utils/QosConverters.hpp>

@@ -20,7 +20,7 @@
 #define _SECURITY_AUTHENTICATION_AESGCMGMAC_H_
 
 
-#include <fastdds/rtps/attributes/PropertyPolicy.h>
+#include <fastdds/rtps/attributes/PropertyPolicy.hpp>
 #include <rtps/security/cryptography/Cryptography.h>
 #include <security/cryptography/AESGCMGMAC_KeyExchange.h>
 #include <security/cryptography/AESGCMGMAC_KeyFactory.h>

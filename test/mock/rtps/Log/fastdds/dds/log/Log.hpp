@@ -12,9 +12,14 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
-#ifndef _FASTDDS_DDS_LOG_LOG_HPP_
-#define _FASTDDS_DDS_LOG_LOG_HPP_
+
+/**
+ * @file Log.hpp
+ *
+ */
+
+#ifndef FASTDDS_DDS_LOG__LOG_HPP
+#define FASTDDS_DDS_LOG__LOG_HPP
 
 #include <functional>
 #include <memory>
@@ -118,4 +123,4 @@ public:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_DDS_LOG_LOG_HPP_
+#endif // FASTDDS_DDS_LOG__LOG_HPP

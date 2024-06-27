@@ -38,11 +38,11 @@
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/dds/topic/TopicDataType.hpp>
 
-#include <fastdds/rtps/attributes/PropertyPolicy.h>
-#include <fastdds/rtps/common/Types.h>
-#include <fastdds/rtps/common/SerializedPayload.h>
+#include <fastdds/rtps/attributes/PropertyPolicy.hpp>
+#include <fastdds/rtps/common/Types.hpp>
+#include <fastdds/rtps/common/SerializedPayload.hpp>
 
-#include <fastdds/utils/IPFinder.h>
+#include <fastdds/utils/IPFinder.hpp>
 
 
 

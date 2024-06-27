@@ -31,15 +31,15 @@
 #include <unistd.h>
 #endif // if defined(_WIN32)
 
-#include "../types/Data1mbPubSubTypes.h"
-#include "../types/Data64kbPubSubTypes.h"
-#include "../types/FixedSizedPubSubTypes.h"
-#include "../types/HelloWorldPubSubTypes.h"
-#include "../types/KeyedData1mbPubSubTypes.h"
-#include "../types/KeyedHelloWorldPubSubTypes.h"
-#include "../types/core/core_typesPubSubTypes.h"
-#include "../types/StringTestPubSubTypes.h"
-#include "../types/UnboundedHelloWorldPubSubTypes.h"
+#include "../types/Data1mbPubSubTypes.hpp"
+#include "../types/Data64kbPubSubTypes.hpp"
+#include "../types/FixedSizedPubSubTypes.hpp"
+#include "../types/HelloWorldPubSubTypes.hpp"
+#include "../types/KeyedData1mbPubSubTypes.hpp"
+#include "../types/KeyedHelloWorldPubSubTypes.hpp"
+#include "../types/core/core_typesPubSubTypes.hpp"
+#include "../types/StringTestPubSubTypes.hpp"
+#include "../types/UnboundedHelloWorldPubSubTypes.hpp"
 
 #include <algorithm>
 #include <cstddef>

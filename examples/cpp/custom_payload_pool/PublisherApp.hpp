@@ -30,7 +30,7 @@
 #include "Application.hpp"
 #include "CLIParser.hpp"
 #include "CustomPayloadPool.hpp"
-#include "HelloWorldPubSubTypes.h"
+#include "HelloWorldPubSubTypes.hpp"
 
 using namespace eprosima::fastdds::dds;
 

@@ -20,7 +20,7 @@
 #ifndef _FASTDDS_RTPS_BUILTIN_DATA_PROXYHASHTABLES_HPP_
 #define _FASTDDS_RTPS_BUILTIN_DATA_PROXYHASHTABLES_HPP_
 
-#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/Guid.hpp>
 
 #include <foonathan/memory/container.hpp>
 #include <foonathan/memory/memory_pool.hpp>

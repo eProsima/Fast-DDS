@@ -18,7 +18,7 @@
 
 #include "../DynamicTypesDDSTypesTest.hpp"
 #include "../../../dds-types-test/helpers/basic_inner_types.hpp"
-#include "../../../dds-types-test/annotationsPubSubTypes.h"
+#include "../../../dds-types-test/annotationsPubSubTypes.hpp"
 #include "../../../dds-types-test/annotationsTypeObjectSupport.hpp"
 #include <fastdds/dds/xtypes/dynamic_types/AnnotationDescriptor.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>

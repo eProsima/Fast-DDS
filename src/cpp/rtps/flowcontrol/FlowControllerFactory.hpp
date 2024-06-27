@@ -2,7 +2,7 @@
 #define _RTPS_FLOWCONTROL_FLOWCONTROLLERFACTORY_HPP_
 
 #include <fastdds/rtps/flowcontrol/FlowControllerDescriptor.hpp>
-#include <fastdds/rtps/attributes/WriterAttributes.h>
+#include <fastdds/rtps/attributes/WriterAttributes.hpp>
 #include "FlowController.hpp"
 
 #include <string>

@@ -20,7 +20,7 @@
 #define _SECURITY_AUTHENTICATION_AESGCMGMAC_TRANSFORM_H_
 
 #include <fastcdr/Cdr.h>
-#include <fastdds/rtps/attributes/PropertyPolicy.h>
+#include <fastdds/rtps/attributes/PropertyPolicy.hpp>
 #include <rtps/security/cryptography/CryptoTransform.h>
 
 #include <map>

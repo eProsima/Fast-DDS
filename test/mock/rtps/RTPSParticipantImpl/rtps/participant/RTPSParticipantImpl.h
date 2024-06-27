@@ -16,8 +16,8 @@
  * @file RTPSParticipantImpl.h
  */
 
-#ifndef _RTPS_PARTICIPANT_RTPSPARTICIPANTIMPL_H_
-#define _RTPS_PARTICIPANT_RTPSPARTICIPANTIMPL_H_
+#ifndef FASTDDS_RTPS_PARTICIPANT__RTPSPARTICIPANTIMPL_H
+#define FASTDDS_RTPS_PARTICIPANT__RTPSPARTICIPANTIMPL_H
 
 #include <atomic>
 #include <map>
@@ -26,12 +26,12 @@
 #include <gmock/gmock.h>
 
 // Include first possible mocks (depending on include on CMakeLists.txt)
-#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
 #include <fastdds/rtps/common/LocatorList.hpp>
-#include <fastdds/rtps/history/IChangePool.h>
-#include <fastdds/rtps/participant/RTPSParticipantListener.h>
-#include <fastdds/rtps/reader/RTPSReader.h>
-#include <fastdds/rtps/writer/RTPSWriter.h>
+#include <fastdds/rtps/history/IChangePool.hpp>
+#include <fastdds/rtps/participant/RTPSParticipantListener.hpp>
+#include <fastdds/rtps/reader/RTPSReader.hpp>
+#include <fastdds/rtps/writer/RTPSWriter.hpp>
 
 #include <rtps/network/NetworkFactory.h>
 #include <rtps/reader/BaseReader.hpp>
@@ -443,4 +443,4 @@ private:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _RTPS_PARTICIPANT_RTPSPARTICIPANTIMPL_H_
+#endif // FASTDDS_RTPS_PARTICIPANT__RTPSPARTICIPANTIMPL_H

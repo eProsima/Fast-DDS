@@ -24,13 +24,13 @@
 #include <set>
 
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
-#include <fastdds/rtps/attributes/WriterAttributes.h>
-#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
-#include <fastdds/rtps/common/CacheChange.h>
-#include <fastdds/rtps/common/FragmentNumber.h>
-#include <fastdds/rtps/common/Locator.h>
-#include <fastdds/rtps/common/SequenceNumber.h>
-#include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/attributes/WriterAttributes.hpp>
+#include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
+#include <fastdds/rtps/common/CacheChange.hpp>
+#include <fastdds/rtps/common/FragmentNumber.hpp>
+#include <fastdds/rtps/common/Locator.hpp>
+#include <fastdds/rtps/common/SequenceNumber.hpp>
+#include <fastdds/rtps/common/Types.hpp>
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>
 
 #include <rtps/writer/ChangeForReader.hpp>

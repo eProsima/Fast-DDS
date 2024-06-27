@@ -23,7 +23,7 @@
 #include <rtps/history/PoolConfig.h>
 #include <utils/shared_memory/SharedMemSegment.hpp>
 #include <utils/shared_memory/SharedDir.hpp>
-#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/Guid.hpp>
 
 #include <memory>
 #include <vector>

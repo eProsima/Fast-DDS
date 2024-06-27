@@ -16,15 +16,15 @@
  * @file ReaderLocator.hpp
  */
 
-#ifndef RTPS_WRITER__READERLOCATOR_HPP
-#define RTPS_WRITER__READERLOCATOR_HPP
+#ifndef FASTDDS_RTPS_WRITER__READERLOCATOR_HPP
+#define FASTDDS_RTPS_WRITER__READERLOCATOR_HPP
 
 #include <vector>
 
-#include <fastdds/rtps/common/Guid.h>
-#include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/Guid.hpp>
+#include <fastdds/rtps/common/Locator.hpp>
 #include <fastdds/rtps/common/LocatorSelectorEntry.hpp>
-#include <fastdds/rtps/common/SequenceNumber.h>
+#include <fastdds/rtps/common/SequenceNumber.hpp>
 #include <fastdds/rtps/messages/RTPSMessageSenderInterface.hpp>
 
 namespace eprosima {
@@ -256,4 +256,4 @@ private:
 } /* namespace fastdds */
 } /* namespace eprosima */
 
-#endif // RTPS_WRITER__READERLOCATOR_HPP
+#endif // FASTDDS_RTPS_WRITER__READERLOCATOR_HPP

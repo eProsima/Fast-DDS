@@ -23,7 +23,7 @@
 #include <fastdds/statistics/IListeners.hpp>
 
 #include <fastdds/subscriber/DataReaderImpl.hpp>
-#include <fastdds/rtps/reader/RTPSReader.h>
+#include <fastdds/rtps/reader/RTPSReader.hpp>
 
 #include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
 

@@ -17,15 +17,15 @@
  */
 
 
-#ifndef _FASTDDS_DATAREADERQOS_HPP
-#define _FASTDDS_DATAREADERQOS_HPP
+#ifndef FASTDDS_DDS_SUBSCRIBER_QOS__DATAREADERQOS_HPP
+#define FASTDDS_DDS_SUBSCRIBER_QOS__DATAREADERQOS_HPP
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/core/policy/ReaderDataLifecycleQosPolicy.hpp>
 #include <fastdds/dds/subscriber/qos/ReaderQos.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
-#include <fastdds/rtps/attributes/ReaderAttributes.h>
-#include <fastdds/rtps/attributes/TopicAttributes.h>
+#include <fastdds/rtps/attributes/ReaderAttributes.hpp>
+#include <fastdds/rtps/attributes/TopicAttributes.hpp>
 #include <fastdds/fastdds_dll.hpp>
 
 namespace eprosima {
@@ -922,4 +922,4 @@ FASTDDS_EXPORTED_API extern const DataReaderQos DATAREADER_QOS_USE_TOPIC_QOS;
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_DATAREADERQOS_HPP
+#endif // FASTDDS_DDS_SUBSCRIBER_QOS__DATAREADERQOS_HPP

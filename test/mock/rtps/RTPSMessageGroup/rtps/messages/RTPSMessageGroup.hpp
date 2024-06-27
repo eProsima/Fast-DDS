@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _FASTDDS_RTPS_RTPSMESSAGEGROUP_H_
-#define _FASTDDS_RTPS_RTPSMESSAGEGROUP_H_
+#ifndef FASTDDS_RTPS_MESSAGES__RTPSMESSAGEGROUP_H
+#define FASTDDS_RTPS_MESSAGES__RTPSMESSAGEGROUP_H
 
 #include <chrono>
 
@@ -85,4 +85,4 @@ public:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_RTPS_RTPSMESSAGEGROUP_H_
+#endif // FASTDDS_RTPS_MESSAGES__RTPSMESSAGEGROUP_H

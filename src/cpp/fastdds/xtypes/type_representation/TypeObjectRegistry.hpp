@@ -17,8 +17,8 @@
  * This file contains the required classes to keep a TypeObject/TypeIdentifier registry.
  */
 
-#ifndef _FASTDDS_DDS_XTYPES_TYPE_REPRESENTATION_TYPEOBJECTREGISTRY_HPP_
-#define _FASTDDS_DDS_XTYPES_TYPE_REPRESENTATION_TYPEOBJECTREGISTRY_HPP_
+#ifndef FASTDDS_DDS_XTYPES_TYPE_REPRESENTATION__TYPEOBJECTREGISTRY_HPP
+#define FASTDDS_DDS_XTYPES_TYPE_REPRESENTATION__TYPEOBJECTREGISTRY_HPP
 
 #include <mutex>
 #include <string>
@@ -1106,9 +1106,9 @@ protected:
 
 };
 
-} // xtypes
-} // dds
-} // fastdds
-} // eprosima
+} // namespace xtypes
+} // namespace dds
+} // namespace fastdds
+} // namespace eprosima
 
-#endif // _FASTDDS_DDS_XTYPES_TYPE_REPRESENTATION_TYPEOBJECTREGISTRY_HPP_
+#endif // FASTDDS_DDS_XTYPES_TYPE_REPRESENTATION__TYPEOBJECTREGISTRY_HPP

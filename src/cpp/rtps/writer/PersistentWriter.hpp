@@ -21,7 +21,7 @@
 
 #include <string>
 
-#include <fastdds/rtps/writer/RTPSWriter.h>
+#include <fastdds/rtps/writer/RTPSWriter.hpp>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 

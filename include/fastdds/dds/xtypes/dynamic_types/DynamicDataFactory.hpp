@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef FASTDDS_DDS_XTYPES_DYNAMIC_TYPES_DYNAMIC_DATA_FACTORY_HPP
-#define FASTDDS_DDS_XTYPES_DYNAMIC_TYPES_DYNAMIC_DATA_FACTORY_HPP
+#ifndef FASTDDS_DDS_XTYPES_DYNAMIC_TYPES__DYNAMICDATAFACTORY_HPP
+#define FASTDDS_DDS_XTYPES_DYNAMIC_TYPES__DYNAMICDATAFACTORY_HPP
 
 #include <memory>
 
@@ -75,4 +75,4 @@ protected:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // FASTDDS_DDS_XTYPES_DYNAMIC_TYPES_DYNAMIC_DATA_FACTORY_HPP
+#endif // FASTDDS_DDS_XTYPES_DYNAMIC_TYPES__DYNAMICDATAFACTORY_HPP

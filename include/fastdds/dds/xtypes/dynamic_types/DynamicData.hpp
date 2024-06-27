@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef FASTDDS_DDS_XTYPES_DYNAMIC_TYPES_DYNAMIC_DATA_HPP
-#define FASTDDS_DDS_XTYPES_DYNAMIC_TYPES_DYNAMIC_DATA_HPP
+#ifndef FASTDDS_DDS_XTYPES_DYNAMIC_TYPES__DYNAMICDATA_HPP
+#define FASTDDS_DDS_XTYPES_DYNAMIC_TYPES__DYNAMICDATA_HPP
 
 #include <memory>
 #include <string>
@@ -22,7 +22,7 @@
 #include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/Types.hpp>
 #include <fastdds/fastdds_dll.hpp>
-#include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/common/Types.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -1039,4 +1039,4 @@ private:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // FASTDDS_DDS_XTYPES_DYNAMIC_TYPES_DYNAMIC_DATA_HPP
+#endif // FASTDDS_DDS_XTYPES_DYNAMIC_TYPES__DYNAMICDATA_HPP

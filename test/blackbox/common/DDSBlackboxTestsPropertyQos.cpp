@@ -14,8 +14,8 @@
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/LibrarySettings.hpp>
-#include <fastdds/rtps/common/Types.h>
-#include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
+#include <fastdds/rtps/common/Types.hpp>
+#include <fastdds/rtps/participant/ParticipantDiscoveryInfo.hpp>
 #include <gtest/gtest.h>
 
 #include "BlackboxTests.hpp"

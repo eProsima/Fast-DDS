@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _FASTDDS_DDS_QOS_QOSPOLICIES_HPP_
-#define _FASTDDS_DDS_QOS_QOSPOLICIES_HPP_
+#ifndef FASTDDS_DDS_CORE_POLICY__QOSPOLICIES_HPP
+#define FASTDDS_DDS_CORE_POLICY__QOSPOLICIES_HPP
 
 #include <bitset>
 #include <vector>
@@ -27,13 +27,13 @@
 #include <fastdds/dds/core/Types.hpp>
 #include <fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobject.hpp>
 #include <fastdds/rtps/attributes/ExternalLocators.hpp>
-#include <fastdds/rtps/attributes/PropertyPolicy.h>
+#include <fastdds/rtps/attributes/PropertyPolicy.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
-#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastdds/rtps/common/LocatorList.hpp>
-#include <fastdds/rtps/common/Time_t.h>
-#include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/common/Time_t.hpp>
+#include <fastdds/rtps/common/Types.hpp>
 #include <fastdds/rtps/flowcontrol/FlowControllerConsts.hpp>
 #include <fastdds/rtps/attributes/ResourceManagement.hpp>
 #include <fastdds/rtps/transport/network/NetmaskFilterKind.hpp>
@@ -3216,4 +3216,4 @@ private:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_DDS_QOS_QOSPOLICIES_HPP_
+#endif // FASTDDS_DDS_CORE_POLICY__QOSPOLICIES_HPP

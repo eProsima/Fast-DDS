@@ -22,7 +22,7 @@
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/topic/TopicListener.hpp>
-#include <fastdds/rtps/attributes/TopicAttributes.h>
+#include <fastdds/rtps/attributes/TopicAttributes.hpp>
 
 namespace eprosima {
 namespace fastdds {

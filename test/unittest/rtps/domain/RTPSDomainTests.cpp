@@ -16,7 +16,7 @@
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/LibrarySettings.hpp>
-#include <fastdds/rtps/RTPSDomain.h>
+#include <fastdds/rtps/RTPSDomain.hpp>
 
 /**
  * This test checks the getter and setter for the library settings in the RTPS layer.

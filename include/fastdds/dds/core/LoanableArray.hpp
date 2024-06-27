@@ -16,8 +16,8 @@
  * @file LoanableArray.hpp
  */
 
-#ifndef _FASTDDS_DDS_CORE_LOANABLEARRAY_HPP_
-#define _FASTDDS_DDS_CORE_LOANABLEARRAY_HPP_
+#ifndef FASTDDS_DDS_CORE__LOANABLEARRAY_HPP
+#define FASTDDS_DDS_CORE__LOANABLEARRAY_HPP
 
 #include <cstdint>
 #include <array>
@@ -72,4 +72,4 @@ private:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_DDS_CORE_LOANABLEARRAY_HPP_
+#endif // FASTDDS_DDS_CORE__LOANABLEARRAY_HPP

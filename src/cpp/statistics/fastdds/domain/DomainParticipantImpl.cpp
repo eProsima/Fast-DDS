@@ -34,8 +34,8 @@
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/topic/TopicDescription.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
-#include <fastdds/rtps/attributes/PropertyPolicy.h>
-#include <fastdds/rtps/participant/RTPSParticipant.h>
+#include <fastdds/rtps/attributes/PropertyPolicy.hpp>
+#include <fastdds/rtps/participant/RTPSParticipant.hpp>
 #include <fastdds/statistics/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/statistics/topic_names.hpp>
 
@@ -45,7 +45,7 @@
 #include <statistics/fastdds/subscriber/SubscriberImpl.hpp>
 #include <statistics/rtps/GuidUtils.hpp>
 #include <statistics/types/types.hpp>
-#include <statistics/types/typesPubSubTypes.h>
+#include <statistics/types/typesPubSubTypes.hpp>
 #include <utils/SystemInfo.hpp>
 #include <xmlparser/attributes/PublisherAttributes.hpp>
 #include <xmlparser/XMLParserCommon.h>

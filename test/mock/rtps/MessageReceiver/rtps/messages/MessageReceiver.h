@@ -18,12 +18,12 @@
 
 
 
-#ifndef _FASTDDS_RTPS_MESSAGERECEIVER_H_
-#define _FASTDDS_RTPS_MESSAGERECEIVER_H_
+#ifndef FASTDDS_RTPS_MESSAGES__MESSAGERECEIVER_H
+#define FASTDDS_RTPS_MESSAGES__MESSAGERECEIVER_H
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <fastdds/rtps/common/CDRMessage_t.h>
-#include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/CDRMessage_t.hpp>
+#include <fastdds/rtps/common/Locator.hpp>
 
 #include <rtps/writer/StatefulWriter.hpp>
 #include <rtps/writer/StatelessWriter.hpp>
@@ -78,7 +78,7 @@ public:
 
 };
 } // namespace rtps
-} /* namespace rtps */
-} /* namespace eprosima */
+} // namespace rtps
+} // namespace eprosima
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#endif /* _FASTDDS_RTPS_MESSAGERECEIVER_H_*/
+#endif // FASTDDS_RTPS_MESSAGES__MESSAGERECEIVER_H

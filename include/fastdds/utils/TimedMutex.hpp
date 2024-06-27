@@ -16,8 +16,8 @@
  * @file TimedMutex.hpp
  */
 
-#ifndef _UTILS_TIMEDMUTEX_HPP_
-#define _UTILS_TIMEDMUTEX_HPP_
+#ifndef FASTDDS_UTILS__TIMEDMUTEX_HPP
+#define FASTDDS_UTILS__TIMEDMUTEX_HPP
 
 #include <chrono>
 #include <iostream>
@@ -341,4 +341,4 @@ private:
 } //namespace fastdds
 } //namespace eprosima
 
-#endif // _UTILS_TIMEDMUTEX_HPP_
+#endif // FASTDDS_UTILS__TIMEDMUTEX_HPP

@@ -23,7 +23,7 @@
 #   include <version>
 #endif // if defined(__has_include) && __has_include(<version>)
 
-#include <fastdds/config.h>
+#include <fastdds/config.hpp>
 #include <fastdds/core/condition/StatusConditionImpl.hpp>
 #include <fastdds/core/policy/QosPolicyUtils.hpp>
 #include <fastdds/dds/core/StackAllocatedSequence.hpp>
@@ -36,9 +36,9 @@
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/domain/DomainParticipantImpl.hpp>
-#include <fastdds/rtps/participant/RTPSParticipant.h>
-#include <fastdds/rtps/reader/RTPSReader.h>
-#include <fastdds/rtps/RTPSDomain.h>
+#include <fastdds/rtps/participant/RTPSParticipant.hpp>
+#include <fastdds/rtps/reader/RTPSReader.hpp>
+#include <fastdds/rtps/RTPSDomain.hpp>
 #include <fastdds/subscriber/DataReaderImpl.hpp>
 #include <fastdds/subscriber/DataReaderImpl/ReadTakeCommand.hpp>
 #include <fastdds/subscriber/DataReaderImpl/StateFilter.hpp>

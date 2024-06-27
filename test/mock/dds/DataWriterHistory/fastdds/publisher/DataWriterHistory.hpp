@@ -12,24 +12,24 @@
 // See the License for the specific language governing permissiones and
 // limitations under the License.
 
-#ifndef _FASTDDS_PUBLISHER_DATAWRITERHISTORY_HPP_
-#define _FASTDDS_PUBLISHER_DATAWRITERHISTORY_HPP_
+#ifndef FASTDDS_PUBLISHER__DATAWRITERHISTORY_HPP
+#define FASTDDS_PUBLISHER__DATAWRITERHISTORY_HPP
 
 #include <chrono>
 #include <mutex>
 
 #include <gmock/gmock.h>
 
-#include <fastdds/rtps/attributes/HistoryAttributes.h>
-#include <fastdds/rtps/attributes/TopicAttributes.h>
-#include <fastdds/rtps/common/CacheChange.h>
-#include <fastdds/rtps/common/ChangeKind_t.hpp>
-#include <fastdds/rtps/common/InstanceHandle.h>
-#include <fastdds/rtps/common/SequenceNumber.h>
-#include <fastdds/rtps/common/Time_t.h>
-#include <fastdds/rtps/common/Types.h>
-#include <fastdds/rtps/history/WriterHistory.h>
+#include <fastdds/rtps/attributes/HistoryAttributes.hpp>
 #include <fastdds/rtps/attributes/ResourceManagement.hpp>
+#include <fastdds/rtps/attributes/TopicAttributes.hpp>
+#include <fastdds/rtps/common/CacheChange.hpp>
+#include <fastdds/rtps/common/ChangeKind_t.hpp>
+#include <fastdds/rtps/common/InstanceHandle.hpp>
+#include <fastdds/rtps/common/SequenceNumber.hpp>
+#include <fastdds/rtps/common/Time_t.hpp>
+#include <fastdds/rtps/common/Types.hpp>
+#include <fastdds/rtps/history/WriterHistory.hpp>
 #include <fastdds/utils/TimedMutex.hpp>
 
 #include <fastdds/publisher/history/DataWriterInstance.hpp>
@@ -325,8 +325,8 @@ private:
 
 };
 
-} // dds
-} // fastdds
-} // eprosima
+} // namespace dds
+} // namespace fastdds
+} // namespace eprosima
 
-#endif // _FASTDDS_PUBLISHER_DATAWRITERHISTORY_HPP_
+#endif // FASTDDS_PUBLISHER__DATAWRITERHISTORY_HPP

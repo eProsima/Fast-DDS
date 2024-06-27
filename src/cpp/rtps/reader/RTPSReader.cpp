@@ -16,12 +16,12 @@
  * RTPSReader.cpp
  *
  */
-#include <fastdds/rtps/reader/RTPSReader.h>
+#include <fastdds/rtps/reader/RTPSReader.hpp>
 
-#include <fastdds/rtps/Endpoint.h>
-#include <fastdds/rtps/attributes/ReaderAttributes.h>
-#include <fastdds/rtps/common/Guid.h>
-#include <fastdds/rtps/history/ReaderHistory.h>
+#include <fastdds/rtps/Endpoint.hpp>
+#include <fastdds/rtps/attributes/ReaderAttributes.hpp>
+#include <fastdds/rtps/common/Guid.hpp>
+#include <fastdds/rtps/history/ReaderHistory.hpp>
 
 #include <rtps/participant/RTPSParticipantImpl.h>
 

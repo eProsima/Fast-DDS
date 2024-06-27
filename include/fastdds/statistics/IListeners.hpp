@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _FASTDDS_STATISTICS_ILISTENERS_HPP_
-#define _FASTDDS_STATISTICS_ILISTENERS_HPP_
+#ifndef FASTDDS_STATISTICS__ILISTENERS_HPP
+#define FASTDDS_STATISTICS__ILISTENERS_HPP
 
 #include <cstdint>
 
@@ -40,4 +40,4 @@ struct IListener
 } // fastdds
 } // eprosima
 
-#endif // _FASTDDS_STATISTICS_ILISTENERS_HPP_
+#endif // FASTDDS_STATISTICS__ILISTENERS_HPP

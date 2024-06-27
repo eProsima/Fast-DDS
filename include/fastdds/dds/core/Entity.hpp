@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _FASTDDS_ENTITY_HPP_
-#define _FASTDDS_ENTITY_HPP_
+#ifndef FASTDDS_DDS_CORE__ENTITY_HPP
+#define FASTDDS_DDS_CORE__ENTITY_HPP
 
 #include <fastdds/dds/common/InstanceHandle.hpp>
 #include <fastdds/dds/core/condition/StatusCondition.hpp>
@@ -183,4 +183,4 @@ public:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_ENTITY_HPP_
+#endif // FASTDDS_DDS_CORE__ENTITY_HPP

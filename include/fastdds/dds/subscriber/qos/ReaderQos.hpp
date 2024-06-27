@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _FASTDDS_DDS_QOS_READERQOS_HPP_
-#define _FASTDDS_DDS_QOS_READERQOS_HPP_
+#ifndef FASTDDS_DDS_SUBSCRIBER_QOS__READERQOS_HPP
+#define FASTDDS_DDS_SUBSCRIBER_QOS__READERQOS_HPP
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 
@@ -156,4 +156,4 @@ public:
 } //namespace fastdds
 } //namespace eprosima
 
-#endif // _FASTDDS_DDS_QOS_READERQOS_HPP_
+#endif // FASTDDS_DDS_SUBSCRIBER_QOS__READERQOS_HPP

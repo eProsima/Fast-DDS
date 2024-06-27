@@ -20,7 +20,7 @@
 #ifndef _FASTDDS_RTPS_DISCOVERY_SHARED_INFO_H_
 #define _FASTDDS_RTPS_DISCOVERY_SHARED_INFO_H_
 
-#include <fastdds/rtps/common/CacheChange.h>
+#include <fastdds/rtps/common/CacheChange.hpp>
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
 #include <fastdds/dds/log/Log.hpp>
 

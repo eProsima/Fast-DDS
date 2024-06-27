@@ -18,7 +18,7 @@
 #ifndef _FASTDDS_RTPS_SECURITY_CRYPTOGRAPHY_CRYPTOTYPES_H_
 #define _FASTDDS_RTPS_SECURITY_CRYPTOGRAPHY_CRYPTOTYPES_H_
 
-#include <fastdds/rtps/common/Token.h>
+#include <fastdds/rtps/common/Token.hpp>
 #include <rtps/security/common/Handle.h>
 #include <rtps/security/common/SharedSecretHandle.h>
 #include <rtps/security/exceptions/SecurityException.h>

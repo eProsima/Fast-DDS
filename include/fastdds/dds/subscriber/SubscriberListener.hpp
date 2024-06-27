@@ -16,8 +16,8 @@
  * @file SubscriberListener.hpp
  */
 
-#ifndef _FASTDDS_SUBLISTENER_HPP_
-#define _FASTDDS_SUBLISTENER_HPP_
+#ifndef FASTDDS_DDS_SUBSCRIBER__SUBSCRIBERLISTENER_HPP
+#define FASTDDS_DDS_SUBSCRIBER__SUBSCRIBERLISTENER_HPP
 
 #include <fastdds/dds/core/status/DeadlineMissedStatus.hpp>
 #include <fastdds/dds/core/status/LivelinessChangedStatus.hpp>
@@ -69,8 +69,8 @@ public:
 
 };
 
-} /* namespace dds */
-} /* namespace fastdds */
-} /* namespace eprosima */
+} // namespace dds
+} // namespace fastdds
+} // namespace eprosima
 
-#endif /* _FASTDDS_SUBLISTENER_HPP_ */
+#endif // FASTDDS_DDS_SUBSCRIBER__SUBSCRIBERLISTENER_HPP

@@ -16,7 +16,7 @@
 #define _FASTDDS_SHAREDMEM_CHANNEL_RESOURCE_
 
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
-#include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/Locator.hpp>
 
 #include <rtps/messages/MessageReceiver.h>
 #include <rtps/transport/shared_mem/SharedMemManager.hpp>

@@ -16,8 +16,8 @@
  * @file UserAllocatedSequence.hpp
  */
 
-#ifndef _FASTDDS_DDS_CORE_USERALLOCATEDSEQUENCE_HPP_
-#define _FASTDDS_DDS_CORE_USERALLOCATEDSEQUENCE_HPP_
+#ifndef FASTDDS_DDS_CORE__USERALLOCATEDSEQUENCE_HPP
+#define FASTDDS_DDS_CORE__USERALLOCATEDSEQUENCE_HPP
 
 #include <cassert>
 #include <cstdint>
@@ -100,4 +100,4 @@ protected:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_DDS_CORE_USERALLOCATEDSEQUENCE_HPP_
+#endif // FASTDDS_DDS_CORE__USERALLOCATEDSEQUENCE_HPP

@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef FASTDDS_RTPS_FLOWCONTROL_FLOWCONTROLLERDESCRIPTOR_HPP
-#define FASTDDS_RTPS_FLOWCONTROL_FLOWCONTROLLERDESCRIPTOR_HPP
+#ifndef FASTDDS_RTPS_FLOWCONTROL__FLOWCONTROLLERDESCRIPTOR_HPP
+#define FASTDDS_RTPS_FLOWCONTROL__FLOWCONTROLLERDESCRIPTOR_HPP
 
 #include <string>
 
@@ -64,4 +64,4 @@ struct FlowControllerDescriptor
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // FASTDDS_RTPS_FLOWCONTROL_FLOWCONTROLLERDESCRIPTOR_HPP
+#endif // FASTDDS_RTPS_FLOWCONTROL__FLOWCONTROLLERDESCRIPTOR_HPP

@@ -18,10 +18,10 @@
  */
 
 
-#include <fastdds/rtps/history/History.h>
+#include <fastdds/rtps/history/History.hpp>
 
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/rtps/common/CacheChange.h>
+#include <fastdds/rtps/common/CacheChange.hpp>
 
 #include <rtps/history/BasicPayloadPool.hpp>
 #include <rtps/history/CacheChangePool.h>

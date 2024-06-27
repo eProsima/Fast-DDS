@@ -20,7 +20,7 @@
 #ifndef TESTREADERSOCKET_H_
 #define TESTREADERSOCKET_H_
 
-#include <fastdds/rtps/reader/ReaderListener.h>
+#include <fastdds/rtps/reader/ReaderListener.hpp>
 
 namespace eprosima {
 namespace fastdds {

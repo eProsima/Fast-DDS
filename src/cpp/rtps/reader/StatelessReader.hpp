@@ -17,8 +17,8 @@
  */
 
 
-#ifndef RTPS_READER__STATELESSREADER_HPP
-#define RTPS_READER__STATELESSREADER_HPP
+#ifndef FASTDDS_RTPS_READER__STATELESSREADER_HPP
+#define FASTDDS_RTPS_READER__STATELESSREADER_HPP
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
@@ -26,7 +26,7 @@
 #include <mutex>
 
 #include <fastdds/rtps/common/VendorId_t.hpp>
-#include <fastdds/rtps/reader/RTPSReader.h>
+#include <fastdds/rtps/reader/RTPSReader.hpp>
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>
 
 #include <rtps/reader/BaseReader.hpp>
@@ -270,10 +270,10 @@ private:
     ResourceLimitedVector<RemoteWriterInfo_t> matched_writers_;
 };
 
-} /* namespace rtps */
-} /* namespace fastdds */
-} /* namespace eprosima */
+} // namespace rtps
+} // namespace fastdds
+} // namespace eprosima
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#endif /* RTPS_READER__STATELESSREADER_HPP */
+#endif // FASTDDS_RTPS_READER__STATELESSREADER_HPP

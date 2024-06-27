@@ -27,7 +27,7 @@ char dummy;
 #endif // ifdef _WIN32
 
 #include <fastdds/rtps/common/CdrSerialization.hpp>
-#include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/common/Types.hpp>
 #include <fastdds/rtps/common/VendorId_t.hpp>
 
 #include <rtps/transport/tcp/TCPControlMessage.h>

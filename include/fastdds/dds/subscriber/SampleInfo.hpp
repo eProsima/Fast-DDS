@@ -17,17 +17,17 @@
  *
  */
 
-#ifndef _FASTDDS_DDS_SUBSCRIBER_SAMPLEINFO_HPP_
-#define _FASTDDS_DDS_SUBSCRIBER_SAMPLEINFO_HPP_
+#ifndef FASTDDS_DDS_SUBSCRIBER__SAMPLEINFO_HPP
+#define FASTDDS_DDS_SUBSCRIBER__SAMPLEINFO_HPP
 
 #include <fastdds/dds/subscriber/InstanceState.hpp>
 #include <fastdds/dds/subscriber/SampleState.hpp>
 #include <fastdds/dds/subscriber/ViewState.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
-#include <fastdds/rtps/common/SampleIdentity.h>
-#include <fastdds/rtps/common/Time_t.h>
-#include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/common/SampleIdentity.hpp>
+#include <fastdds/rtps/common/Time_t.hpp>
+#include <fastdds/rtps/common/Types.hpp>
 #include <fastdds/dds/common/InstanceHandle.hpp>
 
 namespace eprosima {
@@ -93,4 +93,4 @@ struct SampleInfo
 }  // namespace fastdds
 }  // namespace eprosima
 
-#endif /* _FASTDDS_DDS_SUBSCRIBER_SAMPLEINFO_HPP_*/
+#endif // FASTDDS_DDS_SUBSCRIBER__SAMPLEINFO_HPP

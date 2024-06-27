@@ -16,7 +16,7 @@
 
 #include "../DynamicTypesDDSTypesTest.hpp"
 #include "../../../dds-types-test/helpers/basic_inner_types.hpp"
-#include "../../../dds-types-test/inheritancePubSubTypes.h"
+#include "../../../dds-types-test/inheritancePubSubTypes.hpp"
 #include "../../../dds-types-test/inheritanceTypeObjectSupport.hpp"
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>

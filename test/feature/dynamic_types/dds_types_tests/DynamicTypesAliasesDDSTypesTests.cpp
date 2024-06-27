@@ -18,7 +18,7 @@
 
 #include "../DynamicTypesDDSTypesTest.hpp"
 #include "../../../dds-types-test/helpers/basic_inner_types.hpp"
-#include "../../../dds-types-test/aliasesPubSubTypes.h"
+#include "../../../dds-types-test/aliasesPubSubTypes.hpp"
 #include "../../../dds-types-test/aliasesTypeObjectSupport.hpp"
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>

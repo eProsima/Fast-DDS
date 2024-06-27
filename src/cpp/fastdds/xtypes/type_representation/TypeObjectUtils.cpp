@@ -26,7 +26,7 @@
 #include <fastdds/dds/xtypes/exception/Exception.hpp>
 #include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/utils/md5.h>
+#include <fastdds/utils/md5.hpp>
 
 #include <fastdds/xtypes/type_representation/TypeObjectRegistry.hpp>
 #include <rtps/RTPSDomainImpl.hpp>

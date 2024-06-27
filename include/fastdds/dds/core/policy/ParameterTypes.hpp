@@ -16,8 +16,8 @@
  * @file ParameterTypes.hpp
  */
 
-#ifndef _FASTDDS_DDS_QOS_PARAMETERTYPES_HPP_
-#define _FASTDDS_DDS_QOS_PARAMETERTYPES_HPP_
+#ifndef FASTDDS_DDS_CORE_POLICY__PARAMETERTYPES_HPP
+#define FASTDDS_DDS_CORE_POLICY__PARAMETERTYPES_HPP
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
@@ -28,15 +28,15 @@
 #include <fastcdr/cdr/fixed_size_string.hpp>
 
 #include <fastdds/dds/core/Types.hpp>
-#include <fastdds/rtps/common/InstanceHandle.h>
-#include <fastdds/rtps/common/Locator.h>
-#include <fastdds/rtps/common/SampleIdentity.h>
-#include <fastdds/rtps/common/SerializedPayload.h>
-#include <fastdds/rtps/common/Time_t.h>
-#include <fastdds/rtps/common/Token.h>
+#include <fastdds/rtps/common/InstanceHandle.hpp>
+#include <fastdds/rtps/common/Locator.hpp>
+#include <fastdds/rtps/common/SampleIdentity.hpp>
+#include <fastdds/rtps/common/SerializedPayload.hpp>
+#include <fastdds/rtps/common/Time_t.hpp>
+#include <fastdds/rtps/common/Token.hpp>
 
 #if HAVE_SECURITY
-#include <fastdds/rtps/attributes/EndpointSecurityAttributes.h>
+#include <fastdds/rtps/attributes/EndpointSecurityAttributes.hpp>
 #endif // if HAVE_SECURITY
 
 namespace eprosima {
@@ -1897,4 +1897,4 @@ using ParameterEndpointSecurityInfo_t = fastdds::dds::ParameterEndpointSecurityI
 } //namespace eprosima
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#endif // _FASTDDS_DDS_QOS_PARAMETERTYPES_HPP_
+#endif // FASTDDS_DDS_CORE_POLICY__PARAMETERTYPES_HPP

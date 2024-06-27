@@ -17,8 +17,8 @@
 #include <gtest/gtest.h>
 
 #include "../DynamicTypesDDSTypesTest.hpp"
-#include "../../../dds-types-test/helpers/basic_inner_typesPubSubTypes.h"
-#include "../../../dds-types-test/enumerationsPubSubTypes.h"
+#include "../../../dds-types-test/helpers/basic_inner_typesPubSubTypes.hpp"
+#include "../../../dds-types-test/enumerationsPubSubTypes.hpp"
 #include "../../../dds-types-test/enumerationsTypeObjectSupport.hpp"
 #include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>

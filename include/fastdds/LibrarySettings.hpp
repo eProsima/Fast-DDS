@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _FASTDDS_LIBRARY_SETTINGS_HPP_
-#define _FASTDDS_LIBRARY_SETTINGS_HPP_
+#ifndef FASTDDS__LIBRARY_SETTINGS_HPP
+#define FASTDDS__LIBRARY_SETTINGS_HPP
 
 namespace eprosima {
 namespace fastdds {
@@ -63,4 +63,4 @@ public:
 }  // namespace fastdds
 }  // namespace eprosima
 
-#endif /* _FASTDDS_LIBRARY_SETTINGS_HPP_ */
+#endif // FASTDDS__LIBRARY_SETTINGS_HPP

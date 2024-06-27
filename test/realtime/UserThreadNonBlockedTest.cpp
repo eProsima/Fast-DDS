@@ -17,7 +17,7 @@
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/flowcontrol/FlowControllerDescriptor.hpp>
-#include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/UDPv4TransportDescriptor.hpp>
 
 #include "mutex_testing_tool/TMutex.hpp"
 #include <TimeConversion.hpp>

@@ -19,8 +19,8 @@
 
 #include "HelloWorldPublisher.h"
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
-#include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
-#include <fastdds/utils/IPLocator.h>
+#include <fastdds/rtps/transport/TCPv4TransportDescriptor.hpp>
+#include <fastdds/utils/IPLocator.hpp>
 
 #include <thread>
 

@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef _FASTDDS_PARTICIPANTIMPL_HPP_
-#define _FASTDDS_PARTICIPANTIMPL_HPP_
+#ifndef FASTDDS_DOMAIN__DOMAINPARTICIPANTIMPL_HPP
+#define FASTDDS_DOMAIN__DOMAINPARTICIPANTIMPL_HPP
 
 #include <atomic>
 #include <map>
@@ -36,13 +36,13 @@
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/publisher/PublisherImpl.hpp>
-#include <fastdds/rtps/attributes/TopicAttributes.h>
-#include <fastdds/rtps/common/Guid.h>
-#include <fastdds/rtps/common/InstanceHandle.h>
-#include <fastdds/rtps/common/Types.h>
-#include <fastdds/rtps/participant/RTPSParticipant.h>
-#include <fastdds/rtps/participant/RTPSParticipantListener.h>
-#include <fastdds/rtps/RTPSDomain.h>
+#include <fastdds/rtps/attributes/TopicAttributes.hpp>
+#include <fastdds/rtps/common/Guid.hpp>
+#include <fastdds/rtps/common/InstanceHandle.hpp>
+#include <fastdds/rtps/common/Types.hpp>
+#include <fastdds/rtps/participant/RTPSParticipant.hpp>
+#include <fastdds/rtps/participant/RTPSParticipantListener.hpp>
+#include <fastdds/rtps/RTPSDomain.hpp>
 #include <fastdds/subscriber/SubscriberImpl.hpp>
 #include <fastdds/topic/TopicImpl.hpp>
 #include <fastdds/topic/TopicProxy.hpp>
@@ -782,8 +782,8 @@ protected:
 
 };
 
-} // dds
-} // fastdds
-} // eprosima
+} // namespace dds
+} // namespace fastdds
+} // namespace eprosima
 
-#endif /* _FASTDDS_PARTICIPANTIMPL_HPP_ */
+#endif // FASTDDS_DOMAIN__DOMAINPARTICIPANTIMPL_HPP

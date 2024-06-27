@@ -20,14 +20,14 @@
 #define FASTDDS_RTPS_READER_WRITERPROXY_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <fastdds/rtps/common/Types.h>
-#include <fastdds/rtps/common/Locator.h>
-#include <fastdds/rtps/common/CacheChange.h>
-#include <fastdds/rtps/attributes/ReaderAttributes.h>
+#include <fastdds/rtps/common/Types.hpp>
+#include <fastdds/rtps/common/Locator.hpp>
+#include <fastdds/rtps/common/CacheChange.hpp>
+#include <fastdds/rtps/attributes/ReaderAttributes.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
 #include <fastdds/rtps/messages/RTPSMessageSenderInterface.hpp>
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>
-#include <fastdds/rtps/builtin/data/WriterProxyData.h>
+#include <fastdds/rtps/builtin/data/WriterProxyData.hpp>
 #include <fastdds/rtps/common/LocatorSelectorEntry.hpp>
 
 #include <foonathan/memory/container.hpp>

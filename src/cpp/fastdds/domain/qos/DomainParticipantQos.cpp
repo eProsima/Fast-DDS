@@ -20,7 +20,7 @@
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 
 #include <fastdds/rtps/attributes/BuiltinTransports.hpp>
-#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
 #include <fastdds/utils/QosConverters.hpp>
 
 namespace eprosima {

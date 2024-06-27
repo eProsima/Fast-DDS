@@ -18,8 +18,8 @@
  * limitations under the License.
  */
 
-#ifndef _FASTDDS_STATUSMASK_HPP_
-#define _FASTDDS_STATUSMASK_HPP_
+#ifndef FASTDDS_DDS_CORE_STATUS__STATUSMASK_HPP
+#define FASTDDS_DDS_CORE_STATUS__STATUSMASK_HPP
 
 #include <fastdds/fastdds_dll.hpp>
 
@@ -267,4 +267,4 @@ public:
 } //namespace eprosima
 
 
-#endif //_FASTDDS_STATUSMASK_HPP_
+#endif //FASTDDS_DDS_CORE_STATUS__STATUSMASK_HPP

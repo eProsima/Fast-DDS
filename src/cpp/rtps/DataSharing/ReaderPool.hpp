@@ -16,11 +16,11 @@
  * @file ReaderPool.hpp
  */
 
-#ifndef RTPS_DATASHARING_READERPOOL_HPP
-#define RTPS_DATASHARING_READERPOOL_HPP
+#ifndef FASTDDS_RTPS_DATASHARING__READERPOOL_HPP
+#define FASTDDS_RTPS_DATASHARING__READERPOOL_HPP
 
-#include <fastdds/rtps/common/CacheChange.h>
 #include <fastdds/rtps/attributes/ResourceManagement.hpp>
+#include <fastdds/rtps/common/CacheChange.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <rtps/DataSharing/DataSharingPayloadPool.hpp>
 
@@ -311,4 +311,4 @@ private:
 }  // namespace fastdds
 }  // namespace eprosima
 
-#endif  // RTPS_DATASHARING_DATASHARINGPAYLOADPOOLIMPL_READERPOOL_HPP
+#endif  // FASTDDS_RTPS_DATASHARING__READERPOOL_HPP

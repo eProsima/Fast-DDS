@@ -17,15 +17,15 @@
  *
  */
 
-#ifndef __FASTDDS__PARTICIPANT_PARTICIPANTLISTENER_HPP__
-#define __FASTDDS__PARTICIPANT_PARTICIPANTLISTENER_HPP__
+#ifndef FASTDDS_DDS_DOMAIN__DOMAINPARTICIPANTLISTENER_HPP
+#define FASTDDS_DDS_DOMAIN__DOMAINPARTICIPANTLISTENER_HPP
 
 #include <fastdds/dds/publisher/PublisherListener.hpp>
 #include <fastdds/dds/subscriber/SubscriberListener.hpp>
 #include <fastdds/dds/topic/TopicListener.hpp>
-#include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
-#include <fastdds/rtps/reader/ReaderDiscoveryInfo.h>
-#include <fastdds/rtps/writer/WriterDiscoveryInfo.h>
+#include <fastdds/rtps/participant/ParticipantDiscoveryInfo.hpp>
+#include <fastdds/rtps/reader/ReaderDiscoveryInfo.hpp>
+#include <fastdds/rtps/writer/WriterDiscoveryInfo.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -137,4 +137,4 @@ public:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // __FASTDDS__PARTICIPANT_PARTICIPANTLISTENER_HPP__
+#endif // FASTDDS_DDS_DOMAIN__DOMAINPARTICIPANTLISTENER_HPP

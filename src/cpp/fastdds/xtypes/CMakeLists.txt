@@ -100,7 +100,7 @@ target_sources(fastdds-xtypes-type-representation INTERFACE
 
     ${PROJECT_SOURCE_DIR}/include/fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobject.hpp
     ${PROJECT_SOURCE_DIR}/include/fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobjectCdrAux.hpp
-    ${PROJECT_SOURCE_DIR}/include/fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobjectPubSubTypes.h
+    ${PROJECT_SOURCE_DIR}/include/fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobjectPubSubTypes.hpp
 
     exception/Exception.cpp
     type_representation/dds_xtypes_typeobjectCdrAux.ipp

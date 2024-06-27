@@ -17,11 +17,11 @@
  */
 
 
-#ifndef _FASTDDS_TOPICQOS_HPP
-#define _FASTDDS_TOPICQOS_HPP
+#ifndef FASTDDS_DDS_TOPIC_QOS__TOPICQOS_HPP
+#define FASTDDS_DDS_TOPIC_QOS__TOPICQOS_HPP
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
-#include <fastdds/rtps/attributes/TopicAttributes.h>
+#include <fastdds/rtps/attributes/TopicAttributes.hpp>
 
 #include <fastdds/dds/log/Log.hpp>
 
@@ -549,4 +549,4 @@ FASTDDS_EXPORTED_API extern const TopicQos TOPIC_QOS_DEFAULT;
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_TOPICQOS_HPP
+#endif // FASTDDS_DDS_TOPIC_QOS__TOPICQOS_HPP

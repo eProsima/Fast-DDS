@@ -16,8 +16,8 @@
  * @file StatelessReader.hpp
  */
 
-#ifndef RTPS_READER__STATELESSREADER_HPP
-#define RTPS_READER__STATELESSREADER_HPP
+#ifndef FASTDDS_RTPS_READER__STATELESSREADER_HPP
+#define FASTDDS_RTPS_READER__STATELESSREADER_HPP
 
 #include <rtps/reader/BaseReader.hpp>
 
@@ -55,4 +55,4 @@ public:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // RTPS_READER__STATELESSREADER_HPP
+#endif // FASTDDS_RTPS_READER__STATELESSREADER_HPP

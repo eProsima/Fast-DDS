@@ -16,8 +16,8 @@
  * @file AllowedNetworkInterface.hpp
  */
 
-#ifndef _FASTDDS_RTPS_TRANSPORT_NETWORK_ALLOWEDNETWORKINTERFACE_HPP_
-#define _FASTDDS_RTPS_TRANSPORT_NETWORK_ALLOWEDNETWORKINTERFACE_HPP_
+#ifndef FASTDDS_RTPS_TRANSPORT_NETWORK__ALLOWEDNETWORKINTERFACE_HPP
+#define FASTDDS_RTPS_TRANSPORT_NETWORK__ALLOWEDNETWORKINTERFACE_HPP
 
 #include <fastdds/rtps/transport/network/NetworkInterfaceWithFilter.hpp>
 #include <fastdds/fastdds_dll.hpp>
@@ -60,4 +60,4 @@ struct AllowedNetworkInterface : public NetworkInterfaceWithFilter
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_RTPS_TRANSPORT_NETWORK_ALLOWEDNETWORKINTERFACE_HPP_
+#endif // FASTDDS_RTPS_TRANSPORT_NETWORK__ALLOWEDNETWORKINTERFACE_HPP

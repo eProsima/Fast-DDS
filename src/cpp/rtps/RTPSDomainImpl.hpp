@@ -13,8 +13,8 @@
 // limitations under the License.
 
 
-#ifndef _RTPS_RTPSDOMAINIMPL_HPP_
-#define _RTPS_RTPSDOMAINIMPL_HPP_
+#ifndef FASTDDS_RTPS__RTPSDOMAINIMPL_HPP
+#define FASTDDS_RTPS__RTPSDOMAINIMPL_HPP
 
 #include <chrono>
 #include <memory>
@@ -25,9 +25,9 @@
 #endif // defined(_WIN32) || defined(__unix__)
 
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
-#include <fastdds/rtps/reader/RTPSReader.h>
-#include <fastdds/rtps/RTPSDomain.h>
-#include <fastdds/rtps/writer/RTPSWriter.h>
+#include <fastdds/rtps/reader/RTPSReader.hpp>
+#include <fastdds/rtps/RTPSDomain.hpp>
+#include <fastdds/rtps/writer/RTPSWriter.hpp>
 
 #include <rtps/reader/BaseReader.hpp>
 #include <utils/shared_memory/BoostAtExitRegistry.hpp>
@@ -325,4 +325,4 @@ private:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif  // _RTPS_RTPSDOMAINIMPL_HPP_
+#endif  // FASTDDS_RTPS__RTPSDOMAINIMPL_HPP

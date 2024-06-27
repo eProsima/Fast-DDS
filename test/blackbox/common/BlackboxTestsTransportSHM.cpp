@@ -23,8 +23,8 @@
 #include "./mock/BlackboxMockConsumer.h"
 
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/rtps/transport/shared_mem/test_SharedMemTransportDescriptor.h>
-#include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/shared_mem/test_SharedMemTransportDescriptor.hpp>
+#include <fastdds/rtps/transport/UDPv4TransportDescriptor.hpp>
 #include <gtest/gtest.h>
 
 using namespace eprosima::fastdds;

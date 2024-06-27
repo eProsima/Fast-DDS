@@ -16,17 +16,17 @@
  * @file StatefulReader.hpp
  */
 
-#ifndef RTPS_READER__STATEFULREADER_HPP
-#define RTPS_READER__STATEFULREADER_HPP
+#ifndef FASTDDS_RTPS_READER__STATEFULREADER_HPP
+#define FASTDDS_RTPS_READER__STATEFULREADER_HPP
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <mutex>
 #include <vector>
 
-#include <fastdds/rtps/common/CDRMessage_t.h>
+#include <fastdds/rtps/common/CDRMessage_t.hpp>
 #include <fastdds/rtps/common/VendorId_t.hpp>
-#include <fastdds/rtps/reader/RTPSReader.h>
+#include <fastdds/rtps/reader/RTPSReader.hpp>
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>
 
 #include <rtps/reader/BaseReader.hpp>
@@ -368,10 +368,10 @@ private:
     bool is_alive_;
 };
 
-} /* namespace rtps */
-} /* namespace fastdds */
-} /* namespace eprosima */
+} // namespace rtps
+} // namespace fastdds
+} // namespace eprosima
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#endif // RTPS_READER__STATEFULREADER_HPP
+#endif // FASTDDS_RTPS_READER__STATEFULREADER_HPP

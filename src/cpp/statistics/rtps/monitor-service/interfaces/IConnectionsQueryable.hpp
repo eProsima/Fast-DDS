@@ -22,7 +22,7 @@
 
 #include <vector>
 
-#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/statistics/rtps/monitor_service/connections_fwd.hpp>
 
 namespace eprosima {

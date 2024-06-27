@@ -15,7 +15,7 @@
 #ifndef _FASTDDS_SHAREDMEM_SENDERRESOURCE_HPP_
 #define _FASTDDS_SHAREDMEM_SENDERRESOURCE_HPP_
 
-#include <fastdds/rtps/transport/SenderResource.h>
+#include <fastdds/rtps/transport/SenderResource.hpp>
 
 #include <rtps/transport/ChainingSenderResource.hpp>
 #include <rtps/transport/shared_mem/SharedMemTransport.h>

@@ -13,19 +13,19 @@
 // limitations under the License.
 
 /**
- * @file QosPolicies.h
+ * @file QosPolicies.hpp
  *
  */
 
-#ifndef _FASTDDS_DDS_QOS_QOSPOLICIES_HPP_
-#define _FASTDDS_DDS_QOS_QOSPOLICIES_HPP_
+#ifndef FASTDDS_DDS_CORE_POLICY__QOSPOLICIES_HPP
+#define FASTDDS_DDS_CORE_POLICY__QOSPOLICIES_HPP
 
 #include <bitset>
 #include <vector>
 
 #include <fastdds/dds/core/policy/ParameterTypes.hpp>
-#include <fastdds/rtps/common/Time_t.h>
-#include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/common/Time_t.hpp>
+#include <fastdds/rtps/common/Types.hpp>
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>
 
 namespace eprosima {
@@ -1615,4 +1615,4 @@ public:
 } //namespace fastdds
 } //namespace eprosima
 
-#endif // _FASTDDS_DDS_QOS_QOSPOLICIES_HPP_
+#endif // FASTDDS_DDS_CORE_POLICY__QOSPOLICIES_HPP

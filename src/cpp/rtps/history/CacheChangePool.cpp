@@ -17,7 +17,7 @@
  *
  */
 
-#include <fastdds/rtps/common/CacheChange.h>
+#include <fastdds/rtps/common/CacheChange.hpp>
 #include <fastdds/dds/log/Log.hpp>
 
 #include <rtps/history/CacheChangePool.h>

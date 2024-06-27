@@ -17,15 +17,15 @@
  *
  */
 
-#ifndef _FASTDDS_RTPS_MESSAGES_RTPSMESSAGESENDERINTERFACE_HPP_
-#define _FASTDDS_RTPS_MESSAGES_RTPSMESSAGESENDERINTERFACE_HPP_
+#ifndef FASTDDS_RTPS_MESSAGES__RTPSMESSAGESENDERINTERFACE_HPP
+#define FASTDDS_RTPS_MESSAGES__RTPSMESSAGESENDERINTERFACE_HPP
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <chrono>
 #include <vector>
 
-#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/transport/NetworkBuffer.hpp>
 
 namespace eprosima {
@@ -98,10 +98,10 @@ public:
 
 };
 
-} /* namespace rtps */
-} /* namespace fastdds */
-} /* namespace eprosima */
+} // namespace rtps
+} // namespace fastdds
+} // namespace eprosima
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#endif /* _FASTDDS_RTPS_MESSAGES_RTPSMESSAGESENDERINTERFACE_HPP_ */
+#endif // FASTDDS_RTPS_MESSAGES__RTPSMESSAGESENDERINTERFACE_HPP

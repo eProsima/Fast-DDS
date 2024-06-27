@@ -29,8 +29,8 @@
 
 #include <nlohmann/json.hpp>
 
-#include <fastdds/rtps/common/CacheChange.h>
-#include <fastdds/rtps/history/WriterHistory.h>
+#include <fastdds/rtps/common/CacheChange.hpp>
+#include <fastdds/rtps/history/WriterHistory.hpp>
 
 #include <rtps/builtin/discovery/database/DiscoveryDataFilter.hpp>
 #include <rtps/builtin/discovery/database/DiscoveryDataQueueInfo.hpp>

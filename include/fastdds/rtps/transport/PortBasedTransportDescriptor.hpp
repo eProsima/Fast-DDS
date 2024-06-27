@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef _FASTDDS_PORT_BASED_TRANSPORT_DESCRIPTOR_H_
-#define _FASTDDS_PORT_BASED_TRANSPORT_DESCRIPTOR_H_
+#ifndef FASTDDS_RTPS_TRANSPORT__PORTBASEDTRANSPORTDESCRIPTOR_HPP
+#define FASTDDS_RTPS_TRANSPORT__PORTBASEDTRANSPORTDESCRIPTOR_HPP
 
 #include <cstdint>
 #include <map>
 
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
-#include <fastdds/rtps/transport/TransportDescriptorInterface.h>
+#include <fastdds/rtps/transport/TransportDescriptorInterface.hpp>
 #include <fastdds/fastdds_dll.hpp>
 
 namespace eprosima {
@@ -110,4 +110,4 @@ protected:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // ifndef _FASTDDS_PORT_BASED_TRANSPORT_DESCRIPTOR_H_
+#endif // FASTDDS_RTPS_TRANSPORT__PORTBASEDTRANSPORTDESCRIPTOR_HPP

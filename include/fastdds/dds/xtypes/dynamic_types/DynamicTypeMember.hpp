@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef FASTDDS_DDS_XTYPES_DYNAMIC_TYPES_DYNAMIC_TYPE_MEMBER_HPP
-#define FASTDDS_DDS_XTYPES_DYNAMIC_TYPES_DYNAMIC_TYPE_MEMBER_HPP
+#ifndef FASTDDS_DDS_XTYPES_DYNAMIC_TYPES__DYNAMICTYPEMEMBER_HPP
+#define FASTDDS_DDS_XTYPES_DYNAMIC_TYPES__DYNAMICTYPEMEMBER_HPP
 
 #include <map>
 #include <memory>
@@ -136,4 +136,4 @@ typedef std::map<MemberId, traits<DynamicTypeMember>::ref_type> DynamicTypeMembe
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // FASTDDS_DDS_XTYPES_DYNAMIC_TYPES_DYNAMIC_TYPE_MEMBER_HPP
+#endif // FASTDDS_DDS_XTYPES_DYNAMIC_TYPES__DYNAMICTYPEMEMBER_HPP

@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-#ifndef XML_PROFILE_MANAGER_H_
-#define XML_PROFILE_MANAGER_H_
+#ifndef FASTDDS_XMLPARSER__XMLPROFILEMANAGER_H
+#define FASTDDS_XMLPARSER__XMLPROFILEMANAGER_H
 
 #include <xmlparser/XMLParser.h>
 
@@ -37,4 +37,4 @@ public:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // XML_PROFILE_MANAGER_H_
+#endif // FASTDDS_XMLPARSER__XMLPROFILEMANAGER_H

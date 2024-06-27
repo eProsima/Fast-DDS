@@ -27,12 +27,12 @@
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/LibrarySettings.hpp>
-#include <fastdds/rtps/common/CDRMessage_t.h>
-#include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
+#include <fastdds/rtps/common/CDRMessage_t.hpp>
+#include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.hpp>
 #include <gtest/gtest.h>
 
 #include "../types/HelloWorldTypeObjectSupport.hpp"
-#include "../types/TestRegression3361PubSubTypes.h"
+#include "../types/TestRegression3361PubSubTypes.hpp"
 #include "../types/TestRegression3361TypeObjectSupport.hpp"
 #include "../utils/filter_helpers.hpp"
 #include "BlackboxTests.hpp"

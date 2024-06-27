@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _FASTDDS_RTPS_BUILTIN_DATA_PARTICIPANTPROXYDATA_HPP_
-#define _FASTDDS_RTPS_BUILTIN_DATA_PARTICIPANTPROXYDATA_HPP_
+#ifndef FASTDDS_RTPS_BUILTIN_DATA__PARTICIPANTPROXYDATA_HPP
+#define FASTDDS_RTPS_BUILTIN_DATA__PARTICIPANTPROXYDATA_HPP
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
@@ -26,12 +26,12 @@
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/core/Types.hpp>
-#include <fastdds/rtps/attributes/ReaderAttributes.h>
+#include <fastdds/rtps/attributes/ReaderAttributes.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
-#include <fastdds/rtps/attributes/WriterAttributes.h>
+#include <fastdds/rtps/attributes/WriterAttributes.hpp>
 #include <fastdds/rtps/builtin/data/BuiltinEndpoints.hpp>
 #include <fastdds/rtps/common/RemoteLocators.hpp>
-#include <fastdds/rtps/common/Token.h>
+#include <fastdds/rtps/common/Token.hpp>
 #include <fastdds/rtps/common/VendorId_t.hpp>
 
 namespace eprosima {
@@ -49,7 +49,7 @@ class NetworkFactory;
 #if HAVE_SECURITY
 namespace security {
 struct ParticipantSecurityAttributes;
-} /* namespace security */
+} // namespace security
 #endif // if HAVE_SECURITY
 
 // proxy specific declarations
@@ -231,10 +231,10 @@ private:
     std::chrono::microseconds lease_duration_;
 };
 
-} /* namespace rtps */
-} /* namespace fastdds */
-} /* namespace eprosima */
+} // namespace rtps
+} // namespace fastdds
+} // namespace eprosima
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#endif // _FASTDDS_RTPS_BUILTIN_DATA_PARTICIPANTPROXYDATA_HPP_
+#endif // FASTDDS_RTPS_BUILTIN_DATA__PARTICIPANTPROXYDATA_HPP

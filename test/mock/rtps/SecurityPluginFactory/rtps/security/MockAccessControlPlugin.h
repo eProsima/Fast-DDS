@@ -16,11 +16,11 @@
  * @file MockAccessControlPlugin.h
  */
 
-#ifndef _SECURITY_MOCKACCESSCONTROLPLUGIN_H_
-#define _SECURITY_MOCKACCESSCONTROLPLUGIN_H_
+#ifndef FASTDDS_RTPS_SECURITY__MOCKACCESSCONTROLPLUGIN_H
+#define FASTDDS_RTPS_SECURITY__MOCKACCESSCONTROLPLUGIN_H
 
-#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
-#include <fastdds/rtps/builtin/data/WriterProxyData.h>
+#include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
+#include <fastdds/rtps/builtin/data/WriterProxyData.hpp>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
 
 #include <rtps/security/accesscontrol/AccessControl.h>
@@ -151,4 +151,4 @@ public:
 } //namespace fastdds
 } //namespace eprosima
 
-#endif // _SECURITY_MOCKACCESSCONTROLPLUGIN_H_
+#endif // FASTDDS_RTPS_SECURITY__MOCKACCESSCONTROLPLUGIN_H

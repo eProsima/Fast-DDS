@@ -37,7 +37,7 @@
 #include <nlohmann/json.hpp>
 
 #include <fastdds/dds/core/ReturnCode.hpp>
-#include <fastdds/utils/IPFinder.h>
+#include <fastdds/utils/IPFinder.hpp>
 #include <utils/threading.hpp>
 
 namespace eprosima {

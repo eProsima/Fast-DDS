@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * @file SubscriberListener.hpp
+ * @file TopicListener.hpp
  */
 
-#ifndef _FASTDDS_TOPICLISTENER_HPP_
-#define _FASTDDS_TOPICLISTENER_HPP_
+#ifndef FASTDDS_DDS_TOPIC__TOPICLISTENER_HPP
+#define FASTDDS_DDS_TOPIC__TOPICLISTENER_HPP
 
 #include <fastdds/fastdds_dll.hpp>
 #include <fastdds/dds/core/status/BaseStatus.hpp>
@@ -68,8 +68,8 @@ public:
 
 };
 
-} /* namespace dds */
-} /* namespace fastdds */
-} /* namespace eprosima */
+} // namespace dds
+} // namespace fastdds
+} // namespace eprosima
 
-#endif /* _FASTDDS_TOPICLISTENER_HPP_ */
+#endif // FASTDDS_DDS_TOPIC__TOPICLISTENER_HPP

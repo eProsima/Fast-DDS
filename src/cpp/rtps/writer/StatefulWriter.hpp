@@ -16,8 +16,8 @@
  * @file StatefulWriter.hpp
  */
 
-#ifndef RTPS_WRITER__STATEFULWRITER_HPP
-#define RTPS_WRITER__STATEFULWRITER_HPP
+#ifndef FASTDDS_RTPS_WRITER__STATEFULWRITER_HPP
+#define FASTDDS_RTPS_WRITER__STATEFULWRITER_HPP
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
@@ -25,10 +25,10 @@
 #include <mutex>
 
 #include <fastdds/rtps/common/VendorId_t.hpp>
-#include <fastdds/rtps/history/IChangePool.h>
-#include <fastdds/rtps/history/IPayloadPool.h>
+#include <fastdds/rtps/history/IChangePool.hpp>
+#include <fastdds/rtps/history/IPayloadPool.hpp>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
-#include <fastdds/rtps/writer/RTPSWriter.h>
+#include <fastdds/rtps/writer/RTPSWriter.hpp>
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>
 
 namespace eprosima {
@@ -545,9 +545,9 @@ private:
     LocatorSelectorSender locator_selector_async_;
 };
 
-} /* namespace rtps */
-} /* namespace fastdds */
-} /* namespace eprosima */
+} // namespace rtps
+} // namespace fastdds
+} // namespace eprosima
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#endif /* RTPS_WRITER__STATEFULWRITER_HPP */
+#endif // FASTDDS_RTPS_WRITER__STATEFULWRITER_HPP

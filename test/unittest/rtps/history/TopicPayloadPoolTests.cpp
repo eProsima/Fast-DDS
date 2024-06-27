@@ -15,7 +15,7 @@
 #include <gtest/gtest.h>
 
 #include <rtps/history/TopicPayloadPool.hpp>
-#include <fastdds/rtps/common/CacheChange.h>
+#include <fastdds/rtps/common/CacheChange.hpp>
 
 #include <tuple>
 

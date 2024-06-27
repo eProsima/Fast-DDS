@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef _RTPS_NETWORK_RECEIVERRESOURCE_H_
-#define _RTPS_NETWORK_RECEIVERRESOURCE_H_
+#ifndef FASTDDS_RTPS_NETWORK__RECEIVERRESOURCE_H
+#define FASTDDS_RTPS_NETWORK__RECEIVERRESOURCE_H
 
 #include <condition_variable>
 #include <functional>
 #include <memory>
 #include <vector>
 
-#include <fastdds/rtps/transport/TransportInterface.h>
+#include <fastdds/rtps/transport/TransportInterface.hpp>
 
 #include <rtps/messages/MessageReceiver.h>
 
@@ -124,4 +124,4 @@ private:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif /* _RTPS_NETWORK_RECEIVERRESOURCE_H_ */
+#endif // FASTDDS_RTPS_NETWORK__RECEIVERRESOURCE_H

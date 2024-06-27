@@ -17,7 +17,7 @@
 #include <chrono>
 #include <thread>
 
-#include <fastdds/utils/IPLocator.h>
+#include <fastdds/utils/IPLocator.hpp>
 
 #include <rtps/transport/asio_helpers.hpp>
 #include <rtps/transport/TCPTransportInterface.h>

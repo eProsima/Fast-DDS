@@ -16,8 +16,8 @@
  * @file Colors.hpp
  */
 
-#ifndef _FASTDDS_DDS_LOG_COLORS_H_
-#define _FASTDDS_DDS_LOG_COLORS_H_
+#ifndef FASTDDS_DDS_LOG__COLORS_HPP
+#define FASTDDS_DDS_LOG__COLORS_HPP
 
 
 #if defined(_WIN32)
@@ -57,4 +57,4 @@
 #endif // if defined(_WIN32)
 
 
-#endif /* _FASTDDS_DDS_LOG_COLORS_H_ */
+#endif // FASTDDS_DDS_LOG__COLORS_HPP

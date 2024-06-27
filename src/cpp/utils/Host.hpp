@@ -17,10 +17,11 @@
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/common/LocatorList.hpp>
-#include <fastdds/utils/IPFinder.h>
-#include <fastdds/utils/md5.h>
+#include <fastdds/utils/IPFinder.hpp>
+#include <fastdds/utils/md5.hpp>
 
 namespace eprosima {
+
 
 /**
  * This singleton generates a host_id based on system interfaces
@@ -65,7 +66,7 @@ public:
 
         if (loc.size() > 0)
         {
-            MD5 md5;
+            fastdds::MD5 md5;
             for (auto& l : loc)
             {
                 md5.update(l.address, sizeof(l.address));
@@ -106,7 +107,7 @@ private:
         if (fastdds::rtps::IPFinder::getAllMACAddress(&macs) &&
                 macs.size() > 0)
         {
-            MD5 md5;
+            fastdds::MD5 md5;
             for (auto& m : macs)
             {
                 md5.update(m.address, sizeof(m.address));

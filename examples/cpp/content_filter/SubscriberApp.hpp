@@ -35,7 +35,7 @@
 
 #include "Application.hpp"
 #include "CLIParser.hpp"
-#include "HelloWorldPubSubTypes.h"
+#include "HelloWorldPubSubTypes.hpp"
 #include "CustomContentFilterFactory.hpp"
 
 using namespace eprosima::fastdds::dds;

@@ -16,13 +16,13 @@
  * @file LocatorWithMask.hpp
  */
 
-#ifndef _FASTDDS_RTPS_COMMON_LOCATORWITHMASK_HPP_
-#define _FASTDDS_RTPS_COMMON_LOCATORWITHMASK_HPP_
+#ifndef FASTDDS_RTPS_COMMON__LOCATORWITHMASK_HPP
+#define FASTDDS_RTPS_COMMON__LOCATORWITHMASK_HPP
 
 #include <sstream>
 
 #include <fastdds/fastdds_dll.hpp>
-#include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/Locator.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -77,4 +77,4 @@ FASTDDS_EXPORTED_API std::ostream& operator <<(
 } // namespace fastdds
 } // namespace eprosima
 
-#endif /* _FASTDDS_RTPS_COMMON_LOCATORWITHMASK_HPP_ */
+#endif // FASTDDS_RTPS_COMMON__LOCATORWITHMASK_HPP

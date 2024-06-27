@@ -26,8 +26,8 @@
 #include <openssl/rand.h>
 
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/rtps/common/BinaryProperty.h>
-#include <fastdds/rtps/common/Token.h>
+#include <fastdds/rtps/common/BinaryProperty.hpp>
+#include <fastdds/rtps/common/Token.hpp>
 #include <rtps/security/exceptions/SecurityException.h>
 
 // Solve error with Win32 macro

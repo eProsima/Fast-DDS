@@ -16,8 +16,8 @@
  * @file Subscriber.hpp
  */
 
-#ifndef _FASTDDS_SUBSCRIBER_HPP_
-#define _FASTDDS_SUBSCRIBER_HPP_
+#ifndef FASTDDS_DDS_SUBSCRIBER__SUBSCRIBER_HPP
+#define FASTDDS_DDS_SUBSCRIBER__SUBSCRIBER_HPP
 
 #include <fastdds/dds/core/Entity.hpp>
 #include <fastdds/dds/core/ReturnCode.hpp>
@@ -392,8 +392,8 @@ protected:
     friend class ::dds::sub::Subscriber;
 };
 
-} /* namespace dds */
-} /* namespace fastdds */
-} /* namespace eprosima */
+} // namespace dds
+} // namespace fastdds
+} // namespace eprosima
 
-#endif /* _FASTDDS_SUBSCRIBER_HPP_ */
+#endif // FASTDDS_DDS_SUBSCRIBER__SUBSCRIBER_HPP

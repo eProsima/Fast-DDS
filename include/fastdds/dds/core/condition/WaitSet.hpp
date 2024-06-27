@@ -17,14 +17,14 @@
  *
  */
 
-#ifndef _FASTDDS_WAIT_SET_HPP_
-#define _FASTDDS_WAIT_SET_HPP_
+#ifndef FASTDDS_DDS_CORE_CONDITION__WAITSET_HPP
+#define FASTDDS_DDS_CORE_CONDITION__WAITSET_HPP
 
 #include <memory>
 
 #include <fastdds/dds/core/condition/Condition.hpp>
 #include <fastdds/dds/core/ReturnCode.hpp>
-#include <fastdds/rtps/common/Time_t.h>
+#include <fastdds/rtps/common/Time_t.hpp>
 #include <fastdds/fastdds_dll.hpp>
 
 namespace eprosima {
@@ -105,4 +105,4 @@ private:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_WAIT_SET_HPP_
+#endif // FASTDDS_DDS_CORE_CONDITION__WAITSET_HPP

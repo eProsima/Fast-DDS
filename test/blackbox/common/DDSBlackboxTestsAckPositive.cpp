@@ -35,8 +35,8 @@
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
-#include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
-#include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
+#include <fastdds/rtps/participant/ParticipantDiscoveryInfo.hpp>
+#include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.hpp>
 
 #include "BlackboxTests.hpp"
 #include "../api/dds-pim/CustomPayloadPool.hpp"
@@ -45,8 +45,8 @@
 #include "../api/dds-pim/ReqRepAsReliableHelloWorldRequester.hpp"
 #include "../api/dds-pim/ReqRepAsReliableHelloWorldReplier.hpp"
 #include "../types/FixedSized.hpp"
-#include "../types/FixedSizedPubSubTypes.h"
-#include "../types/HelloWorldPubSubTypes.h"
+#include "../types/FixedSizedPubSubTypes.hpp"
+#include "../types/HelloWorldPubSubTypes.hpp"
 
 using namespace eprosima::fastdds;
 using namespace eprosima::fastdds::rtps;

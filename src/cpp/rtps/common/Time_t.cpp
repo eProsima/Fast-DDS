@@ -15,7 +15,7 @@
 /**
  * @file Time_t.cpp
  */
-#include <fastdds/rtps/common/Time_t.h>
+#include <fastdds/rtps/common/Time_t.hpp>
 
 #include <cstdlib>
 #include <chrono>

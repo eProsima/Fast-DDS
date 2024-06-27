@@ -16,8 +16,8 @@
  * @file ReadCondition.hpp
  */
 
-#ifndef _FASTDDS_DDS_SUBSCRIBER_READCONDITION_HPP_
-#define _FASTDDS_DDS_SUBSCRIBER_READCONDITION_HPP_
+#ifndef FASTDDS_DDS_SUBSCRIBER__READCONDITION_HPP
+#define FASTDDS_DDS_SUBSCRIBER__READCONDITION_HPP
 
 #include <cassert>
 
@@ -123,4 +123,4 @@ protected:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_DDS_SUBSCRIBER_READCONDITION_HPP_
+#endif // FASTDDS_DDS_SUBSCRIBER__READCONDITION_HPP

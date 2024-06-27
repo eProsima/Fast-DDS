@@ -16,11 +16,11 @@
  * @file DataSharingPayloadPool.hpp
  */
 
-#ifndef RTPS_HISTORY_DATASHARINGPAYLOADPOOL_HPP
-#define RTPS_HISTORY_DATASHARINGPAYLOADPOOL_HPP
+#ifndef FASTDDS_RTPS_DATASHARING__DATASHARINGPAYLOADPOOL_HPP
+#define FASTDDS_RTPS_DATASHARING__DATASHARINGPAYLOADPOOL_HPP
 
-#include <fastdds/rtps/common/CacheChange.h>
-#include <fastdds/rtps/history/IPayloadPool.h>
+#include <fastdds/rtps/common/CacheChange.hpp>
+#include <fastdds/rtps/history/IPayloadPool.hpp>
 #include <rtps/history/PoolConfig.h>
 
 namespace eprosima {
@@ -165,4 +165,4 @@ protected:
 }  // namespace fastdds
 }  // namespace eprosima
 
-#endif  // RTPS_HISTORY_DATASHARINGPAYLOADPOOL_HPP
+#endif  // FASTDDS_RTPS_DATASHARING__DATASHARINGPAYLOADPOOL_HPP

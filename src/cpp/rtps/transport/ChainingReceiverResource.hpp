@@ -15,7 +15,7 @@
 #ifndef _RTPS_TRANSPORT_CHAININGRECEIVERRESOURCE_HPP_
 #define _RTPS_TRANSPORT_CHAININGRECEIVERRESOURCE_HPP_
 
-#include <fastdds/rtps/transport/TransportReceiverInterface.h>
+#include <fastdds/rtps/transport/TransportReceiverInterface.hpp>
 
 namespace eprosima {
 namespace fastdds {

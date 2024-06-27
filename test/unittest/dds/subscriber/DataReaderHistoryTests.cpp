@@ -1,5 +1,5 @@
 #include <fastdds/subscriber/history/DataReaderHistory.hpp>
-#include <fastdds/rtps/reader/RTPSReader.h>
+#include <fastdds/rtps/reader/RTPSReader.hpp>
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/utils/TimedMutex.hpp>

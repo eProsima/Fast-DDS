@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _FASTDDS_RTPS_WLP_HPP_
-#define _FASTDDS_RTPS_WLP_HPP_
+#ifndef FASTDDS_RTPS_BUILTIN_LIVELINESS__WLP_HPP
+#define FASTDDS_RTPS_BUILTIN_LIVELINESS__WLP_HPP
 
 #include <mutex>
 #include <vector>
@@ -26,7 +26,7 @@
 #include <gmock/gmock.h>
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
-#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/Guid.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -70,4 +70,4 @@ public:
 } /* namespace fastdds */
 } /* namespace eprosima */
 
-#endif /* _FASTDDS_RTPS_WLP_HPP_ */
+#endif /* FASTDDS_RTPS_BUILTIN_LIVELINESS__WLP_HPP */

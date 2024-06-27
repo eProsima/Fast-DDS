@@ -17,11 +17,11 @@
  *
  */
 
-#ifndef RTPSGAPBUILDER_HPP
-#define RTPSGAPBUILDER_HPP
+#ifndef FASTDDS_RTPS_MESSAGES__RTPSGAPBUILDER_HPP
+#define FASTDDS_RTPS_MESSAGES__RTPSGAPBUILDER_HPP
 
-#include <fastdds/rtps/common/SequenceNumber.h>
-#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/SequenceNumber.hpp>
+#include <fastdds/rtps/common/Guid.hpp>
 
 #include <rtps/messages/RTPSMessageGroup.hpp>
 
@@ -89,8 +89,8 @@ public:
     MOCK_METHOD0(flush, bool());
 };
 
-} /* namespace rtps */
-} /* namespace fastdds */
-} /* namespace eprosima */
+} // namespace rtps
+} // namespace fastdds
+} // namespace eprosima
 
-#endif /* RTPSGAPBUILDER_HPP */
+#endif // FASTDDS_RTPS_MESSAGES__RTPSGAPBUILDER_HPP

@@ -19,7 +19,7 @@
 #ifndef FASTDDS_RTPS_BUILTIN_DISCOVERY_PARTICIPANT_DS__FAKEWRITER_HPP_
 #define FASTDDS_RTPS_BUILTIN_DISCOVERY_PARTICIPANT_DS__FAKEWRITER_HPP_
 
-#include <fastdds/rtps/Endpoint.h>
+#include <fastdds/rtps/Endpoint.hpp>
 
 #include <rtps/participant/RTPSParticipantImpl.h>
 

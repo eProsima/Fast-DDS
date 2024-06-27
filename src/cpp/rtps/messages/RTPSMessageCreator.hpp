@@ -19,10 +19,10 @@
 #define _FASTDDS_RTPS_CDRMESSAGECREATOR_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <fastdds/rtps/common/CacheChange.h>
-#include <fastdds/rtps/common/FragmentNumber.h>
-#include <fastdds/rtps/common/Guid.h>
-#include <fastdds/rtps/common/SequenceNumber.h>
+#include <fastdds/rtps/common/CacheChange.hpp>
+#include <fastdds/rtps/common/FragmentNumber.hpp>
+#include <fastdds/rtps/common/Guid.hpp>
+#include <fastdds/rtps/common/SequenceNumber.hpp>
 #include <fastdds/rtps/common/VendorId_t.hpp>
 #include <fastdds/rtps/transport/NetworkBuffer.hpp>
 

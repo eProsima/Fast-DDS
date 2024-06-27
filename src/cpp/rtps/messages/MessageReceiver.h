@@ -16,19 +16,19 @@
  * @file MessageReceiver.h
  */
 
-#ifndef _FASTDDS_RTPS_MESSAGERECEIVER_H_
-#define _FASTDDS_RTPS_MESSAGERECEIVER_H_
+#ifndef FASTDDS_RTPS_MESSAGES__MESSAGERECEIVER_H
+#define FASTDDS_RTPS_MESSAGES__MESSAGERECEIVER_H
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <functional>
 #include <unordered_map>
 
-#include <fastdds/rtps/common/CDRMessage_t.h>
-#include <fastdds/rtps/common/Guid.h>
-#include <fastdds/rtps/common/Locator.h>
-#include <fastdds/rtps/common/CacheChange.h>
-#include <fastdds/rtps/common/MatchingInfo.h>
-#include <fastdds/rtps/common/Time_t.h>
+#include <fastdds/rtps/common/CDRMessage_t.hpp>
+#include <fastdds/rtps/common/Guid.hpp>
+#include <fastdds/rtps/common/Locator.hpp>
+#include <fastdds/rtps/common/CacheChange.hpp>
+#include <fastdds/rtps/common/MatchingInfo.hpp>
+#include <fastdds/rtps/common/Time_t.hpp>
 #include <fastdds/rtps/common/VendorId_t.hpp>
 
 #include <utils/shared_mutex.hpp>
@@ -301,9 +301,9 @@ private:
 
 };
 
-} /* namespace rtps */
-} /* namespace fastdds */
-} /* namespace eprosima */
+} // namespace rtps
+} // namespace fastdds
+} // namespace eprosima
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#endif /* _FASTDDS_RTPS_MESSAGERECEIVER_H_ */
+#endif // FASTDDS_RTPS_MESSAGES__MESSAGERECEIVER_H

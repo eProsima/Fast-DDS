@@ -14,8 +14,8 @@
 
 #include <gtest/gtest.h>
 
-#include <fastdds/rtps/attributes/HistoryAttributes.h>
-#include <fastdds/rtps/common/CacheChange.h>
+#include <fastdds/rtps/attributes/HistoryAttributes.hpp>
+#include <fastdds/rtps/common/CacheChange.hpp>
 
 #include <rtps/history/CacheChangePool.h>
 

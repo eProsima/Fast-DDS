@@ -16,8 +16,8 @@
  * @file RTPSParticipantImpl.h
  */
 
-#ifndef _RTPS_PARTICIPANT_RTPSPARTICIPANTIMPL_H_
-#define _RTPS_PARTICIPANT_RTPSPARTICIPANTIMPL_H_
+#ifndef FASTDDS_RTPS_PARTICIPANT__RTPSPARTICIPANTIMPL_H
+#define FASTDDS_RTPS_PARTICIPANT__RTPSPARTICIPANTIMPL_H
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <atomic>
@@ -37,15 +37,15 @@
 #include <unistd.h>
 #endif // if defined(_WIN32)
 
-#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
 #include <fastdds/rtps/builtin/data/ContentFilterProperty.hpp>
-#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
-#include <fastdds/rtps/builtin/data/WriterProxyData.h>
-#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
+#include <fastdds/rtps/builtin/data/WriterProxyData.hpp>
+#include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/LocatorList.hpp>
-#include <fastdds/rtps/history/IChangePool.h>
-#include <fastdds/rtps/history/IPayloadPool.h>
-#include <fastdds/rtps/transport/SenderResource.h>
+#include <fastdds/rtps/history/IChangePool.hpp>
+#include <fastdds/rtps/history/IPayloadPool.hpp>
+#include <fastdds/rtps/transport/SenderResource.hpp>
 
 #include "../flowcontrol/FlowControllerFactory.hpp"
 #include <rtps/messages/MessageReceiver.h>
@@ -62,7 +62,7 @@
 #include <utils/Semaphore.hpp>
 
 #if HAVE_SECURITY
-#include <fastdds/rtps/Endpoint.h>
+#include <fastdds/rtps/Endpoint.hpp>
 #include <rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
 #include <rtps/security/SecurityManager.h>
 #include <rtps/security/SecurityPluginFactory.h>
@@ -1317,4 +1317,4 @@ public:
 } /* namespace rtps */
 } /* namespace eprosima */
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#endif //_RTPS_PARTICIPANT_RTPSPARTICIPANTIMPL_H_
+#endif //FASTDDS_RTPS_PARTICIPANT__RTPSPARTICIPANTIMPL_H

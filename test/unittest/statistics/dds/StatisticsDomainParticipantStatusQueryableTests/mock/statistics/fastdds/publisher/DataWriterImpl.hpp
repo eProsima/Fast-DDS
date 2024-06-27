@@ -22,8 +22,8 @@
 #include <fastdds/statistics/IListeners.hpp>
 
 #include <fastdds/publisher/DataWriterImpl.hpp>
-#include <fastdds/rtps/RTPSDomain.h>
-#include <fastdds/rtps/writer/RTPSWriter.h>
+#include <fastdds/rtps/RTPSDomain.hpp>
+#include <fastdds/rtps/writer/RTPSWriter.hpp>
 
 #include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
 

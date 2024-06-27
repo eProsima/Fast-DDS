@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _FASTDDS_DOMAIN_PARTICIPANT_HPP_
-#define _FASTDDS_DOMAIN_PARTICIPANT_HPP_
+#ifndef FASTDDS_DDS_DOMAIN__DOMAINPARTICIPANT_HPP
+#define FASTDDS_DDS_DOMAIN__DOMAINPARTICIPANT_HPP
 
 #include <functional>
 #include <string>
@@ -38,9 +38,9 @@
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/topic/TopicListener.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
-#include <fastdds/rtps/common/Guid.h>
-#include <fastdds/rtps/common/SampleIdentity.h>
-#include <fastdds/rtps/common/Time_t.h>
+#include <fastdds/rtps/common/Guid.hpp>
+#include <fastdds/rtps/common/SampleIdentity.hpp>
+#include <fastdds/rtps/common/Time_t.hpp>
 
 namespace dds {
 namespace domain {
@@ -921,6 +921,6 @@ protected:
 
 } // namespace dds
 } // namespace fastdds
-} /* namespace eprosima */
+} // namespace eprosima
 
-#endif /* _FASTDDS_DOMAIN_PARTICIPANT_HPP_ */
+#endif // FASTDDS_DDS_DOMAIN__DOMAINPARTICIPANT_HPP

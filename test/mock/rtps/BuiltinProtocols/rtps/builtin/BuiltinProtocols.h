@@ -13,14 +13,14 @@
 // limitations under the License.
 
 /**
- * @file BiultinProtocols.h
+ * @file BuiltinProtocols.h
  */
 
-#ifndef _FASTDDS_RTPS_BUILTINPROTOCOLS_H_
-#define _FASTDDS_RTPS_BUILTINPROTOCOLS_H_
+#ifndef FASTDDS_RTPS_BUILTIN__BUILTINPROTOCOLS_H
+#define FASTDDS_RTPS_BUILTIN__BUILTINPROTOCOLS_H
 
-#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
-#include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
+#include <fastdds/rtps/common/Locator.hpp>
 
 #include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
 
@@ -70,4 +70,4 @@ public:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_RTPS_ENDPOINT_H_
+#endif // FASTDDS_RTPS_BUILTIN__BUILTINPROTOCOLS_H

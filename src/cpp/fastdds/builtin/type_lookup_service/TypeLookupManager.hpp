@@ -17,19 +17,19 @@
  *
  */
 
-#ifndef _FASTDDS_BUILTIN_TYPE_LOOKUP_SERVICE_TYPE_LOOKUP_MANAGER_HPP_
-#define _FASTDDS_BUILTIN_TYPE_LOOKUP_SERVICE_TYPE_LOOKUP_MANAGER_HPP_
+#ifndef FASTDDS_FASTDDS_BUILTIN_TYPE_LOOKUP_SERVICE__TYPELOOKUPMANAGER_HPP
+#define FASTDDS_FASTDDS_BUILTIN_TYPE_LOOKUP_SERVICE__TYPELOOKUPMANAGER_HPP
 
 #include <cstdint>
 #include <mutex>
 #include <unordered_map>
 #include <vector>
 
-#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
-#include <fastdds/rtps/builtin/data/WriterProxyData.h>
+#include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
+#include <fastdds/rtps/builtin/data/WriterProxyData.hpp>
 
 #include <fastdds/builtin/type_lookup_service/detail/TypeLookupTypes.hpp>
-#include <fastdds/builtin/type_lookup_service/detail/TypeLookupTypesPubSubTypes.h>
+#include <fastdds/builtin/type_lookup_service/detail/TypeLookupTypesPubSubTypes.hpp>
 #include <fastdds/builtin/type_lookup_service/TypeLookupReplyListener.hpp>
 #include <fastdds/builtin/type_lookup_service/TypeLookupRequestListener.hpp>
 #include <fastdds/xtypes/type_representation/TypeIdentifierWithSizeHashSpecialization.h>
@@ -440,8 +440,8 @@ protected:
     static constexpr uint32_t typelookup_data_max_size = 5000;
 };
 
-} /* namespace builtin */
-} /* namespace dds */
-} /* namespace fastdds */
-} /* namespace eprosima */
-#endif /* _FASTDDS_BUILTIN_TYPE_LOOKUP_SERVICE_TYPE_LOOKUP_MANAGER_HPP_ */
+} // namespace builtin
+} // namespace dds
+} // namespace fastdds
+} // namespace eprosima
+#endif // FASTDDS_FASTDDS_BUILTIN_TYPE_LOOKUP_SERVICE__TYPELOOKUPMANAGER_HPP

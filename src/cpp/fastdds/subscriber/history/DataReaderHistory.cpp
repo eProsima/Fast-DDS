@@ -26,7 +26,7 @@
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/rtps/reader/RTPSReader.h>
+#include <fastdds/rtps/reader/RTPSReader.hpp>
 
 #include <fastdds/subscriber/DataReaderImpl/ReadTakeCommand.hpp>
 

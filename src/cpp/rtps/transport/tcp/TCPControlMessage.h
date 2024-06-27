@@ -22,8 +22,8 @@
 #ifndef _FASTDDS_TCP_CONTROL_MESSAGE_H_
 #define _FASTDDS_TCP_CONTROL_MESSAGE_H_
 
-#include <fastdds/rtps/common/Locator.h>
-#include <fastdds/rtps/common/SerializedPayload.h>
+#include <fastdds/rtps/common/Locator.hpp>
+#include <fastdds/rtps/common/SerializedPayload.hpp>
 #include <fastdds/rtps/common/VendorId_t.hpp>
 
 namespace eprosima {

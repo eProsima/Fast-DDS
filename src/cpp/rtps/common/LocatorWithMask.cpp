@@ -19,8 +19,8 @@
 #include <cassert>
 #include <string>
 
-#include <fastdds/rtps/common/Locator.h>
-#include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/common/Locator.hpp>
+#include <fastdds/rtps/common/Types.hpp>
 #include <rtps/network/utils/network.hpp>
 
 #include <fastdds/rtps/common/LocatorWithMask.hpp>

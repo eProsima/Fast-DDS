@@ -23,7 +23,7 @@
 #include <gtest/gtest.h>
 
 #include "../types/statistics/types.hpp"
-#include "../types/statistics/typesPubSubTypes.h"
+#include "../types/statistics/typesPubSubTypes.hpp"
 #include "BlackboxTests.hpp"
 #include "PubSubReader.hpp"
 

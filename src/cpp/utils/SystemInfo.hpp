@@ -28,7 +28,7 @@
 
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastdds/dds/core/ReturnCode.hpp>
-#include <fastdds/utils/IPFinder.h>
+#include <fastdds/utils/IPFinder.hpp>
 #include <utils/Host.hpp>
 
 #if defined(_WIN32) || defined(__unix__)

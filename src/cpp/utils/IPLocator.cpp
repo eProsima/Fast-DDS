@@ -22,8 +22,8 @@
 
 #include <asio.hpp>
 
-#include <fastdds/utils/IPLocator.h>
-#include <fastdds/utils/IPFinder.h>
+#include <fastdds/utils/IPLocator.hpp>
+#include <fastdds/utils/IPFinder.hpp>
 
 namespace eprosima {
 namespace fastdds {

@@ -19,7 +19,7 @@
 #ifndef FASTDDS_RTPS_BUILTIN_DISCOVERY_PARTICIPANT__PDPENDPOINTS_HPP_
 #define FASTDDS_RTPS_BUILTIN_DISCOVERY_PARTICIPANT__PDPENDPOINTS_HPP_
 
-#include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/common/Types.hpp>
 
 #include <rtps/participant/RTPSParticipantImpl.h>
 

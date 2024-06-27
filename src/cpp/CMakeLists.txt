@@ -428,8 +428,8 @@ unset(SM_RUN_OUTPUT)
 unset(CMAKE_ATOMIC_LIB)
 
 # Generate the proper configure file
-configure_file(${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/config.h.in
-    ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}/config.h)
+configure_file(${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/config.hpp.in
+    ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}/config.hpp)
 
 #Create library
 add_library(${PROJECT_NAME} ${${PROJECT_NAME}_source_files})
@@ -595,8 +595,8 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}
     PATTERN "*.ipp"
     )
 
-# Install config.h header
-install(FILES ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}/config.h
+# Install config.hpp header
+install(FILES ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}/config.hpp
     DESTINATION ${INCLUDE_INSTALL_DIR}/${PROJECT_NAME}
     COMPONENT headers
     )

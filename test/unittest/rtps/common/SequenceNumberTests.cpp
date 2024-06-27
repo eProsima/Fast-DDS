@@ -16,7 +16,7 @@
 
 #include <gtest/gtest.h>
 
-#include <fastdds/rtps/common/SequenceNumber.h>
+#include <fastdds/rtps/common/SequenceNumber.hpp>
 
 using namespace eprosima::fastdds::rtps;
 

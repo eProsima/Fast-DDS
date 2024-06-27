@@ -20,7 +20,7 @@
 #ifndef TESTREADERREGISTERED_H_
 #define TESTREADERREGISTERED_H_
 
-#include <fastdds/rtps/reader/ReaderListener.h>
+#include <fastdds/rtps/reader/ReaderListener.hpp>
 
 
 namespace eprosima {

@@ -17,8 +17,8 @@
  */
 
 
-#ifndef _FASTDDS_PUBLISHERQOS_HPP_
-#define _FASTDDS_PUBLISHERQOS_HPP_
+#ifndef FASTDDS_DDS_PUBLISHER_QOS__PUBLISHERQOS_HPP
+#define FASTDDS_DDS_PUBLISHER_QOS__PUBLISHERQOS_HPP
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 
@@ -206,4 +206,4 @@ FASTDDS_EXPORTED_API extern const PublisherQos PUBLISHER_QOS_DEFAULT;
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_PUBLISHERQOS_HPP_
+#endif // FASTDDS_DDS_PUBLISHER_QOS__PUBLISHERQOS_HPP

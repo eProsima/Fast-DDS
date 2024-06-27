@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef FASTDDS_DDS_CORE_TYPES_HPP
-#define FASTDDS_DDS_CORE_TYPES_HPP
+#ifndef FASTDDS_DDS_CORE__TYPES_HPP
+#define FASTDDS_DDS_CORE__TYPES_HPP
 
 #include <cstdint>
 
@@ -31,4 +31,4 @@ const int32_t LENGTH_UNLIMITED = -1;
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // FASTDDS_DDS_CORE_TYPES_HPP
+#endif // FASTDDS_DDS_CORE__TYPES_HPP

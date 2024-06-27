@@ -24,7 +24,7 @@
 #include <mutex>
 #include <set>
 
-#include <fastdds/config.h>
+#include <fastdds/config.hpp>
 
 #include <statistics/types/types.hpp>
 

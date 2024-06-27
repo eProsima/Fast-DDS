@@ -17,15 +17,15 @@
  *
  */
 
-#ifndef _FASTDDS_PUBLISHER_HPP_
-#define _FASTDDS_PUBLISHER_HPP_
+#ifndef FASTDDS_DDS_PUBLISHER__PUBLISHER_HPP
+#define FASTDDS_DDS_PUBLISHER__PUBLISHER_HPP
 
 #include <fastdds/dds/core/Entity.hpp>
 #include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
-#include <fastdds/rtps/common/Time_t.h>
+#include <fastdds/rtps/common/Time_t.hpp>
 
 #include <fastdds/fastdds_dll.hpp>
 
@@ -375,8 +375,8 @@ protected:
     friend class ::dds::pub::Publisher;
 };
 
-} /* namespace dds */
-} /* namespace fastdds */
-} /* namespace eprosima */
+} // namespace dds
+} // namespace fastdds
+} // namespace eprosima
 
-#endif /* _FASTDDS_PUBLISHER_HPP_ */
+#endif // FASTDDS_DDS_PUBLISHER__PUBLISHER_HPP

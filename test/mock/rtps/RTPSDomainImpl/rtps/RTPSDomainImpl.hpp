@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef _RTPS_RTPSDOMAINIMPL_HPP_
-#define _RTPS_RTPSDOMAINIMPL_HPP_
+#ifndef FASTDDS_RTPS__RTPSDOMAINIMPL_HPP
+#define FASTDDS_RTPS__RTPSDOMAINIMPL_HPP
 
 #include <memory>
 
 #include <fastdds/LibrarySettings.hpp>
-#include <fastdds/rtps/RTPSDomain.h>
+#include <fastdds/rtps/RTPSDomain.hpp>
 #include <fastdds/xtypes/type_representation/TypeObjectRegistry.hpp>
 
 namespace eprosima {
@@ -144,4 +144,4 @@ public:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif  // _RTPS_RTPSDOMAINIMPL_HPP_
+#endif  // FASTDDS_RTPS__RTPSDOMAINIMPL_HPP

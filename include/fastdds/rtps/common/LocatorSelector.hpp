@@ -16,15 +16,15 @@
  * @file LocatorSelector.hpp
  */
 
-#ifndef _FASTDDS_RTPS_COMMON_LOCATORSELECTOR_HPP_
-#define _FASTDDS_RTPS_COMMON_LOCATORSELECTOR_HPP_
+#ifndef FASTDDS_RTPS_COMMON__LOCATORSELECTOR_HPP
+#define FASTDDS_RTPS_COMMON__LOCATORSELECTOR_HPP
 
 #include <fastdds/rtps/common/LocatorSelectorEntry.hpp>
-#include <fastdds/rtps/common/Guid.h>
-#include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/Guid.hpp>
+#include <fastdds/rtps/common/Locator.hpp>
 #include <fastdds/rtps/common/LocatorsIterator.hpp>
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>
-#include <fastdds/utils/IPLocator.h>
+#include <fastdds/utils/IPLocator.hpp>
 
 #include <algorithm>
 
@@ -472,8 +472,8 @@ private:
     ResourceLimitedVector<int> last_state_;
 };
 
-} /* namespace rtps */
-} /* namespace fastdds */
-} /* namespace eprosima */
+} // namespace rtps
+} // namespace fastdds
+} // namespace eprosima
 
-#endif /* _FASTDDS_RTPS_COMMON_LOCATORSELECTOR_H_ */
+#endif // FASTDDS_RTPS_COMMON__LOCATORSELECTOR_HPP

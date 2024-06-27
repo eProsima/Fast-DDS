@@ -17,12 +17,12 @@
 #include <limits>
 #include <utility>
 
-#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/LocatorList.hpp>
-#include <fastdds/rtps/participant/RTPSParticipant.h>
-#include <fastdds/rtps/transport/TransportDescriptorInterface.h>
-#include <fastdds/utils/IPFinder.h>
-#include <fastdds/utils/IPLocator.h>
+#include <fastdds/rtps/participant/RTPSParticipant.hpp>
+#include <fastdds/rtps/transport/TransportDescriptorInterface.hpp>
+#include <fastdds/utils/IPFinder.hpp>
+#include <fastdds/utils/IPLocator.hpp>
 
 #include <rtps/transport/TCPTransportInterface.h>
 

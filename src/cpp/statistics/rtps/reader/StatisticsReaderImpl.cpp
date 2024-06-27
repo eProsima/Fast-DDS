@@ -18,7 +18,7 @@
 
 #include <statistics/rtps/StatisticsBase.hpp>
 
-#include <fastdds/rtps/reader/RTPSReader.h>
+#include <fastdds/rtps/reader/RTPSReader.hpp>
 
 #include <rtps/reader/BaseReader.hpp>
 #include <statistics/types/types.hpp>

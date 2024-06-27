@@ -25,11 +25,11 @@
 #include <mutex>
 #include <set>
 
-#include <fastdds/config.h>
+#include <fastdds/config.hpp>
 #include <fastdds/dds/core/policy/ParameterTypes.hpp>
-#include <fastdds/rtps/common/Guid.h>
-#include <fastdds/rtps/common/Locator.h>
-#include <fastdds/rtps/common/SampleIdentity.h>
+#include <fastdds/rtps/common/Guid.hpp>
+#include <fastdds/rtps/common/Locator.hpp>
+#include <fastdds/rtps/common/SampleIdentity.hpp>
 #include <fastdds/statistics/rtps/StatisticsCommon.hpp>
 #include <statistics/rtps/GuidUtils.hpp>
 #include <statistics/rtps/messages/RTPSStatisticsMessages.hpp>

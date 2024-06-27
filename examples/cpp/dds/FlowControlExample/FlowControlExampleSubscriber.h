@@ -29,7 +29,7 @@
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 
-#include "FlowControlExamplePubSubTypes.h"
+#include "FlowControlExamplePubSubTypes.hpp"
 
 class FlowControlExampleSubscriber
 {

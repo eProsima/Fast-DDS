@@ -23,9 +23,9 @@
 #endif // ifdef ANDROID
 
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/rtps/common/Locator.h>
-#include <fastdds/rtps/transport/SenderResource.h>
-#include <fastdds/rtps/transport/TransportInterface.h>
+#include <fastdds/rtps/common/Locator.hpp>
+#include <fastdds/rtps/transport/SenderResource.hpp>
+#include <fastdds/rtps/transport/TransportInterface.hpp>
 
 #include <rtps/messages/CDRMessage.hpp>
 #include <rtps/messages/MessageReceiver.h>

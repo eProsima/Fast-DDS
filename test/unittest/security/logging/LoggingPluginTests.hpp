@@ -19,7 +19,7 @@
 
 #include <gtest/gtest.h>
 
-#include <fastdds/rtps/attributes/PropertyPolicy.h>
+#include <fastdds/rtps/attributes/PropertyPolicy.hpp>
 
 #include <security/logging/LogTopic.h>
 

@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef _FASTDDS_PUBLISHER_DATAWRITERHISTORY_HPP_
-#define _FASTDDS_PUBLISHER_DATAWRITERHISTORY_HPP_
+#ifndef FASTDDS_PUBLISHER__DATAWRITERHISTORY_HPP
+#define FASTDDS_PUBLISHER__DATAWRITERHISTORY_HPP
 
 #include <chrono>
 #include <functional>
@@ -21,8 +21,8 @@
 
 #include <gmock/gmock.h>
 
-#include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/attributes/ResourceManagement.hpp>
+#include <fastdds/rtps/history/WriterHistory.hpp>
 #include <fastdds/utils/TimedMutex.hpp>
 
 namespace eprosima {
@@ -79,4 +79,4 @@ public:
 }  // namespace fastdds
 }  // namespace eprosima
 
-#endif // _FASTDDS_PUBLISHER_DATAWRITERHISTORY_HPP_
+#endif // FASTDDS_PUBLISHER__DATAWRITERHISTORY_HPP

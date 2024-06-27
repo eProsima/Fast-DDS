@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _FASTDDS_RTPS_PDP_H_
-#define _FASTDDS_RTPS_PDP_H_
+#ifndef FASTDDS_RTPS_BUILTIN_DISCOVERY_PARTICIPANT__PDP_H
+#define FASTDDS_RTPS_BUILTIN_DISCOVERY_PARTICIPANT__PDP_H
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <atomic>
@@ -27,14 +27,14 @@
 #include <mutex>
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
-#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
-#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
-#include <fastdds/rtps/builtin/data/WriterProxyData.h>
-#include <fastdds/rtps/common/Guid.h>
-#include <fastdds/rtps/common/WriteParams.h>
-#include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
-#include <fastdds/rtps/reader/ReaderDiscoveryInfo.h>
-#include <fastdds/rtps/writer/WriterDiscoveryInfo.h>
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
+#include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
+#include <fastdds/rtps/builtin/data/WriterProxyData.hpp>
+#include <fastdds/rtps/common/Guid.hpp>
+#include <fastdds/rtps/common/WriteParams.hpp>
+#include <fastdds/rtps/participant/ParticipantDiscoveryInfo.hpp>
+#include <fastdds/rtps/reader/ReaderDiscoveryInfo.hpp>
+#include <fastdds/rtps/writer/WriterDiscoveryInfo.hpp>
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>
 
 #include <statistics/rtps/monitor-service/interfaces/IProxyObserver.hpp>
@@ -666,9 +666,9 @@ extern const Duration_t pdp_heartbeat_response_delay;
 
 extern const int32_t pdp_initial_reserved_caches;
 
-} /* namespace rtps */
-} /* namespace fastdds */
-} /* namespace eprosima */
+} // namespace rtps
+} // namespace fastdds
+} // namespace eprosima
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#endif /* _FASTDDS_RTPS_PDP_H_ */
+#endif // FASTDDS_RTPS_BUILTIN_DISCOVERY_PARTICIPANT__PDP_H

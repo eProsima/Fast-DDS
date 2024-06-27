@@ -16,8 +16,8 @@
  * @file DataWriter.hpp
  */
 
-#ifndef _FASTDDS_DDS_PUBLISHER_DATAWRITER_HPP_
-#define _FASTDDS_DDS_PUBLISHER_DATAWRITER_HPP_
+#ifndef FASTDDS_DDS_PUBLISHER__DATAWRITER_HPP
+#define FASTDDS_DDS_PUBLISHER__DATAWRITER_HPP
 
 #include <fastdds/dds/builtin/topic/SubscriptionBuiltinTopicData.hpp>
 #include <fastdds/dds/core/Entity.hpp>
@@ -29,7 +29,7 @@
 #include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/rtps/common/LocatorList.hpp>
-#include <fastdds/rtps/common/Time_t.h>
+#include <fastdds/rtps/common/Time_t.hpp>
 #include <fastdds/fastdds_dll.hpp>
 
 namespace eprosima {
@@ -589,8 +589,8 @@ protected:
     DataWriterImpl* impl_;
 };
 
-} /* namespace dds */
-} /* namespace fastdds */
-} /* namespace eprosima */
+} // namespace dds
+} // namespace fastdds
+} // namespace eprosima
 
-#endif // _FASTDDS_DDS_PUBLISHER_DATAWRITER_HPP_
+#endif // FASTDDS_DDS_PUBLISHER__DATAWRITER_HPP

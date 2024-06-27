@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef RTPSGAPBUILDER_HPP
-#define RTPSGAPBUILDER_HPP
+#ifndef FASTDDS_RTPS_MESSAGES__RTPSGAPBUILDER_HPP
+#define FASTDDS_RTPS_MESSAGES__RTPSGAPBUILDER_HPP
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include "RTPSMessageGroup.hpp"
@@ -99,9 +99,9 @@ private:
     GUID_t reader_guid_;                      ///< Specific destination reader guid.
 };
 
-} /* namespace rtps */
-} /* namespace fastdds */
-} /* namespace eprosima */
+} // namespace rtps
+} // namespace fastdds
+} // namespace eprosima
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#endif /* RTPSGAPBUILDER_HPP */
+#endif // FASTDDS_RTPS_MESSAGES__RTPSGAPBUILDER_HPP

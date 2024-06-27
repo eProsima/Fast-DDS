@@ -15,8 +15,8 @@
 /*!
  * @file SecurityManager.h
  */
-#ifndef _RTPS_SECURITY_SECURITYMANAGER_H_
-#define _RTPS_SECURITY_SECURITYMANAGER_H_
+#ifndef FASTDDS_RTPS_SECURITY__SECURITYMANAGER_H
+#define FASTDDS_RTPS_SECURITY__SECURITYMANAGER_H
 
 #include <atomic>
 #include <list>
@@ -25,14 +25,14 @@
 #include <mutex>
 #include <thread>
 
-#include <fastdds/rtps/attributes/HistoryAttributes.h>
+#include <fastdds/rtps/attributes/HistoryAttributes.hpp>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.hpp>
-#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
-#include <fastdds/rtps/builtin/data/WriterProxyData.h>
-#include <fastdds/rtps/common/SequenceNumber.h>
-#include <fastdds/rtps/common/SerializedPayload.h>
-#include <fastdds/rtps/reader/ReaderListener.h>
-#include <fastdds/rtps/writer/WriterListener.h>
+#include <fastdds/rtps/builtin/data/ReaderProxyData.hpp>
+#include <fastdds/rtps/builtin/data/WriterProxyData.hpp>
+#include <fastdds/rtps/common/SequenceNumber.hpp>
+#include <fastdds/rtps/common/SerializedPayload.hpp>
+#include <fastdds/rtps/reader/ReaderListener.hpp>
+#include <fastdds/rtps/writer/WriterListener.hpp>
 
 #include <rtps/resources/TimedEvent.h>
 #include <rtps/security/authentication/Handshake.h>
@@ -949,4 +949,4 @@ private:
 } //namespace fastdds
 } //namespace eprosima
 
-#endif // _RTPS_SECURITY_SECURITYMANAGER_H_
+#endif // FASTDDS_RTPS_SECURITY__SECURITYMANAGER_H

@@ -19,7 +19,7 @@
 
 #include <rtps/reader/StatefulPersistentReader.hpp>
 
-#include <fastdds/rtps/history/ReaderHistory.h>
+#include <fastdds/rtps/history/ReaderHistory.hpp>
 
 #include <rtps/persistence/PersistenceService.h>
 #include <rtps/reader/ReaderHistoryState.hpp>

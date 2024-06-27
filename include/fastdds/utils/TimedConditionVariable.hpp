@@ -16,10 +16,10 @@
  * @file TimedConditionVariable.hpp
  */
 
-#ifndef _UTILS_TIMEDCONDITIONVARIABLE_HPP_
-#define _UTILS_TIMEDCONDITIONVARIABLE_HPP_
+#ifndef FASTDDS_UTILS__TIMEDCONDITIONVARIABLE_HPP
+#define FASTDDS_UTILS__TIMEDCONDITIONVARIABLE_HPP
 
-#include <fastdds/config.h>
+#include <fastdds/config.hpp>
 
 /*
    NOTE: Windows implementation temporary disabled due to aleatory high CPU consumption when
@@ -193,4 +193,4 @@ using TimedConditionVariable = std::condition_variable_any;
 }  // namespace fastdds
 }  // namespace eprosima
 
-#endif // _UTILS_TIMEDCONDITIONVARIABLE_HPP_
+#endif // FASTDDS_UTILS__TIMEDCONDITIONVARIABLE_HPP

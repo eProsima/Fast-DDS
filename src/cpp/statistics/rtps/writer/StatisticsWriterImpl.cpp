@@ -18,7 +18,7 @@
 
 #include <statistics/rtps/StatisticsBase.hpp>
 
-#include <fastdds/rtps/writer/RTPSWriter.h>
+#include <fastdds/rtps/writer/RTPSWriter.hpp>
 #include <statistics/types/types.hpp>
 
 using eprosima::fastdds::RecursiveTimedMutex;

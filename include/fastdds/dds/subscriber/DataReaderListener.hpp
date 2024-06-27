@@ -16,8 +16,8 @@
  * @file DataReaderListener.hpp
  */
 
-#ifndef _FASTDDS_DATAREADERLISTENER_HPP_
-#define _FASTDDS_DATAREADERLISTENER_HPP_
+#ifndef FASTDDS_DDS_SUBSCRIBER__DATAREADERLISTENER_HPP
+#define FASTDDS_DDS_SUBSCRIBER__DATAREADERLISTENER_HPP
 
 #include <fastdds/dds/core/status/BaseStatus.hpp>
 #include <fastdds/dds/core/status/DeadlineMissedStatus.hpp>
@@ -152,8 +152,8 @@ public:
 
 };
 
-} /* namespace dds */
-} /* namespace fastdds */
-} /* namespace eprosima */
+} // namespace dds
+} // namespace fastdds
+} // namespace eprosima
 
-#endif /* _FASTDDS_DATAREADERLISTENER_HPP_ */
+#endif // FASTDDS_DDS_SUBSCRIBER__DATAREADERLISTENER_HPP

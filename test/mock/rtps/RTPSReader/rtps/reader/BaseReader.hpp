@@ -16,19 +16,19 @@
  * @file BaseReader.hpp
  */
 
-#ifndef RTPS_READER__BASEREADER_HPP
-#define RTPS_READER__BASEREADER_HPP
+#ifndef FASTDDS_RTPS_READER__BASEREADER_HPP
+#define FASTDDS_RTPS_READER__BASEREADER_HPP
 
 #include <gmock/gmock.h>
 
-#include <fastdds/rtps/reader/RTPSReader.h>
-#include <fastdds/rtps/attributes/ReaderAttributes.h>
-#include <fastdds/rtps/attributes/WriterAttributes.h>
-#include <fastdds/rtps/builtin/data/WriterProxyData.h>
-#include <fastdds/rtps/Endpoint.h>
-#include <fastdds/rtps/history/ReaderHistory.h>
+#include <fastdds/rtps/reader/RTPSReader.hpp>
+#include <fastdds/rtps/attributes/ReaderAttributes.hpp>
+#include <fastdds/rtps/attributes/WriterAttributes.hpp>
+#include <fastdds/rtps/builtin/data/WriterProxyData.hpp>
+#include <fastdds/rtps/Endpoint.hpp>
+#include <fastdds/rtps/history/ReaderHistory.hpp>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
-#include <fastdds/rtps/reader/ReaderListener.h>
+#include <fastdds/rtps/reader/ReaderListener.hpp>
 
 namespace eprosima {
 
@@ -163,4 +163,4 @@ public:
 }  // namespace fastdds
 }  // namespace eprosima
 
-#endif // RTPS_READER__BASEREADER_HPP
+#endif // FASTDDS_RTPS_READER__BASEREADER_HPP

@@ -16,7 +16,7 @@
  * @file RTPSDomain.cpp
  */
 
-#include <fastdds/rtps/RTPSDomain.h>
+#include <fastdds/rtps/RTPSDomain.hpp>
 
 #include <chrono>
 #include <cstdlib>
@@ -28,13 +28,13 @@
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/LibrarySettings.hpp>
-#include <fastdds/rtps/history/WriterHistory.h>
-#include <fastdds/rtps/participant/RTPSParticipant.h>
-#include <fastdds/rtps/reader/RTPSReader.h>
-#include <fastdds/rtps/writer/RTPSWriter.h>
-#include <fastdds/utils/IPFinder.h>
-#include <fastdds/utils/IPLocator.h>
-#include <fastdds/utils/md5.h>
+#include <fastdds/rtps/history/WriterHistory.hpp>
+#include <fastdds/rtps/participant/RTPSParticipant.hpp>
+#include <fastdds/rtps/reader/RTPSReader.hpp>
+#include <fastdds/rtps/writer/RTPSWriter.hpp>
+#include <fastdds/utils/IPFinder.hpp>
+#include <fastdds/utils/IPLocator.hpp>
+#include <fastdds/utils/md5.hpp>
 
 #include <rtps/common/GuidUtils.hpp>
 #include <rtps/network/utils/external_locators.hpp>

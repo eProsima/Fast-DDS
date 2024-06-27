@@ -16,7 +16,7 @@
  * @file TopicAttributes.cpp
  */
 
-#include <fastdds/rtps/attributes/TopicAttributes.h>
+#include <fastdds/rtps/attributes/TopicAttributes.hpp>
 #include <fastdds/dds/log/Log.hpp>
 
 namespace eprosima {

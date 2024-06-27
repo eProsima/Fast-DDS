@@ -15,7 +15,7 @@
 #ifndef _FASTDDS_UDPV6_TRANSPORT_H_
 #define _FASTDDS_UDPV6_TRANSPORT_H_
 
-#include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
+#include <fastdds/rtps/transport/UDPv6TransportDescriptor.hpp>
 #include <rtps/transport/UDPTransportInterface.h>
 
 namespace eprosima {
