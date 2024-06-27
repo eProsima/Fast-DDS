@@ -19,6 +19,7 @@
 
 #include "ServerApp.hpp"
 
+#include <iostream>
 #include <stdexcept>
 
 #include <fastdds/dds/core/detail/DDSReturnCode.hpp>
@@ -200,11 +201,22 @@ void ServerApp::on_publication_matched(
 }
 
 void ServerApp::on_subscription_matched(
-        DataReader* reader,
+        DataReader* /* reader */,
         const SubscriptionMatchedStatus& info)
 {
-    static_cast<void>(reader);
-    static_cast<void>(info);
+    if (info.current_count_change == 1)
+    {
+        std::cout << "Remote request writer matched." << std::endl;
+    }
+    else if (info.current_count_change == -1)
+    {
+        std::cout << "Remote request writer unmatched." << std::endl;
+    }
+    else
+    {
+        std::cout << info.current_count_change
+                  << " is not a valid value for SubscriptionMatchedStatus current count change" << std::endl;
+    }
 }
 
 void ServerApp::on_data_available(
