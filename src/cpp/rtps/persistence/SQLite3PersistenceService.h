@@ -47,17 +47,10 @@ public:
             sqlite3* db);
     virtual ~SQLite3PersistenceService() override;
 
-    /**
-     * Get all data stored for a writer.
-     * @param writer_guid GUID of the writer to load.
-     * @return True if operation was successful.
-     */
     bool load_writer_from_storage(
             const std::string& persistence_guid,
             const GUID_t& writer_guid,
             WriterHistory* history,
-            const std::shared_ptr<IChangePool>& change_pool,
-            const std::shared_ptr<IPayloadPool>& payload_pool,
             SequenceNumber_t& next_sequence) final;
 
     /**

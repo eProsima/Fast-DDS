@@ -163,43 +163,6 @@ StatelessWriter::StatelessWriter(
     init(impl, attributes);
 }
 
-StatelessWriter::StatelessWriter(
-        RTPSParticipantImpl* impl,
-        const GUID_t& guid,
-        const WriterAttributes& attributes,
-        const std::shared_ptr<IPayloadPool>& payload_pool,
-        fastdds::rtps::FlowController* flow_controller,
-        WriterHistory* history,
-        WriterListener* listener)
-    : RTPSWriter(impl, guid, attributes, payload_pool, flow_controller, history, listener)
-    , matched_remote_readers_(attributes.matched_readers_allocation)
-    , matched_local_readers_(attributes.matched_readers_allocation)
-    , matched_datasharing_readers_(attributes.matched_readers_allocation)
-    , matched_readers_pool_(attributes.matched_readers_allocation)
-    , locator_selector_(*this, attributes.matched_readers_allocation)
-{
-    init(impl, attributes);
-}
-
-StatelessWriter::StatelessWriter(
-        RTPSParticipantImpl* participant,
-        const GUID_t& guid,
-        const WriterAttributes& attributes,
-        const std::shared_ptr<IPayloadPool>& payload_pool,
-        const std::shared_ptr<IChangePool>& change_pool,
-        fastdds::rtps::FlowController* flow_controller,
-        WriterHistory* history,
-        WriterListener* listener)
-    : RTPSWriter(participant, guid, attributes, payload_pool, change_pool, flow_controller, history, listener)
-    , matched_remote_readers_(attributes.matched_readers_allocation)
-    , matched_local_readers_(attributes.matched_readers_allocation)
-    , matched_datasharing_readers_(attributes.matched_readers_allocation)
-    , matched_readers_pool_(attributes.matched_readers_allocation)
-    , locator_selector_(*this, attributes.matched_readers_allocation)
-{
-    init(participant, attributes);
-}
-
 void StatelessWriter::init(
         RTPSParticipantImpl* participant,
         const WriterAttributes& attributes)
@@ -289,7 +252,7 @@ void StatelessWriter::update_reader_info(
 bool StatelessWriter::datasharing_delivery(
         CacheChange_t* change)
 {
-    auto pool = std::dynamic_pointer_cast<WriterPool>(payload_pool_);
+    auto pool = std::dynamic_pointer_cast<WriterPool>(mp_history->get_payload_pool());
     assert(pool != nullptr);
 
     pool->add_to_shared_history(change);
@@ -376,7 +339,7 @@ bool StatelessWriter::change_removed_by_history(
         // remove from datasharing pool history
         if (is_datasharing_compatible())
         {
-            auto pool = std::dynamic_pointer_cast<WriterPool>(payload_pool_);
+            auto pool = std::dynamic_pointer_cast<WriterPool>(mp_history->get_payload_pool());
             assert (pool != nullptr);
 
             pool->remove_from_shared_history(change);

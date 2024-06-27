@@ -122,12 +122,8 @@ bool EDPClient::removeLocalWriter(
     {
         InstanceHandle_t iH;
         iH = W->getGuid();
-        CacheChange_t* change = writer->first->new_change(
-            [this]() -> uint32_t
-            {
-                return mp_PDP->builtin_attributes().writerPayloadSize;
-            },
-            NOT_ALIVE_DISPOSED_UNREGISTERED, iH);
+        CacheChange_t* change = EDPUtils::create_change(*writer, NOT_ALIVE_DISPOSED_UNREGISTERED, iH,
+                        mp_PDP->builtin_attributes().writerPayloadSize);
         if (change != nullptr)
         {
             {
@@ -175,12 +171,8 @@ bool EDPClient::removeLocalReader(
     {
         InstanceHandle_t iH;
         iH = (R->getGuid());
-        CacheChange_t* change = writer->first->new_change(
-            [this]() -> uint32_t
-            {
-                return mp_PDP->builtin_attributes().writerPayloadSize;
-            },
-            NOT_ALIVE_DISPOSED_UNREGISTERED, iH);
+        CacheChange_t* change = EDPUtils::create_change(*writer, NOT_ALIVE_DISPOSED_UNREGISTERED, iH,
+                        mp_PDP->builtin_attributes().writerPayloadSize);
         if (change != nullptr)
         {
             {

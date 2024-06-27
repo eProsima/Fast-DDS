@@ -26,6 +26,8 @@
 
 #include <rtps/builtin/discovery/endpoint/EDP.h>
 
+#include "EDPUtils.hpp"
+
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
@@ -50,7 +52,7 @@ struct CacheChange_t;
  */
 class EDPSimple : public EDP
 {
-    using t_p_StatefulWriter = std::pair<StatefulWriter*, WriterHistory*>;
+    using t_p_StatefulWriter = EDPUtils::WriterHistoryPair;
     using t_p_StatefulReader = std::pair<StatefulReader*, ReaderHistory*>;
 
 public:
@@ -244,15 +246,11 @@ protected:
     t_p_StatefulReader get_builtin_reader_history_pair_by_entity(
             const EntityId_t& entity_id);
 
-    std::shared_ptr<ITopicPayloadPool> pub_writer_payload_pool_;
     std::shared_ptr<ITopicPayloadPool> pub_reader_payload_pool_;
-    std::shared_ptr<ITopicPayloadPool> sub_writer_payload_pool_;
     std::shared_ptr<ITopicPayloadPool> sub_reader_payload_pool_;
 
 #if HAVE_SECURITY
-    std::shared_ptr<ITopicPayloadPool> sec_pub_writer_payload_pool_;
     std::shared_ptr<ITopicPayloadPool> sec_pub_reader_payload_pool_;
-    std::shared_ptr<ITopicPayloadPool> sec_sub_writer_payload_pool_;
     std::shared_ptr<ITopicPayloadPool> sec_sub_reader_payload_pool_;
 #endif // if HAVE_SECURITY
 

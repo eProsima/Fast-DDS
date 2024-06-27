@@ -27,6 +27,8 @@
 #include <fastdds/rtps/attributes/TopicAttributes.hpp>
 #include <fastdds/rtps/common/InstanceHandle.hpp>
 #include <fastdds/rtps/common/Time_t.hpp>
+#include <fastdds/rtps/history/IChangePool.hpp>
+#include <fastdds/rtps/history/IPayloadPool.hpp>
 #include <fastdds/rtps/history/WriterHistory.hpp>
 
 #include <fastdds/publisher/history/DataWriterInstance.hpp>
@@ -42,7 +44,13 @@ namespace dds {
  */
 class DataWriterHistory : public rtps::WriterHistory
 {
+
 public:
+
+    static rtps::HistoryAttributes to_history_attributes(
+            const TopicAttributes& topic_att,
+            uint32_t payloadMaxSize,
+            rtps::MemoryManagementPolicy_t mempolicy);
 
     /**
      * Constructor of the DataWriterHistory.
@@ -52,6 +60,8 @@ public:
      * @param unack_sample_remove_functor Functor to call DDS listener callback on_unacknowledged_sample_removed
      */
     DataWriterHistory(
+            const std::shared_ptr<rtps::IPayloadPool>& payload_pool,
+            const std::shared_ptr<rtps::IChangePool>& change_pool,
             const TopicAttributes& topic_att,
             uint32_t payloadMax,
             rtps::MemoryManagementPolicy_t mempolicy,

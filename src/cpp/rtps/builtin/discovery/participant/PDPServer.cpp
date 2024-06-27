@@ -850,13 +850,7 @@ void PDPServer::announceParticipantState(
                 getMutex()->unlock();
 
                 uint32_t cdr_size = proxy_data_copy.get_serialized_size(true);
-                change = writer.new_change(
-                    [cdr_size]() -> uint32_t
-                    {
-                        return cdr_size;
-                    },
-                    ALIVE, proxy_data_copy.m_key);
-
+                change = history.create_change(cdr_size, ALIVE, proxy_data_copy.m_key);
                 if (change != nullptr)
                 {
                     CDRMessage_t aux_msg(change->serializedPayload);
@@ -915,7 +909,7 @@ void PDPServer::announceParticipantState(
                         // Already there, dispose
                         EPROSIMA_LOG_ERROR(RTPS_PDP_SERVER,
                                 "DiscoveryDatabase already initialized with local DATA(p) on creation");
-                        writer.release_change(change);
+                        history.release_change(change);
                     }
                 }
                 // Doesn't make sense to send the DATA directly if it hasn't been introduced in the history yet (missing
@@ -963,14 +957,8 @@ void PDPServer::announceParticipantState(
             // Unlock PDP mutex since it's no longer needed.
             getMutex()->unlock();
 
-            change = writer.new_change(
-                [cdr_size]() -> uint32_t
-                {
-                    return cdr_size;
-                },
-                NOT_ALIVE_DISPOSED_UNREGISTERED, key);
-
             // Generate the Data(Up)
+            change = history.create_change(cdr_size, NOT_ALIVE_DISPOSED_UNREGISTERED, key);
             if (nullptr != change)
             {
                 // Assign identity
@@ -987,7 +975,7 @@ void PDPServer::announceParticipantState(
                 {
                     // Dispose if already there
                     // It may happen if the participant is not removed fast enough
-                    writer.release_change(change);
+                    history.release_change(change);
                     return;
                 }
             }
@@ -1396,7 +1384,7 @@ void PDPServer::process_changes_release_(
                 // Normally Data(Up) will not be in history except in Own Server destruction
                 if (!remove_change_from_writer_history(endpoints->writer.writer_, endpoints->writer.history_.get(), ch))
                 {
-                    endpoints->writer.writer_->release_change(ch);
+                    endpoints->writer.history_->release_change(ch);
                 }
             }
             else
@@ -2053,7 +2041,7 @@ void PDPServer::release_change_from_writer(
         eprosima::fastdds::rtps::CacheChange_t* change)
 {
     auto endpoints = static_cast<fastdds::rtps::DiscoveryServerPDPEndpoints*>(builtin_endpoints_.get());
-    endpoints->writer.writer_->release_change(change);
+    endpoints->writer.history_->release_change(change);
 }
 
 } // namespace rtps

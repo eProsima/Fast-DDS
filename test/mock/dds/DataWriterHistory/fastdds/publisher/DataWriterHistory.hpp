@@ -40,39 +40,41 @@ namespace dds {
 
 using namespace eprosima::fastdds::rtps;
 
-static HistoryAttributes to_history_attributes(
-        const TopicAttributes& topic_att,
-        uint32_t payloadMaxSize,
-        MemoryManagementPolicy_t mempolicy)
-{
-    auto initial_samples = topic_att.resourceLimitsQos.allocated_samples;
-    auto max_samples = topic_att.resourceLimitsQos.max_samples;
-    auto extra_samples = topic_att.resourceLimitsQos.extra_samples;
-
-    if (topic_att.historyQos.kind != KEEP_ALL_HISTORY_QOS)
-    {
-        max_samples = topic_att.historyQos.depth;
-        if (topic_att.getTopicKind() != NO_KEY)
-        {
-            max_samples *= topic_att.resourceLimitsQos.max_instances;
-        }
-
-        initial_samples = std::min(initial_samples, max_samples);
-    }
-
-    return HistoryAttributes(mempolicy, payloadMaxSize, initial_samples, max_samples, extra_samples);
-}
-
 class DataWriterHistory : public WriterHistory
 {
 public:
 
+    static HistoryAttributes to_history_attributes(
+            const TopicAttributes& topic_att,
+            uint32_t payloadMaxSize,
+            MemoryManagementPolicy_t mempolicy)
+    {
+        auto initial_samples = topic_att.resourceLimitsQos.allocated_samples;
+        auto max_samples = topic_att.resourceLimitsQos.max_samples;
+        auto extra_samples = topic_att.resourceLimitsQos.extra_samples;
+
+        if (topic_att.historyQos.kind != KEEP_ALL_HISTORY_QOS)
+        {
+            max_samples = topic_att.historyQos.depth;
+            if (topic_att.getTopicKind() != NO_KEY)
+            {
+                max_samples *= topic_att.resourceLimitsQos.max_instances;
+            }
+
+            initial_samples = std::min(initial_samples, max_samples);
+        }
+
+        return HistoryAttributes(mempolicy, payloadMaxSize, initial_samples, max_samples, extra_samples);
+    }
+
     DataWriterHistory(
+            const std::shared_ptr<IPayloadPool>& payload_pool,
+            const std::shared_ptr<IChangePool>& change_pool,
             const TopicAttributes& topic_att,
             uint32_t payloadMaxSize,
             MemoryManagementPolicy_t mempolicy,
-            std::function<void (const fastdds::rtps::InstanceHandle_t&)> unack_sample_remove_functor)
-        : WriterHistory(to_history_attributes(topic_att, payloadMaxSize, mempolicy))
+            std::function<void (const InstanceHandle_t&)> unack_sample_remove_functor)
+        : WriterHistory(to_history_attributes(topic_att, payloadMaxSize, mempolicy), payload_pool, change_pool)
         , history_qos_(topic_att.historyQos)
         , resource_limited_qos_(topic_att.resourceLimitsQos)
         , topic_att_(topic_att)

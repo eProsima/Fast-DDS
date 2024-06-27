@@ -69,7 +69,6 @@ public:
             mock_status_q_,
             [&](fastdds::rtps::RTPSWriter**,
             fastdds::rtps::WriterAttributes&,
-            const std::shared_ptr<fastdds::rtps::IPayloadPool>&,
             fastdds::rtps::WriterHistory*,
             fastdds::rtps::WriterListener*,
             const fastdds::rtps::EntityId_t&,

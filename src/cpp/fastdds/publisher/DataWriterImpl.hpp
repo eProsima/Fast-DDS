@@ -34,6 +34,7 @@
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/common/WriteParams.hpp>
+#include <fastdds/rtps/common/SerializedPayload.hpp>
 #include <fastdds/rtps/history/IChangePool.hpp>
 #include <fastdds/rtps/history/IPayloadPool.hpp>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
@@ -41,9 +42,9 @@
 
 #include <fastdds/publisher/DataWriterHistory.hpp>
 #include <fastdds/publisher/filtering/ReaderFilterCollection.hpp>
-#include <fastdds/rtps/common/SerializedPayload.hpp>
 #include <rtps/DataSharing/DataSharingPayloadPool.hpp>
 #include <rtps/history/ITopicPayloadPool.h>
+#include <rtps/history/PoolConfig.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -403,7 +404,7 @@ protected:
     std::mutex listener_mutex_;
 
     //!History
-    DataWriterHistory history_;
+    std::unique_ptr<DataWriterHistory> history_;
 
     //!Listener to capture the events of the Writer
     class InnerDataWriterListener : public fastdds::rtps::WriterListener
@@ -487,6 +488,8 @@ protected:
     bool is_data_sharing_compatible_ = false;
 
     uint32_t fixed_payload_size_ = 0u;
+
+    rtps::PoolConfig pool_config_ {};
 
     std::shared_ptr<IPayloadPool> payload_pool_;
 
@@ -714,6 +717,10 @@ protected:
             const fastdds::rtps::GUID_t& reader_guid) const override;
 
 private:
+
+    void create_history(
+            const std::shared_ptr<IPayloadPool>& payload_pool,
+            const std::shared_ptr<IChangePool>& change_pool);
 
     DataWriterQos get_datawriter_qos_from_settings(
             const DataWriterQos& qos);

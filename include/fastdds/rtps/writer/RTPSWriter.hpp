@@ -86,79 +86,9 @@ protected:
             WriterHistory* hist,
             WriterListener* listen = nullptr);
 
-    RTPSWriter(
-            RTPSParticipantImpl* impl,
-            const GUID_t& guid,
-            const WriterAttributes& att,
-            const std::shared_ptr<IPayloadPool>& payload_pool,
-            fastdds::rtps::FlowController* flow_controller,
-            WriterHistory* hist,
-            WriterListener* listen = nullptr);
-
-    RTPSWriter(
-            RTPSParticipantImpl* impl,
-            const GUID_t& guid,
-            const WriterAttributes& att,
-            const std::shared_ptr<IPayloadPool>& payload_pool,
-            const std::shared_ptr<IChangePool>& change_pool,
-            fastdds::rtps::FlowController* flow_controller,
-            WriterHistory* hist,
-            WriterListener* listen = nullptr);
-
     virtual ~RTPSWriter();
 
 public:
-
-    /**
-     * Create a new change based with the provided changeKind.
-     * @param data Data of the change.
-     * @param changeKind The type of change.
-     * @param handle InstanceHandle to assign.
-     * @return Pointer to the CacheChange or nullptr if incorrect.
-     */
-    template<typename T>
-    CacheChange_t* new_change(
-            T& data,
-            ChangeKind_t changeKind,
-            InstanceHandle_t handle = c_InstanceHandle_Unknown)
-    {
-        return new_change([data]() -> uint32_t
-                       {
-#if FASTCDR_VERSION_MAJOR == 1
-                           return (uint32_t)T::getCdrSerializedSize(data);
-#else
-                           eprosima::fastcdr::CdrSizeCalculator calculator(
-                               eprosima::fastdds::rtps::DEFAULT_XCDR_VERSION);
-                           size_t current_alignment {0};
-                           return (uint32_t)calculator.calculate_serialized_size(data, current_alignment);
-#endif // if FASTCDR_VERSION_MAJOR == 1
-                       }, changeKind, handle);
-    }
-
-    FASTDDS_EXPORTED_API CacheChange_t* new_change(
-            const std::function<uint32_t()>& dataCdrSerializedSize,
-            ChangeKind_t changeKind,
-            InstanceHandle_t handle = c_InstanceHandle_Unknown);
-
-    FASTDDS_EXPORTED_API CacheChange_t* new_change(
-            ChangeKind_t changeKind,
-            InstanceHandle_t handle = c_InstanceHandle_Unknown);
-
-    /**
-     * Release a change when it is not being used anymore.
-     *
-     * @param change Pointer to the cache change to be released.
-     *
-     * @returns whether the operation succeeded or not
-     *
-     * @pre
-     *     @li @c change is not @c nullptr
-     *     @li @c change points to a cache change obtained from a call to @c this->new_change
-     *
-     * @post memory pointed to by @c change is not accessed
-     */
-    FASTDDS_EXPORTED_API bool release_change(
-            CacheChange_t* change);
 
     /**
      * Add a matched reader.
@@ -294,14 +224,6 @@ public:
     {
         return is_async_;
     }
-
-    /**
-     * Remove an specified max number of changes
-     * @param max Maximum number of changes to remove.
-     * @return at least one change has been removed
-     */
-    FASTDDS_EXPORTED_API bool remove_older_changes(
-            unsigned int max = 0);
 
     /**
      * @brief Returns if disable positive ACKs QoS is enabled.
@@ -588,8 +510,6 @@ protected:
     bool is_datasharing_compatible_with(
             const ReaderProxyData& rdata) const;
 
-    bool is_pool_initialized() const;
-
     void add_statistics_sent_submessage(
             CacheChange_t* change,
             size_t num_locators);
@@ -607,8 +527,6 @@ private:
             const RTPSWriter&) = delete;
 
     void init(
-            const std::shared_ptr<IPayloadPool>& payload_pool,
-            const std::shared_ptr<IChangePool>& change_pool,
             const WriterAttributes& att);
 
 

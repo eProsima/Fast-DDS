@@ -76,6 +76,15 @@ inline bool usleep_bool()
     return true;
 }
 
+static CacheChange_t* create_change_for_message(
+        const ParticipantGenericMessage& message,
+        WriterHistory* history)
+{
+    uint32_t cdr_size = static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message));
+    cdr_size += 4; // Encapsulation
+    return history->create_change(cdr_size, ALIVE, c_InstanceHandle_Unknown);
+}
+
 SecurityManager::SecurityManager(
         RTPSParticipantImpl* participant,
         ISecurityPluginFactory& plugin_factory)
@@ -899,12 +908,9 @@ bool SecurityManager::on_process_handshake(
         ParticipantGenericMessage message = generate_authentication_message(std::move(message_identity),
                         participant_data.m_guid, *handshake_message);
 
-        CacheChange_t* change = participant_stateless_message_writer_->new_change([&message]() -> uint32_t
-                        {
-                            return static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message)
-                            + 4 /*encapsulation*/);
-                        }
-                        , ALIVE, c_InstanceHandle_Unknown);
+        CacheChange_t* change = create_change_for_message(
+            message,
+            participant_stateless_message_writer_history_);
 
         if (change != nullptr)
         {
@@ -939,12 +945,13 @@ bool SecurityManager::on_process_handshake(
                 else
                 {
                     EPROSIMA_LOG_ERROR(SECURITY, "WriterHistory cannot add the CacheChange_t");
+                    participant_stateless_message_writer_history_->release_change(change);
                 }
             }
             else
             {
-                //TODO (Ricardo) Return change.
                 EPROSIMA_LOG_ERROR(SECURITY, "Cannot serialize ParticipantGenericMessage");
+                participant_stateless_message_writer_history_->release_change(change);
             }
         }
         else
@@ -1096,7 +1103,9 @@ void SecurityManager::delete_participant_stateless_message_pool()
 
 bool SecurityManager::create_participant_stateless_message_writer()
 {
-    participant_stateless_message_writer_history_ = new WriterHistory(participant_stateless_message_writer_hattr_);
+    participant_stateless_message_writer_history_ = new WriterHistory(
+        participant_stateless_message_writer_hattr_,
+        participant_stateless_message_pool_);
 
     const RTPSParticipantAttributes& pattr = participant_->getRTPSParticipantAttributes();
 
@@ -1109,7 +1118,7 @@ bool SecurityManager::create_participant_stateless_message_writer()
     watt.matched_readers_allocation = pattr.allocation.participants;
 
     RTPSWriter* wout = nullptr;
-    if (participant_->createWriter(&wout, watt, participant_stateless_message_pool_,
+    if (participant_->createWriter(&wout, watt,
             participant_stateless_message_writer_history_, nullptr,
             participant_stateless_message_writer_entity_id, true))
     {
@@ -1245,7 +1254,7 @@ void SecurityManager::delete_participant_volatile_message_secure_pool()
 bool SecurityManager::create_participant_volatile_message_secure_writer()
 {
     participant_volatile_message_secure_writer_history_ =
-            new WriterHistory(participant_volatile_message_secure_hattr_);
+            new WriterHistory(participant_volatile_message_secure_hattr_, participant_volatile_message_secure_pool_);
 
     const RTPSParticipantAttributes& pattr = participant_->getRTPSParticipantAttributes();
 
@@ -1264,7 +1273,7 @@ bool SecurityManager::create_participant_volatile_message_secure_writer()
     watt.matched_readers_allocation = pattr.allocation.participants;
 
     RTPSWriter* wout = nullptr;
-    if (participant_->createWriter(&wout, watt, participant_volatile_message_secure_pool_,
+    if (participant_->createWriter(&wout, watt,
             participant_volatile_message_secure_writer_history_,
             this, participant_volatile_message_secure_writer_entity_id, true))
     {
@@ -2212,13 +2221,9 @@ void SecurityManager::exchange_participant_crypto(
         ParticipantGenericMessage message = generate_participant_crypto_token_message(remote_participant_guid,
                         local_participant_crypto_tokens);
 
-        CacheChange_t* change = participant_volatile_message_secure_writer_->new_change(
-            [&message]() -> uint32_t
-            {
-                return static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message)
-                + 4 /*encapsulation*/);
-            }
-            , ALIVE, c_InstanceHandle_Unknown);
+        CacheChange_t* change = create_change_for_message(
+            message,
+            participant_volatile_message_secure_writer_history_);
 
         if (change != nullptr)
         {
@@ -2243,13 +2248,13 @@ void SecurityManager::exchange_participant_crypto(
                 // Send
                 if (!participant_volatile_message_secure_writer_history_->add_change(change))
                 {
-                    participant_volatile_message_secure_writer_->release_change(change);
+                    participant_volatile_message_secure_writer_history_->release_change(change);
                     EPROSIMA_LOG_ERROR(SECURITY, "WriterHistory cannot add the CacheChange_t");
                 }
             }
             else
             {
-                participant_volatile_message_secure_writer_->release_change(change);
+                participant_volatile_message_secure_writer_history_->release_change(change);
                 EPROSIMA_LOG_ERROR(SECURITY, "Cannot serialize ParticipantGenericMessage");
             }
         }
@@ -3031,14 +3036,9 @@ bool SecurityManager::discovered_reader(
                                         std::make_tuple(remote_reader_data, remote_reader_handle));
                                 lock.unlock();
 
-                                CacheChange_t* change = participant_volatile_message_secure_writer_->new_change(
-                                    [&message]() -> uint32_t
-                                    {
-                                        return static_cast<uint32_t>(
-                                            ParticipantGenericMessageHelper::serialized_size(message)
-                                            + 4 /*encapsulation*/);
-                                    }
-                                    , ALIVE, c_InstanceHandle_Unknown);
+                                CacheChange_t* change = create_change_for_message(
+                                    message,
+                                    participant_volatile_message_secure_writer_history_);
 
                                 if (change != nullptr)
                                 {
@@ -3069,13 +3069,13 @@ bool SecurityManager::discovered_reader(
                                         }
                                         else
                                         {
-                                            participant_volatile_message_secure_writer_->release_change(change);
+                                            participant_volatile_message_secure_writer_history_->release_change(change);
                                             EPROSIMA_LOG_ERROR(SECURITY, "WriterHistory cannot add the CacheChange_t");
                                         }
                                     }
                                     else
                                     {
-                                        participant_volatile_message_secure_writer_->release_change(change);
+                                        participant_volatile_message_secure_writer_history_->release_change(change);
                                         EPROSIMA_LOG_ERROR(SECURITY, "Cannot serialize ParticipantGenericMessage");
                                     }
                                 }
@@ -3395,14 +3395,9 @@ bool SecurityManager::discovered_writer(
                                         std::make_tuple(remote_writer_data, remote_writer_handle));
                                 lock.unlock();
 
-                                CacheChange_t* change = participant_volatile_message_secure_writer_->new_change(
-                                    [&message]() -> uint32_t
-                                    {
-                                        return static_cast<uint32_t>(
-                                            ParticipantGenericMessageHelper::serialized_size(message)
-                                            + 4 /*encapsulation*/);
-                                    }
-                                    , ALIVE, c_InstanceHandle_Unknown);
+                                CacheChange_t* change = create_change_for_message(
+                                    message,
+                                    participant_volatile_message_secure_writer_history_);
 
                                 if (change != nullptr)
                                 {
@@ -3433,13 +3428,13 @@ bool SecurityManager::discovered_writer(
                                         }
                                         else
                                         {
-                                            participant_volatile_message_secure_writer_->release_change(change);
+                                            participant_volatile_message_secure_writer_history_->release_change(change);
                                             EPROSIMA_LOG_ERROR(SECURITY, "WriterHistory cannot add the CacheChange_t");
                                         }
                                     }
                                     else
                                     {
-                                        participant_volatile_message_secure_writer_->release_change(change);
+                                        participant_volatile_message_secure_writer_history_->release_change(change);
                                         EPROSIMA_LOG_ERROR(SECURITY, "Cannot serialize ParticipantGenericMessage");
                                     }
                                 }

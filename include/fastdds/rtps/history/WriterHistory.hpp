@@ -20,13 +20,23 @@
 #ifndef FASTDDS_RTPS_HISTORY__WRITERHISTORY_HPP
 #define FASTDDS_RTPS_HISTORY__WRITERHISTORY_HPP
 
-#include <fastdds/rtps/history/History.hpp>
+#include <cstdint>
+#include <memory>
+
+#include <fastdds/fastdds_dll.hpp>
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/common/CacheChange.hpp>
+#include <fastdds/rtps/common/ChangeKind_t.hpp>
+#include <fastdds/rtps/common/InstanceHandle.hpp>
+#include <fastdds/rtps/history/History.hpp>
+#include <fastdds/rtps/history/IChangePool.hpp>
+#include <fastdds/rtps/history/IPayloadPool.hpp>
 
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
+class HistoryAttributes;
 class RTPSWriter;
 class WriteParams;
 
@@ -48,11 +58,80 @@ class WriterHistory : public rtps::History
 public:
 
     /**
-     * Constructor of the WriterHistory.
+     * @brief Construct a WriterHistory.
+     *
+     * @param att  Attributes configuring the WriterHistory.
      */
     FASTDDS_EXPORTED_API WriterHistory(
-            const HistoryAttributes&  att);
+            const HistoryAttributes& att);
+
+    /**
+     * @brief Construct a WriterHistory with a custom payload pool.
+     *
+     * @param att           Attributes configuring the WriterHistory.
+     * @param payload_pool  Pool of payloads to be used by the WriterHistory.
+     */
+    FASTDDS_EXPORTED_API WriterHistory(
+            const HistoryAttributes& att,
+            const std::shared_ptr<IPayloadPool>& payload_pool);
+
+    /**
+     * @brief Construct a WriterHistory with custom payload and change pools.
+     *
+     * @param att           Attributes configuring the WriterHistory.
+     * @param payload_pool  Pool of payloads to be used by the WriterHistory.
+     * @param change_pool   Pool of changes to be used by the WriterHistory.
+     */
+    FASTDDS_EXPORTED_API WriterHistory(
+            const HistoryAttributes& att,
+            const std::shared_ptr<IPayloadPool>& payload_pool,
+            const std::shared_ptr<IChangePool>& change_pool);
+
     FASTDDS_EXPORTED_API virtual ~WriterHistory() override;
+
+    /**
+     * @brief Get the payload pool used by this history.
+     *
+     * @return Reference to the payload pool used by this history.
+     */
+    FASTDDS_EXPORTED_API const std::shared_ptr<IPayloadPool>& get_payload_pool() const;
+
+    /**
+     * @brief Get the change pool used by this history.
+     *
+     * @return Reference to the change pool used by this history.
+     */
+    FASTDDS_EXPORTED_API const std::shared_ptr<IChangePool>& get_change_pool() const;
+
+    /**
+     * @brief Create a new CacheChange_t object.
+     *
+     * @param change_kind  Kind of the change.
+     * @param handle       InstanceHandle_t of the change.
+     *
+     * @return Pointer to the new CacheChange_t object.
+     *
+     * @pre A writer has been associated with this history
+     */
+    FASTDDS_EXPORTED_API CacheChange_t* create_change(
+            ChangeKind_t change_kind,
+            InstanceHandle_t handle = c_InstanceHandle_Unknown);
+
+    /**
+     * @brief Create a new CacheChange_t object with a specific payload size.
+     *
+     * @param payload_size  Size of the payload.
+     * @param change_kind   Kind of the change.
+     * @param handle        InstanceHandle_t of the change.
+     *
+     * @return Pointer to the new CacheChange_t object.
+     *
+     * @pre A writer has been associated with this history
+     */
+    FASTDDS_EXPORTED_API CacheChange_t* create_change(
+            uint32_t payload_size,
+            ChangeKind_t change_kind,
+            InstanceHandle_t handle = c_InstanceHandle_Unknown);
 
     /**
      * Add a CacheChange_t to the WriterHistory.
@@ -141,11 +220,24 @@ public:
         return m_lastCacheChangeSeqNum + 1;
     }
 
-protected:
+    /**
+     * Release a change when it is not being used anymore.
+     *
+     * @param ch Pointer to the cache change to be released.
+     *
+     * @returns whether the operation succeeded or not
+     *
+     * @pre
+     *     @li A writer has been associated with this history
+     *     @li @c ch is not @c nullptr
+     *     @li @c ch points to a cache change obtained from a call to @c this->create_change
+     *
+     * @post memory pointed to by @c ch is not accessed
+     */
+    FASTDDS_EXPORTED_API bool release_change(
+            CacheChange_t* ch);
 
-    FASTDDS_EXPORTED_API bool do_reserve_cache(
-            CacheChange_t** change,
-            uint32_t size) override;
+protected:
 
     FASTDDS_EXPORTED_API void do_release_cache(
             CacheChange_t* ch) override;
@@ -211,9 +303,9 @@ protected:
     }
 
     //!Last CacheChange Sequence Number added to the History.
-    SequenceNumber_t m_lastCacheChangeSeqNum;
+    SequenceNumber_t m_lastCacheChangeSeqNum {};
     //!Pointer to the associated RTPSWriter;
-    RTPSWriter* mp_writer;
+    RTPSWriter* mp_writer = nullptr;
 
     uint32_t high_mark_for_frag_ = 0;
 
@@ -248,6 +340,11 @@ private:
 
     void set_fragments(
             CacheChange_t* change);
+
+    /// Reference to the change pool used by this history.
+    std::shared_ptr<IChangePool> change_pool_;
+    /// Reference to the payload pool used by this history.
+    std::shared_ptr<IPayloadPool> payload_pool_;
 };
 
 } // namespace rtps

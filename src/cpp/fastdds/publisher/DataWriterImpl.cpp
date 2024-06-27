@@ -42,6 +42,7 @@
 
 #include <rtps/builtin/liveliness/WLP.hpp>
 #include <rtps/DataSharing/DataSharingPayloadPool.hpp>
+#include <rtps/DataSharing/WriterPool.hpp>
 #include <rtps/history/CacheChangePool.h>
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
@@ -154,15 +155,7 @@ DataWriterImpl::DataWriterImpl(
     , topic_(topic)
     , qos_(get_datawriter_qos_from_settings(qos))
     , listener_(listen)
-    , history_(get_topic_attributes(qos_, *topic_, type_), type_->m_typeSize, qos_.endpoint().history_memory_policy,
-            [this](
-                const InstanceHandle_t& handle) -> void
-            {
-                if (nullptr != listener_)
-                {
-                    listener_->on_unacknowledged_sample_removed(user_datawriter_, handle);
-                }
-            })
+    , history_()
 #pragma warning (disable : 4355 )
     , writer_listener_(this)
     , deadline_duration_us_(qos_.deadline().period.to_ns() * 1e-3)
@@ -197,15 +190,7 @@ DataWriterImpl::DataWriterImpl(
     , topic_(topic)
     , qos_(get_datawriter_qos_from_settings(qos))
     , listener_(listen)
-    , history_(get_topic_attributes(qos_, *topic_, type_), type_->m_typeSize, qos_.endpoint().history_memory_policy,
-            [this](
-                const InstanceHandle_t& handle) -> void
-            {
-                if (nullptr != listener_)
-                {
-                    listener_->on_unacknowledged_sample_removed(user_datawriter_, handle);
-                }
-            })
+    , history_()
 #pragma warning (disable : 4355 )
     , writer_listener_(this)
     , deadline_duration_us_(qos_.deadline().period.to_ns() * 1e-3)
@@ -235,9 +220,33 @@ DataWriterQos DataWriterImpl::get_datawriter_qos_from_settings(
     return return_qos;
 }
 
+void DataWriterImpl::create_history(
+        const std::shared_ptr<IPayloadPool>& payload_pool,
+        const std::shared_ptr<IChangePool>& change_pool)
+{
+    history_.reset(new DataWriterHistory(
+                payload_pool, change_pool,
+                get_topic_attributes(qos_, *topic_, type_),
+                type_->m_typeSize,
+                qos_.endpoint().history_memory_policy,
+                [this](
+                    const InstanceHandle_t& handle) -> void
+                {
+                    if (nullptr != listener_)
+                    {
+                        listener_->on_unacknowledged_sample_removed(user_datawriter_, handle);
+                    }
+                }));
+}
+
 ReturnCode_t DataWriterImpl::enable()
 {
     assert(writer_ == nullptr);
+
+    auto topic_att = get_topic_attributes(qos_, *topic_, type_);
+    auto history_att = DataWriterHistory::to_history_attributes(
+        topic_att, type_->m_typeSize, qos_.endpoint().history_memory_policy);
+    pool_config_ = PoolConfig::from_history_attributes(history_att);
 
     WriterAttributes w_att;
     w_att.endpoint.durabilityKind = qos_.durability().durabilityKind();
@@ -347,19 +356,32 @@ ReturnCode_t DataWriterImpl::enable()
         return RETCODE_ERROR;
     }
 
+    create_history(pool, change_pool);
+
     RTPSWriter* writer =  RTPSDomainImpl::create_rtps_writer(
         publisher_->rtps_participant(),
         guid_.entityId,
         w_att,
-        pool,
-        change_pool,
-        static_cast<WriterHistory*>(&history_),
+        history_.get(),
         static_cast<WriterListener*>(&writer_listener_));
+
+    if (writer != nullptr &&
+            w_att.endpoint.data_sharing_configuration().kind() != DataSharingKind::OFF)
+    {
+        auto writer_pool = std::dynamic_pointer_cast<fastdds::rtps::WriterPool>(pool);
+        if (!writer_pool || !writer_pool->is_initialized())
+        {
+            EPROSIMA_LOG_ERROR(DATA_WRITER, "Could not initialize DataSharing writer pool");
+            RTPSDomain::removeRTPSWriter(writer);
+            writer = nullptr;
+        }
+    }
 
     if (writer == nullptr &&
             w_att.endpoint.data_sharing_configuration().kind() == DataSharingKind::AUTO)
     {
         EPROSIMA_LOG_INFO(DATA_WRITER, "Trying with a non-datasharing pool");
+        history_.reset();
         release_payload_pool();
         is_data_sharing_compatible_ = false;
         DataSharingQosPolicy datasharing;
@@ -373,17 +395,17 @@ ReturnCode_t DataWriterImpl::enable()
             return RETCODE_ERROR;
         }
 
+        create_history(pool, change_pool);
         writer = RTPSDomainImpl::create_rtps_writer(
             publisher_->rtps_participant(),
             guid_.entityId,
             w_att,
-            pool,
-            change_pool,
-            static_cast<WriterHistory*>(&history_),
+            history_.get(),
             static_cast<WriterListener*>(&writer_listener_));
     }
     if (writer == nullptr)
     {
+        history_.reset();
         release_payload_pool();
         EPROSIMA_LOG_ERROR(DATA_WRITER, "Problem creating associated Writer");
         return RETCODE_ERROR;
@@ -396,7 +418,7 @@ ReturnCode_t DataWriterImpl::enable()
     }
 
     // In case it has been loaded from the persistence DB, rebuild instances on history
-    history_.rebuild_instances();
+    history_->rebuild_instances();
 
     deadline_timer_ = new TimedEvent(publisher_->rtps_participant()->get_resource_event(),
                     [&]() -> bool
@@ -799,7 +821,7 @@ InstanceHandle_t DataWriterImpl::do_register_instance(
 #endif // if HAVE_STRICT_REALTIME
     {
         SerializedPayload_t* payload = nullptr;
-        if (history_.register_instance(instance_handle, lock, max_blocking_time, payload))
+        if (history_->register_instance(instance_handle, lock, max_blocking_time, payload))
         {
             // Keep serialization of sample inside the instance
             assert(nullptr != payload);
@@ -814,7 +836,7 @@ InstanceHandle_t DataWriterImpl::do_register_instance(
                     // Serialization of the sample failed. Remove the instance to keep original state.
                     // Note that we will only end-up here if the instance has just been created, so it will be empty
                     // and removing its changes will remove the instance completely.
-                    history_.remove_instance_changes(instance_handle, fastdds::rtps::SequenceNumber_t());
+                    history_->remove_instance_changes(instance_handle, rtps::SequenceNumber_t());
                 }
             }
             return instance_handle;
@@ -832,7 +854,7 @@ ReturnCode_t DataWriterImpl::unregister_instance(
     // Preconditions
     InstanceHandle_t ih;
     ReturnCode_t returned_value = check_instance_preconditions(instance, handle, ih);
-    if (RETCODE_OK == returned_value && !history_.is_key_registered(ih))
+    if (RETCODE_OK == returned_value && !history_->is_key_registered(ih))
     {
         returned_value = RETCODE_PRECONDITION_NOT_MET;
     }
@@ -865,7 +887,7 @@ ReturnCode_t DataWriterImpl::unregister_instance_w_timestamp(
     {
         ret = check_instance_preconditions(instance, handle, instance_handle);
     }
-    if (RETCODE_OK == ret && !history_.is_key_registered(instance_handle))
+    if (RETCODE_OK == ret && !history_->is_key_registered(instance_handle))
     {
         ret = RETCODE_PRECONDITION_NOT_MET;
     }
@@ -917,7 +939,7 @@ ReturnCode_t DataWriterImpl::get_key_value(
     std::lock_guard<RecursiveTimedMutex> lock(writer_->getMutex());
 #endif // if HAVE_STRICT_REALTIME
 
-    SerializedPayload_t* payload = history_.get_key_value(handle);
+    SerializedPayload_t* payload = history_->get_key_value(handle);
     if (nullptr == payload)
     {
         return RETCODE_BAD_PARAMETER;
@@ -997,7 +1019,7 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
         }
     }
 
-    CacheChange_t* ch = writer_->new_change(change_kind, handle);
+    CacheChange_t* ch = history_->create_change(change_kind, handle);
     if (ch != nullptr)
     {
         ch->serializedPayload = std::move(payload);
@@ -1011,11 +1033,11 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
                         reader_filters_->update_filter_info(static_cast<DataWriterFilteredChange&>(ch),
                                 related_sample_identity);
                     };
-            added = history_.add_pub_change_with_commit_hook(ch, wparams, filter_hook, lock, max_blocking_time);
+            added = history_->add_pub_change_with_commit_hook(ch, wparams, filter_hook, lock, max_blocking_time);
         }
         else
         {
-            added = history_.add_pub_change(ch, wparams, lock, max_blocking_time);
+            added = history_->add_pub_change(ch, wparams, lock, max_blocking_time);
         }
 
         if (!added)
@@ -1025,13 +1047,13 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
                 payload = std::move(ch->serializedPayload);
                 add_loan(data, payload);
             }
-            writer_->release_change(ch);
+            history_->release_change(ch);
             return RETCODE_TIMEOUT;
         }
 
         if (qos_.deadline().period != c_TimeInfinite)
         {
-            if (!history_.set_next_deadline(
+            if (!history_->set_next_deadline(
                         handle,
                         steady_clock::now() + duration_cast<system_clock::duration>(deadline_duration_us_)))
             {
@@ -1105,13 +1127,13 @@ ReturnCode_t DataWriterImpl::create_new_change_with_params(
 
 bool DataWriterImpl::remove_min_seq_change()
 {
-    return history_.removeMinChange();
+    return history_->removeMinChange();
 }
 
 ReturnCode_t DataWriterImpl::clear_history(
         size_t* removed)
 {
-    return (history_.removeAllChange(removed) ? RETCODE_OK : RETCODE_ERROR);
+    return (history_->removeAllChange(removed) ? RETCODE_OK : RETCODE_ERROR);
 }
 
 ReturnCode_t DataWriterImpl::get_sending_locators(
@@ -1301,11 +1323,11 @@ void DataWriterImpl::InnerDataWriterListener::onWriterChangeReceivedByAll(
             (NOT_ALIVE_UNREGISTERED == ch->kind ||
             NOT_ALIVE_DISPOSED_UNREGISTERED == ch->kind))
     {
-        data_writer_->history_.remove_instance_changes(ch->instanceHandle, ch->sequenceNumber);
+        data_writer_->history_->remove_instance_changes(ch->instanceHandle, ch->sequenceNumber);
     }
     else if (data_writer_->qos_.durability().kind == VOLATILE_DURABILITY_QOS)
     {
-        data_writer_->history_.remove_change_g(ch);
+        data_writer_->history_->remove_change_g(ch);
     }
 }
 
@@ -1415,12 +1437,12 @@ ReturnCode_t DataWriterImpl::wait_for_acknowledgments(
     std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
 #endif // HAVE_STRICT_REALTIME
 
-    if (!history_.is_key_registered(ih))
+    if (!history_->is_key_registered(ih))
     {
         return RETCODE_PRECONDITION_NOT_MET;
     }
 
-    if (history_.wait_for_acknowledgement_last_change(ih, lock, max_blocking_time))
+    if (history_->wait_for_acknowledgement_last_change(ih, lock, max_blocking_time))
     {
         return RETCODE_OK;
     }
@@ -1469,7 +1491,7 @@ bool DataWriterImpl::deadline_timer_reschedule()
     std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
 
     steady_clock::time_point next_deadline_us;
-    if (!history_.get_next_deadline(timer_owner_, next_deadline_us))
+    if (!history_->get_next_deadline(timer_owner_, next_deadline_us))
     {
         EPROSIMA_LOG_ERROR(DATA_WRITER, "Could not get the next deadline from the history");
         return false;
@@ -1503,7 +1525,7 @@ bool DataWriterImpl::deadline_missed()
 
     user_datawriter_->get_statuscondition().get_impl()->set_status(notify_status, true);
 
-    if (!history_.set_next_deadline(
+    if (!history_->set_next_deadline(
                 timer_owner_,
                 steady_clock::now() + duration_cast<system_clock::duration>(deadline_duration_us_)))
     {
@@ -1556,7 +1578,7 @@ bool DataWriterImpl::lifespan_expired()
     std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
 
     CacheChange_t* earliest_change;
-    while (history_.get_earliest_change(&earliest_change))
+    while (history_->get_earliest_change(&earliest_change))
     {
         auto source_timestamp = system_clock::time_point() + nanoseconds(earliest_change->sourceTimestamp.to_ns());
         auto now = system_clock::now();
@@ -1570,10 +1592,10 @@ bool DataWriterImpl::lifespan_expired()
         }
 
         // The earliest change has expired
-        history_.remove_change_pub(earliest_change);
+        history_->remove_change_pub(earliest_change);
 
         // Set the timer for the next change if there is one
-        if (!history_.get_earliest_change(&earliest_change))
+        if (!history_->get_earliest_change(&earliest_change))
         {
             return false;
         }
@@ -2021,29 +2043,28 @@ DataWriterListener* DataWriterImpl::get_listener_for(
 
 std::shared_ptr<IChangePool> DataWriterImpl::get_change_pool() const
 {
-    PoolConfig config = PoolConfig::from_history_attributes(history_.m_att);
     if (reader_filters_)
     {
         return std::make_shared<DataWriterFilteredChangePool>(
-            config, qos_.writer_resource_limits().reader_filters_allocation);
+            pool_config_, qos_.writer_resource_limits().reader_filters_allocation);
     }
 
-    return std::make_shared<fastdds::rtps::CacheChangePool>(config);
+    return std::make_shared<fastdds::rtps::CacheChangePool>(pool_config_);
 }
 
 std::shared_ptr<IPayloadPool> DataWriterImpl::get_payload_pool()
 {
     if (!payload_pool_)
     {
+        PoolConfig config = pool_config_;
+
         // When the user requested PREALLOCATED_WITH_REALLOC, but we know the type cannot
         // grow, we translate the policy into bare PREALLOCATED
-        if (PREALLOCATED_WITH_REALLOC_MEMORY_MODE == history_.m_att.memoryPolicy &&
+        if (PREALLOCATED_WITH_REALLOC_MEMORY_MODE == config.memory_policy &&
                 (type_->is_bounded() || type_->is_plain(data_representation_)))
         {
-            history_.m_att.memoryPolicy = PREALLOCATED_MEMORY_MODE;
+            config.memory_policy = PREALLOCATED_MEMORY_MODE;
         }
-
-        PoolConfig config = PoolConfig::from_history_attributes(history_.m_att);
 
         // Avoid calling the serialization size functors on PREALLOCATED mode
         fixed_payload_size_ = config.memory_policy == PREALLOCATED_MEMORY_MODE ? config.payload_initial_size : 0u;
@@ -2086,9 +2107,8 @@ bool DataWriterImpl::release_payload_pool()
     }
     else
     {
-        PoolConfig config = PoolConfig::from_history_attributes(history_.m_att);
         auto topic_pool = std::static_pointer_cast<ITopicPayloadPool>(payload_pool_);
-        result = topic_pool->release_history(config, false);
+        result = topic_pool->release_history(pool_config_, false);
     }
 
     payload_pool_.reset();

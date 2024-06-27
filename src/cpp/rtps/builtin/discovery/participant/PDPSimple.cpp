@@ -277,16 +277,14 @@ void PDPSimple::announceParticipantState(
             auto secure = dynamic_cast<fastdds::rtps::SimplePDPEndpointsSecure*>(builtin_endpoints_.get());
             assert(nullptr != secure);
 
-            RTPSWriter& writer = *(secure->secure_writer.writer_);
             WriterHistory& history = *(secure->secure_writer.history_);
-            PDP::announceParticipantState(writer, history, new_change, dispose, wp);
+            PDP::announceParticipantState(history, new_change, dispose, wp);
         }
 #endif // HAVE_SECURITY
 
         auto endpoints = dynamic_cast<fastdds::rtps::SimplePDPEndpoints*>(builtin_endpoints_.get());
-        RTPSWriter& writer = *(endpoints->writer.writer_);
         WriterHistory& history = *(endpoints->writer.history_);
-        PDP::announceParticipantState(writer, history, new_change, dispose, wp);
+        PDP::announceParticipantState(history, new_change, dispose, wp);
 
         if (!(dispose || new_change))
         {
@@ -380,7 +378,7 @@ bool PDPSimple::create_dcps_participant_endpoints()
     PoolConfig writer_pool_cfg = PoolConfig::from_history_attributes(hatt);
     writer.payload_pool_ = TopicPayloadPoolRegistry::get(topic_name, writer_pool_cfg);
     writer.payload_pool_->reserve_history(writer_pool_cfg, false);
-    writer.history_.reset(new WriterHistory(hatt));
+    writer.history_.reset(new WriterHistory(hatt, writer.payload_pool_));
 
     WriterAttributes watt = create_builtin_writer_attributes();
     watt.endpoint.reliabilityKind = BEST_EFFORT;
@@ -399,7 +397,7 @@ bool PDPSimple::create_dcps_participant_endpoints()
     }
 
     RTPSWriter* rtps_writer = nullptr;
-    if (mp_RTPSParticipant->createWriter(&rtps_writer, watt, writer.payload_pool_, writer.history_.get(),
+    if (mp_RTPSParticipant->createWriter(&rtps_writer, watt, writer.history_.get(),
             nullptr, writer_entity_id, true))
     {
         writer.writer_ = dynamic_cast<StatelessWriter*>(rtps_writer);
@@ -513,10 +511,10 @@ bool PDPSimple::create_dcps_participant_secure_endpoints()
     PoolConfig writer_pool_cfg = PoolConfig::from_history_attributes(hatt);
     writer.payload_pool_ = TopicPayloadPoolRegistry::get(topic_name, writer_pool_cfg);
     writer.payload_pool_->reserve_history(writer_pool_cfg, false);
-    writer.history_.reset(new WriterHistory(hatt));
+    writer.history_.reset(new WriterHistory(hatt, writer.payload_pool_));
 
     RTPSWriter* rtps_writer = nullptr;
-    if (mp_RTPSParticipant->createWriter(&rtps_writer, watt, writer.payload_pool_, writer.history_.get(),
+    if (mp_RTPSParticipant->createWriter(&rtps_writer, watt, writer.history_.get(),
             nullptr, writer_entity_id, true))
     {
         writer.writer_ = dynamic_cast<StatefulWriter*>(rtps_writer);

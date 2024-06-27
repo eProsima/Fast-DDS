@@ -271,10 +271,6 @@ protected:
     //!Print the seqNum of the changes in the History (for debuggisi, mng purposes).
     void print_changes_seqNum2();
 
-    FASTDDS_EXPORTED_API virtual bool do_reserve_cache(
-            CacheChange_t** change,
-            uint32_t size) = 0;
-
     FASTDDS_EXPORTED_API virtual void do_release_cache(
             CacheChange_t* ch) = 0;
 

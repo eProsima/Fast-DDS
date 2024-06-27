@@ -830,45 +830,23 @@ public:
 
     /**
      * Create a Writer in this RTPSParticipant with a custom payload pool.
-     * @param Writer Pointer to pointer of the Writer, used as output. Only valid if return==true.
-     * @param param WriterAttributes to define the Writer.
-     * @param payload_pool Shared pointer to the IPayloadPool
-     * @param hist Pointer to the WriterHistory.
-     * @param listen Pointer to the WriterListener.
-     * @param entityId EntityId assigned to the Writer.
-     * @param isBuiltin Bool value indicating if the Writer is builtin (Discovery or Liveliness protocol) or is created for the end user.
-     * @return True if the Writer was correctly created.
-     */
-    bool createWriter(
-            RTPSWriter** Writer,
-            WriterAttributes& param,
-            const std::shared_ptr<IPayloadPool>& payload_pool,
-            WriterHistory* hist,
-            WriterListener* listen,
-            const EntityId_t& entityId = c_EntityId_Unknown,
-            bool isBuiltin = false);
-
-    /**
-     * Create a Writer in this RTPSParticipant with a custom payload pool.
-     * @param Writer Pointer to pointer of the Writer, used as output. Only valid if return==true.
-     * @param watt WriterAttributes to define the Writer.
-     * @param payload_pool Shared pointer to the IPayloadPool
-     * @param change_pool Shared pointer to the IChangePool
-     * @param hist Pointer to the WriterHistory.
-     * @param listen Pointer to the WriterListener.
-     * @param entityId EntityId assigned to the Writer.
-     * @param isBuiltin Bool value indicating if the Writer is builtin (Discovery or Liveliness protocol) or is created for the end user.
+     *
+     * @param Writer     Pointer to pointer of the Writer, used as output. Only valid if return==true.
+     * @param watt       WriterAttributes to define the Writer.
+     * @param hist       Pointer to the WriterHistory.
+     * @param listen     Pointer to the WriterListener.
+     * @param entityId   EntityId assigned to the Writer.
+     * @param isBuiltin  Bool value indicating if the Writer is builtin (Discovery or Liveliness protocol) or is created for the end user.
+     *
      * @return True if the Writer was correctly created.
      */
     bool create_writer(
             RTPSWriter** Writer,
             WriterAttributes& watt,
-            const std::shared_ptr<IPayloadPool>& payload_pool,
-            const std::shared_ptr<IChangePool>& change_pool,
             WriterHistory* hist,
             WriterListener* listen,
-            const EntityId_t& entityId = c_EntityId_Unknown,
-            bool isBuiltin = false);
+            const EntityId_t& entityId,
+            bool isBuiltin);
 
     /**
      * Create a Reader in this RTPSParticipant.

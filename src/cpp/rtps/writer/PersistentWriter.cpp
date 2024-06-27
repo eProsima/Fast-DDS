@@ -32,8 +32,6 @@ namespace rtps {
 PersistentWriter::PersistentWriter(
         const GUID_t& guid,
         const WriterAttributes& att,
-        const std::shared_ptr<IPayloadPool>& payload_pool,
-        const std::shared_ptr<IChangePool>& change_pool,
         WriterHistory* hist,
         IPersistenceService* persistence)
     : persistence_(persistence)
@@ -45,8 +43,7 @@ PersistentWriter::PersistentWriter(
     ss << p_guid;
     persistence_guid_ = ss.str();
 
-    persistence_->load_writer_from_storage(persistence_guid_, guid, hist,
-            change_pool, payload_pool, hist->m_lastCacheChangeSeqNum);
+    persistence_->load_writer_from_storage(persistence_guid_, guid, hist, hist->m_lastCacheChangeSeqNum);
 
     // Update history state after loading from DB
     hist->m_isHistoryFull =
@@ -54,9 +51,9 @@ PersistentWriter::PersistentWriter(
             static_cast<int32_t>(hist->m_changes.size()) == hist->m_att.maximumReservedCaches;
 
     // Prepare the changes for datasharing if compatible
-    if (att.endpoint.data_sharing_configuration().kind() != dds::OFF)
+    if (att.endpoint.data_sharing_configuration().kind() != dds::DataSharingKind::OFF)
     {
-        auto pool = std::dynamic_pointer_cast<WriterPool>(payload_pool);
+        auto pool = std::dynamic_pointer_cast<WriterPool>(hist->get_payload_pool());
         assert(pool != nullptr);
         for (auto change : hist->m_changes)
         {

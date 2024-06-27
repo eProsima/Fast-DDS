@@ -48,7 +48,7 @@ TEST(SHMSegmentTests, Writer)
     HistoryAttributes history_attr;
     history_attr.payloadMaxSize = 255;
     history_attr.maximumReservedCaches = 50;
-    WriterHistory* history = new WriterHistory(history_attr);
+
     WriterAttributes writer_attr;
     dds::DataSharingQosPolicy dsq;
     // We select a folder to force the use of SharedFileSegment
@@ -58,8 +58,9 @@ TEST(SHMSegmentTests, Writer)
     std::shared_ptr<WriterPool> payload_pool(new WriterPool(history_attr.payloadMaxSize,
             history_attr.maximumReservedCaches));
 
+    WriterHistory* history = new WriterHistory(history_attr, payload_pool);
     RTPSWriter* writer = nullptr;
-    EXPECT_NO_THROW(writer = RTPSDomain::createRTPSWriter(participant, writer_attr, payload_pool, history));
+    EXPECT_NO_THROW(writer = RTPSDomain::createRTPSWriter(participant, writer_attr, history));
     // RTPSWriter creation failed, as expected.
     EXPECT_EQ(writer, nullptr);
 

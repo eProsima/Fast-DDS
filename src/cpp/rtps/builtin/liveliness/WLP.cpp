@@ -241,11 +241,10 @@ bool WLP::createEndpoints()
     // Built-in writer history
     HistoryAttributes hatt;
     set_builtin_writer_history_attributes(hatt, false);
-    mp_builtinWriterHistory = new WriterHistory(hatt);
-
     PoolConfig writer_pool_cfg = PoolConfig::from_history_attributes(hatt);
     payload_pool_ = TopicPayloadPoolRegistry::get("DCPSParticipantMessage", writer_pool_cfg);
     payload_pool_->reserve_history(writer_pool_cfg, false);
+    mp_builtinWriterHistory = new WriterHistory(hatt, payload_pool_);
 
     // Built-in writer
     WriterAttributes watt;
@@ -262,7 +261,6 @@ bool WLP::createEndpoints()
     if (mp_participant->createWriter(
                 &wout,
                 watt,
-                payload_pool_,
                 mp_builtinWriterHistory,
                 nullptr,
                 c_EntityId_WriterLiveliness,
@@ -342,11 +340,10 @@ bool WLP::createSecureEndpoints()
     //CREATE WRITER
     HistoryAttributes hatt;
     set_builtin_writer_history_attributes(hatt, true);
-    mp_builtinWriterSecureHistory = new WriterHistory(hatt);
-
     PoolConfig writer_pool_cfg = PoolConfig::from_history_attributes(hatt);
     secure_payload_pool_ = TopicPayloadPoolRegistry::get("DCPSParticipantMessageSecure", writer_pool_cfg);
     secure_payload_pool_->reserve_history(writer_pool_cfg, false);
+    mp_builtinWriterSecureHistory = new WriterHistory(hatt, secure_payload_pool_);
 
     WriterAttributes watt;
     watt.endpoint.unicastLocatorList = mp_builtinProtocols->m_metatrafficUnicastLocatorList;
@@ -379,7 +376,7 @@ bool WLP::createSecureEndpoints()
     }
 
     RTPSWriter* wout;
-    if (mp_participant->createWriter(&wout, watt, secure_payload_pool_, mp_builtinWriterSecureHistory, nullptr,
+    if (mp_participant->createWriter(&wout, watt, mp_builtinWriterSecureHistory, nullptr,
             c_EntityId_WriterLivelinessSecure, true))
     {
         mp_builtinWriterSecure = dynamic_cast<StatefulWriter*>(wout);
@@ -899,17 +896,11 @@ bool WLP::send_liveliness_message(
 {
     StatefulWriter* writer = builtin_writer();
     WriterHistory* history = builtin_writer_history();
+    std::shared_ptr<IPayloadPool> pool = builtin_writer_pool();
 
     std::lock_guard<RecursiveTimedMutex> wguard(writer->getMutex());
 
-    CacheChange_t* change = writer->new_change(
-        []() -> uint32_t
-        {
-            return WLP::builtin_participant_data_max_size;
-        },
-        ALIVE,
-        instance);
-
+    CacheChange_t* change = history->create_change(WLP::builtin_participant_data_max_size, ALIVE, instance);
     if (change != nullptr)
     {
         change->serializedPayload.encapsulation = (uint16_t)DEFAULT_ENCAPSULATION;
@@ -969,6 +960,18 @@ WriterHistory* WLP::builtin_writer_history()
 #endif // if HAVE_SECURITY
 
     return ret_val;
+}
+
+std::shared_ptr<IPayloadPool> WLP::builtin_writer_pool()
+{
+#if HAVE_SECURITY
+    if (mp_participant->security_attributes().is_liveliness_protected)
+    {
+        return secure_payload_pool_;
+    }
+#endif // if HAVE_SECURITY
+
+    return payload_pool_;
 }
 
 bool WLP::assert_liveliness(

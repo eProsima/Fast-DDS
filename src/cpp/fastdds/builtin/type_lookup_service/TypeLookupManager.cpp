@@ -680,7 +680,7 @@ TypeLookup_Request* TypeLookupManager::create_request(
 bool TypeLookupManager::send(
         TypeLookup_Request& request) const
 {
-    if (!send_impl(request, &request_type_, builtin_request_writer_, builtin_request_writer_history_))
+    if (!send_impl(request, &request_type_, builtin_request_writer_history_))
     {
         EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE, "Error sending request.");
         return false;
@@ -691,7 +691,7 @@ bool TypeLookupManager::send(
 bool TypeLookupManager::send(
         TypeLookup_Reply& reply) const
 {
-    if (!send_impl(reply, &reply_type_, builtin_reply_writer_, builtin_reply_writer_history_))
+    if (!send_impl(reply, &reply_type_, builtin_reply_writer_history_))
     {
         EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE, "Error sending reply.");
         return false;
@@ -703,19 +703,15 @@ template <typename Type, typename PubSubType>
 bool TypeLookupManager::send_impl(
         Type& msg,
         PubSubType* pubsubtype,
-        fastdds::rtps::StatefulWriter* writer,
         fastdds::rtps::WriterHistory* writer_history) const
 {
+    // Calculate the serialized size of the message using a CdrSizeCalculator
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    size_t current_alignment {0};
+    uint32_t payload_size = static_cast<uint32_t>(calculator.calculate_serialized_size(msg, current_alignment) + 4);
+
     // Create a new CacheChange_t using the provided StatefulWriter
-    CacheChange_t* change = writer->new_change(
-        [&msg]()
-        {
-            // Calculate the serialized size of the message using a CdrSizeCalculator
-            eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
-            size_t current_alignment {0};
-            return static_cast<uint32_t>(calculator.calculate_serialized_size(msg, current_alignment) + 4);
-        },
-        ALIVE);
+    CacheChange_t* change = writer_history->create_change(payload_size, ALIVE);
 
     // Check if the creation of CacheChange_t was successful
     if (!change)
@@ -723,23 +719,14 @@ bool TypeLookupManager::send_impl(
         return false;
     }
 
-    // Prepare the payload for sending the message
-    SerializedPayload_t payload;
-    payload.max_size = change->serializedPayload.max_size;
-    payload.data = change->serializedPayload.data;
-
     // Serialize the message using the provided PubSubType
-    bool result = pubsubtype->serialize(&msg, &payload, DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+    bool result = pubsubtype->serialize(&msg, &change->serializedPayload,
+                    DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
     // If serialization was successful, update the change and add it to the WriterHistory
     if (result)
     {
-        change->serializedPayload.length += payload.length;
-        change->serializedPayload.pos += payload.pos;
         result = writer_history->add_change(change);
     }
-    // Release the payload data
-    payload.data = nullptr;
-
     // If adding the change to WriterHistory failed, remove the change
     if (!result)
     {

@@ -32,6 +32,8 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
+class IChangePool;
+class IPayloadPool;
 class ReaderProxy;
 class RTPSWriter;
 
@@ -41,6 +43,21 @@ public:
 
     WriterHistory(
             const HistoryAttributes& /*att*/)
+        : samples_number_(0)
+    {
+    }
+
+    WriterHistory(
+            const HistoryAttributes& /*att*/,
+            const std::shared_ptr<IPayloadPool>&)
+        : samples_number_(0)
+    {
+    }
+
+    WriterHistory(
+            const HistoryAttributes& /*att*/,
+            const std::shared_ptr<IPayloadPool>&,
+            const std::shared_ptr<IChangePool>&)
         : samples_number_(0)
     {
     }
@@ -55,10 +72,28 @@ public:
     using iterator = std::vector<CacheChange_t*>::iterator;
 
     // *INDENT-OFF* Uncrustify makes a mess with MOCK_METHOD macros
+    MOCK_METHOD2(create_change, CacheChange_t* (
+            ChangeKind_t,
+            InstanceHandle_t));
+
+    CacheChange_t* create_change(
+            uint32_t size,
+            ChangeKind_t kind)
+    {
+        return create_change(size, kind, InstanceHandle_t{});
+    }
+
+    MOCK_METHOD3(create_change, CacheChange_t* (
+            uint32_t,
+            ChangeKind_t,
+            InstanceHandle_t handle));
+
+    MOCK_METHOD1(release_change, bool(CacheChange_t*));
+
     MOCK_METHOD1(add_change_mock, bool(CacheChange_t*));
-    // *INDENT-ON*
 
     MOCK_METHOD2(add_change, bool(CacheChange_t * a_change, WriteParams & wparams));
+    // *INDENT-ON*
 
     bool add_change(
             CacheChange_t* change)

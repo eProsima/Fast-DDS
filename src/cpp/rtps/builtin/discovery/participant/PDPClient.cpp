@@ -739,13 +739,12 @@ void PDPClient::announceParticipantState(
             // In order to avoid that we send the message directly as in the standard stateless PDP
 
             CacheChange_t* change = nullptr;
+            change = history.create_change(
+                mp_builtin->m_att.writerPayloadSize,
+                NOT_ALIVE_DISPOSED_UNREGISTERED,
+                getLocalParticipantProxyData()->m_key);
 
-            if ((change = writer.new_change(
-                        [this]() -> uint32_t
-                        {
-                            return mp_builtin->m_att.writerPayloadSize;
-                        },
-                        NOT_ALIVE_DISPOSED_UNREGISTERED, getLocalParticipantProxyData()->m_key)))
+            if (nullptr != change)
             {
                 // update the sequence number
                 change->sequenceNumber = history.next_sequence_number();
@@ -788,11 +787,11 @@ void PDPClient::announceParticipantState(
             }
 
             // free change
-            writer.release_change(change);
+            history.release_change(change);
         }
         else
         {
-            PDP::announceParticipantState(writer, history, new_change, dispose, wp);
+            PDP::announceParticipantState(history, new_change, dispose, wp);
 
             if (!new_change)
             {

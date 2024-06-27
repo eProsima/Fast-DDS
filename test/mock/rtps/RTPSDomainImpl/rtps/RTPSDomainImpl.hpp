@@ -89,13 +89,10 @@ public:
             RTPSParticipant* p,
             const EntityId_t& entity_id,
             WriterAttributes& watt,
-            const std::shared_ptr<IPayloadPool>& payload_pool,
-            const std::shared_ptr<IChangePool>& change_pool,
             WriterHistory* hist,
-            WriterListener* listen = nullptr)
+            WriterListener* listen)
     {
-        static_cast<void>(change_pool);
-        return RTPSDomain::createRTPSWriter(p, entity_id, watt, payload_pool, hist, listen);
+        return RTPSDomain::createRTPSWriter(p, entity_id, watt, hist, listen);
     }
 
     static RTPSParticipant* clientServerEnvironmentCreationOverride(

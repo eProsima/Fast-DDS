@@ -21,6 +21,7 @@
 
 #include <fastdds/rtps/common/CacheChange.hpp>
 #include <fastdds/rtps/history/IPayloadPool.hpp>
+#include <fastdds/rtps/writer/RTPSWriter.hpp>
 #include <rtps/history/PoolConfig.h>
 
 namespace eprosima {
@@ -74,6 +75,15 @@ public:
     {
         writer_guid_ = writer_guid;
         return true;
+    }
+
+    virtual bool init_shared_memory(
+            const RTPSWriter* /*writer*/,
+            const std::string& /*shared_dir*/)
+    {
+        // Default implementation is NOP
+        // will be overriden by children if needed
+        return false;
     }
 
     static std::shared_ptr<DataSharingPayloadPool> get_reader_pool(

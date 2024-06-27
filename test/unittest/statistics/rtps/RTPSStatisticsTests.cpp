@@ -409,13 +409,7 @@ public:
 
         ASSERT_NE(nullptr, writer_);
 
-        auto writer_change = writer_->new_change(
-            [length]() -> uint32_t
-            {
-                return length;
-            },
-            ALIVE);
-
+        auto writer_change = writer_history_->create_change(length, ALIVE);
         ASSERT_NE(nullptr, writer_change);
 
         std::string str("https://github.com/eProsima/Fast-DDS.git");
@@ -434,13 +428,7 @@ public:
 
         ASSERT_NE(nullptr, writer_);
 
-        auto writer_change = writer_->new_change(
-            [length]() -> uint32_t
-            {
-                return length;
-            },
-            ALIVE);
-
+        auto writer_change = writer_history_->create_change(length, ALIVE);
         ASSERT_NE(nullptr, writer_change);
 
         {

@@ -108,19 +108,21 @@ void pool_initialization_test (
 
     ASSERT_NE(participant, nullptr);
 
+    std::shared_ptr<TestPayloadPool> pool;
+
     HistoryAttributes h_attr;
     h_attr.memoryPolicy = policy;
     h_attr.initialReservedCaches = initial_reserved_caches;
     h_attr.payloadMaxSize = TestDataType::data_size;
-    WriterHistory* history = new WriterHistory(h_attr);
-
-    std::shared_ptr<TestPayloadPool> pool;
+    WriterHistory* history = new WriterHistory(h_attr, pool);
 
     WriterAttributes w_attr;
-    RTPSWriter* writer = RTPSDomain::createRTPSWriter(participant, w_attr, pool, history);
+    RTPSWriter* writer = RTPSDomain::createRTPSWriter(participant, w_attr, history);
     EXPECT_EQ(nullptr, writer);
 
+    delete history;
     pool = std::make_shared<TestPayloadPool>();
+    history = new WriterHistory(h_attr, pool);
 
     // Creating the Writer initializes the PayloadPool with the initial reserved size
     EXPECT_CALL(*pool, get_payload_delegate(TestDataType::data_size, _))
@@ -128,7 +130,7 @@ void pool_initialization_test (
     EXPECT_CALL(*pool, release_payload_delegate(_))
             .Times(0);
 
-    writer = RTPSDomain::createRTPSWriter(participant, w_attr, pool, history);
+    writer = RTPSDomain::createRTPSWriter(participant, w_attr, history);
 
     Mock::VerifyAndClearExpectations(pool.get());
 
@@ -138,7 +140,10 @@ void pool_initialization_test (
             .WillOnce(Return(true));
 
     TestDataType data;
-    CacheChange_t* ch = writer->new_change(data, ALIVE);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastdds::rtps::DEFAULT_XCDR_VERSION);
+    size_t current_alignment{ 0 };
+    uint32_t payload_size = (uint32_t)calculator.calculate_serialized_size(data, current_alignment);
+    CacheChange_t* ch = history->create_change(payload_size, ALIVE);
     ASSERT_NE(ch, nullptr);
 
     // Changes released to the writer have the payload returned to the pool
@@ -146,7 +151,7 @@ void pool_initialization_test (
             .Times(1)
             .WillOnce(Return(true));
 
-    writer->release_change(ch);
+    history->release_change(ch);
 
     RTPSDomain::removeRTPSWriter(writer);
     RTPSDomain::removeRTPSParticipant(participant);

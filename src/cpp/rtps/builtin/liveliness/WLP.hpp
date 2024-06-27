@@ -169,6 +169,12 @@ public:
      */
     WriterHistory* builtin_writer_history();
 
+    /**
+     * Get the liveliness builtin writer's payload pool
+     * @return payload pool
+     */
+    std::shared_ptr<IPayloadPool> builtin_writer_pool();
+
 #if HAVE_SECURITY
     bool pairing_remote_reader_with_local_writer_after_security(
             const GUID_t& local_writer,

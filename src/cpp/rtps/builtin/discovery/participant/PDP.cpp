@@ -479,7 +479,6 @@ void PDP::announceParticipantState(
 }
 
 void PDP::announceParticipantState(
-        RTPSWriter& writer,
         WriterHistory& history,
         bool new_change,
         bool dispose,
@@ -505,12 +504,7 @@ void PDP::announceParticipantState(
                     history.remove_min_change();
                 }
                 uint32_t cdr_size = proxy_data_copy.get_serialized_size(true);
-                change = writer.new_change(
-                    [cdr_size]() -> uint32_t
-                    {
-                        return cdr_size;
-                    },
-                    ALIVE, key);
+                change = history.create_change(cdr_size, ALIVE, key);
 
                 if (nullptr != change)
                 {
@@ -551,11 +545,7 @@ void PDP::announceParticipantState(
                 history.remove_min_change();
             }
             uint32_t cdr_size = proxy_data_copy.get_serialized_size(true);
-            change = writer.new_change([cdr_size]() -> uint32_t
-                            {
-                                return cdr_size;
-                            },
-                            NOT_ALIVE_DISPOSED_UNREGISTERED, key);
+            change = history.create_change(cdr_size, NOT_ALIVE_DISPOSED_UNREGISTERED, key);
 
             if (nullptr != change)
             {

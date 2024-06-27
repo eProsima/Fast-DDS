@@ -114,6 +114,12 @@ BaseReader::~BaseReader()
     }
 
     delete history_state_;
+
+    // As releasing the change pool will delete the cache changes it owns,
+    // the payload pool may be called to release their payloads, so we should
+    // ensure that the payload pool is destroyed after the change pool.
+    change_pool_.reset();
+    payload_pool_.reset();
 }
 
 ReaderListener* BaseReader::get_listener() const
