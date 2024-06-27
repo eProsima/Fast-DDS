@@ -18,6 +18,7 @@
 #include <thread>
 
 #include <fastrtps/utils/IPLocator.h>
+#include <rtps/transport/asio_helpers.hpp>
 #include <rtps/transport/TCPTransportInterface.h>
 
 namespace eprosima {
@@ -370,6 +371,52 @@ bool TCPChannelResource::check_socket_send_buffer(
     return true;
 }
 
+void TCPChannelResource::set_socket_options(
+        asio::basic_socket<asio::ip::tcp>& socket,
+        const TCPTransportDescriptor* options)
+{
+    uint32_t minimum_value = options->maxMessageSize;
+
+    // Set the send buffer size
+    {
+        uint32_t desired_value = options->sendBufferSize;
+        uint32_t configured_value = 0;
+        if (!asio_helpers::try_setting_buffer_size<asio::socket_base::send_buffer_size>(
+                    socket, desired_value, minimum_value, configured_value))
+        {
+            logError(TCP_TRANSPORT,
+                    "Couldn't set send buffer size to minimum value: " << minimum_value);
+        }
+        else if (desired_value != configured_value)
+        {
+            logWarning(TCP_TRANSPORT,
+                    "Couldn't set send buffer size to desired value. "
+                    << "Using " << configured_value << " instead of " << desired_value);
+        }
+    }
+
+    // Set the receive buffer size
+    {
+        uint32_t desired_value = options->receiveBufferSize;
+        uint32_t configured_value = 0;
+        if (!asio_helpers::try_setting_buffer_size<asio::socket_base::receive_buffer_size>(
+                    socket, desired_value, minimum_value, configured_value))
+        {
+            logError(TCP_TRANSPORT,
+                    "Couldn't set receive buffer size to minimum value: " << minimum_value);
+        }
+        else if (desired_value != configured_value)
+        {
+            logWarning(TCP_TRANSPORT,
+                    "Couldn't set receive buffer size to desired value. "
+                    << "Using " << configured_value << " instead of " << desired_value);
+        }
+    }
+
+    // Set the TCP_NODELAY option
+    socket.set_option(asio::ip::tcp::no_delay(options->enable_tcp_nodelay));
+}
+
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
