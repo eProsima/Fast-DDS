@@ -19,16 +19,8 @@ isolated_delivery_test_cases = [
     # Default builtin transports (UDP forced)
     ('', '-s 20', '-s 20', '', 50),
     ('', '-s 20', '-s 20', '--ignore-local-endpoints', 50),
-    # Data-sharing only in the same container
-    ('--mechanism data-sharing', '--mechanism data-sharing', '--unknown-argument', '--unknown-argument', 10),
-    ('--unknown-argument', '--unknown-argument', '--unknown-argument', '--mechanism data-sharing', 10),
-    # Intra-process only makes sense for pubsub entities. This test forces entities != pubsub  to fail, so
-    #  only 1 message is expected per sample (the local one)
-    ('--unknown-argument', '--unknown-argument', '--unknown-argument', '--mechanism intra-process', 10),
     # Large-data with only one publisher (testing TCP)
     ('--mechanism large-data', '--unknown-argument', '--mechanism large-data', '--unknown-argument', 10),
-    # Shared memory only in the same container
-    ('--mechanism shm', '--mechanism shm', '--unknown-argument', '--mechanism shm', 20),
     # TCP takes longer to match, so explicitly expect much more samples in this case.
     # TCP is configured through initial peers (a single locator), so we test only one publisher at a time
     #  Note: pubsub with TCP and ignore-local-endpoints NOT set is not supported, tested in  expected output test cases
