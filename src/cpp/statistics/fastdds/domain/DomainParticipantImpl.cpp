@@ -287,6 +287,7 @@ void DomainParticipantImpl::disable()
 
 ReturnCode_t DomainParticipantImpl::delete_contained_entities()
 {
+<<<<<<< HEAD
     ReturnCode_t ret = efd::DomainParticipantImpl::delete_contained_entities();
 
     if (ret == ReturnCode_t::RETCODE_OK)
@@ -296,6 +297,10 @@ ReturnCode_t DomainParticipantImpl::delete_contained_entities()
     }
 
     return ret;
+=======
+    delete_statistics_builtin_entities();
+    return efd::DomainParticipantImpl::delete_contained_entities();
+>>>>>>> 0d62335cc (Properly delete builtin statistics writers upon `delete_contained_entities()`  (#4891))
 }
 
 ReturnCode_t DomainParticipantImpl::enable_monitor_service()
