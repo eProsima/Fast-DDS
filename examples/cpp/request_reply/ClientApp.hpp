@@ -20,6 +20,12 @@
 #ifndef FASTDDS_EXAMPLES_CPP_REQUEST_REPLY__CLIENTAPP_HPP
 #define FASTDDS_EXAMPLES_CPP_REQUEST_REPLY__CLIENTAPP_HPP
 
+#include <array>
+#include <cassert>
+#include <condition_variable>
+#include <cstddef>
+#include <limits>
+#include <mutex>
 #include <string>
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
@@ -104,6 +110,64 @@ private:
     Subscriber* subscriber_;
 
     DataReader* reply_reader_;
+
+    mutable std::mutex mtx_;
+
+    std::condition_variable cv_;
+
+    template<std::size_t set_size>
+    class Uint8CountSet
+    {
+    public:
+        void increase(const size_t& position)
+        {
+            assert(position <= (set_size - 1));
+            if (inner_set_[position] < std::numeric_limits<std::uint8_t>::max())
+            {
+                inner_set_[position] += 1;
+            }
+        }
+
+        void decrease(const size_t& position)
+        {
+            assert(position <= (set_size - 1));
+            if (inner_set_[position] > 0)
+            {
+                inner_set_[position] -= 1;
+            }
+        }
+
+        bool all()
+        {
+            bool all_different_from_zero = true;
+
+            for (auto i = 0; i < set_size; i++)
+            {
+                if (inner_set_[i] == 0)
+                {
+                    all_different_from_zero = false;
+                    break;
+                }
+            }
+
+            return all_different_from_zero;
+        }
+
+    private:
+        std::array<std::uint8_t, set_size> inner_set_ = {0};
+    };
+
+    /**
+     * @brief Set to represent the matched count of the request-reply endpoints:
+     *
+     * - Position 0 represents matching status of request writer
+     * - Position 1 represents matching status of reply reader
+     */
+    Uint8CountSet<2> matched_state_;
+
+    static constexpr std::size_t request_writer_position_ = 0;
+
+    static constexpr std::size_t reply_reader_position_ = 1;
 };
 
 } // namespace request_reply

@@ -36,14 +36,15 @@ CalculatorRequestTypePubSubType::CalculatorRequestTypePubSubType()
     setName("CalculatorRequestType");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        static_cast<uint32_t>(CalculatorRequestType::getMaxCdrSerializedSize());
+            static_cast<uint32_t>(CalculatorRequestType::getMaxCdrSerializedSize());
 #else
-        CalculatorRequestType_max_cdr_typesize;
-#endif
+            CalculatorRequestType_max_cdr_typesize;
+#endif // if FASTCDR_VERSION_MAJOR == 1
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     m_typeSize = type_size + 4; /*encapsulation*/
     m_isGetKeyDefined = false;
-    uint32_t keyLength = CalculatorRequestType_max_key_cdr_typesize > 16 ? CalculatorRequestType_max_key_cdr_typesize : 16;
+    uint32_t keyLength = CalculatorRequestType_max_key_cdr_typesize >
+            16 ? CalculatorRequestType_max_key_cdr_typesize : 16;
     m_keyBuffer = reinterpret_cast<unsigned char*>(malloc(keyLength));
     memset(m_keyBuffer, 0, keyLength);
 }
@@ -150,8 +151,8 @@ std::function<uint32_t()> CalculatorRequestTypePubSubType::getSerializedSizeProv
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<const CalculatorRequestType*>(data), current_alignment)) +
-                           4u /*encapsulation*/;
+                              *static_cast<const CalculatorRequestType*>(data), current_alignment)) +
+                          4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                {
@@ -189,7 +190,8 @@ bool CalculatorRequestTypePubSubType::getKey(
             CalculatorRequestType_max_key_cdr_typesize);
 
     // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv1);
+    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS,
+            eprosima::fastcdr::CdrVersion::XCDRv1);
 #if FASTCDR_VERSION_MAJOR == 1
     p_type->serializeKey(ser);
 #else
@@ -229,10 +231,10 @@ CalculatorReplyTypePubSubType::CalculatorReplyTypePubSubType()
     setName("CalculatorReplyType");
     uint32_t type_size =
 #if FASTCDR_VERSION_MAJOR == 1
-        static_cast<uint32_t>(CalculatorReplyType::getMaxCdrSerializedSize());
+            static_cast<uint32_t>(CalculatorReplyType::getMaxCdrSerializedSize());
 #else
-        CalculatorReplyType_max_cdr_typesize;
-#endif
+            CalculatorReplyType_max_cdr_typesize;
+#endif // if FASTCDR_VERSION_MAJOR == 1
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     m_typeSize = type_size + 4; /*encapsulation*/
     m_isGetKeyDefined = false;
@@ -343,8 +345,8 @@ std::function<uint32_t()> CalculatorReplyTypePubSubType::getSerializedSizeProvid
                        eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
                    size_t current_alignment {0};
                    return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                               *static_cast<const CalculatorReplyType*>(data), current_alignment)) +
-                           4u /*encapsulation*/;
+                              *static_cast<const CalculatorReplyType*>(data), current_alignment)) +
+                          4u /*encapsulation*/;
                }
                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                {
@@ -382,7 +384,8 @@ bool CalculatorReplyTypePubSubType::getKey(
             CalculatorReplyType_max_key_cdr_typesize);
 
     // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv1);
+    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS,
+            eprosima::fastcdr::CdrVersion::XCDRv1);
 #if FASTCDR_VERSION_MAJOR == 1
     p_type->serializeKey(ser);
 #else
@@ -416,7 +419,6 @@ void CalculatorReplyTypePubSubType::register_type_object_representation()
 {
     register_CalculatorReplyType_type_identifier(type_identifiers_);
 }
-
 
 // Include auxiliary functions like for serializing/deserializing.
 #include "CalculatorCdrAux.ipp"

@@ -19,6 +19,7 @@
 
 #include "ClientApp.hpp"
 
+#include <mutex>
 #include <stdexcept>
 
 #include <fastdds/dds/core/detail/DDSReturnCode.hpp>
@@ -39,6 +40,10 @@ namespace examples {
 namespace request_reply {
 
 using namespace eprosima::fastdds::dds;
+
+// Define the constexpr so the linker can find the static members
+constexpr std::size_t ClientApp::request_writer_position_;
+constexpr std::size_t ClientApp::reply_reader_position_;
 
 ClientApp::ClientApp(
         const CLIParser::config& config,
@@ -196,11 +201,27 @@ void ClientApp::stop()
 }
 
 void ClientApp::on_publication_matched(
-        DataWriter* writer,
+        DataWriter* /* writer */,
         const PublicationMatchedStatus& info)
 {
-    static_cast<void>(writer);
-    static_cast<void>(info);
+    std::lock_guard<std::mutex> lock(mtx_);
+
+    if (info.current_count_change == 1)
+    {
+        std::cout << "Remote request reader matched." << std::endl;
+        matched_state_.increase(request_writer_position_);
+    }
+    else if (info.current_count_change == -1)
+    {
+        std::cout << "Remote request reader unmatched." << std::endl;
+        matched_state_.decrease(request_writer_position_);
+    }
+    else
+    {
+        std::cout << info.current_count_change
+                  << " is not a valid value for SubscriptionMatchedStatus current count change" << std::endl;
+    }
+    cv_.notify_one();
 }
 
 void ClientApp::on_subscription_matched(

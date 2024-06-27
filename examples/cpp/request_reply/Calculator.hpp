@@ -89,11 +89,11 @@ public:
     eProsima_user_DllExport CalculatorRequestType(
             const CalculatorRequestType& x)
     {
-                    m_operation = x.m_operation;
+        m_operation = x.m_operation;
 
-                    m_x = x.m_x;
+        m_x = x.m_x;
 
-                    m_y = x.m_y;
+        m_y = x.m_y;
 
     }
 
@@ -117,11 +117,11 @@ public:
             const CalculatorRequestType& x)
     {
 
-                    m_operation = x.m_operation;
+        m_operation = x.m_operation;
 
-                    m_x = x.m_x;
+        m_x = x.m_x;
 
-                    m_y = x.m_y;
+        m_y = x.m_y;
 
         return *this;
     }
@@ -148,8 +148,8 @@ public:
             const CalculatorRequestType& x) const
     {
         return (m_operation == x.m_operation &&
-           m_x == x.m_x &&
-           m_y == x.m_y);
+               m_x == x.m_x &&
+               m_y == x.m_y);
     }
 
     /*!
@@ -190,7 +190,6 @@ public:
         return m_operation;
     }
 
-
     /*!
      * @brief This function sets a value in member x
      * @param _x New value for member x
@@ -219,7 +218,6 @@ public:
         return m_x;
     }
 
-
     /*!
      * @brief This function sets a value in member y
      * @param _y New value for member y
@@ -247,8 +245,6 @@ public:
     {
         return m_y;
     }
-
-
 
 private:
 
@@ -286,7 +282,7 @@ public:
     eProsima_user_DllExport CalculatorReplyType(
             const CalculatorReplyType& x)
     {
-                    m_z = x.m_z;
+        m_z = x.m_z;
 
     }
 
@@ -308,7 +304,7 @@ public:
             const CalculatorReplyType& x)
     {
 
-                    m_z = x.m_z;
+        m_z = x.m_z;
 
         return *this;
     }
@@ -372,8 +368,6 @@ public:
     {
         return m_z;
     }
-
-
 
 private:
 
