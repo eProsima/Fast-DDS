@@ -20,6 +20,18 @@
 #ifndef FASTDDS_EXAMPLES_CPP_REQUEST_REPLY__CLIENTAPP_HPP
 #define FASTDDS_EXAMPLES_CPP_REQUEST_REPLY__CLIENTAPP_HPP
 
+#include <string>
+
+#include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/publisher/DataWriter.hpp>
+#include <fastdds/dds/publisher/DataWriterListener.hpp>
+#include <fastdds/dds/publisher/Publisher.hpp>
+#include <fastdds/dds/subscriber/DataReader.hpp>
+#include <fastdds/dds/subscriber/DataReaderListener.hpp>
+#include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastdds/dds/topic/Topic.hpp>
+#include <fastdds/dds/topic/TypeSupport.hpp>
+
 #include "Application.hpp"
 #include "CLIParser.hpp"
 
@@ -28,7 +40,9 @@ namespace fastdds {
 namespace examples {
 namespace request_reply {
 
-class ClientApp : public Application
+using namespace eprosima::fastdds::dds;
+
+class ClientApp : public Application, public DataReaderListener, public DataWriterListener
 {
 public:
 
@@ -44,6 +58,52 @@ public:
     //! Trigger the end of execution
     void stop() override;
 
+    //! Publication matched method
+    void on_publication_matched(
+            DataWriter* writer,
+            const PublicationMatchedStatus& info) override;
+
+    //! Subscription matched method
+    void on_subscription_matched(
+            DataReader* reader,
+            const SubscriptionMatchedStatus& info) override;
+
+    //! Reply received method
+    void on_data_available(
+            DataReader* reader) override;
+
+private:
+
+    struct RequestInput
+    {
+        RequestInput(const CLIParser::config& config);
+
+        CLIParser::Operation operation = CLIParser::Operation::UNDEFINED;
+
+        std::int16_t x = 0;
+
+        std::int16_t y = 0;
+    };
+
+    RequestInput request_input_;
+
+    DomainParticipant* participant_;
+
+    TypeSupport request_type_;
+
+    Topic* request_topic_;
+
+    Publisher* publisher_;
+
+    DataWriter* request_writer_;
+
+    TypeSupport reply_type_;
+
+    Topic* reply_topic_;
+
+    Subscriber* subscriber_;
+
+    DataReader* reply_reader_;
 };
 
 } // namespace request_reply

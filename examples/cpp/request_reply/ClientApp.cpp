@@ -19,17 +19,168 @@
 
 #include "ClientApp.hpp"
 
+#include <stdexcept>
+
+#include <fastdds/dds/core/detail/DDSReturnCode.hpp>
+#include <fastdds/dds/core/status/StatusMask.hpp>
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
+#include <fastdds/dds/publisher/qos/PublisherQos.hpp>
+#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
+#include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
+#include <fastdds/dds/topic/qos/TopicQos.hpp>
+
+#include "Calculator.hpp"
+#include "CalculatorPubSubTypes.hpp"
+
 namespace eprosima {
 namespace fastdds {
 namespace examples {
 namespace request_reply {
 
+using namespace eprosima::fastdds::dds;
+
 ClientApp::ClientApp(
         const CLIParser::config& config,
         const std::string& service_name)
+    : request_input_(config)
+    , participant_(nullptr)
+    , request_type_(nullptr)
+    , request_topic_(nullptr)
+    , publisher_(nullptr)
+    , request_writer_(nullptr)
+    , reply_type_(nullptr)
+    , reply_topic_(nullptr)
+    , subscriber_(nullptr)
+    , reply_reader_(nullptr)
 {
-    static_cast<void>(config);
-    static_cast<void>(service_name);
+    // Create the participant
+    auto factory = DomainParticipantFactory::get_instance();
+
+    if (nullptr == factory)
+    {
+        throw std::runtime_error("Failed to get participant factory instance");
+    }
+
+    participant_ = factory->create_participant_with_default_profile(nullptr, StatusMask::none());
+
+    if (nullptr == participant_)
+    {
+        throw std::runtime_error("Participant initialization failed");
+    }
+
+    /********** REQUEST ENTITIES **********/
+    // Create the request TypeSupport
+    request_type_.reset(new CalculatorRequestTypePubSubType());
+
+    if (nullptr == request_type_)
+    {
+        throw std::runtime_error("Failed to create request type");
+    }
+
+    // Register the type
+    if (RETCODE_OK != request_type_.register_type(participant_))
+    {
+        throw std::runtime_error("Failed to register request type");
+    }
+
+    // Create the request topic
+    TopicQos topic_qos = TOPIC_QOS_DEFAULT;
+
+    if (RETCODE_OK != participant_->get_default_topic_qos(topic_qos))
+    {
+        throw std::runtime_error("Failed to get default topic qos");
+    }
+
+    request_topic_ = participant_->create_topic("rq/" + service_name, request_type_.get_type_name(), topic_qos);
+
+    if (nullptr == request_topic_)
+    {
+        throw std::runtime_error("Request topic initialization failed");
+    }
+
+    // Create the publisher
+    PublisherQos pub_qos = PUBLISHER_QOS_DEFAULT;
+
+    if (RETCODE_OK != participant_->get_default_publisher_qos(pub_qos))
+    {
+        throw std::runtime_error("Failed to get default publisher qos");
+    }
+
+    publisher_ = participant_->create_publisher(pub_qos, nullptr, StatusMask::none());
+
+    if (nullptr == publisher_)
+    {
+        throw std::runtime_error("Publisher initialization failed");
+    }
+
+    // Create the request writer
+    DataWriterQos writer_qos = DATAWRITER_QOS_DEFAULT;
+
+    if (RETCODE_OK != publisher_->get_default_datawriter_qos(writer_qos))
+    {
+        throw std::runtime_error("Failed to get default datawriter qos");
+    }
+
+    request_writer_ = publisher_->create_datawriter(request_topic_, writer_qos, this, StatusMask::all());
+
+    if (nullptr == request_writer_)
+    {
+        throw std::runtime_error("Request writer initialization failed");
+    }
+
+    /********** REPLY ENTITIES **********/
+    // Create the reply TypeSupport
+    reply_type_.reset(new CalculatorReplyTypePubSubType());
+
+    if (nullptr == reply_type_)
+    {
+        throw std::runtime_error("Failed to create reply type");
+    }
+
+    // Register the type
+    if (RETCODE_OK != reply_type_.register_type(participant_))
+    {
+        throw std::runtime_error("Failed to register reply type");
+    }
+
+    // Create the reply topic
+    reply_topic_ = participant_->create_topic("rr/" + service_name, reply_type_.get_type_name(), topic_qos);
+
+    if (nullptr == reply_topic_)
+    {
+        throw std::runtime_error("Reply topic initialization failed");
+    }
+
+    // Create the subscriber
+    SubscriberQos sub_qos = SUBSCRIBER_QOS_DEFAULT;
+
+    if (RETCODE_OK != participant_->get_default_subscriber_qos(sub_qos))
+    {
+        throw std::runtime_error("Failed to get default subscriber qos");
+    }
+
+    subscriber_ = participant_->create_subscriber(sub_qos, nullptr, StatusMask::none());
+
+    if (nullptr == subscriber_)
+    {
+        throw std::runtime_error("Subscriber initialization failed");
+    }
+
+    // Create the request reader
+    DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
+
+    if (RETCODE_OK != subscriber_->get_default_datareader_qos(reader_qos))
+    {
+        throw std::runtime_error("Failed to get default datareader qos");
+    }
+
+    reply_reader_ = subscriber_->create_datareader(reply_topic_, reader_qos, this, StatusMask::all());
+
+    if (nullptr == reply_reader_)
+    {
+        throw std::runtime_error("Reply reader initialization failed");
+    }
 }
 
 ClientApp::~ClientApp()
@@ -44,7 +195,37 @@ void ClientApp::stop()
 {
 }
 
-} // namespace request_reply {
+void ClientApp::on_publication_matched(
+        DataWriter* writer,
+        const PublicationMatchedStatus& info)
+{
+    static_cast<void>(writer);
+    static_cast<void>(info);
+}
+
+void ClientApp::on_subscription_matched(
+        DataReader* reader,
+        const SubscriptionMatchedStatus& info)
+{
+    static_cast<void>(reader);
+    static_cast<void>(info);
+}
+
+void ClientApp::on_data_available(
+        DataReader* reader)
+{
+    static_cast<void>(reader);
+}
+
+ClientApp::RequestInput::RequestInput(
+        const CLIParser::config& config)
+    : operation(config.operation)
+    , x(config.x)
+    , y(config.y)
+{
+}
+
+} // namespace request_reply
 } // namespace examples
 } // namespace fastdds
 } // namespace eprosima
