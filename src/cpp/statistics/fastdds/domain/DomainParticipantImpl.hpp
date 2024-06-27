@@ -119,6 +119,8 @@ public:
      * @brief This override calls the parent method and returns builtin publishers to nullptr
      *
      * @return RETCODE_OK if successful
+     * @note This method is meant to be used followed by a deletion of the participant as it implies
+     * the deletion of the builtin statistics publishers.
      */
     ReturnCode_t delete_contained_entities() override;
 
